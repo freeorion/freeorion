@@ -268,17 +268,8 @@ Pt StateButton::MinUsableSize() const
     if (m_representer)
         return m_representer->MinUsableSize(*this);
 
-    return Pt();
+    return Pt0;
 }
-
-StateButton::ButtonState StateButton::State() const
-{ return m_state; }
-
-const std::string& StateButton::Text() const
-{ return m_label->Text(); }
-
-bool StateButton::Checked() const
-{ return m_checked; }
 
 void StateButton::Render()
 {
@@ -528,18 +519,9 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
 ////////////////////////////////////////////////
 // GG::RadioButtonGroup
 ////////////////////////////////////////////////
-// ButtonSlot
-RadioButtonGroup::ButtonSlot::ButtonSlot(std::shared_ptr<StateButton> button_) :
-    button(std::move(button_))
-{}
-
 RadioButtonGroup::RadioButtonGroup(Orientation orientation) :
     Control(X0, Y0, X1, Y1),
-    m_orientation(orientation),
-    m_checked_button(NO_BUTTON),
-    m_expand_buttons(false),
-    m_expand_buttons_proportionally(false),
-    m_render_outline(false)
+    m_orientation(orientation)
 {
     SetColor(CLR_YELLOW);
 
@@ -562,27 +544,6 @@ Pt RadioButtonGroup::MinUsableSize() const
     }
     return retval;
 }
-
-Orientation RadioButtonGroup::GetOrientation() const
-{ return m_orientation; }
-
-bool RadioButtonGroup::Empty() const
-{ return m_button_slots.empty(); }
-
-std::size_t RadioButtonGroup::NumButtons() const
-{ return m_button_slots.size(); }
-
-std::size_t RadioButtonGroup::CheckedButton() const
-{ return m_checked_button; }
-
-bool RadioButtonGroup::ExpandButtons() const
-{ return m_expand_buttons; }
-
-bool RadioButtonGroup::ExpandButtonsProportionally() const
-{ return m_expand_buttons_proportionally; }
-
-bool RadioButtonGroup::RenderOutline() const
-{ return m_render_outline; }
 
 void RadioButtonGroup::RaiseCheckedButton()
 {
@@ -751,12 +712,6 @@ void RadioButtonGroup::ExpandButtonsProportionally(bool proportional)
         SetCheck(old_checked_button);
     }
 }
-
-void RadioButtonGroup::RenderOutline(bool render_outline)
-{ m_render_outline = render_outline; }
-
-const std::vector<RadioButtonGroup::ButtonSlot>& RadioButtonGroup::ButtonSlots() const
-{ return m_button_slots; }
 
 void RadioButtonGroup::ConnectSignals()
 {

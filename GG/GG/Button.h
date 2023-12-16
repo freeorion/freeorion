@@ -153,11 +153,11 @@ public:
     Pt                  MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
-    ButtonState         State() const;
+    ButtonState         State() const noexcept { return m_state; }
 
-    const std::string&  Text() const;        ///< Returns the label to be used as the button label
+    const std::string&  Text() const noexcept { return m_label->Text(); }
 
-    bool                Checked() const;     ///< Returns true if button is checked
+    bool                Checked() const noexcept { return m_checked; }
 
     TextControl*        GetLabel() const;
 
@@ -308,33 +308,33 @@ public:
     Pt MinUsableSize() const override;
 
     /** Returns the orientation of the buttons in the group */
-    Orientation      GetOrientation() const;
+    Orientation      GetOrientation() const noexcept { return m_orientation; }
 
     /** Returns true iff NumButtons() == 0 */
-    bool             Empty() const;
+    bool             Empty() const noexcept { return m_button_slots.empty(); }
 
     /** Returns the number of buttons in this control */
-    std::size_t      NumButtons() const;
+    std::size_t      NumButtons() const noexcept { return m_button_slots.size(); }
 
     /** Returns the index of the currently checked button, or NO_BUTTON if
         none are checked */
-    std::size_t      CheckedButton() const;
+    std::size_t      CheckedButton() const noexcept { return m_checked_button; }
 
     /** Returns true iff the buttons in the group are to be expanded to fill
         the group's available space.  If false, this indicates that the
         buttons are to be spaced out evenly, and that they should all be their
         MinUsableSize()s. */
-    bool             ExpandButtons() const;
+    bool             ExpandButtons() const noexcept { return m_expand_buttons; }
 
     /** Returns true iff the buttons in the group are to be expanded in
         proportion to their initial sizes.  If false, this indicates that the
         buttons are to be expanded evenly.  Note that this has no effect if
         ExpandButtons() is false. */
-    bool             ExpandButtonsProportionally() const;
+    bool             ExpandButtonsProportionally() const noexcept { return m_expand_buttons_proportionally; }
 
     /** Returns true iff this button group will render an outline of itself;
         this is sometimes useful for debugging purposes */
-    bool             RenderOutline() const;
+    bool             RenderOutline() const noexcept { return m_render_outline; }
 
     mutable ButtonChangedSignalType ButtonChangedSignal; ///< The button changed signal object for this RadioButtonGroup
 
@@ -380,7 +380,7 @@ public:
 
     /** Set this to true if this button group should render an outline of
         itself; this is sometimes useful for debugging purposes */
-    void RenderOutline(bool render_outline);
+    void RenderOutline(bool render_outline) noexcept { m_render_outline = render_outline; }
 
     /** Raises the currently-selected button to the top of the child z-order.
         If there is no currently-selected button, no action is taken. */
@@ -395,14 +395,15 @@ protected:
         RadioButtonGroup. */
     struct GG_API ButtonSlot
     {
-        ButtonSlot(std::shared_ptr<StateButton> button_);
+        ButtonSlot(std::shared_ptr<StateButton> button_) noexcept :
+            button(std::move(button_))
+        {}
 
         std::shared_ptr<StateButton> button;
-
         boost::signals2::scoped_connection connection;
     };
 
-    const std::vector<ButtonSlot>& ButtonSlots() const; ///< returns the state buttons in the group
+    const std::vector<ButtonSlot>& ButtonSlots() const noexcept { return m_button_slots; }
 
 private:
     void ConnectSignals();
@@ -411,10 +412,10 @@ private:
 
     const Orientation       m_orientation;
     std::vector<ButtonSlot> m_button_slots;
-    std::size_t             m_checked_button; ///< the index of the currently-checked button; NO_BUTTON if none is clicked
-    bool                    m_expand_buttons;
-    bool                    m_expand_buttons_proportionally;
-    bool                    m_render_outline;
+    std::size_t             m_checked_button = NO_BUTTON; ///< the index of the currently-checked button; NO_BUTTON if none is clicked
+    bool                    m_expand_buttons = false;
+    bool                    m_expand_buttons_proportionally = false;
+    bool                    m_render_outline = false;
 };
 
 }
