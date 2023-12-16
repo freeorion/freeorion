@@ -1672,7 +1672,7 @@ GG::Pt GovernmentWnd::GetPolicySlotSize() const {
 }
 
 int GovernmentWnd::GetPolicyTextSize() const {
-    double zoom_factor = GetPolicyZoomFactor();
+    const double zoom_factor = GetPolicyZoomFactor();
     return static_cast<int>(ClientUI::Pts() * zoom_factor);
 }
 
