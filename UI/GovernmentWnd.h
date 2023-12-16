@@ -16,9 +16,10 @@ public:
     void Reset();
     void Sanitize();
     void Refresh();
-    double GetPolicyZoomFactor();   // returns zoom factor for policy cards
-    GG::Pt GetPolicySlotSize();     // returns policy slot size with zoom factor applied
-    int    GetPolicyTextSize();     // returns policy text size with zoom factor applied
+
+    double GetPolicyZoomFactor() const; // zoom factor for policy cards
+    GG::Pt GetPolicySlotSize() const;   // policy slot size with zoom factor applied
+    int    GetPolicyTextSize() const;   // policy text size with zoom factor applied
 
     /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
     void EnableOrderIssuing(bool enable = true);

@@ -1257,8 +1257,7 @@ void GovernmentWnd::MainPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
 void GovernmentWnd::MainPanel::Sanitize()
 { void ClearPolicies(); }
 
-void GovernmentWnd::MainPanel::Refresh()
-{
+void GovernmentWnd::MainPanel::Refresh() {
     Populate();
     DoLayout();
 }
@@ -1525,13 +1524,10 @@ void GovernmentWnd::MainPanel::DoLayout() {
         return;
 
     // arrange policy slots, start new row when slots overlap with right wnd border
-    auto gov_wnd = std::dynamic_pointer_cast<GovernmentWnd>(Parent());
-    GG::Pt slot_size = GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT);
-    int text_pts = PTS;
-    if (gov_wnd) {
-        slot_size = gov_wnd->GetPolicySlotSize();
-        text_pts = gov_wnd->GetPolicyTextSize();
-    }
+    const auto gov_wnd = std::dynamic_pointer_cast<const GovernmentWnd>(Parent());
+    const auto [slot_size, text_pts] = gov_wnd ?
+        std::pair{gov_wnd->GetPolicySlotSize(), gov_wnd->GetPolicyTextSize()} :
+        std::pair{GG::Pt(SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT), PTS};
 
     const GG::X initial_slot_l = GG::X{PAD*2};
     GG::Pt ul = GG::Pt(initial_slot_l, BUTTON_HEIGHT / 2 + PAD*2);
@@ -1539,8 +1535,7 @@ void GovernmentWnd::MainPanel::DoLayout() {
     int count = 0;
     bool first_iteration = true;
     for (auto& slot : m_slots) {
-
-        slot->Resize(GG::Pt(slot_size.x, slot_size.y), text_pts);
+        slot->Resize(slot_size, text_pts);
 
         // start of new row
         if (count <= 0) {
@@ -1658,7 +1653,7 @@ void GovernmentWnd::Refresh() {
     m_main_panel->Refresh();
 }
 
-double GovernmentWnd::GetPolicyZoomFactor() {
+double GovernmentWnd::GetPolicyZoomFactor() const {
     switch (m_policy_size_buttons->CheckedButton()) {
     case 0: return 1;
     case 1: return 0.75;
@@ -1669,14 +1664,14 @@ double GovernmentWnd::GetPolicyZoomFactor() {
     return 1;
 }
 
-GG::Pt GovernmentWnd::GetPolicySlotSize() {
+GG::Pt GovernmentWnd::GetPolicySlotSize() const {
     const double zoom_factor = GetPolicyZoomFactor();
     const GG::X slot_width{GG::ToX(SLOT_CONTROL_WIDTH * zoom_factor)};
     const GG::Y slot_height{GG::ToY(SLOT_CONTROL_HEIGHT * zoom_factor)};
     return GG::Pt(slot_width, slot_height);
 }
 
-int GovernmentWnd::GetPolicyTextSize() {
+int GovernmentWnd::GetPolicyTextSize() const {
     double zoom_factor = GetPolicyZoomFactor();
     return static_cast<int>(ClientUI::Pts() * zoom_factor);
 }
@@ -1688,7 +1683,7 @@ void GovernmentWnd::DoLayout() {
     const GG::X BUTTON_WIDTH = PTS_WIDE * GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
     const GG::Y BUTTON_HEIGHT{PTS * 2};
 
-    static constexpr GG::Pt palette_ul(GG::X0, GG::Y0);
+    static constexpr GG::Pt palette_ul(GG::Pt0);
     const GG::Pt palette_lr(palette_ul + GG::Pt(ClientWidth(), ClientHeight() / 2));
     const int num_size_buttons = static_cast<int>(m_policy_size_buttons->NumButtons());
 
