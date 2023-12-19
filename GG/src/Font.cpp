@@ -70,13 +70,13 @@ constexpr T NextPowerOfTwo(T input)
     of Font's constructor.*/
 struct TempGlyphData
 {
-    TempGlyphData() {}
-    TempGlyphData(Pt ul_, Pt lr_, Y y_ofs, X lb, X a) :
+    constexpr TempGlyphData() = default;
+    constexpr TempGlyphData(Pt ul_, Pt lr_, int16_t y_ofs, int16_t lb, int16_t a) noexcept :
         ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
-    Pt ul, lr;   ///< area of glyph subtexture within texture
-    Y  y_offset; ///< vertical offset to draw texture (may be negative!)
-    X  left_b;   ///< left bearing (see Glyph)
-    X  adv;      ///< advance of glyph (see Glyph)
+    Pt       ul, lr;        ///< area of glyph subtexture within texture
+    int16_t  y_offset = 0;  ///< vertical offset to draw texture (may be negative!)
+    int16_t  left_b = 0;    ///< left bearing (see Glyph)
+    int16_t  adv = 0;       ///< advance of glyph (see Glyph)
 };
 
 /// A two dimensional grid of pixels that expands to
@@ -979,12 +979,12 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 ///////////////////////////////////////
 // struct GG::Font::Glyph
 ///////////////////////////////////////
-Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, Y y_ofs, X lb, X adv) :
+Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int16_t y_ofs, int16_t lb, int16_t adv) :
     sub_texture(std::move(texture), ul.x, ul.y, lr.x, lr.y),
     y_offset(y_ofs),
     left_bearing(lb),
     advance(adv),
-    width(ul.x - lr.x)
+    width(Value(ul.x - lr.x))
 {}
 
 ///////////////////////////////////////
@@ -1014,10 +1014,9 @@ Font::Font(std::string font_filename, unsigned int pts,
     Init(wrapper.m_face);
 }
 
-X Font::RenderText(Pt pt_, const std::string& text) const
+X Font::RenderText(Pt pt, const std::string& text) const
 {
-    Pt pt = pt_;
-    X orig_x = pt.x;
+    const X orig_x = pt.x;
 
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
@@ -1459,7 +1458,7 @@ void Font::FillTemplatedText(
                 auto it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
                 // space chararacter is always renderable)
-                elem->widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
+                elem->widths.back() = (it != m_glyphs.end()) ? X{it->second.advance} : m_space_width;
             }
         }
     }
@@ -1802,7 +1801,8 @@ void Font::Init(FT_Face& face)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
     const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
 
-    std::map<std::uint32_t, TempGlyphData> temp_glyph_data; // TODO: flat_map?
+    std::vector<std::pair<std::uint32_t, TempGlyphData>> temp_glyph_data;
+    temp_glyph_data.reserve(1000); // rough guesstimate
 
     // Start with width and height of 16,
     // increase them as needed.
@@ -1815,53 +1815,62 @@ void Font::Init(FT_Face& face)
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (const auto& [low, high] : range_vec) {
+    for (const auto [low, high] : range_vec) {
         for (std::uint32_t c = low; c < high; ++c) {
+            // skip already-existing glphys
+            if (std::any_of(temp_glyph_data.begin(), temp_glyph_data.end(),
+                            [c](const auto& tgd) { return tgd.first == c; }))
+            { continue; }
+            const auto generated = GenerateGlyph(face, c);
+            if (!generated)
+                continue;
+
             // copy glyph images
-            if (!temp_glyph_data.count(c) && GenerateGlyph(face, c)) {
-                const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
-                if ((glyph_bitmap.width > TEX_MAX_SIZE) || (glyph_bitmap.rows > TEX_MAX_SIZE))
-                    ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
+            const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
+            if ((glyph_bitmap.width > TEX_MAX_SIZE) || (glyph_bitmap.rows > TEX_MAX_SIZE))
+                ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
 
-                if (Value(x) + glyph_bitmap.width >= TEX_MAX_SIZE) { // start a new row of glyph images
-                    if (x > max_x) max_x = x;
-                    x = X0;
-                    y = max_y;
-                }
-                if (Value(y) + glyph_bitmap.rows >= TEX_MAX_SIZE) {
-                    // We cannot make the texture any larger. The font does not fit.
-                    ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
-                }
-                if (y + Y(glyph_bitmap.rows) > max_y)
-                    max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
-
-                std::uint8_t* const src_start = glyph_bitmap.buffer;
-                // Resize buffer to fit new data
-                buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
-
-                for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
-                    std::uint8_t* src = src_start + row * glyph_bitmap.pitch;
-                    std::uint16_t* dst = &buffer.get(x, y + Y(row));
-                    // Rows are always contiguous, so we can copy along a row using simple incrementation
-                    for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
-#ifdef __BIG_ENDIAN__
-                        *dst++ = *src++ | (255 << 8); // big-endian uses different byte ordering
-#else
-                        *dst++ = (*src++ << 8) | 255; // alpha is the value from glyph_bitmap; luminance is always 100% white
-#endif
-                    }
-                }
-
-                // record info on how to find and use this glyph later
-                temp_glyph_data[c] =
-                    TempGlyphData(Pt(x, y), Pt(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)),
-                                  Y(m_height - 1 + m_descent - face->glyph->bitmap_top),
-                                  X(static_cast<int>((std::ceil(face->glyph->metrics.horiBearingX / 64.0)))),
-                                  X(static_cast<int>((std::ceil(face->glyph->metrics.horiAdvance / 64.0)))));
-
-                // advance buffer write-position
-                x += X(glyph_bitmap.width + 1); //Leave a one pixel gap between glyphs
+            if (Value(x) + glyph_bitmap.width >= TEX_MAX_SIZE) { // start a new row of glyph images
+                if (x > max_x) max_x = x;
+                x = X0;
+                y = max_y;
             }
+            if (Value(y) + glyph_bitmap.rows >= TEX_MAX_SIZE) {
+                // We cannot make the texture any larger. The font does not fit.
+                ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
+            }
+            if (y + Y(glyph_bitmap.rows) > max_y)
+                max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
+
+            std::uint8_t* const src_start = glyph_bitmap.buffer;
+            // Resize buffer to fit new data
+            buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
+
+            for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
+                std::uint8_t* src = src_start + row * glyph_bitmap.pitch;
+                std::uint16_t* dst = &buffer.get(x, y + Y(row));
+                // Rows are always contiguous, so we can copy along a row using simple incrementation
+                for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
+#ifdef __BIG_ENDIAN__
+                    *dst++ = *src++ | (255 << 8); // big-endian uses different byte ordering
+#else
+                    *dst++ = (*src++ << 8) | 255; // alpha is the value from glyph_bitmap; luminance is always 100% white
+#endif
+                }
+            }
+
+            // record info on how to find and use this glyph later
+            temp_glyph_data.emplace_back(std::piecewise_construct,
+                                         std::forward_as_tuple(c),
+                                         std::forward_as_tuple(
+                                             Pt(x, y),
+                                             Pt(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)),
+                                             Value(m_height - 1 + m_descent - face->glyph->bitmap_top),
+                                             static_cast<int16_t>((std::ceil(face->glyph->metrics.horiBearingX / 64.0))),
+                                             static_cast<int16_t>((std::ceil(face->glyph->metrics.horiAdvance / 64.0)))));
+
+            // advance buffer write-position
+            x += X(glyph_bitmap.width + 1); //Leave a one pixel gap between glyphs
         }
     }
 
@@ -1875,13 +1884,14 @@ void Font::Init(FT_Face& face)
     // create Glyph objects from temp glyph data
     for (const auto& glyph_data : temp_glyph_data) {
         m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr,
-                                           glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
+                                           glyph_data.second.y_offset, glyph_data.second.left_b,
+                                           glyph_data.second.adv);
     }
 
     // record the width of the space character
     auto glyph_it = m_glyphs.find(WIDE_SPACE);
     assert(glyph_it != m_glyphs.end());
-    m_space_width = glyph_it->second.advance;
+    m_space_width = X{glyph_it->second.advance};
 }
 
 bool Font::GenerateGlyph(FT_Face face, std::uint32_t ch)
@@ -2015,7 +2025,7 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState* render_st
         }
     }
 
-    return glyph.advance;
+    return X{glyph.advance};
 }
 
 namespace {

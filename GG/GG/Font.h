@@ -659,13 +659,13 @@ private:
     struct Glyph
     {
         Glyph() = default;
-        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, Y y_ofs, X lb, X adv);
+        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int16_t y_ofs, int16_t lb, int16_t adv);
 
-        SubTexture  sub_texture;       ///< The subtexture containing just this glyph
-        Y           y_offset = Y0;     ///< The vertical offset to draw this glyph (may be negative!)
-        X           left_bearing = X0; ///< The space that should remain before the glyph
-        X           advance = X0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
-        X           width = X0;        ///< The width of the glyph only
+        SubTexture  sub_texture;      ///< The subtexture containing just this glyph
+        int16_t     y_offset = 0;     ///< The vertical offset to draw this glyph (may be negative!)
+        int16_t     left_bearing = 0; ///< The space that should remain before the glyph
+        int16_t     advance = 0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
+        int16_t     width = 0;        ///< The width of the glyph only
     };
 
     typedef std::unordered_map<std::uint32_t, Glyph> GlyphMap;
