@@ -42,9 +42,6 @@ public:
                                                             Flags<TextFormat>) const = 0;
     };
 
-    //! The type of the object where we store control factories of tags.
-    using BlockFactoryMap = std::map<std::string, std::shared_ptr<IBlockControlFactory>, std::less<>>;
-
     //! The special tag that is used to represent plaintext.
     // Allows you to register a custom control for displaying plaintext.
     static constexpr std::string_view PLAINTEXT_TAG = "GG_RICH_PLAIN";
@@ -68,12 +65,15 @@ public:
      */
     void SetPadding(int pixels);
 
-    void Render() override;
+    void Render() noexcept override {}
 
     void SizeMove(Pt ul, Pt lr) override;
 
+    //! The type of the object where we store control factories of tags.
+    using BlockFactoryMap = std::vector<std::pair<std::string_view, std::shared_ptr<IBlockControlFactory>>>;
+
     //! Use this to customize the handling of tags in the text on a per-object basis.
-    void SetBlockFactoryMap(std::shared_ptr<BlockFactoryMap> block_factory_map);
+    void SetBlockFactoryMap(BlockFactoryMap block_factory_map);
 
     /** Registers a factory in the default block factory map. \a tag must be a view of
       * persistant storage that will be valid indefinitely after this call. */
@@ -81,7 +81,7 @@ public:
     static int RegisterDefaultBlock(std::string, std::shared_ptr<IBlockControlFactory>) = delete;
 
     //! Access the default block factory map.
-    static std::shared_ptr<RichText::BlockFactoryMap> DefaultBlockFactoryMap();
+    static const RichText::BlockFactoryMap& DefaultBlockFactoryMap();
 
 private:
     friend class RichTextPrivate;

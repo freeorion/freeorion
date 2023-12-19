@@ -160,8 +160,9 @@ bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, fs::path 
 bool ImageBlock::SetDefaultImagePath(fs::path path)
 {
     // Find the image block factory from the default map and give it the path.
-    auto factory_it = RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
-    if (factory_it != RichText::DefaultBlockFactoryMap()->end()) {
+    auto& dbf{RichText::DefaultBlockFactoryMap()};
+    const auto factory_it = std::find_if(dbf.begin(), dbf.end(), [](auto f) { return f.first == IMAGE_TAG; });
+    if (factory_it != dbf.end()) {
         if (auto factory = dynamic_cast<ImageBlockFactory*>(factory_it->second.get()))
             return SetImagePath(factory, std::move(path));
     }
