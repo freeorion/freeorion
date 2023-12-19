@@ -103,7 +103,7 @@ public:
     }
 
     // Sets the root of image search path.
-    void SetRootPath(fs::path path)
+    void SetRootPath(fs::path path) noexcept
     { m_root_path = std::move(path); }
 
 private:
