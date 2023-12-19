@@ -279,52 +279,53 @@ void MultiEdit::SetText(std::string str)
     const auto lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
     const auto& line_data{GetLineData()};
 
-    if (m_max_lines_history == ALL_LINES) {
-        TextControl::SetText(std::move(str));
-    } else {
-        if (m_max_lines_history < lines.size()) {
-            std::size_t first_line = 0;
-            std::size_t last_line = m_max_lines_history - 1;
-            CPSize cursor_begin_idx = INVALID_CP_SIZE; // used to correct the cursor range when lines get chopped
-            CPSize cursor_end_idx = INVALID_CP_SIZE;
-            if (m_style & MULTI_TERMINAL_STYLE) {
-                first_line = lines.size() - 1 - m_max_lines_history;
-                last_line = lines.size() - 1;
-            }
-            CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, &lines);
-            if (m_style & MULTI_TERMINAL_STYLE) {
-                // chopping these lines off the front will invalidate the cursor range unless we do this
-                CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, &lines);
-                cursor_begin_idx = first_line_first_char_idx < cursor_begin_string_index ? CP0 : cursor_begin_string_index - first_line_first_char_idx;
-                CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, &lines);
-                cursor_end_idx = first_line_first_char_idx < cursor_end_string_index ? CP0 : cursor_end_string_index - first_line_first_char_idx;
-            }
-            StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, lines);
-            StrSize last_line_last_string_idx = last_line < lines.size() - 1 ? StringIndexOf(last_line + 1, CP0, lines) : StringIndexOf(lines.size() - 1, CP0, lines);
-            TextControl::SetText(str.substr(Value(first_line_first_string_idx), Value(last_line_last_string_idx - first_line_first_string_idx)));
-            if (cursor_begin_idx != INVALID_CP_SIZE && cursor_end_idx != INVALID_CP_SIZE) {
-                bool found_cursor_begin = false;
-                bool found_cursor_end = false;
-                for (std::size_t i = 0; i < line_data.size(); ++i) {
-                    const auto& ldi{line_data[i]};
-                    if (ldi.Empty())
-                        continue;
-                    const auto char_back_cp{ldi.char_data.back().code_point_index};
+    if (m_max_lines_history == ALL_LINES || m_max_lines_history >= lines.size()) {
+        TextControl::SetText(std::move(str), std::move(text_elements));
 
-                    if (!found_cursor_begin && cursor_begin_idx <= char_back_cp) {
-                        m_cursor_begin.first = i;
-                        m_cursor_begin.second = cursor_begin_idx - CharIndexOf(i, CP0);
-                        found_cursor_begin = true;
-                    }
-                    if (!found_cursor_end && cursor_end_idx <= char_back_cp) {
-                        m_cursor_end.first = i;
-                        m_cursor_end.second = cursor_end_idx - CharIndexOf(i, CP0);
-                        found_cursor_end = true;
-                    }
+    } else {
+        std::size_t first_line = 0;
+        std::size_t last_line = m_max_lines_history - 1;
+        CPSize cursor_begin_idx = INVALID_CP_SIZE; // used to correct the cursor range when lines get chopped
+        CPSize cursor_end_idx = INVALID_CP_SIZE;
+        if (m_style & MULTI_TERMINAL_STYLE) {
+            first_line = lines.size() - 1 - m_max_lines_history;
+            last_line = lines.size() - 1;
+        }
+        const CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, &lines);
+        if (m_style & MULTI_TERMINAL_STYLE) {
+            // chopping these lines off the front will invalidate the cursor range unless we do this
+            const CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, &lines);
+            cursor_begin_idx = first_line_first_char_idx < cursor_begin_string_index ? CP0 : cursor_begin_string_index - first_line_first_char_idx;
+            const CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, &lines);
+            cursor_end_idx = first_line_first_char_idx < cursor_end_string_index ? CP0 : cursor_end_string_index - first_line_first_char_idx;
+        }
+        const StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, lines);
+        const StrSize last_line_last_string_idx = last_line < lines.size() - 1 ? StringIndexOf(last_line + 1, CP0, lines) : StringIndexOf(lines.size() - 1, CP0, lines);
+
+        // set text to a substring of visible
+        TextControl::SetText(str.substr(Value(first_line_first_string_idx),
+                                        Value(last_line_last_string_idx - first_line_first_string_idx)));
+
+        if (cursor_begin_idx != INVALID_CP_SIZE && cursor_end_idx != INVALID_CP_SIZE) {
+            bool found_cursor_begin = false;
+            bool found_cursor_end = false;
+            for (std::size_t i = 0; i < line_data.size(); ++i) {
+                const auto& ldi{line_data[i]};
+                if (ldi.Empty())
+                    continue;
+                const auto char_back_cp{ldi.char_data.back().code_point_index};
+
+                if (!found_cursor_begin && cursor_begin_idx <= char_back_cp) {
+                    m_cursor_begin.first = i;
+                    m_cursor_begin.second = cursor_begin_idx - CharIndexOf(i, CP0);
+                    found_cursor_begin = true;
+                }
+                if (!found_cursor_end && cursor_end_idx <= char_back_cp) {
+                    m_cursor_end.first = i;
+                    m_cursor_end.second = cursor_end_idx - CharIndexOf(i, CP0);
+                    found_cursor_end = true;
                 }
             }
-        } else {
-            TextControl::SetText(std::move(str));
         }
     }
 
