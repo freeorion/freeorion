@@ -2389,7 +2389,7 @@ void RotatingGraphic::Render() {
     }
 
     // set up texture coordinates for vertices
-    const GLfloat* tc = texture->DefaultTexCoords();
+    const auto tc = texture->DefaultTexCoords();
     GLfloat texture_coordinate_data[8] = {tc[0], tc[1], tc[2], tc[1], tc[0], tc[3], tc[2], tc[3]};
 
 

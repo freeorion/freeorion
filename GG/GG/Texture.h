@@ -68,13 +68,15 @@ public:
     Y                Height() const noexcept { return m_height; }               ///< returns height of entire texture
     bool             MipMapped() const noexcept { return m_mipmaps; }           ///< returns true if the texture has mipmaps
     GLuint           OpenGLId() const noexcept { return m_opengl_id; }          ///< GLuint "name" of the opengl texture object associated with this object
-    const GLfloat*   DefaultTexCoords() const noexcept { return m_tex_coords; } ///< texture coordinates to use by default when blitting this texture
     X                DefaultWidth() const noexcept { return m_default_width; }  ///< returns width in pixels, based on initial image (0 if texture was not loaded)
     Y                DefaultHeight() const noexcept { return m_default_height; }///< returns height in pixels, based on initial image (0 if texture was not loaded)
 
+    std::array<GLfloat, 4> DefaultTexCoords() const noexcept { return m_tex_coords; }///< texture coordinates to use by default when blitting this texture
+
     /** Blit any portion of texture to any place on screen, scaling as
         necessary*/
-    void OrthoBlit(Pt pt1, Pt pt2, const GLfloat* tex_coords = nullptr) const;
+    void OrthoBlit(Pt pt1, Pt pt2, std::array<GLfloat, 4> tex_coords) const;
+    void OrthoBlit(Pt pt1, Pt pt2) const;
     void Blit(const GL2DVertexBuffer& vertex_buffer, const GLTexCoordBuffer& tex_coord_buffer,
               bool render_scaled = true) const;
 
@@ -85,7 +87,8 @@ public:
 
     /** Fill \a tex_coord_buff with texture coordinate data for the texture
       * coords specified by \a tex_coords */
-    static void InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_coords = 0);
+    static void InitBuffer(GLTexCoordBuffer& tex_coord_buffer,
+                           std::array<GLfloat, 4> tex_coords = {0.0, 0.0, 1.0, 1.0});
 
     /** Blit default portion of texture unscaled to \a pt (upper left
         corner)*/
@@ -144,7 +147,7 @@ private:
     GLenum       m_type = GL_INVALID_ENUM;
 
     /// each of these is used for a non-power-of-two-sized graphic loaded into a power-of-two-sized texture
-    GLfloat      m_tex_coords[4] = {0.0f, 0.0f, 0.0f, 0.0f};    ///< the texture coords used to blit from this texture by default (reflecting original image width and height)
+    std::array<GLfloat, 4> m_tex_coords = {0.0f, 0.0f, 0.0f, 0.0f};    ///< the texture coords used to blit from this texture by default (reflecting original image width and height)
     X            m_default_width = GG::X0;                      ///< the original width and height of this texture to be used in blitting 
     Y            m_default_height = GG::Y0;
 };
@@ -173,11 +176,11 @@ public:
 
     virtual ~SubTexture() = default;
 
-    bool             Empty() const;     ///< returns true if this object has no associated GG::Texture
-    const GLfloat*   TexCoords() const; ///< texture coordinates to use when blitting this sub-texture
-    X                Width() const;     ///< width of sub-texture in pixels
-    Y                Height() const;    ///< height of sub-texture in pixels
-    const Texture*   GetTexture() const;///< returns the texture the SubTexture is a part of
+    bool                    Empty() const noexcept { return !m_texture; }           ///< true if this object has no associated GG::Texture
+    std::array<GLfloat, 4>  TexCoords() const noexcept { return m_tex_coords; }     ///< texture coordinates to use when blitting this sub-texture
+    X                       Width() const noexcept { return m_width; }              ///< width of sub-texture in pixels
+    Y                       Height() const noexcept { return m_height; }            ///< height of sub-texture in pixels
+    const Texture*          GetTexture() const noexcept { return m_texture.get(); } ///< the texture the SubTexture is a part of
 
     /** Blit sub-texture to any place on screen, scaling as necessary \see
         GG::Texture::OrthoBlit*/
@@ -205,7 +208,7 @@ private:
     std::shared_ptr<const Texture>  m_texture;
     X                               m_width = GG::X0;
     Y                               m_height = GG::Y0;
-    GLfloat                         m_tex_coords[4] = {0.0f, 0.0f, 1.0f, 1.0f}; ///< position of element within containing texture 
+    std::array<GLfloat, 4>          m_tex_coords = {0.0f, 0.0f, 1.0f, 1.0f}; ///< position of element within containing texture 
 };
 
 /** \brief A singleton that loads and stores textures for use by GG.

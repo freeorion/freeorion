@@ -3218,7 +3218,8 @@ void MapWnd::InitSystemRenderingBuffers() {
     // be.  This allows us to use one set of texture coords for everything, even
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
-    static constexpr GLfloat tex_coords[4] = {-0.5, -0.5, 1.5, 1.5};
+    static constexpr std::array<GLfloat, 4> tex_coords{-0.5, -0.5, 1.5, 1.5};
+
     for (std::size_t i = 0; i < m_system_icons.size(); ++i)
         GG::Texture::InitBuffer(m_star_texture_coords, tex_coords);
 
@@ -3294,11 +3295,8 @@ void MapWnd::InitSystemRenderingBuffers() {
             unsigned int subtexture_x_index = subtexture_index / 3;                     //  0  0  0  0  1  1  1  1  2  2  2  2
             unsigned int subtexture_y_index = subtexture_index - 4*subtexture_x_index;  //  0  1  2  3  0  1  2  3  0  1  2  3
 
-            const GLfloat* default_tex_coords = gas_texture->DefaultTexCoords();
-            const GLfloat tex_coord_min_x = default_tex_coords[0];
-            const GLfloat tex_coord_min_y = default_tex_coords[1];
-            const GLfloat tex_coord_max_x = default_tex_coords[2];
-            const GLfloat tex_coord_max_y = default_tex_coords[3];
+            const auto [tex_coord_min_x, tex_coord_min_y, tex_coord_max_x, tex_coord_max_y] =
+                gas_texture->DefaultTexCoords();
 
             // gas texture is expected to be a 4 wide by 3 high grid
             // also add a bit of padding to hopefully avoid artifacts of texture edges
@@ -3307,7 +3305,7 @@ void MapWnd::InitSystemRenderingBuffers() {
             const GLfloat tx_low_y = tex_coord_min_y  + (subtexture_y_index + 0)*(tex_coord_max_y - tex_coord_min_y)/3;
             const GLfloat tx_high_y = tex_coord_min_y + (subtexture_y_index + 1)*(tex_coord_max_y - tex_coord_min_y)/3;
 
-            const GLfloat rot_tex_coords[4] = {tx_low_x, tx_low_y, tx_high_x, tx_high_y};
+            const std::array<GLfloat, 4> rot_tex_coords{tx_low_x, tx_low_y, tx_high_x, tx_high_y};
             GG::Texture::InitBuffer(m_galaxy_gas_texture_coords, rot_tex_coords);
         }
     }

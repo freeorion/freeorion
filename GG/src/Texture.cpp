@@ -85,7 +85,7 @@ void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
     glPopAttrib();
 }
 
-void Texture::OrthoBlit(Pt pt1, Pt pt2, const GLfloat* tex_coords) const
+void Texture::OrthoBlit(Pt pt1, Pt pt2, std::array<GLfloat, 4> tex_coords) const
 {
     if (m_opengl_id == 0)
         return;
@@ -97,10 +97,16 @@ void Texture::OrthoBlit(Pt pt1, Pt pt2, const GLfloat* tex_coords) const
     GLTexCoordBuffer tex_coord_buffer;
     tex_coord_buffer.reserve(4);
     InitBuffer(vertex_buffer, pt1, pt2);
-    InitBuffer(tex_coord_buffer, tex_coords ? tex_coords : m_tex_coords);   // use default texture coords when not given any others
+    InitBuffer(tex_coord_buffer, tex_coords);
 
     Blit(vertex_buffer, tex_coord_buffer, render_scaled);
 }
+
+void Texture::OrthoBlit(Pt pt1, Pt pt2) const
+{ OrthoBlit(pt1, pt2, m_tex_coords); }
+
+void Texture::OrthoBlit(Pt pt) const
+{ OrthoBlit(pt, pt + Pt(m_default_width, m_default_height), m_tex_coords); }
 
 void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, Pt pt1, Pt pt2)
 {
@@ -118,23 +124,13 @@ void Texture::InitBuffer(GL2DVertexBuffer& vertex_buffer, float x1, float y1, fl
     vertex_buffer.store(x2, y2);
 }
 
-void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, const GLfloat* tex_coords)
+void Texture::InitBuffer(GLTexCoordBuffer& tex_coord_buffer, std::array<GLfloat, 4> tex_coords)
 {
-    if (tex_coords) {
-        tex_coord_buffer.store(tex_coords[2], tex_coords[1]);
-        tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
-        tex_coord_buffer.store(tex_coords[0], tex_coords[3]);
-        tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
-    } else {
-        tex_coord_buffer.store(1.0, 0.0);
-        tex_coord_buffer.store(0.0, 0.0);
-        tex_coord_buffer.store(0.0, 1.0);
-        tex_coord_buffer.store(1.0, 1.0);
-    }
+    tex_coord_buffer.store(tex_coords[2], tex_coords[1]);
+    tex_coord_buffer.store(tex_coords[0], tex_coords[1]);
+    tex_coord_buffer.store(tex_coords[0], tex_coords[3]);
+    tex_coord_buffer.store(tex_coords[2], tex_coords[3]);
 }
-
-void Texture::OrthoBlit(Pt pt) const
-{ OrthoBlit(pt, pt + Pt(m_default_width, m_default_height), m_tex_coords); }
 
 void Texture::Load(const boost::filesystem::path& path, bool mipmap)
 {
@@ -469,21 +465,6 @@ SubTexture& SubTexture::operator=(SubTexture&& rhs) noexcept
     }
     return *this;
 }
-
-bool SubTexture::Empty() const
-{ return !m_texture; }
-
-const GLfloat* SubTexture::TexCoords() const
-{ return m_tex_coords; }
-
-X SubTexture::Width() const
-{ return m_width; }
-
-Y SubTexture::Height() const
-{ return m_height; }
-
-const Texture* SubTexture::GetTexture() const
-{ return m_texture.get(); }
 
 void SubTexture::OrthoBlit(Pt pt1, Pt pt2) const
 { if (m_texture) m_texture->OrthoBlit(pt1, pt2, m_tex_coords); }

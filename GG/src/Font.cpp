@@ -1114,6 +1114,14 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat
 {
     const Y y_origin = LineOriginY(ul.y, lr.y, format, m_lineskip, m_height, end_line, begin_line);
 
+    std::size_t glyph_count = std::transform_reduce(std::next(line_data.begin(), begin_line),
+                                                    std::next(line_data.begin(), end_line),
+                                                    0, std::plus{},
+                                                    [](const auto& line) { return line.char_data.size(); });
+    cache.coordinates->reserve(glyph_count*4);
+    cache.vertices->reserve(glyph_count*4);
+    cache.colors->reserve(glyph_count*4);
+
     for (std::size_t i = begin_line; i < end_line; ++i) {
         const LineData& line = line_data[i];
 
@@ -1950,23 +1958,25 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
 void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset + y_shift);
+    const auto tc = glyph.sub_texture.TexCoords();
+    const auto l = pt.x + glyph.left_bearing;
+    const auto w = glyph.sub_texture.Width();
+    const auto t = pt.y + glyph.y_offset;
+
+    cache.coordinates->store(tc[0], tc[1]);
+    cache.vertices->store(l + x_top_offset, t + y_shift);
     cache.colors->store(color);
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + x_top_offset,
-                          pt.y + glyph.y_offset + y_shift);
+    cache.coordinates->store(tc[2], tc[1]);
+    cache.vertices->store(l + w + x_top_offset, t + y_shift);
     cache.colors->store(color);
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - x_top_offset,
-                          pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
+    cache.coordinates->store(tc[2], tc[3]);
+    cache.vertices->store(l + w - x_top_offset, t + glyph.sub_texture.Height() + y_shift);
     cache.colors->store(color);
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.left_bearing - x_top_offset,
-                          pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
+    cache.coordinates->store(tc[0], tc[3]);
+    cache.vertices->store(l - x_top_offset, t + glyph.sub_texture.Height() + y_shift);
     cache.colors->store(color);
 }
 
