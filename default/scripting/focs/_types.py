@@ -48,22 +48,6 @@ class _Aggregator:
     ...
 
 
-class _ID:
-    ...
-
-
-class _SystemID(_ID):
-    ...
-
-
-class _PlanetId(_ID):
-    ...
-
-
-class _DesignID(_ID):
-    ...
-
-
 _T = TypeVar("_T", str, int, float)
 
 
@@ -119,6 +103,28 @@ class _ConditionalComposition:
 
     def __ge__(self, other) -> _Condition:
         ...
+
+
+class _ID:
+    ...
+
+    def __eq__(self, other) -> _Condition:
+        ...
+
+    def __ne__(self, other) -> _Condition:
+        ...
+
+
+class _SystemID(_ID):
+    ...
+
+
+class _PlanetId(_ID):
+    ...
+
+
+class _DesignID(_ID):
+    ...
 
 
 _SpeciesValue = str

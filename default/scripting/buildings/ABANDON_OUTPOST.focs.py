@@ -1,15 +1,35 @@
 from common.misc import UNOWNED_EMPIRE_ID
 from common.priorities import POPULATION_OVERRIDE_PRIORITY
+from focs._effects import (
+    Destroy,
+    EffectsGroup,
+    GenerateSitRepMessage,
+    IsBuilding,
+    IsSource,
+    LocalCandidate,
+    MaxOf,
+    Object,
+    OwnedBy,
+    Partial,
+    Planet,
+    Population,
+    SetOwner,
+    SetVisibility,
+    Source,
+    Target,
+    ThisBuilding,
+    Turn,
+)
 
 try:
     from focs._buildings import *
 except ModuleNotFoundError:
     pass
 
-BuildingType(
+BuildingType(  # type: ignore[reportUnboundVariable]
     name="BLD_ABANDON_OUTPOST",
     description="BLD_ABANDON_OUTPOST_DESC",
-    captureresult=DestroyOnCapture,
+    captureresult=DestroyOnCapture,  # type: ignore[reportUnboundVariable]
     buildcost=20,
     buildtime=1,
     location=Planet() & OwnedBy(empire=Source.Owner) & Population(high=0),
@@ -59,7 +79,7 @@ BuildingType(
                     parameters={"planet": Target.ID},
                     empire=Source.Owner,
                 ),
-                SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", ValueVisibility, Partial)),
+                SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", ValueVisibility, Partial)),  # type: ignore # noqa: F821
             ],
         ),
         EffectsGroup(

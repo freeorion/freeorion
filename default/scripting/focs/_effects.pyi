@@ -73,6 +73,7 @@ Hostile = _PlanetEnvironment()
 Uninhabitable = _PlanetEnvironment()
 
 ThisSpecies = _SpeciesValue()
+ThisBuilding = _BuildingType()
 
 BuildBuilding = _BuildingType()
 
@@ -97,10 +98,12 @@ class Source:
     SystemID: _SystemID
     Species: _SpeciesValue
     System: _SystemInfo
+    PlanetID: _PlanetId
     TargetPopulation: float
     Research: float
     Industry: float
     HabitableSize: float
+    CreationTurn: int
 
 class LocalCandidate:
     LastTurnConquered: int
@@ -135,6 +138,7 @@ class LocalCandidate:
     TargetPopulation: float
     Happiness: float
     TargetHappiness: float
+    PlanetID: _PlanetId
 
 class RootCandidate:
     ID: _ID
@@ -145,6 +149,7 @@ class Target:
     Owner: _Empire
     ID: _ID
     SystemID: _SystemID
+    PlanetID: _PlanetId
     DesignID: _DesignID
     Construction: Any
     PreviousSystemID: _SystemID
@@ -233,7 +238,7 @@ CurrentContent = ""
 
 def Enqueued(type: _BuildingType, name: str) -> _Condition: ...
 def TurnTechResearched(*, empire: _Empire, name: str) -> _Condition: ...
-def IsBuilding(*, name: list[str] = ...) -> _Condition: ...
+def IsBuilding(*, name: list[str | _BuildingType] = ...) -> _Condition: ...
 def Number(*, low: int, condition: _Condition) -> _Condition: ...
 def Planet(
     *, type: list[_PlanetType] = ..., environment: list[_PlanetEnvironment] = ..., size: list[_PlanetSize] = ...
