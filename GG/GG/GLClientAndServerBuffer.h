@@ -57,6 +57,13 @@ public:
 protected:
     // store items, buffers usually store tuples, convenience functions
     // do not use while server buffer exists
+    template <std::size_t ArrN>
+    void store(std::array<vtype, N*ArrN> items)
+    {
+        b_data.insert(b_data.end(), items.begin(), items.end());
+        b_size += ArrN;
+    }
+
     template <std::size_t M = N, std::enable_if_t<M == 1>* = nullptr>
     void store(vtype item)
     {
@@ -69,8 +76,7 @@ protected:
     void store(vtype item1, vtype item2)
     {
         static_assert(b_elements_per_item == 2);
-        b_data.push_back(item1);
-        b_data.push_back(item2);
+        b_data.insert(b_data.end(), {item1, item2});
         ++b_size;
     }
 
@@ -78,9 +84,7 @@ protected:
     void store(vtype item1, vtype item2, vtype item3)
     {
         static_assert(b_elements_per_item == 3);
-        b_data.push_back(item1);
-        b_data.push_back(item2);
-        b_data.push_back(item3);
+        b_data.insert(b_data.end(), {item1, item2, item3});
         ++b_size;
     }
 
@@ -88,10 +92,7 @@ protected:
     void store(vtype item1, vtype item2, vtype item3, vtype item4)
     {
         static_assert(b_elements_per_item == 4);
-        b_data.push_back(item1);
-        b_data.push_back(item2);
-        b_data.push_back(item3);
-        b_data.push_back(item4);
+        b_data.insert(b_data.end(), {item1, item2, item3, item4});
         ++b_size;
     }
 
@@ -136,6 +137,37 @@ public:
     using base_t = GLClientAndServerBufferBase<uint8_t, 4>;
     GLRGBAColorBuffer() = default;
     void store(const Clr color) { base_t::store(color.r, color.g, color.b, color.a); }
+
+    // Arrn distinct colours
+    template <std::size_t ArrN>
+    void store(std::array<Clr, ArrN> clrs)
+    {
+        std::array<uint8_t, ArrN*4> data{};
+        auto data_it = data.begin();
+        for (auto clr : clrs) {
+            *data_it++ = clr.r;
+            *data_it++ = clr.g;
+            *data_it++ = clr.b;
+            *data_it++ = clr.a;
+        }
+        base_t::store<ArrN>(data);
+    }
+
+    // same colour ArrN times
+    template <std::size_t ArrN>
+    void store(Clr clr)
+    {
+        std::array<uint8_t, ArrN*4> data{};
+        auto data_it = data.begin();
+        for (std::size_t n = 0; n < ArrN; ++n) {
+            *data_it++ = clr.r;
+            *data_it++ = clr.g;
+            *data_it++ = clr.b;
+            *data_it++ = clr.a;
+        }
+        base_t::store<ArrN>(data);
+    }
+
     void activate() const override;
 };
 
@@ -152,6 +184,10 @@ public:
     void store(X x, float y) { base_t::store(static_cast<float>(Value(x)), y); }
     void store(float x, Y y) { base_t::store(x, static_cast<float>(Value(y))); }
     void store(float x, float y) { base_t::store(x, y); }
+
+    template <std::size_t ArrNx2>
+    void store(std::array<float, ArrNx2> xys) { base_t::store<ArrNx2/2>(xys); }
+
     void activate() const override;
 };
 
@@ -164,6 +200,8 @@ public:
     using base_t = GLClientAndServerBufferBase<float, 2>;
     GLTexCoordBuffer() = default;
     void store(float x, float y) { base_t::store(x, y); }
+    template <std::size_t ArrNx2>
+    void store(std::array<float, ArrNx2> xys) { base_t::store<ArrNx2/2>(xys); }
     void activate() const override;
 };
 
@@ -176,6 +214,8 @@ public:
     using base_t = GLClientAndServerBufferBase<float, 3>;
     GL3DVertexBuffer() = default;
     void store(float x, float y, float z) { base_t::store(x, y, z); }
+    template <std::size_t ArrNx3>
+    void store(std::array<float, ArrNx3> xyzs) { base_t::store<ArrNx3/3>(xyzs); }
     void activate() const override;
 };
 
@@ -188,6 +228,8 @@ public:
     using base_t = GLClientAndServerBufferBase<float, 3>;
     GLNormalBuffer() = default;
     void store(float x, float y, float z) { base_t::store(x, y, z); }
+    template <std::size_t ArrNx3>
+    void store(std::array<float, ArrNx3> xyzs) { base_t::store<ArrNx3/3>(xyzs); }
     void activate() const override;
 };
 

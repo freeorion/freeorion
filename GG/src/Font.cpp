@@ -1959,25 +1959,18 @@ void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
     const auto tc = glyph.sub_texture.TexCoords();
-    const auto l = pt.x + glyph.left_bearing;
-    const auto w = glyph.sub_texture.Width();
-    const auto t = pt.y + glyph.y_offset;
+    const auto l = static_cast<GLfloat>(pt.x + glyph.left_bearing);
+    const auto w = static_cast<GLfloat>(glyph.sub_texture.Width());
+    const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
 
-    cache.coordinates->store(tc[0], tc[1]);
-    cache.vertices->store(l + x_top_offset, t + y_shift);
-    cache.colors->store(color);
+    cache.coordinates->store(std::array{tc[0], tc[1], tc[2], tc[1], tc[2], tc[3], tc[0], tc[3]});
 
-    cache.coordinates->store(tc[2], tc[1]);
-    cache.vertices->store(l + w + x_top_offset, t + y_shift);
-    cache.colors->store(color);
+    cache.vertices->store(std::array{l + x_top_offset,      t + y_shift,
+                                     l + w + x_top_offset,  t + y_shift,
+                                     l + w - x_top_offset,  t + glyph.sub_texture.Height() + y_shift,
+                                     l - x_top_offset,      t + glyph.sub_texture.Height() + y_shift});
 
-    cache.coordinates->store(tc[2], tc[3]);
-    cache.vertices->store(l + w - x_top_offset, t + glyph.sub_texture.Height() + y_shift);
-    cache.colors->store(color);
-
-    cache.coordinates->store(tc[0], tc[3]);
-    cache.vertices->store(l - x_top_offset, t + glyph.sub_texture.Height() + y_shift);
-    cache.colors->store(color);
+    cache.colors->store<4>(color);
 }
 
 void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, Pt pt, const Glyph& glyph,
