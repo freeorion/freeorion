@@ -23,6 +23,7 @@
 #include <stack>
 #include <unordered_map>
 #include <GG/AlignmentFlags.h>
+#include <GG/GLClientAndServerBuffer.h>
 #include <GG/FontFwd.h>
 #include <GG/Texture.h>
 #include <GG/UnicodeCharsets.h>
@@ -422,19 +423,22 @@ public:
         bool ColorsEmpty() const noexcept { return color_index_stack.size() <= 1; }
     };
 
-    /** \brief Holds precomputed glyph position information for rendering.
-     */
+    /** \brief Holds precomputed glyph position information for rendering. */
     struct RenderCache
     {
-        std::unique_ptr<GL2DVertexBuffer> vertices;
-        std::unique_ptr<GLTexCoordBuffer> coordinates;
-        std::unique_ptr<GLRGBAColorBuffer> colors;
+        GL2DVertexBuffer vertices;
+        GLTexCoordBuffer coordinates;
+        GLRGBAColorBuffer colors;
+        GL2DVertexBuffer underline_vertices;
+        GLRGBAColorBuffer underline_colors;
 
-        std::unique_ptr<GL2DVertexBuffer> underline_vertices;
-        std::unique_ptr<GLRGBAColorBuffer> underline_colors;
-
-        RenderCache();
-        ~RenderCache(); // needed for unique_ptr<forward_declared_class>
+        void clear() {
+            vertices.clear();
+            coordinates.clear();
+            colors.clear();
+            underline_vertices.clear();
+            underline_colors.clear();
+        }
     };
 
     /** Construct a font using only the printable ASCII characters.

@@ -71,7 +71,7 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_text_elements = that.m_text_elements;
     m_code_points = that.m_code_points;
     m_font = that.m_font;
-    m_render_cache.reset();
+    m_render_cache.clear();
     m_cached_minusable_size_width = that.m_cached_minusable_size_width;
     m_cached_minusable_size = that.m_cached_minusable_size;
 
@@ -147,15 +147,14 @@ void TextControl::Render()
     Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
     glColor(clr_to_use);
 
-    if (!m_render_cache)
-        RefreshCache();
+    RefreshCache();
     if (m_clip_text)
         BeginClipping();
 
     glPushMatrix();
     Pt ul = ClientUpperLeft();
     glTranslated(Value(ul.x), Value(ul.y), 0);
-    m_font->RenderCachedText(*m_render_cache);
+    m_font->RenderCachedText(m_render_cache);
     glPopMatrix();
 
     if (m_clip_text)
@@ -163,9 +162,9 @@ void TextControl::Render()
 }
 
 void TextControl::RefreshCache() {
-    m_render_cache = std::make_unique<Font::RenderCache>();
+    m_render_cache.clear();
     if (m_font)
-        m_font->PreRenderText(Pt0, Size(), m_text, m_format, *m_render_cache, m_line_data);
+        m_font->PreRenderText(Pt0, Size(), m_text, m_format, m_render_cache, m_line_data);
 }
 
 void TextControl::SetText(std::string str)
@@ -217,14 +216,13 @@ void TextControl::RecomputeLineData() {
 
     m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
     Pt text_sz = m_font->TextExtent(m_line_data);
-    m_text_ul = Pt();
+    m_text_ul = Pt0;
     m_text_lr = text_sz;
-    m_render_cache.reset();
-    if (m_format & FORMAT_NOWRAP) {
+    m_render_cache.clear();
+    if (m_format & FORMAT_NOWRAP)
         Resize(text_sz);
-    } else {
+    else
         RecomputeTextBounds();
-    }
 
     m_cached_minusable_size_width = X0;
 }
@@ -265,7 +263,7 @@ void TextControl::SizeMove(Pt ul, Pt lr)
         Pt text_sz = m_font->TextExtent(m_line_data);
         m_text_ul = Pt();
         m_text_lr = text_sz;
-        m_render_cache.reset();
+        m_render_cache.clear();
     }
     RecomputeTextBounds();
 }
@@ -281,14 +279,14 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
 void TextControl::SetTextColor(Clr color)
 {
     m_text_color = color;
-    m_render_cache.reset();
+    m_render_cache.clear();
 }
 
 void TextControl::SetColor(Clr c)
 {
     Control::SetColor(c);
     m_text_color = c;
-    m_render_cache.reset();
+    m_render_cache.clear();
 }
 
 void TextControl::ClipText(bool b)

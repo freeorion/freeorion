@@ -321,7 +321,7 @@ private:
     std::shared_ptr<Font>                           m_font;
     Pt                                              m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                                              m_text_lr;     ///< stored relative to the control's UpperLeft()
-    std::unique_ptr<Font::RenderCache>              m_render_cache;///< Cache much of text rendering.
+    Font::RenderCache                               m_render_cache;///< Cache much of text rendering.
 
     mutable X                                       m_cached_minusable_size_width{X0};
     mutable Pt                                      m_cached_minusable_size;
