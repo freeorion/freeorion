@@ -915,22 +915,46 @@ Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(Clr c
 ///////////////////////////////////////
 // class GG::Font::RenderState
 ///////////////////////////////////////
+namespace {
+    std::array<GLubyte, 4> GetCurrentByteColor() {
+        std::array<GLfloat, 4> current_float{};
+        glGetFloatv(GL_CURRENT_COLOR, current_float.data());
+        return std::array<GLubyte, 4>{static_cast<GLubyte>(current_float[0]*255),
+                                      static_cast<GLubyte>(current_float[1]*255),
+                                      static_cast<GLubyte>(current_float[2]*255),
+                                      static_cast<GLubyte>(current_float[3]*255)};
+    }
+}
+
 Font::RenderState::RenderState()
 {
     // Initialize the color stack with the current color
-    GLfloat current[4];
-    glGetFloatv(GL_CURRENT_COLOR, current);
-    PushColor(current[0]*255, current[1]*255, current[2]*255, current[3]*255);
+    auto clr = GetCurrentByteColor();
+    PushColor(clr[0], clr[1], clr[2], clr[3]);
 }
 
 Font::RenderState::RenderState(Clr color)
 { PushColor(color.r, color.g, color.b, color.a); }
 
+void Font::RenderState::clear()
+{
+    use_italics = 0;
+    use_shadow = 0;
+    draw_underline = 0;
+    super_sub_shift = 0;
+    color_index_stack = std::stack<uint8_t>{};
+    used_colors.clear();
+
+    // Re-initialize the color stack with the current color
+    auto clr = GetCurrentByteColor();
+    PushColor(clr[0], clr[1], clr[2], clr[3]);
+}
+
 void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 {
     // The same color may end up being stored multiple times, but the cost of
     // deduplication is greater than the cost of just letting it be so.
-    color_index_stack.push(used_colors.size());
+    color_index_stack.push(static_cast<uint8_t>(used_colors.size()));
     used_colors.emplace_back(r, g, b, a);
 }
 
@@ -975,6 +999,11 @@ Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int16_t y_ofs
 ///////////////////////////////////////
 // class GG::Font
 ///////////////////////////////////////
+namespace {
+    Font::RenderCache shared_cache{};
+    Font::RenderState shared_render_state{};
+}
+
 Font::Font(std::string font_filename, unsigned int pts) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts)
@@ -1005,23 +1034,23 @@ X Font::RenderText(Pt pt, const std::string& text) const
 
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
-    RenderCache cache;
-    RenderState render_state;
+    shared_cache.clear();
+    shared_render_state.clear();
 
     for (auto text_it = text.begin(); text_it != text.end();) {
-        std::uint32_t c = utf8::next(text_it, text.end());
-        auto it = m_glyphs.find(c);
+        const std::uint32_t c = utf8::next(text_it, text.end());
+        const auto it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
         } else {
-            pt.x += StoreGlyph(pt, it->second, &render_state, cache);
+            pt.x += StoreGlyph(pt, it->second, &shared_render_state, shared_cache);
         }
     }
 
-    cache.vertices.createServerBuffer();
-    cache.coordinates.createServerBuffer();
-    cache.colors.createServerBuffer();
-    RenderCachedText(cache);
+    shared_cache.vertices.createServerBuffer();
+    shared_cache.coordinates.createServerBuffer();
+    shared_cache.colors.createServerBuffer();
+    RenderCachedText(shared_cache);
 
     return pt.x - orig_x;
 }
@@ -1029,11 +1058,8 @@ X Font::RenderText(Pt pt, const std::string& text) const
 void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                       const std::vector<LineData>& line_data, RenderState* render_state) const
 {
-    RenderState state;
-    if (!render_state)
-        render_state = &state;
-
-    RenderText(ul, lr, text, format, line_data, *render_state,
+    RenderText(ul, lr, text, format, line_data,
+               render_state ? *render_state : shared_render_state,
                0, CP0, line_data.size(),
                line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()));
 }
@@ -1043,23 +1069,19 @@ void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& 
                       std::size_t begin_line, CPSize begin_char,
                       std::size_t end_line, CPSize end_char) const
 {
-    RenderCache cache;
-    PreRenderText(ul, lr, text, format, line_data, render_state, begin_line, begin_char, end_line, end_char, cache);
-    RenderCachedText(cache);
+    PreRenderText(ul, lr, text, format, line_data, render_state,
+                  begin_line, begin_char, end_line, end_char, shared_cache);
+    RenderCachedText(shared_cache);
 }
 
 void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
                          RenderCache& cache,
                          const std::vector<LineData>& line_data, RenderState* render_state) const
 {
-    if (render_state) {
-        PreRenderText(ul, lr, text, format, line_data, *render_state, 0, CP0, line_data.size(),
-                      line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
-    } else {
-        RenderState render_state_local;
-        PreRenderText(ul, lr, text, format, line_data, render_state_local, 0, CP0, line_data.size(),
-                      line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
-    }
+    PreRenderText(ul, lr, text, format, line_data,
+                  render_state ? *render_state : shared_render_state,
+                  0, CP0, line_data.size(),
+                  line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
 }
 
 namespace {
@@ -1103,6 +1125,10 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat
                                                     std::next(line_data.begin(), end_line),
                                                     0, std::plus{},
                                                     [](const auto& line) { return line.char_data.size(); });
+
+    cache.clear();
+    render_state.clear();
+
     cache.coordinates.reserve(glyph_count*4);
     cache.vertices.reserve(glyph_count*4);
     cache.colors.reserve(glyph_count*4);
@@ -1157,7 +1183,7 @@ void Font::RenderCachedText(RenderCache& cache) const
     cache.vertices.activate();
     cache.coordinates.activate();
     cache.colors.activate();
-    glDrawArrays(GL_QUADS, 0,  cache.vertices.size());
+    glDrawArrays(GL_QUADS, 0, cache.vertices.size());
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

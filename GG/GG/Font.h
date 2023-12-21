@@ -390,20 +390,22 @@ public:
 
         RenderState(Clr color); //< Takes default text color as parameter
 
+        void clear();
+
         /** The count of open \<i> tags seen since the last \</i> seen. */
-        std::size_t     use_italics = 0;
+        uint8_t use_italics = 0;
 
         /** The count of open \<s> tags seen since the last \</s> seen. */
-        std::size_t     use_shadow = 0;
+        uint8_t use_shadow = 0;
 
         /** The count of open \<u> tags seen since the last \</u> seen. */
-        std::size_t     draw_underline = 0;
+        uint8_t draw_underline = 0;
 
         /** The count of open \<super> (positive) minus \<sub> tags seen. */
-        int             super_sub_shift = 0;
+        int8_t super_sub_shift = 0;
 
         /** The stack of text color indexes (as set by previous tags). */
-        std::stack<int> color_index_stack;
+        std::stack<uint8_t> color_index_stack;
 
         /** All colors that have been used. **/
         std::vector<Clr> used_colors;
