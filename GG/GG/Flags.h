@@ -258,7 +258,7 @@ public:
     }
 
     /** Adds \a flag, with stringification string \a name, to the FlagSpec. */
-    void insert(FlagType flag, const char* name)
+    void insert(FlagType flag, std::string_view name)
     {
         if (m_count >= digits)
             throw std::runtime_error("FlagSpec had too many flags inserted");
