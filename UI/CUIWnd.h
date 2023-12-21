@@ -36,10 +36,9 @@ public:
     void Toggle(bool pinned); // Switches icon from Pin to Pinned and back
 };
 
-// Aditional window creation flags
-extern GG::WndFlag MINIMIZABLE;    ///< allows the window to be minimized
-extern GG::WndFlag CLOSABLE;       ///< allows the window to be closed
-extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
+inline constexpr GG::WndFlag MINIMIZABLE(1 << 10);
+inline constexpr GG::WndFlag CLOSABLE(1 << 11);
+inline constexpr GG::WndFlag PINABLE(1 << 12);
 
 class CUILabel;
 

@@ -83,32 +83,21 @@ namespace {
 CUI_PinButton::CUI_PinButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor())
 {
-    LeftClickedSignal.connect(-1,
-        &PlayCloseSound);
+    LeftClickedSignal.connect(-1, &PlayCloseSound);
     SetUnpressedGraphic(GetButtonSubTexture("pin.png"));
     SetPressedGraphic  (GetButtonSubTexture("pin.png"));
     SetRolloverGraphic (GetButtonSubTexture("pin_mouseover.png"));
 }
 
 void CUI_PinButton::Toggle(bool pinned) {
-    if (!pinned) {
-        SetUnpressedGraphic(GetButtonSubTexture("pin.png"));
-        SetPressedGraphic  (GetButtonSubTexture("pin.png"));
-        SetRolloverGraphic (GetButtonSubTexture("pin_mouseover.png"));
-    } else {
-        SetUnpressedGraphic(GetButtonSubTexture("pinned.png"));
-        SetPressedGraphic  (GetButtonSubTexture("pinned.png"));
-        SetRolloverGraphic (GetButtonSubTexture("pinned_mouseover.png"));
-    }
+    SetUnpressedGraphic(GetButtonSubTexture(pinned ? "pinned.png" : "pin.png"));
+    SetPressedGraphic  (GetButtonSubTexture(pinned ? "pinned.png" : "pin.png"));
+    SetRolloverGraphic (GetButtonSubTexture(pinned ? "pinned_mouseover.png" : "pin_mouseover.png"));
 }
 
 ////////////////////////////////////////////////
 // CUIWnd
 ////////////////////////////////////////////////
-GG::WndFlag MINIMIZABLE(1 << 10);
-GG::WndFlag CLOSABLE(1 << 11);
-GG::WndFlag PINABLE(1 << 12);
-
 namespace {
     bool RegisterWndFlags() {
         GG::FlagSpec<GG::WndFlag>::instance().insert(MINIMIZABLE, "MINIMIZABLE");
