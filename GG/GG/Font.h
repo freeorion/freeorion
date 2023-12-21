@@ -19,9 +19,8 @@
 
 
 #include <memory>
-#include <set>
 #include <stack>
-#include <unordered_map>
+#include <boost/unordered_map.hpp>
 #include <GG/AlignmentFlags.h>
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/FontFwd.h>
@@ -674,7 +673,7 @@ private:
         int16_t     width = 0;        ///< The width of the glyph only
     };
 
-    typedef std::unordered_map<std::uint32_t, Glyph> GlyphMap;
+    using GlyphMap = boost::unordered_map<uint32_t, Glyph>;
 
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
