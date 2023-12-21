@@ -48,8 +48,8 @@ class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
 public:
     GLClientAndServerBufferBase() = default;
-    [[nodiscard]] std::size_t size() const { return b_size; }
-    [[nodiscard]] bool        empty() const { return b_size == 0; }
+    [[nodiscard]] std::size_t size() const noexcept { return b_data.size() / b_elements_per_item; }
+    [[nodiscard]] bool        empty() const noexcept { return b_data.empty(); }
 
     // pre-allocate space for item data
     void reserve(std::size_t num_items) { b_data.reserve(num_items * b_elements_per_item); }
@@ -59,17 +59,13 @@ protected:
     // do not use while server buffer exists
     template <std::size_t ArrN>
     void store(std::array<vtype, N*ArrN> items)
-    {
-        b_data.insert(b_data.end(), items.begin(), items.end());
-        b_size += ArrN;
-    }
+    { b_data.insert(b_data.end(), items.begin(), items.end()); }
 
     template <std::size_t M = N, std::enable_if_t<M == 1>* = nullptr>
     void store(vtype item)
     {
         static_assert(b_elements_per_item == 1);
         b_data.push_back(item);
-        ++b_size;
     }
 
     template <std::size_t M = N, std::enable_if_t<M == 2>* = nullptr>
@@ -77,7 +73,6 @@ protected:
     {
         static_assert(b_elements_per_item == 2);
         b_data.insert(b_data.end(), {item1, item2});
-        ++b_size;
     }
 
     template <std::size_t M = N, std::enable_if_t<M == 3>* = nullptr>
@@ -85,7 +80,6 @@ protected:
     {
         static_assert(b_elements_per_item == 3);
         b_data.insert(b_data.end(), {item1, item2, item3});
-        ++b_size;
     }
 
     template <std::size_t M = N, std::enable_if_t<M == 4>* = nullptr>
@@ -93,33 +87,29 @@ protected:
     {
         static_assert(b_elements_per_item == 4);
         b_data.insert(b_data.end(), {item1, item2, item3, item4});
-        ++b_size;
     }
 
 public:
     // try to store the buffered data in a server buffer
-    void createServerBuffer() {
-        glGenBuffers(1, &b_name);
+    void createServerBuffer(GLenum usage = GL_STATIC_DRAW) {
+        if (!b_name)
+            glGenBuffers(1, &b_name);
         if (!b_name)
             return;
         glBindBuffer(GL_ARRAY_BUFFER, b_name);
         glBufferData(GL_ARRAY_BUFFER,
                      b_data.size() * sizeof(vtype),
-                     b_data.empty() ? nullptr : &b_data[0],
-                     GL_STATIC_DRAW);
+                     b_data.empty() ? nullptr : b_data.data(),
+                     usage);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     // drops a server buffer if one exists, clears the client side buffer
-    void clear() {
-        dropServerBuffer();
-        b_size = 0;
-        b_data.clear();
-    }
+    void clear() noexcept
+    { b_data.clear(); }
 
 protected:
     std::vector<vtype>           b_data;
-    std::size_t                  b_size = 0;
     static constexpr std::size_t b_elements_per_item = N;
 
     // used in derived classes to activate the buffer
