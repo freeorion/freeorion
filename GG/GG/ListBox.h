@@ -467,7 +467,7 @@ protected:
     bool            AutoScrollingLeft() const noexcept { return m_auto_scrolling_left; }   ///< returns true iff the list is being autoscrolled left due to drag-and-drop
     bool            AutoScrollingRight() const noexcept { return m_auto_scrolling_right; } ///< returns true iff the list is being autoscrolled right due to drag-and-drop
 
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     void DragDropEnter(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
     void DragDropHere(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;

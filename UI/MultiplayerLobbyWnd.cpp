@@ -773,7 +773,7 @@ void MultiPlayerLobbyWnd::Render() {
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void MultiPlayerLobbyWnd::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (m_ready_bn && (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER)) {
         m_ready_bn->LeftClickedSignal();
     } else if (key == GG::Key::GGK_ESCAPE) {

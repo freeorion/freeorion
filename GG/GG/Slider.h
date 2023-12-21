@@ -96,7 +96,7 @@ protected:
     T       PtToPosn(Pt pt) const; ///< maps an arbitrary screen point to its nearest logical slider position
 
     void LClick(Pt pt, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     void MoveTabToPosn(); ///< moves the tab to the current logical position
@@ -297,7 +297,7 @@ void Slider<T>::LClick(Pt pt, Flags<ModKey> mod_keys)
 { SlideToImpl(m_posn < PtToPosn(pt) ? m_posn + PageSize() : m_posn - PageSize(), true); }
 
 template <typename T>
-void Slider<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Slider<T>::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         switch (key) {

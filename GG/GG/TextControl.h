@@ -298,6 +298,8 @@ protected:
     /** Returns the line data for the text in this TextControl. */
     virtual const std::vector<Font::LineData>& GetLineData() const noexcept { return m_line_data; }
 
+    Font::RenderCache m_render_cache;///< Cache much of text rendering.
+
     friend class StateButtonRepresenter;
 
 private:
@@ -321,7 +323,6 @@ private:
     std::shared_ptr<Font>                           m_font;
     Pt                                              m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                                              m_text_lr;     ///< stored relative to the control's UpperLeft()
-    Font::RenderCache                               m_render_cache;///< Cache much of text rendering.
 
     mutable X                                       m_cached_minusable_size_width{X0};
     mutable Pt                                      m_cached_minusable_size;

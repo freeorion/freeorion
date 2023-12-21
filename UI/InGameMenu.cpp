@@ -136,7 +136,7 @@ void InGameMenu::DoLayout() {
     m_done_btn->SizeMove(button_ul, button_lr);
 }
 
-void InGameMenu::KeyPress(GG::Key key, std::uint32_t key_code_point,
+void InGameMenu::KeyPress(GG::Key key, uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)
 {
     // Same behaviour as if "done" was pressed

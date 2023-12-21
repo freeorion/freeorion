@@ -70,7 +70,7 @@ public:
     bool AppendMissingSaveExtension() const noexcept { return m_append_missing_save_extension; }
 
     void Render() override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     /** Set this to true if this FileDlg should select directories instead of
         files.  Note that this will only have an effect in file-open mode. */

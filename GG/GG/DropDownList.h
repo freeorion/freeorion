@@ -205,7 +205,7 @@ public:
 
 protected:
     void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
 
     ListBox* LB() noexcept; ///< ListBox used to render the selected row and the popup list

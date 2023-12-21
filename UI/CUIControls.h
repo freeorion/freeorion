@@ -266,7 +266,7 @@ public:
     void CompleteConstruction() override;
 
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void KeyPress(GG::Key key, std::uint32_t key_code_point,
+    void KeyPress(GG::Key key, uint32_t key_code_point,
                   GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptPastedText(const std::string& text) override;
     void GainingFocus() override;

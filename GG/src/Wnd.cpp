@@ -929,10 +929,10 @@ void Wnd::CheckDrops(Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
 void Wnd::DragDropLeave()
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Wnd::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Wnd::KeyRelease(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
 void Wnd::TextInput(const std::string&)

@@ -39,11 +39,11 @@ using namespace GG;
 
 namespace {
 
-constexpr std::uint32_t WIDE_SPACE = ' ';
-constexpr std::uint32_t WIDE_NEWLINE = '\n';
-constexpr std::uint32_t WIDE_CR = '\r';
-constexpr std::uint32_t WIDE_FF = '\f';
-constexpr std::uint32_t WIDE_TAB = '\t';
+constexpr uint32_t WIDE_SPACE = ' ';
+constexpr uint32_t WIDE_NEWLINE = '\n';
+constexpr uint32_t WIDE_CR = '\r';
+constexpr uint32_t WIDE_FF = '\f';
+constexpr uint32_t WIDE_TAB = '\t';
 
 constexpr std::string_view ITALIC_TAG = "i";
 constexpr std::string_view SHADOW_TAG = "s";
@@ -219,11 +219,11 @@ void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
 constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
 const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
-constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 2> PRINTABLE_ASCII_ALPHA_RANGES{{
+constexpr std::array<std::pair<uint32_t, uint32_t>, 2> PRINTABLE_ASCII_ALPHA_RANGES{{
     {0x41, 0x5B},
     {0x61, 0x7B}}};
 
-constexpr std::array<std::pair<std::uint32_t, std::uint32_t>, 7> PRINTABLE_ASCII_NONALPHA_RANGES{{
+constexpr std::array<std::pair<uint32_t, uint32_t>, 7> PRINTABLE_ASCII_NONALPHA_RANGES{{
     {0x09, 0x0D},
     {0x20, 0x21},
     {0x30, 0x3A},
@@ -1038,7 +1038,7 @@ X Font::RenderText(Pt pt, const std::string& text) const
     shared_render_state.clear();
 
     for (auto text_it = text.begin(); text_it != text.end();) {
-        const std::uint32_t c = utf8::next(text_it, text.end());
+        const uint32_t c = utf8::next(text_it, text.end());
         const auto it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
@@ -1153,7 +1153,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat
             for (const auto& tag : char_data.tags)
                 HandleTag(tag, render_state);
 
-            const std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
+            const uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
                 continue;
@@ -1271,7 +1271,7 @@ void Font::RemoveKnownTag(std::string_view tag)
 void Font::ClearKnownTags()
 { tag_handler.Clear(); }
 
-void Font::ThrowBadGlyph(const std::string& format_str, std::uint32_t c)
+void Font::ThrowBadGlyph(const std::string& format_str, uint32_t c)
 {
     boost::format format(isprint(c) ? "%c" : "U+%x");
     throw BadGlyph(boost::io::str(boost::format(format_str) % boost::io::str(format % c)));
@@ -1472,7 +1472,7 @@ void Font::FillTemplatedText(
         while (text_it != end_it) {
             // Find and set the width of the character glyph.
             elem->widths.push_back(X0);
-            std::uint32_t c = utf8::next(text_it, end_it);
+            uint32_t c = utf8::next(text_it, end_it);
             if (c != WIDE_NEWLINE) {
                 auto it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
@@ -1597,7 +1597,7 @@ std::vector<Font::LineData> Font::DetermineLines(
             const auto end_it = elem->text.end();
             while (it != end_it) {
                 const StrSize char_index{static_cast<std::size_t>(std::distance(elem->text.begin(), it))};
-                const std::uint32_t c = utf8::next(it, end_it);
+                const uint32_t c = utf8::next(it, end_it);
                 const StrSize char_size{std::distance(elem->text.begin(), it) - Value(char_index)};
                 if (c != WIDE_CR && c != WIDE_FF) {
                     X advance_position = x + m_space_width;
@@ -1800,7 +1800,7 @@ void Font::Init(FT_Face& face)
     m_super_sub_offset = m_height / 4.0;
 
     // we always need these whitespace, number, and punctuation characters
-    std::vector<std::pair<std::uint32_t, std::uint32_t>> range_vec(
+    std::vector<std::pair<uint32_t, uint32_t>> range_vec(
         PRINTABLE_ASCII_NONALPHA_RANGES.begin(),
         PRINTABLE_ASCII_NONALPHA_RANGES.end());
 
@@ -1820,7 +1820,7 @@ void Font::Init(FT_Face& face)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
     const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
 
-    std::vector<std::pair<std::uint32_t, TempGlyphData>> temp_glyph_data;
+    std::vector<std::pair<uint32_t, TempGlyphData>> temp_glyph_data;
     temp_glyph_data.reserve(1000); // rough guesstimate
 
     // Start with width and height of 16,
@@ -1828,14 +1828,14 @@ void Font::Init(FT_Face& face)
     // We will lay out the glyphs on the texture side by side
     // until the width would reach TEX_MAX_SIZE, then go to the next row.
     // QUESTION: Would a more square-like shape be better for the texture?
-    Buffer2d<std::uint16_t> buffer(X{16}, Y{16}, 0);
+    Buffer2d<uint16_t> buffer(X{16}, Y{16}, 0);
 
     X x = X0;
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
     for (const auto [low, high] : range_vec) {
-        for (std::uint32_t c = low; c < high; ++c) {
+        for (uint32_t c = low; c < high; ++c) {
             // skip already-existing glphys
             if (std::any_of(temp_glyph_data.begin(), temp_glyph_data.end(),
                             [c](const auto& tgd) { return tgd.first == c; }))
@@ -1861,13 +1861,13 @@ void Font::Init(FT_Face& face)
             if (y + Y(glyph_bitmap.rows) > max_y)
                 max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
 
-            std::uint8_t* const src_start = glyph_bitmap.buffer;
+            uint8_t* const src_start = glyph_bitmap.buffer;
             // Resize buffer to fit new data
             buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
 
             for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
-                std::uint8_t* src = src_start + row * glyph_bitmap.pitch;
-                std::uint16_t* dst = &buffer.get(x, y + Y(row));
+                uint8_t* src = src_start + row * glyph_bitmap.pitch;
+                uint16_t* dst = &buffer.get(x, y + Y(row));
                 // Rows are always contiguous, so we can copy along a row using simple incrementation
                 for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__
@@ -1913,7 +1913,7 @@ void Font::Init(FT_Face& face)
     m_space_width = X{glyph_it->second.advance};
 }
 
-bool Font::GenerateGlyph(FT_Face face, std::uint32_t ch)
+bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
 {
     bool retval = true;
 

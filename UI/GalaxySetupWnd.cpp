@@ -1093,7 +1093,7 @@ void GalaxySetupWnd::Render() {
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void GalaxySetupWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void GalaxySetupWnd::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     // Enter is no longer accepted as OK as it could clash with ALT-Enter
     if (key == GG::Key::GGK_ESCAPE) // Same behaviour as if "Cancel" was pressed
         CancelClicked();

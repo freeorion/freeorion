@@ -54,7 +54,7 @@ public:
     std::size_t EscapeButton() const;  ///< returns the number of the button that will be chosen by default if the user hits ESC (NO_BUTTON if none)
 
     void Render() override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     void SetButtonColor(Clr color);       ///< sets the color used to render the dialog's buttons
     void SetDefaultButton(std::size_t i); ///< sets the number of the button that will be chosen by default if the user hits enter (NO_BUTTON to disable)

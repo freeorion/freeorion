@@ -127,9 +127,9 @@ struct GG::GUIImpl
     void HandleMouseButtonRelease(unsigned int mouse_button, Pt pos, int curr_ticks);
     void HandleIdle(              Flags<ModKey> mod_keys, Pt pos, int curr_ticks);
 
-    void HandleKeyPress(          Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleKeyPress(          Key key, uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
 
-    void HandleKeyRelease(        Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+    void HandleKeyRelease(        Key key, uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
 
     void HandleTextInput(         std::string text);
     void HandleMouseMove(         Flags<ModKey> mod_keys, Pt pos, Pt rel, int curr_ticks);
@@ -161,7 +161,7 @@ struct GG::GUIImpl
     int          m_key_press_repeat_interval = 66;
     int          m_last_key_press_repeat_time = 0;          // last time of a simulated key press message
 
-    std::pair<Key, std::uint32_t> m_last_pressed_key_code_point{Key::GGK_NONE, 0u};
+    std::pair<Key, uint32_t> m_last_pressed_key_code_point{Key::GGK_NONE, 0u};
 
     int          m_prev_key_press_time = -1;                // the time of the most recent key press
 
@@ -627,7 +627,7 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const Pt pos, int curr_ticks)
         GUI::s_gui->ProcessBrowseInfo();
 }
 
-void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point,
+void GUIImpl::HandleKeyPress(Key key, uint32_t key_code_point,
                              Flags<ModKey> mod_keys, int curr_ticks)
 {
     m_browse_info_wnd.reset();
@@ -657,7 +657,7 @@ void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point,
             WndEvent::EventType::KeyPress, key, key_code_point, mod_keys));
 }
 
-void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point,
+void GUIImpl::HandleKeyRelease(Key key, uint32_t key_code_point,
                                Flags<ModKey> mod_keys, int curr_ticks)
 {
     m_last_key_press_repeat_time = 0;
@@ -1140,7 +1140,7 @@ void GUI::SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const
     m_impl->m_save_as_png_filename = filename;
 }
 
-void GUI::HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
+void GUI::HandleGGEvent(EventType event, Key key, uint32_t key_code_point,
                         Flags<ModKey> mod_keys, Pt pos, Pt rel, std::string text)
 {
     m_impl->m_mod_keys = mod_keys;

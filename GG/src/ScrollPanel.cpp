@@ -90,7 +90,7 @@ void ScrollPanel::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
     SignalScroll(*m_vscroll, true);
 }
 
-void ScrollPanel::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void ScrollPanel::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     // unused variable bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
     bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);

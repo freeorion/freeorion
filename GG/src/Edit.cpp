@@ -357,7 +357,7 @@ void Edit::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 void Edit::LClick(Pt pt, Flags<ModKey> mod_keys)
 { ClearDoubleButtonDownMode(); }
 
-void Edit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Edit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (Disabled()) {
         TextControl::KeyPress(key, key_code_point, mod_keys);
@@ -600,14 +600,14 @@ void Edit::AdjustView()
 ////////////////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////////////////
-void GG::GetTranslatedCodePoint(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys,
+void GG::GetTranslatedCodePoint(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys,
                                 std::string& translated_code_point)
 {
     // only process it if it's a valid code point or a known printable
     // key, and no significant modifiers are in use
     if (key_code_point) {
         try {
-            std::uint32_t chars[] = { key_code_point };
+            uint32_t chars[] = { key_code_point };
             utf8::utf32to8(chars, chars + 1, std::back_inserter(translated_code_point));
         } catch (const utf8::invalid_code_point&) {
             translated_code_point.clear();

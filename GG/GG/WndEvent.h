@@ -139,7 +139,7 @@ public:
         }
     }
 
-    WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys) :
+    WndEvent(EventType type, Key key, uint32_t code_point, Flags<ModKey> mod_keys) :
         m_type(type),
         m_key_code_point(code_point),
         m_mod_keys(mod_keys),
@@ -181,7 +181,7 @@ public:
 
         @note  This may be zero, even in a KeyPress or KeyRelease event, if
         Unicode support is unavailable. */
-    [[nodiscard]] std::uint32_t KeyCodePoint() const noexcept { return m_key_code_point; }
+    [[nodiscard]] uint32_t KeyCodePoint() const noexcept { return m_key_code_point; }
 
     [[nodiscard]] Flags<ModKey> ModKeys() const noexcept { return m_mod_keys; }   ///< modifiers to the WndEvent's keypress, if any
     [[nodiscard]] Pt            DragMove() const noexcept { return m_drag_move; } ///< amount of drag movement represented by the WndEvent, if any
@@ -197,7 +197,7 @@ private:
     EventType                       m_type;
     Pt                              m_point;
 
-    std::uint32_t                   m_key_code_point = 0;
+    uint32_t                   m_key_code_point = 0;
 
     Flags<ModKey>                   m_mod_keys;
     Pt                              m_drag_move;

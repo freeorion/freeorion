@@ -935,7 +935,7 @@ void CUIEditWnd::CompleteConstruction() {
 void CUIEditWnd::ModalInit()
 { GG::GUI::GetGUI()->SetFocusWnd(m_edit); }
 
-void CUIEditWnd::KeyPress(GG::Key key, std::uint32_t key_code_point,
+void CUIEditWnd::KeyPress(GG::Key key, uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {

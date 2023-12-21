@@ -797,7 +797,7 @@ namespace {
             CUIEdit("")
         { DisallowChars("\n\r"); }
 
-        void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
+        void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
             switch (key) {
             case GG::Key::GGK_RETURN:
             case GG::Key::GGK_KP_ENTER:
@@ -1021,7 +1021,7 @@ void EncyclopediaDetailPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
         RequirePreRender();
 }
 
-void EncyclopediaDetailPanel::KeyPress(GG::Key key, std::uint32_t key_code_point,
+void EncyclopediaDetailPanel::KeyPress(GG::Key key, uint32_t key_code_point,
                                        GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) {

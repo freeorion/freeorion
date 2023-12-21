@@ -660,10 +660,10 @@ void Layout::RenderOutline(bool render_outline)
 void Layout::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void Layout::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Layout::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void Layout::KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Layout::KeyRelease(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 float Layout::TotalStretch(const std::vector<RowColParams>& params_vec)

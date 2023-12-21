@@ -177,7 +177,7 @@ std::vector<UnicodeCharset> GG::UnicodeCharsetsToRender(std::string_view str)
     return retval;
 }
 
-const UnicodeCharset* GG::CharsetContaining(std::uint32_t c) noexcept
+const UnicodeCharset* GG::CharsetContaining(uint32_t c) noexcept
 {
     const std::size_t block = c / UnicodeCharset::BLOCK_SIZE;
     return block < s_charset_blocks.size() ? s_charset_blocks[block] : nullptr;

@@ -217,7 +217,7 @@ public:
     virtual void    HandleSystemEvents() = 0;
 
     /** Event handler for GG events. */
-    void            HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
+    void            HandleGGEvent(EventType event, Key key, uint32_t key_code_point,
                                   Flags<ModKey> mod_keys, Pt pos, Pt rel,
                                   std::string text = std::string());
 

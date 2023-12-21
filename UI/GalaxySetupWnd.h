@@ -142,7 +142,7 @@ public:
                             GetRulesAsStrings() const;
 
     void Render() override;
-    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
 protected:

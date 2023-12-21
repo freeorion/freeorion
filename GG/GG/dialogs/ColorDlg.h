@@ -262,7 +262,7 @@ public:
     Clr Result() const;
 
     void Render() override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     static constexpr std::size_t INVALID_COLOR_BUTTON{std::numeric_limits<std::size_t>::max()};
 

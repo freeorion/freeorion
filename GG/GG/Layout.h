@@ -210,8 +210,8 @@ public:
 
 protected:
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyRelease(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     virtual void DoLayout(Pt ul, Pt lr);
 

@@ -50,7 +50,7 @@ public:
     const Scroll* GetScroll() const noexcept { return m_vscroll.get();}
 
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
 private:
     std::shared_ptr<Scroll> m_vscroll; //!< The vertical scroll bar.

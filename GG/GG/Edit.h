@@ -168,7 +168,7 @@ protected:
     void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;
     void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;
     void LClick(Pt pt, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void TextInput(const std::string& text) override;
     void GainingFocus() override;
     void LosingFocus() override;
@@ -213,7 +213,7 @@ private:
     bool   m_recently_edited = false; ///< The contents when the focus was last gained
 };
 
-void GG_API GetTranslatedCodePoint(Key key, std::uint32_t key_code_point,
+void GG_API GetTranslatedCodePoint(Key key, uint32_t key_code_point,
                                    Flags<ModKey> mod_keys, std::string& translated_code_point);
 
 CPSize GG_API NextWordEdgeFrom(std::string_view text, CPSize from_position, bool search_right = true);

@@ -2813,12 +2813,12 @@ void MapWnd::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) {
         Zoom(move, pt);
 }
 
-void MapWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT)
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
 }
 
-void MapWnd::KeyRelease(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::KeyRelease(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT)
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
 }

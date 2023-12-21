@@ -55,7 +55,7 @@ public:
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override
     { m_scroll_offset -= move * 2000; }
 
-    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
+    void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
         if (key == GG::Key::GGK_ESCAPE)
             OnExit();
     }
@@ -405,7 +405,7 @@ void IntroScreen::OnExitGame() {
     GG::GUI::GetGUI()->ExitApp(0);
 }
 
-void IntroScreen::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void IntroScreen::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::Key::GGK_ESCAPE)
         OnExitGame();
 }

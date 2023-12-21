@@ -116,7 +116,7 @@ protected:
     Button* DownButton() const; ///< returns a pointer to the Button control used as this control's down button
     Edit*   GetEdit() const;    ///< returns a pointer to the Edit control used to render this control's text and accept keyboard input
 
-    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
     virtual void SetEditTextFromValue();
@@ -345,7 +345,7 @@ Edit* Spin<T>::GetEdit() const
 { return m_edit.get(); }
 
 template <typename T>
-void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Spin<T>::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (Disabled()) {
         Control::KeyPress(key, key_code_point, mod_keys);

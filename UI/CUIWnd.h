@@ -214,7 +214,7 @@ public:
                GG::Flags<GG::WndFlag> flags = GG::MODAL);
     void CompleteConstruction() override;
     void ModalInit() override;
-    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     const std::string& Result() const noexcept { return m_result; }
 

@@ -78,7 +78,7 @@ class MessageWndEdit : public CUIEdit {
 public:
     MessageWndEdit();
 
-    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     bool AutoComplete() override;   //!< Autocomplete current word
 
     /** emitted when user presses enter/return while entering text */
@@ -111,7 +111,7 @@ MessageWndEdit::MessageWndEdit() :
     CUIEdit("")
 {}
 
-void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
+void MessageWndEdit::KeyPress(GG::Key key, uint32_t key_code_point,
                               GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {

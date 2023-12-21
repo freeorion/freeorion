@@ -654,7 +654,7 @@ public:
         character (if possible), or as a Unicode code point.  \a format_str
         should contain the Boost.Format positional notation formatting tag
         "%1%" where the code point should appear. */
-    static void ThrowBadGlyph(const std::string& format_str, std::uint32_t c);
+    static void ThrowBadGlyph(const std::string& format_str, uint32_t c);
 
 protected:
     Font() = default;
@@ -681,7 +681,7 @@ private:
     void              CheckFace(FT_Face font, FT_Error error);
     void              Init(FT_Face& font);
 
-    bool              GenerateGlyph(FT_Face font, std::uint32_t ch);
+    bool              GenerateGlyph(FT_Face font, uint32_t ch);
 
     void              ValidateFormat(Flags<TextFormat>& format) const;
 
