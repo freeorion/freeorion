@@ -1,3 +1,4 @@
+# Placeholder for module.
 # mypy: disable-error-code="empty-body"
 from typing import TypeVar, Union
 
@@ -32,8 +33,13 @@ class _PlanetEnvironment:
     ...
 
 
+# Type for return
 class _Empire:
     ...
+
+
+# Type for arguments, since invalid Empire is -1
+_EmpireId = Union[_Empire, int]
 
 
 class _Focus:
@@ -45,22 +51,6 @@ class _Resource:
 
 
 class _Aggregator:
-    ...
-
-
-class _ID:
-    ...
-
-
-class _SystemID(_ID):
-    ...
-
-
-class _PlanetId(_ID):
-    ...
-
-
-class _DesignID(_ID):
     ...
 
 
@@ -119,6 +109,28 @@ class _ConditionalComposition:
 
     def __ge__(self, other) -> _Condition:
         ...
+
+
+class _ID:
+    ...
+
+    def __eq__(self, other) -> _Condition:
+        ...
+
+    def __ne__(self, other) -> _Condition:
+        ...
+
+
+class _SystemID(_ID):
+    ...
+
+
+class _PlanetId(_ID):
+    ...
+
+
+class _DesignID(_ID):
+    ...
 
 
 _SpeciesValue = str
