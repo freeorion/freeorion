@@ -1,6 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.misc import PLANET_SHIELD_FACTOR
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 from focs._effects import (
     CurrentTurn,
     EffectsGroup,
@@ -17,6 +14,9 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.misc import PLANET_SHIELD_FACTOR
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 
 Tech(
     name="DEF_PLAN_BARRIER_SHLD_1",

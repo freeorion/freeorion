@@ -1,9 +1,3 @@
-from common.base_prod import INDUSTRY_PER_POP, RESEARCH_PER_POP, TECH_COST_MULTIPLIER
-from common.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
-from common.priorities import (
-    TARGET_AFTER_SCALING_PRIORITY,
-    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-)
 from focs._effects import (
     EffectsGroup,
     Focus,
@@ -23,6 +17,12 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import INDUSTRY_PER_POP, RESEARCH_PER_POP, TECH_COST_MULTIPLIER
+from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
+from macros.priorities import (
+    TARGET_AFTER_SCALING_PRIORITY,
+    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
+)
 
 Tech(
     name="GRO_ENERGY_META",

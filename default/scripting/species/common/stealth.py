@@ -1,5 +1,5 @@
-from common.stealth import HIGH_STEALTH, LOW_STEALTH, MEDIUM_STEALTH
 from focs._effects import EffectsGroup, HasTag, IsSource, OnPlanet, Planet, SetStealth, Source, Value
+from macros.stealth import HIGH_STEALTH, LOW_STEALTH, MEDIUM_STEALTH
 
 # Linter get crazy because of common suffix for two different files common/stealth.py
 assert isinstance(LOW_STEALTH, int)

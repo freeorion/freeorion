@@ -1,4 +1,3 @@
-from common.priorities import END_CLEANUP_PRIORITY
 from focs._effects import (
     BuildBuilding,
     Capital,
@@ -35,6 +34,7 @@ from focs._effects import (
     UserString,
     VisibleToEmpire,
 )
+from macros.priorities import END_CLEANUP_PRIORITY
 
 ETA_NEXT_TURN = CurrentTurn + LocalCandidate.ETA - 1
 

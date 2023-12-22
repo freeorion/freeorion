@@ -1,5 +1,5 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 from techs.ship_weapons.ship_weapons import WEAPON_UPGRADE_CAPACITY_EFFECTS
 
 Tech(

@@ -1,4 +1,3 @@
-from common.priorities import POPULATION_OVERRIDE_PRIORITY, TARGET_POPULATION_OVERRIDE_PRIORITY
 from focs._effects import (
     AddSpecial,
     EffectsGroup,
@@ -17,6 +16,7 @@ from focs._effects import (
     Uninhabitable,
 )
 from focs._species import *
+from macros.priorities import POPULATION_OVERRIDE_PRIORITY, TARGET_POPULATION_OVERRIDE_PRIORITY
 from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
 from species.common.env import DESERT_STANDARD_EP
 from species.common.focus import (

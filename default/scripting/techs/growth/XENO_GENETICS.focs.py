@@ -1,5 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.priorities import TARGET_POPULATION_BEFORE_SCALING_PRIORITY
 from focs._effects import (
     Adequate,
     EffectsGroup,
@@ -15,6 +13,8 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.priorities import TARGET_POPULATION_BEFORE_SCALING_PRIORITY
 
 Tech(
     name="GRO_XENO_GENETICS",

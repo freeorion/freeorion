@@ -1,12 +1,3 @@
-from common.misc import (
-    DESCRIPTION_EFFECTSGROUP_MACRO,
-    SUPPLY_DISCONNECTED_INFLUENCE_MALUS,
-)
-from common.priorities import (
-    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-    TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
-    TARGET_SCALING_PRIORITY,
-)
 from focs._effects import (
     Abs,
     Capital,
@@ -33,6 +24,15 @@ from focs._effects import (
     Target,
     Unowned,
     Value,
+)
+from macros.misc import (
+    DESCRIPTION_EFFECTSGROUP_MACRO,
+    SUPPLY_DISCONNECTED_INFLUENCE_MALUS,
+)
+from macros.priorities import (
+    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
+    TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
+    TARGET_SCALING_PRIORITY,
 )
 
 _BASE_INFLUENCE_COSTS = [

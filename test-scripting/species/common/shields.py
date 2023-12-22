@@ -1,5 +1,5 @@
-from common.misc import SHIP_SHIELD_FACTOR
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
+from macros.misc import SHIP_SHIELD_FACTOR
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY, DEFAULT_PRIORITY
 
 try:
     from focs._effects import (

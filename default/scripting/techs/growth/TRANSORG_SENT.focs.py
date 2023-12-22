@@ -1,5 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     Conditional,
     EffectsGroup,
@@ -16,6 +14,8 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 Tech(
     name="GRO_TRANSORG_SENT",

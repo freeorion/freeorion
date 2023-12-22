@@ -1,12 +1,3 @@
-from common.misc import GROWTH_RATE_FACTOR
-from common.priorities import (
-    POPULATION_FIRST_PRIORITY,
-    TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-    TARGET_POPULATION_BEFORE_SCALING_PRIORITY,
-    TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
-    TARGET_POPULATION_OVERRIDE_PRIORITY,
-    TARGET_POPULATION_SCALING_PRIORITY,
-)
 from focs._effects import (
     Abs,
     AnyEmpire,
@@ -46,6 +37,15 @@ from focs._effects import (
     Value,
     White,
     Yellow,
+)
+from macros.misc import GROWTH_RATE_FACTOR
+from macros.priorities import (
+    POPULATION_FIRST_PRIORITY,
+    TARGET_POPULATION_AFTER_SCALING_PRIORITY,
+    TARGET_POPULATION_BEFORE_SCALING_PRIORITY,
+    TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY,
+    TARGET_POPULATION_OVERRIDE_PRIORITY,
+    TARGET_POPULATION_SCALING_PRIORITY,
 )
 from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
 from species.common.general import (

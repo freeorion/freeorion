@@ -1,6 +1,6 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._effects import EffectsGroup, IsBuilding, OwnedBy, SetStealth, Source, Value
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="CON_FRC_ENRG_CAMO",

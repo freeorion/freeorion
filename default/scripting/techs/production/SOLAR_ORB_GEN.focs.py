@@ -1,4 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._effects import (
     EmpireHasAdoptedPolicy,
     IsSource,
@@ -6,6 +5,7 @@ from focs._effects import (
     StatisticIf,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="PRO_SOL_ORB_GEN",

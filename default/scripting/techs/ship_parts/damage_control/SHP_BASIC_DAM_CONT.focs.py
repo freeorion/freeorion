@@ -1,5 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.misc import SHIP_STRUCTURE_FACTOR
 from focs._effects import (
     EffectsGroup,
     InSystem,
@@ -13,6 +11,8 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.misc import SHIP_STRUCTURE_FACTOR
 
 Tech(
     name="SHP_BASIC_DAM_CONT",

@@ -1,4 +1,3 @@
-from common.base_prod import STOCKPILE_PER_POP, TECH_COST_MULTIPLIER
 from focs._effects import (
     EffectsGroup,
     Focus,
@@ -11,6 +10,7 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import STOCKPILE_PER_POP, TECH_COST_MULTIPLIER
 
 Tech(
     name="PRO_VOID_PREDICTION",

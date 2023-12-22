@@ -1,5 +1,5 @@
-from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from focs._species import *
+from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import TERRAN_STANDARD_EP
 from species.common.focus import (

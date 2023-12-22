@@ -1,4 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._effects import (
     ContainedBy,
     Contains,
@@ -19,6 +18,7 @@ from focs._effects import (
     VisibleToEmpire,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="LRN_PSY_DOM",

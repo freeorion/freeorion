@@ -50,3 +50,4 @@ Special
     graphic = "icons/tech/categories/learning.png"
 
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/priorities.macros"

@@ -10,8 +10,8 @@
 #             effects = SetMaxDefense value = Value + ( @1@ )
 # '''
 
-from common.misc import PLANET_DEFENSE_FACTOR
-from common.priorities import (
+from macros.misc import PLANET_DEFENSE_FACTOR
+from macros.priorities import (
     AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
     TARGET_AFTER_2ND_SCALING_PRIORITY,
 )

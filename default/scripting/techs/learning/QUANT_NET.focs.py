@@ -1,5 +1,3 @@
-from common.base_prod import RESEARCH_PER_POP, TECH_COST_MULTIPLIER
-from common.priorities import TARGET_AFTER_SCALING_PRIORITY
 from focs._effects import (
     EffectsGroup,
     Focus,
@@ -13,6 +11,8 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import RESEARCH_PER_POP, TECH_COST_MULTIPLIER
+from macros.priorities import TARGET_AFTER_SCALING_PRIORITY
 
 Tech(
     name="LRN_QUANT_NET",

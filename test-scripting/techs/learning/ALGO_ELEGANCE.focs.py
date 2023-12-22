@@ -1,4 +1,4 @@
-from common.base_prod import TECH_COST_MULTIPLIER
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 try:
     from focs._tech import *

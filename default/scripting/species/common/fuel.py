@@ -1,7 +1,7 @@
 # usually each "level" of fuel allows two jumps fuel
 # (i.e. GREAT_FUEL is similar to GREAT_SUPPLY)
-from common.priorities import TARGET_AFTER_SCALING_PRIORITY
 from focs._effects import EffectsGroup, IsSource, SetMaxFuel, Ship, Value
+from macros.priorities import TARGET_AFTER_SCALING_PRIORITY
 
 
 def _fuel(label: str, fuel_change: float):

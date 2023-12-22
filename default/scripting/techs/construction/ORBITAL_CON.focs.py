@@ -1,4 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._effects import (
     EffectsGroup,
     OwnedBy,
@@ -8,6 +7,7 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="CON_ORBITAL_CON",

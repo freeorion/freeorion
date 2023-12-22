@@ -1,5 +1,5 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="SHP_HEAVY_AST_HULL",

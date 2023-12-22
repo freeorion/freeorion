@@ -1,4 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._effects import (
     AddSpecial,
     EffectsGroup,
@@ -12,6 +11,7 @@ from focs._effects import (
     StatisticIf,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="SPY_STEALTH_2",

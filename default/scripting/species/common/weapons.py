@@ -1,5 +1,5 @@
-from common.misc import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR
 from focs._effects import Armed, DesignHasPart, EffectsGroup, IsSource, SetMaxDamage, SetMaxSecondaryStat, Ship, Value
+from macros.misc import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR
 
 
 def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tier_4: int, hangar: float):

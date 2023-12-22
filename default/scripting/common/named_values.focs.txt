@@ -66,3 +66,4 @@ NamedReal name = "FU_RAMSCOOP_REFUEL" value = 0.4
 
 #include "/scripting/common/misc.macros"
 #include "/scripting/common/base_prod.macros"
+#include "/scripting/common/priorities.macros"

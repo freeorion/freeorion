@@ -1,4 +1,3 @@
-from common.priorities import TARGET_AFTER_SCALING_PRIORITY, TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY
 from focs._effects import (
     Contains,
     EffectsGroup,
@@ -31,6 +30,7 @@ from focs._effects import (
     VisibleToEmpire,
     WithinStarlaneJumps,
 )
+from macros.priorities import TARGET_AFTER_SCALING_PRIORITY, TARGET_POPULATION_LAST_BEFORE_OVERRIDE_PRIORITY
 
 
 def _condition_other_species_nearby():

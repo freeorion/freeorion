@@ -1,5 +1,3 @@
-from common.misc import DESCRIPTION_EFFECTSGROUP_MACRO
-
 # BROAD_EP and NARROW_EP are stub placeholders for applying the
 # board/narrow environment tolerance description to a species.
 from focs._effects import (
@@ -20,6 +18,7 @@ from focs._effects import (
     Tundra,
     Uninhabitable,
 )
+from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 
 BROAD_EP = DESCRIPTION_EFFECTSGROUP_MACRO("BROAD_EP_DESC")
 

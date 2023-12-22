@@ -1,4 +1,3 @@
-from common.misc import MINIMUM_DISTANCE_EMPIRE_CHECK
 from focs._effects import (
     AddSpecial,
     Conditional,
@@ -11,6 +10,7 @@ from focs._effects import (
     Turn,
 )
 from focs._species import *
+from macros.misc import MINIMUM_DISTANCE_EMPIRE_CHECK
 from species.common.empire_opinions import COMMON_OPINION_EFFECTS
 from species.common.env import SWAMP_STANDARD_EP
 from species.common.focus import (

@@ -1,4 +1,3 @@
-from common.priorities import DEFAULT_PRIORITY
 from focs._effects import (
     EffectsGroup,
     Full,
@@ -13,6 +12,7 @@ from focs._effects import (
     Unowned,
     Value,
 )
+from macros.priorities import DEFAULT_PRIORITY
 
 BAD_DETECTION = [
     EffectsGroup(

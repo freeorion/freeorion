@@ -1,4 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._effects import (
     HasTag,
     OwnedBy,
@@ -8,6 +7,7 @@ from focs._effects import (
     StatisticIf,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 
 Tech(
     name="LRN_PSIONICS",

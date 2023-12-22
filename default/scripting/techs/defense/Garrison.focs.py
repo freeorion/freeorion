@@ -1,9 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER, TROOPS_PER_POP
-from common.priorities import (
-    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-    TARGET_AFTER_SCALING_PRIORITY,
-    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-)
 from focs._effects import (
     CurrentTurn,
     EffectsGroup,
@@ -20,6 +14,12 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER, TROOPS_PER_POP
+from macros.priorities import (
+    AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
+    TARGET_AFTER_SCALING_PRIORITY,
+    TARGET_EARLY_BEFORE_SCALING_PRIORITY,
+)
 
 Tech(
     name="DEF_GARRISON_1",

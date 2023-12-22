@@ -64,3 +64,4 @@ FieldType
     graphic = "fields/nanite_swarm.png"
 
 #include "/scripting/common/misc.macros"
+#include "/scripting/common/priorities.macros"

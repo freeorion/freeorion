@@ -1,6 +1,3 @@
-from common.base_prod import TECH_COST_MULTIPLIER
-from common.misc import GROWTH_RATE_FACTOR, MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from focs._effects import (
     CanColonize,
     EffectsGroup,
@@ -24,6 +21,9 @@ from focs._effects import (
     Value,
 )
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
+from macros.misc import GROWTH_RATE_FACTOR, MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 Tech(
     name="SHP_GAL_EXPLO",

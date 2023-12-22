@@ -1,5 +1,5 @@
-from common.misc import SUPPLY_DISCONNECTED_INFLUENCE_MALUS
-from common.priorities import (
+from macros.misc import SUPPLY_DISCONNECTED_INFLUENCE_MALUS
+from macros.priorities import (
     TARGET_EARLY_BEFORE_SCALING_PRIORITY,
     TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
     TARGET_SCALING_PRIORITY,

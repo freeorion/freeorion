@@ -1,5 +1,5 @@
-from common.base_prod import TECH_COST_MULTIPLIER
 from focs._tech import *
+from macros.base_prod import TECH_COST_MULTIPLIER
 from techs.ship_parts.fuel.fuel import PART_UPGRADE_MAXFUEL_EFFECTS
 
 Tech(

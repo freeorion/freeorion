@@ -264,3 +264,4 @@ EXPERIMENTOR_ADD_STARLANE
 
 #include "/scripting/common/misc.macros"
 #include "buildings.macros"
+#include "/scripting/common/priorities.macros"

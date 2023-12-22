@@ -1,4 +1,4 @@
-from common.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
+from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 
 # NO_SUPPLY
 # '''
