@@ -1,5 +1,3 @@
-from common.misc import UNOWNED_EMPIRE_ID
-from common.priorities import POPULATION_OVERRIDE_PRIORITY
 from focs._effects import (
     Destroy,
     EffectsGroup,
@@ -20,6 +18,8 @@ from focs._effects import (
     ThisBuilding,
     Turn,
 )
+from macros.misc import UNOWNED_EMPIRE_ID
+from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 
 try:
     from focs._buildings import *
