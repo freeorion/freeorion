@@ -109,7 +109,7 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
         try:
             setstate = new_instance.__setstate__
         except AttributeError:
-            if not type(parsed_content) == dict:
+            if not type(parsed_content) == dict:  # noqa: E721
                 raise InvalidSaveGameException("Could not set content for %s" % new_instance)
             new_instance.__dict__ = parsed_content
         else:

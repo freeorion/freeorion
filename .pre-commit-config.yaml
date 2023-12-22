@@ -3,17 +3,17 @@ default_stages:
   - manual
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.284'
+    rev: 'v0.1.9'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 23.12.0
     hooks:
       - id: black
   - repo: local
@@ -26,14 +26,14 @@ repos:
         files: 'default/stringtables/[a-z]{2}\.txt'
         types: [ text ]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.5.0'
+    rev: 'v1.8.0'
     hooks:
       - id: mypy
         name: focs.py type checks with mypy
         files: "(default/scripting/.*.py)|(check/check_file_changed/.*.py)"
         exclude: "^default/scripting/focs/.*.py"
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.322
+    rev: v1.1.342
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
