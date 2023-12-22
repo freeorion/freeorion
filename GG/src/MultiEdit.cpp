@@ -437,22 +437,17 @@ Y MultiEdit::BottomMargin() const noexcept
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(Pt pt) const
 {
-    std::pair<std::size_t, CPSize> retval{0, CP0};
     const auto& line_data = GetLineData();
-
     if (line_data.empty())
-        return retval;
+        return {0, CP0};
 
     const auto row = RowAt(pt.y);
-    retval.first = std::min(row, line_data.size() - 1);
+    const auto constrained_row = std::min(row, line_data.size() - 1);
+    const CPSize line_sz{line_data[constrained_row].char_data.size()};
 
-    if (row > retval.first)
-        retval.second = CPSize(line_data[retval.first].char_data.size());
-    else
-        retval.second = std::min(CharAt(row, pt.x),
-                                 CPSize(line_data[retval.first].char_data.size()));
+    const auto char_idx = (row > constrained_row) ? line_sz : std::min(CharAt(row, pt.x), line_sz);
 
-    return retval;
+    return {constrained_row, char_idx};
 }
 
 std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
@@ -551,8 +546,8 @@ std::size_t MultiEdit::RowAt(Y y) const
     y += m_first_row_shown;
     if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < Y0) {
         retval = y / GetFont()->Lineskip();
+
     } else { // FORMAT_BOTTOM
-        
         retval = NumLines() -
             (ClientSize().y + (m_vscroll && m_hscroll ? BottomMargin() : Y0) - y - 1) / GetFont()->Lineskip();
     }
@@ -696,19 +691,17 @@ void MultiEdit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 
     // when a button press occurs, record the character position under the
     // cursor, and remove any previous selection range
-    std::pair<std::size_t, CPSize> click_pos = CharAt(ScreenToClient(pt));
+    const auto click_pos = CharAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
-    //std::cout << "click pos: " << click_pos.first << " / " << click_pos.second << "\n";
 
     CPSize idx = CharIndexOf(click_pos.first, click_pos.second);
     this->m_cursor_pos = {idx, idx};
-    //std::cout << "cursor pos: " << this->m_cursor_pos.first << "\n";
 
     // double-click-drag whole-word selection disabled due to the following code
     // resulting in weird highlighting glitches, possibly due to inconsistency
     // between this->m_cursor_pos and  m_cursor_pos and m_cursor_end
 
-    //std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownWordIndices(idx);
+    //const auto word_indices = GetDoubleButtonDownWordIndices(idx);
     ////std::cout << "Edit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
     //if (word_indices.first != word_indices.second)
     //    this->m_cursor_pos = word_indices;
