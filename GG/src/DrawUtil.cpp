@@ -329,12 +329,12 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     glTranslatef(Value(ul.x) + wd/2.0f, Value(ul.y) + ht/2.0f, 0.0f);// move origin to the center of the rectangle
     glScalef(wd/2.0f, ht/2.0f, 1.0f);                                // map the range [-1,1] to the rectangle in both (x- and y-) directions
 
-    double inner_radius = (std::min(wd, ht) - 2.0*bevel_thick) / std::min(wd, ht);
+    const double inner_radius = (std::min(wd, ht) - 2.0*bevel_thick) / std::min(wd, ht);
     glColor(color);
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(0, 0);
     // point on circle at angle theta1
-    double theta1_x = cos(-theta1), theta1_y = sin(-theta1);
+    const double theta1_x = cos(-theta1), theta1_y = sin(-theta1);
     glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
@@ -342,7 +342,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
         int Y = X + 1;
         glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
-    double theta2_x = cos(-theta2), theta2_y = sin(-theta2);
+    const double theta2_x = cos(-theta2), theta2_y = sin(-theta2);
     glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
     glEnd();
     glBegin(GL_QUAD_STRIP);
@@ -372,9 +372,9 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
 }
 
 void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
-                        unsigned int corner_radius, int thick)
+                      unsigned int corner_radius, int thick)
 {
-    int circle_diameter = corner_radius * 2;
+    const int circle_diameter = corner_radius * 2;
     CircleArc(Pt(lr.x - circle_diameter, ul.y),                     Pt(lr.x, ul.y + circle_diameter),
               color, border_color2, border_color1, thick, 0, 0.5 * PI);  // ur corner
     CircleArc(Pt(ul.x, ul.y),                                       Pt(ul.x + circle_diameter, ul.y + circle_diameter),
@@ -391,7 +391,7 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
     GLRGBAColorBuffer colour_buf;   // need to give each vertex in lightness bar its own colour so can't just use a glColor call
     colour_buf.reserve(28);
 
-    int rad = static_cast<int>(corner_radius);
+    const int rad = static_cast<int>(corner_radius);
 
     static constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
     Clr clr = BlendClr(border_color1, border_color2, color_scale_factor1);
@@ -461,13 +461,13 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
 
 void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned int corner_radius)
 {
-    int circle_diameter = corner_radius * 2;
+    const int circle_diameter = corner_radius * 2;
     BubbleArc(Pt(lr.x - circle_diameter, ul.y), Pt(lr.x, ul.y + circle_diameter), color1, color3, color2, 0, 0.5 * PI);  // ur corner
     BubbleArc(Pt(ul.x, ul.y), Pt(ul.x + circle_diameter, ul.y + circle_diameter), color1, color3, color2, 0.5 * PI, PI); // ul corner
     BubbleArc(Pt(ul.x, lr.y - circle_diameter), Pt(ul.x + circle_diameter, lr.y), color1, color3, color2, PI, 1.5 * PI); // ll corner
     BubbleArc(Pt(lr.x - circle_diameter, lr.y - circle_diameter), Pt(lr.x, lr.y), color1, color3, color2, 1.5 * PI, 0);  // lr corner
 
-    int rad = static_cast<int>(corner_radius);
+    const int rad = static_cast<int>(corner_radius);
 
     // top
     static constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
@@ -620,7 +620,7 @@ void GG::BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glDepthMask(GL_FALSE);
 
-    GLuint mask = 1u << g_stencil_bit;
+    const GLuint mask = 1u << g_stencil_bit;
 
     glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -629,7 +629,7 @@ void GG::BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr
 
     glStencilFunc(GL_ALWAYS, mask, mask);
     glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-    GLint outer_vertices[] = {
+    const GLint outer_vertices[] = {
         Value(outer_ul.x), Value(outer_ul.y),
         Value(outer_ul.x), Value(outer_lr.y),
         Value(outer_lr.x), Value(outer_lr.y),
@@ -639,7 +639,7 @@ void GG::BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr
     glDrawArrays(GL_QUADS, 0, 4);
 
     glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
-    GLint inner_vertices[] = {
+    const GLint inner_vertices[] = {
         Value(inner_ul.x), Value(inner_ul.y),
         Value(inner_ul.x), Value(inner_lr.y),
         Value(inner_lr.x), Value(inner_lr.y),
@@ -681,8 +681,8 @@ void GG::Line(Pt pt1, Pt pt2, Clr color, float thick)
 
 void GG::Line(X x1, Y y1, X x2, Y y2)
 {
-    GLfloat vertices[4] = {GLfloat(Value(x1)), GLfloat(Value(y1)),
-                            GLfloat(Value(x2)), GLfloat(Value(y2))};
+    const GLfloat vertices[4] = {GLfloat(Value(x1)), GLfloat(Value(y1)),
+                                 GLfloat(Value(x2)), GLfloat(Value(y2))};
 
     glDisable(GL_TEXTURE_2D);
 
@@ -701,8 +701,8 @@ void GG::Line(X x1, Y y1, X x2, Y y2)
 
 void GG::Triangle(Pt pt1, Pt pt2, Pt pt3, Clr color, Clr border_color, float border_thick)
 {
-    GLfloat vertices[6] = {GLfloat(Value(pt1.x)), GLfloat(Value(pt1.y)), GLfloat(Value(pt2.x)),
-                            GLfloat(Value(pt2.y)), GLfloat(Value(pt3.x)), GLfloat(Value(pt3.y))};
+    const GLfloat vertices[6] = {GLfloat(Value(pt1.x)), GLfloat(Value(pt1.y)), GLfloat(Value(pt2.x)),
+                                 GLfloat(Value(pt2.y)), GLfloat(Value(pt3.x)), GLfloat(Value(pt3.y))};
 
     glDisable(GL_TEXTURE_2D);
 
@@ -729,8 +729,8 @@ void GG::Triangle(Pt pt1, Pt pt2, Pt pt3, Clr color, Clr border_color, float bor
 
 void GG::Triangle(X x1, Y y1, X x2, Y y2, X x3, Y y3, bool filled)
 {
-    GLfloat vertices[6] = {GLfloat(Value(x1)), GLfloat(Value(y1)), GLfloat(Value(x2)),
-                            GLfloat(Value(y2)), GLfloat(Value(x3)), GLfloat(Value(y3))};
+    const GLfloat vertices[6] = {GLfloat(Value(x1)), GLfloat(Value(y1)), GLfloat(Value(x2)),
+                                 GLfloat(Value(y2)), GLfloat(Value(x3)), GLfloat(Value(y3))};
 
     glDisable(GL_TEXTURE_2D);
 
