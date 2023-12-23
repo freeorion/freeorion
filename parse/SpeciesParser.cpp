@@ -210,10 +210,10 @@ namespace parse {
             py_parse::detail::parse_file<py_grammar>(parser, file, p);
         }
 
-        TraceLogger(parsing) << "FOCS + Python Species: " << species_.size();
+        TraceLogger(parsing) << "Start parsing FOCS for Species: " << species_.size();
         for (auto& [sp_name, sp] : species_)
-            TraceLogger(parsing) << sp_name << " : " << sp.GetCheckSum() << "\n" << sp.Dump();
-
+            TraceLogger(parsing) << "Species " << sp_name << " : " << sp.GetCheckSum() << "\n" << sp.Dump();
+        TraceLogger(parsing) << "End parsing FOCS for Soecies" << species_.size();
 
         if (!manifest_file.empty()) {
             try {

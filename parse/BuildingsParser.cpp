@@ -251,6 +251,11 @@ namespace parse {
         for (const auto& file : ListDir(path, IsFOCPyScript))
             py_parse::detail::parse_file<py_grammar>(parser, file, p);
 
+        TraceLogger(parsing) << "Start parsing FOCS for BuildingTypes: " << building_types.size();
+        for (auto& [building_name, bt] : building_types)
+            TraceLogger(parsing) << "BuildingType " << building_name << " : " << bt.GetCheckSum() << "\n" << sp.Dump();
+        TraceLogger(parsing) << "End parsing FOCS for BuildingTypes" << building_types.size();
+
         return building_types;
     }
 }
