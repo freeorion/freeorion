@@ -519,16 +519,21 @@ X MultiEdit::RowStartX(std::size_t row) const
     else if (m_style & MULTI_CENTER)
         retval -= excess_width / 2;
 
-    if (!GetLineData().empty() && !GetLineData()[row].Empty()) {
-        X line_width = GetLineData()[row].char_data.back().extent;
-        if (GetLineData()[row].justification == ALIGN_LEFT) {
-            retval += (m_vscroll && m_hscroll ? RightMargin() : X0);
-        } else if (GetLineData()[row].justification == ALIGN_RIGHT) {
-            retval += m_contents_sz.x - line_width + (m_vscroll && m_hscroll ? RightMargin() : X0);
-        } else if (GetLineData()[row].justification == ALIGN_CENTER) {
-            retval += (m_contents_sz.x - line_width + (m_vscroll && m_hscroll ? RightMargin() : X0)) / 2;
-        }
-    }
+    const auto& line_data = GetLineData();
+    if (line_data.empty() || line_data.size() <= row)
+        return retval;
+    const auto& row_data = line_data[row];
+    if (row_data.Empty())
+        return retval;
+    const X line_width = row_data.char_data.back().extent;
+    const X right_margin = m_vscroll && m_hscroll ? RightMargin() : X0;
+
+    if (row_data.justification == ALIGN_LEFT)
+        retval += right_margin;
+    else if (row_data.justification == ALIGN_RIGHT)
+        retval += m_contents_sz.x - line_width + right_margin;
+    else if (row_data.justification == ALIGN_CENTER)
+        retval += (m_contents_sz.x - line_width + right_margin) / 2;
 
     return retval;
 }
