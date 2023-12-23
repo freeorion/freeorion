@@ -162,7 +162,7 @@ protected:
 
     /** Return the index of the last LineData() or 0 if LineData is empty.
      Allows index based Edit to handle empty line data.*/
-    std::vector<GG::Font::LineData>::size_type NumLines() const;
+    std::size_t NumLines() const noexcept;
 
     void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
     void LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys) override;

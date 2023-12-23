@@ -263,18 +263,16 @@ X Edit::ScreenPosOfChar(CPSize idx) const
 
 CPSize Edit::LastVisibleChar() const
 {
-    X first_char_offset = FirstCharOffset();
-    CPSize retval = m_first_char_shown;
-
     const auto& line_data = GetLineData();
     if (line_data.empty())
         return CP0;
-    const auto& first_line_data = line_data.at(0);
-    const auto& char_data = first_line_data.char_data;
+    const auto& char_data = line_data[0].char_data;
 
-    CPSize line_limit = std::min(Length(), CPSize(char_data.size()));
-    X client_size_x = ClientSize().x;
+    const CPSize line_limit = std::min(Length(), CPSize(char_data.size()));
+    const X client_size_x = ClientSize().x;
+    const X first_char_offset = FirstCharOffset();
 
+    CPSize retval = m_first_char_shown;
     for (; retval < line_limit; ++retval) {
         if (retval == CP0) {
             if (client_size_x <= X0 - first_char_offset)
@@ -289,9 +287,10 @@ CPSize Edit::LastVisibleChar() const
     return retval;
 }
 
-std::vector<GG::Font::LineData>::size_type Edit::NumLines() const {
-    return std::max(std::vector<GG::Font::LineData>::size_type(0),
-                    GetLineData().size() - 1);
+std::size_t Edit::NumLines() const noexcept
+{
+    const auto ldsz = GetLineData().size();
+    return (ldsz > 0) ? (ldsz - 1) : 0;
 }
 
 void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
@@ -299,15 +298,15 @@ void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
     if (Disabled())
         return;
     //std::cout << "Edit::LButtonDown start" << std::endl;
-    X click_xpos = ScreenToClient(pt).x; // x coord of click within text space
-    CPSize idx = CharIndexOf(click_xpos);
+    const X click_xpos = ScreenToClient(pt).x; // x coord of click within text space
+    const CPSize idx = CharIndexOf(click_xpos);
     //std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
-    m_cursor_pos = {idx, idx};
 
-    auto word_indices = GetDoubleButtonDownWordIndices(idx);
-    //std::cout << "Edit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
+    const auto word_indices = GetDoubleButtonDownWordIndices(idx);
     if (word_indices.first != word_indices.second)
         m_cursor_pos = word_indices;
+    else
+        m_cursor_pos = {idx, idx};
 }
 
 void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
@@ -315,12 +314,12 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     if (Disabled())
         return;
 
-    X xpos = ScreenToClient(pt).x; // x coord for mouse position within text space
-    CPSize idx = CharIndexOf(xpos);
+    const X xpos = ScreenToClient(pt).x; // x coord for mouse position within text space
+    const CPSize idx = CharIndexOf(xpos);
     //std::cout << "CharIndexOf mouse x-pos: " << xpos << std::endl;
 
     if (m_in_double_click_mode) {
-        auto word_indices = GetDoubleButtonDownDragWordIndices(idx);
+        const auto word_indices = GetDoubleButtonDownDragWordIndices(idx);
 
         if (word_indices.first == word_indices.second) {
             if (idx < m_double_click_cursor_pos.first) {
@@ -364,11 +363,11 @@ void Edit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
         return;
     }
 
-    bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
-    bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
-    bool emit_signal = false;
-    bool numlock_on = mod_keys & MOD_KEY_NUM;
+    const bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+    const bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
+    const bool numlock_on = mod_keys & MOD_KEY_NUM;
 
+    bool emit_signal = false;
 
     if (!numlock_on) {
         // convert keypad keys into corresponding non-number keys
