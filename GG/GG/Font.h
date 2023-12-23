@@ -347,16 +347,13 @@ public:
             CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
                      const std::vector<std::shared_ptr<TextElement>>& tags_);
 
-            /** The furthest-right extent of this glyph as it appears on the
-                line. */
+            /** The furthest-right extent of this glyph as it appears on the line. */
             X extent = X0;
 
-            /** The position in the original string of the first character of
-                this glyph. */
+            /** The position in the original string of the first character of this glyph. */
             StrSize string_index = S0;
 
-            /** The size in the original string of the characters that make up
-                this glyph. */
+            /** The size in the original string of the characters that make up this glyph. */
             StrSize string_size = S0;
 
             /** The code point index of this glyph. */
