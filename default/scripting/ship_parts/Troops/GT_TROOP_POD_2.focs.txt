@@ -17,4 +17,4 @@ Part
 //  consumption = Troops consumption = 2 condition = Source
     icon = "icons/meter/rebels.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

@@ -25,4 +25,4 @@ Part
             effects = SetFuel value = Value + (NamedRealLookup name = "FU_RAMSCOOP_REFUEL")
     icon = "icons/ship_parts/antimatter_tank.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

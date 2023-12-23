@@ -273,5 +273,5 @@ Special
     ]
     graphic = "icons/specials_huge/ancient_ruins.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "./monster_guard.macros"

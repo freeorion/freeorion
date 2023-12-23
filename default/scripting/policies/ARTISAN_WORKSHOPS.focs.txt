@@ -11,5 +11,5 @@ Policy
     graphic = "icons/policies/social_artisans.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/misc.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/misc.macros"
+#include "/scripting/macros/priorities.macros"

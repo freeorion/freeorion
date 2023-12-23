@@ -1,24 +1,24 @@
 from focs._species import *
-from species.common.detection import ULTIMATE_DETECTION
-from species.common.empire_opinions import FIXED_OPINION_EFFECTS
-from species.common.env import VERY_TOLERANT_EP
-from species.common.focus import (
+from species.species_macros.detection import ULTIMATE_DETECTION
+from species.species_macros.empire_opinions import FIXED_OPINION_EFFECTS
+from species.species_macros.env import VERY_TOLERANT_EP
+from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_INFLUENCE_FOCUS,
     HAS_RESEARCH_FOCUS,
 )
-from species.common.happiness import AVERAGE_HAPPINESS
-from species.common.industry import NO_INDUSTRY
-from species.common.influence import ULTIMATE_INFLUENCE
-from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE
-from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS
-from species.common.population import GOOD_POPULATION
-from species.common.research import ULTIMATE_RESEARCH
-from species.common.shields import STANDARD_SHIP_SHIELDS
-from species.common.stealth import ULTIMATE_STEALTH
-from species.common.stockpile import ULTIMATE_STOCKPILE
-from species.common.supply import AVERAGE_SUPPLY
-from species.common.troops import ULTIMATE_DEFENSE_TROOPS
+from species.species_macros.happiness import AVERAGE_HAPPINESS
+from species.species_macros.industry import NO_INDUSTRY
+from species.species_macros.influence import ULTIMATE_INFLUENCE
+from species.species_macros.planet_defense import AVERAGE_PLANETARY_DEFENSE
+from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS
+from species.species_macros.population import GOOD_POPULATION
+from species.species_macros.research import ULTIMATE_RESEARCH
+from species.species_macros.shields import STANDARD_SHIP_SHIELDS
+from species.species_macros.stealth import ULTIMATE_STEALTH
+from species.species_macros.stockpile import ULTIMATE_STOCKPILE
+from species.species_macros.supply import AVERAGE_SUPPLY
+from species.species_macros.troops import ULTIMATE_DEFENSE_TROOPS
 
 Species(
     name="SP_EXPERIMENTOR",

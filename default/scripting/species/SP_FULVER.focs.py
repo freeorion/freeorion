@@ -1,29 +1,29 @@
 from focs._effects import Capital, EffectsGroup, IsSource, Planet, Unowned
 from focs._species import *
-from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import NARROW_EP, TUNDRA_NARROW_EP
-from species.common.focus import (
+from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
+from species.species_macros.env import NARROW_EP, TUNDRA_NARROW_EP
+from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
     HAS_INDUSTRY_FOCUS,
     HAS_INFLUENCE_FOCUS,
     HAS_RESEARCH_FOCUS,
 )
-from species.common.fuel import GREAT_FUEL
-from species.common.happiness import BAD_HAPPINESS
-from species.common.industry import AVERAGE_INDUSTRY
-from species.common.influence import AVERAGE_INFLUENCE
-from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE
-from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS
-from species.common.planet_size import LARGE_PLANET
-from species.common.population import AVERAGE_POPULATION
-from species.common.research import BAD_RESEARCH
-from species.common.shields import STANDARD_SHIP_SHIELDS
-from species.common.stockpile import GOOD_STOCKPILE
-from species.common.supply import AVERAGE_SUPPLY
-from species.common.telepathic import PRECOGNITIVE_DETECTION
-from species.common.troops import BAD_DEFENSE_TROOPS
-from species.common.weapons import GOOD_WEAPONS
+from species.species_macros.fuel import GREAT_FUEL
+from species.species_macros.happiness import BAD_HAPPINESS
+from species.species_macros.industry import AVERAGE_INDUSTRY
+from species.species_macros.influence import AVERAGE_INFLUENCE
+from species.species_macros.planet_defense import AVERAGE_PLANETARY_DEFENSE
+from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS
+from species.species_macros.planet_size import LARGE_PLANET
+from species.species_macros.population import AVERAGE_POPULATION
+from species.species_macros.research import BAD_RESEARCH
+from species.species_macros.shields import STANDARD_SHIP_SHIELDS
+from species.species_macros.stockpile import GOOD_STOCKPILE
+from species.species_macros.supply import AVERAGE_SUPPLY
+from species.species_macros.telepathic import PRECOGNITIVE_DETECTION
+from species.species_macros.troops import BAD_DEFENSE_TROOPS
+from species.species_macros.weapons import GOOD_WEAPONS
 
 Species(
     name="SP_FULVER",

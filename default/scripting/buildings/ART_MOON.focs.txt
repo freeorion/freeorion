@@ -25,7 +25,7 @@ BuildingType
     ]
     icon = "icons/specials_huge/resonant_moon.png"
 
-#include "/scripting/common/enqueue.macros"
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/enqueue.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/buildings/buildings.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

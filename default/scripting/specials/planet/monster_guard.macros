@@ -132,4 +132,4 @@ CHANCE_OF_HIDE_1
             ]
 '''
 
-#include "/scripting/common/*.macros"
+#include "/scripting/macros/*.macros"

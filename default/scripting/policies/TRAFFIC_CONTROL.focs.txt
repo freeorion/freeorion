@@ -21,6 +21,6 @@ Policy
     ]
     graphic = "icons/policies/economic_traffic_control.png"
 
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/policies/policies.macros"

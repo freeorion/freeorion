@@ -28,4 +28,4 @@ Special
             effects = SetMaxStructure value = Value + 0.1*Value accountinglabel = "ASTEROID_COATING_SPECIAL"
     ]
     graphic = "icons/specials_huge/asteroid_coating.png"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

@@ -19,5 +19,5 @@ Part
     ]
     icon = "icons/ship_parts/fighter04.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"
 #include "/scripting/ship_parts/targeting.macros"

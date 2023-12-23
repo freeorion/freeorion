@@ -20,5 +20,5 @@ Policy
     ]                
     graphic = "icons/policies/economic_stockpile_liquidation.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/policies/policies.macros"

@@ -69,4 +69,4 @@ PLC_TERRAFORMING_DISTANCE
 '''
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

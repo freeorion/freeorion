@@ -40,5 +40,5 @@ Policy
     graphic = "icons/policies/military_charge.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
-#include "/scripting/common/misc.macros"
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/macros/misc.macros"

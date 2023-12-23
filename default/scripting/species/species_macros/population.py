@@ -47,8 +47,8 @@ from macros.priorities import (
     TARGET_POPULATION_OVERRIDE_PRIORITY,
     TARGET_POPULATION_SCALING_PRIORITY,
 )
-from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
-from species.common.general import (
+from species.species_macros.advanced_focus import ADVANCED_FOCUS_EFFECTS
+from species.species_macros.general import (
     FOCUS_CHANGE_PENALTY,
     STANDARD_CONSTRUCTION,
     STANDARD_METER_GROWTH,

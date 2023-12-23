@@ -29,4 +29,4 @@ Policy
     graphic = "icons/policies/social_liberty.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

@@ -41,6 +41,6 @@ Policy
     ]
     graphic = "icons/policies/economic_exobot_productivity.png"
 
-#include "/scripting/common/multiplier.macros"
+#include "/scripting/macros/multiplier.macros"
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

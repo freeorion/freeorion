@@ -25,6 +25,6 @@ BuildingType
     ]
     icon = "icons/building/lighthouse.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/buildings/buildings.macros"
 

@@ -19,4 +19,4 @@ Special
     graphic = "icons/monsters/dim_rift.png"
 
 #include "remove_stealth.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

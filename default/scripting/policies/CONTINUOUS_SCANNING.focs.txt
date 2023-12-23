@@ -31,4 +31,4 @@ Policy
     graphic = "icons/policies/military_continuous_scanning.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

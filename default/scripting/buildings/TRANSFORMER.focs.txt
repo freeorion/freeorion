@@ -11,5 +11,5 @@ BuildingType
     enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/transformer.png"
 
-#include "/scripting/common/enqueue.macros"
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/enqueue.macros"
+#include "/scripting/macros/base_prod.macros"

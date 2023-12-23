@@ -30,5 +30,5 @@ Policy
     ]
     graphic = "icons/policies/economic_colonial_bootstrapping.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/policies/policies.macros"

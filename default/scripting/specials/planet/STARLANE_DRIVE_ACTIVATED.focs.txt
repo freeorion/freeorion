@@ -19,5 +19,5 @@ Special
     ]
     graphic = "icons/building/planetary_stardrive.png"
 
-#include "/scripting/common/priorities.macros"
-#include "/scripting/common/advanced_focus.macros"
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/macros/advanced_focus.macros"

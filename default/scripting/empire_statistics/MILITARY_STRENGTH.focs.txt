@@ -21,4 +21,4 @@ Statistic name = "MILITARY_STRENGTH_STAT" value =
             OwnedBy empire = Source.Owner
         ]
 
-#include "/scripting/common/misc.macros"
+#include "/scripting/macros/misc.macros"

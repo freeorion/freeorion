@@ -20,4 +20,4 @@ Part
     ]
     icon = "icons/ship_parts/engine-1.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

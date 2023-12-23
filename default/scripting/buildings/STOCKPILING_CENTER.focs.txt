@@ -49,7 +49,7 @@ BuildingType
     ]
     icon = "icons/building/stockpiling_center.png"
 
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/enqueue.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/enqueue.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/buildings/buildings.macros"

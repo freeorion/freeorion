@@ -52,4 +52,4 @@ Part
     ]
     icon = "icons/ship_parts/nova-bomb.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

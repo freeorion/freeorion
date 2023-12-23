@@ -22,4 +22,4 @@ Policy
     graphic = "icons/policies/military_marine_recruitment.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

@@ -51,6 +51,6 @@ BuildingType
     ]
     icon = "icons/tech/n-dimensional_structures.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/buildings/buildings.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

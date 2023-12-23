@@ -11,4 +11,4 @@ Policy
     graphic = "icons/policies/social_population.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

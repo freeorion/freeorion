@@ -57,6 +57,6 @@ Policy
     ]
     graphic = "icons/policies/economic_capital_markets.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

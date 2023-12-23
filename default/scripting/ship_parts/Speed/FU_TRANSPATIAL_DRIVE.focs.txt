@@ -36,4 +36,4 @@ Part
 
 #include "../Stealth/best_stealth.macros"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

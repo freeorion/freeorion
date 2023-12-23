@@ -52,5 +52,5 @@ ONE_IF_CHARGING
 
 #include "shortrange.macros"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"
 #include "/scripting/ship_parts/targeting.macros"

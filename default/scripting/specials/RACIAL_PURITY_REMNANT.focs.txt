@@ -28,4 +28,4 @@ Special
     ]
     graphic = "icons/building/concentration-camp.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

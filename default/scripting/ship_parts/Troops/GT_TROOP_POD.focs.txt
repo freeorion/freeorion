@@ -17,4 +17,4 @@ Part
 //  consumption = Troops consumption = 1 condition = Source
     icon = "icons/ship_parts/troops.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

@@ -9,4 +9,4 @@ Tech
     unlock = Item type = ShipPart name = "CO_COLONY_POD"
     graphic = "icons/tech/environmental_encapsulation.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"

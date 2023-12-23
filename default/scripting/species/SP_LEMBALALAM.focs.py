@@ -17,25 +17,25 @@ from focs._effects import (
 )
 from focs._species import *
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY, TARGET_POPULATION_OVERRIDE_PRIORITY
-from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
-from species.common.env import DESERT_STANDARD_EP
-from species.common.focus import (
+from species.species_macros.advanced_focus import ADVANCED_FOCUS_EFFECTS
+from species.species_macros.env import DESERT_STANDARD_EP
+from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_INFLUENCE_FOCUS,
     HAS_RESEARCH_FOCUS,
 )
-from species.common.general import FOCUS_CHANGE_PENALTY, STANDARD_CONSTRUCTION, STANDARD_METER_GROWTH
-from species.common.happiness import AVERAGE_HAPPINESS
-from species.common.industry import NO_INDUSTRY
-from species.common.influence import VERY_BAD_INFLUENCE
-from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE
-from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS
-from species.common.research import GOOD_RESEARCH
-from species.common.shields import STANDARD_SHIP_SHIELDS
-from species.common.stealth import GOOD_STEALTH
-from species.common.stockpile import AVERAGE_STOCKPILE
-from species.common.supply import AVERAGE_SUPPLY
-from species.common.troops import AVERAGE_DEFENSE_TROOPS
+from species.species_macros.general import FOCUS_CHANGE_PENALTY, STANDARD_CONSTRUCTION, STANDARD_METER_GROWTH
+from species.species_macros.happiness import AVERAGE_HAPPINESS
+from species.species_macros.industry import NO_INDUSTRY
+from species.species_macros.influence import VERY_BAD_INFLUENCE
+from species.species_macros.planet_defense import AVERAGE_PLANETARY_DEFENSE
+from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS
+from species.species_macros.research import GOOD_RESEARCH
+from species.species_macros.shields import STANDARD_SHIP_SHIELDS
+from species.species_macros.stealth import GOOD_STEALTH
+from species.species_macros.stockpile import AVERAGE_STOCKPILE
+from species.species_macros.supply import AVERAGE_SUPPLY
+from species.species_macros.troops import AVERAGE_DEFENSE_TROOPS
 
 Species(
     name="SP_LEMBALALAM",

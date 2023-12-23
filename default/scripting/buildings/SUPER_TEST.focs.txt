@@ -26,4 +26,4 @@ BuildingType
     ]
     icon = "icons/species/other-04.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

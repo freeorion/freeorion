@@ -39,4 +39,4 @@ Species
 
 #include "common/*.macros"
 
-#include "/scripting/common/*.macros"
+#include "/scripting/macros/*.macros"

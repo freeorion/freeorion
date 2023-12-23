@@ -72,4 +72,4 @@ AVERAGE_PLANETARY_DEFENSE = [
 ]
 
 
-# #include "../common/priorities.macros"
+# #include "../macros/priorities.macros"

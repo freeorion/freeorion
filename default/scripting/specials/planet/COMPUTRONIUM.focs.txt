@@ -40,6 +40,6 @@ Special
     graphic = "icons/specials_huge/computronium.png"
 
 #include "monster_guard.macros"
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/specials/specials.macros.txt"

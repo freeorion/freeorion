@@ -99,8 +99,8 @@ Hull
 
 #include "../ship_hulls.macros"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 
-#include "/scripting/common/misc.macros"
+#include "/scripting/macros/misc.macros"

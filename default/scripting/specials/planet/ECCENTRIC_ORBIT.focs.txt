@@ -35,5 +35,5 @@ Special
     ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/specials/specials.macros.txt"

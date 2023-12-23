@@ -90,5 +90,5 @@ POPULATION_BOOST_LITHIC
             effects = SetTargetPopulation value = Value + 1 * Target.HabitableSize  // Provides the bonus locally, no matter the focus
 '''
 
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/priorities.macros"

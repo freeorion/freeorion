@@ -67,5 +67,5 @@ Part
     ]
     icon = "icons/ship_parts/void-shadow.png"
 
-#include "/scripting/common/upkeep.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/upkeep.macros"
+#include "/scripting/macros/priorities.macros"
