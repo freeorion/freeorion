@@ -28,5 +28,5 @@ Policy
     ]
     graphic = "icons/policies/social_colonization.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/policies/policies.macros"

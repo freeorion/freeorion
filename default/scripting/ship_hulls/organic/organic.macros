@@ -27,6 +27,6 @@ LIVING_HULL_BASE_FUEL_REGEN
    [[REFUEL_MESSAGE(0.3)]]
 '''
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 
-#include "/scripting/common/misc.macros"
+#include "/scripting/macros/misc.macros"

@@ -36,4 +36,4 @@ Hull
 
 #include "../ship_hulls.macros"
 #include "monster.macros"
-#include "/scripting/common/misc.macros"
+#include "/scripting/macros/misc.macros"

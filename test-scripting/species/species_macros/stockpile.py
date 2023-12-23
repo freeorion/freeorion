@@ -107,5 +107,5 @@ AVERAGE_STOCKPILE = [
 # '''
 
 
-# #include "../common/base_prod.macros"
-# #include "../common/priorities.macros"
+# #include "../macros/base_prod.macros"
+# #include "../macros/priorities.macros"

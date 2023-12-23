@@ -32,5 +32,5 @@ Policy
     graphic = "icons/policies/social_augmentation.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/priorities.macros"

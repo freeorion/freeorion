@@ -28,5 +28,5 @@ Policy
     ]
     graphic = "icons/policies/economic_no_supply.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/policies/policies.macros"

@@ -66,4 +66,4 @@ Policy
     graphic = "icons/policies/social_indoctrination.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

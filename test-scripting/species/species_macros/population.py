@@ -54,8 +54,8 @@ try:
 except ModuleNotFoundError:
     pass
 
-from species.common.advanced_focus import ADVANCED_FOCUS_EFFECTS
-from species.common.general import (
+from species.species_macros.advanced_focus import ADVANCED_FOCUS_EFFECTS
+from species.species_macros.general import (
     FOCUS_CHANGE_PENALTY,
     STANDARD_CONSTRUCTION,
     STANDARD_METER_GROWTH,
@@ -362,6 +362,6 @@ AVERAGE_POPULATION = BASIC_POPULATION
 #             ]
 # '''
 
-# #include "common/advanced_focus.macros"
-# #include "common/focus.macros"
-# #include "common/general.macros"
+# #include "macros/advanced_focus.macros"
+# #include "macros/focus.macros"
+# #include "macros/general.macros"

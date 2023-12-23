@@ -71,6 +71,6 @@ Special
 
 #include "/scripting/techs/defense/mines.macros"
 
-#include "/scripting/common/priorities.macros"
-#include "/scripting/common/misc.macros"
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/macros/misc.macros"
 #include "/scripting/specials/specials.macros.txt"

@@ -234,4 +234,4 @@ GREAT_INFLUENCE = [
 #             effects = SetTargetInfluence value = Value + (2.0-1.0)*abs(Value)
 # '''
 
-# #include "../common/misc.macros"
+# #include "../macros/misc.macros"

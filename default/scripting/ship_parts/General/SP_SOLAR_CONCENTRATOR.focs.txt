@@ -93,6 +93,6 @@ SOLAR_CONCENTRATOR_EFFECT
     ,3)) * [[SHIP_WEAPON_DAMAGE_FACTOR]]
 '''
 
-#include "/scripting/common/upkeep.macros"
-#include "/scripting/common/misc.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/upkeep.macros"
+#include "/scripting/macros/misc.macros"
+#include "/scripting/macros/priorities.macros"

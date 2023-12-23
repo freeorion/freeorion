@@ -37,4 +37,4 @@ Part
     location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/economics.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

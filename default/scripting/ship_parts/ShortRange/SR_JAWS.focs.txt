@@ -28,6 +28,6 @@ Part
 
 #include "shortrange.macros"
 
-#include "/scripting/common/misc.macros"
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/misc.macros"
+#include "/scripting/macros/upkeep.macros"
 #include "/scripting/ship_parts/targeting.macros"

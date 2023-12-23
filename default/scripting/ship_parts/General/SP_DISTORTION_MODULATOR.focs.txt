@@ -17,4 +17,4 @@ Part
             effects = SetStealth value = Value - 20
     icon = "icons/ship_parts/distortion_modulator.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

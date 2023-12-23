@@ -17,9 +17,9 @@ from focs._effects import (
     Turn,
 )
 from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
-from species.common.detection import NATIVE_PLANETARY_DETECTION
-from species.common.planet_defense import AVERAGE_PLANETARY_DEFENSE, NATIVE_PLANETARY_DEFENSE
-from species.common.planet_shields import AVERAGE_PLANETARY_SHIELDS, _native_planetary_shields
+from species.species_macros.detection import NATIVE_PLANETARY_DETECTION
+from species.species_macros.planet_defense import AVERAGE_PLANETARY_DEFENSE, NATIVE_PLANETARY_DEFENSE
+from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS, _native_planetary_shields
 
 _FORTIFICATION_PROBABILITY = 0.1 * MaxOf(float, 0.2 * Source.TargetPopulation, Source.Research + Source.Industry)
 

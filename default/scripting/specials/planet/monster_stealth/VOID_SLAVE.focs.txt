@@ -16,4 +16,4 @@ Special
     ]
     graphic = "icons/specials_huge/void.png"
 
-#include "/scripting/common/stealth.macros"
+#include "/scripting/macros/stealth.macros"

@@ -21,7 +21,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-from species.common.multiplier import BAD_MULTIPLIER
+from species.species_macros.multiplier import BAD_MULTIPLIER
 
 # NO_RESEARCH
 # '''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH_DESC)]]'''

@@ -1,24 +1,24 @@
 from focs._species import *
-from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import ASTEROIDAL_NARROW_EP, NARROW_EP
-from species.common.focus import (
+from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
+from species.species_macros.env import ASTEROIDAL_NARROW_EP, NARROW_EP
+from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
     HAS_INDUSTRY_FOCUS,
     HAS_INFLUENCE_FOCUS,
     HAS_RESEARCH_FOCUS,
 )
-from species.common.general import FAST_COLONIZATION
-from species.common.happiness import BAD_HAPPINESS
-from species.common.industry import VERY_BAD_INDUSTRY
-from species.common.influence import AVERAGE_INFLUENCE
-from species.common.native_fortification import DEFAULT_NATIVE_DEFENSE
-from species.common.population import VERY_BAD_POPULATION
-from species.common.research import AVERAGE_RESEARCH
-from species.common.shields import STANDARD_SHIP_SHIELDS
-from species.common.stockpile import AVERAGE_STOCKPILE
-from species.common.supply import BAD_SUPPLY
-from species.common.troops import BAD_DEFENSE_TROOPS, NO_OFFENSE_TROOPS
+from species.species_macros.general import FAST_COLONIZATION
+from species.species_macros.happiness import BAD_HAPPINESS
+from species.species_macros.industry import VERY_BAD_INDUSTRY
+from species.species_macros.influence import AVERAGE_INFLUENCE
+from species.species_macros.native_fortification import DEFAULT_NATIVE_DEFENSE
+from species.species_macros.population import VERY_BAD_POPULATION
+from species.species_macros.research import AVERAGE_RESEARCH
+from species.species_macros.shields import STANDARD_SHIP_SHIELDS
+from species.species_macros.stockpile import AVERAGE_STOCKPILE
+from species.species_macros.supply import BAD_SUPPLY
+from species.species_macros.troops import BAD_DEFENSE_TROOPS, NO_OFFENSE_TROOPS
 
 Species(
     name="SP_CELESTEPHYTE",

@@ -30,4 +30,4 @@ Special
             ]
     ]
     graphic = "icons/specials_huge/asteroid_coating.png"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

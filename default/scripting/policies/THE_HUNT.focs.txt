@@ -35,5 +35,5 @@ Policy
     ]
     graphic = "icons/policies/social_hunt.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/policies/policies.macros"

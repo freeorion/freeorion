@@ -9,25 +9,25 @@ from focs._effects import (
     Source,
 )
 from focs._species import *
-from species.common.detection import GREAT_DETECTION
-from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import DESERT_STANDARD_EP
-from species.common.focus import (
+from species.species_macros.detection import GREAT_DETECTION
+from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
+from species.species_macros.env import DESERT_STANDARD_EP
+from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_INFLUENCE_FOCUS,
     HAS_RESEARCH_FOCUS,
 )
-from species.common.happiness import AVERAGE_HAPPINESS
-from species.common.industry import NO_INDUSTRY
-from species.common.influence import BAD_INFLUENCE
-from species.common.native_fortification import DEFAULT_NATIVE_DEFENSE
-from species.common.population import BAD_POPULATION
-from species.common.research import AVERAGE_RESEARCH
-from species.common.shields import STANDARD_SHIP_SHIELDS
-from species.common.stealth import GOOD_STEALTH
-from species.common.stockpile import AVERAGE_STOCKPILE
-from species.common.supply import BAD_SUPPLY
-from species.common.troops import BAD_DEFENSE_TROOPS
+from species.species_macros.happiness import AVERAGE_HAPPINESS
+from species.species_macros.industry import NO_INDUSTRY
+from species.species_macros.influence import BAD_INFLUENCE
+from species.species_macros.native_fortification import DEFAULT_NATIVE_DEFENSE
+from species.species_macros.population import BAD_POPULATION
+from species.species_macros.research import AVERAGE_RESEARCH
+from species.species_macros.shields import STANDARD_SHIP_SHIELDS
+from species.species_macros.stealth import GOOD_STEALTH
+from species.species_macros.stockpile import AVERAGE_STOCKPILE
+from species.species_macros.supply import BAD_SUPPLY
+from species.species_macros.troops import BAD_DEFENSE_TROOPS
 
 Species(
     name="SP_NYMNMN",

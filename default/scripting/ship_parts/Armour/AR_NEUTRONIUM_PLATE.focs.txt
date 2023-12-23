@@ -22,4 +22,4 @@ Part
     ]
     icon = "icons/ship_parts/neutronium_plating.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

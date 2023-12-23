@@ -10,4 +10,4 @@ Part
     location = Not All  // to keep this from making all other armor look redundant in DesignWnd; ok since not player-buildable currently
     icon = ""
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

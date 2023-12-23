@@ -20,4 +20,4 @@ Special
     ]
     graphic = "icons/specials_huge/dim_rift.png"
 
-#include "/scripting/common/stealth.macros"
+#include "/scripting/macros/stealth.macros"

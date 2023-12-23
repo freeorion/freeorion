@@ -35,4 +35,4 @@ Special
         ]
     graphic = "icons/specials_huge/abandoned-colony.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

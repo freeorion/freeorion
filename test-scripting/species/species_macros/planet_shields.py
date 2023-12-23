@@ -58,5 +58,5 @@ PROTECTION_FOCUS_SHIELDS = EffectsGroup(
 
 AVERAGE_PLANETARY_SHIELDS = [PROTECTION_FOCUS_SHIELDS, STANDARD_SHIELD_GROWTH]
 
-# #include "../common/priorities.macros"
-# #include "../common/misc.macros"
+# #include "../macros/priorities.macros"
+# #include "../macros/misc.macros"

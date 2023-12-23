@@ -104,4 +104,4 @@ STANDARD_SHIP_SHIELDS = [
 #                 + (7.5 * [[SHIP_SHIELD_FACTOR]] * (Statistic If condition = And [ Source DesignHasPart name = "SH_BLACK"]))
 # '''
 
-# #include "../common/misc.macros"
+# #include "../macros/misc.macros"

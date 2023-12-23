@@ -13,4 +13,4 @@ Part
     ]
     icon = "icons/ship_parts/habitation_domes.png"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

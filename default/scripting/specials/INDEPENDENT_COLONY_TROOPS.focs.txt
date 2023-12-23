@@ -25,4 +25,4 @@ Special
     ]
     graphic = "icons/meter/troops.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

@@ -71,4 +71,4 @@ Hull
 
 #include "../ship_hulls.macros"
 
-#include "/scripting/common/upkeep.macros"
+#include "/scripting/macros/upkeep.macros"

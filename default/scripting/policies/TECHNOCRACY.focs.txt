@@ -34,5 +34,5 @@ Policy
     ]
     graphic = "icons/policies/economic_technocracy.png"
 
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/policies/policies.macros"

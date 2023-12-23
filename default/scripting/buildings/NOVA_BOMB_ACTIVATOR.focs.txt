@@ -10,4 +10,4 @@ BuildingType
             effects = Destroy
     icon = "icons/building/nova-bomb-activator.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"

@@ -21,6 +21,6 @@ BuildingType
     ]
     icon = "icons/ship_hulls/colony_base_hull_small.png"
 
-#include "/scripting/common/misc.macros"
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/misc.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/priorities.macros"

@@ -161,5 +161,5 @@ BuildingType
 AGGREGATED_STEPS_FROM_TO
 '''((1 + PlanetTypeDifference from = @1@ to = @2@) * (PlanetTypeDifference from = @1@ to = @2@) / 2 )'''
 
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/enqueue.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/enqueue.macros"

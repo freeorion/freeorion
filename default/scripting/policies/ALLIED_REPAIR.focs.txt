@@ -10,4 +10,4 @@ Policy
     graphic = "icons/policies/military_allied_repair.png"
 
 #include "/scripting/policies/policies.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

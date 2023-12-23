@@ -1,24 +1,24 @@
 from focs._species import *
-from species.common.empire_opinions import COMMON_OPINION_EFFECTS
-from species.common.env import DESERT_STANDARD_EP
-from species.common.focus import (
+from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
+from species.species_macros.env import DESERT_STANDARD_EP
+from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
     HAS_INDUSTRY_FOCUS,
     HAS_INFLUENCE_FOCUS,
     HAS_RESEARCH_FOCUS,
 )
-from species.common.happiness import AVERAGE_HAPPINESS
-from species.common.industry import AVERAGE_INDUSTRY
-from species.common.influence import GOOD_INFLUENCE
-from species.common.native_fortification import ADVANCED_NATIVE_DEFENSE
-from species.common.population import AVERAGE_POPULATION
-from species.common.research import BAD_RESEARCH
-from species.common.shields import STANDARD_SHIP_SHIELDS
-from species.common.stockpile import AVERAGE_STOCKPILE
-from species.common.supply import BAD_SUPPLY
-from species.common.troops import GREAT_DEFENSE_TROOPS
-from species.common.weapons import GREAT_WEAPONS
+from species.species_macros.happiness import AVERAGE_HAPPINESS
+from species.species_macros.industry import AVERAGE_INDUSTRY
+from species.species_macros.influence import GOOD_INFLUENCE
+from species.species_macros.native_fortification import ADVANCED_NATIVE_DEFENSE
+from species.species_macros.population import AVERAGE_POPULATION
+from species.species_macros.research import BAD_RESEARCH
+from species.species_macros.shields import STANDARD_SHIP_SHIELDS
+from species.species_macros.stockpile import AVERAGE_STOCKPILE
+from species.species_macros.supply import BAD_SUPPLY
+from species.species_macros.troops import GREAT_DEFENSE_TROOPS
+from species.species_macros.weapons import GREAT_WEAPONS
 
 Species(
     name="SP_MUURSH",

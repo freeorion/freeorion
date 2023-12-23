@@ -53,7 +53,7 @@ except ModuleNotFoundError:
 
 STABILITY_PER_LIKED_FOCUS = 2.0
 
-# Policy Liberty doubles de focus dislike effect, policy Conformance halves it, macro is in common/opinion.macros
+# Policy Liberty doubles de focus dislike effect, policy Conformance halves it, macro is in macros/opinion.macros
 STABILITY_PER_DISLIKED_FOCUS = 2.0 * POLICY_DISLIKE_SCALING
 
 ENVIRONMENT_STABILITY_MODIFIER = [
@@ -325,4 +325,4 @@ GOOD_HAPPINESS = [
 # '''
 
 
-# #include "../common/opinion.macros"
+# #include "../macros/opinion.macros"

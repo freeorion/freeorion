@@ -32,6 +32,6 @@ Policy
     ]
     graphic = "icons/policies/economic_system_infrastructure.png"
 
-#include "/scripting/common/base_prod.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/macros/priorities.macros"
 #include "/scripting/policies/policies.macros"

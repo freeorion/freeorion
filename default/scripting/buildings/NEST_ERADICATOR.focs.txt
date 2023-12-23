@@ -45,5 +45,5 @@ EG_NEST_REMOVAL
             ]
 '''
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 

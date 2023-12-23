@@ -33,4 +33,4 @@ BuildingType
     icon = "icons/building/concentration-camp.png"
     
 #include "/scripting/buildings/buildings.macros"
-#include "/scripting/common/priorities.macros"
+#include "/scripting/macros/priorities.macros"

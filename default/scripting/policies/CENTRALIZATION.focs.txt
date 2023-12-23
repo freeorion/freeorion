@@ -81,5 +81,5 @@ Policy
     ]
     graphic = "icons/policies/economic_centralization.png"
 
-#include "/scripting/common/base_prod.macros"
+#include "/scripting/macros/base_prod.macros"
 #include "/scripting/policies/policies.macros"
