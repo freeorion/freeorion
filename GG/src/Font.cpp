@@ -637,17 +637,6 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::TextElement
 ///////////////////////////////////////
-Font::TextElement::TextElement(bool ws, bool nl) :
-    whitespace(ws),
-    newline(nl)
-{}
-
-void Font::TextElement::Bind(const std::string& whole_text)
-{ text.Bind(whole_text); }
-
-Font::TextElement::TextElementType Font::TextElement::Type() const
-{ return newline ? TextElementType::NEWLINE : (whitespace ? TextElementType::WHITESPACE : TextElementType::TEXT); }
-
 X Font::TextElement::Width() const
 {
     if (cached_width == -X1)
@@ -655,38 +644,6 @@ X Font::TextElement::Width() const
     return cached_width;
 }
 
-StrSize Font::TextElement::StringSize() const noexcept
-{ return StrSize(text.size()); }
-
-CPSize Font::TextElement::CodePointSize() const noexcept
-{ return CPSize(widths.size()); }
-
-bool Font::TextElement::operator==(const TextElement &rhs) const
-{
-    return (text == rhs.text && widths == rhs.widths
-            && whitespace == rhs.whitespace && newline == rhs.newline);
-}
-
-///////////////////////////////////////
-// class GG::Font::FormattingTag
-///////////////////////////////////////
-void Font::FormattingTag::Bind(const std::string& whole_text)
-{
-    TextElement::Bind(whole_text);
-    tag_name.Bind(whole_text);
-    for (Substring& substring : params)
-        substring.Bind(whole_text);
-}
-
-bool Font::FormattingTag::operator==(const TextElement &rhs) const
-{
-    Font::FormattingTag const* ft = dynamic_cast<Font::FormattingTag const*>(&rhs);
-    return (ft
-            && Font::TextElement::operator==(rhs)
-            && params == ft->params
-            && tag_name == ft->tag_name
-            && close_tag == ft->close_tag);
-}
 
 ///////////////////////////////////////
 // class GG::Font::TextAndElementsAssembler
@@ -1128,6 +1085,14 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat
 
     cache.clear();
     render_state.clear();
+
+    //std::cout << "glyphs: " << glyph_count << ": lines " << begin_line << " to " << end_line << ": ";
+    //for (std::size_t i = begin_line; i < end_line; ++i) {
+    //    const LineData& line = line_data[i];
+    //    for (auto& c : line.char_data)
+    //        std::cout << static_cast<char>(c.code_point_index);
+    //}
+    //std::cout << std::endl;
 
     cache.coordinates.reserve(glyph_count*4);
     cache.vertices.reserve(glyph_count*4);

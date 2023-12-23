@@ -168,8 +168,7 @@ public:
         bool operator==(const Substring& rhs) const;
 
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
-            .second must be equal to \a rhs.first (*this and \a rhs must be
-            contiguous). */
+          * .second must be equal to \a rhs.first (*this and \a rhs must be contiguous). */
         Substring& operator+=(const IterPair& rhs);
 
     private:
@@ -182,8 +181,7 @@ public:
         using GG::Font. */
     struct GG_API TextElement
     {
-        /** The types of token-like entities that can be represented by a
-            TextElement. */
+        /** The types of token-like entities that can be represented by a TextElement. */
         enum class TextElementType : uint8_t {
             OPEN_TAG,   ///< An opening text formatting tag (e.g. "<rgba 0 0 0 255>").
             CLOSE_TAG,  ///< A closing text formatting tag (e.g. "</rgba>").
@@ -198,9 +196,10 @@ public:
 
         /** Ctor.  \a ws indicates that the element contains only whitespace;
             \a nl indicates that it is a newline element. */
-        TextElement(bool ws, bool nl);
-
-        virtual ~TextElement() = default;
+        TextElement(bool ws, bool nl) noexcept :
+            whitespace(ws),
+            newline(nl)
+        {}
 
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
@@ -223,23 +222,35 @@ public:
             entire vectors of TextElement with different std::strings
             without re-parsing the std::string.
          */
-        virtual void Bind(const std::string& whole_text);
+        virtual void Bind(const std::string& whole_text) noexcept
+        { text.Bind(whole_text); }
 
         /** Returns the TextElementType of the element. */
-        virtual TextElementType Type() const;
+        virtual TextElementType Type() const noexcept
+        {
+            return newline ? TextElementType::NEWLINE :
+                whitespace ? TextElementType::WHITESPACE :
+                             TextElementType::TEXT;
+        }
 
         /** Returns the width of the element. */
         X Width() const;
 
         /* Returns the number of characters in the original string that the
            element represents. */
-        StrSize StringSize() const noexcept;
+        StrSize StringSize() const noexcept
+        { return StrSize(text.size()); }
 
         /** Returns the number of code points in the original string that the
             element represents. */
-        CPSize CodePointSize() const noexcept;
+        CPSize CodePointSize() const noexcept
+        { return CPSize(widths.size()); }
 
-        virtual bool operator==(const TextElement &rhs) const; // ignores cached_width
+        virtual bool operator==(const TextElement &rhs) const noexcept
+        { // ignores cached_width
+            return (text == rhs.text && widths == rhs.widths
+                    && whitespace == rhs.whitespace && newline == rhs.newline);
+        }
 
         /** The text from the original string represented by the element. */
         Substring text;
@@ -307,12 +318,26 @@ public:
         /** Attach to \p whole_text by binding all Substring data members,
             both the base class and the data member tag_name to the string
             \p whole_text.*/
-        void Bind(const std::string& whole_text) override;
+        void Bind(const std::string& whole_text) noexcept override
+        {
+            TextElement::Bind(whole_text);
+            tag_name.Bind(whole_text);
+            for (Substring& substring : params)
+                substring.Bind(whole_text);
+        }
 
         TextElementType Type() const noexcept override
         { return close_tag ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG; }
 
-        bool operator==(const TextElement &rhs) const override;
+        bool operator==(const TextElement &rhs) const noexcept override
+        {
+            Font::FormattingTag const* ft = dynamic_cast<Font::FormattingTag const*>(&rhs);
+            return (ft &&
+                    Font::TextElement::operator==(rhs) &&
+                    params == ft->params &&
+                    tag_name == ft->tag_name &&
+                    close_tag == ft->close_tag);
+        }
 
         /** The parameter strings within the tag, e.g. "0", "0", "0", and "255"
             for the tag "<rgba 0 0 0 255>". */
