@@ -960,7 +960,7 @@ protected:
         GetChildClippingMode() is ClipToClientAndWindowSeparately. */
     void EndNonclientClipping();
 
-    virtual void SetParent(std::shared_ptr<Wnd> wnd) { m_parent = std::move(wnd); }
+    virtual void SetParent(std::shared_ptr<Wnd> wnd) noexcept { m_parent = std::move(wnd); }
 
     /** Modal Wnd's set this to true to stop modal loop. */
     std::atomic<bool> m_modal_done{false};

@@ -888,7 +888,7 @@ void CUIWnd::InvalidateUnusedOptions() {
     db.Commit();
 }
 
-void CUIWnd::SetParent(std::shared_ptr<GG::Wnd> wnd) {
+void CUIWnd::SetParent(std::shared_ptr<GG::Wnd> wnd) noexcept {
     GG::Wnd::SetParent(std::move(wnd));
     m_vertex_buffer.clear();    // force buffer re-init on next Render call, so background is properly positioned for new parent-relative position
 }

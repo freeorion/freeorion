@@ -161,7 +161,7 @@ protected:
     void         Init();                         //!< performs initialization common to all CUIWnd constructors
     void         ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
-    void         SetParent(std::shared_ptr<GG::Wnd> wnd) override;
+    void         SetParent(std::shared_ptr<GG::Wnd> wnd) noexcept override;
     void         SetDefaultedOptions();          //!< flags options currently at their default values for later use in SaveDefaultedOptions
     void         SaveDefaultedOptions();         //!< sets the default value any options previously determined from calls to SetDefaultedOptions to their current value
 
