@@ -10,6 +10,7 @@ from focs._effects import (
     Population,
     SetVisibility,
     Source,
+    ValueVisibility,
     VisibleToEmpire,
     WithinStarlaneJumps,
 )
@@ -25,7 +26,7 @@ def PRECOGNITIVE_DETECTION(jumps: int):
             & ~OwnedBy(empire=Source.Owner)
             & WithinStarlaneJumps(jumps=jumps, condition=IsSource),
             activation=OwnedBy(affiliation=AnyEmpire),
-            effects=SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", Basic, ValueVisibility)),  # type: ignore # noqa: F821
+            effects=SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", Basic, ValueVisibility)),
         )
     ]
 
@@ -41,7 +42,7 @@ def TELEPATHIC_DETECTION(jumps: int) -> list:
             & WithinStarlaneJumps(jumps=jumps, condition=IsSource)
             & ~IsSource,
             activation=OwnedBy(affiliation=AnyEmpire),
-            effects=SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", Basic, ValueVisibility)),  # type: ignore # noqa: F821
+            effects=SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", Basic, ValueVisibility)),
         )
     ]
 
@@ -58,6 +59,6 @@ def HAEMAESTHETIC_DETECTION(jumps: int) -> list:
             & WithinStarlaneJumps(jumps=jumps, condition=IsSource)
             & ~IsSource,
             activation=OwnedBy(affiliation=AnyEmpire),
-            effects=SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", Basic, ValueVisibility)),  # type: ignore # noqa: F821
+            effects=SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", Basic, ValueVisibility)),
         )
     ]

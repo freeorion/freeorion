@@ -17,6 +17,7 @@ from focs._effects import (
     Target,
     ThisBuilding,
     Turn,
+    ValueVisibility,
 )
 from macros.misc import UNOWNED_EMPIRE_ID
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
@@ -79,7 +80,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
                     parameters={"planet": Target.ID},
                     empire=Source.Owner,
                 ),
-                SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", ValueVisibility, Partial)),  # type: ignore # noqa: F821
+                SetVisibility(empire=Source.Owner, visibility=MaxOf("Visibility", ValueVisibility, Partial)),
             ],
         ),
         EffectsGroup(

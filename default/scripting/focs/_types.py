@@ -74,18 +74,6 @@ class _Condition(bool):  # type: ignore
     def __invert__(self) -> Self:
         ...
 
-    def __mul__(self, other: _T) -> _T:
-        """
-        Support for boolean multiplication.
-        """
-        return other
-
-    def __rmul__(self, other: _T) -> _T:
-        """
-        Support for boolean multiplication.
-        """
-        return other
-
 
 class _ConditionalComposition:
     """
