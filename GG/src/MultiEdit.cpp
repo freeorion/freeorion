@@ -471,12 +471,8 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 
 Pt MultiEdit::ScrollPosition() const
 {
-    Pt retval(X0, Y0);
-    if (m_hscroll)
-        retval.x = X(m_hscroll->PosnRange().first);
-    if (m_vscroll)
-        retval.y = Y(m_vscroll->PosnRange().first);
-    return retval;
+    return {m_hscroll ? X{m_hscroll->PosnRange().first} : X0,
+            m_vscroll ? Y{m_vscroll->PosnRange().first} : Y0};
 }
 
 CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
@@ -542,17 +538,16 @@ X MultiEdit::CharXOffset(std::size_t row, CPSize idx) const
 
 std::size_t MultiEdit::RowAt(Y y) const
 {
-    std::size_t retval = 0;
     const auto format = GetTextFormat();
     y += m_first_row_shown_y_from_top_of_text;
-    if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < Y0) {
-        retval = y / GetFont()->Lineskip();
 
-    } else { // FORMAT_BOTTOM
-        retval = NumLines() -
+    if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < Y0) {
+        return y / GetFont()->Lineskip();
+
+    } else {
+        return NumLines() -
             (ClientSize().y + (m_vscroll && m_hscroll ? BottomMargin() : Y0) - y - 1) / GetFont()->Lineskip();
     }
-    return retval;
 }
 
 CPSize MultiEdit::CharAt(std::size_t row, X x) const
