@@ -116,7 +116,6 @@ void MultiEdit::Render()
     Font::RenderState state(text_color_to_use);
     const std::size_t first_visible_row = FirstVisibleRow();
     const std::size_t last_visible_row = LastVisibleRow();
-    std::cout << "first vis: " << first_visible_row << " last vis: " << last_visible_row << std::endl;
 
     // safety checks
     if (first_visible_row > last_visible_row || (last_visible_row > lines.size())) {
@@ -539,7 +538,16 @@ X MultiEdit::RowStartX(std::size_t row) const
 }
 
 X MultiEdit::CharXOffset(std::size_t row, CPSize idx) const
-{ return (CP0 < idx && !GetLineData().empty() ? GetLineData()[row].char_data[Value(idx) - 1].extent : X0); }
+{
+    if (idx <= CP0)
+        return X0; // first char starts at position 0 on line (assuming ALIGN_LEFT ?)
+    const auto& ld{GetLineData()};
+    if (ld.empty() || row >= ld.size())
+        return X0;
+    const auto& cd{ld[row].char_data};
+    const std::size_t idxm1 = Value(idx) - std::size_t(1u); // previous char
+    return cd[idxm1].extent; // right side of previous char is left side of current char
+}
 
 std::size_t MultiEdit::RowAt(Y y) const
 {
