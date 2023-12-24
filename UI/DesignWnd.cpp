@@ -4538,19 +4538,18 @@ void DesignWnd::MainPanel::DoLayout() {
     ul.x = GG::X0;
     ul.y += m_design_name->Height();
 
-    auto bg_ul = ul;
+    auto bg_rect = GG::Rect(ul, ClientLowerRight());
     if (m_background_image) {
-        m_background_image->SizeMove(bg_ul, cl_sz);
-        bg_ul = m_background_image->RenderedArea().UpperLeft();
+        m_background_image->SizeMove(bg_rect.UpperLeft(), ClientSize());
+        bg_rect = m_background_image->RenderedArea();
     }
 
     // place slot controls over image of hull
-    const auto slot_ref_ul = bg_ul - ClientUpperLeft();
-    const auto bg_sz = cl_sz - bg_ul;
+    const auto slot_ref_ul = bg_rect.UpperLeft() - ClientUpperLeft();
 
     for (auto& slot : m_slots) {
-        const auto x = slot_ref_ul.x - GG::ToX(slot->Width()/2.0 + slot->XPositionFraction() * bg_sz.x);
-        const auto y = slot_ref_ul.y - GG::ToY(slot->Height()/2.0 + slot->YPositionFraction() * bg_sz.y);
+        GG::X x = slot_ref_ul.x - slot->Width()/2 + GG::ToX(slot->XPositionFraction() * bg_rect.Width());
+        GG::Y y = slot_ref_ul.y - slot->Height()/2 + GG::ToY(slot->YPositionFraction() * bg_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
     }
 }
