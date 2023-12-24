@@ -93,17 +93,16 @@ public:
            std::string_view config_name = "", bool visible = true);
 
     void CompleteConstruction() override;
-    /** Virtual destructor. */
     virtual ~CUIWnd();
 
-    bool    Minimized() const noexcept { return m_minimized; } //!< true if window is minimized
+    bool    Minimized() const noexcept { return m_minimized; }      //!< true if window is minimized
     GG::Pt  ClientUpperLeft() const noexcept override;
     GG::Pt  ClientLowerRight() const noexcept override;
     bool    InWindow(GG::Pt pt) const override;
-    GG::X   LeftBorder() const noexcept { return BORDER_LEFT; }                        //!< the distance on the left side between the outer edge of the window and the inner border
-    GG::Y   TopBorder() const;  //!< distance at the top between the outer edge of the window and the inner border
-    GG::X   RightBorder() const noexcept { return BORDER_RIGHT; }                      //!< the distance on the right side between the outer edge of the window and the inner border
-    GG::Y   BottomBorder() const noexcept { return BORDER_BOTTOM; }                    //!< the distance at the bottom between the outer edge of the window and the inner border
+    GG::X   LeftBorder() const noexcept { return BORDER_LEFT; }     //!< distance on the left side between the outer edge of the window and the inner border
+    GG::Y   TopBorder() const;                                      //!< distance at the top between the outer edge of the window and the inner border
+    GG::X   RightBorder() const noexcept { return BORDER_RIGHT; }   //!< distance on the right side between the outer edge of the window and the inner border
+    GG::Y   BottomBorder() const noexcept { return BORDER_BOTTOM; } //!< distance at the bottom between the outer edge of the window and the inner border
 
     GG::Pt  MinimizedSize() const { return GG::Pt(MINIMIZED_WND_WIDTH, TopBorder()); }
     int     InnerBorderAngleOffset() const noexcept { return INNER_BORDER_ANGLE_OFFSET; }
