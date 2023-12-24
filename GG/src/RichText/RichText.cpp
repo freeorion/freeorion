@@ -137,13 +137,12 @@ auto ExtractParameters(std::string_view params_string)
     */
 class GG::RichTextPrivate {
 public:
-    RichTextPrivate(RichText* q, const std::string& content,
-                    const std::shared_ptr<Font>& font,
-                    Clr color, Flags<TextFormat> format = FORMAT_NONE);
-
-    void CompleteConstruction();
-
+    RichTextPrivate(RichText& q, const std::string& content,
+                    std::shared_ptr<Font> font, Clr color,
+                    Flags<TextFormat> format = FORMAT_NONE);
     virtual ~RichTextPrivate() = default;
+
+    const auto BlockCount() noexcept { return m_blocks.size(); }
 
     // Set the text to show. Parses it into tags and uses the factory map to turn them into blocks.
     void SetText(const std::string& content);
@@ -168,25 +167,27 @@ private:
     // Create blocks from tags.
     void CreateBlocks(std::vector<RichTextTag> tags);
 
-    void AttachBlocks();
+    void AttachBlocksToOwner();
 
     // Update the sizes of all blocks.
     void DoLayout();
 
-    RichText* const             m_owner;                    //!< The public control.
+    RichText&                   m_owner;                    //!< The public control.
     std::shared_ptr<Font>       m_font;                     //!< The font to use for text.
     RichText::BlockFactoryMap   m_block_factory_map;        //!< A map that tells us how to generate block controls from tags.
     std::vector<std::shared_ptr<BlockControl>>  m_blocks;   //!< The blocks generated from our content.
     int                         m_padding = 0;
     Flags<TextFormat>           m_format;                   //!< Text format.
     Clr                         m_color;                    //! < The color to use for text.
+
+    friend class RichText;
 };
 
-RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
-                                 const std::shared_ptr<Font>& font,
+RichTextPrivate::RichTextPrivate(RichText& q, const std::string& content,
+                                 std::shared_ptr<Font> font,
                                  Clr color, Flags<TextFormat> format) :
     m_owner(q),
-    m_font(font),
+    m_font(std::move(font)),
     m_color(color),
     m_format(format),
     m_block_factory_map(RichText::DefaultBlockFactoryMap())
@@ -194,17 +195,18 @@ RichTextPrivate::RichTextPrivate(RichText* q, const std::string& content,
     // Parse the content into a vector of tags and create
     // blocks from the tags and populate the control with them.
     CreateBlocks(ParseTags(content));
+    // can CreateBlocks here but not AttachBlocksToOwner, since CreateBlocks doesn't
+    // depend on m_owner, but AttachBlocksToOwner will modify the passed-in reference
+    // but this constructor is called during RichText's constructor, and so the
+    // passed in reference isn't fully constructed yet
 }
-
-void RichTextPrivate::CompleteConstruction()
-{ AttachBlocks(); }
 
 void RichTextPrivate::SetText(const std::string& content)
 {
     // Parse the content into a vector of tags and create
     // blocks from the tags and populate the control with them.
     CreateBlocks(ParseTags(content));
-    AttachBlocks();
+    AttachBlocksToOwner();
 }
 
 void RichTextPrivate::SetPadding(int pixels)
@@ -217,11 +219,12 @@ void RichTextPrivate::SetPadding(int pixels)
 
 void RichTextPrivate::SizeMove(Pt ul, Pt lr)
 {
-    const Pt original_size = m_owner->Size();
-    m_owner->Control::SizeMove(ul, lr);
+    const Pt original_size = m_owner.Size();
+
+    m_owner.Control::SizeMove(ul, lr);
 
     // Redo layout if necessary.
-    if (m_owner->Size() != original_size)
+    if (m_owner.Size() != original_size)
         DoLayout();
 }
 
@@ -272,12 +275,12 @@ void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
     }
 }
 
-void RichTextPrivate::AttachBlocks()
+void RichTextPrivate::AttachBlocksToOwner()
 {
-    m_owner->DetachChildren();
+    m_owner.DetachChildren();
 
     for (const auto& block : m_blocks)
-        m_owner->AttachChild(block);
+        m_owner.AttachChild(block);
 
     DoLayout();
 }
@@ -285,7 +288,7 @@ void RichTextPrivate::AttachBlocks()
 // Update the sizes of all blocks.
 void RichTextPrivate::DoLayout()
 {
-    X width = m_owner->ClientWidth() - X(m_padding)*2;
+    X width = m_owner.ClientWidth() - X(m_padding)*2;
     Pt pos = Pt(X(m_padding), Y(m_padding));
 
     // The contract between RichText and block controls is this:
@@ -296,8 +299,8 @@ void RichTextPrivate::DoLayout()
         pos.y += size.y;
     }
 
-    Pt size(m_owner->Width(), pos.y + Y(m_padding));
-    m_owner->Resize(size);
+    Pt size(m_owner.Width(), pos.y + Y(m_padding));
+    m_owner.Resize(size);
 }
 
 /////////////////////////////////
@@ -307,17 +310,26 @@ RichText::RichText(X x, Y y, X w, Y h, const std::string& str,
                     const std::shared_ptr<Font>& font, Clr color,
                     Flags<TextFormat> format, Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
-    m_self(std::make_unique<RichTextPrivate>(this, str, font, color, format))
-{}
+    m_self(std::make_unique<RichTextPrivate>(*this, str, font, color, format))
+{
+    SetName("RichText (" + std::to_string(str.size()) + "): \"" + str.substr(0, 16)
+            + "\" blocks: " + std::to_string(m_self->BlockCount()));
+}
 
 void RichText::CompleteConstruction() {
     Control::CompleteConstruction();
-    m_self->CompleteConstruction();
+    m_self->AttachBlocksToOwner();
+    SetName("RichText blocks: " + std::to_string(m_self->BlockCount()));
 }
 
 RichText::~RichText() = default;
 
-void RichText::SetText(const std::string& str) { m_self->SetText(str); }
+void RichText::SetText(const std::string& str)
+{
+    std::string name_start = "RichText (" + std::to_string(str.size()) + "): \"" + str.substr(0, 16) + "\" blocks: ";
+    m_self->SetText(str);
+    SetName(name_start + std::to_string(m_self->BlockCount()));
+}
 
 void RichText::SetPadding(int pixels) { m_self->SetPadding(pixels); }
 
