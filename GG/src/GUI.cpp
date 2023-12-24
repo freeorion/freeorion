@@ -1615,45 +1615,98 @@ void GUI::PreRenderWindow(Wnd* wnd, bool even_if_not_visible)
 void GUI::RenderWindow(const std::shared_ptr<Wnd>& wnd)
 { RenderWindow(wnd.get()); }
 
+namespace {
+    bool WndClippedOut(const Rect clipped_rect, const Wnd* clipped_wnd, const Wnd* clipping_wnd)
+    {
+        const auto client_clipped_out = [clipped_rect](const Wnd* clipping_wnd) noexcept
+        { return !clipping_wnd->InClient(clipped_rect); };
+        const auto wnd_clipped_out = [clipped_rect](const Wnd* clipping_wnd)
+        { return !clipping_wnd->InWindow(clipped_rect); };
+
+        switch (clipping_wnd->GetChildClippingMode()) {
+        case Wnd::ChildClippingMode::DontClip:
+            return false;
+            break;
+        case Wnd::ChildClippingMode::ClipToClient:
+            return client_clipped_out(clipping_wnd);
+            break;
+        case Wnd::ChildClippingMode::ClipToWindow:
+            return wnd_clipped_out(clipping_wnd);
+            break;
+        case Wnd::ChildClippingMode::ClipToClientAndWindowSeparately:
+            return clipped_wnd->NonClientChild() ?
+                wnd_clipped_out(clipping_wnd) : client_clipped_out(clipping_wnd);
+            break;
+        }
+        return false;
+    };
+}
+
 void GUI::RenderWindow(Wnd* wnd)
 {
     if (!wnd || !wnd->Visible())
         return;
-
     wnd->Render();
 
-    Wnd::ChildClippingMode clip_mode = wnd->GetChildClippingMode();
+    const auto clip_mode = wnd->GetChildClippingMode();
 
-    if (clip_mode != Wnd::ChildClippingMode::ClipToClientAndWindowSeparately) {
-        bool clip = clip_mode != Wnd::ChildClippingMode::DontClip;
-        if (clip)
-            wnd->BeginClipping();
+    if (clip_mode == Wnd::ChildClippingMode::DontClip) {
+        for (auto& child : wnd->Children())
+            if (child && child->Visible())
+                RenderWindow(child);
+
+    } else if (clip_mode == Wnd::ChildClippingMode::ClipToAncestorClient) {
         for (auto& child_wnd : wnd->Children()) {
-            if (child_wnd && child_wnd->Visible())
-                RenderWindow(child_wnd.get());
+            Wnd* const child  = child_wnd.get();
+            if (child && child->Visible()) {
+                const Rect clipped_rect{child->UpperLeft(), child->LowerRight()};
+                bool clipped_out = false;
+                const Wnd* clipping_wnd = wnd;
+                while (clipping_wnd && !clipped_out) {
+                    if (WndClippedOut(clipped_rect, child, clipping_wnd))
+                        clipped_out = true;
+                    else
+                        clipping_wnd = clipping_wnd->Parent().get();
+                }
+                if (!clipped_out)
+                    RenderWindow(child);
+            }
         }
-        if (clip)
-            wnd->EndClipping();
-    } else {
-        auto children_copy{wnd->Children()};
+
+    } else if (clip_mode != Wnd::ChildClippingMode::ClipToClientAndWindowSeparately) {
+        wnd->BeginClipping();
+        for (auto& child : wnd->Children())
+            if (child && child->Visible())
+                RenderWindow(child);
+        wnd->EndClipping();
+
+    } else { // clip_mode == Wnd::ChildClippingMode::ClipToClientAndWindowSeparately
+        const auto& wnd_children = wnd->Children();
+        std::vector<Wnd*> children;
+        children.reserve(wnd->Children().size());
+        std::transform(wnd_children.begin(), wnd_children.end(), std::back_inserter(children),
+                       [](const auto& child) { return child.get(); });
+
         const auto client_child_begin =
-            std::partition(children_copy.begin(), children_copy.end(),
+            std::partition(children.begin(), children.end(),
                            [](const auto& child) { return child->NonClientChild(); });
 
-        if (children_copy.begin() != client_child_begin) {
+        if (children.begin() != client_child_begin) {
             wnd->BeginNonclientClipping();
-            for (auto it = children_copy.begin(); it != client_child_begin; ++it) {
-                if ((*it) && (*it)->Visible())
-                    RenderWindow(it->get());
+            for (auto it = children.begin(); it != client_child_begin; ++it) {
+                Wnd* const child = *it;
+                if (child && child->Visible())
+                    RenderWindow(child);
             }
             wnd->EndNonclientClipping();
         }
 
-        if (client_child_begin != children_copy.end()) {
+        if (client_child_begin != children.end()) {
             wnd->BeginClipping();
-            for (auto it = client_child_begin; it != children_copy.end(); ++it) {
-                if ((*it) && (*it)->Visible())
-                    RenderWindow(it->get());
+            for (auto it = client_child_begin; it != children.end(); ++it) {
+                Wnd* const child = *it;
+                if (child && child->Visible())
+                    RenderWindow(child);
             }
             wnd->EndClipping();
         }

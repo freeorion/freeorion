@@ -292,7 +292,9 @@ public:
             window's area is not visible.  This mode is useful for Wnds that
             have client contents that should be clipped, but that also have
             nonclient children (e.g. minimize/maximize/close buttons). */
-        ClipToClientAndWindowSeparately
+        ClipToClientAndWindowSeparately,
+
+        ClipToAncestorClient
     };
 
     virtual ~Wnd();
