@@ -18,16 +18,16 @@ public:
     BuildDesignatorWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    bool InWindow(GG::Pt pt) const override;
-    bool InClient(GG::Pt pt) const override;
+    bool InWindow(GG::Pt pt) const noexcept override;
+    bool InClient(GG::Pt pt) const noexcept override;
 
     /** returns set of BulldType shown in this selector */
-    const std::set<BuildType>& GetBuildTypesShown() const;
+    const std::set<BuildType>& GetBuildTypesShown() const noexcept;
 
     /** .first -> available items; .second -> unavailable items */
-    std::pair<bool, bool> GetAvailabilitiesShown() const;
+    std::pair<bool, bool> GetAvailabilitiesShown() const noexcept;
 
-    int SelectedPlanetID() const;
+    int SelectedPlanetID() const noexcept;
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 

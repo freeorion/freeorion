@@ -84,15 +84,13 @@ public:
     CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
 
-    bool InWindow(GG::Pt pt) const override;
+    bool InWindow(GG::Pt pt) const noexcept override;
 
     void MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
 
 protected:
     void RenderPressed() override;
-
     void RenderRollover() override;
-
     void RenderUnpressed() override;
 
 private:

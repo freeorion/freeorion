@@ -18,11 +18,11 @@ public:
     ProductionWnd(GG::X w, GG::Y h);
     void CompleteConstruction() override;
 
-    int SelectedPlanetID() const;
-    int ShownEmpireID() const { return m_empire_shown_id; }
+    int SelectedPlanetID() const noexcept;
+    int ShownEmpireID() const noexcept { return m_empire_shown_id; }
 
-    bool InWindow(GG::Pt pt) const override;
-    bool InClient(GG::Pt pt) const override;
+    bool InWindow(GG::Pt pt) const noexcept override;
+    bool InClient(GG::Pt pt) const noexcept override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     void Render() override;

@@ -104,11 +104,8 @@ CUIButton::CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed,
     LeftClickedSignal.connect(-1, &PlayButtonClickSound);
 }
 
-bool CUIButton::InWindow(GG::Pt pt) const {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    return InAngledCornerRect(pt, ul, lr, CUIBUTTON_ANGLE_OFFSET);
-}
+bool CUIButton::InWindow(GG::Pt pt) const
+{ return InAngledCornerRect(pt, UpperLeft(), LowerRight(), CUIBUTTON_ANGLE_OFFSET); }
 
 void CUIButton::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     Button::MouseEnter(pt, mod_keys);
@@ -215,7 +212,7 @@ CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_backgroun
     m_fill_background_with_wnd_color(fill_background)
 { LeftClickedSignal.connect(-1, &PlayButtonClickSound); }
 
-bool CUIArrowButton::InWindow(GG::Pt pt) const {
+bool CUIArrowButton::InWindow(GG::Pt pt) const noexcept {
     if (m_fill_background_with_wnd_color) {
         return Button::InWindow(pt);
     } else {
