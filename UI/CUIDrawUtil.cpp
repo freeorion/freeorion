@@ -287,8 +287,8 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
 bool InAngledCornerRect(const GG::Pt pt, const GG::Pt ul, const GG::Pt lr, int angle_offset,
                         bool upper_left_angled, bool lower_right_angled) noexcept
 {
-    bool retval = false;
-    if ((retval = ((ul <= pt) && (pt < lr)))) {
+    bool retval = (ul <= pt) && (pt < lr);
+    if (retval) {
         GG::Pt dist_from_ul = pt - ul;
         GG::Pt dist_from_lr = lr - pt;
         bool inside_upper_left_corner = upper_left_angled ? (angle_offset < Value(dist_from_ul.x) + Value(dist_from_ul.y)) : true;
