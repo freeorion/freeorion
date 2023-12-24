@@ -1290,14 +1290,7 @@ void StatisticIcon::CompleteConstruction() {
 
     AttachChild(m_icon);    // created in constructor to forward texture
 
-    // Format for text?
-    GG::Flags<GG::TextFormat> format;
-
-    if (Value(Width()) >= Value(Height())) {
-        format = GG::FORMAT_LEFT;
-    } else {
-        format = GG::FORMAT_BOTTOM;
-    }
+    const auto format = (Value(Width()) >= Value(Height())) ? GG::FORMAT_LEFT : GG::FORMAT_BOTTOM;
     m_text = GG::Wnd::Create<CUILabel>("    ", format, GG::NO_WND_FLAGS);
     AttachChild(m_text);
 
