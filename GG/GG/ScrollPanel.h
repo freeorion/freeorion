@@ -32,8 +32,11 @@ class Scroll;
 class GG_API ScrollPanel : public Wnd
 {
 public:
-    ScrollPanel();
-    ScrollPanel(X x, Y y, X w, Y h, std::shared_ptr<Wnd> content);
+    ScrollPanel() = default;
+    ScrollPanel(X x, Y y, X w, Y h, std::shared_ptr<Wnd> content) :
+        Wnd(x, y, w, h, INTERACTIVE),
+        m_content(std::move(content))
+    {}
     ~ScrollPanel() = default;
     void CompleteConstruction() override;
 
@@ -53,10 +56,10 @@ public:
     void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
 private:
-    std::shared_ptr<Scroll> m_vscroll; //!< The vertical scroll bar.
-    std::shared_ptr<Wnd> m_content; //!< The content window of the panel.
-    Pt m_content_pos; //!< The position of the content when scrolled properly.
-    Clr m_background_color; //!< The color to paint the background with.
+    std::shared_ptr<Scroll> m_vscroll;      //!< The vertical scroll bar.
+    std::shared_ptr<Wnd> m_content;         //!< The content window of the panel.
+    Pt m_content_pos;                       //!< The position of the content when scrolled properly.
+    Clr m_background_color = GG::CLR_ZERO;  //!< The color to paint the background with.
 
     /**
      * @brief Refreshes the size and positions of the children of this window.

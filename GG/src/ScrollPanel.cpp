@@ -43,16 +43,6 @@ void ScrollPanel::SizeMove(Pt ul, Pt lr)
 void ScrollPanel::Render()
 { FlatRectangle(UpperLeft(), LowerRight(), m_background_color, CLR_ZERO, 0); }
 
-ScrollPanel::ScrollPanel() :
-    m_background_color(CLR_ZERO)
-{}
-
-ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, std::shared_ptr<Wnd> content):
-    Wnd(x, y, w, h, INTERACTIVE),
-    m_content(content),
-    m_background_color(CLR_ZERO)
-{}
-
 void ScrollPanel::CompleteConstruction()
 {
     // Very important to clip the content of this panel,
