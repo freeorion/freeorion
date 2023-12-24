@@ -20,6 +20,8 @@ TextBlock::TextBlock(X x, Y y, X w, std::string str,
                      Flags<WndFlag> flags) :
     BlockControl(x, y, w, flags)
 {
+    SetName("TextBlock: " + str.substr(0, 16));
+
     // Construct the text control. Activate full text wrapping features,
     // and make it stick to the top.
     // With these setting the height is largely ignored, so we set it to one.

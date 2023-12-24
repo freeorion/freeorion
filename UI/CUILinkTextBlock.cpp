@@ -19,6 +19,8 @@ void CUILinkTextBlock::CompleteConstruction() {
 
     m_link_text->SetColor(GG::CLR_ZERO);
     m_link_text->SetInteriorColor(GG::CLR_ZERO);
+
+    SetName("CUILinkTextBlock");
 }
 
 GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {

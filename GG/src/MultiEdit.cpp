@@ -82,6 +82,7 @@ void MultiEdit::CompleteConstruction()
 {
     SetStyle(m_style);
     SizeMove(UpperLeft(), LowerRight()); // do this to set up the scrolls, and in case MULTI_INTEGRAL_HEIGHT is in effect
+    SetName("MultiEdit (" + std::to_string(Text().size()) + "): " + Text().substr(0, 16));
 }
 
 Pt MultiEdit::MinUsableSize() const noexcept
@@ -262,6 +263,8 @@ void MultiEdit::SetText(std::string str)
 {
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
+
+    SetName("MultiEdit (" + std::to_string(str.size()) + "): " + str.substr(0, 16));
 
     if (m_preserve_text_position_on_next_set_text) {
         TextControl::SetText(std::move(str));

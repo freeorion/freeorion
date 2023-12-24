@@ -63,14 +63,14 @@ CUILabel::CUILabel(std::string str,
                    GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
                    GG::X x, GG::Y y, GG::X w, GG::Y h) :
     TextControl(x, y, w, h, std::move(str), ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
-{}
+{ SetName("CUILabel no elements"); }
 
 CUILabel::CUILabel(std::string str, std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements,
                    GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
                    GG::X x, GG::Y y, GG::X w, GG::Y h) :
     TextControl(x, y, w, h, std::move(str), std::move(text_elements),
                 ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
-{}
+{ SetName("CUILabel from elements"); }
 
 void CUILabel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto copy_wnd_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
@@ -91,12 +91,16 @@ namespace {
 CUIButton::CUIButton(std::string str) :
     Button(std::move(str), ClientUI::GetFont(), ClientUI::CtrlColor(),
            ClientUI::TextColor(), GG::INTERACTIVE)
-{ LeftClickedSignal.connect(-1, &PlayButtonClickSound); }
+{
+    SetName("CUIButton " + this->m_label->Text());
+    LeftClickedSignal.connect(-1, &PlayButtonClickSound);
+}
 
 CUIButton::CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed,
                      GG::SubTexture rollover) :
     Button("", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE)
 {
+    SetName("CUIButton SubTextures");
     SetColor(GG::CLR_WHITE);
     SetUnpressedGraphic(std::move(unpressed));
     SetPressedGraphic  (std::move(pressed));
@@ -192,7 +196,10 @@ SettableInWindowCUIButton::SettableInWindowCUIButton(GG::SubTexture unpressed,
                                                      GG::SubTexture rollover,
                                                      SettableInWindowCUIButton::TestFuncT in_window_function) :
     CUIButton(std::move(unpressed), std::move(pressed), std::move(rollover))
-{ m_in_window_func = std::move(in_window_function); }
+{
+    SetName("SettableInWindowCUIButton SubTextures");
+    m_in_window_func = std::move(in_window_function);
+}
 
 bool SettableInWindowCUIButton::InWindow(GG::Pt pt) const {
     if (m_in_window_func)
@@ -210,7 +217,10 @@ CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_backgroun
     Button("", nullptr, ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color(fill_background)
-{ LeftClickedSignal.connect(-1, &PlayButtonClickSound); }
+{
+    SetName("CUIArrowButton");
+    LeftClickedSignal.connect(-1, &PlayButtonClickSound);
+}
 
 bool CUIArrowButton::InWindow(GG::Pt pt) const noexcept {
     if (m_fill_background_with_wnd_color) {
@@ -570,7 +580,7 @@ CUIStateButton::CUIStateButton(std::string str, GG::Flags<GG::TextFormat> format
                                std::shared_ptr<GG::StateButtonRepresenter> representer) :
     StateButton(std::move(str), ClientUI::GetFont(), format,
                 ClientUI::StateButtonColor(), std::move(representer), ClientUI::TextColor())
-{}
+{ SetName("CUIStateButton"); }
 
 
 ///////////////////////////////////////
@@ -592,7 +602,7 @@ void CUISpin<double>::SetEditTextFromValue()
 ///////////////////////////////////////
 CUITabBar::CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color) :
     GG::TabBar(font, color, text_color)
-{}
+{ SetName("CUITabBar"); }
 
 void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {
     RaiseCurrentTabButton();
@@ -617,6 +627,7 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
     m_border_color(border_color),
     m_orientation(orientation)
 {
+    SetName("CUIScroll " + this->m_label->Text());
     MoveTo(GG::Pt(GG::X(orientation == GG::Orientation::VERTICAL ? 0 : 2),
                   GG::Y(orientation == GG::Orientation::VERTICAL ? 2 : 0)));
     Resize(GG::Pt(GG::X(scroll_width), GG::Y(scroll_width)));
@@ -667,7 +678,7 @@ void CUIScroll::ScrollTab::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 CUIScroll::CUIScroll(GG::Orientation orientation) :
     Scroll(orientation, ClientUI::CtrlColor(), ClientUI::CtrlColor()),
     m_border_color(ClientUI::CtrlBorderColor())
-{}
+{ SetName("CUIScroll"); }
 
 void CUIScroll::Render() {
     GG::Clr color_to_use =          Disabled() ? DisabledColor(Color())         :   Color();
@@ -744,6 +755,7 @@ CUIDropDownList::CUIDropDownList(std::size_t num_shown_elements) :
     SetInteriorColor(ClientUI::CtrlColor());
     SetMinSize(GG::Pt(MinSize().x, CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT));
     SetChildClippingMode(ChildClippingMode::ClipToClient);
+    SetName("CUIDropDownList");
 }
 
 void CUIDropDownList::InitBuffer() {
@@ -872,6 +884,8 @@ void CUIEdit::CompleteConstruction() {
     auto fx = boost::bind(&CUIEdit::AutoComplete, this);
     hkm.Connect(fx, "ui.autocomplete", FocusWindowCondition(this));
     hkm.RebuildShortcuts();
+
+    SetName("CUIEdit");
 }
 
 void CUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -964,6 +978,7 @@ CensoredCUIEdit::CensoredCUIEdit(std::string str, char display_placeholder) :
     m_placeholder{display_placeholder},
     m_raw_text(std::move(str))
 {
+    SetName("CensoredCUIEdit");
     // TODO: allow multi-byte UTF-8 characters as placeholders, stored in a string...?
     if (m_placeholder == 0)
         m_placeholder = ' ';
@@ -1076,6 +1091,7 @@ void CUIMultiEdit::CompleteConstruction() {
 
     RecreateScrolls();
     SetHiliteColor(ClientUI::EditHiliteColor());
+    SetName("CUIMultiEdit");
 }
 
 void CUIMultiEdit::Render() {
@@ -1136,6 +1152,8 @@ void CUILinkTextMultiEdit::CompleteConstruction() {
 
     FindLinks();
     MarkLinks();
+
+    SetName("CUILinkTextMultiEdit: " + m_raw_text.substr(0, 16));
 }
 
 GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
@@ -1254,6 +1272,7 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(std::string row_text, GG::Y r
 void CUISimpleDropDownListRow::CompleteConstruction() {
     GG::ListBox::Row::CompleteConstruction();
     push_back(m_row_label);
+    SetName("CUILinkTextMultiEdit");
 }
 
 
