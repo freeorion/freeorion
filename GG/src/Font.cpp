@@ -997,11 +997,10 @@ X Font::RenderText(Pt pt, const std::string& text) const
     for (auto text_it = text.begin(); text_it != text.end();) {
         const uint32_t c = utf8::next(text_it, text.end());
         const auto it = m_glyphs.find(c);
-        if (it == m_glyphs.end()) {
+        if (it == m_glyphs.end())
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
-        } else {
+        else
             pt.x += StoreGlyph(pt, it->second, &shared_render_state, shared_cache);
-        }
     }
 
     shared_cache.vertices.createServerBuffer();

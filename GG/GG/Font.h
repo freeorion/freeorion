@@ -720,21 +720,22 @@ private:
 
     static std::shared_ptr<Font> GetDefaultFont(unsigned int pts);
 
-    std::string          m_font_filename;
-    unsigned int         m_pt_sz = 0;
-    std::vector<UnicodeCharset>
-                         m_charsets;               ///< The sets of glyphs that are covered by this font object
-    Y                    m_ascent = Y0;            ///< Maximum amount above the baseline the text can go
-    Y                    m_descent = Y0;           ///< Maximum amount below the baseline the text can go
-    Y                    m_height = Y0;            ///< Ascent - descent
-    Y                    m_lineskip = Y0;          ///< Distance that should be placed between lines
-    double               m_underline_offset = 0.0; ///< Amount below the baseline that the underline sits
-    double               m_underline_height = 0.0; ///< Height (thickness) of underline
-    double               m_italics_offset = 0.0;   ///< Amount that the top of an italicized glyph is left of the bottom
-    double               m_super_sub_offset = 0.0; ///< Ammount to shift super or subscript text
-    double               m_shadow_offset = 0.0;    ///< Amount that shadows rendered under texts are displaced from the text
-    X                    m_space_width = X0;       ///< The width of the glyph for the space character
-    GlyphMap             m_glyphs;                 ///< The locations of the images of each glyph within the textures
+    std::string                 m_font_filename;
+    unsigned int                m_pt_sz = 0;
+    std::vector<UnicodeCharset> m_charsets; ///< The sets of glyphs that are covered by this font object
+
+    Y       m_ascent = Y0;            ///< Maximum amount above the baseline the text can go
+    Y       m_descent = Y0;           ///< Maximum amount below the baseline the text can go
+    Y       m_height = Y0;            ///< Ascent - descent
+    Y       m_lineskip = Y0;          ///< Distance that should be placed between lines
+    double  m_underline_offset = 0.0; ///< Amount below the baseline that the underline sits
+    double  m_underline_height = 0.0; ///< Height (thickness) of underline
+    double  m_italics_offset = 0.0;   ///< Amount that the top of an italicized glyph is left of the bottom
+    double  m_super_sub_offset = 0.0; ///< Ammount to shift super or subscript text
+    double  m_shadow_offset = 0.0;    ///< Amount that shadows rendered under texts are displaced from the text
+    X       m_space_width = X0;       ///< The width of the glyph for the space character
+
+    GlyphMap m_glyphs;                ///< The locations of the images of each glyph within the textures
 
     /** The OpenGL texture object in which the glyphs can be found. */
     std::shared_ptr<Texture> m_texture;
