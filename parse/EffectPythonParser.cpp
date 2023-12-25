@@ -85,7 +85,7 @@ namespace {
         for (auto it = effects_begin; it != effects_end; ++ it) {
             effects.push_back(ValueRef::CloneUnique(it->effect));
         }
-        
+
         std::vector<std::unique_ptr<Effect::Effect>> else_;
         if (kw.has_key("else_")) {
             boost::python::stl_input_iterator<effect_wrapper> else_begin(kw["else_"]);
@@ -240,7 +240,7 @@ namespace {
 
         if (empire)
             return effect_wrapper(std::make_shared<Effect::SetEmpireStockpile>(std::move(empire), resource.value, std::move(value)));
-        else 
+        else
             return effect_wrapper(std::make_shared<Effect::SetEmpireStockpile>(resource.value, std::move(value)));
     }
 
@@ -254,7 +254,7 @@ namespace {
                 empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
             }
         }
-       
+
         return effect_wrapper(std::make_shared<Effect::SetOwner>(std::move(empire)));
     }
 
@@ -285,10 +285,10 @@ namespace {
 
         if (kw.has_key("target")) {
             auto target = py::extract<condition_wrapper>(kw["target"])();
-            return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed), 
+            return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed),
                 ValueRef::CloneUnique(target.condition)));
         }
-        
+
         throw std::runtime_error(std::string("Not implemented in ") + __func__);
     }
 
@@ -301,6 +301,17 @@ namespace {
             planetsize = std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(kw["planetsize"])().value);
         }
         return effect_wrapper(std::make_shared<Effect::SetPlanetSize>(std::move(planetsize)));
+    }
+
+    effect_wrapper insert_set_planet_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<PlanetType>> type;
+        auto type_arg = boost::python::extract<value_ref_wrapper< ::PlanetType>>(kw["type"]);
+        if (type_arg.check()) {
+            type = ValueRef::CloneUnique(type_arg().value_ref);
+        } else {
+            type = std::make_unique<ValueRef::Constant< ::PlanetType>>(boost::python::extract<enum_wrapper< ::PlanetType>>(kw["type"])().value);
+        }
+        return effect_wrapper(std::make_shared<Effect::SetPlanetType>(std::move(type)));
     }
 
     effect_wrapper insert_set_visibility_(const boost::python::tuple& args, const boost::python::dict& kw) {
@@ -560,6 +571,18 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetFocus>(std::move(name)));
     }
 
+    effect_wrapper set_species(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        return effect_wrapper(std::make_shared<Effect::SetSpecies>(std::move(name)));
+    }
+
     FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
@@ -592,6 +615,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["CreateShip"] = py::raw_function(create_ship);
     globals["CreateBuilding"] = py::raw_function(create_building);
     globals["SetFocus"] = py::raw_function(set_focus);
+    globals["SetSpecies"] = py::raw_function(set_species);
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
@@ -655,9 +679,10 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["MoveTo"] = py::raw_function(insert_move_to_);
     globals["MoveTowards"] = py::raw_function(insert_move_towards_);
     globals["SetPlanetSize"] = py::raw_function(insert_set_planet_size_);
+    globals["SetPlanetType"] = py::raw_function(insert_set_planet_type_);
     globals["SetVisibility"] = py::raw_function(insert_set_visibility_);
 
-    // give_empire_unlockable_item_enum_grammar 
+    // give_empire_unlockable_item_enum_grammar
     for (const auto& uit : std::initializer_list<std::pair<const char*, UnlockableItemType>>{
             {"GiveEmpireBuilding", UnlockableItemType::UIT_BUILDING},
             {"GiveEmpireShipPart", UnlockableItemType::UIT_SHIP_PART},
