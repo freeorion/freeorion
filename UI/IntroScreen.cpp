@@ -242,6 +242,14 @@ void IntroScreen::CompleteConstruction() {
                                                       GG::INTERACTIVE);
         m_logo = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "logo0104.png"),
                                                     GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+
+    } else if (today.month() == 12 && today.day() == 25) {
+        m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash2512.png"),
+                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE,
+                                                      GG::INTERACTIVE);
+        m_logo = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "logo2512.png"),
+                                                    GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+
     } else if (today.month() == 10 && today.day() == 31) {
             m_splash = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::GetTexture(ClientUI::ArtDir() / "splash3110.png"),
                                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE,
@@ -429,7 +437,7 @@ void IntroScreen::PreRender() {
     GG::Wnd::PreRender();
 
     m_splash->Resize(this->Size());
-    m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
+    m_logo->Resize(GG::Pt(this->Width(), this->Height() / 8));
     m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));
 
     auto layout = m_menu->GetLayout();
