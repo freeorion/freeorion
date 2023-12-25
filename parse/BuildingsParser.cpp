@@ -21,6 +21,10 @@
 #include <boost/python/import.hpp>
 #include <boost/python/raw_function.hpp>
 
+namespace {
+    DeclareThreadSafeLogger(parsing);
+}
+
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
@@ -234,7 +238,7 @@ namespace {
                 { return py_insert_buildings_(buildings_, args, kw); });
         }
 
-        boost::python::dict operator()() const { return globals; }        
+        boost::python::dict operator()() const { return globals; }
     };
 }
 
@@ -253,7 +257,7 @@ namespace parse {
 
         TraceLogger(parsing) << "Start parsing FOCS for BuildingTypes: " << building_types.size();
         for (auto& [building_name, bt] : building_types)
-            TraceLogger(parsing) << "BuildingType " << building_name << " : " << bt.GetCheckSum() << "\n" << sp.Dump();
+            TraceLogger(parsing) << "BuildingType " << building_name << " : " << bt->GetCheckSum() << "\n" << bt->Dump();
         TraceLogger(parsing) << "End parsing FOCS for BuildingTypes" << building_types.size();
 
         return building_types;
