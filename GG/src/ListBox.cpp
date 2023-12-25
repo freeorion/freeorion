@@ -81,11 +81,13 @@ private:
     bool m_invert;
 };
 
-ListBox::Row* SafeDeref(const ListBox::iterator& it, const ListBox::iterator& end)
-{ return it == end ? nullptr : it->get(); }
+namespace {
+    auto* SafeDeref(const ListBox::iterator it, const ListBox::iterator end) noexcept
+    { return it == end ? nullptr : it->get(); }
 
-std::shared_ptr<ListBox::Row> IteratorToShared(const ListBox::iterator& it, const ListBox::iterator& end)
-{ return it == end ? std::shared_ptr<ListBox::Row>() : std::shared_ptr<ListBox::Row>(*it); }
+    auto IteratorToShared(const ListBox::iterator it, const ListBox::iterator end)
+    { return it == end ? std::shared_ptr<ListBox::Row>() : std::shared_ptr<ListBox::Row>(*it); }
+}
 
 bool RowAboveOrIsRow(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
 {
@@ -435,7 +437,7 @@ void ListBox::Row::RClick(Pt pt, GG::Flags<GG::ModKey> mod) {
 }
 
 namespace {
-    auto RowPtrIteratorLess = [](const ListBox::iterator& lhs, const ListBox::iterator& rhs)
+    auto RowPtrIteratorLess = [](const ListBox::iterator lhs, const ListBox::iterator rhs)
     { return (*lhs)->Top() < (*rhs)->Top(); };
 }
 

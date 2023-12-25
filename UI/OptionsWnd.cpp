@@ -451,7 +451,7 @@ namespace {
 
         // Connect to Options DB
         drop_list->SelChangedSignal.connect(
-            [option_name, drop_list](const GG::ListBox::const_iterator& it) {
+            [option_name, drop_list](const GG::ListBox::const_iterator it) {
                 if (it == drop_list->end())
                     return;
                 const auto dropdown_row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());

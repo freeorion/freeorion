@@ -68,7 +68,7 @@ namespace {
     struct grammar : public parse::detail::grammar<start_rule_signature> {
         grammar(const parse::lexer& tok,
                 const std::string& filename,
-                const parse::text_iterator& first, const parse::text_iterator& last) :
+                const parse::text_iterator first, const parse::text_iterator last) :
             grammar::base_type(start),
             one_or_more_string_tokens(tok)
         {
@@ -168,7 +168,7 @@ namespace {
     struct manifest_grammar : public parse::detail::grammar<manifest_start_rule_signature> {
         manifest_grammar(const parse::lexer& tok,
                          const std::string& filename,
-                         const parse::text_iterator& first, const parse::text_iterator& last) :
+                         const parse::text_iterator first, const parse::text_iterator last) :
             manifest_grammar::base_type(start)
         {
             namespace phoenix = boost::phoenix;

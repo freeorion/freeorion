@@ -49,7 +49,7 @@ namespace parse {
 
     private:
         std::pair<text_iterator, unsigned int> line_start_and_line_number(
-            const text_iterator& begin, const text_iterator& end, text_iterator error_position) const;
+            const text_iterator begin, const text_iterator end, text_iterator error_position) const;
         std::string get_line(const text_iterator& end, text_iterator line_start) const;
         std::string get_lines_before(const text_iterator& begin, const text_iterator& end, text_iterator line_start) const;
         std::string get_lines_after(const text_iterator& begin, const text_iterator& end, text_iterator line_start) const;

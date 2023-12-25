@@ -188,9 +188,9 @@ namespace parse::detail {
         parse. */
     bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
                                          bool parser_success,
-                                         std::string& file_contents,
-                                         text_iterator& first,
-                                         text_iterator& last);
+                                         const std::string& file_contents,
+                                         const text_iterator first,
+                                         const text_iterator last);
 
     template <typename Grammar, typename Arg1>
     bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1) {

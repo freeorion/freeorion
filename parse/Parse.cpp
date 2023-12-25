@@ -508,10 +508,10 @@ namespace parse {
 
 
     bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
-                                            bool parser_success,
-                                            std::string& file_contents,
-                                            text_iterator& first,
-                                            text_iterator& last)
+                                         bool parser_success,
+                                         const std::string& file_contents,
+                                         const text_iterator first,
+                                         const text_iterator last)
     {
         if (!parser_success)
             WarnLogger() << "A parser failed while parsing " << path;

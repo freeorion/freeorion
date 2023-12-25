@@ -1059,8 +1059,8 @@ void ProductionWnd::SelectSystem(int system_id) {
     }
 }
 
-void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it,
-                                   const GG::ListBox::iterator& original_position_it)
+void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator row_it,
+                                   const GG::ListBox::iterator original_position_it)
 {
     if (!m_order_issuing_enabled)
         return;

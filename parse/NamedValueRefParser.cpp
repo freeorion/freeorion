@@ -50,10 +50,8 @@ namespace parse {
     using start_rule_signature = void(start_rule_payload&);
 
     struct grammar : public parse::detail::grammar<start_rule_signature> {
-        grammar(const parse::lexer& tok,
-                const std::string& filename,
-                const parse::text_iterator& first,
-                const parse::text_iterator& last) :
+        grammar(const parse::lexer& tok, const std::string& filename,
+                const parse::text_iterator first, const parse::text_iterator last) :
             grammar::base_type(start, "named_value_ref_grammar"),
             condition_parser(tok, label),
             planet_type_rules(tok, label, condition_parser),

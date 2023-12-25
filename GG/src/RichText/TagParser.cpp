@@ -70,8 +70,8 @@ class TagParserImpl {
 
         //! Parses tags until the first unmatched close tag, or the end.
         //! \return The position before the first unmatched closing tag or the end.
-        std::string::const_iterator ParseTagsImpl(const std::string::const_iterator& start,
-                                                  const std::string::const_iterator& end,
+        std::string::const_iterator ParseTagsImpl(const std::string::const_iterator start,
+                                                  const std::string::const_iterator end,
                                                   std::vector<RichTextTag>* tags)
         {
             std::string::const_iterator current = start;
@@ -120,9 +120,9 @@ class TagParserImpl {
         }
 
         // Helper. Return true if str is a prefix of the string (start..end) or vice versa.
-        bool StartsWith(const std::string::const_iterator& start,
-                        const std::string::const_iterator& end,
-                        const std::string& str)
+        bool StartsWith(const std::string::const_iterator start,
+                        const std::string::const_iterator end,
+                        const std::string& str) noexcept
         {
             auto current = start;
             auto str_current = str.begin();

@@ -3684,7 +3684,7 @@ namespace {
     // to be lower-case. Returns true if it is OK or handled. Returns false
     // to indicate that CustomToLower won't check for that char or make it
     // lower case if it is not already.
-    inline bool IsOK3CharCode(const std::string::iterator& it) {
+    inline bool IsOK3CharCode(const std::string::iterator it) {
         uint8_t c1 = *it;
         uint8_t c2 = *(it + 1);
         uint8_t c3 = *(it + 2);

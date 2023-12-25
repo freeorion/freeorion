@@ -179,7 +179,7 @@ public:
 
     struct IteratorHash
     {
-        std::size_t operator()(const iterator& it) const
+        std::size_t operator()(const iterator it) const
         { return boost::hash<const std::shared_ptr<Row>>()(*it); }
     };
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;

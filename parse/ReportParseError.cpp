@@ -96,7 +96,9 @@ std::function<void (const std::string&)> parse::report_error_::send_error_string
     &detail::default_send_error_string;
 
 namespace {
-    std::vector<parse::text_iterator> LineStarts(const parse::text_iterator& begin, const parse::text_iterator& end) {
+    std::vector<parse::text_iterator> LineStarts(const parse::text_iterator begin,
+                                                 const parse::text_iterator end)
+    {
         //DebugLogger() << "line starts start";
         using namespace parse;
 
@@ -138,7 +140,7 @@ namespace {
 }
 
 std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_and_line_number(
-    const parse::text_iterator& begin, const parse::text_iterator& end, text_iterator error_position) const
+    const parse::text_iterator begin, const parse::text_iterator end, text_iterator error_position) const
 {
     //DebugLogger() << "line_start_and_line_number start ... looking for: " << std::string(error_position, error_position + 20);
     if (error_position == begin)

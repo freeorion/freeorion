@@ -121,7 +121,7 @@ struct DropDownListSelChangedEcho
     DropDownListSelChangedEcho(const DropDownList& drop_list) :
         m_drop_list(drop_list)
     {}
-    void operator()(const DropDownList::iterator& it)
+    void operator()(const DropDownList::iterator it)
     {
         std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
                   << m_drop_list.IteratorToIndex(it)
@@ -135,7 +135,7 @@ struct ModalListPickerSelChangedEcho
     ModalListPickerSelChangedEcho(ModalListPicker& picker) :
         m_picker(picker)
     {}
-    void operator()(const ListBox::iterator& it)
+    void operator()(const ListBox::iterator it)
     {
         std::cerr << "GG SIGNAL : ModalListPicker::SelChangedSignal(row="
                   << std::distance(m_picker.LB()->begin(), it)
