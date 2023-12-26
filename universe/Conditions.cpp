@@ -814,7 +814,7 @@ namespace {
 
             // transfer objects with the most common keys
             uint32_t number_transferred = 0;
-            for (const auto cur_sort_key : inv_histogram | range_values) {
+            for (const auto& cur_sort_key : inv_histogram | range_values) {
                 for (auto& [obj_sort_key, object_to_transfer] : sort_key_objects) {
                     if (obj_sort_key != cur_sort_key)
                         continue;
