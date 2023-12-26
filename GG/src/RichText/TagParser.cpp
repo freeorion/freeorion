@@ -58,9 +58,8 @@ class TagParserImpl {
             for (RichTextTag& tag : tags) {
                 if (m_known_tags.count(tag.tag))
                     AddWithPlaintextSquashing(relevant_tags, std::move(tag));
-                else {
+                else
                     AddWithPlaintextSquashing(relevant_tags, WrapInPlaintext(tag));
-                }
             }
             return relevant_tags;
         }
@@ -100,14 +99,15 @@ class TagParserImpl {
                     // Recurse to the next nesting level.
                     current = FinishTag(begin_match, match["params"],
                                         current + match.position() + match.length(), end, tags);
+
                 } else if (end_match.matched) {
                     // An end tag encountered. Stop parsing here.
                     return current + match.position();
+
                 } else {
                     // This really shouldn't happen.
-                    std::stringstream error;
-                    error << "Error parsing rich text tags: match not begin or end tag:" << match;
-                    throw std::runtime_error(error.str());
+                    std::string error = "Error parsing rich text tags: match not begin or end tag:" + match.str();
+                    throw std::runtime_error(error);
                 }
             }
 
@@ -147,40 +147,38 @@ class TagParserImpl {
             */
         std::basic_string<char>::const_iterator FinishTag(
             std::string tag, std::string parameters,
-            const std::string::const_iterator& start,
-            const std::string::const_iterator& end,
+            const std::string::const_iterator start,
+            const std::string::const_iterator end,
             std::vector<RichTextTag>* tags)
         {
             // Use ParseTagsImpl to get the beginning of the first unmatched end tag.
             // We are interested only in the first level tags, so don't pass the vector to populate.
-            auto current = ParseTagsImpl(start, end, nullptr);
+            const auto current = ParseTagsImpl(start, end, nullptr);
 
             // It is an error if the end tag is not found.
             if (current == end) {
-                std::stringstream error;
-                error << "Error parsing rich text tags: expected end tag:" << tag << " got end of string.";
-                throw std::runtime_error(error.str());
+                std::string error = "Error parsing rich text tags: expected end tag:" + tag + " got end of string.";
+                throw std::runtime_error(error);
+            }
+            // ParseTagsImpl should have dropped us off just before the end of our tag.
+            std::string end_tag = "</" + tag + ">";
+
+            if (StartsWith(current, end, end_tag)) {
+                // A tag was successfully fully read. Add it to tags, if we got one.
+                if (tags)
+                    tags->emplace_back(std::move(tag), std::move(parameters), std::string(start, current));
+
+                // Continue after the tag.
+                return current + end_tag.length();
+
             } else {
-                // ParseTagsImpl should have dropped us off just before the end of our tag.
-                std::string end_tag = "</" + tag + ">";
-
-                if (StartsWith(current, end, end_tag)) {
-                    // A tag was successfully fully read. Add it to tags, if we got one.
-                    if (tags)
-                        tags->emplace_back(std::move(tag), std::move(parameters), std::string(start, current));
-
-                    // Continue after the tag.
-                    return current + end_tag.length();
-                } else {
-                    // The end tag eas not the expected end tag.
-                    std::stringstream error;
-                    std::string rest_prefix(current, std::min(current + 20, end));
-
-                    // The rest prefix is likely to be a wrong end tag, but no worries, the rendering tag interpreter ignores
-                    // unpaired end tags so it will display fine.
-                    error << "Error parsing rich text tags: expected end tag:" << tag << " got: \"" << rest_prefix << "...\"";
-                    throw std::runtime_error(error.str());
-                }
+                // The end tag eas not the expected end tag.
+                std::string rest_prefix(current, std::min(current + 20, end));
+                // The rest prefix is likely to be a wrong end tag, but no worries, the rendering
+                // tag interpreter ignores unpaired end tags so it will display fine.
+                std::string error = "Error parsing rich text tags: expected end tag:" + tag +
+                    " got: \"" + rest_prefix + "...\"";
+                throw std::runtime_error(error);
             }
         }
 
