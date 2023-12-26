@@ -4496,7 +4496,6 @@ void DesignWnd::MainPanel::DoLayout() {
     // position labels and text edit boxes for name and description and buttons to clear and confirm design
 
     const int PTS = ClientUI::Pts();
-    const GG::X PTS_WIDE{PTS / 2};           // guess at how wide per character the font needs
     static constexpr int PAD = 6;
 
     GG::Pt ul,lr,ll,mus;

@@ -1242,7 +1242,8 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(std::string category) {
-    if (const auto did_emplace = m_categories_shown.emplace(std::move(category)).second)
+     const auto did_emplace = m_categories_shown.emplace(std::move(category)).second;
+     if (did_emplace)
         Layout(true);
 }
 
@@ -1338,8 +1339,6 @@ GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(GG::Pt pt) const {
 }
 
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
-    const GG::X TECH_PANEL_MARGIN_X{ClientUI::Pts()*16};
-    const GG::Y TECH_PANEL_MARGIN_Y{ClientUI::Pts()*16 + 100};
     const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.horizontal");
     const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("ui.research.tree.spacing.vertical");
     const double WIDTH = Value(TechPanelWidth());
@@ -1891,7 +1890,8 @@ void TechTreeWnd::TechListBox::Populate(bool update ) {
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(std::string category) {
-    if (const auto did_emplace = m_categories_shown.emplace(std::move(category)).second)
+    const auto did_emplace = m_categories_shown.emplace(std::move(category)).second;
+    if (did_emplace)
         Populate();
 }
 
@@ -1918,7 +1918,8 @@ void TechTreeWnd::TechListBox::HideAllCategories() {
 }
 
 void TechTreeWnd::TechListBox::ShowStatus(TechStatus status) {
-    if (const auto did_emplace = m_tech_statuses_shown.emplace(status).second)
+    const auto did_emplace = m_tech_statuses_shown.emplace(status).second;
+    if (did_emplace)
         Populate();
 }
 
