@@ -980,7 +980,7 @@ protected:
     virtual void DetachChildCore(Wnd* wnd);
 
 private:
-    static constexpr int MAX_WINDOW_SZ{32000};
+    static constexpr int MAX_WINDOW_SZ{1u << 24u};
     static_assert(MAX_WINDOW_SZ < std::numeric_limits<std::underlying_type_t<X>>::max());
 
     /// m_parent may be expired or null if there is no parent.  m_parent will reset itself if expired.
