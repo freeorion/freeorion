@@ -8,10 +8,11 @@ def BuildingType(
     *,
     name: str,
     description: str,
-    captureresult: _DestroyAction,
-    buildcost: int,
+    buildcost: int | float,
     buildtime: int,
     location: _Condition,
     effectsgroups: list[_EffectGroup],
     icon: str,
+    captureresult=_DestroyAction,
+    enqueuelocation=_Condition(),
 ): ...
