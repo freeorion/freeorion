@@ -314,6 +314,7 @@ RichText::RichText(X x, Y y, X w, Y h, const std::string& str,
 {
     SetName("RichText (" + std::to_string(str.size()) + "): \"" + str.substr(0, 16)
             + "\" blocks: " + std::to_string(m_self->BlockCount()));
+    SetChildClippingMode(Wnd::ChildClippingMode::ClipToAncestorClient);
 }
 
 void RichText::CompleteConstruction() {
