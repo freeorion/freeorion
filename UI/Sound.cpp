@@ -125,7 +125,7 @@ namespace {
         }
 
         std::unique_lock buffer_lock(buffer_mutex);
-        if (audio_data_buffer.size() < file_required_buffer_size) {
+        if (static_cast<int>(audio_data_buffer.size()) < file_required_buffer_size) {
             try {
                 audio_data_buffer.resize(file_required_buffer_size, 0);
                 DebugLogger() << "RefillBuffer buffer expanded to " << file_required_buffer_size;
