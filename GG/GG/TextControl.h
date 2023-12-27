@@ -303,7 +303,6 @@ protected:
     friend class StateButtonRepresenter;
 
 private:
-    void ValidateFormat();      ///< ensures that the format flags are consistent
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
     void RefreshCache();

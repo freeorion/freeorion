@@ -529,26 +529,26 @@ public:
     X    RenderText(Pt pt, const std::string& text) const;
 
     /** Formatted text rendering. */
-    void RenderText(Pt pt1, Pt pt2, const std::string& text, Flags<TextFormat>& format,
+    void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
                     const std::vector<LineData>& line_data, RenderState* render_state = nullptr) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
         <i>begin_char</i>, <i>line_data</i>), CodePointIndexOf(<i>end_line</i> -
         1, <i>end_char</i>, <i>line_data</i>)). */
-    void RenderText(Pt pt1, Pt pt2, const std::string& text, Flags<TextFormat>& format,
+    void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
                     const std::vector<LineData>& line_data, RenderState& render_state,
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
 
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
-    void PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
+    void PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                        RenderCache& cache, const std::vector<LineData>& line_data,
                        RenderState* render_state = nullptr) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(Pt pt1, Pt pt2, const std::string& text,
-                       Flags<TextFormat> format, const std::vector<LineData>& line_data,
+                       const Flags<TextFormat> format, const std::vector<LineData>& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
 
@@ -620,11 +620,8 @@ public:
 
         Supplying a \p text and \p text_elements that are incompatible will result in undefined
         behavior.  \p text_elements contains internal pointers to the \p text to which it is
-        bound.  Compatible means the exact same \p text object, not the same text content.
-        */
-    std::vector<LineData> DetermineLines(const std::string& text,
-                                         Flags<TextFormat>& format, // may be modified
-                                         X box_width,
+        bound.  Compatible means the exact same \p text object, not the same text content. */
+    std::vector<LineData> DetermineLines(const std::string& text, Flags<TextFormat> format, X box_width,
                                          const std::vector<std::shared_ptr<TextElement>>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
@@ -703,8 +700,6 @@ private:
     void              Init(FT_Face& font);
 
     bool              GenerateGlyph(FT_Face font, uint32_t ch);
-
-    void              ValidateFormat(Flags<TextFormat>& format) const;
 
     X                 StoreGlyph(Pt pt, const Glyph& glyph, const RenderState* render_state,
                                  RenderCache& cache) const;

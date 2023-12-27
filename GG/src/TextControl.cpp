@@ -11,8 +11,32 @@
 #include <GG/TextControl.h>
 #include <GG/utf8/checked.h>
 
-
 using namespace GG;
+
+namespace {
+    [[nodiscard]] constexpr Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
+    {
+        int dup_ct = 0;   // duplication count
+        if (format & FORMAT_LEFT) ++dup_ct;
+        if (format & FORMAT_RIGHT) ++dup_ct;
+        if (format & FORMAT_CENTER) ++dup_ct;
+        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_CENTER by default
+            format &= ~(FORMAT_RIGHT | FORMAT_LEFT);
+            format |= FORMAT_CENTER;
+        }
+        dup_ct = 0;
+        if (format & FORMAT_TOP) ++dup_ct;
+        if (format & FORMAT_BOTTOM) ++dup_ct;
+        if (format & FORMAT_VCENTER) ++dup_ct;
+        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_VCENTER by default
+            format &= ~(FORMAT_TOP | FORMAT_BOTTOM);
+            format |= FORMAT_VCENTER;
+        }
+        if ((format & FORMAT_WORDBREAK) && (format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
+            format &= ~FORMAT_LINEWRAP;
+        return format;
+    }
+}
 
 ////////////////////////////////////////////////
 // GG::TextControl
@@ -22,13 +46,10 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
                          Flags<TextFormat> format,
                          Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
-    m_format(format),
+    m_format(ValidateFormat(format)),
     m_text_color(color),
     m_font(std::move(font))
-{
-    ValidateFormat();
-    TextControl::SetText(std::move(str));
-}
+{ TextControl::SetText(std::move(str)); }
 
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
                          std::vector<std::shared_ptr<Font::TextElement>> text_elements,
@@ -36,13 +57,10 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
                          Clr color, Flags<TextFormat> format,
                          Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
-    m_format(format),
+    m_format(ValidateFormat(format)),
     m_text_color(color),
     m_font(std::move(font))
-{
-    ValidateFormat();
-    TextControl::SetText(std::move(str), std::move(text_elements));
-}
+{ TextControl::SetText(std::move(str), std::move(text_elements)); }
 
 TextControl::TextControl(const TextControl& that) :
     Control(that.Left(), that.Top(), that.Width(), that.Height()),
@@ -270,9 +288,9 @@ void TextControl::SizeMove(Pt ul, Pt lr)
 
 void TextControl::SetTextFormat(Flags<TextFormat> format)
 {
-    m_format = format;
-    ValidateFormat();
-    if (m_format != format)
+    const auto initial_format = m_format;
+    m_format = ValidateFormat(format);
+    if (m_format != initial_format)
         SetText(std::move(m_text));
 }
 
@@ -371,28 +389,6 @@ void TextControl::Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSiz
     auto end_it = m_text.begin() + std::max(offset1, offset2);
     m_text.erase(it, end_it);
     SetText(std::move(m_text));
-}
-
-void TextControl::ValidateFormat()
-{
-    int dup_ct = 0;   // duplication count
-    if (m_format & FORMAT_LEFT) ++dup_ct;
-    if (m_format & FORMAT_RIGHT) ++dup_ct;
-    if (m_format & FORMAT_CENTER) ++dup_ct;
-    if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_CENTER by default
-        m_format &= ~(FORMAT_RIGHT | FORMAT_LEFT);
-        m_format |= FORMAT_CENTER;
-    }
-    dup_ct = 0;
-    if (m_format & FORMAT_TOP) ++dup_ct;
-    if (m_format & FORMAT_BOTTOM) ++dup_ct;
-    if (m_format & FORMAT_VCENTER) ++dup_ct;
-    if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_VCENTER by default
-        m_format &= ~(FORMAT_TOP | FORMAT_BOTTOM);
-        m_format |= FORMAT_VCENTER;
-    }
-    if ((m_format & FORMAT_WORDBREAK) && (m_format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
-        m_format &= ~FORMAT_LINEWRAP;
 }
 
 void TextControl::AdjustMinimumSize()

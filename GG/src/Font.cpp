@@ -1011,7 +1011,7 @@ X Font::RenderText(Pt pt, const std::string& text) const
     return pt.x - orig_x;
 }
 
-void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
+void Font::RenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                       const std::vector<LineData>& line_data, RenderState* render_state) const
 {
     RenderText(ul, lr, text, format, line_data,
@@ -1020,7 +1020,7 @@ void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& 
                line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()));
 }
 
-void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
+void Font::RenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                       const std::vector<LineData>& line_data, RenderState& render_state,
                       std::size_t begin_line, CPSize begin_char,
                       std::size_t end_line, CPSize end_char) const
@@ -1030,7 +1030,7 @@ void Font::RenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& 
     RenderCachedText(shared_cache);
 }
 
-void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat>& format,
+void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                          RenderCache& cache,
                          const std::vector<LineData>& line_data, RenderState* render_state) const
 {
@@ -1065,11 +1065,11 @@ namespace {
     }
 
     constexpr Y LinePosY(const Y origin, const std::size_t line_num,
-                         const std::size_t begin_line, const Y lineskip)
+                         const std::size_t begin_line, const Y lineskip) noexcept
     { return origin + (static_cast<int>(line_num) - static_cast<int>(begin_line)) * lineskip; }
 }
 
-void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, Flags<TextFormat> format,
+void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                          const std::vector<LineData>& line_data, RenderState& render_state,
                          std::size_t begin_line, CPSize begin_char,
                          std::size_t end_line, CPSize end_char,
@@ -1508,8 +1508,36 @@ void Font::ChangeTemplatedText(
     FillTemplatedText(text, text_elements, start_of_reflow);
 }
 
+
+namespace {
+    [[nodiscard]] constexpr Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
+    {
+        // correct any disagreements in the format flags
+        uint8_t dup_ct = 0;   // duplication count
+        if (format & FORMAT_LEFT) ++dup_ct;
+        if (format & FORMAT_RIGHT) ++dup_ct;
+        if (format & FORMAT_CENTER) ++dup_ct;
+        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_LEFT by default
+            format &= ~(FORMAT_RIGHT | FORMAT_CENTER);
+            format |= FORMAT_LEFT;
+        }
+        uint8_t dup_ct2 = 0;
+        if (format & FORMAT_TOP) ++dup_ct2;
+        if (format & FORMAT_BOTTOM) ++dup_ct2;
+        if (format & FORMAT_VCENTER) ++dup_ct2;
+        if (dup_ct2 != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
+            format &= ~(FORMAT_BOTTOM | FORMAT_VCENTER);
+            format |= FORMAT_TOP;
+        }
+        if ((format & FORMAT_WORDBREAK) && (format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
+            format &= ~FORMAT_LINEWRAP;
+
+        return format;
+    }
+}
+
 std::vector<Font::LineData> Font::DetermineLines(
-    const std::string& text, Flags<TextFormat>& format, X box_width,
+    const std::string& text, Flags<TextFormat> format, X box_width,
     const std::vector<std::shared_ptr<TextElement>>& text_elements) const
 {
     // HACK - Workaround for #2166
@@ -1519,12 +1547,12 @@ std::vector<Font::LineData> Font::DetermineLines(
         return std::vector<Font::LineData>{};
     }
 
-    ValidateFormat(format); // may modify format
+    format = ValidateFormat(format); // may modify format
 
     RenderState render_state;
     static constexpr int tab_width = 8; // default tab width
-    X tab_pixel_width = tab_width * m_space_width; // get the length of a tab stop
-    bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
+    const X tab_pixel_width = tab_width * m_space_width; // get the length of a tab stop
+    const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
     Alignment orig_just = ALIGN_NONE;
     if (format & FORMAT_LEFT)
         orig_just = ALIGN_LEFT;
@@ -1905,29 +1933,6 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
     }
 
     return retval;
-}
-
-void Font::ValidateFormat(Flags<TextFormat>& format) const
-{
-    // correct any disagreements in the format flags
-    uint8_t dup_ct = 0;   // duplication count
-    if (format & FORMAT_LEFT) ++dup_ct;
-    if (format & FORMAT_RIGHT) ++dup_ct;
-    if (format & FORMAT_CENTER) ++dup_ct;
-    if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_LEFT by default
-        format &= ~(FORMAT_RIGHT | FORMAT_CENTER);
-        format |= FORMAT_LEFT;
-    }
-    uint8_t dup_ct2 = 0;
-    if (format & FORMAT_TOP) ++dup_ct2;
-    if (format & FORMAT_BOTTOM) ++dup_ct2;
-    if (format & FORMAT_VCENTER) ++dup_ct2;
-    if (dup_ct2 != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
-        format &= ~(FORMAT_BOTTOM | FORMAT_VCENTER);
-        format |= FORMAT_TOP;
-    }
-    if ((format & FORMAT_WORDBREAK) && (format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
-        format &= ~FORMAT_LINEWRAP;
 }
 
 void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,

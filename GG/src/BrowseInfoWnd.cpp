@@ -94,7 +94,7 @@ void TextBoxBrowseInfoWnd::SetText(std::string str)
 {
     unsigned int margins = 2 * TextMargin();
     bool str_empty = str.empty();
-    Flags<TextFormat> fmt = GetTextFormat();
+    const auto fmt = GetTextFormat();
     auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
     auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins),
                                         text_elements);
