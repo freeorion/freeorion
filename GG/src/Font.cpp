@@ -1563,10 +1563,8 @@ std::vector<Font::LineData> Font::DetermineLines(
     bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
 
     std::vector<Font::LineData> line_data;
-    if (!text_elements.empty()) {
-        line_data.emplace_back();
-        line_data.back().justification = orig_just;
-    }
+    if (!text_elements.empty())
+        line_data.emplace_back(orig_just);
 
     X x = X0;
     // the position within the original string of the current TextElement
@@ -1574,6 +1572,7 @@ std::vector<Font::LineData> Font::DetermineLines(
     // the index of the first code point of the current TextElement
     CPSize code_point_offset(CP0);
     std::vector<std::shared_ptr<TextElement>> pending_formatting_tags;
+
     for (const auto& elem : text_elements) {
         // if a newline is explicitly requested, start a new one
         if (elem->Type() == TextElement::TextElementType::NEWLINE) {
@@ -1621,6 +1620,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                                 char_size,
                                 code_point_offset,
                                 pending_formatting_tags);
+
                             pending_formatting_tags.clear();
                             SetJustification(last_line_of_curr_just,
                                              line_data.back(),

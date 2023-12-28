@@ -360,7 +360,10 @@ public:
         formatting tags present on that line as well. */
     struct GG_API LineData
     {
-        LineData() = default;
+        LineData() noexcept = default;
+        explicit LineData(Alignment justification_) noexcept :
+            justification(justification_)
+        {}
 
         /** \brief Contains the extent, the index into the original string,
             and the text formatting tags that should be applied before
