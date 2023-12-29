@@ -213,7 +213,7 @@ const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) co
 }
 
 void TechTreeLayout::AddNode(const std::string& tech, GG::X width, GG::Y height) {
-    assert(width > X0 && height > Y0 && GetTech(tech));
+    assert(width > GG::X0 && height > GG::Y0 && GetTech(tech));
     auto node = new TechTreeLayout::Node(tech, width, height);
     //DebugLogger() << "Adding Node: " << node << " for tech " << tech;
     m_nodes.push_back(node);
@@ -263,7 +263,7 @@ TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
     place_holder(false),
     m_width(Value(width)),
     m_height(Value(height))
-{ assert(width > X0 && height > Y0 && GetTech(tech)); }
+{ assert(width > GG::X0 && height > GG::Y0 && GetTech(tech)); }
 
 /**
  * recursively creates dummy nodes between parent and child
