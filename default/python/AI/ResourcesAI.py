@@ -591,7 +591,8 @@ class PlanetFocusManager:
             for pi in chain(self.baked_planet_info.values(), self.planet_info.values())
         )
         pp_per_priority = planned_pp_target / self.priority_industry
-        rp_per_priority = planned_rp_target / self.priority_research
+        # When the AI finished all research, research prio becomes 0
+        rp_per_priority = planned_rp_target / self.priority_research if self.priority_research else "---"
         debug(
             f"pp: {planned_pp_target}/{self.priority_industry}={pp_per_priority}, "
             f"rp: {planned_rp_target}/{self.priority_research}={rp_per_priority}"
