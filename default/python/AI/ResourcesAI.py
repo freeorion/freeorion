@@ -531,7 +531,8 @@ class PlanetFocusManager:
         while industry_or_research:
             # Mini offset to avoid comparing 0 vs 0, so higher priority wins if we have not baked anything yet.
             pp_per_priority = (current_pp_target + 0.1) / self.priority_industry
-            ip_per_priority = (current_rp_target + 0.1) / self.priority_research
+            # When the AI finished all research, research prio becomes 0
+            ip_per_priority = (current_rp_target + 0.1) / self.priority_research if self.priority_research else "---"
             debug(
                 f"pp: {current_pp_target}/{self.priority_industry}={pp_per_priority}, "
                 f"rp: {current_rp_target}/{self.priority_research}={ip_per_priority}"
