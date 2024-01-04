@@ -1553,13 +1553,10 @@ std::vector<Font::LineData> Font::DetermineLines(
     static constexpr int tab_width = 8; // default tab width
     const X tab_pixel_width = tab_width * m_space_width; // get the length of a tab stop
     const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
-    Alignment orig_just = ALIGN_NONE;
-    if (format & FORMAT_LEFT)
-        orig_just = ALIGN_LEFT;
-    if (format & FORMAT_CENTER)
-        orig_just = ALIGN_CENTER;
-    if (format & FORMAT_RIGHT)
-        orig_just = ALIGN_RIGHT;
+    const Alignment orig_just =
+        (format & FORMAT_LEFT) ? ALIGN_LEFT :
+        (format & FORMAT_CENTER) ? ALIGN_CENTER :
+        (format & FORMAT_RIGHT) ? ALIGN_RIGHT : ALIGN_NONE;
     bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
 
     std::vector<Font::LineData> line_data;
