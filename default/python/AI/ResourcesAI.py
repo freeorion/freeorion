@@ -592,7 +592,7 @@ class PlanetFocusManager:
         )
         pp_per_priority = planned_pp_target / self.priority_industry
         # When the AI finished all research, research prio becomes 0
-        rp_per_priority = planned_rp_target / self.priority_research if self.priority_research else "---"
+        rp_per_priority = planned_rp_target / self.priority_research if self.priority_research else 0.0
         debug(
             f"pp: {planned_pp_target}/{self.priority_industry}={pp_per_priority}, "
             f"rp: {planned_rp_target}/{self.priority_research}={rp_per_priority}"
