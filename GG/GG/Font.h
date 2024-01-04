@@ -193,11 +193,12 @@ public:
             NEWLINE
         };
 
-        /** \a ws indicates that the element contains only whitespace;
-            \a nl indicates that it is a newline element. */
-        TextElement(bool ws, bool nl) noexcept :
-            whitespace(ws),
-            newline(nl)
+        explicit TextElement(TextElementType type_) noexcept :
+            type(type_)
+        {}
+        explicit TextElement(Substring text_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+            text(text_),
+            type(TextElementType::TEXT)
         {}
 
         /** Attach this TextElement to the string \p whole_text, by
@@ -225,19 +226,17 @@ public:
         { text.Bind(whole_text); }
 
         /** Returns the TextElementType of the element. */
-        virtual TextElementType Type() const noexcept
-        {
-            return newline ? TextElementType::NEWLINE :
-                whitespace ? TextElementType::WHITESPACE :
-                             TextElementType::TEXT;
-        }
+        [[nodiscard]] TextElementType Type() const noexcept { return type; };
+        [[nodiscard]] bool IsCloseTag() const noexcept { return type == TextElementType::CLOSE_TAG; }
+        [[nodiscard]] bool IsWhiteSpace() const noexcept { return type == TextElementType::WHITESPACE; }
+        [[nodiscard]] bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
 
         /** Returns the width of the element. */
-        X Width() const;
+        [[nodiscard]] X Width() const;
 
         /* Returns the number of characters in the original string that the
            element represents. */
-        StrSize StringSize() const noexcept
+        [[nodiscard]] StrSize StringSize() const noexcept
         { return StrSize(text.size()); }
 
         /** Returns the number of code points in the original string that the
@@ -245,18 +244,14 @@ public:
         CPSize CodePointSize() const noexcept
         { return CPSize(widths.size()); }
 
-        virtual bool operator==(const TextElement &rhs) const noexcept
-        { // ignores cached_width
-            return (text == rhs.text && widths == rhs.widths
-                    && whitespace == rhs.whitespace && newline == rhs.newline);
-        }
+        virtual bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
+        { return (text == rhs.text) && (widths == rhs.widths) && (type == rhs.type); }
 
         /** The text from the original string represented by the element. */
         Substring text;
 
         std::vector<X> widths;             ///< The widths of the glyphs in \a text.
-        const bool     whitespace = false; ///< True iff this is a whitespace element.
-        const bool     newline = false;    ///< True iff this is a newline element.
+        const TextElementType type = TextElementType::TEXT;
 
     protected:
         TextElement() = default;
@@ -306,12 +301,15 @@ public:
 
     /** \brief The type of TextElement that represents a text formatting
         tag. */
-    struct GG_API FormattingTag : TextElement
+    struct GG_API FormattingTag : public TextElement
     {
         /** Ctor.  \a close indicates that the tag is a close-tag (e.g. "</rgba>"). */
-        FormattingTag(bool close) :
-            TextElement(false, false),
-            close_tag(close)
+        explicit FormattingTag(bool close) noexcept :
+            TextElement(close ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG)
+        {}
+        explicit FormattingTag(TextElementType type) noexcept :
+            TextElement(type == TextElementType::OPEN_TAG ?
+                        TextElementType::OPEN_TAG : TextElementType::CLOSE_TAG)
         {}
 
         /** Attach to \p whole_text by binding all Substring data members,
@@ -325,17 +323,13 @@ public:
                 substring.Bind(whole_text);
         }
 
-        TextElementType Type() const noexcept override
-        { return close_tag ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG; }
-
         bool operator==(const TextElement &rhs) const noexcept override
         {
-            Font::FormattingTag const* ft = dynamic_cast<Font::FormattingTag const*>(&rhs);
+            auto const* ft = dynamic_cast<Font::FormattingTag const*>(&rhs);
             return (ft &&
                     Font::TextElement::operator==(rhs) &&
                     params == ft->params &&
-                    tag_name == ft->tag_name &&
-                    close_tag == ft->close_tag);
+                    tag_name == ft->tag_name);
         }
 
         /** The parameter strings within the tag, e.g. "0", "0", "0", and "255"
@@ -344,12 +338,6 @@ public:
 
         /** The name of the tag (e.g. for the tag "<i>", tag_name is "i"). */
         Substring tag_name;
-
-        /** True iff this is a close-tag. */
-        const bool close_tag = false;
-
-    private:
-        FormattingTag() = default;
     };
 
     /** \brief Holds the essential data on each line that a string occupies when

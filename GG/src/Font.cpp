@@ -763,12 +763,10 @@ public:
     {
         m_are_widths_calculated = false;
 
-        auto element = std::make_shared<Font::TextElement>(false, false);
-        auto begin = m_text.size();
-        auto end = m_text.append(text).size();
-        element->text = Substring(m_text,
-                                  std::next(m_text.begin(), begin),
-                                  std::next(m_text.begin(), end));
+        const auto begin = m_text.size();
+        const auto end = m_text.append(text).size();
+        Substring ss{m_text, std::next(m_text.begin(), begin), std::next(m_text.begin(), end)};
+        auto element = std::make_shared<Font::TextElement>(ss);
         m_text_elements.push_back(std::move(element));
     }
 
@@ -777,7 +775,7 @@ public:
     {
         m_are_widths_calculated = false;
 
-        auto element = std::make_shared<Font::TextElement>(true, false);
+        auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::WHITESPACE);
         auto begin = m_text.size();
         auto end = m_text.append(whitespace).size();
         element->text = Substring(m_text,
@@ -790,7 +788,7 @@ public:
     void AddNewline()
     {
         m_are_widths_calculated = false;
-        m_text_elements.push_back(std::make_shared<Font::TextElement>(false, true));
+        m_text_elements.push_back(std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::NEWLINE));
     }
 
     /** Add open color tag.*/
@@ -1252,18 +1250,19 @@ namespace DebugOutput {
                           << static_cast<const void*>(&tag_elem.text.front()) << ")\n    widths=";
                 for (const X& width : tag_elem.widths)
                     std::cout << Value(width) << " ";
-                std::cout << "\n    whitespace=" << tag_elem.whitespace << "\n    newline="
-                          << tag_elem.newline << "\n    params=\n";
+                std::cout << "\n    whitespace=" << tag_elem.IsWhiteSpace() << "\n    newline="
+                          << tag_elem.IsNewline() << "\n    params=\n";
                 for (const Font::Substring& param : tag_elem.params)
                     std::cout << "        \"" << param << "\"\n";
                 std::cout << "    tag_name=\"" << tag_elem.tag_name << "\"\n    close_tag="
-                          << tag_elem.close_tag << "\n";
+                          << tag_elem.IsCloseTag() << "\n";
+
             } else {
                 std::cout << "TextElement\n    text=\"" << elem->text << "\" (@ "
                           << static_cast<const void*>(elem->text.data()) << ")\n    widths=";
                 for (const X& width : elem->widths)
                     std::cout << Value(width) << " ";
-                std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
+                std::cout << "\n    whitespace=" << elem->IsWhiteSpace() << "\n    newline=" << elem->IsNewline() << "\n";
             }
             std::cout << "    string_size=" << Value(elem->StringSize()) << "\n";
             std::cout << "\n";
@@ -1306,12 +1305,12 @@ namespace DebugOutput {
                     std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem.text << "\"\n    widths=";
                     for (const auto width : tag_elem.widths)
                         std::cout << Value(width) << " ";
-                    std::cout << "\n    whitespace=" << tag_elem.whitespace
-                              << "\n    newline=" << tag_elem.newline << "\n    params=\n";
+                    std::cout << "\n    whitespace=" << tag_elem.IsWhiteSpace()
+                              << "\n    newline=" << tag_elem.IsNewline() << "\n    params=\n";
                     for (const auto& param : tag_elem.params)
                         std::cout << "        \"" << param << "\"\n";
                     std::cout << "    tag_name=\"" << tag_elem.tag_name << "\"\n    close_tag="
-                              << tag_elem.close_tag << "\n";
+                              << tag_elem.IsCloseTag() << "\n";
                 }
             }
             std::cout << "    justification=" << line_data[i].justification << "\n" << std::endl;
@@ -1387,14 +1386,14 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
             // Close XML tag
             } else if (it_elem[close_bracket_tag].matched) {
-                auto element = std::make_shared<Font::FormattingTag>(true);
+                auto element = std::make_shared<Font::FormattingTag>(Font::TextElement::TextElementType::CLOSE_TAG);
                 element->text = Substring(text, it_elem[0]);
                 element->tag_name = Substring(text, it_elem[tag_name_tag]);
                 text_elements.push_back(std::move(element));
 
             // Whitespace element
             } else if (it_elem[whitespace_tag].matched) {
-                auto element = std::make_shared<Font::TextElement>(true, false);
+                auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::WHITESPACE);
                 element->text = Substring(text, it_elem[whitespace_tag]);
                 char last_char = *std::prev(element->text.end());
 
@@ -1403,13 +1402,12 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
                 // If the last character of a whitespace element is a line ending then create a
                 // newline TextElement.
                 if (last_char == '\n' || last_char == '\f' || last_char == '\r')
-                    text_elements.push_back(std::make_shared<Font::TextElement>(false, true));
+                    text_elements.push_back(std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::NEWLINE));
             }
 
         // Basic text element.
         } else {
-            auto element = std::make_shared<Font::TextElement>(false, false);
-            element->text = std::move(combined_text);
+            auto element = std::make_shared<Font::TextElement>(combined_text);
             text_elements.push_back(std::move(element));
         }
 
@@ -2068,56 +2066,59 @@ namespace {
     }
 }
 
-void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& render_state) const
+void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag_, RenderState& render_state) const
 {
-    if (tag->tag_name == ITALIC_TAG) {
-        if (tag->close_tag) {
-            if (render_state.use_italics) {
+    if (!tag_) {
+        std::cerr << "GG::Font::HandleTag passed null tag";
+        return;
+    }
+    const auto& tag{*tag_};
+
+    if (tag.tag_name == ITALIC_TAG) {
+        if (tag.IsCloseTag()) {
+            if (render_state.use_italics)
                 --render_state.use_italics;
-            }
         } else {
             ++render_state.use_italics;
         }
-    } else if (tag->tag_name == UNDERLINE_TAG) {
-        if (tag->close_tag) {
-            if (render_state.draw_underline) {
+    } else if (tag.tag_name == UNDERLINE_TAG) {
+        if (tag.IsCloseTag()) {
+            if (render_state.draw_underline)
                 --render_state.draw_underline;
-            }
         } else {
             ++render_state.draw_underline;
         }
-    } else if (tag->tag_name == SHADOW_TAG) {
-        if (tag->close_tag) {
-            if (render_state.use_shadow) {
+    } else if (tag.tag_name == SHADOW_TAG) {
+        if (tag.IsCloseTag()) {
+            if (render_state.use_shadow)
                 --render_state.use_shadow;
-            }
         } else {
             ++render_state.use_shadow;
         }
-    } else if (tag->tag_name == SUPERSCRIPT_TAG) {
-        if (tag->close_tag) {
+    } else if (tag.tag_name == SUPERSCRIPT_TAG) {
+        if (tag.IsCloseTag())
             --render_state.super_sub_shift;
-        } else {
+        else
             ++render_state.super_sub_shift;
-        }
-    } else if (tag->tag_name == SUBSCRIPT_TAG) {
-        if (tag->close_tag) {
+
+    } else if (tag.tag_name == SUBSCRIPT_TAG) {
+        if (tag.IsCloseTag())
             ++render_state.super_sub_shift;
-        } else {
+        else
             --render_state.super_sub_shift;
-        }
-    } else if (tag->tag_name == RGBA_TAG) {
-        if (tag->close_tag) {
+
+    } else if (tag.tag_name == RGBA_TAG) {
+        if (tag.IsCloseTag()) {
             // Popping is ok also for an empty color stack.
             render_state.PopColor();
 
         } else {
-            auto [color, well_formed_tag] = TagParamsToColor(tag->params);
+            auto [color, well_formed_tag] = TagParamsToColor(tag.params);
             if (well_formed_tag) {
                 glColor4ubv(color.data());
                 render_state.PushColor(color[0], color[1], color[2], color[3]);
             } else {
-                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag: " << tag->text;
+                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag: " << tag.text;
             }
         }
     }

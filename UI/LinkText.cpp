@@ -454,7 +454,7 @@ void TextLinker::FindLinks() {
                     continue;
 
                 link.type = tag->tag_name;
-                if (tag->close_tag) {
+                if (tag->IsCloseTag()) {
                     link.text_posn.second = Value(curr_char.string_index);
                     m_links.emplace_back(std::move(link));
                     link = Link();
