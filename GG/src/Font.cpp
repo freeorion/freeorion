@@ -1275,26 +1275,28 @@ namespace DebugOutput {
                             const std::vector<Font::LineData>& line_data)
     {
         std::cout << "Font::DetermineLines(text=\"" << text << "\" (@ "
-                  << static_cast<const void*>(&text.front()) << ") format="
+                  << static_cast<const void*>(text.c_str()) << ") format="
                   << format << " box_width=" << Value(box_width) << ")" << std::endl;
 
         std::cout << "Line breakdown:\n";
         for (std::size_t i = 0; i < line_data.size(); ++i) {
+            const auto& char_data = line_data[i].char_data;
+
             std::cout << "Line " << i << ":\n    extents=";
-            for (const auto& character : line_data[i].char_data)
+            for (const auto& character : char_data)
                 std::cout << Value(character.extent) << " ";
             std::cout << "\n    string indices=";
-            for (const auto& character : line_data[i].char_data)
+            for (const auto& character : char_data)
                 std::cout << Value(character.string_index) << " ";
             std::cout << "\n    code point indices=";
-            for (const auto& character : line_data[i].char_data)
+            for (const auto& character : char_data)
                 std::cout << Value(character.code_point_index) << " ";
             std::cout << "\n    chars on line: \"";
-            for (const auto& character : line_data[i].char_data)
+            for (const auto& character : char_data)
                 std::cout << text[Value(character.string_index)];
             std::cout << "\"\n";
-            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                for (auto& tag_elem : line_data[i].char_data[j].tags) {
+            for (std::size_t j = 0; j < char_data.size(); ++j) {
+                for (auto& tag_elem : char_data[j].tags) {
                     if (tag_elem) {
                         std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
                         for (const auto width : tag_elem->widths)
@@ -1323,7 +1325,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, Flags<TextFo
     if (text.empty())
         return text_elements;
 
-    bool ignore_tags = format & FORMAT_IGNORETAGS;
+    const bool ignore_tags = format & FORMAT_IGNORETAGS;
 
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
     sregex& regex = tag_handler.Regex(text, ignore_tags);
@@ -1359,36 +1361,37 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, Flags<TextFo
 
         // If the element is not a text element then it must be an open tag, a close tag or whitespace.
         if (combined_text.empty()) {
+            const auto& it_elem = *it;
 
             // Open XML tag.
-            if ((*it)[open_bracket_tag].matched) {
+            if (it_elem[open_bracket_tag].matched) {
                 auto element = std::make_shared<Font::FormattingTag>(false);
-                element->text = Substring(text, (*it)[0]);
+                element->text = Substring(text, it_elem[0]);
 
                 // Check open tags for submatches which are parameters.  For example a Color tag
                 // might have RGB parameters.
-                if (1 < (*it).nested_results().size()) {
-                    element->params.reserve((*it).nested_results().size() - 1);
-                    for (auto nested_it = ++(*it).nested_results().begin();
-                         nested_it != (*it).nested_results().end(); ++nested_it)
+                if (1 < it_elem.nested_results().size()) {
+                    element->params.reserve(it_elem.nested_results().size() - 1);
+                    for (auto nested_it = ++it_elem.nested_results().begin();
+                         nested_it != it_elem.nested_results().end(); ++nested_it)
                     {
                         element->params.emplace_back(text, (*nested_it)[0]);
                     }
                 }
-                element->tag_name = Substring(text, (*it)[tag_name_tag]);
+                element->tag_name = Substring(text, it_elem[tag_name_tag]);
                 text_elements.push_back(std::move(element));
 
             // Close XML tag
-            } else if ((*it)[close_bracket_tag].matched) {
+            } else if (it_elem[close_bracket_tag].matched) {
                 auto element = std::make_shared<Font::FormattingTag>(true);
-                element->text = Substring(text, (*it)[0]);
-                element->tag_name = Substring(text, (*it)[tag_name_tag]);
+                element->text = Substring(text, it_elem[0]);
+                element->tag_name = Substring(text, it_elem[tag_name_tag]);
                 text_elements.push_back(std::move(element));
 
             // Whitespace element
-            } else if ((*it)[whitespace_tag].matched) {
+            } else if (it_elem[whitespace_tag].matched) {
                 auto element = std::make_shared<Font::TextElement>(true, false);
-                element->text = Substring(text, (*it)[whitespace_tag]);
+                element->text = Substring(text, it_elem[whitespace_tag]);
                 char last_char = *std::prev(element->text.end());
 
                 text_elements.push_back(std::move(element));
@@ -1426,22 +1429,23 @@ void Font::FillTemplatedText(
     std::vector<std::shared_ptr<Font::TextElement>>::iterator start) const
 {
     // For each TextElement in text_elements starting from start.
-    auto& te_it = start;
-    for (; te_it != text_elements.end(); ++te_it) {
-        std::shared_ptr<TextElement> elem = (*te_it);
+    for (auto te_it = start; te_it != text_elements.end(); ++te_it) {
+        if (!*te_it)
+            continue;
+        auto& elem = **te_it;
 
         // For each character in the TextElement.
-        auto text_it = elem->text.begin();
-        auto end_it = elem->text.end();
+        auto text_it = elem.text.begin();
+        const auto end_it = elem.text.end();
         while (text_it != end_it) {
             // Find and set the width of the character glyph.
-            elem->widths.push_back(X0);
+            elem.widths.push_back(X0);
             uint32_t c = utf8::next(text_it, end_it);
             if (c != WIDE_NEWLINE) {
                 auto it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
                 // space chararacter is always renderable)
-                elem->widths.back() = (it != m_glyphs.end()) ? X{it->second.advance} : m_space_width;
+                elem.widths.back() = (it != m_glyphs.end()) ? X{it->second.advance} : m_space_width;
             }
         }
     }
