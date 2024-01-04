@@ -1270,7 +1270,7 @@ namespace DebugOutput {
     }
 
     void PrintLineBreakdown(const std::string& text,
-                            const Flags<TextFormat>& format,
+                            const Flags<TextFormat> format,
                             const X box_width,
                             const std::vector<Font::LineData>& line_data)
     {
