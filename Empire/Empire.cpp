@@ -1081,7 +1081,7 @@ void Empire::UpdateSystemSupplyRanges(const Universe& universe) {
     UpdateSystemSupplyRanges(known_object_ids, empire_known_objects);
 }
 
-void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) {
+void Empire::UpdateUnobstructedFleets(ObjectMap& objects, const std::unordered_set<int>& known_destroyed_objects) const {
     for (const auto* system : objects.findRaw<System>(m_supply_unobstructed_systems)) {
         if (!system)
             continue;
