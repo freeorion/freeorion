@@ -177,8 +177,7 @@ public:
         std::ptrdiff_t second{0};
     };
 
-    /** \brief Used to encapsulate a token-like piece of text to be rendered
-        using GG::Font. */
+    /** \brief Describes a token-like piece of text to be rendered. */
     struct GG_API TextElement
     {
         /** The types of token-like entities that can be represented by a TextElement. */
@@ -194,7 +193,7 @@ public:
             NEWLINE
         };
 
-        /** Ctor.  \a ws indicates that the element contains only whitespace;
+        /** \a ws indicates that the element contains only whitespace;
             \a nl indicates that it is a newline element. */
         TextElement(bool ws, bool nl) noexcept :
             whitespace(ws),
@@ -572,7 +571,7 @@ public:
         call it repeatedly on a known text.
     */
     std::vector<std::shared_ptr<Font::TextElement>> ExpensiveParseFromTextToTextElements(
-        const std::string& text, Flags<TextFormat> format) const;
+        const std::string& text, const Flags<TextFormat> format) const;
 
     /** Fill \p text_elements with the font widths of characters from \p text starting from \p
         starting_from. */
