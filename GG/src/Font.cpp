@@ -322,41 +322,7 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::Substring
 ///////////////////////////////////////
-namespace {
-    const std::string EMPTY_STRING;
-}
-
-Font::Substring::Substring() noexcept :
-    str(&EMPTY_STRING)
-{}
-
-Font::Substring::Substring(const std::string& str_,
-                           std::string::const_iterator first_,
-                           std::string::const_iterator second_) :
-    str(&str_)
-{
-    assert(str->begin() <= first_);
-    assert(first_ <= second_);
-    assert(second_ <= str->end());
-    first = std::distance(str->begin(), first_);
-    second = std::distance(str->begin(), second_);
-}
-
-Font::Substring::Substring(const std::string& str_, const IterPair& pair) :
-    str(&str_)
-{
-    assert(str->begin() <= pair.first);
-    assert(pair.first <= pair.second);
-    assert(pair.second <= str->end());
-    first = std::distance(str->begin(), pair.first);
-    second = std::distance(str->begin(), pair.second);
-}
-
-void Font::Substring::Bind(const std::string& str_) noexcept
-{
-    assert(std::distance(str_.begin(), str_.end()) >= second);
-    str = &str_;
-}
+const std::string Font::Substring::EMPTY_STRING{};
 
 bool Font::Substring::operator==(const std::string& rhs) const
 { return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data(), size()); }
@@ -366,15 +332,6 @@ bool Font::Substring::operator==(std::string_view rhs) const
 
 bool Font::Substring::operator==(const Substring& rhs) const
 { return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data() + rhs.first, size()); }
-
-Font::Substring& Font::Substring::operator+=(const IterPair& rhs)
-{
-    assert(rhs.first <= rhs.second);
-    assert(std::distance(str->begin(), rhs.first) == second);
-    second = std::distance(str->begin(), rhs.second);
-    return *this;
-}
-
 
 ///////////////////////////////////////
 // Free Functions
@@ -684,13 +641,9 @@ public:
         auto tag_name_end = m_text.append(tag).size();
         auto tag_end = m_text.append(">").size();
 
-        element->tag_name = Substring(m_text,
-                                      std::next(m_text.begin(), tag_name_begin),
-                                      std::next(m_text.begin(), tag_name_end));
+        element->tag_name = Substring(m_text, tag_name_begin, tag_name_end);
         // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
-        element->text = Substring(m_text,
-                                  std::next(m_text.begin(), tag_begin),
-                                  std::next(m_text.begin(), tag_end));
+        element->text = Substring(m_text, tag_begin, tag_end);
 
         m_text_elements.push_back(std::move(element));
     }
@@ -708,9 +661,7 @@ public:
         auto tag_begin = m_text.size();
         auto tag_name_begin = m_text.append("<").size();
         auto tag_name_end = m_text.append(tag).size();
-        element->tag_name = Substring(m_text,
-                                      std::next(m_text.begin(), tag_name_begin),
-                                      std::next(m_text.begin(), tag_name_end));
+        element->tag_name = Substring(m_text, tag_name_begin, tag_name_end);
 
         // add params, like: "<tag param1 param2"
         for (const auto& param : params) {
@@ -718,16 +669,12 @@ public:
             auto param_begin = m_text.size();
             auto param_end = m_text.append(param).size();
 
-            element->params.emplace_back(m_text,
-                                         std::next(m_text.begin(), param_begin),
-                                         std::next(m_text.begin(), param_end));
+            element->params.emplace_back(m_text, param_begin, param_end);
         }
 
         // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
         auto tag_end = m_text.append(">").size();
-        element->text = Substring(m_text,
-                                  std::next(m_text.begin(), tag_begin),
-                                  std::next(m_text.begin(), tag_end));
+        element->text = Substring(m_text, tag_begin, tag_end);
 
         m_text_elements.push_back(std::move(element));
     }
@@ -748,12 +695,8 @@ public:
         const auto tag_name_end = m_text.append(tag).size();
         const auto tag_end = m_text.append(">").size();
 
-        element->text = Substring(m_text,
-                                  std::next(m_text.begin(), tag_begin),
-                                  std::next(m_text.begin(), tag_end));
-        element->tag_name = Substring(m_text,
-                                      std::next(m_text.begin(), tag_name_begin),
-                                      std::next(m_text.begin(), tag_name_end));
+        element->text = Substring(m_text, tag_begin, tag_end);
+        element->tag_name = Substring(m_text, tag_name_begin, tag_name_end);
 
         m_text_elements.push_back(std::move(element));
     }
@@ -765,7 +708,7 @@ public:
 
         const auto begin = m_text.size();
         const auto end = m_text.append(text).size();
-        Substring ss{m_text, std::next(m_text.begin(), begin), std::next(m_text.begin(), end)};
+        Substring ss{m_text, begin, end};
         auto element = std::make_shared<Font::TextElement>(ss);
         m_text_elements.push_back(std::move(element));
     }
@@ -778,9 +721,7 @@ public:
         auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::WHITESPACE);
         auto begin = m_text.size();
         auto end = m_text.append(whitespace).size();
-        element->text = Substring(m_text,
-                                  std::next(m_text.begin(), begin),
-                                  std::next(m_text.begin(), end));
+        element->text = Substring(m_text, begin, end);
         m_text_elements.push_back(std::move(element));
     }
 
@@ -1247,7 +1188,7 @@ namespace DebugOutput {
                 auto& tag_elem = *tag_elem_p;
 
                 std::cout << "FormattingTag\n    text=\"" << tag_elem.text << "\" (@ "
-                          << static_cast<const void*>(&tag_elem.text.front()) << ")\n    widths=";
+                          << static_cast<const void*>(tag_elem.text.data()) << ")\n    widths=";
                 for (const X& width : tag_elem.widths)
                     std::cout << Value(width) << " ";
                 std::cout << "\n    whitespace=" << tag_elem.IsWhiteSpace() << "\n    newline="
@@ -1481,9 +1422,8 @@ void Font::ChangeTemplatedText(
                 text.insert(ii_sub_begin, new_text);
 
                 change_of_len = new_text.size() - sub_len;
-                (*te_it)->text = Substring(text,
-                                           std::next(text.begin(), ii_sub_begin),
-                                           std::next(text.begin(), ii_sub_begin + new_text.size()));
+                (*te_it)->text = Substring(text, ii_sub_begin,
+                                           ii_sub_begin + static_cast<std::ptrdiff_t>(new_text.size()));
                 break;
             }
             ++curr_offset;
@@ -1503,9 +1443,7 @@ void Font::ChangeTemplatedText(
         {
             auto ii_sub_begin = (*te_it)->text.begin() - text.begin();
             auto ii_sub_end = (*te_it)->text.end() - text.begin();
-            (*te_it)->text = Substring(text,
-                                       std::next(text.begin(), ii_sub_begin + change_of_len),
-                                       std::next(text.begin(), ii_sub_end + change_of_len));
+            (*te_it)->text = Substring(text, ii_sub_begin + change_of_len, ii_sub_end + change_of_len);
 
             ++te_it;
         }
@@ -1844,12 +1782,12 @@ void Font::Init(FT_Face& face)
             if ((glyph_bitmap.width > TEX_MAX_SIZE) || (glyph_bitmap.rows > TEX_MAX_SIZE))
                 ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
 
-            if (Value(x) + glyph_bitmap.width >= TEX_MAX_SIZE) { // start a new row of glyph images
+            if (static_cast<std::size_t>(Value(x)) + glyph_bitmap.width >= TEX_MAX_SIZE) { // start a new row of glyph images
                 if (x > max_x) max_x = x;
                 x = X0;
                 y = max_y;
             }
-            if (Value(y) + glyph_bitmap.rows >= TEX_MAX_SIZE) {
+            if (static_cast<std::size_t>(Value(y)) + glyph_bitmap.rows >= TEX_MAX_SIZE) {
                 // We cannot make the texture any larger. The font does not fit.
                 ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
             }

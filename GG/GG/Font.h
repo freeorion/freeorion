@@ -121,29 +121,52 @@ public:
     class GG_API Substring
     {
     public:
-        typedef std::pair<std::string::const_iterator, std::string::const_iterator> IterPair;
+        using IterPair = std::pair<std::string::const_iterator, std::string::const_iterator>;
 
-        Substring() noexcept;
+        explicit Substring(const std::string& str_) noexcept :
+            str(&str_)
+        {}
 
-        /** Ctor.  \a first_ must be <= \a second_. */
+        /** Construction from two offsets. \a first_ must be <= \a second_. */
+        Substring(const std::string& str_, std::ptrdiff_t first_,
+                  std::ptrdiff_t second_) noexcept :
+            str(&str_),
+            first(first_),
+            second(second_)
+        {
+            assert(0 <= first_);
+            assert(first_ <= second_);
+            assert(second_ <= str->size());
+        }
+
+        Substring(const std::string& str_, std::size_t first_, std::size_t second_) noexcept :
+            Substring(str_, static_cast<std::ptrdiff_t>(first_), static_cast<std::ptrdiff_t>(second_))
+        {}
+
+        /** Construction from two iterators. \a first_ must be <= \a second_.
+          * Both must be valid iterators into \a str_. */
         Substring(const std::string& str_,
                   std::string::const_iterator first_,
-                  std::string::const_iterator second_);
+                  std::string::const_iterator second_) :
+            Substring(str_,
+                      std::distance(str_.begin(), first_),
+                      std::distance(str_.begin(), second_))
+        {}
+        Substring(const std::string& str_, const IterPair& pair) :
+            Substring(str_, pair.first, pair.second)
+        {}
 
-        /** Construction from base.  \a pair.first must be <= \a
-            pair.second. */
-        Substring(const std::string& str_, const IterPair& pair);
 
         /** Attach this Substring to \p str_.
+          * This changes any future-returned iterators from pointing into the previously-bound
+          * string to pointing into \p str_. */
+        void Bind(const std::string& str_) noexcept
+        {
+            assert(std::distance(str_.begin(), str_.end()) >= second);
+            str = &str_;
+        }
 
-            This changes the iterators from pointing into the previous
-            std::string to pointing into \p str_.
-        */
-        void Bind(const std::string& str_) noexcept;
-
-        [[nodiscard]] auto data() const noexcept { return str->data() + first; }
-
-        [[nodiscard]] const auto& front() const noexcept { return *(str->data() + first); }
+        [[nodiscard]] auto data() const noexcept { return std::next(str->data(), first); }
 
         /** Returns an iterator to the beginning of the substring. */
         [[nodiscard]] auto begin() const { return std::next(str->begin(), first); }
@@ -169,12 +192,22 @@ public:
 
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
           * .second must be equal to \a rhs.first (*this and \a rhs must be contiguous). */
-        Substring& operator+=(const IterPair& rhs);
+        Substring& operator+=(const IterPair& rhs)
+        {
+            assert(rhs.first <= rhs.second);
+            assert(std::distance(str->begin(), rhs.first) == second);
+            second = std::distance(str->begin(), rhs.second);
+            return *this;
+        }
+
+        Substring() noexcept = default;
 
     private:
-        const std::string* str = nullptr;
-        std::ptrdiff_t first{0};
-        std::ptrdiff_t second{0};
+        static const std::string EMPTY_STRING;
+
+        const std::string* str = &EMPTY_STRING;
+        std::ptrdiff_t first = 0;
+        std::ptrdiff_t second = 0;
     };
 
     /** \brief Describes a token-like piece of text to be rendered. */
