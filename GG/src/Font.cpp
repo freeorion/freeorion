@@ -633,19 +633,16 @@ public:
 
         m_are_widths_calculated = false;
 
-        // Create the opening part of an open tag, like this: "<tag"
-        auto element = std::make_shared<Font::FormattingTag>(false);
+        // Create open tag like "<tag>" with no parameters
+        const auto tag_begin = m_text.size();
+        const auto tag_name_begin = m_text.append("<").size();
+        const auto tag_name_end = m_text.append(tag).size();
+        const auto tag_end = m_text.append(">").size();
 
-        auto tag_begin = m_text.size();
-        auto tag_name_begin = m_text.append("<").size();
-        auto tag_name_end = m_text.append(tag).size();
-        auto tag_end = m_text.append(">").size();
-
-        element->tag_name = Substring(m_text, tag_name_begin, tag_name_end);
-        // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
-        element->text = Substring(m_text, tag_begin, tag_end);
-
-        m_text_elements.push_back(std::move(element));
+        Substring text{m_text, tag_begin, tag_end};
+        Substring tag_name{m_text, tag_name_begin, tag_name_end};
+        m_text_elements.push_back(std::make_shared<Font::TextElement>(
+            text, tag_name, Font::TextElement::TextElementType::OPEN_TAG));
     }
 
     /** Add an open tag iff it exists as a recognized tag.*/
@@ -656,27 +653,29 @@ public:
 
         m_are_widths_calculated = false;
 
-        // Create the opening part of an open tag, like this: "<tag"
-        auto element = std::make_shared<Font::FormattingTag>(false);
-        auto tag_begin = m_text.size();
-        auto tag_name_begin = m_text.append("<").size();
-        auto tag_name_end = m_text.append(tag).size();
-        element->tag_name = Substring(m_text, tag_name_begin, tag_name_end);
+        const auto tag_begin = m_text.size();
 
-        // add params, like: "<tag param1 param2"
+        // Create the opening part of an open tag, like "<tag"
+        const auto tag_name_begin = m_text.append("<").size();
+        const auto tag_name_end = m_text.append(tag).size();
+        Substring tag_name{m_text, tag_name_begin, tag_name_end};
+
+        std::vector<Substring> pass_params;
+        pass_params.reserve(params.size());
+        // add params, like: "... param1 param2 ..."
         for (const auto& param : params) {
             m_text.append(" ");
-            auto param_begin = m_text.size();
-            auto param_end = m_text.append(param).size();
-
-            element->params.emplace_back(m_text, param_begin, param_end);
+            const auto param_begin = m_text.size();
+            const auto param_end = m_text.append(param).size();
+            pass_params.emplace_back(m_text, param_begin, param_end);
         }
 
-        // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
+        // Create the close part of an open tag to complete the tag, like ">"
         auto tag_end = m_text.append(">").size();
-        element->text = Substring(m_text, tag_begin, tag_end);
+        Substring text{m_text, tag_begin, tag_end};
 
-        m_text_elements.push_back(std::move(element));
+        m_text_elements.push_back(std::make_shared<TextElement>(
+            text, tag_name, std::move(pass_params), TextElement::TextElementType::OPEN_TAG));
     }
 
     /** Add a close tag iff it exists as a recognized tag.*/
@@ -687,18 +686,16 @@ public:
 
         m_are_widths_calculated = false;
 
-        // Create a close tag that looks like this: "</tag>"
-        auto element = std::make_shared<Font::FormattingTag>(true);
-
+        // Create a close tag that looks like "</tag>"
         const auto tag_begin = m_text.size();
         const auto tag_name_begin = m_text.append("</").size();
         const auto tag_name_end = m_text.append(tag).size();
         const auto tag_end = m_text.append(">").size();
 
-        element->text = Substring(m_text, tag_begin, tag_end);
-        element->tag_name = Substring(m_text, tag_name_begin, tag_name_end);
-
-        m_text_elements.push_back(std::move(element));
+        Substring text{m_text, tag_begin, tag_end};
+        Substring tag_name{m_text, tag_name_begin, tag_name_end};
+        m_text_elements.push_back(std::make_shared<TextElement>(
+            text, tag_name, TextElement::TextElementType::CLOSE_TAG));
     }
 
     /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
@@ -708,9 +705,7 @@ public:
 
         const auto begin = m_text.size();
         const auto end = m_text.append(text).size();
-        Substring ss{m_text, begin, end};
-        auto element = std::make_shared<Font::TextElement>(ss);
-        m_text_elements.push_back(std::move(element));
+        m_text_elements.push_back(std::make_shared<Font::TextElement>(Substring{m_text, begin, end}));
     }
 
     /** Add a white space element.*/
@@ -718,18 +713,20 @@ public:
     {
         m_are_widths_calculated = false;
 
-        auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::WHITESPACE);
         auto begin = m_text.size();
         auto end = m_text.append(whitespace).size();
-        element->text = Substring(m_text, begin, end);
-        m_text_elements.push_back(std::move(element));
+
+        m_text_elements.push_back(std::make_shared<Font::TextElement>(
+            Substring(m_text, begin, end),
+            Font::TextElement::TextElementType::WHITESPACE));
     }
 
     /** Add a newline element.*/
     void AddNewline()
     {
         m_are_widths_calculated = false;
-        m_text_elements.push_back(std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::NEWLINE));
+        m_text_elements.push_back(std::make_shared<Font::TextElement>(
+            Font::TextElement::TextElementType::NEWLINE));
     }
 
     /** Add open color tag.*/
@@ -877,7 +874,8 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 {
     tags.reserve(tags_.size());
     for (auto& tag : tags_)
-        tags.push_back(std::dynamic_pointer_cast<FormattingTag>(tag));
+        if (tag->IsTag())
+            tags.push_back(tag);
 }
 
 
@@ -1183,9 +1181,9 @@ void Font::ThrowBadGlyph(const std::string& format_str, uint32_t c)
 namespace DebugOutput {
     void PrintParseResults(const std::vector<std::shared_ptr<Font::TextElement>>& text_elements) {
         std::cout << "results of parse:\n";
-        for (auto& elem : text_elements) {
-            if (auto tag_elem_p = std::dynamic_pointer_cast<Font::FormattingTag>(elem)) {
-                auto& tag_elem = *tag_elem_p;
+        for (const auto& elem : text_elements) {
+            if (elem->IsTag()) {
+                auto& tag_elem = *elem;
 
                 std::cout << "FormattingTag\n    text=\"" << tag_elem.text << "\" (@ "
                           << static_cast<const void*>(tag_elem.text.data()) << ")\n    widths=";
@@ -1307,9 +1305,9 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
         if (combined_text.empty()) {
             const auto& it_elem = *it;
 
-            // Open XML tag.
             if (it_elem[open_bracket_tag].matched) {
-                auto element = std::make_shared<Font::FormattingTag>(false);
+                // Open XML tag.
+                auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::OPEN_TAG);
                 element->text = Substring(text, it_elem[0]);
 
                 // Check open tags for submatches which are parameters.  For example a Color tag
@@ -1325,15 +1323,15 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
                 element->tag_name = Substring(text, it_elem[tag_name_tag]);
                 text_elements.push_back(std::move(element));
 
-            // Close XML tag
             } else if (it_elem[close_bracket_tag].matched) {
-                auto element = std::make_shared<Font::FormattingTag>(Font::TextElement::TextElementType::CLOSE_TAG);
+                // Close XML tag
+                auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::CLOSE_TAG);
                 element->text = Substring(text, it_elem[0]);
                 element->tag_name = Substring(text, it_elem[tag_name_tag]);
                 text_elements.push_back(std::move(element));
 
-            // Whitespace element
             } else if (it_elem[whitespace_tag].matched) {
+                // Whitespace element
                 auto element = std::make_shared<Font::TextElement>(Font::TextElement::TextElementType::WHITESPACE);
                 element->text = Substring(text, it_elem[whitespace_tag]);
                 char last_char = *std::prev(element->text.end());
@@ -1348,8 +1346,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
         // Basic text element.
         } else {
-            auto element = std::make_shared<Font::TextElement>(combined_text);
-            text_elements.push_back(std::move(element));
+            text_elements.push_back(std::make_shared<Font::TextElement>(combined_text));
         }
 
         if (need_increment)
@@ -1652,8 +1649,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                 }
             }
         } else if (elem->Type() == TextElement::TextElementType::OPEN_TAG) {
-            assert(std::dynamic_pointer_cast<FormattingTag>(elem));
-            const auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
+            const auto elem_as_tag = std::static_pointer_cast<TextElement>(elem);
             if (elem_as_tag->tag_name == ALIGN_LEFT_TAG)
                 line_data.back().justification = ALIGN_LEFT;
             else if (elem_as_tag->tag_name == ALIGN_CENTER_TAG)
@@ -1666,8 +1662,7 @@ std::vector<Font::LineData> Font::DetermineLines(
             code_point_offset += elem->CodePointSize();
 
         } else if (elem->Type() == TextElement::TextElementType::CLOSE_TAG) {
-            assert(std::dynamic_pointer_cast<FormattingTag>(elem));
-            const auto elem_as_tag = std::static_pointer_cast<FormattingTag>(elem);
+            const auto elem_as_tag = std::static_pointer_cast<TextElement>(elem);
             if ((elem_as_tag->tag_name == ALIGN_LEFT_TAG && line_data.back().justification == ALIGN_LEFT) ||
                 (elem_as_tag->tag_name == ALIGN_CENTER_TAG && line_data.back().justification == ALIGN_CENTER) ||
                 (elem_as_tag->tag_name == ALIGN_RIGHT_TAG && line_data.back().justification == ALIGN_RIGHT))
@@ -2004,7 +1999,7 @@ namespace {
     }
 }
 
-void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag_, RenderState& render_state) const
+void Font::HandleTag(const std::shared_ptr<TextElement>& tag_, RenderState& render_state) const
 {
     if (!tag_) {
         std::cerr << "GG::Font::HandleTag passed null tag";

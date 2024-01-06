@@ -234,6 +234,25 @@ public:
             type(TextElementType::TEXT)
         {}
 
+        TextElement(Substring text_, TextElementType type_)
+            noexcept(noexcept(Substring{std::declval<Substring>()})) :
+            text(text_),
+            type(type_)
+        {}
+        TextElement(Substring text_, Substring tag_name_,
+                    TextElementType type_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+            text(text_),
+            tag_name(tag_name_),
+            type(type_)
+        {}
+        TextElement(Substring text_, Substring tag_name_, std::vector<Substring> params_,
+                    TextElementType type_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+            text(text_),
+            tag_name(tag_name_),
+            params(std::move(params_)),
+            type(type_)
+        {}
+
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
 
@@ -256,11 +275,18 @@ public:
             without re-parsing the std::string.
          */
         virtual void Bind(const std::string& whole_text) noexcept
-        { text.Bind(whole_text); }
+        {
+            text.Bind(whole_text);
+            tag_name.Bind(whole_text);
+            for (Substring& substring : params)
+                substring.Bind(whole_text);
+        }
 
         /** Returns the TextElementType of the element. */
         [[nodiscard]] TextElementType Type() const noexcept { return type; };
         [[nodiscard]] bool IsCloseTag() const noexcept { return type == TextElementType::CLOSE_TAG; }
+        [[nodiscard]] bool IsOpenTag() const noexcept { return type == TextElementType::OPEN_TAG; }
+        [[nodiscard]] bool IsTag() const noexcept { return IsCloseTag() || IsOpenTag(); }
         [[nodiscard]] bool IsWhiteSpace() const noexcept { return type == TextElementType::WHITESPACE; }
         [[nodiscard]] bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
 
@@ -278,12 +304,27 @@ public:
         { return CPSize(widths.size()); }
 
         virtual bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
-        { return (text == rhs.text) && (widths == rhs.widths) && (type == rhs.type); }
+        {
+            return (type == rhs.type) &&
+                   (text == rhs.text) &&
+                   (tag_name == rhs.tag_name) &&
+                   (widths == rhs.widths) &&
+                   (params == rhs.params);
+        }
 
         /** The text from the original string represented by the element. */
         Substring text;
 
-        std::vector<X> widths;             ///< The widths of the glyphs in \a text.
+        /** For a formatting tag, contains the tag name, eg. "rgba" for the tag "<rgba 0 0 0 255>". */
+        Substring tag_name;
+
+        /** The widths of the glyphs in \a text. */
+        std::vector<X> widths;
+
+        /** The parameter strings within the tag, eg. "0", "0", "0", and "255"
+            for the tag "<rgba 0 0 0 255>". */
+        std::vector<Substring> params;
+
         const TextElementType type = TextElementType::TEXT;
 
     protected:
@@ -332,47 +373,6 @@ public:
         std::unique_ptr<Impl> const m_impl;
     };
 
-    /** \brief The type of TextElement that represents a text formatting
-        tag. */
-    struct GG_API FormattingTag : public TextElement
-    {
-        /** Ctor.  \a close indicates that the tag is a close-tag (e.g. "</rgba>"). */
-        explicit FormattingTag(bool close) noexcept :
-            TextElement(close ? TextElementType::CLOSE_TAG : TextElementType::OPEN_TAG)
-        {}
-        explicit FormattingTag(TextElementType type) noexcept :
-            TextElement(type == TextElementType::OPEN_TAG ?
-                        TextElementType::OPEN_TAG : TextElementType::CLOSE_TAG)
-        {}
-
-        /** Attach to \p whole_text by binding all Substring data members,
-            both the base class and the data member tag_name to the string
-            \p whole_text.*/
-        void Bind(const std::string& whole_text) noexcept override
-        {
-            TextElement::Bind(whole_text);
-            tag_name.Bind(whole_text);
-            for (Substring& substring : params)
-                substring.Bind(whole_text);
-        }
-
-        bool operator==(const TextElement &rhs) const noexcept override
-        {
-            auto const* ft = dynamic_cast<Font::FormattingTag const*>(&rhs);
-            return (ft &&
-                    Font::TextElement::operator==(rhs) &&
-                    params == ft->params &&
-                    tag_name == ft->tag_name);
-        }
-
-        /** The parameter strings within the tag, e.g. "0", "0", "0", and "255"
-            for the tag "<rgba 0 0 0 255>". */
-        std::vector<Substring> params;
-
-        /** The name of the tag (e.g. for the tag "<i>", tag_name is "i"). */
-        Substring tag_name;
-    };
-
     /** \brief Holds the essential data on each line that a string occupies when
         rendered with given format flags.
 
@@ -407,9 +407,8 @@ public:
             /** The code point index of this glyph. */
             CPSize code_point_index = CP0;
 
-            /** The text formatting tags that should be applied before
-                rendering this glyph. */
-            std::vector<std::shared_ptr<FormattingTag>> tags;
+            /** The text formatting tags that should be applied before rendering this glyph. */
+            std::vector<std::shared_ptr<TextElement>> tags;
         };
 
         X    Width() const noexcept { return char_data.empty() ? X0 : char_data.back().extent; }
@@ -733,7 +732,7 @@ private:
                                          const Glyph& glyph, Y descent, Y height,
                                          Y underline_height, Y underline_offset) const;
 
-    void              HandleTag(const std::shared_ptr<FormattingTag>& tag, RenderState& render_state) const;
+    void              HandleTag(const std::shared_ptr<TextElement>& tag, RenderState& render_state) const;
     bool              IsDefaultFont() const noexcept;
 
     static std::shared_ptr<Font> GetDefaultFont(unsigned int pts);
