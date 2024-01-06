@@ -524,7 +524,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     }
 
     std::string text;
-    text.reserve(digits+3);
+    text.reserve(static_cast<std::size_t>(digits)+3u);
 
     // prepend signs if neccessary
     int effective_sign = EffectiveSign(val);
