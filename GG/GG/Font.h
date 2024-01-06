@@ -128,8 +128,7 @@ public:
         {}
 
         /** Construction from two offsets. \a first_ must be <= \a second_. */
-        Substring(const std::string& str_, std::ptrdiff_t first_,
-                  std::ptrdiff_t second_) noexcept :
+        Substring(const std::string& str_, uint32_t first_, uint32_t second_) noexcept :
             str(&str_),
             first(first_),
             second(second_)
@@ -140,7 +139,10 @@ public:
         }
 
         Substring(const std::string& str_, std::size_t first_, std::size_t second_) noexcept :
-            Substring(str_, static_cast<std::ptrdiff_t>(first_), static_cast<std::ptrdiff_t>(second_))
+            Substring(str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
+        {}
+        Substring(const std::string& str_, std::ptrdiff_t first_, std::ptrdiff_t second_) noexcept :
+            Substring(str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
         {}
 
         /** Construction from two iterators. \a first_ must be <= \a second_.
@@ -149,8 +151,8 @@ public:
                   std::string::const_iterator first_,
                   std::string::const_iterator second_) :
             Substring(str_,
-                      std::distance(str_.begin(), first_),
-                      std::distance(str_.begin(), second_))
+                      static_cast<uint32_t>(std::distance(str_.begin(), first_)),
+                      static_cast<uint32_t>(std::distance(str_.begin(), second_)))
         {}
         Substring(const std::string& str_, const IterPair& pair) :
             Substring(str_, pair.first, pair.second)
@@ -178,7 +180,7 @@ public:
         [[nodiscard]] bool empty() const noexcept { return first == second; }
 
         /** Length, in original string chars, of the substring. */
-        [[nodiscard]] std::size_t size() const noexcept { return second - first; }
+        [[nodiscard]] std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
 
         /** Implicit conversion to std::string. */
         [[nodiscard]] operator std::string() const { return std::string(begin(), end()); }
@@ -206,8 +208,8 @@ public:
         static const std::string EMPTY_STRING;
 
         const std::string* str = &EMPTY_STRING;
-        std::ptrdiff_t first = 0;
-        std::ptrdiff_t second = 0;
+        uint32_t first = 0;
+        uint32_t second = 0;
     };
 
     /** \brief Describes a token-like piece of text to be rendered. */
