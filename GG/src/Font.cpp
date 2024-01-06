@@ -1258,7 +1258,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     const bool ignore_tags = format & FORMAT_IGNORETAGS;
 
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
-    sregex& regex = tag_handler.Regex(text, ignore_tags);
+    const sregex& regex = tag_handler.Regex(text, ignore_tags);
     sregex_iterator it(text.begin(), text.end(), regex);
 
     // These are the types found by the regular expression: XML open/close tags, text and
@@ -1270,7 +1270,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     static const mark_tag whitespace_tag(4);
     static const mark_tag text_tag(5);
 
-    sregex_iterator end_it;
+    const sregex_iterator end_it;
     while (it != end_it)
     {
         // Consolidate adjacent blocks of text.  If adjacent found substrings are all text, merge
