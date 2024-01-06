@@ -3124,7 +3124,7 @@ namespace {
         if (retval > GG::Pt0)
             return retval;
 
-        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+        static constexpr auto format = GG::FORMAT_NONE;
         auto font = ClientUI::GetFont();
 
 #if defined(__cpp_lib_char8_t)
