@@ -1263,11 +1263,12 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
     // These are the types found by the regular expression: XML open/close tags, text and
     // whitespace.  Each type will correspond to a type of TextElement.
-    mark_tag tag_name_tag(1);
-    mark_tag open_bracket_tag(2);
-    mark_tag close_bracket_tag(3);
-    mark_tag whitespace_tag(4);
-    mark_tag text_tag(5);
+    static const mark_tag full_regex(0);
+    static const mark_tag tag_name_tag(1);
+    static const mark_tag open_bracket_tag(2);
+    static const mark_tag close_bracket_tag(3);
+    static const mark_tag whitespace_tag(4);
+    static const mark_tag text_tag(5);
 
     sregex_iterator end_it;
     while (it != end_it)
@@ -1295,7 +1296,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
             if (it_elem[open_bracket_tag].matched) {
                 // Open XML tag.
-                Substring text_substr{text, it_elem[0]};
+                Substring text_substr{text, it_elem[full_regex]};
                 Substring tag_name_substr{text, it_elem[tag_name_tag]};
 
                 // Check open tags for submatches which are parameters.  For example, a color tag
@@ -1306,7 +1307,10 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
                     params.reserve(nested_results.size() - 1);
                     for (auto nested_it = ++nested_results.begin();
                          nested_it != nested_results.end(); ++nested_it)
-                    { params.emplace_back(text, (*nested_it)[0]); }
+                    {
+                        const auto& nested_elem = *nested_it;
+                        params.emplace_back(text, nested_elem[full_regex]);
+                    }
                 }
 
                 text_elements.emplace_back(text_substr, tag_name_substr, std::move(params),
@@ -1314,7 +1318,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
             } else if (it_elem[close_bracket_tag].matched) {
                 // Close XML tag
-                Substring text_substr{text, it_elem[0]};
+                Substring text_substr{text, it_elem[full_regex]};
                 Substring tag_substr{text, it_elem[tag_name_tag]};
                 text_elements.emplace_back(text_substr, tag_substr,
                                            Font::TextElement::TextElementType::CLOSE_TAG);
