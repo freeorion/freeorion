@@ -299,7 +299,7 @@ namespace internal
 
     template <typename octet_iterator>
     inline utf_error validate_next(octet_iterator& it, octet_iterator end) {
-        uint32_t ignored;
+        uint32_t ignored{0};
         return utf8::internal::validate_next(it, end, ignored);
     }
 
