@@ -3172,11 +3172,11 @@ namespace {
         }
 
         // determine widest column, storing extents of each row for later alignment
-        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+        static constexpr auto format = GG::FORMAT_NONE;
         GG::X longest_width{0};
         std::unordered_map<std::string_view, GG::Pt> column1_species_extents;
         for (auto& [species_name, formatted_col1] : retval) {
-            std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements;
+            std::vector<GG::Font::TextElement> text_elements;
             try {
                 text_elements = font->ExpensiveParseFromTextToTextElements(formatted_col1, format);
             } catch (const std::exception& e) {

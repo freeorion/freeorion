@@ -450,18 +450,18 @@ void TextLinker::FindLinks() {
     for (const auto& curr_line : GetLineData()) {
         for (const auto& curr_char : curr_line.char_data) {
             for (const auto& tag : curr_char.tags) {
-                if (!is_link_tag(tag->tag_name))
+                if (!is_link_tag(tag.tag_name))
                     continue;
 
-                link.type = tag->tag_name;
-                if (tag->IsCloseTag()) {
+                link.type = tag.tag_name;
+                if (tag.IsCloseTag()) {
                     link.text_posn.second = Value(curr_char.string_index);
                     m_links.emplace_back(std::move(link));
                     link = Link();
                 } else {
-                    if (!tag->params.empty()) {
-                        if (tag->tag_name == TextLinker::BROWSE_PATH_TAG) {
-                            auto all_param_str(AllParamsAsString(tag->params));
+                    if (!tag.params.empty()) {
+                        if (tag.tag_name == TextLinker::BROWSE_PATH_TAG) {
+                            auto all_param_str(AllParamsAsString(tag.params));
                             link.data = ResolveNestedPathTypes(all_param_str);
                             // BROWSE_PATH_TAG requires a PathType within param
                             if (link.data == all_param_str) {
@@ -470,14 +470,14 @@ void TextLinker::FindLinks() {
                                 link.data = PathTypeToString(PathType::PATH_INVALID);
                             }
                         } else {
-                            link.data = tag->params[0];
+                            link.data = tag.params[0];
                         }
                     } else {
                         link.data.clear();
                     }
                     link.text_posn.first = Value(curr_char.string_index);
                     for (auto& itag : curr_char.tags)
-                        link.text_posn.first -= Value(itag->StringSize());
+                        link.text_posn.first -= Value(itag.StringSize());
                 }
                 // Before decoration, the real positions are the same as the raw ones
                 link.real_text_posn = link.text_posn;

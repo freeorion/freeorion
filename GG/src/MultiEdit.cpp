@@ -505,7 +505,7 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
     // associated with that position
     CPSize retval = line.char_data[Value(char_idx)].code_point_index;
     for (const auto& tag : line.char_data[Value(char_idx)].tags)
-        retval -= tag->CodePointSize();
+        retval -= tag.CodePointSize();
 
     return retval;
 }

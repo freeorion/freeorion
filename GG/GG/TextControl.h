@@ -67,7 +67,7 @@ public:
      called on \p str.  Hence this constructor is much faster than the first
      constructor.*/
     TextControl(X x, Y y, X w, Y h, std::string str,
-                std::vector<std::shared_ptr<Font::TextElement>> text_elements,
+                std::vector<Font::TextElement> text_elements,
                 std::shared_ptr<Font> font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
@@ -203,8 +203,7 @@ public:
         If the \p str and \p text_elements are inconsistent and \p str is shorter than expected
         from examining \p text_elements then it will return without changing the TextControl.
     */
-    virtual void SetText(std::string str,
-                         std::vector<std::shared_ptr<Font::TextElement>> text_elements);
+    virtual void SetText(std::string str, std::vector<Font::TextElement> text_elements);
 
     /** Change TextControl's text to replace the text at templated \p targ_offset with \p new_text.
 
@@ -311,20 +310,20 @@ private:
         m_text_elements changes.*/
     void RecomputeLineData();
 
-    std::string                                     m_text;
-    Flags<TextFormat>                               m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
-    Clr                                             m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
-    bool                                            m_clip_text = false;
-    bool                                            m_set_min_size = false;
-    std::vector<std::shared_ptr<Font::TextElement>> m_text_elements;
-    std::vector<Font::LineData>                     m_line_data;
-    CPSize                                          m_code_points{0};
-    std::shared_ptr<Font>                           m_font;
-    Pt                                              m_text_ul;     ///< stored relative to the control's UpperLeft()
-    Pt                                              m_text_lr;     ///< stored relative to the control's UpperLeft()
+    std::string                    m_text;
+    Flags<TextFormat>              m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
+    Clr                            m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
+    bool                           m_clip_text = false;
+    bool                           m_set_min_size = false;
+    std::vector<Font::TextElement> m_text_elements;
+    std::vector<Font::LineData>    m_line_data;
+    CPSize                         m_code_points{0};
+    std::shared_ptr<Font>          m_font;
+    Pt                             m_text_ul;     ///< stored relative to the control's UpperLeft()
+    Pt                             m_text_lr;     ///< stored relative to the control's UpperLeft()
 
-    mutable X                                       m_cached_minusable_size_width{X0};
-    mutable Pt                                      m_cached_minusable_size;
+    mutable X                      m_cached_minusable_size_width{X0};
+    mutable Pt                     m_cached_minusable_size{Pt0};
 };
 
 typedef TextControl Label;

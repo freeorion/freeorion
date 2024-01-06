@@ -325,7 +325,7 @@ public:
             for the tag "<rgba 0 0 0 255>". */
         std::vector<Substring> params;
 
-        const TextElementType type = TextElementType::TEXT;
+        TextElementType type = TextElementType::TEXT;
 
     protected:
         TextElement() = default;
@@ -350,7 +350,7 @@ public:
         /** Return the constructed text.*/
         const std::string& Text() const;
         /** Return the constructed TextElements.*/
-        const std::vector<std::shared_ptr<TextElement>>& Elements() const;
+        const std::vector<TextElement>& Elements() const;
 
         /** Add an open tag iff it exists as a recognized tag.*/
         TextAndElementsAssembler& AddOpenTag(std::string_view tag);
@@ -393,7 +393,7 @@ public:
             CharData() = default;
 
             CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
-                     const std::vector<std::shared_ptr<TextElement>>& tags_);
+                     const std::vector<TextElement>& tags_);
 
             /** The furthest-right extent of this glyph as it appears on the line. */
             X extent = X0;
@@ -408,7 +408,7 @@ public:
             CPSize code_point_index = CP0;
 
             /** The text formatting tags that should be applied before rendering this glyph. */
-            std::vector<std::shared_ptr<TextElement>> tags;
+            std::vector<TextElement> tags;
         };
 
         X    Width() const noexcept { return char_data.empty() ? X0 : char_data.back().extent; }
@@ -590,14 +590,14 @@ public:
         it from tight loops.  Do not call it from within Render().  Do not
         call it repeatedly on a known text.
     */
-    std::vector<std::shared_ptr<Font::TextElement>> ExpensiveParseFromTextToTextElements(
+    std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
         const std::string& text, const Flags<TextFormat> format) const;
 
     /** Fill \p text_elements with the font widths of characters from \p text starting from \p
         starting_from. */
     void FillTemplatedText(const std::string& text,
-                           std::vector<std::shared_ptr<TextElement>>& text_elements,
-                           std::vector<std::shared_ptr<TextElement>>::iterator starting_from) const;
+                           std::vector<TextElement>& text_elements,
+                           std::vector<TextElement>::iterator starting_from) const;
 
     /** Change \p text_elements and \p text to replace the text of the TextElement at
         \p targ_offset with \p new_text.
@@ -628,7 +628,7 @@ public:
         changed text_elements:     [<OPEN_TAG i>, <TEXT "Ship:">, <CLOSE_TAG i>, <WHITESPACE>, <TEXT New Ship Name>, <WHITESPACE>, <TEXT ID:>]
     */
     void ChangeTemplatedText(std::string& text,
-                             std::vector<std::shared_ptr<TextElement>>& text_elements,
+                             std::vector<TextElement>& text_elements,
                              const std::string& new_text,
                              std::size_t targ_offset) const;
 
@@ -644,7 +644,7 @@ public:
         behavior.  \p text_elements contains internal pointers to the \p text to which it is
         bound.  Compatible means the exact same \p text object, not the same text content. */
     std::vector<LineData> DetermineLines(const std::string& text, Flags<TextFormat> format, X box_width,
-                                         const std::vector<std::shared_ptr<TextElement>>& text_elements) const;
+                                         const std::vector<TextElement>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
     Pt TextExtent(const std::vector<LineData>& line_data) const;
@@ -732,7 +732,7 @@ private:
                                          const Glyph& glyph, Y descent, Y height,
                                          Y underline_height, Y underline_offset) const;
 
-    void              HandleTag(const std::shared_ptr<TextElement>& tag, RenderState& render_state) const;
+    void              HandleTag(const TextElement& tag, RenderState& render_state) const;
     bool              IsDefaultFont() const noexcept;
 
     static std::shared_ptr<Font> GetDefaultFont(unsigned int pts);

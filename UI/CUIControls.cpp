@@ -65,7 +65,7 @@ CUILabel::CUILabel(std::string str,
     TextControl(x, y, w, h, std::move(str), ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 { SetName("CUILabel no elements"); }
 
-CUILabel::CUILabel(std::string str, std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements,
+CUILabel::CUILabel(std::string str, std::vector<GG::Font::TextElement> text_elements,
                    GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
                    GG::X x, GG::Y y, GG::X w, GG::Y h) :
     TextControl(x, y, w, h, std::move(str), std::move(text_elements),

@@ -52,7 +52,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
 { TextControl::SetText(std::move(str)); }
 
 TextControl::TextControl(X x, Y y, X w, Y h, std::string str,
-                         std::vector<std::shared_ptr<Font::TextElement>> text_elements,
+                         std::vector<Font::TextElement> text_elements,
                          std::shared_ptr<Font> font,
                          Clr color, Flags<TextFormat> format,
                          Flags<WndFlag> flags) :
@@ -76,7 +76,7 @@ TextControl::TextControl(const TextControl& that) :
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
     for (auto& elem : m_text_elements)
-        elem->Bind(m_text);
+        elem.Bind(m_text);
 }
 
 TextControl& TextControl::operator=(const TextControl& that)
@@ -94,7 +94,7 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_cached_minusable_size = that.m_cached_minusable_size;
 
     for (auto& elem : m_text_elements)
-        elem->Bind(m_text);
+        elem.Bind(m_text);
 
     return *this;
 }
@@ -198,15 +198,14 @@ void TextControl::SetText(std::string str)
     RecomputeLineData();
 }
 
-void TextControl::SetText(std::string str,
-                          std::vector<std::shared_ptr<Font::TextElement>> text_elements)
+void TextControl::SetText(std::string str, std::vector<Font::TextElement> text_elements)
 {
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
 
     std::size_t expected_length(0);
     for (auto& elem : text_elements)
-        expected_length += elem->text.size();
+        expected_length += elem.text.size();
 
     if (expected_length > str.size())
         return;
@@ -215,7 +214,7 @@ void TextControl::SetText(std::string str,
 
     m_text_elements = std::move(text_elements);
     for (auto& elem : m_text_elements)
-        elem->Bind(m_text);
+        elem.Bind(m_text);
 
     RecomputeLineData();
 }

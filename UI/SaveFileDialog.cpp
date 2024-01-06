@@ -680,9 +680,8 @@ void SaveFileDialog::Init() {
     m_layout->SetRowStretch      (1, 1.0 );
     GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
     std::string cancel_text(cancel_btn->Text());
-    std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-    font->ExpensiveParseFromTextToTextElements(cancel_text, fmt);
-    std::vector<GG::Font::LineData> lines = ClientUI::GetFont()->DetermineLines(
+    auto text_elements = font->ExpensiveParseFromTextToTextElements(cancel_text, fmt);
+    auto lines = ClientUI::GetFont()->DetermineLines(
         cancel_text, fmt, GG::X(1 << 15), text_elements);
     GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
     m_layout->SetMinimumRowHeight(3, extent.y);

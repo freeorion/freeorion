@@ -159,20 +159,15 @@ void CreditsWnd::OnExit() {
 }
 
 void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2) {
-    GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
-
-    //offset starts with 0, credits are place by transforming the viewport
-    GG::Y offset(GG::Y0);
+    static constexpr auto format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     //start color is white (name), this color is valid outside the rgba tags
-    glColor(GG::Clr(255, 255, 255, 255));
+    glColor(GG::CLR_WHITE);
 
-    std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-        m_font->ExpensiveParseFromTextToTextElements(m_credits, format);
-    std::vector<GG::Font::LineData> lines =
-        m_font->DetermineLines(m_credits, format, x2 - x1, text_elements);
-    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), m_credits, format, lines);
-    offset = m_font->TextExtent(lines).y;
+    const auto text_elements = m_font->ExpensiveParseFromTextToTextElements(m_credits, format);
+    const auto lines = m_font->DetermineLines(m_credits, format, x2 - x1, text_elements);
+    m_font->RenderText(GG::Pt(x1, y1), GG::Pt(x2, y2), m_credits, format, lines);
+    const auto offset = m_font->TextExtent(lines).y;
     //store complete height for self destruction
     m_credits_height = Value(offset);
 }
