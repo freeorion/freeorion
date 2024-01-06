@@ -901,15 +901,13 @@ namespace detail {
     template <typename CharT>
     struct ValidUTFChar<CharT, true>
     {
-        bool operator()(CharT c)
-            { return 0x0 <= c; }
+        constexpr bool operator()(CharT c) noexcept { return 0x0 <= c; }
     };
 
     template <typename CharT>
     struct ValidUTFChar<CharT, false>
     {
-        bool operator()(CharT c)
-            { return c <= 0x7f; }
+        constexpr bool operator()(CharT c) noexcept { return c <= 0x7f; }
     };
 
     struct GG_API FTFaceWrapper
