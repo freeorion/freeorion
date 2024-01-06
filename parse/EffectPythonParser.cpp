@@ -583,6 +583,72 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetSpecies>(std::move(name)));
     }
 
+    effect_wrapper create_field(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> type;
+        auto type_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["type"]);
+        if (type_args.check()) {
+            type = ValueRef::CloneUnique(type_args().value_ref);
+        } else {
+            type = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["type"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<double>> size;
+        auto size_arg = py::extract<value_ref_wrapper<double>>(kw["size"]);
+        if (size_arg.check()) {
+            size = ValueRef::CloneUnique(size_arg().value_ref);
+        } else {
+            size = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["size"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        if (kw.has_key("name")) {
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+        }
+
+        std::vector<std::unique_ptr<Effect::Effect>> effects;
+        if (kw.has_key("effects")) {
+            py::stl_input_iterator<effect_wrapper> effects_begin(kw["effects"]), effects_end;
+            for (auto it = effects_begin; it != effects_end; ++ it) {
+                effects.push_back(ValueRef::CloneUnique(it->effect));
+            }
+        }
+
+        if (kw.has_key("x") && kw.has_key("y")) {
+            std::unique_ptr<ValueRef::ValueRef<double>> x;
+            auto x_arg = py::extract<value_ref_wrapper<double>>(kw["x"]);
+            if (x_arg.check()) {
+                x = ValueRef::CloneUnique(x_arg().value_ref);
+            } else {
+                x = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["x"])());
+            }
+
+            std::unique_ptr<ValueRef::ValueRef<double>> y;
+            auto y_arg = py::extract<value_ref_wrapper<double>>(kw["y"]);
+            if (y_arg.check()) {
+                y = ValueRef::CloneUnique(y_arg().value_ref);
+            } else {
+                y = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["y"])());
+            }
+
+            return effect_wrapper(std::make_shared<Effect::CreateField>(std::move(type),
+                                                                        std::move(x),
+                                                                        std::move(y),
+                                                                        std::move(size),
+                                                                        std::move(name),
+                                                                        std::move(effects)));
+        } else {
+            return effect_wrapper(std::make_shared<Effect::CreateField>(std::move(type),
+                                                                        std::move(size),
+                                                                        std::move(name),
+                                                                        std::move(effects)));
+        }
+    }
+
     FocusType insert_focus_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         auto description = boost::python::extract<std::string>(kw["description"])();
@@ -616,6 +682,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["CreateBuilding"] = py::raw_function(create_building);
     globals["SetFocus"] = py::raw_function(set_focus);
     globals["SetSpecies"] = py::raw_function(set_species);
+    globals["CreateField"] = py::raw_function(create_field);
 
     // set_non_ship_part_meter_enum_grammar
     for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
