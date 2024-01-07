@@ -53,6 +53,8 @@ public:
 
     // pre-allocate space for item data
     void reserve(std::size_t num_items) { b_data.reserve(num_items * b_elements_per_item); }
+    auto capacity() noexcept { return b_data.capacity(); };
+    auto raw_size() noexcept { return b_data.size(); };
 
 protected:
     // store items, buffers usually store tuples, convenience functions
