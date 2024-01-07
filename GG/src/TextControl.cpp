@@ -162,9 +162,6 @@ void TextControl::Render()
     if (!m_font)
         return;
 
-    Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
-    glColor(clr_to_use);
-
     RefreshCache();
     if (m_clip_text)
         BeginClipping();
