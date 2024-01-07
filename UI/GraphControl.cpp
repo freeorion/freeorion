@@ -194,11 +194,11 @@ void GraphControl::Render() {
 
     if (m_show_scale && !m_y_scale_ticks.empty()) {
         glEnable(GL_TEXTURE_2D);
-        auto font = ClientUI::GetFont();
-        glColor(ClientUI::TextColor());
+        const auto font = ClientUI::GetFont();
+        GG::Font::RenderState rs{ClientUI::TextColor()};
         for (auto label : m_y_scale_ticks) {
-            auto roundedlabel = boost::format("%|1$.12|") % label.second;
-            font->RenderText({ul.x + GG::X1, lr.y + label.first}, roundedlabel.str());
+            const auto roundedlabel = boost::format("%|1$.12|") % label.second;
+            font->RenderText(GG::Pt{ul.x + GG::X1, lr.y + label.first}, roundedlabel.str(), rs);
         }
     }
 

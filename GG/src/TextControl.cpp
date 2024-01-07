@@ -181,8 +181,9 @@ void TextControl::Render()
 
 void TextControl::RefreshCache() {
     m_render_cache.clear();
+    Font::RenderState rs(TextColor());
     if (m_font)
-        m_font->PreRenderText(Pt0, Size(), m_text, m_format, m_render_cache, m_line_data);
+        m_font->PreRenderText(Pt0, Size(), m_text, m_format, m_render_cache, m_line_data, rs);
 }
 
 void TextControl::SetText(std::string str)

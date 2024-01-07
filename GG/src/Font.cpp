@@ -824,20 +824,6 @@ Font::RenderState::RenderState()
 Font::RenderState::RenderState(Clr color)
 { PushColor(color.r, color.g, color.b, color.a); }
 
-void Font::RenderState::clear()
-{
-    use_italics = 0;
-    use_shadow = 0;
-    draw_underline = 0;
-    super_sub_shift = 0;
-    color_index_stack = std::stack<uint8_t>{};
-    used_colors.clear();
-
-    // Re-initialize the color stack with the current color
-    auto clr = GetCurrentByteColor();
-    PushColor(clr[0], clr[1], clr[2], clr[3]);
-}
-
 void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 {
     // The same color may end up being stored multiple times, but the cost of
@@ -845,6 +831,9 @@ void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
     color_index_stack.push(static_cast<uint8_t>(used_colors.size()));
     used_colors.emplace_back(r, g, b, a);
 }
+
+void Font::RenderState::PushColor(Clr clr)
+{ PushColor(clr.r, clr.g, clr.b, clr.a); }
 
 void Font::RenderState::PopColor()
 {
@@ -890,7 +879,6 @@ Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int16_t y_ofs
 ///////////////////////////////////////
 namespace {
     Font::RenderCache shared_cache{};
-    Font::RenderState shared_render_state{};
 }
 
 Font::Font(std::string font_filename, unsigned int pts) :
@@ -917,14 +905,13 @@ Font::Font(std::string font_filename, unsigned int pts,
     Init(wrapper.m_face);
 }
 
-X Font::RenderText(Pt pt, const std::string& text) const
+X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render_state) const
 {
     const X orig_x = pt.x;
 
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
     shared_cache.clear();
-    shared_render_state.clear();
 
     for (auto text_it = text.begin(); text_it != text.end();) {
         const uint32_t c = utf8::next(text_it, text.end());
@@ -932,7 +919,7 @@ X Font::RenderText(Pt pt, const std::string& text) const
         if (it == m_glyphs.end())
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
         else
-            pt.x += StoreGlyph(pt, it->second, &shared_render_state, shared_cache);
+            pt.x += StoreGlyph(pt, it->second, render_state, shared_cache);
     }
 
     shared_cache.vertices.createServerBuffer();
@@ -944,11 +931,9 @@ X Font::RenderText(Pt pt, const std::string& text) const
 }
 
 void Font::RenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
-                      const std::vector<LineData>& line_data, RenderState* render_state) const
+                      const std::vector<LineData>& line_data, RenderState& render_state) const
 {
-    RenderText(ul, lr, text, format, line_data,
-               render_state ? *render_state : shared_render_state,
-               0, CP0, line_data.size(),
+    RenderText(ul, lr, text, format, line_data, render_state, 0, CP0, line_data.size(),
                line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()));
 }
 
@@ -963,12 +948,10 @@ void Font::RenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFor
 }
 
 void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
-                         RenderCache& cache,
-                         const std::vector<LineData>& line_data, RenderState* render_state) const
+                         RenderCache& cache, const std::vector<LineData>& line_data,
+                         RenderState& render_state) const
 {
-    PreRenderText(ul, lr, text, format, line_data,
-                  render_state ? *render_state : shared_render_state,
-                  0, CP0, line_data.size(),
+    PreRenderText(ul, lr, text, format, line_data, render_state, 0, CP0, line_data.size(),
                   line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
 }
 
@@ -1013,9 +996,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
                                                     std::next(line_data.begin(), end_line),
                                                     0, std::plus{},
                                                     [](const auto& line) { return line.char_data.size(); });
-
     cache.clear();
-    render_state.clear();
 
     //std::cout << "glyphs: " << glyph_count << ": lines " << begin_line << " to " << end_line << ": ";
     //for (std::size_t i = begin_line; i < end_line; ++i) {
@@ -1057,7 +1038,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
             if (it == m_glyphs.end()) {
                 x = x_origin + char_data.extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
             } else {
-                x += StoreGlyph(Pt(x, y), it->second, &render_state, cache);
+                x += StoreGlyph(Pt(x, y), it->second, render_state, cache);
             }
         }
     }
@@ -1474,7 +1455,6 @@ std::vector<Font::LineData> Font::DetermineLines(
 
     format = ValidateFormat(format); // may modify format
 
-    RenderState render_state;
     static constexpr int tab_width = 8; // default tab width
     const X tab_pixel_width = tab_width * m_space_width; // get the length of a tab stop
     const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
@@ -1889,19 +1869,18 @@ void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, Pt pt, const 
     cache.underline_colors.store(color);
 }
 
-X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState* render_state,
+X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_state,
                    Font::RenderCache& cache) const
 {
     int italic_top_offset = 0;
     int shadow_offset = 0;
     int super_sub_offset = 0;
 
-    if (render_state && render_state->use_italics) // Should we enable sub pixel italics offsets?
+    if (render_state.use_italics) // Should we enable sub pixel italics offsets?
         italic_top_offset = static_cast<int>(m_italics_offset);
-    if (render_state && render_state->use_shadow)
+    if (render_state.use_shadow)
         shadow_offset = static_cast<int>(m_shadow_offset);
-    if (render_state)
-        super_sub_offset = -static_cast<int>(render_state->super_sub_shift * m_super_sub_offset);
+    super_sub_offset = -static_cast<int>(render_state.super_sub_shift * m_super_sub_offset);
 
     // render shadows?
     if (shadow_offset > 0) {
@@ -1909,7 +1888,7 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState* render_st
         StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
         StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
         StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
-        if (render_state && render_state->draw_underline) {
+        if (render_state.draw_underline) {
             StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, m_descent,
                                m_height, Y(m_underline_height), Y(m_underline_offset));
             StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, m_descent,
@@ -1918,12 +1897,10 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState* render_st
     }
 
     // render main text
-    if (render_state) {
-        StoreGlyphImpl(cache, render_state->CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
-        if (render_state->draw_underline) {
-            StoreUnderlineImpl(cache, render_state->CurrentColor(), pt, glyph, m_descent,
-                               m_height, Y(m_underline_height), Y(m_underline_offset));
-        }
+    StoreGlyphImpl(cache, render_state.CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
+    if (render_state.draw_underline) {
+        StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, glyph, m_descent,
+                           m_height, Y(m_underline_height), Y(m_underline_offset));
     }
 
     return X{glyph.advance};

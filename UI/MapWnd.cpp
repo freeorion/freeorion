@@ -2437,9 +2437,7 @@ void MapWnd::RenderFleetMovementLines() {
     glPopMatrix();
 }
 
-void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line,
-                                             GG::Clr clr)
-{
+void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr) {
     const auto& vertices = move_line.vertices;
     if (vertices.empty())
         return; // nothing to draw.
@@ -2496,18 +2494,18 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
         // render ETA number in white with black shadows
-        std::string text = "<s>" + std::to_string(vert.eta) + "</s>"; // TODO: use to_chars and reused string?
-        glColor(GG::CLR_WHITE);
+        const std::string text = "<s>" + std::to_string(vert.eta) + "</s>"; // TODO: use to_chars and reused string?
+        GG::Font::RenderState rs{GG::CLR_WHITE};
         // TODO cache the text_elements
-        auto text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
-        auto lines = font->DetermineLines(text, flags, lr.x - ul.x, text_elements);
-        font->RenderText(ul, lr, text, flags, lines);
+        const auto text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
+        const auto lines = font->DetermineLines(text, flags, lr.x - ul.x, text_elements);
+        font->RenderText(ul, lr, text, flags, lines, rs);
     }
     glPopMatrix();
 }
 
 namespace {
-    constexpr GG::Pt BORDER_INSET{GG::X(1.0f), GG::Y(1.0f)};
+    constexpr GG::Pt BORDER_INSET{GG::X1, GG::Y1};
 
     // Reimplementation of the boost::hash_range function, embedding
     // boost::hash_combine and using std::hash instead of boost::hash

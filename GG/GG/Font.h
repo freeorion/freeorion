@@ -440,8 +440,6 @@ public:
 
         RenderState(Clr color); //< Takes default text color as parameter
 
-        void clear();
-
         /** The count of open \<i> tags seen since the last \</i> seen. */
         uint8_t use_italics = 0;
 
@@ -462,6 +460,7 @@ public:
 
         /// Add color to stack and remember it has been used
         void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a);
+        void PushColor(Clr clr);
 
         /// Return to the previous used color, or remain as default
         void PopColor();
@@ -555,11 +554,11 @@ public:
 
     /** Unformatted text rendering; repeatedly calls RenderGlyph, then returns
         advance of entire string. */
-    X    RenderText(Pt pt, const std::string& text) const;
+    X    RenderText(Pt pt, const std::string_view text, const RenderState& render_state) const;
 
     /** Formatted text rendering. */
     void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
-                    const std::vector<LineData>& line_data, RenderState* render_state = nullptr) const;
+                    const std::vector<LineData>& line_data, RenderState& render_state) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
@@ -573,7 +572,7 @@ public:
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                        RenderCache& cache, const std::vector<LineData>& line_data,
-                       RenderState* render_state = nullptr) const;
+                       RenderState& render_state) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(Pt pt1, Pt pt2, const std::string& text,
@@ -730,7 +729,7 @@ private:
 
     bool              GenerateGlyph(FT_Face font, uint32_t ch);
 
-    X                 StoreGlyph(Pt pt, const Glyph& glyph, const RenderState* render_state,
+    X                 StoreGlyph(Pt pt, const Glyph& glyph, const RenderState& render_state,
                                  RenderCache& cache) const;
     void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, Pt pt,
                                      const Glyph& glyph, int x_top_offset,

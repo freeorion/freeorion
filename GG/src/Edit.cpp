@@ -71,9 +71,12 @@ void Edit::Render()
     CPSize last_visible_char = LastVisibleChar();
     const StrSize INDEX_0 = StringIndexOf(0, m_first_char_shown, GetLineData());
     const StrSize INDEX_END = StringIndexOf(0, last_visible_char, GetLineData());
+    Font::RenderState rs{text_color_to_use};
+    const auto& font = GetFont();
+
 
     if (!GetLineData().empty() && MultiSelected()) {
-        const std::vector<Font::LineData::CharData>& char_data = GetLineData()[0].char_data;
+        const auto& char_data = GetLineData()[0].char_data;
 
         // if one or more chars are selected, hilite, then draw the range in
         // the selected-text color
@@ -93,26 +96,24 @@ void Edit::Render()
 
         // draw text
         X text_x_pos = client_ul.x;
-        glColor(text_color_to_use);
+        text_x_pos +=
+            font->RenderText(Pt(text_x_pos, text_y_pos),
+                             Text().substr(Value(INDEX_0), Value(INDEX_1 - INDEX_0)), rs);
 
-        // TODO: Use subrange RenderTex()
-
+        rs.PushColor(sel_text_color_to_use);
         text_x_pos +=
-            GetFont()->RenderText(Pt(text_x_pos, text_y_pos),
-                                  Text().substr(Value(INDEX_0), Value(INDEX_1 - INDEX_0)));
-        glColor(sel_text_color_to_use);
+            font->RenderText(Pt(text_x_pos, text_y_pos),
+                             Text().substr(Value(INDEX_1), Value(INDEX_2 - INDEX_1)), rs);
+        rs.PopColor();
         text_x_pos +=
-            GetFont()->RenderText(Pt(text_x_pos, text_y_pos),
-                                  Text().substr(Value(INDEX_1), Value(INDEX_2 - INDEX_1)));
-        glColor(text_color_to_use);
-        text_x_pos +=
-            GetFont()->RenderText(Pt(text_x_pos, text_y_pos),
-                                  Text().substr(Value(INDEX_2), Value(INDEX_END - INDEX_2)));
+            font->RenderText(Pt(text_x_pos, text_y_pos),
+                             Text().substr(Value(INDEX_2), Value(INDEX_END - INDEX_2)), rs);
 
     } else { // no selected text
-        glColor(text_color_to_use);
-        GetFont()->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)));
-        if (GUI::GetGUI()->FocusWnd().get() == this) { // if we have focus, draw the caret as a simple vertical line
+        font->RenderText(Pt(client_ul.x, text_y_pos),
+                         Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)), rs);
+        if (GUI::GetGUI()->FocusWnd().get() == this) {
+            // if we have focus, draw the caret as a simple vertical line
             X caret_x = ScreenPosOfChar(m_cursor_pos.second);
             Line(caret_x, client_ul.y, caret_x, client_lr.y);
         }
