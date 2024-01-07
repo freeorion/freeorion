@@ -1328,7 +1328,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
                 Substring text_substr{text, it_elem[whitespace_tag]};
                 const auto& ws_elem = text_elements.emplace_back(
                     text_substr, Font::TextElement::TextElementType::WHITESPACE);
-                char last_char = *std::prev(ws_elem.text.end());
+                const char last_char = ws_elem.text.empty() ? static_cast<char>(0) : *std::prev(ws_elem.text.end());
 
                 // If the last character of a whitespace element is a line ending then create a
                 // newline TextElement.
@@ -1398,14 +1398,13 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<Font::TextElement>
             // Change the target text element
             if (targ_offset == curr_offset) {
                 // Change text
-                auto ii_sub_begin = te_it->text.begin() - text.begin();
-                auto sub_len = te_it->text.end() - te_it->text.begin();
+                auto ii_sub_begin = static_cast<std::size_t>(te_it->text.begin() - text.begin());
+                auto sub_len = static_cast<std::size_t>(te_it->text.end() - te_it->text.begin());
                 text.erase(ii_sub_begin, sub_len);
                 text.insert(ii_sub_begin, new_text);
 
                 change_of_len = new_text.size() - sub_len;
-                te_it->text = Substring(text, ii_sub_begin,
-                                        ii_sub_begin + static_cast<std::ptrdiff_t>(new_text.size()));
+                te_it->text = Substring(text, ii_sub_begin, ii_sub_begin + new_text.size());
                 break;
             }
             ++curr_offset;

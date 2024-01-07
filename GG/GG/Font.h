@@ -126,10 +126,13 @@ public:
         explicit Substring(const std::string& str_) noexcept :
             str(&str_)
         {}
+        constexpr explicit Substring(const std::string* str_) noexcept :
+            str(str_)
+        {}
 
         /** Construction from two offsets. \a first_ must be <= \a second_. */
-        Substring(const std::string& str_, uint32_t first_, uint32_t second_) noexcept :
-            str(&str_),
+        constexpr Substring(const std::string* str_, uint32_t first_, uint32_t second_) noexcept :
+            str(str_),
             first(first_),
             second(second_)
         {
@@ -137,10 +140,11 @@ public:
             assert(first_ <= second_);
             assert(second_ <= str->size());
         }
-
-        Substring(const std::string& str_, std::size_t first_, std::size_t second_) noexcept :
-            Substring(str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
+        template <typename T, std::enable_if_t<std::is_unsigned_v<T>>* = nullptr>
+        Substring(const std::string& str_, T first_, T second_) noexcept :
+            Substring(&str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
         {}
+
         Substring(const std::string& str_, std::ptrdiff_t first_, std::ptrdiff_t second_) noexcept :
             Substring(str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
         {}
@@ -181,6 +185,7 @@ public:
 
         /** Length, in original string chars, of the substring. */
         [[nodiscard]] std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
+        [[nodiscard]] auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
 
         /** Implicit conversion to std::string. */
         [[nodiscard]] operator std::string() const { return std::string(begin(), end()); }
@@ -276,7 +281,7 @@ public:
             entire vectors of TextElement with different std::strings
             without re-parsing the std::string.
          */
-        virtual void Bind(const std::string& whole_text) noexcept
+        void Bind(const std::string& whole_text) noexcept
         {
             text.Bind(whole_text);
             tag_name.Bind(whole_text);
@@ -302,10 +307,10 @@ public:
 
         /** Returns the number of code points in the original string that the
             element represents. */
-        CPSize CodePointSize() const noexcept
+        [[nodiscard]] CPSize CodePointSize() const noexcept
         { return CPSize(widths.size()); }
 
-        virtual bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
+        bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
         {
             return (type == rhs.type) &&
                    (text == rhs.text) &&
