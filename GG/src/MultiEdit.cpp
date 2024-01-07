@@ -114,7 +114,6 @@ void MultiEdit::Render()
     // clip text to client area
     BeginScissorClipping(Pt(cl_ul.x - 1, cl_ul.y), cl_lr);
 
-    Font::RenderState state(text_color_to_use);
     const std::size_t first_visible_row = FirstVisibleRow();
     const std::size_t last_visible_row = LastVisibleRow();
 
@@ -136,7 +135,8 @@ void MultiEdit::Render()
         ? m_cursor_begin.first : std::numeric_limits<std::size_t>::max();
 
     // process tags
-    font->ProcessTagsBefore(lines, state, first_visible_row, CP0);
+    Font::RenderState rs(text_color_to_use);
+    font->ProcessTagsBefore(lines, rs, first_visible_row, CP0);
 
     auto text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
@@ -166,11 +166,10 @@ void MultiEdit::Render()
                 const CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
 
                 // draw text
-                glColor(text_color_to_use);
                 const X text_l = (idx0 == idx1) ? text_pos.x :
                                                   initial_text_x_pos + line.char_data[Value(idx1) - 1].extent;
                 Pt text_lr{text_l, text_pos.y + HEIGHT};
-                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx0, row + 1, idx1);
+                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
                 // draw hiliting
@@ -179,25 +178,24 @@ void MultiEdit::Render()
                 FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
 
                 // draw hilited text
-                glColor(sel_text_color_to_use);
-                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, idx1, row + 1, idx2);
+                rs.PushColor(sel_text_color_to_use);
+                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx1, row + 1, idx2);
+                rs.PopColor();
                 text_pos.x = text_lr.x;
 
-                glColor(text_color_to_use);
                 if (idx2 != idx3) {
                     text_lr.x = initial_text_x_pos + line.char_data[Value(idx3) - 1].extent;
 
                     // render the text after the highlighted text, all the way through to the end
                     // of the line, even if ends with newline, so that any tags associated with that
                     // final character will be processed.
-                    font->RenderText(text_pos, text_lr, text, text_format, lines, state,
+                    font->RenderText(text_pos, text_lr, text, text_format, lines, rs,
                                      row, idx2, row + 1, CPSize(line.char_data.size()));
                 }
 
             } else { // just draw normal text on this line
                 Pt text_lr = text_pos + Pt(line.char_data.back().extent, HEIGHT);
-                glColor(text_color_to_use);
-                font->RenderText(text_pos, text_lr, text, text_format, lines, state, row, CP0, row + 1, CPSize(line.char_data.size()));
+                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, CP0, row + 1, CPSize(line.char_data.size()));
             }
         }
 
