@@ -70,12 +70,12 @@ constexpr T NextPowerOfTwo(T input)
 struct TempGlyphData
 {
     constexpr TempGlyphData() = default;
-    constexpr TempGlyphData(Pt ul_, Pt lr_, int16_t y_ofs, int16_t lb, int16_t a) noexcept :
+    constexpr TempGlyphData(Pt ul_, Pt lr_, int8_t y_ofs, int8_t lb, int8_t a) noexcept :
         ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
     Pt       ul, lr;        ///< area of glyph subtexture within texture
-    int16_t  y_offset = 0;  ///< vertical offset to draw texture (may be negative!)
-    int16_t  left_b = 0;    ///< left bearing (see Glyph)
-    int16_t  adv = 0;       ///< advance of glyph (see Glyph)
+    int8_t   y_offset = 0;  ///< vertical offset to draw texture (may be negative!)
+    int8_t   left_b = 0;    ///< left bearing (see Glyph)
+    int8_t   adv = 0;       ///< advance of glyph (see Glyph)
 };
 
 /// A two dimensional grid of pixels that expands to
@@ -866,12 +866,12 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
 ///////////////////////////////////////
 // struct GG::Font::Glyph
 ///////////////////////////////////////
-Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int16_t y_ofs, int16_t lb, int16_t adv) :
+Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv) :
     sub_texture(std::move(texture), ul.x, ul.y, lr.x, lr.y),
     y_offset(y_ofs),
     left_bearing(lb),
     advance(adv),
-    width(Value(ul.x - lr.x))
+    width(std::min<int8_t>(std::numeric_limits<int8_t>::max(), Value(ul.x - lr.x)))
 {}
 
 ///////////////////////////////////////
@@ -1161,8 +1161,8 @@ namespace DebugOutput {
             if (elem.IsTag()) {
                 std::cout << "FormattingTag\n    text=\"" << elem.text << "\" (@ "
                           << static_cast<const void*>(elem.text.data()) << ")\n    widths=";
-                for (const X width : elem.widths)
-                    std::cout << Value(width) << " ";
+                for (const auto width : elem.widths)
+                    std::cout << width << " ";
                 std::cout << "\n    whitespace=" << elem.IsWhiteSpace() << "\n    newline="
                           << elem.IsNewline() << "\n    params=\n";
                 for (const auto& param : elem.params)
@@ -1173,8 +1173,8 @@ namespace DebugOutput {
             } else {
                 std::cout << "TextElement\n    text=\"" << elem.text << "\" (@ "
                           << static_cast<const void*>(elem.text.data()) << ")\n    widths=";
-                for (const X& width : elem.widths)
-                    std::cout << Value(width) << " ";
+                for (const auto width : elem.widths)
+                    std::cout << width << " ";
                 std::cout << "\n    whitespace=" << elem.IsWhiteSpace() << "\n    newline=" << elem.IsNewline() << "\n";
             }
             std::cout << "    string_size=" << Value(elem.StringSize()) << "\n";
@@ -1212,7 +1212,7 @@ namespace DebugOutput {
                 for (auto& tag_elem : char_data[j].tags) {
                     std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem.text << "\"\n    widths=";
                     for (const auto width : tag_elem.widths)
-                        std::cout << Value(width) << " ";
+                        std::cout << width << " ";
                     std::cout << "\n    whitespace=" << tag_elem.IsWhiteSpace()
                               << "\n    newline=" << tag_elem.IsNewline() << "\n    params=\n";
                     for (const auto& param : tag_elem.params)
@@ -1348,13 +1348,13 @@ void Font::FillTemplatedText(const std::string& text, std::vector<Font::TextElem
         const auto end_it = elem.text.end();
         while (text_it != end_it) {
             // Find and set the width of the character glyph.
-            elem.widths.push_back(X0);
+            elem.widths.push_back(0);
             uint32_t c = utf8::next(text_it, end_it);
             if (c != WIDE_NEWLINE) {
                 auto it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
                 // space chararacter is always renderable)
-                elem.widths.back() = (it != m_glyphs.end()) ? X{it->second.advance} : m_space_width;
+                elem.widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
             }
         }
     }
@@ -1456,7 +1456,7 @@ std::vector<Font::LineData> Font::DetermineLines(
     format = ValidateFormat(format); // may modify format
 
     static constexpr int tab_width = 8; // default tab width
-    const X tab_pixel_width = tab_width * m_space_width; // get the length of a tab stop
+    const X tab_pixel_width = X{tab_width * m_space_width}; // get the length of a tab stop
     const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
     const Alignment orig_just =
         (format & FORMAT_LEFT) ? ALIGN_LEFT :
@@ -1584,7 +1584,7 @@ std::vector<Font::LineData> Font::DetermineLines(
                     // line, move it down to the next line
                     if ((format & FORMAT_LINEWRAP) && box_width < x + elem.widths[j] && x != X0) {
                         line_data.emplace_back();
-                        x = elem.widths[j];
+                        x = X{elem.widths[j]};
                         line_data.back().char_data.emplace_back(
                             x,
                             original_string_offset + char_index,
@@ -1769,14 +1769,45 @@ void Font::Init(FT_Face& face)
             }
 
             // record info on how to find and use this glyph later
+            int16_t y_offset = static_cast<int16_t>(Value(m_height - 1 + m_descent - face->glyph->bitmap_top));
+            int16_t left_b = static_cast<int16_t>(std::ceil(face->glyph->metrics.horiBearingX / 64.0));
+            int16_t adv = static_cast<int16_t>(std::ceil(face->glyph->metrics.horiAdvance / 64.0));
+
+            static constexpr int16_t int8max = std::numeric_limits<int8_t>::max();
+            static constexpr int16_t int8min = std::numeric_limits<int8_t>::min();
+            if (y_offset > int8max) {
+                std::cout << "glyph " << c << " y offset too big: " << y_offset;
+                y_offset = int8max;
+            }
+            if (y_offset < int8min) {
+                std::cout << "glyph " << c << " y offset too small: " << y_offset;
+                y_offset = int8min;
+            }
+            if (left_b > int8max) {
+                std::cout << "glyph " << c << " left bearing too big: " << left_b;
+                left_b = int8max;
+            }
+            if (left_b < int8min) {
+                std::cout << "glyph " << c << " left bearing too small: " << left_b;
+                left_b = int8min;
+            }
+            if (adv > int8max) {
+                std::cout << "glyph " << c << " advance too big: " << adv;
+                adv = int8max;
+            }
+            if (adv < int8min) {
+                std::cout << "glyph " << c << " advance too small: " << adv;
+                adv = int8min;
+            }
+
             temp_glyph_data.emplace_back(std::piecewise_construct,
                                          std::forward_as_tuple(c),
                                          std::forward_as_tuple(
                                              Pt(x, y),
                                              Pt(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)),
-                                             Value(m_height - 1 + m_descent - face->glyph->bitmap_top),
-                                             static_cast<int16_t>((std::ceil(face->glyph->metrics.horiBearingX / 64.0))),
-                                             static_cast<int16_t>((std::ceil(face->glyph->metrics.horiAdvance / 64.0)))));
+                                             static_cast<int8_t>(y_offset),
+                                             static_cast<int8_t>(left_b),
+                                             static_cast<int8_t>(adv)));
 
             // advance buffer write-position
             x += X(glyph_bitmap.width + 1); //Leave a one pixel gap between glyphs
@@ -1791,16 +1822,15 @@ void Font::Init(FT_Face& face)
                     (uint8_t*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
-    for (const auto& glyph_data : temp_glyph_data) {
-        m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr,
-                                           glyph_data.second.y_offset, glyph_data.second.left_b,
-                                           glyph_data.second.adv);
+    for (const auto& [codepoint, glyph_data] : temp_glyph_data) {
+        m_glyphs[codepoint] = Glyph(m_texture, glyph_data.ul, glyph_data.lr, glyph_data.y_offset,
+                                    glyph_data.left_b, glyph_data.adv);
     }
 
     // record the width of the space character
     auto glyph_it = m_glyphs.find(WIDE_SPACE);
     assert(glyph_it != m_glyphs.end());
-    m_space_width = X{glyph_it->second.advance};
+    m_space_width = glyph_it->second.advance;
 }
 
 bool Font::GenerateGlyph(FT_Face face, uint32_t ch)

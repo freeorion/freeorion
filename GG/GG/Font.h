@@ -326,7 +326,7 @@ public:
         Substring tag_name;
 
         /** The widths of the glyphs in \a text. */
-        std::vector<X> widths;
+        std::vector<int8_t> widths;
 
         /** The parameter strings within the tag, eg. "0", "0", "0", and "255"
             for the tag "<rgba 0 0 0 255>". */
@@ -550,7 +550,7 @@ public:
     Y    Lineskip() const noexcept { return m_lineskip; }
 
     /** Returns the width of the glyph for the space character. */
-    X    SpaceWidth() const noexcept { return m_space_width; }
+    X    SpaceWidth() const noexcept { return X{m_space_width}; }
 
     /** Unformatted text rendering; repeatedly calls RenderGlyph, then returns
         advance of entire string. */
@@ -711,13 +711,13 @@ private:
     struct Glyph
     {
         Glyph() = default;
-        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int16_t y_ofs, int16_t lb, int16_t adv);
+        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv);
 
         SubTexture  sub_texture;      ///< The subtexture containing just this glyph
-        int16_t     y_offset = 0;     ///< The vertical offset to draw this glyph (may be negative!)
-        int16_t     left_bearing = 0; ///< The space that should remain before the glyph
-        int16_t     advance = 0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
-        int16_t     width = 0;        ///< The width of the glyph only
+        int8_t      y_offset = 0;     ///< The vertical offset to draw this glyph (may be negative!)
+        int8_t      left_bearing = 0; ///< The space that should remain before the glyph
+        int8_t      advance = 0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
+        int8_t      width = 0;        ///< The width of the glyph only
     };
 
     using GlyphMap = boost::unordered_map<uint32_t, Glyph>;
@@ -747,16 +747,16 @@ private:
     unsigned int                m_pt_sz = 0;
     std::vector<UnicodeCharset> m_charsets; ///< The sets of glyphs that are covered by this font object
 
-    Y       m_ascent = Y0;            ///< Maximum amount above the baseline the text can go
-    Y       m_descent = Y0;           ///< Maximum amount below the baseline the text can go
-    Y       m_height = Y0;            ///< Ascent - descent
-    Y       m_lineskip = Y0;          ///< Distance that should be placed between lines
-    double  m_underline_offset = 0.0; ///< Amount below the baseline that the underline sits
-    double  m_underline_height = 0.0; ///< Height (thickness) of underline
-    double  m_italics_offset = 0.0;   ///< Amount that the top of an italicized glyph is left of the bottom
-    double  m_super_sub_offset = 0.0; ///< Ammount to shift super or subscript text
-    double  m_shadow_offset = 0.0;    ///< Amount that shadows rendered under texts are displaced from the text
-    X       m_space_width = X0;       ///< The width of the glyph for the space character
+    Y        m_ascent = Y0;            ///< Maximum amount above the baseline the text can go
+    Y        m_descent = Y0;           ///< Maximum amount below the baseline the text can go
+    Y        m_height = Y0;            ///< Ascent - descent
+    Y        m_lineskip = Y0;          ///< Distance that should be placed between lines
+    double   m_underline_offset = 0.0; ///< Amount below the baseline that the underline sits
+    double   m_underline_height = 0.0; ///< Height (thickness) of underline
+    double   m_italics_offset = 0.0;   ///< Amount that the top of an italicized glyph is left of the bottom
+    double   m_super_sub_offset = 0.0; ///< Ammount to shift super or subscript text
+    double   m_shadow_offset = 0.0;    ///< Amount that shadows rendered under texts are displaced from the text
+    int8_t   m_space_width = 0;        ///< The width of the glyph for the space character
 
     GlyphMap m_glyphs;                ///< The locations of the images of each glyph within the textures
 
