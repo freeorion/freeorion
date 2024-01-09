@@ -3,6 +3,7 @@ from focs._effects import (
     EffectsGroup,
     EmpireHasAdoptedPolicy,
     GiveEmpireTech,
+    Good,
     HasSpecies,
     HasTag,
     IsBuilding,
@@ -98,7 +99,7 @@ XENOPHOBIC_SELF = [
     # Pop malus for self-sustaining xenophobic species based on the number of nearby planets with other species
     EffectsGroup(
         scope=IsSource,
-        activation=Planet()
+        activation=Planet(environment=[Good])
         & HasTag(name="SELF_SUSTAINING")
         & (0 < _xenophobic_selfsustaining_qualifying_planet_count()),
         stackinggroup="XENOPHOBIC_POP_SELF",
