@@ -181,7 +181,7 @@ void FleetButton::Refresh(SizeType size_type) {
     // select icon(s) for fleet(s)
     int num_ships = 0;
     m_fleet_blockaded = false;
-    for (const auto& fleet : fleets) {
+    for (const auto* fleet : fleets) {
         if (fleet) {
             num_ships += fleet->NumShips();
             if (!m_fleet_blockaded && fleet->Blockaded(context))
