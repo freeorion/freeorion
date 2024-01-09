@@ -1147,7 +1147,7 @@ bool Pathfinder::SystemHasVisibleStarlanes(int system_id, const ObjectMap& objec
 { return pimpl->SystemHasVisibleStarlanes(system_id, objects); }
 
 bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, const ObjectMap& objects) const {
-    if (auto system = objects.get<System>(system_id))
+    if (auto system = objects.getRaw<System>(system_id))
         if (system->NumStarlanes() > 0)
             return true;
     return false;
