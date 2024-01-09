@@ -859,7 +859,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     }
 
     auto current_system = objects.getRaw<System>(SystemID());
-    auto initial_system = current_system;
+    auto const initial_system = current_system;
     auto move_path = MovePath(false, context);
 
     if (!move_path.empty()) {
@@ -1049,7 +1049,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     if (!m_travel_route.empty() && next_it != move_path.end() && it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
-            if (objects.get<System>(next_it->object_id)) {
+            if (objects.getRaw<System>(next_it->object_id)) {
                 //DebugLogger() << "___ setting m_next_system to " << next_it->object_id;
                 m_next_system = next_it->object_id;
                 break;
@@ -1065,7 +1065,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0f) {
-        for (auto& ship : ships) {
+        for (auto* ship : ships) {
             if (Meter* meter = ship->UniverseObject::GetMeter(MeterType::METER_FUEL)) {
                 meter->AddToCurrent(-fuel_consumed);
                 meter->BackPropagate();
@@ -1264,19 +1264,19 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
     }
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
-    for (auto& ship : objects.find<const Ship>(this->ShipIDs())) {
+    for (auto* ship : objects.findRaw<const Ship>(this->ShipIDs())) {
         float ship_stealth = ship->GetMeter(MeterType::METER_STEALTH)->Current();
         if (lowest_ship_stealth > ship_stealth)
             lowest_ship_stealth = ship_stealth;
     }
 
     float monster_detection = 0.0f;
-    auto this_system_fleets = objects.find<const Fleet>(current_system->FleetIDs());
-    for (auto& system_fleet : this_system_fleets) {
+    auto this_system_fleets = objects.findRaw<const Fleet>(current_system->FleetIDs());
+    for (auto* system_fleet : this_system_fleets) {
         if (!system_fleet->Unowned())
             continue;
 
-        for (auto& ship : objects.find<const Ship>(system_fleet->ShipIDs())) {
+        for (auto* ship : objects.findRaw<const Ship>(system_fleet->ShipIDs())) {
             float cur_detection = ship->GetMeter(MeterType::METER_DETECTION)->Current();
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
@@ -1284,23 +1284,21 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
     }
 
     bool can_be_blockaded = false;
-    for (auto& system_fleet : this_system_fleets) {
+    for (auto* system_fleet : this_system_fleets) {
         if (system_fleet->NextSystemID() != INVALID_OBJECT_ID) // fleets trying to leave this turn can't blockade pre-combat.
             continue;
         bool unrestricted = (system_fleet->m_arrival_starlane == start_system_id);
         if (system_fleet->Owner() == this->Owner()) {
-            if (unrestricted)  // perhaps should consider allies
+            if (unrestricted)  // TODO: perhaps should consider allies
                 return false;
             continue;
         }
         if (!unrestricted && !not_yet_in_system)
             continue;
 
-        bool can_see;
-        if (!system_fleet->Unowned())
-            can_see = (context.GetEmpire(system_fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
-        else
-            can_see = (monster_detection >= lowest_ship_stealth);
+        const auto system_fleet_detection = (system_fleet->Unowned()) ? (monster_detection) :
+            (context.GetEmpire(system_fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current());
+        const bool can_see = system_fleet_detection >= lowest_ship_stealth;
         if (!can_see)
             continue;
 
