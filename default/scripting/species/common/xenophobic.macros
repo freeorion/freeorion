@@ -36,7 +36,7 @@ XENOPHOBIC_SELF
         EffectsGroup
             scope = Source
             activation = And [
-                Planet
+                Planet environment = Good
                 HasTag name = "SELF_SUSTAINING"
                 (0 < [[XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT]])
             ]
