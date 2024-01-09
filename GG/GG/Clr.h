@@ -103,6 +103,25 @@ struct Clr
     uint8_t b = 0;    ///< the blue channel
     uint8_t a = 0;    ///< the alpha channel
 
+    [[nodiscard]] static constexpr auto ToHexChars(uint8_t bits) noexcept
+    {
+        using val_t = std::string_view::value_type;
+        const uint8_t high_bits = bits >> 4;
+        val_t high_char = (high_bits > 9) ? ('A' + high_bits - 10) : ('0' + high_bits);
+        const uint8_t low_bits = bits & 0xF;
+        val_t low_char = (low_bits > 9) ? ('A' + low_bits - 10) : ('0' + low_bits);
+        return std::array<val_t, 2>{high_char, low_char};
+    };
+
+    [[nodiscard]] constexpr std::array<std::string_view::value_type, 8> Hex() const noexcept
+    {
+        const auto rhex = ToHexChars(r);
+        const auto ghex = ToHexChars(g);
+        const auto bhex = ToHexChars(b);
+        const auto ahex = ToHexChars(a);
+        return {rhex[0], rhex[1], ghex[0], ghex[1], bhex[0], bhex[1], ahex[0], ahex[1]};
+    }
+
     [[nodiscard]] static constexpr uint8_t ValFromTwoHexChars(std::string_view chars) noexcept
     {
         auto digit0 = chars[0];
@@ -143,16 +162,39 @@ namespace ClrStaticTests {
     static_assert(Clr("A0FF01") == Clr{160, 255, 1, 255});
     static_assert(Clr("12345678") == Clr{16*1+2, 16*3+4, 16*5+6, 16*7+8});
 
+    // workaround for operator==(array, array) not being constexpr in C++17
+    template <std::size_t N>
+    constexpr bool ArrEq(std::array<std::string::value_type, N> l,
+                         const std::string::value_type* r) noexcept
+    {
+        for (std::size_t idx = 0; idx < l.size(); ++idx)
+            if (l[idx] != r[idx])
+                return false;
+        return true;
+    }
+    static_assert(ArrEq(Clr("A0FF01BB").Hex(), "A0FF01BB"));
+
     static_assert(Clr::ValFromTwoHexChars("01") == 1);
     static_assert(Clr::ValFromTwoHexChars("FF") == 255);
     static_assert(Clr::ValFromTwoHexChars("A0") == 160);
     static_assert(Clr::ValFromTwoHexChars("!.") == 14u);
 
+    static_assert(ArrEq(Clr::ToHexChars(0), "00"));
+    static_assert(ArrEq(Clr::ToHexChars(1), "01"));
+    static_assert(ArrEq(Clr::ToHexChars(9), "09"));
+    static_assert(ArrEq(Clr::ToHexChars(10), "0A"));
+    static_assert(ArrEq(Clr::ToHexChars(15), "0F"));
+    static_assert(ArrEq(Clr::ToHexChars(16), "10"));
+    static_assert(ArrEq(Clr::ToHexChars(255), "FF"));
+
+    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("00")), "00"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("09")), "09"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("2C")), "2C"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("EF")), "EF"));
+
     using sva4 = std::array<std::string::value_type, 4>;
-    constexpr bool ArrEq(sva4 l, sva4 r) noexcept // workaround for operator==(array, array) not being constexpr in C++17
-    { return l[0] == r[0] && l[1] == r[1] && l[2] == r[2] && l[3] == r[3]; }
     constexpr bool TestUint8ToCharArray(uint8_t num, sva4 expected_result) noexcept
-    { return ArrEq(Clr::UInt8ToCharArray(num), expected_result); }
+    { return ArrEq(Clr::UInt8ToCharArray(num), expected_result.data()); }
 
     static_assert(TestUint8ToCharArray(0, sva4{"0\0\0"}));
     static_assert(TestUint8ToCharArray(1, sva4{"1\0\0"}));
