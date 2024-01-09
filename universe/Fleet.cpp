@@ -1219,6 +1219,10 @@ bool Fleet::Blockaded(const ScriptingContext& context) const {
 
 bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
                               const ScriptingContext& context) const
+{ return !BlockadingFleetsAtSystem(start_system_id, dest_system_id, context).empty(); }
+
+std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_system_id,
+                                                 const ScriptingContext& context) const
 {
     /** If a newly arrived fleet joins a non-blockaded fleet of the same empire
       * (perhaps should include allies?) already at the system, the newly
@@ -1235,31 +1239,31 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
     const ObjectMap& objects = context.ContextObjects();
 
     if (m_arrival_starlane == start_system_id) {
-        //DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
-        return false;
+        //DebugLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
+        return {};
     }
     bool not_yet_in_system = SystemID() != start_system_id;
 
     if (!not_yet_in_system && m_arrival_starlane == dest_system_id)
-        return false;
+        return {};
 
     // find which empires have blockading aggressive armed ships in system;
     // fleets that just arrived do not blockade by themselves, but may
     // reinforce a preexisting blockade, and may possibly contribute to detection
     auto current_system = objects.get<System>(start_system_id);
     if (!current_system) {
-        DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id
+        DebugLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " considering system (" << start_system_id
                       << ") but can't retrieve system copy";
-        return false;
+        return {};
     }
 
     if (auto this_owner_empire = context.GetEmpire(this->Owner())) {
         if (this_owner_empire->SupplyUnobstructedSystems().contains(start_system_id))
-            return false;
+            return {};
         if (this_owner_empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
-            return false;
+            return {};
         } else {
-            TraceLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
+            TraceLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
         }
     }
 
@@ -1283,14 +1287,18 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
         }
     }
 
+    // collect fleets that can blockade. may still return empty vector if a blockade-preventing ship is also present
+    std::vector<int> fleets_that_can_blockade;
+    fleets_that_can_blockade.reserve(this_system_fleets.size());
+
     bool can_be_blockaded = false;
     for (auto* system_fleet : this_system_fleets) {
         if (system_fleet->NextSystemID() != INVALID_OBJECT_ID) // fleets trying to leave this turn can't blockade pre-combat.
             continue;
-        bool unrestricted = (system_fleet->m_arrival_starlane == start_system_id);
+        const bool unrestricted = (system_fleet->m_arrival_starlane == start_system_id);
         if (system_fleet->Owner() == this->Owner()) {
             if (unrestricted)  // TODO: perhaps should consider allies
-                return false;
+                return {}; // regardless of other fleets present, an unrestricted owned fleet in system prevents a blockade
             continue;
         }
         if (!unrestricted && !not_yet_in_system)
@@ -1322,10 +1330,10 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
             continue;
 
         // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
-        can_be_blockaded = true;
+        fleets_that_can_blockade.push_back(system_fleet->ID());
     }
 
-    return can_be_blockaded;
+    return fleets_that_can_blockade;
 }
 
 float Fleet::Speed(const ObjectMap& objects) const {

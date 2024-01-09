@@ -104,8 +104,11 @@ public:
     [[nodiscard]] int     PreviousToFinalDestinationID() const;                       ///< Returns ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
     [[nodiscard]] int     PreviousSystemID() const noexcept { return m_prev_system; } ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     [[nodiscard]] int     NextSystemID() const noexcept     { return m_next_system; } ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
-    [[nodiscard]] bool    Blockaded(const ScriptingContext& context) const;           ///< returns true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
-    [[nodiscard]] bool    BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
+
+    [[nodiscard]] bool             Blockaded(const ScriptingContext& context) const;           ///< returns true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
+    [[nodiscard]] bool             BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
+    [[nodiscard]] std::vector<int> BlockadingFleetsAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns ids of fleets that would blockade this fleet's movement at system.
+
     [[nodiscard]] float   Speed(const ObjectMap& objects) const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     [[nodiscard]] bool    CanChangeDirectionEnRoute() const noexcept { return false; }///< Returns true iff this fleet can change its direction while in interstellar space.
     [[nodiscard]] bool    CanDamageShips(const ScriptingContext& context,
