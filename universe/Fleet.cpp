@@ -836,11 +836,12 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
 }
 
 void Fleet::MovementPhase(ScriptingContext& context) {
-    auto empire = context.GetEmpire(Owner());
-    std::set<int> supply_unobstructed_systems;
-    if (empire)
-        supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
-                                           empire->SupplyUnobstructedSystems().end());
+    auto this_owner_empire = context.GetEmpire(Owner());
+    const auto supply_unobstructed_systems = [this_owner_empire]() { // local copy
+        if (this_owner_empire)
+            return this_owner_empire->SupplyUnobstructedSystems();
+        return std::set<int>{};
+    }();
 
     auto& objects = context.ContextObjects();
     const auto& universe = context.ContextUniverse();
@@ -987,9 +988,9 @@ void Fleet::MovementPhase(ScriptingContext& context) {
 
         if (system) {
             // node is a system.  explore system for all owners of this fleet
-            if (empire) {
-                empire->AddExploredSystem(it->object_id, context.current_turn, context.ContextObjects());
-                empire->RecordPendingLaneUpdate(it->object_id, m_prev_system, context.ContextObjects()); // specifies the lane from it->object_id back to m_prev_system is available
+            if (this_owner_empire) {
+                this_owner_empire->AddExploredSystem(it->object_id, context.current_turn, context.ContextObjects());
+                this_owner_empire->RecordPendingLaneUpdate(it->object_id, m_prev_system, context.ContextObjects()); // specifies the lane from it->object_id back to m_prev_system is available
             }
 
             m_prev_system = system->ID(); // passing a system, so update previous system of this fleet
@@ -1252,11 +1253,10 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
         return false;
     }
 
-    auto empire = context.GetEmpire(this->Owner());
-    if (empire) {
-        if (empire->SupplyUnobstructedSystems().contains(start_system_id))
+    if (auto this_owner_empire = context.GetEmpire(this->Owner())) {
+        if (this_owner_empire->SupplyUnobstructedSystems().contains(start_system_id))
             return false;
-        if (empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
+        if (this_owner_empire->PreservedLaneTravel(start_system_id, dest_system_id)) {
             return false;
         } else {
             TraceLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
@@ -1271,12 +1271,12 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
     }
 
     float monster_detection = 0.0f;
-    auto fleets = objects.find<const Fleet>(current_system->FleetIDs());
-    for (auto& fleet : fleets) {
-        if (!fleet->Unowned())
+    auto this_system_fleets = objects.find<const Fleet>(current_system->FleetIDs());
+    for (auto& system_fleet : this_system_fleets) {
+        if (!system_fleet->Unowned())
             continue;
 
-        for (auto& ship : objects.find<const Ship>(fleet->ShipIDs())) {
+        for (auto& ship : objects.find<const Ship>(system_fleet->ShipIDs())) {
             float cur_detection = ship->GetMeter(MeterType::METER_DETECTION)->Current();
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
@@ -1284,12 +1284,12 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
     }
 
     bool can_be_blockaded = false;
-    for (auto& fleet : fleets) {
-        if (fleet->NextSystemID() != INVALID_OBJECT_ID) //fleets trying to leave this turn can't blockade pre-combat.
+    for (auto& system_fleet : this_system_fleets) {
+        if (system_fleet->NextSystemID() != INVALID_OBJECT_ID) // fleets trying to leave this turn can't blockade pre-combat.
             continue;
-        bool unrestricted = (fleet->m_arrival_starlane == start_system_id);
-        if  (fleet->Owner() == this->Owner()) {
-            if (unrestricted)  // perhaps should consider allies 
+        bool unrestricted = (system_fleet->m_arrival_starlane == start_system_id);
+        if (system_fleet->Owner() == this->Owner()) {
+            if (unrestricted)  // perhaps should consider allies
                 return false;
             continue;
         }
@@ -1297,18 +1297,18 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
             continue;
 
         bool can_see;
-        if (!fleet->Unowned())
-            can_see = (context.GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
+        if (!system_fleet->Unowned())
+            can_see = (context.GetEmpire(system_fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
         else
             can_see = (monster_detection >= lowest_ship_stealth);
         if (!can_see)
             continue;
 
-        bool at_war = Unowned() || fleet->Unowned() ||
-                      context.ContextDiploStatus(this->Owner(), fleet->Owner()) == DiplomaticStatus::DIPLO_WAR;
+        const bool at_war = Unowned() || system_fleet->Unowned() ||
+                            context.ContextDiploStatus(this->Owner(), system_fleet->Owner()) == DiplomaticStatus::DIPLO_WAR;
         if (!at_war)
             continue;
-        bool obstructive = (fleet->Obstructive() || fleet->Unowned());
+        const bool obstructive = (system_fleet->Obstructive() || system_fleet->Unowned());
         if (!obstructive)
             continue;
         // Newly created ships/monsters are not allowed to block other fleet movement since they have not even
@@ -1317,10 +1317,10 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id,
         // ageas since fleets can be created/destroyed as purely organizational matters.  Since these checks are
         // pertinent just during those stages of turn processing immediately following turn number advancement,
         // whereas the new ships were created just prior to turn advamcenemt, we require age greater than 1.
-        if (fleet->MaxShipAgeInTurns(objects, context.current_turn) <= 1)
+        if (system_fleet->MaxShipAgeInTurns(objects, context.current_turn) <= 1)
             continue;
         // These are the most costly checks.  Do them last
-        if (!fleet->CanDamageShips(context))
+        if (!system_fleet->CanDamageShips(context))
             continue;
 
         // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
