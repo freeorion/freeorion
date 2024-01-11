@@ -999,7 +999,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             if (m_travel_route.front() == system->ID())
                 m_travel_route.erase(m_travel_route.begin());
 
-            bool resupply_here = supply.SystemHasFleetSupply(
+            const bool resupply_here = supply.SystemHasFleetSupply(
                 system->ID(), this->Owner(), ALLOW_ALLIED_SUPPLY, context.diplo_statuses);
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
@@ -1250,7 +1250,7 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
     // find which empires have blockading aggressive armed ships in system;
     // fleets that just arrived do not blockade by themselves, but may
     // reinforce a preexisting blockade, and may possibly contribute to detection
-    auto current_system = objects.get<System>(start_system_id);
+    auto const current_system = objects.getRaw<System>(start_system_id);
     if (!current_system) {
         DebugLogger() << "Fleet::BlockadingFleetsAtSystem fleet " << ID() << " considering system (" << start_system_id
                       << ") but can't retrieve system copy";
@@ -1267,27 +1267,35 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
         }
     }
 
-    float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
-    for (auto* ship : objects.findRaw<const Ship>(this->ShipIDs())) {
-        float ship_stealth = ship->GetMeter(MeterType::METER_STEALTH)->Current();
-        if (lowest_ship_stealth > ship_stealth)
-            lowest_ship_stealth = ship_stealth;
-    }
-
-    float monster_detection = 0.0f;
-    auto this_system_fleets = objects.findRaw<const Fleet>(current_system->FleetIDs());
-    for (auto* system_fleet : this_system_fleets) {
-        if (!system_fleet->Unowned())
-            continue;
-
-        for (auto* ship : objects.findRaw<const Ship>(system_fleet->ShipIDs())) {
-            float cur_detection = ship->GetMeter(MeterType::METER_DETECTION)->Current();
-            if (cur_detection >= monster_detection)
-                monster_detection = cur_detection;
+    const float lowest_ship_stealth_in_this_fleet = [this, &objects]() {
+        float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
+        for (auto* ship : objects.findRaw<const Ship>(m_ships)) {
+            const float ship_stealth = ship->GetMeter(MeterType::METER_STEALTH)->Current();
+            if (lowest_ship_stealth > ship_stealth)
+                lowest_ship_stealth = ship_stealth;
         }
-    }
+        return lowest_ship_stealth;
+    }();
 
-    // collect fleets that can blockade. may still return empty vector if a blockade-preventing ship is also present
+    auto const this_system_fleets = objects.findRaw<const Fleet>(current_system->FleetIDs());
+
+    const float monster_detection = [&this_system_fleets, &objects]() {
+        float highest_detection = 0.0f;
+        for (auto* system_fleet : this_system_fleets |
+             range_filter([](const auto* sf) { return sf && sf->Unowned(); }))
+        {
+            for (auto* ship : objects.findRaw<const Ship>(system_fleet->ShipIDs())) {
+                float cur_detection = ship->GetMeter(MeterType::METER_DETECTION)->Current();
+                if (cur_detection >= highest_detection)
+                    highest_detection = cur_detection;
+            }
+        }
+        return highest_detection;
+    }();
+
+
+    // collect fleets that can blockade. this function may still return empty vector if a
+    // blockade-preventing ship is also present
     std::vector<int> fleets_that_can_blockade;
     fleets_that_can_blockade.reserve(this_system_fleets.size());
 
@@ -1306,7 +1314,7 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
 
         const auto system_fleet_detection = (system_fleet->Unowned()) ? (monster_detection) :
             (context.GetEmpire(system_fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current());
-        const bool can_see = system_fleet_detection >= lowest_ship_stealth;
+        const bool can_see = system_fleet_detection >= lowest_ship_stealth_in_this_fleet;
         if (!can_see)
             continue;
 
@@ -1317,6 +1325,7 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
         const bool obstructive = (system_fleet->Obstructive() || system_fleet->Unowned());
         if (!obstructive)
             continue;
+
         // Newly created ships/monsters are not allowed to block other fleet movement since they have not even
         // potentially gone through a combat round at the present location.  Potential sources for such new ships are
         // monsters created via Effect and Ships/fleets newly constructed by empires.  We check ship ages not fleet
@@ -1414,7 +1423,7 @@ float Fleet::Shields(const ObjectMap& objects) const {
     return retval;
 }
 
-std::string Fleet::GenerateFleetName(const ScriptingContext& context) {
+std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
     // TODO: Change returned name based on passed ship designs.  eg. return "colony fleet" if
     // ships are colony ships, or "battle fleet" if ships are armed.
     if (ID() == INVALID_OBJECT_ID)

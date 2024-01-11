@@ -175,7 +175,7 @@ public:
     void SetMoveOrderedTurn(int turn);                      ///< marks fleet to as being ordered to move on indicated turn
 
     /* returns a name for a fleet based on its ships*/
-    [[nodiscard]] std::string GenerateFleetName(const ScriptingContext& context);
+    [[nodiscard]] std::string GenerateFleetName(const ScriptingContext& context) const;
 
     static constexpr int ETA_NEVER = (1 << 30);             ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
     static constexpr int ETA_UNKNOWN = (1 << 30) - 1;       ///< returned when ETA can't be determined
