@@ -696,7 +696,8 @@ public:
     }
 
     /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
-    void AddText(std::string_view text)
+    template <typename S>
+    void AddText(S&& text)
     {
         m_are_widths_calculated = false;
 
@@ -786,6 +787,12 @@ Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(std:
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(std::string_view text)
 {
     m_impl->AddText(text);
+    return *this;
+}
+
+Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(std::string&& text)
+{
+    m_impl->AddText(std::move(text));
     return *this;
 }
 
