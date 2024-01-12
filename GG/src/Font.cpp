@@ -204,17 +204,6 @@ namespace {
     };
     const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
 
-    void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
-                          Alignment orig_just, Alignment prev_just) noexcept
-    {
-        if (last_line_of_curr_just) {
-            line_data.justification = orig_just;
-            last_line_of_curr_just = false;
-        } else {
-            line_data.justification = prev_just;
-        }
-    }
-
     constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
     const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
@@ -1457,6 +1446,17 @@ namespace {
             format &= ~FORMAT_LINEWRAP;
 
         return format;
+    }
+
+    void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
+                          Alignment orig_just, Alignment prev_just) noexcept
+    {
+        if (last_line_of_curr_just) {
+            line_data.justification = orig_just;
+            last_line_of_curr_just = false;
+        } else {
+            line_data.justification = prev_just;
+        }
     }
 }
 
