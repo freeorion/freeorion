@@ -38,199 +38,198 @@ namespace GG::detail {
 using namespace GG;
 
 namespace {
+    constexpr uint32_t WIDE_SPACE = ' ';
+    constexpr uint32_t WIDE_NEWLINE = '\n';
+    constexpr uint32_t WIDE_CR = '\r';
+    constexpr uint32_t WIDE_FF = '\f';
+    constexpr uint32_t WIDE_TAB = '\t';
 
-constexpr uint32_t WIDE_SPACE = ' ';
-constexpr uint32_t WIDE_NEWLINE = '\n';
-constexpr uint32_t WIDE_CR = '\r';
-constexpr uint32_t WIDE_FF = '\f';
-constexpr uint32_t WIDE_TAB = '\t';
+    constexpr std::string_view ITALIC_TAG = "i";
+    constexpr std::string_view SHADOW_TAG = "s";
+    constexpr std::string_view UNDERLINE_TAG = "u";
+    constexpr std::string_view SUPERSCRIPT_TAG = "sup";
+    constexpr std::string_view SUBSCRIPT_TAG = "sub";
+    constexpr std::string_view RGBA_TAG = "rgba";
+    constexpr std::string_view ALIGN_LEFT_TAG = "left";
+    constexpr std::string_view ALIGN_CENTER_TAG = "center";
+    constexpr std::string_view ALIGN_RIGHT_TAG = "right";
+    constexpr std::string_view PRE_TAG = "pre";
 
-constexpr std::string_view ITALIC_TAG = "i";
-constexpr std::string_view SHADOW_TAG = "s";
-constexpr std::string_view UNDERLINE_TAG = "u";
-constexpr std::string_view SUPERSCRIPT_TAG = "sup";
-constexpr std::string_view SUBSCRIPT_TAG = "sub";
-constexpr std::string_view RGBA_TAG = "rgba";
-constexpr std::string_view ALIGN_LEFT_TAG = "left";
-constexpr std::string_view ALIGN_CENTER_TAG = "center";
-constexpr std::string_view ALIGN_RIGHT_TAG = "right";
-constexpr std::string_view PRE_TAG = "pre";
-
-template <typename T>
-constexpr T NextPowerOfTwo(T input)
-{
-    T value{1};
-    while (value < input)
-        value *= 2;
-    return value;
-}
-
-/** This is used to collect data on the glyphs as they are recorded into buffers, for use in creating Glyph objects at the end
-    of Font's constructor.*/
-struct TempGlyphData
-{
-    constexpr TempGlyphData() = default;
-    constexpr TempGlyphData(Pt ul_, Pt lr_, int8_t y_ofs, int8_t lb, int8_t a) noexcept :
-        ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
-    Pt       ul, lr;        ///< area of glyph subtexture within texture
-    int8_t   y_offset = 0;  ///< vertical offset to draw texture (may be negative!)
-    int8_t   left_b = 0;    ///< left bearing (see Glyph)
-    int8_t   adv = 0;       ///< advance of glyph (see Glyph)
-};
-
-/// A two dimensional grid of pixels that expands to
-/// fit any write much like an stl vector, but in 2d.
-template<typename T>
-class Buffer2d
-{
-public:
-    /// Create a new 2D buffer
-    /// \param initial_width Initial width to allocate
-    /// \param initial_height Initial height to allocate
-    /// \param default_value The value to fill empty space with whenever it appears
-    Buffer2d(X initial_width, Y initial_height, const T& default_value):
-        m_capacity_width(initial_width),
-        m_capacity_height(initial_height),
-        m_data(Value(initial_width)*Value(initial_height), default_value),
-        m_current_width(initial_width),
-        m_current_height(initial_height),
-        m_default_value(default_value)
-    {}
-
-    /// Access point \x,\y, expanding the buffer if it does not exist yet
-    T& at(X x, Y y)
+    template <typename T>
+    constexpr T NextPowerOfTwo(T input)
     {
-        EnsureFit(x, y);
-        return this->get(x,y);
+        T value{1};
+        while (value < input)
+            value *= 2;
+        return value;
     }
 
-    /// Access point \x, \y without any checks
-    T& get(X x, Y y) noexcept(noexcept(std::declval<std::vector<T>>()[Value(X{})*Value(X{}) + Value(Y{})]))
-    { return m_data[Value(m_capacity_width)*Value(y) + Value(x)]; }
-
-    /// Returns the current highest x the user has requested to exist
-    X CurrentWidth() const noexcept { return m_current_width; }
-
-    /// Returns the current highest y the user has requested to exist
-    Y CurrentHeight() const noexcept { return m_capacity_height; }
-
-    /// Returns the actual width of the storage area allocated so far
-    X BufferWidth() const noexcept { return m_capacity_width; }
-
-    /// Returns the actual height of the storage area allocated so far
-    Y BufferHeight() const noexcept { return m_capacity_height; }
-
-    /// Return a pointer to the storage buffer where the data is kept
-    T* Buffer() noexcept { return &m_data.front(); }
-
-    /// Returns the size of the storage buffer where the data is kept
-    auto BufferSize() const noexcept { return m_data.size(); }
-
-    /// Makes the size of the underlying buffer the smallest power of power of two
-    /// rectangle that can accommodate CurrentWidth() and CurrentHeight()
-    void MakePowerOfTwo()
-    { ResizeCapacity(NextPowerOfTwo(m_current_width), NextPowerOfTwo(m_current_height)); }
-
-private:
-    X m_capacity_width; // How wide the reserved buffer is
-    Y m_capacity_height; // How hight the reserved buffer is
-    std::vector<T> m_data;
-    X m_current_width; // The highest x coordinate written to
-    Y m_current_height; // The highest y coordinate written to
-    const T m_default_value; // The value with which to fill all emerging empty slots in the buffer
-
-    void EnsureFit(X x, Y y)
+    /** This is used to collect data on the glyphs as they are recorded into buffers,
+      * for use in creating Glyph objects at the end of Font's constructor.*/
+    struct TempGlyphData
     {
-        X new_width = std::max(m_current_width, x + 1); // Zero indexed => width = max_x + 1
-        Y new_height = std::max(m_current_height, y + 1); // Also zero indexed
-        X new_capacity_width = m_capacity_width;
-        Y new_capacity_height = m_capacity_height;
-        while (new_width > new_capacity_width) {
-            new_capacity_width *= 2;
-        }
-        while (new_height > new_capacity_height) {
-            new_capacity_height *= 2;
+        constexpr TempGlyphData() = default;
+        constexpr TempGlyphData(Pt ul_, Pt lr_, int8_t y_ofs, int8_t lb, int8_t a) noexcept :
+            ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
+        Pt       ul, lr;        ///< area of glyph subtexture within texture
+        int8_t   y_offset = 0;  ///< vertical offset to draw texture (may be negative!)
+        int8_t   left_b = 0;    ///< left bearing (see Glyph)
+        int8_t   adv = 0;       ///< advance of glyph (see Glyph)
+    };
+
+    /// A two dimensional grid of pixels that expands to
+    /// fit any write much like an stl vector, but in 2d.
+    template<typename T>
+    class Buffer2d
+    {
+    public:
+        /// Create a new 2D buffer
+        /// \param initial_width Initial width to allocate
+        /// \param initial_height Initial height to allocate
+        /// \param default_value The value to fill empty space with whenever it appears
+        Buffer2d(X initial_width, Y initial_height, const T& default_value):
+            m_capacity_width(initial_width),
+            m_capacity_height(initial_height),
+            m_data(Value(initial_width)*Value(initial_height), default_value),
+            m_current_width(initial_width),
+            m_current_height(initial_height),
+            m_default_value(default_value)
+        {}
+
+        /// Access point \x,\y, expanding the buffer if it does not exist yet
+        T& at(X x, Y y)
+        {
+            EnsureFit(x, y);
+            return this->get(x,y);
         }
 
-        ResizeCapacity(new_capacity_width, new_capacity_height);
-        m_current_width = new_width;
-        m_current_height = new_height;
-    }
+        /// Access point \x, \y without any checks
+        T& get(X x, Y y) noexcept(noexcept(std::declval<std::vector<T>>()[Value(X{})*Value(X{}) + Value(Y{})]))
+        { return m_data[Value(m_capacity_width)*Value(y) + Value(x)]; }
 
-    void ResizeCapacity(X new_capacity_width, Y new_capacity_height)
-    {
-        // If there really was a change, we need to recreate our storage.
-        // This is expensive, but since we double the size every time,
-        // the cost of adding data here in some sane order is amortized constant
-        if (new_capacity_width != m_capacity_width || new_capacity_height != m_capacity_height) {
-            // Create new storage and copy old data. A linear copy won't do, there
-            // will be a new mapping from 2d indexes to 1d memory.
-            std::vector<T> new_data(Value(new_capacity_width)*Value(new_capacity_height), m_default_value);
-            for (Y y_i = Y0; y_i < m_current_height && y_i < new_capacity_height; ++y_i) {
-                for (X x_i = X0; x_i < m_current_width && x_i < new_capacity_width; ++x_i) {
-                    unsigned pos = Value(new_capacity_width) * Value(y_i) + Value(x_i);
-                    new_data[pos] = get(x_i, y_i);
-                }
+        /// Returns the current highest x the user has requested to exist
+        X CurrentWidth() const noexcept { return m_current_width; }
+
+        /// Returns the current highest y the user has requested to exist
+        Y CurrentHeight() const noexcept { return m_capacity_height; }
+
+        /// Returns the actual width of the storage area allocated so far
+        X BufferWidth() const noexcept { return m_capacity_width; }
+
+        /// Returns the actual height of the storage area allocated so far
+        Y BufferHeight() const noexcept { return m_capacity_height; }
+
+        /// Return a pointer to the storage buffer where the data is kept
+        T* Buffer() noexcept { return &m_data.front(); }
+
+        /// Returns the size of the storage buffer where the data is kept
+        auto BufferSize() const noexcept { return m_data.size(); }
+
+        /// Makes the size of the underlying buffer the smallest power of power of two
+        /// rectangle that can accommodate CurrentWidth() and CurrentHeight()
+        void MakePowerOfTwo()
+        { ResizeCapacity(NextPowerOfTwo(m_current_width), NextPowerOfTwo(m_current_height)); }
+
+    private:
+        X m_capacity_width; // How wide the reserved buffer is
+        Y m_capacity_height; // How hight the reserved buffer is
+        std::vector<T> m_data;
+        X m_current_width; // The highest x coordinate written to
+        Y m_current_height; // The highest y coordinate written to
+        const T m_default_value; // The value with which to fill all emerging empty slots in the buffer
+
+        void EnsureFit(X x, Y y)
+        {
+            X new_width = std::max(m_current_width, x + 1); // Zero indexed => width = max_x + 1
+            Y new_height = std::max(m_current_height, y + 1); // Also zero indexed
+            X new_capacity_width = m_capacity_width;
+            Y new_capacity_height = m_capacity_height;
+            while (new_width > new_capacity_width) {
+                new_capacity_width *= 2;
             }
-            std::swap(m_data, new_data);
-            m_capacity_width = new_capacity_width;
-            m_capacity_height = new_capacity_height;
+            while (new_height > new_capacity_height) {
+                new_capacity_height *= 2;
+            }
+
+            ResizeCapacity(new_capacity_width, new_capacity_height);
+            m_current_width = new_width;
+            m_current_height = new_height;
+        }
+
+        void ResizeCapacity(X new_capacity_width, Y new_capacity_height)
+        {
+            // If there really was a change, we need to recreate our storage.
+            // This is expensive, but since we double the size every time,
+            // the cost of adding data here in some sane order is amortized constant
+            if (new_capacity_width != m_capacity_width || new_capacity_height != m_capacity_height) {
+                // Create new storage and copy old data. A linear copy won't do, there
+                // will be a new mapping from 2d indexes to 1d memory.
+                std::vector<T> new_data(Value(new_capacity_width)*Value(new_capacity_height), m_default_value);
+                for (Y y_i = Y0; y_i < m_current_height && y_i < new_capacity_height; ++y_i) {
+                    for (X x_i = X0; x_i < m_current_width && x_i < new_capacity_width; ++x_i) {
+                        unsigned pos = Value(new_capacity_width) * Value(y_i) + Value(x_i);
+                        new_data[pos] = get(x_i, y_i);
+                    }
+                }
+                std::swap(m_data, new_data);
+                m_capacity_width = new_capacity_width;
+                m_capacity_height = new_capacity_height;
+            }
+        }
+    };
+
+    struct FTLibraryWrapper
+    {
+        FTLibraryWrapper()
+        {
+            if (!m_library && FT_Init_FreeType(&m_library)) // if no library exists and we can't create one...
+                throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
+        }
+        ~FTLibraryWrapper() { FT_Done_FreeType(m_library); }
+        FT_Library m_library = nullptr;
+    } g_library;
+
+    struct PushSubmatchOntoStackP
+    {
+        typedef void result_type;
+        void operator()(const std::string* str,
+                        std::stack<Font::Substring>& tag_stack,
+                        bool& ignore_tags,
+                        const boost::xpressive::ssub_match& sub) const
+        {
+            tag_stack.emplace(*str, sub);
+            if (tag_stack.top() == PRE_TAG)
+                ignore_tags = true;
+        }
+    };
+    const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
+
+    void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
+                          Alignment orig_just, Alignment prev_just) noexcept
+    {
+        if (last_line_of_curr_just) {
+            line_data.justification = orig_just;
+            last_line_of_curr_just = false;
+        } else {
+            line_data.justification = prev_just;
         }
     }
-};
 
-struct FTLibraryWrapper
-{
-    FTLibraryWrapper()
-    {
-        if (!m_library && FT_Init_FreeType(&m_library)) // if no library exists and we can't create one...
-            throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
-    }
-    ~FTLibraryWrapper() { FT_Done_FreeType(m_library); }
-    FT_Library m_library = nullptr;
-} g_library;
+    constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
+    const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
-struct PushSubmatchOntoStackP
-{
-    typedef void result_type;
-    void operator()(const std::string* str,
-                    std::stack<Font::Substring>& tag_stack,
-                    bool& ignore_tags,
-                    const boost::xpressive::ssub_match& sub) const
-    {
-        tag_stack.emplace(*str, sub);
-        if (tag_stack.top() == PRE_TAG)
-            ignore_tags = true;
-    }
-};
-const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
+    constexpr std::array<std::pair<uint32_t, uint32_t>, 2> PRINTABLE_ASCII_ALPHA_RANGES{{
+        {0x41, 0x5B},
+        {0x61, 0x7B}}};
 
-void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
-                      Alignment orig_just, Alignment prev_just) noexcept
-{
-    if (last_line_of_curr_just) {
-        line_data.justification = orig_just;
-        last_line_of_curr_just = false;
-    } else {
-        line_data.justification = prev_just;
-    }
-}
-
-constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
-const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
-
-constexpr std::array<std::pair<uint32_t, uint32_t>, 2> PRINTABLE_ASCII_ALPHA_RANGES{{
-    {0x41, 0x5B},
-    {0x61, 0x7B}}};
-
-constexpr std::array<std::pair<uint32_t, uint32_t>, 7> PRINTABLE_ASCII_NONALPHA_RANGES{{
-    {0x09, 0x0D},
-    {0x20, 0x21},
-    {0x30, 0x3A},
-    {0x21, 0x30},
-    {0x3A, 0x41},
-    {0x5B, 0x61},
-    {0x7B, 0x7F}}};
+    constexpr std::array<std::pair<uint32_t, uint32_t>, 7> PRINTABLE_ASCII_NONALPHA_RANGES{{
+        {0x09, 0x0D},
+        {0x20, 0x21},
+        {0x30, 0x3A},
+        {0x21, 0x30},
+        {0x3A, 0x41},
+        {0x5B, 0x61},
+        {0x7B, 0x7F}}};
 }
 
 namespace {
