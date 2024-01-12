@@ -371,6 +371,8 @@ public:
         TextAndElementsAssembler& AddCloseTag(std::string_view tag);
         /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
         TextAndElementsAssembler& AddText(std::string_view text);
+        TextAndElementsAssembler& AddText(const char* text) { return AddText(std::string_view(text)); }
+        TextAndElementsAssembler& AddText(std::string&& text);
         /** Add a white space element.*/
         TextAndElementsAssembler& AddWhitespace(std::string_view whitespace);
         /** Add a new line element.*/
