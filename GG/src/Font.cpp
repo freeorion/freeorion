@@ -1465,6 +1465,209 @@ namespace {
             line_data.justification = prev_just;
         }
     }
+
+    void AddNewline(X& x, bool& last_line_of_curr_just, std::vector<Font::LineData>& line_data,
+                    const Alignment orig_just)
+    {
+        line_data.emplace_back();
+        SetJustification(last_line_of_curr_just,
+                         line_data.back(),
+                         orig_just,
+                         line_data[line_data.size() - 2].justification);
+        x = X0;
+    }
+
+    void AddWhitespace(X& x, const Font::Substring elem_text, const int8_t space_width, const X box_width,
+                       const bool expand_tabs, const X tab_pixel_width, const Flags<TextFormat> format,
+                       std::vector<Font::LineData>& line_data, bool& last_line_of_curr_just,
+                       const Alignment orig_just, const StrSize original_string_offset,
+                       CPSize& code_point_offset, std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        auto it = elem_text.begin();
+        const auto end_it = elem_text.end();
+        while (it != end_it) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(elem_text.begin(), it))};
+            const uint32_t c = utf8::next(it, end_it);
+            const StrSize char_size{std::distance(elem_text.begin(), it) - Value(char_index)};
+            if (c != WIDE_CR && c != WIDE_FF) {
+                const X advance_position =
+                    (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
+                    (c == WIDE_NEWLINE) ? x : (x + space_width);
+                const X advance = advance_position - x;
+
+                // if we're using linewrap and this space won't fit on this line
+                if ((format & FORMAT_LINEWRAP) && (box_width < advance_position)) {
+                    if (x == X0 && box_width < advance) {
+                        // if the space is larger than the line and alone
+                        // on the line, let the space overrun this line
+                        // and then start a new one
+                        line_data.emplace_back();
+                        x = X0; // reset the x-position to 0
+                        SetJustification(last_line_of_curr_just,
+                                         line_data.back(),
+                                         orig_just,
+                                         line_data[line_data.size() - 2].justification);
+                    } else {
+                        // otherwise start a new line and put the space there
+                        line_data.emplace_back();
+                        x = advance;
+                        line_data.back().char_data.emplace_back(
+                            x,
+                            original_string_offset + char_index,
+                            char_size,
+                            code_point_offset,
+                            pending_formatting_tags);
+
+                        pending_formatting_tags.clear();
+                        SetJustification(last_line_of_curr_just,
+                                         line_data.back(),
+                                         orig_just,
+                                         line_data[line_data.size() - 2].justification);
+                    }
+                } else { // there's room for the space, or we're not using linewrap
+                    x += advance;
+                    line_data.back().char_data.emplace_back(
+                        x,
+                        original_string_offset + char_index,
+                        char_size,
+                        code_point_offset,
+                        pending_formatting_tags);
+                    pending_formatting_tags.clear();
+                }
+            }
+            ++code_point_offset;
+        }
+    }
+
+    void AddTextWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                          const X box_width, std::vector<Font::LineData>& line_data,
+                          bool& last_line_of_curr_just, const Alignment orig_just,
+                          const StrSize original_string_offset, CPSize& code_point_offset,
+                          std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        // if the text "word" overruns this line, and isn't alone on
+        // this line, move it down to the next line
+        if (box_width < x + elem.Width() && x != X0) {
+            line_data.emplace_back();
+            x = X0;
+            SetJustification(last_line_of_curr_just,
+                             line_data.back(),
+                             orig_just,
+                             line_data[line_data.size() - 2].justification);
+        }
+        auto it = elem.text.begin();
+        const auto end_it = elem.text.end();
+        std::size_t j = 0;
+        while (it != end_it) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
+            utf8::next(it, end_it);
+            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
+            x += elem.widths[j];
+            line_data.back().char_data.emplace_back(
+                x,
+                original_string_offset + char_index,
+                char_size,
+                code_point_offset,
+                pending_formatting_tags);
+            pending_formatting_tags.clear();
+            ++j;
+            ++code_point_offset;
+        }
+    }
+
+    void AddTextNoWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                            const X box_width, std::vector<Font::LineData>& line_data,
+                            bool& last_line_of_curr_just, const Alignment orig_just,
+                            const StrSize original_string_offset, CPSize& code_point_offset,
+                            std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        auto it = elem.text.begin();
+        const auto end_it = elem.text.end();
+        std::size_t j = 0;
+        while (it != end_it) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
+            utf8::next(it, end_it);
+            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
+            // if the char overruns this line, and isn't alone on this
+            // line, move it down to the next line
+            if ((format & FORMAT_LINEWRAP) && box_width < x + elem.widths[j] && x != X0) {
+                line_data.emplace_back();
+                x = X{elem.widths[j]};
+                line_data.back().char_data.emplace_back(
+                    x,
+                    original_string_offset + char_index,
+                    char_size,
+                    code_point_offset,
+                    pending_formatting_tags);
+                pending_formatting_tags.clear();
+                SetJustification(last_line_of_curr_just,
+                                 line_data.back(),
+                                 orig_just,
+                                 line_data[line_data.size() - 2].justification);
+            } else {
+                // there's room for this char on this line, or there's
+                // no wrapping in use
+                x += elem.widths[j];
+                line_data.back().char_data.emplace_back(
+                    x,
+                    original_string_offset + char_index,
+                    char_size,
+                    code_point_offset,
+                    pending_formatting_tags);
+                pending_formatting_tags.clear();
+            }
+            ++j;
+            ++code_point_offset;
+        }
+    }
+
+    void AddText(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                 const X box_width, std::vector<Font::LineData>& line_data,
+                 bool& last_line_of_curr_just, const Alignment orig_just,
+                 const StrSize original_string_offset, CPSize& code_point_offset,
+                 std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        if (format & FORMAT_WORDBREAK) {
+            AddTextWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
+                             orig_just, original_string_offset, code_point_offset,
+                             pending_formatting_tags);
+        } else {
+            AddTextNoWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
+                               orig_just, original_string_offset, code_point_offset,
+                               pending_formatting_tags);
+        }
+    }
+
+    void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
+                    bool& last_line_of_curr_just, CPSize& code_point_offset,
+                    std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        if (elem.tag_name == ALIGN_LEFT_TAG)
+            justification = ALIGN_LEFT;
+        else if (elem.tag_name == ALIGN_CENTER_TAG)
+            justification = ALIGN_CENTER;
+        else if (elem.tag_name == ALIGN_RIGHT_TAG)
+            justification = ALIGN_RIGHT;
+        else if (elem.tag_name != PRE_TAG)
+            pending_formatting_tags.push_back(elem);
+        last_line_of_curr_just = false;
+        code_point_offset += elem.CodePointSize();
+    }
+
+    void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
+                     bool& last_line_of_curr_just, CPSize& code_point_offset,
+                     std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        if ((elem.tag_name == ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
+            (elem.tag_name == ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
+            (elem.tag_name == ALIGN_RIGHT_TAG && justification == ALIGN_RIGHT))
+        {
+            last_line_of_curr_just = true;
+        } else if (elem.tag_name != PRE_TAG) {
+            pending_formatting_tags.push_back(elem);
+        }
+        code_point_offset += elem.CodePointSize();
+    }
 }
 
 std::vector<Font::LineData> Font::DetermineLines(
@@ -1503,160 +1706,24 @@ std::vector<Font::LineData> Font::DetermineLines(
     for (const auto& elem : text_elements) {
         // if a newline is explicitly requested, start a new one
         if (elem.Type() == TextElement::TextElementType::NEWLINE) {
-            line_data.emplace_back();
-            SetJustification(last_line_of_curr_just,
-                             line_data.back(),
-                             orig_just,
-                             line_data[line_data.size() - 2].justification);
-            x = X0;
+            AddNewline(x, last_line_of_curr_just, line_data, orig_just);
 
         } else if (elem.Type() == TextElement::TextElementType::WHITESPACE) {
-            auto it = elem.text.begin();
-            const auto end_it = elem.text.end();
-            while (it != end_it) {
-                const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
-                const uint32_t c = utf8::next(it, end_it);
-                const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
-                if (c != WIDE_CR && c != WIDE_FF) {
-                    X advance_position = x + m_space_width;
-                    if (c == WIDE_TAB && expand_tabs)
-                        advance_position = (((x / tab_pixel_width) + 1) * tab_pixel_width);
-                    else if (c == WIDE_NEWLINE)
-                        advance_position = x;
-                    X advance = advance_position - x;
+            AddWhitespace(x, elem.text, m_space_width, box_width, expand_tabs, tab_pixel_width, format,
+                          line_data, last_line_of_curr_just, orig_just, original_string_offset,
+                          code_point_offset, pending_formatting_tags);
 
-                    // if we're using linewrap and this space won't fit on this line
-                    if ((format & FORMAT_LINEWRAP) && box_width < advance_position) {
-                        if (x == X0 && box_width < advance) {
-                            // if the space is larger than the line and alone
-                            // on the line, let the space overrun this line
-                            // and then start a new one
-                            line_data.emplace_back();
-                            x = X0; // reset the x-position to 0
-                            SetJustification(last_line_of_curr_just,
-                                             line_data.back(),
-                                             orig_just,
-                                             line_data[line_data.size() - 2].justification);
-                        } else {
-                            // otherwise start a new line and put the space there
-                            line_data.emplace_back();
-                            x = advance;
-                            line_data.back().char_data.emplace_back(
-                                x,
-                                original_string_offset + char_index,
-                                char_size,
-                                code_point_offset,
-                                pending_formatting_tags);
-
-                            pending_formatting_tags.clear();
-                            SetJustification(last_line_of_curr_just,
-                                             line_data.back(),
-                                             orig_just,
-                                             line_data[line_data.size() - 2].justification);
-                        }
-                    } else { // there's room for the space, or we're not using linewrap
-                        x += advance;
-                        line_data.back().char_data.emplace_back(
-                            x,
-                            original_string_offset + char_index,
-                            char_size,
-                            code_point_offset,
-                            pending_formatting_tags);
-                        pending_formatting_tags.clear();
-                    }
-                }
-                ++code_point_offset;
-            }
         } else if (elem.Type() == TextElement::TextElementType::TEXT) {
-            if (format & FORMAT_WORDBREAK) {
-                // if the text "word" overruns this line, and isn't alone on
-                // this line, move it down to the next line
-                if (box_width < x + elem.Width() && x != X0) {
-                    line_data.emplace_back();
-                    x = X0;
-                    SetJustification(last_line_of_curr_just,
-                                     line_data.back(),
-                                     orig_just,
-                                     line_data[line_data.size() - 2].justification);
-                }
-                auto it = elem.text.begin();
-                const auto end_it = elem.text.end();
-                std::size_t j = 0;
-                while (it != end_it) {
-                    const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
-                    utf8::next(it, end_it);
-                    const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
-                    x += elem.widths[j];
-                    line_data.back().char_data.emplace_back(
-                        x,
-                        original_string_offset + char_index,
-                        char_size,
-                        code_point_offset,
-                        pending_formatting_tags);
-                    pending_formatting_tags.clear();
-                    ++j;
-                    ++code_point_offset;
-                }
-            } else {
-                auto it = elem.text.begin();
-                const auto end_it = elem.text.end();
-                std::size_t j = 0;
-                while (it != end_it) {
-                    const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
-                    utf8::next(it, end_it);
-                    const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
-                    // if the char overruns this line, and isn't alone on this
-                    // line, move it down to the next line
-                    if ((format & FORMAT_LINEWRAP) && box_width < x + elem.widths[j] && x != X0) {
-                        line_data.emplace_back();
-                        x = X{elem.widths[j]};
-                        line_data.back().char_data.emplace_back(
-                            x,
-                            original_string_offset + char_index,
-                            char_size,
-                            code_point_offset,
-                            pending_formatting_tags);
-                        pending_formatting_tags.clear();
-                        SetJustification(last_line_of_curr_just,
-                                         line_data.back(),
-                                         orig_just,
-                                         line_data[line_data.size() - 2].justification);
-                    } else {
-                        // there's room for this char on this line, or there's
-                        // no wrapping in use
-                        x += elem.widths[j];
-                        line_data.back().char_data.emplace_back(
-                            x,
-                            original_string_offset + char_index,
-                            char_size,
-                            code_point_offset,
-                            pending_formatting_tags);
-                        pending_formatting_tags.clear();
-                    }
-                    ++j;
-                    ++code_point_offset;
-                }
-            }
+            AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
+                    original_string_offset, code_point_offset, pending_formatting_tags);
+
         } else if (elem.Type() == TextElement::TextElementType::OPEN_TAG) {
-            if (elem.tag_name == ALIGN_LEFT_TAG)
-                line_data.back().justification = ALIGN_LEFT;
-            else if (elem.tag_name == ALIGN_CENTER_TAG)
-                line_data.back().justification = ALIGN_CENTER;
-            else if (elem.tag_name == ALIGN_RIGHT_TAG)
-                line_data.back().justification = ALIGN_RIGHT;
-            else if (elem.tag_name != PRE_TAG)
-                pending_formatting_tags.push_back(elem);
-            last_line_of_curr_just = false;
-            code_point_offset += elem.CodePointSize();
+            AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
+                       code_point_offset, pending_formatting_tags);
 
         } else if (elem.Type() == TextElement::TextElementType::CLOSE_TAG) {
-            if ((elem.tag_name == ALIGN_LEFT_TAG && line_data.back().justification == ALIGN_LEFT) ||
-                (elem.tag_name == ALIGN_CENTER_TAG && line_data.back().justification == ALIGN_CENTER) ||
-                (elem.tag_name == ALIGN_RIGHT_TAG && line_data.back().justification == ALIGN_RIGHT))
-                last_line_of_curr_just = true;
-            else if (elem.tag_name != PRE_TAG)
-                pending_formatting_tags.push_back(elem);
-            code_point_offset += elem.CodePointSize();
+            AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
+                        code_point_offset, pending_formatting_tags);
         }
         original_string_offset += elem.StringSize();
     }
