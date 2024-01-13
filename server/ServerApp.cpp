@@ -3805,23 +3805,23 @@ void ServerApp::PreCombatProcessTurns() {
         empire->UpdateSupplyUnobstructedSystems(context, true);
 
 
+    static constexpr auto not_null = [](const auto* o) { return !!o; };
+    static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
+    static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
+    static constexpr auto arrived_this_turn = [](const Fleet* f) { return f && f->ArrivedThisTurn(); };
+
     // fleet movement
     auto fleets = m_universe.Objects().allRaw<Fleet>();
-    for (auto* fleet : fleets) {
-        if (fleet)
-            fleet->ClearArrivalFlag();
-    }
+
+    for (auto* fleet : fleets | range_filter(not_null))
+        fleet->ClearArrivalFlag();
+
     // first move unowned fleets, or an empire fleet landing on them could wrongly
     // blockade them before they move
-    for (auto* fleet : fleets) {
-        if (fleet && fleet->Unowned())
-            fleet->MovementPhase(context);
-    }
-    for (auto* fleet : fleets) {
-        // save for possible SitRep generation after moving...
-        if (fleet && !fleet->Unowned())
-            fleet->MovementPhase(context);
-    }
+    for (auto* fleet : fleets | range_filter(is_unowned))
+        fleet->MovementPhase(context);
+    for (auto* fleet : fleets | range_filter(is_owned))
+        fleet->MovementPhase(context);
 
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities(m_empires);
@@ -3829,10 +3829,7 @@ void ServerApp::PreCombatProcessTurns() {
     m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
     // SitReps for fleets having arrived at destinations
-    for (auto* fleet : fleets) {
-        // save for possible SitRep generation after moving...
-        if (!fleet || !fleet->ArrivedThisTurn())
-            continue;
+    for (auto* fleet : fleets | range_filter(arrived_this_turn)) {
         // sitreps for all empires that can see fleet at new location
         for (auto& [empire_id, empire] : m_empires) {
             if (fleet->GetVisibility(empire_id, m_universe) >= Visibility::VIS_BASIC_VISIBILITY)
@@ -3850,7 +3847,7 @@ void ServerApp::PreCombatProcessTurns() {
          player_it != m_networking.established_end(); ++player_it)
     {
         const auto& player = *player_it;
-        int empire_id = PlayerEmpireID(player->PlayerID());
+        const int empire_id = PlayerEmpireID(player->PlayerID());
         if (m_empires.GetEmpire(empire_id) ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
             player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
