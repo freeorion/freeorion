@@ -261,7 +261,7 @@ namespace {
 
         // first: readable name. can't be a view because some names are on-the fly generated, eg. system apparent name
         // second.first: link text. generated on the fly
-        // second.second: item name/id/key within category. coul be dynamically generated from an ID number
+        // second.second: item name/id/key within category. could be dynamically generated from an ID number
         std::vector<std::pair<std::string, std::pair<std::string, std::string>>> retval;
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
@@ -768,10 +768,14 @@ namespace {
             }
         }
 
-        if (dir_name == "ENC_NAMED_VALUE_REF" && !retval.empty())
-            std::sort(std::next(retval.begin()), retval.end()); // leave explanitory text first
-        else
-            std::sort(retval.begin(), retval.end());
+        if (!retval.empty()) {
+            if (dir_name == "ENC_NAMED_VALUE_REF") {
+                // leave explanitory text first
+                std::sort(std::next(retval.begin()), retval.end());
+            } else {
+                std::sort(retval.begin(), retval.end());
+            }
+        }
         return retval;
     }
 
@@ -780,7 +784,7 @@ namespace {
         auto sorted_entries = GetSortedPediaDirEntires(dir_name, true);
 
         std::string retval;
-        retval.reserve(sorted_entries.size() * 128);   // rough guesstimate
+        retval.reserve(sorted_entries.size() * 256);   // rough guesstimate
 
         // add sorted entries linktext representation to page text
         for (const auto& entry : sorted_entries)
@@ -1437,10 +1441,12 @@ namespace {
         if (dir_text.empty())
             return;
 
-        if (!detailed_description.empty())
+        if (!detailed_description.empty()) {
             detailed_description += "\n\n";
-
-        detailed_description += dir_text;
+            detailed_description += dir_text;
+        } else {
+            detailed_description = std::move(dir_text);
+        }
     }
 
     void RefreshDetailPanelShipPartTag(     const std::string& item_type, const std::string& item_name,
