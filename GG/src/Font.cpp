@@ -1605,8 +1605,7 @@ namespace {
                                  orig_just,
                                  line_data[line_data.size() - 2].justification);
             } else {
-                // there's room for this char on this line, or there's
-                // no wrapping in use
+                // there's room for this char on this line, or there's no wrapping in use
                 x += elem.widths[j];
                 line_data.back().char_data.emplace_back(
                     x,
@@ -1704,26 +1703,27 @@ std::vector<Font::LineData> Font::DetermineLines(
     std::vector<TextElement> pending_formatting_tags;
 
     for (const auto& elem : text_elements) {
-        // if a newline is explicitly requested, start a new one
-        if (elem.Type() == TextElement::TextElementType::NEWLINE) {
+        switch (elem.Type()) {
+        case TextElement::TextElementType::NEWLINE:
             AddNewline(x, last_line_of_curr_just, line_data, orig_just);
-
-        } else if (elem.Type() == TextElement::TextElementType::WHITESPACE) {
+            break;
+        case TextElement::TextElementType::WHITESPACE:
             AddWhitespace(x, elem.text, m_space_width, box_width, expand_tabs, tab_pixel_width, format,
                           line_data, last_line_of_curr_just, orig_just, original_string_offset,
                           code_point_offset, pending_formatting_tags);
-
-        } else if (elem.Type() == TextElement::TextElementType::TEXT) {
+            break;
+        case TextElement::TextElementType::TEXT:
             AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
                     original_string_offset, code_point_offset, pending_formatting_tags);
-
-        } else if (elem.Type() == TextElement::TextElementType::OPEN_TAG) {
+            break;
+        case TextElement::TextElementType::OPEN_TAG:
             AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
                        code_point_offset, pending_formatting_tags);
-
-        } else if (elem.Type() == TextElement::TextElementType::CLOSE_TAG) {
+            break;
+        case TextElement::TextElementType::CLOSE_TAG:
             AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
                         code_point_offset, pending_formatting_tags);
+            break;
         }
         original_string_offset += elem.StringSize();
     }
