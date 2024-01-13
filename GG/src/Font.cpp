@@ -77,6 +77,10 @@ namespace {
         int8_t   adv = 0;       ///< advance of glyph (see Glyph)
     };
 
+    // utility to less verbosely quiet warnings
+    template <typename T>
+    [[nodiscard]] constexpr std::size_t to_sz_t(T i) noexcept { return static_cast<std::size_t>(Value(i)); }
+
     /// A two dimensional grid of pixels that expands to
     /// fit any write much like an stl vector, but in 2d.
     template<typename T>
@@ -90,7 +94,7 @@ namespace {
         Buffer2d(X initial_width, Y initial_height, const T& default_value):
             m_capacity_width(initial_width),
             m_capacity_height(initial_height),
-            m_data(Value(initial_width)*Value(initial_height), default_value),
+            m_data(to_sz_t(initial_width)*to_sz_t(initial_height), default_value),
             m_current_width(initial_width),
             m_current_height(initial_height),
             m_default_value(default_value)
@@ -164,7 +168,7 @@ namespace {
             if (new_capacity_width != m_capacity_width || new_capacity_height != m_capacity_height) {
                 // Create new storage and copy old data. A linear copy won't do, there
                 // will be a new mapping from 2d indexes to 1d memory.
-                std::vector<T> new_data(Value(new_capacity_width)*Value(new_capacity_height), m_default_value);
+                std::vector<T> new_data(to_sz_t(new_capacity_width)*to_sz_t(new_capacity_height), m_default_value);
                 for (Y y_i = Y0; y_i < m_current_height && y_i < new_capacity_height; ++y_i) {
                     for (X x_i = X0; x_i < m_current_width && x_i < new_capacity_width; ++x_i) {
                         unsigned pos = Value(new_capacity_width) * Value(y_i) + Value(x_i);
