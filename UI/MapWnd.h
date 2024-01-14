@@ -248,8 +248,8 @@ private:
                          GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
 
         std::vector<MovePathNode> path;                  // raw path data from which line rendering is determined
-        GG::Clr                   colour = GG::CLR_ZERO; // colour of line
         std::vector<Vertex>       vertices;              // cached apparent universe positions of starts and ends of line segments drawn to represent move path
+        GG::Clr                   colour = GG::CLR_ZERO; // colour of line
     };
 
     void BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
