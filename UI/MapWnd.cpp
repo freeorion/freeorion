@@ -2248,10 +2248,8 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
         return std::pair{x, y};
     });
 
-    auto vert_coord_it = vert_screen_coords.begin();
-    auto vert_coord_end = vert_screen_coords.end();
-
-    for (; vert_coord_it != vert_coord_end;) {
+    const auto vert_coord_end = vert_screen_coords.end();
+    for (auto vert_coord_it = vert_screen_coords.begin(); vert_coord_it != vert_coord_end;) {
         // get next two vertices screen positions
         const auto& [x1, y1] = *vert_coord_it;
         ++vert_coord_it;
@@ -2260,14 +2258,13 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
         const auto& [x2, y2] = *vert_coord_it;
 
         // get unit vector along line connecting vertices
-        float deltaX = x2 - x1;
-        float deltaY = y2 - y1;
-        float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+        const float deltaX = x2 - x1;
+        const float deltaY = y2 - y1;
+        const float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
         if (!isnormal(length)) // safety check
             continue;
-        float inv_length = 1.0 / length;
-        float uVecX = deltaX * inv_length;
-        float uVecY = deltaY * inv_length;
+        const float uVecX = deltaX / length;
+        const float uVecY = deltaY / length;
 
         // increment along line, adding dots to buffers, until end of line segment is passed
         while (offset < length) {
@@ -2306,16 +2303,16 @@ void MapWnd::RenderFleetMovementLines() {
         return;
 
     // determine animation shift for move lines
-    int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
-    float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
-    int ticks = GG::GUI::GetGUI()->Ticks();
+    const int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
+    const float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
+    const int ticks = GG::GUI::GetGUI()->Ticks();
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
-    float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
+    const float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots
-    auto move_line_dot_texture = MoveLineDotTexture();
-    float dot_size = Value(move_line_dot_texture->DefaultWidth());
+    const auto move_line_dot_texture = MoveLineDotTexture();
+    const float dot_size = Value(move_line_dot_texture->DefaultWidth());
 
     // dots rendered same size for all zoom levels, so do positioning in screen
     // space instead of universe space
