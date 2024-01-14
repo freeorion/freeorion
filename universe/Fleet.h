@@ -85,9 +85,10 @@ public:
     [[nodiscard]] bool               Passive() const noexcept { return m_aggression <= FleetAggression::FLEET_PASSIVE; }
     [[nodiscard]] FleetAggression    Aggression() const noexcept { return m_aggression; }
 
-    /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the
-        specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
-        location, however the fleet's current location will not be on the list, even if it is currently in a system. */
+    /** Returns a list of locations at which notable events will occur along the fleet's
+      * path if it follows the specified route.  It is assumed in the calculation that the
+      * fleet starts its move path at its actual current location, however the fleet's
+      * current location will not be on the list, even if it is currently in a system. */
     [[nodiscard]] std::vector<MovePathNode> MovePath(const std::vector<int>& route, bool flag_blockades,
                                                      const ScriptingContext& context) const;
     [[nodiscard]] std::vector<MovePathNode> MovePath(bool flag_blockades, const ScriptingContext& context) const;   ///< Returns MovePath for fleet's current TravelRoute
