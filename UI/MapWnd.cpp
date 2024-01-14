@@ -895,43 +895,9 @@ void MapWndPopup::Close()
 { CloseClicked(); }
 
 
-//////////////////////////////////
-//LaneEndpoints
-//////////////////////////////////
-LaneEndpoints::LaneEndpoints() :
-    X1(static_cast<float>(UniverseObject::INVALID_POSITION)),
-    Y1(static_cast<float>(UniverseObject::INVALID_POSITION)),
-    X2(static_cast<float>(UniverseObject::INVALID_POSITION)),
-    Y2(static_cast<float>(UniverseObject::INVALID_POSITION))
-{}
-
-
-////////////////////////////////////////////////
-// MapWnd::MovementLineData::Vertex
-////////////////////////////////////////////////
-struct MapWnd::MovementLineData::Vertex {
-    Vertex(double x_, double y_, int eta_, bool show_eta_,
-           bool flag_blockade_ = false, bool flag_supply_block_ = false) :
-        x(x_), y(y_), eta(eta_), show_eta(show_eta_),
-        flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
-    {}
-    double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
-    int     eta;        // turns taken to reach point by object travelling along move line
-    bool    show_eta;   // should an ETA indicator / number be shown over this vertex?
-    bool    flag_blockade;
-    bool    flag_supply_block;
-};
-
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData
 ////////////////////////////////////////////////
-MapWnd::MovementLineData::MovementLineData() :
-    path(),
-    colour(GG::CLR_ZERO)
-{}
-
-MapWnd::MovementLineData::~MovementLineData() = default;
-
 MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
                                            GG::Clr colour_, int empireID) :
