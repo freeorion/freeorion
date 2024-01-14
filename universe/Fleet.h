@@ -14,24 +14,24 @@
 /** Contains info about a single notable point on the move path of a fleet or
   * other UniverseObject. */
 struct MovePathNode {
-    MovePathNode(double x_, double y_, bool turn_end_, int eta_,
+    MovePathNode(double x_, double y_, bool turn_end_, uint8_t eta_,
                  int id_, int lane_start_id_, int lane_end_id_,
                  bool post_blockade_ = false) :
         x(x_),
         y(y_),
-        turn_end(turn_end_),
-        eta(eta_),
         object_id(id_),
         lane_start_id(lane_start_id_),
         lane_end_id(lane_end_id_),
+        eta(eta_),
+        turn_end(turn_end_),
         post_blockade(post_blockade_)
     {}
     double  x, y;           ///< location in Universe of node
-    bool    turn_end;       ///< true if the fleet will end a turn at this point
-    int     eta;            ///< estimated turns to reach this node
     int     object_id;      ///< id of object (most likely a system) located at this node, or INVALID_OBJECT_ID if there is no object here
     int     lane_start_id;  ///< id of object (most likely a system) at the start of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
     int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
+    uint8_t eta;            ///< estimated turns to reach this node
+    bool    turn_end;       ///< true if the fleet will end a turn at this point
     bool    post_blockade;  ///< estimation of whether this node is past a blockade for the subject fleet
 };
 
@@ -93,8 +93,8 @@ public:
                                                      const ScriptingContext& context) const;
     [[nodiscard]] std::vector<MovePathNode> MovePath(bool flag_blockades, const ScriptingContext& context) const;   ///< Returns MovePath for fleet's current TravelRoute
 
-    [[nodiscard]] std::pair<int, int> ETA(const ScriptingContext& context) const;            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
-    [[nodiscard]] std::pair<int, int> ETA(const std::vector<MovePathNode>& move_path) const; ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
+    [[nodiscard]] std::pair<uint8_t, uint8_t> ETA(const ScriptingContext& context) const;            ///< turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
+    [[nodiscard]] std::pair<uint8_t, uint8_t> ETA(const std::vector<MovePathNode>& move_path) const; ///< turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
     [[nodiscard]] float   Damage(const Universe& universe) const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
     [[nodiscard]] float   Structure(const ObjectMap& objects) const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
@@ -178,9 +178,9 @@ public:
     /* returns a name for a fleet based on its ships*/
     [[nodiscard]] std::string GenerateFleetName(const ScriptingContext& context) const;
 
-    static constexpr int ETA_NEVER = (1 << 30);             ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
-    static constexpr int ETA_UNKNOWN = (1 << 30) - 1;       ///< returned when ETA can't be determined
-    static constexpr int ETA_OUT_OF_RANGE = (1 << 30) - 2;  ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
+    static constexpr uint8_t ETA_NEVER = 255;       ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
+    static constexpr uint8_t ETA_UNKNOWN = 254;     ///< returned when ETA can't be determined
+    static constexpr uint8_t ETA_OUT_OF_RANGE = 253;///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
     Fleet(std::string name, double x, double y, int owner_id, int creation_turn);
     Fleet() : UniverseObject(UniverseObjectType::OBJ_FLEET) {}

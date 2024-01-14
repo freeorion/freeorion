@@ -15,6 +15,8 @@
 #include "../util/i18n.h"
 
 namespace {
+    static_assert(Fleet::ETA_NEVER <= std::numeric_limits<decltype(Fleet::ETA_NEVER)>::max());
+
     constexpr bool ALLOW_ALLIED_SUPPLY = true;
 
     const std::set<int> EMPTY_SET;
@@ -532,27 +534,27 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     return retval;
 }
 
-std::pair<int, int> Fleet::ETA(const ScriptingContext& context) const
+std::pair<uint8_t, uint8_t> Fleet::ETA(const ScriptingContext& context) const
 { return ETA(MovePath(false, context)); }
 
-std::pair<int, int> Fleet::ETA(const std::vector<MovePathNode>& move_path) const {
+std::pair<uint8_t, uint8_t> Fleet::ETA(const std::vector<MovePathNode>& move_path) const {
     // check that path exists.  if empty, there was no valid route or some other problem prevented pathing
     if (move_path.empty())
         return {ETA_UNKNOWN, ETA_UNKNOWN};
 
     // check for single node in path.  return the single node's eta as both .first and .second (likely indicates that fleet couldn't move)
     if (move_path.size() == 1) {
-        const MovePathNode& node = move_path.front();
+        const auto& node = move_path.front();
         return {node.eta, node.eta};
     }
 
-    // general case: there is a multi-node path.  return the ETA of the first object node, and the ETA of the last node
-    int last_stop_eta = move_path.rbegin()->eta;
-    int first_stop_eta = last_stop_eta;
+    // general case: there is a multi-node path.
+    // return the ETA of the first node and the ETA of the last node
+    const auto last_stop_eta = move_path.rbegin()->eta;
+    auto first_stop_eta = last_stop_eta;
     for (auto it = ++(move_path.begin()); it != move_path.end(); ++it) {
-        const MovePathNode& node = *it;
-        if (node.object_id != INVALID_OBJECT_ID) {
-            first_stop_eta = node.eta;
+        if (it->object_id != INVALID_OBJECT_ID) {
+            first_stop_eta = it->eta;
             break;
         }
     }
@@ -568,7 +570,7 @@ float Fleet::Fuel(const ObjectMap& objects) const {
     float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (auto& ship : objects.find<const Ship>(m_ships)) {
+    for (auto* ship : objects.findRaw<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(MeterType::METER_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
@@ -577,11 +579,11 @@ float Fleet::Fuel(const ObjectMap& objects) const {
         if (!ship->OrderedScrapped()) {
             fuel = std::min(fuel, meter->Current());
             is_fleet_scrapped = false;
-        } 
+        }
     }
-    if (is_fleet_scrapped) {
-        fuel = 0.0f;
-    }
+    if (is_fleet_scrapped)
+        return 0.0f;
+
     return fuel;
 }
 
@@ -594,7 +596,7 @@ float Fleet::MaxFuel(const ObjectMap& objects) const {
     float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (auto& ship : objects.find<const Ship>(m_ships)) {
+    for (auto* ship : objects.findRaw<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(MeterType::METER_MAX_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
@@ -605,9 +607,9 @@ float Fleet::MaxFuel(const ObjectMap& objects) const {
             is_fleet_scrapped = false;
         }
     }
-    if (is_fleet_scrapped) {
-        max_fuel = 0.0f;
-    }
+    if (is_fleet_scrapped)
+        return 0.0f;
+
     return max_fuel;
 }
 
