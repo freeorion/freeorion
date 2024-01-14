@@ -954,8 +954,8 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
     double  prev_node_x =               first_node.x;
     double  prev_node_y =               first_node.y;
     int     prev_sys_id =               first_node.object_id;
-    int     prev_eta =                  first_node.eta;
     int     next_sys_id =               INVALID_OBJECT_ID;
+    auto    prev_eta =                  first_node.eta;
 
     const ScriptingContext context;
     const Empire* empire = GetEmpire(empireID);
@@ -4704,7 +4704,10 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
                 for (MovePathNode& node : path) {
                     //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
-                    node.eta++;
+                    if (node.eta >= 250)
+                        node.eta = Fleet::ETA_NEVER;
+                    else
+                        node.eta++;
                 }
             } else {
                 //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" slips through second block check";
@@ -4757,19 +4760,21 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>&
                 for (MovePathNode& node : path) {
                     //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
-                    node.eta++;
+                    if (node.eta >= 250)
+                        node.eta = Fleet::ETA_NEVER;
+                    else
+                        node.eta++;
                 }
             }
         }
     }
 
     // get colour: empire colour, or white if no single empire applicable
-    GG::Clr line_colour = GG::CLR_WHITE;
-    if (empire)
-        line_colour = empire->Color();
+    const auto line_colour = empire ? empire->Color() : GG::CLR_WHITE;
 
     // create and store line
-    m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour, fleet->Owner());
+    m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints,
+                                                         line_colour, fleet->Owner());
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
@@ -7419,9 +7424,10 @@ namespace {
     bool FleetRouteInRange(const Fleet* fleet, const RouteListType& route,
                            const ScriptingContext& context)
     {
-        auto eta = fleet->ETA(fleet->MovePath(route, false, context));
-        return (eta.first != Fleet::ETA_NEVER && eta.first != Fleet::ETA_UNKNOWN &&
-                eta.first != Fleet::ETA_OUT_OF_RANGE);
+        const auto eta_final_turns = fleet->ETA(fleet->MovePath(route, false, context)).first;
+        return (eta_final_turns != Fleet::ETA_NEVER &&
+                eta_final_turns != Fleet::ETA_UNKNOWN &&
+                eta_final_turns != Fleet::ETA_OUT_OF_RANGE);
     }
 
     // helper function for DispatchFleetsExploring
