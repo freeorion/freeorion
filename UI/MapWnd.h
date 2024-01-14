@@ -41,14 +41,17 @@ class ShaderProgram;
  * location of these start ane endpoints is used for rendering the starlane and for
  * positioning fleet buttons that are moving along the starlane. */
 struct LaneEndpoints {
-    LaneEndpoints();
-    LaneEndpoints(float x1, float y1, float x2, float y2) :
+    constexpr LaneEndpoints() noexcept = default;
+    constexpr LaneEndpoints(float x1, float y1, float x2, float y2) noexcept :
         X1(x1),
         Y1(y1),
         X2(x2),
         Y2(y2)
     {}
-    float X1, Y1, X2, Y2;
+    float X1 = UniverseObject::INVALID_POSITION;
+    float Y1 = UniverseObject::INVALID_POSITION;
+    float X2 = UniverseObject::INVALID_POSITION;
+    float Y2 = UniverseObject::INVALID_POSITION;
 };
 
 
@@ -226,16 +229,27 @@ private:
     /** contains information necessary to render a single fleet movement line
       * on the main map. also contains cached infromation */
     struct MovementLineData {
-        struct Vertex;  // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
-        MovementLineData();
+        // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
+        struct Vertex {
+            constexpr Vertex(double x_, double y_, int eta_, bool show_eta_,
+                             bool flag_blockade_ = false, bool flag_supply_block_ = false) noexcept :
+                x(x_), y(y_), eta(eta_), show_eta(show_eta_),
+                flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
+            {}
+            double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
+            uint8_t eta;        // turns taken to reach point by object travelling along move line
+            bool    show_eta;   // should an ETA indicator / number be shown over this vertex?
+            bool    flag_blockade;
+            bool    flag_supply_block;
+        };
+        MovementLineData() = default;
         MovementLineData(const std::vector<MovePathNode>& path_,
                          const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
                          GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
-        ~MovementLineData();
 
-        std::vector<MovePathNode> path;       // raw path data from which line rendering is determined
-        GG::Clr                   colour;     // colour of line
-        std::vector<Vertex>       vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
+        std::vector<MovePathNode> path;                  // raw path data from which line rendering is determined
+        GG::Clr                   colour = GG::CLR_ZERO; // colour of line
+        std::vector<Vertex>       vertices;              // cached apparent universe positions of starts and ends of line segments drawn to represent move path
     };
 
     void BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
