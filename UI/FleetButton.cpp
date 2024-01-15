@@ -97,11 +97,7 @@ void FleetButton::Refresh(SizeType size_type) {
     const EmpireManager& e = Empires();
     ScriptingContext context{u, e};
 
-    auto fleets_shared = o.find<Fleet>(m_fleets);
-    std::vector<const Fleet*> fleets;
-    fleets.reserve(fleets_shared.size());
-    std::transform(fleets_shared.begin(), fleets_shared.end(), std::back_inserter(fleets),
-                   [](auto& f) { return f.get(); });
+    const auto fleets = o.findRaw<const Fleet>(m_fleets);
 
     // determine owner(s) of fleet(s).  Only care whether or not there is more than one owner, as owner
     // is used to determine colouration
@@ -109,7 +105,7 @@ void FleetButton::Refresh(SizeType size_type) {
     int owner_id = fleets.empty() ? ALL_EMPIRES : fleets.front()->Owner();
     if (!fleets.empty()) {
         // use ALL_EMPIRES if there are multiple owners
-        for (auto& fleet : fleets) {
+        for (auto* fleet : fleets) {
             if (fleet->Owner() != owner_id) {
                 owner_id = ALL_EMPIRES;
                 multiple_owners = true;
@@ -127,8 +123,8 @@ void FleetButton::Refresh(SizeType size_type) {
         // all ships owned by no empire
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
-        for (const auto& fleet : fleets) {
-            for (const auto& ship : o.find<Ship>(fleet->ShipIDs())) {
+        for (const auto* fleet : fleets) {
+            for (const auto* ship : o.findRaw<const Ship>(fleet->ShipIDs())) {
                 if (!ship->IsMonster(u)) {
                     monsters = false;
                     break;
@@ -148,7 +144,7 @@ void FleetButton::Refresh(SizeType size_type) {
 
     // determine direction button should be rotated to orient along a starlane
     GLfloat pointing_angle = 0.0f;
-    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto map_wnd = ClientUI::GetClientUI()->GetMapWnd();
 
     const Fleet* first_fleet = fleets.empty() ? nullptr : fleets.front();
 
@@ -156,8 +152,7 @@ void FleetButton::Refresh(SizeType size_type) {
         first_fleet->SystemID() == INVALID_OBJECT_ID &&
         first_fleet->NextSystemID() != INVALID_OBJECT_ID)
     {
-        int next_sys_id = first_fleet->NextSystemID();
-        if (const auto* obj = Objects().get(next_sys_id).get()) {
+        if (auto* obj = o.getRaw<const System>(first_fleet->NextSystemID())) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their
             // actual universe position, but if they're moving along a starlane, this code will assume
@@ -181,12 +176,11 @@ void FleetButton::Refresh(SizeType size_type) {
     // select icon(s) for fleet(s)
     int num_ships = 0;
     m_fleet_blockaded = false;
-    for (const auto* fleet : fleets) {
-        if (fleet) {
-            num_ships += fleet->NumShips();
-            if (!m_fleet_blockaded && fleet->Blockaded(context))
-                m_fleet_blockaded = true;
-        }
+    static constexpr auto not_null = [](const auto* f) -> bool { return f; };
+    for (const auto* fleet : fleets | range_filter(not_null)) {
+        num_ships += fleet->NumShips();
+        if (!m_fleet_blockaded && fleet->Blockaded(context))
+            m_fleet_blockaded = true;
     }
 
     // remove and re-create graphics for all icons needed
