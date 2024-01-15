@@ -230,7 +230,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     float fuel = Fuel(context.ContextObjects());
     float max_fuel = MaxFuel(context.ContextObjects());
 
-    auto RouteNums = [route]() {
+    static constexpr auto route_nums = [](const auto& route) {
         std::string retval;
         retval.reserve(route.size() * 8);
         for (int waypoint : route)
@@ -239,7 +239,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     };
     TraceLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
                   << ") fuel: " << fuel << " at sys id: " << this->SystemID() << "  route: "
-                  << RouteNums();
+                  << route_nums(route);
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     auto empire = context.GetEmpire(this->Owner());
@@ -350,7 +350,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
             DebugLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
                             << ") No starlane connection between systems " << prev_or_cur->Name() << "(" << prev_or_cur->ID()
                             << ")  and " << next_system->Name() << "(" << next_system->ID()
-                            << "). Abandoning the rest of the route. Route was: " << RouteNums();
+                            << "). Abandoning the rest of the route. Route was: " << route_nums(route);
             return retval;
         } else if (!prev_or_cur) {
             ErrorLogger() << "Fleet::MovePath: No previous or current system!?";
