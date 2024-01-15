@@ -2447,11 +2447,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
         // empire-coloured central fill within wedged outer ring
-        if (clr == GG::CLR_ZERO)
-            glColor(move_line.colour);
-        else
-            glColor(clr);
-
+        glColor(clr == GG::CLR_ZERO ? move_line.colour : clr);
         CircleArc(ul, lr, 0.0, TWO_PI, true);
         glEnable(GL_TEXTURE_2D);
 
@@ -2538,10 +2534,7 @@ void MapWnd::RenderVisibilityRadii() {
     // render each colour's radii separately, so they can consistently blend
     // when overlapping other colours, but be stenciled to avoid blending
     // when overlapping within a colour
-    for (unsigned int i = 0; i < m_radii_radii_vertices_indices_runs.size(); ++i) {
-        const auto& radii_start_run = m_radii_radii_vertices_indices_runs[i].first;
-        const auto& border_start_run = m_radii_radii_vertices_indices_runs[i].second;
-
+    for (const auto& [radii_start_run, border_start_run] : m_radii_radii_vertices_indices_runs) {
         glClear(GL_STENCIL_BUFFER_BIT);
         glStencilOp(GL_INCR, GL_INCR, GL_INCR);
         glStencilFunc(GL_EQUAL, 0x0, 0xff);
@@ -2560,7 +2553,6 @@ void MapWnd::RenderVisibilityRadii() {
     }
 
     if (GetOptionsDB().Get<bool>("ui.map.detection.range.future.shown")) {
-
         glDisable(GL_STENCIL_TEST);
 
         // future position ranges for selected fleets
@@ -2573,9 +2565,7 @@ void MapWnd::RenderVisibilityRadii() {
 
         for (const auto& [circle_colour, ul_lrs] : future_turn_circles) {
             // get empire colour and calculate brighter radii outline colour
-            for (const auto& ul_lr : ul_lrs) {
-                const auto& [ul, lr] = ul_lr;
-
+            for (const auto& [ul, lr] : ul_lrs) {
                 // store line segments for border lines of radii
                 verts.clear();
                 vert_colours.clear();
@@ -2583,8 +2573,7 @@ void MapWnd::RenderVisibilityRadii() {
                                              0.0, TWO_PI, false, 72, false);
 
                 // store colours for line segments
-                for (std::size_t count = 0; count < verts.size(); ++count)
-                    vert_colours.store(circle_colour);
+                vert_colours.store(verts.size(), circle_colour);
 
                 verts.activate();
                 vert_colours.activate();
@@ -2616,8 +2605,7 @@ void MapWnd::RenderScaleCircle() {
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0f);
 
-    GG::Clr circle_colour = GG::CLR_WHITE;
-    circle_colour.a = 128;
+    const GG::Clr circle_colour = []() { auto retval = GG::CLR_WHITE; retval.a = 128; return retval; }();
     glColor(circle_colour);
 
     m_scale_circle_vertices.activate();
@@ -2787,7 +2775,7 @@ void MapWnd::KeyRelease(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModK
 void MapWnd::EnableOrderIssuing(bool enable) {
     // disallow order enabling if this client does not have an empire
     // and is not a moderator
-    GGHumanClientApp* app = GGHumanClientApp::GetApp();
+    const auto* app = GGHumanClientApp::GetApp();
     bool moderator = false;
     bool observer = false;
     m_btn_turn->Disable(GGHumanClientApp::GetApp()->SinglePlayerGame() && !enable);
@@ -2807,15 +2795,12 @@ void MapWnd::EnableOrderIssuing(bool enable) {
     m_moderator_wnd->EnableActions(enable && moderator);
     m_ready_turn = !enable;
 
-    std::string button_label;
-    if (!moderator && !observer && m_ready_turn && !GGHumanClientApp::GetApp()->SinglePlayerGame()) {
-        // multiplayer game with a participating player who has sent orders
-        button_label = UserString("MAP_BTN_TURN_UNREADY");
-    } else {
-        button_label = UserString("MAP_BTN_TURN_UPDATE");
-    }
+    const auto& button_label = (!app) ? UserString("ERROR") :
+        (!moderator && !observer && m_ready_turn && !app->SinglePlayerGame()) ?
+            UserString("MAP_BTN_TURN_UNREADY") : UserString("MAP_BTN_TURN_UPDATE");
 
-    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(app->CurrentTurn())));
+    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) %
+                                       std::to_string(app ? app->CurrentTurn() : 0)));
     RefreshTurnButtonTooltip();
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
@@ -2987,7 +2972,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     if (context.current_turn == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (auto obj = objects.get(this_client_empire->CapitalID())) {
+        if (const auto obj = objects.getRaw(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
