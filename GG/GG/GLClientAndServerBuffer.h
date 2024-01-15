@@ -160,6 +160,14 @@ public:
         base_t::store<ArrN>(data);
     }
 
+    // same colour N times
+    void store(std::size_t N, Clr clr)
+    {
+        base_t::reserve(base_t::size() + N);
+        for (std::size_t n = 0; n < N; ++n)
+            base_t::store(clr.r, clr.g, clr.b, clr.a);
+    }
+
     void activate() const override;
 };
 
