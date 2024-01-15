@@ -96,35 +96,35 @@ public:
     [[nodiscard]] std::pair<uint8_t, uint8_t> ETA(const ScriptingContext& context) const;            ///< turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     [[nodiscard]] std::pair<uint8_t, uint8_t> ETA(const std::vector<MovePathNode>& move_path) const; ///< turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
 
-    [[nodiscard]] float   Damage(const Universe& universe) const;                     ///< Returns total amount of damage this fleet has, which is the sum of the ships' damage
-    [[nodiscard]] float   Structure(const ObjectMap& objects) const;                  ///< Returns total amount of structure this fleet has, which is the sum of the ships' structure
-    [[nodiscard]] float   Shields(const ObjectMap& objects) const;                    ///< Returns total amount of shields this fleet has, which is the sum of the ships' shields
-    [[nodiscard]] float   Fuel(const ObjectMap& objects) const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
-    [[nodiscard]] float   MaxFuel(const ObjectMap& objects) const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
-    [[nodiscard]] int     FinalDestinationID() const;                                 ///< Returns ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
-    [[nodiscard]] int     PreviousToFinalDestinationID() const;                       ///< Returns ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
-    [[nodiscard]] int     PreviousSystemID() const noexcept { return m_prev_system; } ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
-    [[nodiscard]] int     NextSystemID() const noexcept     { return m_next_system; } ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
+    [[nodiscard]] float   Damage(const Universe& universe) const;                     ///< total amount of damage this fleet has, which is the sum of the ships' damage
+    [[nodiscard]] float   Structure(const ObjectMap& objects) const;                  ///< total amount of structure this fleet has, which is the sum of the ships' structure
+    [[nodiscard]] float   Shields(const ObjectMap& objects) const;                    ///< total amount of shields this fleet has, which is the sum of the ships' shields
+    [[nodiscard]] float   Fuel(const ObjectMap& objects) const;                       ///< effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
+    [[nodiscard]] float   MaxFuel(const ObjectMap& objects) const;                    ///< effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
+    [[nodiscard]] int     FinalDestinationID() const;                                 ///< ID of system that this fleet is moving to or INVALID_OBJECT_ID if staying still.
+    [[nodiscard]] int     PreviousToFinalDestinationID() const;                       ///< ID of system previous to the destination system that this fleet is moving to or INVALID_OBJECT_ID not moving at least two jumps.
+    [[nodiscard]] int     PreviousSystemID() const noexcept { return m_prev_system; } ///< ID of system that this fleet is moving away from as it moves to its destination.
+    [[nodiscard]] int     NextSystemID() const noexcept     { return m_next_system; } ///< ID of system that this fleet is moving to next as it moves to its destination.
 
-    [[nodiscard]] bool             Blockaded(const ScriptingContext& context) const;           ///< returns true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
+    [[nodiscard]] bool             Blockaded(const ScriptingContext& context) const;  ///< true iff either (i) fleet is stationary and at least one system exit is blocked for this fleet or (ii) fleet is attempting to depart a system along a blocked system exit
     [[nodiscard]] bool             BlockadedAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns true iff this fleet's movement would be blockaded at system.
     [[nodiscard]] std::vector<int> BlockadingFleetsAtSystem(int start_system_id, int dest_system_id, const ScriptingContext& context) const; ///< returns ids of fleets that would blockade this fleet's movement at system.
 
-    [[nodiscard]] float   Speed(const ObjectMap& objects) const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
-    [[nodiscard]] bool    CanChangeDirectionEnRoute() const noexcept { return false; }///< Returns true iff this fleet can change its direction while in interstellar space.
+    [[nodiscard]] float   Speed(const ObjectMap& objects) const;                      ///< speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
+    [[nodiscard]] bool    CanChangeDirectionEnRoute() const noexcept { return false; }///< true iff this fleet can change its direction while in interstellar space.
     [[nodiscard]] bool    CanDamageShips(const ScriptingContext& context,
-                                         float target_shields = 0.0f) const;          ///< Returns true if there is at least one ship in the fleet which is currently able to damage a ship using direct weapons or fighters
-    [[nodiscard]] bool    CanDestroyFighters(const ScriptingContext& context) const;  ///< Returns true if there is at least one ship in the fleet which is currently able to destroy fighters using direct weapons or fighters
-    [[nodiscard]] bool    HasMonsters(const Universe& universe) const;                ///< returns true iff this fleet contains monster ships.
-    [[nodiscard]] bool    HasArmedShips(const ScriptingContext& context) const;       ///< Returns true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
-    [[nodiscard]] bool    HasFighterShips(const Universe& universe) const;            ///< Returns true if there is at least one ship with fighters in the fleet.
-    [[nodiscard]] bool    HasColonyShips(const Universe& universe) const;             ///< Returns true if there is at least one colony ship with nonzero capacity in the fleet.
-    [[nodiscard]] bool    HasOutpostShips(const Universe& universe) const;            ///< Returns true if there is at least one colony ship with zero capacity in the fleet
-    [[nodiscard]] bool    HasTroopShips(const Universe& universe) const;              ///< Returns true if there is at least one troop ship in the fleet.
-    [[nodiscard]] bool    HasShipsOrderedScrapped(const Universe& universe) const;    ///< Returns true if there is at least one ship ordered scrapped in the fleet.
-    [[nodiscard]] bool    HasShipsWithoutScrapOrders(const Universe& universe) const; ///< Returns true if there is at least one ship without any scrap orders in the fleet.
-    [[nodiscard]] auto    NumShips() const noexcept { return m_ships.size(); }        ///< Returns number of ships in fleet.
-    [[nodiscard]] bool    Empty() const noexcept    { return m_ships.empty(); }       ///< Returns true if fleet contains no ships, false otherwise.
+                                         float target_shields = 0.0f) const;          ///< true if there is at least one ship in the fleet which is currently able to damage a ship using direct weapons or fighters
+    [[nodiscard]] bool    CanDestroyFighters(const ScriptingContext& context) const;  ///< true if there is at least one ship in the fleet which is currently able to destroy fighters using direct weapons or fighters
+    [[nodiscard]] bool    HasMonsters(const Universe& universe) const;                ///< true iff this fleet contains monster ships.
+    [[nodiscard]] bool    HasArmedShips(const ScriptingContext& context) const;       ///< true if there is at least one armed ship in the fleet, meaning it has direct fire weapons or fighters that can be launched and that do damage
+    [[nodiscard]] bool    HasFighterShips(const Universe& universe) const;            ///< true if there is at least one ship with fighters in the fleet.
+    [[nodiscard]] bool    HasColonyShips(const Universe& universe) const;             ///< true if there is at least one colony ship with nonzero capacity in the fleet.
+    [[nodiscard]] bool    HasOutpostShips(const Universe& universe) const;            ///< true if there is at least one colony ship with zero capacity in the fleet
+    [[nodiscard]] bool    HasTroopShips(const Universe& universe) const;              ///< true if there is at least one troop ship in the fleet.
+    [[nodiscard]] bool    HasShipsOrderedScrapped(const Universe& universe) const;    ///< true if there is at least one ship ordered scrapped in the fleet.
+    [[nodiscard]] bool    HasShipsWithoutScrapOrders(const Universe& universe) const; ///< true if there is at least one ship without any scrap orders in the fleet.
+    [[nodiscard]] auto    NumShips() const noexcept { return m_ships.size(); }        ///< number of ships in fleet.
+    [[nodiscard]] bool    Empty() const noexcept    { return m_ships.empty(); }       ///< true if fleet contains no ships, false otherwise.
     [[nodiscard]] float   ResourceOutput(ResourceType type, const ObjectMap& objects) const;
 
     /** Returns true iff this fleet is moving, but the route is unknown.  This
