@@ -223,7 +223,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
                             this->SystemID(),
                             INVALID_OBJECT_ID,
                             INVALID_OBJECT_ID,
-                            false);
+                            false, false);
         return retval; // can't move => path is just this system with explanatory ETA
     }
 
@@ -254,10 +254,8 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
                      [sys_id{this->SystemID()}] (const auto fss) { return fss == sys_id; }))
     {
         // no fuel and out of supply => can't move => path is just this system with explanatory ETA
-        retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
-                            this->SystemID(),
-                            INVALID_OBJECT_ID,
-                            INVALID_OBJECT_ID);
+        retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE, this->SystemID(),
+                            INVALID_OBJECT_ID, INVALID_OBJECT_ID, false, false);
         return retval;
     }
 
@@ -288,23 +286,24 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
                   << "  next system: " << (next_system ? next_system->Name() : "(none)") << "(" << (next_system ? next_system->ID() : -1) << ")";
 
 
-    bool is_post_blockade = false;
+    bool blockaded_at_current_location = false;
     if (cur_system) {
         //DebugLogger() << "Fleet::MovePath starting in system "<< SystemID();
         if (flag_blockades) {
-            if (BlockadedAtSystem(cur_system->ID(), next_system->ID(), context)) {
-                // blockade debug logging
-                TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
-                TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" <<cur_system->ID()
-                              << ") blockaded for fleet " << this->Name();
-                is_post_blockade = true;
-            } else {
-                // blockade debug logging, but only for the more complex situations
-                if (next_system->ID() != m_arrival_starlane && !unobstructed_systems.contains(cur_system->ID())) {
-                    TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to " << next_system->ID();
-                    TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
-                                  << ") NOT blockaded for fleet " << this->Name();
-                }
+            blockaded_at_current_location = BlockadedAtSystem(cur_system->ID(), next_system->ID(), context);
+            if (blockaded_at_current_location) {
+                TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID()
+                              << " to "<< next_system->ID();
+                TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name()
+                              << " (" <<cur_system->ID() << ") blockaded for fleet " << this->Name();
+                blockaded_at_current_location = true;
+            } else if (next_system->ID() != m_arrival_starlane &&
+                       !unobstructed_systems.contains(cur_system->ID()))
+            {
+                TraceLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID()
+                              << " to " << next_system->ID();
+                TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name()
+                              << " (" << cur_system->ID() << ") NOT blockaded for fleet " << this->Name();
             }
         }
     }
@@ -314,7 +313,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
                         (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
                         (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
                         (next_system ? next_system->ID() : INVALID_OBJECT_ID),
-                        false);
+                        blockaded_at_current_location, false);
 
 
     static constexpr int TOO_LONG = 100; // limit on turns to simulate.  99 turns max keeps ETA to two digits, making UI work better
@@ -324,6 +323,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     double cur_y =               this->Y();
     double next_x =              next_system->X();
     double next_y =              next_system->Y();
+    bool   past_blockade =       blockaded_at_current_location;
 
     // simulate fleet movement given known speed, starting position, fuel limit and systems on route
     // need to populate retval with MovePathNodes that indicate the correct position, whether this
@@ -412,13 +412,14 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
             }
         }
 
-        bool end_turn_at_cur_position = false;
+        bool end_turn_here = false;
+        bool blockaded_here = false;
 
         // check if fleet can move any further this turn
         if (turn_dist_remaining < FLEET_MOVEMENT_EPSILON) {
             //DebugLogger() << " ... fleet can't move further this turn.";
             turn_dist_remaining = 0.0;      // to prevent any possible precision-related errors
-            end_turn_at_cur_position = true;
+            end_turn_here = true;
         }
 
         // check if current position is close enough to next system on route to qualify as at that system.
@@ -459,7 +460,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
                     // blockade debug logging
                     TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
                                   << ") blockaded for fleet " << this->Name();
-                    is_post_blockade = true;
+                    blockaded_here = true;
                 } else {
                     TraceLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID()
                                   << ") NOT blockaded for fleet " << this->Name();
@@ -482,37 +483,42 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         // and so will force a stop in that situation
         if (cur_system && !unobstructed_systems.contains(cur_system->ID())) {
             turn_dist_remaining = 0.0;
-            end_turn_at_cur_position = true;
+            end_turn_here = true;
         }
 
         // if turn done and turns taken is enough, abort simulation
-        if (end_turn_at_cur_position && (turns_taken + 1 >= TOO_LONG)) {
+        if (end_turn_here && (turns_taken + 1 >= TOO_LONG)) {
             // exit loop before placing current node to simplify post-loop processing: now all cases require a post-loop node to be added
             ++turns_taken;
             break;
         }
 
         // blockade debug logging
-        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " 
-                      << (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status " 
-                      << is_post_blockade << " and ETA " << turns_taken;
+        TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID()
+                      << " adding node at sysID " << (cur_system ? cur_system->ID() : INVALID_OBJECT_ID)
+                      << " " << (blockaded_here ? "(blockade here)" : "")
+                      << "  " << (past_blockade ? "(past blockade)" : "")
+                      << "  ETA " << turns_taken;
 
         // add MovePathNode for current position (end of turn position and/or system location)
-        retval.emplace_back(cur_x, cur_y, end_turn_at_cur_position, turns_taken,
+        retval.emplace_back(cur_x, cur_y, end_turn_here, turns_taken,
                             (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
                             (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
                             (next_system ? next_system->ID() : INVALID_OBJECT_ID),
-                            is_post_blockade);
+                            blockaded_here, past_blockade);
 
 
         // if the turn ended at this position, increment the turns taken and
         // reset the distance remaining to be travelled during the current (now
         // next) turn for the next loop iteration
-        if (end_turn_at_cur_position) {
+        if (end_turn_here) {
             //DebugLogger() << " ... end of simulated turn " << turns_taken;
             ++turns_taken;
             turn_dist_remaining = this->Speed(context.ContextObjects());
         }
+
+        if (blockaded_here)
+            past_blockade = true; // for next iteration
     }
 
 
@@ -520,15 +526,17 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     if (turns_taken == TOO_LONG)
         turns_taken = ETA_NEVER;
     // blockade debug logging
-    TraceLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" adding node at sysID "
-                  << (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status "
-                  << is_post_blockade << " and ETA " << turns_taken;
+    TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id "<< this->ID()
+                  <<" adding node at sysID " << (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID)
+                  << "  " << (blockaded_at_current_location ? "(blockade here)" : "")
+                  << "  " << (past_blockade ? "(past blockade)" : "")
+                  << " ETA " << turns_taken;
 
     retval.emplace_back(cur_x, cur_y, true, turns_taken,
                         (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID),
                         (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
                         (next_system ? next_system->ID() : INVALID_OBJECT_ID),
-                        is_post_blockade);
+                        blockaded_at_current_location, past_blockade);
     TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << "(" << this->ID() << ") is complete";
 
     return retval;

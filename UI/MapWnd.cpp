@@ -4691,7 +4691,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>&
     // and appending projections on shift changes
     if (path.empty())
         path.emplace_back(fleet->X(), fleet->Y(), true, 0, fleet->SystemID(),
-                          INVALID_OBJECT_ID, INVALID_OBJECT_ID);
+                          INVALID_OBJECT_ID, INVALID_OBJECT_ID, false, false);
 
     auto route_it = travel_route.begin();
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
