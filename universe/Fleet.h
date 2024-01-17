@@ -16,7 +16,7 @@
 struct MovePathNode {
     MovePathNode(double x_, double y_, bool turn_end_, uint8_t eta_,
                  int id_, int lane_start_id_, int lane_end_id_,
-                 bool post_blockade_ = false) :
+                 bool blockade_here_, bool post_blockade_) :
         x(x_),
         y(y_),
         object_id(id_),
@@ -24,6 +24,7 @@ struct MovePathNode {
         lane_end_id(lane_end_id_),
         eta(eta_),
         turn_end(turn_end_),
+        blockaded_here(blockade_here_),
         post_blockade(post_blockade_)
     {}
     double  x, y;           ///< location in Universe of node
@@ -31,8 +32,9 @@ struct MovePathNode {
     int     lane_start_id;  ///< id of object (most likely a system) at the start of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
     int     lane_end_id;    ///< id of object (most likely a system) at the end of the starlane on which this MovePathNode is located, or INVALID_OBJECT_ID if not on a starlane
     uint8_t eta;            ///< estimated turns to reach this node
-    bool    turn_end;       ///< true if the fleet will end a turn at this point
-    bool    post_blockade;  ///< estimation of whether this node is past a blockade for the subject fleet
+    bool    turn_end;       ///< is this node a location where the fleet will end a turn?
+    bool    blockaded_here; ///< is there a blockade at this node?
+    bool    post_blockade;  ///< is this node past a blockade for the subject fleet?
 };
 
 //! How to Fleets control or not their system?
