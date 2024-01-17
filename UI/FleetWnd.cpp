@@ -3001,16 +3001,16 @@ void FleetWnd::RequireRefresh() {
 void FleetWnd::Refresh() {
     m_needs_refresh = false;
 
-    int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // save selected fleet(s) and ships(s)
-    auto initially_selected_fleets = this->SelectedFleetIDs();
-    auto initially_selected_ships = this->SelectedShipIDs();
+    const auto initially_selected_fleets{this->SelectedFleetIDs()};
+    const auto initially_selected_ships{this->SelectedShipIDs()};
 
     // remove existing fleet rows
-    auto initial_fleet_ids = m_fleet_ids;
+    const auto initial_fleet_ids{m_fleet_ids};
     m_fleet_ids.clear();
 
     std::multimap<std::pair<int, GG::Pt>, int> fleet_locations_ids;
@@ -3019,7 +3019,7 @@ void FleetWnd::Refresh() {
     // Check all fleets in initial_fleet_ids and keep those that exist.
     std::unordered_set<int> fleets_that_exist;
     GG::Rect fleets_bounding_box;
-    for (const auto& fleet : Objects().find<Fleet>(initial_fleet_ids)) {
+    for (const auto* fleet : Objects().findRaw<const Fleet>(initial_fleet_ids)) {
         if (!fleet)
             continue;
 
@@ -3037,12 +3037,12 @@ void FleetWnd::Refresh() {
         fleet_locations_ids.emplace(std::pair(fleet->SystemID(), fleet_loc), fleet->ID());
     }
 
-    auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
+    const auto bounding_box_center = GG::Pt(fleets_bounding_box.MidX(), fleets_bounding_box.MidY());
 
 
     // Filter initially selected fleets according to existing fleets
     GG::Rect selected_fleets_bounding_box;
-    for (const auto& fleet : Objects().find<Fleet>(initially_selected_fleets)) {
+    for (const auto* fleet : Objects().findRaw<const Fleet>(initially_selected_fleets)) {
         if (!fleet)
             continue;
 
@@ -3056,8 +3056,8 @@ void FleetWnd::Refresh() {
                                                        selected_fleets_bounding_box, fleet_loc);
         selected_fleet_locations_ids.emplace(std::pair(fleet->SystemID(), fleet_loc), fleet->ID());
     }
-    auto selected_bounding_box_center = GG::Pt(selected_fleets_bounding_box.MidX(),
-                                               selected_fleets_bounding_box.MidY());
+    const GG::Pt selected_bounding_box_center{selected_fleets_bounding_box.MidX(),
+                                              selected_fleets_bounding_box.MidY()};
 
 
     // Determine FleetWnd location
@@ -3118,7 +3118,7 @@ void FleetWnd::Refresh() {
 
 
     // Use fleets that are at the determined location
-    auto flt_at_loc = fleet_locations_ids.equal_range(location);
+    const auto flt_at_loc = fleet_locations_ids.equal_range(location);
     for (auto it = flt_at_loc.first; it != flt_at_loc.second; ++it)
         m_fleet_ids.emplace(it->second);
 
