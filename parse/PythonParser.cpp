@@ -302,12 +302,13 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::implicitly_convertible<value_ref_wrapper<double>, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
 
-        m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"));
-        const int meta_path_len = py::len(m_meta_path);
+        m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"))();
+        const int meta_path_len = py::len(*m_meta_path);
         for (int i = 0; i < meta_path_len; ++ i) {
-            m_meta_path.pop();
+            m_meta_path->pop();
         }
-        m_meta_path.append(boost::cref(*this));
+        m_meta_path->append(boost::cref(*this));
+        m_meta_path_len = py::len(*m_meta_path);
 
         py::import("sys").attr("modules") = py::dict();
     } catch (const boost::python::error_already_set&) {
@@ -326,12 +327,12 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
 
 PythonParser::~PythonParser() {
     try {
-        m_meta_path.pop(py::len(m_meta_path) - 1);
+        m_meta_path->pop(m_meta_path_len - 1);
         type_int = py::object();
         type_float = py::object();
         type_bool = py::object();
         type_str = py::object();
-        m_meta_path = py::list();
+        m_meta_path = boost::none;
     } catch (const py::error_already_set&) {
         ErrorLogger() << "Python parser destructor throw exception";
         m_python.HandleErrorAlreadySet();
