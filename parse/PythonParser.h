@@ -40,7 +40,8 @@ private:
 
     PythonCommon&                  m_python;
     const boost::filesystem::path& m_scripting_dir;
-    boost::python::list            m_meta_path;
+    boost::optional<boost::python::list>            m_meta_path;
+    int                            m_meta_path_len;
     PyThreadState*                 m_parser_thread_state = nullptr;
     PyThreadState*                 m_main_thread_state = nullptr;
 };

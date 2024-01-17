@@ -82,6 +82,8 @@ void PythonCommon::HandleErrorAlreadySet() {
         return;
     }
 
+    PyErr_Print();
+#if PY_VERSION_HEX < 0x030c0000
     PyObject *extype, *value, *traceback;
     PyErr_Fetch(&extype, &value, &traceback);
     PyErr_NormalizeException(&extype, &value, &traceback);
@@ -100,7 +102,7 @@ void PythonCommon::HandleErrorAlreadySet() {
         boost::algorithm::trim_right(line);
         ErrorLogger() << line;
     }
-
+#endif
     return;
 }
 
