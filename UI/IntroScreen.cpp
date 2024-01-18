@@ -97,7 +97,7 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     if (!doc.root_node.ContainsChild("CREDITS"))
         return;
 
-    auto credits_node = doc.root_node.Child("CREDITS");
+    const auto& credits_node = doc.root_node.Child("CREDITS");
 
     std::ostringstream credits;
 
