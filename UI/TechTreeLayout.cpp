@@ -257,10 +257,9 @@ void TechTreeLayout::Clear() {
 /**
  * creates a node for that tech
  */
-TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
+TechTreeLayout::Node::Node(std::string tech, GG::X width, GG::Y height) :
     weight(NODE_CELL_HEIGHT),
-    tech_name(tech),
-    place_holder(false),
+    tech_name(std::move(tech)),
     m_width(Value(width)),
     m_height(Value(height))
 { assert(width > GG::X0 && height > GG::Y0 && GetTech(tech)); }
@@ -270,10 +269,7 @@ TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
  */
 TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes) :
     weight(LINE_CELL_HEIGHT),
-    tech_name(),
-    place_holder(true),
-    m_width(0),
-    m_height(0)
+    place_holder(true)
 {
     assert(parent != 0 && child != 0);
     // ensure passed in nodes are valid
@@ -324,11 +320,6 @@ TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes)
     }
     if (parent->primary_child == child)
         parent->primary_child = this;
-}
-
-TechTreeLayout::Node::~Node() {
-    children.clear();
-    parents.clear();
 }
 
 const GG::X TechTreeLayout::Node::GetX() const

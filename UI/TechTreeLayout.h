@@ -108,8 +108,7 @@ class TechTreeLayout::Node {
     friend class Column;
 
 public:
-    Node(std::string const & tech, GG::X width, GG::Y height);
-    ~Node();
+    Node(std::string tech, GG::X width, GG::Y height);
 
     auto GetX() const -> GG::X const;
     auto GetY() const -> GG::Y const;
@@ -134,13 +133,13 @@ private:
     int row = -1; //! layout row, every node is organized in a straight tabelle system
     const int weight; //! height in rows
     std::string tech_name;
-    bool place_holder;
+    bool place_holder = false;
     Node* primary_child = nullptr; // primary child for layout
     std::vector<Edge> outgoing_edges;
     double m_x = 0.0;
     double m_y = 0.0;
-    double m_width;
-    double m_height;
+    double m_width = 0.0;
+    double m_height = 0.0;
 };
 
 
