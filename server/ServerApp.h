@@ -312,12 +312,14 @@ private:
     boost::asio::signal_set m_signals;
     boost::asio::high_resolution_timer m_timer;
 
-    Universe                m_universe;
-    EmpireManager           m_empires;
-    SpeciesManager          m_species_manager;
-    SupplyManager           m_supply_manager;
-    ServerNetworking        m_networking;
-    ServerFSM*              m_fsm;
+    Universe         m_universe;
+    EmpireManager    m_empires;
+    SpeciesManager   m_species_manager;
+    SupplyManager    m_supply_manager;
+    ServerNetworking m_networking;
+
+    std::unique_ptr<ServerFSM> m_fsm;
+
     PythonServer            m_python_server;
     std::map<int, int>      m_player_empire_ids;                ///< map from player id to empire id that the player controls.
     int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number

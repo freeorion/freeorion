@@ -87,7 +87,7 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, boost::placeholders::_1, boost::placeholders::_2),
                  boost::bind(&ServerApp::HandleMessage, this, boost::placeholders::_1, boost::placeholders::_2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, boost::placeholders::_1)),
-    m_fsm(new ServerFSM(*this)),
+    m_fsm(std::make_unique<ServerFSM>(*this)),
     m_chat_history(1000)
 {
     // Force the log file if requested.
@@ -160,7 +160,7 @@ ServerApp::~ServerApp() {
     // object fields
 
     CleanupAIs();
-    delete m_fsm;
+
     DebugLogger() << "Server exited cleanly.";
 }
 
