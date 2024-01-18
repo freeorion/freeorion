@@ -31,9 +31,6 @@ void AccordionPanel::CompleteConstruction() {
     InitBuffer();
 }
 
-AccordionPanel::~AccordionPanel()
-{ m_border_buffer.clear(); }
-
 void AccordionPanel::InitBuffer() {
     const auto sz = Size();
     m_border_buffer.clear();
