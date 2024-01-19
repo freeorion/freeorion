@@ -188,9 +188,9 @@ RichTextPrivate::RichTextPrivate(RichText& q, const std::string& content,
                                  Clr color, Flags<TextFormat> format) :
     m_owner(q),
     m_font(std::move(font)),
+    m_block_factory_map(RichText::DefaultBlockFactoryMap()),
     m_color(color),
-    m_format(format),
-    m_block_factory_map(RichText::DefaultBlockFactoryMap())
+    m_format(format)
 {
     // Parse the content into a vector of tags and create
     // blocks from the tags and populate the control with them.

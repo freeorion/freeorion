@@ -1309,7 +1309,6 @@ std::vector<int> Fleet::BlockadingFleetsAtSystem(int start_system_id, int dest_s
     std::vector<int> fleets_that_can_blockade;
     fleets_that_can_blockade.reserve(this_system_fleets.size());
 
-    bool can_be_blockaded = false;
     for (auto* system_fleet : this_system_fleets) {
         if (system_fleet->NextSystemID() != INVALID_OBJECT_ID) // fleets trying to leave this turn can't blockade pre-combat.
             continue;
