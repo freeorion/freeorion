@@ -203,7 +203,7 @@ public:
         {
             assert(rhs.first <= rhs.second);
             assert(std::distance(str->begin(), rhs.first) == second);
-            second = std::distance(str->begin(), rhs.second);
+            second = static_cast<decltype(second)>(std::distance(str->begin(), rhs.second));
             return *this;
         }
 

@@ -1847,7 +1847,7 @@ bool GUI::ProcessBrowseInfoImpl(Wnd* wnd)
                     if (m_impl->m_browse_target != wnd || m_impl->m_browse_info_wnd != it->wnd || m_impl->m_browse_info_mode != static_cast<int>(i)) {
                         m_impl->m_browse_target = wnd;
                         m_impl->m_browse_info_wnd = it->wnd;
-                        m_impl->m_browse_info_mode = i;
+                        m_impl->m_browse_info_mode = static_cast<decltype(m_impl->m_browse_info_mode)>(i);
                         m_impl->m_browse_info_wnd->SetCursorPosition(m_impl->m_mouse_pos);
                     }
                     retval = true;
