@@ -73,7 +73,7 @@ void Texture::Blit(const GL2DVertexBuffer& vertex_buffer,
     glBindTexture(GL_TEXTURE_2D, m_opengl_id);
     vertex_buffer.activate();
     tex_coord_buffer.activate();
-    glDrawArrays(GL_QUADS, 0, vertex_buffer.size());
+    glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(vertex_buffer.size()));
 
     if (need_min_filter_change)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);

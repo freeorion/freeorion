@@ -1079,7 +1079,7 @@ void Font::RenderCachedText(RenderCache& cache) const
     cache.vertices.activate();
     cache.coordinates.activate();
     cache.colors.activate();
-    glDrawArrays(GL_QUADS, 0, cache.vertices.size());
+    glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(cache.vertices.size()));
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1087,7 +1087,7 @@ void Font::RenderCachedText(RenderCache& cache) const
     if (!cache.underline_vertices.empty()) {
         cache.underline_vertices.activate();
         cache.underline_colors.activate();
-        glDrawArrays(GL_QUADS, 0, cache.underline_vertices.size());
+        glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(cache.underline_vertices.size()));
     }
 
     glPopClientAttrib();
@@ -1402,7 +1402,7 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<Font::TextElement>
                 text.erase(ii_sub_begin, sub_len);
                 text.insert(ii_sub_begin, new_text);
 
-                change_of_len = new_text.size() - sub_len;
+                change_of_len = static_cast<decltype(change_of_len)>(new_text.size() - sub_len);
                 te_it->text = Substring(text, ii_sub_begin, ii_sub_begin + new_text.size());
                 break;
             }
