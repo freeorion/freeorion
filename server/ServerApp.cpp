@@ -3668,25 +3668,8 @@ namespace {
         return mp;
     };
 
-    /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
-    void HandleFleetMovement(ScriptingContext& context) {
-        static constexpr auto not_null = [](const auto* o) { return !!o; };
-        static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
-        static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
-
-        auto fleets = context.ContextObjects().allRaw<Fleet>();
-
-        for (auto* fleet : fleets | range_filter(not_null))
-            fleet->ClearArrivalFlag();
-
-        // get all fleets' move pathes (before anything moves).
-        // these move pathes may have been limited by blockades
-        const auto fleet_to_move_path = [&context](const Fleet* fleet)
-        { return std::pair{fleet, fleet->MovePath(true, context)}; };
-
-        auto move_pathes = fleets | range_filter(not_null) | range_transform(fleet_to_move_path);
-
-        // is there a blockade within (at end?) of this turn's movement?
+    auto GetBlockadingObjectsForEmpires(auto move_pathes, const ScriptingContext& context) {
+                // is there a blockade within (at end?) of this turn's movement?
         const auto path_to_blockading_fleets =
             [&context](std::pair<const Fleet*, std::vector<MovePathNode>> mp)
             -> std::pair<const Fleet*, std::vector<int>>
@@ -3750,7 +3733,7 @@ namespace {
             auto unique_it = std::unique(fleet_ids.begin(), fleet_ids.end());
             fleet_ids.erase(unique_it, fleet_ids.end());
 
-            TraceLogger() << "empire id " << empire_id << " is blockaded by: " <<
+            TraceLogger() << "empire id " << empire_id << " is blockaded by fleets: " <<
                 [](const auto& ids) {
                     std::string retval;
                     for (auto id : ids)
@@ -3759,10 +3742,49 @@ namespace {
                 }(fleet_ids);
         }
 
+        static constexpr auto not_null = [](const auto* o) { return !!o; };
 
-        // TODO:
-        // -mark blocking fleets as visible to moving fleet owner
-        // -move fleets to end of current turn's move path and replace following code
+        // also add ships
+        for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
+            if (fleet_ids.empty())
+                continue;
+            const auto fleets = context.ContextObjects().findRaw<const Fleet>(fleet_ids);
+            std::vector<int> all_ship_ids;
+            all_ship_ids.reserve(fleet_ids.size()*4); // guesstimate
+            for (const auto* fleet : fleets | range_filter(not_null)) {
+                const auto& ship_ids = fleet->ShipIDs();
+                all_ship_ids.insert(all_ship_ids.end(), ship_ids.begin(), ship_ids.end());
+            }
+            fleet_ids.insert(fleet_ids.end(), all_ship_ids.begin(), all_ship_ids.end());
+        }
+
+        return empires_blockaded_by_fleets;
+    }
+
+    /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
+    void HandleFleetMovement(ScriptingContext& context) {
+        static constexpr auto not_null = [](const auto* o) { return !!o; };
+        static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
+        static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
+
+        const auto fleets = context.ContextObjects().allRaw<Fleet>();
+
+        for (auto* fleet : fleets | range_filter(not_null))
+            fleet->ClearArrivalFlag();
+
+        // get all fleets' move pathes (before anything moves).
+        // these move pathes may have been limited by blockades
+        const auto fleet_to_move_path = [&context](const Fleet* fleet)
+        { return std::pair{fleet, fleet->MovePath(true, context)}; };
+
+        auto move_pathes = fleets | range_filter(not_null) | range_transform(fleet_to_move_path);
+
+        // mark blocking fleets as visible to moving fleet owner
+        auto empires_blockaded_by_objects = GetBlockadingObjectsForEmpires(move_pathes, context);
+        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empires_blockaded_by_objects));
+
+
+        // TODO: move fleets to end of current turn's move path and replace following code
 
         // first move unowned fleets, or an empire fleet landing on them could wrongly
         // blockade them before they move
