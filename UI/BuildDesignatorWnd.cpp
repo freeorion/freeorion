@@ -317,12 +317,12 @@ namespace {
             //std::cout << "ProductionItemRowBrowseWnd construct " << item.name << std::endl;
         }
 
-        bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+        bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override {
             assert(mode <= wnd->BrowseModes().size());
             return true;
         }
 
-        void Render() {
+        void Render() override {
             const auto ul = UpperLeft();
             const auto lr = LowerRight();
             const GG::Y ROW_HEIGHT{IconTextBrowseWndRowHeight()};

@@ -42,7 +42,9 @@ namespace {
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
     const std::string SOUND_FILE_SUFFIX = ".ogg";
     const std::string FONT_FILE_SUFFIX = ".ttf";
+#ifdef FREEORION_WIN32
     const std::string EXE_FILE_SUFFIX = ".exe";
+#endif
 
     class RowContentsWnd : public GG::Control {
     public:
