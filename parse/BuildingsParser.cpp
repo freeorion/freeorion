@@ -199,19 +199,21 @@ namespace {
         }
 
         auto building_type = std::make_unique<BuildingType>(
-            std::string(name), std::move(description),
-            std::move(CommonParams{
+            std::string{name},
+            std::move(description),
+            CommonParams{
                 std::move(production_cost),
                 std::move(production_time),
                 producible,
-                tags,
+                tags, // TODO: make this parameter by value and move?
                 std::move(location),
                 std::move(effectsgroups),
                 {},
                 {},
                 std::move(enqueue_location)
-            }),
-            capture_result, std::move(icon));
+            },
+            capture_result,
+            std::move(icon));
 
         buildings_.emplace(std::move(name), std::move(building_type));
 

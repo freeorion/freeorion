@@ -1637,6 +1637,8 @@ namespace {
             return clipped_wnd->NonClientChild() ?
                 wnd_clipped_out(clipping_wnd) : client_clipped_out(clipping_wnd);
             break;
+        case Wnd::ChildClippingMode::ClipToAncestorClient:
+            return false;
         }
         return false;
     };
