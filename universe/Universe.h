@@ -281,6 +281,10 @@ public:
       * level, based on  */
     void UpdateEmpireObjectVisibilities(EmpireManager& empires);
 
+    /** Sets visibility by empires of objects with specified ids. */
+    void SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids);
+    void ApplyEmpireObjectVisibilityOverrides();
+
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
     void SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
@@ -524,6 +528,7 @@ private:
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
+    std::map<int, std::vector<int>> m_empire_object_visibility_overrides;
     EmpireObjectVisValueRefMap      m_effect_specified_empire_object_visibilities;
 
     EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )

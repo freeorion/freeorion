@@ -221,6 +221,7 @@ void Universe::Clear() {
 
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
+    m_empire_object_visibility_overrides.clear();
     m_effect_specified_empire_object_visibilities.clear();
 
     m_stat_records.clear();
@@ -546,6 +547,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
         do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
 
+    m_empire_object_visibility_overrides.clear();
     m_effect_specified_empire_object_visibilities.clear();
 
     // cache all activation and scoping condition results before applying
@@ -1882,6 +1884,24 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id,
     }
 }
 
+void Universe::SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids)
+{ m_empire_object_visibility_overrides = std::move(empires_ids); }
+
+void Universe::ApplyEmpireObjectVisibilityOverrides() {
+    EmpireObjectVisibilityMap new_empire_object_visibilities;
+    for (auto& [empire_id, object_ids] : m_empire_object_visibility_overrides) {
+        if (empire_id == ALL_EMPIRES)
+            continue;
+        for (auto viewed_obj_id : object_ids) {
+            if (viewed_obj_id <= INVALID_OBJECT_ID)
+                continue;
+            Visibility& target_vis = m_empire_object_visibility[empire_id][viewed_obj_id];
+            if (target_vis < Visibility::VIS_PARTIAL_VISIBILITY)
+                target_vis = Visibility::VIS_PARTIAL_VISIBILITY;
+        }
+    }
+}
+
 void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
                                           const ValueRef::ValueRef<Visibility>* vis)
 {
@@ -2192,6 +2212,10 @@ std::size_t Universe::SizeInMemory() const {
         for (const auto& id_vtm : id_ovtm.second)
             retval += sizeof(decltype(id_vtm.second)::value_type)*id_vtm.second.size();
     }
+
+    retval += sizeof(decltype(m_empire_object_visibility_overrides)::value_type)*m_empire_object_visibility_overrides.size();
+    for (const auto& id_ids : m_empire_object_visibility_overrides)
+        retval += sizeof(decltype(id_ids.second)::value_type)*id_ids.second.size();
 
     retval += sizeof(decltype(m_effect_specified_empire_object_visibilities)::value_type)*m_effect_specified_empire_object_visibilities.size();
     for (const auto& id_ovrm : m_effect_specified_empire_object_visibilities) {
@@ -2832,6 +2856,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
 
     SetSameSystemPlanetsVisible(*this);
 
+    ApplyEmpireObjectVisibilityOverrides();
     ApplyEffectDerivedVisibilities(empires);
 
     PropagateVisibilityToContainerObjects(*m_objects, m_empire_object_visibility);
