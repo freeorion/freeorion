@@ -214,14 +214,12 @@ namespace {
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
         std::shared_ptr<QuantitySelector>       m_quantity_selector;
         std::shared_ptr<QuantitySelector>       m_block_size_selector;
-        bool                                    m_in_progress = false;
-        int                                     m_total_turns = 0;
         double                                  m_turn_spending = 0.0;
         double                                  m_total_cost = 0.0;
         double                                  m_completed_progress = 0.0;
+        int                                     m_total_turns = 0;
+        bool                                    m_in_progress = false;
         bool                                    m_order_issuing_enabled = true;
-        bool                                    m_paused = false;
-        bool                                    m_marked_to_remove = false;
     };
 
     /////////////////////////////

@@ -147,7 +147,6 @@ namespace {
     constexpr std::string_view DESIGN_FILENAME_PREFIX = "ShipDesign-";
     constexpr std::string_view DESIGN_FILENAME_EXTENSION = ".focs.txt";
     constexpr std::string_view DESIGN_MANIFEST_PREFIX = "ShipDesignOrdering";
-    constexpr std::string_view UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
     void ReportFileError(const boost::filesystem::path& file) {
@@ -4502,7 +4501,6 @@ void DesignWnd::MainPanel::DoLayout() {
     static constexpr int PAD = 6;
 
     const auto cl_sz = ClientSize();
-    const auto [cl_width, cl_height] = cl_sz;
 
     auto lr = cl_sz - GG::Pt(GG::X{PAD}, GG::Y{PAD});
     m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);

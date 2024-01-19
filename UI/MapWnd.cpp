@@ -4008,7 +4008,7 @@ void MapWnd::InitFieldRenderingBuffers() {
         const bool should_create_new_buffer = (field_vertices.empty() || field_vertices.back().first != field_texture);
         GG::GL2DVertexBuffer& current_field_vertex_buffer =
             should_create_new_buffer ?
-                field_vertices.emplace_back(field_texture, std::move(GG::GL2DVertexBuffer())).second :
+                field_vertices.emplace_back(field_texture, GG::GL2DVertexBuffer()).second :
                 field_vertices.back().second;
 
         // determine field rotation angle...
