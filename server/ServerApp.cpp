@@ -3641,6 +3641,154 @@ namespace {
         for (const auto fleet_id : empty_fleet_ids)
             universe.RecursiveDestroy(fleet_id, empire_ids);
     }
+
+    void LogDumpMovePaths(const Fleet* fleet, const std::vector<MovePathNode>& nodes) {
+        TraceLogger() << "move path of: " << fleet->Name() << " (" << fleet->ID() << ") ...";
+        for (const auto& node : nodes) {
+            TraceLogger() << "node: obj: " << node.object_id << " eta: " << static_cast<int>(node.eta)
+                          << "  end?: " << node.turn_end
+                          << "  " << (node.blockaded_here ? "(blockade)" : "")
+                          << "  " << (node.post_blockade ? "(after blockade)" : "")
+                          << (!node.blockaded_here && !node.post_blockade ? "(clear)" : "")
+                          << "  lane start: " << node.lane_start_id << "  land end: "
+                          << node.lane_end_id << "  xy: " << node.x << ", " << node.y << std::endl;
+        }
+    }
+
+    auto TruncateMovePathTo1Turn(std::pair<const Fleet*, std::vector<MovePathNode>> mp) {
+        auto& [fleet, nodes] = mp;
+        LogDumpMovePaths(fleet, nodes);
+        // find first turn-end node
+        static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end; };
+        auto it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
+        // erase everything after the first turn end node
+        if (it != nodes.end())
+            it = std::next(it);
+        nodes.erase(it, nodes.end());
+        return mp;
+    };
+
+    /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
+    void HandleFleetMovement(ScriptingContext& context) {
+        static constexpr auto not_null = [](const auto* o) { return !!o; };
+        static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
+        static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
+
+        auto fleets = context.ContextObjects().allRaw<Fleet>();
+
+        for (auto* fleet : fleets | range_filter(not_null))
+            fleet->ClearArrivalFlag();
+
+        // get all fleets' move pathes (before anything moves).
+        // these move pathes may have been limited by blockades
+        const auto fleet_to_move_path = [&context](const Fleet* fleet)
+        { return std::pair{fleet, fleet->MovePath(true, context)}; };
+
+        auto move_pathes = fleets | range_filter(not_null) | range_transform(fleet_to_move_path);
+
+        // is there a blockade within (at end?) of this turn's movement?
+        const auto path_to_blockading_fleets =
+            [&context](std::pair<const Fleet*, std::vector<MovePathNode>> mp)
+            -> std::pair<const Fleet*, std::vector<int>>
+            {
+                const auto& [fleet, nodes] = mp;
+                if (!fleet)
+                    return {fleet, {}}; // no valid fleet??? (unexpected)
+
+                static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end; };
+                // get first turn end node
+                auto turn_end_node_it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
+                if (turn_end_node_it == nodes.end())
+                    return {fleet, {}}; // didn't find a turn end node??? (unexpected)
+
+                // is it at a system?
+                const auto turn_end_sys_id = turn_end_node_it->object_id;
+                if (turn_end_sys_id == INVALID_OBJECT_ID)
+                    return {fleet, {}}; // turn end node is not at a system, so can't have a blockade there
+
+                // is there more path after the next turn end system?
+                const auto following_node_it = std::next(turn_end_node_it);
+                if (following_node_it == nodes.end())
+                    return {fleet, {}}; // end turn node is also end of path, so no blockade
+
+                // if the next node is not a system, then it should be a lane that starts at the turn end system
+                if (following_node_it->object_id == INVALID_OBJECT_ID) {
+                    const auto should_be_turn_end_system_id = following_node_it->lane_start_id;
+                    if (should_be_turn_end_system_id != turn_end_sys_id)
+                        return {fleet, {}}; // unexpected...
+                }
+
+                // what system is after the turn end system in the path?
+                const auto next_sys_id = following_node_it->object_id != INVALID_OBJECT_ID ?
+                    following_node_it->object_id : following_node_it->lane_end_id;
+                if (next_sys_id == INVALID_OBJECT_ID)
+                    return {fleet, {}}; // following node exists but isn't headed anywhere??? (unexpected)
+
+                // is there a blockading fleet at the turn end system for this fleet going to the next system?
+                auto blockading_fleets = fleet->BlockadingFleetsAtSystem(turn_end_sys_id, next_sys_id, context);
+                return {fleet, blockading_fleets};
+            };
+
+        using blockading_fleets_t = std::pair<const Fleet*, std::vector<int>>;
+        std::vector<blockading_fleets_t> blockading_fleets;
+        blockading_fleets.reserve(context.ContextObjects().size<Fleet>());
+        range_copy(move_pathes | range_transform(path_to_blockading_fleets),
+                   std::back_inserter(blockading_fleets));
+
+        // assemble list of fleets that are revealed to each empire by performing blockades
+        static constexpr auto not_null_or_empty = [](const auto& fbids) { return fbids.first && !fbids.second.empty(); };
+        std::map<int, std::vector<int>> empires_blockaded_by_fleets;
+        for (auto& [fleet, blockader_ids] : blockading_fleets | range_filter(not_null_or_empty)) {
+            auto& revealed_ids = empires_blockaded_by_fleets[fleet->Owner()];
+            revealed_ids.insert(revealed_ids.end(), blockader_ids.begin(), blockader_ids.end());
+        }
+        // sort/unique
+        for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
+            if (fleet_ids.empty())
+                continue;
+            std::sort(fleet_ids.begin(), fleet_ids.end());
+            auto unique_it = std::unique(fleet_ids.begin(), fleet_ids.end());
+            fleet_ids.erase(unique_it, fleet_ids.end());
+
+            TraceLogger() << "empire id " << empire_id << " is blockaded by: " <<
+                [](const auto& ids) {
+                    std::string retval;
+                    for (auto id : ids)
+                        retval.append(std::to_string(id)).append(" ");
+                    return retval;
+                }(fleet_ids);
+        }
+
+
+        // TODO:
+        // -mark blocking fleets as visible to moving fleet owner
+        // -move fleets to end of current turn's move path and replace following code
+
+        // first move unowned fleets, or an empire fleet landing on them could wrongly
+        // blockade them before they move
+        for (auto* fleet : fleets | range_filter(is_unowned))
+            fleet->MovementPhase(context);
+        for (auto* fleet : fleets | range_filter(is_owned))
+            fleet->MovementPhase(context);
+
+        // post-movement visibility update
+        context.ContextUniverse().UpdateEmpireObjectVisibilities(context.Empires());
+        context.ContextUniverse().UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+        context.ContextUniverse().UpdateEmpireStaleObjectKnowledge(context.Empires());
+
+        // SitReps for fleets having arrived at destinations
+        static constexpr auto arrived_this_turn = [](const Fleet* f) { return f && f->ArrivedThisTurn(); };
+        for (auto* fleet : fleets | range_filter(arrived_this_turn)) {
+            // sitreps for all empires that can see fleet at new location
+            for (auto& [empire_id, empire] : context.Empires()) {
+                if (fleet->GetVisibility(empire_id, context.ContextUniverse()) >= Visibility::VIS_BASIC_VISIBILITY) {
+                    empire->AddSitRepEntry(
+                        CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(),
+                                                              empire_id, context));
+                }
+            }
+        }
+    }
 }
 
 void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
@@ -3801,42 +3949,13 @@ void ServerApp::PreCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::FLEET_MOVEMENT));
 
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
-    for (auto& empire : m_empires | range_values | range_filter([](auto e) { return !e->Eliminated(); }))
+    static constexpr auto not_eliminated = [](auto& id_e) { return !id_e.second->Eliminated(); };
+    for (auto& empire : m_empires | range_filter(not_eliminated) | range_values)
         empire->UpdateSupplyUnobstructedSystems(context, true);
 
 
-    static constexpr auto not_null = [](const auto* o) { return !!o; };
-    static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
-    static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
-    static constexpr auto arrived_this_turn = [](const Fleet* f) { return f && f->ArrivedThisTurn(); };
+    HandleFleetMovement(context);
 
-    // fleet movement
-    auto fleets = m_universe.Objects().allRaw<Fleet>();
-
-    for (auto* fleet : fleets | range_filter(not_null))
-        fleet->ClearArrivalFlag();
-
-    // first move unowned fleets, or an empire fleet landing on them could wrongly
-    // blockade them before they move
-    for (auto* fleet : fleets | range_filter(is_unowned))
-        fleet->MovementPhase(context);
-    for (auto* fleet : fleets | range_filter(is_owned))
-        fleet->MovementPhase(context);
-
-    // post-movement visibility update
-    m_universe.UpdateEmpireObjectVisibilities(m_empires);
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
-    m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
-
-    // SitReps for fleets having arrived at destinations
-    for (auto* fleet : fleets | range_filter(arrived_this_turn)) {
-        // sitreps for all empires that can see fleet at new location
-        for (auto& [empire_id, empire] : m_empires) {
-            if (fleet->GetVisibility(empire_id, m_universe) >= Visibility::VIS_BASIC_VISIBILITY)
-                empire->AddSitRepEntry(
-                    CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(), empire_id, context));
-        }
-    }
 
     // indicate that the clients are waiting for their new Universes
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::DOWNLOADING));
