@@ -128,7 +128,7 @@ void DynamicGraphic::Render()
                         send_stopped_signal = true;
                     }
                 }
-                m_last_frame_time = curr_time;
+                m_last_frame_time = static_cast<decltype(m_last_frame_time)>(curr_time);
             }
         }
 
