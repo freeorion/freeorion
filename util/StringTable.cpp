@@ -29,7 +29,6 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 
 
 namespace {
-    constexpr std::string_view DEFAULT_FILENAME = "en.txt";
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
     constexpr std::string EMPTY_STRING;
 #else

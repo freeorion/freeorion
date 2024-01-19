@@ -8719,7 +8719,7 @@ namespace {
             // does the candidate have a starlane to the system of any of m_to_objects
             return candidate_sys &&
                 std::any_of(m_to_objects.begin(), m_to_objects.end(),
-                            [this, candidate_sys](const auto* obj)
+                            [candidate_sys](const auto* obj)
                             { return obj && candidate_sys->HasStarlaneTo(obj->SystemID()); });
         }
 

@@ -422,7 +422,6 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id,
 
 namespace {
     constexpr auto lookup_part = [](const auto& name) { return GetShipPart(name); };
-    constexpr auto not_null = [](const auto* p) -> bool { return p; };
 }
 
 std::map<std::string, std::map<int, float>>
