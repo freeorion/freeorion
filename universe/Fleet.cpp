@@ -33,40 +33,6 @@ namespace {
         for (auto* ship : objects.findRaw<Ship>(fleet.ShipIDs()))
             system.Insert(ship, System::NO_ORBIT, current_turn, objects);
     }
-
-    /** Return \p full_route terminates at \p last_system or before the first
-      * system not known to the \p empire_id. If \a last_system is INVALID_OBJECT_ID,
-      * returns an empty route. */
-    std::vector<int> TruncateRouteToEndAtSystem(const std::vector<int>& full_route,
-                                                const Universe& universe, int last_system)
-    {
-        if (full_route.empty() || (last_system == INVALID_OBJECT_ID))
-            return {};
-
-        auto visible_end_it = full_route.cend();
-        if (last_system != full_route.back()) {
-            visible_end_it = std::find(full_route.begin(), full_route.end(), last_system);
-
-            // if requested last system not in route, do nothing
-            if (visible_end_it == full_route.end())
-                return {};
-
-            ++visible_end_it;
-        }
-
-        // Remove any extra systems from the route after the apparent destination.
-        //
-        // It is enforced on the server, in the visibility calculations, that an
-        // owning empire knows about:
-        // a) the system containing an owned fleet
-        // b) the starlane on which an owned fleet is travelling
-        // c) both systems terminating a starlane on which an owned fleet is travelling.
-        auto has_no_visible_starlanes = [&universe](int system_id)
-        { return !universe.GetPathfinder()->SystemHasVisibleStarlanes(system_id, universe.Objects()); };
-        auto end_it = std::find_if(full_route.begin(), visible_end_it, has_no_visible_starlanes);
-
-        return {full_route.begin(), end_it};
-    }
 }
 
 
@@ -121,15 +87,8 @@ void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, int empire
             if (Unowned())
                 m_name =        copied_fleet.m_name;
 
-            // Truncate the travel route to only systems known to empire_id
-            int moving_to = (vis >= Visibility::VIS_FULL_VISIBILITY
-                             ? (!copied_fleet.m_travel_route.empty()
-                                ? copied_fleet.m_travel_route.back()
-                                : INVALID_OBJECT_ID)
-                             : m_next_system);
-
-            m_travel_route = TruncateRouteToEndAtSystem(copied_fleet.m_travel_route, universe, moving_to);
-
+            m_travel_route = (vis >= Visibility::VIS_FULL_VISIBILITY) ?
+                copied_fleet.m_travel_route : TruncateRouteToEndAt(copied_fleet.m_travel_route, m_next_system);
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 m_ordered_given_to_empire_id =  copied_fleet.m_ordered_given_to_empire_id;
@@ -817,6 +776,18 @@ void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
     StateChangedSignal();
 }
 
+std::vector<int> Fleet::TruncateRouteToEndAt(std::vector<int> route, int system_id) {
+    const auto sys_it = std::find(route.begin(), route.end(), system_id);
+    if (sys_it == route.end()) {
+        route.clear();
+        return route;
+    } else  {
+        const auto after_sys_it = std::next(sys_it);
+        route.erase(after_sys_it, route.end());
+        return route;
+    }
+}
+
 void Fleet::SetAggression(FleetAggression aggression) {
     if (m_aggression == aggression)
         return;
@@ -860,21 +831,6 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     auto current_system = objects.getRaw<System>(SystemID());
     auto const initial_system = current_system;
     auto move_path = MovePath(false, context);
-
-    // If the move path cannot lead to the destination,
-    // make the route go as far as it can
-    if (!move_path.empty() && !m_travel_route.empty() &&
-         move_path.back().object_id != m_travel_route.back())
-    {
-        const int back_id = move_path.back().object_id;
-        auto shortened_route = TruncateRouteToEndAtSystem(m_travel_route, universe, back_id);
-        try {
-            SetRoute(std::move(shortened_route), objects);
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Caught exception in Fleet MovementPhase shorentning route: " << e.what();
-        }
-        move_path = MovePath(false, context);
-    }
 
     auto it = move_path.begin();
     auto next_it = it;
