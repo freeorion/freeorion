@@ -3844,6 +3844,31 @@ namespace {
                    std::back_inserter(fleets_move_pathes));
 
 
+        // "correct" routes and pathes, in case a route is impossible to follow after some system...
+        static constexpr auto not_empty_path = [](const auto& fleet_path) { return !fleet_path.second.empty(); };
+        for (auto& [fleet, move_path] : fleets_move_pathes | range_filter(not_empty_path)) {
+            const auto last_sys_id = move_path.back().object_id;
+            if (last_sys_id == INVALID_OBJECT_ID) {
+                ErrorLogger() << "Unexpected got fleet move path with last node not at a system...";
+            } else {
+                const auto old_route{fleet->TravelRoute()};
+                fleet->TruncateRouteToEndAt(last_sys_id);
+                const System* sys = context.ContextObjects().getRaw<const System>(last_sys_id);
+                static constexpr auto route_to_string = [](const auto& route) {
+                    std::string retval;
+                    for (auto i : route)
+                        retval.append(std::to_string(i)).append(" ");
+                    return retval;
+                };
+                DebugLogger() << "Truncated fleet " << fleet->Name() << " (" << fleet->ID()
+                              << ") route from: " << route_to_string(old_route)
+                              << " to end at last reachable system: "
+                              << (sys ? sys->Name() : "(Unknown system)") << " (" << last_sys_id << ")"
+                              << " :" << route_to_string(fleet->TravelRoute());
+            }
+        }
+
+
         // log pathes
         for (auto& [fleet, move_path] : fleets_move_pathes)
             LogPathAndRoute(fleet, move_path, context.ContextObjects());
