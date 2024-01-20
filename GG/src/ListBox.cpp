@@ -624,17 +624,18 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, Pt offset)
 
     Y vertical_offset = offset.y;
     for (const auto& sorted_sel : selections_Y_sorted) {
-        auto row_wnd = **(sorted_sel.second);
-        if (row_wnd.get() == wnd)
+        const auto* row_wnd{(*(sorted_sel.second))->get()};
+        if (row_wnd == wnd)
             break;
         vertical_offset += row_wnd->Height();
     }
 
     for (const auto& sorted_sel : selections_Y_sorted) {
-        auto row_wnd = **(sorted_sel.second);
-        if (row_wnd.get() != wnd) {
-            GUI::GetGUI()->RegisterDragDropWnd(row_wnd, Pt(offset.x, vertical_offset), shared_from_this());
-            vertical_offset -= row_wnd->Height();
+        auto row_wnd{**(sorted_sel.second)};
+        const auto* raw_row_wnd = row_wnd.get();
+        if (raw_row_wnd != wnd) {
+            GUI::GetGUI()->RegisterDragDropWnd(std::move(row_wnd), Pt(offset.x, vertical_offset), shared_from_this());
+            vertical_offset -= raw_row_wnd->Height();
         } else {
             vertical_offset -= wnd->Height();
         }
@@ -1059,9 +1060,9 @@ void ListBox::BringRowIntoView(iterator target)
         return;
 
     // Find the y offsets of the first and last shown rows and target.
-    auto first_row_found(false);
-    auto last_row_found(false);
-    auto target_found(false);
+    bool first_row_found = false;
+    bool last_row_found = false;
+    bool target_found = false;
 
     auto y_offset_top(Y0);
     auto y_offset_bot(Y0);
@@ -1070,7 +1071,7 @@ void ListBox::BringRowIntoView(iterator target)
     auto first_row_y_offset(Y0);
     auto last_row_y_offset(Y0);
 
-    auto final_row = --m_rows.end();
+    const auto final_row = std::prev(m_rows.end());
     auto it = m_rows.begin();
 
     while ((it != m_rows.end()) && (!first_row_found || !last_row_found || !target_found)) {
@@ -1383,9 +1384,8 @@ void ListBox::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
         case Key::GGK_PAGEUP: // page up key (not numpad key)
             if (m_caret != m_rows.end()) {
                 Y space = ClientSize().y;
-                while (m_caret != m_rows.begin() && Y0 < (space -= (*std::prev(m_caret))->Height())) {
+                while (m_caret != m_rows.begin() && Y0 < (space -= (*std::prev(m_caret))->Height()))
                     --m_caret;
-                }
             }
             break;
         case Key::GGK_PAGEDOWN: // page down key (not numpad key)
@@ -1411,12 +1411,13 @@ void ListBox::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
                 break;
 
             --m_first_col_shown;
-            auto&& first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
-            auto first_shown_cell = *std::next(first_row_first_child, m_first_col_shown);
-            GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
+            const auto first_row_first_child{(*m_first_row_shown)->GetLayout()->Children().begin()};
+            const auto first_shown_cell_ul = (*std::next(first_row_first_child, m_first_col_shown))->UpperLeft();
+            const GG::X new_scroll_offset(first_shown_cell_ul.x - UpperLeft().x - GG::X(BORDER_THICK));
             m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
-            break;}
+            break;
+        }
         case Key::GGK_RIGHT:{ // right key (not numpad)
             std::size_t num_cols((*m_first_row_shown)->GetLayout()->Children().size());
             if (num_cols <= 1)
@@ -1425,12 +1426,13 @@ void ListBox::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
                 break;
 
             ++m_first_col_shown;
-            auto&& first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
-            auto first_shown_cell = *std::next(first_row_first_child, m_first_col_shown);
-            GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
+            const auto first_row_first_child{(*m_first_row_shown)->GetLayout()->Children().begin()};
+            const auto first_shown_cell_ul = (*std::next(first_row_first_child, m_first_col_shown))->UpperLeft();
+            const GG::X new_scroll_offset(first_shown_cell_ul.x - UpperLeft().x - GG::X(BORDER_THICK));
             m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
-            break;}
+            break;
+        }
 
         // any other key gets passed along to the parent
         default:
@@ -1439,9 +1441,9 @@ void ListBox::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
         }
 
         if (bring_caret_into_view &&
-            key != Key::GGK_SPACE && key != Key::GGK_DELETE && key != Key::GGK_LEFT && key != Key::GGK_RIGHT) {
-            BringCaretIntoView();
-        }
+            key != Key::GGK_SPACE && key != Key::GGK_DELETE && key != Key::GGK_LEFT && key != Key::GGK_RIGHT)
+        { BringCaretIntoView(); }
+
     } else {
         Control::KeyPress(key, key_code_point, mod_keys);
     }
@@ -1792,9 +1794,9 @@ std::shared_ptr<ListBox::Row> ListBox::Erase(iterator it, bool removing_duplicat
 
     RequirePreRender();
 
-    auto row = *it;
-    if (!removing_duplicate) {
-        DetachChild(row.get());
+    auto row{*it};
+    if (!removing_duplicate && row) {
+        DetachChild(row);
         row->RemoveEventFilter(shared_from_this());
     }
 
