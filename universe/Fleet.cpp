@@ -857,17 +857,6 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     const auto& universe = context.ContextUniverse();
     const auto& supply = context.supply;
 
-    const auto ships = objects.findRaw<Ship>(m_ships);
-
-    // if owner of fleet can resupply ships at the location of this fleet, then
-    // resupply all ships in this fleet
-    if (supply.SystemHasFleetSupply(SystemID(), Owner(), ALLOW_ALLIED_SUPPLY,
-                                    context.diplo_statuses))
-    {
-        for (auto& ship : ships)
-            ship->Resupply(context.current_turn);
-    }
-
     auto current_system = objects.getRaw<System>(SystemID());
     auto const initial_system = current_system;
     auto move_path = MovePath(false, context);
@@ -926,6 +915,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     if (next_it != move_path.end())
         ++next_it;
 
+    const auto ships = objects.findRaw<Ship>(m_ships);
 
     // is the fleet stuck in a system for a whole turn?
     if (current_system) {
