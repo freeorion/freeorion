@@ -159,6 +159,8 @@ public:
     void SetRoute(std::vector<int> route, const ObjectMap& objects);
     void ClearRoute(const ObjectMap& objects) { SetRoute({}, objects); }
 
+    void ResetPrevNextSystems() noexcept { m_next_system = m_prev_system = INVALID_OBJECT_ID; }
+
     /** Sets this fleet to move through the series of systems that makes the
       * shortest path from its current location to target_system_id */
     void CalculateRouteTo(int target_system_id, const Universe& universe);

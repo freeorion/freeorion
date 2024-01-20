@@ -3668,7 +3668,7 @@ namespace {
         return mp;
     };
 
-    auto GetBlockadingObjectsForEmpires(auto move_pathes, const ScriptingContext& context) {
+    auto GetBlockadingObjectsForEmpires(const auto& move_pathes, const ScriptingContext& context) {
         // is there a blockade within (at end?) of this turn's movement?
         const auto path_to_blockading_fleets =
             [&context](std::pair<const Fleet*, std::vector<MovePathNode>> mp)
@@ -3777,11 +3777,45 @@ namespace {
         supplyable_ships.reserve(context.ContextObjects().size<Fleet>());
         range_copy(fleets | range_filter(owner_can_supply_at_location) | range_transform(fleet_to_ships),
                    std::back_inserter(supplyable_ships));
-        for (auto& ships : supplyable_ships) {
+        for (const auto& ships : supplyable_ships) {
             for (auto* ship : ships)
                 ship->Resupply(context.current_turn);
         }
     }
+
+    void LogPathAndRoute(const Fleet* fleet, const auto& move_path, const ObjectMap& objects) {
+        if (move_path.empty())
+            return;
+
+        DebugLogger() << "Fleet " << fleet->Name() << " (" << fleet->ID()
+                      << ")  route:" << [&]()
+            {
+                std::string ss;
+                ss.reserve(fleet->TravelRoute().size() * 32); // guesstimate
+                for (auto sys_id : fleet->TravelRoute()) {
+                    if (auto sys = objects.getRaw<const System>(sys_id))
+                        ss.append("  ").append(sys->Name()).append(" (")
+                        .append(std::to_string(sys_id)).append(")");
+                    else
+                        ss.append("  (?) (").append(std::to_string(sys_id)).append(")");
+                }
+                return ss;
+            }()
+                      << "   move path:" << [&]()
+            {
+                std::string ss;
+                ss.reserve(move_path.size() * 32); // guesstimate
+                for (const auto& node : move_path) {
+                    if (auto sys = objects.getRaw<const System>(node.object_id))
+                        ss.append("  ").append(sys->Name()).append(" (")
+                        .append(std::to_string(node.object_id)).append(")");
+                    else
+                        ss.append("  (-)");
+                }
+                return ss;
+            }();
+    }
+
 
     /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
     void HandleFleetMovement(ScriptingContext& context) {
@@ -3804,11 +3838,33 @@ namespace {
         const auto fleet_to_move_path = [&context](Fleet* fleet)
         { return std::pair{fleet, fleet->MovePath(true, context)}; };
 
-        auto move_pathes = fleets | range_filter(not_null) | range_transform(fleet_to_move_path);
+        std::vector<std::pair<Fleet*, std::vector<MovePathNode>>> fleets_move_pathes;
+        fleets_move_pathes.reserve(context.ContextObjects().size<Fleet>());
+        range_copy(fleets | range_filter(not_null) | range_transform(fleet_to_move_path),
+                   std::back_inserter(fleets_move_pathes));
+
+
+        // log pathes
+        for (auto& [fleet, move_path] : fleets_move_pathes)
+            LogPathAndRoute(fleet, move_path, context.ContextObjects());
+
 
         // mark blocking fleets as visible to moving fleet owner
-        auto empires_blockaded_by_objects = GetBlockadingObjectsForEmpires(move_pathes, context);
+        auto empires_blockaded_by_objects = GetBlockadingObjectsForEmpires(fleets_move_pathes, context);
         context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empires_blockaded_by_objects));
+
+
+        // truncate move pathes to the current turn
+        std::vector<std::pair<Fleet*, std::vector<MovePathNode>>> one_turn_move_pathes;
+        one_turn_move_pathes.reserve(context.ContextObjects().size<Fleet>());
+        range_copy(fleets_move_pathes | range_transform(TruncateMovePathTo1Turn),
+                   std::back_inserter(one_turn_move_pathes));
+
+
+        // reset prev/next of not-moving fleets
+        static constexpr auto not_moving = [](const auto& fleet_move_path) { return fleet_move_path.second.empty(); };
+        for (auto* fleet : one_turn_move_pathes | range_filter(not_moving) | range_keys)
+            fleet->ResetPrevNextSystems();
 
 
         // TODO: move fleets to end of current turn's move path and replace following code
