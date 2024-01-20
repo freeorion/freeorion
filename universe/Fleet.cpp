@@ -552,8 +552,8 @@ std::pair<uint8_t, uint8_t> Fleet::ETA(const std::vector<MovePathNode>& move_pat
 
     // check for single node in path.  return the single node's eta as both .first and .second (likely indicates that fleet couldn't move)
     if (move_path.size() == 1) {
-        const auto& node = move_path.front();
-        return {node.eta, node.eta};
+        const auto node_eta = move_path.front().eta;
+        return {node_eta, node_eta};
     }
 
     // general case: there is a multi-node path.
@@ -860,40 +860,6 @@ void Fleet::MovementPhase(ScriptingContext& context) {
     auto current_system = objects.getRaw<System>(SystemID());
     auto const initial_system = current_system;
     auto move_path = MovePath(false, context);
-
-    if (!move_path.empty()) {
-        DebugLogger() << "Fleet::MovementPhase " << this->Name() << " (" << this->ID()
-                      << ")  route:" << [&]() {
-            std::string ss;
-            ss.reserve(this->TravelRoute().size() * 32); // guesstimate
-            for (auto sys_id : this->TravelRoute()) {
-                if (auto sys = objects.getRaw<const System>(sys_id))
-                    ss.append("  ").append(sys->Name()).append(" (")
-                      .append(std::to_string(sys_id)).append(")");
-                else
-                    ss.append("  (?) (").append(std::to_string(sys_id)).append(")");
-            }
-            return ss;
-        }()
-                      << "   move path:" << [&]() {
-            std::string ss;
-            ss.reserve(move_path.size() * 32); // guesstimate
-            for (const auto& node : move_path) {
-                if (auto sys = context.ContextObjects().getRaw<const System>(node.object_id))
-                    ss.append("  ").append(sys->Name()).append(" (")
-                      .append(std::to_string(node.object_id)).append(")");
-                else
-                    ss.append("  (-)");
-            }
-            return ss;
-        }();
-    } else {
-        // enforce m_next_system and m_prev_system being INVALID_OBJECT_ID when
-        // move path is empty. bug was reported where m_next_system was somehow
-        // left with a system ID in it, which was never reset, and lead to
-        // supply propagation issues
-        m_next_system = m_prev_system = INVALID_OBJECT_ID;
-    }
 
     // If the move path cannot lead to the destination,
     // make the route go as far as it can
