@@ -158,6 +158,10 @@ public:
     /** Sets this fleet to move through the series of systems in the list, in order */
     void SetRoute(std::vector<int> route, const ObjectMap& objects);
     void ClearRoute(const ObjectMap& objects) { SetRoute({}, objects); }
+    /** Removes ids in this fleet's route (list of system ids) after \a system_id.
+      * If \a system_id is not in the route, the route is cleared. */
+    static std::vector<int> TruncateRouteToEndAt(std::vector<int> route, int system_id);
+    void TruncateRouteToEndAt(int system_id) { m_travel_route = TruncateRouteToEndAt(std::move(m_travel_route), system_id); }
 
     void ResetPrevNextSystems() noexcept { m_next_system = m_prev_system = INVALID_OBJECT_ID; }
 
