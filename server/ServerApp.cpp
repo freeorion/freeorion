@@ -3655,7 +3655,7 @@ namespace {
         }
     }
 
-    auto TruncateMovePathTo1Turn(std::pair<const Fleet*, std::vector<MovePathNode>> mp) {
+    auto TruncateMovePathTo1Turn(std::pair<Fleet*, std::vector<MovePathNode>> mp) {
         auto& [fleet, nodes] = mp;
         LogDumpMovePaths(fleet, nodes);
         // find first turn-end node
@@ -3761,20 +3761,47 @@ namespace {
         return empires_blockaded_by_fleets;
     }
 
+    void Resupply(auto fleets, ScriptingContext& context) {
+        const auto fleet_to_ships = [&context](const Fleet* fleet)
+        { return context.ContextObjects().findRaw<Ship>(fleet->ShipIDs()); };
+
+        const auto owner_can_supply_at_location =
+            [&context](const auto* obj) {
+                static constexpr bool ALLOW_ALLIED_SUPPLY = true;
+                return obj && context.supply.SystemHasFleetSupply(obj->SystemID(), obj->Owner(),
+                                                                  ALLOW_ALLIED_SUPPLY, context.diplo_statuses);
+            };
+
+        // resupply ships at their initial locations
+        std::vector<std::vector<Ship*>> supplyable_ships;
+        supplyable_ships.reserve(context.ContextObjects().size<Fleet>());
+        range_copy(fleets | range_filter(owner_can_supply_at_location) | range_transform(fleet_to_ships),
+                   std::back_inserter(supplyable_ships));
+        for (auto& ships : supplyable_ships) {
+            for (auto* ship : ships)
+                ship->Resupply(context.current_turn);
+        }
+    }
+
     /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
     void HandleFleetMovement(ScriptingContext& context) {
         static constexpr auto not_null = [](const auto* o) { return !!o; };
         static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
         static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
 
+
         const auto fleets = context.ContextObjects().allRaw<Fleet>();
 
         for (auto* fleet : fleets | range_filter(not_null))
             fleet->ClearArrivalFlag();
 
+
+        Resupply(fleets, context);
+
+
         // get all fleets' move pathes (before anything moves).
         // these move pathes may have been limited by blockades
-        const auto fleet_to_move_path = [&context](const Fleet* fleet)
+        const auto fleet_to_move_path = [&context](Fleet* fleet)
         { return std::pair{fleet, fleet->MovePath(true, context)}; };
 
         auto move_pathes = fleets | range_filter(not_null) | range_transform(fleet_to_move_path);
