@@ -3669,7 +3669,7 @@ namespace {
     };
 
     auto GetBlockadingObjectsForEmpires(auto move_pathes, const ScriptingContext& context) {
-                // is there a blockade within (at end?) of this turn's movement?
+        // is there a blockade within (at end?) of this turn's movement?
         const auto path_to_blockading_fleets =
             [&context](std::pair<const Fleet*, std::vector<MovePathNode>> mp)
             -> std::pair<const Fleet*, std::vector<int>>
