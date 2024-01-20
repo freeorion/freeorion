@@ -220,8 +220,8 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
         u.m_design_id_allocator->SerializeForEmpire(ar, version, GlobalSerializationEncodingForEmpire());
     } else {
         if constexpr (Archive::is_loading::value) {
-            int dummy_last_allocated_object_id;
-            int dummy_last_allocated_design_id;
+            int dummy_last_allocated_object_id = INVALID_OBJECT_ID;
+            int dummy_last_allocated_design_id = INVALID_DESIGN_ID;
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids version = " << version;
             ar  & boost::serialization::make_nvp("m_last_allocated_object_id", dummy_last_allocated_object_id);
             DebugLogger() << "Universe::serialize : " << serializing_label << " legacy last allocated ids2";

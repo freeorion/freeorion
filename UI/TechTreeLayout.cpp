@@ -17,12 +17,13 @@ namespace  {
 bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     if (0 >= index)
         return false;
+    std::size_t idx = static_cast<std::size_t>(index);
 
-    int size = column.size();
-    if (index + node->weight > size)
-        column.resize(index + node->weight, nullptr);
+    const auto size = column.size();
+    if (idx + node->weight > size)
+        column.resize(idx + node->weight, nullptr);
 
-    for (int j = index + node->weight; j-->index; ) {
+    for (auto j = idx + node->weight; j-->idx; ) {
         if (column[j] != nullptr && column[j] != node)
             return false;
     }
@@ -398,8 +399,8 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
         if (improvement > 0.25) { // 0 produces endless loop
             if (weight == n->weight) {
                 for (int ii = 0; ii < weight; ii++) {
-                    column.column[row + ii] = n;
-                    column.column[n->row + ii] = this;
+                    column.column[static_cast<std::size_t>(row + ii)] = n;
+                    column.column[static_cast<std::size_t>(n->row + ii)] = this;
                 }
                 int t_row = row;
                 row = n->row;
@@ -548,13 +549,14 @@ void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
         }
     }
     //check parents
-    for (int i = parents.size(); i --> 0;) {
+    for (auto i = parents.size(); i --> 0;) {
         if (parents[i]->row != -1) {
             index += parents[i]->row;
             count++;
         }
     }
-    if (static_cast<int>(row_index.size()) < depth + 1) row_index.resize(depth + 1);
+    if (static_cast<int>(row_index.size()) < depth + 1)
+        row_index.resize(static_cast<std::size_t>(depth) + 1);
 
     // if any parents or children have been placed, put this node in next free
     // space after the ideal node.  if no parents or children have been placed,

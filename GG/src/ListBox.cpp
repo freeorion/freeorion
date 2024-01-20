@@ -1873,7 +1873,7 @@ void ListBox::RestoreCachedSelections(const ListBox::SelectionCache& cache)
     m_selections.clear();
 
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
-        auto row = *it;
+        const auto row{*it};
         if (cache.caret == row)
             m_caret = it;
         if (cache.selections.count(row))
@@ -2278,7 +2278,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
         SelRowsChangedSignal(m_selections);
 }
 
-void ListBox::NormalizeRow(Row* row)
+void ListBox::NormalizeRow(Row* row) const
 {
     assert(m_num_cols);
     row->SetMargin(m_cell_margin);
