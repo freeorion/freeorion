@@ -28,12 +28,12 @@ Policy
             ]
             priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
             effects = [
-                // increase normal meter growth rate
-                SetIndustry value = min(Target.TargetIndustry, Value + 1.0)
-                SetResearch value = min(Target.TargetResearch, Value + 1.0)
-                SetInfluence value = min(Target.TargetInfluence, Value + 1.0)
+                // increase normal meter growth rate (where the target is at least zero)
+                SetIndustry value = max(Value, min(Target.TargetIndustry, Value + 1.0))
+                SetResearch value = max(Value, min(Target.TargetResearch, Value + 1.0))
+                SetInfluence value = max(Value, min(Target.TargetInfluence, Value + 1.0))
 
-                // increase growth rate for meteres which could be negative; i.e. stability
+                // increase growth rate for meters which could be negative; i.e. stability
                 SetHappiness value = Value + min(abs(Value(Target.TargetHappiness) - Value), 1) *
                     (Value < Value(Target.TargetHappiness))
             ]
