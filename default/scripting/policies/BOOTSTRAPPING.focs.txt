@@ -15,20 +15,32 @@ Policy
                 OwnedBy empire = Source.Owner
             ]
             effects = [
+                // increase target stability by 10 on first turn, decreasing each turn to 0 at turn 20
+                SetTargetHappiness value = Value + 
+                    0.5 * max(0.0, (NamedReal name = "PLC_BOOTSTRAPPING_MAX_TURNS" value = 20.0) - Target.TurnsSinceColonization)
+            ]
+
+        EffectsGroup
+            scope = And [
+                Species
+                Population high = NamedRealLookup name = "PLC_BOOTSTRAPPING_MAX_POP"
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = [
+                // increase normal meter growth rate
                 SetIndustry value = min(Target.TargetIndustry, Value + 1.0)
                 SetResearch value = min(Target.TargetResearch, Value + 1.0)
                 SetInfluence value = min(Target.TargetInfluence, Value + 1.0)
 
-                // increase target stability by 10 on first turn, decreasing each turn to 0 at turn 20
-                SetTargetHappiness value = Value + 
-                    0.5 * max(0.0, (NamedReal name = "PLC_BOOTSTRAPPING_MAX_TURNS" value = 20.0) - Target.TurnsSinceColonization)
-
-                // increase stability growth rate
+                // increase growth rate for meteres which could be negative; i.e. stability
                 SetHappiness value = Value + min(abs(Value(Target.TargetHappiness) - Value), 1) *
                     (Value < Value(Target.TargetHappiness))
             ]
+
     ]
     graphic = "icons/policies/economic_colonial_bootstrapping.png"
 
 #include "/scripting/macros/base_prod.macros"
 #include "/scripting/policies/policies.macros"
+#include "/scripting/macros/priorities.macros"
