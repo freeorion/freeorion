@@ -21,18 +21,6 @@ namespace {
 
     const std::set<int> EMPTY_SET;
     constexpr double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
-
-    void MoveFleetWithShips(Fleet& fleet, double x, double y, ObjectMap& objects) {
-        fleet.MoveTo(x, y);
-        for (auto* ship : objects.findRaw<Ship>(fleet.ShipIDs()))
-            ship->MoveTo(x, y);
-    }
-
-    void InsertFleetWithShips(Fleet& fleet, System& system, ObjectMap& objects, int current_turn) {
-        system.Insert(fleet.shared_from_this(), System::NO_ORBIT, current_turn, objects);
-        for (auto* ship : objects.findRaw<Ship>(fleet.ShipIDs()))
-            system.Insert(ship, System::NO_ORBIT, current_turn, objects);
-    }
 }
 
 
@@ -816,103 +804,85 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
     m_arrival_starlane = prev; // see comment for ArrivalStarlane()
 }
 
-void Fleet::MovementPhase(ScriptingContext& context) {
+namespace {
+    void LogPathAndRoute(const Fleet* fleet, const auto& move_path, const ObjectMap& objects) {
+        if (move_path.empty())
+            return;
+
+        DebugLogger() << "Fleet MoveAlongPath: " << fleet->Name() << " (" << fleet->ID()
+                      << ")  route:" << [&]()
+            {
+                std::string ss;
+                ss.reserve(fleet->TravelRoute().size() * 32); // guesstimate
+                for (auto sys_id : fleet->TravelRoute()) {
+                    if (auto sys = objects.getRaw<const System>(sys_id))
+                        ss.append("  ").append(sys->Name()).append(" (")
+                        .append(std::to_string(sys_id)).append(")");
+                    else
+                        ss.append("  (?) (").append(std::to_string(sys_id)).append(")");
+                }
+                return ss;
+            }()
+                      << "   move path:" << [&]()
+            {
+                std::string ss;
+                ss.reserve(move_path.size() * 32); // guesstimate
+                for (const auto& node : move_path) {
+                    if (auto sys = objects.getRaw<const System>(node.object_id))
+                        ss.append("  ").append(sys->Name()).append(" (")
+                        .append(std::to_string(node.object_id)).append(")");
+                    else
+                        ss.append("  (-)");
+                }
+                return ss;
+            }();
+    }
+}
+
+void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathNode>& move_path) {
+    if (move_path.empty())
+        return;
+
     auto this_owner_empire = context.GetEmpire(Owner());
-    const auto supply_unobstructed_systems = [this_owner_empire]() { // local copy
+
+    const auto& supply_unobstructed_systems = [this_owner_empire]() {
         if (this_owner_empire)
             return this_owner_empire->SupplyUnobstructedSystems();
-        return std::set<int>{};
+        return EMPTY_SET;
     }();
 
     auto& objects = context.ContextObjects();
     const auto& universe = context.ContextUniverse();
     const auto& supply = context.supply;
 
-    auto current_system = objects.getRaw<System>(SystemID());
-    auto const initial_system = current_system;
-    auto move_path = MovePath(false, context);
-
-    auto it = move_path.begin();
-    auto next_it = it;
-    if (next_it != move_path.end())
-        ++next_it;
-
     const auto ships = objects.findRaw<Ship>(m_ships);
 
-    // is the fleet stuck in a system for a whole turn?
-    if (current_system) {
-        // update m_arrival_starlane if no blockade, if needed
-        if (supply_unobstructed_systems.contains(SystemID()))
-            m_arrival_starlane = SystemID();// allows departure via any starlane
+    auto* current_system = objects.getRaw<System>(SystemID());
+    auto* const initial_system = current_system;
 
-        // in a system.  if either:
-        // - there is no system after the current one in the path
-        // - the current and next nodes are the same and are system IDs or actual systems (not empty space)
-        // - this fleet is blockaded from its intended path
-        // then this fleet won't be moving further this turn
-        bool stopped = false;
-
-        if (next_it == move_path.end()) {
-            // at end of path
-            stopped = true;
-
-        } else if (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id) {
-            // arriving at system
-            stopped = true;
-
-        } else if (m_arrival_starlane != SystemID()) {
-            // blockaded
-            int next_sys_id;
-            if (next_it->object_id != INVALID_OBJECT_ID) {
-                next_sys_id = next_it->object_id;
-            } else {
-                next_sys_id = next_it->lane_end_id;
-            }
-            stopped = BlockadedAtSystem(SystemID(), next_sys_id, context);
-        }
-
-        if (stopped)
-            return;
-
-        // record previous system on fleet's path, and the starlane along
-        // which it will arrive at the next system (for blockading purposes)
-        m_arrival_starlane = SystemID();
-        m_prev_system = SystemID();
-
-        // remove fleet and ships from system they are departing
-        current_system->Remove(ID());
-        SetSystem(INVALID_OBJECT_ID);
-        for (auto& ship : ships) {
-            current_system->Remove(ship->ID());
-            ship->SetSystem(INVALID_OBJECT_ID);
-        }
-    }
+    LogPathAndRoute(this, move_path, objects);
 
 
-    // if fleet not moving, nothing more to do.
-    if (move_path.empty()) {
-        m_next_system = m_prev_system = INVALID_OBJECT_ID;
-        return;
-    }
-
+    float fuel_consumed = 0.0f;
 
     // move fleet in sequence to MovePathNodes it can reach this turn
-    float fuel_consumed = 0.0f;
-    for (it = move_path.begin(); it != move_path.end(); ++it) {
-        next_it = it;   ++next_it;
+    auto it = move_path.begin();
+    auto next_it = (it == move_path.end()) ? it : std::next(it);
 
-        auto system = objects.getRaw<System>(it->object_id);
+
+    for (it = move_path.begin(); it != move_path.end(); ++it) {
+        next_it = (it == move_path.end()) ? it : std::next(it);
 
         // is this system the last node reached this turn?  either it's an end of turn node,
         // or there are no more nodes after this one on path
-        bool node_is_next_stop = (it->turn_end || next_it == move_path.end());
+        const bool node_is_next_stop = (it->turn_end || next_it == move_path.end());
 
 
-        if (system) {
+        if (const auto system = objects.getRaw<System>(it->object_id)) {
             // node is a system.  explore system for all owners of this fleet
             if (this_owner_empire) {
-                this_owner_empire->AddExploredSystem(it->object_id, context.current_turn, context.ContextObjects());
-                this_owner_empire->RecordPendingLaneUpdate(it->object_id, m_prev_system, context.ContextObjects()); // specifies the lane from it->object_id back to m_prev_system is available
+                this_owner_empire->AddExploredSystem(it->object_id, context.current_turn, objects);
+                this_owner_empire->RecordPendingLaneUpdate(it->object_id, m_prev_system, objects); // specifies the lane from it->object_id back to m_prev_system is available
             }
 
             m_prev_system = system->ID(); // passing a system, so update previous system of this fleet
@@ -928,15 +898,25 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             if (resupply_here) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0f;
-                for (auto& ship : ships)
+                for (auto* ship : ships)
                     ship->Resupply(context.current_turn);
             }
 
 
             // is system the last node reached this turn?
             if (node_is_next_stop) {
-                // fleet ends turn at this node.  insert fleet and ships into system
-                InsertFleetWithShips(*this, *system, objects, context.current_turn);
+                // fleet ends turn at this node.
+
+                // remove fleet/ships from initial system, if any
+                if (initial_system) {
+                    initial_system->Remove(this->ID());
+                    for (auto* ship : ships)
+                        initial_system->Remove(ship->ID());
+                }
+                // insert fleet/ships into new system
+                system->Insert(this, System::NO_ORBIT, context.current_turn, objects);
+                for (auto* ship : ships)
+                    system->Insert(ship, System::NO_ORBIT, context.current_turn, objects);
 
                 current_system = system;
 
@@ -960,7 +940,19 @@ void Fleet::MovementPhase(ScriptingContext& context) {
             // node is not a system.
             m_arrival_starlane = m_prev_system;
             if (node_is_next_stop) { // node is not a system, but is it the last node reached this turn?
-                MoveFleetWithShips(*this, it->x, it->y, objects);
+                // remove fleet/ships from initial system, if any
+                if (initial_system) {
+                    initial_system->Remove(this->ID());
+                    this->SetSystem(INVALID_OBJECT_ID);
+                    for (auto* ship : ships) {
+                        initial_system->Remove(ship->ID());
+                        ship->SetSystem(INVALID_OBJECT_ID);
+                    }
+                }
+                // move to new location
+                MoveTo(it->x, it->y);
+                for (auto* ship : ships)
+                    ship->MoveTo(it->x, it->y);
                 break;
             }
         }
@@ -968,7 +960,7 @@ void Fleet::MovementPhase(ScriptingContext& context) {
 
 
     // update next system
-    if (!m_travel_route.empty() && next_it != move_path.end() && it != move_path.end()) {
+    if (!m_travel_route.empty() && next_it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
             if (objects.getRaw<System>(next_it->object_id)) {
