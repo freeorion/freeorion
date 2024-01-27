@@ -3655,19 +3655,6 @@ namespace {
         }
     }
 
-    auto TruncateMovePathTo1Turn(std::pair<Fleet*, std::vector<MovePathNode>> mp) {
-        auto& [fleet, nodes] = mp;
-        LogDumpMovePaths(fleet, nodes);
-        // find first turn-end node
-        static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end; };
-        auto it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
-        // erase everything after the first turn end node
-        if (it != nodes.end())
-            it = std::next(it);
-        nodes.erase(it, nodes.end());
-        return mp;
-    };
-
     auto GetBlockadingObjectsForEmpires(const auto& move_pathes, const ScriptingContext& context) {
         // is there a blockade within (at end?) of this turn's movement?
         const auto path_to_blockading_fleets =
@@ -3816,6 +3803,22 @@ namespace {
             }();
     }
 
+    void LogTruncation(const auto* fleet, const auto& old_route,
+                       int last_sys_id, const ScriptingContext& context)
+    {
+        static constexpr auto route_to_string = [](const auto& route) {
+            std::string retval;
+            for (auto i : route)
+                retval.append(std::to_string(i)).append(" ");
+            return retval;
+        };
+        const System* sys = context.ContextObjects().getRaw<const System>(last_sys_id);
+        DebugLogger() << "Truncated fleet " << fleet->Name() << " (" << fleet->ID()
+                      << ") route from: " << route_to_string(old_route)
+                      << " to end at last reachable system: "
+                      << (sys ? sys->Name() : "(Unknown system)") << " (" << last_sys_id << ")"
+                      << " :" << route_to_string(fleet->TravelRoute());
+    }
 
     /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
     void HandleFleetMovement(ScriptingContext& context) {
@@ -3850,22 +3853,13 @@ namespace {
             const auto last_sys_id = move_path.back().object_id;
             if (last_sys_id == INVALID_OBJECT_ID) {
                 ErrorLogger() << "Unexpected got fleet move path with last node not at a system...";
-            } else {
-                const auto old_route{fleet->TravelRoute()};
-                fleet->TruncateRouteToEndAt(last_sys_id);
-                const System* sys = context.ContextObjects().getRaw<const System>(last_sys_id);
-                static constexpr auto route_to_string = [](const auto& route) {
-                    std::string retval;
-                    for (auto i : route)
-                        retval.append(std::to_string(i)).append(" ");
-                    return retval;
-                };
-                DebugLogger() << "Truncated fleet " << fleet->Name() << " (" << fleet->ID()
-                              << ") route from: " << route_to_string(old_route)
-                              << " to end at last reachable system: "
-                              << (sys ? sys->Name() : "(Unknown system)") << " (" << last_sys_id << ")"
-                              << " :" << route_to_string(fleet->TravelRoute());
+                continue;
             }
+
+            const auto old_route{fleet->TravelRoute()};
+            fleet->TruncateRouteToEndAt(last_sys_id);
+
+            LogTruncation(fleet, old_route, last_sys_id, context);
         }
 
 
@@ -3879,27 +3873,66 @@ namespace {
         context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empires_blockaded_by_objects));
 
 
-        // truncate move pathes to the current turn
-        std::vector<std::pair<Fleet*, std::vector<MovePathNode>>> one_turn_move_pathes;
-        one_turn_move_pathes.reserve(context.ContextObjects().size<Fleet>());
-        range_copy(fleets_move_pathes | range_transform(TruncateMovePathTo1Turn),
-                   std::back_inserter(one_turn_move_pathes));
-
-
         // reset prev/next of not-moving fleets
-        static constexpr auto not_moving = [](const auto& fleet_move_path) { return fleet_move_path.second.empty(); };
-        for (auto* fleet : one_turn_move_pathes | range_filter(not_moving) | range_keys)
+        static constexpr auto not_moving =
+            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_move_path)
+            { return fleet_move_path.second.empty(); };
+
+        for (auto* fleet : fleets_move_pathes | range_filter(not_moving) | range_keys)
             fleet->ResetPrevNextSystems();
 
 
-        // TODO: move fleets to end of current turn's move path and replace following code
+        // mark fleets that start turn in systems that are supply unobstructed as
+        // arriving from that system (which makes them able to depart on any lane)
+        const auto in_supply_unobstructed_system =
+            [&context](const Fleet* fleet) {
+                if (!fleet || fleet->SystemID() == INVALID_OBJECT_ID || fleet->Unowned())
+                    return false;
+                const auto empire = context.GetEmpire(fleet->Owner());
+                if (!empire)
+                    return false;
+                const auto& sus = empire->SupplyUnobstructedSystems();
+                return sus.contains(fleet->SystemID());
+            };
+        for (auto* fleet : fleets | range_filter(in_supply_unobstructed_system))
+            fleet->SetArrivalStarlane(fleet->SystemID());
 
-        // first move unowned fleets, or an empire fleet landing on them could wrongly
-        // blockade them before they move
-        for (auto* fleet : fleets | range_filter(is_unowned))
-            fleet->MovementPhase(context);
-        for (auto* fleet : fleets | range_filter(is_owned))
-            fleet->MovementPhase(context);
+
+        static constexpr auto next_system_on_path = [](const std::vector<MovePathNode>& path) {
+            if (path.empty())
+                return INVALID_OBJECT_ID;
+            const int first_node_obj_id = path.front().object_id;
+            for (const MovePathNode& node : path) {
+                if (node.object_id != first_node_obj_id && node.object_id != INVALID_OBJECT_ID)
+                    return node.object_id; // next object on path
+                if (node.object_id == INVALID_OBJECT_ID && node.lane_end_id != INVALID_OBJECT_ID)
+                    return node.lane_end_id; // end of lane that next node is on
+            }
+            return INVALID_OBJECT_ID;
+        };
+
+        static constexpr auto in_system_and_moving =
+            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_path)
+            { return (fleet_path.first->SystemID() != INVALID_OBJECT_ID) && !not_moving(fleet_path); };
+
+        // set fleets that are in systems and are moving away from them as being from that system
+        for (auto& [fleet, path] : fleets_move_pathes | range_filter(in_system_and_moving)) {
+            const auto fleet_sys_id = fleet->SystemID();
+            System* system = context.ContextObjects().getRaw<System>(fleet_sys_id);
+            if (!system) {
+                ErrorLogger() << "Couldn't find system with id " << fleet_sys_id << " that fleet "
+                              << fleet->Name() << " (" << fleet->ID() << ") is supposedly in / departing";
+                continue;
+            }
+            fleet->SetArrivalStarlane(fleet_sys_id);
+            fleet->SetNextAndPreviousSystems(next_system_on_path(path), fleet_sys_id);
+        }
+
+
+        // move fleets to end of current turn's move path, consuming fuel or being resupplied
+        for (auto& [fleet, path] : fleets_move_pathes)
+            fleet->MoveAlongPath(context, path);
+
 
         // post-movement visibility update
         context.ContextUniverse().UpdateEmpireObjectVisibilities(context.Empires());
