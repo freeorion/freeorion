@@ -855,7 +855,11 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
     const auto& universe = context.ContextUniverse();
     const auto& supply = context.supply;
 
-    const auto ships = objects.findRaw<Ship>(m_ships);
+    const auto ships = [&objects, this]() { // ensure only non-null ships iterated over...
+        std::vector<Ship*> ships = objects.findRaw<Ship>(m_ships);
+        ships.erase(std::remove(ships.begin(), ships.end(), nullptr), ships.end());
+        return ships;
+    }();
 
     auto* current_system = objects.getRaw<System>(SystemID());
     auto* const initial_system = current_system;
