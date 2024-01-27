@@ -3655,12 +3655,13 @@ namespace {
         }
     }
 
+    /** Which fleets and ships are revealed to empires due to those
+      * fleets and ships blockading a fleet owned by that empire? */
     auto GetBlockadingObjectsForEmpires(const auto& move_pathes, const ScriptingContext& context) {
         // is there a blockade within (at end?) of this turn's movement?
-        const auto path_to_blockading_fleets =
-            [&context](std::pair<const Fleet*, std::vector<MovePathNode>> mp)
-            -> std::pair<const Fleet*, std::vector<int>>
-            {
+        using fleet_and_path = std::pair<const Fleet*, std::vector<MovePathNode>>;
+        using fleet_and_ids = std::pair<const Fleet*, std::vector<int>>;
+        const auto path_to_blockading_fleets = [&context](fleet_and_path mp) -> fleet_and_ids {
                 const auto& [fleet, nodes] = mp;
                 if (!fleet)
                     return {fleet, {}}; // no valid fleet??? (unexpected)
@@ -3699,14 +3700,14 @@ namespace {
                 return {fleet, blockading_fleets};
             };
 
-        using blockading_fleets_t = std::pair<const Fleet*, std::vector<int>>;
-        std::vector<blockading_fleets_t> blockading_fleets;
+        std::vector<fleet_and_ids> blockading_fleets;
         blockading_fleets.reserve(context.ContextObjects().size<Fleet>());
         range_copy(move_pathes | range_transform(path_to_blockading_fleets),
                    std::back_inserter(blockading_fleets));
 
         // assemble list of fleets that are revealed to each empire by performing blockades
-        static constexpr auto not_null_or_empty = [](const auto& fbids) { return fbids.first && !fbids.second.empty(); };
+        static constexpr auto not_null_or_empty = [](const fleet_and_ids& fbids)
+        { return fbids.first && !fbids.second.empty(); };
         std::map<int, std::vector<int>> empires_blockaded_by_fleets;
         for (auto& [fleet, blockader_ids] : blockading_fleets | range_filter(not_null_or_empty)) {
             auto& revealed_ids = empires_blockaded_by_fleets[fleet->Owner()];
@@ -3729,7 +3730,7 @@ namespace {
                 }(fleet_ids);
         }
 
-        static constexpr auto not_null = [](const auto* o) { return !!o; };
+        static constexpr auto not_null = [](const Fleet* o) noexcept -> bool { return !!o; };
 
         // also add ships
         for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
@@ -3822,9 +3823,9 @@ namespace {
 
     /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
     void HandleFleetMovement(ScriptingContext& context) {
-        static constexpr auto not_null = [](const auto* o) { return !!o; };
-        static constexpr auto is_unowned = [](const auto* o) { return o && o->Unowned(); };
-        static constexpr auto is_owned = [](const auto* o) { return o && !o->Unowned(); };
+        static constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
+        static constexpr auto is_unowned = [](const auto* o) noexcept -> bool { return o && o->Unowned(); };
+        static constexpr auto is_owned = [](const auto* o) noexcept -> bool { return o && !o->Unowned(); };
 
 
         const auto fleets = context.ContextObjects().allRaw<Fleet>();
@@ -3875,7 +3876,7 @@ namespace {
 
         // reset prev/next of not-moving fleets
         static constexpr auto not_moving =
-            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_move_path)
+            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_move_path) noexcept -> bool
             { return fleet_move_path.second.empty(); };
 
         for (auto* fleet : fleets_move_pathes | range_filter(not_moving) | range_keys)
@@ -3912,10 +3913,18 @@ namespace {
         };
 
         static constexpr auto in_system_and_moving =
-            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_path)
-            { return (fleet_path.first->SystemID() != INVALID_OBJECT_ID) && !not_moving(fleet_path); };
+            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_path) {
+                const auto& [fleet, path] = fleet_path;
+                if (fleet->SystemID() == INVALID_OBJECT_ID)
+                    return false;
+                if (path.empty())
+                    return false;
+                //if (path.front().object_id != fleet->SystemID())
+                //    ErrorLogger() << "expected fleet path start to be fleet's system...";
+                return !path.front().blockaded_here;
+            };
 
-        // set fleets that are in systems and are moving away from them as being from that system
+        // set fleets that are in systems and are unblockaded and are moving away from them as being from that system
         for (auto& [fleet, path] : fleets_move_pathes | range_filter(in_system_and_moving)) {
             const auto fleet_sys_id = fleet->SystemID();
             System* system = context.ContextObjects().getRaw<System>(fleet_sys_id);

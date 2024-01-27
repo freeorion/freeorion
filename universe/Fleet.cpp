@@ -843,6 +843,22 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
     if (move_path.empty())
         return;
 
+    if (this->SystemID() != INVALID_OBJECT_ID &&
+        this->SystemID() == move_path.front().object_id &&
+        move_path.front().blockaded_here)
+    {
+        m_arrived_this_turn = false;
+        m_next_system = m_prev_system = INVALID_OBJECT_ID;
+        DebugLogger() << "Fleet " << Name() << " (" << ID() << ") movement blockaded at "
+                      << [&context](int sys_id) {
+                            const auto* sys = context.ContextObjects().getRaw<const System>(sys_id);
+                            const auto id_as_string = std::to_string(sys_id);
+                            return (sys ? sys->Name() : "") + " (" + id_as_string + ")";
+                         }(SystemID());
+        // TODO: Blockaded movement sitrep
+        return;
+    }
+
     auto this_owner_empire = context.GetEmpire(Owner());
 
     const auto& supply_unobstructed_systems = [this_owner_empire]() {
@@ -1349,16 +1365,14 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
     const Universe& u{context.ContextUniverse()};
     const SpeciesManager& sm{context.species};
     const ObjectMap& objects = u.Objects();
-    auto ships = objects.find<Ship>(m_ships);
+    const auto ships = objects.findRaw<const Ship>(m_ships);
 
-    // todo: rewrite with a lambda and store in a const string& to avoid copies...
-    std::string fleet_name_key = UserStringNop("NEW_FLEET_NAME");
-
-    auto IsCombatShip = [&context, &u](const auto& ship) {
+    const auto IsCombatShip = [&context, &u](const Ship& ship) {
         return ship.IsArmed(context) || ship.HasFighters(u) ||
                ship.CanHaveTroops(u) || ship.CanBombard(u);
     };
 
+    std::string_view fleet_name_key;
     if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->IsMonster(u); }))
         fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");
     else if (std::all_of(ships.begin(), ships.end(), [&u, &sm](const auto& ship){ return ship->CanColonize(u, sm); }))
@@ -1371,6 +1385,8 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
         fleet_name_key = UserStringNop("NEW_BOMBARD_FLEET_NAME");
     else if (std::all_of(ships.begin(), ships.end(), [&IsCombatShip](const auto& ship){ return IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_BATTLE_FLEET_NAME");
+    else
+        fleet_name_key = UserStringNop("NEW_FLEET_NAME");
 
     return boost::io::str(FlexibleFormat(UserString(fleet_name_key)) % ID());
 }
