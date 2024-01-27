@@ -150,8 +150,9 @@ public:
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Fleet& copied_fleet, const Universe& universe, int empire_id = ALL_EMPIRES);
 
-    /** Moves fleet, its ships, and sets systems as explored for empires. */
-    void MovementPhase(ScriptingContext& context);
+    /** Moves fleet and its ships, consumes fuel or resupplies ships,
+      * and sets systems as explored for empires. */
+    void MoveAlongPath(ScriptingContext& context, const std::vector<MovePathNode>& move_path);
 
     void ResetTargetMaxUnpairedMeters() override;
 
