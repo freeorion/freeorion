@@ -176,8 +176,8 @@ public:
     void RemoveShips(const std::vector<int>& ship_ids);     ///< removes the ships from the fleet.
 
     void SetNextAndPreviousSystems(int next, int prev);     ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
-    void SetArrivalStarlane(int starlane) { m_arrival_starlane = starlane; }///< sets the arrival starlane, used to clear blockaded status after combat
-    void ClearArrivalFlag() { m_arrived_this_turn = false; }///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
+    void SetArrivalStarlane(int starlane) noexcept  { m_arrival_starlane = starlane; }  ///< sets the arrival starlane, used to clear blockaded status after combat
+    void ClearArrivalFlag() noexcept { m_arrived_this_turn = false; }                   ///< used to clear the m_arrived_this_turn flag, prior to any fleets moving, for accurate blockade tests
 
     void SetGiveToEmpire(int empire_id);                    ///< marks fleet to be given to empire
     void ClearGiveToEmpire();                               ///< marks fleet not to be given to any empire
