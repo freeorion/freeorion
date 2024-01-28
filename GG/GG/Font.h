@@ -183,6 +183,8 @@ public:
         /** True iff .first == .second. */
         [[nodiscard]] bool empty() const noexcept { return first == second; }
 
+        [[nodiscard]] bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
+
         /** Length, in original string chars, of the substring. */
         [[nodiscard]] std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
         [[nodiscard]] auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
