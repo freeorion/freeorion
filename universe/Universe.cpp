@@ -1888,16 +1888,12 @@ void Universe::SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>
 
 void Universe::ApplyEmpireObjectVisibilityOverrides() {
     EmpireObjectVisibilityMap new_empire_object_visibilities;
-    for (auto& [empire_id, object_ids] : m_empire_object_visibility_overrides) {
-        if (empire_id == ALL_EMPIRES)
-            continue;
-        for (auto viewed_obj_id : object_ids) {
-            if (viewed_obj_id <= INVALID_OBJECT_ID)
-                continue;
-            Visibility& target_vis = m_empire_object_visibility[empire_id][viewed_obj_id];
-            if (target_vis < Visibility::VIS_PARTIAL_VISIBILITY)
-                target_vis = Visibility::VIS_PARTIAL_VISIBILITY;
-        }
+    for (auto& [empire_id, object_ids] : m_empire_object_visibility_overrides
+         | range_filter([](auto& e_os) { return e_os.first != ALL_EMPIRES; }))
+    {
+        for (auto viewed_obj_id : object_ids
+             | range_filter([](auto viewed_obj_id) { return viewed_obj_id > INVALID_OBJECT_ID; }))
+        { SetEmpireObjectVisibility(empire_id, viewed_obj_id, Visibility::VIS_PARTIAL_VISIBILITY); }
     }
 }
 
@@ -1922,7 +1918,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
         for (const auto& [viewed_obj_id, src_and_vis_ref_map] : obj_src_vis_ref_map) {
             if (viewed_obj_id <= INVALID_OBJECT_ID)
                 continue;   // can't set a non-object's visibility
-            auto target = m_objects->getRaw(viewed_obj_id);
+            auto const target = m_objects->getRaw(viewed_obj_id);
             if (!target)
                 continue;   // don't need to set a non-gettable object's visibility
 
@@ -1931,7 +1927,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
             // evaluating this ValueRef. If not, use the object's current
             // in-universe Visibility for the specified empire
             Visibility target_initial_vis = m_empire_object_visibility[empire_id][viewed_obj_id];
-            auto neov_it = new_empire_object_visibilities[empire_id].find(viewed_obj_id);
+            const auto neov_it = new_empire_object_visibilities[empire_id].find(viewed_obj_id);
             if (neov_it != new_empire_object_visibilities[empire_id].end())
                 target_initial_vis = neov_it->second;
 
@@ -1954,6 +1950,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
     for (auto& [empire_id, obj_vis_map] : new_empire_object_visibilities) {
         for (auto& [object_id, vis] : obj_vis_map)
             m_empire_object_visibility[empire_id][object_id] = vis;
+        // TODO: use SetEmpireObjectVisibility to ensure ship design visibility. needs some tweaks as that only upgrades vis...
     }
 }
 
@@ -2021,15 +2018,10 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // get visibility map for empire and find object in it
     auto& vis_map = m_empire_object_visibility[empire_id];
-    auto vis_map_it = vis_map.find(object_id);
 
     // if object not already present, store default value (which may be replaced)
-    if (vis_map_it == vis_map.end()) {
-        vis_map[object_id] = Visibility::VIS_NO_VISIBILITY;
-
-        // get iterator pointing at newly-created entry
-        vis_map_it = vis_map.find(object_id);
-    }
+    // and get iterator to value
+    auto vis_map_it = vis_map.try_emplace(object_id, Visibility::VIS_NO_VISIBILITY).first;
 
     // increase stored value if new visibility is higher than last recorded
     if (vis > vis_map_it->second)
@@ -2037,7 +2029,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-        if (auto ship = m_objects->get<Ship>(object_id))
+        if (auto ship = m_objects->getRaw<const Ship>(object_id))
             SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
     }
 }
