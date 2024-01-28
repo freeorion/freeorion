@@ -337,7 +337,7 @@ void RichText::SetPadding(int pixels) { m_self->SetPadding(pixels); }
 void RichText::SizeMove(Pt ul, Pt lr) { m_self->SizeMove(ul, lr); }
 
 void RichText::SetBlockFactoryMap(BlockFactoryMap block_factory_map)
-{ m_self->SetBlockFactoryMap(block_factory_map); }
+{ m_self->SetBlockFactoryMap(std::move(block_factory_map)); }
 
 namespace {
     RichText::BlockFactoryMap default_block_factories{};
