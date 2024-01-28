@@ -4,6 +4,7 @@
 #include "OptionsDB.h"
 #include "Pending.h"
 #include "GameRuleCategories.h"
+#include "../universe/EnumsFwd.h"
 
 class GameRules;
 
@@ -33,6 +34,7 @@ struct FO_COMMON_API GameRule final : public OptionsDB::Option {
 
     [[nodiscard]] static constexpr Type RuleTypeForType(bool) noexcept { return Type::TOGGLE; }
     [[nodiscard]] static constexpr Type RuleTypeForType(int) noexcept { return Type::INT; }
+    [[nodiscard]] static constexpr Type RuleTypeForType(Visibility) noexcept { return Type::INT; }
     [[nodiscard]] static constexpr Type RuleTypeForType(double) noexcept { return Type::DOUBLE; }
     [[nodiscard]] static inline Type RuleTypeForType(std::string) noexcept { return Type::STRING; }
 
@@ -157,8 +159,8 @@ public:
 
         DebugLogger() << "Added game rule named " << name << " with default value " << value;
 
-        GameRule&& rule{GameRule::RuleTypeForType(T()), name, value, value, std::move(description),
-                        std::move(validator), engine_internal, rank, std::move(category)};
+        GameRule rule{GameRule::RuleTypeForType(T()), name, value, value, std::move(description),
+                      std::move(validator), engine_internal, rank, std::move(category)};
         m_game_rules.insert_or_assign(std::move(name), std::move(rule));
     }
 
