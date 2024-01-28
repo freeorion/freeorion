@@ -1303,6 +1303,12 @@ Extrasolar Ship Detection
 RULE_EXTRASOLAR_SHIP_DETECTION_DESC
 Ships outside systems provide detection.
 
+RULE_OVERRIDE_VIS_LEVEL
+Stealthy Blockader Visibility
+
+RULE_OVERRIDE_VIS_LEVEL_DESC
+Visibility level at which otherwise stealthy fleets and ships are revealed to the empire that owns a fleet that is blockaded.
+
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 Undetectable Stealthy Planets
 
