@@ -250,7 +250,7 @@ std::vector<RichTextTag> RichTextPrivate::ParseTags(const std::string& content)
     std::transform(m_block_factory_map.begin(), m_block_factory_map.end(),
                    std::inserter(keys, keys.end()),
                    [](const auto entry) { return std::string{entry.first}; });
-    return TagParser::ParseTags(content, keys);
+    return TagParser::ParseTags(content, std::move(keys));
 }
 
 // Create blocks from tags.
