@@ -507,7 +507,7 @@ std::pair<uint8_t, uint8_t> Fleet::ETA(const std::vector<MovePathNode>& move_pat
     // return the ETA of the first node and the ETA of the last node
     const auto last_stop_eta = move_path.rbegin()->eta;
     auto first_stop_eta = last_stop_eta;
-    for (auto it = ++(move_path.begin()); it != move_path.end(); ++it) {
+    for (auto it = std::next(move_path.begin()); it != move_path.end(); ++it) {
         if (it->object_id != INVALID_OBJECT_ID) {
             first_stop_eta = it->eta;
             break;
