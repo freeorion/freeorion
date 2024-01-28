@@ -298,7 +298,8 @@ public:
     void ForgetKnownObject(int empire_id, int object_id);
 
     /** Sets visibility for indicated \a empire_id of object with \a object_id
-      * a vis */
+      * to at least * \a vis. If visibility is already equal or higher, does nothing.
+      * For ship object ids, also sets the ship's design to be known to the empire. */
     void SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis);
 
     /** Sets visibility for indicated \a empire_id for the indicated \a special */
