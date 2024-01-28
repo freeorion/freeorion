@@ -3662,43 +3662,43 @@ namespace {
         using fleet_and_path = std::pair<const Fleet*, std::vector<MovePathNode>>;
         using fleet_and_ids = std::pair<const Fleet*, std::vector<int>>;
         const auto path_to_blockading_fleets = [&context](fleet_and_path mp) -> fleet_and_ids {
-                const auto& [fleet, nodes] = mp;
-                if (!fleet)
-                    return {fleet, {}}; // no valid fleet??? (unexpected)
+            const auto& [fleet, nodes] = mp;
+            if (!fleet || nodes.empty())
+                return {fleet, {}}; // no valid fleet??? (unexpected) or no path
 
-                static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end; };
-                // get first turn end node
-                auto turn_end_node_it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
-                if (turn_end_node_it == nodes.end())
-                    return {fleet, {}}; // didn't find a turn end node??? (unexpected)
+            static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end; };
+            // get first turn end node
+            auto turn_end_node_it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
+            if (turn_end_node_it == nodes.end())
+                return {fleet, {}}; // didn't find a turn end node??? (unexpected)
 
-                // is it at a system?
-                const auto turn_end_sys_id = turn_end_node_it->object_id;
-                if (turn_end_sys_id == INVALID_OBJECT_ID)
-                    return {fleet, {}}; // turn end node is not at a system, so can't have a blockade there
+            // is it at a system?
+            const auto turn_end_sys_id = turn_end_node_it->object_id;
+            if (turn_end_sys_id == INVALID_OBJECT_ID)
+                return {fleet, {}}; // turn end node is not at a system, so can't have a blockade there
 
-                // is there more path after the next turn end system?
-                const auto following_node_it = std::next(turn_end_node_it);
-                if (following_node_it == nodes.end())
-                    return {fleet, {}}; // end turn node is also end of path, so no blockade
+            // is there more path after the next turn end system?
+            const auto following_node_it = std::next(turn_end_node_it);
+            if (following_node_it == nodes.end())
+                return {fleet, {}}; // end turn node is also end of path, so no blockade
 
-                // if the next node is not a system, then it should be a lane that starts at the turn end system
-                if (following_node_it->object_id == INVALID_OBJECT_ID) {
-                    const auto should_be_turn_end_system_id = following_node_it->lane_start_id;
-                    if (should_be_turn_end_system_id != turn_end_sys_id)
-                        return {fleet, {}}; // unexpected...
-                }
+            // if the next node is not a system, then it should be a lane that starts at the turn end system
+            if (following_node_it->object_id == INVALID_OBJECT_ID) {
+                const auto should_be_turn_end_system_id = following_node_it->lane_start_id;
+                if (should_be_turn_end_system_id != turn_end_sys_id)
+                    return {fleet, {}}; // unexpected...
+            }
 
-                // what system is after the turn end system in the path?
-                const auto next_sys_id = following_node_it->object_id != INVALID_OBJECT_ID ?
-                    following_node_it->object_id : following_node_it->lane_end_id;
-                if (next_sys_id == INVALID_OBJECT_ID)
-                    return {fleet, {}}; // following node exists but isn't headed anywhere??? (unexpected)
+            // what system is after the turn end system in the path?
+            const auto next_sys_id = following_node_it->object_id != INVALID_OBJECT_ID ?
+                following_node_it->object_id : following_node_it->lane_end_id;
+            if (next_sys_id == INVALID_OBJECT_ID)
+                return {fleet, {}}; // following node exists but isn't headed anywhere??? (unexpected)
 
-                // is there a blockading fleet at the turn end system for this fleet going to the next system?
-                auto blockading_fleets = fleet->BlockadingFleetsAtSystem(turn_end_sys_id, next_sys_id, context);
-                return {fleet, blockading_fleets};
-            };
+            // is there a blockading fleet at the turn end system for this fleet going to the next system?
+            auto blockading_fleets = fleet->BlockadingFleetsAtSystem(turn_end_sys_id, next_sys_id, context);
+            return {fleet, blockading_fleets};
+        };
 
         std::vector<fleet_and_ids> blockading_fleets;
         blockading_fleets.reserve(context.ContextObjects().size<Fleet>());
