@@ -3666,8 +3666,8 @@ namespace {
             if (!fleet || nodes.empty())
                 return {fleet, {}}; // no valid fleet??? (unexpected) or no path
 
-            static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end; };
-            // get first turn end node
+            static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end || n.blockaded_here; };
+            // get first turn end node. blockades also count as a turn end for this purpose
             auto turn_end_node_it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
             if (turn_end_node_it == nodes.end())
                 return {fleet, {}}; // didn't find a turn end node??? (unexpected)
