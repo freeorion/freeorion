@@ -185,6 +185,7 @@ namespace {
     /** Retreive a value label and general string representation for @a meter_type
       * eg. {"METER_STEALTH_VALUE_LABEL", UserString("METER_STEALTH")} */
     auto MeterValueLabelAndString(MeterType meter_type) {
+        static_assert(std::is_same_v<std::string_view, decltype(to_string(meter_type))>);
         std::pair<std::string_view, std::string_view> retval{"", to_string(meter_type)};
 
         if (meter_type == MeterType::INVALID_METER_TYPE)
@@ -4170,7 +4171,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     m_summary_text->Clear();
     m_cost_text->Clear();
 
-    m_description_rich_text->SetText("");
+    m_description_rich_text->SetText(EMPTY_STRING);
 
     DetachChild(m_graph);
 
