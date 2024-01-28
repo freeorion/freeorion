@@ -1,8 +1,8 @@
 BuildingType
     name = "BLD_NEST_ERADICATOR"
     description = "BLD_NEST_ERADICATOR_DESC"
-    buildcost = 240
-    buildtime = 8
+    buildcost = 80
+    buildtime = 5
     location = And [
         Planet
         OwnedBy empire = Source.Owner
