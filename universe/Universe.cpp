@@ -547,7 +547,6 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
         do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
     }
 
-    m_empire_object_visibility_overrides.clear();
     m_effect_specified_empire_object_visibilities.clear();
 
     // cache all activation and scoping condition results before applying
