@@ -2130,7 +2130,17 @@ void Font::HandleTag(const TextElement& tag, RenderState& render_state) const
                 glColor4ubv(color.data());
                 render_state.PushColor(color[0], color[1], color[2], color[3]);
             } else {
-                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag: " << tag.text;
+                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag from text";
+                if (tag.text.IsDefaultEmpty())
+                    std::cerr << ": (default EMPTY Substring)";
+                else if (tag.text.empty())
+                    std::cerr << ": (empty Substring)";
+                else
+                    std::cerr << " (" << tag.text.size() << "): " << tag.text;
+                std::cerr << " ... tag_name: " << tag.tag_name << " ... params (" << tag.params.size() << ") :";
+                for (const auto& p : tag.params)
+                    std::cerr << " (" << p.size() << "):" << p;
+                std::cerr << std::endl;
             }
         }
     }
