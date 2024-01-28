@@ -415,6 +415,16 @@ std::pair<std::size_t, CPSize> GG::LinePositionOf(
 }
 
 namespace {
+    // These are the types found by the regular expression: XML open/close tags, text and
+    // whitespace.  Each type will correspond to a type of TextElement.
+    constexpr std::size_t full_regex_tag_idx = 0;
+    constexpr std::size_t tag_name_tag_idx = 1;
+    constexpr std::size_t open_bracket_tag_idx = 2;
+    constexpr std::size_t close_bracket_tag_idx = 3;
+    constexpr std::size_t whitespace_tag_idx = 4;
+    constexpr std::size_t text_tag_idx = 5;
+
+
     namespace xpr = boost::xpressive;
 
     /** CompiledRegex maintains a compiled boost::xpressive regular
@@ -428,11 +438,11 @@ namespace {
             m_tag_handler(tag_handler)
         {
             // Synonyms for s1 thru s5 sub matches
-            xpr::mark_tag tag_name_tag(1);
-            xpr::mark_tag open_bracket_tag(2);
-            xpr::mark_tag close_bracket_tag(3);
-            xpr::mark_tag whitespace_tag(4);
-            xpr::mark_tag text_tag(5);
+            xpr::mark_tag tag_name_tag(tag_name_tag_idx);
+            xpr::mark_tag open_bracket_tag(open_bracket_tag_idx);
+            xpr::mark_tag close_bracket_tag(close_bracket_tag_idx);
+            xpr::mark_tag whitespace_tag(whitespace_tag_idx);
+            xpr::mark_tag text_tag(text_tag_idx);
 
             using boost::placeholders::_1;
 
@@ -1029,6 +1039,18 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
     cache.vertices.reserve(glyph_count*4);
     cache.colors.reserve(glyph_count*4);
 
+    const auto get_next_char = [&text, string_end_it = text.end()](std::size_t string_index) -> uint32_t {
+        const auto text_next_it = std::next(text.begin(), string_index);
+        try {
+            const uint32_t c = utf8::peek_next(text_next_it, string_end_it);
+            assert((text[string_index] == '\n') == (c == WIDE_NEWLINE));
+            return c;
+        } catch (...) {
+            return WIDE_NEWLINE;
+        }
+    };
+
+
     for (std::size_t i = begin_line; i < end_line; ++i) {
         const LineData& line = line_data[i];
 
@@ -1043,22 +1065,21 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
         const CPSize end = (i != end_line - 1) ? CPSize(line.char_data.size()) :
             std::max(CP0, std::min(end_char, CPSize(line.char_data.size())));
 
-        const auto string_end_it = text.end();
+
         for (CPSize j = start; j < end; ++j) {
             const auto& char_data = line.char_data[Value(j)];
             for (const auto& tag : char_data.tags)
                 HandleTag(tag, render_state);
+            const uint32_t c = get_next_char(Value(char_data.string_index));
 
-            const uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
-            assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
                 continue;
-            auto it = m_glyphs.find(c);
-            if (it == m_glyphs.end()) {
+            const auto it = m_glyphs.find(c);
+            if (it == m_glyphs.end())
                 x = x_origin + char_data.extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
-            } else {
+            else
                 x += StoreGlyph(Pt(x, y), it->second, render_state, cache);
-            }
+
         }
     }
 
@@ -1118,25 +1139,19 @@ std::string Font::StripTags(std::string_view text, bool strip_unpaired_tags)
     std::string text_str{text}; // temporary until tag_handler.Regex returns a cregex
     auto& regex = tag_handler.Regex(text_str, false, strip_unpaired_tags);
 
-    static const mark_tag tag_name_tag(1);
-    static const mark_tag open_bracket_tag(2);
-    static const mark_tag close_bracket_tag(3);
-    static const mark_tag whitespace_tag(4);
-    static const mark_tag text_tag(5);
-
     std::string retval;
     retval.reserve(text.size());
 
     // scan through matched markup and text, saving only the non-tag-text
     sregex_iterator it(text_str.begin(), text_str.end(), regex);
-    sregex_iterator end_it;
+    const sregex_iterator end_it;
     for (; it != end_it; ++it) {
-        auto& text_match = (*it)[text_tag];
+        auto& text_match = (*it)[text_tag_idx];
         if (text_match.matched) {
             retval.append(text_match.first, text_match.second);
 
         } else {
-            auto& whitespace_match = (*it)[whitespace_tag];
+            auto& whitespace_match = (*it)[whitespace_tag_idx];
             if (whitespace_match.matched)
                 retval.append(whitespace_match.first, whitespace_match.second);
         }
@@ -1260,15 +1275,6 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     const sregex& regex = tag_handler.Regex(text, ignore_tags);
     sregex_iterator it(text.begin(), text.end(), regex);
 
-    // These are the types found by the regular expression: XML open/close tags, text and
-    // whitespace.  Each type will correspond to a type of TextElement.
-    static constexpr std::size_t full_regex(0);
-    static const mark_tag tag_name_tag(1);
-    static const mark_tag open_bracket_tag(2);
-    static const mark_tag close_bracket_tag(3);
-    static const mark_tag whitespace_tag(4);
-    static const mark_tag text_tag(5);
-
     const sregex_iterator end_it;
     while (it != end_it)
     {
@@ -1278,7 +1284,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
         Substring combined_text;
         sub_match<std::string::const_iterator> const* text_match;
         while (it != end_it
-               && (text_match = &(*it)[text_tag])
+               && (text_match = &(*it)[text_tag_idx])
                && text_match->matched)
         {
             need_increment = false;
@@ -1293,10 +1299,10 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
         if (combined_text.empty()) {
             const auto& it_elem = *it;
 
-            if (it_elem[open_bracket_tag].matched) {
+            if (it_elem[open_bracket_tag_idx].matched) {
                 // Open XML tag.
-                Substring text_substr{text, it_elem[full_regex]};
-                Substring tag_name_substr{text, it_elem[tag_name_tag]};
+                Substring text_substr{text, it_elem[full_regex_tag_idx]};
+                Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
 
                 // Check open tags for submatches which are parameters.  For example, a color tag
                 // might have RGB parameters.
@@ -1304,27 +1310,27 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
                 std::vector<Substring> params;
                 if (1 < nested_results.size()) {
                     params.reserve(nested_results.size() - 1);
-                    for (auto nested_it = ++nested_results.begin();
+                    for (auto nested_it = std::next(nested_results.begin());
                          nested_it != nested_results.end(); ++nested_it)
                     {
                         const auto& nested_elem = *nested_it;
-                        params.emplace_back(text, nested_elem[full_regex]);
+                        params.emplace_back(text, nested_elem[full_regex_tag_idx]);
                     }
                 }
 
                 text_elements.emplace_back(text_substr, tag_name_substr, std::move(params),
                                            Font::TextElement::TextElementType::OPEN_TAG);
 
-            } else if (it_elem[close_bracket_tag].matched) {
+            } else if (it_elem[close_bracket_tag_idx].matched) {
                 // Close XML tag
-                Substring text_substr{text, it_elem[full_regex]};
-                Substring tag_substr{text, it_elem[tag_name_tag]};
+                Substring text_substr{text, it_elem[full_regex_tag_idx]};
+                Substring tag_substr{text, it_elem[tag_name_tag_idx]};
                 text_elements.emplace_back(text_substr, tag_substr,
                                            Font::TextElement::TextElementType::CLOSE_TAG);
 
-            } else if (it_elem[whitespace_tag].matched) {
+            } else if (it_elem[whitespace_tag_idx].matched) {
                 // Whitespace element
-                Substring text_substr{text, it_elem[whitespace_tag]};
+                Substring text_substr{text, it_elem[whitespace_tag_idx]};
                 const auto& ws_elem = text_elements.emplace_back(
                     text_substr, Font::TextElement::TextElementType::WHITESPACE);
                 const char last_char = ws_elem.text.empty() ? static_cast<char>(0) : *std::prev(ws_elem.text.end());
