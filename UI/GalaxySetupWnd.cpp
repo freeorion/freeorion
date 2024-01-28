@@ -304,20 +304,31 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
                                                   GG::INTERACTIVE);
 
     auto validator = GetGameRules().GetValidator(rule_name);
-    int value = GetGameRules().Get<int>(rule_name);
 
     std::shared_ptr<GG::Spin<int>> spin;
-    if (auto ranged_validator = dynamic_cast<const RangedValidator<int>*>(validator))
+    if (auto ranged_validator = dynamic_cast<const RangedValidator<int>*>(validator)) {
+        const int value = GetGameRules().Get<int>(rule_name);
         spin = GG::Wnd::Create<CUISpin<int>>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
 
-    else if (auto step_validator = dynamic_cast<const StepValidator<int>*>(validator))
+    } else if (auto step_validator = dynamic_cast<const StepValidator<int>*>(validator)) {
+        const int value = GetGameRules().Get<int>(rule_name);
         spin = GG::Wnd::Create<CUISpin<int>>(value, step_validator->m_step_size, -1000000, 1000000, true);
 
-    else if (auto ranged_step_validator = dynamic_cast<const RangedStepValidator<int>*>(validator))
-        spin = GG::Wnd::Create<CUISpin<int>>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+    } else if (auto ranged_step_validator = dynamic_cast<const RangedStepValidator<int>*>(validator)) {
+        const int value = GetGameRules().Get<int>(rule_name);
+        spin = GG::Wnd::Create<CUISpin<int>>(value, ranged_step_validator->m_step_size,
+                                             ranged_step_validator->m_min, ranged_step_validator->m_max, true);
 
-    else //if (auto int_validator = dynamic_cast<const Validator<int>*>(validator))
-        spin = GG::Wnd::Create<CUISpin<int>>(value, 1, -1000000, 1000000, true);
+    } else if (auto vis_validator = dynamic_cast<const RangedValidator<Visibility>*>(validator)) {
+        const int value = static_cast<int>(GetGameRules().Get<Visibility>(rule_name));
+        spin = GG::Wnd::Create<CUISpin<int>>(value, 1, static_cast<int>(vis_validator->m_min),
+                                             static_cast<int>(vis_validator->m_max), true);
+
+    } else { //if (auto int_validator = dynamic_cast<const Validator<int>*>(validator)) 
+        const int value = GetGameRules().Get<int>(rule_name);
+        spin = GG::Wnd::Create<CUISpin<int>>(value, 1, -10000, 10000, true);
+    }
+
 
     if (!spin) {
         ErrorLogger() << "Unable to create IntRuleWidget spin";
@@ -333,9 +344,8 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
     layout->SetColumnStretch(1, 1.0);
     layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-    auto row = GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            std::move(layout), indentation_level);
-    page->Insert(std::move(row));
+    page->Insert(GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                              std::move(layout), indentation_level));
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
@@ -353,7 +363,7 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     auto text_control = GG::Wnd::Create<CUILabel>(UserString(rule_name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
     const ValidatorBase* validator = GetGameRules().GetValidator(rule_name);
-    double value = GetGameRules().Get<double>(rule_name);
+    const double value = GetGameRules().Get<double>(rule_name);
 
     std::shared_ptr<GG::Spin<double>> spin;
     if (auto ranged_validator = dynamic_cast<const RangedValidator<double>*>(validator))
@@ -381,9 +391,8 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
     layout->SetColumnStretch(1, 1.0);
     layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-    auto row = GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            layout, indentation_level);
-    page->Insert(row);
+    page->Insert(GG::Wnd::Create<RuleListRow>(Width(), spin->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                              layout, indentation_level));
 
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
@@ -453,9 +462,8 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
     layout->SetColumnStretch(1, 1.0);
     layout->SetChildClippingMode(ChildClippingMode::ClipToClient);
 
-    auto row = GG::Wnd::Create<RuleListRow>(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
-                                            layout, indentation_level);
-    page->Insert(row);
+    page->Insert(GG::Wnd::Create<RuleListRow>(Width(), drop->MinUsableSize().y + CONTROL_VMARGIN + 6,
+                                              layout, indentation_level));
 
     drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));

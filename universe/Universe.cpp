@@ -107,6 +107,15 @@ namespace {
                         false,
                         true,
                         GameRuleRanks::RULE_EXTRASOLAR_SHIP_DETECTION_RANK);
+
+        rules.Add<Visibility>(UserStringNop("RULE_OVERRIDE_VIS_LEVEL"),
+                              UserStringNop("RULE_OVERRIDE_VIS_LEVEL_DESC"),
+                              GameRuleCategories::GameRuleCategory::GENERAL,
+                              Visibility::VIS_PARTIAL_VISIBILITY,
+                              true,
+                              GameRuleRanks::RULE_OVERRIDE_VIS_LEVEL_RANK,
+                              std::make_unique<RangedValidator<Visibility>>(
+                                  Visibility::VIS_NO_VISIBILITY, Visibility::VIS_FULL_VISIBILITY));
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
@@ -1887,13 +1896,14 @@ void Universe::SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>
 { m_empire_object_visibility_overrides = std::move(empires_ids); }
 
 void Universe::ApplyEmpireObjectVisibilityOverrides() {
-    EmpireObjectVisibilityMap new_empire_object_visibilities;
+    const Visibility override_vis = GetGameRules().Get<Visibility>("RULE_OVERRIDE_VIS_LEVEL");
+
     for (auto& [empire_id, object_ids] : m_empire_object_visibility_overrides
          | range_filter([](auto& e_os) { return e_os.first != ALL_EMPIRES; }))
     {
         for (auto viewed_obj_id : object_ids
              | range_filter([](auto viewed_obj_id) { return viewed_obj_id > INVALID_OBJECT_ID; }))
-        { SetEmpireObjectVisibility(empire_id, viewed_obj_id, Visibility::VIS_PARTIAL_VISIBILITY); }
+        { SetEmpireObjectVisibility(empire_id, viewed_obj_id, override_vis); }
     }
 }
 
