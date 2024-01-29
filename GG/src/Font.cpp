@@ -1244,7 +1244,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
     // These are the types found by the regular expression: XML open/close tags, text and
     // whitespace.  Each type will correspond to a type of TextElement.
-    static const mark_tag full_regex(0);
+    static constexpr std::size_t full_regex(0);
     static const mark_tag tag_name_tag(1);
     static const mark_tag open_bracket_tag(2);
     static const mark_tag close_bracket_tag(3);
