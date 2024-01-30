@@ -1338,7 +1338,7 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
     }
 
     auto& entry0 = m_values[0];
-    auto& [value0, precision0, show_sign0] = entry0;
+    auto [value0, precision0, show_sign0] = entry0;
 
     if (index >= m_values.size()) {
         value0 = value;
