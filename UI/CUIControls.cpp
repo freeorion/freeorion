@@ -1285,18 +1285,14 @@ namespace {
 
 StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture, GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
-{
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC);
-}
+{ m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC); }
 
 StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
                              GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_values(1, std::tuple<double, int, bool>{value, digits, showsign})
-{
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC);
-}
+    m_values({std::tuple<double, int, bool>{value, digits, showsign}, {0.0, 0, false}})
+{ m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC); }
 
 void StatisticIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
@@ -1319,7 +1315,7 @@ void StatisticIcon::PreRender() {
 }
 
 double StatisticIcon::GetValue(std::size_t index) const {
-    if (index < 0u || index >= m_values.size()) {
+    if (index < 0u || (!m_have_two && index > 0) || (m_have_two && index > 1)) {
         ErrorLogger() << "StatisticIcon::GetValue passed index out of range index:" << index;
         return 0.0;
     }
@@ -1327,7 +1323,7 @@ double StatisticIcon::GetValue(std::size_t index) const {
 }
 
 void StatisticIcon::SetValue(double value, std::size_t index) {
-    if (index < 0u || index > 1u) {
+    if (index > 1u) {
         ErrorLogger() << "StatisticIcon::SetValue passed index out of range index:" << index;
         return;
     }
@@ -1337,33 +1333,30 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
         return;
     }
 
-    auto& entry0 = m_values[0];
-    auto [value0, precision0, show_sign0] = entry0;
+    auto& [value0, precision0, show_sign0] = m_values[0];
+    auto& [value1, precision1, show_sign1] = m_values[1];
 
-    if (index >= m_values.size()) {
-        value0 = value;
-        m_values.resize(index + 1, entry0);
-        RequirePreRender();
-    }
-
-    auto& entryi = m_values[index];
-    auto& valuei = std::get<0>(entryi);
+    auto& valuei = index == 0 ? value0 : value1;
     if (value != valuei) {
         RequirePreRender();
         valuei = value;
     }
 
+    const bool had_two = m_have_two;
+    if (index == 1)
+        m_have_two = true;
+    if (had_two != m_have_two)
+        RequirePreRender();
+
     // Compute text elements
-    GG::Font::TextAndElementsAssembler text_elements(*ClientUI::GetFont());
+    GG::Font::TextAndElementsAssembler text_elements(*font);
 
     text_elements
         .AddOpenTag(ClientUI::TextColor())
         .AddText(DoubleToString(value0, precision0, show_sign0))
         .AddCloseTag("rgba");
 
-    if (m_values.size() > 1) {
-        const auto [value1, precision1, show_sign1] = m_values[1];
-
+    if (m_have_two) {
         const auto effective_sign = EffectiveSign(value1);
         const auto clr = (effective_sign == -1) ? ClientUI::StatDecrColor() :
             (effective_sign == 1) ? ClientUI::StatIncrColor() :
