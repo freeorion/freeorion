@@ -908,7 +908,7 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
             m_prev_system = system->ID(); // passing a system, so update previous system of this fleet
 
             // reached a system, so remove it from the route
-            if (m_travel_route.front() == system->ID())
+            if (!m_travel_route.empty() && m_travel_route.front() == system->ID())
                 m_travel_route.erase(m_travel_route.begin());
 
             const bool resupply_here = supply.SystemHasFleetSupply(
