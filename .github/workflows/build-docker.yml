@@ -107,11 +107,10 @@ jobs:
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e GIT_SSL_NO_VERIFY=true -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 2
       - name: Test freeorion
-        if: ${{ matrix.image != 'fedora-rawhide' }} # Fedora Rawhide have issues with Python 3.12 
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e FO_TEST_HOSTLESS_GAMES=1 -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . --target unittest
       - name: Run godot
-        if: ${{ matrix.image != 'fedora-32' && matrix.image != 'manjaro' && matrix.image != 'fedora-rawhide' }} # old Godot 3.1 in Fedora 32 && no headless mode, Fedora Rawhide have issues with Python 3.12
+        if: ${{ matrix.image != 'fedora-32' && matrix.image != 'manjaro' }} # old Godot 3.1 in Fedora 32 && no headless mode
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/ ${{ steps.prep.outputs.tagged_image }} /freeorion/build/godot --disable-render-loop --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
       - name: Run godot
