@@ -382,8 +382,7 @@ public:
     GG::Pt MinUsableSize() const override;
 
     void PreRender() override;
-    void Render() override
-    {}
+    void Render() override {}
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
@@ -410,10 +409,11 @@ public:
 private:
     void DoLayout();
 
-    /// The value, precision and sign of the statistic value
-    std::vector<std::tuple<double, int, bool>> m_values;
-    std::shared_ptr<GG::StaticGraphic>         m_icon;
-    std::shared_ptr<GG::Label>                 m_text;
+    /// The value, precision and sign of the statistic value(s)
+    std::shared_ptr<GG::StaticGraphic>           m_icon;
+    std::shared_ptr<GG::Label>                   m_text;
+    std::array<std::tuple<double, int, bool>, 2> m_values{{{0.0, 0, false}, {0.0, 0, false}}};
+    bool                                         m_have_two = false;
 };
 
 class CUIToolBar final : public GG::Control {
