@@ -351,13 +351,17 @@ public:
     class GG_API TextAndElementsAssembler
     {
     public:
-        TextAndElementsAssembler(const Font& font);
+        explicit TextAndElementsAssembler(const Font& font);
+        TextAndElementsAssembler(const Font& font, std::size_t text_capacity, std::size_t elements_capacity);
         ~TextAndElementsAssembler(); // needed for unique_ptr<Impl>
 
         /** Return the constructed text.*/
-        const std::string& Text() const;
+        const std::string& Text() const noexcept;
         /** Return the constructed TextElements.*/
-        const std::vector<TextElement>& Elements() const;
+        const std::vector<TextElement>& Elements() const noexcept;
+
+        /** Destructively extract and return the constructed text and elements */
+        std::pair<std::string, std::vector<TextElement>> Extract() noexcept;
 
         /** Add an open tag iff it exists as a recognized tag.*/
         TextAndElementsAssembler& AddOpenTag(std::string_view tag);

@@ -1349,7 +1349,7 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
         RequirePreRender();
 
     // Compute text elements
-    GG::Font::TextAndElementsAssembler text_elements(*font);
+    GG::Font::TextAndElementsAssembler text_elements(*font, 120, 8); // usually 63 chars enough, but might have bigger numbers and don't want to guess from precision...
 
     text_elements
         .AddOpenTag(ClientUI::TextColor())

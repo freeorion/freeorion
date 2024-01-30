@@ -608,13 +608,22 @@ X Font::TextElement::Width() const
 class Font::TextAndElementsAssembler::Impl
 {
 public:
-    Impl(const Font& font) :
+    explicit Impl(const Font& font) :
         m_font(font)
     {}
+    Impl(const Font& font, std::size_t text_capacity, std::size_t elements_capacity) :
+        m_font(font)
+    {
+        m_text.reserve(text_capacity);
+        m_text_elements.reserve(elements_capacity);
+    }
 
     /** Return the constructed text.*/
     const auto& Text() const noexcept
     { return m_text; }
+
+    std::pair<std::string, std::vector<TextElement>> Extract() noexcept
+    { return std::pair(std::move(m_text), std::move(m_text_elements)); }
 
     /** Return the constructed TextElements.*/
     const auto& Elements()
@@ -747,14 +756,22 @@ Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
     m_impl(std::make_unique<Impl>(font))
 {}
 
+Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font, std::size_t text_capacity,
+                                                         std::size_t elements_capacity) :
+    m_impl(std::make_unique<Impl>(font, text_capacity, elements_capacity))
+{}
+
 // Required because Impl is defined here
 Font::TextAndElementsAssembler::~TextAndElementsAssembler() = default;
 
-const std::string& Font::TextAndElementsAssembler::Text() const
+const std::string& Font::TextAndElementsAssembler::Text() const noexcept
 { return m_impl->Text(); }
 
-const std::vector<Font::TextElement>& Font::TextAndElementsAssembler::Elements() const
+const std::vector<Font::TextElement>& Font::TextAndElementsAssembler::Elements() const noexcept
 { return m_impl->Elements(); }
+
+std::pair<std::string, std::vector<Font::TextElement>> Font::TextAndElementsAssembler::Extract() noexcept
+{ return m_impl->Extract(); }
 
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(std::string_view tag)
 {
