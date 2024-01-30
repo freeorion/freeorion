@@ -263,7 +263,7 @@ TechTreeLayout::Node::Node(std::string tech, GG::X width, GG::Y height) :
     tech_name(std::move(tech)),
     m_width(Value(width)),
     m_height(Value(height))
-{ assert(width > GG::X0 && height > GG::Y0 && GetTech(tech)); }
+{ assert(width > GG::X0 && height > GG::Y0 && GetTech(tech_name)); }
 
 /**
  * recursively creates dummy nodes between parent and child
