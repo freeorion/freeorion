@@ -272,11 +272,16 @@ bool Ship::HasFighters(const Universe& universe) const {
 bool Ship::CanColonize(const Universe& universe, const SpeciesManager& sm) const {
     if (m_species_name.empty())
         return false;
-    const Species* species = sm.GetSpecies(m_species_name);
-    if (!species || !species->CanColonize())
-        return false;
     const ShipDesign* design = universe.GetShipDesign(m_design_id);
-    return design && design->CanColonize(); // use design->CanColonize because zero-capacity colony ships still count as outpost ships, can "can colonize" as far as order / the UI are concerned
+    if (design && design->CanColonize()) {
+        if (design->ColonyCapacity() == 0.0f) // zero-capacity colony ships count as outpost ships
+            return true;
+        // for establishing a colony, the species needs to be able to colonize
+        const Species* species = sm.GetSpecies(m_species_name);
+        if (species && species->CanColonize())
+            return true;
+    }
+    return false;
 }
 
 bool Ship::HasTroops(const Universe& universe) const

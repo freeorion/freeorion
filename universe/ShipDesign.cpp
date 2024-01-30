@@ -377,9 +377,6 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id, const Script
     // ships can only be produced by species that are not planetbound
     if (!species->CanProduceShips())
         return false;
-    // also, species that can't colonize can't produce colony ships
-    if (this->CanColonize() && !species->CanColonize())
-        return false;
 
     // apply hull location conditions to potential location
     const ShipHull* hull = GetShipHull(m_hull);

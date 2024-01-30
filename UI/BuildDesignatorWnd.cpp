@@ -271,15 +271,13 @@ namespace {
 #if defined(__GNUC__) && (__GNUC__ < 13)
         // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
         static constinit const Condition::CanProduceShips can_prod_ship_cond;
-        static constinit const Condition::CanColonize can_colonize_cond;
 #else
         static constexpr Condition::CanProduceShips can_prod_ship_cond;
-        static constexpr Condition::CanColonize can_colonize_cond;
 #endif
         const Condition::OwnerHasShipDesignAvailable ship_avail_cond{ship_design_id};
 
         std::vector<const Condition::Condition*> location_conditions;
-        location_conditions.reserve(5);
+        location_conditions.reserve(4);
         location_conditions.push_back(&can_prod_ship_cond);
         location_conditions.push_back(&ship_avail_cond);
 
@@ -287,8 +285,6 @@ namespace {
         const Universe& universe = context.ContextUniverse();
 
         if (const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id)) {
-            if (ship_design->CanColonize())
-                location_conditions.push_back(&can_colonize_cond);
             if (const ShipHull* ship_hull = GetShipHull(ship_design->Hull()))
                 location_conditions.push_back(ship_hull->Location());
             for (const std::string& part_name : ship_design->Parts()) {
