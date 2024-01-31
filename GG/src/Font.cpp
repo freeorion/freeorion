@@ -622,15 +622,18 @@ public:
     const auto& Text() const noexcept
     { return m_text; }
 
-    std::pair<std::string, std::vector<TextElement>> Extract() noexcept
-    { return std::pair(std::move(m_text), std::move(m_text_elements)); }
+    std::pair<std::string, std::vector<TextElement>> Extract()
+    {
+        if (!m_are_widths_calculated)
+            m_font.FillTemplatedText(m_text, m_text_elements, m_text_elements.begin());
+        return std::pair(std::move(m_text), std::move(m_text_elements));
+    }
 
     /** Return the constructed TextElements.*/
     const auto& Elements()
     {
         if (!m_are_widths_calculated)
             m_font.FillTemplatedText(m_text, m_text_elements, m_text_elements.begin());
-
         return m_text_elements;
     }
 
@@ -767,10 +770,10 @@ Font::TextAndElementsAssembler::~TextAndElementsAssembler() = default;
 const std::string& Font::TextAndElementsAssembler::Text() const noexcept
 { return m_impl->Text(); }
 
-const std::vector<Font::TextElement>& Font::TextAndElementsAssembler::Elements() const noexcept
+const std::vector<Font::TextElement>& Font::TextAndElementsAssembler::Elements() const
 { return m_impl->Elements(); }
 
-std::pair<std::string, std::vector<Font::TextElement>> Font::TextAndElementsAssembler::Extract() noexcept
+std::pair<std::string, std::vector<Font::TextElement>> Font::TextAndElementsAssembler::Extract()
 { return m_impl->Extract(); }
 
 Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(std::string_view tag)
