@@ -40,6 +40,11 @@ public:
     SetMeter(MeterType meter,
              std::unique_ptr<ValueRef::ValueRef<double>>&& value,
              boost::optional<std::string> accounting_label = boost::none);
+    SetMeter(MeterType meter,
+             std::unique_ptr<ValueRef::ValueRef<double>>&& value,
+             const char* accounting_label) :
+        SetMeter(meter, std::move(value), std::string{accounting_label})
+    {}
 
     bool operator==(const Effect& rhs) const override;
 
