@@ -33,6 +33,12 @@ struct ScriptingContext;
 class CUILabel final : public GG::TextControl {
 public:
     CUILabel(std::string str,
+             GG::Flags<GG::TextFormat> format,
+             GG::Flags<GG::WndFlag> flags,
+             std::shared_ptr<GG::Font> font,
+             GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
+
+    CUILabel(std::string str,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
