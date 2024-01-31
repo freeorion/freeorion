@@ -1143,17 +1143,16 @@ std::string Font::StripTags(std::string_view text, bool strip_unpaired_tags)
     return retval;
 }
 
-Pt Font::TextExtent(const std::vector<LineData>& line_data) const
+Pt Font::TextExtent(const std::vector<LineData>& line_data) const noexcept
 {
-    Pt retval;
-    for (const LineData& line : line_data) {
-        if (retval.x < line.Width())
-            retval.x = line.Width();
-    }
-    bool is_empty = line_data.empty()
-        || (line_data.size() == 1 && line_data.front().Empty());
-    retval.y = is_empty ? Y0 : (static_cast<int>(line_data.size()) - 1) * m_lineskip + m_height;
-    return retval;
+    X x = X0;
+    for (const LineData& line : line_data)
+        x = std::max(x, line.Width());
+
+    const auto ld_size = static_cast<int>(line_data.size());
+    const bool is_empty = line_data.empty() || (ld_size == 1 && line_data.front().Empty());
+    Y y = is_empty ? Y0 : ((ld_size - 1) * m_lineskip + m_height);
+    return {x, y};
 }
 
 void Font::RegisterKnownTags(std::vector<std::string_view> tags)
