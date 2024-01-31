@@ -394,8 +394,15 @@ void TextControl::Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSiz
 
 void TextControl::AdjustMinimumSize()
 {
-    if (m_set_min_size)
-        SetMinSize(m_text_lr - m_text_ul);
+    if (!m_set_min_size)
+        return;
+
+    // disable while doing to prevent recursive loop via
+    // SetMinSize(..) -> AdjustMinimumSize() -> RecomputeTextBounds() -> Resize(..) -> SetMinSize(..)
+    // which occurred when Font::TextExtent returned a large value
+    m_set_min_size = false;
+    SetMinSize(m_text_lr - m_text_ul);
+    m_set_min_size = true;
 }
 
 void TextControl::RecomputeTextBounds()
