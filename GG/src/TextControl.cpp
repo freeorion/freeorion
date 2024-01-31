@@ -201,6 +201,11 @@ void TextControl::SetText(std::string str, std::vector<Font::TextElement> text_e
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
 
+    // before rebinding text elements to str, they may be invalid if whatever they were
+    // pointing to before the call to this function may have been moved from to create
+    // str. this is OK though, as the elem.text.size() calls don't depend on the
+    // pointed-to string of the Substring elem.text
+
     std::size_t expected_length(0);
     for (auto& elem : text_elements)
         expected_length += elem.text.size();

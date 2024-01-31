@@ -1381,10 +1381,8 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
             .AddCloseTag("rgba");
     }
 
-    m_text->SetText(text_elements.Text(), text_elements.Elements());
-
-    //auto [text, elements] = text_elements.Extract();
-    //m_text->SetText(std::move(text), std::move(elements));
+    auto [text, elements] = text_elements.Extract();
+    m_text->SetText(std::move(text), std::move(elements));
 
     DoLayout();
 }
