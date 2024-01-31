@@ -61,6 +61,13 @@ namespace {
 ///////////////////////////////////////
 CUILabel::CUILabel(std::string str,
                    GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
+                   std::shared_ptr<GG::Font> font,
+                   GG::X x, GG::Y y, GG::X w, GG::Y h) :
+    TextControl(x, y, w, h, std::move(str), std::move(font), ClientUI::TextColor(), format, flags)
+{ SetName("CUILabel no elements"); }
+
+CUILabel::CUILabel(std::string str,
+                   GG::Flags<GG::TextFormat> format, GG::Flags<GG::WndFlag> flags,
                    GG::X x, GG::Y y, GG::X w, GG::Y h) :
     TextControl(x, y, w, h, std::move(str), ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 { SetName("CUILabel no elements"); }
@@ -1375,6 +1382,9 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
     }
 
     m_text->SetText(text_elements.Text(), text_elements.Elements());
+
+    //auto [text, elements] = text_elements.Extract();
+    //m_text->SetText(std::move(text), std::move(elements));
 
     DoLayout();
 }
