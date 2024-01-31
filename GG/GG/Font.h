@@ -356,12 +356,12 @@ public:
         ~TextAndElementsAssembler(); // needed for unique_ptr<Impl>
 
         /** Return the constructed text.*/
-        const std::string& Text() const noexcept;
+        [[nodiscard]] const std::string& Text() const noexcept;
         /** Return the constructed TextElements.*/
-        const std::vector<TextElement>& Elements() const noexcept;
+        [[nodiscard]] const std::vector<TextElement>& Elements() const;
 
         /** Destructively extract and return the constructed text and elements */
-        std::pair<std::string, std::vector<TextElement>> Extract() noexcept;
+        [[nodiscard]] std::pair<std::string, std::vector<TextElement>> Extract();
 
         /** Add an open tag iff it exists as a recognized tag.*/
         TextAndElementsAssembler& AddOpenTag(std::string_view tag);
