@@ -151,10 +151,10 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     }
 }
 
-Pt TextControl::TextUpperLeft() const
+Pt TextControl::TextUpperLeft() const noexcept
 { return UpperLeft() + m_text_ul; }
 
-Pt TextControl::TextLowerRight() const
+Pt TextControl::TextLowerRight() const noexcept
 { return UpperLeft() + m_text_lr; }
 
 void TextControl::Render()
@@ -252,18 +252,22 @@ void TextControl::SizeMove(Pt ul, Pt lr)
 {
     const auto old_size = Size();
     Wnd::SizeMove(ul, lr);
-    bool resized = old_size != Size();
+    const bool resized = old_size != Size();
     bool redo_determine_lines = false;
     X client_width = ClientSize().x;
 
     if (m_text.empty()) {
         // don't redo lines
-    } else if (resized && m_format != FORMAT_LEFT && m_format != FORMAT_NONE) {
-        // for text with non-trivial alignment, be that centred, justified,
-        // right, or multi-line, or vertical alignments, need to redo for any
-        // resize
+    } else if (resized && m_format != FORMAT_LEFT &&
+               m_format != FORMAT_NONE)
+    {
+        // for text with non-trivial alignment, be that centred, justified, right,
+        // or multi-line, or vertical alignments, need to redo for any resize
         redo_determine_lines = true;
-    } else if (resized && !(m_format & FORMAT_NOWRAP) && (m_format & FORMAT_WORDBREAK || m_format & FORMAT_LINEWRAP)) {
+    } else if (resized &&
+               !(m_format & FORMAT_NOWRAP) &&
+               (m_format & FORMAT_WORDBREAK || m_format & FORMAT_LINEWRAP))
+    {
         // if breaking text across lines, need to redo layout when the available
         // width is less than that needed to fit the text on one line
         X text_width = m_text_lr.x - m_text_ul.x;
@@ -396,7 +400,7 @@ void TextControl::AdjustMinimumSize()
 
 void TextControl::RecomputeTextBounds()
 {
-    Pt text_sz = TextLowerRight() - TextUpperLeft();
+    const Pt text_sz = TextLowerRight() - TextUpperLeft();
     m_text_ul.y = Y0; // default value for FORMAT_TOP
     if (m_format & FORMAT_BOTTOM)
         m_text_ul.y = Size().y - text_sz.y;
