@@ -17,6 +17,7 @@
 #include "util/GameRules.h"
 #include "util/Pending.h"
 #include "util/PythonCommon.h"
+#include "util/VarText.h"
 
 #include "ParserAppFixture.h"
 
@@ -26,8 +27,21 @@ namespace {
     { return {std::make_move_iterator(a.begin()), std::make_move_iterator(a.end())}; }
 
     template <typename T, size_t N>
-    inline std::vector<std::pair<std::string, std::unique_ptr<T>>> pair_array_to_vector(std::array<std::pair<std::string, std::unique_ptr<T>>, N>&& a)
+    inline std::vector<std::pair<std::string, std::unique_ptr<T>>> pair_array_to_vector(
+        std::array<std::pair<std::string, std::unique_ptr<T>>, N>&& a)
     { return {std::make_move_iterator(a.begin()), std::make_move_iterator(a.end())}; }
+
+    template <typename T, size_t N>
+    inline std::vector<std::pair<std::string, std::unique_ptr<T>>> pair_array_to_vector(
+        std::array<std::pair<std::string_view, std::unique_ptr<T>>, N>&& a)
+    {
+        std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
+        retval.reserve(a.size());
+        std::transform(std::make_move_iterator(a.begin()), std::make_move_iterator(a.end()),
+                       std::back_inserter(retval),
+                       [](auto&& p) { return std::pair{std::string(p.first), std::move(p.second)}; });
+        return retval;
+    }
 }
 
 BOOST_FIXTURE_TEST_SUITE(TestPythonParser, ParserAppFixture)
@@ -105,7 +119,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                     nullptr,
                     nullptr,
                     nullptr,
-                    std::make_unique<ValueRef::Constant<std::string>>(std::string("RULE_TECH_COST_FACTOR")),
+                    std::make_unique<ValueRef::Constant<std::string>>("RULE_TECH_COST_FACTOR"),
                     nullptr
                 )),
             std::make_unique<ValueRef::Constant<int>>(3),
@@ -162,7 +176,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                                 std::make_unique<ValueRef::Constant<double>>(1.0),
                                 std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "HabitableSize"))
                         ),
-                        std::string("ORBITAL_HAB_LABEL")));
+                        "ORBITAL_HAB_LABEL"));
 
         auto effect_group = std::make_shared<Effect::EffectsGroup>(
                 std::make_unique<Condition::And>(
@@ -192,7 +206,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                     nullptr,
                     nullptr,
                     nullptr,
-                    std::make_unique<ValueRef::Constant<std::string>>(std::string("RULE_TECH_COST_FACTOR")),
+                    std::make_unique<ValueRef::Constant<std::string>>("RULE_TECH_COST_FACTOR"),
                     nullptr
                 )),
             std::make_unique<ValueRef::Constant<int>>(7),
@@ -454,7 +468,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_REQUIRE(building);
 
     std::set<std::string> test_tags{};
-    
+
     const BuildingType test_building{
         "BLD_ART_BLACK_HOLE",
         "BLD_ART_BLACK_HOLE_DESC",
@@ -466,7 +480,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
                     nullptr,
                     nullptr,
                     nullptr,
-                    std::make_unique<ValueRef::Constant<std::string>>(std::string("RULE_BUILDING_COST_FACTOR")),
+                    std::make_unique<ValueRef::Constant<std::string>>("RULE_BUILDING_COST_FACTOR"),
                     nullptr
                 )),
             std::make_unique<ValueRef::Constant<int>>(6),
@@ -476,7 +490,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
                 std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
                 std::make_unique<Condition::Not>(std::make_unique<Condition::Contains>(
                     std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
-                       std::make_unique<ValueRef::Constant<std::string>>(std::string("BLD_ART_BLACK_HOLE")) 
+                       std::make_unique<ValueRef::Constant<std::string>>("BLD_ART_BLACK_HOLE")
                     }))
                 )),
                 std::make_unique<Condition::EmpireAffiliation>(
@@ -505,7 +519,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
                             std::string{"EFFECT_BLACKHOLE"},
                             std::string{"icons/building/blackhole.png"},
                             pair_array_to_vector<ValueRef::ValueRef<std::string>, 1>({
-                                std::make_pair("system", std::make_unique<ValueRef::StringCast<int>>(
+                                std::pair(VarText::SYSTEM_ID_TAG, std::make_unique<ValueRef::StringCast<int>>(
                                     std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID")
                                 ))
                             }),
