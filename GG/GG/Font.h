@@ -657,7 +657,7 @@ public:
                                          const std::vector<TextElement>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
-    Pt TextExtent(const std::vector<LineData>& line_data) const;
+    Pt TextExtent(const std::vector<LineData>& line_data) const noexcept;
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
