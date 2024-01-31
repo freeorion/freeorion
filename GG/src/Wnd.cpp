@@ -302,8 +302,8 @@ void Wnd::ClampRectWithMinAndMaxSize(Pt& ul, Pt& lr) const
 {
     Pt min_sz = MinSize();
     Pt max_sz = MaxSize();
-    auto&& layout = GetLayout();
-    if (layout) {
+
+    if (auto layout = GetLayout()) {
         Pt layout_min_sz = layout->MinSize() + (Size() - ClientSize());
         min_sz.x = std::max(min_sz.x, layout_min_sz.x);
         min_sz.y = std::max(min_sz.y, layout_min_sz.y);
