@@ -123,12 +123,12 @@ std::shared_ptr<Empire> CombatInfo::GetEmpire(int id)
 
 float CombatInfo::GetMonsterDetection() const {
     float monster_detection = 0.0;
-    constexpr auto not_unowned = [](const auto* obj) { return !obj->Unowned(); };
+    constexpr auto unowned = [](const auto* obj) { return obj->Unowned(); };
     constexpr auto detection = [](const auto* obj) { return obj->GetMeter(MeterType::METER_DETECTION)->Initial(); };
 
-    for (const auto det : objects.allRaw<Ship>() | range_filter(not_unowned) | range_transform(detection))
+    for (const auto det : objects.allRaw<Ship>() | range_filter(unowned) | range_transform(detection))
         monster_detection = std::max(monster_detection, det); // TODO: could use ranges::max_element
-    for (const auto det : objects.allRaw<Planet>() | range_filter(not_unowned)| range_transform(detection))
+    for (const auto det : objects.allRaw<Planet>() | range_filter(unowned)| range_transform(detection))
         monster_detection = std::max(monster_detection, det);
     return monster_detection;
 }
