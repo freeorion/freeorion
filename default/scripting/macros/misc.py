@@ -55,6 +55,19 @@ MINIMUM_DISTANCE_EMPIRE_CHECK = ~WithinStarlaneJumps(
     condition=System & Contains(Planet() & OwnedBy(affiliation=AnyEmpire)),
 )
 
+# Range from -0.5(1/2 population growth) to +1(double population growth)
+AUGMENTATION_GROWTH_MODIFIER = (
+    MinOf(
+        float,
+        2,
+        MaxOf(
+            float,
+            0.5,
+            Target.Construction / NamedRealLookup(name="AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"),
+        ),
+    )
+    - 1
+)
 
 GROWTH_RATE_FACTOR = (
     0.1
@@ -68,14 +81,6 @@ GROWTH_RATE_FACTOR = (
         1
         + StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_AUGMENTATION"))
         # slower growth with augmentation on low-infrastructure planets
-        * MinOf(
-            float,
-            1.2,
-            MaxOf(
-                float,
-                0.5,
-                Target.Construction / NamedRealLookup(name="AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"),
-            ),
-        )
+        * AUGMENTATION_GROWTH_MODIFIER
     )
 )
