@@ -289,18 +289,30 @@ namespace {
     {
         // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
         // Use the label value. When missing, use the tag submatch as label instead.
-        const int idx = match[2].matched ? 2 : 1;
-        const auto& m{match[idx]};
-        const std::string_view label{&*m.first, static_cast<std::size_t>(std::max(0, static_cast<int>(m.length())))};
+
+        const bool have_label = match[2].matched;
+
+        const auto& full_match = match[0];
+        const auto& tag_match = match[1];
+        const auto& label_match = match[have_label ? 2 : 1];
+
+        //std::cout << "match length: " << match.length() << (have_label ? " with label" : " without label") << std::endl;
+        //std::cout << "full: " << full_match << "   tag: " << tag_match << "   label: " << label_match << std::endl;
+
+        static constexpr decltype(label_match.length()) zero = 0;
+
+        const std::size_t label_sz = static_cast<std::size_t>(std::max(zero, label_match.length()));
+        const std::string_view label(&*label_match.first, label_sz);
 
         // look up child
         const auto elem = variables.find(label);
+        //std::cout << (elem == variables.end() ? "... label not in variables": "found label in variables") << std::endl;
+
         if (elem == variables.end())
             return {"", "", "", false};
 
-        const std::string_view tag{
-            &*match[1].first,
-            static_cast<std::size_t>(std::max(0, static_cast<int>(match[1].length())))};
+        const std::size_t tag_sz = static_cast<std::size_t>(std::max(zero, tag_match.length()));
+        const std::string_view tag(&*tag_match.first, tag_sz);
 
         return {label, elem->second, tag, true};
     }
