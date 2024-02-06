@@ -493,7 +493,9 @@ namespace {
             }
         }
 
-        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) {
+        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags)
+            noexcept(noexcept(std::stack<Font::Substring>{}))
+        {
             if (!m_tag_stack.empty()) {
                 std::stack<Font::Substring> empty_stack;
                 std::swap(m_tag_stack, empty_stack);
@@ -507,7 +509,7 @@ namespace {
         bool MatchesKnownTag(const boost::xpressive::ssub_match& sub)
         { return !m_ignore_tags && m_tag_handler.IsKnown(sub.str()); }
 
-        bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) {
+        bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) noexcept {
             bool retval = !m_tag_stack.empty() && m_tag_stack.top() == sub;
             if (retval) {
                 m_tag_stack.pop();
@@ -541,9 +543,8 @@ namespace {
         /** Add a tag to the set of known tags.*/
         void Insert(std::vector<std::string_view> tags)
         {
-            for (const auto tag : tags)
-                if (!IsKnown(tag))
-                    m_custom_tags.push_back(tag);
+            std::copy_if(tags.begin(), tags.end(), std::back_inserter(m_custom_tags),
+                         [this](const auto tag) { return !IsKnown(tag); });
         }
 
         /** Remove a tag from the set of known tags.*/
@@ -555,7 +556,7 @@ namespace {
         }
 
         /** Remove all tags from the set of known tags.*/
-        void Clear()
+        void Clear() noexcept
         { m_custom_tags.clear(); }
 
         bool IsKnown(std::string_view tag) const
