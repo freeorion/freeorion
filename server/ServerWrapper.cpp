@@ -87,8 +87,8 @@ namespace {
         }
 
         if (empire_id == ALL_EMPIRES) {
-            for (const auto& entry : context.Empires()) {
-                entry.second->AddSitRepEntry(CreateSitRep(
+            for (const auto& empire : context.Empires() | range_values) {
+                empire->AddSitRepEntry(CreateSitRep(
                     template_string, sitrep_turn, icon, params));  // copy params for each...
             }
         } else {
