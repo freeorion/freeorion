@@ -117,6 +117,7 @@ public:
     //! @param  data
     //!     Data value of the #m_variables set.
     void AddVariable(std::string tag, std::string data);
+    void AddVariable(const char* tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
     void AddVariable(std::string_view tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
 
     //! Assign @p data as tags. Does not overwrite or replace data of existing tags.
