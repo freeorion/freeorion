@@ -322,13 +322,15 @@ namespace {
             return UserString("ERROR");
         }
 
-        boost::optional<std::string> sub_opt;
-        bool sub_found = false;
+        const auto [sub_opt, sub_found] = [context](std::string_view tag, std::string_view variable_value) {
+            if (context) {
+                auto retval = EvalContextSub(tag, variable_value, *context);
+                if (std::get<1>(retval))
+                    return retval;
+            }
+            return EvalNoContextSub(tag, variable_value);
+        }(tag, variable_value);
 
-        if (context)
-            std::tie(sub_opt, sub_found) = EvalContextSub(tag, variable_value, *context);
-        if (!sub_found)
-            std::tie(sub_opt, sub_found) = EvalNoContextSub(tag, variable_value);
 
         if (!sub_found) {
             ErrorLogger() << "No substitution found for tag: " << tag << " from token: " << match.str();
