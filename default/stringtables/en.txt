@@ -8052,6 +8052,21 @@ At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
+SITREP_FLEET_BLOCKADED
+At %system%: the %empire:blockaded% fleet %fleet% was forced to halt by an %empire:blockader% blockade.
+
+SITREP_FLEET_BLOCKADED_NEUTRAL
+At %system%: the fleet %fleet% was forced to halt by a blockade.
+
+SITREP_FLEET_BLOCKADED_LABEL
+Fleet Blockaded
+
+SITREP_FLEET_BLOCKADED_NO_EMPIRE
+At %system%: the fleet %fleet% was forced to halt by a blockade.
+
+SITREP_FLEET_BLOCKADED_NO_EMPIRE_LABEL
+Fleet Blockaded
+
 SITREP_POP_THRESHOLD
 On %planet%: The colony has reached sufficient size and [[metertype METER_HAPPINESS]] to be a settler source for colonizing other planets. Also [[metertype METER_INDUSTRY]] and [[metertype METER_RESEARCH]] may start growing.
 

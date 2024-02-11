@@ -620,6 +620,41 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
     }
 }
 
+SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id, int blockaded_empire_id,
+                                       int blockading_empire_id, const ScriptingContext& context)
+{
+    const auto template_label = (blockading_empire_id != ALL_EMPIRES) ?
+        std::pair{UserStringNop("SITREP_FLEET_BLOCKADED"), UserStringNop("SITREP_FLEET_BLOCKADED_LABEL")} :
+        std::pair{UserStringNop("SITREP_FLEET_BLOCKADED_NEUTRAL"), UserStringNop("SITREP_FLEET_BLOCKADED_LABEL")};
+
+    SitRepEntry sitrep(
+        template_label.first,
+        context.current_turn + 1,
+        "icons/sitrep/blockade.png",
+        template_label.second,
+        true);
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG,  std::to_string(system_id));
+    sitrep.AddVariable(VarText::FLEET_ID_TAG,   std::to_string(blockaded_fleet_id));
+    sitrep.AddVariable("blockaded",             std::to_string(blockaded_empire_id));
+    //if (blockading_empire_id != ALL_EMPIRES)
+        sitrep.AddVariable("blockader",        std::to_string(blockading_empire_id));
+    return sitrep;
+}
+
+SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id,
+                                       int blockaded_empire_id, const ScriptingContext& context)
+{
+    SitRepEntry sitrep(
+        UserStringNop("SITREP_FLEET_BLOCKADED_NO_EMPIRE"),
+        context.current_turn + 1,
+        "icons/sitrep/blockade.png",
+        UserStringNop("SITREP_FLEET_BLOCKADED_NO_EMPIRE_LABEL"), true);
+    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
+    sitrep.AddVariable(VarText::FLEET_ID_TAG,  std::to_string(blockaded_fleet_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(blockaded_empire_id));
+    return sitrep;
+}
+
 SitRepEntry CreateEmpireEliminatedSitRep(int empire_id, int current_turn) {
     SitRepEntry sitrep(
         UserStringNop("SITREP_EMPIRE_ELIMINATED"),
