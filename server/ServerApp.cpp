@@ -3655,62 +3655,66 @@ namespace {
         }
     }
 
-    /** Which fleets and ships are revealed to empires due to those
-      * fleets and ships blockading a fleet owned by that empire? */
+    /** .first: Map from empire ID to IDs of fleets and ships that are being revealed
+      *         to that empire, due to those fleets and ships blockading that empire's fleet(s)
+      * .second: Vector of ((fleet ID, owner empire ID), fleet IDs), where the fleet IDs are
+      *          blockading the first fleet ID */
     auto GetBlockadingObjectsForEmpires(const auto& move_pathes, const ScriptingContext& context) {
         // is there a blockade within (at end?) of this turn's movement?
         using fleet_and_path = std::pair<const Fleet*, std::vector<MovePathNode>>;
-        using fleet_and_ids = std::pair<const Fleet*, std::vector<int>>;
-        const auto path_to_blockading_fleets = [&context](fleet_and_path mp) -> fleet_and_ids {
+        using two_ids_and_ids = std::pair<std::pair<int, int>, std::vector<int>>;
+        const auto path_to_ids_and_blockading_fleets = [&context](fleet_and_path mp) -> two_ids_and_ids {
             const auto& [fleet, nodes] = mp;
             if (!fleet || nodes.empty())
-                return {fleet, {}}; // no valid fleet??? (unexpected) or no path
+                return {std::pair{INVALID_OBJECT_ID, ALL_EMPIRES}, {}}; // no valid fleet??? (unexpected) or no path
+
+            const std::pair<int, int> fleet_id_and_owner{fleet->ID(), fleet->Owner()};
 
             static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end || n.blockaded_here; };
             // get first turn end node. blockades also count as a turn end for this purpose
             auto turn_end_node_it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
             if (turn_end_node_it == nodes.end())
-                return {fleet, {}}; // didn't find a turn end node??? (unexpected)
+                return {fleet_id_and_owner, {}}; // didn't find a turn end node??? (unexpected)
 
             // is it at a system?
             const auto turn_end_sys_id = turn_end_node_it->object_id;
             if (turn_end_sys_id == INVALID_OBJECT_ID)
-                return {fleet, {}}; // turn end node is not at a system, so can't have a blockade there
+                return {fleet_id_and_owner, {}}; // turn end node is not at a system, so can't have a blockade there
 
             // is there more path after the next turn end system?
             const auto following_node_it = std::next(turn_end_node_it);
             if (following_node_it == nodes.end())
-                return {fleet, {}}; // end turn node is also end of path, so no blockade
+                return {fleet_id_and_owner, {}}; // end turn node is also end of path, so no blockade
 
             // if the next node is not a system, then it should be a lane that starts at the turn end system
             if (following_node_it->object_id == INVALID_OBJECT_ID) {
                 const auto should_be_turn_end_system_id = following_node_it->lane_start_id;
                 if (should_be_turn_end_system_id != turn_end_sys_id)
-                    return {fleet, {}}; // unexpected...
+                    return {fleet_id_and_owner, {}}; // unexpected...
             }
 
             // what system is after the turn end system in the path?
             const auto next_sys_id = following_node_it->object_id != INVALID_OBJECT_ID ?
                 following_node_it->object_id : following_node_it->lane_end_id;
             if (next_sys_id == INVALID_OBJECT_ID)
-                return {fleet, {}}; // following node exists but isn't headed anywhere??? (unexpected)
+                return {fleet_id_and_owner, {}}; // following node exists but isn't headed anywhere??? (unexpected)
 
             // is there a blockading fleet at the turn end system for this fleet going to the next system?
             auto blockading_fleets = fleet->BlockadingFleetsAtSystem(turn_end_sys_id, next_sys_id, context);
-            return {fleet, blockading_fleets};
+            return {fleet_id_and_owner, blockading_fleets};
         };
 
-        std::vector<fleet_and_ids> blockading_fleets;
-        blockading_fleets.reserve(context.ContextObjects().size<Fleet>());
-        range_copy(move_pathes | range_transform(path_to_blockading_fleets),
-                   std::back_inserter(blockading_fleets));
+        std::vector<two_ids_and_ids> fleet_owner_and_blockading_fleets;
+        fleet_owner_and_blockading_fleets.reserve(context.ContextObjects().size<Fleet>());
+        range_copy(move_pathes | range_transform(path_to_ids_and_blockading_fleets),
+                   std::back_inserter(fleet_owner_and_blockading_fleets));
 
         // assemble list of fleets that are revealed to each empire by performing blockades
-        static constexpr auto not_null_or_empty = [](const fleet_and_ids& fbids)
-        { return fbids.first && !fbids.second.empty(); };
+        static constexpr auto not_null_or_empty = [](const two_ids_and_ids& fbids)
+        { return fbids.first.first != INVALID_OBJECT_ID && !fbids.second.empty(); };
         std::map<int, std::vector<int>> empires_blockaded_by_fleets;
-        for (auto& [fleet, blockader_ids] : blockading_fleets | range_filter(not_null_or_empty)) {
-            auto& revealed_ids = empires_blockaded_by_fleets[fleet->Owner()];
+        for (auto& [fleet_and_owner, blockader_ids] : fleet_owner_and_blockading_fleets | range_filter(not_null_or_empty)) {
+            auto& revealed_ids = empires_blockaded_by_fleets[fleet_and_owner.second];
             revealed_ids.insert(revealed_ids.end(), blockader_ids.begin(), blockader_ids.end());
         }
         // sort/unique
@@ -3746,7 +3750,7 @@ namespace {
             fleet_ids.insert(fleet_ids.end(), all_ship_ids.begin(), all_ship_ids.end());
         }
 
-        return empires_blockaded_by_fleets;
+        return std::pair{empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets};
     }
 
     // separate into objects that are visible or not to the empire
@@ -4038,10 +4042,64 @@ namespace {
         for (auto* fleet : fleets | range_filter(arrived_this_turn)) {
             // sitreps for all empires that can see fleet at new location
             for (auto& [empire_id, empire] : context.Empires()) {
-                if (fleet->GetVisibility(empire_id, context.ContextUniverse()) >= Visibility::VIS_BASIC_VISIBILITY) {
+                if (context.ContextVis(fleet->ID(), empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
                     empire->AddSitRepEntry(
                         CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID(),
                                                               empire_id, context));
+                }
+            }
+        }
+
+        static constexpr auto obj_to_owner = [](const UniverseObject* obj) -> int { return obj->Owner(); };
+
+        const auto fleet_ids_to_owner_empires = [&context](const std::vector<int>& fleet_ids) {
+            std::vector<int> empire_ids;
+            empire_ids.reserve(fleet_ids.size());
+
+            const auto id_to_fleet = [&context](const int fleet_id) -> const Fleet*
+            { return context.ContextObjects().getRaw<const Fleet>(fleet_id); };
+
+            auto empires_rng = fleet_ids | range_transform(id_to_fleet)
+                | range_filter(not_null) | range_transform(obj_to_owner);
+            range_copy(empires_rng, std::back_inserter(empire_ids));
+
+            // sort/unique
+            std::sort(empire_ids.begin(), empire_ids.end());
+            const auto unique_it = std::unique(empire_ids.begin(), empire_ids.end());
+            empire_ids.erase(unique_it, empire_ids.end());
+
+            return empire_ids;
+        };
+
+        // SitReps for blockaded fleets
+        for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_and_owner_blockaded_by_fleets) {
+            const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
+            static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, int>);
+            static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<int>>);
+
+            // which fleet and system is blockaded?
+            const Fleet* blockaded_fleet = context.ContextObjects().getRaw<const Fleet>(blockaded_fleet_id);
+            if (!blockaded_fleet) continue;
+            const auto sys_id = blockaded_fleet->SystemID();
+            if (sys_id == INVALID_OBJECT_ID)
+                continue;
+
+            // which empire(s) are blockading the fleet?
+            const auto blockading_empire_ids = fleet_ids_to_owner_empires(blockading_fleet_ids);
+
+            for (auto& [empire_id, empire] : context.Empires()) {
+                for (auto blockading_empire_id : blockading_empire_ids) {
+                    // if blockaded fleet is visible, give viewing empire a sitrep
+                    if (context.ContextVis(blockaded_fleet_id, empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY) {
+                        // TODO: only if blockading fleet is visible, include that info
+                        empire->AddSitRepEntry(
+                            CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
+                                                       blockaded_fleet_owner_id, blockading_empire_id, context));
+                        // TODO: else, don't...
+                        empire->AddSitRepEntry(
+                            CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
+                                                       blockaded_fleet_owner_id, context));
+                    }
                 }
             }
         }

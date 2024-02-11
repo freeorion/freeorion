@@ -855,7 +855,6 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
                             const auto id_as_string = std::to_string(sys_id);
                             return (sys ? sys->Name() : "") + " (" + id_as_string + ")";
                          }(SystemID());
-        // TODO: Blockaded movement sitrep
         return;
     }
 
