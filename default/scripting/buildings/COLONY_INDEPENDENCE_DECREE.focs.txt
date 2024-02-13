@@ -7,7 +7,7 @@ BuildingType
     location = And [
         Planet
         OwnedBy empire = Source.Owner
-        Population
+        Population low = 0.001
         Not Capital
     ]
 
