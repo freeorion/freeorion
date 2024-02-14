@@ -3927,8 +3927,7 @@ namespace {
         // set fleets that are in systems and are unblockaded and are moving away from them as being from that system
         for (auto& [fleet, path] : fleets_move_pathes | range_filter(in_system_and_moving)) {
             const auto fleet_sys_id = fleet->SystemID();
-            System* system = context.ContextObjects().getRaw<System>(fleet_sys_id);
-            if (!system) {
+            if (!context.ContextObjects().getRaw<System>(fleet_sys_id)) {
                 ErrorLogger() << "Couldn't find system with id " << fleet_sys_id << " that fleet "
                               << fleet->Name() << " (" << fleet->ID() << ") is supposedly in / departing";
                 continue;
