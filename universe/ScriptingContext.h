@@ -7,13 +7,21 @@
 #include "../util/AppInterface.h"
 #include <variant>
 
+#if !defined(CONSTEXPR_VEC_AND_STRING)
+#  if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#    define CONSTEXPR_VEC_AND_STRING constexpr
+#  else
+#    define CONSTEXPR_VEC_AND_STRING
+#  endif
+#endif
+
 struct CombatInfo;
 
 struct [[nodiscard]] ScriptingContext {
     using CurrentValueVariant = std::variant<
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
         UniverseObjectType, Visibility, std::string, std::vector<std::string>>;
-    inline static CONSTEXPR_VEC const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
+    inline static CONSTEXPR_VEC_AND_STRING const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
     ScriptingContext() noexcept :
         ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),
