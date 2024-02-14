@@ -9,7 +9,7 @@ Tech(
     researchcost=16 * TECH_COST_MULTIPLIER,
     researchturns=5,
     tags=["PEDIA_ORGANIC_HULL_TECHS"],
-    prerequisites=["SHP_DOMESTIC_MONSTER"],
+    prerequisites=["GRO_MEGA_ECO"],
     unlock=[Item(type=UnlockShipHull, name="SH_ORGANIC"), Item(type=UnlockBuilding, name="BLD_SHIPYARD_ORG_ORB_INC")],
     graphic="hulls_design/organic_hull.png",
 )
