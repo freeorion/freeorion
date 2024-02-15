@@ -3749,6 +3749,84 @@ namespace {
         return empires_blockaded_by_fleets;
     }
 
+    // separate into objects that are visible or not to the empire
+    auto VisAndNotVisObjectsToEmpire(const auto& obj_ids, int empire_id, const ScriptingContext& context) {
+        const auto visible = [empire_id, &context](int obj_id)
+        { return context.ContextVis(obj_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+
+        std::vector<int> vis_ids, not_vis_ids;
+        vis_ids.reserve(obj_ids.size());
+        not_vis_ids.reserve(obj_ids.size());
+        std::partition_copy(obj_ids.begin(), obj_ids.end(),
+                            std::back_inserter(vis_ids), std::back_inserter(not_vis_ids),
+                            visible);
+
+        return std::pair{vis_ids, not_vis_ids};
+    }
+
+    bool IsArmedShipID(int ship_id, const ScriptingContext& context) {
+        const auto ship = context.ContextObjects().getRaw<Ship>(ship_id);
+        return ship && ship->IsArmed(context);
+    }
+
+    // for each input fleet, pick one or no ship in that fleet to reveal to empire
+    // that the fleet is blockading. pick no ships if there is already an armed visible
+    // ship in the fleet. otherwise, pick the lowest-stealth armed ship in the fleet
+    auto GetShipsToRevealForEmpiresBlockadedByFleets(auto empires_blockaded_by_fleets,
+                                                     const ScriptingContext& context)
+    {
+        std::map<int, std::vector<int>> retval;
+        for (const auto& [empire_id, fleets] : empires_blockaded_by_fleets)
+            retval[empire_id].reserve(fleets.size()); // reveal at most one ship per fleet
+
+        const auto is_potential_blockader = [&context](int ship_id) {
+            const auto* ship = context.ContextObjects().getRaw<Ship>(ship_id);
+            return ship && ship->CanDamageShips(context);
+        };
+
+        const auto id_to_ship = [&context](int ship_id) { return context.ContextObjects().getRaw<Ship>(ship_id); };
+
+        static constexpr auto ship_to_ship_and_stealth = [](const Ship* ship)
+        { return std::pair{ship, ship ? ship->GetMeter(MeterType::METER_STEALTH)->Current() : 0.0f}; };
+
+        const auto is_potential_bloackder2 = [&context](const std::pair<const Ship*, float>& ss) noexcept -> bool
+        { return ss.first && ss.first->CanDamageShips(context); };
+
+        for (const auto& [empire_id, fleets] : empires_blockaded_by_fleets) {
+            for (const auto fleet_id : fleets) {
+                const Fleet* fleet = context.ContextObjects().getRaw<Fleet>(fleet_id);
+                if (!fleet)
+                    continue;
+
+                const auto [vis_ship_ids, not_vis_ship_ids] =
+                    VisAndNotVisObjectsToEmpire(fleet->ShipIDs(), empire_id, context);
+
+                if (std::any_of(vis_ship_ids.begin(), vis_ship_ids.end(), is_potential_blockader))
+                    continue; // don't need to reveal anything. blockaded empire can see an armed ship.
+
+                // find all blockade-capable not-visible ships
+                auto not_vis_blockader_ships_stealth_rng = not_vis_ship_ids | range_transform(id_to_ship)
+                    | range_transform(ship_to_ship_and_stealth) | range_filter(is_potential_bloackder2);
+
+                std::vector<std::pair<const Ship*, float>> blockaders_and_stealths;
+                blockaders_and_stealths.reserve(not_vis_ship_ids.size());
+                range_copy(not_vis_blockader_ships_stealth_rng, std::back_inserter(blockaders_and_stealths));
+
+                if (blockaders_and_stealths.empty())
+                    continue; // nothing to reveal...
+
+                // return found ship with lowest stealth
+                const auto it = std::min_element(blockaders_and_stealths.begin(),
+                                                 blockaders_and_stealths.end(),
+                                                 [](const auto& ssl, const auto& ssr) noexcept -> bool
+                                                 { return ssl.second < ssr.second; });
+                retval[empire_id].push_back(it->first->ID());
+            }
+        }
+
+        return retval;
+    }
+
     void Resupply(auto fleets, ScriptingContext& context) {
         const auto fleet_to_ships = [&context](const Fleet* fleet)
         { return context.ContextObjects().findRaw<Ship>(fleet->ShipIDs()); };
@@ -3869,9 +3947,11 @@ namespace {
             LogPathAndRoute(fleet, move_path, context.ContextObjects());
 
 
-        // mark blocking fleets as visible to moving fleet owner
-        auto empires_blockaded_by_objects = GetBlockadingObjectsForEmpires(fleets_move_pathes, context);
-        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empires_blockaded_by_objects));
+        // if a blocking fleet has no armed and already-visible-to-the-blockaded-empire ships,
+        // mark lowest-stealth armed ship in blocking fleets as visible to moving fleet owner
+        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(
+            GetShipsToRevealForEmpiresBlockadedByFleets(
+                GetBlockadingObjectsForEmpires(fleets_move_pathes, context), context));
 
 
         // reset prev/next of not-moving fleets
