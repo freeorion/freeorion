@@ -3779,6 +3779,8 @@ namespace {
         for (const auto& [empire_id, fleets] : empires_blockaded_by_fleets)
             retval[empire_id].reserve(fleets.size()); // reveal at most one ship per fleet
 
+        // TODO: could consolidate fleets at the same system and only reveal one ship per system?
+
         const auto is_potential_blockader = [&context](int ship_id) {
             const auto* ship = context.ContextObjects().getRaw<Ship>(ship_id);
             return ship && ship->CanDamageShips(context);
@@ -3789,8 +3791,8 @@ namespace {
         static constexpr auto ship_to_ship_and_stealth = [](const Ship* ship)
         { return std::pair{ship, ship ? ship->GetMeter(MeterType::METER_STEALTH)->Current() : 0.0f}; };
 
-        const auto is_potential_bloackder2 = [&context](const std::pair<const Ship*, float>& ss) noexcept -> bool
-        { return ss.first && ss.first->CanDamageShips(context); };
+        const auto is_not_potential_blockader = [&context](const std::pair<const Ship*, float>& ss) noexcept -> bool
+        { return !ss.first || !ss.first->CanDamageShips(context); };
 
         for (const auto& [empire_id, fleets] : empires_blockaded_by_fleets) {
             for (const auto fleet_id : fleets) {
@@ -3804,20 +3806,24 @@ namespace {
                 if (std::any_of(vis_ship_ids.begin(), vis_ship_ids.end(), is_potential_blockader))
                     continue; // don't need to reveal anything. blockaded empire can see an armed ship.
 
-                // find all blockade-capable not-visible ships
-                auto not_vis_blockader_ships_stealth_rng = not_vis_ship_ids | range_transform(id_to_ship)
-                    | range_transform(ship_to_ship_and_stealth) | range_filter(is_potential_bloackder2);
+                // find all not-visible ships and their stealth levels
+                auto not_vis_ships_stealth_rng = not_vis_ship_ids | range_transform(id_to_ship)
+                    | range_transform(ship_to_ship_and_stealth);
+                std::vector<std::pair<const Ship*, float>> not_vis_ships_and_stealths;
+                not_vis_ships_and_stealths.reserve(not_vis_ship_ids.size());
+                range_copy(not_vis_ships_stealth_rng, std::back_inserter(not_vis_ships_and_stealths));
 
-                std::vector<std::pair<const Ship*, float>> blockaders_and_stealths;
-                blockaders_and_stealths.reserve(not_vis_ship_ids.size());
-                range_copy(not_vis_blockader_ships_stealth_rng, std::back_inserter(blockaders_and_stealths));
+                // remove ships that can't blockade
+                not_vis_ships_and_stealths.erase(
+                    std::remove_if(not_vis_ships_and_stealths.begin(), not_vis_ships_and_stealths.end(),
+                                   is_not_potential_blockader), not_vis_ships_and_stealths.end());
 
-                if (blockaders_and_stealths.empty())
+                if (not_vis_ships_and_stealths.empty())
                     continue; // nothing to reveal...
 
-                // return found ship with lowest stealth
-                const auto it = std::min_element(blockaders_and_stealths.begin(),
-                                                 blockaders_and_stealths.end(),
+                // return found blockade-capable not-visible ship with the lowest stealth
+                const auto it = std::min_element(not_vis_ships_and_stealths.begin(),
+                                                 not_vis_ships_and_stealths.end(),
                                                  [](const auto& ssl, const auto& ssr) noexcept -> bool
                                                  { return ssl.second < ssr.second; });
                 retval[empire_id].push_back(it->first->ID());
