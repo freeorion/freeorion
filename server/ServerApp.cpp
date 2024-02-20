@@ -3655,8 +3655,8 @@ namespace {
         }
     }
 
-    /** .first: Map from empire ID to IDs of fleets and ships that are being revealed
-      *         to that empire, due to those fleets and ships blockading that empire's fleet(s)
+    /** .first: Map from empire ID to IDs of fleets that are being revealed
+      *         to that empire, due to those fleets blockading that empire's fleet(s)
       * .second: Vector of ((fleet ID, owner empire ID), fleet IDs), where the fleet IDs are
       *          blockading the first fleet ID */
     auto GetBlockadingObjectsForEmpires(const auto& move_pathes, const ScriptingContext& context) {
@@ -3736,19 +3736,19 @@ namespace {
 
         static constexpr auto not_null = [](const Fleet* o) noexcept -> bool { return !!o; };
 
-        // also add ships
-        for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
-            if (fleet_ids.empty())
-                continue;
-            const auto fleets = context.ContextObjects().findRaw<const Fleet>(fleet_ids);
-            std::vector<int> all_ship_ids;
-            all_ship_ids.reserve(fleet_ids.size()*4); // guesstimate
-            for (const auto* fleet : fleets | range_filter(not_null)) {
-                const auto& ship_ids = fleet->ShipIDs();
-                all_ship_ids.insert(all_ship_ids.end(), ship_ids.begin(), ship_ids.end());
-            }
-            fleet_ids.insert(fleet_ids.end(), all_ship_ids.begin(), all_ship_ids.end());
-        }
+        //// also add ships
+        //for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
+        //    if (fleet_ids.empty())
+        //        continue;
+        //    const auto fleets = context.ContextObjects().findRaw<const Fleet>(fleet_ids);
+        //    std::vector<int> all_ship_ids;
+        //    all_ship_ids.reserve(fleet_ids.size()*4); // guesstimate
+        //    for (const auto* fleet : fleets | range_filter(not_null)) {
+        //        const auto& ship_ids = fleet->ShipIDs();
+        //        all_ship_ids.insert(all_ship_ids.end(), ship_ids.begin(), ship_ids.end());
+        //    }
+        //    fleet_ids.insert(fleet_ids.end(), all_ship_ids.begin(), all_ship_ids.end());
+        //}
 
         return std::pair{empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets};
     }
@@ -3959,9 +3959,11 @@ namespace {
 
         // if a blocking fleet has no armed and already-visible-to-the-blockaded-empire ships,
         // mark lowest-stealth armed ship in blocking fleets as visible to moving fleet owner
-        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(
-            GetShipsToRevealForEmpiresBlockadedByFleets(
-                GetBlockadingObjectsForEmpires(fleets_move_pathes, context), context));
+        auto [empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets] =
+            GetBlockadingObjectsForEmpires(fleets_move_pathes, context);
+        auto empire_ships_revealed =
+            GetShipsToRevealForEmpiresBlockadedByFleets(std::move(empires_blockaded_by_fleets), context);
+        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empire_ships_revealed));
 
 
         // reset prev/next of not-moving fleets
@@ -4072,7 +4074,7 @@ namespace {
         };
 
         // SitReps for blockaded fleets
-        for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_and_owner_blockaded_by_fleets) {
+        for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
             const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
             static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, int>);
             static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<int>>);
