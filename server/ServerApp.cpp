@@ -2353,38 +2353,45 @@ namespace {
         }
     }
 
-    void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id,
-                                           const ScriptingContext& context)
+    std::vector<const Planet*> GetPlanetsVisibleToEmpireAtSystem(int empire_id, int system_id,
+                                                                 const ScriptingContext& context)
     {
         const auto& objects{context.ContextObjects()};
 
-        visible_planets.clear();
         auto* system = objects.getRaw<System>(system_id);
         if (!system)
-            return; // no such system
+            return {}; // no such system
         const auto& planet_ids = system->PlanetIDs();
         if (planet_ids.empty())
-            return; // no planets to be seen
+            return {}; // no planets to be seen
         if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
-            return; // no such empire
+            return {}; // no such empire
 
-        TraceLogger(combat) << "\t** GetPlanetsVisibleToEmpire " << empire_id
-                            << " at system " << system->Name();
+        const auto system_planets = objects.findRaw<Planet>(planet_ids);
+        std::vector<const Planet*> visible_planets;
+        visible_planets.reserve(system_planets.size());
+
+        TraceLogger(combat) << "\t** GetPlanetsVisibleToEmpire " << empire_id << " at system " << system->Name();
+
         // for visible planets by an empire, check visibility of planet by that empire
         if (empire_id != ALL_EMPIRES) {
-            for (int planet_id : planet_ids) {
-                // include planets visible to empire
-                Visibility planet_vis = context.ContextVis(planet_id, empire_id);
-                TraceLogger(combat) << "\t\tplanet (" << planet_id << ") has visibility rank " << planet_vis;
-                if (planet_vis <= Visibility::VIS_BASIC_VISIBILITY)
-                    continue;
-                // skip planets that have no owner and that are unpopulated; don't matter for combat conditions test
-                auto* planet = objects.getRaw<Planet>(planet_id);
+            // include only planets visible to empire
+            const auto is_visible = [&context, empire_id](const Planet* planet) {
+                if (!planet) return
+                    false;
+                if (context.ContextVis(planet->ID(), empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
+                    return false;
+                // skip planets that have no owner and that are unpopulated;
+                // these don't matter for combat conditions tests
                 if (planet->Unowned() && planet->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0f)
-                    continue;
-                visible_planets.insert(planet->ID());
-            }
-            return;
+                    return false;
+                return true;
+            };
+
+            std::copy_if(system_planets.begin(), system_planets.end(),
+                         std::back_inserter(visible_planets), is_visible);
+
+            return visible_planets;
         }
 
 
@@ -2401,13 +2408,21 @@ namespace {
         }
 
         // test each planet for visibility by best monster detection here
-        for (auto* planet : objects.findRaw<const Planet>(system->PlanetIDs())) {
-            if (planet->Unowned())
+        for (const auto* planet : system_planets) {
+            if (!planet || planet->Unowned())
                 continue;       // only want empire-owned planets; unowned planets visible to monsters don't matter for combat conditions test
             // if a planet is low enough stealth, it can be seen by monsters
             if (monster_detection_strength_here >= planet->GetMeter(MeterType::METER_STEALTH)->Initial())
-                visible_planets.insert(planet->ID());
+                visible_planets.push_back(planet);
         }
+
+        if (!visible_planets.empty()) {
+            std::sort(visible_planets.begin(), visible_planets.end());
+            const auto unique_it = std::unique(visible_planets.begin(), visible_planets.end());
+            visible_planets.erase(unique_it, visible_planets.end());
+        }
+
+        return visible_planets;
     }
 
     /** Returns true iff there is an appropriate combination of objects in the
@@ -2432,24 +2447,24 @@ namespace {
         if (empire_fleets_here.empty())
             return false;
 
-        auto* this_system = objects.getRaw<System>(system_id);
+        const auto is_combat_aggressive = [&context](const Fleet* fleet) -> bool {
+            return fleet &&
+                (fleet->Aggressive() || fleet->Unowned()) &&
+                (fleet->CanDamageShips(context) || !fleet->Unowned()); // an unarmed Monster will not trigger combat
+        };
+
+        const auto* this_system = objects.getRaw<System>(system_id);
         DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << this_system->Name();
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
         std::set<int> empires_with_aggressive_fleets_here;
-        for (auto& empire_fleets : empire_fleets_here) {
-            int empire_id = empire_fleets.first;
-            for (const auto* fleet : objects.findRaw<Fleet>(empire_fleets.second)) {
-                if (!fleet)
-                    continue;
-                // an unarmed Monster will not trigger combat
-                if (  (fleet->Aggressive() || fleet->Unowned())  &&
-                      (fleet->CanDamageShips(context) || !fleet->Unowned())  )
-                {
-                    if (!empires_with_aggressive_fleets_here.contains(empire_id))
-                        DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
-                    empires_with_aggressive_fleets_here.emplace(empire_id);
-                    break;
-                }
+        for (const auto [empire_id, empire_fleet_ids] : empire_fleets_here) {
+            for (const auto* fleet : objects.findRaw<Fleet>(empire_fleet_ids)
+                 | range_filter(is_combat_aggressive))
+            {
+                if (!empires_with_aggressive_fleets_here.contains(empire_id))
+                    DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
+                empires_with_aggressive_fleets_here.emplace(empire_id);
+                break;
             }
         }
         if (empires_with_aggressive_fleets_here.empty()) {
@@ -2468,10 +2483,10 @@ namespace {
 
         // all empires with something here
         std::set<int> empires_here;
-        for (auto& empire_fleets : empire_fleets_here)
-            empires_here.emplace(empire_fleets.first);
-        for (auto& empire_planets : empire_planets_here)
-            empires_here.emplace(empire_planets.first);
+        for (auto empire_id : empire_fleets_here | range_keys)
+            empires_here.emplace(empire_id);
+        for (auto empire_planet_id : empire_planets_here | range_keys)
+            empires_here.emplace(empire_planet_id);
 
         // what combinations of present empires are at war?
         std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
@@ -2501,14 +2516,12 @@ namespace {
             const auto& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
 
             // what planets can the aggressive empire see?
-            std::set<int> aggressive_empire_visible_planets;
-            GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_visible_planets, aggressive_empire_id,
-                                              system_id, context);
+            const auto aggressive_empire_visible_planets =
+                GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, context);
+            // should be all non-null pointers...
 
             // is any planet owned by an empire at war with aggressive empire?
-            for (const auto& planet : objects.find<Planet>(aggressive_empire_visible_planets)) {
-                if (!planet)
-                    continue;
+            for (const auto* planet : aggressive_empire_visible_planets) {
                 int visible_planet_empire_id = planet->Owner();
 
                 if (aggressive_empire_id != visible_planet_empire_id &&
