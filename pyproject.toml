@@ -35,10 +35,10 @@ client
 target-version = ["py39"]
 line-length=120
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "*auth/auth.py" = ["E402"]
 "*chat/chat.py" = ["E402"]
 "*universe_generation/universe_generator.py" = ["E402"]
@@ -62,11 +62,35 @@ max-complexity = 10
 "test-scripting/game_rules.focs.py"=["F821"]
 "test-scripting/*"=["F405", "F403"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 extra-standard-library=["freeorion", "freeOrionAIInterface"]
 
 
+[tool.ruff.lint]
+select = [
+    "C9",
+    "E",
+    "F",
+    "W",
+    "UP",
+    "I",
+    "ANN",
+]
+
+ignore = [
+    "E501",
+    # Annotation won't fix
+    "ANN101", "ANN202", "ANN204", "ANN102",
+
+    # Annotation nice to fix
+    "ANN0",
+    "ANN201",
+    "ANN205",
+    "ANN401",
+]
+
 [tool.ruff]
+
 
 src = [
     "default/python",
@@ -86,29 +110,7 @@ exclude = [
     "venv_*/",
     "venv/",
 ]
-ignore = [
-    "E501",
-    # Annotation won't fix
-    "ANN101", "ANN202", "ANN204", "ANN102",
 
-    # Annotation nice to fix
-    "ANN0",
-    "ANN201",
-    "ANN205",
-    "ANN401",
-
-
-
-]
-select = [
-    "C9",
-    "E",
-    "F",
-    "W",
-    "UP",
-    "I",
-    "ANN",
-]
 
 builtins = []
 

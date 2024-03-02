@@ -8,7 +8,7 @@ repos:
       - id: check-merge-conflict
       - id: check-yaml
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.1.9'
+    rev: 'v0.2.1'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
@@ -33,7 +33,7 @@ repos:
         files: "(default/scripting/.*.py)|(check/check_file_changed/.*.py)"
         exclude: "^default/scripting/focs/.*.py"
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.342
+    rev: v1.1.350
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
