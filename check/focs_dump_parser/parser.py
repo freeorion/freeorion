@@ -1,3 +1,4 @@
+from logging import error
 from typing import IO
 
 
@@ -32,6 +33,11 @@ def parse_buildings(f: IO):
         else:
             if _current:
                 _current[1].append(line)
+
+    if not _current:
+        error("No data in log, check that game is run with 'parsing' set to 'trace'")
+        exit(1)
+
     _result.append((_current[0], "".join(_current[1])))
 
     return _result
