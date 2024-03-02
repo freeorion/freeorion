@@ -4065,25 +4065,21 @@ namespace {
             }
         }
 
-        static constexpr auto obj_to_owner = [](const UniverseObject* obj) -> int { return obj->Owner(); };
+        static constexpr auto obj_to_id_and_owner = [](const UniverseObject* obj)
+            -> std::pair<int, int> { return {obj->ID(), obj->Owner()}; };
 
-        const auto fleet_ids_to_owner_empires = [&context](const std::vector<int>& fleet_ids) {
-            std::vector<int> empire_ids;
-            empire_ids.reserve(fleet_ids.size());
+        const auto fleet_ids_to_also_owner_empires = [&context](const std::vector<int>& fleet_ids) {
+            std::vector<std::pair<int, int>> fleet_ids_owner_empire_ids;
+            fleet_ids_owner_empire_ids.reserve(fleet_ids.size());
 
             const auto id_to_fleet = [&context](const int fleet_id) -> const Fleet*
             { return context.ContextObjects().getRaw<const Fleet>(fleet_id); };
 
             auto empires_rng = fleet_ids | range_transform(id_to_fleet)
-                | range_filter(not_null) | range_transform(obj_to_owner);
-            range_copy(empires_rng, std::back_inserter(empire_ids));
+                | range_filter(not_null) | range_transform(obj_to_id_and_owner);
+            range_copy(empires_rng, std::back_inserter(fleet_ids_owner_empire_ids));
 
-            // sort/unique
-            std::sort(empire_ids.begin(), empire_ids.end());
-            const auto unique_it = std::unique(empire_ids.begin(), empire_ids.end());
-            empire_ids.erase(unique_it, empire_ids.end());
-
-            return empire_ids;
+            return fleet_ids_owner_empire_ids;
         };
 
         // SitReps for blockaded fleets
@@ -4094,24 +4090,28 @@ namespace {
 
             // which fleet and system is blockaded?
             const Fleet* blockaded_fleet = context.ContextObjects().getRaw<const Fleet>(blockaded_fleet_id);
-            if (!blockaded_fleet) continue;
-            const auto sys_id = blockaded_fleet->SystemID();
-            if (sys_id == INVALID_OBJECT_ID)
+            if (!blockaded_fleet || blockaded_fleet->SystemID() == INVALID_OBJECT_ID)
                 continue;
 
             // which empire(s) are blockading the fleet?
-            const auto blockading_empire_ids = fleet_ids_to_owner_empires(blockading_fleet_ids);
+            const auto blockading_fleets_and_empire_ids =
+                fleet_ids_to_also_owner_empires(blockading_fleet_ids);
 
-            for (auto& [empire_id, empire] : context.Empires()) {
-                for (auto blockading_empire_id : blockading_empire_ids) {
-                    // if blockaded fleet is visible, give viewing empire a sitrep
-                    if (context.ContextVis(blockaded_fleet_id, empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY) {
-                        // TODO: only if blockading fleet is visible, include that info
-                        empire->AddSitRepEntry(
+            for (const auto [recipient_empire_id, recipient_empire] : context.Empires()) {
+                // notify empires that can observe a blockaded fleet about the blockade
+                if (context.ContextVis(blockaded_fleet_id, recipient_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+                    continue;
+
+                // every (blockading fleet) X (blockaded fleet) X (recipient empire) generates a separate sitrep
+                for (const auto [blockading_fleet_id, blockading_empire_id] : blockading_fleets_and_empire_ids) {
+                    if (context.ContextVis(blockading_fleet_id, recipient_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY) {
+                        // if the blockading fleet is also visible, include that info
+                        recipient_empire->AddSitRepEntry(
                             CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
                                                        blockaded_fleet_owner_id, blockading_empire_id, context));
-                        // TODO: else, don't...
-                        empire->AddSitRepEntry(
+                    } else {
+                        // otherwise, just indicate that the blockade occurred
+                        recipient_empire->AddSitRepEntry(
                             CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
                                                        blockaded_fleet_owner_id, context));
                     }
