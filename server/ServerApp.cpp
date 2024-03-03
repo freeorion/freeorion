@@ -2262,6 +2262,14 @@ namespace {
                                            { return s->OwnedBy(empire_id); });
     }
 
+    void Uniquify(auto& vec) {
+        if (vec.empty())
+            return;
+        std::sort(vec.begin(), vec.end());
+        const auto unique_it = std::unique(vec.begin(), vec.end());
+        vec.erase(unique_it, vec.end());
+    }
+
     void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id,
                                  const ObjectMap& objects)
     {
@@ -2273,27 +2281,32 @@ namespace {
             empire_fleets[fleet->Owner()].insert(fleet->ID());
     }
 
-    void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id,
-                                  const ObjectMap& objects)
-    {
-        empire_planets.clear();
-        auto* system = objects.getRaw<System>(system_id);
+    std::vector<int> GetEmpiresWithPlanetsAtSystem(int system_id, const ObjectMap& objects) {
+        const auto* system = objects.getRaw<System>(system_id);
         if (!system)
-            return;
-        for (auto* planet : objects.findRaw<const Planet>(system->PlanetIDs())) {
-            if (!planet->Unowned())
-                empire_planets[planet->Owner()].emplace(planet->ID());
-            else if (planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f)
-                empire_planets[ALL_EMPIRES].emplace(planet->ID());
-        }
-    }
+            return {};
 
-    void Uniquify(auto& vec) {
-        if (vec.empty())
-            return;
-        std::sort(vec.begin(), vec.end());
-        const auto unique_it = std::unique(vec.begin(), vec.end());
-        vec.erase(unique_it, vec.end());
+        static constexpr auto is_owned = [](const Planet* p) noexcept { return p && !p->Unowned(); };
+        static constexpr auto is_unowned_and_populated = [](const Planet* p) noexcept
+        { return p && p->Unowned() && p->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f; };
+
+        const auto id_to_planet = [&objects](int id) { return objects.getRaw<Planet>(id); };
+
+        static constexpr auto to_owner = [](const Planet* p) noexcept { return p->Owner(); };
+
+        const auto& planet_ids = system->PlanetIDs();
+        std::vector<int> empire_ids;
+        empire_ids.reserve(planet_ids.size());
+
+        auto plt_rng = planet_ids | range_transform(id_to_planet);
+        if (range_any_of(plt_rng, is_unowned_and_populated))
+            empire_ids.push_back(ALL_EMPIRES);
+        range_copy(plt_rng | range_filter(is_owned) | range_transform(to_owner),
+                   std::back_inserter(empire_ids));
+
+        Uniquify(empire_ids);
+
+        return empire_ids;
     }
 
     std::vector<int> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
@@ -2485,20 +2498,17 @@ namespace {
             return false;
         }
 
-        // what empires have planets here?  Unowned planets are included for
-        // ALL_EMPIRES if they have population > 0
-        std::map<int, std::set<int>> empire_planets_here;
-        GetEmpirePlanetsAtSystem(empire_planets_here, system_id, objects);
-        if (empire_planets_here.empty() && empire_fleets_here.size() <= 1) {
+        // what empires have planets here?
+        // Unowned planets are included for ALL_EMPIRES if they have population > 0
+        auto empires_here = GetEmpiresWithPlanetsAtSystem(system_id, objects);
+        if (empires_here.empty() && empire_fleets_here.size() < 2) {
             DebugLogger(combat) << "\t Only one combatant present: no combat.";
             return false;
         }
 
         // all empires with something here
-        std::vector<int> empires_here;
-        empires_here.reserve(empire_fleets_here.size() + empire_planets_here.size());
+        empires_here.reserve(empire_fleets_here.size() + empires_here.size());
         range_copy(empire_fleets_here | range_keys, std::back_inserter(empires_here));
-        range_copy(empire_planets_here | range_keys, std::back_inserter(empires_here));
         Uniquify(empires_here);
 
         // what combinations of present empires are at war?
