@@ -4,6 +4,25 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+[v0.5.0.1] - 2024-03-04
+---------------
+
+### Bugfixes / Improvements
+
+- Fixed issue with Boost for Boost version 1.82 and greater
+- Fixed ship design validation
+- Fixed species description in encyclopedia
+- Fixed division by zero error in AI scripts
+- Fixed issue with rendering caret at start of line in multi line edit boxes
+- Update logistics facilitator description to fix number of external slots
+- Fixed Megalith increase infrastructure effect
+- Ignore irrelevant SDL error message
+- Build prerequisite ship facilities when needed
+- Only show scrap building popup if a scrap order could be issued for that building by the client empire
+- Apply self-sustaining xenophobic malus only where self-sustaining bonus applies
+- Fix division by zero when AI has researched everything
+
+
 [v0.5] - 2023-03-21
 ---------------
 
