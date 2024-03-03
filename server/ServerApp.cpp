@@ -2288,35 +2288,43 @@ namespace {
         }
     }
 
-    void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id,
-                                          const ScriptingContext& context)
+    void Uniquify(auto& vec) {
+        if (vec.empty())
+            return;
+        std::sort(vec.begin(), vec.end());
+        const auto unique_it = std::unique(vec.begin(), vec.end());
+        vec.erase(unique_it, vec.end());
+    }
+
+    std::vector<int> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
+                                                      const ScriptingContext& context)
     {
         const ObjectMap& objects{context.ContextObjects()};
 
-        visible_fleets.clear();
         auto* system = objects.getRaw<System>(system_id);
         if (!system)
-            return; // no such system
+            return {}; // no such system
         const auto& fleet_ids = system->FleetIDs();
         if (fleet_ids.empty())
-            return; // no fleets to be seen
+            return {}; // no fleets to be seen
         if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
-            return; // no such empire
+            return {}; // no such empire
+
+        std::vector<int> visible_fleets;
+        visible_fleets.reserve(fleet_ids.size());
 
         TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
             for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
-                if (!fleet)
-                    continue;
-                if (fleet->OwnedBy(empire_id))
-                    continue;   // don't care about fleets owned by the same empire for determining combat conditions
+                if (!fleet || fleet->OwnedBy(empire_id))
+                    continue; // don't care about fleets owned by the same empire for determining combat conditions
                 Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
                 TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
-                    visible_fleets.emplace(fleet->ID());
+                    visible_fleets.push_back(fleet->ID());
             }
-            return;
+            return visible_fleets;
         }
 
 
@@ -2337,20 +2345,27 @@ namespace {
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
-                visible_fleets.insert(fleet->ID());   // fleet is monster, so can be seen by monsters
+                visible_fleets.push_back(fleet->ID());   // fleet is monster, so can be seen by monsters
                 continue;
             }
 
-            for (const auto* ship : objects.findRaw<Ship>(fleet->ShipIDs())) {
-                if (!ship)
-                    continue;
-                // if a ship is low enough stealth, its fleet can be seen by monsters
-                if (monster_detection_strength_here >= ship->GetMeter(MeterType::METER_STEALTH)->Initial()) {
-                    visible_fleets.emplace(fleet->ID());
-                    break;  // fleet is seen, so don't need to check any more ships in it
-                }
-            }
+            const auto id_to_ship_stealth = [&objects](const int id) {
+                const Ship* ship = objects.getRaw<Ship>(id);
+                return ship ? ship->GetMeter(MeterType::METER_STEALTH)->Initial() :
+                              std::numeric_limits<float>::infinity();
+            };
+
+            // if a ship is low enough stealth, its fleet can be seen by monsters
+            const auto ship_is_visible = [monster_detection_strength_here](float ship_stealth)
+            { return monster_detection_strength_here >= ship_stealth; };
+
+            auto ship_stealth_rng = fleet->ShipIDs() | range_transform(id_to_ship_stealth);
+            if (range_any_of(ship_stealth_rng, ship_is_visible))
+                visible_fleets.push_back(fleet->ID());
         }
+
+        Uniquify(visible_fleets);
+        return visible_fleets;
     }
 
     std::vector<const Planet*> GetPlanetsVisibleToEmpireAtSystem(int empire_id, int system_id,
@@ -2416,12 +2431,7 @@ namespace {
                 visible_planets.push_back(planet);
         }
 
-        if (!visible_planets.empty()) {
-            std::sort(visible_planets.begin(), visible_planets.end());
-            const auto unique_it = std::unique(visible_planets.begin(), visible_planets.end());
-            visible_planets.erase(unique_it, visible_planets.end());
-        }
-
+        Uniquify(visible_planets);
         return visible_planets;
     }
 
@@ -2462,7 +2472,10 @@ namespace {
                  | range_filter(is_combat_aggressive))
             {
                 if (!empires_with_aggressive_fleets_here.contains(empire_id))
-                    DebugLogger(combat) << "\t Empire " << empire_id << " has at least one aggressive fleet present";
+                    DebugLogger(combat) << "\t Empire " << empire_id
+                                        << " has at least one armed aggressive fleet present: "
+                                        << fleet->Name() << " (" << fleet->ID()
+                                        << ", " << to_string(fleet->Aggression()) << ")";
                 empires_with_aggressive_fleets_here.emplace(empire_id);
                 break;
             }
@@ -2542,9 +2555,8 @@ namespace {
                 continue;
 
             // what fleets can the aggressive empire see?
-            std::set<int> aggressive_empire_visible_fleets;
-            GetFleetsVisibleToEmpireAtSystem(aggressive_empire_visible_fleets, aggressive_empire_id,
-                                             system_id, context);
+            const auto aggressive_empire_visible_fleets =
+                GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, context);
 
             // is any fleet owned by an empire at war with aggressive empire?
             for (const auto* fleet : objects.findRaw<Fleet>(aggressive_empire_visible_fleets)) {
@@ -3732,12 +3744,7 @@ namespace {
         }
         // sort/unique
         for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
-            if (fleet_ids.empty())
-                continue;
-            std::sort(fleet_ids.begin(), fleet_ids.end());
-            auto unique_it = std::unique(fleet_ids.begin(), fleet_ids.end());
-            fleet_ids.erase(unique_it, fleet_ids.end());
-
+            Uniquify(fleet_ids);
             TraceLogger() << "empire id " << empire_id << " is blockaded by fleets: " <<
                 [](const auto& ids) {
                     std::string retval;
@@ -3746,22 +3753,6 @@ namespace {
                     return retval;
                 }(fleet_ids);
         }
-
-        static constexpr auto not_null = [](const Fleet* o) noexcept -> bool { return !!o; };
-
-        //// also add ships
-        //for (auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
-        //    if (fleet_ids.empty())
-        //        continue;
-        //    const auto fleets = context.ContextObjects().findRaw<const Fleet>(fleet_ids);
-        //    std::vector<int> all_ship_ids;
-        //    all_ship_ids.reserve(fleet_ids.size()*4); // guesstimate
-        //    for (const auto* fleet : fleets | range_filter(not_null)) {
-        //        const auto& ship_ids = fleet->ShipIDs();
-        //        all_ship_ids.insert(all_ship_ids.end(), ship_ids.begin(), ship_ids.end());
-        //    }
-        //    fleet_ids.insert(fleet_ids.end(), all_ship_ids.begin(), all_ship_ids.end());
-        //}
 
         return std::pair{empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets};
     }
