@@ -2495,17 +2495,15 @@ namespace {
         }
 
         // all empires with something here
-        std::set<int> empires_here;
-        for (auto empire_id : empire_fleets_here | range_keys)
-            empires_here.emplace(empire_id);
-        for (auto empire_planet_id : empire_planets_here | range_keys)
-            empires_here.emplace(empire_planet_id);
+        std::vector<int> empires_here;
+        empires_here.reserve(empire_fleets_here.size() + empire_planets_here.size());
+        range_copy(empire_fleets_here | range_keys, std::back_inserter(empires_here));
+        range_copy(empire_planets_here | range_keys, std::back_inserter(empires_here));
+        Uniquify(empires_here);
 
         // what combinations of present empires are at war?
         std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
-        for (auto emp1_it = empires_here.begin();
-             emp1_it != empires_here.end(); ++emp1_it)
-        {
+        for (auto emp1_it = empires_here.begin(); emp1_it != empires_here.end(); ++emp1_it) {
             auto emp2_it = emp1_it;
             ++emp2_it;
             for (; emp2_it != empires_here.end(); ++emp2_it) {
@@ -2562,7 +2560,7 @@ namespace {
             for (const auto* fleet : objects.findRaw<Fleet>(aggressive_empire_visible_fleets)) {
                 if (!fleet)
                     continue;
-                int visible_fleet_empire_id = fleet->Owner();
+                const int visible_fleet_empire_id = fleet->Owner();
 
                 if (aggressive_empire_id != visible_fleet_empire_id &&
                     at_war_with_empire_ids.contains(visible_fleet_empire_id))
