@@ -2271,7 +2271,8 @@ namespace {
     }
 
     // .first: IDs of all empires with fleets at system with id \a system_id
-    // .second: IDs of empires with aggressive combat-capable ships at that system
+    // .second: IDs of empires with aggressive-fleet combat-capable ships at that system
+    // empire IDs may include ALL_EMPIRES for non-empire-owned ships
     std::pair<std::vector<int>, std::vector<int>> GetEmpiresWithFleetsAtSystem(
         int system_id, const ScriptingContext& context)
     {
@@ -2281,8 +2282,8 @@ namespace {
             return {};
         const auto fleets = context.ContextObjects().findRaw<Fleet>(system->FleetIDs());
 
-        static constexpr auto not_null = [](const Fleet* p) -> bool { return !!p; };
-        static constexpr auto to_owner = [](const Fleet* p) { return p->Owner(); };
+        static constexpr auto not_null = [](const Fleet* p) noexcept -> bool { return !!p; };
+        static constexpr auto to_owner = [](const Fleet* p) noexcept { return p->Owner(); };
 
         const auto fleets_owner_ids = [&fleets]() -> std::vector<int> {
             std::vector<int> retval;
