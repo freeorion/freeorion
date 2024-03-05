@@ -2354,8 +2354,8 @@ namespace {
         return empire_ids;
     }
 
-    std::vector<int> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
-                                                      const ScriptingContext& context)
+    std::vector<const Fleet*> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
+                                                               const ScriptingContext& context)
     {
         const ObjectMap& objects{context.ContextObjects()};
 
@@ -2368,7 +2368,7 @@ namespace {
         if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
             return {}; // no such empire
 
-        std::vector<int> visible_fleets;
+        std::vector<const Fleet*> visible_fleets;
         visible_fleets.reserve(fleet_ids.size());
 
         TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
@@ -2380,7 +2380,7 @@ namespace {
                 Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
                 TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
                 if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
-                    visible_fleets.push_back(fleet->ID());
+                    visible_fleets.push_back(fleet);
             }
             return visible_fleets;
         }
@@ -2403,7 +2403,7 @@ namespace {
             if (!fleet)
                 continue;
             if (fleet->Unowned()) {
-                visible_fleets.push_back(fleet->ID());   // fleet is monster, so can be seen by monsters
+                visible_fleets.push_back(fleet);   // fleet is monster, so can be seen by monsters
                 continue;
             }
 
@@ -2419,7 +2419,7 @@ namespace {
 
             auto ship_stealth_rng = fleet->ShipIDs() | range_transform(id_to_ship_stealth);
             if (range_any_of(ship_stealth_rng, ship_is_visible))
-                visible_fleets.push_back(fleet->ID());
+                visible_fleets.push_back(fleet);
         }
 
         Uniquify(visible_fleets);
@@ -2552,6 +2552,8 @@ namespace {
             return false;
         }
 
+        static constexpr auto not_null = [](const auto* p) noexcept -> bool { return !!p; };
+
         // is an empire with an aggressive fleet here able to see a planet of an
         // empire it is at war with here?
         for (int aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
@@ -2564,7 +2566,7 @@ namespace {
             // should be all non-null pointers...
 
             // is any planet owned by an empire at war with aggressive empire?
-            for (const auto* planet : aggressive_empire_visible_planets) {
+            for (const auto* planet : aggressive_empire_visible_planets | range_filter(not_null)) {
                 int visible_planet_empire_id = planet->Owner();
 
                 if (aggressive_empire_id != visible_planet_empire_id &&
@@ -2589,9 +2591,7 @@ namespace {
                 GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, context);
 
             // is any fleet owned by an empire at war with aggressive empire?
-            for (const auto* fleet : objects.findRaw<Fleet>(aggressive_empire_visible_fleets)) {
-                if (!fleet)
-                    continue;
+            for (const auto* fleet : aggressive_empire_visible_fleets | range_filter(not_null)) {
                 const int visible_fleet_empire_id = fleet->Owner();
 
                 if (aggressive_empire_id != visible_fleet_empire_id &&
