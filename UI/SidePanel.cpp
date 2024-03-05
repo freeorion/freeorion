@@ -2418,24 +2418,18 @@ void SidePanel::PlanetPanel::PreRender() {
 }
 
 void SidePanel::PlanetPanel::Render() {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
-    GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->Bottom());
-    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y(MaxPlanetDiameter()));
-    bool show_planet_box = true;
+    const GG::Pt ul = UpperLeft(), lr = LowerRight();
+    const GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
+    const GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->Bottom());
 
-    if (m_rotating_planet_graphic) {
-        // default OK
-    } else if (m_planet_graphic) {
-        planet_box_lr = m_planet_graphic->LowerRight();
-    } else {
-        show_planet_box = false;    // no planet render to put box behind
-    }
+    const bool show_planet_box = m_rotating_planet_graphic || m_planet_graphic;
+    const GG::Pt planet_box_lr = m_planet_graphic ?
+        m_planet_graphic->LowerRight() :
+        ul + [mpd{MaxPlanetDiameter()}](){ return GG::Pt(GG::X(mpd), GG::Y(mpd)); }();
 
-
-    GG::Clr background_colour = ClientUI::CtrlColor();
-    GG::Clr title_background_colour = ClientUI::WndOuterBorderColor();
-    GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
+    const GG::Clr background_colour = ClientUI::CtrlColor();
+    const GG::Clr title_background_colour = ClientUI::WndOuterBorderColor();
+    const GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
 
 
     static constexpr int OFFSET = 15;   // size of corners cut off sticky-out bit of background around planet render
@@ -2464,14 +2458,17 @@ void SidePanel::PlanetPanel::Render() {
     verts.store(lr.x,                   lr.y);                      // bottom right
 
     verts.activate();
+    const auto szm4 = verts.size() - 4;
 
     glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 
     // standard WndColor background for whole panel
     glColor(background_colour);
-    glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
+    glDrawArrays(GL_TRIANGLE_FAN, 4, szm4);
 
     // title background box
     glColor(title_background_colour);
@@ -2480,14 +2477,14 @@ void SidePanel::PlanetPanel::Render() {
     // border
     glColor(border_colour);
     glLineWidth(1.5f);
-    glDrawArrays(GL_LINE_LOOP, 4, verts.size() - 4);
+    glDrawArrays(GL_LINE_LOOP, 4, szm4);
     glLineWidth(1.0f);
 
     // disable greyover
-    static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
     if (Disabled()) {
+        static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
         glColor(HALF_GREY);
-        glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
+        glDrawArrays(GL_TRIANGLE_FAN, 4, szm4);
     }
 
     glPopClientAttrib();
