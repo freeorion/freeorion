@@ -623,7 +623,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
 SitRepEntry CreateFleetBlockadedSitRep(int system_id, int blockaded_fleet_id, int blockaded_empire_id,
                                        int blockading_empire_id, const ScriptingContext& context)
 {
-    const auto template_label = (blockading_empire_id != ALL_EMPIRES) ?
+    const auto template_label = (blockaded_empire_id != ALL_EMPIRES) ?
         std::pair{UserStringNop("SITREP_FLEET_BLOCKADED"), UserStringNop("SITREP_FLEET_BLOCKADED_LABEL")} :
         std::pair{UserStringNop("SITREP_FLEET_BLOCKADED_NEUTRAL"), UserStringNop("SITREP_FLEET_BLOCKADED_LABEL")};
 
