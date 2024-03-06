@@ -8053,7 +8053,7 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
 SITREP_FLEET_BLOCKADED
-At %system%: the %empire:blockaded% fleet %fleet% was forced to halt by an %empire:blockader% blockade.
+At %system%: the %empire:blockaded% fleet %fleet% was forced to halt by a %empire:blockader% blockade.
 
 SITREP_FLEET_BLOCKADED_NEUTRAL
 At %system%: the fleet %fleet% was forced to halt by a blockade.
