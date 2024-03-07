@@ -23,13 +23,13 @@ struct [[nodiscard]] ScriptingContext {
         UniverseObjectType, Visibility, std::string, std::vector<std::string>>;
     inline static CONSTEXPR_VEC_AND_STRING const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
-    ScriptingContext() noexcept :
+    [[nodiscard]] ScriptingContext() noexcept :
         ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),
                          GetSpeciesManager(), GetSupplyManager())
     {}
 
-    ScriptingContext(const ScriptingContext& parent_context,
-                     const UniverseObject* condition_local_candidate_) noexcept :
+    [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
+                                   const UniverseObject* condition_local_candidate_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate ?
@@ -55,7 +55,7 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    explicit ScriptingContext(const UniverseObject* source_) noexcept :
+    [[nodiscard]] explicit ScriptingContext(const UniverseObject* source_) noexcept :
         source(           source_),
         galaxy_setup_data(GetGalaxySetupData()),
         species(          GetSpeciesManager()),
@@ -67,8 +67,8 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
-    ScriptingContext(const UniverseObject* source_,
-                     const ScriptingContext& parent_context) noexcept :
+    [[nodiscard]] ScriptingContext(const UniverseObject* source_,
+                                   const ScriptingContext& parent_context) noexcept :
         source(                   source_),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -92,11 +92,11 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(const ScriptingContext& parent_context,
-                     const Universe::EmpireObjectVisibilityMap& vis,
-                     const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
-                     const UniverseObject* source_ = nullptr,
-                     UniverseObject* target_ = nullptr) noexcept :
+    [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
+                                   const Universe::EmpireObjectVisibilityMap& vis,
+                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
+                                   const UniverseObject* source_ = nullptr,
+                                   UniverseObject* target_ = nullptr) noexcept :
         source(                   source_),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -120,8 +120,8 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(const ScriptingContext& parent_context,
-                     const CurrentValueVariant& current_value_) noexcept :
+    [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
+                                   const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -145,8 +145,8 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(ScriptingContext&& parent_context,
-                     const CurrentValueVariant& current_value_) noexcept :
+    [[nodiscard]] ScriptingContext(ScriptingContext&& parent_context,
+                                   const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -193,10 +193,10 @@ struct [[nodiscard]] ScriptingContext {
     ScriptingContext(const ScriptingContext&, std::vector<std::string>) = delete;
 
 
-    ScriptingContext(const ScriptingContext& parent_context,
-                     const UniverseObject* source_,
-                     UniverseObject* target_,
-                     int in_design_id_, int production_block_size_) noexcept :
+    [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
+                                   const UniverseObject* source_,
+                                   UniverseObject* target_,
+                                   int in_design_id_, int production_block_size_) noexcept :
         source(                   source_),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -220,9 +220,9 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(const ScriptingContext& parent_context,
-                     UniverseObject* target_,
-                     const CurrentValueVariant& current_value_) noexcept :
+    [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
+                                   UniverseObject* target_,
+                                   const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -246,9 +246,9 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    ScriptingContext(ScriptingContext&& parent_context,
-                     UniverseObject* target_,
-                     const CurrentValueVariant& current_value_) noexcept :
+    [[nodiscard]] ScriptingContext(ScriptingContext&& parent_context,
+                                   UniverseObject* target_,
+                                   const CurrentValueVariant& current_value_) noexcept :
         source(                   parent_context.source),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -295,7 +295,7 @@ struct [[nodiscard]] ScriptingContext {
     ScriptingContext(ScriptingContext&&, UniverseObject*, std::vector<std::string>) = delete;
     ScriptingContext(const ScriptingContext&, UniverseObject*, std::vector<std::string>) = delete;
 
-    ScriptingContext(const UniverseObject* source_, UniverseObject* target_) noexcept :
+    [[nodiscard]] ScriptingContext(const UniverseObject* source_, UniverseObject* target_) noexcept :
         source(           source_),
         effect_target(    target_),
         galaxy_setup_data(GetGalaxySetupData()),
@@ -308,10 +308,10 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
-    ScriptingContext(Universe& universe, EmpireManager& empires_,
-                     const GalaxySetupData& galaxy_setup_data_ = GetGalaxySetupData(),
-                     SpeciesManager& species_ = GetSpeciesManager(),
-                     const SupplyManager& supply_ = GetSupplyManager()) noexcept :
+    [[nodiscard]] ScriptingContext(Universe& universe, EmpireManager& empires_,
+                                   const GalaxySetupData& galaxy_setup_data_ = GetGalaxySetupData(),
+                                   SpeciesManager& species_ = GetSpeciesManager(),
+                                   const SupplyManager& supply_ = GetSupplyManager()) noexcept :
         galaxy_setup_data(galaxy_setup_data_),
         species(          species_),
         supply(           supply_),
@@ -322,13 +322,13 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(   empires_.GetDiplomaticStatuses())
     {}
 
-    explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
-                              UniverseObject* attacker_as_source = nullptr) noexcept;
+    [[nodiscard]] explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
+                                            UniverseObject* attacker_as_source = nullptr) noexcept;
 
-    ScriptingContext(const Universe& universe, const EmpireManager& empires_,
-                     const UniverseObject* source_ = nullptr,
-                     UniverseObject* target_ = nullptr,
-                     const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) noexcept :
+    [[nodiscard]] ScriptingContext(const Universe& universe, const EmpireManager& empires_,
+                                   const UniverseObject* source_ = nullptr,
+                                   UniverseObject* target_ = nullptr,
+                                   const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) noexcept :
         source(        source_),
         effect_target( target_),
         current_value( current_value_),
