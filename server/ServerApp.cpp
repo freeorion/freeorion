@@ -2271,9 +2271,10 @@ namespace {
     }
 
     // .first: IDs of all empires with fleets at system with id \a system_id
-    // .second: IDs of empires with aggressive-fleet combat-capable ships at that system
+    // .second.first: IDs of empires with aggressive-fleet combat-capable ships at that system
+    // .second.second: IDs of empires with obstructive-fleet combat-capable ships at that system
     // empire IDs may include ALL_EMPIRES for non-empire-owned ships
-    std::pair<std::vector<int>, std::vector<int>> GetEmpiresWithFleetsAtSystem(
+    std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<int>>> GetEmpiresWithFleetsAtSystem(
         int system_id, const ScriptingContext& context)
     {
         const ObjectMap& objects = context.ContextObjects();
@@ -2294,37 +2295,38 @@ namespace {
             return retval;
         };
 
-        const auto aggressive_combat_fleet_owner_ids = [&fleets, &context]() -> std::vector<int> {
-            const auto is_combat_aggressive = [&context](const Fleet* fleet) -> bool {
-                if (!fleet)
-                    return false;
-                const bool aggressive = fleet->Aggressive();
-                const bool can_damage_ships = fleet->CanDamageShips(context);
-                const bool unowned = fleet->Unowned();
+        const auto aggressive_obstructive_combat_fleet_owner_ids =
+            [&fleets, &context]() -> std::pair<std::vector<int>, std::vector<int>>
+        {
+            // unarmed empire ships can trigger combat, but
+            // an unarmed Monster will not trigger combat
+            const auto owned_or_can_damage_ships = [&context](const Fleet* fleet) -> bool
+            { return !fleet->Unowned() || fleet->CanDamageShips(context); };
 
-                DebugLogger(combat) << "Fleet " << fleet->Name() << " (" << fleet->ID()
-                                    << " of empire " << fleet->Owner() << " at " << fleet->SystemID() << ") is "
-                                    << (unowned ? "UNOWNED" : "empire owned") << ", "
-                                    << (aggressive ? "AGGRESSIVE" : "not aggressive") << ", "
-                                    << (can_damage_ships ? "CAN DAMAGE" : "can't damage");
+            auto combat_provoking_fleets_rng = fleets | range_filter(not_null)
+                | range_filter(owned_or_can_damage_ships);
 
-                // unarmed empire ships can trigger combat, but
-                // an unarmed Monster will not trigger combat
-                if (unowned)
-                    return aggressive && can_damage_ships;
-                else
-                    return aggressive;
-            };
+            static constexpr auto is_aggressive = [](const Fleet* fleet) noexcept -> bool
+            { return fleet && fleet->Aggressive(); };
+            static constexpr auto is_obstructive = [](const Fleet* fleet) noexcept -> bool
+            { return fleet && fleet->Obstructive(); };
 
-            std::vector<int> retval;
-            retval.reserve(fleets.size());
-            range_copy(fleets | range_filter(is_combat_aggressive) | range_transform(to_owner),
-                       std::back_inserter(retval));
-            Uniquify(retval);
-            return retval;
+            std::vector<int> retval_aggressive;
+            retval_aggressive.reserve(fleets.size());
+            range_copy(combat_provoking_fleets_rng | range_filter(is_aggressive) | range_transform(to_owner),
+                       std::back_inserter(retval_aggressive));
+            Uniquify(retval_aggressive);
+
+            std::vector<int> retval_obstructive;
+            retval_aggressive.reserve(fleets.size());
+            range_copy(combat_provoking_fleets_rng | range_filter(is_obstructive) | range_transform(to_owner),
+                       std::back_inserter(retval_obstructive));
+            Uniquify(retval_obstructive);
+
+            return {retval_aggressive, retval_obstructive};
         };
 
-        return {fleets_owner_ids(), aggressive_combat_fleet_owner_ids()};
+        return {fleets_owner_ids(), aggressive_obstructive_combat_fleet_owner_ids()};
     }
 
     std::vector<int> GetEmpiresWithPlanetsAtSystem(int system_id, const ObjectMap& objects) {
@@ -2515,12 +2517,16 @@ namespace {
         // native planets are treated as owned by an empire at war with all other empires
 
         // what empires have fleets here? (including monsters as id ALL_EMPIRES)
-        const auto [empires_with_fleets_here, empires_with_aggressive_armed_fleets_here] =
+        const auto [empires_with_fleets_here, aggressive_obstructive_fleets_here] =
             GetEmpiresWithFleetsAtSystem(system_id, context);
+        const auto& [empires_with_aggressive_armed_fleets_here, empires_with_obstructive_armed_fleets_here] =
+            aggressive_obstructive_fleets_here;
         if (empires_with_fleets_here.empty() || empires_with_aggressive_armed_fleets_here.empty())
             return false;
         for (auto empire_id : empires_with_aggressive_armed_fleets_here)
             DebugLogger(combat) << "\t Empire " << empire_id << " has at least one armed aggressive fleet present";
+        for (auto empire_id : empires_with_obstructive_armed_fleets_here)
+            DebugLogger(combat) << "\t Empire " << empire_id << " has at least one armed obstructive fleet present";
 
 
         // what empires have planets or fleets here?
