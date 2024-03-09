@@ -3816,10 +3816,12 @@ namespace {
         return ship && ship->IsArmed(context);
     }
 
-    // for each input fleet, pick one or no ship in that fleet to reveal to empire
-    // that the fleet is blockading. pick no ships if there is already an armed visible
-    // ship in the fleet. otherwise, pick the lowest-stealth armed ship in the fleet
-    auto GetShipsToRevealForEmpiresBlockadedByFleets(auto empires_blockaded_by_fleets,
+    // for each input fleet that is obstructive, pick one or no ship in that fleet to
+    // reveal to empire that the fleet is blockading. pick no ships if there is already
+    // an armed visible ship in the fleet. otherwise, pick the lowest-stealth armed ship
+    // in the fleet. do not pick any ships in aggressive fleets, as these will reveal
+    // themselves in combat, rather than by this mechanism.
+    auto GetShipsToRevealForEmpiresBlockadedByFleets(const auto& empires_blockaded_by_fleets,
                                                      const ScriptingContext& context)
     {
         std::map<int, std::vector<int>> retval;
@@ -3827,6 +3829,10 @@ namespace {
             retval[empire_id].reserve(fleets.size()); // reveal at most one ship per fleet
 
         // TODO: could consolidate fleets at the same system and only reveal one ship per system?
+
+        static constexpr auto not_null = [](const Fleet* f) noexcept -> bool { return !!f; };
+
+        static constexpr auto is_obstructive = [](const Fleet* f) noexcept -> bool { return f->Obstructive(); };
 
         const auto is_potential_blockader = [&context](int ship_id) {
             const auto* ship = context.ContextObjects().getRaw<Ship>(ship_id);
@@ -3841,11 +3847,10 @@ namespace {
         const auto is_not_potential_blockader = [&context](const std::pair<const Ship*, float>& ss) noexcept -> bool
         { return !ss.first || !ss.first->CanDamageShips(context); };
 
-        for (const auto& [empire_id, fleets] : empires_blockaded_by_fleets) {
-            for (const auto fleet_id : fleets) {
-                const Fleet* fleet = context.ContextObjects().getRaw<Fleet>(fleet_id);
-                if (!fleet)
-                    continue;
+        for (const auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
+            auto fleets = context.ContextObjects().findRaw<Fleet>(fleet_ids);
+            for (const Fleet* fleet : fleets | range_filter(not_null) | range_filter(is_obstructive)) {
+                // intentionally excluding aggressive fleets
 
                 const auto [vis_ship_ids, not_vis_ship_ids] =
                     VisAndNotVisObjectsToEmpire(fleet->ShipIDs(), empire_id, context);
@@ -4005,7 +4010,7 @@ namespace {
         auto [empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets] =
             GetBlockadingObjectsForEmpires(fleets_move_pathes, context);
         auto empire_ships_revealed =
-            GetShipsToRevealForEmpiresBlockadedByFleets(std::move(empires_blockaded_by_fleets), context);
+            GetShipsToRevealForEmpiresBlockadedByFleets(empires_blockaded_by_fleets, context);
         context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empire_ships_revealed));
 
 
@@ -4059,7 +4064,8 @@ namespace {
                 return !path.front().blockaded_here;
             };
 
-        // set fleets that are in systems and are unblockaded and are moving away from them as being from that system
+        // set fleets that are in systems and are unblockaded and
+        // are moving away from them as being from that system
         for (auto& [fleet, path] : fleets_move_pathes | range_filter(in_system_and_moving)) {
             const auto fleet_sys_id = fleet->SystemID();
             if (!context.ContextObjects().getRaw<System>(fleet_sys_id)) {
