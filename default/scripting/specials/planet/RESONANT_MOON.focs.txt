@@ -7,7 +7,7 @@ Special
     location = And [
         Planet
         Not Capital
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [Asteroids]
     ]
     effectsgroups = [
         EffectsGroup
