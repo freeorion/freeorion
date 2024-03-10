@@ -58,12 +58,13 @@ Species(
         "RESONANT_MOON_SPECIAL",
         "PLC_DIVERSITY",
         "PLC_ENVIRONMENTALISM",
+        "PLC_EXOBOT_PRODUCTIVITY",
         "PLC_TECHNOCRACY",
     ],
     dislikes=[
         "BLD_SHIPYARD_CON_NANOROBO",
-        "BLD_IMPERIAL_PALACE",
         "BLD_BIOTERROR_PROJECTOR",
+        "BLD_REGIONAL_ADMIN",
         "BLD_SPACE_ELEVATOR",
         "BLD_HYPER_DAM",
         "BLD_PLANET_DRIVE",
@@ -75,6 +76,7 @@ Species(
         "WORLDTREE_SPECIAL",
         "PLC_MARTIAL_LAW",
         "PLC_RACIAL_PURITY",
+        "PLC_TERRAFORMING",
         "PLC_TERROR_SUPPRESSION",
     ],
     effectsgroups=[

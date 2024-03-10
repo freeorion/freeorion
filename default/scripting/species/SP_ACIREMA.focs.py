@@ -68,6 +68,7 @@ Species(
     likes=[
         "PLC_EXPLORATION",
         "PLC_INDUSTRIALISM",
+        "PLC_ISOLATION",
         "PLC_CENTRALIZATION",
         "PLC_MARTIAL_LAW",
         "PLC_RACIAL_PURITY",

@@ -62,11 +62,11 @@ Species(
         "PLC_NO_SUPPLY",
     ],
     dislikes=[
-        "BLD_INDUSTRY_CENTER",
         "BLD_STOCKPILING_CENTER",
         "BLD_MEGALITH",
+        "BLD_REGIONAL_ADMIN",
         "BLD_SPACE_ELEVATOR",
-        "BLD_SHIPYARD_ORBITAL_DRYDOCK",
+        "BLD_STARGATE",
         "BLD_PLANET_CLOAK",
         "WORLDTREE_SPECIAL",
         "COMPUTRONIUM_SPECIAL",
