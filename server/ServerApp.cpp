@@ -2358,6 +2358,7 @@ namespace {
     }
 
     std::vector<const Fleet*> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
+                                                               const auto&& override_vis_fleet_ids,
                                                                const ScriptingContext& context)
     {
         const ObjectMap& objects{context.ContextObjects()};
@@ -2374,16 +2375,25 @@ namespace {
         std::vector<const Fleet*> visible_fleets;
         visible_fleets.reserve(fleet_ids.size());
 
+        const auto is_in_overrides = [&override_vis_fleet_ids](int id) {
+            return std::any_of(override_vis_fleet_ids.begin(), override_vis_fleet_ids.end(),
+                               [id](int oid) { return id == oid; });
+        };
+
         TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
             for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
                 if (!fleet || fleet->OwnedBy(empire_id))
                     continue; // don't care about fleets owned by the same empire for determining combat conditions
-                Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
-                TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
-                if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
+                if (is_in_overrides(fleet->ID())) {
                     visible_fleets.push_back(fleet);
+                } else {
+                    Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
+                    TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
+                    if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
+                        visible_fleets.push_back(fleet);
+                }
             }
             return visible_fleets;
         }
@@ -2405,8 +2415,10 @@ namespace {
         for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
             if (!fleet)
                 continue;
-            if (fleet->Unowned()) {
-                visible_fleets.push_back(fleet);   // fleet is monster, so can be seen by monsters
+            if (fleet->Unowned() || // fleet is monster, so can be seen by monsters
+                is_in_overrides(fleet->ID()))
+            {
+                visible_fleets.push_back(fleet);
                 continue;
             }
 
@@ -2595,7 +2607,7 @@ namespace {
 
             // what fleets can the aggressive empire see?
             const auto aggressive_empire_visible_fleets =
-                GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, context);
+                GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, std::vector<int>{}, context);
 
             // is any fleet owned by an empire at war with aggressive empire?
             for (const auto* fleet : aggressive_empire_visible_fleets | range_filter(not_null)) {
@@ -2611,6 +2623,8 @@ namespace {
                 }
             }
         }
+
+        // 
 
         DebugLogger(combat) << "\t No aggressive armed fleet can see a target: no combat.";
         return false;   // no possible conditions for combat were found
