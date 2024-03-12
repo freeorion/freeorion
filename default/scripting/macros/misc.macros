@@ -54,6 +54,10 @@ MINIMUM_DISTANCE_EMPIRE_CHECK
 UNOWNED_EMPIRE_ID
 '''-1'''
 
+// Range from -0.5(1/2 population growth) to +1(double population growth)
+AUGMENTATION_GROWTH_MODIFIER
+'''(min(2, max(0.5, Target.Construction / (NamedRealLookup name = "AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"))) - 1)
+'''
 
 GROWTH_RATE_FACTOR
 '''
@@ -61,7 +65,7 @@ GROWTH_RATE_FACTOR
 (1 - (Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_NO_GROWTH"])) *       // no growth with no-growth policy
 (1 + 0.5*(Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_POPULATION"])) *  // +50% growth with population policy
 (1 + (Statistic If condition = And [Target EmpireHasAdoptedPolicy name = "PLC_AUGMENTATION"]) *     // slower growth with augmentation on low-infrastructure planets
-      min(1.2, max(0.5, Target.Construction / (NamedRealLookup name = "AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT"))))
+     [[AUGMENTATION_GROWTH_MODIFIER]])
 '''
 
 
