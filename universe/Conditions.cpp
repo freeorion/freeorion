@@ -8838,20 +8838,20 @@ namespace {
 
 
     struct vec2 {
-        constexpr vec2(double x_, double y_) noexcept : x(x_), y(y_) {}
-        vec2(const UniverseObject& obj) noexcept : x(obj.X()), y(obj.Y()) {}
+        [[nodiscard]] constexpr vec2(double x_, double y_) noexcept : x(x_), y(y_) {}
+        [[nodiscard]] vec2(const UniverseObject& obj) noexcept : x(obj.X()), y(obj.Y()) {}
         double x = 0.0, y = 0.0;
-        constexpr auto operator-() const noexcept { return vec2{-x, -y}; };
-        constexpr auto operator-(const vec2& rhs) const noexcept { return vec2{x - rhs.x, y - rhs.y}; }
-        constexpr auto operator+(const vec2& rhs) const noexcept { return vec2{x + rhs.x, y + rhs.y}; }
-        constexpr double mag2() const noexcept { return x*x + y*y; }
-        constexpr double mag() const noexcept {
+        [[nodiscard]] constexpr auto operator-() const noexcept { return vec2{-x, -y}; };
+        [[nodiscard]] constexpr auto operator-(const vec2& rhs) const noexcept { return vec2{x - rhs.x, y - rhs.y}; }
+        [[nodiscard]] constexpr auto operator+(const vec2& rhs) const noexcept { return vec2{x + rhs.x, y + rhs.y}; }
+        [[nodiscard]] constexpr double mag2() const noexcept { return x*x + y*y; }
+        [[nodiscard]] constexpr double mag() const noexcept {
             if (std::is_constant_evaluated())
                 return constexprsqrt(mag2());
             else
                 return std::sqrt(mag2());
         }
-        constexpr vec2 normalize() const noexcept {
+        [[nodiscard]] constexpr vec2 normalize() const noexcept {
             vec2 retval = *this;
             const auto this_mag = mag();
             if (this_mag > 0.0) [[likely]] {
@@ -8860,9 +8860,13 @@ namespace {
             }
             return retval;
         }
-        operator std::string() const
+        [[nodiscard]] inline operator std::string() const
         { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
     };
+    std::ostream& operator<<(std::ostream& os, const vec2 v2) {
+        os << std::string{v2};
+        return os;
+    }
 
     struct seg {
         constexpr seg(vec2 s_, vec2 e_) noexcept : s(s_), e(e_) {}
@@ -9186,30 +9190,34 @@ bool StarlaneToWouldBeAngularlyCloseToExistingStarlane::operator==(const Conditi
 }
 
 namespace {
-    bool LanesClose(const UniverseObject* common_pos, const UniverseObject* end_pos1,
+    auto LanesClose(const UniverseObject* common_pos, const UniverseObject* end_pos1,
                     const UniverseObject* end_pos2, const double max_dotprod) noexcept
     {
+        static constexpr auto nan = std::numeric_limits<decltype(vec2::x)>::quiet_NaN();
+
         // are all endpoints valid systems?
         if (!common_pos || !end_pos1 || !end_pos2)
-            return false;
+            return std::pair{false, nan};
         // is either lane degenerate (same start and endpoints)
         if (common_pos == end_pos1 || common_pos == end_pos2)
-            return false;
+            return std::pair{false, nan};
         // are two lanes the same?
         if (end_pos1 == end_pos2)
-            return true;
+            return std::pair{true, nan};
 
         const vec2 c{*common_pos}, e1{*end_pos1}, e2{*end_pos2};
+        const auto rv2 = DotProduct((e1-c).normalize(), (e2-c).normalize());
+        const auto rv1 = rv2 >= max_dotprod;
 
         TraceLogger(conditions)
-            << (DotProduct((e1-c).normalize(), (e2-c).normalize()) >= max_dotprod ? "OK" : "NO")
+            << (rv1 ? "LANES CLOSE" : "LANES NOT CLOSE")
             << "  common: " << common_pos->Name()
             << " end1: " << end_pos1->Name() << " vec: " << std::string{(e1-c).normalize()}
             << " end2: " << end_pos2->Name() << " vec: " << std::string{(e2-c).normalize()}
-            << " dotprod: " << DotProduct((e1-c).normalize(), (e2-c).normalize());
+            << " dotprod: " << DotProduct((e1-c).normalize(), (e2-c).normalize())
+            << "  vs. max: " << max_dotprod;
 
-
-        return DotProduct((e1-c).normalize(), (e2-c).normalize()) >= max_dotprod;
+        return std::pair{rv1, rv2};
     }
 
     // returns true if \a system has a starlane to a system, which is close in
@@ -9220,8 +9228,13 @@ namespace {
         if (!system || !pos1)
             return false;
 
-        const auto lanes_close = [=](const UniverseObject* pos2)
-        { return LanesClose(system, pos1, pos2, max_dotprod); };
+        const auto lanes_close = [=](const UniverseObject* pos2) {
+            const auto rv = LanesClose(system, pos1, pos2, max_dotprod);
+            TraceLogger(conditions) << "lanes from " << system->Name() << " to " << pos1->Name()
+                                    << " and " << pos2->Name() << " have dotprod: " << rv.second
+                                    << (rv.first ? " (close)" : " (not close)");
+            return rv.first;
+        };
 
         const auto& sys_lanes = system->Starlanes();
         const auto get_sys = [&objects](const int sys_id)
@@ -9235,6 +9248,8 @@ namespace {
     {
         if (!obj1 || !obj2)
             return false;
+        TraceLogger(conditions) << " !! Checking if a lane from " << obj1->Name() << " to " << obj2->Name()
+                                << " would be angularly close to any lane from their locations";
         const System* sys1 = ObjectToSystem(obj1, objects);
         const System* sys2 = ObjectToSystem(obj2, objects);
         if (sys1 && sys2)
@@ -9266,7 +9281,15 @@ namespace {
 
             // check if lanes from candidate to any subcondition object are
             // angularly close to an existing lane on either end
-            return std::any_of(m_to_objects.begin(), m_to_objects.end(), has_angularly_close_lane);
+            auto result = std::any_of(m_to_objects.begin(), m_to_objects.end(), has_angularly_close_lane);
+            if (result)
+                TraceLogger(conditions) << " ... there are lanes angularly conflicting with a lane from " << candidate->Name()
+                                        << " to at least one of " << m_to_objects.size() << " objects";
+            else
+                TraceLogger(conditions) << " ... no lanes angularly conflict with a lane from " << candidate->Name()
+                                        << " to any of " << m_to_objects.size() << " objects";
+
+            return result;
         }
 
         const ObjectSet& m_to_objects;
@@ -9279,6 +9302,10 @@ void StarlaneToWouldBeAngularlyCloseToExistingStarlane::Eval(const ScriptingCont
     ObjectSet& matches, ObjectSet& non_matches,
     SearchDomain search_domain) const
 {
+    TraceLogger(conditions) << "StarlaneToWouldBeAngularlyCloseToExistingStarlane considering " << matches.size()
+                            << " matches and " << non_matches.size() << " non matches. Looking in "
+                            << (search_domain == SearchDomain::MATCHES ? "MATCHES" : "NON_MATCHES");
+
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
@@ -9293,6 +9320,8 @@ void StarlaneToWouldBeAngularlyCloseToExistingStarlane::Eval(const ScriptingCont
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
+    TraceLogger(conditions) << "StarlaneToWouldBeAngularlyCloseToExistingStarlane accepted "
+                            << matches.size() << " matches";
 }
 
 std::string StarlaneToWouldBeAngularlyCloseToExistingStarlane::Description(bool negated) const {
@@ -9377,6 +9406,7 @@ bool StarlaneToWouldBeCloseToObject::operator==(const Condition& rhs) const {
 namespace {
     constexpr bool PointIsInLineSegBB(const vec2 seg_pt1, const vec2 seg_pt2,
                                       const vec2 test_pt, const double dist)
+        noexcept(noexcept(std::min(seg_pt1.x, seg_pt2.x)) && noexcept(std::max(seg_pt1.y, seg_pt2.y)))
     {
         // bounding box: is test_pt near segment at all?
         const vec2 seg_min{std::min(seg_pt1.x, seg_pt2.x), std::min(seg_pt1.y, seg_pt2.y)};
@@ -9388,16 +9418,17 @@ namespace {
     }
 
     constexpr bool PointIsInLineSegBB(const seg seg1, const vec2 test_pt, const double dist)
+        noexcept(noexcept(PointIsInLineSegBB(seg1.s, seg1.e, test_pt, dist)))
     { return PointIsInLineSegBB(seg1.s, seg1.e, test_pt, dist); }
 
-    constexpr bool PointsClose(const vec2 pt1, const vec2 pt2, const double dist2)
+    constexpr bool PointsClose(const vec2 pt1, const vec2 pt2, const double dist2) noexcept
     { return (pt2 - pt1).mag2() <= dist2; }
 
     constexpr auto constexprabs(const auto val) noexcept
     { return val >= 0 ? val : -val; }
 
     constexpr std::pair<bool, double> PointIsCloseToLineThroughSegment(
-        const vec2 seg_pt1, const vec2 seg_pt2, const vec2 test_pt, const double dist)
+        const vec2 seg_pt1, const vec2 seg_pt2, const vec2 test_pt, const double dist) noexcept
     {
         const vec2 seg1_to_test_vec = test_pt - seg_pt1;
         const vec2 seg_norm = (seg_pt2 - seg_pt1).normalize();
@@ -9406,7 +9437,7 @@ namespace {
     }
 
     constexpr bool PointIsBetweenLineSegPoints(const vec2 seg_pt1, const vec2 seg_pt2,
-                                               const vec2 test_pt)
+                                               const vec2 test_pt) noexcept
     {
         const vec2 seg1_to_test_vec = test_pt - seg_pt1;
         const vec2 seg2_to_test_vec = test_pt - seg_pt2;
@@ -9426,6 +9457,7 @@ namespace {
 
     constexpr bool LineSegmentIsCloseToPoint(const vec2 seg_pt1, const vec2 seg_pt2,
                                              const vec2 test_pt, const double max_dist)
+        noexcept(noexcept(PointIsInLineSegBB(seg_pt1, seg_pt2, test_pt, max_dist)))
     {
         // is test_pt within the bounding box of the segment +/- allowed distance?
         if (!PointIsInLineSegBB(seg_pt1, seg_pt2, test_pt, max_dist)) {
@@ -9472,6 +9504,7 @@ namespace {
     }
 
     constexpr bool LineSegmentIsCloseToPoint(const seg seg1, const vec2 test_pt, const double dist)
+        noexcept(noexcept(LineSegmentIsCloseToPoint(seg1.s, seg1.e, test_pt, dist)))
     { return LineSegmentIsCloseToPoint(seg1.s, seg1.e, test_pt, dist); }
 
     namespace StaticTests {
@@ -9564,10 +9597,10 @@ namespace {
 
             const auto retval = LineSegmentIsCloseToPoint(pt1, pt2, vec2{*close_obj}, max_distance);
 
-            if (retval)
-                TraceLogger(conditions) << close_obj->Name() << " @ " << std::string{vec2{*close_obj}}
-                                        << " is close to lane from "<< obj1->Name() << " to " << obj2->Name()
-                                        << std::string{vec2{*obj1}} << " - " << std::string{vec2{*obj2}};
+            TraceLogger(conditions) << close_obj->Name() << " @ " << vec2{*close_obj}
+                                    << " is " << (retval ? "close to" : "far from")
+                                    <<" lane from "<< obj1->Name() << " to " << obj2->Name()
+                                    << vec2{*obj1} << " - " << vec2{*obj2};
 
             return retval;
         };
@@ -9577,7 +9610,7 @@ namespace {
 
 
     struct StarlaneToWouldBeCloseToObjectSimpleMatch {
-        StarlaneToWouldBeCloseToObjectSimpleMatch(
+        [[nodiscard]] StarlaneToWouldBeCloseToObjectSimpleMatch(
             const ObjectSet& to_objects, const ObjectSet& close_objects, double max_distance) :
             m_to_objects(to_objects),
             m_close_objects(close_objects),
@@ -9598,8 +9631,8 @@ namespace {
             const auto retval = std::any_of(m_to_objects.begin(), m_to_objects.end(),
                                             lane_to_close_to_other_object);
 
-            if (retval)
-                TraceLogger(conditions) << "lane from an object to " << candidate->Name() << " would be close to another object...";
+            TraceLogger(conditions) << "lane from an object to " << candidate->Name()
+                                    << " would " << (retval ? "" : "not ") << "be close to another object...";
 
             return retval;
         }
@@ -9614,22 +9647,26 @@ void StarlaneToWouldBeCloseToObject::Eval(const ScriptingContext& parent_context
     ObjectSet& matches, ObjectSet& non_matches,
     SearchDomain search_domain) const
 {
+    TraceLogger(conditions) << "StarlaneToWouldBeCloseToObject considering " << matches.size()
+                            << " matches and " << non_matches.size() << " non matches. Looking in "
+                            << (search_domain == SearchDomain::MATCHES ? "MATCHES" : "NON_MATCHES");
+
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
         // get subcondition matches
-        ObjectSet lane_from_objects = m_lane_end_condition->Eval(parent_context);
-        ObjectSet close_objects = m_close_object_condition->Eval(parent_context);
+        const ObjectSet lane_from_objects = m_lane_end_condition->Eval(parent_context);
+        const ObjectSet close_objects = m_close_object_condition->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
                  StarlaneToWouldBeCloseToObjectSimpleMatch(lane_from_objects, close_objects, m_max_distance));
-        const auto inv = search_domain == SearchDomain::MATCHES ? "NOT" : "";
-        DebugLogger() << matches.size() << " objects would be " << inv <<  " close to something";
+
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
     }
+    TraceLogger(conditions) << "StarlaneToWouldBeCloseToObject accepted " << matches.size() << " matches";
 }
 
 std::string StarlaneToWouldBeCloseToObject::Description(bool negated) const {
