@@ -9557,6 +9557,9 @@ namespace {
         const auto lane_would_be_close_to_object =
             [obj1, pt1{vec2{*obj1}}, obj2, pt2{vec2{*obj2}}, max_distance](const UniverseObject* close_obj)
         {
+            if (obj1 == close_obj || obj2 == close_obj)
+                return false; // don't check if lane is close to object(s) it is connected to
+
             const auto retval = LineSegmentIsCloseToPoint(pt1, pt2, vec2{*close_obj}, max_distance);
 
             if (retval)
