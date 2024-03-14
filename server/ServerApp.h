@@ -345,6 +345,7 @@ private:
     std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> m_cached_empire_production_costs_times;
     std::map<int, std::vector<std::pair<int, double>>> m_cached_empire_annexation_costs;
 
+    std::map<int, std::vector<int>> m_empire_vis_overrides;
 
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.
