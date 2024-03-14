@@ -292,7 +292,7 @@ namespace {
 
         const bool have_label = match[2].matched;
 
-        const auto& full_match = match[0];
+        //const auto& full_match = match[0];
         const auto& tag_match = match[1];
         const auto& label_match = match[have_label ? 2 : 1];
 

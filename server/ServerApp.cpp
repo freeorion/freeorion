@@ -2544,7 +2544,6 @@ namespace {
     {
         const auto& objects{context.ContextObjects()};
 
-        const auto* this_system = objects.getRaw<System>(system_id);
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
 
         // combats occur if:
@@ -3757,19 +3756,6 @@ namespace {
             universe.RecursiveDestroy(fleet_id, empire_ids);
     }
 
-    void LogDumpMovePaths(const Fleet* fleet, const std::vector<MovePathNode>& nodes) {
-        TraceLogger() << "move path of: " << fleet->Name() << " (" << fleet->ID() << ") ...";
-        for (const auto& node : nodes) {
-            TraceLogger() << "node: obj: " << node.object_id << " eta: " << static_cast<int>(node.eta)
-                          << "  end?: " << node.turn_end
-                          << "  " << (node.blockaded_here ? "(blockade)" : "")
-                          << "  " << (node.post_blockade ? "(after blockade)" : "")
-                          << (!node.blockaded_here && !node.post_blockade ? "(clear)" : "")
-                          << "  lane start: " << node.lane_start_id << "  land end: "
-                          << node.lane_end_id << "  xy: " << node.x << ", " << node.y << std::endl;
-        }
-    }
-
     /** .first: Map from empire ID to IDs of fleets that are being revealed
       *         to that empire, due to those fleets blockading that empire's fleet(s)
       * .second: Vector of ((fleet ID, owner empire ID), fleet IDs), where the fleet IDs are
@@ -3860,11 +3846,6 @@ namespace {
                             visible);
 
         return std::pair{vis_ids, not_vis_ids};
-    }
-
-    bool IsArmedShipID(int ship_id, const ScriptingContext& context) {
-        const auto ship = context.ContextObjects().getRaw<Ship>(ship_id);
-        return ship && ship->IsArmed(context);
     }
 
     // for each input fleet that is obstructive, pick one or no ship in that fleet to
@@ -4012,9 +3993,6 @@ namespace {
       * Returns fleet visibility overrides arising during movement, indexed by observer empire id. */
     [[nodiscard]] auto HandleFleetMovement(ScriptingContext& context) {
         static constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
-        static constexpr auto is_unowned = [](const auto* o) noexcept -> bool { return o && o->Unowned(); };
-        static constexpr auto is_owned = [](const auto* o) noexcept -> bool { return o && !o->Unowned(); };
-
 
         const auto fleets = context.ContextObjects().allRaw<Fleet>();
 

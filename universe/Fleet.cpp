@@ -867,7 +867,6 @@ void Fleet::MoveAlongPath(ScriptingContext& context, const std::vector<MovePathN
     }();
 
     auto& objects = context.ContextObjects();
-    const auto& universe = context.ContextUniverse();
     const auto& supply = context.supply;
 
     const auto ships = [&objects, this]() { // ensure only non-null ships iterated over...
