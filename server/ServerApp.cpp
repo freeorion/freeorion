@@ -2296,8 +2296,11 @@ namespace {
         };
 
         const auto aggressive_obstructive_combat_fleet_owner_ids =
-            [&fleets, &context]() -> std::pair<std::vector<int>, std::vector<int>>
+            [&fleets, &context, system_id, system]() -> std::pair<std::vector<int>, std::vector<int>>
         {
+            if (fleets.empty())
+                return {};
+
             // unarmed empire ships can trigger combat, but
             // an unarmed Monster will not trigger combat
             const auto owned_or_can_damage_ships = [&context](const Fleet* fleet) -> bool
@@ -2307,9 +2310,20 @@ namespace {
                 | range_filter(owned_or_can_damage_ships);
 
             static constexpr auto is_aggressive = [](const Fleet* fleet) noexcept -> bool
-            { return fleet && fleet->Aggressive(); };
+            { return fleet && fleet->Aggression() == FleetAggression::FLEET_AGGRESSIVE; };
             static constexpr auto is_obstructive = [](const Fleet* fleet) noexcept -> bool
-            { return fleet && fleet->Obstructive(); };
+            { return fleet && fleet->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
+
+            DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << system->Name();
+            DebugLogger(combat) << "   fleets here: " << [&fleets]() {
+                std::string retval;
+                for (auto& f : fleets)
+                    retval.append(f->Name()).append(" ( id: ").append(std::to_string(f->ID()))
+                            .append("  owner: ").append(std::to_string(f->Owner()))
+                            .append("  aggression: ").append(to_string(f->Aggression()))
+                            .append(" )   ");
+                return retval;
+            }();
 
             std::vector<int> retval_aggressive;
             retval_aggressive.reserve(fleets.size());
@@ -2318,10 +2332,22 @@ namespace {
             Uniquify(retval_aggressive);
 
             std::vector<int> retval_obstructive;
-            retval_aggressive.reserve(fleets.size());
+            retval_obstructive.reserve(fleets.size());
             range_copy(combat_provoking_fleets_rng | range_filter(is_obstructive) | range_transform(to_owner),
                        std::back_inserter(retval_obstructive));
             Uniquify(retval_obstructive);
+
+            DebugLogger(combat) << "   aggressive armed fleet owners: " << [&retval_aggressive]() {
+                std::string retval;
+                for (auto a : retval_aggressive)
+                    retval.append(std::to_string(a)).append("  ");
+                return retval;
+            }() << "   obstructive armed fleet owners: " << [&retval_obstructive]() {
+                std::string retval;
+                for (auto a : retval_obstructive)
+                    retval.append(std::to_string(a)).append("  ");
+                return retval;
+            }();
 
             return {retval_aggressive, retval_obstructive};
         };
@@ -2358,8 +2384,9 @@ namespace {
     }
 
     std::vector<const Fleet*> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
-                                                               const auto&& override_vis_fleet_ids,
+                                                               const auto& override_vis_fleet_ids,
                                                                const ScriptingContext& context)
+        requires(std::is_same_v<int, std::decay_t<decltype(override_vis_fleet_ids.front())>>)
     {
         const ObjectMap& objects{context.ContextObjects()};
 
@@ -2384,9 +2411,9 @@ namespace {
         // for visible fleets by an empire, check visibility of fleets by that empire
         if (empire_id != ALL_EMPIRES) {
             for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
-                if (!fleet || fleet->OwnedBy(empire_id))
+                if (!fleet || fleet->OwnedBy(empire_id)) {
                     continue; // don't care about fleets owned by the same empire for determining combat conditions
-                if (is_in_overrides(fleet->ID())) {
+                } else if (is_in_overrides(fleet->ID())) {
                     visible_fleets.push_back(fleet);
                 } else {
                     Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
@@ -2510,11 +2537,14 @@ namespace {
 
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
-    bool CombatConditionsInSystem(int system_id, const ScriptingContext& context) {
+    bool CombatConditionsInSystem(int system_id, const ScriptingContext& context,
+                                  const auto& empire_vis_overrides)
+        requires(std::is_same_v<int, std::decay_t<decltype(empire_vis_overrides.begin()->first)>> &&
+                 std::is_same_v<int, std::decay_t<decltype(*empire_vis_overrides.begin()->second.begin())>>)
+    {
         const auto& objects{context.ContextObjects()};
 
         const auto* this_system = objects.getRaw<System>(system_id);
-        DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << this_system->Name();
         // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
 
         // combats occur if:
@@ -2597,6 +2627,12 @@ namespace {
             }
         }
 
+        const auto overrides_for_empire = [&empire_vis_overrides](const int override_empire_id) -> const auto& {
+            static CONSTEXPR_VEC const std::vector<int> EMPTY_VEC;
+            auto it = empire_vis_overrides.find(override_empire_id);
+            return it == empire_vis_overrides.end() ? EMPTY_VEC : it->second;
+        };
+
         // is an empire with an aggressive fleet here able to see a fleet or a
         // planet of an empire it is at war with here?
         for (int aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
@@ -2607,7 +2643,8 @@ namespace {
 
             // what fleets can the aggressive empire see?
             const auto aggressive_empire_visible_fleets =
-                GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, std::vector<int>{}, context);
+                GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id,
+                                                 overrides_for_empire(aggressive_empire_id), context);
 
             // is any fleet owned by an empire at war with aggressive empire?
             for (const auto* fleet : aggressive_empire_visible_fleets | range_filter(not_null)) {
@@ -2624,21 +2661,21 @@ namespace {
             }
         }
 
-        // 
-
         DebugLogger(combat) << "\t No aggressive armed fleet can see a target: no combat.";
         return false;   // no possible conditions for combat were found
     }
 
     /** Clears and refills \a combats with CombatInfo structs for
       * every system where a combat should occur this turn. */
-    std::vector<CombatInfo> AssembleSystemCombatInfo(ScriptingContext& context) {
+    std::vector<CombatInfo> AssembleSystemCombatInfo(ScriptingContext& context,
+                                                     const auto& empire_vis_overrides)
+    {
         std::vector<CombatInfo> combats;
         combats.reserve(context.ContextObjects().size());
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in combats
-        for (const auto& sys : context.ContextObjects().allRaw<System>()) {
-            if (CombatConditionsInSystem(sys->ID(), context))
+        for (const auto* sys : context.ContextObjects().allRaw<System>()) {
+            if (CombatConditionsInSystem(sys->ID(), context, empire_vis_overrides))
                 combats.emplace_back(sys->ID(), context.current_turn, context.ContextUniverse(),
                                      context.Empires(), context.diplo_statuses,
                                      context.galaxy_setup_data, context.species,
@@ -3736,7 +3773,7 @@ namespace {
     /** .first: Map from empire ID to IDs of fleets that are being revealed
       *         to that empire, due to those fleets blockading that empire's fleet(s)
       * .second: Vector of ((fleet ID, owner empire ID), fleet IDs), where the fleet IDs are
-      *          blockading the first fleet ID */
+      *          blockading the first fleet ID, and first fleet ID is owned by owner empire ID. */
     auto GetBlockadingObjectsForEmpires(const auto& move_pathes, const ScriptingContext& context) {
         // is there a blockade within (at end?) of this turn's movement?
         using fleet_and_path = std::pair<const Fleet*, std::vector<MovePathNode>>;
@@ -3971,8 +4008,9 @@ namespace {
                       << " :" << route_to_string(fleet->TravelRoute());
     }
 
-    /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire. */
-    void HandleFleetMovement(ScriptingContext& context) {
+    /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire.
+      * Returns fleet visibility overrides arising during movement, indexed by observer empire id. */
+    [[nodiscard]] auto HandleFleetMovement(ScriptingContext& context) {
         static constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
         static constexpr auto is_unowned = [](const auto* o) noexcept -> bool { return o && o->Unowned(); };
         static constexpr auto is_owned = [](const auto* o) noexcept -> bool { return o && !o->Unowned(); };
@@ -4132,11 +4170,19 @@ namespace {
             return fleet_ids_owner_empire_ids;
         };
 
+        // map from empire ID to IDs of fleets that are blockading one of its fleets, and thus
+        // should be considered visible (as a fleet, not the contained ships) for combat initiation
+        std::map<int, std::vector<int>> empire_ids_vis_fleet_overrides;
+
+
         // SitReps for blockaded fleets
         for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
             const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
             static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, int>);
             static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<int>>);
+
+            auto& vis_ovrds = empire_ids_vis_fleet_overrides[blockaded_fleet_owner_id];
+            vis_ovrds.insert(vis_ovrds.end(), blockading_fleet_ids.begin(), blockading_fleet_ids.end());
 
             // which fleet and system is blockaded?
             const Fleet* blockaded_fleet = context.ContextObjects().getRaw<const Fleet>(blockaded_fleet_id);
@@ -4168,6 +4214,8 @@ namespace {
                 }
             }
         }
+
+        return empire_ids_vis_fleet_overrides;
     }
 }
 
@@ -4334,7 +4382,7 @@ void ServerApp::PreCombatProcessTurns() {
         empire->UpdateSupplyUnobstructedSystems(context, true);
 
 
-    HandleFleetMovement(context);
+    m_empire_vis_overrides = HandleFleetMovement(context);
 
 
     // indicate that the clients are waiting for their new Universes
@@ -4368,7 +4416,8 @@ void ServerApp::ProcessCombats() {
 
     // collect data about locations where combat is to occur:
     // map from system ID to CombatInfo for that system
-    auto combats = AssembleSystemCombatInfo(context);
+    auto combats = AssembleSystemCombatInfo(context, m_empire_vis_overrides);
+    m_empire_vis_overrides.clear();
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
