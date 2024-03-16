@@ -484,7 +484,7 @@ namespace {
             auto [obj, candidate_name] = GetObjName(context);
             auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
 
-            const ShipDesign* design = GetUniverse().GetShipDesign(m_item.design_id);
+            const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_item.design_id);
             std::string main_text;
             main_text.reserve(1000); // guesstimate
 
@@ -1009,12 +1009,13 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!m_build_types_shown.contains(build_type))
         return false;
 
-    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+    const ScriptingContext context;
+
+    const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
     if (!design || !design->Producible())
         return false;
 
-    const ScriptingContext context;
-    auto empire = context.GetEmpire(m_empire_id);
+    const auto& empire = context.GetEmpire(m_empire_id);
     if (!empire)
         return true;
 

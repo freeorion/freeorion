@@ -342,12 +342,13 @@ namespace {
         if (!design)
             return false;
 
-        const auto& current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
-        const auto is_same_design = [&design](const int id) {
-            auto current_design = GetUniverse().GetShipDesign(id);
+        const ScriptingContext context;
+        const auto is_same_design = [design, &context](const int id) {
+            auto const current_design = context.ContextUniverse().GetShipDesign(id);
             return current_design && *current_design == *design;
         };
 
+        const auto& current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
         return std::none_of(current_ids.begin(), current_ids.end(), is_same_design);
     }
 
@@ -385,7 +386,7 @@ namespace {
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
-        const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : all_ids.front() ;
+        const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : all_ids.front();
         current_manager.InsertBefore(order->DesignID(), before_id);
     }
 
