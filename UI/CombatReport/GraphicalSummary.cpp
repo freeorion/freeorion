@@ -262,16 +262,13 @@ public:
     ParticipantBar(const ParticipantSummary& participant, const BarSizer& sizer):
         GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
         m_participant(participant),
-        m_sizer(sizer),
-        m_hovered(false)
+        m_sizer(sizer)
     {
-        const Universe& u = GetUniverse();
-        auto object = u.Objects().get(participant.object_id);
-        if (object) {
-            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), u) + " " +
-                          DoubleToString(participant.current_health, 3, false) + "/" +
-                          DoubleToString(participant.max_health, 3, false)
-            );
+        const ScriptingContext context;
+        if (auto object = context.ContextObjects().getRaw(participant.object_id)) {
+            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), context.ContextUniverse()) +
+                          " " + DoubleToString(participant.current_health, 3, false) +
+                          "/" + DoubleToString(participant.max_health, 3, false));
         }
         SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
@@ -331,7 +328,7 @@ public:
 private:
     const ParticipantSummary& m_participant;
     const BarSizer& m_sizer;
-    bool m_hovered;
+    bool m_hovered = false;
     GG::Clr m_dead_color;
     GG::Clr m_wound_color;
     GG::Clr m_health_color;

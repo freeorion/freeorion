@@ -5,6 +5,7 @@
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
 #include "../../util/VarText.h"
+#include "../../universe/ScriptingContext.h"
 #include "../../universe/ShipDesign.h"
 #include "../../universe/Universe.h"
 
@@ -103,7 +104,8 @@ public:
             } else if (link_type == VarText::DESIGN_ID_TAG) {
                 ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-                if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
+                const ScriptingContext context;
+                if (const ShipDesign* design = context.ContextUniverse().GetGenericShipDesign(data))
                     ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
 
             } else if (link_type == VarText::TECH_TAG) {
