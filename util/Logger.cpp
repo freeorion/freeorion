@@ -64,16 +64,16 @@ inline std::basic_istream<CharT, TraitsT >& operator>>(
 }
 
 namespace {
-    std::string& LocalUnnamedLoggerIdentifier() {
+    std::string& LocalUnnamedLoggerIdentifier() noexcept {
         // Create default logger name as a static function variable to avoid static initialization fiasco
         static std::string unnamed_logger_identifier;
         return unnamed_logger_identifier;
     }
 
-    const std::string& DisplayName(const std::string& channel_name)
+    const std::string& DisplayName(const std::string& channel_name) noexcept 
     { return (channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name); }
 
-    boost::optional<LogLevel>& ForcedThreshold() {
+    boost::optional<LogLevel>& ForcedThreshold() noexcept {
         // Create forced threshold as a static function variable to avoid static initialization fiasco
         static boost::optional<LogLevel> forced_threshold = boost::none;
         return forced_threshold;
@@ -83,7 +83,7 @@ namespace {
 
     using LoggerFileSinkFrontEndConfigurer = std::function<void(LoggerTextFileSinkFrontend& sink_frontend)>;
 
-    boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type>& FileSinkBackend() {
+    boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type>& FileSinkBackend() noexcept {
         // Create the sink backend as a function local static variable to avoid the static
         // initilization fiasco.
         static boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type> m_sink_backend;
@@ -208,7 +208,7 @@ void ApplyConfigurationToFileSinkFrontEnd(const std::string& channel_name,
     ConfigureToFileSinkFrontEndCore(file_sink_backend, channel_name, configure_front_end);
 }
 
-const std::string& DefaultExecLoggerName()
+const std::string& DefaultExecLoggerName() noexcept
 { return LocalUnnamedLoggerIdentifier(); }
 
 std::vector<std::string> CreatedLoggersNames()
