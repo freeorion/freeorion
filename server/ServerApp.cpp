@@ -2410,8 +2410,8 @@ namespace {
                                [id](int oid) { return id == oid; });
         };
 
-        const auto id_to_ship_stealth = [&objects{context.ContextObjects()}](const int id) {
-            const Ship* ship = objects.getRaw<Ship>(id);
+        const auto id_to_ship_stealth = [&context](const int id) {
+            const Ship* ship = context.ContextObjects().getRaw<Ship>(id);
             return ship ? ship->GetMeter(MeterType::METER_STEALTH)->Initial() :
                           std::numeric_limits<float>::infinity();
         };
