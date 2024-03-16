@@ -158,9 +158,9 @@ namespace {
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
                         const std::shared_ptr<UniverseObject>& rhs)
         {
-            const Universe& u = GetUniverse();
-            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, u);
-            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, u);
+            const ScriptingContext context;
+            const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, context.ContextUniverse());
+            const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, context.ContextUniverse());
             if (lhs_public_name != rhs_public_name) {
 #if defined(FREEORION_MACOSX)
                 // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α
@@ -182,12 +182,12 @@ namespace {
     std::string ForcesToText(
         int viewing_empire_id,
         const std::vector<std::vector<std::shared_ptr<UniverseObject>>>& forces,
-        const std::string& delimiter = ", ",
-        const std::string& category_delimiter = "\n-\n")
+        const std::string_view delimiter = ", ",
+        const std::string_view category_delimiter = "\n-\n")
     {
-        std::stringstream ss;
-        const Universe& universe = GetUniverse();
+        const ScriptingContext context;
 
+        std::stringstream ss;
         bool first_category = true;
         for (const auto& category : forces) {
             if (category.empty())
@@ -203,7 +203,7 @@ namespace {
                     first_in_category = false;
                 else
                     ss << delimiter;
-                ss << WrapWithTagAndId(object->PublicName(viewing_empire_id, universe),
+                ss << WrapWithTagAndId(object->PublicName(viewing_empire_id, context.ContextUniverse()),
                                        LinkTag(object->ObjectType()), object->ID());
             }
         }
@@ -569,13 +569,15 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                                                      );
     m_wnd.SetLayout(layout);
 
+    const ScriptingContext context;
+
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Universe& universe = GetUniverse();
-    const ObjectMap& objects = universe.Objects();
+    const Universe& universe = context.ContextUniverse();
+    const ObjectMap& objects = context.ContextObjects();
     //const EmpireManager& empires = Empires();
 
     // Write Header text
-    auto system = objects.get<System>(log->system_id);
+    const auto* system = objects.getRaw<System>(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id, universe) : UserString("ERROR"));
     DebugLogger(combat_log) << "Showing combat log #" << log_id << " at " << sys_name << " (" << log->system_id
                             << ") with " << log->combat_events.size() << " events";
@@ -602,7 +604,6 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
             GG::X0, *this, client_empire_id, empire_forces.first, empire_forces.second));
 
     // Write Logs
-    const ScriptingContext context;
     for (CombatEventPtr event : log->combat_events) {
         DebugLogger(combat_log) << "event debug info: " << event->DebugString(context);
         for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))

@@ -132,18 +132,20 @@ void MessageWndEdit::KeyPress(GG::Key key, uint32_t key_code_point,
 }
 
 void MessageWndEdit::FindGameWords() {
+    const ScriptingContext context;
+
      // add player and empire names
     for (const auto& empire : Empires() | range_values) {
         m_game_words.insert(empire->Name());
         m_game_words.insert(empire->PlayerName());
     }
     // add system names
-    for (const auto* system : GetUniverse().Objects().allRaw<const System>()) {
+    for (const auto* system : context.ContextObjects().allRaw<const System>()) {
         if (!system->Name().empty())
             m_game_words.insert(system->Name());
     }
      // add ship names
-    for (const auto* ship : GetUniverse().Objects().allRaw<const Ship>()) {
+    for (const auto* ship : context.ContextObjects().allRaw<const Ship>()) {
         if (!ship->Name().empty())
             m_game_words.insert(ship->Name());
     }
@@ -159,7 +161,7 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(special_name));
     }
      // add species names
-    for (const auto& name : GetSpeciesManager() | range_keys) {
+    for (const auto& name : context.species | range_keys) {
         if (!name.empty())
             m_game_words.insert(UserString(name));
     }

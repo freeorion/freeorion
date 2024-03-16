@@ -51,7 +51,7 @@ namespace {
         const SupplyManager& supply = context.supply;
 
         std::map<int, int> retval;
-        const auto empire_starlanes = empire.KnownStarlanes(GetUniverse());
+        const auto empire_starlanes = empire.KnownStarlanes(context.ContextUniverse());
         std::deque<int> propagating_list;
 
         for (int system_id : supply.FleetSupplyableSystemIDs(empire.EmpireID(), true, context)) {
