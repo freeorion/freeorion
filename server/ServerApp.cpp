@@ -1,6 +1,7 @@
 #include "ServerApp.h"
 
 #include <ctime>
+#include <numeric>
 #include <stdexcept>
 #include <thread>
 #include <boost/date_time/posix_time/time_formatters.hpp>
@@ -2383,6 +2384,63 @@ namespace {
         return empire_ids;
     }
 
+    [[nodiscard]] float CalcMonsterDetectionStrengthAtSystem(const System* system, const ObjectMap& objects) {
+        // get best monster detection strength here.  Use monster detection meters for this.
+        // if no monsters, default to 0.0 detection strength
+
+        const auto ships = objects.findRaw<Ship>(system->ShipIDs());
+        // only want unowned / monster ships
+        static constexpr auto is_unowned = [](const Ship* ship) noexcept
+        { return ship && ship->Unowned(); };
+        static constexpr auto to_detection = [](const Ship* ship) noexcept
+        { return ship ? ship->GetMeter(MeterType::METER_DETECTION)->Initial() : 0.0f; };
+
+        auto det_rng = ships | range_filter(is_unowned) | range_transform(to_detection);
+
+        static constexpr auto max = [](const auto l, const auto r) noexcept { return l > r ? l : r; };
+        return std::reduce(det_rng.begin(), det_rng.end(), 0.0f, max);
+    }
+
+    std::vector<const Fleet*> GetFleetsVisibleToMonstersAtSystem(const System* system,
+                                                                 const auto& override_vis_fleet_ids,
+                                                                 const ScriptingContext& context)
+    {
+        const auto is_in_overrides = [&override_vis_fleet_ids](int id) {
+            return std::any_of(override_vis_fleet_ids.begin(), override_vis_fleet_ids.end(),
+                               [id](int oid) { return id == oid; });
+        };
+
+        const auto id_to_ship_stealth = [&objects{context.ContextObjects()}](const int id) {
+            const Ship* ship = objects.getRaw<Ship>(id);
+            return ship ? ship->GetMeter(MeterType::METER_STEALTH)->Initial() :
+                          std::numeric_limits<float>::infinity();
+        };
+
+        const auto ship_is_detectable_by_monsters =
+            [mdsas{CalcMonsterDetectionStrengthAtSystem(system, context.ContextObjects())}]
+            (float ship_stealth) noexcept
+        { return mdsas >= ship_stealth; };
+
+        const auto should_be_visible_to_monsters = [&](const Fleet* fleet) {
+            if (!fleet)
+                return false;
+            if (fleet->Unowned()) // fleet is monster, so can be seen by monsters
+                return true;
+            if (is_in_overrides(fleet->ID()))
+                return true;
+            return range_any_of(fleet->ShipIDs() | range_transform(id_to_ship_stealth),
+                                ship_is_detectable_by_monsters);
+        };
+
+        // test each ship in each fleet for visibility by best monster detection here, and
+        // only return those fleets that contain a visible ship
+        auto fleets = context.ContextObjects().findRaw<Fleet>(system->FleetIDs());
+        const auto part_it = std::partition(fleets.begin(), fleets.end(), should_be_visible_to_monsters);
+        fleets.erase(part_it, fleets.end());
+        Uniquify(fleets);
+        return fleets;
+    }
+
     std::vector<const Fleet*> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
                                                                const auto& override_vis_fleet_ids,
                                                                const ScriptingContext& context)
@@ -2399,72 +2457,36 @@ namespace {
         if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
             return {}; // no such empire
 
+        TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
+        if (empire_id == ALL_EMPIRES)
+            return GetFleetsVisibleToMonstersAtSystem(system, override_vis_fleet_ids, context);
+
+
+        // check visibility of fleets by empire
         std::vector<const Fleet*> visible_fleets;
         visible_fleets.reserve(fleet_ids.size());
 
+        // don't care about fleets owned by the same empire for determining combat conditions or checking visibility
+        const auto is_not_that_empire_owned = [empire_id](const Fleet* fleet)
+        { return fleet && !fleet->OwnedBy(empire_id); };
+
         const auto is_in_overrides = [&override_vis_fleet_ids](int id) {
             return std::any_of(override_vis_fleet_ids.begin(), override_vis_fleet_ids.end(),
-                               [id](int oid) { return id == oid; });
+                                [id](int oid) { return id == oid; });
         };
 
-        TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
-        // for visible fleets by an empire, check visibility of fleets by that empire
-        if (empire_id != ALL_EMPIRES) {
-            for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
-                if (!fleet || fleet->OwnedBy(empire_id)) {
-                    continue; // don't care about fleets owned by the same empire for determining combat conditions
-                } else if (is_in_overrides(fleet->ID())) {
+        const auto fleets = objects.findRaw<Fleet>(fleet_ids);
+        for (const auto* fleet : fleets | range_filter(is_not_that_empire_owned)) {
+            if (is_in_overrides(fleet->ID())) {
+                visible_fleets.push_back(fleet);
+                TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") is in visibility overrides";
+            } else {
+                Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
+                TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
+                if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
                     visible_fleets.push_back(fleet);
-                } else {
-                    Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
-                    TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
-                    if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
-                        visible_fleets.push_back(fleet);
-                }
             }
-            return visible_fleets;
         }
-
-
-        // now considering only fleets visible to monsters
-
-
-        // get best monster detection strength here.  Use monster detection meters for this...
-        float monster_detection_strength_here = 0.0f;
-        for (const auto* ship : objects.findRaw<Ship>(system->ShipIDs())) {
-            if (!ship || !ship->Unowned())  // only want unowned / monster ships
-                continue;
-            if (ship->GetMeter(MeterType::METER_DETECTION)->Initial() > monster_detection_strength_here)
-                monster_detection_strength_here = ship->GetMeter(MeterType::METER_DETECTION)->Initial();
-        }
-
-        // test each ship in each fleet for visibility by best monster detection here
-        for (const auto* fleet : objects.findRaw<Fleet>(fleet_ids)) {
-            if (!fleet)
-                continue;
-            if (fleet->Unowned() || // fleet is monster, so can be seen by monsters
-                is_in_overrides(fleet->ID()))
-            {
-                visible_fleets.push_back(fleet);
-                continue;
-            }
-
-            const auto id_to_ship_stealth = [&objects](const int id) {
-                const Ship* ship = objects.getRaw<Ship>(id);
-                return ship ? ship->GetMeter(MeterType::METER_STEALTH)->Initial() :
-                              std::numeric_limits<float>::infinity();
-            };
-
-            // if a ship is low enough stealth, its fleet can be seen by monsters
-            const auto ship_is_visible = [monster_detection_strength_here](float ship_stealth)
-            { return monster_detection_strength_here >= ship_stealth; };
-
-            auto ship_stealth_rng = fleet->ShipIDs() | range_transform(id_to_ship_stealth);
-            if (range_any_of(ship_stealth_rng, ship_is_visible))
-                visible_fleets.push_back(fleet);
-        }
-
-        Uniquify(visible_fleets);
         return visible_fleets;
     }
 
