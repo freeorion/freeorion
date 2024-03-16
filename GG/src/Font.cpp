@@ -15,7 +15,6 @@
 #include <iterator>
 #include <numeric>
 #include <sstream>
-#include <unordered_set>
 #include <boost/format.hpp>
 #include <boost/xpressive/regex_actions.hpp>
 #include <boost/xpressive/xpressive.hpp>
