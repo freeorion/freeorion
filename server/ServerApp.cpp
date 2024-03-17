@@ -1881,8 +1881,8 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         return false;
     }
 
-    int player_id = player_connection->PlayerID();
-    int empire_id = PlayerEmpireID(player_id);
+    const int player_id = player_connection->PlayerID();
+    const int empire_id = PlayerEmpireID(player_id);
     if (empire_id == ALL_EMPIRES) {
         player_connection->SendMessage(ErrorMessage(UserStringNop("ERROR_NONPLAYER_CANNOT_CONCEDE"), false));
         return false;
@@ -1890,11 +1890,9 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // test if there other human or disconnected players in the game
     bool other_human_player = false;
-    for (auto& empires : m_empires) {
-        if (!empires.second->Eliminated() &&
-            empire_id != empires.second->EmpireID())
-        {
-            Networking::ClientType other_client_type = GetEmpireClientType(empires.second->EmpireID());
+    for (auto& [loop_empire_id, loop_empire] : m_empires) {
+        if (!loop_empire->Eliminated() && empire_id != loop_empire_id) {
+            const auto other_client_type = GetEmpireClientType(loop_empire_id);
             if (other_client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
                 other_client_type == Networking::ClientType::INVALID_CLIENT_TYPE)
             {
@@ -1914,7 +1912,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
         return false;
     }
 
-    auto is_owned = [empire_id](const UniverseObject* obj) { return obj->OwnedBy(empire_id); };
+    auto is_owned = [empire_id](const UniverseObject* obj) noexcept { return obj->OwnedBy(empire_id); };
 
     // test for colonies count
     auto planets = m_universe.Objects().findRaw <Planet>(is_owned);
@@ -3926,7 +3924,9 @@ namespace {
         return retval;
     }
 
-    void Resupply(auto fleets, ScriptingContext& context) {
+    void Resupply(const auto& fleets, ScriptingContext& context) {
+        static_assert(std::is_same_v<std::decay_t<decltype(*fleets.begin())>, Fleet*>);
+
         const auto fleet_to_ships = [&context](const Fleet* fleet)
         { return context.ContextObjects().findRaw<Ship>(fleet->ShipIDs()); };
 
