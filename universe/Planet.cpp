@@ -330,17 +330,37 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const ScriptingContext& contex
 
 namespace {
     constexpr PlanetType RingNextPlanetType(PlanetType current_type) noexcept {
-        PlanetType next(PlanetType(int(current_type)+1));
-        if (next >= PlanetType::PT_ASTEROIDS)
-            next = PlanetType::PT_SWAMP;
-        return next;
+        using enum PlanetType;
+        switch (current_type) {
+        case INVALID_PLANET_TYPE:
+        case PT_ASTEROIDS:
+        case PT_GASGIANT:
+        case NUM_PLANET_TYPES:
+            return current_type; break;
+        case PT_OCEAN: return PT_SWAMP; break;
+        default: return PlanetType(int(current_type)+1);
+        }
     }
     constexpr PlanetType RingPreviousPlanetType(PlanetType current_type) noexcept {
-        PlanetType next(PlanetType(int(current_type)-1));
-        if (next <= PlanetType::INVALID_PLANET_TYPE)
-            next = PlanetType::PT_OCEAN;
-        return next;
+        using enum PlanetType;
+        switch (current_type) {
+        case INVALID_PLANET_TYPE:
+        case PT_ASTEROIDS:
+        case PT_GASGIANT:
+        case NUM_PLANET_TYPES:
+            return current_type; break;
+        case PT_SWAMP: return PT_OCEAN; break;
+        default: return PlanetType(int(current_type)-1);
+        }
     }
+    static_assert(RingNextPlanetType(PlanetType::INVALID_PLANET_TYPE) == PlanetType::INVALID_PLANET_TYPE);
+    static_assert(RingNextPlanetType(PlanetType::PT_ASTEROIDS) == PlanetType::PT_ASTEROIDS);
+    static_assert(RingNextPlanetType(PlanetType::PT_SWAMP) == PlanetType::PT_TOXIC);
+    static_assert(RingNextPlanetType(PlanetType::PT_OCEAN) == PlanetType::PT_SWAMP);
+    static_assert(RingPreviousPlanetType(PlanetType::INVALID_PLANET_TYPE) == PlanetType::INVALID_PLANET_TYPE);
+    static_assert(RingPreviousPlanetType(PlanetType::PT_GASGIANT) == PlanetType::PT_GASGIANT);
+    static_assert(RingPreviousPlanetType(PlanetType::PT_SWAMP) == PlanetType::PT_OCEAN);
+    static_assert(RingPreviousPlanetType(PlanetType::PT_OCEAN) == PlanetType::PT_TERRAN);
 }
 
 PlanetType Planet::NextCloserToOriginalPlanetType() const noexcept {
