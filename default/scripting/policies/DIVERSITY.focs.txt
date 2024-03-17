@@ -40,6 +40,7 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetInfluence value = Value + NamedRealLookup name = "PLC_DIVERSITY_SCALING" *
                                                    ([[NUM_SPECIES]] - (NamedIntegerLookup name = "PLC_DIVERSITY_THRESHOLD"))
@@ -59,3 +60,4 @@ Statistic CountUnique
 '''
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/macros/priorities.macros"

@@ -22,6 +22,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Happiness low = (NamedReal name = "PLC_CENTRALIZATION_MIN_STABILITY" value = 20)
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
                 SetTargetIndustry value = Value + Target.Population
                     * (NamedReal name = "PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP"
