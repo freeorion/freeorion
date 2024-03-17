@@ -243,7 +243,7 @@ public:
 
     /** Returns the meter with the indicated \a name if it exists, or nullptr. */
     [[nodiscard]] Meter* GetMeter(std::string_view name);
-    void BackPropagateMeters();
+    void BackPropagateMeters() noexcept;
 
     /** Adds \a tech to the research queue, placing it before position \a pos.
       * If \a tech is already in the queue, it is moved to \a pos, then removed

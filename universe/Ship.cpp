@@ -581,7 +581,7 @@ void Ship::SetArrivedOnTurn(int turn) {
     }
 }
 
-void Ship::BackPropagateMeters() {
+void Ship::BackPropagateMeters() noexcept {
     UniverseObject::BackPropagateMeters();
 
     // ship part meter back propagation, since base class function doesn't do this...

@@ -66,7 +66,7 @@ public:
 
     [[nodiscard]] std::size_t               SizeInMemory() const;
 
-    void BackPropagateMeters();
+    void BackPropagateMeters() noexcept;
 
     void SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
     void HandleDiplomaticMessage(const DiplomaticMessage& message);
