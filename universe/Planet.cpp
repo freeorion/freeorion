@@ -219,20 +219,20 @@ std::string Planet::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-bool Planet::Populated() const
+bool Planet::Populated() const noexcept
 { return UniverseObject::GetMeter(MeterType::METER_POPULATION)->Current() >= MINIMUM_POP_CENTER_POPULATION; }
 
 int Planet::HabitableSize() const {
     auto& gr = GetGameRules();
     switch (m_size) {
-    case PlanetSize::SZ_GASGIANT:  return gr.Get<int>("RULE_HABITABLE_SIZE_GASGIANT");   break;
-    case PlanetSize::SZ_HUGE:      return gr.Get<int>("RULE_HABITABLE_SIZE_HUGE");   break;
-    case PlanetSize::SZ_LARGE:     return gr.Get<int>("RULE_HABITABLE_SIZE_LARGE");   break;
-    case PlanetSize::SZ_MEDIUM:    return gr.Get<int>("RULE_HABITABLE_SIZE_MEDIUM");   break;
-    case PlanetSize::SZ_ASTEROIDS: return gr.Get<int>("RULE_HABITABLE_SIZE_ASTEROIDS");   break;
-    case PlanetSize::SZ_SMALL:     return gr.Get<int>("RULE_HABITABLE_SIZE_SMALL");   break;
-    case PlanetSize::SZ_TINY:      return gr.Get<int>("RULE_HABITABLE_SIZE_TINY");   break;
-    default:                       return 0;   break;
+    case PlanetSize::SZ_GASGIANT:  return gr.Get<int>("RULE_HABITABLE_SIZE_GASGIANT");  break;
+    case PlanetSize::SZ_HUGE:      return gr.Get<int>("RULE_HABITABLE_SIZE_HUGE");      break;
+    case PlanetSize::SZ_LARGE:     return gr.Get<int>("RULE_HABITABLE_SIZE_LARGE");     break;
+    case PlanetSize::SZ_MEDIUM:    return gr.Get<int>("RULE_HABITABLE_SIZE_MEDIUM");    break;
+    case PlanetSize::SZ_ASTEROIDS: return gr.Get<int>("RULE_HABITABLE_SIZE_ASTEROIDS"); break;
+    case PlanetSize::SZ_SMALL:     return gr.Get<int>("RULE_HABITABLE_SIZE_SMALL");     break;
+    case PlanetSize::SZ_TINY:      return gr.Get<int>("RULE_HABITABLE_SIZE_TINY");      break;
+    default:                       return 0;                                            break;
     }
 }
 
@@ -265,7 +265,7 @@ void Planet::Init() {
     AddMeter(MeterType::METER_REBEL_TROOPS);
 }
 
-int Planet::TurnsSinceFocusChange(int current_turn) const {
+int Planet::TurnsSinceFocusChange(int current_turn) const noexcept {
     if (m_last_turn_focus_changed == INVALID_GAME_TURN)
         return 0;
     if (current_turn == INVALID_GAME_TURN)
@@ -329,13 +329,13 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const ScriptingContext& contex
 }
 
 namespace {
-    PlanetType RingNextPlanetType(PlanetType current_type) {
+    constexpr PlanetType RingNextPlanetType(PlanetType current_type) noexcept {
         PlanetType next(PlanetType(int(current_type)+1));
         if (next >= PlanetType::PT_ASTEROIDS)
             next = PlanetType::PT_SWAMP;
         return next;
     }
-    PlanetType RingPreviousPlanetType(PlanetType current_type) {
+    constexpr PlanetType RingPreviousPlanetType(PlanetType current_type) noexcept {
         PlanetType next(PlanetType(int(current_type)-1));
         if (next <= PlanetType::INVALID_PLANET_TYPE)
             next = PlanetType::PT_OCEAN;
@@ -343,7 +343,7 @@ namespace {
     }
 }
 
-PlanetType Planet::NextCloserToOriginalPlanetType() const {
+PlanetType Planet::NextCloserToOriginalPlanetType() const noexcept {
     if (m_type == PlanetType::INVALID_PLANET_TYPE ||
         m_type == PlanetType::PT_GASGIANT ||
         m_type == PlanetType::PT_ASTEROIDS ||
@@ -375,12 +375,11 @@ PlanetType Planet::NextCloserToOriginalPlanetType() const {
 }
 
 namespace {
-    PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) {
+    constexpr PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) noexcept {
         // avoid too large steps that would mess up enum arithmatic
-        if (std::abs(step) >= int(PlanetType::PT_ASTEROIDS)) {
-            DebugLogger() << "LoopPlanetTypeIncrement giving too large step: " << step;
+        const int absstep = step >= 0 ? step : -step;
+        if (absstep >= int(PlanetType::PT_ASTEROIDS))
             return initial_type;
-        }
         // some types can't be terraformed
         if (initial_type == PlanetType::PT_GASGIANT)
             return PlanetType::PT_GASGIANT;
@@ -398,42 +397,36 @@ namespace {
             new_type = PlanetType(int(new_type) + int(PlanetType::PT_ASTEROIDS));
         return new_type;
     }
-}
 
-PlanetType Planet::ClockwiseNextPlanetType() const
-{ return LoopPlanetTypeIncrement(m_type, 1); }
+    constexpr int PlanetTypeDifference(PlanetType type1, PlanetType type2) noexcept {
+        // no distance defined for invalid types
+        if (type1 == PlanetType::INVALID_PLANET_TYPE || type2 == PlanetType::INVALID_PLANET_TYPE)
+            return 0;
+        // if the same, distance is zero
+        if (type1 == type2)
+            return 0;
+        // no distance defined for asteroids or gas giants with anything else
+        if (type1 == PlanetType::PT_ASTEROIDS || type1 == PlanetType::PT_GASGIANT ||
+            type2 == PlanetType::PT_ASTEROIDS || type2 == PlanetType::PT_GASGIANT)
+        { return 0; }
+        // find distance around loop:
+        //
+        //  0  1  2
+        //  8     3
+        //  7     4
+        //    6 5
+        int sdiff = int(type1) - int(type2);
+        int diff = sdiff >= 0 ? sdiff : -sdiff;
+        // raw_dist -> actual dist
+        //  0 to 4       0 to 4
+        //  5 to 8       4 to 1
+        if (diff > 4)
+            diff = 9 - diff;
+        //std::cout << "typedifference type1: " << int(type1) << "  type2: " << int(type2) << "  diff: " << diff << "\n";
+        return diff;
+    }
 
-PlanetType Planet::CounterClockwiseNextPlanetType() const
-{ return LoopPlanetTypeIncrement(m_type, -1); }
-
-int Planet::TypeDifference(PlanetType type1, PlanetType type2) {
-    // no distance defined for invalid types
-    if (type1 == PlanetType::INVALID_PLANET_TYPE || type2 == PlanetType::INVALID_PLANET_TYPE)
-        return 0;
-    // if the same, distance is zero
-    if (type1 == type2)
-        return 0;
-    // no distance defined for asteroids or gas giants with anything else
-    if (type1 == PlanetType::PT_ASTEROIDS || type1 == PlanetType::PT_GASGIANT || type2 == PlanetType::PT_ASTEROIDS || type2 == PlanetType::PT_GASGIANT)
-        return 0;
-    // find distance around loop:
-    //
-    //  0  1  2
-    //  8     3
-    //  7     4
-    //    6 5
-    int diff = std::abs(int(type1) - int(type2)); // TODO: replace abs call and make this function noexcept?
-    // raw_dist -> actual dist
-    //  0 to 4       0 to 4
-    //  5 to 8       4 to 1
-    if (diff > 4)
-        diff = 9 - diff;
-    //std::cout << "typedifference type1: " << int(type1) << "  type2: " << int(type2) << "  diff: " << diff << "\n";
-    return diff;
-}
-
-namespace {
-    PlanetSize PlanetSizeIncrement(PlanetSize initial_size, int step) {
+    constexpr PlanetSize PlanetSizeIncrement(PlanetSize initial_size, int step) noexcept {
         // some sizes don't have meaningful increments
         if (initial_size == PlanetSize::SZ_GASGIANT)
             return PlanetSize::SZ_GASGIANT;
@@ -455,10 +448,19 @@ namespace {
     }
 }
 
-PlanetSize Planet::NextLargerPlanetSize() const
+PlanetType Planet::ClockwiseNextPlanetType() const noexcept
+{ return LoopPlanetTypeIncrement(m_type, 1); }
+
+PlanetType Planet::CounterClockwiseNextPlanetType() const noexcept
+{ return LoopPlanetTypeIncrement(m_type, -1); }
+
+int Planet::TypeDifference(PlanetType type1, PlanetType type2) noexcept
+{ return PlanetTypeDifference(type1, type2); }
+
+PlanetSize Planet::NextLargerPlanetSize() const noexcept
 { return PlanetSizeIncrement(m_size, 1); }
 
-PlanetSize Planet::NextSmallerPlanetSize() const
+PlanetSize Planet::NextSmallerPlanetSize() const noexcept
 { return PlanetSizeIncrement(m_size, -1); }
 
 float Planet::OrbitalPositionOnTurn(int turn) const
@@ -953,7 +955,7 @@ bool Planet::Colonize(int empire_id, std::string species_name, double population
     // find a default focus. use first defined available focus.
     // AvailableFoci function should return a vector of all names of
     // available foci.
-    auto available_foci = AvailableFoci(context);
+    const auto available_foci = AvailableFoci(context);
     if (species && !available_foci.empty()) {
         bool found_preference = false;
         for (const auto focus : available_foci) {
