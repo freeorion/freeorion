@@ -2387,6 +2387,8 @@ namespace {
     [[nodiscard]] float CalcMonsterDetectionStrengthAtSystem(const System* system, const ObjectMap& objects) {
         // get best monster detection strength here.  Use monster detection meters for this.
         // if no monsters, default to 0.0 detection strength
+        if (!system)
+            return 0.0f;
 
         const auto ships = objects.findRaw<Ship>(system->ShipIDs());
         // only want unowned / monster ships
@@ -2401,160 +2403,140 @@ namespace {
         return std::reduce(det_rng.begin(), det_rng.end(), 0.0f, max);
     }
 
-    std::vector<const Fleet*> GetFleetsVisibleToMonstersAtSystem(const System* system,
-                                                                 const auto& override_vis_fleet_ids,
-                                                                 const ScriptingContext& context)
+    template <typename FleetOrPlanet>
+    const auto& GetIDs(const System* system) noexcept
+        requires(std::is_same_v<FleetOrPlanet, Fleet> || std::is_same_v<FleetOrPlanet, Planet>)
     {
-        const auto is_in_overrides = [&override_vis_fleet_ids](int id) {
-            return std::any_of(override_vis_fleet_ids.begin(), override_vis_fleet_ids.end(),
-                               [id](int oid) { return id == oid; });
+        if constexpr (std::is_same_v<FleetOrPlanet, Fleet>)
+            return system->FleetIDs();
+        else if constexpr (std::is_same_v<FleetOrPlanet, Planet>)
+            return system->PlanetIDs();
+    }
+
+    template <typename FleetOrPlanet>
+    std::vector<const FleetOrPlanet*> GetVisibleToMonstersAtSystem(
+        const System* system, const auto& override_vis_ids, const ScriptingContext& context)
+    {
+        static_assert(std::is_same_v<FleetOrPlanet, Planet> || std::is_same_v<FleetOrPlanet, Fleet>);
+
+        if (!system)
+            return {};
+
+        const auto is_in_overrides = [&override_vis_ids](int id) {
+            return std::any_of(override_vis_ids.begin(), override_vis_ids.end(),
+                               [id](int oid) noexcept { return id == oid; });
         };
 
-        const auto id_to_ship_stealth = [&context](const int id) {
-            const Ship* ship = context.ContextObjects().getRaw<Ship>(id);
-            return ship ? ship->GetMeter(MeterType::METER_STEALTH)->Initial() :
-                          std::numeric_limits<float>::infinity();
+        static constexpr auto obj_to_stealth = [](const UniverseObject* obj) noexcept -> float {
+            return obj ? obj ->GetMeter(MeterType::METER_STEALTH)->Initial() :
+                         std::numeric_limits<float>::infinity();
         };
 
-        const auto ship_is_detectable_by_monsters =
-            [mdsas{CalcMonsterDetectionStrengthAtSystem(system, context.ContextObjects())}]
-            (float ship_stealth) noexcept
-        { return mdsas >= ship_stealth; };
+        const auto id_to_stealth = [&context](const int id) -> float
+        { return obj_to_stealth(context.ContextObjects().getRaw(id)); };
 
-        const auto should_be_visible_to_monsters = [&](const Fleet* fleet) {
-            if (!fleet)
+        const auto obj_is_detectable_by_monsters =
+            [monster_detection{CalcMonsterDetectionStrengthAtSystem(system, context.ContextObjects())}]
+            (float obj_stealth) noexcept -> bool
+        { return monster_detection >= obj_stealth; };
+
+        const auto should_be_visible_to_monsters = [&](const FleetOrPlanet* fp) -> bool {
+            if (!fp)
                 return false;
-            if (fleet->Unowned()) // fleet is monster, so can be seen by monsters
+
+            if constexpr (std::is_same_v<FleetOrPlanet, Fleet>) {
+                if (fp->Unowned()) // fleet is monster, so can be seen by monsters
+                    return true;
+            } else if constexpr (std::is_same_v<FleetOrPlanet, Planet>) {
+                if (fp->Unowned())
+                    return false; // only want empire-owned planets; unowned planets visible to monsters don't matter for combat conditions test
+            }
+
+            if (is_in_overrides(fp->ID()))
                 return true;
-            if (is_in_overrides(fleet->ID()))
-                return true;
-            return range_any_of(fleet->ShipIDs() | range_transform(id_to_ship_stealth),
-                                ship_is_detectable_by_monsters);
+
+            if constexpr (std::is_same_v<FleetOrPlanet, Fleet>) {
+                return range_any_of(fp->ShipIDs() | range_transform(id_to_stealth),
+                                        obj_is_detectable_by_monsters);
+            } else if constexpr (std::is_same_v<FleetOrPlanet, Planet>) {
+                return obj_is_detectable_by_monsters(obj_to_stealth(fp));
+            }
+
+            return false;
         };
 
         // test each ship in each fleet for visibility by best monster detection here, and
         // only return those fleets that contain a visible ship
-        auto fleets = context.ContextObjects().findRaw<Fleet>(system->FleetIDs());
-        const auto part_it = std::partition(fleets.begin(), fleets.end(), should_be_visible_to_monsters);
-        fleets.erase(part_it, fleets.end());
-        Uniquify(fleets);
-        return fleets;
+        auto objs = context.ContextObjects().findRaw<FleetOrPlanet>(GetIDs<FleetOrPlanet>(system));
+        if (objs.empty())
+            return objs;
+        const auto part_it = std::partition(objs.begin(), objs.end(), should_be_visible_to_monsters);
+        objs.erase(part_it, objs.end());
+        Uniquify(objs);
+        return objs;
     }
 
-    std::vector<const Fleet*> GetFleetsVisibleToEmpireAtSystem(int empire_id, int system_id,
-                                                               const auto& override_vis_fleet_ids,
-                                                               const ScriptingContext& context)
-        requires(std::is_same_v<int, std::decay_t<decltype(override_vis_fleet_ids.front())>>)
+    template <typename FleetOrPlanet>
+    std::vector<const FleetOrPlanet*> GetVisibleToEmpireAtSystem(
+        int empire_id, const System* system, const auto& override_vis_ids, const ScriptingContext& context)
     {
+        static_assert(std::is_same_v<FleetOrPlanet, Planet> || std::is_same_v<FleetOrPlanet, Fleet>);
+
+        if (!system)
+            return {};
+
+        const auto is_in_overrides = [&override_vis_ids](int id) {
+            return std::any_of(override_vis_ids.begin(), override_vis_ids.end(),
+                               [id](int oid) { return id == oid; });
+        };
+
+        // check visibility of object by empire
+        const auto is_visible_to_empire = [&context, &is_in_overrides, empire_id](const auto* obj) {
+            if (!obj) return
+                false;
+            const auto id = obj->ID();
+            if (is_in_overrides(id))
+                return true;
+            if constexpr (std::is_same_v<FleetOrPlanet, Planet>) {
+                // skip planets that have no owner and that are unpopulated;
+                // these don't matter for combat conditions tests
+                if (obj->Unowned() && obj->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0f)
+                    return false;
+            }
+            return context.ContextVis(id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY;
+        };
+
+        auto objs = context.ContextObjects().findRaw<FleetOrPlanet>(GetIDs<FleetOrPlanet>(system));
+        if (objs.empty())
+            return objs;
+        const auto part_it = std::partition(objs.begin(), objs.end(), is_visible_to_empire);
+        objs.erase(part_it, objs.end());
+        Uniquify(objs);
+        return objs;
+    }
+
+    template <typename FleetOrPlanet>
+    std::vector<const FleetOrPlanet*> GetObjsVisibleToEmpireOrNeutralsAtSystem(
+        int empire_id, int system_id, const auto& override_vis_ids, const ScriptingContext& context)
+        requires(std::is_same_v<int, std::decay_t<decltype(override_vis_ids.front())>> &&
+                 (std::is_same_v<FleetOrPlanet, Fleet> || std::is_same_v<FleetOrPlanet, Planet>))
+    {
+        if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
+            return {}; // no such empire
+
         const ObjectMap& objects{context.ContextObjects()};
 
         auto* system = objects.getRaw<System>(system_id);
         if (!system)
             return {}; // no such system
-        const auto& fleet_ids = system->FleetIDs();
-        if (fleet_ids.empty())
-            return {}; // no fleets to be seen
-        if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
-            return {}; // no such empire
 
-        TraceLogger(combat) << "\t** GetFleetsVisibleToEmpire " << empire_id << " at system " << system->Name();
+        TraceLogger(combat) << "\t** GetObjsVisibleToEmpire<" << typeid(FleetOrPlanet).name()
+                            << "> " << empire_id << " at system " << system->Name();
+
         if (empire_id == ALL_EMPIRES)
-            return GetFleetsVisibleToMonstersAtSystem(system, override_vis_fleet_ids, context);
-
-
-        // check visibility of fleets by empire
-        std::vector<const Fleet*> visible_fleets;
-        visible_fleets.reserve(fleet_ids.size());
-
-        // don't care about fleets owned by the same empire for determining combat conditions or checking visibility
-        const auto is_not_that_empire_owned = [empire_id](const Fleet* fleet)
-        { return fleet && !fleet->OwnedBy(empire_id); };
-
-        const auto is_in_overrides = [&override_vis_fleet_ids](int id) {
-            return std::any_of(override_vis_fleet_ids.begin(), override_vis_fleet_ids.end(),
-                                [id](int oid) { return id == oid; });
-        };
-
-        const auto fleets = objects.findRaw<Fleet>(fleet_ids);
-        for (const auto* fleet : fleets | range_filter(is_not_that_empire_owned)) {
-            if (is_in_overrides(fleet->ID())) {
-                visible_fleets.push_back(fleet);
-                TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") is in visibility overrides";
-            } else {
-                Visibility fleet_vis = context.ContextVis(fleet->ID(), empire_id);
-                TraceLogger(combat) << "\t\tfleet (" << fleet->ID() << ") has visibility rank " << fleet_vis;
-                if (fleet_vis >= Visibility::VIS_BASIC_VISIBILITY)
-                    visible_fleets.push_back(fleet);
-            }
-        }
-        return visible_fleets;
-    }
-
-    std::vector<const Planet*> GetPlanetsVisibleToEmpireAtSystem(int empire_id, int system_id,
-                                                                 const ScriptingContext& context)
-    {
-        const auto& objects{context.ContextObjects()};
-
-        auto* system = objects.getRaw<System>(system_id);
-        if (!system)
-            return {}; // no such system
-        const auto& planet_ids = system->PlanetIDs();
-        if (planet_ids.empty())
-            return {}; // no planets to be seen
-        if (empire_id != ALL_EMPIRES && !context.GetEmpire(empire_id))
-            return {}; // no such empire
-
-        const auto system_planets = objects.findRaw<Planet>(planet_ids);
-        std::vector<const Planet*> visible_planets;
-        visible_planets.reserve(system_planets.size());
-
-        TraceLogger(combat) << "\t** GetPlanetsVisibleToEmpire " << empire_id << " at system " << system->Name();
-
-        // for visible planets by an empire, check visibility of planet by that empire
-        if (empire_id != ALL_EMPIRES) {
-            // include only planets visible to empire
-            const auto is_visible = [&context, empire_id](const Planet* planet) {
-                if (!planet) return
-                    false;
-                if (context.ContextVis(planet->ID(), empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
-                    return false;
-                // skip planets that have no owner and that are unpopulated;
-                // these don't matter for combat conditions tests
-                if (planet->Unowned() && planet->GetMeter(MeterType::METER_POPULATION)->Initial() <= 0.0f)
-                    return false;
-                return true;
-            };
-
-            std::copy_if(system_planets.begin(), system_planets.end(),
-                         std::back_inserter(visible_planets), is_visible);
-
-            return visible_planets;
-        }
-
-
-        // now considering only planets visible to monsters
-
-
-        // get best monster detection strength here.  Use monster detection meters for this...
-        float monster_detection_strength_here = 0.0f;
-        for (auto* ship : objects.findRaw<const Ship>(system->ShipIDs())) {
-            if (!ship->Unowned())  // only want unowned / monster ships
-                continue;
-            if (ship->GetMeter(MeterType::METER_DETECTION)->Initial() > monster_detection_strength_here)
-                monster_detection_strength_here = ship->GetMeter(MeterType::METER_DETECTION)->Initial();
-        }
-
-        // test each planet for visibility by best monster detection here
-        for (const auto* planet : system_planets) {
-            if (!planet || planet->Unowned())
-                continue;       // only want empire-owned planets; unowned planets visible to monsters don't matter for combat conditions test
-            // if a planet is low enough stealth, it can be seen by monsters
-            if (monster_detection_strength_here >= planet->GetMeter(MeterType::METER_STEALTH)->Initial())
-                visible_planets.push_back(planet);
-        }
-
-        Uniquify(visible_planets);
-        return visible_planets;
+            return GetVisibleToMonstersAtSystem<FleetOrPlanet>(system, override_vis_ids, context);
+        else
+            return GetVisibleToEmpireAtSystem<FleetOrPlanet>(empire_id, system, override_vis_ids, context);
     }
 
     /** Returns true iff there is an appropriate combination of objects in the
@@ -2578,6 +2560,8 @@ namespace {
         //
         // monster ships are treated as owned by an empire at war with all other empires (may be passive or aggressive)
         // native planets are treated as owned by an empire at war with all other empires
+        // "can see" means has visibility due to normal detection mechanics, or possibly due to the
+        // seen empire B fleet being involved in a blockade of empire A's fleet(s)
 
         // what empires have fleets here? (including monsters as id ALL_EMPIRES)
         const auto [empires_with_fleets_here, aggressive_obstructive_fleets_here] =
@@ -2624,6 +2608,12 @@ namespace {
 
         static constexpr auto not_null = [](const auto* p) noexcept -> bool { return !!p; };
 
+        const auto overrides_for_empire = [&empire_vis_overrides](const int override_empire_id) -> const auto& {
+            static CONSTEXPR_VEC const std::vector<int> EMPTY_VEC;
+            auto it = empire_vis_overrides.find(override_empire_id);
+            return it == empire_vis_overrides.end() ? EMPTY_VEC : it->second;
+        };
+
         // is an empire with an aggressive fleet here able to see a planet of an
         // empire it is at war with here?
         for (int aggressive_empire_id : empires_with_aggressive_armed_fleets_here) {
@@ -2632,7 +2622,8 @@ namespace {
 
             // what planets can the aggressive empire see?
             const auto aggressive_empire_visible_planets =
-                GetPlanetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id, context);
+                GetObjsVisibleToEmpireOrNeutralsAtSystem<Planet>(
+                    aggressive_empire_id, system_id, overrides_for_empire(aggressive_empire_id), context);
             // should be all non-null pointers...
 
             // is any planet owned by an empire at war with aggressive empire?
@@ -2648,11 +2639,6 @@ namespace {
             }
         }
 
-        const auto overrides_for_empire = [&empire_vis_overrides](const int override_empire_id) -> const auto& {
-            static CONSTEXPR_VEC const std::vector<int> EMPTY_VEC;
-            auto it = empire_vis_overrides.find(override_empire_id);
-            return it == empire_vis_overrides.end() ? EMPTY_VEC : it->second;
-        };
 
         // is an empire with an aggressive fleet here able to see a fleet or a
         // planet of an empire it is at war with here?
@@ -2664,8 +2650,8 @@ namespace {
 
             // what fleets can the aggressive empire see?
             const auto aggressive_empire_visible_fleets =
-                GetFleetsVisibleToEmpireAtSystem(aggressive_empire_id, system_id,
-                                                 overrides_for_empire(aggressive_empire_id), context);
+                GetObjsVisibleToEmpireOrNeutralsAtSystem<Fleet>(
+                    aggressive_empire_id, system_id, overrides_for_empire(aggressive_empire_id), context);
 
             // is any fleet owned by an empire at war with aggressive empire?
             for (const auto* fleet : aggressive_empire_visible_fleets | range_filter(not_null)) {
