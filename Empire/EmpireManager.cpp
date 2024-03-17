@@ -114,7 +114,7 @@ std::size_t EmpireManager::SizeInMemory() const {
 }
 
 
-void EmpireManager::BackPropagateMeters() {
+void EmpireManager::BackPropagateMeters() noexcept {
     for (auto& entry : m_empire_map)
         entry.second->BackPropagateMeters();
 }
@@ -173,7 +173,7 @@ boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusW
 
     // find ids of empires with the specified diplomatic status with the specified empire
     for (auto const [emp1, emp2] : statuses
-         | range_filter([diplo_status](const auto& ids_status) { return ids_status.second == diplo_status; })
+         | range_filter([diplo_status](const auto& ids_status) noexcept { return ids_status.second == diplo_status; })
          | range_keys)
     {
         if (emp1 == empire_id)
