@@ -3872,7 +3872,8 @@ namespace {
 
         static constexpr auto not_null = [](const Fleet* f) noexcept -> bool { return !!f; };
 
-        static constexpr auto is_obstructive = [](const Fleet* f) noexcept -> bool { return f->Obstructive(); };
+        static constexpr auto is_obstructive = [](const Fleet* f) noexcept -> bool
+        { return f->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
 
         const auto is_potential_blockader = [&context](int ship_id) {
             const auto* ship = context.ContextObjects().getRaw<Ship>(ship_id);
