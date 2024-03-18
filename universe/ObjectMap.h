@@ -816,7 +816,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
         // avoids error: no type named 'type' in 'boost::range_iterator<const std::span<const int>>'
         auto rng = boost::make_iterator_range(pred.begin(), pred.end()) | range_transform(find_in_map);
 #endif
-        result.reserve(pred.size());
+
         range_copy_if(rng, std::back_inserter(result), not_null);
         return result;
 
