@@ -716,11 +716,12 @@ std::string ClientUI::GetFilenameWithSaveFileDialog(
         return "";
 
     m_savefile_dialog = GG::Wnd::Create<SaveFileDialog>(purpose, type);
+    if (!m_savefile_dialog)
+        return "";
 
     m_savefile_dialog->Run();
-    auto filename = m_savefile_dialog->Result();
-
-    m_savefile_dialog = nullptr;
+    auto filename = m_savefile_dialog->ResultString();
+    m_savefile_dialog.reset();
     return filename;
 }
 

@@ -21,8 +21,8 @@ struct PreviewInformation;
  */
 class SaveFileDialog : public CUIWnd {
 public:
-    enum class Purpose {Save, Load};
-    enum class SaveType {SinglePlayer, MultiPlayer};
+    enum class Purpose : bool {Save, Load};
+    enum class SaveType : bool {SinglePlayer, MultiPlayer};
 
     SaveFileDialog(const Purpose purpose = Purpose::Load, const SaveType type = SaveType::SinglePlayer);
 
@@ -37,7 +37,8 @@ public:
     void SetPreviewList(PreviewInformation&& preview_info);
 
     /// Get the chosen save files full path
-    std::string Result() const;
+    [[nodiscard]] boost::filesystem::path ResultPath() const;
+    [[nodiscard]] std::string ResultString() const;
 
 protected:
     GG::Rect CalculatePosition() const override;
