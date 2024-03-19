@@ -143,7 +143,7 @@ namespace {
             m_empire_ids.reserve(empires.NumEmpires());
 
             std::string empires_names_text;
-            empires_names_text.reserve(empires.NumEmpires()*50); // guesstimate
+            empires_names_text.reserve(static_cast<std::size_t>(empires.NumEmpires())*50); // guesstimate
 
             for (const auto& [empire_id, empire] : empires) {
                 if (m_empire_id == empire_id) continue;
@@ -214,7 +214,7 @@ namespace {
         std::shared_ptr<GG::Texture>    m_icon;
 
         int IconSize() const { return Value(Height()); }
-        static const int PAD = 3;
+        static constexpr int PAD = 3;
     };
 
 
