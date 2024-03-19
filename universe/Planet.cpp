@@ -361,38 +361,58 @@ namespace {
     static_assert(RingPreviousPlanetType(PlanetType::PT_GASGIANT) == PlanetType::PT_GASGIANT);
     static_assert(RingPreviousPlanetType(PlanetType::PT_SWAMP) == PlanetType::PT_OCEAN);
     static_assert(RingPreviousPlanetType(PlanetType::PT_OCEAN) == PlanetType::PT_TERRAN);
+
+    constexpr PlanetType NextCloserTo(PlanetType from, PlanetType towards) noexcept {
+        using enum PlanetType;
+        switch (from) {
+        case INVALID_PLANET_TYPE:
+        case PT_ASTEROIDS:
+        case PT_GASGIANT:
+        case NUM_PLANET_TYPES:
+            return from;
+        }
+        switch (towards) {
+        case INVALID_PLANET_TYPE:
+        case PT_ASTEROIDS:
+        case PT_GASGIANT:
+        case NUM_PLANET_TYPES:
+            return from;
+        }
+
+        if (from == towards)
+            return from;
+
+        const int cw_steps = [towards, cur_type{from}]() mutable noexcept {
+            int cw_steps = 0;
+            while (cur_type != towards) {
+                cw_steps++;
+                cur_type = RingNextPlanetType(cur_type);
+            }
+            return cw_steps;
+        }();
+
+        const int ccw_steps = [towards, cur_type{from}]() mutable noexcept {
+            int ccw_steps = 0;
+            while (cur_type != towards) {
+                ccw_steps++;
+                cur_type = RingPreviousPlanetType(cur_type);
+            }
+            return ccw_steps;
+        }();
+
+        return (cw_steps <= ccw_steps) ? RingNextPlanetType(from) : RingPreviousPlanetType(from);
+    }
+    static_assert(NextCloserTo(PlanetType::INVALID_PLANET_TYPE, PlanetType::PT_OCEAN) == PlanetType::INVALID_PLANET_TYPE);
+    static_assert(NextCloserTo(PlanetType::PT_OCEAN, PlanetType::PT_GASGIANT) == PlanetType::PT_OCEAN);
+    static_assert(NextCloserTo(PlanetType::PT_OCEAN, PlanetType::PT_OCEAN) == PlanetType::PT_OCEAN);
+    static_assert(NextCloserTo(PlanetType::PT_OCEAN, PlanetType::PT_TOXIC) == PlanetType::PT_SWAMP);
+    static_assert(NextCloserTo(PlanetType::PT_SWAMP, PlanetType::PT_TOXIC) == PlanetType::PT_TOXIC);
+    static_assert(NextCloserTo(PlanetType::PT_INFERNO, PlanetType::PT_OCEAN) == PlanetType::PT_TOXIC);
+    static_assert(NextCloserTo(PlanetType::PT_INFERNO, PlanetType::PT_DESERT) == PlanetType::PT_RADIATED);
 }
 
-PlanetType Planet::NextCloserToOriginalPlanetType() const noexcept {
-    if (m_type == PlanetType::INVALID_PLANET_TYPE ||
-        m_type == PlanetType::PT_GASGIANT ||
-        m_type == PlanetType::PT_ASTEROIDS ||
-        m_original_type == PlanetType::INVALID_PLANET_TYPE ||
-        m_original_type == PlanetType::PT_GASGIANT ||
-        m_original_type == PlanetType::PT_ASTEROIDS)
-    { return m_type; }
-
-    if (m_type == m_original_type)
-        return m_type;
-
-    PlanetType cur_type = m_type;
-    int cw_steps = 0;
-    while (cur_type != m_original_type) {
-        cw_steps++;
-        cur_type = RingNextPlanetType(cur_type);
-    }
-
-    cur_type = m_type;
-    int ccw_steps = 0;
-    while (cur_type != m_original_type) {
-        ccw_steps++;
-        cur_type = RingPreviousPlanetType(cur_type);
-    }
-
-    if (cw_steps <= ccw_steps)
-        return RingNextPlanetType(m_type);
-    return RingPreviousPlanetType(m_type);
-}
+PlanetType Planet::NextCloserToOriginalPlanetType() const noexcept
+{ return NextCloserTo(m_type, m_original_type); }
 
 namespace {
     constexpr PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) noexcept {
@@ -483,7 +503,7 @@ PlanetSize Planet::NextLargerPlanetSize() const noexcept
 PlanetSize Planet::NextSmallerPlanetSize() const noexcept
 { return PlanetSizeIncrement(m_size, -1); }
 
-float Planet::OrbitalPositionOnTurn(int turn) const
+float Planet::OrbitalPositionOnTurn(int turn) const noexcept
 { return m_initial_orbital_position + OrbitalPeriod() * 2.0 * 3.1415926 / 4 * turn; }
 
 std::shared_ptr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
@@ -663,7 +683,7 @@ double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) co
     return ac->Eval(source_planet_context);
 }
 
-int Planet::TurnsSinceColonization(int current_turn) const {
+int Planet::TurnsSinceColonization(int current_turn) const noexcept {
     if (m_turn_last_colonized == INVALID_GAME_TURN)
         return 0;
     if (current_turn == INVALID_GAME_TURN)
@@ -671,7 +691,7 @@ int Planet::TurnsSinceColonization(int current_turn) const {
     return current_turn - m_turn_last_colonized;
 }
 
-int Planet::TurnsSinceLastConquered(int current_turn) const {
+int Planet::TurnsSinceLastConquered(int current_turn) const noexcept {
     if (m_turn_last_conquered == INVALID_GAME_TURN)
         return 0;
     if (current_turn == INVALID_GAME_TURN)
@@ -679,7 +699,7 @@ int Planet::TurnsSinceLastConquered(int current_turn) const {
     return current_turn - m_turn_last_conquered;
 }
 
-int Planet::TurnsSinceLastAnnexed(int current_turn) const {
+int Planet::TurnsSinceLastAnnexed(int current_turn) const noexcept {
     if (m_turn_last_annexed == INVALID_GAME_TURN)
         return 0;
     if (current_turn == INVALID_GAME_TURN)

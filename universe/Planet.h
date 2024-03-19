@@ -94,7 +94,7 @@ public:
     /** @returns an angle in radians. */
     [[nodiscard]] float InitialOrbitalPosition() const noexcept     { return m_initial_orbital_position; }
     /** @returns an angle in radians. */
-    [[nodiscard]] float OrbitalPositionOnTurn(int turn) const;
+    [[nodiscard]] float OrbitalPositionOnTurn(int turn) const noexcept;
     /** The rotational period represents a planets "day".  A "day" is
       * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
     [[nodiscard]] float RotationalPeriod() const noexcept           { return m_rotational_period; }
@@ -113,14 +113,14 @@ public:
     [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
     [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
-    [[nodiscard]] int TurnsSinceColonization(int current_turn) const;
+    [[nodiscard]] int TurnsSinceColonization(int current_turn) const noexcept;
     [[nodiscard]] int LastColonizedByEmpire() const                 { return m_last_colonized_by_empire_id; }
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
-    [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
+    [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const noexcept;
     [[nodiscard]] int OwnerBeforeLastConquered() const noexcept     { return m_owner_before_last_conquered; }
     [[nodiscard]] int LastInvadedByEmpire() const noexcept          { return m_last_invaded_by_empire_id; }
     [[nodiscard]] int LastTurnAnnexed() const noexcept              { return m_turn_last_annexed; }
-    [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const;
+    [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const noexcept;
 
     [[nodiscard]] const auto& SurfaceTexture() const noexcept       { return m_surface_texture; }
     [[nodiscard]] std::string CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
