@@ -161,11 +161,13 @@ namespace {
         }
 
         std::unique_ptr<ValueRef::ValueRef<double>> sortkey;
-        auto sortkey_args = boost::python::extract<value_ref_wrapper<double>>(kw["sortkey"]);
-        if (sortkey_args.check()) {
-            sortkey = ValueRef::CloneUnique(sortkey_args().value_ref);
-        } else {
-            sortkey = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["sortkey"])());
+        if (kw.has_key("sortkey")) {
+            auto sortkey_args = boost::python::extract<value_ref_wrapper<double>>(kw["sortkey"]);
+            if (sortkey_args.check()) {
+                sortkey = ValueRef::CloneUnique(sortkey_args().value_ref);
+            } else {
+                sortkey = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["sortkey"])());
+            }
         }
 
         auto condition = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["condition"])().condition);
@@ -845,7 +847,8 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     {
         const auto sm = op.second;
         globals[op.first] = boost::python::raw_function([sm](const auto& args, const auto& kw) { return insert_sorted_number_of_(args, kw, sm); });
-    }            
+    }
+    globals["NumberOf"] = boost::python::raw_function([](const auto& args, const auto& kw) { return insert_sorted_number_of_(args, kw, Condition::SortingMethod::SORT_RANDOM); });
 
     globals["HasSpecies"] = boost::python::raw_function(insert_has_species_);
     globals["IsField"] = boost::python::raw_function(insert_is_field_);
