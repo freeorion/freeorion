@@ -375,7 +375,9 @@ std::string_view MeterToName(MeterType meter) noexcept { return MeterToNameCX(me
 namespace {
     constexpr std::string_view PlanetTypeToStringCX(PlanetType planet) noexcept {
         // NOTE: INVALID_PLANET_TYPE (enum's -1 position) <= planet < NUM_PLANET_TYPES (enum's final position)
-        return NAME_BY_PLANET[static_cast<std::underlying_type_t<PlanetType>>(planet) + 1];
+        using ul_t = std::underlying_type_t<PlanetType>;
+        using arr_size_t = decltype(NAME_BY_PLANET)::size_type;
+        return NAME_BY_PLANET[static_cast<arr_size_t>(static_cast<ul_t>(planet) + 1)];
     }
 }
 
