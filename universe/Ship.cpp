@@ -20,6 +20,7 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
+#include <numeric>
 
 
 Ship::Ship(int empire_id, int design_id, std::string species_name,
@@ -507,22 +508,16 @@ float Ship::WeaponPartShipDamage(const ShipPart* part, const ScriptingContext& c
 
 float Ship::TotalWeaponsFighterDamage(const ScriptingContext& context, bool launch_fighters) const {
     // sum up all individual weapons' attack strengths
-    float total_shots = 0.0f;
     const auto all_weapons_shots = AllWeaponsFighterDamage(context, launch_fighters);
-    for (float shots : all_weapons_shots)
-        total_shots += shots;
-    return total_shots;
+    return std::accumulate(all_weapons_shots.begin(), all_weapons_shots.end(), 0.0f);
 }
 
 float Ship::TotalWeaponsShipDamage(const ScriptingContext& context, float shield_DR,
                                    bool launch_fighters) const
 {
     // sum up all individual weapons' attack strengths
-    float total_attack = 0.0f;
     const auto all_weapons_damage = AllWeaponsShipDamage(context, shield_DR, launch_fighters);
-    for (float attack : all_weapons_damage)
-        total_attack += attack;
-    return total_attack;
+    return std::accumulate(all_weapons_damage.begin(), all_weapons_damage.end(), 0.0f);
 }
 
 std::vector<float> Ship::AllWeaponsFighterDamage(const ScriptingContext& context,
