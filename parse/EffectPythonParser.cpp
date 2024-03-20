@@ -677,6 +677,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetEmpireMeter"] = py::raw_function(set_empire_meter);
     globals["Victory"] = py::raw_function(victory);
     globals["AddSpecial"] = py::raw_function(add_special);
+    globals["SetSpecialCapacity"] = py::raw_function(add_special);
     globals["RemoveSpecial"] = py::raw_function(remove_special);
     globals["CreateShip"] = py::raw_function(create_ship);
     globals["CreateBuilding"] = py::raw_function(create_building);
