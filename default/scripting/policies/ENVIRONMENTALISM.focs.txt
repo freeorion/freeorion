@@ -12,6 +12,7 @@ Policy
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                Species
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
@@ -26,6 +27,7 @@ Policy
                 Planet
                 OwnedBy empire = Source.Owner
                 Not Planet type = LocalCandidate.OriginalType
+                Species
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
