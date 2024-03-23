@@ -4,7 +4,6 @@ from focs._effects import (
     Contains,
     Destroy,
     EffectsGroup,
-    GasGiantType,
     HasSpecial,
     IsBuilding,
     IsSource,
@@ -30,7 +29,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         Planet()
         & ~Contains(IsBuilding(name=["BLD_ART_MOON"]))
         & OwnedBy(empire=Source.Owner)
-        & ~Planet(type=[AsteroidsType, GasGiantType])
+        & ~Planet(type=[AsteroidsType])
         & ~HasSpecial(name="RESONANT_MOON_SPECIAL")
     ),
     enqueuelocation=ENQUEUE_BUILD_ONE_PER_PLANET,
