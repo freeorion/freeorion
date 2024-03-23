@@ -15,6 +15,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Species
             ]
+            priority = [[TARGET_LATE_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
                 SetTargetInfluence value = Value
                    + (NamedReal name = "PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT" value = -0.5)
