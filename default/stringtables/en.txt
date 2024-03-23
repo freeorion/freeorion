@@ -12536,8 +12536,8 @@ Environmentalism
 
 PLC_ENVIRONMENTALISM_DESC
 '''• Decreases [[metertype METER_CONSTRUCTION]] by [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_TERRAFORMED_FLAT]], [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_FLAT]] and [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_FLAT]] on planets that have been terraformed, or otherwise changed from their original environment.
-• Decreases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT]] and [[metertype METER_CONSTRUCTION]] by [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_FLAT]] on non-asteroids.
-• Boosts [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT]], [[metertype METER_TARGET_RESEARCH]] by [[value PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT]] and [[metertype METER_STEALTH]] by [[value PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT]] on planets that are not asteroids or gas giants, have not been terraformed, contain no buildings and are not industry-focused.
+• Decreases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT]] and [[metertype METER_CONSTRUCTION]] by [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_FLAT]] on populated planets.
+• Boosts [[metertype METER_TARGET_HAPPINESS]] by [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT]], [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT]], [[metertype METER_TARGET_RESEARCH]] by [[value PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT]] and [[metertype METER_STEALTH]] by [[value PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT]] on planets that have not been terraformed, contain no buildings and are not industry-focused.
 • Makes terraforming a planet 3x as expensive.'''
 
 PLC_ENVIRONMENTALISM_SHORT_DESC
@@ -12582,14 +12582,14 @@ PLC_CHECKPOINTS
 Border Checkpoints
 
 PLC_CHECKPOINTS_DESC
-'''Decreases [[metertype METER_STEALTH]] of foreign ships and planets in [[metertype METER_SUPPLY]] by up to [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]]. Ships and planets are considered foreign if not owned by or allied to this empire. Unowned planets and monsters are also foreign.
+'''Decreases [[metertype METER_STEALTH]] of foreign ships in [[metertype METER_SUPPLY]] by up to [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
 The decrease depends on the time this policy is adopted, decreasing [[metertype METER_STEALTH]] by 1 per turn up to [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
-Reduces [[metertype METER_INFLUENCE]] generation ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
+Decreases [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]] on populated planets owned by empire.'''
 
 PLC_CHECKPOINTS_SHORT_DESC
-Improves Detection / Hinders Supply
+Improves Detection / Costs Influence
 
 PLC_DIVERSITY
 Diversity
