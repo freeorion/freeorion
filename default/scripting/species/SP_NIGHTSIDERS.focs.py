@@ -64,6 +64,8 @@ Species(
         "FOCUS_PROTECTION",  # good at it and like it. why not. go away. nothing to see here anyway. we'll come to you when we need your blood.
         "BLD_INTERSPECIES_ACADEMY",  # sure, show us all the species you got, maybe tasty
         "PLC_DIVINE_AUTHORITY",  # we were kind of in god's plan from the beginning ...
+        "PLC_ISOLATION",
+        "PLC_INSURGENCY",
         "SP_DERTHREAN",  # now following: whats on the menu – all those tasty organic non-aquatic species
         "SP_EAXAW",
         "SP_FIFTYSEVEN",

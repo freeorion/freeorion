@@ -68,6 +68,7 @@ Species(
         "PLC_DREAM_RECURSION",
         "PLC_CONTINUOUS_SCANNING",
         "PLC_CENTRALIZATION",
+        "PLC_ISOLATION",
     ],
     dislikes=[
         "BLD_CULTURE_LIBRARY",

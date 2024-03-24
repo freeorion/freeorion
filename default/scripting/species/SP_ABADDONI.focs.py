@@ -57,6 +57,7 @@ Species(
         "PLC_CONFORMANCE",
         "PLC_TERROR_SUPPRESSION",
         "PLC_INDOCTRINATION",
+        "PLC_INSURGENCY",
         "PLC_BUREAUCRACY",
     ],
     dislikes=[
@@ -70,6 +71,7 @@ Species(
         "PHILOSOPHER_SPECIAL",
         "TIDAL_LOCK_SPECIAL",
         "PLC_DIVERSITY",
+        "PLC_FEUDALISM",
         "PLC_LIBERTY",
         "PLC_ARTISAN_WORKSHOPS",
         "PLC_CONFEDERATION",

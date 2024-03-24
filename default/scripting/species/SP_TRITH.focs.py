@@ -2,7 +2,7 @@ from focs._effects import Capital, EffectsGroup, GiveEmpirePolicy, IsSource, Pla
 from focs._species import *
 from species.species_macros.detection import GOOD_DETECTION
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
-from species.species_macros.env import RADIATED_STANDARD_EP
+from species.species_macros.env import BROAD_EP, RADIATED_BROAD_EP
 from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
@@ -103,11 +103,12 @@ Species(
         # not for description,
         *AVERAGE_PLANETARY_SHIELDS,
         *AVERAGE_PLANETARY_DEFENSE,
+        BROAD_EP,
         *GOOD_SHIP_SHIELDS,
         EffectsGroup(
             scope=IsSource, activation=Planet() & ~Unowned & Capital, effects=GiveEmpirePolicy(name="PLC_RACIAL_PURITY")
         ),
     ],
-    environments=RADIATED_STANDARD_EP,
+    environments=RADIATED_BROAD_EP,
     graphic="icons/species/trith.png",
 )

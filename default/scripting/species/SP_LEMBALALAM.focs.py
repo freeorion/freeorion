@@ -68,6 +68,8 @@ Species(
         "PLC_AUGMENTATION",
         "PLC_CHECKPOINTS",
         "PLC_EXOBOT_PRODUCTIVITY",
+        "PLC_ISOLATION",
+        "PLC_NO_GROWTH",
     ],
     dislikes=[
         "SUPERCONDUCTOR_SPECIAL",
@@ -80,6 +82,7 @@ Species(
         "PLC_SYSTEM_INFRA",
         "PLC_INTERSTELLAR_INFRA",
         "PLC_METROPOLES",
+        "PLC_POPULATION",
         "SP_NIGHTSIDERS",
     ],
     effectsgroups=[
