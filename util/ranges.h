@@ -21,6 +21,7 @@ inline constexpr auto& range_any_of = std::ranges::any_of;
 inline constexpr auto& range_copy = std::ranges::copy;
 inline constexpr auto& range_copy_if = std::ranges::copy_if;
 inline constexpr auto& range_max_element = std::ranges::max_element;
+inline constexpr auto& range_min_element = std::ranges::min_element;
 inline constexpr auto& range_equal = std::ranges::equal_range;
 inline constexpr auto& range_end = std::ranges::end;
 #else
@@ -47,6 +48,8 @@ template <typename... Args>
 inline auto range_copy_if(Args... args) { return boost::algorithm::copy_if(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_max_element(Args... args) { return boost::range::max_element(std::forward<Args>(args)...); }
+template <typename... Args>
+inline auto range_min_element(Args... args) { return boost::range::min_element(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_equal(Args... args) { return boost::range::equal_range(std::forward<Args>(args)...); }
 template <typename... Args>
