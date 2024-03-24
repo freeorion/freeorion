@@ -13,6 +13,7 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_FLAT" value = 4.0)
 
         EffectsGroup
@@ -21,6 +22,7 @@ Policy
                 OwnedBy affiliation = AllyOf empire = Source.Owner
                 Not EmpireHasAdoptedPolicy empire = LocalCandidate.Owner name = ThisPolicy
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ALLIED_FLAT" value = 1.0)
 
         EffectsGroup
@@ -33,8 +35,10 @@ Policy
                     VisibleToEmpire empire = RootCandidate.Owner
                 ]
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + (NamedReal name = "PROPAGANDA_INFLUENCE_ENEMY_FLAT" value = -1.0)
     ]
     graphic = "icons/policies/social_propaganda.png"
 
 #include "/scripting/policies/policies.macros"
+#include "/scripting/macros/priorities.macros"
