@@ -370,6 +370,9 @@ namespace {
         case PT_GASGIANT:
         case NUM_PLANET_TYPES:
             return from;
+            break;
+        default:
+            break;
         }
         switch (towards) {
         case INVALID_PLANET_TYPE:
@@ -377,6 +380,9 @@ namespace {
         case PT_GASGIANT:
         case NUM_PLANET_TYPES:
             return from;
+            break;
+        default:
+            break;
         }
 
         if (from == towards)
