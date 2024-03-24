@@ -42,8 +42,9 @@ Policy
                     ]
                 ]
             ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value +
-                (NamedReal name = "PLC_VASSALIZATION_INFLUENCE_SCALING" value = 2.0) *
+                (NamedReal name = "PLC_VASSALIZATION_INFLUENCE_SCALING" value = 1.5) *
                 (Statistic Sum value = LocalCandidate.Population condition = And [
                     InSystem id = Target.SystemID
                     Planet
