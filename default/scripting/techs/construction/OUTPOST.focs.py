@@ -1,6 +1,7 @@
 from focs._effects import (
     Abs,
     EffectsGroup,
+    EmpireHasAdoptedPolicy,
     HasEmpireStockpile,
     HasSpecies,
     Influence,
@@ -42,7 +43,10 @@ Tech(
     effectsgroups=[
         # Outposts only have 50% of troops
         EffectsGroup(
-            scope=Planet() & OwnedBy(empire=Source.Owner) & Population(high=0),
+            scope=Planet()
+            & OwnedBy(empire=Source.Owner)
+            & Population(high=0)
+            & ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_MARINE_RECRUITMENT"),
             stackinggroup="OUTPOST_TROOPS_STACK",
             priority=TARGET_AFTER_2ND_SCALING_PRIORITY,
             effects=SetMaxTroops(value=Value * 0.5),

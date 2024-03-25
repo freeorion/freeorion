@@ -12475,7 +12475,8 @@ Marine Recruitment
 
 PLC_MARINE_RECRUITMENT_DESC
 '''• Reduces the cost of ground troop ship parts by 50%.
-• Increases planet troop regeneration rate by [[value PLC_MARINE_RECRUITMENT_TROOP_GROWTH_FLAT]].'''
+• Increases planet troop regeneration rate by [[value PLC_MARINE_RECRUITMENT_TROOP_GROWTH_FLAT]].
+• Removes the troop penalty on outposts.'''
 
 PLC_MARINE_RECRUITMENT_SHORT_DESC
 Reduces Ground Troop Cost
