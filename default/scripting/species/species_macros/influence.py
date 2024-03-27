@@ -22,6 +22,7 @@ from focs._effects import (
     Source,
     StatisticCount,
     Target,
+    Turn,
     Unowned,
     Value,
 )
@@ -128,7 +129,8 @@ _BASE_INFLUENCE_COSTS = [
         & ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CONFEDERATION")
         & ~ResourceSupplyConnected(
             empire=LocalCandidate.Owner, condition=Planet() & OwnedBy(empire=Source.Owner) & Capital
-        ),
+        )
+        & Turn(low=1),
         accountinglabel="CAPITAL_DISCONNECTION_LABEL",
         priority=TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
         effects=SetTargetInfluence(
