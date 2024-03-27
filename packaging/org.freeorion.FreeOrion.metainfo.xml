@@ -2,11 +2,11 @@
 <component type="desktop-application">
   <id>org.freeorion.FreeOrion</id>
   <name>FreeOrion</name>
-  <summary>Turn-based space empire and galactic conquest (4X) computer game</summary>
+  <summary>Turn-based space empire and galactic conquest game</summary>
   <developer_name>FreeOrion Project</developer_name>
   <description>
     <p>FreeOrion is a free, Open Source, turn-based space empire and galactic conquest computer game.</p>
-    <p>FreeOrion is inspired by the tradition of the Master of Orion games, but does not try to be a clone or remake of that series or any other game.  It builds on the classic 4X (eXplore, eXpand, eXploit and eXterminate) model.</p>
+    <p>FreeOrion is inspired by the tradition of the Master of Orion games, but does not try to be a clone or remake of that series or any other game. It builds on the classic 4X (eXplore, eXpand, eXploit and eXterminate) model.</p>
   </description>
   <categories>
     <category>Game</category>
