@@ -1100,7 +1100,7 @@ if(NOT APPLE AND NOT ANDROID)
                     FILES
                     ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
                     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
-                    RENAME freeorion.png
+                    RENAME org.freeorion.FreeOrion.png
                 )
             endforeach()
         endif()
