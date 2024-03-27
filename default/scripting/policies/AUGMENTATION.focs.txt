@@ -12,10 +12,10 @@ Policy
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
-                Planet environment = [ Hostile ]
+                Not Planet environment = [Uninhabitable]
             ]
-            priority = [[TARGET_POPULATION_BEFORE_SCALING_PRIORITY]]
-            effects = SetTargetPopulation value = Value + 2 * Target.HabitableSize
+            priority = [[TARGET_POPULATION_OVERRIDE_PRIORITY]]
+            effects = SetTargetPopulation value = max(Value, Target.HabitableSize)
 
         EffectsGroup
             scope = And [
