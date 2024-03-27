@@ -459,8 +459,6 @@ class ColorSelector final : public GG::Control {
 public:
     ColorSelector(GG::Clr color, GG::Clr default_color);
 
-    virtual ~ColorSelector();
-
     void Render() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;

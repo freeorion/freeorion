@@ -145,7 +145,7 @@ void Scroll::Render()
 
     m_buffer.activate();
     glColor(Disabled() ? DisabledColor(m_int_color) : m_int_color);
-    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size());
+    glDrawArrays(GL_TRIANGLE_FAN, 0, static_cast<GLsizei>(m_buffer.size()));
 
     glLineWidth(1.0f);
     glEnable(GL_TEXTURE_2D);

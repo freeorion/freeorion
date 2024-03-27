@@ -185,6 +185,7 @@ namespace {
     /** Retreive a value label and general string representation for @a meter_type
       * eg. {"METER_STEALTH_VALUE_LABEL", UserString("METER_STEALTH")} */
     auto MeterValueLabelAndString(MeterType meter_type) {
+        static_assert(std::is_same_v<std::string_view, decltype(to_string(meter_type))>);
         std::pair<std::string_view, std::string_view> retval{"", to_string(meter_type)};
 
         if (meter_type == MeterType::INVALID_METER_TYPE)
@@ -261,7 +262,7 @@ namespace {
 
         // first: readable name. can't be a view because some names are on-the fly generated, eg. system apparent name
         // second.first: link text. generated on the fly
-        // second.second: item name/id/key within category. coul be dynamically generated from an ID number
+        // second.second: item name/id/key within category. could be dynamically generated from an ID number
         std::vector<std::pair<std::string, std::pair<std::string, std::string>>> retval;
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
@@ -768,10 +769,14 @@ namespace {
             }
         }
 
-        if (dir_name == "ENC_NAMED_VALUE_REF" && !retval.empty())
-            std::sort(std::next(retval.begin()), retval.end()); // leave explanitory text first
-        else
-            std::sort(retval.begin(), retval.end());
+        if (!retval.empty()) {
+            if (dir_name == "ENC_NAMED_VALUE_REF") {
+                // leave explanitory text first
+                std::sort(std::next(retval.begin()), retval.end());
+            } else {
+                std::sort(retval.begin(), retval.end());
+            }
+        }
         return retval;
     }
 
@@ -780,7 +785,7 @@ namespace {
         auto sorted_entries = GetSortedPediaDirEntires(dir_name, true);
 
         std::string retval;
-        retval.reserve(sorted_entries.size() * 128);   // rough guesstimate
+        retval.reserve(sorted_entries.size() * 256);   // rough guesstimate
 
         // add sorted entries linktext representation to page text
         for (const auto& entry : sorted_entries)
@@ -1437,10 +1442,12 @@ namespace {
         if (dir_text.empty())
             return;
 
-        if (!detailed_description.empty())
+        if (!detailed_description.empty()) {
             detailed_description += "\n\n";
-
-        detailed_description += dir_text;
+            detailed_description += dir_text;
+        } else {
+            detailed_description = std::move(dir_text);
+        }
     }
 
     void RefreshDetailPanelShipPartTag(     const std::string& item_type, const std::string& item_name,
@@ -4164,7 +4171,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     m_summary_text->Clear();
     m_cost_text->Clear();
 
-    m_description_rich_text->SetText("");
+    m_description_rich_text->SetText(EMPTY_STRING);
 
     DetachChild(m_graph);
 

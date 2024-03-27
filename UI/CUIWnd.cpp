@@ -226,7 +226,6 @@ CUIWnd::~CUIWnd() {
         ErrorLogger() << "CUIWnd::~CUIWnd() : caught exception while removing \"ui." << m_config_name
                       << ".initialized\": " << e.what();
     }
-    m_vertex_buffer.clear();
 }
 
 void CUIWnd::ValidatePosition()

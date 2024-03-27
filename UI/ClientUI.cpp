@@ -340,7 +340,8 @@ std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
-    if (const ShipDesign* design = GetUniverse().GetShipDesign(design_id)) {
+    const ScriptingContext context;
+    if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id)) {
         std::string_view icon_name = design->Icon();
         if (icon_name.empty())
             return ClientUI::HullIcon(design->Hull());
@@ -715,11 +716,12 @@ std::string ClientUI::GetFilenameWithSaveFileDialog(
         return "";
 
     m_savefile_dialog = GG::Wnd::Create<SaveFileDialog>(purpose, type);
+    if (!m_savefile_dialog)
+        return "";
 
     m_savefile_dialog->Run();
-    auto filename = m_savefile_dialog->Result();
-
-    m_savefile_dialog = nullptr;
+    auto filename = m_savefile_dialog->ResultString();
+    m_savefile_dialog.reset();
     return filename;
 }
 
@@ -752,8 +754,9 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
 }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
+    const ScriptingContext context;
     // try first by finding the object by name TODO: use getRaw or find or somesuch
-    for (auto obj : GetUniverse().Objects().allRaw<UniverseObject>())
+    for (auto obj : context.ContextObjects().allRaw<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
 
@@ -957,7 +960,8 @@ bool ClientUI::ZoomToFieldType(std::string field_type_name) {
 }
 
 bool ClientUI::ZoomToShipDesign(int design_id) {
-    if (!GetUniverse().GetShipDesign(design_id))
+    const ScriptingContext context;
+    if (!context.ContextUniverse().GetShipDesign(design_id))
         return false;
     GetMapWnd()->ShowShipDesign(design_id);
     return true;

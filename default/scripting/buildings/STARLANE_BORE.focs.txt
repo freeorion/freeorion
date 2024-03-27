@@ -12,8 +12,8 @@ BuildingType
             activation = Not [[ BORE_POSSIBLE ]]
             effects = [
                 GenerateSitRepMessage
-                    message = "EFFECT_STARLANE_NEXUS_FAILED"
-                    label = "EFFECT_STARLANE_NEXUS_LABEL"
+                    message = "EFFECT_STARLANE_BORE_FAILED"
+                    label = "EFFECT_STARLANE_BORE_LABEL"
                     icon = "icons/tech/n-dimensional_structures.png"
                     parameters = tag = "system" data = Target.ID
                     empire = Source.Owner

@@ -107,6 +107,15 @@ namespace {
                         false,
                         true,
                         GameRuleRanks::RULE_EXTRASOLAR_SHIP_DETECTION_RANK);
+
+        rules.Add<Visibility>(UserStringNop("RULE_OVERRIDE_VIS_LEVEL"),
+                              UserStringNop("RULE_OVERRIDE_VIS_LEVEL_DESC"),
+                              GameRuleCategories::GameRuleCategory::GENERAL,
+                              Visibility::VIS_PARTIAL_VISIBILITY,
+                              true,
+                              GameRuleRanks::RULE_OVERRIDE_VIS_LEVEL_RANK,
+                              std::make_unique<RangedValidator<Visibility>>(
+                                  Visibility::VIS_NO_VISIBILITY, Visibility::VIS_FULL_VISIBILITY));
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 
@@ -221,6 +230,7 @@ void Universe::Clear() {
 
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
+    m_empire_object_visibility_overrides.clear();
     m_effect_specified_empire_object_visibilities.clear();
 
     m_stat_records.clear();
@@ -1882,6 +1892,21 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id,
     }
 }
 
+void Universe::SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids)
+{ m_empire_object_visibility_overrides = std::move(empires_ids); }
+
+void Universe::ApplyEmpireObjectVisibilityOverrides() {
+    const Visibility override_vis = GetGameRules().Get<Visibility>("RULE_OVERRIDE_VIS_LEVEL");
+
+    for (auto& [empire_id, object_ids] : m_empire_object_visibility_overrides
+         | range_filter([](auto& e_os) { return e_os.first != ALL_EMPIRES; }))
+    {
+        for (auto viewed_obj_id : object_ids
+             | range_filter([](auto viewed_obj_id) { return viewed_obj_id > INVALID_OBJECT_ID; }))
+        { SetEmpireObjectVisibility(empire_id, viewed_obj_id, override_vis); }
+    }
+}
+
 void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int source_id,
                                           const ValueRef::ValueRef<Visibility>* vis)
 {
@@ -1903,7 +1928,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
         for (const auto& [viewed_obj_id, src_and_vis_ref_map] : obj_src_vis_ref_map) {
             if (viewed_obj_id <= INVALID_OBJECT_ID)
                 continue;   // can't set a non-object's visibility
-            auto target = m_objects->getRaw(viewed_obj_id);
+            auto const target = m_objects->getRaw(viewed_obj_id);
             if (!target)
                 continue;   // don't need to set a non-gettable object's visibility
 
@@ -1912,7 +1937,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
             // evaluating this ValueRef. If not, use the object's current
             // in-universe Visibility for the specified empire
             Visibility target_initial_vis = m_empire_object_visibility[empire_id][viewed_obj_id];
-            auto neov_it = new_empire_object_visibilities[empire_id].find(viewed_obj_id);
+            const auto neov_it = new_empire_object_visibilities[empire_id].find(viewed_obj_id);
             if (neov_it != new_empire_object_visibilities[empire_id].end())
                 target_initial_vis = neov_it->second;
 
@@ -1935,6 +1960,7 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
     for (auto& [empire_id, obj_vis_map] : new_empire_object_visibilities) {
         for (auto& [object_id, vis] : obj_vis_map)
             m_empire_object_visibility[empire_id][object_id] = vis;
+        // TODO: use SetEmpireObjectVisibility to ensure ship design visibility. needs some tweaks as that only upgrades vis...
     }
 }
 
@@ -2002,15 +2028,10 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // get visibility map for empire and find object in it
     auto& vis_map = m_empire_object_visibility[empire_id];
-    auto vis_map_it = vis_map.find(object_id);
 
     // if object not already present, store default value (which may be replaced)
-    if (vis_map_it == vis_map.end()) {
-        vis_map[object_id] = Visibility::VIS_NO_VISIBILITY;
-
-        // get iterator pointing at newly-created entry
-        vis_map_it = vis_map.find(object_id);
-    }
+    // and get iterator to value
+    auto vis_map_it = vis_map.try_emplace(object_id, Visibility::VIS_NO_VISIBILITY).first;
 
     // increase stored value if new visibility is higher than last recorded
     if (vis > vis_map_it->second)
@@ -2018,7 +2039,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-        if (auto ship = m_objects->get<Ship>(object_id))
+        if (auto ship = m_objects->getRaw<const Ship>(object_id))
             SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
     }
 }
@@ -2192,6 +2213,10 @@ std::size_t Universe::SizeInMemory() const {
         for (const auto& id_vtm : id_ovtm.second)
             retval += sizeof(decltype(id_vtm.second)::value_type)*id_vtm.second.size();
     }
+
+    retval += sizeof(decltype(m_empire_object_visibility_overrides)::value_type)*m_empire_object_visibility_overrides.size();
+    for (const auto& id_ids : m_empire_object_visibility_overrides)
+        retval += sizeof(decltype(id_ids.second)::value_type)*id_ids.second.size();
 
     retval += sizeof(decltype(m_effect_specified_empire_object_visibilities)::value_type)*m_effect_specified_empire_object_visibilities.size();
     for (const auto& id_ovrm : m_effect_specified_empire_object_visibilities) {
@@ -2832,6 +2857,7 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
 
     SetSameSystemPlanetsVisible(*this);
 
+    ApplyEmpireObjectVisibilityOverrides();
     ApplyEffectDerivedVisibilities(empires);
 
     PropagateVisibilityToContainerObjects(*m_objects, m_empire_object_visibility);

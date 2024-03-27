@@ -106,10 +106,8 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     auto it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it == m_fleet_supplyable_system_ids.end())
         return false;
-    const std::set<int>& sys_set = it->second;
-    if (sys_set.contains(system_id))
-        return true;
-    return false;
+    const auto& sys_set = it->second;
+    return sys_set.contains(system_id);
 }
 
 bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies,
@@ -244,7 +242,7 @@ namespace {
         if (empire_id == ALL_EMPIRES)
             return 0.0f;
 
-        auto is_owned = [empire_id](const UniverseObject* obj) { return obj->OwnedBy(empire_id); };
+        auto is_owned = [empire_id](const UniverseObject* obj) noexcept { return obj->OwnedBy(empire_id); };
 
         float accumulator_current = 0.0f;
         for (auto* obj : objects.findRaw<Planet>(is_owned)) { // TODO: handle ships if they can have supply meters

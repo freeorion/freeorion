@@ -109,7 +109,7 @@ namespace {
     }
 
     bool Prompt(std::string question) {
-        std::shared_ptr<GG::Font> font = ClientUI::GetFont();
+        const auto font = ClientUI::GetFont();
         auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
             PROMT_WIDTH, PROMPT_HEIGHT, std::move(question), font,
             ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(),
@@ -823,7 +823,7 @@ void SaveFileDialog::Confirm() {
             if (!Prompt(std::move(question)))
                 return;
         } else if (fs::exists(chosen_full_path)) {
-            ErrorLogger() << "SaveFileDialog::Confirm: Invalid status for file: " << Result();
+            ErrorLogger() << "SaveFileDialog::Confirm: Invalid status for file: " << ResultString();
             return;
         }
     }
@@ -835,32 +835,31 @@ void SaveFileDialog::AskDelete() {
     if (m_server_previews)
         return;
 
-    fs::path chosen(Result());
-    if (fs::exists (chosen) && fs::is_regular_file (chosen)) {
-        std::string filename = m_name_edit->Text();
+    fs::path chosen(ResultPath());
+    if (!fs::exists(chosen) || !fs::is_regular_file(chosen))
+        return;
+    const auto& filename = m_name_edit->Text();
 
-        boost::format templ(UserString("SAVE_REALLY_DELETE"));
+    boost::format templ(UserString("SAVE_REALLY_DELETE"));
+    const auto answer = Prompt(str(templ % filename));
+    if (!answer)
+        return;
 
-        std::string question = str(templ % filename);
-        if (Prompt (question)) {
-            fs::remove(chosen);
-            // Move selection to next if any or previous, if any
-            auto it = m_file_list->Selections().begin();
-            if (it != m_file_list->Selections().end()) {
-                auto row_it = *it;
-                auto next_it(row_it);
-                ++next_it;
-                if (next_it != m_file_list->end()) {
-                    m_file_list->SelectRow(next_it, true);
-                } else if (row_it != m_file_list->begin()) {
-                    auto prev_it(row_it);
-                    --prev_it;
-                    m_file_list->SelectRow(next_it, true);
-                }
-                m_file_list->Erase(row_it);
-            }
-        }
-    }
+    fs::remove(chosen);
+    // Move selection to next if any or previous, if any
+    const auto sel_it = m_file_list->Selections().begin();
+    if (sel_it == m_file_list->Selections().end())
+        return;
+
+    const auto init_sel_row_it{*sel_it};
+    if (init_sel_row_it == m_file_list->end())
+        return;
+
+    if (std::next(init_sel_row_it) != m_file_list->end())
+        m_file_list->SelectRow(std::next(init_sel_row_it), true);
+    else if (init_sel_row_it != m_file_list->begin())
+        m_file_list->SelectRow(std::prev(init_sel_row_it), true);
+    m_file_list->Erase(init_sel_row_it);
 }
 
 void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
@@ -1024,14 +1023,17 @@ void SaveFileDialog::SetDirPath(std::string dirname) {
     m_current_dir_edit->SetText(std::move(dirname));
 }
 
-std::string SaveFileDialog::Result() const {
-    std::string choice = m_name_edit->Text();
+fs::path SaveFileDialog::ResultPath() const {
+    const auto& choice = m_name_edit->Text();
     if (choice.empty())
-        return "";
+        return {};
 
     fs::path choice_path = FilenameToPath(choice);
     fs::path current_dir = FilenameToPath(GetDirPath());
     fs::path chosen_full_path = current_dir / choice_path;
 
-    return PathToString(chosen_full_path);
+    return chosen_full_path;
 }
+
+std::string SaveFileDialog::ResultString() const
+{ return PathToString(ResultPath()); }

@@ -120,7 +120,7 @@ void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
 // implementation data types
 struct GG::GUIImpl
 {
-    GUIImpl();
+    explicit GUIImpl(std::string app_name);
 
     void HandleMouseButtonPress(  unsigned int mouse_button, Pt pos, int curr_ticks);
     void HandleMouseDrag(         unsigned int mouse_button, Pt pos, int curr_ticks);
@@ -237,7 +237,8 @@ struct GG::GUIImpl
     std::string m_clipboard_text;
 };
 
-GUIImpl::GUIImpl() :
+GUIImpl::GUIImpl(std::string app_name) :
+    m_app_name(std::move(app_name)),
     m_last_FPS_time(std::chrono::high_resolution_clock::now()),
     m_last_frame_time(std::chrono::high_resolution_clock::now()),
     m_style_factory(std::make_shared<StyleFactory>())
@@ -836,16 +837,15 @@ GUI* GUI::s_gui = nullptr;
 
 // member functions
 GUI::GUI(std::string app_name) :
-    m_impl(std::make_unique<GUIImpl>())
+    m_impl(std::make_unique<GUIImpl>(std::move(app_name)))
 {
     assert(!s_gui);
     s_gui = this;
-    m_impl->m_app_name = std::move(app_name);
 }
 
 GUI::~GUI()
 {
-    s_gui = nullptr;
+    s_gui = nullptr; // probly optimized away :/
     Wnd::s_default_browse_info_wnd.reset();
 }
 
@@ -1637,6 +1637,8 @@ namespace {
             return clipped_wnd->NonClientChild() ?
                 wnd_clipped_out(clipping_wnd) : client_clipped_out(clipping_wnd);
             break;
+        case Wnd::ChildClippingMode::ClipToAncestorClient:
+            return false;
         }
         return false;
     };
@@ -1845,7 +1847,7 @@ bool GUI::ProcessBrowseInfoImpl(Wnd* wnd)
                     if (m_impl->m_browse_target != wnd || m_impl->m_browse_info_wnd != it->wnd || m_impl->m_browse_info_mode != static_cast<int>(i)) {
                         m_impl->m_browse_target = wnd;
                         m_impl->m_browse_info_wnd = it->wnd;
-                        m_impl->m_browse_info_mode = i;
+                        m_impl->m_browse_info_mode = static_cast<decltype(m_impl->m_browse_info_mode)>(i);
                         m_impl->m_browse_info_wnd->SetCursorPosition(m_impl->m_mouse_pos);
                     }
                     retval = true;

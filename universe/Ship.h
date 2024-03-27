@@ -38,7 +38,7 @@ public:
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
-    void BackPropagateMeters() override;
+    void BackPropagateMeters() noexcept override;
 
     void ResetTargetMaxUnpairedMeters() override;
     void ResetPairedActiveMeters() override;

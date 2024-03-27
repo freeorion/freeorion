@@ -43,8 +43,6 @@ namespace {
     const std::string EMPTY_STRING;
 #endif
     constexpr std::string_view  POLICY_CONTROL_DROP_TYPE_STRING = "Policy Control";
-    constexpr GG::X             POLICY_CONTROL_WIDTH{120};
-    constexpr GG::Y             POLICY_CONTROL_HEIGHT{180};
     constexpr GG::X             SLOT_CONTROL_WIDTH{120};
     constexpr GG::Y             SLOT_CONTROL_HEIGHT{180};
     constexpr int               PAD{3};

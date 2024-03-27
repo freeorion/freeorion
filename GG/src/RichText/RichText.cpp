@@ -188,9 +188,9 @@ RichTextPrivate::RichTextPrivate(RichText& q, const std::string& content,
                                  Clr color, Flags<TextFormat> format) :
     m_owner(q),
     m_font(std::move(font)),
+    m_block_factory_map(RichText::DefaultBlockFactoryMap()),
     m_color(color),
-    m_format(format),
-    m_block_factory_map(RichText::DefaultBlockFactoryMap())
+    m_format(format)
 {
     // Parse the content into a vector of tags and create
     // blocks from the tags and populate the control with them.
@@ -250,7 +250,7 @@ std::vector<RichTextTag> RichTextPrivate::ParseTags(const std::string& content)
     std::transform(m_block_factory_map.begin(), m_block_factory_map.end(),
                    std::inserter(keys, keys.end()),
                    [](const auto entry) { return std::string{entry.first}; });
-    return TagParser::ParseTags(content, keys);
+    return TagParser::ParseTags(content, std::move(keys));
 }
 
 // Create blocks from tags.
@@ -337,7 +337,7 @@ void RichText::SetPadding(int pixels) { m_self->SetPadding(pixels); }
 void RichText::SizeMove(Pt ul, Pt lr) { m_self->SizeMove(ul, lr); }
 
 void RichText::SetBlockFactoryMap(BlockFactoryMap block_factory_map)
-{ m_self->SetBlockFactoryMap(block_factory_map); }
+{ m_self->SetBlockFactoryMap(std::move(block_factory_map)); }
 
 namespace {
     RichText::BlockFactoryMap default_block_factories{};

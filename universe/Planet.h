@@ -52,7 +52,7 @@ public:
     [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
     using UniverseObject::IDSet;
-    [[nodiscard]] int          ContainerObjectID() const noexcept  override { return this->SystemID(); }
+    [[nodiscard]] int          ContainerObjectID() const noexcept override { return this->SystemID(); }
     [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_buildings; }
     [[nodiscard]] bool         Contains(int object_id) const override;
     [[nodiscard]] bool         ContainedBy(int object_id) const noexcept override;
@@ -60,17 +60,17 @@ public:
     std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     [[nodiscard]] const auto&                   Focus() const noexcept { return m_focus; }
-    [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const;
+    [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const noexcept;
     [[nodiscard]] std::vector<std::string_view> AvailableFoci(const ScriptingContext& context) const;
     [[nodiscard]] bool                          FocusAvailable(std::string_view focus, const ScriptingContext& context) const;
     [[nodiscard]] const std::string&            FocusIcon(std::string_view focus_name, const ScriptingContext& context) const;
 
-    [[nodiscard]] bool                Populated() const;
+    [[nodiscard]] bool                Populated() const noexcept;
     [[nodiscard]] auto&               SpeciesName() const noexcept { return m_species_name; }
 
     [[nodiscard]] PlanetType          Type() const noexcept            { return m_type; }
     [[nodiscard]] PlanetType          OriginalType() const noexcept    { return m_original_type; }
-    [[nodiscard]] int                 DistanceFromOriginalType() const { return TypeDifference(m_type, m_original_type); }
+    [[nodiscard]] int                 DistanceFromOriginalType() const noexcept { return TypeDifference(m_type, m_original_type); }
     [[nodiscard]] PlanetSize          Size() const noexcept            { return m_size; }
     [[nodiscard]] int                 HabitableSize() const;
 
@@ -82,11 +82,11 @@ public:
                                                                    const std::string& species_name = "") const;
     [[nodiscard]] PlanetType          NextBetterPlanetTypeForSpecies(const ScriptingContext& context,
                                                                      const std::string& species_name = "") const;
-    [[nodiscard]] PlanetType          NextCloserToOriginalPlanetType() const;
-    [[nodiscard]] PlanetType          ClockwiseNextPlanetType() const;
-    [[nodiscard]] PlanetType          CounterClockwiseNextPlanetType() const;
-    [[nodiscard]] PlanetSize          NextLargerPlanetSize() const;
-    [[nodiscard]] PlanetSize          NextSmallerPlanetSize() const;
+    [[nodiscard]] PlanetType          NextCloserToOriginalPlanetType() const noexcept;
+    [[nodiscard]] PlanetType          ClockwiseNextPlanetType() const noexcept;
+    [[nodiscard]] PlanetType          CounterClockwiseNextPlanetType() const noexcept;
+    [[nodiscard]] PlanetSize          NextLargerPlanetSize() const noexcept;
+    [[nodiscard]] PlanetSize          NextSmallerPlanetSize() const noexcept;
 
     /** An orbital period is equal to a planets "year". A "year" is arbitrarily
       * defined to be 4 turns. */
@@ -94,7 +94,7 @@ public:
     /** @returns an angle in radians. */
     [[nodiscard]] float InitialOrbitalPosition() const noexcept     { return m_initial_orbital_position; }
     /** @returns an angle in radians. */
-    [[nodiscard]] float OrbitalPositionOnTurn(int turn) const;
+    [[nodiscard]] float OrbitalPositionOnTurn(int turn) const noexcept;
     /** The rotational period represents a planets "day".  A "day" is
       * arbitrarily defined to be 1/360 of a "year", and 1/90 of a turn. */
     [[nodiscard]] float RotationalPeriod() const noexcept           { return m_rotational_period; }
@@ -113,14 +113,14 @@ public:
     [[nodiscard]] int OrderedGivenToEmpire() const noexcept         { return m_ordered_given_to_empire_id; }
     [[nodiscard]] int LastTurnAttackedByShip() const noexcept       { return m_last_turn_attacked_by_ship; }
     [[nodiscard]] int LastTurnColonized() const noexcept            { return m_turn_last_colonized; }
-    [[nodiscard]] int TurnsSinceColonization(int current_turn) const;
+    [[nodiscard]] int TurnsSinceColonization(int current_turn) const noexcept;
     [[nodiscard]] int LastColonizedByEmpire() const                 { return m_last_colonized_by_empire_id; }
     [[nodiscard]] int LastTurnConquered() const noexcept            { return m_turn_last_conquered; }
-    [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const;
+    [[nodiscard]] int TurnsSinceLastConquered(int current_turn) const noexcept;
     [[nodiscard]] int OwnerBeforeLastConquered() const noexcept     { return m_owner_before_last_conquered; }
     [[nodiscard]] int LastInvadedByEmpire() const noexcept          { return m_last_invaded_by_empire_id; }
     [[nodiscard]] int LastTurnAnnexed() const noexcept              { return m_turn_last_annexed; }
-    [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const;
+    [[nodiscard]] int TurnsSinceLastAnnexed(int current_turn) const noexcept;
 
     [[nodiscard]] const auto& SurfaceTexture() const noexcept       { return m_surface_texture; }
     [[nodiscard]] std::string CardinalSuffix(const ObjectMap& objects) const; ///< returns a roman number representing this planets orbit in relation to other planets
@@ -174,7 +174,7 @@ public:
     void SetSurfaceTexture(const std::string& texture);
     void ResetTargetMaxUnpairedMeters() override;
 
-    [[nodiscard]] static int TypeDifference(PlanetType type1, PlanetType type2);
+    [[nodiscard]] static int TypeDifference(PlanetType type1, PlanetType type2) noexcept;
 
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */

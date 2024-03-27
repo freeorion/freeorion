@@ -895,43 +895,9 @@ void MapWndPopup::Close()
 { CloseClicked(); }
 
 
-//////////////////////////////////
-//LaneEndpoints
-//////////////////////////////////
-LaneEndpoints::LaneEndpoints() :
-    X1(static_cast<float>(UniverseObject::INVALID_POSITION)),
-    Y1(static_cast<float>(UniverseObject::INVALID_POSITION)),
-    X2(static_cast<float>(UniverseObject::INVALID_POSITION)),
-    Y2(static_cast<float>(UniverseObject::INVALID_POSITION))
-{}
-
-
-////////////////////////////////////////////////
-// MapWnd::MovementLineData::Vertex
-////////////////////////////////////////////////
-struct MapWnd::MovementLineData::Vertex {
-    Vertex(double x_, double y_, int eta_, bool show_eta_,
-           bool flag_blockade_ = false, bool flag_supply_block_ = false) :
-        x(x_), y(y_), eta(eta_), show_eta(show_eta_),
-        flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
-    {}
-    double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
-    int     eta;        // turns taken to reach point by object travelling along move line
-    bool    show_eta;   // should an ETA indicator / number be shown over this vertex?
-    bool    flag_blockade;
-    bool    flag_supply_block;
-};
-
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData
 ////////////////////////////////////////////////
-MapWnd::MovementLineData::MovementLineData() :
-    path(),
-    colour(GG::CLR_ZERO)
-{}
-
-MapWnd::MovementLineData::~MovementLineData() = default;
-
 MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path_,
                                            const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
                                            GG::Clr colour_, int empireID) :
@@ -954,8 +920,8 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
     double  prev_node_x =               first_node.x;
     double  prev_node_y =               first_node.y;
     int     prev_sys_id =               first_node.object_id;
-    int     prev_eta =                  first_node.eta;
     int     next_sys_id =               INVALID_OBJECT_ID;
+    auto    prev_eta =                  first_node.eta;
 
     const ScriptingContext context;
     const Empire* empire = GetEmpire(empireID);
@@ -2282,10 +2248,8 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
         return std::pair{x, y};
     });
 
-    auto vert_coord_it = vert_screen_coords.begin();
-    auto vert_coord_end = vert_screen_coords.end();
-
-    for (; vert_coord_it != vert_coord_end;) {
+    const auto vert_coord_end = vert_screen_coords.end();
+    for (auto vert_coord_it = vert_screen_coords.begin(); vert_coord_it != vert_coord_end;) {
         // get next two vertices screen positions
         const auto& [x1, y1] = *vert_coord_it;
         ++vert_coord_it;
@@ -2294,14 +2258,13 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
         const auto& [x2, y2] = *vert_coord_it;
 
         // get unit vector along line connecting vertices
-        float deltaX = x2 - x1;
-        float deltaY = y2 - y1;
-        float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+        const float deltaX = x2 - x1;
+        const float deltaY = y2 - y1;
+        const float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
         if (!isnormal(length)) // safety check
             continue;
-        float inv_length = 1.0 / length;
-        float uVecX = deltaX * inv_length;
-        float uVecY = deltaY * inv_length;
+        const float uVecX = deltaX / length;
+        const float uVecY = deltaY / length;
 
         // increment along line, adding dots to buffers, until end of line segment is passed
         while (offset < length) {
@@ -2340,16 +2303,16 @@ void MapWnd::RenderFleetMovementLines() {
         return;
 
     // determine animation shift for move lines
-    int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
-    float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
-    int ticks = GG::GUI::GetGUI()->Ticks();
+    const int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
+    const float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
+    const int ticks = GG::GUI::GetGUI()->Ticks();
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
-    float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
+    const float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots
-    auto move_line_dot_texture = MoveLineDotTexture();
-    float dot_size = Value(move_line_dot_texture->DefaultWidth());
+    const auto move_line_dot_texture = MoveLineDotTexture();
+    const float dot_size = Value(move_line_dot_texture->DefaultWidth());
 
     // dots rendered same size for all zoom levels, so do positioning in screen
     // space instead of universe space
@@ -2484,11 +2447,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
         // empire-coloured central fill within wedged outer ring
-        if (clr == GG::CLR_ZERO)
-            glColor(move_line.colour);
-        else
-            glColor(clr);
-
+        glColor(clr == GG::CLR_ZERO ? move_line.colour : clr);
         CircleArc(ul, lr, 0.0, TWO_PI, true);
         glEnable(GL_TEXTURE_2D);
 
@@ -2575,10 +2534,7 @@ void MapWnd::RenderVisibilityRadii() {
     // render each colour's radii separately, so they can consistently blend
     // when overlapping other colours, but be stenciled to avoid blending
     // when overlapping within a colour
-    for (unsigned int i = 0; i < m_radii_radii_vertices_indices_runs.size(); ++i) {
-        const auto& radii_start_run = m_radii_radii_vertices_indices_runs[i].first;
-        const auto& border_start_run = m_radii_radii_vertices_indices_runs[i].second;
-
+    for (const auto& [radii_start_run, border_start_run] : m_radii_radii_vertices_indices_runs) {
         glClear(GL_STENCIL_BUFFER_BIT);
         glStencilOp(GL_INCR, GL_INCR, GL_INCR);
         glStencilFunc(GL_EQUAL, 0x0, 0xff);
@@ -2597,7 +2553,6 @@ void MapWnd::RenderVisibilityRadii() {
     }
 
     if (GetOptionsDB().Get<bool>("ui.map.detection.range.future.shown")) {
-
         glDisable(GL_STENCIL_TEST);
 
         // future position ranges for selected fleets
@@ -2610,9 +2565,7 @@ void MapWnd::RenderVisibilityRadii() {
 
         for (const auto& [circle_colour, ul_lrs] : future_turn_circles) {
             // get empire colour and calculate brighter radii outline colour
-            for (const auto& ul_lr : ul_lrs) {
-                const auto& [ul, lr] = ul_lr;
-
+            for (const auto& [ul, lr] : ul_lrs) {
                 // store line segments for border lines of radii
                 verts.clear();
                 vert_colours.clear();
@@ -2620,8 +2573,7 @@ void MapWnd::RenderVisibilityRadii() {
                                              0.0, TWO_PI, false, 72, false);
 
                 // store colours for line segments
-                for (std::size_t count = 0; count < verts.size(); ++count)
-                    vert_colours.store(circle_colour);
+                vert_colours.store(verts.size(), circle_colour);
 
                 verts.activate();
                 vert_colours.activate();
@@ -2653,8 +2605,7 @@ void MapWnd::RenderScaleCircle() {
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0f);
 
-    GG::Clr circle_colour = GG::CLR_WHITE;
-    circle_colour.a = 128;
+    const GG::Clr circle_colour = []() { auto retval = GG::CLR_WHITE; retval.a = 128; return retval; }();
     glColor(circle_colour);
 
     m_scale_circle_vertices.activate();
@@ -2824,7 +2775,7 @@ void MapWnd::KeyRelease(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModK
 void MapWnd::EnableOrderIssuing(bool enable) {
     // disallow order enabling if this client does not have an empire
     // and is not a moderator
-    GGHumanClientApp* app = GGHumanClientApp::GetApp();
+    const auto* app = GGHumanClientApp::GetApp();
     bool moderator = false;
     bool observer = false;
     m_btn_turn->Disable(GGHumanClientApp::GetApp()->SinglePlayerGame() && !enable);
@@ -2844,15 +2795,12 @@ void MapWnd::EnableOrderIssuing(bool enable) {
     m_moderator_wnd->EnableActions(enable && moderator);
     m_ready_turn = !enable;
 
-    std::string button_label;
-    if (!moderator && !observer && m_ready_turn && !GGHumanClientApp::GetApp()->SinglePlayerGame()) {
-        // multiplayer game with a participating player who has sent orders
-        button_label = UserString("MAP_BTN_TURN_UNREADY");
-    } else {
-        button_label = UserString("MAP_BTN_TURN_UPDATE");
-    }
+    const auto& button_label = (!app) ? UserString("ERROR") :
+        (!moderator && !observer && m_ready_turn && !app->SinglePlayerGame()) ?
+            UserString("MAP_BTN_TURN_UNREADY") : UserString("MAP_BTN_TURN_UPDATE");
 
-    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(app->CurrentTurn())));
+    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) %
+                                       std::to_string(app ? app->CurrentTurn() : 0)));
     RefreshTurnButtonTooltip();
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
@@ -3024,7 +2972,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     if (context.current_turn == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (auto obj = objects.get(this_client_empire->CapitalID())) {
+        if (const auto obj = objects.getRaw(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -4060,7 +4008,7 @@ void MapWnd::InitFieldRenderingBuffers() {
         const bool should_create_new_buffer = (field_vertices.empty() || field_vertices.back().first != field_texture);
         GG::GL2DVertexBuffer& current_field_vertex_buffer =
             should_create_new_buffer ?
-                field_vertices.emplace_back(field_texture, std::move(GG::GL2DVertexBuffer())).second :
+                field_vertices.emplace_back(field_texture, GG::GL2DVertexBuffer()).second :
                 field_vertices.back().second;
 
         // determine field rotation angle...
@@ -4704,7 +4652,10 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
                 for (MovePathNode& node : path) {
                     //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
-                    node.eta++;
+                    if (node.eta >= 250)
+                        node.eta = Fleet::ETA_NEVER;
+                    else
+                        node.eta++;
                 }
             } else {
                 //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" slips through second block check";
@@ -4740,7 +4691,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>&
     // and appending projections on shift changes
     if (path.empty())
         path.emplace_back(fleet->X(), fleet->Y(), true, 0, fleet->SystemID(),
-                          INVALID_OBJECT_ID, INVALID_OBJECT_ID);
+                          INVALID_OBJECT_ID, INVALID_OBJECT_ID, false, false);
 
     auto route_it = travel_route.begin();
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
@@ -4757,19 +4708,21 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>&
                 for (MovePathNode& node : path) {
                     //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << node.object_id <<
                     //                            ", node lane end " << node.lane_end_id << ", is post-blockade (" << node.post_blockade << ")";
-                    node.eta++;
+                    if (node.eta >= 250)
+                        node.eta = Fleet::ETA_NEVER;
+                    else
+                        node.eta++;
                 }
             }
         }
     }
 
     // get colour: empire colour, or white if no single empire applicable
-    GG::Clr line_colour = GG::CLR_WHITE;
-    if (empire)
-        line_colour = empire->Color();
+    const auto line_colour = empire ? empire->Color() : GG::CLR_WHITE;
 
     // create and store line
-    m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour, fleet->Owner());
+    m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints,
+                                                         line_colour, fleet->Owner());
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids,
@@ -7419,9 +7372,10 @@ namespace {
     bool FleetRouteInRange(const Fleet* fleet, const RouteListType& route,
                            const ScriptingContext& context)
     {
-        auto eta = fleet->ETA(fleet->MovePath(route, false, context));
-        return (eta.first != Fleet::ETA_NEVER && eta.first != Fleet::ETA_UNKNOWN &&
-                eta.first != Fleet::ETA_OUT_OF_RANGE);
+        const auto eta_final_turns = fleet->ETA(fleet->MovePath(route, false, context)).first;
+        return (eta_final_turns != Fleet::ETA_NEVER &&
+                eta_final_turns != Fleet::ETA_UNKNOWN &&
+                eta_final_turns != Fleet::ETA_OUT_OF_RANGE);
     }
 
     // helper function for DispatchFleetsExploring

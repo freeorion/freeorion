@@ -131,8 +131,7 @@ public:
 
     [[nodiscard]] UniverseObjectType          ObjectType() const noexcept { return m_type; }
 
-    /** Return human readable string description of object offset \p ntabs from
-        margin. */
+    /** Return human readable string description of object offset \p ntabs from margin. */
     [[nodiscard]] virtual std::string         Dump(uint8_t ntabs = 0) const;
 
     /** Returns id of the object that directly contains this object, if any, or
@@ -146,8 +145,7 @@ public:
         within this UniverseObject. */
     [[nodiscard]] virtual bool                Contains(int object_id) const { return false; }
 
-    /* Returns true if there is an object with id \a object_id that contains
-       this UniverseObject. */
+    /* Returns true if there is an object with id \a object_id that contains this UniverseObject. */
     [[nodiscard]] virtual bool                ContainedBy(int object_id) const noexcept { return false; }
 
     using EmpireObjectVisMap = std::map<int, std::map<int, Visibility>>;
@@ -167,7 +165,7 @@ public:
     virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;
 
     [[nodiscard]] int                         CreationTurn() const noexcept { return m_created_on_turn; }; ///< returns game turn on which object was created
-    [[nodiscard]] int                         AgeInTurns(int current_turn) const;   ///< returns elapsed number of turns between turn object was created and current game turn
+    [[nodiscard]] int                         AgeInTurns(int current_turn) const noexcept; ///< returns elapsed number of turns between turn object was created and current game turn
 
     [[nodiscard]] virtual std::size_t         SizeInMemory() const;
 
@@ -195,9 +193,8 @@ public:
     [[nodiscard]] MeterMap& Meters() noexcept { return m_meters; }  ///< returns this UniverseObject's meters
     [[nodiscard]] Meter*    GetMeter(MeterType type) noexcept;      ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    /** Sets all this UniverseObject's meters' initial values equal to their
-        current values. */
-    virtual void BackPropagateMeters();
+    /** Sets all this UniverseObject's meters' initial values equal to their current values. */
+    virtual void BackPropagateMeters() noexcept;
 
     /** Sets the empire that owns this object. */
     virtual void SetOwner(int id);

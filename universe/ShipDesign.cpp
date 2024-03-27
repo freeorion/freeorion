@@ -29,12 +29,6 @@ namespace {
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-    constexpr std::string EMPTY_STRING;
-#else
-    const std::string EMPTY_STRING;
-#endif
-
     constexpr float ARBITRARY_LARGE_COST = 999999.9f;
 
     bool DesignsTheSame(const ShipDesign& one, const ShipDesign& two) {
@@ -192,12 +186,9 @@ float ShipDesign::ProductionCost(int empire_id, int location_id, const Scripting
     if (const ShipHull* hull = GetShipHull(m_hull))
         cost_accumulator += hull->ProductionCost(empire_id, location_id, context, m_id);
 
-    int part_count = 0;
     for (const std::string& part_name : m_parts) {
-        if (const ShipPart* part = GetShipPart(part_name)) {
+        if (const ShipPart* part = GetShipPart(part_name))
             cost_accumulator += part->ProductionCost(empire_id, location_id, context, m_id);
-            part_count++;
-        }
     }
 
     // Assuming no reasonable combination of parts and hull will add up to more

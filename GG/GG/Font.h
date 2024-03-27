@@ -183,6 +183,8 @@ public:
         /** True iff .first == .second. */
         [[nodiscard]] bool empty() const noexcept { return first == second; }
 
+        [[nodiscard]] bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
+
         /** Length, in original string chars, of the substring. */
         [[nodiscard]] std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
         [[nodiscard]] auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
@@ -203,7 +205,7 @@ public:
         {
             assert(rhs.first <= rhs.second);
             assert(std::distance(str->begin(), rhs.first) == second);
-            second = std::distance(str->begin(), rhs.second);
+            second = static_cast<decltype(second)>(std::distance(str->begin(), rhs.second));
             return *this;
         }
 
@@ -371,6 +373,8 @@ public:
         TextAndElementsAssembler& AddCloseTag(std::string_view tag);
         /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
         TextAndElementsAssembler& AddText(std::string_view text);
+        TextAndElementsAssembler& AddText(const char* text) { return AddText(std::string_view(text)); }
+        TextAndElementsAssembler& AddText(std::string&& text);
         /** Add a white space element.*/
         TextAndElementsAssembler& AddWhitespace(std::string_view whitespace);
         /** Add a new line element.*/

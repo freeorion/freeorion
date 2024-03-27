@@ -318,7 +318,7 @@ public:
     void AuditContainment(const std::unordered_set<int>& destroyed_object_ids);
 
     template <typename T, typename Pred>
-    [[nodiscard]] static constexpr std::array<bool, 12> CheckTypes();
+    [[nodiscard]] static constexpr std::array<bool, 13> CheckTypes();
 
 private:
     void insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed);
@@ -568,21 +568,22 @@ namespace ObjectMapPredicateTypeTraits{
   * Pred may also be an iterable range of int that specifes IDs of the UniverseObjects
   * to select. */
 template <typename T, typename Pred>
-constexpr std::array<bool, 12> ObjectMap::CheckTypes() // TODO: check if it's a Condition
+constexpr std::array<bool, 13> ObjectMap::CheckTypes() // TODO: check if it's a Condition
 {
     using DecayT = std::decay_t<T>;
     static_assert(std::is_base_of_v<UniverseObject, DecayT>);
     using DecayPred = std::decay_t<Pred>;
     using ContainerT = container_type<DecayT>;
     using EntryT = typename ContainerT::value_type;
-    static_assert(std::is_same_v<std::pair<const int, std::shared_ptr<DecayT>>, EntryT>);
+    static_assert(std::is_same_v<std::pair<const int, std::shared_ptr<DecayT>>, EntryT> ||
+                  std::is_same_v<std::pair<int, std::shared_ptr<DecayT>>, EntryT>);
     using ConstEntryT = std::pair<const int, std::shared_ptr<const DecayT>>;
     static_assert(std::is_convertible_v<EntryT, ConstEntryT>);
 
     using namespace ObjectMapPredicateTypeTraits;
 
     constexpr bool is_int_range = int_iterable<Pred>;
-
+    constexpr bool is_sorted_container = is_sorted<Pred>;
 
     constexpr bool is_visitor = std::is_convertible_v<DecayPred, UniverseObjectVisitor>;
 
@@ -634,12 +635,12 @@ constexpr std::array<bool, 12> ObjectMap::CheckTypes() // TODO: check if it's a 
         invokable_on_const_reference || invokable_on_mutable_reference ||
         invokable_on_int;
 
-    return std::array<bool, 12>{
+    return std::array<bool, 13>{
         invokable_on_raw_const_object, invokable_on_raw_mutable_object,
         invokable_on_shared_const_object, invokable_on_shared_mutable_object,
         invokable_on_const_entry, invokable_on_mutable_entry,
         invokable_on_const_reference, invokable_on_mutable_reference,
-        invokable, is_visitor, is_int_range, invokable_on_int};
+        invokable, is_visitor, is_int_range, invokable_on_int, is_sorted_container};
 }
 
 template <typename T, bool only_existing>
@@ -790,6 +791,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
     static constexpr bool invokable_on_int = invoke_flags[11];
     static constexpr bool is_visitor = invoke_flags[9];
     static constexpr bool is_int_range = invoke_flags[10];
+    static constexpr bool is_sorted = invoke_flags[12];
 
     using DecayT = std::decay_t<T>;
 
@@ -804,8 +806,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
     static constexpr auto not_null = [](const auto& p) -> bool { return p; };
     static constexpr auto get_rawptr = [](const auto& p) { return p.get(); };
 
-    if constexpr (is_int_range) {
-        // TODO: special case for sorted range of int?
+    if constexpr (is_int_range /*&& !is_sorted*/) {
         const auto find_in_map = [&map](auto id) -> const DecayT* {
             auto map_it = map.find(id);
             return (map_it != map.end()) ? map_it->second.get() : nullptr;
@@ -816,7 +817,7 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
         // avoids error: no type named 'type' in 'boost::range_iterator<const std::span<const int>>'
         auto rng = boost::make_iterator_range(pred.begin(), pred.end()) | range_transform(find_in_map);
 #endif
-        result.reserve(pred.size());
+
         range_copy_if(rng, std::back_inserter(result), not_null);
         return result;
 

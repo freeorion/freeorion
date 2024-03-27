@@ -214,14 +214,12 @@ namespace {
         std::shared_ptr<MultiTurnProgressBar>   m_progress_bar;
         std::shared_ptr<QuantitySelector>       m_quantity_selector;
         std::shared_ptr<QuantitySelector>       m_block_size_selector;
-        bool                                    m_in_progress = false;
-        int                                     m_total_turns = 0;
         double                                  m_turn_spending = 0.0;
         double                                  m_total_cost = 0.0;
         double                                  m_completed_progress = 0.0;
+        int                                     m_total_turns = 0;
+        bool                                    m_in_progress = false;
         bool                                    m_order_issuing_enabled = true;
-        bool                                    m_paused = false;
-        bool                                    m_marked_to_remove = false;
     };
 
     /////////////////////////////
@@ -296,8 +294,8 @@ namespace {
         else
             main_text += UserString("PRODUCTION_LOCATION_INVALID") + "\n";
 
-        float progress = elem.progress;
-        float allocation = elem.allocated_pp;
+        const auto progress = elem.progress;
+        const auto allocation = elem.allocated_pp;
 
         // %1% / %2%  +  %3% / %4% PP/turn
         main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_PROGRESS"))
@@ -309,10 +307,10 @@ namespace {
         if (elem.allowed_imperial_stockpile_use)
             main_text += UserString("PRODUCTION_QUEUE_ITEM_STOCKPILE_ENABLED") + "\n";
 
-        int ETA = elem.turns_left_to_completion;
-        if (ETA != -1)
+        const auto turns_left = elem.turns_left_to_completion;
+        if (turns_left != -1)
             main_text += boost::io::str(FlexibleFormat(UserString("TECH_WND_ETA"))
-                                        % ETA);
+                                        % turns_left);
 
         std::string title_text;
         if (elem.blocksize > 1)

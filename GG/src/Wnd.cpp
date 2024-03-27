@@ -716,7 +716,7 @@ void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
     if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
         throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
     RemoveLayout();
-    auto children = m_children;
+    const auto children{m_children};
     DetachChildren();
     Pt client_sz = ClientSize();
     for (auto& wnd : children) {
@@ -735,7 +735,7 @@ void Wnd::SetLayout(std::shared_ptr<Layout>&& layout)
     if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
         throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
     RemoveLayout();
-    auto children = m_children;
+    const auto children{m_children};
     DetachChildren();
     const Pt client_sz = ClientSize();
     for (auto& wnd : children) {
@@ -1094,6 +1094,8 @@ void Wnd::BeginClippingImpl(ChildClippingMode mode)
     case ChildClippingMode::ClipToWindow:
         BeginScissorClipping(UpperLeft(), LowerRight());
         break;
+    case Wnd::ChildClippingMode::ClipToAncestorClient:
+        break;
     }
 }
 
@@ -1107,6 +1109,8 @@ void Wnd::EndClippingImpl(ChildClippingMode mode)
     case ChildClippingMode::ClipToWindow:
     case ChildClippingMode::ClipToClientAndWindowSeparately:
         EndScissorClipping();
+        break;
+    case Wnd::ChildClippingMode::ClipToAncestorClient:
         break;
     }
 }

@@ -307,7 +307,9 @@ void BuildingIndicator::PreRender() {
 void BuildingIndicator::Refresh() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    auto building = Objects().get<Building>(m_building_id);
+    const ScriptingContext context;
+
+    auto building = context.ContextObjects().get<Building>(m_building_id);
     if (!building)
         return;
 
@@ -325,9 +327,9 @@ void BuildingIndicator::Refresh() {
 
         // Scanlines for not currently-visible objects?
         if (GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
-            int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+            const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
             if (empire_id != ALL_EMPIRES &&
-                GetUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
+                context.ContextUniverse().GetObjectVisibilityByEmpire(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
             { AttachChild(m_scanlines); }
         }
 

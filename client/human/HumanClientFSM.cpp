@@ -848,7 +848,7 @@ boost::statechart::result PlayingGame::react(const TurnPartialUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnPartialUpdate";
 
     try {
-        ExtractTurnPartialUpdateMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
+        ExtractTurnPartialUpdateMessageData(msg.m_message, Client().EmpireID(), Client().GetUniverse());
         Client().GetClientUI().GetMapWnd()->MidTurnUpdate();
     } catch (...) {}
 

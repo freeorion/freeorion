@@ -1680,9 +1680,6 @@ ColorSelector::ColorSelector(GG::Clr color, GG::Clr default_color) :
     m_default_color(default_color)
 { SetColor(color); }
 
-ColorSelector::~ColorSelector()
-{ m_border_buffer.clear(); }
-
 void ColorSelector::InitBuffer() {
     const auto sz = Size();
     m_border_buffer.clear();
