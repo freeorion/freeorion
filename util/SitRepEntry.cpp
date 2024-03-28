@@ -391,10 +391,10 @@ SitRepEntry CreatePlanetAnnexedSitRep(int planet_id, int original_owner_id, int 
     const auto msg = (original_owner_id == ALL_EMPIRES) ? neutral_annex_txt : other_empire_annex_txt;
     const auto label = (original_owner_id == ALL_EMPIRES) ? neutral_annex_label : other_empire_annex_label;
     SitRepEntry sitrep{msg.data(), current_turn + 1, "icons/sitrep/annexed.png", label.data(), true};
-    sitrep.AddVariable(VarText::PLANET_ID_TAG,     std::to_string(planet_id));
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     std::to_string(annexer_empire_id));
+    sitrep.AddVariable(VarText::PLANET_ID_TAG,  std::to_string(planet_id));
+    sitrep.AddVariable("annexer",               std::to_string(annexer_empire_id));
     if (original_owner_id != ALL_EMPIRES)
-        sitrep.AddVariable(VarText::EMPIRE_ID_TAG, std::to_string(original_owner_id));
+        sitrep.AddVariable("original",          std::to_string(original_owner_id));
     return sitrep;
 }
 

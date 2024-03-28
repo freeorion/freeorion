@@ -7919,7 +7919,7 @@ SITREP_PLANET_ANNEXED_LABEL
 Neutral Planet Annexed
 
 SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE
-%planet% has been annexed by %empire% from %empire%.
+%planet% has been annexed by %empire:annexer% from %empire:original%.
 
 SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE_LABEL
 Empire Planet Annexed
