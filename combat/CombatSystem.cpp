@@ -135,7 +135,7 @@ float CombatInfo::GetMonsterDetection() const {
 
 namespace {
     // collect detection strengths of all empires (and neutrals) in \a combat_info
-    auto GetEmpiresDetectionStrengths(const CombatInfo& combat_info) {
+    auto GetEmpiresAndMonsterDetectionStrengths(const CombatInfo& combat_info) {
         std::vector<std::pair<int, float>> retval;
         retval.reserve(combat_info.empire_ids.size());
         for (auto empire_id : combat_info.empire_ids) { // loop over participating empires
@@ -145,12 +145,12 @@ namespace {
             }
             const auto empire = combat_info.GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
+                ErrorLogger() << "GetEmpiresAndMonsterDetectionStrengths(CombatInfo) couldn't find empire with id " << empire_id;
                 continue;
             }
             const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
             if (!meter)
-                ErrorLogger() << "GetEmpiresDetectionStrengths(CombatInfo) found empire with no detection meter?";
+                ErrorLogger() << "GetEmpiresAndMonsterDetectionStrengths(CombatInfo) found empire with no detection meter?";
             else
                 retval.emplace_back(empire_id, meter->Current());
         }
@@ -161,31 +161,34 @@ namespace {
     }
 
     Visibility GetObjectVisibilityByEmpire(int obj_id, int empire_id, const CombatInfo& combat_info) {
-        auto empire_it = combat_info.empire_object_visibility.find(empire_id);
+        const auto empire_it = combat_info.empire_object_visibility.find(empire_id);
         if (empire_it == combat_info.empire_object_visibility.end())
             return Visibility::VIS_NO_VISIBILITY;
-        auto obj_it = empire_it->second.find(obj_id);
+        const auto obj_it = empire_it->second.find(obj_id);
         return obj_it == empire_it->second.end() ? Visibility::VIS_NO_VISIBILITY : obj_it->second;
     }
+}
+
+namespace {
+    static constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
 }
 
 void CombatInfo::InitializeObjectVisibility() {
     // initialize combat-local visibility of objects by empires and combat-local
     // empire ObjectMaps with object state info that empires know at start of battle
-    const auto det_strengths = GetEmpiresDetectionStrengths(*this);
+    const auto get_empire_detection =
+        [det_strengths{GetEmpiresAndMonsterDetectionStrengths(*this)}](auto empire_id)
+    {
+        const auto it = std::find_if(det_strengths.begin(), det_strengths.end(),
+                                     [empire_id](auto& id_ds) { return empire_id == id_ds.first; });
+        return (it != det_strengths.end()) ? it->second : 0.0f;
+     };
 
     for (int empire_id : empire_ids) {
         DebugLogger() << "Initializing CombatInfo object visibility and known objects for empire: " << empire_id;
 
-        float empire_detection = [empire_id, &det_strengths]() {
-            const auto it = std::find_if(det_strengths.begin(), det_strengths.end(),
-                                         [empire_id](auto& id_ds) { return empire_id == id_ds.first; });
-            if (it != det_strengths.end())
-                return it->second;
-            return 0.0f;
-        }();
+        const auto empire_detection = get_empire_detection(empire_id);
 
-        static constexpr auto not_null = [](const auto* o) -> bool { return o; };
         for (const auto* obj : objects.allRaw() | range_filter(not_null)) {
             if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
                 // systems always visible to empires with objects in them
@@ -202,14 +205,17 @@ void CombatInfo::InitializeObjectVisibility() {
                         DebugLogger() << "Planet " << obj->Name() << " visible from universe state";
                     }
                 }
-                if (vis < Visibility::VIS_PARTIAL_VISIBILITY && empire_detection >= obj->GetMeter(MeterType::METER_STEALTH)->Current()) {
+
+                if (vis < Visibility::VIS_PARTIAL_VISIBILITY &&
+                    empire_detection >= obj->GetMeter(MeterType::METER_STEALTH)->Current())
+                {
                     vis = Visibility::VIS_PARTIAL_VISIBILITY;
                     DebugLogger() << "Planet " << obj->Name() << " visible empire stealth check: " << empire_detection
                                   << " >= " << obj->GetMeter(MeterType::METER_STEALTH)->Current();
                 }
-                if (vis == Visibility::VIS_BASIC_VISIBILITY) {
+
+                if (vis == Visibility::VIS_BASIC_VISIBILITY)
                     DebugLogger() << "Planet " << obj->Name() << " has just basic visibility by default";
-                }
 
                 empire_object_visibility[empire_id][obj->ID()] = vis;
 
@@ -230,7 +236,10 @@ void CombatInfo::InitializeObjectVisibility() {
                     DebugLogger() << "Ship " << obj->Name() << " visible empire stealth check: " << empire_detection
                                   << " >= " << obj->GetMeter(MeterType::METER_STEALTH)->Current();
                 }
-                if (vis < Visibility::VIS_PARTIAL_VISIBILITY && GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE")) {
+
+                if (vis < Visibility::VIS_PARTIAL_VISIBILITY &&
+                    GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE"))
+                {
                     if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
                         const auto* ship = static_cast<const Ship*>(obj);
                         if (auto fleet = objects.getRaw<const Fleet>(ship->FleetID())) {
@@ -242,11 +251,10 @@ void CombatInfo::InitializeObjectVisibility() {
                     }
                 }
 
-                if (vis > Visibility::VIS_NO_VISIBILITY) {
+                if (vis > Visibility::VIS_NO_VISIBILITY)
                     empire_object_visibility[empire_id][obj->ID()] = vis;
-                } else {
+                else
                     DebugLogger() << "Ship " << obj->Name() << " initially hidden";
-                }
             }
         }
     }
