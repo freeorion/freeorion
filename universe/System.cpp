@@ -45,7 +45,8 @@ System::System(StarType star, std::string name, double x, double y, int current_
 }
 
 std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empire_id) const {
-    Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
+    const Visibility vis = empire_id == ALL_EMPIRES ?
+        Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
@@ -71,7 +72,8 @@ void System::Copy(const System& copied_system, const Universe& universe, int emp
         return;
 
     const int copied_object_id = copied_system.ID();
-    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const Visibility vis = empire_id == ALL_EMPIRES ?
+        Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_system, vis, visible_specials, universe);

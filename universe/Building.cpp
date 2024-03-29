@@ -21,7 +21,8 @@ Building::Building(int empire_id, std::string building_type, int produced_by_emp
 }
 
 std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, int empire_id) const {
-    const Visibility vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
+    const Visibility vis = empire_id == ALL_EMPIRES ?
+        Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= Visibility::VIS_BASIC_VISIBILITY && vis <= Visibility::VIS_FULL_VISIBILITY))
         return nullptr;
@@ -47,7 +48,8 @@ void Building::Copy(const Building& copied_building, const Universe& universe, i
         return;
 
     const int copied_object_id = copied_building.ID();
-    const Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+    const Visibility vis = empire_id == ALL_EMPIRES ?
+        Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
     const auto visible_specials = universe.GetObjectVisibleSpecialsByEmpire(copied_object_id, empire_id);
 
     UniverseObject::Copy(copied_building, vis, visible_specials, universe);
