@@ -807,7 +807,9 @@ public:
         m_rpm = (std::abs(period) < 0.1) ? 10.0 : (1.0 / period); // prevent divide by zero or extremely fast rotations
         m_diameter = PlanetDiameter(planet->Size());
         m_axial_tilt = std::max(-30.0, std::min(static_cast<double>(planet->AxialTilt()), 60.0));
-        m_visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, GGHumanClientApp::GetApp()->EmpireID());
+        const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        m_visibility = (client_empire_id == ALL_EMPIRES) ?
+            Visibility::VIS_FULL_VISIBILITY : GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
 
         const std::string texture_filename;
         const auto& planet_data = GetRotatingPlanetData();
@@ -1772,7 +1774,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     const bool populated =        planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f;
     const bool habitable =        planet_env_for_colony_species >= PlanetEnvironment::PE_HOSTILE &&
                                   planet_env_for_colony_species <= PlanetEnvironment::PE_GOOD;
-    const bool visible =          u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY;
+    const bool visible =          (client_empire_id == ALL_EMPIRES) ||
+                                    (u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY);
     const bool shielded =         planet->GetMeter(MeterType::METER_SHIELD)->Initial() > 0.0f;
     const bool has_defenses =     planet->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0.0f ||
                                   planet->GetMeter(MeterType::METER_MAX_DEFENSE)->Initial() > 0.0f ||
