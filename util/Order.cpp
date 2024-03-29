@@ -854,6 +854,11 @@ bool ColonizeOrder::Check(int empire_id, int ship_id, int planet_id, const Scrip
     const ObjectMap& o = context.ContextObjects();
     const SpeciesManager& sm = context.species;
 
+    if (empire_id == ALL_EMPIRES) {
+        ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id << " is not an empire";
+        return false;
+    }
+
     auto ship = o.get<Ship>(ship_id);
     if (!ship) {
         ErrorLogger() << "ColonizeOrder::Check() : empire " << empire_id
@@ -995,6 +1000,11 @@ bool InvadeOrder::Check(int empire_id, int ship_id, int planet_id, const Scripti
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 
+    if (empire_id == ALL_EMPIRES) {
+        ErrorLogger() << "InvadeOrder::Check() : empire " << empire_id << " is not an empire";
+        return false;
+    }
+
     // make sure ship_id is a ship...
     auto ship = o.get<Ship>(ship_id);
     if (!ship) {
@@ -1130,6 +1140,11 @@ bool BombardOrder::Check(int empire_id, int ship_id, int planet_id,
 {
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
+
+    if (empire_id == ALL_EMPIRES) {
+        ErrorLogger() << "BombardOrder::Check() : empire " << empire_id << " is not an empire";
+        return false;
+    }
 
     auto ship = objects.get<Ship>(ship_id);
     if (!ship) {
