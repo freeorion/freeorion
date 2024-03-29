@@ -2158,8 +2158,10 @@ public:
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
             return it->second.contains(VIS_DISPLAY::SHOW_DESTROYED);
 
-        if (assume_visible_without_checking || context.ContextUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
-            return it->second.contains(VIS_DISPLAY::SHOW_VISIBLE);
+        if (assume_visible_without_checking ||
+            client_empire_id == ALL_EMPIRES ||
+            context.ContextUniverse().GetObjectVisibilityByEmpire(object_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY)
+        { return it->second.contains(VIS_DISPLAY::SHOW_VISIBLE); }
 
         return it->second.contains(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
     }
