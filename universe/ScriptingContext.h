@@ -222,8 +222,9 @@ struct [[nodiscard]] ScriptingContext {
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    UniverseObject* target_,
-                                   const CurrentValueVariant& current_value_) noexcept :
-        source(                   parent_context.source),
+                                   const CurrentValueVariant& current_value_,
+                                   const UniverseObject* source_ = nullptr) noexcept :
+        source(                   source_ ? source_ : parent_context.source),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
         condition_local_candidate(parent_context.condition_local_candidate),
