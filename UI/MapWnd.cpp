@@ -2033,6 +2033,7 @@ void MapWnd::RenderSystems() {
 
         // prep scanlines
         if (fog_scanlines &&
+            empire_id != ALL_EMPIRES &&
             universe.GetObjectVisibilityByEmpire(system_id, empire_id) <= Visibility::VIS_BASIC_VISIBILITY)
         {
             BufferStoreCircleArcVertices(m_scanline_circle_vertices, circle_ul, circle_lr,
@@ -3989,7 +3990,9 @@ void MapWnd::InitFieldRenderingBuffers() {
 
     // reverse size processing so large fields are painted first and smaller ones on top of larger ones
     for (auto& field_icon : m_field_icons | range_reverse) {
-        bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon->FieldID(), empire_id) > Visibility::VIS_BASIC_VISIBILITY;
+        bool current_field_visible =
+            (empire_id == ALL_EMPIRES) ||
+            universe.GetObjectVisibilityByEmpire(field_icon->FieldID(), empire_id) > Visibility::VIS_BASIC_VISIBILITY;
         auto field = universe.Objects().get<Field>(field_icon->FieldID());
         if (!field)
             continue;
@@ -4117,6 +4120,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
 
     for (const auto& [empire_id, detection_circles] : empire_position_max_detection_ranges) {
+        if (empire_id == ALL_EMPIRES)
+            continue;
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << empire_id;
@@ -5794,9 +5799,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
 
     // find sensor ghosts
     for (const auto* fleet : Objects().findRaw<Fleet>(fleet_ids)) {
-        if (!fleet)
-            continue;
-        if (fleet->OwnedBy(empire_id))
+        if (empire_id == ALL_EMPIRES || !fleet || fleet->OwnedBy(empire_id))
             continue;
         if (GetUniverse().GetObjectVisibilityByEmpire(fleet->ID(), empire_id) >= Visibility::VIS_BASIC_VISIBILITY)
             continue;
