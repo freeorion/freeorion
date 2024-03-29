@@ -1,4 +1,4 @@
-from focs._effects import Capital, EffectsGroup, IsSource, Planet, Unowned
+from focs._effects import Capital, EffectsGroup, GiveEmpireTech, IsSource, Planet, Target, Turn, Unowned
 from focs._species import *
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
 from species.species_macros.env import NARROW_EP, TUNDRA_NARROW_EP
@@ -57,6 +57,8 @@ Species(
         "BLD_STARGATE",
         "CRYSTALS_SPECIAL",
         "ECCENTRIC_ORBIT_SPECIAL",
+        "FOCUS_INDUSTRY",
+        "FOCUS_RESEARCH",
         "FOCUS_STOCKPILE",
         "GAIA_SPECIAL",
         "MIMETIC_ALLOY_SPECIAL",
@@ -66,17 +68,24 @@ Species(
         "PLC_DREAM_RECURSION",
         "PLC_ENGINEERING",
         "PLC_EXPLORATION",
+        "PLC_INSURGENCY",
         "PLC_LIBERTY",
         "PLC_MODERATION",
+        "PLC_NECESSITY",
         "PLC_RACIAL_PURITY",
         "PLC_STOCKPILE_LIQUIDATION",
         "RESONANT_MOON_SPECIAL",
         "SUCCULENT_BARNACLES_SPECIAL",
     ],
     dislikes=[
+        "FOCUS_GROWTH",
+        "FOCUS_INFLUENCE",
+        "FOCUS_LOGISTICS",
+        "FOCUS_PROTECTION",
         "ANCIENT_RUINS_DEPLETED_SPECIAL",
         "BLD_GAS_GIANT_GEN",
         "BLD_INDUSTRY_CENTER",
+        "BLD_REGIONAL_ADMIN",
         "BLD_SHIPYARD_ENRG_COMP",
         "BLD_SHIPYARD_ENRG_SOLAR",
         "BLD_SOL_ORB_GEN",
@@ -84,9 +93,14 @@ Species(
         "KRAKEN_NEST_SPECIAL",
         "PLC_BUREAUCRACY",
         "PLC_CHECKPOINTS",
+        "PLC_COLONIALISM",
         "PLC_ENVIRONMENTALISM",
+        "PLC_FEUDALISM",
         "PLC_INTERSTELLAR_INFRA",
+        "PLC_METROPOLES",
         "PLC_SYSTEM_INFRA",
+        "PLC_TECHNOCRACY",
+        "PLC_VASSALIZATION",
         "SUPERCONDUCTOR_SPECIAL",
     ],
     effectsgroups=[
@@ -102,6 +116,11 @@ Species(
         *GOOD_WEAPONS,
         *GREAT_FUEL,
         *PRECOGNITIVE_DETECTION(2),
+        EffectsGroup(
+            scope=IsSource,
+            activation=Turn(high=1),
+            effects=[GiveEmpireTech(name="PRO_GENERIC_SUPPLIES", empire=Target.Owner)],
+        ),
         # not for description,
         *AVERAGE_PLANETARY_SHIELDS,
         *AVERAGE_PLANETARY_DEFENSE,

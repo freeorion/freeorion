@@ -85,6 +85,10 @@ Species(
     defaultfocus="FOCUS_INDUSTRY",
     likes=[
         "FOCUS_INDUSTRY",
+        "FOCUS_INFLUENCE",
+        "FRACTAL_GEODES_SPECIAL",
+        "SUCCULENT_BARNACLES_SPECIAL",
+        "SHIMMER_SILK_SPECIAL",
         "SPARK_FOSSILS_SPECIAL",
         "MIMETIC_ALLOY_SPECIAL",
         "CRYSTALS_SPECIAL",
@@ -95,8 +99,10 @@ Species(
         "PLC_CONFEDERATION",
         "PLC_CONTINUOUS_SCANNING",
         "PLC_EXPLORATION",
+        "PLC_ISOLATION",
         "PLC_NATIVE_APPROPRIATION",
         "PLC_DIVERSITY",
+        "PLC_NO_SUPPLY",
     ],
     dislikes=[
         "BLD_GAS_GIANT_GEN",  # messes with their way of life
@@ -111,6 +117,8 @@ Species(
         "RESONANT_MOON_SPECIAL",
         "TEMPORAL_ANOMALY_SPECIAL",
         "SUPERCONDUCTOR_SPECIAL",
+        "PLC_AUGMENTATION",
+        "PLC_PROPAGANDA",
         "PLC_RACIAL_PURITY",
         "PLC_TERROR_SUPPRESSION",
         "PLC_CONFORMANCE",

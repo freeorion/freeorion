@@ -1,6 +1,6 @@
 from focs._species import *
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
-from species.species_macros.env import BARREN_STANDARD_EP
+from species.species_macros.env import BARREN_NARROW_EP, NARROW_EP
 from species.species_macros.focus import (
     HAS_ADVANCED_FOCI,
     HAS_GROWTH_FOCUS,
@@ -55,6 +55,7 @@ Species(
         "PLC_CONTINUOUS_SCANNING",
         "PLC_DESIGN_SIMPLICITY",
         "PLC_EXPLORATION",
+        "PLC_ISOLATION",
         "PLC_INDUSTRIALISM",
         "PLC_INTERSTELLAR_INFRA",
     ],
@@ -89,8 +90,9 @@ Species(
         *BAD_OFFENSE_TROOPS,
         # not for description,
         *ADVANCED_NATIVE_DEFENSE,
+        NARROW_EP,
         *STANDARD_SHIP_SHIELDS,
     ],
-    environments=BARREN_STANDARD_EP,
+    environments=BARREN_NARROW_EP,
     graphic="icons/species/intangible-04.png",
 )
