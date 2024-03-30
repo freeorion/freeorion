@@ -2287,6 +2287,9 @@ namespace {
         return retval;
     };
 
+    constexpr auto not_null = [](const auto* p) noexcept { return !!p; };
+    constexpr auto to_owner = [](const auto* p) noexcept { return p->Owner(); };
+
     // .first: IDs of all empires with fleets at system with id \a system_id
     // .second.first: IDs of empires with aggressive-fleet combat-capable ships at that system
     // .second.second: IDs of empires with obstructive-fleet combat-capable ships at that system
@@ -2299,9 +2302,6 @@ namespace {
         if (!system)
             return {};
         const auto fleets = context.ContextObjects().findRaw<Fleet>(system->FleetIDs());
-
-        static constexpr auto not_null = [](const Fleet* p) noexcept -> bool { return !!p; };
-        static constexpr auto to_owner = [](const Fleet* p) noexcept { return p->Owner(); };
 
         const auto fleets_owner_ids = [&fleets]() -> std::vector<int> {
             std::vector<int> retval;
@@ -2373,8 +2373,6 @@ namespace {
         { return p && p->Unowned() && p->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f; };
 
         const auto id_to_planet = [&objects](int id) { return objects.getRaw<Planet>(id); };
-
-        static constexpr auto to_owner = [](const Planet* p) noexcept { return p->Owner(); };
 
         const auto& planet_ids = system->PlanetIDs();
         std::vector<int> empire_ids;
@@ -2581,11 +2579,10 @@ namespace {
             aggressive_obstructive_fleets_here;
         if (empires_with_fleets_here.empty() || empires_with_aggressive_armed_fleets_here.empty())
             return false;
-        for (auto empire_id : empires_with_aggressive_armed_fleets_here)
-            DebugLogger(combat) << "   Empire " << empire_id << " has at least one armed aggressive fleet present";
-        for (auto empire_id : empires_with_obstructive_armed_fleets_here)
-            DebugLogger(combat) << "   Empire " << empire_id << " has at least one armed obstructive fleet present";
-
+        DebugLogger(combat) << "   Empires with at least one armed aggressive fleet present:  "
+                            << to_string(empires_with_aggressive_armed_fleets_here);
+        DebugLogger(combat) << "   Empires with at least one armed obstructive fleet present: "
+                            << to_string(empires_with_obstructive_armed_fleets_here);
 
         // what empires have planets or fleets here?
         // Unowned planets are included for ALL_EMPIRES if they have population > 0
@@ -2645,7 +2642,8 @@ namespace {
                 if (aggressive_empire_id != visible_planet_empire_id &&
                     at_war_with_empire_ids.contains(visible_planet_empire_id))
                 {
-                    DebugLogger(combat) << "   Empire " << aggressive_empire_id << " sees target planet " << planet->Name();
+                    DebugLogger(combat) << "   Aggressive fleet empire " << aggressive_empire_id
+                                        << " sees target planet " << planet->Name();
                     return true;  // an aggressive empire can see a planet onwned by an empire it is at war with
                 }
             }
@@ -2662,14 +2660,14 @@ namespace {
 
             // what fleets can the aggressive empire see?
             const auto& overrides = overrides_for_empire(aggressive_empire_id);
-            DebugLogger(combat) << "   empire " << aggressive_empire_id << " vis overrides here: "
-                                << to_string(overrides);
+            DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+                                << " vis overrides here: " << to_string(overrides);
 
             const auto aggressive_empire_visible_fleets =
                 GetObjsVisibleToEmpireOrNeutralsAtSystem<Fleet>(aggressive_empire_id, system_id,
                                                                 overrides, context);
-            DebugLogger(combat) << "   empire " << aggressive_empire_id << " can see fleets here: "
-                                << to_string(aggressive_empire_visible_fleets);
+            DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+                                << " can see fleets here: " << to_string(aggressive_empire_visible_fleets);
 
             const auto not_self_owned = [aggressive_empire_id](const UniverseObject* obj) noexcept
             { return obj && obj->Owner() != aggressive_empire_id; };
@@ -2681,14 +2679,14 @@ namespace {
             for (const auto* fleet : aggressive_empire_visible_fleets
                  | range_filter(not_self_owned) | range_filter(at_war_with))
             {
-                DebugLogger(combat) << "   Empire " << aggressive_empire_id
-                                    << " sees target fleet " << fleet->Name()
+                DebugLogger(combat) << "   aggressive fleet empire " << aggressive_empire_id
+                                    << " sees at-war target fleet " << fleet->Name()
                                     << " (" << fleet->ID() << " of empire " << fleet->Owner() << ")";
                 return true;  // an aggressive empire can see a fleet onwned by an empire it is at war with
             }
         }
 
-        DebugLogger(combat) << "   No aggressive armed fleet can see a target: no combat.";
+        DebugLogger(combat) << "   No aggressive armed fleet empire can see a target: no combat.";
         return false;   // no possible conditions for combat were found
     }
 
@@ -4025,11 +4023,79 @@ namespace {
                       << " :" << to_string(fleet->TravelRoute());
     }
 
+    void GenerateSitrepsForBlockades(const auto& fleet_owner_and_blockading_fleets,
+                                     ScriptingContext& context)
+    {
+        static constexpr auto obj_to_id_and_owner = [](const auto* obj) noexcept -> std::pair<int, int>
+        { return {obj->ID(), obj->Owner()}; };
+
+        const auto fleet_ids_to_also_owner_empires = [&context](const std::vector<int>& fleet_ids) {
+            std::vector<std::pair<int, int>> fleet_ids_owner_empire_ids;
+            fleet_ids_owner_empire_ids.reserve(fleet_ids.size());
+
+            const auto id_to_fleet = [&context](const int fleet_id) -> const Fleet*
+            { return context.ContextObjects().getRaw<const Fleet>(fleet_id); };
+
+            auto empires_rng = fleet_ids | range_transform(id_to_fleet)
+                | range_filter(not_null) | range_transform(obj_to_id_and_owner);
+            range_copy(empires_rng, std::back_inserter(fleet_ids_owner_empire_ids));
+
+            return fleet_ids_owner_empire_ids;
+        };
+
+        for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
+            const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
+            static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, int>);
+            static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<int>>);
+
+            // which fleet and system is blockaded?
+            const Fleet* blockaded_fleet = context.ContextObjects().getRaw<const Fleet>(blockaded_fleet_id);
+            if (!blockaded_fleet || blockaded_fleet->SystemID() == INVALID_OBJECT_ID)
+                continue;
+
+            // which empire(s) are blockading the fleet?
+            const auto blockading_fleets_and_empire_ids = fleet_ids_to_also_owner_empires(blockading_fleet_ids);
+
+            for (auto& [recipient_empire_id, recipient_empire] : context.Empires()) {
+                // notify empires that can observe a blockaded fleet about the blockade
+                if (context.ContextVis(blockaded_fleet_id, recipient_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+                    continue;
+
+                // every (blockading fleet) X (blockaded fleet) X (recipient empire) generates a separate sitrep
+                for (const auto [blockading_fleet_id, blockading_empire_id] : blockading_fleets_and_empire_ids) {
+                    if (context.ContextVis(blockading_fleet_id, recipient_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY) {
+                        // if the blockading fleet is also visible, include that info
+                        recipient_empire->AddSitRepEntry(
+                            CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
+                                                       blockaded_fleet_owner_id, blockading_empire_id, context));
+                    } else {
+                        // otherwise, just indicate that the blockade occurred
+                        recipient_empire->AddSitRepEntry(
+                            CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
+                                                       blockaded_fleet_owner_id, context));
+                    }
+                }
+            }
+        }
+    }
+
+    auto GetBlockadingFleetsForEmpires(auto&& fleet_owner_and_blockading_fleets) {
+        // map from empire ID to IDs of fleets that are blockading one of its fleets, and thus
+        // should be considered visible (as a fleet, not the contained ships) for combat initiation
+        std::map<int, std::vector<int>> empire_blockading_fleets;
+        for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
+            const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
+            std::copy(blockading_fleet_ids.begin(), blockading_fleet_ids.end(),
+                      std::back_inserter(empire_blockading_fleets[blockaded_fleet_owner_id]));
+        }
+        for (auto& [blockaded_fleet_owner_id, blockading_fleet_ids] : empire_blockading_fleets)
+            Uniquify(blockading_fleet_ids);
+        return empire_blockading_fleets;
+    }
+
     /** Moves fleets, marks blockading fleets as visible to blockaded fleet owner empire.
       * Returns fleet visibility overrides arising during movement, indexed by observer empire id. */
     [[nodiscard]] auto HandleFleetMovement(ScriptingContext& context) {
-        static constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
-
         const auto fleets = context.ContextObjects().allRaw<Fleet>();
 
         for (auto* fleet : fleets | range_filter(not_null))
@@ -4074,9 +4140,8 @@ namespace {
         // mark lowest-stealth armed ship in blocking fleets as visible to moving fleet owner
         auto [empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets] =
             GetBlockadingObjectsForEmpires(fleets_move_pathes, context);
-        auto empire_ships_revealed =
-            GetShipsToRevealForEmpiresBlockadedByFleets(empires_blockaded_by_fleets, context);
-        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(std::move(empire_ships_revealed));
+        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(
+            GetShipsToRevealForEmpiresBlockadedByFleets(empires_blockaded_by_fleets, context));
 
 
         // reset prev/next of not-moving fleets
@@ -4104,7 +4169,9 @@ namespace {
             fleet->SetArrivalStarlane(fleet->SystemID());
 
 
-        static constexpr auto next_system_on_path = [](const std::vector<MovePathNode>& path) {
+        static constexpr auto next_system_on_path = [](const std::vector<MovePathNode>& path)
+            noexcept(noexcept(path.front()))
+        {
             if (path.empty())
                 return INVALID_OBJECT_ID;
             const int first_node_obj_id = path.front().object_id;
@@ -4118,15 +4185,14 @@ namespace {
         };
 
         static constexpr auto in_system_and_moving =
-            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_path) {
+            [](const std::pair<Fleet*, std::vector<MovePathNode>>& fleet_path)
+                noexcept(noexcept(fleet_path.second.front()))
+            {
                 const auto& [fleet, path] = fleet_path;
-                if (fleet->SystemID() == INVALID_OBJECT_ID)
-                    return false;
-                if (path.empty())
-                    return false;
-                //if (path.front().object_id != fleet->SystemID())
-                //    ErrorLogger() << "expected fleet path start to be fleet's system...";
-                return !path.front().blockaded_here;
+                return fleet &&
+                    fleet->SystemID() != INVALID_OBJECT_ID &&
+                    !path.empty() &&
+                    !path.front().blockaded_here;
             };
 
         // set fleets that are in systems and are unblockaded and
@@ -4154,7 +4220,7 @@ namespace {
         context.ContextUniverse().UpdateEmpireStaleObjectKnowledge(context.Empires());
 
         // SitReps for fleets having arrived at destinations
-        static constexpr auto arrived_this_turn = [](const Fleet* f) { return f && f->ArrivedThisTurn(); };
+        static constexpr auto arrived_this_turn = [](const Fleet* f) noexcept { return f && f->ArrivedThisTurn(); };
         for (auto* fleet : fleets | range_filter(arrived_this_turn)) {
             // sitreps for all empires that can see fleet at new location
             for (auto& [empire_id, empire] : context.Empires()) {
@@ -4166,69 +4232,15 @@ namespace {
             }
         }
 
-        static constexpr auto obj_to_id_and_owner = [](const UniverseObject* obj)
-            -> std::pair<int, int> { return {obj->ID(), obj->Owner()}; };
 
-        const auto fleet_ids_to_also_owner_empires = [&context](const std::vector<int>& fleet_ids) {
-            std::vector<std::pair<int, int>> fleet_ids_owner_empire_ids;
-            fleet_ids_owner_empire_ids.reserve(fleet_ids.size());
+        GenerateSitrepsForBlockades(fleet_owner_and_blockading_fleets, context);
 
-            const auto id_to_fleet = [&context](const int fleet_id) -> const Fleet*
-            { return context.ContextObjects().getRaw<const Fleet>(fleet_id); };
-
-            auto empires_rng = fleet_ids | range_transform(id_to_fleet)
-                | range_filter(not_null) | range_transform(obj_to_id_and_owner);
-            range_copy(empires_rng, std::back_inserter(fleet_ids_owner_empire_ids));
-
-            return fleet_ids_owner_empire_ids;
-        };
-
-        // map from empire ID to IDs of fleets that are blockading one of its fleets, and thus
-        // should be considered visible (as a fleet, not the contained ships) for combat initiation
-        std::map<int, std::vector<int>> empire_ids_vis_fleet_overrides;
-
-
-        // SitReps for blockaded fleets
-        for (const auto& [fleet_id_owner_id, blockading_fleet_ids] : fleet_owner_and_blockading_fleets) {
-            const auto [blockaded_fleet_id, blockaded_fleet_owner_id] = fleet_id_owner_id;
-            static_assert(std::is_same_v<std::decay_t<decltype(blockaded_fleet_id)>, int>);
-            static_assert(std::is_same_v<std::decay_t<decltype(blockading_fleet_ids)>, std::vector<int>>);
-
-            auto& vis_ovrds = empire_ids_vis_fleet_overrides[blockaded_fleet_owner_id];
-            vis_ovrds.insert(vis_ovrds.end(), blockading_fleet_ids.begin(), blockading_fleet_ids.end());
-
-            // which fleet and system is blockaded?
-            const Fleet* blockaded_fleet = context.ContextObjects().getRaw<const Fleet>(blockaded_fleet_id);
-            if (!blockaded_fleet || blockaded_fleet->SystemID() == INVALID_OBJECT_ID)
-                continue;
-
-            // which empire(s) are blockading the fleet?
-            const auto blockading_fleets_and_empire_ids =
-                fleet_ids_to_also_owner_empires(blockading_fleet_ids);
-
-            for (const auto [recipient_empire_id, recipient_empire] : context.Empires()) {
-                // notify empires that can observe a blockaded fleet about the blockade
-                if (context.ContextVis(blockaded_fleet_id, recipient_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY)
-                    continue;
-
-                // every (blockading fleet) X (blockaded fleet) X (recipient empire) generates a separate sitrep
-                for (const auto [blockading_fleet_id, blockading_empire_id] : blockading_fleets_and_empire_ids) {
-                    if (context.ContextVis(blockading_fleet_id, recipient_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY) {
-                        // if the blockading fleet is also visible, include that info
-                        recipient_empire->AddSitRepEntry(
-                            CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
-                                                       blockaded_fleet_owner_id, blockading_empire_id, context));
-                    } else {
-                        // otherwise, just indicate that the blockade occurred
-                        recipient_empire->AddSitRepEntry(
-                            CreateFleetBlockadedSitRep(blockaded_fleet->SystemID(), blockaded_fleet_id,
-                                                       blockaded_fleet_owner_id, context));
-                    }
-                }
-            }
+        auto empire_blockading_fleets = GetBlockadingFleetsForEmpires(fleet_owner_and_blockading_fleets);
+        for (const auto& [blockaded_empire_id, blockading_fleets] : empire_blockading_fleets) {
+            DebugLogger() << "FleetMovement blockading fleets for empire " << blockaded_empire_id
+                          << ": " << to_string(blockading_fleets);
         }
-
-        return empire_ids_vis_fleet_overrides;
+        return empire_blockading_fleets;
     }
 }
 
@@ -4395,7 +4407,7 @@ void ServerApp::PreCombatProcessTurns() {
         empire->UpdateSupplyUnobstructedSystems(context, true);
 
 
-    m_empire_vis_overrides = HandleFleetMovement(context);
+    m_empire_fleet_combat_initiation_vis_overrides = HandleFleetMovement(context);
 
 
     // indicate that the clients are waiting for their new Universes
@@ -4429,13 +4441,13 @@ void ServerApp::ProcessCombats() {
 
     // collect data about locations where combat is to occur:
     // map from system ID to CombatInfo for that system
-    auto combats = AssembleSystemCombatInfo(context, m_empire_vis_overrides);
-    m_empire_vis_overrides.clear();
+    auto combats = AssembleSystemCombatInfo(context, m_empire_fleet_combat_initiation_vis_overrides);
+    m_empire_fleet_combat_initiation_vis_overrides.clear();
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
     for (CombatInfo& combat_info : combats) {
-        auto combat_system = combat_info.GetSystem();
+        const auto combat_system = combat_info.GetSystem();
         if (combat_system)
             combat_system->SetLastTurnBattleHere(context.current_turn);
 
