@@ -4112,7 +4112,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const auto& stale_object_ids = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
-    auto empire_position_max_detection_ranges = universe.GetEmpiresPositionDetectionRanges(objects, stale_object_ids);
+    auto empire_position_max_detection_ranges = universe.GetEmpiresAndNeutralPositionDetectionRanges(objects, stale_object_ids);
     //auto empire_position_max_detection_ranges = universe.GetEmpiresPositionNextTurnFleetDetectionRanges(context);
 
 

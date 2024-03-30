@@ -230,7 +230,7 @@ void Universe::Clear() {
 
     m_effect_accounting_map.clear();
     m_effect_discrepancy_map.clear();
-    m_empire_object_visibility_overrides.clear();
+    m_fleet_blockade_ship_visibility_overrides.clear();
     m_effect_specified_empire_object_visibilities.clear();
 
     m_stat_records.clear();
@@ -413,16 +413,13 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
 }
 
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const {
-    if (empire_id == ALL_EMPIRES)
-        return Visibility::VIS_FULL_VISIBILITY;
-
-    auto empire_it = m_empire_object_visibility.find(empire_id);
+    const auto empire_it = m_empire_object_visibility.find(empire_id);
     if (empire_it == m_empire_object_visibility.end())
         return Visibility::VIS_NO_VISIBILITY;
 
     const ObjectVisibilityMap& vis_map = empire_it->second;
 
-    auto vis_map_it = vis_map.find(object_id);
+    const auto vis_map_it = vis_map.find(object_id);
     if (vis_map_it == vis_map.end())
         return Visibility::VIS_NO_VISIBILITY;
 
@@ -1873,16 +1870,16 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 void Universe::CountDestructionInStats(int object_id, int source_object_id,
                                        const std::map<int, std::shared_ptr<Empire>>& empires)
 {
-    ObjectMap& objects{*m_objects};
+    const ObjectMap& objects{*m_objects};
 
-    auto obj = objects.get(object_id);
+    const auto* obj = objects.getRaw(object_id);
     if (!obj)
         return;
-    auto source = objects.get(source_object_id);
+    const auto* source = objects.getRaw(source_object_id);
     if (!source)
         return;
     if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-        auto shp = std::static_pointer_cast<const Ship>(obj);
+        const auto shp = static_cast<const Ship*>(obj);
         auto source_empire = empires.find(source->Owner());
         if (source_empire != empires.end() && source_empire->second)
             source_empire->second->RecordShipShotDown(*shp);
@@ -1892,18 +1889,18 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id,
     }
 }
 
-void Universe::SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids)
-{ m_empire_object_visibility_overrides = std::move(empires_ids); }
+void Universe::SetObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids)
+{ m_fleet_blockade_ship_visibility_overrides = std::move(empires_ids); }
 
-void Universe::ApplyEmpireObjectVisibilityOverrides() {
+void Universe::ApplyObjectVisibilityOverrides() {
     const Visibility override_vis = GetGameRules().Get<Visibility>("RULE_OVERRIDE_VIS_LEVEL");
 
-    for (auto& [empire_id, object_ids] : m_empire_object_visibility_overrides
-         | range_filter([](auto& e_os) { return e_os.first != ALL_EMPIRES; }))
-    {
-        for (auto viewed_obj_id : object_ids
-             | range_filter([](auto viewed_obj_id) { return viewed_obj_id > INVALID_OBJECT_ID; }))
-        { SetEmpireObjectVisibility(empire_id, viewed_obj_id, override_vis); }
+    static constexpr auto is_valid_object_id =
+        [](auto viewed_obj_id) noexcept { return viewed_obj_id > INVALID_OBJECT_ID; };
+
+    for (auto& [empire_id, object_ids] : m_fleet_blockade_ship_visibility_overrides) {
+        for (auto viewed_obj_id : object_ids | range_filter(is_valid_object_id))
+            SetEmpireObjectVisibility(empire_id, viewed_obj_id, override_vis);
     }
 }
 
@@ -1919,7 +1916,7 @@ void Universe::SetEffectDerivedVisibility(int empire_id, int object_id, int sour
     m_effect_specified_empire_object_visibilities[empire_id][object_id].emplace_back(source_id, vis);
 }
 
-void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
+void Universe::ApplyEffectDerivedVisibilities(const ScriptingContext& context) {
     EmpireObjectVisibilityMap new_empire_object_visibilities;
     // for each empire with a visibility map
     for (auto& [empire_id, obj_src_vis_ref_map] : m_effect_specified_empire_object_visibilities) { // TODO: should this consider effect priorities here... ie. is the final result visibility determined based on the order of the source objects, rather than the order of effect execution?
@@ -1944,11 +1941,11 @@ void Universe::ApplyEffectDerivedVisibilities(EmpireManager& empires) {
             // evaluate valuerefs and and store visibility of object
             for (auto& [source_obj_id, vis_val_ref] : src_and_vis_ref_map) {
                 // set up context for executing ValueRef to determine visibility to set
-                const ScriptingContext context{*this, empires, m_objects->getRaw(source_obj_id),
-                                               target, target_initial_vis};
+                const ScriptingContext source_init_vis_context{context, target, target_initial_vis,
+                                                               m_objects->getRaw(source_obj_id)};
 
                 // evaluate and store actual new visibility level
-                Visibility vis = vis_val_ref->Eval(context);
+                Visibility vis = vis_val_ref->Eval(source_init_vis_context);
                 target_initial_vis = vis;   // store for next iteration's context
                 new_empire_object_visibilities[empire_id][viewed_obj_id] = vis;
             }
@@ -2023,7 +2020,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
 }
 
 void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
-    if (empire_id == ALL_EMPIRES || object_id == INVALID_OBJECT_ID)
+    if (object_id == INVALID_OBJECT_ID)
         return;
 
     // get visibility map for empire and find object in it
@@ -2058,19 +2055,15 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 
 
 namespace {
-    template <typename R>
-    auto CheckObjects(R&& range, std::map<int, std::map<std::pair<double, double>, float>>& retval)
+    /** for each object, for its owner, find the highest detection range at the object's location
+      * and store in or update that value in \a retval */
+    void CheckObjects(auto&& range, std::map<int, std::map<std::pair<double, double>, float>>& retval)
     {
-        for (const auto& obj : range) {
-            // skip systems and unowned objects, which can't provide detection to any empire
-            if (obj->Unowned())
-                continue;
-
-            // skip ships not in systems, so that they cannot provide detection
-            using RangeElementType = typename R::value_type::element_type;
-            if constexpr (std::is_same_v<std::decay_t<RangeElementType>, Ship>) {
+        for (const auto* obj : range) {
+            using RangeElementType = std::decay_t<decltype(*obj)>;
+            if constexpr (std::is_same_v<RangeElementType, Ship>) {
                 if (obj->SystemID() == INVALID_OBJECT_ID && !GetGameRules().Get<bool>("RULE_EXTRASOLAR_SHIP_DETECTION"))
-                    continue;
+                    continue; // skip ships not in systems, so that they cannot provide detection
             }
 
             // skip objects with no detection range
@@ -2082,7 +2075,7 @@ namespace {
                 continue;
 
             // record object's detection range for owner
-            int object_owner_empire_id = obj->Owner();
+            const int object_owner_empire_id = obj->Owner();
             std::pair<double, double> object_pos(obj->X(), obj->Y());
             // store range in output map (if new for location or larger than any
             // previously-found range at this location)
@@ -2097,28 +2090,28 @@ namespace {
 }
 
 std::map<int, std::map<std::pair<double, double>, float>>
-Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const
+Universe::GetEmpiresAndNeutralPositionDetectionRanges(const ObjectMap& objects) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
     auto not_destroyed = [this](const UniverseObject* obj) { return !m_destroyed_object_ids.contains(obj->ID()); };
 
-    CheckObjects(objects.find<Planet>(not_destroyed), retval);
-    CheckObjects(objects.find<Ship>(not_destroyed), retval);
+    CheckObjects(objects.findRaw<Planet>(not_destroyed), retval);
+    CheckObjects(objects.findRaw<Ship>(not_destroyed), retval);
     //CheckObjects(objects.find<Building>(not_destroyed), retval); // as of this writing, buildings don't have detection meters
 
     return retval;
 }
 
 std::map<int, std::map<std::pair<double, double>, float>>
-Universe::GetEmpiresPositionDetectionRanges(const ObjectMap& objects,
-                                            const std::unordered_set<int>& exclude_ids) const
+Universe::GetEmpiresAndNeutralPositionDetectionRanges(
+    const ObjectMap& objects, const std::unordered_set<int>& exclude_ids) const
 {
     std::map<int, std::map<std::pair<double, double>, float>> retval;
     auto not_destroyed_or_excluded = [this, &exclude_ids](const UniverseObject* obj)
     { return !m_destroyed_object_ids.contains(obj->ID()) && !exclude_ids.contains(obj->ID()); };
 
-    CheckObjects(objects.find<Planet>(not_destroyed_or_excluded), retval);
-    CheckObjects(objects.find<Ship>(not_destroyed_or_excluded), retval);
+    CheckObjects(objects.findRaw<Planet>(not_destroyed_or_excluded), retval);
+    CheckObjects(objects.findRaw<Ship>(not_destroyed_or_excluded), retval);
     //CheckObjects(objects.find<Building>(not_destroyed_or_excluded), retval); // as of this writing, buildings don't have detection meters
 
     return retval;
@@ -2134,17 +2127,14 @@ Universe::GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext&
     //       for cases where detection range is modified in a position-dependent way
     //       such as in Nebulas or a proposed out-of-system detection range penalty
 
-    for (const auto fleet : context.ContextObjects().allRaw<Fleet>()) {
-        // skip unowned objects, which can't provide detection to any empire
-        if (fleet->Unowned())
-            continue;
-        // skip fleets that don't have a next system
-        if (fleet->NextSystemID() == INVALID_OBJECT_ID)
-            continue;
+    static constexpr auto has_next_system_id = [](const Fleet* fleet) noexcept
+    { return fleet && fleet->NextSystemID() != INVALID_OBJECT_ID; };
 
+    // skip fleets that don't have a next system
+    for (const auto fleet : context.ContextObjects().findRaw<Fleet>(has_next_system_id)) {
         // get all ships in fleet, find their detection ranges
         float fleet_detection_range = 0.0f;
-        for (const auto& ship : context.ContextObjects().find<Ship>(fleet->ShipIDs())) {
+        for (const auto* ship : context.ContextObjects().findRaw<Ship>(fleet->ShipIDs())) {
             const Meter* detection_meter = ship->GetMeter(MeterType::METER_DETECTION);
             if (!detection_meter)
                 continue;
@@ -2214,8 +2204,8 @@ std::size_t Universe::SizeInMemory() const {
             retval += sizeof(decltype(id_vtm.second)::value_type)*id_vtm.second.size();
     }
 
-    retval += sizeof(decltype(m_empire_object_visibility_overrides)::value_type)*m_empire_object_visibility_overrides.size();
-    for (const auto& id_ids : m_empire_object_visibility_overrides)
+    retval += sizeof(decltype(m_fleet_blockade_ship_visibility_overrides)::value_type)*m_fleet_blockade_ship_visibility_overrides.size();
+    for (const auto& id_ids : m_fleet_blockade_ship_visibility_overrides)
         retval += sizeof(decltype(id_ids.second)::value_type)*id_ids.second.size();
 
     retval += sizeof(decltype(m_effect_specified_empire_object_visibilities)::value_type)*m_effect_specified_empire_object_visibilities.size();
@@ -2309,29 +2299,22 @@ std::size_t Universe::SizeInMemory() const {
 }
 
 namespace {
-    std::map<int, float> GetEmpiresDetectionStrengths(const EmpireManager& empires, int empire_id = ALL_EMPIRES) {
+    std::map<int, float> GetEmpiresDetectionStrengths(const EmpireManager& empires) {
         std::map<int, float> retval;
-        if (empire_id == ALL_EMPIRES) {
-            for (const auto& [empire_id_loop, empire] : empires) {
-                const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
-                retval[empire_id_loop] = meter ? meter->Current() : 0.0f;
-            }
-        } else {
-            if (auto empire = empires.GetEmpire(empire_id))
-                if (const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH"))
-                    retval[empire_id] = meter->Current();
+        for (const auto& [empire_id_loop, empire] : empires) {
+            const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
+            const auto strength = meter ? meter->Current() : 0.0f;
+            retval.emplace(empire_id_loop, strength);
         }
         return retval;
     }
 
     /** for each empire: for each position, what objects have low enough stealth
-      * that the empire could detect them if an detector owned by the empire is in
+      * that the empire could detect them if a detector owned by the empire is in
       * range? */
-    auto GetEmpiresPositionsPotentiallyDetectableObjects(
-        const ObjectMap& objects, const EmpireManager& empires, int empire_id = ALL_EMPIRES)
-    {
+    auto GetEmpiresPositionsPotentiallyDetectableObjects(const ObjectMap& objects, const EmpireManager& empires) {
         const auto obj_count = objects.size();
-        const auto empire_detection_strengths = GetEmpiresDetectionStrengths(empires, empire_id);
+        const auto empire_detection_strengths = GetEmpiresDetectionStrengths(empires);
         boost::container::flat_map<int, boost::container::flat_map<std::pair<double, double>, std::vector<int>>> retval;
         retval.reserve(empire_detection_strengths.size());
         for (const int loop_empire_id : empire_detection_strengths | range_keys)
@@ -2350,8 +2333,9 @@ namespace {
             // being detectable by an empire requires the object to have
             // low enough stealth (0 or below the empire's detection strength)
             for (const auto& [loop_empire_id, detection_strength] : empire_detection_strengths) {
-                if (object_stealth <= detection_strength || object_stealth <= 0.0f || obj->OwnedBy(loop_empire_id))
-                    retval[loop_empire_id][object_pos].push_back(obj->ID());
+                if (object_stealth <= detection_strength || object_stealth <= 0.0f
+                    || obj->OwnedBy(loop_empire_id))
+                { retval[loop_empire_id][object_pos].push_back(obj->ID()); }
             }
         }
         return retval;
@@ -2364,6 +2348,8 @@ namespace {
         const auto& detector_position_ranges)
     {
         std::vector<int> retval;
+        retval.reserve(object_positions.size());
+
         // check each detector position and range against each object position
         for (const auto& [object_pos, objects] : object_positions) {
             // search through detector positions until one is found in range
@@ -2383,8 +2369,7 @@ namespace {
         return retval;
     }
 
-    /** removes ids of objects that the indicated empire knows have been
-      * destroyed */
+    /** removes ids of objects that the indicated empire knows have been destroyed */
     template <typename DS>
     void FilterObjectIDsByKnownDestruction(std::vector<int>& object_ids, int empire_id,
                                            const DS& empire_known_destroyed_object_ids)
@@ -2417,7 +2402,7 @@ namespace {
     void SetEmpireFieldVisibilitiesFromRanges(
         const std::map<int, std::map<std::pair<double, double>, float>>&
             empire_location_detection_ranges,
-        Universe& universe, EmpireManager& empires)
+        Universe& universe, const EmpireManager& empires)
     {
         const ObjectMap& objects{universe.Objects()};
 
@@ -2493,44 +2478,112 @@ namespace {
 
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities(Universe& universe) {
-        auto process_objects = [&](const auto&& range) {
-            for (const auto& obj : range) {
-                if (!obj->Unowned())
-                    universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), Visibility::VIS_FULL_VISIBILITY);
-            }
+        static constexpr auto to_owner_id = [](const auto* obj) noexcept { return std::pair{obj->Owner(), obj->ID()}; };
+        static constexpr auto process_objects = [](const auto&& range, Universe& universe) {
+            for (const auto [owner, id] : range | range_transform(to_owner_id))
+                universe.SetEmpireObjectVisibility(owner, id, Visibility::VIS_FULL_VISIBILITY);
         };
+        process_objects(universe.Objects().allRaw<Building>(), universe);
+        process_objects(universe.Objects().allRaw<Planet>(), universe);
+        process_objects(universe.Objects().allRaw<Ship>(), universe);
+        process_objects(universe.Objects().allRaw<Fleet>(), universe);
+    }
+
+    auto GetBestNeutralDetectionAtSystems(const ObjectMap& objects) {
+        // determine neutral / monster detection strengths at each system, which is
+        // the highest detection strength of unowned ships at each
+
+        static constexpr auto is_unowned_ship_in_system = [](const Ship* ship) noexcept
+        { return ship && ship->Unowned() && ship->SystemID() != INVALID_OBJECT_ID; };
+
+        const auto neutral_ships_in_systems = objects.findRaw<Ship>(is_unowned_ship_in_system);
+
+        static constexpr auto to_system_id_and_ship_detection = [](const Ship* ship) noexcept
+        { return std::pair{ship->SystemID(), ship->GetMeter(MeterType::METER_DETECTION)->Initial()}; };
+
+        auto neutral_ship_systems_detections = neutral_ships_in_systems
+            | range_transform(to_system_id_and_ship_detection);
+
+        std::map<int, float> best_neutral_detection_strengths_at_systems;
+
+        for (const auto [sys_id, det] : neutral_ship_systems_detections) {
+            auto& best_det = best_neutral_detection_strengths_at_systems[sys_id];
+            best_det = std::max(best_det, det);
+        }
+
+        return best_neutral_detection_strengths_at_systems;
+    }
+
+    /** sets visibility of empire-owned objects by neutrals in systems
+      * based on the best neutral detection rating there and the objects' stealth */
+    void SetNeutralVisibleOwnedObjectsFromDetectionStrengths(Universe& universe) {
+        const auto best_neutral_detection_strengths_at_systems{
+            GetBestNeutralDetectionAtSystems(universe.Objects())};
+
+        const auto is_neutral_detectable =
+            [&best_neutral_detection_strengths_at_systems](const auto* obj) {
+                if (!obj || obj->Unowned()) // unowned objects given full visibility by neutrals elsewhere
+                    return false;
+                const auto obj_sys_id = obj->SystemID();
+                if (obj_sys_id == INVALID_OBJECT_ID)
+                    return false;
+                const auto stealth_meter = obj->GetMeter(MeterType::METER_STEALTH);
+                if (!stealth_meter)
+                    return false; // ??
+                const auto obj_stealth = stealth_meter->Initial();
+
+                const auto det_it = best_neutral_detection_strengths_at_systems.find(obj_sys_id);
+                if (det_it == best_neutral_detection_strengths_at_systems.end())
+                    return false;
+
+                return det_it->second >= obj_stealth;
+            };
+
+        static constexpr auto to_obj_id = [](const auto* obj) noexcept { return obj->ID(); };
+
+        auto process_objects = [is_neutral_detectable, &universe](const auto&& range) {
+            for (const auto obj_id : range | range_filter(is_neutral_detectable) | range_transform(to_obj_id))
+                universe.SetEmpireObjectVisibility(ALL_EMPIRES, obj_id, Visibility::VIS_PARTIAL_VISIBILITY);
+        };
+
         process_objects(universe.Objects().allRaw<Building>());
         process_objects(universe.Objects().allRaw<Planet>());
         process_objects(universe.Objects().allRaw<Ship>());
-        process_objects(universe.Objects().allRaw<Fleet>());
     }
 
-    /** sets all objects visible to all empires */
+    constexpr auto not_eliminated = [](const auto& id_empire) noexcept
+    { return id_empire.second && !id_empire.second->Eliminated(); };
+
+    /** sets all objects visible to all empires and neutrals */
     void SetAllObjectsVisibleToAllEmpires(Universe& universe,
-                                          const EmpireManager::const_container_type& empires) {
+                                          const EmpireManager::const_container_type& empires)
+    {
         // set every object visible to all empires
-        for (const auto& obj : universe.Objects().allRaw()) {
-            for (auto& [empire_id, empire] : empires) {
-                if (empire->Eliminated())
-                    continue;
-                universe.SetEmpireObjectVisibility(empire_id, obj->ID(), Visibility::VIS_FULL_VISIBILITY);
+        for (const auto* obj : universe.Objects().allRaw()) {
+            const auto obj_id = obj->ID();
+
+            universe.SetEmpireObjectVisibility(ALL_EMPIRES, obj_id, Visibility::VIS_FULL_VISIBILITY);
+            for (const auto& special_name : obj->Specials() | range_keys)
+                universe.SetEmpireSpecialVisibility(ALL_EMPIRES, obj_id, special_name);
+
+            for (auto& [empire_id, empire] : empires | range_filter(not_eliminated)) {
+                universe.SetEmpireObjectVisibility(empire_id, obj_id, Visibility::VIS_FULL_VISIBILITY);
                 // specials on objects
-                for (const auto& special_entry : obj->Specials())
-                    universe.SetEmpireSpecialVisibility(empire_id, obj->ID(), special_entry.first);
+                for (const auto& special_name : obj->Specials() | range_keys)
+                    universe.SetEmpireSpecialVisibility(empire_id, obj_id, special_name);
             }
         }
     }
 
-    /** sets all systems basically visible to all empires */
-    void SetAllSystemsBasicallyVisibleToAllEmpires(Universe& universe,
-                                                   const EmpireManager& empires)
-    {
-        for (const auto& obj : universe.Objects().allRaw<System>()) {
-            for (auto& [empire_id, empire] : empires) {
-                if (empire->Eliminated())
-                    continue;
-                universe.SetEmpireObjectVisibility(empire_id, obj->ID(), Visibility::VIS_BASIC_VISIBILITY);
-            }
+    /** sets all systems basically visible to all empires and neutrals */
+    void SetAllSystemsBasicallyVisibleToAllEmpires(Universe& universe, const EmpireManager& empires) {
+        for (const auto* obj : universe.Objects().allRaw<System>()) {
+            const auto obj_id = obj->ID();
+
+            universe.SetEmpireObjectVisibility(ALL_EMPIRES, obj_id, Visibility::VIS_BASIC_VISIBILITY);
+
+            for (const auto empire_id : empires | range_filter(not_eliminated) | range_keys)
+                universe.SetEmpireObjectVisibility(empire_id, obj_id, Visibility::VIS_BASIC_VISIBILITY);
         }
     }
 
@@ -2541,12 +2594,13 @@ namespace {
         const ObjectMap& objects = universe.Objects();
         // map from empire ID to ID of systems where those empires own at least one object
         std::map<int, std::set<int>> empires_systems_with_owned_objects;
+
+        static constexpr auto in_a_system = [](const UniverseObject* obj) noexcept
+        { return obj && obj->SystemID() != INVALID_OBJECT_ID; };
+
         // get systems where empires have owned objects
-        for (const auto& obj : objects.allRaw()) {
-            if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID)
-                continue;
+        for (const auto* obj : objects.findRaw(in_a_system))
             empires_systems_with_owned_objects[obj->Owner()].insert(obj->SystemID());
-        }
 
         // set system visibility
         for (const auto& [empire_id, system_ids] : empires_systems_with_owned_objects) {
@@ -2555,12 +2609,12 @@ namespace {
         }
 
         // get planets, check their locations, and whether they have ever been observed by the empire
-        for (const auto& planet : objects.allRaw<Planet>()) {
-            int system_id = planet->SystemID();
+        for (const auto* planet : objects.allRaw<Planet>()) {
+            const int system_id = planet->SystemID();
             if (system_id == INVALID_OBJECT_ID)
                 continue;
 
-            int planet_id = planet->ID();
+            const int planet_id = planet->ID();
             for (const auto& [empire_id, empire_systems] : empires_systems_with_owned_objects) {
                 if (!empire_systems.contains(system_id))
                     continue;   // no objects, don't grant any visibility
@@ -2694,19 +2748,18 @@ namespace {
         // ensure systems on either side of a starlane along which a fleet is
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
-        auto moving_owned_insystem_fleet = [](const Fleet* fleet) {
+        static constexpr auto moving_insystem_fleet = [](const Fleet* fleet) noexcept {
             return fleet->FinalDestinationID() != INVALID_OBJECT_ID &&
-                fleet->SystemID() == INVALID_OBJECT_ID &&
-                !fleet->Unowned();
+                   fleet->SystemID() == INVALID_OBJECT_ID;
         };
 
-        for (const auto* fleet : objects.findRaw<const Fleet>(moving_owned_insystem_fleet)) {
-            int prev = fleet->PreviousSystemID();
-            int next = fleet->NextSystemID();
-
+        for (const auto* fleet : objects.findRaw<const Fleet>(moving_insystem_fleet)) {
             // ensure fleet's owner has at least basic visibility of the next
             // and previous systems on the fleet's path
             auto& vis_map = empire_object_visibility[fleet->Owner()];
+
+            const int prev = fleet->PreviousSystemID();
+            const int next = fleet->NextSystemID();
 
             auto system_vis_it = vis_map.find(prev);
             if (system_vis_it == vis_map.end())
@@ -2822,9 +2875,9 @@ namespace {
     }
 }
 
-void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
+void Universe::UpdateEmpireObjectVisibilities(const ScriptingContext& context) {
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
-    for (const auto& [empire_id, empire] : empires) {
+    for (const auto& [empire_id, empire] : context.Empires()) {
         if (empire->Eliminated()) {
             m_empire_known_ship_design_ids.erase(empire_id);
         } else {
@@ -2837,28 +2890,42 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
     m_empire_object_visible_specials.clear();
 
     if (GetGameRules().Get<bool>("RULE_ALL_OBJECTS_VISIBLE")) {
-        SetAllObjectsVisibleToAllEmpires(*this, std::as_const(empires).GetEmpires());
+        SetAllObjectsVisibleToAllEmpires(*this, context.Empires().GetEmpires());
         return;
     } else if (GetGameRules().Get<bool>("RULE_ALL_SYSTEMS_VISIBLE")) {
-        SetAllSystemsBasicallyVisibleToAllEmpires(*this, empires);
+        SetAllSystemsBasicallyVisibleToAllEmpires(*this, context.Empires());
     }
 
     SetEmpireOwnedObjectVisibilities(*this);
 
-    auto empire_position_detection_ranges = GetEmpiresPositionDetectionRanges(*m_objects);
+    {
+        static constexpr auto stringify = [](const auto& container) {
+            std::string retval;
+            for (auto& [empire_id, entries] : container)
+                retval.append("[").append(std::to_string(empire_id)).append(": ")
+                      .append(std::to_string(entries.size())).append("]  ");
+            return retval;
+        };
 
-    auto empire_position_potentially_detectable_objects =
-        GetEmpiresPositionsPotentiallyDetectableObjects(*m_objects, empires);
+        const auto empire_position_detection_ranges = GetEmpiresAndNeutralPositionDetectionRanges(*m_objects);
+        DebugLogger() << "for empires/neutral have # detector positions: " << stringify(empire_position_detection_ranges);
 
-    SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
-                                          empire_position_potentially_detectable_objects,
-                                          *this);
-    SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, *this, empires);
+        const auto empire_position_potentially_detectable_objects =
+            GetEmpiresPositionsPotentiallyDetectableObjects(*m_objects, context.Empires());
+        DebugLogger() << "for empires have # detectable object positions: " << stringify(empire_position_potentially_detectable_objects);
+
+        SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
+                                              empire_position_potentially_detectable_objects,
+                                              *this);
+        SetEmpireFieldVisibilitiesFromRanges(empire_position_detection_ranges, *this, context.Empires());
+    }
+
+    SetNeutralVisibleOwnedObjectsFromDetectionStrengths(*this);
 
     SetSameSystemPlanetsVisible(*this);
 
-    ApplyEmpireObjectVisibilityOverrides();
-    ApplyEffectDerivedVisibilities(empires);
+    ApplyObjectVisibilityOverrides();
+    ApplyEffectDerivedVisibilities(context);
 
     PropagateVisibilityToContainerObjects(*m_objects, m_empire_object_visibility);
 
@@ -2866,10 +2933,10 @@ void Universe::UpdateEmpireObjectVisibilities(EmpireManager& empires) {
 
     SetTravelledStarlaneEndpointsVisible(*m_objects, m_empire_object_visibility);
 
-    ScriptingContext context{*this, empires};
     SetEmpireSpecialVisibilities(context, m_empire_object_visibility, m_empire_object_visible_specials);
 
-    ShareVisbilitiesBetweenAllies(*this, empires, m_empire_object_visibility, m_empire_object_visible_specials);
+    ShareVisbilitiesBetweenAllies(*this, context.Empires(), m_empire_object_visibility,
+                                  m_empire_object_visible_specials);
 }
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn) {
@@ -2953,7 +3020,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
     // detectable by that empire, then the latest known state of the objects
     // (including stealth and position) appears to be stale / out of date.
 
-    const auto empire_location_detection_ranges = GetEmpiresPositionDetectionRanges(*m_objects);
+    const auto empire_location_detection_ranges = GetEmpiresAndNeutralPositionDetectionRanges(*m_objects);
 
     for (const auto& [empire_id, latest_known_objects] : m_empire_latest_known_objects) {
         const ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
@@ -2972,13 +3039,13 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
         // get empire latest known objects that are potentially detectable
         auto empires_latest_known_objects_that_should_be_detectable =
-            GetEmpiresPositionsPotentiallyDetectableObjects(latest_known_objects, empires, empire_id);
-        auto& empire_latest_known_should_be_still_detectable_objects =
+            GetEmpiresPositionsPotentiallyDetectableObjects(latest_known_objects, empires);
+        const auto& empire_latest_known_should_be_still_detectable_objects =
             empires_latest_known_objects_that_should_be_detectable[empire_id];
 
 
         // get empire detection ranges
-        auto empire_detectors_it = empire_location_detection_ranges.find(empire_id);
+        const auto empire_detectors_it = empire_location_detection_ranges.find(empire_id);
         if (empire_detectors_it == empire_location_detection_ranges.end())
             continue;
         const auto& empire_detector_positions_ranges = empire_detectors_it->second;
@@ -3012,7 +3079,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
 
 
         // fleets that are not visible and that contain no ships or only stale ships are stale
-        for (const auto& fleet : latest_known_objects.allRaw<Fleet>()) {
+        for (const auto* fleet : latest_known_objects.allRaw<Fleet>()) {
             if (fleet->GetVisibility(empire_id, *this) >= Visibility::VIS_BASIC_VISIBILITY)
                 continue;
 
@@ -3031,7 +3098,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
             bool fleet_stale = true;
             // check each ship. if any are visible or not visible but not stale,
             // fleet is not stale
-            for (const auto& ship : latest_known_objects.find<Ship>(fleet->ShipIDs())) {
+            for (const auto* ship : latest_known_objects.findRaw<Ship>(fleet->ShipIDs())) {
                 // if ship doesn't think it's in this fleet, doesn't count.
                 if (!ship || ship->FleetID() != fleet->ID())
                     continue;
@@ -3437,7 +3504,8 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     // other empires' visibilites of objects
     empire_object_visibility.clear();
     for (const auto& object : m_objects->all()) {
-        Visibility vis = GetObjectVisibilityByEmpire(object->ID(), encoding_empire);
+        Visibility vis = (encoding_empire == ALL_EMPIRES) ?
+            Visibility::VIS_FULL_VISIBILITY : GetObjectVisibilityByEmpire(object->ID(), encoding_empire);
         if (vis > Visibility::VIS_NO_VISIBILITY)
             empire_object_visibility[encoding_empire][object->ID()] = vis;
     }

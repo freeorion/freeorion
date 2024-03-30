@@ -1658,7 +1658,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     TraceLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
     TraceLogger() << m_universe.Objects().Dump();
 
-    m_universe.UpdateEmpireObjectVisibilities(m_empires);
+    m_universe.UpdateEmpireObjectVisibilities(context);
 }
 
 void ServerApp::ExecuteScriptedTurnEvents() {
@@ -4140,7 +4140,7 @@ namespace {
         // mark lowest-stealth armed ship in blocking fleets as visible to moving fleet owner
         auto [empires_blockaded_by_fleets, fleet_owner_and_blockading_fleets] =
             GetBlockadingObjectsForEmpires(fleets_move_pathes, context);
-        context.ContextUniverse().SetEmpireObjectVisibilityOverrides(
+        context.ContextUniverse().SetObjectVisibilityOverrides(
             GetShipsToRevealForEmpiresBlockadedByFleets(empires_blockaded_by_fleets, context));
 
 
@@ -4215,7 +4215,7 @@ namespace {
 
 
         // post-movement visibility update
-        context.ContextUniverse().UpdateEmpireObjectVisibilities(context.Empires());
+        context.ContextUniverse().UpdateEmpireObjectVisibilities(context);
         context.ContextUniverse().UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
         context.ContextUniverse().UpdateEmpireStaleObjectKnowledge(context.Empires());
 
@@ -4520,7 +4520,7 @@ void ServerApp::PostCombatProcessTurns() {
                              m_species_manager, m_supply_manager};
 
     // post-combat visibility update
-    m_universe.UpdateEmpireObjectVisibilities(m_empires);
+    m_universe.UpdateEmpireObjectVisibilities(context);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
 
 
@@ -4565,7 +4565,7 @@ void ServerApp::PostCombatProcessTurns() {
 
     // now that we've had combat and applied Effects, update visibilities again, prior
     //  to updating system obstructions below.
-    m_universe.UpdateEmpireObjectVisibilities(m_empires);
+    m_universe.UpdateEmpireObjectVisibilities(context);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
 
     UpdateEmpireSupply(context, m_supply_manager, false);
@@ -4680,7 +4680,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
 
     // post-production and meter-effects visibility update
-    m_universe.UpdateEmpireObjectVisibilities(m_empires);
+    m_universe.UpdateEmpireObjectVisibilities(context);
 
     m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
@@ -4700,7 +4700,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // new turn visibility update
-    m_universe.UpdateEmpireObjectVisibilities(m_empires);
+    m_universe.UpdateEmpireObjectVisibilities(context);
 
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns applying Newly Added Techs";
