@@ -151,9 +151,9 @@ public:
       * ids is returned */
     [[nodiscard]] const std::set<int>& EmpireKnownShipDesignIDs(int empire_id) const;
 
-    /** Returns the Visibility level of empire with id \a empire_id of
-      * UniverseObject with id \a object_id as determined by calling
-      * UpdateEmpireObjectVisibilities. */
+    /** Returns the Visibility level of empire with id \a empire_id of UniverseObject with
+      * id \a object_id as determined by calling UpdateEmpireObjectVisibilities.
+      * Monsters/neutrals are treated as an empire with id ALL_EMPIRES. */
     [[nodiscard]] Visibility GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
     /* Return the map from empire id to (map from id to that empire's current
@@ -179,11 +179,11 @@ public:
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire has at that location. */
     [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
-        GetEmpiresPositionDetectionRanges(const ObjectMap& objects) const;
+        GetEmpiresAndNeutralPositionDetectionRanges(const ObjectMap& objects) const;
 
     [[nodiscard]] std::map<int, std::map<std::pair<double, double>, float>>
-        GetEmpiresPositionDetectionRanges(const ObjectMap& objects,
-                                          const std::unordered_set<int>& exclude_ids) const;
+        GetEmpiresAndNeutralPositionDetectionRanges(const ObjectMap& objects,
+                                                    const std::unordered_set<int>& exclude_ids) const;
 
     /** Returns map from empire ID to map from location (X, Y) to detection range
       * that empire is expected to have at that location after the next turn's
@@ -277,13 +277,13 @@ public:
     /** Sets all objects' meters' initial values to their current values. */
     void BackPropagateObjectMeters();
 
-    /** Determines which empires can see which objects at what visibility
-      * level, based on  */
-    void UpdateEmpireObjectVisibilities(EmpireManager& empires);
+    /** Determines which empires, or neutrals, can see which objects at what visibility
+      * level, based on detection strengths and ranges and any applicable overrides to that. */
+    void UpdateEmpireObjectVisibilities(const ScriptingContext& context);
 
     /** Sets visibility by empires of objects with specified ids. */
-    void SetEmpireObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids);
-    void ApplyEmpireObjectVisibilityOverrides();
+    void SetObjectVisibilityOverrides(std::map<int, std::vector<int>> empires_ids);
+    void ApplyObjectVisibilityOverrides();
 
     /** Sets a special record of visibility that overrides the standard
       * empire-object visibility after the latter is processed. */
@@ -291,7 +291,7 @@ public:
                                     const ValueRef::ValueRef<Visibility>* vis);
 
     /** Applies empire-object visibilities set by effects. */
-    void ApplyEffectDerivedVisibilities(EmpireManager& empires);
+    void ApplyEffectDerivedVisibilities(const ScriptingContext& context);
 
     /** If an \p empire_id can't currently see \p object_id, then remove
      * \p object_id' object from the object map and the set of known objects. */
@@ -529,7 +529,7 @@ private:
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
-    std::map<int, std::vector<int>> m_empire_object_visibility_overrides;
+    std::map<int, std::vector<int>> m_fleet_blockade_ship_visibility_overrides; // map from empire id to (list of ship ids that are visibile to that empire due to being revealed by participating in a blockade)
     EmpireObjectVisValueRefMap      m_effect_specified_empire_object_visibilities;
 
     EmpireObjectSpecialsMap         m_empire_object_visible_specials;   ///< map from empire id to (map from object id to (set of names of specials that empire can see are on that object) )
