@@ -14,9 +14,9 @@
 /** Contains info about a single notable point on the move path of a fleet or
   * other UniverseObject. */
 struct MovePathNode {
-    MovePathNode(double x_, double y_, bool turn_end_, uint8_t eta_,
-                 int id_, int lane_start_id_, int lane_end_id_,
-                 bool blockade_here_, bool post_blockade_) :
+    [[nodiscard]] constexpr MovePathNode(double x_, double y_, bool turn_end_, uint8_t eta_,
+                                         int id_, int lane_start_id_, int lane_end_id_,
+                                         bool blockade_here_, bool post_blockade_) noexcept :
         x(x_),
         y(y_),
         object_id(id_),
