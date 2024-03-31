@@ -49,10 +49,8 @@ public:
     std::map<int, std::unordered_set<int>> destroyed_object_knowers;   ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
     std::vector<CombatEventPtr>            combat_events;              ///< list of combat attack events that occur in combat
 
-    float GetMonsterDetection() const;
-
 private:
-    void    InitializeObjectVisibility();
+    void InitializeObjectVisibility();
 };
 
 /** Auto-resolves a battle. */
