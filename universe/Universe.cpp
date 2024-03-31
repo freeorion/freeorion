@@ -2632,16 +2632,16 @@ namespace {
         }
     }
 
+    constexpr auto not_null = [](const auto* p) noexcept -> bool { return !!p; };
+
     void PropagateVisibilityToContainerObjects(const ObjectMap& objects,
                                                Universe::EmpireObjectVisibilityMap& empire_object_visibility)
     {
         // propagate visibility from contained to container objects
-        for (const auto& container_obj : objects.allRaw()) {
-            if (!container_obj)
-                continue;   // shouldn't be necessary, but I like to be safe...
-
+        for (const auto* container_obj : objects.allRaw() | range_filter(not_null)) {
             // check if container object is a fleet, for special case later...
-            bool container_fleet = container_obj->ObjectType() == UniverseObjectType::OBJ_FLEET;
+            const bool container_fleet = container_obj->ObjectType() == UniverseObjectType::OBJ_FLEET;
+            const int container_id = container_obj->ID();
 
             //DebugLogger() << "Container object " << container_obj->Name() << " (" << container_obj->ID() << ")";
 
@@ -2654,13 +2654,13 @@ namespace {
                     //DebugLogger() << " ... ... empire id " << empire_entry.first;
 
                     // find current empire's visibility entry for current container object
-                    auto container_vis_it = vis_map.find(container_obj->ID());
+                    auto container_vis_it = vis_map.find(container_id);
                     // if no entry yet stored for this object, default to not visible
                     if (container_vis_it == vis_map.end()) {
-                        vis_map[container_obj->ID()] = Visibility::VIS_NO_VISIBILITY;
+                        vis_map[container_id] = Visibility::VIS_NO_VISIBILITY;
 
                         // get iterator pointing at newly-created entry
-                        container_vis_it = vis_map.find(container_obj->ID());
+                        container_vis_it = vis_map.find(container_id);
                     } else {
                         // check whether having a contained object would change container's visibility
                         if (container_fleet) {
