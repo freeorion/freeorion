@@ -265,7 +265,7 @@ void InitBinDir(std::string const& argv0)
 #if defined(FREEORION_WIN32)
     try {
         fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
-        bin_dir = binary_file.branch_path();
+        bin_dir = binary_file.parent_path();
     } catch (const fs::filesystem_error &) {
         bin_dir = fs::initial_path();
     }
@@ -314,7 +314,7 @@ void InitBinDir(std::string const& argv0)
             std::string path_text(buf);
 
             fs::path binary_file = fs::system_complete(fs::path(path_text));
-            bin_dir = binary_file.branch_path();
+            bin_dir = binary_file.parent_path();
 
             // check that a "freeoriond" file (hopefully the freeorion server binary) exists in the found directory
             fs::path p(bin_dir);
