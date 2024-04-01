@@ -2301,7 +2301,7 @@ namespace {
         const auto* system = objects.getRaw<System>(system_id);
         if (!system)
             return {};
-        const auto fleets = context.ContextObjects().findRaw<Fleet>(system->FleetIDs());
+        const auto fleets = objects.findRaw<Fleet>(system->FleetIDs());
 
         const auto fleets_owner_ids = [&fleets]() -> std::vector<int> {
             std::vector<int> retval;
@@ -2386,29 +2386,6 @@ namespace {
         return empire_ids;
     }
 
-    [[nodiscard]] float CalcMonsterDetectionOfShips(const auto& ships) {
-        static_assert(std::is_nothrow_convertible_v<decltype(*ships.begin()), const Ship*>);
-        // get best monster detection strength here.  Use monster detection meters for this.
-        // if no monsters, default to 0.0 detection strength
-
-        // only want unowned / monster ships
-        static constexpr auto is_unowned = [](const Ship* ship) noexcept
-        { return ship && ship->Unowned(); };
-        static constexpr auto to_detection = [](const Ship* ship) noexcept
-        { return ship ? ship->GetMeter(MeterType::METER_DETECTION)->Initial() : 0.0f; };
-
-        auto det_rng = ships | range_filter(is_unowned) | range_transform(to_detection);
-
-        static constexpr auto max = [](const auto l, const auto r) noexcept { return l > r ? l : r; };
-        return std::reduce(det_rng.begin(), det_rng.end(), 0.0f, max);
-    }
-
-    [[nodiscard]] float CalcMonsterDetectionStrengthAtSystem(const System* system, const ObjectMap& objects)
-    { return system ? CalcMonsterDetectionOfShips(objects.findRaw<Ship>(system->ShipIDs())) : 0.0f; }
-
-    [[nodiscard]] float CalcMonsterDetectionStrengthAtSystem(int system_id, const ObjectMap& objects)
-    { return CalcMonsterDetectionStrengthAtSystem(objects.getRaw<System>(system_id), objects); }
-
     template <typename FleetOrPlanet>
     [[nodiscard]] const auto& GetIDs(const System* system) noexcept
         requires(std::is_same_v<FleetOrPlanet, Fleet> || std::is_same_v<FleetOrPlanet, Planet>)
@@ -2474,7 +2451,7 @@ namespace {
     {
         const auto& objects{context.ContextObjects()};
 
-        // which empires have aggressive ships here? (including monsters as id ALL_EMPIRES)
+        // which empires have aggressive ships here? (including monsters as empire with id ALL_EMPIRES)
 
         // combats occur if:
         // 1) empires A and B are at war, and
@@ -2482,7 +2459,7 @@ namespace {
         // 2) b) empire A has a fleet and empire B has a planet in a system
         // 3) empire A can see the fleet or planet of empire B
         // 4) empire A's fleet is set to aggressive
-        // 5) empire A's fleet has at least one armed ship <-- only enforced if empire A is 'monster'
+        // 5) empire A is monsters, its fleet has at least one armed ship (unarmed monsters don't trigger combat)
         //
         // monster ships are treated as owned by an empire at war with all other empires (may be passive or aggressive)
         // native planets are treated as owned by an empire at war with all other empires
@@ -3819,54 +3796,44 @@ namespace {
         for (const auto& [empire_id, fleet_ids] : empires_blockaded_by_fleets) {
             const auto fleets = objs.findRaw<Fleet>(fleet_ids);
 
+            const auto id_is_visible = [empire_id{empire_id}, &context](int id)
+            { return context.ContextVis(id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+            const auto id_not_visible = [id_is_visible](int id)
+            { return !id_is_visible(id); };
+
             // intentionally excluding aggressive fleets
             for (const Fleet* fleet : fleets | range_filter(not_null) | range_filter(is_obstructive)) {
                 DebugLogger(combat) << "   finding ship to reveal for obstructive fleet: "
                                     << fleet->Name() << " (" << fleet->ID()
                                     << ") ship ids: " << to_string(fleet->ShipIDs());
-                auto blockade_capable_ships_and_stealth = fleet->ShipIDs()
+
+                // if there is already a blockade-capable visible ship, don't need to reveal anything
+                auto vis_ships_rng = fleet->ShipIDs()
+                    | range_filter(id_is_visible)
+                    | range_transform(id_to_ship);
+                if (range_any_of(vis_ships_rng, is_potential_blockader))
+                    continue; // don't need to reveal anything. blockaded empire can see a blockade-capable ship
+
+                // find blockade-capable not-visible ship that has the lowest stealth
+                auto not_vis_blockade_capable_ships_and_stealths_rng = fleet->ShipIDs()
+                    | range_filter(id_not_visible)
                     | range_transform(id_to_ship)
                     | range_filter(is_potential_blockader)
                     | range_transform(ship_to_ship_and_stealth);
 
-                const float monster_detection = empire_id != ALL_EMPIRES ? 0.0f : // don't need value for empire
-                    CalcMonsterDetectionStrengthAtSystem(fleet->SystemID(), objs);
-
-                const auto ship_is_visible =
-                    [empire_id{empire_id}, monster_detection, &context](const auto& obj_and_stealth)
-                {
-                    const auto& [obj, stealth] = obj_and_stealth;
-                    if (empire_id != ALL_EMPIRES) // use pre-determined empire objet visibility
-                        return context.ContextVis(obj->ID(), empire_id) >= Visibility::VIS_BASIC_VISIBILITY;
-                    else                          // check stealth vs. detection of monsters here
-                        return monster_detection >= stealth;
-                };
-
-                if (range_any_of(blockade_capable_ships_and_stealth, ship_is_visible))
-                    continue; // don't need to reveal anything. blockaded empire can see a blockade-capable ship
-
-                const auto ship_not_visible = [ship_is_visible](const auto& obj_and_stealth)
-                { return !ship_is_visible(obj_and_stealth); };
-
                 static constexpr auto second_less = [](const auto& l, const auto& r) noexcept -> bool
                 { return l.second < r.second; };
-
-                // use blockade-capable not-visible ship that has the lowest stealth
-                auto not_vis_blockade_capable_ships_and_stealth_rng =
-                    blockade_capable_ships_and_stealth | range_filter(ship_not_visible);
-                const auto it = range_min_element(not_vis_blockade_capable_ships_and_stealth_rng, second_less);
+                const auto it = range_min_element(not_vis_blockade_capable_ships_and_stealths_rng, second_less);
 
                 static_assert(std::is_same_v<std::decay_t<decltype(*it)>, std::pair<const Ship*, float>>);
-                if (it != not_vis_blockade_capable_ships_and_stealth_rng.end()) {
+                if (it != not_vis_blockade_capable_ships_and_stealths_rng.end()) {
                     const auto& [ship, stealth] = *it;
                     static_assert(std::is_same_v<std::decay_t<decltype(ship)>, const Ship*>);
-                    (void)stealth;
                     retval[empire_id].push_back(ship->ID());
-                    DebugLogger(combat) << "      picked lowest stealth not visible blockade capable ship in fleet: "
-                                        << ship->Name() << " (id: " << ship->ID()
-                                        << " stealth: " << ship->GetMeter(MeterType::METER_STEALTH)->Initial() << ")";
+                    DebugLogger(combat) << "      picked lowest stealth not-visible blockade capable ship in fleet: "
+                                        << ship->Name() << " (id: " << ship->ID() << " stealth: " << stealth << ")";
                 } else {
-                    DebugLogger(combat) << "      no not visible blockade capable ships in fleet!";
+                    DebugLogger(combat) << "      no not-visible blockade capable ships in fleet!";
                 }
             }
         }
