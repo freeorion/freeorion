@@ -11,6 +11,7 @@
 #include "../util/Export.h"
 #include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
+#include "../universe/UniverseObject.h"
 
 #include "CombatEvent.h"
 
@@ -126,14 +127,30 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] bool AreSubEventsEmpty(int viewing_empire_id) const override;
     void AddEvent(int attacker_id_, int target_id_, int attacker_empire_,
                   int target_empire_, Visibility new_visibility_);
+    void AddEvent(int launcher_id_, int launcher_empire_id_,
+                  int observer_empire_id_, Visibility new_visibility_);
 
     struct StealthChangeEventDetail;
     typedef std::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
     typedef std::shared_ptr<const StealthChangeEventDetail> ConstStealthChangeEventDetailPtr;
     struct StealthChangeEventDetail : public CombatEvent {
-        StealthChangeEventDetail();
-        StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
-                                 int target_empire_, Visibility new_visibility_);
+        constexpr StealthChangeEventDetail() noexcept = default;
+        constexpr StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
+                                           int target_empire_, Visibility new_visibility_) noexcept :
+            attacker_id(attacker_id_),
+            target_id(target_id_),
+            attacker_empire_id(attacker_empire_),
+            target_empire_id(target_empire_),
+            visibility(new_visibility_)
+        {}
+        constexpr StealthChangeEventDetail(int laucher_id_, int laucher_empire_, int observer_empire_,
+                                           Visibility new_visibility_) noexcept :
+            attacker_id(laucher_id_),
+            attacker_empire_id(laucher_empire_),
+            target_empire_id(observer_empire_),
+            visibility(new_visibility_),
+            is_fighter_launch(true)
+        {}
 
         [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
         [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
@@ -142,7 +159,8 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
         int target_id = INVALID_OBJECT_ID;
         int attacker_empire_id = ALL_EMPIRES;
         int target_empire_id = ALL_EMPIRES;
-        Visibility visibility;
+        Visibility visibility = Visibility::VIS_NO_VISIBILITY;
+        bool is_fighter_launch = false;
     };
 
 private:

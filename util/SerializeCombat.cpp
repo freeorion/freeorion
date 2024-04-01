@@ -122,9 +122,11 @@ void serialize(Archive& ar, StealthChangeEvent::StealthChangeEventDetail& obj, u
         & make_nvp("attacker_empire_id", obj.attacker_empire_id)
         & make_nvp("target_empire_id", obj.target_empire_id)
         & make_nvp("visibility", obj.visibility);
+    if (version >= 5)
+        ar  & make_nvp("is_fighter_launch", obj.is_fighter_launch);
 }
 
-BOOST_CLASS_VERSION(StealthChangeEvent::StealthChangeEventDetail, 4)
+BOOST_CLASS_VERSION(StealthChangeEvent::StealthChangeEventDetail, 5)
 BOOST_CLASS_EXPORT(StealthChangeEvent::StealthChangeEventDetail)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, StealthChangeEvent::StealthChangeEventDetail&, unsigned int const);
