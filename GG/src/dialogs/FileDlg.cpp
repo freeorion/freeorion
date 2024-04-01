@@ -9,7 +9,7 @@
 
 #include <boost/cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 // boost::spirit::classic pulls in windows.h which in turn defines macro
 // versions of min and max.  Defining NOMINMAX disables the creation of those
