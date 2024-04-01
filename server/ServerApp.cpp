@@ -2288,6 +2288,37 @@ namespace {
         }
     }
 
+    // Returns empires which have dangerous obstructing fleets here
+    // This is intended to check for intersection of aggressive empires and obstructing empires
+    // in order to trigger combat.
+    // None of the following cases should trigger combat:
+    //  a) empire A is at peace with empires B and C (which might be at war) and has a blockade at the system.
+    //
+    // The following cases should trigger combat
+    //  b) empire B and C are at war; B is aggressive; C is obstructing; B can detect C
+    //  c) empire B and C are at war; B is aggressive; C is obstructing; C can detect B
+    //  d) empire B and C are at war; B is aggressive; C is obstructing; B and C can not detect each other.
+    //     This implementation might will trigger combat if an invisible obstructor is trying
+    //     to stop an invible aggressor.
+    //     An alternative implementation would not trigger combat in this double-blind case:
+    //       check if any of fleets of aggressive empires are actually blockaded
+    std::set<int> GetObstructingEmpires(const std::map<int, std::set<int>> & empire_fleets, const ScriptingContext& context)
+    {
+        const ObjectMap& objects{context.ContextObjects()};
+        std::set<int> empires_with_obstructive_fleets_here;
+        for (auto& empire_fleets : empire_fleets) {
+            int empire_id = empire_fleets.first;
+            for (const auto* fleet : objects.findRaw<Fleet>(empire_fleets.second)) {
+                if (  (fleet->Obstructive() || fleet->Unowned())  &&
+                      (fleet->CanDamageShips(context) || !fleet->Unowned())  ) {
+                    empires_with_obstructive_fleets_here.insert(empire_id);
+                    break; // check next empire
+                }
+            }
+        }
+        return empires_with_obstructive_fleets_here;
+    }
+
     void GetFleetsVisibleToEmpireAtSystem(std::set<int>& visible_fleets, int empire_id, int system_id,
                                           const ScriptingContext& context)
     {
@@ -2318,7 +2349,6 @@ namespace {
             }
             return;
         }
-
 
         // now considering only fleets visible to monsters
 
@@ -2351,6 +2381,7 @@ namespace {
                 }
             }
         }
+        return;
     }
 
     void GetPlanetsVisibleToEmpireAtSystem(std::set<int>& visible_planets, int empire_id, int system_id,
@@ -2410,6 +2441,20 @@ namespace {
         }
     }
 
+    /** returns true iff the two sorted ranges contain an equal element */
+    template <class I1, class I2>
+    bool have_common_element(I1 first1, I1 last1, I2 first2, I2 last2) {
+        while (first1 != last1 && first2 != last2) {
+            if (*first1 < *first2)
+                ++first1;
+            else if (*first2 < *first1)
+                ++first2;
+            else
+                return true;
+        }
+        return false;
+    }
+
     /** Returns true iff there is an appropriate combination of objects in the
       * system with id \a system_id for a combat to occur. */
     bool CombatConditionsInSystem(int system_id, const ScriptingContext& context) {
@@ -2419,7 +2464,8 @@ namespace {
         // 1) empires A and B are at war, and
         // 2) a) empires A and B both have fleets in a system, or
         // 2) b) empire A has a fleet and empire B has a planet in a system
-        // 3) empire A can see the fleet or planet of empire B
+        // 3) a) empire A can see the fleet or planet of empire B, or
+        // 3) b) the fleet of empire B is set to blockade and is able to damage ships
         // 4) empire A's fleet is set to aggressive
         // 5) empire A's fleet has at least one armed ship <-- only enforced if empire A is 'monster'
         //
@@ -2494,11 +2540,18 @@ namespace {
             return false;
         }
 
+        std::set<int> empires_with_obstructing_fleets_here = GetObstructingEmpires(empire_fleets_here, context);
         // is an empire with an aggressive fleet here able to see a planet of an
         // empire it is at war with here?
         for (int aggressive_empire_id : empires_with_aggressive_fleets_here) {
             // what empires is the aggressive empire at war with?
             const auto& at_war_with_empire_ids = empires_here_at_war[aggressive_empire_id];
+            // does one of those empires try to blockade?
+            if (have_common_element(at_war_with_empire_ids.begin(), at_war_with_empire_ids.end(),
+                                    empires_with_obstructing_fleets_here.begin(), empires_with_obstructing_fleets_here.end())) {
+                DebugLogger(combat) << "\t Aggressive empire " << aggressive_empire_id << " gets obstructed: combat.";
+                return true;
+            }
 
             // what planets can the aggressive empire see?
             std::set<int> aggressive_empire_visible_planets;
