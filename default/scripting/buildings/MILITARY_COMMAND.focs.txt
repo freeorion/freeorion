@@ -2,8 +2,8 @@ BuildingType
     name = "BLD_MILITARY_COMMAND"
     description = "BLD_MILITARY_COMMAND_DESC"
     captureresult = Destroy
-    buildcost = 80 * [[BUILDING_COST_MULTIPLIER]]
-    buildtime = 6
+    buildcost = 60 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 5
     location = And [
         Planet
         OwnedBy empire = Source.Owner
