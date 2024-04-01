@@ -6087,6 +6087,11 @@ ENC_COMBAT_NEUTRAL_INITIAL_STEALTH_LIST
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK
 %2% detects %1% during attack.
 
+# %1 link to the launching unit
+# %2 link to the empire that detects the launcher
+ENC_COMBAT_STEALTH_DECLOAK_LAUNCH
+%2% detects %1% during fighter launch.
+
 # %1% unused
 # %2% name of empire detecting decloacking ship
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS

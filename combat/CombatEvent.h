@@ -28,7 +28,6 @@ in the contructor. The descriptions can be expanded on request.
 
 */
 struct FO_COMMON_API CombatEvent {
-    CombatEvent() = default;
     virtual ~CombatEvent() = default;
 
     [[nodiscard]] virtual std::string DebugString(const ScriptingContext& context) const = 0;

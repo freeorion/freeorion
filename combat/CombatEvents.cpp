@@ -320,19 +320,6 @@ StealthChangeEvent::StealthChangeEvent(int bout_) :
     bout(bout_)
 {}
 
-StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail() :
-    StealthChangeEventDetail(INVALID_OBJECT_ID, INVALID_OBJECT_ID, ALL_EMPIRES, ALL_EMPIRES, Visibility::VIS_NO_VISIBILITY)
-{}
-
-StealthChangeEvent::StealthChangeEventDetail::StealthChangeEventDetail(
-    int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_) :
-    attacker_id(attacker_id_),
-    target_id(target_id_),
-    attacker_empire_id(attacker_empire_),
-    target_empire_id(target_empire_),
-    visibility(new_visibility_)
-{}
-
 std::string StealthChangeEvent::StealthChangeEventDetail::DebugString(const ScriptingContext& context) const {
     std::stringstream ss;
     ss << "StealthChangeDetailEvent"
@@ -345,14 +332,22 @@ std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(
     int viewing_empire_id, const ScriptingContext& context) const
 {
     std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker_id, attacker_empire_id, context);
-    std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_empire_id, context);
-    std::string empire_link = EmpireLink(target_empire_id, context);
-    const std::string& template_str = UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK");
+    std::string target_empire_link = EmpireLink(target_empire_id, context);
 
-    return str(FlexibleFormat(template_str)
-               % attacker_link
-               % target_link
-               % empire_link);
+    if (is_fighter_launch) {
+        const std::string& template_str = UserString("ENC_COMBAT_STEALTH_DECLOAK_LAUNCH");
+        return str(FlexibleFormat(template_str)
+                   % attacker_link
+                   % target_empire_link);
+
+    } else {
+        std::string target_link = FighterOrPublicNameLink(viewing_empire_id, target_id, target_empire_id, context);
+        const std::string& template_str = UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK");
+        return str(FlexibleFormat(template_str)
+                   % attacker_link
+                   % target_link
+                   % target_empire_link);
+    }
 }
 
 
@@ -362,6 +357,14 @@ void StealthChangeEvent::AddEvent(int attacker_id_, int target_id_, int attacker
     events[target_empire_].push_back(
         std::make_shared<StealthChangeEventDetail>(
             attacker_id_, target_id_, attacker_empire_, target_empire_, new_visibility_));
+}
+
+void StealthChangeEvent::AddEvent(int launcher_id_, int launcher_empire_id_,
+                                  int observer_empire_id_, Visibility new_visibility_)
+{
+    events[observer_empire_id_].push_back(
+        std::make_shared<StealthChangeEventDetail>(
+            launcher_id_, launcher_empire_id_, observer_empire_id_, new_visibility_));
 }
 
 std::string StealthChangeEvent::DebugString(const ScriptingContext& context) const {

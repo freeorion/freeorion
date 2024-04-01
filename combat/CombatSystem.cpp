@@ -1875,8 +1875,7 @@ namespace {
 
                     // record visibility change event due to attack
                     // FIXME attacker, TARGET, attacker empire, target empire, visibility
-                    stealth_change_event->AddEvent(attacker->ID(), attacker->ID(),
-                                                   attacker->Owner(), detector_empire_id,
+                    stealth_change_event->AddEvent(attacker->ID(), attacker->Owner(), detector_empire_id,
                                                    Visibility::VIS_BASIC_VISIBILITY);
                 }
             }
