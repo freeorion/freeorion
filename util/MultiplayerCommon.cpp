@@ -92,6 +92,24 @@ namespace {
                        1, true,
                        GameRuleRanks::RULE_CONCEDE_COLONIES_THRESHOLD_RANK,
                        RangedValidator<int>(0, 9999));
+
+        rules.Add<bool>(UserStringNop("RULE_CONCEDE_DESTROY_COLONIES"),
+                        UserStringNop("RULE_CONCEDE_DESTROY_COLONIES_DESC"),
+                        GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                        false, true,
+                        GameRuleRanks::RULE_CONCEDE_DESTROY_COLONIES_RANK);
+
+        rules.Add<bool>(UserStringNop("RULE_CONCEDE_DESTROY_BUILDINGS"),
+                        UserStringNop("RULE_CONCEDE_DESTROY_BUILDINGS_DESC"),
+                        GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                        false, true,
+                        GameRuleRanks::RULE_CONCEDE_DESTROY_BUILDINGS_RANK);
+
+        rules.Add<bool>(UserStringNop("RULE_CONCEDE_DESTROY_SHIPS"),
+                        UserStringNop("RULE_CONCEDE_DESTROY_SHIPS_DESC"),
+                        GameRuleCategories::GameRuleCategory::MULTIPLAYER,
+                        false, true,
+                        GameRuleRanks::RULE_CONCEDE_DESTROY_SHIPS_RANK);
     }
     bool temp_bool2 = RegisterGameRules(&AddRules);
 

@@ -1463,6 +1463,24 @@ Maximum Colonies When Conceding
 RULE_CONCEDE_COLONIES_THRESHOLD_DESC
 Empires with more than this number of colonies may not concede.
 
+RULE_CONCEDE_DESTROY_COLONIES
+Depopulate Conceded Colonies
+
+RULE_CONCEDE_DESTROY_COLONIES_DESC
+If true, colonies owned by empires that concede are depopulated. If false, ships are set to unowned.
+
+RULE_CONCEDE_DESTROY_BUILDINGS
+Destroy Conceded Buildings
+
+RULE_CONCEDE_DESTROY_BUILDINGS_DESC
+If true, buildings owned by empires that concede are destroyed. If false, buildings are set to unowned.
+
+RULE_CONCEDE_DESTROY_SHIPS
+Destroy Conceded Ships
+
+RULE_CONCEDE_DESTROY_SHIPS_DESC
+If true, ships owned by empires that concede are destroyed. If false, ships are set to unowned.
+
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Max human player winners
 
