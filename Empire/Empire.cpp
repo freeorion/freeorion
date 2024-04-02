@@ -846,6 +846,12 @@ bool Empire::ProducibleItem(BuildType build_type, int location_id, const Scripti
         return false;
     }
 
+    if (context.ContextVis(location_id, m_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+        return false;
+    const auto& destroyed_ids = context.ContextUniverse().DestroyedObjectIds();
+    if (destroyed_ids.contains(location_id))
+        return false;
+
     if (!location->OwnedBy(m_id))
         return false;
 
@@ -882,6 +888,12 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
     if (!build_location)
         return false;
 
+    if (context.ContextVis(location, m_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+        return false;
+    const auto& destroyed_ids = context.ContextUniverse().DestroyedObjectIds();
+    if (destroyed_ids.contains(location))
+        return false;
+
     if (build_type == BuildType::BT_BUILDING) {
         // specified location must be a valid production location for that building type
         return building_type->ProductionLocation(m_id, location, context);
@@ -912,6 +924,12 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location,
 
     const auto build_location = context.ContextObjects().getRaw(location);
     if (!build_location) return false;
+
+    if (context.ContextVis(location, m_id) < Visibility::VIS_PARTIAL_VISIBILITY)
+        return false;
+    const auto& destroyed_ids = context.ContextUniverse().DestroyedObjectIds();
+    if (destroyed_ids.contains(location))
+        return false;
 
     if (build_type == BuildType::BT_SHIP) {
         // specified location must be a valid production location for this design
