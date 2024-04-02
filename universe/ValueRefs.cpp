@@ -2566,6 +2566,7 @@ namespace {
 
         if (sender_researched_techs.empty() || recepient_researchable.empty())
             return retval;
+        retval.reserve(std::max(sender_researched_techs.size(), recepient_researchable.size()));
 
         // find intersection of two lists
         std::sort(sender_researched_techs.begin(), sender_researched_techs.end());
@@ -2582,10 +2583,11 @@ namespace {
 template <>
 std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.back();
+    const std::string& variable_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     std::function<std::string (const Empire&)> empire_property{nullptr};
-    auto null_property = [](const Empire&) -> std::string { return ""; };
+    static constexpr auto null_property =
+        [](const Empire&) noexcept(noexcept(std::string{})) { return std::string{}; };
 
     // unindexed empire properties
     if (variable_name == "LowestCostEnqueuedTech")
@@ -2620,12 +2622,9 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         empire_property = null_property;
 
     if (empire_property) {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire_id == ALL_EMPIRES)
+            return "";
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
@@ -2634,124 +2633,98 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
     }
 
     if (variable_name == "RandomEnqueuedTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire_id == ALL_EMPIRES)
+            return "";
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
+
         // get all techs on queue, randomly pick one
-        const auto& queue = empire->GetResearchQueue();
-        auto all_enqueued_techs = queue.AllEnqueuedProjects();
+        auto all_enqueued_techs = empire->GetResearchQueue().AllEnqueuedProjects();
         if (all_enqueued_techs.empty())
             return "";
         std::size_t idx = RandInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
-        return *std::next(all_enqueued_techs.begin(), idx);
+        return std::move(*std::next(all_enqueued_techs.begin(), idx));
 
     } else if (variable_name == "RandomResearchableTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        auto empire = context.GetEmpire(empire_id);
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire_id == ALL_EMPIRES)
+            return "";
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
 
         auto researchable_techs = TechsResearchableByEmpire(empire_id, context);
         if (researchable_techs.empty())
             return "";
-        const std::size_t idx = RandInt(0, static_cast<int>(researchable_techs.size()) - 1);
-        return *std::next(researchable_techs.begin(), idx);
+        const std::size_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(researchable_techs.size()) - 1));
+        return std::move(*std::next(researchable_techs.begin(), idx));
 
     } else if (variable_name == "RandomCompleteTech") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return "";
-        }
-        auto empire = context.GetEmpire(empire_id);
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire_id == ALL_EMPIRES)
+            return "";
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return "";
 
         auto complete_techs = TechsResearchedByEmpire(empire_id, context);
         if (complete_techs.empty())
             return "";
-        std::size_t idx = RandInt(0, static_cast<int>(complete_techs.size()) - 1);
-        return *std::next(complete_techs.begin(), idx);
+        const std::size_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(complete_techs.size()) - 1));
+        return std::move(*std::next(complete_techs.begin(), idx));
+
     } else if (variable_name == "LowestCostTransferrableTech") {
-        int empire1_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire1_id = m_int_ref1->Eval(context);
-            if (empire1_id == ALL_EMPIRES)
-                return "";
-        }
+        const int empire1_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire1_id == ALL_EMPIRES)
+            return "";
+        const int empire2_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
+        if (empire2_id == ALL_EMPIRES)
+            return "";
 
-        int empire2_id = ALL_EMPIRES;
-        if (m_int_ref2) {
-            empire2_id = m_int_ref2->Eval(context);
-            if (empire2_id == ALL_EMPIRES)
-                return "";
-        }
-
-        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
+        auto sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
-        std::size_t idx = RandInt(0, static_cast<int>(sendable_techs.size()) - 1);
-        return *std::next(sendable_techs.begin(), idx);
+        const std::size_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(sendable_techs.size()) - 1));
+        return std::move(*std::next(sendable_techs.begin(), idx));
 
     } else if (variable_name == "HighestCostTransferrableTech") {
-        int empire1_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire1_id = m_int_ref1->Eval(context);
-            if (empire1_id == ALL_EMPIRES)
-                return "";
-        }
+        const int empire1_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire1_id == ALL_EMPIRES)
+            return "";
+        const int empire2_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
+        if (empire2_id == ALL_EMPIRES)
+            return "";
 
-        int empire2_id = ALL_EMPIRES;
-        if (m_int_ref2) {
-            empire2_id = m_int_ref2->Eval(context);
-            if (empire2_id == ALL_EMPIRES)
-                return "";
-        }
-
-        std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
+        auto sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
 
-        std::string retval;
-        float highest_cost = 0.0f;
-        for (const std::string& tech_name : sendable_techs) {
-            const Tech* tech = GetTech(tech_name);
-            if (!tech)
-                continue;
-            float rc = tech->ResearchCost(empire2_id, context);
-            if (rc > highest_cost) {
-                highest_cost = rc;
-                retval = tech_name;
-            }
-        }
-        return retval;
+        const auto name_to_name_tech_and_cost =
+            [empire2_id, &context](std::string& tech_name) -> std::pair<std::string&, float> {
+                const auto* tech = GetTech(tech_name);
+                static constexpr auto flt_low = std::numeric_limits<float>::lowest();
+                auto cost = tech ? tech->ResearchCost(empire2_id, context) : -flt_low;
+                return {tech_name, cost};
+            };
+        auto sendable_techs_costs_rng = sendable_techs | range_transform(name_to_name_tech_and_cost);
+
+        static constexpr auto second_less = [](const auto& l, const auto& r) noexcept -> bool
+        { return l.second < r.second; };
+        using qq = decltype(*range_max_element(sendable_techs_costs_rng, second_less));
+        static_assert(std::is_same_v<qq, std::pair<std::string&, float>>);
+
+        return std::move((*range_max_element(sendable_techs_costs_rng, second_less)).first);
 
     } else if (variable_name == "TopPriorityTransferrableTech") {
-        int empire1_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire1_id = m_int_ref1->Eval(context);
-            if (empire1_id == ALL_EMPIRES)
-                return "";
-        }
+        const int empire1_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire1_id == ALL_EMPIRES)
+            return "";
+        const int empire2_id = m_int_ref2 ? m_int_ref2->Eval(context) : ALL_EMPIRES;
+        if (empire2_id == ALL_EMPIRES)
+            return "";
 
-        int empire2_id = ALL_EMPIRES;
-        if (m_int_ref2) {
-            empire2_id = m_int_ref2->Eval(context);
-            if (empire2_id == ALL_EMPIRES)
-                return "";
-        }
         auto empire2 = context.GetEmpire(empire2_id);
         if (!empire2)
             return "";
@@ -2765,13 +2738,13 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
         // search queue to find which transferrable tech is at the top of the list
         const ResearchQueue& queue = empire2->GetResearchQueue();
-        for (const std::string& tech : sendable_techs) {
+        for (std::string& tech : sendable_techs) {
             auto queue_it = queue.find(tech);
             if (queue_it == queue.end())
                 continue;
             int queue_pos = std::distance(queue.begin(), queue_it);
             if (queue_pos < position_of_top_found_tech) {
-                retval = tech;
+                retval = std::move(tech);
                 position_of_top_found_tech = queue_pos;
             }
         }
@@ -2783,34 +2756,19 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         if (!m_string_ref1)
             return "";
         std::string rule_name = m_string_ref1->Eval();
-        if (rule_name.empty())
+        if (rule_name.empty() || !GetGameRules().RuleExists(rule_name))
             return "";
-        if (!GetGameRules().RuleExists(rule_name))
-            return "";
+
         try {
             // can cast boolean, int, double, or string-valued rules to strings
             switch (GetGameRules().GetType(rule_name)) {
-            case GameRule::Type::TOGGLE: {
-                return std::to_string(GetGameRules().Get<bool>(rule_name));
-                break;
+            case GameRule::Type::TOGGLE:    return std::to_string(GetGameRules().Get<bool>(rule_name));             break;
+            case GameRule::Type::INT:       return std::to_string(GetGameRules().Get<int>(rule_name));              break;
+            case GameRule::Type::DOUBLE:    return DoubleToString(GetGameRules().Get<double>(rule_name), 3, false); break;
+            case GameRule::Type::STRING:    return GetGameRules().Get<std::string>(rule_name);                      break;
+            default: break;
             }
-            case GameRule::Type::INT: {
-                return std::to_string(GetGameRules().Get<int>(rule_name));
-                break;
-            }
-            case GameRule::Type::DOUBLE: {
-                return DoubleToString(GetGameRules().Get<double>(rule_name), 3, false);
-                break;
-            }
-            case GameRule::Type::STRING: {
-                return GetGameRules().Get<std::string>(rule_name);
-                break;
-            }
-            default:
-                break;
-            }
-        } catch (...) {
-        }
+        } catch (...) {}
         return "";
     }
 
@@ -2825,12 +2783,9 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
 
     // unindexed empire properties
     if (variable_name == "EmpireAdoptedPolices") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return {};
-        }
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire_id == ALL_EMPIRES)
+            return {};
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return {};
@@ -2843,12 +2798,9 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
         return retval;
 
     } else if (variable_name == "EmpireAvailablePolices") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1) {
-            empire_id = m_int_ref1->Eval(context);
-            if (empire_id == ALL_EMPIRES)
-                return {};
-        }
+        const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
+        if (empire_id == ALL_EMPIRES)
+            return {};
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return {};
