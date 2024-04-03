@@ -11613,14 +11613,23 @@ namespace {
     }
 
     auto Vectorize(std::unique_ptr<Condition>&& op1, std::unique_ptr<Condition>&& op2,
-                   std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4)
+                   std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4,
+                   std::unique_ptr<Condition>&& op5 = nullptr)
     {
+        static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
+
         std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(4);
-        retval.push_back(std::move(op1));
-        retval.push_back(std::move(op2));
-        retval.push_back(std::move(op3));
-        retval.push_back(std::move(op4));
+        retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) + isnt0(op5));
+        if (op1)
+            retval.push_back(std::move(op1));
+        if (op2)
+            retval.push_back(std::move(op2));
+        if (op3)
+            retval.push_back(std::move(op3));
+        if (op4)
+            retval.push_back(std::move(op4));
+        if (op5)
+            retval.push_back(std::move(op5));
         return retval;
     }
 }
@@ -11634,8 +11643,10 @@ And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
 {}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
-    And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
+         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4,
+         std::unique_ptr<Condition>&& operand5) :
+    And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3),
+                  std::move(operand4), std::move(operand5)))
 {}
 
 bool And::operator==(const Condition& rhs) const {
