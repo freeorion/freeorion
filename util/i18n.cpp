@@ -504,6 +504,22 @@ namespace {
 
         return mag;
     }
+
+    [[nodiscard]] constexpr std::string_view UnitPostFix(int unit_pow10) noexcept {
+        // append base scale SI prefix (as postfix)
+        switch (unit_pow10) {
+        case -15: return "f"; break;        // femto
+        case -12: return "p"; break;        // pico
+        case -9:  return "n"; break;        // nano
+        case -6:  return "\xC2\xB5"; break; // micro / µ in UTF-8
+        case -3:  return "m"; break;        // milli
+        case 3:   return "k"; break;        // kilo
+        case 6:   return "M"; break;        // Mega
+        case 9:   return "G"; break;        // Giga
+        case 12:  return "T"; break;        // Tera
+        default:  return {};  break;
+        }
+    }
 }
 
 std::string DoubleToString(double val, int digits, bool always_show_sign) {
@@ -603,39 +619,8 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     format += "%" + std::to_string(digits) + "." +
                     std::to_string(fraction_digits) + "f";
     text += (boost::format(format) % mag).str();
+    text.append(UnitPostFix(unit_pow10));
 
-    // append base scale SI prefix (as postfix)
-    switch (unit_pow10) {
-    case -15:
-        text += "f";        // femto
-        break;
-    case -12:
-        text += "p";        // pico
-        break;
-    case -9:
-        text += "n";        // nano
-        break;
-    case -6:
-        text += "\xC2\xB5"; // micro / µ in UTF-8
-        break;
-    case -3:
-        text += "m";        // milli
-        break;
-    case 3:
-        text += "k";        // kilo
-        break;
-    case 6:
-        text += "M";        // Mega
-        break;
-    case 9:
-        text += "G";        // Giga
-        break;
-    case 12:
-        text += "T";        // Tera
-        break;
-    default:
-        break;
-    }
     return text;
 }
 
