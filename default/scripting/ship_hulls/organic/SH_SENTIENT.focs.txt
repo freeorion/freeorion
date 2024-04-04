@@ -69,7 +69,7 @@ Hull
         EffectsGroup
             scope = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + ( min(Source.Age*1, 45) * [[SHIP_STRUCTURE_FACTOR]] )
+            effects = SetMaxStructure value = Value + ( min(Source.Age*1, 60) * [[SHIP_STRUCTURE_FACTOR]] )
 
         [[AVERAGE_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
