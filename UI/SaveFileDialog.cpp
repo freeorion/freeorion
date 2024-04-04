@@ -391,7 +391,7 @@ public:
         GetLayout()->PreRender();
     }
 
-    SortKeyType SortKey(std::size_t column) const override
+    SortKeyType SortKey(std::size_t column) const noexcept override
     { return m_filename; }
 
     GG::X DirectoryNameSize() {
@@ -441,7 +441,7 @@ public:
         GetLayout()->PreRender();
     }
 
-    SortKeyType SortKey(std::size_t column) const override
+    SortKeyType SortKey(std::size_t) const noexcept override
     { return m_full_preview.preview.save_time; }
 
 private:
@@ -585,9 +585,9 @@ private:
     /// a) always be first
     /// b) be sorted alphabetically
     /// This custom comparer achieves these goals.
-    static bool DirectoryAwareCmp(const Row& row1, const Row& row2, int column_int) {
-        std::string key1(row1.SortKey(0));
-        std::string key2(row2.SortKey(0));
+    static bool DirectoryAwareCmp(const Row& row1, const Row& row2, int column_int) noexcept {
+        const auto key1(row1.SortKey(0));
+        const auto key2(row2.SortKey(0));
 
         const bool row1_is_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row1);
         const bool row2_is_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row2);
@@ -597,7 +597,7 @@ private:
             // Directories always return directory name as sort key
             return key1.compare(key2) >= 0;
         } else {
-            return ( !row1_is_directory && row2_is_directory );
+            return !row1_is_directory && row2_is_directory;
         }
     }
 };
