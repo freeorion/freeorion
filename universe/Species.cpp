@@ -184,12 +184,43 @@ namespace {
     auto SourceOwner()
     { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"); }
 
+    auto ConqueredRecently() {
+        return std::make_unique<Condition::ValueTest>(
+            std::make_unique<ValueRef::Variable<int>>(
+                ValueRef::ReferenceType::SOURCE_REFERENCE, "TurnsSinceLastConquered"),
+            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::Constant<int>>(1)
+        );
+    }
+    auto AnnexedRecently() {
+        return std::make_unique<Condition::ValueTest>(
+            std::make_unique<ValueRef::Variable<int>>(
+                ValueRef::ReferenceType::SOURCE_REFERENCE, "TurnsSinceAnnexation"),
+            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::Constant<int>>(1)
+        );
+    }
+    auto ColonizedRecently() {
+        return std::make_unique<Condition::ValueTest>(
+            std::make_unique<ValueRef::Variable<int>>(
+                ValueRef::ReferenceType::SOURCE_REFERENCE, "TurnsSinceColonization"),
+            Condition::ComparisonType::LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::Constant<int>>(1)
+        );
+    }
+    auto NotConqueredOrAnnexedOrColonizedRecently() {
+        return std::make_unique<Condition::Not>(std::make_unique<Condition::Or>(
+            ConqueredRecently(), AnnexedRecently(), ColonizedRecently()
+        ));
+    }
+
     auto DefaultAnnexationCondition() {
         return std::make_unique<Condition::And>(
             std::make_unique<Condition::Or>(
                 std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
                 std::make_unique<Condition::EmpireAffiliation>(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
             ),
+            NotConqueredOrAnnexedOrColonizedRecently(),
             std::make_unique<Condition::VisibleToEmpire>(SourceOwner()),
             std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
                                                     std::make_unique<ValueRef::Constant<double>>(0.001),
@@ -198,18 +229,10 @@ namespace {
                 SourceOwner(),
                 std::make_unique<Condition::And>(
                     std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                    std::make_unique<Condition::EmpireAffiliation>(SourceOwner())
+                    std::make_unique<Condition::EmpireAffiliation>(SourceOwner()),
+                    NotConqueredOrAnnexedOrColonizedRecently()
                 )
             ));
-    }
-
-    auto to_vec(auto&& one, auto&& two, auto&& three) {
-        std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> retval;
-        retval.reserve(3);
-        retval.push_back(std::move(one));
-        retval.push_back(std::move(two));
-        retval.push_back(std::move(three));
-        return retval;
     }
 
     auto LocalCandidateOwner()
