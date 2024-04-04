@@ -16891,7 +16891,7 @@ Organic Hull
 
 SH_ORGANIC_DESC
 '''A living hull with one external slot and one internal slot.
-Organic Growth: starts with 24 [[metertype METER_STRUCTURE]], but grows an additional 24 structure over 25 turns.
+Organic Growth: starts with 24 [[metertype METER_STRUCTURE]], but grows an additional 24 structure over 15 turns.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is high.
 
@@ -16918,7 +16918,7 @@ Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
 '''A half living hull with four external slots and two internal slots.
-Organic Growth: starts with 40 [[metertype METER_STRUCTURE]], but grows an additional 120 structure over 30 turns.
+Organic Growth: starts with 80 [[metertype METER_STRUCTURE]], but grows an additional 80 structure over 20 turns.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
@@ -16933,7 +16933,7 @@ Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
 '''A living hull with two internal and two external slots. Exists in a symbiotic relationship with its crew, increasing its [[metertype METER_STEALTH]] and speed.
-Organic Growth: starts with 80 [[metertype METER_STRUCTURE]], but grows an additional 80 structure over 50 turns.
+Organic Growth: starts with 32 [[metertype METER_STRUCTURE]], but grows an additional 128 structure over 40 turns.
 
 [[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
@@ -16980,7 +16980,7 @@ Ravenous Hull
 SH_RAVENOUS_DESC
 '''This non-living organic hull - or 'zombie' hull - has been built from the blood and parts of its brethren. It has five external slots and two internal slots.
 
-Organic Growth: starts with 40 [[metertype METER_STRUCTURE]], grows an additional 160 structure over 40 turns.
+Organic Growth: starts with 40 [[metertype METER_STRUCTURE]], grows an additional 288 structure over 48 turns.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 
@@ -16996,7 +16996,7 @@ Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
 '''A living hull with mind and body in unison, master of healing and endurance. It has three external slots and three internal slots.
-Organic Growth: starts with 120 [[metertype METER_STRUCTURE]], grows an additional 200 structure over 50 turns.
+Organic Growth: starts with 80 [[metertype METER_STRUCTURE]], grows an additional 240 structure over 60 turns.
 
 [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 
@@ -17012,7 +17012,7 @@ Sentient Hull
 
 SH_SENTIENT_DESC
 '''This self-aware organic flagship with powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[metertype METER_STEALTH]] and [[metertype METER_DETECTION]] bonus to all accompanying friendly ships. It has six external slots, three internal slots, and a core slot.
-Organic Growth: Starts with 96 [[metertype METER_STRUCTURE]], grows an additional 360 over 45 turns.
+Organic Growth: Starts with 96 [[metertype METER_STRUCTURE]], grows an additional 480 over 60 turns.
 
 [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 
