@@ -21,17 +21,20 @@ Policy
                 VisibleToEmpire empire = Source.Owner
             ]
             effects =
-                SetTargetHappiness value = Value + min(
-                    10.0, 
-                    (Statistic Min
-                        value = DirectDistanceBetween object = Target.SystemID object = LocalCandidate.SystemID
-                        condition = And [
-                            Planet
-                            Species
-                            VisibleToEmpire empire = Source.Owner
-                            Not Target
-                        ]
-                    ) / (NamedReal name = "PLC_ISOLATION_THRESHOLD_DISTANCE" value = 150.0) * 10.0 - 10.0)
+                SetTargetHappiness value = Value + max(
+                    -(NamedReal name = "PLC_ISOLATION_MAX_STABILITY_MODIFIER" value = 5.0),
+                    min(
+                        (NamedRealLookup name = "PLC_ISOLATION_MAX_STABILITY_MODIFIER"),
+                        (Statistic Min
+                            value = DirectDistanceBetween object = Target.SystemID object = LocalCandidate.SystemID
+                            condition = And [
+                                Planet
+                                Species
+                                VisibleToEmpire empire = Source.Owner
+                                Not Target
+                            ]
+                        ) / (NamedReal name = "PLC_ISOLATION_THRESHOLD_DISTANCE" value = 100.0) * 10.0 - 10.0)
+                    )
 
         // fallback for case when only a single populated planet is known to an empire...
         EffectsGroup
@@ -45,16 +48,15 @@ Policy
                 Species
                 VisibleToEmpire empire = Source.Owner
             ]
-            effects = SetTargetHappiness value = Value + 10.0
+            effects = SetTargetHappiness value = Value + (NamedRealLookup name = "PLC_ISOLATION_MAX_STABILITY_MODIFIER")
         
         // stealth boost
         EffectsGroup
             scope = And [
                 Planet
-                Species
                 OwnedBy empire = Source.Owner
             ]
-            effects = SetStealth value = Value + (NamedReal name = "PLC_ISOLATION_STEALTH" value = 5.0)
+            effects = SetStealth value = Value + (NamedReal name = "PLC_ISOLATION_STEALTH" value = 10.0)
     ]
     graphic = "icons/policies/social_isolation.png"
 
