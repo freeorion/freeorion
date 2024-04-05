@@ -77,42 +77,57 @@ namespace {
         return "stacktrace:\n" + to_string(stacktrace());
     }
 
+    [[nodiscard]] constexpr std::string_view to_string(ValueRef::ReferenceType ref_type) noexcept {
+        switch (ref_type) {
+        case ValueRef::ReferenceType::NON_OBJECT_REFERENCE:                return "<non-object>";   break;
+        case ValueRef::ReferenceType::SOURCE_REFERENCE:                    return "Source";         break;
+        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             return "Target";         break;
+        case ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE:       return "Value(Target)";  break;
+        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  return "RootCandidate";  break;
+        case ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE: return "LocalCandidate"; break;
+        default:                                                           return "<invalid-ref>";
+        }
+    }
+
+    [[nodiscard]] const UniverseObject* GetRefObject(ValueRef::ReferenceType ref_type, const ScriptingContext& context) {
+        switch (ref_type) {
+        case ValueRef::ReferenceType::SOURCE_REFERENCE:                    return context.source;                       break;
+        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             return context.effect_target;                break;
+        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  return context.condition_root_candidate;     break;
+        default:                                                           return context.condition_local_candidate;    break;
+        }
+    }
+
+
     const UniverseObject* FollowReference(
         std::vector<std::string>::const_iterator first, std::vector<std::string>::const_iterator last,
         ValueRef::ReferenceType ref_type, const ScriptingContext& context)
     {
-        const UniverseObject* obj = nullptr;
-        switch (ref_type) {
-        case ValueRef::ReferenceType::NON_OBJECT_REFERENCE:                return context.condition_local_candidate;   break;
-        case ValueRef::ReferenceType::SOURCE_REFERENCE:                    obj = context.source;                       break;
-        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             obj = context.effect_target;                break;
-        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  obj = context.condition_root_candidate;     break;
-        case ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE:
-        default:                                                           obj = context.condition_local_candidate;    break;
-        }
+        if (ref_type == ValueRef::ReferenceType::NON_OBJECT_REFERENCE)
+            return context.condition_local_candidate;
+
+        const UniverseObject* obj = GetRefObject(ref_type, context);
 
         if (!obj) {
-            std::string_view type_string = "";
-            switch (ref_type) {
-            case ValueRef::ReferenceType::SOURCE_REFERENCE:                    type_string = "Source";         break;
-            case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             type_string = "Target";         break;
-            case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  type_string = "RootCandidate";  break;
-            case ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE:
-            default:                                                           type_string = "LocalCandidate"; break;
-            }
-            ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context. "
-                          << "  strings: " << [it=first, last]() mutable -> std::string
-                            {
-                                std::string retval;
-                                retval.reserve(100); // guesstimate
-                                for (; it != last; ++it)
-                                    retval.append(*it).append(" ");
-                                return retval;
-                            }()
-                          << " source: " << (context.source ? context.source->Name() : "0")
-                          << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
-                          << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-                          << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0")
+            std::string_view type_string{to_string(ref_type)};
+
+            static constexpr auto ref_strings = [](auto it, const auto last) {
+                std::string retval;
+                retval.reserve(100); // guesstimate
+                for (; it != last; ++it)
+                    retval.append(*it).append(" ");
+                return retval;
+            };
+
+            static constexpr auto name_or_0 = [](const UniverseObject* obj) noexcept -> std::string_view
+            { return obj ? obj->Name() : "0"; };
+
+            ErrorLogger() << "FollowReference : top level object (" << to_string(ref_type)
+                          << ") not defined in scripting context.  strings: " << ref_strings(first, last)
+                          << "  source: " << name_or_0(context.source)
+                          << " target: " << name_or_0(context.effect_target)
+                          << " local c: " << name_or_0(context.condition_local_candidate)
+                          << " root c: " << name_or_0(context.condition_root_candidate)
                           << " stacktrace: see trace logging";
             static std::atomic<uint32_t> trace_count = 0;
             const auto clock_now = std::chrono::system_clock::now();
