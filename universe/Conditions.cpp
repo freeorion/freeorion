@@ -1880,6 +1880,21 @@ bool Capital::operator==(const Condition& rhs) const {
     return true;
 }
 
+namespace {
+    bool FlexibleContains(const auto& container, const auto num) {
+        if constexpr (requires { container.contains(num); })
+            return container.contains(num);
+        else if constexpr (requires { container.find(num); container.end(); })
+            return container.find(num) != container.end();
+        else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
+            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val; });
+        else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
+            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val->ID(); });
+        else
+            return false;
+    }
+}
+
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
@@ -1899,16 +1914,15 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                 }
             } else {
                 // match only objects with ID same as the empire's capital
-                const auto capital_id = empire->CapitalID();
                 EvalImpl(matches, non_matches, search_domain,
-                        [capital_id](const auto* obj) { return obj->ID() == capital_id; });
+                         [capital_id{empire->CapitalID()}](const auto* obj) noexcept { return obj->ID() == capital_id; });
             }
         } else {
             // ID of empire can be different for each candidate object, so need to
             // get empire ID (and thus its capital ID) separately for each object
             auto is_specific_capital = [this, &parent_context](const auto* candidate) {
                 const ScriptingContext local_context{parent_context, candidate};
-                const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
+                const auto* empire = local_context.GetEmpire(m_empire_id->Eval(local_context)).get();
                 return empire && empire->CapitalID() == candidate->ID();
             };
 
@@ -1917,11 +1931,8 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
 
     } else {
         // check if candidates are capitals of any empire
-        auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
-            return std::any_of(
-                capitals.begin(), capitals.end(),
-                [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
-        };
+        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+        { return FlexibleContains(capitals, obj->ID()); };
 
         const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
         if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
@@ -1949,19 +1960,15 @@ bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& c
 
         if (simple_eval_safe) {
             // match object with ID of the specified empire's capital
-            const auto empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context));
-            if (!empire)
-                return false;
-            const auto cid = empire->CapitalID();
-            return std::any_of(candidates.begin(), candidates.end(),
-                               [cid](const auto* candidate) { return candidate->ID() == cid; });
+            const auto* empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context)).get();
+            return empire && FlexibleContains(candidates, empire->CapitalID());
 
         } else {
             // ID of empire can be different for each candidate object, so need to
             // get empire ID (and thus its capital ID) separately for each object
             auto is_specific_capital = [this, &parent_context](const auto* candidate) {
                 const ScriptingContext local_context{parent_context, candidate};
-                const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
+                const auto* empire = local_context.GetEmpire(m_empire_id->Eval(local_context)).get();
                 return empire && empire->CapitalID() == candidate->ID();
             };
 
@@ -1970,11 +1977,8 @@ bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& c
 
     } else {
         // check if candidates are capitals of any empire
-        auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj) {
-            return std::any_of(
-                capitals.begin(), capitals.end(),
-                [obj_id{obj->ID()}](const int cap_id) noexcept { return cap_id == obj_id; });
-        };
+        auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+        { return FlexibleContains(capitals, obj->ID()); };
 
         return std::any_of(candidates.begin(), candidates.end(), is_capital);
     }
@@ -1997,9 +2001,7 @@ bool Capital::Match(const ScriptingContext& local_context) const {
         const auto empire = local_context.GetEmpire(m_empire_id->Eval(local_context));
         return empire && empire->CapitalID() == candidate->ID();
     } else {
-        const auto capitals{local_context.Empires().CapitalIDs()};
-        return std::any_of(capitals.begin(), capitals.end(),
-                           [candidate_id{candidate->ID()}](const auto cap_id) { return cap_id == candidate_id; });
+        return FlexibleContains(local_context.Empires().CapitalIDs(), candidate->ID());
     }
 }
 
