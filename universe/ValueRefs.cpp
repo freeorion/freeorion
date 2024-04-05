@@ -69,12 +69,22 @@ namespace {
     const std::string EMPTY_STRING;
 #endif
 
-    std::string StackTrace() {
-        static std::atomic<int> string_error_lookup_count = 0;
-        if (string_error_lookup_count++ > 10)
-            return "";
-        using namespace boost::stacktrace;
-        return "stacktrace:\n" + to_string(stacktrace());
+    void LogStackTrace(const std::string_view what) {
+        // only output stack trace some times per minute, as this was very slow on windows
+        static std::atomic<uint32_t> trace_count = 0;
+        const auto clock_now = std::chrono::system_clock::now();
+        const auto now_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
+        static auto previous_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
+        if (now_mins > previous_mins) {
+            trace_count = 0;
+            previous_mins = now_mins;
+            return;
+        }
+        // only output stack trace some times per minute, as this was very slow on windows
+        if (trace_count < 11) {
+            trace_count++;
+            ErrorLogger() << what << ": " << boost::stacktrace::stacktrace();
+        }
     }
 
     [[nodiscard]] constexpr std::string_view to_string(ValueRef::ReferenceType ref_type) noexcept {
@@ -127,25 +137,10 @@ namespace {
                           << "  source: " << name_or_0(context.source)
                           << " target: " << name_or_0(context.effect_target)
                           << " local c: " << name_or_0(context.condition_local_candidate)
-                          << " root c: " << name_or_0(context.condition_root_candidate)
-                          << " stacktrace: see trace logging";
-            static std::atomic<uint32_t> trace_count = 0;
-            const auto clock_now = std::chrono::system_clock::now();
-            const auto now_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
-            static auto previous_mins = std::chrono::duration_cast<std::chrono::minutes>(clock_now.time_since_epoch()).count();
-            if (now_mins > previous_mins) {
-                trace_count = 0;
-                previous_mins = now_mins;
-            }
-            if (trace_count < 11) {
-                trace_count++;
-                ErrorLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context.\n"
-                              << StackTrace(); // only output stack trace some times per minute, as this was very slow on windows
-            } else {
-                ErrorLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context. Skip on error logger level. Already printed enough stacktraces. This can be very slow on windows.\n";
-                TraceLogger() << " FollowReference stacktrace : top level object (" << type_string << ") not defined in scripting context.\n"
-                              << StackTrace(); // only output stack trace some times per minute, as this was very slow on windows
-            }
+                          << " root c: " << name_or_0(context.condition_root_candidate);
+            LogStackTrace(std::string{"FollowReference stacktrace : top level object ("}
+                          .append(to_string(ref_type)).append(")"));
+
             return nullptr;
         }
 
@@ -730,6 +725,7 @@ if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
     try {                                                              \
         return std::get<T>(context.current_value);                     \
     } catch (const std::bad_variant_access&) {                         \
+        LogStackTrace("Variable<" #T ">::Eval()");                     \
         throw std::runtime_error(                                      \
             "Variable<" #T ">::Eval(): Value could not be evaluated, " \
             "because the provided current value is not an " #T ".");   \
