@@ -776,8 +776,7 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 
     const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<PlanetType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
         return PlanetType::INVALID_PLANET_TYPE;
