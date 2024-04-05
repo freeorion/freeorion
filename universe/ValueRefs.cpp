@@ -135,7 +135,7 @@ namespace {
         }
 
         while (obj && first != last) {
-            std::string_view property_name = *first;
+            const std::string_view property_name = *first;
             if (property_name == "Planet") {
                 if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) [[likely]] {
                     const auto b = static_cast<const Building*>(obj);
@@ -178,8 +178,7 @@ namespace {
     // the ReconstructName() info with additional info identifying the object
     // references that were successfully followed.
     std::string TraceReference(const std::vector<std::string>& property_name,
-                               ValueRef::ReferenceType ref_type,
-                               const ScriptingContext& context)
+                               ValueRef::ReferenceType ref_type, const ScriptingContext& context)
     {
         const UniverseObject* obj = nullptr;
         const UniverseObject* initial_obj = nullptr;
@@ -324,7 +323,7 @@ template <typename EnumT>
 std::string EnumToString(EnumT t)
 {
     static_assert(std::is_enum_v<EnumT>);
-    auto maybe_retval = to_string(t);
+    const auto maybe_retval = to_string(t);
     if (UserStringExists(maybe_retval))
         return UserString(maybe_retval);
     else
@@ -2643,7 +2642,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto all_enqueued_techs = empire->GetResearchQueue().AllEnqueuedProjects();
         if (all_enqueued_techs.empty())
             return "";
-        std::size_t idx = RandInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
+        using diff_t = decltype(all_enqueued_techs.begin())::difference_type;
+        const diff_t idx = static_cast<diff_t>(RandInt(0, static_cast<int>(all_enqueued_techs.size()) - 1));
         return std::move(*std::next(all_enqueued_techs.begin(), idx));
 
     } else if (variable_name == "RandomResearchableTech") {
@@ -2657,7 +2657,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto researchable_techs = TechsResearchableByEmpire(empire_id, context);
         if (researchable_techs.empty())
             return "";
-        const std::size_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(researchable_techs.size()) - 1));
+        using diff_t = decltype(researchable_techs.begin())::difference_type;
+        const diff_t idx = static_cast<diff_t>(RandInt(0, static_cast<int>(researchable_techs.size()) - 1));
         return std::move(*std::next(researchable_techs.begin(), idx));
 
     } else if (variable_name == "RandomCompleteTech") {
@@ -2671,7 +2672,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto complete_techs = TechsResearchedByEmpire(empire_id, context);
         if (complete_techs.empty())
             return "";
-        const std::size_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(complete_techs.size()) - 1));
+        using diff_t = decltype(complete_techs.begin())::difference_type;
+        const diff_t idx = static_cast<diff_t>(RandInt(0, static_cast<int>(complete_techs.size()) - 1));
         return std::move(*std::next(complete_techs.begin(), idx));
 
     } else if (variable_name == "LowestCostTransferrableTech") {
@@ -2685,7 +2687,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         auto sendable_techs = TransferrableTechs(empire1_id, empire2_id, context);
         if (sendable_techs.empty())
             return "";
-        const std::size_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(sendable_techs.size()) - 1));
+        using diff_t = decltype(sendable_techs.begin())::difference_type;
+        const diff_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(sendable_techs.size()) - 1));
         return std::move(*std::next(sendable_techs.begin(), idx));
 
     } else if (variable_name == "HighestCostTransferrableTech") {
@@ -2754,7 +2757,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
     if (variable_name == "GameRule") {
         if (!m_string_ref1)
             return "";
-        std::string rule_name = m_string_ref1->Eval();
+        const auto rule_name = m_string_ref1->Eval();
         if (rule_name.empty() || !GetGameRules().RuleExists(rule_name))
             return "";
 
