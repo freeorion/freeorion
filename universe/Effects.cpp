@@ -110,9 +110,7 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, const UniverseObject* target_object,
-                       ScriptingContext& context)
-    {
+    void ExploreSystem(int system_id, const UniverseObject* target_object, ScriptingContext& context) {
         if (!target_object || target_object->Unowned() || system_id == INVALID_OBJECT_ID)
             return;
         if (auto empire = context.GetEmpire(target_object->Owner()))
@@ -512,7 +510,7 @@ namespace {
         if (!target)
             return {Meter::INVALID_VALUE, m};
 
-        ScriptingContext::CurrentValueVariant cvv{m->Current()};
+        const ScriptingContext::CurrentValueVariant cvv{m->Current()};
         const ScriptingContext target_meter_context{std::forward<C>(context), std::forward<T>(target), cvv};
         return {value_ref->Eval(target_meter_context), m};
     }
@@ -1262,8 +1260,8 @@ void SetEmpireStockpile::Execute(ScriptingContext& context) const {
         return;
     }
 
-    ScriptingContext::CurrentValueVariant cvv{empire->ResourceStockpile(m_stockpile)};
-    ScriptingContext stockpile_context{context, cvv};
+    const ScriptingContext::CurrentValueVariant cvv{empire->ResourceStockpile(m_stockpile)};
+    const ScriptingContext stockpile_context{context, cvv};
     empire->SetResourceStockpile(m_stockpile, m_value->Eval(stockpile_context));
 }
 
@@ -1375,9 +1373,9 @@ void SetPlanetType::Execute(ScriptingContext& context) const {
         return;
     auto p = static_cast<Planet*>(context.effect_target);
 
-    ScriptingContext::CurrentValueVariant cvv{p->Type()};
-    ScriptingContext type_context{context, cvv};
-    PlanetType type = m_type->Eval(type_context);
+    const ScriptingContext::CurrentValueVariant cvv{p->Type()};
+    const ScriptingContext type_context{context, cvv};
+    const PlanetType type = m_type->Eval(type_context);
     p->SetType(type);
 
     if (type == PlanetType::PT_ASTEROIDS)
@@ -1424,8 +1422,8 @@ void SetOriginalType::Execute(ScriptingContext& context) const {
         return;
     auto p = static_cast<Planet*>(context.effect_target);
 
-    ScriptingContext::CurrentValueVariant cvv{p->OriginalType()};
-    ScriptingContext type_context{context, cvv};
+    const ScriptingContext::CurrentValueVariant cvv{p->OriginalType()};
+    const ScriptingContext type_context{context, cvv};
     PlanetType type = m_type->Eval(type_context);
     p->SetOriginalType(type);
 
@@ -1473,8 +1471,8 @@ void SetPlanetSize::Execute(ScriptingContext& context) const {
         return;
     auto p = static_cast<Planet*>(context.effect_target);
 
-    ScriptingContext::CurrentValueVariant cvv{p->Size()};
-    ScriptingContext size_context{context, cvv};
+    const ScriptingContext::CurrentValueVariant cvv{p->Size()};
+    const ScriptingContext size_context{context, cvv};
     PlanetSize size = m_size->Eval(size_context);
     p->SetSize(size);
 
@@ -1522,7 +1520,7 @@ void SetFocus::Execute(ScriptingContext& context) const {
 
     Planet* const planet = static_cast<Planet*>(context.effect_target);
 
-    ScriptingContext::CurrentValueVariant cvv{planet->Focus()};
+    const ScriptingContext::CurrentValueVariant cvv{planet->Focus()};
     const ScriptingContext name_context{context, cvv};
     auto new_focus = m_focus_name->Eval(name_context);
     if (new_focus.empty() || new_focus == planet->Focus())
@@ -1567,16 +1565,16 @@ void SetSpecies::Execute(ScriptingContext& context) const {
 
     if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_SHIP) {
         auto ship = static_cast<Ship*>(context.effect_target);
-        ScriptingContext::CurrentValueVariant cvv{ship->SpeciesName()};
-        ScriptingContext name_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{ship->SpeciesName()};
+        const ScriptingContext name_context{context, cvv};
         ship->SetSpecies(m_species_name->Eval(name_context), context.species);
         return;
 
     } else if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_PLANET) {
         auto planet = static_cast<Planet*>(context.effect_target);
 
-        ScriptingContext::CurrentValueVariant cvv{planet->SpeciesName()};
-        ScriptingContext name_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{planet->SpeciesName()};
+        const ScriptingContext name_context{context, cvv};
         planet->SetSpecies(m_species_name->Eval(name_context), context.current_turn, context.species);
         if (!planet->SpeciesName().empty())
             planet->SetLastColonizedByEmpire(planet->Owner());
@@ -1643,7 +1641,7 @@ void SetOwner::Execute(ScriptingContext& context) const {
         return;
     int initial_owner = context.effect_target->Owner();
 
-    ScriptingContext owner_context{context, ScriptingContext::CurrentValueVariant{initial_owner}};
+    const ScriptingContext owner_context{context, ScriptingContext::CurrentValueVariant{initial_owner}};
     int empire_id = m_empire_id->Eval(owner_context);
     if (initial_owner == empire_id)
         return;
@@ -1738,8 +1736,8 @@ void SetSpeciesEmpireOpinion::Execute(ScriptingContext& context) const {
         return;
 
     double previous_value_opinion = context.species.SpeciesEmpireOpinion(species_name, empire_id, m_target, true);
-    ScriptingContext::CurrentValueVariant cvv{previous_value_opinion};
-    ScriptingContext opinion_context{context, cvv};
+    const ScriptingContext::CurrentValueVariant cvv{previous_value_opinion};
+    const ScriptingContext opinion_context{context, cvv};
     float new_value_opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
     TraceLogger(effects) << "SetSpeciesEmpire" << (m_target ? "Target" : "") << "Opinion "
@@ -1811,7 +1809,7 @@ void SetSpeciesSpeciesOpinion::Execute(ScriptingContext& context) const {
 
     const float previous_value_opinion = context.species.SpeciesSpeciesOpinion(opinionated_species_name,
                                                                                rated_species_name, m_target, true);
-    ScriptingContext::CurrentValueVariant cvv{previous_value_opinion};
+    const ScriptingContext::CurrentValueVariant cvv{previous_value_opinion};
     const ScriptingContext opinion_context{context, cvv};
     const float new_value_opinion = static_cast<float>(m_opinion->Eval(opinion_context));
 
@@ -1883,11 +1881,11 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
         target_type = location_planet->Type();
     }
 
-    ScriptingContext::CurrentValueVariant size_cvv{target_size};
-    ScriptingContext size_context{context, size_cvv};
+    const ScriptingContext::CurrentValueVariant size_cvv{target_size};
+    const ScriptingContext size_context{context, size_cvv};
     PlanetSize size = m_size->Eval(size_context);
-    ScriptingContext::CurrentValueVariant type_cvv{target_type};
-    ScriptingContext type_context{context, type_cvv};
+    const ScriptingContext::CurrentValueVariant type_cvv{target_type};
+    const ScriptingContext type_context{context, type_cvv};
     PlanetType type = m_type->Eval(type_context);
     if (size == PlanetSize::INVALID_PLANET_SIZE || type == PlanetType::INVALID_PLANET_TYPE) {
         ErrorLogger(effects) << "CreatePlanet::Execute got invalid size or type of planet to create...";
@@ -2620,8 +2618,8 @@ void AddSpecial::Execute(ScriptingContext& context) const {
     float initial_capacity = context.effect_target->SpecialCapacity(name);  // returns 0.0f if no such special yet present
     float capacity = initial_capacity;
     if (m_capacity) {
-        ScriptingContext::CurrentValueVariant cvv{capacity};
-        ScriptingContext capacity_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{capacity};
+        const ScriptingContext capacity_context{context, cvv};
         capacity = static_cast<float>(m_capacity->Eval(capacity_context));
     }
 
@@ -2858,8 +2856,8 @@ void SetStarType::Execute(ScriptingContext& context) const {
     }
     if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
         auto s = static_cast<System*>(context.effect_target);
-        ScriptingContext::CurrentValueVariant cvv{s->GetStarType()};
-        ScriptingContext type_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{s->GetStarType()};
+        const ScriptingContext type_context{context, cvv};
         s->SetStarType(m_type->Eval(type_context));
     } else {
         ErrorLogger(effects) << "SetStarType::Execute given a non-system target";
@@ -3236,13 +3234,13 @@ void MoveInOrbit::Execute(ScriptingContext& context) const {
 
     double focus_x = 0.0, focus_y = 0.0, speed = 1.0;
     if (m_focus_x) {
-        ScriptingContext::CurrentValueVariant cvv{target->X()};
-        ScriptingContext x_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{target->X()};
+        const ScriptingContext x_context{context, cvv};
         focus_x = m_focus_x->Eval(x_context);
     }
     if (m_focus_y) {
-        ScriptingContext::CurrentValueVariant cvv{target->Y()};
-        ScriptingContext y_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{target->Y()};
+        const ScriptingContext y_context{context, cvv};
         focus_y = m_focus_y->Eval(y_context);
     }
     if (m_speed)
@@ -3394,13 +3392,13 @@ void MoveTowards::Execute(ScriptingContext& context) const {
 
     double dest_x = 0.0, dest_y = 0.0, speed = 1.0;
     if (m_dest_x) {
-        ScriptingContext::CurrentValueVariant cvv{target->X()};
-        ScriptingContext x_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{target->X()};
+        const ScriptingContext x_context{context, cvv};
         dest_x = m_dest_x->Eval(x_context);
     }
     if (m_dest_y) {
-        ScriptingContext::CurrentValueVariant cvv{target->Y()};
-        ScriptingContext y_context{context, cvv};
+        const ScriptingContext::CurrentValueVariant cvv{target->Y()};
+        const ScriptingContext y_context{context, cvv};
         dest_y = m_dest_y->Eval(y_context);
     }
     if (m_speed)
@@ -3740,10 +3738,9 @@ void SetEmpireTechProgress::Execute(ScriptingContext& context) const {
         return;
     }
 
-    ScriptingContext::CurrentValueVariant cvv{empire->ResearchProgress(tech_name, context)};
-    ScriptingContext progress_context{context, cvv};
-    empire->SetTechResearchProgress(tech_name, m_research_progress->Eval(progress_context),
-                                    context);
+    const ScriptingContext::CurrentValueVariant cvv{empire->ResearchProgress(tech_name, context)};
+    const ScriptingContext progress_context{context, cvv};
+    empire->SetTechResearchProgress(tech_name, m_research_progress->Eval(progress_context), context);
 }
 
 std::string SetEmpireTechProgress::Dump(uint8_t ntabs) const {
