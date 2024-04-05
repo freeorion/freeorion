@@ -1941,8 +1941,8 @@ void Universe::ApplyEffectDerivedVisibilities(const ScriptingContext& context) {
             // evaluate valuerefs and and store visibility of object
             for (auto& [source_obj_id, vis_val_ref] : src_and_vis_ref_map) {
                 // set up context for executing ValueRef to determine visibility to set
-                const ScriptingContext source_init_vis_context{context, target, target_initial_vis,
-                                                               m_objects->getRaw(source_obj_id)};
+                const ScriptingContext::CurrentValueVariant vis_cvv{target_initial_vis};
+                const ScriptingContext source_init_vis_context{context, target, vis_cvv, m_objects->getRaw(source_obj_id)};
 
                 // evaluate and store actual new visibility level
                 Visibility vis = vis_val_ref->Eval(source_init_vis_context);
