@@ -658,11 +658,11 @@ public:
 private:
     void DoLayout();
     void RefreshPlanetGraphic();
-    void SetFocus(std::string focus); ///< set the focus of the planet to \a focus
-    void ClickAnnex();                ///< called if annex button is pressed
-    void ClickColonize();             ///< called if colonize button is pressed
-    void ClickInvade();               ///< called if invade button is pressed
-    void ClickBombard();              ///< called if bombard button is pressed
+    void SetFocus(std::string focus) const; ///< set the focus of the planet to \a focus
+    void ClickAnnex();                      ///< called if annex button is pressed
+    void ClickColonize();                   ///< called if colonize button is pressed
+    void ClickInvade();                     ///< called if invade button is pressed
+    void ClickBombard();                    ///< called if bombard button is pressed
 
     void FocusDropListSelectionChangedSlot(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
@@ -2241,18 +2241,18 @@ void SidePanel::PlanetPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
         RequirePreRender();
 }
 
-void SidePanel::PlanetPanel::SetFocus(std::string focus) {
+void SidePanel::PlanetPanel::SetFocus(std::string focus) const {
+    const int app_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     ScriptingContext context;
     const ObjectMap& objects{context.ContextObjects()};
     auto planet = objects.get<Planet>(m_planet_id);
-    if (!planet || !planet->OwnedBy(GGHumanClientApp::GetApp()->EmpireID()))
+    if (!planet || !planet->OwnedBy(app_empire_id))
         return;
-    const int app_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    // todo: if focus is already equal to planet's focus, return early.
+    // TODO: if focus is already equal to planet's focus, return early.
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
     species_colony_projections.clear();
     GGHumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ChangeFocusOrder>(app_empire_id, planet->ID(), std::move(focus), context),
+        std::make_shared<ChangeFocusOrder>(app_empire_id, m_planet_id, std::move(focus), context),
         context);
 }
 
@@ -2300,7 +2300,7 @@ void SidePanel::PlanetPanel::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_k
 }
 
 void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
     ScriptingContext context;
     const Universe& u = context.ContextUniverse();
@@ -2338,10 +2338,10 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (planet->OwnedBy(GGHumanClientApp::GetApp()->EmpireID()) && m_order_issuing_enabled
+    if (planet->OwnedBy(client_empire_id) && m_order_issuing_enabled
         && m_planet_name->InClient(pt))
     {
-        auto rename_action = [context, this, planet]() mutable { // rename planet
+        auto rename_action = [context, this, planet, client_empire_id]() mutable { // rename planet
             auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
                 GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
             edit_wnd->Run();
@@ -2349,11 +2349,10 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
             if (!m_order_issuing_enabled)
                 return;
 
-            auto result = edit_wnd->Result();
+            auto result{edit_wnd->Result()};
 
-            if (!RenameOrder::Check(GGHumanClientApp::GetApp()->EmpireID(),
-                                    planet->ID(), result, context))
-            { return; }
+            if (!RenameOrder::Check(client_empire_id, planet->ID(), result, context))
+                return;
 
             GGHumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<RenameOrder>(GGHumanClientApp::GetApp()->EmpireID(),
@@ -3807,7 +3806,7 @@ void SidePanel::NextButtonClicked() {
     SystemSelectionChangedSlot(m_system_name->CurrentItem());
 }
 
-void SidePanel::PlanetClickedSlot(int planet_id, const ObjectMap& objects) {
+void SidePanel::PlanetClickedSlot(int planet_id, const ObjectMap& objects) const {
     if (m_selection_enabled)
         SelectPlanet(planet_id, objects);
 }
