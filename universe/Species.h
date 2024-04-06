@@ -156,7 +156,7 @@ public:
     [[nodiscard]] const auto&        Tags() const noexcept      { return m_tags; }
     [[nodiscard]] const auto&        PediaTags() const noexcept { return m_pedia_tags; }
     [[nodiscard]] bool               HasTag(std::string_view tag) const
-    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto t) { return t == tag; }); }
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto t) noexcept { return t == tag; }); }
     [[nodiscard]] const auto&        Likes() const noexcept     { return m_likes; }
     [[nodiscard]] const auto&        Dislikes() const noexcept  { return m_dislikes; }
     [[nodiscard]] const std::string& Graphic() const noexcept   { return m_graphic; }        ///< returns the name of the grapic file for this species

@@ -69,13 +69,12 @@ void Field::Copy(const Field& copied_field, const Universe& universe, int empire
     }
 }
 
-UniverseObject::TagVecs Field::Tags(const ScriptingContext&) const {
-    if (const FieldType* type = GetFieldType(m_type_name))
-        return TagVecs{type->Tags()};
-    return {};
+UniverseObject::TagVecs Field::Tags() const {
+    const FieldType* type = GetFieldType(m_type_name);
+    return type ? TagVecs{type->Tags()} : TagVecs{};
 }
 
-bool Field::HasTag(std::string_view name, const ScriptingContext&) const {
+bool Field::HasTag(std::string_view name) const {
     const FieldType* type = GetFieldType(m_type_name);
     return type && type->HasTag(name);
 }
