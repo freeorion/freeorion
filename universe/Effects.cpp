@@ -1210,7 +1210,7 @@ uint32_t SetEmpireMeter::GetCheckSum() const {
 }
 
 std::unique_ptr<Effect> SetEmpireMeter::Clone() const {
-    auto meter = m_meter;
+    auto meter{m_meter};
     return std::make_unique<SetEmpireMeter>(ValueRef::CloneUnique(m_empire_id),
                                             meter,
                                             ValueRef::CloneUnique(m_value));
@@ -4195,9 +4195,8 @@ uint32_t SetOverlayTexture::GetCheckSum() const {
 }
 
 std::unique_ptr<Effect> SetOverlayTexture::Clone() const {
-    auto texture = m_texture;
-    return std::make_unique<SetOverlayTexture>(texture,
-                                               ValueRef::CloneUnique(m_size));
+    auto texture{m_texture};
+    return std::make_unique<SetOverlayTexture>(texture, ValueRef::CloneUnique(m_size));
 }
 
 
@@ -4225,7 +4224,7 @@ uint32_t SetTexture::GetCheckSum() const {
 }
 
 std::unique_ptr<Effect> SetTexture::Clone() const {
-    auto texture = m_texture;
+    auto texture{m_texture};
     return std::make_unique<SetTexture>(texture);
 }
 
@@ -4259,7 +4258,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
 
 
     // whom to set visbility for?
-    const auto all_empire_ids = context.EmpireIDs();
+    const auto all_empire_ids{context.EmpireIDs()};
     std::vector<int> empire_ids;
 
     switch (m_affiliation) {
