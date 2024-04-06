@@ -167,9 +167,8 @@ bool Planet::HostileToEmpire(int empire_id, const EmpireManager& empires) const 
 }
 
 UniverseObject::TagVecs Planet::Tags(const ScriptingContext& context) const {
-    if (const Species* species = context.species.GetSpecies(SpeciesName()))
-        return TagVecs{species->Tags()};
-    return {};
+    const Species* species = context.species.GetSpecies(SpeciesName());
+    return species ? TagVecs{species->Tags()} : TagVecs{};
 }
 
 bool Planet::HasTag(std::string_view name, const ScriptingContext& context) const {
