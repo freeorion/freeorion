@@ -56,9 +56,9 @@ namespace {
                 }
                 const float RPs_to_spend = [ct_it, progress]() {
                     const auto& [ignored, tech_cost, tech_min_turns] = *ct_it;
-                    const float RPs_needed = tech_cost - progress*tech_cost;
-                    const float RPs_per_turn_limit = tech_cost / std::max(1, tech_min_turns);
-                    return std::min(RPs_needed, RPs_per_turn_limit);
+                    const auto RPs_needed = tech_cost - progress*tech_cost;
+                    const auto RPs_per_turn_limit = tech_cost / std::max(1, tech_min_turns);
+                    return static_cast<float>(std::min(RPs_needed, RPs_per_turn_limit));
                 }();
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
@@ -219,14 +219,15 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             continue;
 
         const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
-                                        [t{std::string_view{elem.name}}](const auto& ct) { return t == std::get<0>(ct); });
+                                        [t{std::string_view{elem.name}}](const auto& ct) noexcept
+                                        { return t == std::get<0>(ct); });
         if (ct_it == costs_times.end()) {
             ErrorLogger() << "ResearchQueue::Update no cost/time for tech " << elem.name;
             continue;
         }
-        const auto cost_time = [ct_it]() {
+        const auto cost_time = [ct_it]() noexcept -> std::pair<float, int> {
             const auto& [ignored, cost, time] = *ct_it;
-            return std::pair<float, int>{cost, std::max(1, time)};
+            return {static_cast<float>(cost), std::max(1, time)};
         };
         tech_cost_time.emplace(i, cost_time());
 
