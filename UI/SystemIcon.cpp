@@ -16,6 +16,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
+#include "../util/ranges.h"
 #include "../Empire/Empire.h"
 
 #include <GG/StaticGraphic.h>
@@ -144,28 +145,22 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
         // is planet a homeworld? (for any species)
         if (!homeworld) {
-            for (const auto& entry : species_manager.GetSpeciesHomeworldsMap()) {
-                const auto& homeworld_ids = entry.second;
-                if (homeworld_ids.contains(planet_id)) {
-                    homeworld = true;
-                    break;
-                }
-            }
+            const auto is_homeworld = [planet_id](const auto& hw_ids) { return hw_ids.contains(planet_id); };
+            homeworld = range_any_of(species_manager.GetSpeciesHomeworldsMap() | range_values,
+                                     is_homeworld);
         }
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            for (auto& building : objects.find<const Building>(planet->BuildingIDs())) {
-                int building_id = building->ID();
+            const auto not_destroyed = [&known_destroyed_object_ids](const auto id)
+            { return !known_destroyed_object_ids.contains(id); };
 
-                if (known_destroyed_object_ids.contains(building_id))
-                    continue;
+            const auto get_building = [&objects](const auto id) { return objects.getRaw<const Building>(id); };
 
-                if (building->HasTag(TAG_SHIPYARD, context)) {
-                    has_shipyard = true;
-                    break;
-                }
-            }
+            static constexpr auto is_shipyard = [](const Building* b) { return b && b->HasTag(TAG_SHIPYARD); };
+
+            has_shipyard = range_any_of(planet->BuildingIDs() | range_filter(not_destroyed) | range_transform(get_building),
+                                        is_shipyard);
         }
 
         // is planet populated by neutral species
@@ -194,11 +189,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
         wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
     if (has_shipyard)
         wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
-    std::shared_ptr<GG::Font> font;
-    if (capital)
-        font = ClientUI::GetBoldFont(font_size);
-    else
-        font = ClientUI::GetFont(font_size);
+    const auto font = capital ? ClientUI::GetBoldFont(font_size) : ClientUI::GetFont(font_size);
 
     GG::Clr text_color = ClientUI::SystemNameTextColor();
     if (has_player_planet) {
