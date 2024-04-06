@@ -2057,7 +2057,7 @@ namespace {
             if (!detection_meter)
                 continue;
             float object_detection_range = detection_meter->Current();
-            if (object_detection_range <= 0.0f)
+            if (object_detection_range < 0.0f)
                 continue;
 
             // record object's detection range for owner
