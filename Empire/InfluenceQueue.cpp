@@ -89,7 +89,7 @@ void InfluenceQueue::Update(const ScriptingContext& context,
                 ErrorLogger() << "Missing policy " << policy_name << " cost time in InfluenceQueue::Update!";
                 continue;
             }
-            spending_on_policy_adoption_IP += ct_it->second;;
+            spending_on_policy_adoption_IP += static_cast<float>(ct_it->second);
         }
         return spending_on_policy_adoption_IP;
     }();
@@ -110,7 +110,7 @@ void InfluenceQueue::Update(const ScriptingContext& context,
                 ErrorLogger() << "Missing annexation cost for plaent " << planet_id << " in InfluenceQueue::Update!";
                 continue;
             }
-            spending_on_annexation_IP += p_it->second;
+            spending_on_annexation_IP += static_cast<float>(p_it->second);
         }
         return spending_on_annexation_IP;
     }();
