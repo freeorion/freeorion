@@ -119,7 +119,7 @@ private:
     void PrevButtonClicked();            ///< responds to user clicking next system button
     void NextButtonClicked();            ///< responts to user clicking previous system button
     /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
-    void PlanetClickedSlot(int planet_id, const ObjectMap& objects);
+    void PlanetClickedSlot(int planet_id, const ObjectMap& objects) const;
 
     /** Responds to insertion fleets into system during a turn.  may update colonize buttons. */
     static void FleetsInserted(std::vector<int> fleets, const ObjectMap& objects);
