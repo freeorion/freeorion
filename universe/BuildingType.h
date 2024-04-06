@@ -92,7 +92,7 @@ public:
     auto& Tags() const noexcept { return m_tags; }
 
     auto HasTag(std::string_view tag) const -> bool
-    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) noexcept { return t == tag; }); }
 
     //! Returns the condition that determines the locations where this building
     //! can be produced
