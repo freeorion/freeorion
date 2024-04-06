@@ -1710,7 +1710,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
                                            [this](const auto& ids) { return FlexibleContains(ids, m_planet_id); });
 
     const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const auto not_destroyed_is_shipyard_tag =[&known_destroyed_object_ids](const Building* building) {
+    const auto not_destroyed_is_shipyard_tag = [&known_destroyed_object_ids](const Building* building) {
         return building &&
             !known_destroyed_object_ids.contains(building->ID()) &&
             building->HasTag(TAG_SHIPYARD);
