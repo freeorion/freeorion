@@ -563,19 +563,20 @@ std::size_t DropDownList::CurrentItemIndex() const noexcept
 
 std::size_t DropDownList::IteratorToIndex(iterator it) const noexcept
 {
+    static constexpr std::size_t neg1 = static_cast<std::size_t>(-1);
     const auto* lb = m_modal_picker->LB();
     if (!lb)
-        return -1;
+        return neg1;
     const auto start = lb->begin(), end = lb->end();
     if (it == end)
-        return -1;
+        return neg1;
     std::size_t dist = 0;
     for (auto find_it = start; find_it != end; ++find_it) {
         if (find_it == it)
             return dist;
         ++dist;
     }
-    return -1;
+    return neg1;
 }
 
 DropDownList::iterator DropDownList::IndexToIterator(std::size_t n) const
