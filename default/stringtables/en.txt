@@ -12913,9 +12913,8 @@ PLC_AUGMENTATION
 Augmentation
 
 PLC_AUGMENTATION_DESC
-'''• Increases the [[metertype METER_TARGET_POPULATION]] on [[PE_HOSTILE]] planets by planet size: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''• Sets the minimum [[metertype METER_TARGET_POPULATION]] on all habitable planets to planet size: ([[SZ_TINY]] = 1) ([[SZ_SMALL]] = 2) ([[SZ_MEDIUM]] = 3) ([[SZ_LARGE]] = 4) ([[SZ_HUGE]] = 5).
 • Increases max [[metertype METER_TROOPS]] on all planets by [[value CYBORG_MAX_TROOPS_PERPOP]] per [[metertype METER_POPULATION]].
-• Increases or decreases population growth, dependent on whether a planet's infrastructure is above or below [[value AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT]].
 
 Cyborgification produces a versatile fusion of the organic, inorganic and machine-based life that is capable of adapting rapidly to changing circumstances. Spontaneous generation of specialized organs, mechanisms, and environmental adaptation allows cyborgs to exist and thrive in nearly any environment.'''
 
