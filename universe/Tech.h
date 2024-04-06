@@ -86,7 +86,7 @@ public:
     [[nodiscard]] const auto& Tags() const noexcept { return m_tags; }
     [[nodiscard]] const auto& PediaTags() const noexcept { return m_pedia_tags; }
     [[nodiscard]] bool        HasTag(std::string_view tag) const
-    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) noexcept { return t == tag; }); }
 
     [[nodiscard]] const auto& Effects() const noexcept          { return m_effects; }
     [[nodiscard]] const auto& Prerequisites() const noexcept    { return m_prerequisites; }
