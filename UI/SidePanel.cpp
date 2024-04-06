@@ -1656,8 +1656,20 @@ namespace {
     {
         if (!annexation_condition || !source_context.source || ! candidate)
             return "";
-
         return ConditionDescription(std::vector{annexation_condition}, source_context, candidate);
+    }
+
+    bool FlexibleContains(const auto& container, const auto num) {
+        if constexpr (requires { container.contains(num); })
+            return container.contains(num);
+        else if constexpr (requires { container.find(num); container.end(); })
+            return container.find(num) != container.end();
+        else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
+            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val; });
+        else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
+            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val->ID(); });
+        else
+            return false;
     }
 }
 
@@ -1692,33 +1704,25 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
 
     // apply formatting tags around planet name to indicate:
     //    Italic for homeworlds
-    //    Underline for shipyard(s), and
-    bool homeworld = false, has_shipyard = false;
+    //    Underline for shipyard(s)
 
-    // need to check all species for homeworlds
-    for (const auto& homeworld_ids : sm.GetSpeciesHomeworldsMap() | range_values) { // TODO: any_of
-        if (homeworld_ids.contains(m_planet_id)) {
-            homeworld = true;
-            break;
-        }
-    }
+    const bool is_homeworld = range_any_of(sm.GetSpeciesHomeworldsMap() | range_values,
+                                           [this](const auto& ids) { return FlexibleContains(ids, m_planet_id); });
 
-    // check for shipyard
     const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(client_empire_id);
-    for (const auto* building : objects.findRaw<const Building>(planet->BuildingIDs())) { // TODO: any_of
-        if (!building || known_destroyed_object_ids.contains(building->ID()))
-            continue;
-        if (building->HasTag(TAG_SHIPYARD, source_context)) {
-            has_shipyard = true;
-            break;
-        }
-    }
+    const auto not_destroyed_is_shipyard_tag =[&known_destroyed_object_ids](const Building* building) {
+        return building &&
+            !known_destroyed_object_ids.contains(building->ID()) &&
+            building->HasTag(TAG_SHIPYARD);
+    };
+    const bool has_shipyard = range_any_of(objects.findRaw<const Building>(planet->BuildingIDs()),
+                                           not_destroyed_is_shipyard_tag);
 
     // wrap with formatting tags
     std::string wrapped_planet_name;
     wrapped_planet_name.reserve(planet->Name().length() + 32);  // extra space for wrappings 3*3 + 3*4 + 2 + 1 = 24 + 8 for number
     wrapped_planet_name = planet->Name();
-    if (homeworld)
+    if (is_homeworld)
         wrapped_planet_name = "<i>" + wrapped_planet_name + "</i>";
     if (has_shipyard)
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
@@ -2224,10 +2228,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-        [this]() {
-            ScriptingContext context;
-            Refresh(context);
-        }, boost::signals2::at_front);
+        [this]() { ScriptingContext context; Refresh(context); }, // own new local context, not from containing scope context, since this is a callback that could be invoked later
+        boost::signals2::at_front);
 }
 
 void SidePanel::PlanetPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
