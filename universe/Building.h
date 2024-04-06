@@ -10,8 +10,10 @@
 /** A Building UniverseObject type. */
 class FO_COMMON_API Building final : public UniverseObject {
 public:
-    [[nodiscard]] TagVecs     Tags(const ScriptingContext&) const override;
-    [[nodiscard]] bool        HasTag(std::string_view name, const ScriptingContext&) const override;
+    [[nodiscard]] TagVecs     Tags() const;
+    [[nodiscard]] TagVecs     Tags(const ScriptingContext&) const override { return Tags(); }
+    [[nodiscard]] bool        HasTag(std::string_view name) const;
+    [[nodiscard]] bool        HasTag(std::string_view name, const ScriptingContext&) const override { return HasTag(name); }
 
     [[nodiscard]] bool        HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;

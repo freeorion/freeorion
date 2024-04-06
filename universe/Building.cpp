@@ -76,13 +76,12 @@ bool Building::HostileToEmpire(int empire_id, const EmpireManager& empires) cons
         empires.GetDiplomaticStatus(Owner(), empire_id) == DiplomaticStatus::DIPLO_WAR;
 }
 
-UniverseObject::TagVecs Building::Tags(const ScriptingContext&) const {
-    if (const BuildingType* type = ::GetBuildingType(m_building_type))
-        return TagVecs{type->Tags()};
-    return {};
+UniverseObject::TagVecs Building::Tags() const {
+    const BuildingType* type = ::GetBuildingType(m_building_type);
+    return type ? TagVecs{type->Tags()} : TagVecs{};
 }
 
-bool Building::HasTag(std::string_view name, const ScriptingContext&) const {
+bool Building::HasTag(std::string_view name) const {
     const BuildingType* type = GetBuildingType(m_building_type);
     return type && type->HasTag(name);
 }
