@@ -5645,7 +5645,7 @@ ORDER_RESEARCH_RESUME
 Reprendre %1%
 
 ORDER_RESEARCH_ENQUEUE_AT
-Recherche %1% à l'indice %2%
+Rechercher %1% à l'index %2%
 
 ORDER_PRODUCTION  # translated
 Production
@@ -6086,6 +6086,11 @@ Les forces [[NEUTRAL]]s ne peuvent pas initialement détecter :
 # %3 link to the empire that owns the defending unit.
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK
 %2% détecte %1% durant l'attaque.
+
+# %1 link to the launching unit
+# %2 link to the empire that detects the launcher
+ENC_COMBAT_STEALTH_DECLOAK_LAUNCH
+%2% détecte %1% durant le lancement des chasseurs.
 
 # %1% unused
 # %2% name of empire detecting decloacking ship
@@ -7919,7 +7924,7 @@ SITREP_PLANET_ANNEXED_LABEL
 Planète neutre annexée
 
 SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE
-La planète %planet% a été annexée par %empire% (appartenait à %empire%).
+La planète %planet% a été annexée par %empire:annexer% (appartenait à %empire:original%).
 
 SITREP_PLANET_ANNEXED_FROM_OTHER_EMPIRE_LABEL
 Planète d'un empire annexée
@@ -12475,7 +12480,8 @@ Recrutement de Troupes
 
 PLC_MARINE_RECRUITMENT_DESC
 '''• Diminue de 50% le coût des équipements d'Infanterie pour astronefs.
-• Augmente le taux de régénération de l'Infanterie planétaire de [[value PLC_MARINE_RECRUITMENT_TROOP_GROWTH_FLAT]].'''
+• Augmente le taux de régénération de l'Infanterie planétaire de [[value PLC_MARINE_RECRUITMENT_TROOP_GROWTH_FLAT]].
+• Supprime la pénalité de l'Infanterie sur les avant-postes.'''
 
 PLC_MARINE_RECRUITMENT_SHORT_DESC
 Diminue le coût de l'Infanterie
@@ -12536,8 +12542,8 @@ Environnementalisme
 
 PLC_ENVIRONMENTALISM_DESC
 '''• Diminue l'[[metertype METER_CONSTRUCTION]] de [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_TERRAFORMED_FLAT]], la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_FLAT]] et la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_FLAT]] sur les planètes ayant été terraformées, ou dont l'environnement d'origine a été modifié.
-• Diminue la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT]] et l'[[metertype METER_CONSTRUCTION]] de [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_FLAT]] sur les planètes non-astéroïdales.
-• Améliore la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT]], la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT]], la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT]] et la [[metertype METER_STEALTH]] de [[value PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT]] sur les planètes qui ne sont pas des Astéroïdes ou Géantes Gazeuses, n'ayant pas été terraformées, n'abritant aucune structure, et n'étant pas en Focus Industrie.
+• Diminue la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_ENVIRONMENTALISM_TARGET_INDUSTRY_FLAT]] et l'[[metertype METER_CONSTRUCTION]] de [[value PLC_ENVIRONMENTALISM_TARGET_CONSTRUCTION_FLAT]] sur les planètes habitées.
+• Améliore la [[metertype METER_TARGET_HAPPINESS]] de [[value PLC_ENVIRONMENTALISM_TARGET_HAPPINESS_ORIGINAL_FLAT]], la [[metertype METER_TARGET_INFLUENCE]] de [[value PLC_ENVIRONMENTALISM_TARGET_INFLUENCE_ORIGINAL_FLAT]], la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_ENVIRONMENTALISM_TARGET_RESEARCH_ORIGINAL_FLAT]] et la [[metertype METER_STEALTH]] de [[value PLC_ENVIRONMENTALISM_STEALTH_ORIGINAL_FLAT]] sur les planètes n'ayant pas été terraformées, n'abritant aucune structure, et n'étant pas en Focus Industrie.
 • Rend la Terraformation d'une planète 3x plus coûteuse.'''
 
 PLC_ENVIRONMENTALISM_SHORT_DESC
@@ -12582,14 +12588,14 @@ PLC_CHECKPOINTS
 Postes-Frontières
 
 PLC_CHECKPOINTS_DESC
-'''Diminue la [[metertype METER_STEALTH]] des planètes et astronefs étrangers se trouvant dans la zone d'[[metertype METER_SUPPLY]] d'au plus [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]]. Les planètes et astronefs n'appartenant pas ou n'étant pas alliés à l'empire sont considérés comme étrangers. Les planètes non-colonisées et les monstres sont également des entités étrangères.
+'''Diminue la [[metertype METER_STEALTH]] des astronefs étrangers se trouvant dans la zone d'[[metertype METER_SUPPLY]] d'au plus [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
 La diminution dépend de la durée d'adoption de cette Politique, diminuant la [[metertype METER_STEALTH]] de 1 par tour, jusqu'à un maximum de [[value PLC_CHECKPOINTS_MAX_STEALTH_MALUS]].
 
-Réduit la génération d'[[metertype METER_INFLUENCE]] ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]).'''
+Diminue la [[metertype METER_TARGET_INFLUENCE]] de ([[value PLC_CHECKPOINTS_TARGET_INFLUENCE_FLAT]]) sur les planètes habitées appartenant à l'empire.'''
 
 PLC_CHECKPOINTS_SHORT_DESC
-Améliore la Détection / Entrave l'Approvisionnement
+Améliore la Détection / Coûte de l'Influence
 
 PLC_DIVERSITY
 Diversité
@@ -12907,9 +12913,8 @@ PLC_AUGMENTATION  # translated
 Augmentation
 
 PLC_AUGMENTATION_DESC
-'''• Augmente la [[metertype METER_TARGET_POPULATION]] des planètes [[PE_HOSTILE]]s selon leur taille: ([[SZ_TINY]] +2) ([[SZ_SMALL]] +4) ([[SZ_MEDIUM]] +6) ([[SZ_LARGE]] +8) ([[SZ_HUGE]] +10).
+'''• Définit le minimum de [[metertype METER_TARGET_POPULATION]] de toutes les planètes habitables selon leur taille: ([[SZ_TINY]] = 1) ([[SZ_SMALL]] = 2) ([[SZ_MEDIUM]] = 3) ([[SZ_LARGE]] = 4) ([[SZ_HUGE]] = 5).
 • Augmente l'[[metertype METER_TROOPS]] max sur toutes les planètes de [[value CYBORG_MAX_TROOPS_PERPOP]] par [[metertype METER_POPULATION]].
-• Augmente ou diminue le taux de croissance de la Population, selon que l'[[metertype METER_CONSTRUCTION]] de la planète est supérieure ou inférieure à [[value AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT]].
 
 La cyborgification engendre la fusion hautement polyvalente d'organismes vivants, de corps inorganiques et de machines, capable de s'adapter rapidement aux circonstances changeantes. La génération spontanée d'organes spécialisés, de mécanismes, et d'une adaptabilité environnementale, permet aux cyborgs d'évoluer et de prospérer dans quasiment tous les types d'environnement.'''
 
@@ -12920,9 +12925,9 @@ PLC_ISOLATION  # translated
 Isolation
 
 PLC_ISOLATION_DESC
-'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] des colonies situées à plus de [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu d'une autre planète habitée.
-• Diminue la [[metertype METER_TARGET_HAPPINESS]] des colonies situées à moins de [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu d'une autre planète habitée.
-• Augmente la [[metertype METER_STEALTH]] des colonies de [[value PLC_ISOLATION_STEALTH]].'''
+'''• Augmente la [[metertype METER_TARGET_HAPPINESS]] des colonies d'au plus [[value PLC_ISOLATION_MAX_STABILITY_MODIFIER]] si elles sont situées à plus de [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu d'une autre planète habitée.
+• Diminue la [[metertype METER_TARGET_HAPPINESS]] des colonies d'au plus [[value PLC_ISOLATION_MAX_STABILITY_MODIFIER]] si elles sont situées à moins de [[value PLC_ISOLATION_THRESHOLD_DISTANCE]] uu d'une autre planète habitée.
+• Augmente la [[metertype METER_STEALTH]] des colonies et avant-postes de [[value PLC_ISOLATION_STEALTH]].'''
 
 PLC_ISOLATION_SHORT_DESC
 Améliore les planètes isolées
