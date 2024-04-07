@@ -168,10 +168,6 @@ namespace {
 //////////////////////////////////////////
 ///////// BoutBeginEvent//////////////////
 //////////////////////////////////////////
-BoutBeginEvent::BoutBeginEvent(int bout_) :
-    bout(bout_)
-{}
-
 std::string BoutBeginEvent::DebugString(const ScriptingContext&) const
 { return std::string{"Bout "}.append(std::to_string(bout)).append(" begins."); }
 
@@ -182,13 +178,6 @@ std::string BoutBeginEvent::CombatLogDescription(int viewing_empire_id, const Sc
 //////////////////////////////////////////
 ///////// BoutEvent /////////////
 //////////////////////////////////////////
-BoutEvent::BoutEvent(int _bout):
-    bout(_bout)
-{}
-
-void BoutEvent::AddEvent(CombatEventPtr event)
-{ events.push_back(std::move(event)); }
-
 std::string BoutEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "Bout " << bout << " has " << events.size() << " events";
@@ -208,16 +197,8 @@ std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int viewing_empire_id) con
 void SimultaneousEvents::AddEvent(CombatEventPtr event)
 { events.push_back(std::move(event)); }
 
-// The following two function definitions were moved to the header because the linker refuses to find them otherwise...
-
-//std::string SimultaneousEvents::DebugString(const ScriptingContext&) const {
-//    std::stringstream ss;
-//    ss << "SimultaneousEvents has " << events.size() << " events";
-//    return ss.str();
-//}
-
-//std::string SimultaneousEvents::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const
-//{ return ""; }
+std::string SimultaneousEvents::DebugString(const ScriptingContext&) const
+{ return "SimultaneousEvents has " + std::to_string(events.size()) + " events"; }
 
 std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
     // Sort the events by viewing empire, then ALL_EMPIRES, and then other empires.
@@ -243,10 +224,6 @@ std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empir
 //////////////////////////////////////////
 ///////// InitialStealthEvent /////////////
 //////////////////////////////////////////
-InitialStealthEvent::InitialStealthEvent(const EmpireToObjectVisibilityMap& x) :
-    empire_to_object_visibility(x)
-{}
-
 std::string InitialStealthEvent::DebugString(const ScriptingContext& context) const {
     auto get_obj_id_owner = [&context](const auto id) -> std::pair<int, int> {
         const auto* obj = context.ContextObjects().getRaw(id);
@@ -316,10 +293,6 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id, con
 //////////////////////////////////////////
 ///////// StealthChangeEvent /////////////
 //////////////////////////////////////////
-StealthChangeEvent::StealthChangeEvent(int bout_) :
-    bout(bout_)
-{}
-
 std::string StealthChangeEvent::StealthChangeEventDetail::DebugString(const ScriptingContext& context) const {
     std::stringstream ss;
     ss << "StealthChangeDetailEvent"
@@ -414,9 +387,6 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id, cons
     return desc;
 }
 
-bool StealthChangeEvent::AreSubEventsEmpty(int viewing_empire_id) const
-{ return events.empty(); }
-
 std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empire_id) const {
     std::vector<ConstCombatEventPtr> all_events;
     all_events.reserve(events.size());  // underestimate probably
@@ -430,19 +400,6 @@ std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empir
 //////////////////////////////////////////
 ///////// Attack Event////////////////////
 //////////////////////////////////////////
-WeaponFireEvent::WeaponFireEvent(
-    int bout_, int round_, int attacker_id_, int target_id_, std::string weapon_name_,
-    const std::tuple<float, float, float>& power_shield_damage,
-    int attacker_owner_id_, int target_owner_id_) :
-    bout(bout_),
-    round(round_),
-    attacker_id(attacker_id_),
-    target_id(target_id_),
-    weapon_name(std::move(weapon_name_)),
-    attacker_owner_id(attacker_owner_id_),
-    target_owner_id(target_owner_id_)
-{ std::tie(power, shield, damage) = power_shield_damage; }
-
 std::string WeaponFireEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
@@ -482,32 +439,15 @@ std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
                    % damage);
 }
 
-boost::optional<int> WeaponFireEvent::PrincipalFaction(int viewing_empire_id) const
-{ return attacker_id; }
-
 
 //////////////////////////////////////////
 ///////// IncapacitationEvent/////////////
 //////////////////////////////////////////
-
-IncapacitationEvent::IncapacitationEvent() :
-    bout(-1),
-    object_id(INVALID_OBJECT_ID),
-    object_owner_id(ALL_EMPIRES)
-{}
-
-IncapacitationEvent::IncapacitationEvent(int bout_, int object_id_, int object_owner_id_) :
-    bout(bout_),
-    object_id(object_id_),
-    object_owner_id(object_owner_id_)
-{}
-
 std::string IncapacitationEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "incapacitation of " << object_id << " owned by " << object_owner_id << " at bout " << bout;
     return ss.str();
 }
-
 
 std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
     auto object = context.ContextObjects().get(object_id);
@@ -547,10 +487,6 @@ boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id
 //////////////////////////////////////////
 ///////// FightersAttackFightersEvent ////
 //////////////////////////////////////////
-FightersAttackFightersEvent::FightersAttackFightersEvent(int bout_) :
-    bout(bout_)
-{}
-
 void FightersAttackFightersEvent::AddEvent(int attacker_empire_, int target_empire_)
 { events[{attacker_empire_, target_empire_}] += 1; }
 
@@ -618,15 +554,6 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
 //////////////////////////////////////////
 /////////// FighterLaunchEvent ///////////
 //////////////////////////////////////////
-FighterLaunchEvent::FighterLaunchEvent(int bout_, int launched_from_id_,
-                                       int fighter_owner_empire_id_,
-                                       int number_launched_) :
-    bout(bout_),
-    fighter_owner_empire_id(fighter_owner_empire_id_),
-    launched_from_id(launched_from_id_),
-    number_launched(number_launched_)
-{}
-
 std::string FighterLaunchEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "launch from object " << launched_from_id
@@ -662,10 +589,6 @@ boost::optional<int> FighterLaunchEvent::PrincipalFaction(int viewing_empire_id)
 //////////////////////////////////////////
 ///////// FightersDestroyedEvent ////
 //////////////////////////////////////////
-FightersDestroyedEvent::FightersDestroyedEvent(int bout_) :
-    bout(bout_)
-{}
-
 void FightersDestroyedEvent::AddEvent(int target_empire_)
 { events[target_empire_] += 1; }
 
@@ -733,12 +656,6 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
 //////////////////////////////////////////
 ///////// WeaponsPlatformEvent /////////////
 //////////////////////////////////////////
-WeaponsPlatformEvent::WeaponsPlatformEvent(int bout_, int attacker_id_, int attacker_owner_id_) :
-    bout(bout_),
-    attacker_id(attacker_id_),
-    attacker_owner_id(attacker_owner_id_)
-{}
-
 void WeaponsPlatformEvent::AddEvent(int round_, int target_id_, int target_owner_id_,
                                     const std::string& weapon_name_, float power_,
                                     float shield_, float damage_)
@@ -809,9 +726,6 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
     }
     return desc;
 }
-
-bool WeaponsPlatformEvent::AreSubEventsEmpty(int viewing_empire_id) const
-{ return events.empty(); }
 
 std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_empire_id) const {
     std::vector<ConstCombatEventPtr> all_events;
