@@ -3,7 +3,7 @@ Policy
     description = "PLC_CENTRALIZATION_DESC"
     short_description = "PLC_CENTRALIZATION_SHORT_DESC"
     category = "ECONOMIC_CATEGORY"
-    adoptioncost = floor(2.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
+    adoptioncost = floor(3.0 * [[POPULATION_OWNED_BY_EMPIRE]]^0.5)
     exclusions = [ "PLC_COLONIZATION" "PLC_CONFEDERATION" "PLC_FEUDALISM" "PLC_ISOLATION" ]
     unlock = [
         Item type = Policy name = "PLC_METROPOLES"
@@ -20,16 +20,20 @@ Policy
             scope = And [
                 Capital
                 OwnedBy empire = Source.Owner
-                Happiness low = (NamedReal name = "PLC_CENTRALIZATION_MIN_STABILITY" value = 20)
+                Happiness low = (NamedReal name = "PLC_CENTRALIZATION_MIN_STABILITY" value = 16)
             ]
             priority = [[TARGET_AFTER_SCALING_PRIORITY]]
             effects = [
-                SetTargetIndustry value = Value + Target.Population
+                SetTargetIndustry value = Value +
+                    (min(Target.Happiness, (NamedReal name = "PLC_CENTRALIZATION_MAX_STABILITY" value = 36)) - NamedRealLookup name = "PLC_CENTRALIZATION_MIN_STABILITY")
+                    * Target.Population
                     * (NamedReal name = "PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP"
-                                 value = 0.5 * [[INDUSTRY_PER_POP]])
-                SetTargetResearch value = Value + Target.Population
+                                 value = 0.05 * [[INDUSTRY_PER_POP]])
+                SetTargetResearch value = Value +
+                    (min(Target.Happiness, (NamedRealLookup name = "PLC_CENTRALIZATION_MAX_STABILITY")) - NamedRealLookup name = "PLC_CENTRALIZATION_MIN_STABILITY")
+                    * Target.Population
                     * (NamedReal name = "PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP"
-                                 value = 0.3 * [[RESEARCH_PER_POP]])
+                                 value = 0.05 * [[RESEARCH_PER_POP]])
                 SetTargetConstruction value = Value
                     + (NamedReal name = "PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT" value = 10)
             ]
@@ -40,12 +44,18 @@ Policy
                 Capital
                 OwnedBy empire = Source.Owner
             ]
-            effects = [
-                SetMaxSupply value = Value
-                    + (NamedReal name = "PLC_CENTRALIZATION_MAX_SUPPLY_FLAT" value = -2)
-                SetMaxStockpile value = Value
-                    + (NamedReal name = "PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT" value = -2)
+            effects = SetMaxStockpile value = Value
+                + (NamedReal name = "PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT" value = -2)
+
+        // supply penalty to all colonies
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Population low = 0.001
             ]
+            effects = SetMaxSupply value = Value
+                + (NamedReal name = "PLC_CENTRALIZATION_MAX_SUPPLY_FLAT" value = -1)
 
         // penalty to populated planets that are not supply-connected to the empire capital
         EffectsGroup
@@ -61,7 +71,7 @@ Policy
             ]
             priority = [[TARGET_LATE_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value
-                        + (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_FLAT" value = -4)
+                        + (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_FLAT" value = -2)
 
         // penalty to planets that are supply connected to the capital
         EffectsGroup
@@ -78,7 +88,7 @@ Policy
             ]
             priority = [[TARGET_LATE_AFTER_2ND_SCALING_PRIORITY]]
             effects = SetTargetInfluence value = Value + max(
-                        (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX" value = -4),
+                        (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX" value = -2),
                         (NamedReal name = "PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP" value = -0.5)
                             * JumpsBetween object = Source.ID object = Target.ID)
     ]

@@ -12410,12 +12410,12 @@ Centralization
 
 PLC_CENTRALIZATION_DESC
 '''Boosts production output at the capital, regardless of the focus:
-• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]].
-• Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] per population.
+• Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]], multiplied by how much stability is above [[value PLC_CENTRALIZATION_MIN_STABILITY]], up to a maximum at [[value PLC_CENTRALIZATION_MAX_STABILITY]] stability.
+• Increases [[metertype METER_TARGET_INDUSTRY]] by [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] per [[metertype METER_POPULATION]], multiplied by how much stability is above [[value PLC_CENTRALIZATION_MIN_STABILITY]], up to a maximum at [[value PLC_CENTRALIZATION_MAX_STABILITY]] stability.
 • Increases [[metertype METER_TARGET_CONSTRUCTION]] by [[value PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT]].
 The effect requires a stability of [[value PLC_CENTRALIZATION_MIN_STABILITY]].
 
-However, it also reduces [[metertype METER_SUPPLY]] range ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) and [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), and increases the [[metertype METER_INFLUENCE]] cost of the empire's colonies:
+However, it also reduces [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), [[metertype METER_SUPPLY]] range ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) on all colonies, and increases the [[metertype METER_INFLUENCE]] cost of the empire's colonies:
 • [[metertype METER_SUPPLY]] connected colonies get a penalization of [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] per jump distance to the capital, capped at [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Colonies not [[metertype METER_SUPPLY]] connected to the capital gets the maximum penalization ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
 Additionally, the cost of colonization ship parts is increased by 33%.
