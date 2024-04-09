@@ -2,6 +2,7 @@
 #define _Diplomacy_h_
 
 #include <compare>
+#include <cstdint>
 #include <string>
 #include <boost/serialization/access.hpp>
 #include "../util/Enum.h"
