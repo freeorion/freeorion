@@ -1,6 +1,7 @@
 #ifndef _Diplomacy_h_
 #define _Diplomacy_h_
 
+#include <cstdint>
 #include <string>
 #include <boost/serialization/access.hpp>
 #include "../util/Enum.h"
