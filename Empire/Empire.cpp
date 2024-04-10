@@ -1068,9 +1068,9 @@ void Empire::UpdateSystemSupplyRanges(const std::span<const int> known_objects, 
             continue;   // TODO: consider future special case if current object is itself a system
 
         // check if object has a supply meter
-        if (obj->GetMeter(MeterType::METER_SUPPLY)) {
+        if (const auto m = obj->GetMeter(MeterType::METER_SUPPLY)) {
             // get resource supply range for next turn for this object
-            float supply_range = obj->GetMeter(MeterType::METER_SUPPLY)->Initial();
+            const float supply_range = m->Initial();
 
             // if this object can provide more supply range than the best previously checked object in this system, record its range as the new best for the system
             auto system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
