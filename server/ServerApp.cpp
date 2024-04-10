@@ -1935,19 +1935,29 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 #endif
     };
 
-    // destroy owned ships
-    for (auto* obj : m_universe.Objects().findRaw<Ship>(is_owned)) {
+    const bool destroy_ships = GetGameRules().Get<bool>("RULE_CONCEDE_DESTROY_SHIPS");
+    const bool destroy_buildings = GetGameRules().Get<bool>("RULE_CONCEDE_DESTROY_BUILDINGS");
+    const bool depop_planets = GetGameRules().Get<bool>("RULE_CONCEDE_DESTROY_COLONIES");
+
+    for (auto* obj : m_universe.Objects().findRaw<Ship>(is_owned))
         obj->SetOwner(ALL_EMPIRES);
-        recurse_des(obj->ID());
+    for (auto* obj : m_universe.Objects().findRaw<Fleet>(is_owned)) {
+        obj->SetOwner(ALL_EMPIRES);
+        if (destroy_ships)
+            recurse_des(obj->ID());
     }
-    // destroy owned buildings
+
     for (auto* obj : m_universe.Objects().findRaw<Building>(is_owned)) {
         obj->SetOwner(ALL_EMPIRES);
-        recurse_des(obj->ID());
+        if (destroy_buildings)
+            recurse_des(obj->ID());
     }
-    // unclaim owned planets
-    for (auto* planet : planets)
-        planet->Reset(m_universe.Objects());
+
+    for (auto* planet : planets) {
+        planet->SetOwner(ALL_EMPIRES);
+        if (depop_planets)
+            planet->Reset(m_universe.Objects());
+    }
 
     // Don't wait for turn
     RemoveEmpireTurn(empire_id);
