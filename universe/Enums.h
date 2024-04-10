@@ -2,6 +2,7 @@
 #define _Enums_h_
 
 
+#include <cstdint>
 #include <iostream>
 #include <map>
 #include <string>
