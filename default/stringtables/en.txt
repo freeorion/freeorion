@@ -11332,6 +11332,18 @@ ID
 DESC_VAR_AGE
 age in turns
 
+DESC_VAR_TURNSSINCEFOCUSCHANGE
+turns since focus change
+
+DESC_VAR_TURNSSINCEANNEXATION
+turns since annexation
+
+DESC_VAR_TURNSSINCECOLONIZATION
+turns since colonization
+
+DESC_VAR_TURNSSINCELASTCONQUERED
+turns since being conquered
+
 DESC_VAR_PRODUCEDBYEMPIREID
 producer empire
 
@@ -11358,6 +11370,15 @@ next system id
 
 DESC_VAR_PREVIOUSSYSTEMID
 previous system id
+
+DESC_VAR_PREVIOUSTOFINALDESTINATIONID
+previous final destination id
+
+DESC_VAR_ARRIVALSTARLANEID
+arrival starlane id
+
+DESC_VAR_LASTTURNMOVEORDERED
+last turn ordered to move id
 
 DESC_VAR_NUMSHIPS
 number of ships
@@ -11400,6 +11421,30 @@ owner's top priority enqueued tech
 
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
+
+DESC_VAR_LASTTURNATTACKEDBYSHIP
+last turn attacked by ship
+
+DESC_VAR_LASTTURNCOLONIZED
+last turn colonized
+
+DESC_VAR_LASTTURNCONQUERED
+last turn conquered
+
+DESC_VAR_LASTTURNANNEXED
+last turn annexed
+
+DESC_VAR_ORDEREDGIVENTOEMPIRE
+ordered given to empire
+
+DESC_VAR_OWNERBEFORELASTCONQUERED
+owner before last conquered
+
+DESC_VAR_LASTINVADEDBYEMPIRE
+last invaded by empire
+
+DESC_VAR_LASTCOLONIZEDBYEMPIRE
+last colonized by empire
 
 DESC_VAR_JUMPSBETWEEN
 starlane jumps between systems containing objects with ids %1% and %2%
