@@ -332,26 +332,24 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const ScriptingContext& contex
 
 namespace {
     constexpr PlanetType RingNextPlanetType(PlanetType current_type) noexcept {
-        using enum PlanetType;
         switch (current_type) {
-        case INVALID_PLANET_TYPE:
-        case PT_ASTEROIDS:
-        case PT_GASGIANT:
-        case NUM_PLANET_TYPES:
+        case PlanetType::INVALID_PLANET_TYPE:
+        case PlanetType::PT_ASTEROIDS:
+        case PlanetType::PT_GASGIANT:
+        case PlanetType::NUM_PLANET_TYPES:
             return current_type; break;
-        case PT_OCEAN: return PT_SWAMP; break;
+        case PlanetType::PT_OCEAN: return PlanetType::PT_SWAMP; break;
         default: return PlanetType(int(current_type)+1);
         }
     }
     constexpr PlanetType RingPreviousPlanetType(PlanetType current_type) noexcept {
-        using enum PlanetType;
         switch (current_type) {
-        case INVALID_PLANET_TYPE:
-        case PT_ASTEROIDS:
-        case PT_GASGIANT:
-        case NUM_PLANET_TYPES:
+        case PlanetType::INVALID_PLANET_TYPE:
+        case PlanetType::PT_ASTEROIDS:
+        case PlanetType::PT_GASGIANT:
+        case PlanetType::NUM_PLANET_TYPES:
             return current_type; break;
-        case PT_SWAMP: return PT_OCEAN; break;
+        case PlanetType::PT_SWAMP: return PlanetType::PT_OCEAN; break;
         default: return PlanetType(int(current_type)-1);
         }
     }
@@ -365,22 +363,21 @@ namespace {
     static_assert(RingPreviousPlanetType(PlanetType::PT_OCEAN) == PlanetType::PT_TERRAN);
 
     constexpr PlanetType NextCloserTo(PlanetType from, PlanetType towards) noexcept {
-        using enum PlanetType;
         switch (from) {
-        case INVALID_PLANET_TYPE:
-        case PT_ASTEROIDS:
-        case PT_GASGIANT:
-        case NUM_PLANET_TYPES:
+        case PlanetType::INVALID_PLANET_TYPE:
+        case PlanetType::PT_ASTEROIDS:
+        case PlanetType::PT_GASGIANT:
+        case PlanetType::NUM_PLANET_TYPES:
             return from;
             break;
         default:
             break;
         }
         switch (towards) {
-        case INVALID_PLANET_TYPE:
-        case PT_ASTEROIDS:
-        case PT_GASGIANT:
-        case NUM_PLANET_TYPES:
+        case PlanetType::INVALID_PLANET_TYPE:
+        case PlanetType::PT_ASTEROIDS:
+        case PlanetType::PT_GASGIANT:
+        case PlanetType::NUM_PLANET_TYPES:
             return from;
             break;
         default:
