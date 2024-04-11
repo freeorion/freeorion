@@ -9,7 +9,6 @@
 
 #include <iterator>
 #include <numeric>
-#include <boost/cast.hpp>
 #include <GG/DeferredLayout.h>
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
@@ -671,16 +670,14 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
     }
 
     // remove dragged-away row from this ListBox
-    for (auto& wnd : wnds) {
-        auto row = boost::polymorphic_downcast<Row*>(wnd);
-        iterator row_it = std::find_if(m_rows.begin(), m_rows.end(),
-                                       [&row](const std::shared_ptr<Row>& x){ return x.get() == row; });
-
-
-        if (row_it == m_rows.end())
+    for (const Wnd* wnd : wnds) {
+        auto row = dynamic_cast<const Row*>(wnd);
+        if (!row)
             continue;
-
-        Erase(row_it, false, true);
+        auto row_it = std::find_if(m_rows.begin(), m_rows.end(),
+                                   [row](const std::shared_ptr<Row>& x) noexcept { return x.get() == row; });
+        if (row_it != m_rows.end())
+            Erase(row_it, false, true);
     }
 
     if (!(m_style & LIST_NOSEL) && !initially_selected_rows.empty()) {
