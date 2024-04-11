@@ -140,22 +140,21 @@ public:
         void         Render() override {}
 
         void         push_back(std::shared_ptr<Control> c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
-        void         clear(); ///< removes and deletes all cells in this Row
+        void         clear();               ///< removes and deletes all cells in this Row
         void         resize(std::size_t n); ///< resizes the Row to have \a n cells
 
         void         SetCell(std::size_t n, const std::shared_ptr<Control>& c); ///< sets the Control in the \a nth cell of this Row, deleting any preexisting Control; not range checked
-        Control*     RemoveCell(std::size_t n); ///< returns a pointer to the Control in the \a nth cell of this Row, and sets the contents of the cell to 0; not range checked
-        void         SetRowAlignment(Alignment align); ///< sets the vertical alignment of this Row
-        void         SetColAlignment(std::size_t n, Alignment align); ///< sets the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
-        void         SetColWidth(std::size_t n, X width); ///< sets the width of the \a nth cell of this Row; not range checked
-        void         SetColAlignments(const std::vector<Alignment>& aligns); ///< sets the horizontal alignment of all the Controls in this Row; not range checked
-        void         ClearColAlignments(); ///< Clear the horizontal alignments of the cells in this Row
-        void         SetColWidths(const std::vector<X>& widths); ///< sets all the widths of the cells of this Row; not range checked
-        void         ClearColWidths(); ///< Clear the minimum widths of the cells of this Row.
-        void         SetColStretches(const std::vector<double>& stretches); ///< Set all column stretches.
-        void         SetMargin(unsigned int margin); ///< sets the amount of space left between the contents of adjacent cells, in pixels
-        /** Set normalized.  Used by ListBox to track normalization.*/
-        void         SetNormalized(bool normalized);
+        Control*     RemoveCell(std::size_t n);                                 ///< Control in the \a nth cell of this Row, and sets the contents of the cell to 0; not range checked
+        void         SetRowAlignment(Alignment align);                          ///< sets the vertical alignment of this Row
+        void         SetColAlignment(std::size_t n, Alignment align);           ///< sets the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
+        void         SetColWidth(std::size_t n, X width);                       ///< sets the width of the \a nth cell of this Row; not range checked
+        void         SetColAlignments(const std::vector<Alignment>& aligns);    ///< sets the horizontal alignment of all the Controls in this Row; not range checked
+        void         ClearColAlignments();                                      ///< clears the horizontal alignments of the cells in this Row
+        void         SetColWidths(const std::vector<X>& widths);                ///< sets all the widths of the cells of this Row; not range checked
+        void         ClearColWidths();                                          ///< clears the minimum widths of the cells of this Row.
+        void         SetColStretches(const std::vector<double>& stretches);     ///< sets all column stretches.
+        void         SetMargin(unsigned int margin);                            ///< sets the amount of space left between the contents of adjacent cells, in pixels
+        void         SetNormalized(bool normalized);                            ///< set normalized.  Used by ListBox to track normalization.
 
         boost::signals2::signal<void(Pt, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
@@ -164,12 +163,12 @@ public:
         void GrowWidthsStretchesAlignmentsTo(std::size_t nn);
         void RClick(Pt pt, GG::Flags<GG::ModKey> mod) override;
 
-        std::vector<std::shared_ptr<Control>>   m_cells;                    ///< the Controls in this Row (each may be null)
-        Alignment                               m_row_alignment;            ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
-        std::vector<Alignment>                  m_col_alignments;           ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
-        std::vector<X>                          m_col_widths;               ///< column widths
-        std::vector<double>                     m_col_stretches;            ///< the stretch factor of each column
-        unsigned int                            m_margin = DEFAULT_MARGIN;  ///< the amount of space left between the contents of adjacent cells, in pixels
+        std::vector<std::shared_ptr<Control>>   m_cells;            ///< the Controls in this Row (each may be null)
+        std::vector<Alignment>                  m_col_alignments;   ///< column alignments; each is one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
+        std::vector<X>                          m_col_widths;       ///< column widths
+        std::vector<double>                     m_col_stretches;    ///< the stretch factor of each column
+        unsigned int                            m_margin = DEFAULT_MARGIN;      ///< the amount of space left between the contents of adjacent cells, in pixels
+        Alignment                               m_row_alignment = ALIGN_VCENTER;///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
         bool                                    m_ignore_adjust_layout = false;
         bool                                    m_is_normalized = false;
     };
