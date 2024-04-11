@@ -433,13 +433,24 @@ void FileDlg::CancelClicked()
 void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
 {
     std::string all_files;
+    all_files.reserve(files.size() * 50); // guesstimate
     bool dir_selected = false;
     for (const auto& file : files) {
-        std::string filename = !(**file).empty() ? boost::polymorphic_downcast<TextControl*>((**file).at(0))->Text() : "";
-        if (filename[0] != '[') {
+        const auto filename = [&file{*file}]() -> std::string_view {
+            if (!file || file->empty())
+                return {};
+            const auto* tc = dynamic_cast<TextControl*>(file.get());
+            return tc ? std::string_view{tc->Text()} : std::string_view{};
+        }();
+
+        if (filename.empty()) {
+            continue;
+
+        } else if (filename[0] != '[') {
             if (!all_files.empty())
                 all_files += " ";
             all_files += filename;
+
         } else {
             if (m_select_directories) {
                 if (!all_files.empty())
