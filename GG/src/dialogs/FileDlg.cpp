@@ -158,13 +158,11 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_init_directory(directory),
     m_init_filename(filename)
 {
-    const auto& style = GetStyleFactory();
-
     if (m_save)
         multi = false;
 
     // finally, we can create the listbox with the files in it, sized to fill the available space
-    m_files_list = style->NewListBox(m_border_color);
+    m_files_list = GetStyleFactory()->NewListBox(m_border_color);
     m_files_list->SetStyle(LIST_NOSORT | (multi ? LIST_NONE : LIST_SINGLESEL));
 }
 
