@@ -19,7 +19,6 @@
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/cast.hpp>
 #include <boost/format.hpp>
 
 #include <memory>
@@ -874,10 +873,10 @@ void SaveFileDialog::Cancel() {
 }
 
 void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selections) {
-    if ( selections.size() == 1 ) {
-        auto& row = **selections.begin();
-        SaveFileRow* save_row = boost::polymorphic_downcast<SaveFileRow*> (row.get());
-        m_name_edit -> SetText ( save_row->Filename() );
+    if (selections.size() == 1) {
+        const auto* row = (*selections.begin())->get();
+        if (const auto* save_row = dynamic_cast<const SaveFileRow*>(row))
+            m_name_edit->SetText(save_row->Filename());
     } else {
         DebugLogger() << "SaveFileDialog::SelectionChanged: Unexpected selection size: " << selections.size();
     }
