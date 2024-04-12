@@ -772,16 +772,6 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
-PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = nullptr;
-
-PredefinedShipDesignManager::PredefinedShipDesignManager() {
-    if (s_instance)
-        throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
-
-    // Only update the global pointer on sucessful construction.
-    s_instance = this;
-}
-
 namespace {
     void AddDesignToUniverse(Universe& universe, std::unordered_map<std::string, int>& design_generic_ids,
                              const std::unique_ptr<ShipDesign>& design, bool monster)
@@ -1034,7 +1024,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
     // Verify that every design in saved_designs is in ordering.
     if (ordering.size() != saved_designs.size()) {
         // Add any missing designs in alphabetical order to the end of the list
-        std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>>
+        boost::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>>
             uuids_in_ordering{ordering.begin(), ordering.end()};
         std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
         for (auto& uuid_to_design_and_filename : saved_designs) {

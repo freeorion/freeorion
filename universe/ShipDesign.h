@@ -286,8 +286,6 @@ public:
     FO_COMMON_API void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
 private:
-    PredefinedShipDesignManager();
-
     /** Assigns any m_pending_designs. */
     void CheckPendingDesignsTypes() const;
 
@@ -306,8 +304,6 @@ private:
 
     mutable std::vector<boost::uuids::uuid> m_ship_ordering;
     mutable std::vector<boost::uuids::uuid> m_monster_ordering;
-
-    static PredefinedShipDesignManager* s_instance;
 };
 
 /** returns the singleton predefined ship design manager type manager */
@@ -320,8 +316,8 @@ private:
 [[nodiscard]] FO_COMMON_API std::tuple<
     bool,
     std::unordered_map<boost::uuids::uuid,
-        std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
-        boost::hash<boost::uuids::uuid>>,
+                       std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
+                       boost::hash<boost::uuids::uuid>>,
     std::vector<boost::uuids::uuid>>
 LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);
 
