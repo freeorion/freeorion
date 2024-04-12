@@ -71,7 +71,7 @@ public:
 
     /** Returns translations for common phrases used in the different
         dialoges provided by GiGi. */
-    virtual std::string Translate(const std::string& key) const;
+    virtual std::string Translate(const std::string& key) const { return key; }
 
     /** Returns a new GG Button. */
     virtual std::shared_ptr<Button> NewButton(
