@@ -1008,8 +1008,8 @@ void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptab
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (it->first->DragDropDataType() != POLICY_CONTROL_DROP_TYPE_STRING)
             continue;
-        const auto policy_control = boost::polymorphic_downcast<const PolicyControl* const>(it->first);
-        const Policy* policy = policy_control->GetPolicy();
+        const auto* policy_control = dynamic_cast<const PolicyControl*>(it->first);
+        const Policy* policy = policy_control ? policy_control->GetPolicy() : nullptr;
         if (policy &&
             policy->Category() == m_slot_category &&
             policy_control != m_policy_control.get() &&
@@ -1062,10 +1062,8 @@ void PolicySlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::W
         ErrorLogger() << "PolicySlotControl::AcceptDrops given multiple wnds unexpectedly...";
 
     const auto* wnd = wnds.front().get();
-    auto* control = boost::polymorphic_downcast<const PolicyControl*>(wnd);
-    const Policy* policy_type = control ? control->GetPolicy() : nullptr;
-
-    if (policy_type)
+    auto* control = dynamic_cast<const PolicyControl*>(wnd);
+    if (const Policy* policy_type = control ? control->GetPolicy() : nullptr)
         SlotContentsAlteredSignal(policy_type, mod_keys & GG::MOD_KEY_CTRL);
 }
 
