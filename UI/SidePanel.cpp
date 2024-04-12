@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <numeric>
-#include <boost/cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -3782,8 +3781,10 @@ void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {
         same way. Refresh should not update the list of systems if the list
         is open. */
     int system_id = INVALID_OBJECT_ID;
-    if (it != m_system_name->end())
-        system_id = boost::polymorphic_downcast<const SystemRow*>(it->get())->SystemID();
+    if (it != m_system_name->end()) {
+        if (const auto* sys_row = dynamic_cast<const SystemRow*>(it->get()))
+            system_id = sys_row->SystemID();
+    }
     if (SystemID() != system_id)
         SystemSelectedSignal(system_id);
 }
