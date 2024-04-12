@@ -210,26 +210,17 @@ namespace {
         }
 
         void SizeMove(GG::Pt ul, GG::Pt lr) override {
-            GG::Pt old_size(Size());
+            const GG::Pt old_size(Size());
             CUIDropDownList::SizeMove(ul, lr);
             if (old_size != Size())
                 SetColWidth(0, CUIDropDownList::DisplayedRowWidth());
         }
 
-        void SelectionChanged(GG::DropDownList::iterator it)
-        {
-            if (it == this->end())
-                return;
-
-            const auto& row = *it;
-            if (!row)
-                return;
-
-            const TypeRow* type_row = boost::polymorphic_downcast<const TypeRow*>(row.get());
-            if (!type_row)
-                return;
-
-            TypeChangedSignal(type_row->type);
+        void SelectionChanged(GG::DropDownList::iterator it) {
+            if (it != this->end())
+                if (const auto* row = it->get())
+                    if (const TypeRow* type_row = dynamic_cast<const TypeRow*>(row))
+                        TypeChangedSignal(type_row->type);
         }
 
         mutable boost::signals2::signal<void (Networking::ClientType)> TypeChangedSignal;
@@ -376,13 +367,13 @@ namespace {
             using boost::placeholders::_1;
 
             // human / AI / observer indicator / selector
-            auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(), m_player_data.client_type, m_initial_disabled);
+            auto type_drop = GG::Wnd::Create<TypeSelector>(GG::X(90), PlayerRowHeight(),
+                                                           m_player_data.client_type, m_initial_disabled);
             push_back(type_drop);
             if (m_initial_disabled)
                 type_drop->Disable();
             else
-                type_drop->TypeChangedSignal.connect(
-                    boost::bind(&LoadGamePlayerRow::PlayerTypeChanged, this, _1));
+                type_drop->TypeChangedSignal.connect(boost::bind(&LoadGamePlayerRow::PlayerTypeChanged, this, _1));
 
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(m_player_data.player_name));
@@ -392,9 +383,7 @@ namespace {
             m_empire_list->Resize(GG::Pt(EMPIRE_NAME_WIDTH, PlayerRowHeight()));
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             auto save_game_empire_it = m_save_game_empire_data.end();
-            for (auto it = m_save_game_empire_data.begin();
-                 it != m_save_game_empire_data.end(); ++it)
-            {
+            for (auto it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
                 // don't allow to select eliminated empire
                 if (it->second.eliminated)
                     continue;
@@ -468,29 +457,43 @@ namespace {
         }
         void EmpireChanged(GG::DropDownList::iterator selected_it) {
             if (selected_it == m_empire_list->end()) {
-                ErrorLogger() << "Empire changed to no empire.  Ignoring change.";
+                ErrorLogger() << "LoadGamePlayerRow: Empire changed to no empire.  Ignoring change.";
                 return;
             }
-            const std::string& empire_name = boost::polymorphic_downcast<GG::Label*>((*selected_it)->at(0))->Text();
-            for (const auto& sged : m_save_game_empire_data | range_values) {
-                if (sged.empire_name == empire_name) {
-                    m_player_data.empire_name = empire_name;
-                    m_player_data.empire_color = sged.color;
-                    m_player_data.save_game_empire_id = sged.empire_id;
-                    m_color_selector->SelectColor(m_player_data.empire_color);
+            const auto* row = selected_it->get();
+            if (!row || row->empty()) {
+                ErrorLogger() << "LoadGamePlayerRow: Empire changed to no empire.  Ignoring change.";
+                return;
+            }
+            const auto* label = dynamic_cast<const GG::Label*>(row->at(0));
+            if (!label) {
+                ErrorLogger() << "LoadGamePlayerRow: Empire changed to no empire.  Ignoring change.";
+                return;
+            }
 
-                    // set previous player name indication
-                    if (size() >= 5)
-                        boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(sged.player_name);
+            const std::string& empire_name = label->Text();
+            const auto has_empire_name = [&empire_name](const auto& sged) noexcept
+            { return sged.empire_name == empire_name; };
 
-                    DataChangedSignal();
-                    return;
-                }
+            auto sged_rng = m_save_game_empire_data | range_values;
+            auto sged_it = range_find_if(sged_rng, has_empire_name);
+            if (sged_it != sged_rng.end()) {
+                const auto& sged{*sged_it};
+                m_player_data.empire_name = empire_name;
+                m_player_data.empire_color = sged.color;
+                m_player_data.save_game_empire_id = sged.empire_id;
+                m_color_selector->SelectColor(m_player_data.empire_color);
+
+                // set previous player name indication
+                if (size() >= 5)
+                    boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(sged.player_name);
+
+                DataChangedSignal();
             }
         }
 
-        std::shared_ptr<EmpireColorSelector>                     m_color_selector;
-        std::shared_ptr<GG::DropDownList>                        m_empire_list;
+        std::shared_ptr<EmpireColorSelector>     m_color_selector;
+        std::shared_ptr<GG::DropDownList>        m_empire_list;
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
         bool                                     m_initial_disabled;
         bool                                     m_in_game;
