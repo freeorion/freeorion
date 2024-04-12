@@ -705,7 +705,7 @@ void FileDlg::OpenDirectory()
         return;
     }
 
-    if (directory_sv == "..") {
+    else if (directory_sv == "..") {
         // move to parent directory of current directory
         if (s_working_dir.string() != s_working_dir.root_path().string() &&
             !s_working_dir.parent_path().string().empty())
@@ -725,40 +725,38 @@ void FileDlg::OpenDirectory()
         return;
     }
 
-    std::string const directory{directory_sv.substr(1, directory.size() - 2)}; // strip off '[' and ']'
+    else {
+        std::string const directory{directory_sv.substr(1, directory.size() - 2)}; // strip off '[' and ']'
 
-    // move to contained directory, which may be a drive selection...
-    if (!m_in_win32_drive_selection) {
-
+        // move to contained directory, which may be a drive selection...
+        if (!m_in_win32_drive_selection) {
 #if defined(_WIN32)
-        // convert UTF-8 file name to UTF-16
-        boost::filesystem::path::string_type directory_native;
-        utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
-        SetWorkingDirectory(s_working_dir / fs::path(directory_native));
+            // convert UTF-8 file name to UTF-16
+            boost::filesystem::path::string_type directory_native;
+            utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
+            SetWorkingDirectory(s_working_dir / fs::path(directory_native));
 #else
-        SetWorkingDirectory(s_working_dir / fs::path(directory));
+            SetWorkingDirectory(s_working_dir / fs::path(directory));
 #endif
-    } else {
-        m_in_win32_drive_selection = false;
-        try {
-            SetWorkingDirectory(fs::path(directory + "\\"));
-        } catch (const fs::filesystem_error& e) {
-            if (e.code() == boost::system::errc::io_error) {
+
+        } else {
+            m_in_win32_drive_selection = false;
+            try {
+                SetWorkingDirectory(fs::path(directory + "\\"));
+            } catch (const fs::filesystem_error& e) {
+                if (e.code() != boost::system::errc::io_error)
+                    throw;
+
                 m_in_win32_drive_selection = true;
                 m_files_edit->Clear();
                 FilesEditChanged(m_files_edit->Text());
                 m_curr_dir_text->SetText("");
                 DoLayout();
                 UpdateList();
-                auto dlg =
-                    GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
-                                                            style->Translate("Device is not ready."),
-                                                            m_font, m_color,
-                                                            m_border_color, m_color,
-                                                            m_text_color, 1);
+                auto dlg = GetStyleFactory()->NewThreeButtonDlg(
+                    X(175), Y(75), style->Translate("Device is not ready."),
+                    m_font, m_color, m_border_color, m_color, m_text_color, 1);
                 dlg->Run();
-            } else {
-                throw;
             }
         }
     }
