@@ -1003,44 +1003,43 @@ LoadShipDesignsAndManifestOrderFromParseResults(
         }
     }
 
+    static constexpr auto not_nil = [](const boost::uuids::uuid uuid) noexcept { return !uuid.is_nil(); };
+
     // Verify that all UUIDs in ordering exist
     std::vector<boost::uuids::uuid> ordering;
     ordering.reserve(disk_ordering.size());
     bool ship_manifest_inconsistent = false;
-    for (auto& uuid : disk_ordering) {
-        // Skip the nil UUID.
-        if (uuid.is_nil())
-            continue;
-
-        if (!saved_designs.contains(uuid)) {
-            WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
-                         << "a ship design that does not exist.";
+    for (const auto uuid : disk_ordering | range_filter(not_nil)) { // Skip the nil UUID.
+        if (saved_designs.contains(uuid)) {
+            ordering.push_back(uuid);
+        } else {
+            WarnLogger() << "UUID " << uuid << " is in ship design manifest for a ship design that does not exist.";
             ship_manifest_inconsistent = true;
-            continue;
         }
-        ordering.push_back(uuid);
     }
 
     // Verify that every design in saved_designs is in ordering.
     if (ordering.size() != saved_designs.size()) {
         // Add any missing designs in alphabetical order to the end of the list
-        boost::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>>
-            uuids_in_ordering{ordering.begin(), ordering.end()};
-        std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
-        for (auto& uuid_to_design_and_filename : saved_designs) {
-            if (uuids_in_ordering.contains(uuid_to_design_and_filename.first))
-                continue;
-            ship_manifest_inconsistent = true;
-            missing_uuids_sorted_by_name.emplace(
-                uuid_to_design_and_filename.second.first->Name(),
-                uuid_to_design_and_filename.first);
-        }
+        std::vector<std::pair<std::string_view, boost::uuids::uuid>> names_and_missing_uuids;
+        names_and_missing_uuids.reserve(saved_designs.size());
 
-        for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
-            WarnLogger() << "Missing ship design " << name_and_uuid.second
-                         << " called " << name_and_uuid.first
-                         << " added to the manifest.";
-            ordering.push_back(name_and_uuid.second);
+        const auto not_in_ordering = [&ordering](const auto& uuid_and_x) {
+            const auto uuid = uuid_and_x.first;
+            return std::any_of(ordering.begin(), ordering.end(),
+                               [uuid](const auto uuid_in_order) noexcept { return uuid == uuid_in_order; });
+        };
+
+        for (auto& [uuid, design_and_filename] : saved_designs | range_filter(not_in_ordering)) {
+            ship_manifest_inconsistent = true;
+            names_and_missing_uuids.emplace_back(design_and_filename.first->Name(), uuid);
+        }
+        std::sort(names_and_missing_uuids.begin(), names_and_missing_uuids.end(),
+                  [](const auto& lhs, const auto& rhs) noexcept { return lhs.first < rhs.first; });
+
+        for (auto& [name, uuid] : names_and_missing_uuids) {
+            WarnLogger() << "Missing ship design " << uuid << " called " << name << " added to the manifest.";
+            ordering.push_back(uuid);
         }
     }
 
