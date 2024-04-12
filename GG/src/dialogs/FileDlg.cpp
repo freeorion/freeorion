@@ -7,7 +7,6 @@
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
-#include <boost/cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/format.hpp>
@@ -436,10 +435,10 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
     all_files.reserve(files.size() * 50); // guesstimate
     bool dir_selected = false;
     for (const auto& file : files) {
-        const auto filename = [&file{*file}]() -> std::string_view {
+        const auto filename = [file{file->get()}]() -> std::string_view {
             if (!file || file->empty())
                 return {};
-            const auto* tc = dynamic_cast<TextControl*>(file.get());
+            const auto* tc = dynamic_cast<TextControl*>(file);
             return tc ? std::string_view{tc->Text()} : std::string_view{};
         }();
 
@@ -688,19 +687,27 @@ void FileDlg::OpenDirectory()
     if (sels.empty())
         return;
 
-    const auto& sels_front = ***sels.begin();
-    auto directory = !sels_front.empty() ? boost::polymorphic_downcast<TextControl*>(sels_front.at(0))->Text() : "";
+    const auto directory_sv = [sel{(*sels.begin())->get()}]() -> std::string_view {
+        if (!sel || sel->empty())
+            return {};
+        try {
+            const auto* tc = dynamic_cast<TextControl*>(sel->at(0));
+            return tc ? std::string_view{tc->Text()} : std::string_view{};
+        } catch (...) {
+            return std::string_view{};
+        }
+    }();
 
-    if (directory.size() < 2 || directory[0] != '[')
+    if (directory_sv.size() < 2 || directory_sv[0] != '[')
         return;
 
-    directory = directory.substr(1, directory.size() - 2); // strip off '[' and ']'
-
-    if (directory == ".") {
+    if (directory_sv == ".") {
         // remain in current directory
         UpdateList();
+        return;
+    }
 
-    } else if (directory == "..") {
+    if (directory_sv == "..") {
         // move to parent directory of current directory
         if (s_working_dir.string() != s_working_dir.root_path().string() &&
             !s_working_dir.parent_path().string().empty())
@@ -717,41 +724,43 @@ void FileDlg::OpenDirectory()
             DoLayout();
             UpdateList();
         }
+        return;
+    }
 
-    } else {
-        // move to contained directory, which may be a drive selection...
-        if (!m_in_win32_drive_selection) {
+    std::string const directory{directory_sv.substr(1, directory.size() - 2)}; // strip off '[' and ']'
+
+    // move to contained directory, which may be a drive selection...
+    if (!m_in_win32_drive_selection) {
 
 #if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            boost::filesystem::path::string_type directory_native;
-            utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
-            SetWorkingDirectory(s_working_dir / fs::path(directory_native));
+        // convert UTF-8 file name to UTF-16
+        boost::filesystem::path::string_type directory_native;
+        utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
+        SetWorkingDirectory(s_working_dir / fs::path(directory_native));
 #else
-            SetWorkingDirectory(s_working_dir / fs::path(directory));
+        SetWorkingDirectory(s_working_dir / fs::path(directory));
 #endif
-        } else {
-            m_in_win32_drive_selection = false;
-            try {
-                SetWorkingDirectory(fs::path(directory + "\\"));
-            } catch (const fs::filesystem_error& e) {
-                if (e.code() == boost::system::errc::io_error) {
-                    m_in_win32_drive_selection = true;
-                    m_files_edit->Clear();
-                    FilesEditChanged(m_files_edit->Text());
-                    m_curr_dir_text->SetText("");
-                    DoLayout();
-                    UpdateList();
-                    auto dlg =
-                        GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
-                                                             style->Translate("Device is not ready."),
-                                                             m_font, m_color,
-                                                             m_border_color, m_color,
-                                                             m_text_color, 1);
-                    dlg->Run();
-                } else {
-                    throw;
-                }
+    } else {
+        m_in_win32_drive_selection = false;
+        try {
+            SetWorkingDirectory(fs::path(directory + "\\"));
+        } catch (const fs::filesystem_error& e) {
+            if (e.code() == boost::system::errc::io_error) {
+                m_in_win32_drive_selection = true;
+                m_files_edit->Clear();
+                FilesEditChanged(m_files_edit->Text());
+                m_curr_dir_text->SetText("");
+                DoLayout();
+                UpdateList();
+                auto dlg =
+                    GetStyleFactory()->NewThreeButtonDlg(X(175), Y(75),
+                                                            style->Translate("Device is not ready."),
+                                                            m_font, m_color,
+                                                            m_border_color, m_color,
+                                                            m_text_color, 1);
+                dlg->Run();
+            } else {
+                throw;
             }
         }
     }
