@@ -88,7 +88,8 @@ struct FrontStringBegin
         m_strings(std::move(strings))
     {}
 
-    const char* operator()() const noexcept {return m_strings->front().c_str(); }
+    const char* operator()() const noexcept
+    { return m_strings && !m_strings->empty() ? m_strings->front().c_str() : ""; }
 
     const std::shared_ptr<std::vector<std::string>> m_strings;
 };
@@ -98,7 +99,8 @@ struct FrontStringEnd
         m_strings(std::move(strings))
     {}
 
-    const char* operator()() const noexcept { return m_strings->front().c_str() + m_strings->front().size(); }
+    const char* operator()() const noexcept
+    { return m_strings && !m_strings->empty() ? std::next(m_strings->front().c_str(), m_strings->front().size()) : ""; }
 
     const std::shared_ptr<std::vector<std::string>> m_strings;
 };
@@ -108,7 +110,8 @@ struct IndexedStringBegin
         m_strings(std::move(strings))
     {}
 
-    const char* operator()() const noexcept { return (*m_strings)[Index::value].c_str(); }
+    const char* operator()() const noexcept
+    { return m_strings && m_strings->size() > Index::value ? (*m_strings)[Index::value].c_str() : ""; }
 
     const std::shared_ptr<std::vector<std::string>> m_strings;
 };
@@ -118,8 +121,12 @@ struct IndexedStringEnd
         m_strings(std::move(strings))
     {}
 
-    const char* operator()() const noexcept
-    { return (*m_strings)[Index::value].c_str() + (*m_strings)[Index::value].size(); }
+    const char* operator()() const noexcept {
+        if (!m_strings)
+            return "";
+        const auto& s{*m_strings};
+        return s.size() > Index::value ? std::next(s[Index::value].c_str(), s[Index::value].size()) : "";
+    }
 
     const std::shared_ptr<std::vector<std::string>> m_strings;
 };
