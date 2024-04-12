@@ -180,7 +180,7 @@ public:
     //!     The value to be stored with index key
     //!
     //! @return
-    //!     A string for @p key containing "ERROR: key"
+    //!     A string for @p key containing value
     const std::string& Add(std::string key, std::string value);
 
 private:
@@ -200,10 +200,7 @@ private:
     struct hasher {
         using is_transparent = void;
 
-        size_t operator()(const std::string& key) const
-        { return boost::hash_range(key.begin(), key.end()); }
-
-        size_t operator()(const std::string_view key) const
+        size_t operator()(const auto& key) const
         { return boost::hash_range(key.begin(), key.end()); }
 
         size_t operator()(const char* key) const {
@@ -215,20 +212,11 @@ private:
     struct equalizer {
         using is_transparent = void;
 
-        bool operator()(const std::string& lhs, const std::string& rhs) const noexcept
+        bool operator()(const auto& lhs, const auto& rhs) const noexcept
         { return lhs.compare(rhs) == 0; }
 
-        bool operator()(const std::string_view lhs, const std::string& rhs) const noexcept
-        { return lhs.compare(rhs) == 0; }
-
-        bool operator()(const std::string& lhs, const std::string_view rhs) const noexcept
-        { return lhs.compare(rhs) == 0; }
-
-        bool operator()(const char* lhs, const std::string& rhs) const noexcept
+        bool operator()(const char* lhs, const auto& rhs) const noexcept
         { return rhs.compare(lhs) == 0; }
-
-        bool operator()(const std::string& lhs, const char* rhs) const noexcept
-        { return lhs.compare(rhs) == 0; }
     };
 
     //! Mapping of translation entry keys to translated strings.
