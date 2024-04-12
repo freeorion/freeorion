@@ -171,17 +171,15 @@ std::chrono::nanoseconds ScopedTimer::Elapsed() const noexcept
 class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
     /** Sections store a time and a duration for each section of the elapsed time report.*/
     struct Sections {
-        Sections(const std::chrono::high_resolution_clock::time_point& now,
-                 const std::chrono::nanoseconds& time_from_start) :
-            m_section_start(now)
-        {
-            // Create a dummy "" section so that m_curr is always a valid iterator.
-            auto curr = m_table.emplace("", time_from_start);
-            m_curr = curr.first;
-        }
+        Sections(std::chrono::high_resolution_clock::time_point now,
+                 std::chrono::nanoseconds time_from_start) :
+            m_table{{"", time_from_start}}, // Create a dummy "" section so that m_curr is always a valid iterator.
+            m_section_start(now),
+            m_curr{m_table.begin()}
+        {}
 
         /** Add time to the current section and then setup the new section. */
-        void Accumulate(const std::chrono::high_resolution_clock::time_point& now,
+        void Accumulate(std::chrono::high_resolution_clock::time_point now,
                         const std::string& section_name)
         {
             if (m_curr->first == section_name)
@@ -217,14 +215,13 @@ class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
     };
 
     /** CreateSections allow m_sections to only be initialized if it is used.*/
-    auto* CreateSections(const std::chrono::high_resolution_clock::time_point& now) {
-        m_sections = std::make_unique<Sections>(now, now - m_start);
-        return m_sections.get();
-    }
+    void CreateSections(std::chrono::high_resolution_clock::time_point now)
+    { m_sections = std::make_unique<Sections>(now, now - m_start); }
 
 public:
     Impl(std::string timed_name, std::chrono::microseconds threshold,
-         bool enable_output, bool unify_section_duration_units) :
+         bool enable_output, bool unify_section_duration_units)
+        noexcept(noexcept(ScopedTimer::Impl(std::declval<std::string>(), true, std::declval<std::chrono::microseconds>()))) :
         ScopedTimer::Impl(std::move(timed_name), enable_output, threshold),
         m_unify_units(unify_section_duration_units)
     {}
@@ -311,13 +308,13 @@ public:
         m_sections->Accumulate(now, section_name);
     }
 
-    std::chrono::nanoseconds Elapsed() const noexcept
+    [[nodiscard]]std::chrono::nanoseconds Elapsed() const noexcept
     { return std::chrono::high_resolution_clock::now() - m_start; }
 
-    const Sections::SectionTable* GetSectionTable() const noexcept
+    [[nodiscard]] const Sections::SectionTable* GetSectionTable() const noexcept
     { return m_sections ? &m_sections->m_table : nullptr; }
 
-    const std::vector<std::pair<std::string_view, std::chrono::nanoseconds>> SectionsElapsed() const {
+    [[nodiscard]]const std::vector<std::pair<std::string_view, std::chrono::nanoseconds>> SectionsElapsed() const {
         if (!m_sections)
             return {};
         const auto& t = m_sections->m_table;
