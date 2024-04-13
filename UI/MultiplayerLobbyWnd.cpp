@@ -12,7 +12,6 @@
 #include "Hotkeys.h"
 #include "Sound.h"
 
-#include <boost/cast.hpp>
 #include <boost/serialization/vector.hpp>
 
 
@@ -485,8 +484,10 @@ namespace {
                 m_color_selector->SelectColor(m_player_data.empire_color);
 
                 // set previous player name indication
-                if (size() >= 5)
-                    boost::polymorphic_downcast<GG::Label*>(at(4))->SetText(sged.player_name);
+                if (size() >= 5) {
+                    if (auto* label = dynamic_cast<GG::Label*>(at(4)))
+                        label->SetText(sged.player_name);
+                }
 
                 DataChangedSignal();
             }
@@ -1134,7 +1135,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     return send_update_back_retval;
 }
 
-void MultiPlayerLobbyWnd::SendUpdate() {
+void MultiPlayerLobbyWnd::SendUpdate() const {
     if (GGHumanClientApp::GetApp()->PlayerID() != Networking::INVALID_PLAYER_ID)
         GGHumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(m_lobby_data));
 }
@@ -1142,10 +1143,15 @@ void MultiPlayerLobbyWnd::SendUpdate() {
 bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
     std::set<std::string> empire_names;
     std::set<unsigned int> empire_colors;
-    int num_players_excluding_observers(0);
+    int num_players_excluding_observers = 0;
+    if (!m_players_lb)
+        return false;
 
     for (auto& row : *m_players_lb) {
-        const PlayerRow& prow = dynamic_cast<const PlayerRow&>(*row);
+        const auto* pprow = dynamic_cast<const PlayerRow*>(row.get());
+        if (!pprow)
+            continue;
+        const auto& prow{*pprow};
         if (prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
             prow.m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
         {
