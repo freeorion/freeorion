@@ -15,8 +15,6 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
-#include <boost/cast.hpp>
-
 #include <cmath>
 #include <iterator>
 
@@ -48,7 +46,7 @@ namespace {
         static GG::Y DefaultHeight();
 
     private:
-        void Draw(GG::Clr clr, bool fill);
+        void Draw(GG::Clr clr, bool fill) const;
 
         std::string_view                        m_tech_name = "";
         std::shared_ptr<GG::Label>              m_name_text;
@@ -243,7 +241,7 @@ namespace {
         glEnable(GL_TEXTURE_2D);
     }
 
-    void QueueTechPanel::Draw(GG::Clr clr, bool fill) {
+    void QueueTechPanel::Draw(GG::Clr clr, bool fill) const {
         static constexpr int CORNER_RADIUS = 7;
         glColor(clr);
         GG::Pt LINE_WIDTH(GG::X(3), GG::Y0);
@@ -534,7 +532,7 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
     if (!m_enabled)
         return;
 
-    auto queue_row = boost::polymorphic_downcast<QueueRow*>(row_it->get());
+    auto queue_row = dynamic_cast<QueueRow*>(row_it->get());
     if (!queue_row)
         return;
 
@@ -632,7 +630,7 @@ void ResearchWnd::UpdateInfoPanel(const ScriptingContext& context) {
     //empire->GetResearchResPool().ChangedSignal();
 }
 
-void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos) {
+void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos) const {
     if (!m_enabled)
         return;
 
@@ -684,7 +682,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
-    if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
+    if (auto queue_row = dynamic_cast<const QueueRow*>(it->get()))
         orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name), context);
     if (auto empire = context.GetEmpire(empire_id))
         empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
@@ -699,16 +697,17 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::
         if (m_enabled)
             DeleteQueueItem(it);
     } else {
-        if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
+        if (auto queue_row = dynamic_cast<const QueueRow*>(it->get()))
             ShowTech(queue_row->elem.name, false);
     }
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
-    if (m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0 || !m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
-        return;
+    if (m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0 ||
+        !m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
+    { return; }
 
-    if (auto queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
+    if (auto queue_row = dynamic_cast<const QueueRow*>(it->get()))
         ShowTech(queue_row->elem.name);
 }
 
@@ -717,17 +716,18 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
         return;
 
     ScriptingContext context;
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
 
-    // todo: reject action if shown queue is not this client's empire's queue
+    // TODO: reject action if shown queue is not this client's empire's queue
 
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(it->get()))
+    if (auto* queue_row = dynamic_cast<const QueueRow*>(it->get())) {
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f),
             context);
+    }
 
     empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
 }

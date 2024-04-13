@@ -51,7 +51,7 @@ private:
     void UpdateQueue(const ScriptingContext& context);
     void UpdateInfoPanel(const ScriptingContext& context); ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propagates to the mapwnd to update indicator)
     void DeleteQueueItem(GG::ListBox::iterator it);
-    void AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos = -1);
+    void AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos = -1) const;
     void QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     void QueueItemDoubleClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys);
     void QueueItemPaused(GG::ListBox::iterator it, bool pause);
