@@ -57,20 +57,20 @@ protected:
     GG::Rect CalculatePosition() const override;
 
 private:
-    void            DoLayout();
-    void            NewLoadClicked(std::size_t idx);
-    void            GalaxySetupPanelChanged();
-    void            SaveGameBrowse();
+    void DoLayout();
+    void NewLoadClicked(std::size_t idx);
+    void GalaxySetupPanelChanged();
+    void SaveGameBrowse();
     void PreviewImageChanged(std::shared_ptr<GG::Texture> new_image);
-    void            PlayerDataChangedLocally();
-    bool            PopulatePlayerList();   ///< repopulate list with rows built from current m_lobby_data.  returns true iff something in the lobby data was changed during population and an update should be sent back to the server
-    void            SendUpdate();
-    bool            PlayerDataAcceptable() const;
-    bool            CanStart() const;
-    bool            HasAuthRole(Networking::RoleType role) const;
-    void            ReadyClicked();
-    void            CancelClicked();
-    void            AnyCanEdit(bool checked);
+    void PlayerDataChangedLocally();
+    bool PopulatePlayerList();   ///< repopulate list with rows built from current m_lobby_data.  returns true iff something in the lobby data was changed during population and an update should be sent back to the server
+    void SendUpdate() const;
+    bool PlayerDataAcceptable() const;
+    bool CanStart() const;
+    bool HasAuthRole(Networking::RoleType role) const;
+    void ReadyClicked();
+    void CancelClicked();
+    void AnyCanEdit(bool checked);
 
     MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update
 
