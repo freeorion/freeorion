@@ -150,15 +150,20 @@ namespace {
 
         void SelectionChanged(GG::DropDownList::iterator it) {
             DebugLogger() << "QuantSelector:  selection made ";
-            if (it != end()) {
-                int quant = boost::polymorphic_downcast<const QuantRow*>(it->get())->Quant();
-                if (amBlockType) {
-                    DebugLogger() << "Blocksize Selector:  selection changed to " << quant;
-                    blocksize = quant;
-                } else {
-                    DebugLogger() << "Quantity Selector:  selection changed to " << quant;
-                    quantity = quant;
-                }
+            if (it == end())
+                return;
+
+            const auto* qr = dynamic_cast<const QuantRow*>(it->get());
+            if (!qr)
+                return;
+
+            const int quant = qr->Quant();
+            if (amBlockType) {
+                DebugLogger() << "Blocksize Selector:  selection changed to " << quant;
+                blocksize = quant;
+            } else {
+                DebugLogger() << "Quantity Selector:  selection changed to " << quant;
+                quantity = quant;
             }
         }
 
@@ -202,7 +207,7 @@ namespace {
         mutable boost::signals2::signal<void(int,int)> PanelUpdateQuantSignal;
 
     private:
-        void Draw(GG::Clr clr, bool fill);
+        void Draw(GG::Clr clr, bool fill) const;
         void DoLayout();
 
         const ProductionQueue::Element          elem;
@@ -653,7 +658,7 @@ namespace {
         glEnable(GL_TEXTURE_2D);
     }
 
-    void QueueProductionItemPanel::Draw(GG::Clr clr, bool fill) {
+    void QueueProductionItemPanel::Draw(GG::Clr clr, bool fill) const {
         static constexpr int CORNER_RADIUS = 7;
         glColor(clr);
         GG::Pt LINE_WIDTH(GG::X(3), GG::Y0);
@@ -1236,7 +1241,7 @@ void ProductionWnd::AddBuildToQueueSlot(ProductionQueue::ProductionItem item, in
     m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
 }
 
-void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
+void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) const {
     if (!m_order_issuing_enabled)
         return;
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -1259,7 +1264,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
     empire->UpdateProductionQueue(context, empire->ProductionCostsTimes(context));
 }
 
-void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) {
+void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) const {
     if (!m_order_issuing_enabled)
         return;
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
