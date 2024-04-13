@@ -11153,10 +11153,10 @@ DESC_VAR_TARGET
 target
 
 DESC_VAR_LOCAL_CANDIDATE
-local condition candidate
+candidate
 
 DESC_VAR_ROOT_CANDIDATE
-root condition candidate
+root candidate
 
 DESC_STAT_TYPE
 stat type
