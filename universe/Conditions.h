@@ -1851,7 +1851,10 @@ struct FO_COMMON_API And final : public Condition {
         std::unique_ptr<Condition>&& operand2,
         std::unique_ptr<Condition>&& operand3 = nullptr,
         std::unique_ptr<Condition>&& operand4 = nullptr,
-        std::unique_ptr<Condition>&& operand5 = nullptr);
+        std::unique_ptr<Condition>&& operand5 = nullptr,
+        std::unique_ptr<Condition>&& operand6 = nullptr,
+        std::unique_ptr<Condition>&& operand7 = nullptr,
+        std::unique_ptr<Condition>&& operand8 = nullptr);
 
     bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
