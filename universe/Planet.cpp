@@ -269,9 +269,9 @@ void Planet::Init() {
 
 int Planet::TurnsSinceFocusChange(int current_turn) const noexcept {
     if (m_last_turn_focus_changed == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     if (current_turn == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     return current_turn - m_last_turn_focus_changed;
 }
 
@@ -690,25 +690,25 @@ double Planet::AnnexationCost(int empire_id, const ScriptingContext& context) co
 
 int Planet::TurnsSinceColonization(int current_turn) const noexcept {
     if (m_turn_last_colonized == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     if (current_turn == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     return current_turn - m_turn_last_colonized;
 }
 
 int Planet::TurnsSinceLastConquered(int current_turn) const noexcept {
     if (m_turn_last_conquered == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     if (current_turn == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     return current_turn - m_turn_last_conquered;
 }
 
 int Planet::TurnsSinceLastAnnexed(int current_turn) const noexcept {
     if (m_turn_last_annexed == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     if (current_turn == INVALID_GAME_TURN)
-        return 0;
+        return current_turn - BEFORE_FIRST_TURN;
     return current_turn - m_turn_last_annexed;
 }
 
