@@ -243,18 +243,21 @@ void ServerConnectWnd::OkClicked() {
     m_result.player_name = *m_player_name_edit;
     auto it = m_client_type_list->CurrentItem();
     if (it != m_client_type_list->end()) {
-        const ClientTypeRow* type_row = boost::polymorphic_downcast<const ClientTypeRow*>(it->get());
-        if (type_row) {
+        if (const auto* type_row = dynamic_cast<const ClientTypeRow*>(it->get()))
             m_result.type = type_row->type;
-        }
     }
     if (m_host_or_join_radio_group->CheckedButton() == 0) {
         m_result.server_dest = "HOST GAME SELECTED";
     } else {
         m_result.server_dest = *m_IP_address_edit;
-        if (m_result.server_dest.empty() && !(***m_servers_lb->Selections().begin()).empty()) {
-            m_result.server_dest = boost::polymorphic_downcast<GG::Label*>(
-                (***m_servers_lb->Selections().begin()).at(0))->Text() ;
+        if (m_result.server_dest.empty()) {
+            const auto& sels{m_servers_lb->Selections()};
+            if (!sels.empty()) {
+                if (const auto* sel_row{(*sels.begin())->get()})
+                    if (!sel_row->empty())
+                        if (const auto* label = dynamic_cast<const GG::Label*>(sel_row->at(0)))
+                             m_result.server_dest = label->Text();
+            }
         }
     }
     CUIWnd::CloseClicked();
