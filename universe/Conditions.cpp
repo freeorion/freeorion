@@ -11653,22 +11653,25 @@ namespace {
 
     auto Vectorize(std::unique_ptr<Condition>&& op1, std::unique_ptr<Condition>&& op2,
                    std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4,
-                   std::unique_ptr<Condition>&& op5 = nullptr)
+                   std::unique_ptr<Condition>&& op5 = nullptr,
+                   std::unique_ptr<Condition>&& op6 = nullptr,
+                   std::unique_ptr<Condition>&& op7 = nullptr,
+                   std::unique_ptr<Condition>&& op8 = nullptr)
     {
         static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
 
         std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) + isnt0(op5));
-        if (op1)
-            retval.push_back(std::move(op1));
-        if (op2)
-            retval.push_back(std::move(op2));
-        if (op3)
-            retval.push_back(std::move(op3));
-        if (op4)
-            retval.push_back(std::move(op4));
-        if (op5)
-            retval.push_back(std::move(op5));
+        retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
+                       isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
+        const auto push = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
+        push(op1);
+        push(op2);
+        push(op3);
+        push(op4);
+        push(op5);
+        push(op6);
+        push(op7);
+        push(op8);
         return retval;
     }
 }
@@ -11683,9 +11686,11 @@ And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
          std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4,
-         std::unique_ptr<Condition>&& operand5) :
+         std::unique_ptr<Condition>&& operand5, std::unique_ptr<Condition>&& operand6,
+         std::unique_ptr<Condition>&& operand7, std::unique_ptr<Condition>&& operand8) :
     And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3),
-                  std::move(operand4), std::move(operand5)))
+                  std::move(operand4), std::move(operand5), std::move(operand6),
+                  std::move(operand7), std::move(operand8)))
 {}
 
 bool And::operator==(const Condition& rhs) const {
