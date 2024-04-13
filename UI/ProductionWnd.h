@@ -93,8 +93,8 @@ private:
 
     void AddBuildToQueueSlot(ProductionQueue::ProductionItem item, int number, int location, int pos);
 
-    void ChangeBuildQuantitySlot(int queue_idx, int quantity);
-    void ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize);
+    void ChangeBuildQuantitySlot(int queue_idx, int quantity) const;
+    void ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize) const;
 
     void DeleteQueueItem(GG::ListBox::iterator it, bool do_delete);
     void QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator original_position_it);
