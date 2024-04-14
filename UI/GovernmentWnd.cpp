@@ -407,11 +407,11 @@ void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
 
     RemoveCell(ii);  // Wnd that accepts drop takes ownership of dragged-away control
 
-    auto policy_control = dynamic_cast<PolicyControl*>(control);
+    const auto* policy_control = dynamic_cast<PolicyControl*>(control);
     if (!policy_control)
         return;
 
-    const auto policy_type = policy_control->GetPolicy();
+    const auto* policy_type = policy_control->GetPolicy();
     if (!policy_type)
         return;
 
