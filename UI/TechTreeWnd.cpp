@@ -1612,15 +1612,15 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
         return;
     const ScriptingContext context;
 
-    std::vector<GG::X> col_widths = ColWidths(Width());
-    const GG::X GRAPHIC_WIDTH = col_widths[0];
+    const auto col_widths = ColWidths(Width());
+    const GG::X GRAPHIC_WIDTH = col_widths.empty() ? GG::X{48} : col_widths.front();
     const GG::Y ICON_HEIGHT{std::min(Value(Height() - 12),
                                      std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6))};
-    // TODO replace string padding with new TextFormat flag
-    static const std::string just_pad = "    ";
 
-    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech),
-                                                      GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    static constexpr auto just_pad = "    "; // TODO: replace string padding with new TextFormat flag
+    static constexpr auto graphic_style = GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC;
+
+    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech), graphic_style);
     graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(std::move(graphic));
