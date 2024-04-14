@@ -1626,7 +1626,7 @@ private:
         RequirePreRender();
     }
 
-    std::vector<std::shared_ptr<GG::Control>> GetControls() {
+    std::vector<std::shared_ptr<GG::Control>> GetControls() const {
         std::vector<std::shared_ptr<GG::Control>> retval;
         retval.reserve(NUM_COLUMNS);
 
@@ -1639,18 +1639,19 @@ private:
         return retval;
     }
 
-    bool    m_initialized = false;
     int     m_object_id = INVALID_OBJECT_ID;
     int     m_indent = 1;
-    bool    m_expanded = false;
-    bool    m_has_contents = false;
 
     std::shared_ptr<GG::Button>                 m_expand_button;
     std::shared_ptr<GG::StaticGraphic>          m_dot;
     std::shared_ptr<MultiTextureStaticGraphic>  m_icon;
     std::vector<std::shared_ptr<GG::Control>>   m_controls;
     mutable std::map<std::size_t, std::string>  m_column_val_cache;
-    bool                                        m_selected = false;
+
+    bool    m_selected = false;
+    bool    m_initialized = false;
+    bool    m_expanded = false;
+    bool    m_has_contents = false;
 };
 
 ////////////////////////////////////////////////
