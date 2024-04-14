@@ -1581,7 +1581,7 @@ std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
         return value;
     } else if constexpr (std::is_enum_v<FromType>) {
         return std::string{to_string(value)};
-    } else if constexpr (std::is_arithmetic_v<FromType>) {
+    } else if constexpr (requires { std::to_string(value); }) {
         return std::to_string(value);
     } else if constexpr (std::is_same_v<FromType, std::vector<std::string>>) {
         std::string retval;
