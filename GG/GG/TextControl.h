@@ -336,7 +336,7 @@ void GG::TextControl::operator>>(T& t) const
 {
     try {
         t = boost::lexical_cast<T>(m_text);
-    } catch (const boost::bad_lexical_cast&) {
+    } catch (...) {
         t = T();
     }
 }
@@ -346,7 +346,7 @@ T GG::TextControl::GetValue() const
 {
     try {
         return boost::lexical_cast<T, std::string>(m_text);
-    } catch (const boost::bad_lexical_cast&) {
+    } catch (...) {
         return T{};
     }
 }
