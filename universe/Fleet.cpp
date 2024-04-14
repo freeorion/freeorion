@@ -194,13 +194,13 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     auto empire = context.GetEmpire(this->Owner());
     const auto fleet_supplied_systems = context.supply.FleetSupplyableSystemIDs(
         this->Owner(), ALLOW_ALLIED_SUPPLY, context);
-    auto& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
+    const auto& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
         this->SystemID() != INVALID_OBJECT_ID &&
         std::none_of(fleet_supplied_systems.begin(), fleet_supplied_systems.end(),
-                     [sys_id{this->SystemID()}] (const auto fss) { return fss == sys_id; }))
+                     [sys_id{this->SystemID()}] (const int fss) noexcept { return fss == sys_id; }))
     {
         // no fuel and out of supply => can't move => path is just this system with explanatory ETA
         retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE, this->SystemID(),
