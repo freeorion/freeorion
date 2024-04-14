@@ -10105,7 +10105,7 @@ bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    constexpr auto not_null = [](const auto* o) -> bool { return o; };
+    constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
 
     struct ResourceSupplySimpleMatch {
         ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects,
@@ -10143,12 +10143,13 @@ namespace {
                 const auto candidate_planet_id = planet_id_from_obj(candidate);
                 if (candidate_planet_id == INVALID_OBJECT_ID)
                     return false;
+                const auto is_candidate = [candidate_planet_id](const auto id) noexcept
+                { return candidate_planet_id == id; };
 
                 // can only match if the from_object is (or is on) the same planet. otherwise,
                 // candidate is isolated, but did not match planet for any test object
-                return range_any_of(m_from_objects | range_filter(not_null) | range_transform(planet_id_from_obj)
-                                    | range_filter([](const auto id) { return id != INVALID_OBJECT_ID; }),
-                                    [candidate_planet_id](const auto id) { return candidate_planet_id == id; });
+                return range_any_of(m_from_objects | range_filter(not_null) | range_transform(planet_id_from_obj),
+                                    is_candidate);
             }
 
             // candidate is not blockaded, so check for system group matches
@@ -10171,7 +10172,7 @@ namespace {
             return false;
         }
 
-        int m_empire_id;
+        const int m_empire_id;
         const ObjectSet& m_from_objects;
         const ObjectMap& m_objects;
         const SupplyManager& m_supply;
