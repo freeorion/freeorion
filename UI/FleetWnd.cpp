@@ -2043,7 +2043,7 @@ public:
                     return; // can't drop both at once
 
                 const ShipRow* ship_row = dynamic_cast<const ShipRow*>(dropped_wnd);
-                if (!ship_row);
+                if (!ship_row)
                     return;
                 auto ship = Objects().get<Ship>(ship_row->ShipID());
 
