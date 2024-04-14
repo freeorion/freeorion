@@ -1583,22 +1583,18 @@ std::vector<GG::Alignment> TechTreeWnd::TechListBox::TechRow::ColAlignments() {
 }
 
 bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
-    bool retval = false;
     const std::string lhs_key = boost::trim_copy(lhs.SortKey(column));
     const std::string rhs_key = boost::trim_copy(rhs.SortKey(column));
 
     // When equal, sort by previous sorted column
-    if ((lhs_key == rhs_key) && (m_previous_sort_col != column)) {
-        retval = TechRowCmp(lhs, rhs, m_previous_sort_col);
-    } else {
-        try {  // attempt compare by int
-            retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
-        } catch (const boost::bad_lexical_cast&) {
-            retval = GetLocale().operator()(lhs_key, rhs_key);
-        }
-    }
+    if ((lhs_key == rhs_key) && (m_previous_sort_col != column))
+        return TechRowCmp(lhs, rhs, m_previous_sort_col);
 
-    return retval;
+    try {  // attempt compare by int
+        return boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
+    } catch (...) { // compare as strings
+        return GetLocale().operator()(lhs_key, rhs_key);
+    }
 }
 
 TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name) :
@@ -1614,14 +1610,14 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     const Tech* this_row_tech = ::GetTech(m_tech);
     if (!this_row_tech)
         return;
-    ScriptingContext context;
+    const ScriptingContext context;
 
     std::vector<GG::X> col_widths = ColWidths(Width());
     const GG::X GRAPHIC_WIDTH = col_widths[0];
     const GG::Y ICON_HEIGHT{std::min(Value(Height() - 12),
                                      std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6))};
     // TODO replace string padding with new TextFormat flag
-    std::string just_pad = "    ";
+    static const std::string just_pad = "    ";
 
     auto graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech),
                                                       GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
@@ -1635,7 +1631,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(std::move(text));
 
-    std::string cost_str = std::to_string(std::lround(
+    const std::string cost_str = std::to_string(std::lround(
         this_row_tech->ResearchCost(GGHumanClientApp::GetApp()->EmpireID(), context)));
     text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
@@ -1643,7 +1639,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     text->SetChildClippingMode(ChildClippingMode::ClipToWindow);
     push_back(std::move(text));
 
-    std::string time_str = std::to_string(
+    const std::string time_str = std::to_string(
         this_row_tech->ResearchTime(GGHumanClientApp::GetApp()->EmpireID(), context));
     text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
