@@ -20,28 +20,25 @@ class QueueListBox :
     public CUIListBox
 {
 public:
-    QueueListBox(boost::optional<std::string_view> drop_type_str,
-                 std::string prompt_str);
+    QueueListBox(boost::optional<std::string_view> drop_type_str, std::string prompt_str);
 
     void CompleteConstruction() override;
 
     void Render() override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
-                     GG::Flags<GG::ModKey> mod_keys) override;
-    void DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
-                      GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
 
-    GG::X           RowWidth() const;
+    GG::X           RowWidth() const noexcept;
 
     //! scans this ListBox for the input iterator \a and returns its distance
     //! from begin(), or -1 if not present
     int             IteraterIndex(const const_iterator it);
 
     virtual void    EnableOrderIssuing(bool enable = true);
-    bool            OrderIssuingEnabled() const { return m_order_issuing_enabled; }
-    bool            DisplayingValidQueueItems(); ///< whether or not this QueueListBox is displaying valid queue items, as opposed to, for example, a prompt for the user to enter an item
+    bool            OrderIssuingEnabled() const noexcept { return m_order_issuing_enabled; }
+    bool            DisplayingValidQueueItems() const noexcept; ///< whether or not this QueueListBox is displaying valid queue items, as opposed to, for example, a prompt for the user to enter an item
 
     void            Clear();
 

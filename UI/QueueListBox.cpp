@@ -68,7 +68,7 @@ void QueueListBox::CompleteConstruction() {
         boost::bind(&QueueListBox::ItemRightClicked, this, ph::_1, ph::_2, ph::_3));
 }
 
-GG::X QueueListBox::RowWidth() const
+GG::X QueueListBox::RowWidth() const noexcept
 { return ClientWidth(); }
 
 void QueueListBox::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
@@ -171,7 +171,7 @@ void QueueListBox::EnableOrderIssuing(bool enable) {
         row->Disable(!enable);
 }
 
-bool QueueListBox::DisplayingValidQueueItems()
+bool QueueListBox::DisplayingValidQueueItems() const noexcept
 { return !m_showing_prompt; }
 
 void QueueListBox::Clear() {
