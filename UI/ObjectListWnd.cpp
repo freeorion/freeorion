@@ -46,6 +46,14 @@ namespace std {
   #include <boost/lexical_cast.hpp>
 #endif
 
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
+
 std::vector<std::string_view> SpecialNames();
 
 namespace {
@@ -420,8 +428,8 @@ namespace {
     }
 
     constexpr int DATA_PANEL_BORDER = 1;
-
-    constexpr std::string_view EMPTY_STRING = "";
+    constexpr std::string_view EMPTY_STRINGVIEW;
+    CONSTEXPR_STRING const std::string EMPTY_STRING;
     constexpr std::string_view ALL_CONDITION(UserStringNop("CONDITION_ALL"));
     constexpr std::string_view EMPIREAFFILIATION_CONDITION(UserStringNop("CONDITION_EMPIREAFFILIATION"));
     constexpr std::string_view HOMEWORLD_CONDITION(UserStringNop("CONDITION_HOMEWORLD"));
@@ -463,7 +471,7 @@ namespace {
 
     std::string_view ConditionClassName(const Condition::Condition* const condition) {
         if (!condition)
-            return EMPTY_STRING;
+            return EMPTY_STRINGVIEW;
 
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
@@ -518,7 +526,7 @@ namespace {
         if (desc_it != object_list_cond_description_map.end())
             return desc_it->second;
 
-        return EMPTY_STRING;
+        return EMPTY_STRINGVIEW;
     }
 
     template <typename enumT>
@@ -612,21 +620,14 @@ private:
         std::shared_ptr<CUILabel> m_label;
     };
 
-    const auto& GetString() const noexcept {
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-        static constexpr std::string EMPTY_STRING_X;
-#else
-        static const std::string EMPTY_STRING_X;
-#endif
+    const std::string& GetString() const noexcept {
         if (!m_string_drop)
-            return EMPTY_STRING_X;
-        auto row_it = m_string_drop->CurrentItem();
+            return EMPTY_STRING;
+        const auto row_it = m_string_drop->CurrentItem();
         if (row_it == m_string_drop->end())
-            return EMPTY_STRING_X;
-        auto string_row = dynamic_cast<const StringRow*>(row_it->get());
-        if (!string_row)
-            return EMPTY_STRING_X;
-        return string_row->Text();
+            return EMPTY_STRING;
+        const auto* string_row = dynamic_cast<const StringRow*>(row_it->get());
+        return string_row ? string_row->Text() : EMPTY_STRING;
     }
 
     auto GetStringValueRef() const
@@ -1477,16 +1478,17 @@ public:
         RequirePreRender();
     }
 
-    std::string SortKey(std::size_t column) const {
-        // result cached? if not, calculate and cache
-        auto it = m_column_val_cache.find(column);
-        if (it != m_column_val_cache.end())
-            return it->second;
+    [[nodiscard]] const std::string& SortKey(std::size_t column) const {
+        const auto get_column_sort_key = [this, column]() -> std::string {
+            const auto ref = GetColumnValueRef(column);
+            return ref ? ref->Eval(ScriptingContext{Objects().getRaw(m_object_id)}) : std::string{};
+        };
 
-        auto ref = GetColumnValueRef(column);
-        std::string val = ref ? ref->Eval(ScriptingContext{Objects().getRaw(m_object_id)}) : "";
-        m_column_val_cache[column] = val;
-        return val;
+        try {
+            return m_column_val_cache.try_emplace(column, get_column_sort_key()).first->second;
+        } catch (...) {
+            return EMPTY_STRING;
+        }
     }
 
     int ObjectID() const noexcept { return m_object_id; }
