@@ -22,7 +22,6 @@
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 
-#include <boost/cast.hpp>
 #include <boost/algorithm/string.hpp>
 
 using boost::placeholders::_1;

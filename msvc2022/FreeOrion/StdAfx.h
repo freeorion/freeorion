@@ -120,7 +120,6 @@
 #include <algorithm>
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/cast.hpp>
 
 #ifdef _MSC_VER
 // Note: This is a workaround for Visual C++ non-conformant pre-processor

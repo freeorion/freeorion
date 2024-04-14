@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <cctype>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <GG/Button.h>
 #include <GG/Layout.h>
