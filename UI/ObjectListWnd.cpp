@@ -681,20 +681,16 @@ private:
     template <typename T>
     T GetEnum() const {
         const auto& text = GetString();
-        if constexpr (std::is_same_v<T, MeterType>) {
+        if constexpr (std::is_same_v<T, MeterType>)
             return MeterTypeFromString(text, MeterType::INVALID_METER_TYPE);
-        } else if constexpr (std::is_same_v<T, StarType>) {
+        else if constexpr (std::is_same_v<T, StarType>)
             return StarTypeFromString(text, StarType::INVALID_STAR_TYPE);
-        } else if constexpr (std::is_same_v<T, PlanetType>) {
+        else if constexpr (std::is_same_v<T, PlanetType>)
             return PlanetTypeFromString(text, PlanetType::INVALID_PLANET_TYPE);
-        } else if constexpr (std::is_same_v<T, PlanetSize>) {
+        else if constexpr (std::is_same_v<T, PlanetSize>)
             return PlanetSizeFromString(text, PlanetSize::INVALID_PLANET_SIZE);
-        } else {
-            T retval{-1};
-            std::stringstream ss{text};
-            ss >> retval;
+        else
             return T{-1};
-        }
     }
 
     template <typename T>
