@@ -3968,9 +3968,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
                 return 0;
             std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
             auto& vr = *std::next(m_operands.begin(), idx);
-            if (!vr)
-                return 0;
-            return vr->Eval(context);
+            return vr ? vr->Eval(context) : 0;
             break;
         }
 
@@ -3995,19 +3993,12 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
                 case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
                 default:    break;  // ??? do nothing, default to false
             }
-            if (m_operands.size() < 3) {
+            if (m_operands.size() < 3)
                 return static_cast<int>(test_result);
-            } else if (m_operands.size() < 4) {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return 0;
-            } else {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return m_operands[3]->Eval(context);
-            }
+            else if (m_operands.size() < 4)
+                return test_result ? m_operands[2]->Eval(context) : 0;
+            else
+                return test_result ? m_operands[2]->Eval(context) : m_operands[3]->Eval(context);
             break;
         }
 
