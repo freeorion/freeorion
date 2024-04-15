@@ -1990,8 +1990,7 @@ namespace {
             name = empire->Name();
 
         // Capital
-        const auto capital = objects.get<Planet>(empire->CapitalID());
-        if (capital)
+        if (const auto capital = objects.get<Planet>(empire->CapitalID()))
             detailed_description += UserString("EMPIRE_CAPITAL") +
                 LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
         else
