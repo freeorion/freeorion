@@ -14,7 +14,6 @@
 #include <boost/lexical_cast.hpp>
 #include "Condition.h"
 #include "ScriptingContext.h"
-#include "Universe.h"
 #include "ValueRef.h"
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
@@ -78,16 +77,8 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     { return DumpIndent(ntabs) + Description(); }
 
     [[nodiscard]] constexpr T Value() const noexcept(noexcept(T{std::declval<const T>()})) { return m_value; };
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const override {
-        uint32_t retval{0};
 
-        CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
-        CheckSums::CheckSumCombine(retval, m_value);
-        //if (!std::is_constant_evaluated())
-        //    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-        //                  << " value: " << Description() << " retval: " << retval;
-        return retval;
-    }
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Constant>(m_value); }
@@ -117,10 +108,10 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     [[nodiscard]] constexpr bool operator==(const ValueRef<std::string>& rhs) const override {
         if (&rhs == this)
             return true;
-        if (typeid(rhs) != typeid(*this))
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        if (!rhs_p)
             return false;
-        auto& rhs_ = static_cast<const Constant<std::string>&>(rhs);
-
+        const auto& rhs_ = *rhs_p;
         return m_top_level_content == rhs_.m_top_level_content && m_value == rhs_.m_value;
     }
 
@@ -133,9 +124,9 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     [[nodiscard]] CONSTEXPR_STRING std::string Eval(const ScriptingContext&) const override
     { return Eval(); }
 
-    [[nodiscard]] std::string Description() const override
+    [[nodiscard]] CONSTEXPR_STRING std::string Description() const override
     { return (m_value == current_content) ? m_top_level_content : m_value; }
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
+    [[nodiscard]] CONSTEXPR_STRING std::string Dump(uint8_t ntabs = 0) const override
     { return "\"" + Description() + "\""; }
 
     void CONSTEXPR_STRING SetTopLevelContent(const std::string& content_name) override {
@@ -167,15 +158,19 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
         }
     }
 
-    [[nodiscard]] const auto& Value() const noexcept { return m_value; };
+    [[nodiscard]] CONSTEXPR_STRING const auto& Value() const noexcept { return m_value; };
     [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override {
         uint32_t retval{0};
 
         CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
         CheckSums::CheckSumCombine(retval, m_value);
-        //if (!std::is_constant_evaluated())
-        //    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-        //                  << " value: " << Description() << " retval: " << retval;
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+        if (!std::is_constant_evaluated())
+            [type_id_name{typeid(*this).name()}, this, retval]() {
+                TraceLogger() << "GetCheckSum(Constant<std::string>): " << type_id_name
+                              << " value: " << Description() << " retval: " << retval;
+            }();
+#endif
         return retval;
     }
 
@@ -392,8 +387,7 @@ protected:
 };
 
 /** The variable static_cast class.  The value returned by this node is taken
-  * from the ctor \a value_ref parameter's FromType value, static_cast to
-  * ToType. */
+  * from the ctor \a value_ref parameter's FromType value, static_cast to ToType. */
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
@@ -655,6 +649,21 @@ FO_COMMON_API std::string Constant<double>::Dump(uint8_t ntabs) const;
 
 template <>
 FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
+
+template <typename T>
+constexpr uint32_t Constant<T>::GetCheckSum() const noexcept {
+    uint32_t retval{0};
+    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
+    CheckSums::CheckSumCombine(retval, m_value);
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+    if (!std::is_constant_evaluated())
+        [type_id_name{typeid(*this).name()}, this, retval]() {
+        TraceLogger() << "GetCheckSum(Constant<T>): " << type_id_name
+            << " value: " << Description() << " retval: " << retval;
+    }();
+#endif
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
