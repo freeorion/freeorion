@@ -292,6 +292,15 @@ template<typename T>
     return retval;
 }
 
+template<typename T, std::size_t N>
+[[nodiscard]] inline auto CloneUnique(const std::array<std::unique_ptr<T>, N>& arr)
+{
+    std::array<std::unique_ptr<T>, N> retval{};
+    for (std::size_t i = 0; i < arr.size(); ++i)
+        retval[i] = CloneUnique(arr[i]);
+    return retval;
+}
+
 template<typename T>
 [[nodiscard]] inline auto CloneUnique(const std::vector<std::pair<std::string, std::unique_ptr<T>>>& vec)
 {
