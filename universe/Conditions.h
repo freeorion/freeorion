@@ -480,6 +480,8 @@ struct FO_COMMON_API Type final : public Condition {
     Type(Type&&) noexcept = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Type& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
