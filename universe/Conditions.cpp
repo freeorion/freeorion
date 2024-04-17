@@ -120,7 +120,7 @@ namespace {
         std::vector<const Condition::Condition*> retval;
         retval.reserve(in.size()*2); // guesstimate
         for (const auto op : in) {
-            if (const auto and_cond = dynamic_cast<const Condition::And*>(op)) {
+            if (const auto and_cond = dynamic_cast<const Condition::And<>*>(op)) {
                 auto ops = DenestAnds(and_cond->OperandsRaw());
                 retval.insert(retval.end(), ops.begin(), ops.end());
             } else {
@@ -178,7 +178,7 @@ namespace Condition {
     // concatenate (non-duplicated) single-description results
     std::string retval;
     retval.reserve(1000); // guesstimate
-    if (conditions.size() > 1 || dynamic_cast<const And*>(conditions.front())) {
+    if (conditions.size() > 1 || dynamic_cast<const And<>*>(conditions.front())) {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
 
@@ -207,17 +207,6 @@ namespace Condition {
 ///////////////////////////////////////////////////////////
 // Condition                                             //
 ///////////////////////////////////////////////////////////
-bool Condition::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-
-    try {
-        return typeid(*this) == typeid(rhs);
-    } catch (...) {
-        return false;
-    }
-}
-
 void Condition::Eval(const ScriptingContext& parent_context,
                      ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
@@ -1165,9 +1154,6 @@ void All::Eval(const ScriptingContext& parent_context,
     // match this condition, so should remain in matches set
 }
 
-bool All::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string All::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ALL")
@@ -1203,9 +1189,6 @@ void None::Eval(const ScriptingContext& parent_context,
     }
     // if search domain is non_matches, no need to do anything since none of them match None.
 }
-
-bool None::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
 
 std::string None::Description(bool negated) const {
     return (!negated)
@@ -1248,9 +1231,6 @@ bool NoOp::EvalOne(const ScriptingContext& parent_context, const UniverseObject*
     DebugLogger(conditions) << "NoOp::EvalOne(" << candidate << ")";
     return candidate;
 }
-
-bool NoOp::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
 
 std::string NoOp::Description(bool negated) const
 { return UserString("DESC_NOOP"); }
@@ -1549,9 +1529,6 @@ std::unique_ptr<Condition> EmpireAffiliation::Clone() const {
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
-bool Source::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Source::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_SOURCE")
@@ -1588,9 +1565,6 @@ std::unique_ptr<Condition> Source::Clone() const
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
-bool RootCandidate::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string RootCandidate::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ROOT_CANDIDATE")
@@ -1626,14 +1600,8 @@ std::unique_ptr<Condition> RootCandidate::Clone() const
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
-bool Target::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
-std::string Target::Description(bool negated) const {
-    return (!negated)
-        ? UserString("DESC_TARGET")
-        : UserString("DESC_TARGET_NOT");
-}
+std::string Target::Description(bool negated) const
+{ return (!negated) ? UserString("DESC_TARGET") : UserString("DESC_TARGET_NOT"); }
 
 std::string Target::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Target\n"; }
@@ -1860,26 +1828,6 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-Capital::Capital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    Condition(!empire_id || empire_id->RootCandidateInvariant(),
-              !empire_id || empire_id->TargetInvariant(),
-              !empire_id || empire_id->SourceInvariant()),
-    m_empire_id(std::move(empire_id))
-{}
-
-bool Capital::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Capital& rhs_ = static_cast<const Capital&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_empire_id)
-
-    return true;
-}
-
 namespace {
     bool FlexibleContains(const auto& container, const auto num) {
         if constexpr (requires { container.contains(num); })
@@ -1897,6 +1845,87 @@ namespace {
 
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
+{
+    const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
+    if (sz == 1) {
+        // in testing, this was faster for a single candidate than setting up the loop stuff
+        const bool test_val = search_domain == SearchDomain::MATCHES;
+        auto& from = test_val ? matches : non_matches;
+        auto& to = test_val ? non_matches : matches;
+        const auto* obj = from.front();
+        const bool is_capital = obj && FlexibleContains(parent_context.Empires().CapitalIDs(), obj->ID());
+        if (is_capital != test_val) {
+            to.push_back(obj);
+            from.clear();
+        }
+
+    } else {
+        // check if candidates are capitals of any empire
+        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+        { return FlexibleContains(capitals, obj->ID()); };
+        EvalImpl(matches, non_matches, search_domain, is_capital);
+    }
+}
+
+bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    // check if candidates are capitals of any empire
+    const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+    { return FlexibleContains(capitals, obj->ID()); };
+    return std::any_of(candidates.begin(), candidates.end(), is_capital);
+}
+
+std::string Capital::Description(bool negated) const
+{ return (!negated) ? UserString("DESC_CAPITAL") : UserString("DESC_CAPITAL_NOT"); }
+
+std::string Capital::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "Capital\n"; }
+
+bool Capital::Match(const ScriptingContext& local_context) const {
+    const auto* candidate = local_context.condition_local_candidate;
+    return candidate && FlexibleContains(local_context.Empires().CapitalIDs(), candidate->ID());
+}
+
+ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
+{ return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
+
+uint32_t Capital::GetCheckSum() const {
+    uint32_t retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Capital");
+
+    TraceLogger(conditions) << "GetCheckSum(Capital): retval: " << retval;
+    return retval;
+}
+
+std::unique_ptr<Condition> Capital::Clone() const
+{ return std::make_unique<Capital>(); }
+
+
+///////////////////////////////////////////////////////////
+// CapitalWithID                                         //
+///////////////////////////////////////////////////////////
+CapitalWithID::CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) noexcept:
+    Condition(!empire_id || empire_id->RootCandidateInvariant(),
+              !empire_id || empire_id->TargetInvariant(),
+              !empire_id || empire_id->SourceInvariant()),
+    m_empire_id(std::move(empire_id))
+{}
+
+bool CapitalWithID::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const CapitalWithID& rhs_ = static_cast<const CapitalWithID&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
+
+void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                         ObjectSet& non_matches, SearchDomain search_domain) const
 {
     if (m_empire_id) {
         const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
@@ -1952,7 +1981,7 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 }
 
-bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool CapitalWithID::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
     if (m_empire_id) {
         const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
             (m_empire_id->LocalCandidateInvariant() &&
@@ -1984,16 +2013,13 @@ bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& c
     }
 }
 
-std::string Capital::Description(bool negated) const {
-    return (!negated)
-        ? UserString("DESC_CAPITAL")
-        : UserString("DESC_CAPITAL_NOT");
-}
+std::string CapitalWithID::Description(bool negated) const
+{ return (!negated) ? UserString("DESC_CAPITAL") : UserString("DESC_CAPITAL_NOT"); }
 
-std::string Capital::Dump(uint8_t ntabs) const
-{ return DumpIndent(ntabs) + "Capital\n"; }
+std::string CapitalWithID::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "Capital" + (m_empire_id ? (" empire_id = " + m_empire_id->Dump(ntabs+1)) : "") + "\n"; }
 
-bool Capital::Match(const ScriptingContext& local_context) const {
+bool CapitalWithID::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate)
         return false;
@@ -2005,24 +2031,21 @@ bool Capital::Match(const ScriptingContext& local_context) const {
     }
 }
 
-ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
+ObjectSet CapitalWithID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
 { return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
 
-uint32_t Capital::GetCheckSum() const {
+uint32_t CapitalWithID::GetCheckSum() const {
     uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "Condition::Capital");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
 
     TraceLogger(conditions) << "GetCheckSum(Capital): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Condition> Capital::Clone() const {
-    if (m_empire_id)
-        return std::make_unique<Capital>(m_empire_id->Clone());
-    else
-        return std::make_unique<Capital>();
-}
+std::unique_ptr<Condition> CapitalWithID::Clone() const
+{ return std::make_unique<CapitalWithID>(m_empire_id ? m_empire_id->Clone() : nullptr); }
 
 ///////////////////////////////////////////////////////////
 // Monster                                               //
@@ -11625,10 +11648,26 @@ std::unique_ptr<Condition> CombatTarget::Clone() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
+namespace StaticTests {
+    constexpr auto none = None{};
+    constexpr auto noop = NoOp{};
+    constexpr auto rootcandidate = RootCandidate{};
+    constexpr auto target = Target();
+    constexpr auto monster = Monster{};
+    constexpr auto armed = Armed{};
+    constexpr auto capital = Capital{};
+    constexpr auto not_target1 = Not(Target());
+    constexpr auto not_target2 = Not(Target());
+    static_assert(not_target1 == static_cast<const Condition&>(not_target2));
+
+    constexpr auto andc = And(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
+                                         Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
+}
+
 namespace {
     namespace {
         template <class Cond>
-        concept and_or_or_condition = std::is_same_v<Cond, And> || std::is_same_v<Cond, Or>;
+        concept and_or_or_condition = std::is_same_v<Cond, And<>> || std::is_same_v<Cond, Or>;
     }
 
     // flattens nested conditions by extracting contained operands, and
@@ -11677,7 +11716,7 @@ namespace {
     }
 }
 
-And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
+And<>::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
               std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
               std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
@@ -11685,16 +11724,16 @@ And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     m_operands(DenestOps<And>(operands))
 {}
 
-And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4,
-         std::unique_ptr<Condition>&& operand5, std::unique_ptr<Condition>&& operand6,
-         std::unique_ptr<Condition>&& operand7, std::unique_ptr<Condition>&& operand8) :
+And<>::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
+           std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4,
+           std::unique_ptr<Condition>&& operand5, std::unique_ptr<Condition>&& operand6,
+           std::unique_ptr<Condition>&& operand7, std::unique_ptr<Condition>&& operand8) :
     And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3),
                   std::move(operand4), std::move(operand5), std::move(operand6),
                   std::move(operand7), std::move(operand8)))
 {}
 
-bool And::operator==(const Condition& rhs) const {
+bool And<>::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     if (typeid(*this) != typeid(rhs))
@@ -11711,8 +11750,8 @@ bool And::operator==(const Condition& rhs) const {
     return true;
 }
 
-void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-               ObjectSet& non_matches, SearchDomain search_domain) const
+void And<>::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                 ObjectSet& non_matches, SearchDomain search_domain) const
 {
     if (m_operands.empty())
         return;
@@ -11797,7 +11836,7 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     */
 }
 
-bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool And<>::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
     if (m_operands.empty() || candidates.empty())
         return false;
     if (candidates.size() == 1 && !candidates.front())
@@ -11827,14 +11866,14 @@ bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candi
     return true;
 }
 
-bool And::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+bool And<>::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
     return candidate &&
         std::all_of(m_operands.begin(), m_operands.end(),
                     [candidate, &parent_context](const auto& op)
                     { return op->EvalOne(parent_context, candidate); });
 }
 
-std::string And::Description(bool negated) const {
+std::string And<>::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
         values_str += (!negated)
@@ -11865,7 +11904,7 @@ std::string And::Description(bool negated) const {
     return values_str;
 }
 
-std::string And::Dump(uint8_t ntabs) const {
+std::string And<>::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "And [\n";
     for (auto& operand : m_operands)
         retval += operand->Dump(ntabs+1);
@@ -11873,28 +11912,28 @@ std::string And::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-ObjectSet And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
+ObjectSet And<>::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (m_operands.empty()) [[unlikely]]
         return {};
     return m_operands.front()->GetDefaultInitialCandidateObjects(parent_context);
 }
 
-void And::SetTopLevelContent(const std::string& content_name) {
+void And<>::SetTopLevelContent(const std::string& content_name) {
     for (auto& operand : m_operands)
         operand->SetTopLevelContent(content_name);
 }
 
-uint32_t And::GetCheckSum() const {
+uint32_t And<>::GetCheckSum() const {
     uint32_t retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::And");
+    CheckSums::CheckSumCombine(retval, "Condition::And<>");
     CheckSums::CheckSumCombine(retval, m_operands);
 
     TraceLogger(conditions) << "GetCheckSum(And): retval: " << retval;
     return retval;
 }
 
-std::vector<const Condition*> And::OperandsRaw() const {
+std::vector<const Condition*> And<>::OperandsRaw() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
@@ -11902,8 +11941,8 @@ std::vector<const Condition*> And::OperandsRaw() const {
     return retval;
 }
 
-std::unique_ptr<Condition> And::Clone() const
-{ return std::make_unique<And>(ValueRef::CloneUnique(m_operands)); }
+std::unique_ptr<Condition> And<>::Clone() const
+{ return std::make_unique<And<>>(ValueRef::CloneUnique(m_operands)); }
 
 ///////////////////////////////////////////////////////////
 // Or                                                    //
@@ -12110,96 +12149,6 @@ std::vector<const Condition*> Or::OperandsRaw() const {
 
 std::unique_ptr<Condition> Or::Clone() const
 { return std::make_unique<Or>(ValueRef::CloneUnique(m_operands)); }
-
-///////////////////////////////////////////////////////////
-// Not                                                   //
-///////////////////////////////////////////////////////////
-Not::Not(std::unique_ptr<Condition>&& operand) :
-    Condition(!operand || operand->RootCandidateInvariant(),
-              !operand || operand->TargetInvariant(),
-              !operand || operand->SourceInvariant()),
-    // have no prepared sets of things that eg. aren't ships, and conditions have no
-    // InitialNonCandidates function, so there is no way to get a useful starting set
-    // candidates that will be guaranteed to NOT match the subcondition...
-    m_operand(std::move(operand))
-{}
-
-bool Not::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Not& rhs_ = static_cast<const Not&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_operand)
-
-    return true;
-}
-
-void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
-               SearchDomain search_domain) const
-{
-    if (!m_operand)
-        return;
-
-    if (search_domain == SearchDomain::NON_MATCHES) {
-        // search non_matches set for items that don't meet the operand
-        // condition, and move those to the matches set
-        m_operand->Eval(parent_context, non_matches, matches, SearchDomain::MATCHES); // swapping order of matches and non_matches set parameters and MATCHES / NON_MATCHES search domain effects NOT on requested search domain
-    } else {
-        // search matches set for items that meet the operand condition
-        // condition, and move those to the non_matches set
-        m_operand->Eval(parent_context, non_matches, matches, SearchDomain::NON_MATCHES);
-    }
-}
-
-bool Not::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
-    // need to determine if (anything does not match the subcondition). that's not the same
-    // as (nothing matches the subcondition).
-    //
-    // eg. Capital::EvalAny would return true iff there is any candidate that is a capital
-    // Not(Capital)::EvalAny would return true iff there is any candidate that is not a capital
-    return std::any_of(candidates.begin(), candidates.end(),
-                       [&parent_context, this](const auto* candidate)
-                       { return !m_operand->EvalOne(parent_context, candidate); });
-    // or:
-    //ObjectSet potential_matches{candidates};
-    //ObjectSet non_matches;
-    //non_matches.reserve(candidates.size());
-    //m_operand->Eval(parent_context, potential_matches, non_matches, SearchDomain::MATCHES);
-    //return !non_matches.empty(); // if non_matches is not empty, than something initially in potential_matches was not matched by m_operand
-}
-
-bool Not::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const
-{ return !m_operand->EvalOne(parent_context, candidate); }
-
-std::string Not::Description(bool negated) const
-{ return m_operand->Description(!negated); }
-
-std::string Not::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "Not\n";
-    retval += m_operand->Dump(ntabs+1);
-    return retval;
-}
-
-void Not::SetTopLevelContent(const std::string& content_name) {
-    if (m_operand)
-        m_operand->SetTopLevelContent(content_name);
-}
-
-uint32_t Not::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Not");
-    CheckSums::CheckSumCombine(retval, m_operand);
-
-    TraceLogger(conditions) << "GetCheckSum(Not): retval: " << retval;
-    return retval;
-}
-
-std::unique_ptr<Condition> Not::Clone() const
-{ return std::make_unique<Not>(ValueRef::CloneUnique(m_operand)); }
 
 ///////////////////////////////////////////////////////////
 // OrderedAlternativesOf

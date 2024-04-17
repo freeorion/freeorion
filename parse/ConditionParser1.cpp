@@ -26,13 +26,13 @@ namespace parse { namespace detail {
         int_rules(tok, label, condition_parser, string_grammar),
         empire_affiliation_type_enum(tok)
     {
-        qi::_1_type _1;
-        qi::_2_type _2;
-        qi::_val_type _val;
-        qi::eps_type eps;
-        qi::lit_type lit;
-        qi::_pass_type _pass;
-        qi::omit_type omit_;
+        qi::_1_type _1{};
+        qi::_2_type _2{};
+        qi::_val_type _val{};
+        qi::eps_type eps{};
+        qi::lit_type lit{};
+        qi::_pass_type _pass{};
+        qi::omit_type omit_{};
         const boost::phoenix::function<construct_movable> construct_movable_;
         const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
         const boost::phoenix::function<deconstruct_movable_vector> deconstruct_movable_vector_;
@@ -85,7 +85,7 @@ namespace parse { namespace detail {
 
         capital1
             =   (tok.Capital_ >> label(tok.empire_)) > int_rules.expr
-            [ _val = construct_movable_(new_<Condition::Capital>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::CapitalWithID>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         capital2
@@ -138,7 +138,7 @@ namespace parse { namespace detail {
 
         and_
             = ( omit_[tok.And_] > '[' > +condition_parser > lit(']'))
-            [ _val = construct_movable_(new_<Condition::And>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::And<>>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         or_
@@ -148,7 +148,8 @@ namespace parse { namespace detail {
 
         not_
             = tok.Not_ > condition_parser
-            [ _val = construct_movable_(new_<Condition::Not>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::Not<std::unique_ptr<Condition::Condition>>>(
+                deconstruct_movable_(_1, _pass))) ]
             ;
 
         ordered_alternatives_of
@@ -195,7 +196,7 @@ namespace parse { namespace detail {
         aggressive.name("Aggressive");
         can_colonize.name("CanColonize");
         can_produce_ships.name("CanProduceShips");
-        capital1.name("Capital");
+        capital1.name("CapitalWithID");
         capital2.name("Capital");
         monster.name("Monster");
         armed.name("Armed");

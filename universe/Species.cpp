@@ -175,7 +175,7 @@ namespace {
         auto type_cond = std::make_unique<Condition::Type>(
             std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
 
-        auto retval = std::make_unique<Condition::And>(std::move(enviro_cond), std::move(type_cond));
+        auto retval = std::make_unique<Condition::And<>>(std::move(enviro_cond), std::move(type_cond));
         retval->SetTopLevelContent(name);
 
         return retval;
@@ -207,7 +207,7 @@ namespace {
     }
 
     auto DefaultAnnexationCondition() {
-        return std::make_unique<Condition::And>(
+        return std::make_unique<Condition::And<>>(
             std::make_unique<Condition::Or>(
                 std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
                 std::make_unique<Condition::EmpireAffiliation>(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)

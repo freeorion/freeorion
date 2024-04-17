@@ -12,11 +12,9 @@ namespace Condition {
 
 /** Matches the source object only. */
 struct FO_COMMON_API Source final : public Condition {
-    constexpr Source() noexcept :
-        Condition(true, true, false)
-    {}
-
-    bool operator==(const Condition& rhs) const override;
+    constexpr Source() noexcept : Condition(true, true, false) {}
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override
+    { return dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;

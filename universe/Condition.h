@@ -29,7 +29,7 @@ enum class SearchDomain : bool {
 struct FO_COMMON_API Condition {
     constexpr virtual ~Condition() = default;
 
-    virtual bool operator==(const Condition& rhs) const;
+    constexpr virtual bool operator==(const Condition& rhs) const = 0;
 
     /** Moves object pointers from \a matches or \a non_matches (from whichever
      * is specified in \a search_domain) to the other, if each belongs in the
@@ -128,6 +128,9 @@ protected:
         m_root_candidate_invariant(root_invariant),
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant)
+    {}
+    constexpr Condition(std::array<bool, 3> rts_invariants) noexcept :
+        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2])
     {}
     //! Copies invariants from other Condition
     constexpr Condition(const Condition& rhs) = default;
