@@ -261,7 +261,7 @@ namespace CheckSums {
 
     // floating point types types
     template <typename T> requires std::is_floating_point_v<std::decay_t<T>>
-    FO_COMMON_API constexpr void CheckSumCombine(uint32_t& sum, T t)
+    constexpr void CheckSumCombine(uint32_t& sum, T t)
         noexcept(noexcept(std::log10(std::abs(T{1}))))
     {
         if (t == 0.0)
@@ -286,9 +286,12 @@ namespace CheckSums {
         noexcept(noexcept(CheckSumCombine(sum, std::string_view{s})))
     { CheckSumCombine(sum, std::string_view{s}); }
 
+    template <typename T>
+    concept has_getchecksum = requires(const T t) { t.GetCheckSum(); };
+
     // classes that have GetCheckSum methods
-    template <typename ClassWithGetCheckSum> requires requires(const ClassWithGetCheckSum& c) { c.GetCheckSum(); }
-    constexpr void CheckSumCombine(uint32_t& sum, const ClassWithGetCheckSum& c)
+    template <has_getchecksum C>
+    constexpr void CheckSumCombine(uint32_t& sum, const C& c)
     { CheckSumCombine(sum, c.GetCheckSum()); }
 
     // enums
@@ -297,16 +300,13 @@ namespace CheckSums {
     { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
     // pointer types
-    template <typename PointerT> requires requires(const PointerT& ptr) { *ptr; }
-    constexpr void CheckSumCombine(uint32_t& sum, const PointerT& ptr)
+    constexpr void CheckSumCombine(uint32_t& sum, const auto& ptr)
+        requires(requires { *ptr; ptr.get(); })
     { if (ptr) CheckSumCombine(sum, *ptr); }
 
     // pairs (including map value types)
     template <typename Combinable1, typename Combinable2>
-      /*requires requires(const Combinable1& c1, const Combinable2& c2, uint32_t& i)
-        { CheckSumCombine(i, c1); CheckSumCombine(i, c2); }*/
     constexpr void CheckSumCombine(uint32_t& sum, const std::pair<Combinable1, Combinable2>& p)
-        //noexcept(noexcept(CheckSumCombine(sum, p.first)) && noexcept(CheckSumCombine(sum, p.second)))
     {
         CheckSumCombine(sum, p.first);
         CheckSumCombine(sum, p.second);
@@ -329,11 +329,10 @@ namespace CheckSums {
     }
 
     // iterable containers
-    template <typename ContainerOfCombinable> requires (
-        requires(const ContainerOfCombinable& c, uint32_t& i) { c.begin(); c.end(); c.size(); CheckSumCombine(i, *c.begin()); } &&
-        !std::is_same_v<std::string, std::decay_t<ContainerOfCombinable>> &&
-        !std::is_same_v<std::string_view, std::decay_t<ContainerOfCombinable>>)
-    constexpr void CheckSumCombine(uint32_t& sum, const ContainerOfCombinable& c)
+    constexpr void CheckSumCombine(uint32_t& sum, const auto& c)
+        requires(requires { c.begin(); c.end(); c.size(); } &&
+                 !std::is_same_v<std::string, std::decay_t<decltype(c)>> &&
+                 !std::is_same_v<std::string_view, std::decay_t<decltype(c)>>)
     {
         for (const auto& t : c)
             CheckSumCombine(sum, t);
