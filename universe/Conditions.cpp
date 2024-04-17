@@ -1228,15 +1228,6 @@ std::string None::Description(bool negated) const {
 std::string None::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "None\n"; }
 
-uint32_t None::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::None");
-
-    TraceLogger(conditions) << "GetCheckSum(None): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> None::Clone() const
 { return std::make_unique<None>(); }
 
@@ -1614,10 +1605,13 @@ Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>
 bool Homeworld::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Homeworld& rhs_ = static_cast<const Homeworld&>(rhs);
+bool Homeworld::operator==(const Homeworld& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -2035,15 +2029,6 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 ObjectSet Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
 { return AllObjectsSet<Ship, true>(parent_context.ContextObjects()); }
 
-uint32_t Monster::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Monster");
-
-    TraceLogger(conditions) << "GetCheckSum(Monster): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> Monster::Clone() const
 { return std::make_unique<Monster>(); }
 
@@ -2064,15 +2049,6 @@ bool Armed::Match(const ScriptingContext& local_context) const {
     }
 
     return false;
-}
-
-uint32_t Armed::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Armed");
-
-    TraceLogger(conditions) << "GetCheckSum(Armed): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Armed::Clone() const
@@ -2864,14 +2840,15 @@ HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
 bool HasTag::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const HasTag& rhs_ = static_cast<const HasTag&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_name)
-
-    return true;
+bool HasTag::operator==(const HasTag& rhs) const {
+    if (this == &rhs)
+        return true;
+    return (this == &rhs) || (m_name == rhs.m_name) ||
+        (m_name && rhs.m_name && *m_name == *(rhs.m_name));
 }
 
 namespace {
@@ -3621,14 +3598,13 @@ OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
 bool OnPlanet::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const OnPlanet& rhs_ = static_cast<const OnPlanet&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_planet_id)
-
-    return true;
+bool OnPlanet::operator==(const OnPlanet& rhs) const {
+    return (this == &rhs) || (m_planet_id == rhs.m_planet_id) ||
+        (m_planet_id && rhs.m_planet_id && *m_planet_id == *(rhs.m_planet_id));
 }
 
 namespace {
@@ -6578,13 +6554,9 @@ MeterValue::MeterValue(MeterType meter,
                                (!m_high || m_high->LocalCandidateInvariant()))
 {}
 
-bool MeterValue::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool MeterValue::operator==(const MeterValue& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const MeterValue& rhs_ = static_cast<const MeterValue&>(rhs);
 
     if (m_meter != rhs_.m_meter)
         return false;
