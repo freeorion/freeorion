@@ -2075,13 +2075,14 @@ Type::Type(UniverseObjectType type) :
 bool Type::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Type& rhs_ = static_cast<const Type&>(rhs);
-
+bool Type::operator==(const Type& rhs_) const {
+    if (this == &rhs_)
+        return true;
     CHECK_COND_VREF_MEMBER(m_type)
-
     return true;
 }
 
