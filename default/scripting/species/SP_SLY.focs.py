@@ -185,7 +185,10 @@ Species(
             ],
         ),
         EffectsGroup(
-            scope=IsSource, activation=Capital, effects=GiveEmpirePolicy(name="PLC_CONFEDERATION", empire=Source.Owner)
+            description="SLY_STARTING_UNLOCKS_DESC",
+            scope=IsSource,
+            activation=Capital,
+            effects=GiveEmpirePolicy(name="PLC_CONFEDERATION", empire=Source.Owner),
         ),
     ],
     environments=GASEOUS_STANDARD_EP,

@@ -17646,6 +17646,15 @@ GASEOUS_DESC
 '''+	Live on Gas Giants
 +	Refuel on Gas Giants 0.2 per turn'''
 
+ABADDONI_STARTING_UNLOCKS_DESC
++	Starts with [[tech GRO_SUBTER_HAB]] researched
+
+FULVER_STARTING_UNLOCKS_DESC
++	Starts with [[tech PRO_GENERIC_SUPPLIES]] researched
+
+SLY_STARTING_UNLOCKS_DESC
++	Starts with [[policy PLC_CONFEDERATION]] unlocked
+
 EXTREMELY_BAD_POPULATION_DESC
 −−−	Extremely Bad [[metertype METER_POPULATION]]: 25%
 

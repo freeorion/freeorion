@@ -117,6 +117,7 @@ Species(
         *GREAT_FUEL,
         *PRECOGNITIVE_DETECTION(2),
         EffectsGroup(
+            description="FULVER_STARTING_UNLOCKS_DESC",
             scope=IsSource,
             activation=Turn(high=1),
             effects=[GiveEmpireTech(name="PRO_GENERIC_SUPPLIES", empire=Target.Owner)],

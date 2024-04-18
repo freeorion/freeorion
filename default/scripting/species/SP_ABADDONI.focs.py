@@ -87,6 +87,7 @@ Species(
         *AVERAGE_SUPPLY,
         *BAD_DEFENSE_TROOPS,
         EffectsGroup(
+            description="ABADDONI_STARTING_UNLOCKS_DESC",
             scope=IsSource,
             activation=Turn(high=1),
             effects=[GiveEmpireTech(name="GRO_SUBTER_HAB", empire=Target.Owner)],
