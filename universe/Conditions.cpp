@@ -1199,15 +1199,6 @@ std::string None::Description(bool negated) const {
 std::string None::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "None\n"; }
 
-uint32_t None::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::None");
-
-    TraceLogger(conditions) << "GetCheckSum(None): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> None::Clone() const
 { return std::make_unique<None>(); }
 
@@ -1237,15 +1228,6 @@ std::string NoOp::Description(bool negated) const
 
 std::string NoOp::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "NoOp\n"; }
-
-uint32_t NoOp::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::NoOp");
-
-    TraceLogger(conditions) << "GetCheckSum(NoOp): retval: " << retval;
-    return retval;
-}
 
 std::unique_ptr<Condition> NoOp::Clone() const
 { return std::make_unique<NoOp>(); }
@@ -11662,6 +11644,7 @@ namespace StaticTests {
 
     constexpr auto andc = And(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
                                          Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
+    static_assert(andc.GetCheckSum() == 4254);
 }
 
 namespace {

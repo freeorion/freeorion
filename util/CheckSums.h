@@ -55,16 +55,14 @@ namespace CheckSums {
     constexpr void CheckSumCombine(uint32_t& sum, std::string_view sv) noexcept {
         for (auto t : sv)
             CheckSumCombine(sum, t);
-        sum += static_cast<uint32_t>(sv.size());
-        sum %= CHECKSUM_MODULUS;
+        CheckSumCombine(sum, sv.size());
     }
-    constexpr void CheckSumCombine(uint32_t& sum, const char* s) noexcept
+    constexpr void CheckSumCombine(uint32_t& sum, const char* s) noexcept(noexcept(std::string_view{""}))
     { CheckSumCombine(sum, std::string_view{s}); }
 
     // classes that have GetCheckSum methods
-    template <typename C> //requires (requires(C c) { c.GetCheckSum(); })
-    void CheckSumCombine(uint32_t& sum, const C& c,
-                         decltype(std::declval<C>().GetCheckSum())* = nullptr) noexcept(noexcept(c.GetCheckSum()))
+    constexpr void CheckSumCombine(uint32_t& sum, const auto& c) noexcept(noexcept(c.GetCheckSum()))
+        requires(requires { c.GetCheckSum(); })
     {
         sum += c.GetCheckSum();
         sum %= CHECKSUM_MODULUS;
@@ -76,24 +74,9 @@ namespace CheckSums {
     { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
     // pointer types
-    template <typename T>
-    constexpr void CheckSumCombine(uint32_t& sum, const T* p) noexcept
-    {
-        if (p)
-            CheckSumCombine(sum, *p);
-    }
-    template <typename T>
-    void CheckSumCombine(uint32_t& sum, const typename std::shared_ptr<T>& p)
-    {
-        if (p)
-            CheckSumCombine(sum, *p);
-    }
-    template <typename T>
-    constexpr void CheckSumCombine(uint32_t& sum, const typename std::unique_ptr<T>& p)
-    {
-        if (p)
-            CheckSumCombine(sum, *p);
-    }
+    constexpr void CheckSumCombine(uint32_t& sum, const auto& ptr) noexcept
+        requires(requires { *ptr; ptr.get(); })
+    { if (ptr) CheckSumCombine(sum, *ptr); }
 
     // pairs (including map value types)
     template <typename C, typename D>
@@ -103,16 +86,38 @@ namespace CheckSums {
         CheckSumCombine(sum, p.second);
     }
 
+    // tuples
+    template <typename... Ts>
+    constexpr void CheckSumCombine(uint32_t& sum, const std::tuple<Ts...>& ts)
+    {
+        const auto combine_t = [&sum](const auto& t)
+        { CheckSumCombine(sum, t); };
+
+        const auto combine_ts = [&combine_t](const auto&... ts)
+        { (combine_t(ts), ...); };
+
+        std::apply(combine_ts, ts);
+
+        CheckSumCombine(sum, sizeof...(Ts));
+    }
+
     // iterable containers
-    template <typename C> //requires (requires (C c) { c.begin(); c.end(); })
-    void CheckSumCombine(uint32_t& sum, const C& c,
-                         decltype(std::declval<C>().begin())* = nullptr,
-                         decltype(std::declval<C>().end())* = nullptr)
+    constexpr void CheckSumCombine(uint32_t& sum, const auto& c)
+        requires(requires { c.begin(); c.end(); c.size(); } &&
+                 !std::is_same_v<std::string, std::decay_t<decltype(c)>>)
     {
         for (const auto& t : c)
             CheckSumCombine(sum, t);
-        sum += static_cast<uint32_t>(c.size());
-        sum %= CHECKSUM_MODULUS;
+        CheckSumCombine(sum, c.size());
+    }
+
+    [[nodiscard]] constexpr uint32_t GetCheckSum(const auto& c)
+        noexcept(noexcept(CheckSumCombine(std::declval<uint32_t&>(), c)))
+        requires(requires { CheckSumCombine(std::declval<uint32_t&>(), c); })
+    {
+        uint32_t retval{0};
+        CheckSumCombine(retval, c);
+        return retval;
     }
 }
 

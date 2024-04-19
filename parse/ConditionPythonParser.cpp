@@ -54,7 +54,7 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
         }
     }
 
-    return condition_wrapper(std::make_shared<Condition::And>(
+    return condition_wrapper(std::make_shared<Condition::And<>>(
         lhs.condition->Clone(),
         rhs.condition->Clone()
     ));
@@ -93,7 +93,7 @@ condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_w
 }
 
 condition_wrapper operator~(const condition_wrapper& lhs) {
-    return condition_wrapper(std::make_shared<Condition::Not>(
+    return condition_wrapper(std::make_shared<Condition::Not<>>(
         lhs.condition->Clone()
     ));
 }

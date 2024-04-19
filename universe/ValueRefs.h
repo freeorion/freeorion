@@ -20,11 +20,21 @@
 #include "../util/i18n.h"
 #include "../util/Random.h"
 
+
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
+
 namespace CheckSums {
     template <typename T>
-    void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
+    constexpr void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
     {
-        TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
+        if (!std::is_constant_evaluated())
+            TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
         sum += c.GetCheckSum();
         sum %= CHECKSUM_MODULUS;
     }
@@ -59,16 +69,27 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         return m_value == rhs_.m_value;
     }
 
-    [[nodiscard]] T Eval(const ScriptingContext& context) const
+    [[nodiscard]] constexpr T Eval(const ScriptingContext&) const
         noexcept(noexcept(T{std::declval<const T>()})) override
     { return m_value; }
 
-    [[nodiscard]] std::string Description() const override;
+    [[nodiscard]] std::string Description() const override
+    { return UserString(to_string(m_value)); }
+
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return DumpIndent(ntabs) + Description(); }
 
     [[nodiscard]] constexpr T Value() const noexcept(noexcept(T{std::declval<const T>()})) { return m_value; };
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept override {
+        uint32_t retval{0};
+        CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
+        CheckSums::CheckSumCombine(retval, m_value);
+        if (!std::is_constant_evaluated())
+            TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+                          << " value: " << Description() << " retval: " << retval;
+        return retval;
+    }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Constant>(m_value); }
@@ -76,14 +97,6 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 private:
     const T m_value{};
 };
-
-#if !defined(CONSTEXPR_STRING)
-#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
-#    define CONSTEXPR_STRING constexpr
-#  else
-#    define CONSTEXPR_STRING
-#  endif
-#endif
 
 template <>
 struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
@@ -104,45 +117,48 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     [[nodiscard]] constexpr bool operator==(const ValueRef<std::string>& rhs) const override {
         if (&rhs == this)
             return true;
-        if (typeid(rhs) != typeid(*this))
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        if (!rhs_p)
             return false;
-        auto& rhs_ = static_cast<const Constant<std::string>&>(rhs);
-
+        const auto& rhs_ = *rhs_p;
         return m_top_level_content == rhs_.m_top_level_content && m_value == rhs_.m_value;
     }
 
     static constexpr std::string_view current_content = "CurrentContent";
     static constexpr std::string_view no_current_content = "THERE_IS_NO_TOP_LEVEL_CONTENT";
 
-    [[nodiscard]] std::string Eval(const ScriptingContext&) const override
+    [[nodiscard]] CONSTEXPR_STRING std::string Eval(const ScriptingContext&) const override
     { return (m_value == current_content) ? m_top_level_content : m_value; }
 
-    [[nodiscard]] std::string Description() const override
+    [[nodiscard]] CONSTEXPR_STRING std::string Description() const override
     { return (m_value == current_content) ? m_top_level_content : m_value; }
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
+    [[nodiscard]] CONSTEXPR_STRING std::string Dump(uint8_t ntabs = 0) const override
     { return "\"" + Description() + "\""; }
 
-    void SetTopLevelContent(const std::string& content_name) override {
-        if (m_value == current_content && content_name == no_current_content) {
+    void CONSTEXPR_STRING SetTopLevelContent(const std::string& content_name) override {
+        if (!std::is_constant_evaluated() && m_value == current_content && content_name == no_current_content) {
             ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal.  Trying to set "
                 << no_current_content << " for "
                 << current_content << " (maybe you tried to use "
                 << current_content << " in named_values.focs.txt)";
         }
-        if (!m_top_level_content.empty() && m_top_level_content != no_current_content)
-            ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Tried to overwrite top level content from '" << m_top_level_content << "' to '" << content_name << "'";
-        else
+        if (!m_top_level_content.empty() && m_top_level_content != no_current_content) {
+            if (!std::is_constant_evaluated())
+                ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Tried to overwrite top level content from '" << m_top_level_content << "' to '" << content_name << "'";
+        } else {
             m_top_level_content = content_name;
+        }
     }
 
-    [[nodiscard]] auto& Value() const noexcept { return m_value; };
-    [[nodiscard]] uint32_t GetCheckSum() const override {
+    [[nodiscard]] CONSTEXPR_STRING const auto& Value() const noexcept { return m_value; };
+    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override {
         uint32_t retval{0};
 
         CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
         CheckSums::CheckSumCombine(retval, m_value);
-        TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-                      << " value: " << Description() << " retval: " << retval;
+        if (!std::is_constant_evaluated())
+            TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+                          << " value: " << Description() << " retval: " << retval;
         return retval;
     }
 
@@ -320,8 +336,7 @@ protected:
 };
 
 /** The variable static_cast class.  The value returned by this node is taken
-  * from the ctor \a value_ref parameter's FromType value, static_cast to
-  * ToType. */
+  * from the ctor \a value_ref parameter's FromType value, static_cast to ToType. */
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
@@ -550,41 +565,11 @@ private:
 ///////////////////////////////////////////////////////////
 // Constant                                              //
 ///////////////////////////////////////////////////////////
-template <typename T>
-uint32_t Constant<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
-    CheckSums::CheckSumCombine(retval, m_value);
-    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-                  << " value: " << Description() << " retval: " << retval;
-    return retval;
-}
-
 template <>
 FO_COMMON_API std::string Constant<int>::Description() const;
 
 template <>
 FO_COMMON_API std::string Constant<double>::Description() const;
-
-template <>
-FO_COMMON_API std::string Constant<PlanetType>::Description() const;
-
-template <>
-FO_COMMON_API std::string Constant<PlanetSize>::Description() const;
-
-template <>
-FO_COMMON_API std::string Constant<PlanetEnvironment>::Description() const;
-
-template <>
-FO_COMMON_API std::string Constant<UniverseObjectType>::Description() const;
-
-template <>
-FO_COMMON_API std::string Constant<StarType>::Description() const;
-
-template <>
-FO_COMMON_API std::string Constant<Visibility>::Description() const;
 
 template <>
 FO_COMMON_API std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const;

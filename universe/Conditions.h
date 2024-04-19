@@ -205,7 +205,9 @@ struct FO_COMMON_API None final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const
+        noexcept(noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), ""))) override
+    { return CheckSums::GetCheckSum("Condition::None"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 };
@@ -224,7 +226,9 @@ struct FO_COMMON_API NoOp final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const
+        noexcept(noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), ""))) override
+    { return CheckSums::GetCheckSum("Condition::NoOp"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 };
@@ -1893,7 +1897,7 @@ private:
 
 /** Matches all objects that match every Condition in \a operands. */
 template <class... ConditionTs>
-    requires (std::is_base_of_v<Condition, ConditionTs> && ...)
+    requires ((std::is_base_of_v<Condition, ConditionTs> && ...))
 struct FO_COMMON_API And final : public Condition {
     static constexpr auto N = sizeof...(ConditionTs);
     static_assert(N > 0);
@@ -1909,8 +1913,84 @@ struct FO_COMMON_API And final : public Condition {
         return false;
     }
 
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
+    {
+    }
+
+    //    if (search_domain == SearchDomain::NON_MATCHES) {
+    //        ObjectSet partly_checked_non_matches;
+    //        partly_checked_non_matches.reserve(non_matches.size());
+    //
+    //        // move items in non_matches set that pass first operand condition into
+    //        // partly_checked_non_matches set
+    //        m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
+    //
+    //        // move items that don't pass one of the other conditions back to non_matches
+    //        for (std::size_t i = 1; i < m_operands.size(); ++i) {
+    //            if (partly_checked_non_matches.empty()) break;
+    //            m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
+    //        }
+    //
+    //        // merge items that passed all operand conditions into matches
+    //        matches.insert(matches.end(), partly_checked_non_matches.begin(),
+    //                       partly_checked_non_matches.end());
+    //
+    //        // items already in matches set are not checked, and remain in matches set even if
+    //        // they don't match one of the operand conditions
+    //
+    //    } else /*(search_domain == SearchDomain::MATCHES)*/ {
+    //        // check all operand conditions on all objects in the matches set, moving those
+    //        // that don't pass a condition to the non-matches set
+    //
+    //        for (const auto& operand : m_operands) {
+    //            if (matches.empty()) break;
+    //            operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+    //        }
+    //
+    //        // items already in non_matches set are not checked, and remain in non_matches set
+    //        // even if they pass all operand conditions
+    //    }
+    //}
+
+
+
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override {
+        if (candidates.empty() || candidates.size() == 1 && !candidates.front())
+            return false;
+        ObjectSet matches{candidates};
+        ObjectSet non_matches;
+        non_matches.reserve(candidates.size());
+
+        const auto eval_cond_on_candidates = [&parent_context, &matches, &non_matches](const auto& cond) {
+            cond.Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+            return !matches.empty();
+        };
+
+        const auto eval_conds_on_candidates = [&eval_cond_on_candidates](const auto&... conds)
+        { return (eval_cond_on_candidates(conds) && ...); };
+
+        return std::apply(eval_conds_on_candidates, m_operands);
+    }
+
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override {
+        if (!candidate)
+            return false;
+
+        const auto eval_cond_on_candidate = [&parent_context, candidate](const auto& cond)
+        { return cond.EvalOne(parent_context, candidate); };
+
+        const auto eval_conds_on_candidate = [&eval_cond_on_candidate](const auto&... conds)
+        { return (eval_cond_on_candidate(conds) && ...); };
+
+        return std::apply(eval_conds_on_candidate, m_operands);
+    }
+
     [[nodiscard]] CONSTEXPR_VEC ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
     { return std::get<0>(m_operands).GetDefaultInitialCandidateObjects(parent_context); }
+
+    [[nodiscard]] CONSTEXPR_STRING std::string Description(bool negated = false) const override { return {}; }
+    [[nodiscard]] CONSTEXPR_STRING std::string Dump(uint8_t ntabs = 0) const override { return {}; }
 
     CONSTEXPR_STRING void SetTopLevelContent(const std::string& content_name) {
         const auto set_tlc = [&content_name](auto& op)
@@ -1922,6 +2002,14 @@ struct FO_COMMON_API And final : public Condition {
         std::apply(set_tlcs, m_operands);
     }
 
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const {
+        uint32_t retval{0};
+
+        CheckSums::CheckSumCombine(retval, "Condition::And");
+        CheckSums::CheckSumCombine(retval, m_operands);
+
+        return retval;
+    }
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
         static constexpr auto clone_as_own_type = [](const auto& op) {
             using op_t = std::decay_t<decltype(op)>;
@@ -2009,6 +2097,9 @@ template <class ConditionT = std::unique_ptr<Condition>>
 struct FO_COMMON_API Not final : public Condition {
 private:
     static constexpr bool cond_is_ptr = requires(const ConditionT c) { c.get(); };
+    static constexpr bool cond_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
+    static constexpr bool cond_deref_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
+
     [[nodiscard]] constexpr std::array<bool, 3> GetRTSInvariants(const ConditionT& c) noexcept {
         if constexpr (cond_is_ptr)
             return {c->RootCandidateInvariant(), c->TargetInvariant(), c->SourceInvariant()};
@@ -2022,19 +2113,24 @@ public:
         m_operand(std::move(operand))
     {}
 
-    constexpr bool operator==(const Condition& rhs) const override {
+    constexpr bool operator==(const Not& rhs) const noexcept(cond_equals_noexcept && cond_deref_equals_noexcept) {
         if (this == &rhs)
             return true;
-        if (!std::is_constant_evaluated() && typeid(*this) != typeid(rhs))
-            return false;
-
-        const Not& rhs_ = static_cast<const Not&>(rhs);
-
+        if (m_operand == rhs.m_operand)
+            return true;
         if constexpr (cond_is_ptr)
-            return (m_operand == rhs_.m_operand) ||
-                (m_operand && rhs_.m_operand && (*m_operand == static_cast<const Condition&>(*(rhs_.m_operand))));
+            return *m_operand  == *rhs.m_operand;
         else
-            return m_operand == static_cast<const Condition&>(rhs_.m_operand);
+            return false;
+    }
+
+    constexpr bool operator==(const Condition& rhs) const
+        noexcept(noexcept(std::declval<Not>() == std::declval<Not>())) override
+    {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *rhs_p == *this;
     }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
