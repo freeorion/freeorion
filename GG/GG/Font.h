@@ -172,13 +172,16 @@ public:
             str = &str_;
         }
 
-        [[nodiscard]] auto data() const noexcept { return std::next(str->data(), first); }
+        [[nodiscard]] auto data() const noexcept -> const std::string::value_type*
+        { return (str && (str->size() >= first)) ? (str->data() + first) : EMPTY_STRING.data(); }
 
         /** Returns an iterator to the beginning of the substring. */
-        [[nodiscard]] auto begin() const { return std::next(str->begin(), first); }
+        [[nodiscard]] auto begin() const noexcept -> std::string::const_iterator
+        { return (str && str->size() >= first) ? (str->cbegin() + first) : EMPTY_STRING.cbegin(); }
 
         /** Returns an iterator to one-past-the-end of the substring. */
-        [[nodiscard]] auto end() const { return std::next(str->begin(), second); }
+        [[nodiscard]] auto end() const noexcept -> std::string::const_iterator
+        { return (str && str->size() >= second) ? (str->cbegin() + second) : EMPTY_STRING.cend(); }
 
         /** True iff .first == .second. */
         [[nodiscard]] bool empty() const noexcept { return first == second; }
