@@ -269,6 +269,8 @@ namespace {
             *(str.data() + 1) == 0;
         }());
 #endif
+    static_assert(noexcept(std::declval<const std::string>().data() + 1) &&
+                  noexcept(std::declval<const std::string>().cbegin() + 1));
 }
 
 
