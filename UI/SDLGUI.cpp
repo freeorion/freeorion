@@ -328,21 +328,21 @@ void SDLGUI::GLInit() {
 
     // set up perspective with vertical FOV of 50°. 1:1 application
     // window ratio, near plane of 1.0 and far plane of 10.0
-    float ratio = Value(m_app_width) * 1.0f / Value(m_app_height);
-    float radians = static_cast<float>(50.0 * M_PI / 180.0);
-    float near = 1.0f;
-    float far = 10.0f;
-    float cotangent = std::cos(radians) / std::sin(radians);
+    const float ratio = Value(m_app_width) * 1.0f / Value(m_app_height);
 
-    float projection[4][4] = {};
-    projection[0][0] = cotangent / ratio;
-    projection[1][1] = cotangent;
-    projection[2][2] = -((far + near) / (far - near));
-    projection[2][3] = -1.0f;
-    projection[3][2] = -((2.0f * far * near) / (far - near));
-    projection[3][3] = 0.0f;
+    static constexpr float cot = 0.839099631177f; // radians = 50.0f * pi / 180.0f; cot = cos(radians) / sin(radians);
+    const float cor = cot / ratio;
+    static constexpr float near = 1.0f;
+    static constexpr float far = 10.0f;
+    static constexpr float fpnonmn = -((far + near) / (far - near));
+    static constexpr float ttftnofmn = -((2.0f * far * near) / (far - near));
+    const std::array<std::array<float, 4>, 4> projection{{
+        { cor, 0.0f,      0.0f,  0.0f},
+        {0.0f, cot,       0.0f,  0.0f},
+        {0.0f, 0.0f,   fpnonmn, -1.0f},
+        {0.0f, cot,  ttftnofmn,  0.0f}}};
 
-    glMultMatrixf(&projection[0][0]);
+    glMultMatrixf(projection.front().data());
 }
 
 void SDLGUI::HandleSystemEvents() {
