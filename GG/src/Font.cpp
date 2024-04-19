@@ -271,6 +271,39 @@ namespace {
 #endif
     static_assert(noexcept(std::declval<const std::string>().data() + 1) &&
                   noexcept(std::declval<const std::string>().cbegin() + 1));
+
+    constexpr auto ClrToChars = [](auto& to_it, const Clr c) noexcept
+    {
+        ToChars(to_it, c.r);
+        *(to_it++) = ' ';
+        ToChars(to_it, c.g);
+        *(to_it++) = ' ';
+        ToChars(to_it, c.b);
+        *(to_it++) = ' ';
+        ToChars(to_it, c.a);
+    };
+
+    constexpr std::size_t buf_sz = 6 + 4*4 + 1;
+    constexpr std::array<std::string::value_type, buf_sz> rgba_buffer{"<rgba \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"}; // rest should be nulls without being explicit, but are not considered appropriately initialized in constexpr evaluations in MSVC 2022 in my tests
+    static_assert(rgba_buffer[22] == 0);
+    static_assert(rgba_buffer[6] == 0);
+    static_assert(rgba_buffer[5] == ' ');
+
+    constexpr auto ToRGBATagChars(const Clr c) noexcept
+    {
+        auto buffer{rgba_buffer};
+        auto it = buffer.begin() + 6;
+        static_assert(noexcept(*(it++) = ' ') && noexcept(buffer.begin() + 6));
+        ClrToChars(it, c);
+        *it = '>';
+        return buffer;
+    }
+
+    constexpr auto chars_from_red{ToRGBATagChars(GG::CLR_RED)};
+    static_assert(std::string_view("<rgba 255 0 0 255>") == std::string_view{chars_from_red.data()});
+
+    constexpr auto chars_from_white{ToRGBATagChars(GG::CLR_WHITE)};
+    static_assert(std::string_view("<rgba 255 255 255 255>") == std::string_view{chars_from_white.data()});
 }
 
 
@@ -279,18 +312,7 @@ namespace {
 ///////////////////////////////////////
 std::string GG::RgbaTag(Clr c)
 {
-    std::array<std::string::value_type, 6 + 4*4 + 1> buffer{"<rgba "}; // rest should be nulls
-    auto it = buffer.data() + 6;
-    static_assert(noexcept(*(it++) = ' ') && noexcept(buffer.data() + 6));
-
-    ToChars(it, c.r);
-    *(it++) = ' ';
-    ToChars(it, c.g);
-    *(it++) = ' ';
-    ToChars(it, c.b);
-    *(it++) = ' ';
-    ToChars(it, c.a);
-    *it = '>';
+    auto buffer{ToRGBATagChars(c)};
     return {buffer.data()};
 }
 
