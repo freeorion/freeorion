@@ -390,8 +390,8 @@ namespace {
         glEnable(GL_LIGHT0);
 
         auto& colour = StarLightColour(star_type);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, &colour[0]);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, &colour[0]);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, colour.data());
+        glLightfv(GL_LIGHT0, GL_SPECULAR, colour.data());
         glEnable(GL_TEXTURE_2D);
 
         glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));// relocate to locatin on screen where planet is to be rendered

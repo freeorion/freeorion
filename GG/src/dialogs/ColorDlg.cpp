@@ -56,8 +56,8 @@ void HueSaturationPicker::Render()
     glTranslated(Value(ul.x), Value(ul.y), 0.0);
     glScaled(Value(size.x), Value(size.y), 1.0);
     for (std::size_t i = 0; i < m_vertices.size(); ++i) {
-        glVertexPointer(2, GL_DOUBLE, 0, &m_vertices[i][0]);
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, &m_colors[i][0]);
+        glVertexPointer(2, GL_DOUBLE, 0, m_vertices[i].data());
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, m_colors[i].data());
         glDrawArrays(GL_QUAD_STRIP, 0, m_vertices[i].size());
     }
     glPopMatrix();

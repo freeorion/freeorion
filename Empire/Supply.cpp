@@ -995,7 +995,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
         // declare storage and fill with the component id (group id of connected systems)
         // for each graph vertex
         std::vector<int> components(boost::num_vertices(graph));
-        boost::connected_components(graph, &components[0]);
+        boost::connected_components(graph, components.data());
 
         // convert results back from graph id to system id, and into desired output format
         // output: std::map<int, std::set<std::set<int>>>& m_resource_supply_groups

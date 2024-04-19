@@ -63,7 +63,7 @@ namespace {
         try {
             // read the first five letters of the stream and check if it is opening an xml file
             std::array<std::string::value_type, 5> xxx5{};
-            ifs.read(&xxx5[0], xxx5.size());
+            ifs.read(xxx5.data(), xxx5.size());
             static constexpr std::array<std::string::value_type, 5> xml5{'<', '?', 'x', 'm', 'l'};
 
             // reset to start of stream
@@ -136,7 +136,7 @@ bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
     try {
         // read the first five letters of the stream and check if it is opening an xml file
         std::array<std::string::value_type, 5> xxx5{};
-        ifs.read(&xxx5[0], xxx5.size());
+        ifs.read(xxx5.data(), xxx5.size());
         static constexpr std::array<std::string::value_type, 5> xml5{'<', '?', 'x', 'm', 'l'};
         // reset to start of stream 
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
