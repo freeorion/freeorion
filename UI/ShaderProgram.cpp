@@ -30,7 +30,7 @@ namespace {
         if (0 < logSize) {
             log.resize(logSize, '\0');
             GLsizei chars;
-            glGetShaderInfoLog(shader, logSize, &chars, &log[0]);
+            glGetShaderInfoLog(shader, logSize, &chars, log.data());
             CHECK_ERROR("GetShaderLog", "glGetShaderInfoLog()");
         }
     }
@@ -43,7 +43,7 @@ namespace {
         if (0 < logSize) {
             log.resize(logSize, '\0');
             GLsizei chars;
-            glGetProgramInfoLog(program, logSize, &chars, &log[0]);
+            glGetProgramInfoLog(program, logSize, &chars, log.data());
             CHECK_ERROR("GetProgramLog", "glGetProgramInfoLog()");
         }
     }
@@ -207,9 +207,7 @@ void ShaderProgram::Bind(const std::string& name, std::size_t element_size, cons
     CHECK_ERROR("ShaderProgram::Bind", "glGetUniformLocation()");
     assert(location != -1 &&
            "Bind() : The named uniform variable does not exist.");
-    functions[element_size - 1](location,
-                                floats.size() / element_size,
-                                &floats[0]);
+    functions[element_size - 1](location, floats.size() / element_size, floats.data());
     CHECK_ERROR("ShaderProgram::Bind", "glUniformNfv()");
 }
 
@@ -279,9 +277,7 @@ void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, 
     CHECK_ERROR("ShaderProgram::BindInts", "glGetUniformLocation()");
     assert(location != -1 &&
            "BindInts() : The named uniform variable does not exist.");
-    functions[element_size - 1](location,
-                                ints.size() / element_size,
-                                &ints[0]);
+    functions[element_size - 1](location, ints.size() / element_size, ints.data());
     CHECK_ERROR("ShaderProgram::BindInts", "glUniformNiv()");
 }
 

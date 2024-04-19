@@ -343,7 +343,7 @@ namespace SystemPathing {
         const auto& edge_weight_map = boost::get(boost::edge_weight, graph);
         try {
             boost::dijkstra_shortest_paths(
-                graph, system1_index, &predecessors[0], &distances[0],
+                graph, system1_index, predecessors.data(), distances.data(),
                 edge_weight_map, index_map, std::less<double>(), std::plus<double>(),
                 std::numeric_limits<int>::max(), 0,
                 boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2_index)));
@@ -417,8 +417,8 @@ namespace SystemPathing {
             boost::queue<int> buf;
             std::vector<int> colors(boost::num_vertices(graph));
 
-            BFSVisitor bfsVisitor(system1_index, system2_index, &predecessors[0], max_jumps);
-            boost::breadth_first_search(graph, system1_index, buf, bfsVisitor, &colors[0]);
+            BFSVisitor bfsVisitor(system1_index, system2_index, predecessors.data(), max_jumps);
+            boost::breadth_first_search(graph, system1_index, buf, bfsVisitor, colors.data());
         } catch (const typename BFSVisitor::ReachedDepthLimit&) {
             // catching this means the algorithm explored the neighborhood until max_jumps and didn't find anything
             return {{}, -1};

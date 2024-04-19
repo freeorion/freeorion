@@ -108,7 +108,7 @@ void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
             gil::interleaved_view(
                 Value(size.x),
                 Value(size.y),
-                static_cast<gil::rgba8_pixel_t*>(static_cast<void*>(&bytes[0])),
+                static_cast<gil::rgba8_pixel_t*>(static_cast<void*>(bytes.data())),
                 Value(size.x) * sizeof(gil::rgba8_pixel_t))),
         gil::png_tag());
 #endif
@@ -691,9 +691,9 @@ void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, Pt pos, Pt rel,
     m_mouse_pos = pos; // record mouse position
     m_mouse_rel = rel; // record mouse movement
 
-    const auto&& m_drag_wnds_0 = LockAndResetIfExpired(m_drag_wnds[0]);
-    const auto&& m_drag_wnds_1 = LockAndResetIfExpired(m_drag_wnds[1]);
-    const auto&& m_drag_wnds_2 = LockAndResetIfExpired(m_drag_wnds[2]);
+    const auto m_drag_wnds_0 = LockAndResetIfExpired(m_drag_wnds[0]);
+    const auto m_drag_wnds_1 = LockAndResetIfExpired(m_drag_wnds[1]);
+    const auto m_drag_wnds_2 = LockAndResetIfExpired(m_drag_wnds[2]);
     if (m_drag_wnds_0 || m_drag_wnds_1 || m_drag_wnds_2) {
         if (m_drag_wnds_0)
             HandleMouseDrag(0, pos, curr_ticks);

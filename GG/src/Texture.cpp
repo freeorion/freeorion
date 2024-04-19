@@ -364,7 +364,7 @@ void Texture::InitFromRawData(X width, Y height, const uint8_t* image, GLenum fo
         glTexImage2D(GL_TEXTURE_2D, 0, format, Value(width), Value(height), 0, format, type, image);
     } else {
         std::vector<uint8_t> zero_data(bytes_per_pixel * Value(GL_texture_width) * Value(GL_texture_height));
-        glTexImage2D(GL_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, &zero_data[0]);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, zero_data.data());
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, Value(width), Value(height), format, type, image);
     }
 
@@ -396,7 +396,7 @@ std::vector<uint8_t> Texture::GetRawBytes()
     // get pixel data
     const auto num_bytes = Value(m_width) * Value(m_height) * m_bytes_pp;
     std::vector<uint8_t> retval(num_bytes, 0u);
-    glGetTexImage(GL_TEXTURE_2D, 0, m_format, m_type, &retval[0]);
+    glGetTexImage(GL_TEXTURE_2D, 0, m_format, m_type, retval.data());
     glPopClientAttrib();
     return retval;
 }

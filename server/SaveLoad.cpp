@@ -372,7 +372,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         std::string signature(5, '\0');
-        if (!ifs.read(&signature[0], 5))
+        if (!ifs.read(signature.data(), 5))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
@@ -496,7 +496,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         std::string signature(5, '\0');
-        if (!ifs.read(&signature[0], 5))
+        if (!ifs.read(signature.data(), 5))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
@@ -539,7 +539,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         std::string signature(5, '\0');
-        if (!ifs.read(&signature[0], 5))
+        if (!ifs.read(signature.data(), 5))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
@@ -591,7 +591,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
         std::string signature(5, '\0');
-        if (!ifs.read(&signature[0], 5))
+        if (!ifs.read(signature.data(), 5))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
