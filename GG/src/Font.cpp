@@ -258,6 +258,17 @@ namespace {
         return retval;
     }();
     static_assert(std::string_view{three_zero.data()} == "30");
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+    static_assert([](){
+        const std::string str{"a"};
+        return str.size() >= 1 &&
+            str[str.size()] == 0 &&
+            str[0] == 'a' &&
+            *(str.data() + 0) == 'a' &&
+            *(str.data() + 1) == 0;
+        }());
+#endif
 }
 
 
