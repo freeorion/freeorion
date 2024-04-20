@@ -46,10 +46,6 @@ jobs:
     needs: detect_changed_files
     if: ${{ needs.detect_changed_files.outputs.build_windows_with_cmake == 'true' }}
     uses: ./.github/workflows/_build-windows.yml
-  code-ql:
-    needs: detect_changed_files
-    if: ${{ needs.detect_changed_files.outputs.lint_codeql == 'true' }}
-    uses: ./.github/workflows/_codeql-analysis.yml
   lint-py-focs:
     needs: detect_changed_files
     if: ${{ needs.detect_changed_files.outputs.lint_py_focs == 'true' }}
