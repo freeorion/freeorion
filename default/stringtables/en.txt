@@ -12898,7 +12898,7 @@ PLC_TRAFFIC_CONTROL
 Traffic Control
 
 PLC_TRAFFIC_CONTROL_DESC
-Increases [[metertype METER_SPEED]] of ships by 20 when they are within 50 uu of a controlled planet.
+Increases [[metertype METER_SPEED]] of non-enemy ships by 20 when they are within 50 uu of a controlled planet.
 
 PLC_TRAFFIC_CONTROL_SHORT_DESC
 Speeds ships near empire planets
@@ -15237,7 +15237,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-'''Decreases the [[metertype METER_STEALTH]] of all ships in the same system by [[value BLD_LIGHTHOUSE_IMMEDIATE_STEALTH_MALUS]]. On top of this the Interstellar Lighthouse decreases the [[metertype METER_STEALTH]] of all objects by the number of turns it operates, up to [[value BLD_LIGHTHOUSE_CATALOG_STEALTH_MALUS]]. It also increases the [[metertype METER_SPEED]] of friendly ships that start the turn within [[value BLD_LIGHTHOUSE_SPEEDUP_DISTANCE]] uu by [[value BLD_LIGHTHOUSE_SPEEDUP]] for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
+'''Decreases the [[metertype METER_STEALTH]] of all ships in the same system by [[value BLD_LIGHTHOUSE_IMMEDIATE_STEALTH_MALUS]]. On top of this the Interstellar Lighthouse decreases the [[metertype METER_STEALTH]] of all objects by the number of turns it operates, up to [[value BLD_LIGHTHOUSE_CATALOG_STEALTH_MALUS]]. It also increases the [[metertype METER_SPEED]] of non-enemy ships that start the turn within [[value BLD_LIGHTHOUSE_SPEEDUP_DISTANCE]] uu by [[value BLD_LIGHTHOUSE_SPEEDUP]] for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
 
 This building complex sends a complex pattern of EM pulses and particle streams to reveal the location of objects in a system. After a while, all usual objects in a system are registered in a catalog so unusual occurences can be identified more effectively.
 

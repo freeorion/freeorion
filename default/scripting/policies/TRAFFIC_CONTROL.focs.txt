@@ -10,7 +10,10 @@ Policy
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy empire = Source.Owner
+                Not Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
                 Speed low = 1 // Immobile objects do not get the starlane speed boost.
                 WithinDistance distance = 50 condition = And [
                     Planet
