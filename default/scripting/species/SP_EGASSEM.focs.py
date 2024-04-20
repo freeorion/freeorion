@@ -65,9 +65,9 @@ Species(
         "PLC_DESIGN_SIMPLICITY",
         "PLC_MARINE_RECRUITMENT",
         "PLC_MARTIAL_LAW",
+        "PLC_PROPAGANDA",
     ],
     dislikes=[
-        "BLD_AUTO_HISTORY_ANALYSER",
         "BLD_NEUTRONIUM_EXTRACTOR",
         "BLD_BLACK_HOLE_POW_GEN",
         "BLD_STARGATE",
