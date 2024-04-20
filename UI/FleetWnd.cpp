@@ -2570,11 +2570,10 @@ void FleetDetailPanel::UniverseObjectDeleted(const std::shared_ptr<const Univers
 void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     for (auto it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         try {
-            if (const auto* ship_row = it->get()) {
-                if (ship_row->empty())
-                    continue;
-                if (ShipDataPanel* ship_panel = dynamic_cast<ShipDataPanel*>(ship_row->at(0)))
-                    ship_panel->Select(rows.contains(it));
+            if (auto* ship_row = it->get()) {
+                if (!ship_row->empty())
+                    if (auto* ship_panel = dynamic_cast<ShipDataPanel*>(ship_row->at(0)))
+                        ship_panel->Select(rows.contains(it));
             }
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
@@ -3416,11 +3415,10 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         try {
-            if (const auto* fleet_row = it->get()) {
-                if (fleet_row->empty())
-                    continue;
-                if (FleetDataPanel* fleet_panel = dynamic_cast<FleetDataPanel*>(fleet_row->at(0)))
-                    fleet_panel->Select(rows.contains(it));
+            if (auto* fleet_row = it->get()) {
+                if (!fleet_row->empty())
+                    if (auto* fleet_panel = dynamic_cast<FleetDataPanel*>(fleet_row->at(0)))
+                        fleet_panel->Select(rows.contains(it));
             }
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
