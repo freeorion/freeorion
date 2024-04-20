@@ -53,6 +53,13 @@
 class RotatingPlanetControl;
 
 namespace {
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
+
     constexpr int EDGE_PAD(3);
     boost::container::flat_map<std::pair<int, int>, float, std::less<>>         colony_projections; // indexed by {ship_id, planet_id}
     boost::container::flat_map<std::pair<std::string, int>, float, std::less<>> species_colony_projections;
@@ -889,7 +896,7 @@ namespace {
 
         [[nodiscard]] int SystemID() const noexcept { return m_system_id; }
 
-        [[nodiscard]] SortKeyType SortKey(std::size_t) const noexcept { return {}; } // not sorted using sort key
+        [[nodiscard]] SortKeyType SortKey(std::size_t) const noexcept { return EMPTY_STRING; }
 
     private:
         int m_system_id;
@@ -961,12 +968,6 @@ namespace {
         }
         return retval;
     }
-
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-    constexpr std::string EMPTY_STRING;
-#else
-    const std::string EMPTY_STRING;
-#endif
 
     const std::string& GetPlanetSizeName(const Planet* planet) {
         if (!planet || planet->Size() == PlanetSize::SZ_ASTEROIDS || planet->Size() == PlanetSize::SZ_GASGIANT)
@@ -1651,7 +1652,7 @@ namespace {
                                           const UniverseObject* candidate)
     {
         if (!annexation_condition || !source_context.source || ! candidate)
-            return "";
+            return EMPTY_STRING;
         return ConditionDescription(std::vector{annexation_condition}, source_context, candidate);
     }
 
@@ -1757,7 +1758,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     if (bombard_ships.empty())
         bombard_ships = AutomaticallyChosenBombardShips(m_planet_id, source_context);
 
-    const std::string_view colony_ship_species_name = selected_colony_ship ? selected_colony_ship->SpeciesName() : std::string_view{""};
+    const std::string_view colony_ship_species_name = selected_colony_ship ? selected_colony_ship->SpeciesName() : EMPTY_STRING;
     const float colony_ship_capacity = selected_colony_ship ? selected_colony_ship->ColonyCapacity(u) : 0.0f;
     const Species* colony_ship_species = sm.GetSpecies(colony_ship_species_name);
     const PlanetEnvironment planet_env_for_colony_species = colony_ship_species ?

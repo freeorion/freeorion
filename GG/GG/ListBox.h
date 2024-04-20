@@ -98,23 +98,20 @@ public:
         based on the data type.  Rows are stored in ListBoxes by reference,
         not value; this means that you can subclass from Row to create your
         own custom Row types.  This is the recommended method for associating
-        a row with the non-GUI object that it represents.  Note that all
-        subclasses of Row must declare a SortKeyType, if it differs from
-        std::string, and must provide a SortKey() method if it should differ
-        from the default SortKey() that Row provides.  Note that SortKey is
-        not virtual; this part of its interface is used for compile-time
-        polymorphism -- whatever sorter is used with a Row subclass must know
-        the most-derived type of the Row subclass.  \note The margin, column
-        alignment, and width cell data are included so that each Row has all
-        the necessary information with which to render itself (this is
-        primarily needed to facilitate drag-and-drop); these data are
-        duplicates of the margin, alignment, and column widths data found in
-        the owning ListBox, and may be overwritten by the ListBox at any
-        time. */
+        a row with the non-GUI object that it represents.
+        Note that SortKey is not virtual; this part of its interface is used
+        for compile-time polymorphism -- whatever sorter is used with a Row
+        subclass must know the most-derived type of the Row subclass.
+        \note The margin, column alignment, and width cell data are included
+        so that each Row has all the necessary information with which to
+        render itself (this is primarily needed to facilitate drag-and-drop);
+        these data are duplicates of the margin, alignment, and column widths
+        data found in the owning ListBox, and may be overwritten by the
+        ListBox at any time. */
     struct GG_API Row : public Control
     {
         /** the type of key used to sort rows */
-        typedef std::string SortKeyType;
+        using SortKeyType = const std::string&;
 
         Row() : Row(ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT) {}
         Row(X w, Y h);
@@ -128,8 +125,9 @@ public:
         bool                empty() const noexcept { return m_cells.empty(); }; ///< returns true iff there are 0 Controls in this Row
 
         /** Returns the Control in the \a nth cell of this Row
-            \throw std::range_error throws when size() <= \a n */
-        virtual Control* at(std::size_t n) const { return m_cells.at(n).get(); }
+          * \throw std::range_error throws when size() <= \a n */
+        Control*       at(std::size_t n) { return m_cells.at(n).get(); }
+        const Control* at(std::size_t n) const { return m_cells.at(n).get(); }
 
         Alignment    RowAlignment() const noexcept { return m_row_alignment; }         ///< vertical alignment of this Row
         Alignment    ColAlignment(std::size_t n) const { return m_col_alignments[n]; } ///< horizontal alignment of the Control in the \a nth cell of this Row; not range checked
@@ -143,8 +141,8 @@ public:
         void         clear();               ///< removes and deletes all cells in this Row
         void         resize(std::size_t n); ///< resizes the Row to have \a n cells
 
-        void         SetCell(std::size_t n, const std::shared_ptr<Control>& c); ///< sets the Control in the \a nth cell of this Row, deleting any preexisting Control; not range checked
-        Control*     RemoveCell(std::size_t n);                                 ///< Control in the \a nth cell of this Row, and sets the contents of the cell to 0; not range checked
+        void         SetCell(std::size_t n, std::shared_ptr<Control> c);        ///< sets the Control in the \a nth cell of this Row, deleting any preexisting Control; not range checked
+        void         RemoveCell(std::size_t n);                                 ///< Control in the \a nth cell of this Row, and sets the contents of the cell to 0; not range checked
         void         SetRowAlignment(Alignment align);                          ///< sets the vertical alignment of this Row
         void         SetColAlignment(std::size_t n, Alignment align);           ///< sets the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
         void         SetColWidth(std::size_t n, X width);                       ///< sets the width of the \a nth cell of this Row; not range checked
@@ -437,18 +435,6 @@ public:
         when auto-scrolling. */
     void SetAutoScrollInterval(unsigned int interval);
 
-    /** \brief Sorts two Rows of a ListBox using operator<() on the
-        Row::SortKeyType provided by the rows' SortKey() methods.
-
-        If you want to use operator<() with a Row subclass DerivedRow that has
-        a custom SortKeyType, use DefaultRowCmp<DerivedRow>. */
-    template <typename RowType>
-    struct DefaultRowCmp
-    {
-        /** Returns true iff lhs.SortKey( \a column ) < rhs.SortKey( \a column ). */
-        bool operator()(const Row& lhs, const Row& rhs, std::size_t column) const;
-    };
-
 protected:
     X               RightMargin() const noexcept;  ///< space skipped at right of client area for vertical scroll bar
     Y               BottomMargin() const noexcept; ///< space skipped at bottom of client area for horizontal scroll bar
@@ -552,50 +538,48 @@ private:
     unsigned int            m_vscroll_wheel_scroll_increment = 0;
     unsigned int            m_hscroll_wheel_scroll_increment = 0;
 
-    iterator        m_caret;            ///< the item currently selected, or the last item selected by the user 
-    SelectionSet    m_selections;       ///< vector of indexes of selected items
-    iterator        m_old_sel_row;      ///< used to make sure clicks end on the same row where they started
-    bool            m_old_sel_row_selected = false; ///< set to true if m_old_sel_row was selected at the point at which it was designated
-    iterator        m_old_rdown_row;    ///< the row that most recently recieved a right button down message
-    iterator        m_lclick_row;       ///< the row most recently left-clicked
-    iterator        m_rclick_row;       ///< the row most recently right-clicked
-    iterator        m_last_row_browsed; ///< the last row sent out as having been browsed (used to prevent duplicate browse signals)
+    iterator        m_caret = m_rows.end();             ///< the item currently selected, or the last item selected by the user 
+    SelectionSet    m_selections;                       ///< vector of indexes of selected items
+    iterator        m_old_sel_row = m_rows.end();       ///< used to make sure clicks end on the same row where they started
+    bool            m_old_sel_row_selected = false;     ///< set to true if m_old_sel_row was selected at the point at which it was designated
+    iterator        m_old_rdown_row = m_rows.end();     ///< the row that most recently recieved a right button down message
+    iterator        m_lclick_row = m_rows.end();        ///< the row most recently left-clicked
+    iterator        m_rclick_row = m_rows.end();        ///< the row most recently right-clicked
+    iterator        m_last_row_browsed = m_rows.end();  ///< the last row sent out as having been browsed (used to prevent duplicate browse signals)
 
     GG::Pt          m_first_row_offset = {X(BORDER_THICK), Y(BORDER_THICK)};///< scrolled offset of the first row.
-    iterator        m_first_row_shown;      ///< index of row at top of visible area (always begin() for non-empty ListBox with LIST_NOSCROLL set)
-    std::size_t     m_first_col_shown = 0;  ///< like above, but index of column at left
-    std::size_t     m_num_cols = 1;         ///< the number of columns
-    std::vector<X>  m_col_widths;       ///< the width of each of the columns goes here
+    iterator        m_first_row_shown = m_rows.end();   ///< index of row at top of visible area (always begin() for non-empty ListBox with LIST_NOSCROLL set)
+    std::size_t     m_first_col_shown = 0;              ///< like above, but index of column at left
+    std::size_t     m_num_cols = 1;                     ///< the number of columns
+    std::vector<X>  m_col_widths;                       ///< the width of each of the columns goes here
 
-    std::vector<Alignment>  m_col_alignments;   ///< the horizontal alignment of each of the columns goes here
-    std::vector<double>     m_col_stretches;    ///< the stretch factor of each column
-    unsigned int            m_cell_margin;      ///< the amount of space left between each edge of the cell and its contents, in pixels
+    std::vector<Alignment>  m_col_alignments;               ///< the horizontal alignment of each of the columns goes here
+    std::vector<double>     m_col_stretches;                ///< the stretch factor of each column
+    unsigned int            m_cell_margin = DEFAULT_MARGIN; ///< the amount of space left between each edge of the cell and its contents, in pixels
 
     Clr                     m_int_color;                ///< color painted into the client area of the control
     Clr                     m_hilite_color = CLR_SHADOW;///< color behind selected line items
     Flags<ListBoxStyle>     m_style = LIST_NONE;        ///< composed of ListBoxStyles enums (see GUIBase.h)
 
-    std::shared_ptr<Row>    m_header_row;               ///< row of header text/graphics
-    bool                    m_keep_col_widths = false;  ///< should we keep the column widths, once set?
-    std::size_t             m_sort_col = 0;             ///< the index of the column data used to sort the list
+    std::shared_ptr<Row>    m_header_row = Wnd::Create<Row>();  ///< row of header text/graphics
+    std::size_t             m_sort_col = 0;                     ///< the index of the column data used to sort the list
 
-    std::function<bool (const Row&, const Row&, std::size_t)>
-                            m_sort_cmp;                 ///< the predicate used to sort the values in the m_sort_col column of two rows
+    using sort_func_t = std::function<bool (const Row&, const Row&, std::size_t)>;
+    sort_func_t             m_sort_cmp;                 ///< the predicate used to sort the values in the m_sort_col column of two rows
 
-    bool                    m_allow_drops = false;      ///< are we accepting drops
+    /** Set to boost::none to allow all types.  Otherwise each string is an allowed type.*/
+    boost::optional<std::unordered_set<std::string>> m_allowed_drop_types = boost::none;
 
-    /** Set to boost::none to allow all types.  Otherwise each string is an
-        allowed type.*/
-    boost::optional<std::unordered_set<std::string>>
-                            m_allowed_drop_types = boost::none;
-
-    bool            m_auto_scroll_during_drag_drops = true;
+    Timer           m_auto_scroll_timer{250};
     unsigned int    m_auto_scroll_margin = 8;
+
+    bool            m_keep_col_widths = false;  ///< should we keep the column widths, once set?
+    bool            m_allow_drops = false;      ///< are we accepting drops
+    bool            m_auto_scroll_during_drag_drops = true;
     bool            m_auto_scrolling_up = false;
     bool            m_auto_scrolling_down = false;
     bool            m_auto_scrolling_left = false;
     bool            m_auto_scrolling_right = false;
-    Timer           m_auto_scroll_timer{250};
 
     bool            m_normalize_rows_on_insert = true;
     bool            m_manage_column_props = true;
@@ -605,13 +589,5 @@ private:
 };
 
 }
-
-
-template <typename RowType>
-bool GG::ListBox::DefaultRowCmp<RowType>::operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const
-{
-    return static_cast<const RowType&>(lhs).SortKey(column) < static_cast<const RowType&>(rhs).SortKey(column);
-}
-
 
 #endif

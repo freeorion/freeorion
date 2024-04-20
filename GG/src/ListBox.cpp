@@ -131,40 +131,35 @@ Alignment AlignmentFromStyle(Flags<ListBoxStyle> style)
 GG_FLAGSPEC_IMPL(ListBoxStyle);
 
 namespace {
+    bool RegisterListBoxStyles()
+    {
+        FlagSpec<ListBoxStyle>& spec = FlagSpec<ListBoxStyle>::instance();
+        spec.insert(LIST_NONE,          "LIST_NONE");
+        spec.insert(LIST_VCENTER,       "LIST_VCENTER");
+        spec.insert(LIST_TOP,           "LIST_TOP");
+        spec.insert(LIST_BOTTOM,        "LIST_BOTTOM");
+        spec.insert(LIST_CENTER,        "LIST_CENTER");
+        spec.insert(LIST_LEFT,          "LIST_LEFT");
+        spec.insert(LIST_RIGHT,         "LIST_RIGHT");
+        spec.insert(LIST_NOSORT,        "LIST_NOSORT");
+        spec.insert(LIST_SORTDESCENDING,"LIST_SORTDESCENDING");
+        spec.insert(LIST_NOSEL,         "LIST_NOSEL");
+        spec.insert(LIST_SINGLESEL,     "LIST_SINGLESEL");
+        spec.insert(LIST_QUICKSEL,      "LIST_QUICKSEL");
+        spec.insert(LIST_USERDELETE,    "LIST_USERDELETE");
+        spec.insert(LIST_BROWSEUPDATES, "LIST_BROWSEUPDATES");
+        return true;
+    }
+    bool dummy = RegisterListBoxStyles();
 
-bool RegisterListBoxStyles()
-{
-    FlagSpec<ListBoxStyle>& spec = FlagSpec<ListBoxStyle>::instance();
-    spec.insert(LIST_NONE,          "LIST_NONE");
-    spec.insert(LIST_VCENTER,       "LIST_VCENTER");
-    spec.insert(LIST_TOP,           "LIST_TOP");
-    spec.insert(LIST_BOTTOM,        "LIST_BOTTOM");
-    spec.insert(LIST_CENTER,        "LIST_CENTER");
-    spec.insert(LIST_LEFT,          "LIST_LEFT");
-    spec.insert(LIST_RIGHT,         "LIST_RIGHT");
-    spec.insert(LIST_NOSORT,        "LIST_NOSORT");
-    spec.insert(LIST_SORTDESCENDING,"LIST_SORTDESCENDING");
-    spec.insert(LIST_NOSEL,         "LIST_NOSEL");
-    spec.insert(LIST_SINGLESEL,     "LIST_SINGLESEL");
-    spec.insert(LIST_QUICKSEL,      "LIST_QUICKSEL");
-    spec.insert(LIST_USERDELETE,    "LIST_USERDELETE");
-    spec.insert(LIST_BROWSEUPDATES, "LIST_BROWSEUPDATES");
-    return true;
-}
-bool dummy = RegisterListBoxStyles();
+    /** Make \p layout at least \p size large*/
+    void ValidateLayoutSize(GG::Layout& layout, std::size_t size)
+    {
+        if (layout.Columns() < size)
+            layout.ResizeLayout(1, size);
+    }
 
-}
-
-
-namespace {
-
-/** Make \p layout at least \p size large*/
-void ValidateLayoutSize(GG::Layout* layout, std::size_t size)
-{
-    if (layout->Columns() < size)
-        layout->ResizeLayout(1, size);
-}
-
+    static const std::string EMPTY_STRING{};
 }
 
 ////////////////////////////////////////////////
@@ -179,15 +174,13 @@ ListBox::Row::Row(X w, Y h) :
 void ListBox::Row::CompleteConstruction()
 { SetLayout(Wnd::Create<DeferredLayout>(X0, Y0, Width(), Height(), 1, 1, m_margin, m_margin)); }
 
-std::string ListBox::Row::SortKey(std::size_t col) const
+ListBox::Row::SortKeyType ListBox::Row::SortKey(std::size_t col) const
 {
-    if (col >= m_cells.size()) {
-        std::cerr << "ListBox::Row::SortKey out of range column = " << col << " > num cols = " << m_cells.size();
-        return "";
-    }
+    if (col >= m_cells.size())
+        return EMPTY_STRING;
 
     const TextControl* text_control = dynamic_cast<const TextControl*>(at(col));
-    return text_control ? text_control->Text() : "";
+    return text_control ? text_control->Text() : EMPTY_STRING;
 }
 
 void ListBox::Row::GrowWidthsStretchesAlignmentsTo(std::size_t nn) {
@@ -200,11 +193,18 @@ void ListBox::Row::GrowWidthsStretchesAlignmentsTo(std::size_t nn) {
 
 void ListBox::Row::push_back(std::shared_ptr<Control> c)
 {
-    m_cells.emplace_back(c);    // not moving here due to later use in this function
+    const auto layout = GetLayout();
+
+    if (!layout) {
+        m_cells.push_back(std::move(c));
+        c.reset();
+    } else {
+        m_cells.push_back(c); // not moving here due to later use in this function
+    }
     GrowWidthsStretchesAlignmentsTo(m_cells.size());
-    auto ii = m_cells.size() - 1;
-    auto&& layout = GetLayout();
-    if (c) {
+
+    if (layout && c) {
+        const auto ii = m_cells.size() - 1;
         layout->Add(std::move(c), 0, ii, m_row_alignment | m_col_alignments[ii]);
         layout->SetMinimumColumnWidth(ii, m_col_widths.back());
         layout->SetColumnStretch(ii, m_col_stretches.back());
@@ -224,11 +224,11 @@ void ListBox::Row::resize(std::size_t n)
     if (n == m_cells.size())
         return;
 
-    auto&& layout = GetLayout();
+    const auto layout = GetLayout();
     for (auto& cell : m_cells)
         layout->Remove(cell.get());
 
-    std::size_t old_size = m_cells.size();
+    const std::size_t old_size = m_cells.size();
 
     for (std::size_t ii = n; ii < old_size; ++ii)
         m_cells[ii].reset();
@@ -271,36 +271,38 @@ void ListBox::Row::resize(std::size_t n)
     }
 }
 
-void ListBox::Row::SetCell(std::size_t n, const std::shared_ptr<Control>& c)
+void ListBox::Row::SetCell(std::size_t n, std::shared_ptr<Control> c)
 {
     if (c == m_cells[n])
         return;
 
-    auto&& layout = GetLayout();
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
 
-    if (m_cells.size() > n && m_cells[n]) {
-        layout->Remove(m_cells[n].get());
-        m_cells[n].reset();
+    if (m_cells.size() > n) {
+        auto& cell{m_cells[n]};
+        layout->Remove(cell.get());
+        cell.reset(); // probably redundant; will be overwritten below...
     }
 
     m_cells[n] = c;
-
     if (!c)
         return;
+
     if (layout->Columns() <= n)
         layout->ResizeLayout(1, n + 1);
-    layout->Add(c, 0, n, m_row_alignment | m_col_alignments[n]);
+    layout->Add(std::move(c), 0, n, m_row_alignment | m_col_alignments[n]);
 }
 
-Control* ListBox::Row::RemoveCell(std::size_t n)
+void ListBox::Row::RemoveCell(std::size_t n)
 {
     if (m_cells.size() <= n)
-        return nullptr;
-    auto&& layout = GetLayout();
-    auto& retval = m_cells[n];
-    layout->Remove(retval.get());
-    m_cells[n].reset();
-    return retval.get();
+        return;
+    auto& cell{m_cells[n]};
+    if (const auto layout = GetLayout())
+        layout->Remove(cell.get());
+    cell.reset();
 }
 
 void ListBox::Row::SetRowAlignment(Alignment align)
@@ -326,8 +328,10 @@ void ListBox::Row::SetColAlignment(std::size_t n, Alignment align)
         return;
 
     m_col_alignments[n] = align;
-    auto&& layout = GetLayout();
-    ValidateLayoutSize(layout.get(), n + 1);
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    ValidateLayoutSize(*layout, n + 1);
     if (m_cells[n])
         layout->SetChildAlignment(m_cells[n].get(), m_row_alignment | align);
 }
@@ -340,8 +344,10 @@ void ListBox::Row::SetColWidth(std::size_t n, X width)
 
     m_col_widths[n] = width;
 
-    auto&& layout = GetLayout();
-    ValidateLayoutSize(layout.get(), n + 1);
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    ValidateLayoutSize(*layout, n + 1);
     layout->SetMinimumColumnWidth(n, width);
 }
 
@@ -352,8 +358,10 @@ void ListBox::Row::SetColAlignments(const std::vector<Alignment>& aligns)
 
     m_col_alignments = aligns;
     m_col_alignments.resize(m_cells.size(), ALIGN_NONE);
-    auto&& layout = GetLayout();
-    ValidateLayoutSize(layout.get(), aligns.size());
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    ValidateLayoutSize(*layout, m_col_alignments.size());
     for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
         if (m_cells[ii])
             layout->SetChildAlignment(m_cells[ii].get(), m_row_alignment | m_col_alignments[ii]);
@@ -380,11 +388,12 @@ void ListBox::Row::SetColWidths(const std::vector<X>& widths)
 
     m_col_widths = widths;
     m_col_widths.resize(m_cells.size(), GG::X(5));
-    auto&& layout = GetLayout();
-    ValidateLayoutSize(layout.get(), widths.size());
-    for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    ValidateLayoutSize(*layout, widths.size());
+    for (std::size_t ii = 0; ii < m_cells.size(); ++ii)
         layout->SetMinimumColumnWidth(ii, m_col_widths[ii]);
-    }
 }
 
 void ListBox::Row::ClearColWidths()
@@ -393,11 +402,12 @@ void ListBox::Row::ClearColWidths()
         return;
 
     m_col_widths.clear();
-    auto&& layout = GetLayout();
-    ValidateLayoutSize(layout.get(), m_cells.size());
-    for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    ValidateLayoutSize(*layout, m_cells.size());
+    for (std::size_t ii = 0; ii < m_cells.size(); ++ii)
         layout->SetMinimumColumnWidth(ii, GG::X0);
-    }
 }
 
 void ListBox::Row::SetColStretches(const std::vector<double>& stretches)
@@ -407,11 +417,12 @@ void ListBox::Row::SetColStretches(const std::vector<double>& stretches)
 
     m_col_stretches = stretches;
     m_col_stretches.resize(m_cells.size(), 0.0);
-    auto&& layout = GetLayout();
-    ValidateLayoutSize(layout.get(), m_col_stretches.size());
-    for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    ValidateLayoutSize(*layout, m_col_stretches.size());
+    for (std::size_t ii = 0; ii < m_cells.size(); ++ii)
         layout->SetColumnStretch(ii, m_col_stretches[ii]);
-    }
 }
 
 void ListBox::Row::SetMargin(unsigned int margin)
@@ -420,24 +431,27 @@ void ListBox::Row::SetMargin(unsigned int margin)
         return;
 
     m_margin = margin;
-    auto layout = GetLayout();
-    if (layout)
-    {
-        layout->SetBorderMargin(margin);
-        layout->SetCellMargin(margin);
-    }
+    const auto layout = GetLayout();
+    if (!layout)
+        return;
+    layout->SetBorderMargin(margin);
+    layout->SetCellMargin(margin);
 }
 
 void ListBox::Row::SetNormalized(bool normalized)
 { m_is_normalized = normalized; }
 
-void ListBox::Row::RClick(Pt pt, GG::Flags<GG::ModKey> mod) {
-     RightClickedSignal(pt, mod);
-}
+void ListBox::Row::RClick(Pt pt, GG::Flags<GG::ModKey> mod)
+{ RightClickedSignal(pt, mod); }
 
 namespace {
-    auto RowPtrIteratorLess = [](const ListBox::iterator lhs, const ListBox::iterator rhs)
+    static constexpr auto RowPtrIteratorLess = [](const ListBox::iterator lhs, const ListBox::iterator rhs)
+        noexcept(noexcept(*std::declval<ListBox::iterator>()))
     { return (*lhs)->Top() < (*rhs)->Top(); };
+
+    // Sorts two Rows of a ListBox using operator<() on resuts of the rows' SortKey() methods.
+    static constexpr auto default_row_compare = [](const ListBox::Row& lhs, const ListBox::Row& rhs, std::size_t column)
+    { return lhs.SortKey(column) < rhs.SortKey(column); };
 }
 
 
@@ -446,17 +460,8 @@ namespace {
 ////////////////////////////////////////////////
 ListBox::ListBox(Clr color, Clr interior) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
-    m_caret(m_rows.end()),
-    m_old_sel_row(m_rows.end()),
-    m_old_rdown_row(m_rows.end()),
-    m_lclick_row(m_rows.end()),
-    m_rclick_row(m_rows.end()),
-    m_last_row_browsed(m_rows.end()),
-    m_first_row_shown(m_rows.end()),
-    m_cell_margin(DEFAULT_MARGIN),
     m_int_color(interior),
-    m_header_row(Wnd::Create<Row>()),
-    m_sort_cmp(DefaultRowCmp<Row>())
+    m_sort_cmp(default_row_compare)
 {
     Control::SetColor(color);
 }

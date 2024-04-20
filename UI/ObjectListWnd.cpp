@@ -1678,8 +1678,8 @@ public:
         m_panel->Resize(Size() - border);
     }
 
-    [[nodiscard]] GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
-    { return m_panel ? m_panel->SortKey(column) : ""; }
+    [[nodiscard]] GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const noexcept
+    { return m_panel ? m_panel->SortKey(column) : EMPTY_STRING; }
 
     [[nodiscard]] int ObjectID() const noexcept
     { return m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID; }
@@ -1974,8 +1974,8 @@ namespace {
         }
 
         bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) const {
-            auto lhs_key = lhs.SortKey(column);
-            auto rhs_key = rhs.SortKey(column);
+            auto& lhs_key = lhs.SortKey(column);
+            auto& rhs_key = rhs.SortKey(column);
 
             auto [lhs_val, lhs_ec] = StringToFloat(lhs_key);
             if (lhs_ec != std::errc())
