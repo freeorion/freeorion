@@ -635,46 +635,30 @@ private:
 
     auto GetStringValueRefVec() const {
         std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> retval;
-        retval.emplace_back(GetStringValueRef());
+        retval.push_back(GetStringValueRef());
         return retval;
     }
 
-    int GetInt1() const {
-        if (m_param_spin1)
-            return m_param_spin1->Value();
-        else
-            return 0;
-    }
+    int GetInt1() const
+    { return m_param_spin1 ? m_param_spin1->Value() : 0; }
 
     auto GetInt1ValueRef() const
     { return std::make_unique<ValueRef::Constant<int>>(GetInt1()); }
 
-    int GetInt2() const {
-        if (m_param_spin2)
-            return m_param_spin2->Value();
-        else
-            return 0;
-    }
+    int GetInt2() const
+    { return m_param_spin2 ? m_param_spin2->Value() : 0; }
 
     auto GetInt2ValueRef() const
     { return std::make_unique<ValueRef::Constant<int>>(GetInt2()); }
 
-    double GetDouble1() const {
-        if (m_param_spin1)
-            return m_param_spin1->Value();
-        else
-            return 0;
-    }
+    double GetDouble1() const
+    { return m_param_spin1 ? m_param_spin1->Value() : 0; }
 
     auto GetDouble1ValueRef() const
     { return std::make_unique<ValueRef::Constant<double>>(GetDouble1()); }
 
-    double GetDouble2() const {
-        if (m_param_spin2)
-            return m_param_spin2->Value();
-        else
-            return 0;
-    }
+    double GetDouble2() const
+    { return m_param_spin2 ? m_param_spin2->Value() : 0; }
 
     auto GetDouble2ValueRef() const
     { return std::make_unique<ValueRef::Constant<double>>(GetDouble2()); }
@@ -699,9 +683,10 @@ private:
     { return std::make_unique<ValueRef::Constant<T>>(GetEnum<T>()); }
 
     template <typename T>
-    auto GetEnumValueRefVec() const {
+    auto GetEnumValueRefVec() const
+    {
         std::vector<std::unique_ptr<ValueRef::ValueRef<T>>> retval;
-        retval.emplace_back(GetEnumValueRef<T>());
+        retval.push_back(GetEnumValueRef<T>());
         return retval;
     }
 
@@ -1491,7 +1476,7 @@ public:
         }
     }
 
-    int ObjectID() const noexcept { return m_object_id; }
+    [[nodiscard]] int ObjectID() const noexcept { return m_object_id; }
 
     void PreRender() override {
         GG::Control::PreRender();
@@ -1693,19 +1678,16 @@ public:
         m_panel->Resize(Size() - border);
     }
 
-    GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
+    [[nodiscard]] GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
     { return m_panel ? m_panel->SortKey(column) : ""; }
 
-    int ObjectID() const noexcept {
-        if (m_panel)
-            return m_panel->ObjectID();
-        return INVALID_OBJECT_ID;
-    }
+    [[nodiscard]] int ObjectID() const noexcept
+    { return m_panel ? m_panel->ObjectID() : INVALID_OBJECT_ID; }
 
-    int ContainedByPanel() const noexcept
+    [[nodiscard]] int ContainedByPanel() const noexcept
     { return m_container_object_panel; }
 
-    auto& ContainedPanels() const noexcept
+    [[nodiscard]] auto& ContainedPanels() const noexcept
     { return m_contained_object_panels; }
 
     void SetContainedPanels(boost::container::flat_set<int>&& contained_object_panels) {
@@ -1721,7 +1703,7 @@ public:
         m_panel->RequirePreRender();
     }
 
-    void Update()
+    void Update() noexcept
     { m_panel->RequirePreRender(); }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
@@ -1741,7 +1723,7 @@ public:
 
 private:
     std::shared_ptr<ObjectPanel>            m_panel;
-    int                                     m_container_object_panel;
+    int                                     m_container_object_panel = INVALID_OBJECT_ID;
     boost::container::flat_set<int>         m_contained_object_panels;
     std::shared_ptr<const UniverseObject>   m_obj_init;
     int                                     m_indent_init = 0;
@@ -1929,7 +1911,7 @@ namespace {
     }
 
     struct CustomRowCmp {
-        static bool StringCompare(const std::string& lhs_key, const std::string& rhs_key) {
+        [[nodiscard]] static bool StringCompare(const std::string& lhs_key, const std::string& rhs_key) {
 #if defined(FREEORION_MACOSX)
             // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
             return lhs_key < rhs_key;
@@ -1938,7 +1920,7 @@ namespace {
 #endif
         }
 
-        static auto StringToFloat(const std::string_view key) {
+        [[nodiscard]] static auto StringToFloat(const std::string_view key) {
 #if defined(__cpp_lib_to_chars)
             float retval = 0.0f;
             auto result = std::from_chars(key.data(), key.data() + key.size(), retval);
@@ -2081,7 +2063,7 @@ public:
 
     void CollapseObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
-            for (auto& row : *this)
+            for (const auto& row : *this)
                 if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row.get()))
                     m_collapsed_objects.insert(object_row->ObjectID());
         } else {
@@ -2605,10 +2587,8 @@ void ObjectListWnd::DoLayout() {
 
     SetMinSize(GG::Pt(3*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
 
-    if (m_list_box->AnythingCollapsed())
-        m_collapse_button->SetText(UserString("EXPAND_ALL"));
-    else
-        m_collapse_button->SetText(UserString("COLLAPSE_ALL"));
+    m_collapse_button->SetText(m_list_box->AnythingCollapsed() ?
+                               UserString("EXPAND_ALL") : UserString("COLLAPSE_ALL"));
 }
 
 void ObjectListWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
@@ -2664,8 +2644,7 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
 std::set<int> ObjectListWnd::SelectedObjectIDs() const {
     std::set<int> sel_ids;
     for (const auto& entry : m_list_box->Selections()) {
-        ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get());
-        if (row) {
+        if (ObjectRow *row = dynamic_cast<ObjectRow *>(entry->get())) {
             int selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID)
                 sel_ids.insert(selected_object_id);
@@ -2738,7 +2717,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
         popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action);
 
         for (const auto& entry : m_list_box->Selections()) {
-            ObjectRow* row = dynamic_cast<ObjectRow *>(entry->get());
+            auto* row = dynamic_cast<const ObjectRow*>(entry->get());
             if (!row)
                 continue;
 
