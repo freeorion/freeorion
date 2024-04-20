@@ -859,9 +859,8 @@ ScanlineRenderer RotatingPlanetControl::s_scanline_shader;
 
 
 namespace {
-    int SystemNameFontSize() {
-        return ClientUI::Pts()*1.5;
-    }
+    int SystemNameFontSize()
+    { return ClientUI::Pts()*3/2; }
 
     class SystemRow : public GG::ListBox::Row {
     public:
@@ -875,8 +874,7 @@ namespace {
         }
 
         void Init() {
-            auto name(GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, SystemNameFontSize(), false));
-            push_back(name);
+            push_back(GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, SystemNameFontSize(), false));
             SetColAlignment(0, GG::ALIGN_CENTER);
             GetLayout()->PreRender();
         }
@@ -889,10 +887,9 @@ namespace {
             GG::ListBox::Row::PreRender();
         }
 
-        int SystemID() const { return m_system_id; }
+        [[nodiscard]] int SystemID() const noexcept { return m_system_id; }
 
-        SortKeyType SortKey(std::size_t column) const override
-        { return Objects().get<System>(m_system_id)->Name() + std::to_string(m_system_id); }
+        [[nodiscard]] SortKeyType SortKey(std::size_t) const noexcept { return {}; } // not sorted using sort key
 
     private:
         int m_system_id;
