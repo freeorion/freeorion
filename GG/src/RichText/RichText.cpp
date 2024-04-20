@@ -177,8 +177,8 @@ private:
     RichText::BlockFactoryMap   m_block_factory_map;        //!< A map that tells us how to generate block controls from tags.
     std::vector<std::shared_ptr<BlockControl>>  m_blocks;   //!< The blocks generated from our content.
     int                         m_padding = 0;
-    Flags<TextFormat>           m_format;                   //!< Text format.
     Clr                         m_color;                    //! < The color to use for text.
+    Flags<TextFormat>           m_format;                   //!< Text format.
 
     friend class RichText;
 };
