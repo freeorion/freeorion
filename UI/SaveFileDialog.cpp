@@ -294,7 +294,7 @@ public:
     virtual void Init()
     { m_initialized = true;}
 
-    const std::string&  Filename() const
+    const std::string& Filename() const noexcept
     { return m_filename; }
 
     void PreRender() override {
@@ -341,7 +341,7 @@ protected:
     bool m_initialized = false;
 };
 
-class SaveFileHeaderRow: public SaveFileRow {
+class SaveFileHeaderRow final : public SaveFileRow {
 public:
     SaveFileHeaderRow(const std::vector<SaveFileColumn>& columns) :
         SaveFileRow(columns, "")
@@ -357,10 +357,10 @@ public:
         AdjustColumns();
     }
 
-    void Render() override {}
+    void Render() noexcept override {}
 };
 
-class SaveFileDirectoryRow: public SaveFileRow {
+class SaveFileDirectoryRow final : public SaveFileRow {
 public:
     SaveFileDirectoryRow(const std::vector<SaveFileColumn>& columns, const std::string& directory) :
         SaveFileRow(columns, directory)
@@ -373,16 +373,18 @@ public:
 
     void Init() override {
         SaveFileRow::Init();
+        const auto font_height = ClientUI::GetFont()->Height();
+
         for (unsigned int i = 0; i < m_columns.size(); ++i) {
             if (i == 0) {
                 auto label = GG::Wnd::Create<CUILabel>(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
                                                        GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
-                label->Resize(GG::Pt(DirectoryNameSize(), ClientUI::GetFont()->Height()));
+                label->Resize(GG::Pt(DirectoryNameSize(), font_height));
                 push_back(std::move(label));
             } else {
                 // Dummy columns so that all rows have the same number of cols
                 auto label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_NOWRAP);
-                label->Resize(GG::Pt(GG::X0, ClientUI::GetFont()->Height()));
+                label->Resize(GG::Pt(GG::X0, font_height));
                 push_back(std::move(label));
             }
         }
