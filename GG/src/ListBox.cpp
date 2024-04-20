@@ -166,9 +166,7 @@ namespace {
 // GG::ListBox::Row
 ////////////////////////////////////////////////
 ListBox::Row::Row(X w, Y h) :
-    Control(X0, Y0, w, h),
-    m_row_alignment(ALIGN_VCENTER),
-    m_margin(ListBox::DEFAULT_MARGIN)
+    Control(X0, Y0, w, h)
 {}
 
 void ListBox::Row::CompleteConstruction()
