@@ -61,21 +61,22 @@ struct TrailingWildcard
 
 struct Index
 {
-    constexpr Index(int i = 0) noexcept :
+    constexpr Index(std::size_t i = 0) noexcept :
         m_initial_value(i)
     {}
-    void operator()() const noexcept { value = m_initial_value; }
-    const int m_initial_value;
-    static int value;
+    constexpr void operator()() const noexcept { value = m_initial_value; }
+    const std::size_t m_initial_value;
+    static std::size_t value;
 };
-int Index::value;
+std::size_t Index::value{};
+
 struct IndexLess
 {
-    constexpr IndexLess(int val) noexcept :
+    constexpr IndexLess(std::size_t val) noexcept :
         m_value(val)
     {}
-    bool operator()() const noexcept { return Index::value <  m_value; }
-    const int m_value;
+    bool operator()() const noexcept { return Index::value < m_value; }
+    const std::size_t m_value;
 };
 struct IndexIncr
 {
@@ -125,7 +126,7 @@ struct IndexedStringEnd
         if (!m_strings)
             return "";
         const auto& s{*m_strings};
-        return s.size() > Index::value ? std::next(s[Index::value].c_str(), s[Index::value].size()) : "";
+        return (s.size() > Index::value) ? std::next(s[Index::value].c_str(), s[Index::value].size()) : "";
     }
 
     const std::shared_ptr<std::vector<std::string>> m_strings;
@@ -540,7 +541,7 @@ void FileDlg::UpdateList()
             if (non_wildcards->empty()) {
                 file_filters[i] = *anychar_p;
             } else {
-                file_filters[i] = 
+                file_filters[i] =
                     if_p (LeadingWildcard(filter_specs[i])) [
                         *(wildcard - f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards)))
                         >> f_str_p(FrontStringBegin(non_wildcards), FrontStringEnd(non_wildcards))
@@ -594,15 +595,15 @@ void FileDlg::UpdateList()
 #if defined(_WIN32)
                     // convert UTF-16 path to UTF-8 for display
                     boost::filesystem::path::string_type file_name_native = it->path().filename().native();
-                    std::string temp;
-                    utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(temp));
-                    std::string row_text = "[" + temp + "]";
+                    std::string row_text{"["};
+                    row_text.reserve(file_name_native.size()*2 + 3);
+                    utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(row_text));
+                    row_text += ']';
 #else
                     std::string row_text = "[" + it->path().filename().string() + "]";
 #endif
-                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color,
-                                                                     FORMAT_NOWRAP));
-                    sorted_rows.emplace(row_text, std::move(row));
+                    row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
+                    sorted_rows.emplace(std::move(row_text), std::move(row));
                 }
             } catch (const fs::filesystem_error&) {
             }
@@ -610,12 +611,12 @@ void FileDlg::UpdateList()
 
         std::vector<std::shared_ptr<ListBox::Row>> rows;
         rows.reserve(sorted_rows.size());
-        for (const auto& row : sorted_rows)
-            rows.push_back(row.second);
+        for (auto& row : sorted_rows)
+            rows.push_back(std::move(row.second));
+        sorted_rows.clear();
         m_files_list->Insert(std::move(rows));
 
         if (!m_select_directories) {
-            sorted_rows.clear();
             for (fs::directory_iterator it(s_working_dir); it != end_it; ++it) {
                 try {
                     if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename().native()[0] != '.') {
