@@ -3612,11 +3612,9 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         // select one operand, evaluate it, return result
         if (m_operands.empty())
             return "";
-        std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
+        std::ptrdiff_t idx{RandInt(0, static_cast<int>(m_operands.size()) - 1)};
         auto& vr = *std::next(m_operands.begin(), idx);
-        if (!vr)
-            return "";
-        return vr->Eval(context);
+        return vr ? vr->Eval(context) : "";
 
     } else if (m_op_type == OpType::SUBSTITUTION) {
         // insert string into other string in place of %1% or similar placeholder
@@ -3649,19 +3647,12 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
             case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
             default:    break;  // ??? do nothing, default to false
         }
-        if (m_operands.size() < 3) {
+        if (m_operands.size() < 3)
             return test_result ? "true" : "false";
-        } else if (m_operands.size() < 4) {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return "false";
-        } else {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return m_operands[3]->Eval(context);
-        }
+        else if (m_operands.size() < 4)
+            return test_result ? m_operands[2]->Eval(context) : "false";
+        else
+            return m_operands[test_result ? 2 : 3]->Eval(context);
     }
 
     throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
@@ -3778,11 +3769,9 @@ double Operation<double>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0.0;
-            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
+            std::ptrdiff_t idx{RandInt(0, static_cast<int>(m_operands.size()) - 1)};
             auto& vr = *std::next(m_operands.begin(), idx);
-            if (!vr)
-                return 0.0;
-            return vr->Eval(context);
+            return vr ? vr->Eval(context) : 0.0;
             break;
         }
 
@@ -3966,7 +3955,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0;
-            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
+            std::ptrdiff_t idx{RandInt(0, static_cast<int>(m_operands.size()) - 1)};
             auto& vr = *std::next(m_operands.begin(), idx);
             return vr ? vr->Eval(context) : 0;
             break;
@@ -3998,7 +3987,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             else if (m_operands.size() < 4)
                 return test_result ? m_operands[2]->Eval(context) : 0;
             else
-                return test_result ? m_operands[2]->Eval(context) : m_operands[3]->Eval(context);
+                return m_operands[test_result ? 2 : 3]->Eval(context);
             break;
         }
 

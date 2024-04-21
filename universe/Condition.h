@@ -27,6 +27,8 @@ enum class SearchDomain : bool {
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition {
+    constexpr Condition(const Condition&) noexcept = default;
+    constexpr Condition(Condition&&) noexcept = default;
     constexpr virtual ~Condition() = default;
 
     constexpr virtual bool operator==(const Condition& rhs) const = 0;
@@ -132,9 +134,6 @@ protected:
     constexpr Condition(std::array<bool, 3> rts_invariants) noexcept :
         Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2])
     {}
-    //! Copies invariants from other Condition
-    constexpr Condition(const Condition&) = default;
-    Condition(Condition&&) = delete;
     Condition& operator=(const Condition&) = delete;
     Condition& operator=(Condition&&) = delete;
 

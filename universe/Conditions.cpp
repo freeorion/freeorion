@@ -131,6 +131,14 @@ namespace {
     }
 }
 
+namespace {
+    const auto test_and =
+        std::make_unique<Condition::And<Condition::Type, Condition::OnPlanet>>(
+            Condition::Type{UniverseObjectType::OBJ_BUILDING},
+            Condition::OnPlanet(std::make_unique<ValueRef::Variable<int>>(
+                ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID")));
+}
+
 namespace Condition {
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                                      const ScriptingContext& source_context,
@@ -1249,13 +1257,9 @@ EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
     EmpireAffiliation(nullptr, affiliation)
 {}
 
-bool EmpireAffiliation::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool EmpireAffiliation::operator==(const EmpireAffiliation& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const EmpireAffiliation& rhs_ = static_cast<const EmpireAffiliation&>(rhs);
 
     if (m_affiliation != rhs_.m_affiliation)
         return false;
@@ -2128,16 +2132,8 @@ Type::Type(UniverseObjectType type) :
     Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
 {}
 
-bool Type::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Type& rhs_ = static_cast<const Type&>(rhs);
-
+bool Type::operator==(const Type& rhs_) const {
     CHECK_COND_VREF_MEMBER(m_type)
-
     return true;
 }
 
@@ -2381,23 +2377,22 @@ void Building::Eval(const ScriptingContext& parent_context,
 }
 
 std::string Building::Description(bool negated) const {
+    const auto names_sz = m_names.size();
     std::string values_str;
-    for (std::size_t i = 0; i < m_names.size(); ++i) {
-        values_str += m_names[i]->ConstantExpr() ?
-                        UserString(m_names[i]->Eval()) :
-                        m_names[i]->Description();
-        if (2 <= m_names.size() && i < m_names.size() - 2) {
+    values_str.reserve(names_sz*50); // guesstimate
+    for (std::size_t i = 0u; i < names_sz; ++i) {
+        auto& n{m_names[i]};
+        values_str += UserString(n->ConstantExpr() ? n->Eval() : n->Description());
+        if (2u <= names_sz && i < names_sz - 2u) {
             values_str += ", ";
-        } else if (i == m_names.size() - 2) {
-            values_str += m_names.size() < 3 ? " " : ", ";
+        } else if (i == names_sz - 2u) {
+            values_str += (names_sz < 3u ? " " : ", ");
             values_str += UserString("OR");
             values_str += " ";
         }
     }
-    return str(FlexibleFormat((!negated)
-           ? UserString("DESC_BUILDING")
-           : UserString("DESC_BUILDING_NOT"))
-           % values_str);
+    return str(FlexibleFormat((!negated) ? UserString("DESC_BUILDING") : UserString("DESC_BUILDING_NOT"))
+               % values_str);
 }
 
 std::string Building::Dump(uint8_t ntabs) const {
@@ -3665,6 +3660,20 @@ std::unique_ptr<Condition> InOrIsSystem::Clone() const
 ///////////////////////////////////////////////////////////
 // OnPlanet                                              //
 ///////////////////////////////////////////////////////////
+OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
+    Condition(!planet_id || planet_id->RootCandidateInvariant(),
+              !planet_id || planet_id->TargetInvariant(),
+              !planet_id || planet_id->SourceInvariant(),
+              planet_id && (planet_id->ConstantExpr() ||
+                            (planet_id->LocalCandidateInvariant() && planet_id->RootCandidateInvariant()))),
+    m_planet_id(std::move(planet_id))
+{}
+
+bool OnPlanet::operator==(const OnPlanet& rhs) const {
+    return (this == &rhs) || (m_planet_id == rhs.m_planet_id) ||
+        (m_planet_id && rhs.m_planet_id && *m_planet_id == *(rhs.m_planet_id));
+}
+
 namespace {
     struct OnPlanetSimpleMatch {
         constexpr OnPlanetSimpleMatch(int planet_id) noexcept:
@@ -6659,13 +6668,9 @@ MeterValue::MeterValue(MeterType meter,
                                (!m_high || m_high->LocalCandidateInvariant()))
 {}
 
-bool MeterValue::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool MeterValue::operator==(const MeterValue& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const MeterValue& rhs_ = static_cast<const MeterValue&>(rhs);
 
     if (m_meter != rhs_.m_meter)
         return false;
@@ -8124,13 +8129,9 @@ VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empi
     m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-bool VisibleToEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool VisibleToEmpire::operator==(const VisibleToEmpire& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const VisibleToEmpire& rhs_ = static_cast<const VisibleToEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_since_turn)
@@ -9924,13 +9925,9 @@ FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::Value
     m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
 }
 
-bool FleetSupplyableByEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool FleetSupplyableByEmpire::operator==(const FleetSupplyableByEmpire& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const FleetSupplyableByEmpire& rhs_ = static_cast<const FleetSupplyableByEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
 
@@ -10050,13 +10047,9 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
         (!m_condition || m_condition->SourceInvariant());
 }
 
-bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool operator==(const ResourceSupplyConnectedByEmpire& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const ResourceSupplyConnectedByEmpire& rhs_ = static_cast<const ResourceSupplyConnectedByEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
 
@@ -10761,13 +10754,9 @@ ValueTest::ValueTest(const ValueTest& rhs) :
     m_no_refs12_comparable(rhs.m_no_refs12_comparable)
 {}
 
-bool ValueTest::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool ValueTest::operator==(const ValueTest& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const ValueTest& rhs_ = static_cast<const ValueTest&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_value_ref1)
     CHECK_COND_VREF_MEMBER(m_value_ref2)
@@ -11888,14 +11877,9 @@ Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& opera
     Or(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
 {}
 
-bool Or::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool Or::operator==(const Or& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Or& rhs_ = static_cast<const Or&>(rhs);
-
     if (m_operands.size() != rhs_.m_operands.size())
         return false;
     for (std::size_t i = 0; i < m_operands.size(); ++i) {
