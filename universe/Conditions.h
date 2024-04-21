@@ -1925,7 +1925,7 @@ private:
 
 /** Tests conditions in \a operands in order, to find the first condition that
   * matches at least one candidate object. Matches all objects that match that
-  * condaition, ignoring any conditions listed later. If no candidate matches
+  * condition, ignoring any conditions listed later. If no candidate matches
   * any of the conditions, it matches nothing. */
 struct FO_COMMON_API OrderedAlternativesOf final : public Condition {
     explicit OrderedAlternativesOf(std::vector<std::unique_ptr<Condition>>&& operands);
