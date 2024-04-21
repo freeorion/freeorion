@@ -13,7 +13,6 @@
 #include <boost/lexical_cast.hpp>
 #include "Condition.h"
 #include "ScriptingContext.h"
-#include "Universe.h"
 #include "ValueRef.h"
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
@@ -35,8 +34,7 @@ namespace CheckSums {
     {
         if (!std::is_constant_evaluated())
             TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
-        sum += c.GetCheckSum();
-        sum %= CHECKSUM_MODULUS;
+        CheckSumCombine(c.GetCheckSum());
     }
 }
 
@@ -73,8 +71,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         noexcept(noexcept(T{std::declval<const T>()})) override
     { return m_value; }
 
-    [[nodiscard]] std::string Description() const override
-    { return UserString(to_string(m_value)); }
+    [[nodiscard]] std::string Description() const override;
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return DumpIndent(ntabs) + Description(); }
@@ -138,9 +135,9 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     void CONSTEXPR_STRING SetTopLevelContent(const std::string& content_name) override {
         if (!std::is_constant_evaluated() && m_value == current_content && content_name == no_current_content) {
             ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal.  Trying to set "
-                << no_current_content << " for "
-                << current_content << " (maybe you tried to use "
-                << current_content << " in named_values.focs.txt)";
+                          << no_current_content << " for "
+                          << current_content << " (maybe you tried to use "
+                          << current_content << " in named_values.focs.txt)";
         }
         if (!m_top_level_content.empty() && m_top_level_content != no_current_content) {
             if (!std::is_constant_evaluated())
@@ -570,6 +567,24 @@ FO_COMMON_API std::string Constant<int>::Description() const;
 
 template <>
 FO_COMMON_API std::string Constant<double>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<PlanetType>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<PlanetSize>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<PlanetEnvironment>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<UniverseObjectType>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<StarType>::Description() const;
+
+template <>
+FO_COMMON_API std::string Constant<Visibility>::Description() const;
 
 template <>
 FO_COMMON_API std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const;

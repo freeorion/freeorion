@@ -241,6 +241,8 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
                       EmpireAffiliationType affiliation);
     explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
+    EmpireAffiliation(EmpireAffiliation&&) noexcept = default;
+    EmpireAffiliation(const EmpireAffiliation&) noexcept = delete;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -295,8 +297,10 @@ private:
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
     constexpr Target() noexcept : Condition(true, false, true) {}
-    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override
-    { return dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Target&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const noexcept override
     { return Match(ScriptingContext{parent_context, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
@@ -341,8 +345,10 @@ private:
 struct FO_COMMON_API Capital final : public Condition {
     constexpr Capital() noexcept : Condition(true, true, true, true) {}
 
-    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override
-    { return dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Capital&) const noexcept
+    { return true; }
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override; // no noexcept due to logging
@@ -362,6 +368,8 @@ private:
 
 struct FO_COMMON_API CapitalWithID final : public Condition {
     explicit CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) noexcept;
+    CapitalWithID() = delete; // use Capital with no parameter
+    CapitalWithID(CapitalWithID&&) noexcept = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -383,11 +391,13 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_empire_id;
 };
 
-
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
     constexpr Monster() noexcept : Condition(true, true, true) {}
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Monster&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
@@ -405,7 +415,10 @@ private:
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
     constexpr Armed() noexcept : Condition(true, true, true) {}
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Armed&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -424,6 +437,7 @@ private:
 struct FO_COMMON_API Type final : public Condition {
     explicit Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type);
     explicit Type(UniverseObjectType type);
+    Type(Type&&) noexcept = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -664,9 +678,28 @@ private:
   * or that are that planet. If \a planet_id is INVALID_OBJECT_ID then matches
   * all objects on any planet */
 struct FO_COMMON_API OnPlanet final : public Condition {
-    OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
+    OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
+        Condition(!planet_id || planet_id->RootCandidateInvariant(),
+                  !planet_id || planet_id->TargetInvariant(),
+                  !planet_id || planet_id->SourceInvariant(),
+                  planet_id && (planet_id->ConstantExpr() ||
+                                (planet_id->LocalCandidateInvariant() && planet_id->RootCandidateInvariant()))),
+        m_planet_id(std::move(planet_id))
+    {}
+    OnPlanet() noexcept : Condition(true, true, true, false) {}
+    OnPlanet(OnPlanet&&) noexcept = default;
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *rhs_p == *this;
+    }
+    bool operator==(const OnPlanet& rhs) const {
+        return (this == &rhs) || (m_planet_id == rhs.m_planet_id) ||
+            (m_planet_id && rhs.m_planet_id && *m_planet_id == *rhs.m_planet_id);
+    }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -765,7 +798,18 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
     PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
                       std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref = nullptr);
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_ = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_ && (*rhs_ == *this);
+    }
+
+    [[nodiscard]] bool operator==(const PlanetEnvironment& rhs) const {
+        return (this == &rhs) || (m_planet_id == rhs.m_planet_id) ||
+        (m_planet_id && rhs.m_planet_id && *m_planet_id == *rhs.m_planet_id);
+    }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -1512,7 +1556,7 @@ struct FO_COMMON_API StarlaneToWouldBeAngularlyCloseToExistingStarlane : Conditi
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-        ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1544,7 +1588,7 @@ struct FO_COMMON_API StarlaneToWouldBeCloseToObject : Condition {
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-        ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1590,11 +1634,12 @@ private:
   * fleet of a ship, has a next system that is a system and is not its
   * current system. That is, the fleet. */
 struct FO_COMMON_API Stationary final : public Condition {
-    constexpr Stationary() noexcept :
-        Condition(true, true, true)
-    {}
+    constexpr Stationary() noexcept : Condition(true, true, true) {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Stationary&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1611,13 +1656,16 @@ private:
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    constexpr Aggressive() noexcept : Aggressive(true) {}
+    constexpr Aggressive() noexcept = default;
     constexpr explicit Aggressive(bool aggressive) noexcept :
         Condition(true, true, true),
         m_aggressive(aggressive)
     {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Aggressive&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1632,7 +1680,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    const bool m_aggressive;   // false to match passive ships/fleets
+    const bool m_aggressive = true; // false to match passive ships/fleets
 };
 
 /** Matches objects that are in systems that can be fleet supplied by the
@@ -1688,11 +1736,12 @@ private:
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
-    constexpr CanColonize() :
-        Condition(true, true, true)
-    {}
+    constexpr CanColonize() : Condition(true, true, true) {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const CanColonize&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1709,11 +1758,12 @@ private:
 
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
-    constexpr CanProduceShips() noexcept:
-        Condition(true, true, true)
-    {}
+    constexpr CanProduceShips() noexcept : Condition(true, true, true) {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const CanProduceShips&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1754,11 +1804,12 @@ private:
 
 /** Matches the objects that have been ordered annexed by an empire. */
 struct FO_COMMON_API OrderedAnnexed final : public Condition {
-    constexpr OrderedAnnexed() :
-        Condition(true, true, true)
-    {}
+    constexpr OrderedAnnexed() : Condition(true, true, true) {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const OrderedAnnexed&) const noexcept
+    { return true; }
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
 
@@ -1792,7 +1843,8 @@ struct FO_COMMON_API ValueTest final : public Condition {
               std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
               ComparisonType comp2 = ComparisonType::INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3 = nullptr);
-    explicit ValueTest(const ValueTest& rhs);
+    ValueTest(const ValueTest& rhs);
+    ValueTest(ValueTest&& rhs) = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1872,8 +1924,7 @@ private:
   * content.  */
 struct FO_COMMON_API CombatTarget final : public Condition {
 public:
-    CombatTarget(ContentType content_type,
-                 std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    CombatTarget(ContentType content_type, std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1907,53 +1958,60 @@ struct FO_COMMON_API And final : public Condition {
         m_operands(std::move(operands))
     {}
 
+    constexpr explicit And(ConditionTs&&... operands) noexcept :
+        m_operands(std::forward<decltype(operands)>(operands)...)
+    {}
+
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
-        if (const auto* rhs_and = dynamic_cast<decltype(this)>(&rhs))
-            return m_operands == rhs_and->m_operands;
-        return false;
+        if (this == &rhs)
+            return true;
+        const auto* rhs_and = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_and && m_operands == rhs_and->m_operands;
+    }
+
+    [[nodiscard]] constexpr bool operator==(const And& rhs) const {
+        static_assert(std::is_same_v<decltype(this), decltype(&rhs)>);
+        return (this == &rhs) || m_operands == rhs.m_operands;
     }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
     {
+        //    if (search_domain == SearchDomain::NON_MATCHES) {
+        //        ObjectSet partly_checked_non_matches;
+        //        partly_checked_non_matches.reserve(non_matches.size());
+        //
+        //        // move items in non_matches set that pass first operand condition into
+        //        // partly_checked_non_matches set
+        //        m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
+        //
+        //        // move items that don't pass one of the other conditions back to non_matches
+        //        for (std::size_t i = 1; i < m_operands.size(); ++i) {
+        //            if (partly_checked_non_matches.empty()) break;
+        //            m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
+        //        }
+        //
+        //        // merge items that passed all operand conditions into matches
+        //        matches.insert(matches.end(), partly_checked_non_matches.begin(),
+        //                       partly_checked_non_matches.end());
+        //
+        //        // items already in matches set are not checked, and remain in matches set even if
+        //        // they don't match one of the operand conditions
+        //
+        //    } else /*(search_domain == SearchDomain::MATCHES)*/ {
+        //        // check all operand conditions on all objects in the matches set, moving those
+        //        // that don't pass a condition to the non-matches set
+        //
+        //        for (const auto& operand : m_operands) {
+        //            if (matches.empty()) break;
+        //            operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+        //        }
+        //
+        //        // items already in non_matches set are not checked, and remain in non_matches set
+        //        // even if they pass all operand conditions
+        //    }
+        //}
     }
-
-    //    if (search_domain == SearchDomain::NON_MATCHES) {
-    //        ObjectSet partly_checked_non_matches;
-    //        partly_checked_non_matches.reserve(non_matches.size());
-    //
-    //        // move items in non_matches set that pass first operand condition into
-    //        // partly_checked_non_matches set
-    //        m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
-    //
-    //        // move items that don't pass one of the other conditions back to non_matches
-    //        for (std::size_t i = 1; i < m_operands.size(); ++i) {
-    //            if (partly_checked_non_matches.empty()) break;
-    //            m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
-    //        }
-    //
-    //        // merge items that passed all operand conditions into matches
-    //        matches.insert(matches.end(), partly_checked_non_matches.begin(),
-    //                       partly_checked_non_matches.end());
-    //
-    //        // items already in matches set are not checked, and remain in matches set even if
-    //        // they don't match one of the operand conditions
-    //
-    //    } else /*(search_domain == SearchDomain::MATCHES)*/ {
-    //        // check all operand conditions on all objects in the matches set, moving those
-    //        // that don't pass a condition to the non-matches set
-    //
-    //        for (const auto& operand : m_operands) {
-    //            if (matches.empty()) break;
-    //            operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
-    //        }
-    //
-    //        // items already in non_matches set are not checked, and remain in non_matches set
-    //        // even if they pass all operand conditions
-    //    }
-    //}
-
-
 
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override {
         if (candidates.empty() || candidates.size() == 1 && !candidates.front())
@@ -2010,9 +2068,10 @@ struct FO_COMMON_API And final : public Condition {
 
         return retval;
     }
-    [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
-        static constexpr auto clone_as_own_type = [](const auto& op) {
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override { return nullptr; // TODO: !!!!
+        /*static constexpr auto clone_as_own_type = [](const auto& op) -> auto&& {
             using op_t = std::decay_t<decltype(op)>;
+            static_assert(!std::is_const_v<op_t>);
             auto clone_as_ptr = op.Clone();
             static_assert(std::is_same_v<decltype(clone_as_ptr), std::unique_ptr<Condition>>);
             Condition& clone_as_cond = *clone_as_ptr;
@@ -2026,11 +2085,18 @@ struct FO_COMMON_API And final : public Condition {
         auto operands_as_clone_values = std::apply(tuplify_values, m_operands);
         static_assert(std::is_same_v<decltype(operands_as_clone_values), ConditionTupleT>);
 
-        return std::make_unique<And>(std::move(operands_as_clone_values));
+        return std::make_unique<And>(std::move(operands_as_clone_values));*/
     }
 
     ConditionTupleT m_operands;
 };
+
+template <typename... Ts>
+And(Ts...) -> And<std::decay_t<Ts>...>;
+template <typename... Ts>
+And(Ts&&...) -> And<std::decay_t<Ts>...>;
+template <typename... Ts>
+And(std::tuple<Ts...>&&) -> And<std::decay_t<Ts>...>;
 
 template <>
 struct FO_COMMON_API And<> final : public Condition {
@@ -2114,9 +2180,7 @@ public:
     {}
 
     constexpr bool operator==(const Not& rhs) const noexcept(cond_equals_noexcept && cond_deref_equals_noexcept) {
-        if (this == &rhs)
-            return true;
-        if (m_operand == rhs.m_operand)
+        if (this == &rhs || m_operand == rhs.m_operand)
             return true;
         if constexpr (cond_is_ptr)
             return *m_operand  == *rhs.m_operand;
@@ -2216,6 +2280,9 @@ public:
 private:
     ConditionT m_operand;
 };
+
+template <typename T>
+Not(T) -> Not<std::decay_t<T>>;
 
 /** Tests conditions in \a operands in order, to find the first condition that
   * matches at least one candidate object. Matches all objects that match that

@@ -590,6 +590,30 @@ std::string Constant<double>::Description() const
 { return DoubleToString(m_value, 3, false); }
 
 template <>
+std::string Constant<PlanetType>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<PlanetSize>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<PlanetEnvironment>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<UniverseObjectType>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<StarType>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
+std::string Constant<Visibility>::Description() const
+{ return UserString(to_string(m_value)); }
+
+template <>
 std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const
 {
     switch (m_value) {

@@ -167,10 +167,8 @@ namespace {
             std::make_unique<ValueRef::Constant<std::string>>(name); // name specifies this species
 
         auto enviro_cond = std::unique_ptr<Condition::Condition>(
-            std::make_unique<Condition::Not>(
-                std::unique_ptr<Condition::Condition>(
-                    std::make_unique<Condition::PlanetEnvironment>(
-                        std::move(environments), std::move(this_species_name_ref)))));
+            std::make_unique<Condition::Not<Condition::PlanetEnvironment>>(Condition::PlanetEnvironment(
+                std::move(environments), std::move(this_species_name_ref))));
 
         auto type_cond = std::make_unique<Condition::Type>(
             std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
@@ -185,21 +183,21 @@ namespace {
     { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"); }
 
     auto NotConqueredRecently(ValueRef::ReferenceType ref_type = ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE) {
-        return std::make_unique<Condition::ValueTest>(
+        return Condition::ValueTest(
             std::make_unique<ValueRef::Variable<int>>(ref_type, "TurnsSinceLastConquered"),
             Condition::ComparisonType::GREATER_THAN,
             std::make_unique<ValueRef::Constant<int>>(1)
         );
     }
     auto NotAnnexedRecently(ValueRef::ReferenceType ref_type = ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE) {
-        return std::make_unique<Condition::ValueTest>(
+        return Condition::ValueTest(
             std::make_unique<ValueRef::Variable<int>>(ref_type, "TurnsSinceAnnexation"),
             Condition::ComparisonType::GREATER_THAN,
             std::make_unique<ValueRef::Constant<int>>(1)
         );
     }
     auto NotColonizedRecently(ValueRef::ReferenceType ref_type = ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE) {
-        return std::make_unique<Condition::ValueTest>(
+        return Condition::ValueTest(
             std::make_unique<ValueRef::Variable<int>>(ref_type, "TurnsSinceColonization"),
             Condition::ComparisonType::GREATER_THAN,
             std::make_unique<ValueRef::Constant<int>>(1)
@@ -207,23 +205,26 @@ namespace {
     }
 
     auto DefaultAnnexationCondition() {
-        return std::make_unique<Condition::And<>>(
-            std::make_unique<Condition::Or>(
+        return std::make_unique<Condition::And<Condition::Or, Condition::ValueTest, Condition::ValueTest,
+                                               Condition::ValueTest, Condition::VisibleToEmpire, Condition::MeterValue,
+                                               Condition::ResourceSupplyConnectedByEmpire>>(
+            Condition::Or(
                 std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
                 std::make_unique<Condition::EmpireAffiliation>(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
             ),
             NotConqueredRecently(),
             NotAnnexedRecently(),
             NotColonizedRecently(),
-            std::make_unique<Condition::VisibleToEmpire>(SourceOwner()),
-            std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
-                                                    std::make_unique<ValueRef::Constant<double>>(0.001),
-                                                    nullptr),
-            std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
+            Condition::VisibleToEmpire(SourceOwner()),
+            Condition::MeterValue(MeterType::METER_POPULATION,
+                                  std::make_unique<ValueRef::Constant<double>>(0.001),
+                                  nullptr),
+            Condition::ResourceSupplyConnectedByEmpire(
                 SourceOwner(),
-                std::make_unique<Condition::And>(
-                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                    std::make_unique<Condition::EmpireAffiliation>(SourceOwner()),
+                std::make_unique<Condition::And<Condition::Type, Condition::EmpireAffiliation, Condition::ValueTest,
+                                                Condition::ValueTest, Condition::ValueTest>>(
+                    Condition::Type(UniverseObjectType::OBJ_PLANET),
+                    Condition::EmpireAffiliation(SourceOwner()),
                     NotConqueredRecently(),
                     NotAnnexedRecently(),
                     NotColonizedRecently()
@@ -347,12 +348,10 @@ namespace {
                     ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "BuildingType") // for each building's building type
             ),
             ValueRef::StatisticType::SUM,
-            std::make_unique<Condition::And>(
-                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_BUILDING),
-                std::make_unique<Condition::OnPlanet>(                  // for buildings on the planet being annexed
-                    std::make_unique<ValueRef::Variable<int>>(
-                        ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID")
-                )
+            std::make_unique<Condition::And<Condition::Type, Condition::OnPlanet>>(
+                Condition::Type{UniverseObjectType::OBJ_BUILDING},
+                Condition::OnPlanet(std::make_unique<ValueRef::Variable<int>>(
+                    ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID"))
             )
         );
     }

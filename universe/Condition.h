@@ -133,10 +133,10 @@ protected:
         Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2])
     {}
     //! Copies invariants from other Condition
-    constexpr Condition(const Condition& rhs) = default;
-    Condition(Condition&& rhs) = delete;
-    Condition& operator=(const Condition& rhs) = delete;
-    Condition& operator=(Condition&& rhs) = delete;
+    constexpr Condition(const Condition&) = default;
+    Condition(Condition&&) = delete;
+    Condition& operator=(const Condition&) = delete;
+    Condition& operator=(Condition&&) = delete;
 
     bool m_root_candidate_invariant = false; // TODO: make these const once all derived classes initialize them in their constructors
     bool m_target_invariant = false;

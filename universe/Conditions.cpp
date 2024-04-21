@@ -199,10 +199,9 @@ namespace Condition {
                                             /* check next member */             \
                                         } else if (!m_ptr || !rhs_.m_ptr) {     \
                                             return false;                       \
-                                        } else {                                \
-                                            if (*m_ptr != *(rhs_.m_ptr))        \
-                                                return false;                   \
-                                        }   }
+                                        } else if (*m_ptr != *(rhs_.m_ptr)) {   \
+                                            return false;                       \
+                                        }    }
 
 ///////////////////////////////////////////////////////////
 // Condition                                             //
@@ -313,14 +312,11 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    try {
-        if (typeid(*this) != typeid(rhs))
-            return false;
-    } catch (...) {
-        return false;
-    }
 
-    const Number& rhs_ = static_cast<const Number&>(rhs);
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    if (!rhs_p)
+        return false;
+    const Number& rhs_ = *rhs_p;
 
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
@@ -2032,9 +2028,6 @@ std::unique_ptr<Condition> CapitalWithID::Clone() const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-bool Monster::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Monster::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_MONSTER")
@@ -2078,9 +2071,6 @@ std::unique_ptr<Condition> Monster::Clone() const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-bool Armed::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Armed::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ARMED")
@@ -3675,32 +3665,6 @@ std::unique_ptr<Condition> InOrIsSystem::Clone() const
 ///////////////////////////////////////////////////////////
 // OnPlanet                                              //
 ///////////////////////////////////////////////////////////
-OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
-    m_planet_id(std::move(planet_id))
-{
-    m_root_candidate_invariant = !m_planet_id || m_planet_id->RootCandidateInvariant();
-    m_target_invariant = !m_planet_id || m_planet_id->TargetInvariant();
-    m_source_invariant = !m_planet_id || m_planet_id->SourceInvariant();
-    m_initial_candidates_all_match =
-        m_planet_id && (
-            m_planet_id->ConstantExpr() || (
-                m_planet_id->LocalCandidateInvariant() &&
-                RootCandidateInvariant()));
-}
-
-bool OnPlanet::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const OnPlanet& rhs_ = static_cast<const OnPlanet&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_planet_id)
-
-    return true;
-}
-
 namespace {
     struct OnPlanetSimpleMatch {
         constexpr OnPlanetSimpleMatch(int planet_id) noexcept:
@@ -4314,20 +4278,16 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
         std::all_of(m_environments.begin(), m_environments.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-bool PlanetEnvironment::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool PlanetEnvironment::operator==(const PlanetEnvironment& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const PlanetEnvironment& rhs_ = static_cast<const PlanetEnvironment&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_species_name)
 
     if (m_environments.size() != rhs_.m_environments.size())
         return false;
     for (std::size_t i = 0; i < m_environments.size(); ++i) {
-        CHECK_COND_VREF_MEMBER(m_environments.at(i))
+        CHECK_COND_VREF_MEMBER(m_environments[i])
     }
 
     return true;
@@ -9850,9 +9810,6 @@ std::unique_ptr<Condition> ExploredByEmpire::Clone() const
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
-bool Stationary::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Stationary::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_STATIONARY")
@@ -9908,9 +9865,6 @@ std::unique_ptr<Condition> Stationary::Clone() const
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
 ///////////////////////////////////////////////////////////
-bool Aggressive::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Aggressive::Description(bool negated) const {
     if (m_aggressive)
         return (!negated)
@@ -10275,9 +10229,6 @@ std::unique_ptr<Condition> ResourceSupplyConnectedByEmpire::Clone() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
-bool CanColonize::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string CanColonize::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_COLONIZE")
@@ -10339,9 +10290,6 @@ std::unique_ptr<Condition> CanColonize::Clone() const
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
-bool CanProduceShips::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string CanProduceShips::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_PRODUCE_SHIPS")
@@ -10520,9 +10468,6 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 ///////////////////////////////////////////////////////////
 // OrderedAnnexed                                        //
 ///////////////////////////////////////////////////////////
-bool OrderedAnnexed::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string OrderedAnnexed::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_ORDERED_ANNEXED")
