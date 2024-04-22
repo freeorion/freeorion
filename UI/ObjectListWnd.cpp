@@ -116,7 +116,7 @@ namespace {
             std::make_unique<ValueRef::Statistic<T>>(     // returns non-empty string if the source object matches the object type condition
                 nullptr,                                  // property value value ref not used for IF statistic
                 ValueRef::StatisticType::IF,
-                std::make_unique<Condition::And>(         // want this statistic to return true only if the source object has the specified object type, if there exists any object of that type in the universe
+                std::make_unique<Condition::And<>>(         // want this statistic to return true only if the source object has the specified object type, if there exists any object of that type in the universe
                     std::make_unique<Condition::Source>(),
                     ConditionForObjectTypes(object_types)
                 )
@@ -756,7 +756,7 @@ public:
             if (GetString() == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> copytype;
                 copytype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_ASTEROIDS));
-                operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
+                operands1.emplace_back(std::make_unique<Condition::Not<>>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
             } else {
                 operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
             }
@@ -765,8 +765,8 @@ public:
             std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> maintype;
             maintype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_ASTEROIDS));
             operands2.emplace_back(std::make_unique<Condition::Contains>(std::make_unique<Condition::PlanetType>(std::move(maintype))));
-            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
-            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
+            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And<>>(std::move(operands2))));
+            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And<>>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
 
@@ -775,7 +775,7 @@ public:
             if (GetString() == UserString("CONDITION_ANY")) {
                 std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> copytype;
                     copytype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_GASGIANT));
-                    operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
+                    operands1.emplace_back(std::make_unique<Condition::Not<>>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
             } else {
                 operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
             }
@@ -784,8 +784,8 @@ public:
             std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> maintype;
             maintype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_GASGIANT));
             operands2.emplace_back(std::make_unique<Condition::Contains>(std::make_unique<Condition::PlanetType>(std::move(maintype))));
-            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
-            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
+            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And<>>(std::move(operands2))));
+            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And<>>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
             return this_cond;
 

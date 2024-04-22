@@ -199,7 +199,7 @@ namespace {
     std::unique_ptr<Condition::Condition> VisibleEnemyOfOwnerCondition() {
         return std::make_unique<Condition::Or>(
             // unowned candidate object case
-            std::make_unique<Condition::And>(
+            std::make_unique<Condition::And<>>(
                 std::make_unique<Condition::EmpireAffiliation>(
                     EmpireAffiliationType::AFFIL_NONE),         // unowned candidate object
 
@@ -215,7 +215,7 @@ namespace {
                         ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))),
 
             // owned candidate object case
-            std::make_unique<Condition::And>(
+            std::make_unique<Condition::And<>>(
                 std::make_unique<Condition::EmpireAffiliation>( // candidate is owned by an empire
                     EmpireAffiliationType::AFFIL_ANY),
 
@@ -232,11 +232,11 @@ namespace {
     }
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship_or_fighter =
-        std::make_unique<Condition::And>(
+        std::make_unique<Condition::And<>>(
             std::make_unique<Condition::Or>(
-                std::make_unique<Condition::And>(
+                std::make_unique<Condition::And<>>(
                     std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP),
-                    std::make_unique<Condition::Not>(
+                    std::make_unique<Condition::Not<>>(
                         std::make_unique<Condition::MeterValue>(
                             MeterType::METER_STRUCTURE,
                             nullptr,
@@ -245,10 +245,10 @@ namespace {
             VisibleEnemyOfOwnerCondition());
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship =
-        std::make_unique<Condition::And>(
+        std::make_unique<Condition::And<>>(
             std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP),
 
-            std::make_unique<Condition::Not>(
+            std::make_unique<Condition::Not<>>(
                 std::make_unique<Condition::MeterValue>(
                     MeterType::METER_STRUCTURE,
                     nullptr,
@@ -257,33 +257,33 @@ namespace {
             VisibleEnemyOfOwnerCondition());
 
     const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
-        std::make_unique<Condition::And>(
+        std::make_unique<Condition::And<>>(
             VisibleEnemyOfOwnerCondition(), // enemies
             std::make_unique<Condition::Or>(
                 std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::And>(
+                    std::make_unique<Condition::And<>>(
                         std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP),
-                        std::make_unique<Condition::Not>(
+                        std::make_unique<Condition::Not<>>(
                             std::make_unique<Condition::MeterValue>(
                                 MeterType::METER_STRUCTURE,
                                 nullptr,
                                 std::make_unique<ValueRef::Constant<double>>(0.0)))),
                     std::make_unique<Condition::Type>(UniverseObjectType::OBJ_FIGHTER)),
 
-                std::make_unique<Condition::And>(
+                std::make_unique<Condition::And<>>(
                     std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
                     std::make_unique<Condition::Or>(
-                        std::make_unique<Condition::Not>(
+                        std::make_unique<Condition::Not<>>(
                             std::make_unique<Condition::MeterValue>(
                                 MeterType::METER_DEFENSE,
                                 nullptr,
                                 std::make_unique<ValueRef::Constant<double>>(0.0))),
-                        std::make_unique<Condition::Not>(
+                        std::make_unique<Condition::Not<>>(
                             std::make_unique<Condition::MeterValue>(
                                 MeterType::METER_SHIELD,
                                 nullptr,
                                 std::make_unique<ValueRef::Constant<double>>(0.0))),
-                        std::make_unique<Condition::Not>(
+                        std::make_unique<Condition::Not<>>(
                             std::make_unique<Condition::MeterValue>(
                                 MeterType::METER_CONSTRUCTION,
                                 nullptr,
@@ -291,11 +291,11 @@ namespace {
 
     const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
         std::make_unique<Condition::Or>(
-            std::make_unique<Condition::And>(     // if source is a planet, match ships
+            std::make_unique<Condition::And<>>(     // if source is a planet, match ships
                 std::make_unique<Condition::Number>(
                     std::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
                     nullptr,
-                    std::make_unique<Condition::And>(             // subcondition: source is a planet
+                    std::make_unique<Condition::And<>>(             // subcondition: source is a planet
                         std::make_unique<Condition::Source>(),
                         std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET)
                     )
@@ -306,7 +306,7 @@ namespace {
             std::make_unique<Condition::Number>(  // if source is not a planet, match anything
                 nullptr,
                 std::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
-                std::make_unique<Condition::And>(                 // subcondition: source is a planet
+                std::make_unique<Condition::And<>>(                 // subcondition: source is a planet
                     std::make_unique<Condition::Source>(),
                     std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET)
                 )

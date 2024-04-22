@@ -131,13 +131,6 @@ namespace {
     }
 }
 
-namespace {
-    const auto test_and =
-        std::make_unique<Condition::And<Condition::Type, Condition::OnPlanet>>(
-            Condition::Type{UniverseObjectType::OBJ_BUILDING},
-            Condition::OnPlanet(std::make_unique<ValueRef::Variable<int>>(
-                ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID")));
-}
 
 namespace Condition {
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
@@ -10047,7 +10040,7 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
         (!m_condition || m_condition->SourceInvariant());
 }
 
-bool operator==(const ResourceSupplyConnectedByEmpire& rhs_) const {
+bool ResourceSupplyConnectedByEmpire::operator==(const ResourceSupplyConnectedByEmpire& rhs_) const {
     if (this == &rhs_)
         return true;
 

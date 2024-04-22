@@ -2088,6 +2088,17 @@ struct FO_COMMON_API And final : public Condition {
         std::apply(set_tlcs, m_operands);
     }
 
+    [[nodiscard]] auto OperandsRaw() const noexcept {
+        std::array<const Condition*, N> retval{};
+        const auto to_ptrs = [&retval](const auto&... ops) {
+            std::size_t idx = 0;
+            ((retval[idx++] = &ops), ...);
+        };
+        std::apply(to_ptrs, m_operands);
+        return retval;
+    }
+
+    [[nodiscard]] auto& Operands() noexcept { return m_operands; }
     [[nodiscard]] constexpr uint32_t GetCheckSum() const {
         uint32_t retval{0};
 
@@ -2097,24 +2108,25 @@ struct FO_COMMON_API And final : public Condition {
         return retval;
     }
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
-        return nullptr; // TODO: !!!!
-        /*static constexpr auto clone_as_own_type = [](const auto& op) -> auto&& {
-            using op_t = std::decay_t<decltype(op)>;
-            static_assert(!std::is_const_v<op_t>);
-            auto clone_as_ptr = op.Clone();
-            static_assert(std::is_same_v<decltype(clone_as_ptr), std::unique_ptr<Condition>>);
-            Condition& clone_as_cond = *clone_as_ptr;
-            op_t& clone_as_op_t = static_cast<op_t&>(clone_as_cond);
-            return std::move(clone_as_op_t);
+        using zeroth_operand_t = std::tuple_element_t<0, ConditionTupleT>;
+
+        static constexpr auto clone_cast_op_type_rval = [](const auto& op) -> auto&& {
+            static_assert(requires { op.Clone(); } );
+            using OperandT = std::decay_t<decltype(op)>;
+            auto cond_clone_unique = op.Clone();
+            OperandT& ref = *static_cast<OperandT*>(cond_clone_unique.release());
+            return std::move(ref);
         };
+        using get0_operand_t = decltype(std::get<0>(m_operands));
+        static_assert(std::is_same_v<get0_operand_t, const zeroth_operand_t&>);
+        using clone_cast0_operand_t = decltype(clone_cast_op_type_rval(std::get<0>(m_operands)));
+        static_assert(std::is_same_v<clone_cast0_operand_t, zeroth_operand_t&&>);
 
-        static constexpr auto tuplify_values = [](const auto&... ops)
-        { return std::make_tuple(clone_as_own_type(ops)...); };
+        static constexpr auto clone_operands = [](const auto&... ops)
+        { return std::make_tuple(clone_cast_op_type_rval(ops)...); };
 
-        auto operands_as_clone_values = std::apply(tuplify_values, m_operands);
-        static_assert(std::is_same_v<decltype(operands_as_clone_values), ConditionTupleT>);
-
-        return std::make_unique<And>(std::move(operands_as_clone_values));*/
+        ConditionTupleT cloned_operands = std::apply(clone_operands, m_operands);
+        return std::make_unique<std::decay_t<decltype(*this)>>(std::move(cloned_operands));
     }
 
     ConditionTupleT m_operands;
