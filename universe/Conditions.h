@@ -2005,40 +2005,35 @@ struct FO_COMMON_API And final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
     {
-        //    if (search_domain == SearchDomain::NON_MATCHES) {
-        //        ObjectSet partly_checked_non_matches;
-        //        partly_checked_non_matches.reserve(non_matches.size());
-        //
-        //        // move items in non_matches set that pass first operand condition into
-        //        // partly_checked_non_matches set
-        //        m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
-        //
-        //        // move items that don't pass one of the other conditions back to non_matches
-        //        for (std::size_t i = 1; i < m_operands.size(); ++i) {
-        //            if (partly_checked_non_matches.empty()) break;
-        //            m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
-        //        }
-        //
-        //        // merge items that passed all operand conditions into matches
-        //        matches.insert(matches.end(), partly_checked_non_matches.begin(),
-        //                       partly_checked_non_matches.end());
-        //
-        //        // items already in matches set are not checked, and remain in matches set even if
-        //        // they don't match one of the operand conditions
-        //
-        //    } else /*(search_domain == SearchDomain::MATCHES)*/ {
-        //        // check all operand conditions on all objects in the matches set, moving those
-        //        // that don't pass a condition to the non-matches set
-        //
-        //        for (const auto& operand : m_operands) {
-        //            if (matches.empty()) break;
-        //            operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
-        //        }
-        //
-        //        // items already in non_matches set are not checked, and remain in non_matches set
-        //        // even if they pass all operand conditions
-        //    }
-        //}
+        const auto eval_conds =
+            [&parent_context, &matches, &non_matches, search_domain](const auto& cond0, const auto&... conds)
+        {
+            if (search_domain == SearchDomain::MATCHES) {
+                const auto eval_cond_not_empty = [&parent_context, &matches, &non_matches](const Condition& cond) {
+                    cond.Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+                    return !matches.empty();
+                };
+                eval_cond_not_empty(cond0) && (eval_cond_not_empty(conds) && ...);
+
+            } else /* search_domain == SearchDomain::NON_MATCHES */{
+                ObjectSet partly_checked_non_matches;
+                partly_checked_non_matches.reserve(non_matches.size());
+
+                cond0.Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
+
+                const auto eval_cond_not_empty =
+                    [&parent_context, &partly_checked_non_matches, &non_matches](const Condition& cond)
+                {
+                    cond.Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
+                    return !partly_checked_non_matches.empty();
+                };
+
+                !partly_checked_non_matches.empty() && (eval_cond_not_empty(conds) && ...);
+                matches.insert(matches.end(), partly_checked_non_matches.begin(), partly_checked_non_matches.end());
+            }
+        };
+
+        std::apply(eval_conds, m_operands);
     }
 
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override {
