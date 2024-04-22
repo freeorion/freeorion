@@ -1303,6 +1303,12 @@ Détection extrasolaire par les astronefs
 RULE_EXTRASOLAR_SHIP_DETECTION_DESC
 Les astronefs à l'extérieur des systèmes participent à la Détection.
 
+RULE_OVERRIDE_VIS_LEVEL
+Visibilité des Blocus Furtifs
+
+RULE_OVERRIDE_VIS_LEVEL_DESC
+Niveau de visibilité auquel les flottes et astronefs furtifs sont révélés à l'empire possédant une flotte soumise au blocus.
+
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 Planètes Furtives Indétectables
 
@@ -1462,6 +1468,24 @@ Nombre maximum de colonies pour capituler
 
 RULE_CONCEDE_COLONIES_THRESHOLD_DESC
 Les empires contrôlant un nombre de colonies supérieur à cette valeur ne peuvent pas capituler.
+
+RULE_CONCEDE_DESTROY_COLONIES
+Dépopulation des colonies après capitulation
+
+RULE_CONCEDE_DESTROY_COLONIES_DESC
+Si activé, les colonies appartenant aux empires ayant capitulé perdent leur population. Si désactivé, les astronefs deviennent libres (sans propriétaire).
+
+RULE_CONCEDE_DESTROY_BUILDINGS
+Destruction des structures après capitulation
+
+RULE_CONCEDE_DESTROY_BUILDINGS_DESC
+Si activé, les structures appartenant aux empires ayant capitulé sont détruites. Si désactivé, les structures deviennent libres (sans propriétaire).
+
+RULE_CONCEDE_DESTROY_SHIPS
+Destruction des astronefs après capitulation
+
+RULE_CONCEDE_DESTROY_SHIPS_DESC
+Si activé, les astronefs appartenant aux empires ayant capitulé sont détruits. Si désactivé, les astronefs deviennent libres (sans propriétaire).
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
 Maximum de joueurs humains vainqueurs
@@ -7494,7 +7518,7 @@ FINAL_DEST
 Système Destination Finale
 
 PREV_TO_FINAL_DEST
-Système Préc. vers Destination Finale
+Système Préc. vers Dest. Finale
 
 NEXT_SYSTEM
 Système Suiv.
@@ -7551,7 +7575,7 @@ ORIGINAL_TYPE
 Type d'origine de la Planète
 
 NEXT_TOWARDS_ORIGINAL_TYPE
-Prochain vers Type d'origine de la Planète
+Prochain vers Type d'orig. de la Planète
 
 PLANET_SIZE
 Équilibrage:Planète
@@ -8045,6 +8069,21 @@ La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %sys
 
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte étrangère arrivée à destination
+
+SITREP_FLEET_BLOCKADED
+Dans %system% : la flotte %fleet% de %empire:blockaded% a été stoppée par un blocus de %empire:blockader%.
+
+SITREP_FLEET_BLOCKADED_NEUTRAL
+Dans %system% : la flotte %fleet% a été stoppée par un blocus.
+
+SITREP_FLEET_BLOCKADED_LABEL
+Flotte soumise à un blocus
+
+SITREP_FLEET_BLOCKADED_NO_EMPIRE
+Dans %system% : la flotte %fleet% a été stoppée par un blocus.
+
+SITREP_FLEET_BLOCKADED_NO_EMPIRE_LABEL
+Flotte soumise à un blocus
 
 SITREP_POP_THRESHOLD
 Sur %planet% : la colonie a atteint la taille et la [[metertype METER_HAPPINESS]] prérequise pour entreprendre la colonisation d'autres planètes. L'[[metertype METER_INDUSTRY]] et la [[metertype METER_RESEARCH]] peuvent commencer à croître.
@@ -11114,10 +11153,10 @@ DESC_VAR_TARGET
 cible
 
 DESC_VAR_LOCAL_CANDIDATE
-éligible aux conditions locales
+éligible
 
 DESC_VAR_ROOT_CANDIDATE
-éligible aux conditions d'origine
+éligible de base
 
 DESC_STAT_TYPE
 type de statistique
@@ -11293,6 +11332,18 @@ propriétaire
 DESC_VAR_AGE
 âge en tours
 
+DESC_VAR_TURNSSINCEFOCUSCHANGE
+tours depuis modif. focus
+
+DESC_VAR_TURNSSINCEANNEXATION
+tours depuis annexion
+
+DESC_VAR_TURNSSINCECOLONIZATION
+tours depuis colonisation
+
+DESC_VAR_TURNSSINCELASTCONQUERED
+tours depuis conquête
+
 DESC_VAR_PRODUCEDBYEMPIREID
 empire producteur
 
@@ -11320,6 +11371,15 @@ id prochain système
 DESC_VAR_PREVIOUSSYSTEMID
 id système précédent
 
+DESC_VAR_PREVIOUSTOFINALDESTINATIONID
+id dest. finale précédente
+
+DESC_VAR_ARRIVALSTARLANEID
+id voie spatiale d'arrivée
+
+DESC_VAR_LASTTURNMOVEORDERED
+id dern. tour ordre déplac.
+
 DESC_VAR_NUMSHIPS
 nombre d'astronefs
 
@@ -11345,25 +11405,49 @@ DESC_VAR_AVAILABLE_FOCI
 foci disponibles
 
 DESC_VAR_OWNERLEASTEXPENSIVEENQUEUEDTECH
-technologie la moins coûteuse mise en attente de recherche
+tech. la moins coûteuse mise en file de rech.
 
 DESC_VAR_OWNERMOSTEXPENSIVEENQUEUEDTECH
-technologie la plus coûteuse mise en attente de recherche
+tech. la plus coûteuse mise en file de rech.
 
 DESC_VAR_OWNERMOSTRPCOSTLEFTENQUEUEDTECH
-technologie au coût résiduel le plus important
+tech. au coût résiduel le plus important
 
 DESC_VAR_OWNERMOSTRPSPENTENQUEUEDTECH
-technologie au coût déjà engagé le plus important
+tech. au coût déjà engagé le plus important
 
 DESC_VAR_OWNERTOPPRIORITYENQUEUEDTECH
 technologie prioritaire
 
 DESC_VAR_LASTTURNBATTLEHERE
-dernier tour où une bataille s'est déroulée ici
+dern. tour où bataille a eu lieu ici
+
+DESC_VAR_LASTTURNATTACKEDBYSHIP
+dern. tour attaque par astronef
+
+DESC_VAR_LASTTURNCOLONIZED
+dern. tour colonisation
+
+DESC_VAR_LASTTURNCONQUERED
+dern. tour conquête
+
+DESC_VAR_LASTTURNANNEXED
+dern. tour annexion
+
+DESC_VAR_ORDEREDGIVENTOEMPIRE
+ordre donné à empire
+
+DESC_VAR_OWNERBEFORELASTCONQUERED
+propriétaire avant dern. conquête
+
+DESC_VAR_LASTINVADEDBYEMPIRE
+dern. invasion par empire
+
+DESC_VAR_LASTCOLONIZEDBYEMPIRE
+dern. colonisation par empire
 
 DESC_VAR_JUMPSBETWEEN
-voies spatiales entre les systèmes contenant les objets avec les ids %1% et %2%
+voies spatiales entre systèmes contenant objets avec ids %1% et %2%
 
 DESC_VAR_STATISTIC
 Statistique
@@ -12410,12 +12494,12 @@ Centralisation
 
 PLC_CENTRALIZATION_DESC
 '''Améliore la capacité de production de la Capitale, quel que soit le Focus:
-• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]].
-• Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] par Population.
+• Augmente la [[metertype METER_TARGET_RESEARCH]] de [[value PLC_CENTRALIZATION_TARGET_RESEARCH_PERPOP]] par [[metertype METER_POPULATION]], multiplié par combien la Stabilité est supérieure à [[value PLC_CENTRALIZATION_MIN_STABILITY]], jusqu'à un maximum de [[value PLC_CENTRALIZATION_MAX_STABILITY]] en Stabilité.
+• Augmente la [[metertype METER_TARGET_INDUSTRY]] de [[value PLC_CENTRALIZATION_TARGET_INDUSTRY_PERPOP]] par [[metertype METER_POPULATION]], multiplié par combien la Stabilité est supérieure à [[value PLC_CENTRALIZATION_MIN_STABILITY]], jusqu'à un maximum de [[value PLC_CENTRALIZATION_MAX_STABILITY]] en Stabilité.
 • Augmente la [[metertype METER_TARGET_CONSTRUCTION]] de [[value PLC_CENTRALIZATION_TARGET_CONSTRUCTION_FLAT]].
 Cet effet requiert une [[metertype METER_HAPPINESS]] de [[value PLC_CENTRALIZATION_MIN_STABILITY]].
 
-Toutefois, réduit également la portée de l'[[metertype METER_SUPPLY]] ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) ainsi que la [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), et augmente le coût d'[[metertype METER_INFLUENCE]] des colonies de l'empire:
+Toutefois, réduit également la [[metertype METER_STOCKPILE]] ([[value PLC_CENTRALIZATION_MAX_STOCKPILE_FLAT]]), la portée de l'[[metertype METER_SUPPLY]] ([[value PLC_CENTRALIZATION_MAX_SUPPLY_FLAT]]) de toutes les colonies, et augmente le coût d'[[metertype METER_INFLUENCE]] des colonies de l'empire:
 • Les colonies connectées par lignes d'[[metertype METER_SUPPLY]] subissent une pénalité de [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_PERJUMP]] par Voies spatiales les séparant de la Capitale, plafonnée à [[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]].
 • Les colonies non-connectées par lignes d'[[metertype METER_SUPPLY]] à la Capitale subissent la pénalité maximale ([[value PLC_CENTRALIZATION_TARGET_INFLUENCE_MAX]]).
 Le coût des équipements de colonisation pour astronefs augmente également de 33%.
@@ -17561,6 +17645,15 @@ PHOTOTROP_DESC
 GASEOUS_DESC
 '''+	Vie sur Géantes Gazeuses
 +	Ravitaillement Carburant sur Géantes Gazeuses 0.2 par tour'''
+
+ABADDONI_STARTING_UNLOCKS_DESC
++	Débute avec la technologie [[tech GRO_SUBTER_HAB]] recherchée
+
+FULVER_STARTING_UNLOCKS_DESC
++	Débute avec la technologie [[tech PRO_GENERIC_SUPPLIES]] recherchée
+
+SLY_STARTING_UNLOCKS_DESC
++	Débute avec la politique [[policy PLC_CONFEDERATION]] débloquée
 
 EXTREMELY_BAD_POPULATION_DESC
 −−−	Extrêmement Mauvais en [[metertype METER_POPULATION]] : 25%
