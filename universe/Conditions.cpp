@@ -183,9 +183,13 @@ namespace Condition {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
 
-    } else if (dynamic_cast<const Or*>(conditions.front())) {
+        // TODO: handle template And<...stuff...>
+
+    } else if (dynamic_cast<const Or<>*>(conditions.front())) {
         retval += UserString("ANY_OF") + " ";
         retval += (at_least_one_condition_matches_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
+
+        // TODO: handle template Or<...stuff...>
     }
     // else just output single condition description and PASS/FAIL text
 
@@ -11572,12 +11576,16 @@ namespace StaticTests {
     constexpr auto andc = And(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
                                          Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
     static_assert(andc.GetCheckSum() == 4254);
+
+    constexpr auto orc = Or(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
+                                       Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
+    static_assert(orc.GetCheckSum() == 4171);
 }
 
 namespace {
     namespace {
         template <class Cond>
-        concept and_or_or_condition = std::is_same_v<Cond, And<>> || std::is_same_v<Cond, Or>;
+        concept and_or_or_condition = std::is_same_v<Cond, And<>> || std::is_same_v<Cond, Or<>>;
     }
 
     // flattens nested conditions by extracting contained operands, and
@@ -11857,20 +11865,20 @@ std::unique_ptr<Condition> And<>::Clone() const
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
-Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
+Or<>::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
               std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
               std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
     // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<Or>(operands))
+    m_operands(DenestOps<Or<>>(operands))
 {}
 
-Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
+Or<>::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
        std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
     Or(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
 {}
 
-bool Or::operator==(const Or& rhs_) const {
+bool Or<>::operator==(const Or& rhs_) const {
     if (this == &rhs_)
         return true;
     if (m_operands.size() != rhs_.m_operands.size())
@@ -11882,7 +11890,7 @@ bool Or::operator==(const Or& rhs_) const {
     return true;
 }
 
-void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+void Or<>::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain) const
 {
     if (m_operands.empty())
@@ -11924,7 +11932,7 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 }
 
-bool Or::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool Or<>::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
     if (m_operands.empty())
         return false;
 
@@ -11946,14 +11954,14 @@ bool Or::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candid
     */
 }
 
-bool Or::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+bool Or<>::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
     return candidate &&
         std::any_of(m_operands.begin(), m_operands.end(),
                     [candidate, &parent_context](const auto& op)
                     { return op->EvalOne(parent_context, candidate); });
 }
 
-std::string Or::Description(bool negated) const {
+std::string Or<>::Description(bool negated) const {
     std::string values_str;
     if (m_operands.size() == 1) {
         values_str += (!negated)
@@ -11985,7 +11993,7 @@ std::string Or::Description(bool negated) const {
     return values_str;
 }
 
-ObjectSet Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
+ObjectSet Or<>::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (m_operands.empty())
         return {};
 
@@ -12021,7 +12029,7 @@ ObjectSet Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
     // substantially slower for many Or conditions
 }
 
-std::string Or::Dump(uint8_t ntabs) const {
+std::string Or<>::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Or [\n";
     for (auto& operand : m_operands)
         retval += operand->Dump(ntabs+1);
@@ -12029,12 +12037,12 @@ std::string Or::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-void Or::SetTopLevelContent(const std::string& content_name) {
+void Or<>::SetTopLevelContent(const std::string& content_name) {
     for (auto& operand : m_operands)
         operand->SetTopLevelContent(content_name);
 }
 
-uint32_t Or::GetCheckSum() const {
+uint32_t Or<>::GetCheckSum() const {
     uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "Condition::Or");
@@ -12044,7 +12052,7 @@ uint32_t Or::GetCheckSum() const {
     return retval;
 }
 
-std::vector<const Condition*> Or::OperandsRaw() const {
+std::vector<const Condition*> Or<>::OperandsRaw() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
@@ -12052,7 +12060,7 @@ std::vector<const Condition*> Or::OperandsRaw() const {
     return retval;
 }
 
-std::unique_ptr<Condition> Or::Clone() const
+std::unique_ptr<Condition> Or<>::Clone() const
 { return std::make_unique<Or>(ValueRef::CloneUnique(m_operands)); }
 
 ///////////////////////////////////////////////////////////

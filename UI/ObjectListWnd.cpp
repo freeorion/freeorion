@@ -97,7 +97,7 @@ namespace {
         std::vector<std::unique_ptr<Condition::Condition>> subconditions;
         for (auto obj_type : object_types)
             subconditions.emplace_back(std::make_unique<Condition::Type>(obj_type));
-        return std::make_unique<Condition::Or>(std::move(subconditions));
+        return std::make_unique<Condition::Or<>>(std::move(subconditions));
     }
 
     // returns default value (eg. 0 or an empty string) unless object is of
@@ -746,7 +746,7 @@ public:
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
             { operands.emplace_back(std::make_unique<Condition::HasSpecial>(*stream_it)); }
 
-            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::Or>(std::move(operands));
+            std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::Or<>>(std::move(operands));
             object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
             return this_cond;
 

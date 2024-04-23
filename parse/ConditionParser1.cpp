@@ -143,7 +143,7 @@ namespace parse { namespace detail {
 
         or_
             = ( omit_[tok.Or_] > '[' > +condition_parser > lit(']'))
-            [ _val = construct_movable_(new_<Condition::Or>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::Or<>>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         not_

@@ -205,12 +205,13 @@ namespace {
     }
 
     auto DefaultAnnexationCondition() {
-        return std::make_unique<Condition::And<Condition::Or, Condition::ValueTest, Condition::ValueTest,
-                                               Condition::ValueTest, Condition::VisibleToEmpire, Condition::MeterValue,
+        return std::make_unique<Condition::And<Condition::Or<Condition::EmpireAffiliation, Condition::EmpireAffiliation>,
+                                               Condition::ValueTest, Condition::ValueTest, Condition::ValueTest,
+                                               Condition::VisibleToEmpire, Condition::MeterValue,
                                                Condition::ResourceSupplyConnectedByEmpire>>(
-            Condition::Or(
-                std::make_unique<Condition::EmpireAffiliation>(EmpireAffiliationType::AFFIL_NONE),
-                std::make_unique<Condition::EmpireAffiliation>(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
+            Condition::Or<Condition::EmpireAffiliation, Condition::EmpireAffiliation>(
+                Condition::EmpireAffiliation(EmpireAffiliationType::AFFIL_NONE),
+                Condition::EmpireAffiliation(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
             ),
             NotConqueredRecently(),
             NotAnnexedRecently(),

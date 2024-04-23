@@ -1979,7 +1979,7 @@ template <class... ConditionTs>
     requires ((std::is_base_of_v<Condition, ConditionTs> && ...))
 struct FO_COMMON_API And final : public Condition {
     static constexpr auto N = sizeof...(ConditionTs);
-    static_assert(N > 0);
+    static_assert(N > 1);
     using ConditionTupleT = std::tuple<ConditionTs...>;
 
     constexpr explicit And(ConditionTupleT&& operands) noexcept :
@@ -2067,7 +2067,7 @@ struct FO_COMMON_API And final : public Condition {
         return std::apply(eval_conds_on_candidate, m_operands);
     }
 
-    [[nodiscard]] CONSTEXPR_VEC ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
+    [[nodiscard]] CONSTEXPR_VEC ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override
     { return std::get<0>(m_operands).GetDefaultInitialCandidateObjects(parent_context); }
 
     [[nodiscard]] CONSTEXPR_STRING std::string Description(bool negated = false) const override { return {}; }
@@ -2124,6 +2124,7 @@ struct FO_COMMON_API And final : public Condition {
         return std::make_unique<std::decay_t<decltype(*this)>>(std::move(cloned_operands));
     }
 
+private:
     ConditionTupleT m_operands;
 };
 
@@ -2166,7 +2167,164 @@ private:
 };
 
 /** Matches all objects that match at least one Condition in \a operands. */
+template <class... ConditionTs>
+    requires ((std::is_base_of_v<Condition, ConditionTs> && ...))
 struct FO_COMMON_API Or final : public Condition {
+    static constexpr auto N = sizeof...(ConditionTs);
+    static_assert(N > 1);
+    using ConditionTupleT = std::tuple<ConditionTs...>;
+
+    constexpr explicit Or(ConditionTupleT&& operands) noexcept :
+        m_operands(std::move(operands))
+    {}
+
+    constexpr explicit Or(ConditionTs&&... operands) noexcept :
+        m_operands(std::forward<decltype(operands)>(operands)...)
+    {}
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_and = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_and && m_operands == rhs_and->m_operands;
+    }
+
+    [[nodiscard]] constexpr bool operator==(const Or& rhs) const {
+        static_assert(std::is_same_v<decltype(this), decltype(&rhs)>);
+        return (this == &rhs) || m_operands == rhs.m_operands;
+    }
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
+    {
+        const auto eval_conds =
+            [&parent_context, &matches, &non_matches, search_domain](const auto& cond0, const auto&... conds)
+        {
+            if (search_domain == SearchDomain::NON_MATCHES) {
+                // apply operand conditions to NON_MATCHES until nothing is left to test
+                const auto eval_cond_not_empty = [&parent_context, &matches, &non_matches](const Condition& cond) {
+                    cond.Eval(parent_context, matches, non_matches, SearchDomain::NON_MATCHES);
+                    return !non_matches.empty();
+                };
+                eval_cond_not_empty(cond0) && (eval_cond_not_empty(conds) && ...);
+
+            } else /* search_domain == SearchDomain::MATCHES */{
+                ObjectSet partly_checked_matches;
+                partly_checked_matches.reserve(matches.size());
+
+                // apply first condition to matches objects
+                cond0.Eval(parent_context, matches, partly_checked_matches, SearchDomain::MATCHES);
+
+                // apply additional conditions to partly checked matches until nothing is left to test
+                const auto eval_cond_not_empty =
+                    [&parent_context, &matches, &partly_checked_matches](const Condition& cond)
+                {
+                    cond.Eval(parent_context, matches, partly_checked_matches, SearchDomain::NON_MATCHES);
+                    return !partly_checked_matches.empty();
+                };
+
+                !partly_checked_matches.empty() && (eval_cond_not_empty(conds) && ...);
+                matches.insert(matches.end(), partly_checked_matches.begin(), partly_checked_matches.end());
+            }
+        };
+
+        std::apply(eval_conds, m_operands);
+    }
+
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override {
+        if (candidates.empty() || candidates.size() == 1 && !candidates.front())
+            return false;
+
+        const auto eval_cond_on_candidates = [&parent_context, &candidates](const auto& cond)
+        { return cond.EvalAny(parent_context, candidates); };
+
+        const auto eval_conds_on_candidates = [&eval_cond_on_candidates](const auto&... conds)
+        { return (eval_cond_on_candidates(conds) || ...); };
+
+        return std::apply(eval_conds_on_candidates, m_operands);
+    }
+
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override {
+        if (!candidate)
+            return false;
+
+        const auto eval_cond_on_candidate = [&parent_context, candidate](const auto& cond)
+        { return cond.EvalOne(parent_context, candidate); };
+
+        const auto eval_conds_on_candidate = [&eval_cond_on_candidate](const auto&... conds)
+        { return (eval_cond_on_candidate(conds) || ...); };
+
+        return std::apply(eval_conds_on_candidate, m_operands);
+    }
+
+    [[nodiscard]] CONSTEXPR_STRING std::string Description(bool negated = false) const override { return {}; }
+    [[nodiscard]] CONSTEXPR_STRING std::string Dump(uint8_t ntabs = 0) const override { return {}; }
+
+    CONSTEXPR_STRING void SetTopLevelContent(const std::string& content_name) {
+        const auto set_tlc = [&content_name](auto& op)
+        { op.SetTopLevelContent(content_name); };
+
+        const auto set_tlcs = [&set_tlc](auto&... ops)
+        { (set_tlc(ops), ...); };
+
+        std::apply(set_tlcs, m_operands);
+    }
+
+    [[nodiscard]] auto OperandsRaw() const noexcept {
+        std::array<const Condition*, N> retval{};
+        const auto to_ptrs = [&retval](const auto&... ops) {
+            std::size_t idx = 0;
+            ((retval[idx++] = &ops), ...);
+        };
+        std::apply(to_ptrs, m_operands);
+        return retval;
+    }
+
+    [[nodiscard]] auto& Operands() noexcept { return m_operands; }
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const {
+        uint32_t retval{0};
+
+        CheckSums::CheckSumCombine(retval, "Condition::Or");
+        CheckSums::CheckSumCombine(retval, m_operands);
+
+        return retval;
+    }
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
+        using zeroth_operand_t = std::tuple_element_t<0, ConditionTupleT>;
+
+        static constexpr auto clone_cast_op_type_rval = [](const auto& op) -> auto&& {
+            static_assert(requires { op.Clone(); } );
+            using OperandT = std::decay_t<decltype(op)>;
+            auto cond_clone_unique = op.Clone();
+            OperandT& ref = *static_cast<OperandT*>(cond_clone_unique.release());
+            return std::move(ref);
+        };
+        using get0_operand_t = decltype(std::get<0>(m_operands));
+        static_assert(std::is_same_v<get0_operand_t, const zeroth_operand_t&>);
+        using clone_cast0_operand_t = decltype(clone_cast_op_type_rval(std::get<0>(m_operands)));
+        static_assert(std::is_same_v<clone_cast0_operand_t, zeroth_operand_t&&>);
+
+        static constexpr auto clone_operands = [](const auto&... ops)
+        { return std::make_tuple(clone_cast_op_type_rval(ops)...); };
+
+        ConditionTupleT cloned_operands = std::apply(clone_operands, m_operands);
+        return std::make_unique<std::decay_t<decltype(*this)>>(std::move(cloned_operands));
+    }
+
+private:
+    ConditionTupleT m_operands;
+};
+
+
+template <typename... Ts>
+Or(Ts...) -> Or<std::decay_t<Ts>...>;
+template <typename... Ts>
+Or(Ts&&...) -> Or<std::decay_t<Ts>...>;
+template <typename... Ts>
+Or(std::tuple<Ts...>&&) -> Or<std::decay_t<Ts>...>;
+
+template <>
+struct FO_COMMON_API Or<> final : public Condition {
     explicit Or(std::vector<std::unique_ptr<Condition>>&& operands);
     Or(std::unique_ptr<Condition>&& operand1,
        std::unique_ptr<Condition>&& operand2,
