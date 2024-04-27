@@ -84,6 +84,7 @@ namespace CheckSums {
     {
         CheckSumCombine(sum, p.first);
         CheckSumCombine(sum, p.second);
+        CheckSumCombine(sum, 2);
     }
 
     // tuples

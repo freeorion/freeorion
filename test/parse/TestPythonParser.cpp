@@ -151,9 +151,9 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(true, tech_effect_scope->TargetInvariant());
         BOOST_REQUIRE_EQUAL(false, tech_effect_scope->SourceInvariant());
 
-        const auto tech_effect_scope_and = dynamic_cast<Condition::And<>*>(tech_effect_scope);
+        const auto tech_effect_scope_and = dynamic_cast<Condition::And*>(tech_effect_scope);
         BOOST_REQUIRE(tech_effect_scope_and != nullptr);
-        BOOST_REQUIRE_EQUAL(2, tech_effect_scope_and->Operands().size());
+        BOOST_REQUIRE_EQUAL(2, tech_effect_scope_and->OperandCount());
 
         // effects list
         BOOST_REQUIRE_EQUAL(1, tech_effect_gr.Effects().size());
@@ -179,11 +179,9 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
                         "ORBITAL_HAB_LABEL"));
 
         auto effect_group = std::make_shared<Effect::EffectsGroup>(
-                std::make_unique<Condition::And<>>(
-                    std::make_unique<Condition::Species>(),
-                    std::make_unique<Condition::EmpireAffiliation>(
-                        std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
-                    )
+                std::make_unique<Condition::AndTuple<Condition::Species, Condition::EmpireAffiliation>>(
+                    Condition::Species(),
+                    Condition::EmpireAffiliation(std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
                 ),
                 nullptr,
                 std::move(effects),
@@ -316,9 +314,10 @@ BOOST_AUTO_TEST_CASE(parse_species) {
                 {"FOCUS_RESEARCH", "FOCUS_RESEARCH_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/research.png"},
                 {"FOCUS_INFLUENCE", "FOCUS_INFLUENCE_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/influence.png"},
                 {"FOCUS_GROWTH", "FOCUS_GROWTH_DESC", std::make_unique<Condition::Or<>>(array_to_vector<Condition::Condition, 10>({
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Homeworld>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Species")})),
-                        std::make_unique<Condition::Not<>>(std::make_unique<Condition::HasTag>("SELF_SUSTAINING"))
+                    std::make_unique<Condition::AndTuple<Condition::Homeworld, Condition::Not<Condition::HasTag>>>(
+                        Condition::Homeworld(std::make_unique<ValueRef::Variable<std::string>>(
+                            ValueRef::ReferenceType::SOURCE_REFERENCE, "Species")),
+                        Condition::Not<Condition::HasTag>(Condition::HasTag{"SELF_SUSTAINING"})
                     ),
                     std::make_unique<Condition::HasSpecial>("POSITRONIUM_SPECIAL"),
                     std::make_unique<Condition::HasSpecial>("SUPERCONDUCTOR_SPECIAL"),
@@ -335,49 +334,49 @@ BOOST_AUTO_TEST_CASE(parse_species) {
                 {"FOCUS_STOCKPILE", "FOCUS_STOCKPILE_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("PRO_GENERIC_SUPPLIES")), "icons/focus/stockpile.png"},
                 {"FOCUS_STEALTH", "FOCUS_STEALTH_DESC", std::make_unique<Condition::Or<>>(
                     std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_PLANET_CLOAK")}))),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
-                        std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("DEF_PLANET_CLOAK"))
+                    std::make_unique<Condition::AndTuple<Condition::Contains, Condition::OwnerHasTech>>(
+                        Condition::Contains(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("DEF_PLANET_CLOAK"))
                     )
                 ), "icons/focus/stealth.png"},
                 {"FOCUS_BIOTERROR", "FOCUS_BIOTERROR_DESC", std::make_unique<Condition::Or<>>(
                     std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_BIOTERROR_PROJECTOR")}))),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
-                        std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("GRO_BIOTERROR"))
+                    std::make_unique<Condition::AndTuple<Condition::Contains, Condition::OwnerHasTech>>(
+                        Condition::Contains(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("GRO_BIOTERROR"))
                     )
                 ), "icons/focus/bioterror.png"},
                 {"FOCUS_STARGATE_SEND", "FOCUS_STARGATE_SEND_DESC", std::make_unique<Condition::Or<>>(
                     std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_STARGATE")}))),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
-                        std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
+                    std::make_unique<Condition::AndTuple<Condition::Contains, Condition::OwnerHasTech>>(
+                        Condition::Contains(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
                     )
                 ), "icons/focus/stargate_send.png"},
                 {"FOCUS_STARGATE_RECEIVE", "FOCUS_STARGATE_RECEIVE_DESC", std::make_unique<Condition::Or<>>(
                     std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_STARGATE")}))),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
-                        std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
+                    std::make_unique<Condition::AndTuple<Condition::Contains, Condition::OwnerHasTech>>(
+                        Condition::Contains(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
                     )
                 ), "icons/focus/stargate_receive.png"},
                 {"FOCUS_PLANET_DRIVE", "FOCUS_PLANET_DRIVE_DESC", std::make_unique<Condition::Or<>>(
                     std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_PLANET_DRIVE")}))),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
-                        std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_PLANET_DRIVE"))
+                    std::make_unique<Condition::AndTuple<Condition::Contains, Condition::OwnerHasTech>>(
+                        Condition::Contains(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("CON_PLANET_DRIVE"))
                     )
                 ), "icons/building/planetary_stardrive.png"},
                 {"FOCUS_DISTORTION", "FOCUS_DISTORTION_DESC", std::make_unique<Condition::Or<>>(
                     std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_SPATIAL_DISTORT_GEN")}))),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Contains>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
-                        std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("LRN_SPATIAL_DISTORT_GEN"))
+                    std::make_unique<Condition::AndTuple<Condition::Contains, Condition::OwnerHasTech>>(
+                        Condition::Contains(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("LRN_SPATIAL_DISTORT_GEN"))
                     )
                 ), "icons/focus/distortion.png"},
-                {"FOCUS_DOMINATION", "FOCUS_DOMINATION_DESC", std::make_unique<Condition::And<>>(
-                    std::make_unique<Condition::HasTag>("TELEPATHIC"),
-                    std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("LRN_PSY_DOM"))
+                {"FOCUS_DOMINATION", "FOCUS_DOMINATION_DESC", std::make_unique<Condition::AndTuple<Condition::HasTag, Condition::OwnerHasTech>>(
+                    Condition::HasTag("TELEPATHIC"),
+                    Condition::OwnerHasTech(std::make_unique<ValueRef::Constant<std::string>>("LRN_PSY_DOM"))
                 ), "icons/focus/psi_domination.png"}
             },
             "FOCUS_INDUSTRY",
@@ -397,15 +396,17 @@ BOOST_AUTO_TEST_CASE(parse_species) {
             array_to_vector<Effect::EffectsGroup, 1>({
                 std::make_unique<Effect::EffectsGroup>(
                     std::make_unique<Condition::Source>(),
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                        std::make_unique<Condition::MeterValue>(MeterType::METER_TARGET_INDUSTRY,
+                    std::make_unique<Condition::AndTuple<Condition::Type, Condition::MeterValue,
+                                                         Condition::MeterValue, Condition::FocusType>>(
+                        Condition::Type(UniverseObjectType::OBJ_PLANET),
+                        Condition::MeterValue(MeterType::METER_TARGET_INDUSTRY,
                             std::make_unique<ValueRef::Constant<double>>(0.0),
                             nullptr),
-                        std::make_unique<Condition::MeterValue>(MeterType::METER_HAPPINESS,
+                        Condition::MeterValue(MeterType::METER_HAPPINESS,
                             std::make_unique<ValueRef::Constant<double>>(0.0),
                             nullptr),
-                        std::make_unique<Condition::FocusType>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("FOCUS_INDUSTRY")}))
+                        Condition::FocusType(array_to_vector<ValueRef::ValueRef<std::string>, 1>(
+                            {std::make_unique<ValueRef::Constant<std::string>>("FOCUS_INDUSTRY")}))
                     ),
                     array_to_vector<Effect::Effect, 1>({std::make_unique<Effect::SetMeter>(MeterType::METER_TARGET_INDUSTRY,
                         std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::PLUS,
@@ -486,27 +487,24 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
             std::make_unique<ValueRef::Constant<int>>(6),
             true,
             test_tags,
-            std::make_unique<Condition::And<>>(
-                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                std::make_unique<Condition::Not<>>(std::make_unique<Condition::Contains>(
+            std::make_unique<Condition::AndTuple<Condition::Type, Condition::Not<Condition::Contains>,
+                                                 Condition::EmpireAffiliation, Condition::StarType>>(
+                Condition::Type(UniverseObjectType::OBJ_PLANET),
+                Condition::Not<Condition::Contains>(Condition::Contains(
                     std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
                        std::make_unique<ValueRef::Constant<std::string>>("BLD_ART_BLACK_HOLE")
                     }))
                 )),
-                std::make_unique<Condition::EmpireAffiliation>(
-                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
-                ),
-                std::make_unique<Condition::StarType>(array_to_vector<ValueRef::ValueRef< ::StarType>, 1>({
+                Condition::EmpireAffiliation(std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")),
+                Condition::StarType(array_to_vector<ValueRef::ValueRef< ::StarType>, 1>({
                     std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_RED)
                 }))
             ),
             array_to_vector<Effect::EffectsGroup, 2>({
                 std::make_unique<Effect::EffectsGroup>(
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::ObjectID>(
-                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID")
-                        ),
-                        std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SYSTEM)
+                    std::make_unique<Condition::AndTuple<Condition::ObjectID, Condition::Type>>(
+                        Condition::ObjectID(std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "SystemID")),
+                        Condition::Type(UniverseObjectType::OBJ_SYSTEM)
                     ),
                     std::make_unique<Condition::StarType>(array_to_vector<ValueRef::ValueRef< ::StarType>, 1>({
                         std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_RED)
@@ -545,24 +543,22 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
             }),
             {},
             {},
-            std::make_unique<Condition::And<>>(
-                std::make_unique<Condition::Not<>>(std::make_unique<Condition::Contains>(
-                    std::make_unique<Condition::And<>>(
-                        std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
+            std::make_unique<Condition::AndTuple<Condition::Not<Condition::Contains>,
+                                                 Condition::Not<Condition::Enqueued>,
+                                                 Condition::EmpireAffiliation>>(
+                Condition::Not<Condition::Contains>(Condition::Contains(
+                    std::make_unique<Condition::AndTuple<Condition::Building, Condition::EmpireAffiliation>>(
+                        Condition::Building(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
                             std::make_unique<ValueRef::Constant<std::string>>(std::string{ValueRef::Constant<std::string>::current_content})
                         })),
-                        std::make_unique<Condition::EmpireAffiliation>(
-                            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
-                        )
+                        Condition::EmpireAffiliation(std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
                     )
                 )),
-                std::make_unique<Condition::Not<>>(std::make_unique<Condition::Enqueued>(
+                Condition::Not<Condition::Enqueued>(Condition::Enqueued(
                     BuildType::BT_BUILDING,
                     std::make_unique<ValueRef::Constant<std::string>>(std::string{ValueRef::Constant<std::string>::current_content})
                 )),
-                std::make_unique<Condition::EmpireAffiliation>(
-                    std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
-                )
+                Condition::EmpireAffiliation(std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
             )
         },
         CaptureResult::CR_CAPTURE,
@@ -579,7 +575,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(test_building.ProductionSpecialConsumption() == building->ProductionSpecialConsumption());
     BOOST_CHECK(test_building.Tags() == building->Tags());
 
-    auto* location_cond = dynamic_cast<const Condition::And<>*>(building->Location());
+    auto* location_cond = dynamic_cast<const Condition::And*>(building->Location());
     BOOST_REQUIRE(location_cond != nullptr);
     std::vector<const Condition::Condition*> location_conds = location_cond->OperandsRaw();
     BOOST_REQUIRE_EQUAL(4, location_conds.size());
@@ -593,7 +589,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK_EQUAL(5099, location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, location_conds[3]->GetCheckSum());
 
-    auto* test_location_cond = dynamic_cast<const Condition::And<>*>(test_building.Location());
+    auto* test_location_cond = dynamic_cast<const Condition::AndPtrs<>*>(test_building.Location());
     BOOST_REQUIRE(test_location_cond != nullptr);
     std::vector<const Condition::Condition*> test_location_conds = test_location_cond->OperandsRaw();
     BOOST_REQUIRE_EQUAL(4, test_location_conds.size());

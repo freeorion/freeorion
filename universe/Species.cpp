@@ -173,7 +173,7 @@ namespace {
         auto type_cond = std::make_unique<Condition::Type>(
             std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
 
-        auto retval = std::make_unique<Condition::And<>>(std::move(enviro_cond), std::move(type_cond));
+        auto retval = std::make_unique<Condition::AndPtrs<2>>(std::move(enviro_cond), std::move(type_cond));
         retval->SetTopLevelContent(name);
 
         return retval;
@@ -205,10 +205,10 @@ namespace {
     }
 
     auto DefaultAnnexationCondition() {
-        return std::make_unique<Condition::And<Condition::Or<Condition::EmpireAffiliation, Condition::EmpireAffiliation>,
-                                               Condition::ValueTest, Condition::ValueTest, Condition::ValueTest,
-                                               Condition::VisibleToEmpire, Condition::MeterValue,
-                                               Condition::ResourceSupplyConnectedByEmpire>>(
+        return std::make_unique<Condition::AndTuple<Condition::Or<Condition::EmpireAffiliation, Condition::EmpireAffiliation>,
+                                                    Condition::ValueTest, Condition::ValueTest, Condition::ValueTest,
+                                                    Condition::VisibleToEmpire, Condition::MeterValue,
+                                                    Condition::ResourceSupplyConnectedByEmpire>>(
             Condition::Or<Condition::EmpireAffiliation, Condition::EmpireAffiliation>(
                 Condition::EmpireAffiliation(EmpireAffiliationType::AFFIL_NONE),
                 Condition::EmpireAffiliation(SourceOwner(), EmpireAffiliationType::AFFIL_ENEMY)
@@ -222,8 +222,8 @@ namespace {
                                   nullptr),
             Condition::ResourceSupplyConnectedByEmpire(
                 SourceOwner(),
-                std::make_unique<Condition::And<Condition::Type, Condition::EmpireAffiliation, Condition::ValueTest,
-                                                Condition::ValueTest, Condition::ValueTest>>(
+                std::make_unique<Condition::AndTuple<Condition::Type, Condition::EmpireAffiliation, Condition::ValueTest,
+                                                     Condition::ValueTest, Condition::ValueTest>>(
                     Condition::Type(UniverseObjectType::OBJ_PLANET),
                     Condition::EmpireAffiliation(SourceOwner()),
                     NotConqueredRecently(),
@@ -349,7 +349,7 @@ namespace {
                     ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "BuildingType") // for each building's building type
             ),
             ValueRef::StatisticType::SUM,
-            std::make_unique<Condition::And<Condition::Type, Condition::OnPlanet>>(
+            std::make_unique<Condition::AndTuple<Condition::Type, Condition::OnPlanet>>(
                 Condition::Type{UniverseObjectType::OBJ_BUILDING},
                 Condition::OnPlanet(std::make_unique<ValueRef::Variable<int>>(
                     ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE, "ID"))

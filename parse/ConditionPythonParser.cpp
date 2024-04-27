@@ -54,7 +54,7 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
         }
     }
 
-    return condition_wrapper(std::make_shared<Condition::And<>>(
+    return condition_wrapper(std::make_shared<Condition::AndPtrs<2>>(
         lhs.condition->Clone(),
         rhs.condition->Clone()
     ));

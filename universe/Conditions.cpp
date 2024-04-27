@@ -23,7 +23,6 @@
 #include "System.h"
 #include "UniverseObject.h"
 #include "Universe.h"
-#include "ValueRefs.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../Empire/Supply.h"
@@ -120,7 +119,7 @@ namespace {
         std::vector<const Condition::Condition*> retval;
         retval.reserve(in.size()*2); // guesstimate
         for (const auto op : in) {
-            if (const auto and_cond = dynamic_cast<const Condition::And<>*>(op)) {
+            if (const auto and_cond = dynamic_cast<const Condition::And*>(op)) {
                 auto ops = DenestAnds(and_cond->OperandsRaw());
                 retval.insert(retval.end(), ops.begin(), ops.end());
             } else {
@@ -179,11 +178,9 @@ namespace Condition {
     // concatenate (non-duplicated) single-description results
     std::string retval;
     retval.reserve(1000); // guesstimate
-    if (conditions.size() > 1 || dynamic_cast<const And<>*>(conditions.front())) {
+    if (conditions.size() > 1 || dynamic_cast<const And*>(conditions.front())) {
         retval += UserString("ALL_OF") + " ";
         retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
-
-        // TODO: handle template And<...stuff...>
 
     } else if (dynamic_cast<const Or<>*>(conditions.front())) {
         retval += UserString("ANY_OF") + " ";
@@ -1254,6 +1251,13 @@ EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
     EmpireAffiliation(nullptr, affiliation)
 {}
 
+bool EmpireAffiliation::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
+
 bool EmpireAffiliation::operator==(const EmpireAffiliation& rhs_) const {
     if (this == &rhs_)
         return true;
@@ -1564,15 +1568,6 @@ ObjectSet RootCandidate::GetDefaultInitialCandidateObjects(const ScriptingContex
     return {};
 }
 
-uint32_t RootCandidate::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::RootCandidate");
-
-    TraceLogger(conditions) << "GetCheckSum(RootCandidate): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> RootCandidate::Clone() const
 { return std::make_unique<RootCandidate>(); }
 
@@ -1597,41 +1592,34 @@ ObjectSet Target::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
     return {};
 }
 
-uint32_t Target::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Target");
-
-    TraceLogger(conditions) << "GetCheckSum(Target): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> Target::Clone() const
 { return std::make_unique<Target>(); }
 
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Homeworld::Homeworld() :
-    Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
-{}
+namespace {
+    auto Enveculate(auto&& thing) {
+        std::vector<std::decay_t<decltype(thing)>> retval;
+        retval.push_back(std::forward<decltype(thing)>(thing));
+        return retval;
+    }
+}
 
-Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
+Homeworld::Homeworld(string_vref_ptr_vec&& names) :
+    Condition(ConditionDetail::CondsRTSI(names)),
     m_names(std::move(names)),
     m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
                                         [](const auto& e) { return e->LocalCandidateInvariant(); }))
 {}
 
-bool Homeworld::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+Homeworld::Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Homeworld(Enveculate(std::move(name)))
+{}
 
-    const Homeworld& rhs_ = static_cast<const Homeworld&>(rhs);
+bool Homeworld::operator==(const Homeworld& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -1867,15 +1855,6 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
 { return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
 
-uint32_t Capital::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Capital");
-
-    TraceLogger(conditions) << "GetCheckSum(Capital): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> Capital::Clone() const
 { return std::make_unique<Capital>(); }
 
@@ -2057,15 +2036,6 @@ bool Monster::Match(const ScriptingContext& local_context) const {
 ObjectSet Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
 { return AllObjectsSet<Ship, true>(parent_context.ContextObjects()); }
 
-uint32_t Monster::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Monster");
-
-    TraceLogger(conditions) << "GetCheckSum(Monster): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> Monster::Clone() const
 { return std::make_unique<Monster>(); }
 
@@ -2095,15 +2065,6 @@ bool Armed::Match(const ScriptingContext& local_context) const {
     }
 
     return false;
-}
-
-uint32_t Armed::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Armed");
-
-    TraceLogger(conditions) << "GetCheckSum(Armed): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Armed::Clone() const
@@ -2280,11 +2241,13 @@ Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>
 bool Building::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *rhs_p == *this;
+}
 
-    const Building& rhs_ = static_cast<const Building&>(rhs);
-
+bool Building::operator==(const Building& rhs_) const {
+    if (this == &rhs_)
+        return true;
     if (m_names.size() != rhs_.m_names.size())
         return false;
     for (std::size_t i = 0; i < m_names.size(); ++i) {
@@ -2876,23 +2839,22 @@ HasTag::HasTag(std::string name) :
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(!name || name->RootCandidateInvariant(),
-              !name || name->TargetInvariant(),
-              !name || name->SourceInvariant()),
+    Condition(ConditionDetail::CondsRTSI(name)),
     m_name(std::move(name))
 {}
 
 bool HasTag::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *rhs_p == *this;
+}
 
-    const HasTag& rhs_ = static_cast<const HasTag&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_name)
-
-    return true;
+bool HasTag::operator==(const HasTag& rhs) const {
+    if (this == &rhs)
+        return true;
+    return (this == &rhs) || (m_name == rhs.m_name) ||
+        (m_name && rhs.m_name && *m_name == *(rhs.m_name));
 }
 
 namespace {
@@ -3128,23 +3090,15 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Contains::Contains(std::unique_ptr<Condition>&& condition) :
-    Condition(condition->RootCandidateInvariant(),
-              condition->TargetInvariant(),
-              condition->SourceInvariant()),
+    Condition(ConditionDetail::CondsRTSI(condition)),
     m_condition(std::move(condition))
 {}
 
-bool Contains::operator==(const Condition& rhs) const {
+bool Contains::operator==(const Contains& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Contains& rhs_ = static_cast<const Contains&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_condition)
-
-    return true;
+    return (this == &rhs) || (m_condition == rhs.m_condition) ||
+        (m_condition && rhs.m_condition && *m_condition == *(rhs.m_condition));
 }
 
 namespace {
@@ -3811,10 +3765,13 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
 bool ObjectID::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const ObjectID& rhs_ = static_cast<const ObjectID&>(rhs);
+bool ObjectID::operator==(const ObjectID& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_object_id)
 
@@ -4493,10 +4450,13 @@ Species::Species() :
 bool Species::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Species& rhs_ = static_cast<const Species&>(rhs);
+bool Species::operator==(const Species& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -5089,11 +5049,13 @@ Enqueued::Enqueued(const Enqueued& rhs) :
 bool Enqueued::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Enqueued& rhs_ = static_cast<const Enqueued&>(rhs);
-
+bool Enqueued::operator==(const Enqueued& rhs_) const {
+    if (this == &rhs_)
+        return true;
     if (m_build_type != rhs_.m_build_type)
         return false;
 
@@ -5373,10 +5335,13 @@ FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>
 bool FocusType::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const FocusType& rhs_ = static_cast<const FocusType&>(rhs);
+bool FocusType::operator==(const FocusType& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -7552,10 +7517,13 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& na
 bool OwnerHasTech::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const OwnerHasTech& rhs_ = static_cast<const OwnerHasTech&>(rhs);
+bool OwnerHasTech::operator==(const OwnerHasTech& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
@@ -11573,309 +11541,27 @@ namespace StaticTests {
     constexpr auto not_target2 = Not(Target());
     static_assert(not_target1 == static_cast<const Condition&>(not_target2));
 
-    constexpr auto andc = And(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
-                                         Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
-    static_assert(andc.GetCheckSum() == 4254);
+    constexpr auto andc = AndTuple(None{}, NoOp{}, RootCandidate{}, Target{},
+                                   Monster{}/*, Armed{}, Capital{}*//*, Not(Target())*/);
+    static_assert(andc.GetCheckSum() == 10141);
 
-    constexpr auto orc = Or(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
-                                       Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
-    static_assert(orc.GetCheckSum() == 4171);
+    //constexpr auto orc = Or(std::tuple{None{}, NoOp{}/*, RootCandidate{}, Target{},
+    //                                   Monster{}, Armed{}, Capital{}*//*, Not(Target())*/});
+    //static_assert(orc.GetCheckSum() == 4171);
 }
-
-namespace {
-    namespace {
-        template <class Cond>
-        concept and_or_or_condition = std::is_same_v<Cond, And<>> || std::is_same_v<Cond, Or<>>;
-    }
-
-    // flattens nested conditions by extracting contained operands, and
-    // also removes any null operands
-    template <and_or_or_condition ContainingCondition>
-    std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>& in) {
-        std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(in.size());
-
-        for (auto& op : in) {
-            if (!op)
-                continue;
-            if (auto* op_and = dynamic_cast<ContainingCondition*>(op.get())) {
-                auto sub_ops = DenestOps<ContainingCondition>(op_and->Operands());
-                retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
-                              std::make_move_iterator(sub_ops.end()));
-            } else {
-                retval.push_back(std::move(op));
-            }
-        };
-        return retval;
-    }
-
-    auto Vectorize(std::unique_ptr<Condition>&& op1, std::unique_ptr<Condition>&& op2,
-                   std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4,
-                   std::unique_ptr<Condition>&& op5 = nullptr,
-                   std::unique_ptr<Condition>&& op6 = nullptr,
-                   std::unique_ptr<Condition>&& op7 = nullptr,
-                   std::unique_ptr<Condition>&& op8 = nullptr)
-    {
-        static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
-
-        std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
-                       isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
-        const auto push = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
-        push(op1);
-        push(op2);
-        push(op3);
-        push(op4);
-        push(op5);
-        push(op6);
-        push(op7);
-        push(op8);
-        return retval;
-    }
-}
-
-And<>::And(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
-              // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<And>(operands))
-{}
-
-And<>::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-           std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4,
-           std::unique_ptr<Condition>&& operand5, std::unique_ptr<Condition>&& operand6,
-           std::unique_ptr<Condition>&& operand7, std::unique_ptr<Condition>&& operand8) :
-    And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3),
-                  std::move(operand4), std::move(operand5), std::move(operand6),
-                  std::move(operand7), std::move(operand8)))
-{}
-
-bool And<>::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const And& rhs_ = static_cast<const And&>(rhs);
-
-    if (m_operands.size() != rhs_.m_operands.size())
-        return false;
-    for (std::size_t i = 0; i < m_operands.size(); ++i) {
-        CHECK_COND_VREF_MEMBER(m_operands.at(i))
-    }
-
-    return true;
-}
-
-void And<>::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                 ObjectSet& non_matches, SearchDomain search_domain) const
-{
-    if (m_operands.empty())
-        return;
-
-    // TODO: Enable if TraceLogger is needed
-    /*
-    auto ObjList = [](const ObjectSet& objs) -> std::string {
-        std::string ss;
-        ss.reserve(objs.size() * 20); // guesstimate
-        for (const auto* obj : objs)
-            ss.append(obj->Name()).append(" (").append(std::to_string(obj->ID())).append(")  ");
-        return ss;
-    };
-
-    TraceLogger(conditions) << [&]() {
-        std::stringstream ss;
-        ss << "And::Eval searching " << (search_domain == SearchDomain::MATCHES ? "matches" : "non_matches")
-           << " with input matches (" << matches.size() << "): " << ObjList(matches)
-           << " and input non_matches(" << non_matches.size() << "): " << ObjList(non_matches);
-        return ss.str();
-    }();
-    */
-
-    if (search_domain == SearchDomain::NON_MATCHES) {
-        ObjectSet partly_checked_non_matches;
-        partly_checked_non_matches.reserve(non_matches.size());
-
-        // move items in non_matches set that pass first operand condition into
-        // partly_checked_non_matches set
-        m_operands[0]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::NON_MATCHES);
-        /*
-        TraceLogger(conditions) << [&]() {
-            std::stringstream ss;
-            ss << "Subcondition: " << m_operands[0]->Dump()
-               <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): "
-               << ObjList(partly_checked_non_matches);
-            return ss.str();
-        }();
-        */
-
-        // move items that don't pass one of the other conditions back to non_matches
-        for (std::size_t i = 1; i < m_operands.size(); ++i) {
-            if (partly_checked_non_matches.empty()) break;
-            m_operands[i]->Eval(parent_context, partly_checked_non_matches, non_matches, SearchDomain::MATCHES);
-            /*
-            TraceLogger(conditions) << [&]() {
-                std::stringstream ss;
-                ss << "Subcondition: " << m_operands[i]->Dump()
-                   <<"\npartly_checked_non_matches (" << partly_checked_non_matches.size() << "): "
-                   << ObjList(partly_checked_non_matches);
-                return ss.str();
-            }();
-            */
-        }
-
-        // merge items that passed all operand conditions into matches
-        matches.insert(matches.end(), partly_checked_non_matches.begin(),
-                       partly_checked_non_matches.end());
-
-        // items already in matches set are not checked, and remain in matches set even if
-        // they don't match one of the operand conditions
-
-    } else /*(search_domain == SearchDomain::MATCHES)*/ {
-        // check all operand conditions on all objects in the matches set, moving those
-        // that don't pass a condition to the non-matches set
-
-        for (const auto& operand : m_operands) {
-            if (matches.empty()) break;
-            operand->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
-            /*
-            TraceLogger(conditions) << "Subcondition: " << operand->Dump()
-                                    <<"\nremaining matches (" << matches.size() << "): " << ObjList(matches);
-            */
-        }
-
-        // items already in non_matches set are not checked, and remain in non_matches set
-        // even if they pass all operand conditions
-    }
-    /*
-    TraceLogger(conditions) << "And::Eval final matches (" << matches.size() << "): " << ObjList(matches)
-                            << " and non_matches (" << non_matches.size() << "): " << ObjList(non_matches);
-    */
-}
-
-bool And<>::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
-    if (m_operands.empty() || candidates.empty())
-        return false;
-    if (candidates.size() == 1 && !candidates.front())
-        return false;
-
-    static constexpr auto random_pick = false; // enable to A/B test looping over candidates first instead of operands first
-    if constexpr (random_pick) {
-        if (RandInt(1, 10000) >= 5000) {
-            return std::any_of(candidates.begin(), candidates.end(),
-                               [&parent_context, this](const auto* candidate) {
-                                   return std::all_of(m_operands.begin(), m_operands.end(),
-                                                      [&parent_context, candidate](const auto& op)
-                                                      { return op->EvalOne(parent_context, candidate); });
-                               });
-        }
-    }
-
-    ObjectSet matches{candidates};
-    ObjectSet non_matches;
-    non_matches.reserve(candidates.size());
-    // check candidates against all operands and return true if any candidate is matched by all operands
-    for (const auto& op : m_operands) {
-        op->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
-        if (matches.empty())
-            return false;
-    }
-    return true;
-}
-
-bool And<>::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
-    return candidate &&
-        std::all_of(m_operands.begin(), m_operands.end(),
-                    [candidate, &parent_context](const auto& op)
-                    { return op->EvalOne(parent_context, candidate); });
-}
-
-std::string And<>::Description(bool negated) const {
-    std::string values_str;
-    if (m_operands.size() == 1) {
-        values_str += (!negated)
-            ? UserString("DESC_AND_BEFORE_SINGLE_OPERAND")
-            : UserString("DESC_NOT_AND_BEFORE_SINGLE_OPERAND");
-        // Pushing the negation to the enclosed conditions
-        values_str += m_operands[0]->Description(negated);
-        values_str += (!negated)
-            ? UserString("DESC_AND_AFTER_SINGLE_OPERAND")
-            : UserString("DESC_NOT_AND_AFTER_SINGLE_OPERAND");
-    } else {
-        values_str += (!negated)
-            ? UserString("DESC_AND_BEFORE_OPERANDS")
-            : UserString("DESC_NOT_AND_BEFORE_OPERANDS");
-        for (std::size_t i = 0; i < m_operands.size(); ++i) {
-            // Pushing the negation to the enclosed conditions
-            values_str += m_operands[i]->Description(negated);
-            if (i != m_operands.size() - 1) {
-                values_str += (!negated)
-                    ? UserString("DESC_AND_BETWEEN_OPERANDS")
-                    : UserString("DESC_NOT_AND_BETWEEN_OPERANDS");
-            }
-        }
-        values_str += (!negated)
-            ? UserString("DESC_AND_AFTER_OPERANDS")
-            : UserString("DESC_NOT_AND_AFTER_OPERANDS");
-    }
-    return values_str;
-}
-
-std::string And<>::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "And [\n";
-    for (auto& operand : m_operands)
-        retval += operand->Dump(ntabs+1);
-    retval += DumpIndent(ntabs) + "]\n";
-    return retval;
-}
-
-ObjectSet And<>::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    if (m_operands.empty()) [[unlikely]]
-        return {};
-    return m_operands.front()->GetDefaultInitialCandidateObjects(parent_context);
-}
-
-void And<>::SetTopLevelContent(const std::string& content_name) {
-    for (auto& operand : m_operands)
-        operand->SetTopLevelContent(content_name);
-}
-
-uint32_t And<>::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::And<>");
-    CheckSums::CheckSumCombine(retval, m_operands);
-
-    TraceLogger(conditions) << "GetCheckSum(And): retval: " << retval;
-    return retval;
-}
-
-std::vector<const Condition*> And<>::OperandsRaw() const {
-    std::vector<const Condition*> retval;
-    retval.reserve(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
-                   [](auto& xx) {return xx.get();});
-    return retval;
-}
-
-std::unique_ptr<Condition> And<>::Clone() const
-{ return std::make_unique<And<>>(ValueRef::CloneUnique(m_operands)); }
 
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or<>::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
+    OrBase(ConditionDetail::CondsRTSI(operands)),
     // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<Or<>>(operands))
+    m_operands(ConditionDetail::DenestOps<Or>(std::move(operands)))
 {}
 
 Or<>::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-       std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
-    Or(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
+         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
+    Or(ConditionDetail::Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
 {}
 
 bool Or<>::operator==(const Or& rhs_) const {

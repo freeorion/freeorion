@@ -138,7 +138,7 @@ namespace parse { namespace detail {
 
         and_
             = ( omit_[tok.And_] > '[' > +condition_parser > lit(']'))
-            [ _val = construct_movable_(new_<Condition::And<>>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::AndPtrs<>>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         or_
