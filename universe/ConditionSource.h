@@ -3,6 +3,7 @@
 
 
 #include "Condition.h"
+#include "../util/CheckSums.h"
 
 
 /** this namespace holds Condition and its subclasses; these classes
@@ -13,13 +14,17 @@ namespace Condition {
 /** Matches the source object only. */
 struct FO_COMMON_API Source final : public Condition {
     constexpr Source() noexcept : Condition(true, true, false) {}
+
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override
     { return dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Source& rhs) const { return true; }
+
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    void SetTopLevelContent(const std::string&) noexcept override {}
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
+    { return CheckSums::GetCheckSum("Condition::Source"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 

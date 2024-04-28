@@ -166,14 +166,13 @@ namespace {
         auto this_species_name_ref =
             std::make_unique<ValueRef::Constant<std::string>>(name); // name specifies this species
 
-        auto enviro_cond = std::unique_ptr<Condition::Condition>(
-            std::make_unique<Condition::Not<Condition::PlanetEnvironment>>(Condition::PlanetEnvironment(
-                std::move(environments), std::move(this_species_name_ref))));
+        auto enviro_cond = Condition::Not<Condition::PlanetEnvironment>(Condition::PlanetEnvironment(
+            std::move(environments), std::move(this_species_name_ref)));
 
-        auto type_cond = std::make_unique<Condition::Type>(
-            std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
+        auto type_cond = Condition::Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET));
 
-        auto retval = std::make_unique<Condition::AndPtrs<2>>(std::move(enviro_cond), std::move(type_cond));
+        auto retval = std::make_unique<Condition::AndTuple<Condition::Not<Condition::PlanetEnvironment>, Condition::Type>>(
+            std::move(enviro_cond), std::move(type_cond));
         retval->SetTopLevelContent(name);
 
         return retval;

@@ -196,122 +196,101 @@ ScriptingContext::ScriptingContext(CombatInfo& info, UniverseObject* attacker_as
 namespace {
     // if source is owned by ALL_EMPIRES, match objects owned by an empire
     // if source is owned by an empire, match unowned objects and objects owned by enemies of source's owner empire
-    std::unique_ptr<Condition::Condition> VisibleEnemyOfOwnerCondition() {
-        return std::make_unique<Condition::Or<>>(
+    auto VisibleEnemyOfOwnerCondition() {
+        return Condition::Or(
             // unowned candidate object case
-            std::make_unique<Condition::AndPtrs>(
-                std::make_unique<Condition::EmpireAffiliation>(
-                    EmpireAffiliationType::AFFIL_NONE),         // unowned candidate object
-
-                std::make_unique<Condition::ValueTest>(         // when source object is owned (ie. not the same owner as the candidate object)
+            Condition::AndTuple(
+                Condition::EmpireAffiliation(EmpireAffiliationType::AFFIL_NONE),    // unowned candidate object
+                Condition::ValueTest(                               // when source object is owned (ie. not the same owner as the candidate object)
                     std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
                     Condition::ComparisonType::NOT_EQUAL,
                     std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE, "Owner")),
 
-                std::make_unique<Condition::VisibleToEmpire>(   // when source object's owner empire can detect the candidate object
-                    std::make_unique<ValueRef::Variable<int>>(  // source's owner empire id
+                Condition::VisibleToEmpire(                         // when source object's owner empire can detect the candidate object
+                    std::make_unique<ValueRef::Variable<int>>(      // source's owner empire id
                         ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))),
 
             // owned candidate object case
-            std::make_unique<Condition::AndPtrs>(
-                std::make_unique<Condition::EmpireAffiliation>( // candidate is owned by an empire
-                    EmpireAffiliationType::AFFIL_ANY),
-
-                std::make_unique<Condition::EmpireAffiliation>( // candidate is owned by enemy of source's owner
+            Condition::AndTuple(
+                Condition::EmpireAffiliation(EmpireAffiliationType::AFFIL_ANY), // candidate is owned by an empire
+                Condition::EmpireAffiliation(   // candidate is owned by enemy of source's owner
                     std::make_unique<ValueRef::Variable<int>>(
                         ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"),
                         EmpireAffiliationType::AFFIL_ENEMY),
-
-                std::make_unique<Condition::VisibleToEmpire>(     // when source empire can detect the candidate object
+                Condition::VisibleToEmpire(     // when source empire can detect the candidate object
                     std::make_unique<ValueRef::Variable<int>>(    // source's owner empire id
                         ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"))
             ))
         ;
     }
 
-    const std::unique_ptr<Condition::Condition> is_enemy_ship_or_fighter =
-        std::make_unique<Condition::AndPtrs>(
-            std::make_unique<Condition::Or<>>(
-                std::make_unique<Condition::AndPtrs>(
-                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP),
-                    std::make_unique<Condition::Not<>>(
-                        std::make_unique<Condition::MeterValue>(
-                            MeterType::METER_STRUCTURE,
-                            nullptr,
-                            std::make_unique<ValueRef::Constant<double>>(0.0)))),
-                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_FIGHTER)),
+    const auto is_enemy_ship_or_fighter =
+        Condition::AndTuple(
+            Condition::Or(
+                Condition::AndTuple(
+                    Condition::Type(UniverseObjectType::OBJ_SHIP),
+                    Condition::Not<Condition::MeterValue>(
+                        Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
+                                              std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                Condition::Type(UniverseObjectType::OBJ_FIGHTER)),
             VisibleEnemyOfOwnerCondition());
+    constexpr auto qq = sizeof(is_enemy_ship_or_fighter);
+    static_assert(qq > 5);
 
-    const std::unique_ptr<Condition::Condition> is_enemy_ship =
-        std::make_unique<Condition::AndPtrs>(
-            std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP),
+    const Condition::AndTuple is_enemy_ship(
+        Condition::Type(UniverseObjectType::OBJ_SHIP),
+        Condition::Not<Condition::MeterValue>(
+            Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr, std::make_unique<ValueRef::Constant<double>>(0.0))),
+        VisibleEnemyOfOwnerCondition());
 
-            std::make_unique<Condition::Not<>>(
-                std::make_unique<Condition::MeterValue>(
-                    MeterType::METER_STRUCTURE,
-                    nullptr,
-                    std::make_unique<ValueRef::Constant<double>>(0.0))),
+    const Condition::AndTuple is_enemy_ship_fighter_or_armed_planet(
+        VisibleEnemyOfOwnerCondition(), // enemies
+        Condition::Or(
+            Condition::Or(
+                Condition::AndTuple(
+                    Condition::Type(UniverseObjectType::OBJ_SHIP),
+                    Condition::Not<Condition::MeterValue>(
+                        Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
+                                                std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                Condition::Type(UniverseObjectType::OBJ_FIGHTER)),
 
-            VisibleEnemyOfOwnerCondition());
+            Condition::AndTuple(
+                Condition::Type(UniverseObjectType::OBJ_PLANET),
+                Condition::Or(
+                    Condition::Not<Condition::MeterValue>(
+                        Condition::MeterValue(MeterType::METER_DEFENSE, nullptr,
+                                              std::make_unique<ValueRef::Constant<double>>(0.0))),
+                    Condition::Not<Condition::MeterValue>(
+                        Condition::MeterValue(MeterType::METER_SHIELD, nullptr,
+                                              std::make_unique<ValueRef::Constant<double>>(0.0))),
+                    Condition::Not<Condition::MeterValue>(
+                        Condition::MeterValue(MeterType::METER_CONSTRUCTION, nullptr,
+                                              std::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
-    const std::unique_ptr<Condition::Condition> is_enemy_ship_fighter_or_armed_planet =
-        std::make_unique<Condition::AndPtrs>(
-            VisibleEnemyOfOwnerCondition(), // enemies
-            std::make_unique<Condition::Or<>>(
-                std::make_unique<Condition::Or<>>(
-                    std::make_unique<Condition::AndPtrs>(
-                        std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP),
-                        std::make_unique<Condition::Not<>>(
-                            std::make_unique<Condition::MeterValue>(
-                                MeterType::METER_STRUCTURE,
-                                nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0)))),
-                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_FIGHTER)),
-
-                std::make_unique<Condition::AndPtrs>(
-                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                    std::make_unique<Condition::Or<>>(
-                        std::make_unique<Condition::Not<>>(
-                            std::make_unique<Condition::MeterValue>(
-                                MeterType::METER_DEFENSE,
-                                nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0))),
-                        std::make_unique<Condition::Not<>>(
-                            std::make_unique<Condition::MeterValue>(
-                                MeterType::METER_SHIELD,
-                                nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0))),
-                        std::make_unique<Condition::Not<>>(
-                            std::make_unique<Condition::MeterValue>(
-                                MeterType::METER_CONSTRUCTION,
-                                nullptr,
-                                std::make_unique<ValueRef::Constant<double>>(0.0)))))));
-
-    const std::unique_ptr<Condition::Condition> if_source_is_planet_then_ships_else_all =
-        std::make_unique<Condition::Or<>>(
-            std::make_unique<Condition::AndPtrs>(     // if source is a planet, match ships
-                std::make_unique<Condition::Number>(
-                    std::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
-                    nullptr,
-                    std::make_unique<Condition::AndPtrs>(             // subcondition: source is a planet
-                        std::make_unique<Condition::Source>(),
-                        std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET)
-                    )
-                ),
-                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_SHIP)
-            ),
-
-            std::make_unique<Condition::Number>(  // if source is not a planet, match anything
+    const Condition::Or if_source_is_planet_then_ships_else_all(
+        Condition::AndTuple(     // if source is a planet, match ships
+            Condition::Number(
+                std::make_unique<ValueRef::Constant<int>>(1), // minimum objects matching subcondition
                 nullptr,
-                std::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
-                std::make_unique<Condition::AndPtrs>(                 // subcondition: source is a planet
-                    std::make_unique<Condition::Source>(),
-                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET)
+                std::make_unique<Condition::AndTuple<Condition::Source, Condition::Type>>( // subcondition: source is a planet
+                    Condition::Source(),
+                    Condition::Type(UniverseObjectType::OBJ_PLANET)
                 )
+            ),
+            Condition::Type(UniverseObjectType::OBJ_SHIP)
+        ),
+
+        Condition::Number(  // if source is not a planet, match anything
+            nullptr,
+            std::make_unique<ValueRef::Constant<int>>(0),     // maximum objects matching subcondition
+            std::make_unique<Condition::AndTuple<Condition::Source, Condition::Type>>( // subcondition: source is a planet
+                Condition::Source(),
+                Condition::Type(UniverseObjectType::OBJ_PLANET)
             )
-        );
+        )
+    );
 
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
@@ -860,7 +839,7 @@ namespace {
                 const int shots = static_cast<int>(ship->CurrentPartMeterValue(MeterType::METER_SECONDARY_STAT, part_name)); // secondary stat is shots per attack)
                 if (part_attack > 0.0f && shots > 0) {
                     if (!part_combat_targets)
-                        part_combat_targets = is_enemy_ship_fighter_or_armed_planet.get();
+                        part_combat_targets = &is_enemy_ship_fighter_or_armed_planet;
 
                     // attack for each shot...
                     for (int shot_count = 0; shot_count < shots; ++shot_count)
@@ -877,7 +856,7 @@ namespace {
                     seen_hangar_ship_parts.insert(part_name);
 
                     if (!part_combat_targets)
-                        part_combat_targets = is_enemy_ship_or_fighter.get();
+                        part_combat_targets = &is_enemy_ship_or_fighter;
                     TraceLogger(combat) << "ShipWeaponsStrengths for ship " << ship->Name() << " (" << ship->ID() << ") "
                                         << "when launching fighters, part " << part->Name() << " with targeting condition: "
                                         << part_combat_targets->Dump();
@@ -1314,7 +1293,7 @@ namespace {
             auto attack_planet = static_cast<const Planet*>(attacker);
             weapons.emplace_back(ShipPartClass::PC_DIRECT_WEAPON, UserStringNop("DEF_DEFENSE"),
                                  attack_planet->GetMeter(MeterType::METER_DEFENSE)->Current(),
-                                 is_enemy_ship.get());
+                                 &is_enemy_ship);
 
         } else if (attacker->ObjectType() == UniverseObjectType::OBJ_FIGHTER) { // treat fighter damage as direct fire weapon
             auto attack_fighter = static_cast<const Fighter*>(attacker);
@@ -1329,7 +1308,7 @@ namespace {
         const UniverseObject* attacker, const SpeciesManager& species_manager)
     {
         if (!attacker)
-            return if_source_is_planet_then_ships_else_all.get();
+            return &if_source_is_planet_then_ships_else_all;
 
         const Species* species = nullptr;
         if (auto attack_ship = dynamic_cast<const Ship*>(attacker))
@@ -1340,7 +1319,7 @@ namespace {
             species = species_manager.GetSpecies(attack_fighter->SpeciesName());
 
         if (!species || !species->CombatTargets())
-            return if_source_is_planet_then_ships_else_all.get();
+            return &if_source_is_planet_then_ships_else_all;
 
         return species->CombatTargets();
     }

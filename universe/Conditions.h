@@ -100,6 +100,8 @@ struct FO_COMMON_API Number final : public Condition {
            std::unique_ptr<Condition>&& condition);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Number& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -332,12 +334,7 @@ struct FO_COMMON_API Homeworld final : public Condition {
     explicit Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
     Homeworld() : Homeworld(string_vref_ptr_vec{}) {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
-            return true;
-        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-        return rhs_p && *this == *rhs_p;
-    }
+    [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Homeworld& rhs) const;
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -463,12 +460,7 @@ struct FO_COMMON_API Type final : public Condition {
     explicit Type(UniverseObjectType type);
     Type(Type&&) noexcept = default;
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
-            return true;
-        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-        return rhs_p && *this == *rhs_p;
-    }
+    [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Type& rhs) const;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -724,12 +716,7 @@ struct FO_COMMON_API OnPlanet final : public Condition {
     OnPlanet() noexcept : Condition(true, true, true, false) {}
     OnPlanet(OnPlanet&&) noexcept = default;
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
-            return true;
-        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-        return rhs_p && *rhs_p == *this;
-    }
+    [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const OnPlanet& rhs) const;
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -988,6 +975,8 @@ struct FO_COMMON_API StarType final : public Condition {
     StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const StarType& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -2015,22 +2004,27 @@ namespace ConditionDetail {
     template <class Cond>
     concept is_condition = std::is_base_of_v<Condition, Cond>;
 
+    using upc = std::unique_ptr<Condition>;
+
     // flattens nested conditions by extracting contained operands of the same type.
     // also removes null operands
     template <is_condition ContainingCondition>
-    std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>&& in)
+    std::vector<upc> DenestOps(auto&& in)
+        requires(requires { {*in.begin()} -> std::same_as<upc&>; })
     {
-        std::vector<std::unique_ptr<Condition>> retval;
+        std::vector<upc> retval;
         retval.reserve(in.size()); // may be underestimate if in has nested and/or conditions
 
         static constexpr auto not_null = [](auto& op) noexcept -> bool { return !!op; };
-        for (auto& op : in | range_filter(not_null)) {
-            if (auto* op_and = dynamic_cast<ContainingCondition*>(op.get())) {
-                auto& op_and_ref = *op_and;
-                std::vector<std::unique_ptr<Condition>> sub_ops =
-                    DenestOps<ContainingCondition>(std::move(op_and_ref).Operands());
-                retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
-                              std::make_move_iterator(sub_ops.end()));
+        for (upc& op : in | range_filter(not_null)) {
+            if (auto* op_ = dynamic_cast<ContainingCondition*>(op.get())) {
+                ContainingCondition& op_and_ref = *op_;
+
+                auto sub_ops = std::move(op_and_ref).Operands();
+                auto denested_sub_ops = DenestOps<ContainingCondition>(sub_ops);
+
+                retval.insert(retval.end(), std::make_move_iterator(denested_sub_ops.begin()),
+                              std::make_move_iterator(denested_sub_ops.end()));
             } else {
                 retval.push_back(std::move(op));
             }
@@ -2038,29 +2032,8 @@ namespace ConditionDetail {
         return retval;
     }
 
-    auto Vectorize(std::unique_ptr<Condition>&& op1, std::unique_ptr<Condition>&& op2,
-                   std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4,
-                   std::unique_ptr<Condition>&& op5 = nullptr,
-                   std::unique_ptr<Condition>&& op6 = nullptr,
-                   std::unique_ptr<Condition>&& op7 = nullptr,
-                   std::unique_ptr<Condition>&& op8 = nullptr)
-    {
-        static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
-
-        std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
-                        isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
-        const auto push_if_not_0 = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
-        push_if_not_0(op1);
-        push_if_not_0(op2);
-        push_if_not_0(op3);
-        push_if_not_0(op4);
-        push_if_not_0(op5);
-        push_if_not_0(op6);
-        push_if_not_0(op7);
-        push_if_not_0(op8);
-        return retval;
-    }
+    std::vector<upc> Vectorize(upc&& op1, upc&& op2, upc&& op3, upc&& op4, upc&& op5 = nullptr,
+                               upc&& op6 = nullptr, upc&& op7 = nullptr, upc&& op8 = nullptr);
 
     constexpr auto conds_rtsi = [](const auto&... conds) noexcept -> std::array<bool, 3> {
         return {(conds.RootCandidateInvariant() && ...),
@@ -2073,8 +2046,10 @@ namespace ConditionDetail {
             return {!operands || operands->RootCandidateInvariant(),
                     !operands || operands->TargetInvariant(),
                     !operands || operands->SourceInvariant()};
+
         } else if constexpr (requires { operands.TargetInvariant(); }) {
             return {operands->RootCandidateInvariant(), operands->TargetInvariant(), operands->SourceInvariant()};
+
         } else if constexpr (requires { operands.begin(); operands.begin()->TargetInvariant(); }) {
             return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
                     std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
@@ -2087,6 +2062,7 @@ namespace ConditionDetail {
 
 struct FO_COMMON_API And : public Condition {
     [[nodiscard]] virtual std::vector<const Condition*> OperandsRaw() const = 0;
+    [[nodiscard]] virtual std::vector<std::unique_ptr<Condition>> Operands() && = 0;
     [[nodiscard]] constexpr virtual std::size_t OperandCount() const noexcept = 0;
     constexpr And(std::array<bool, 3> rts_invariants) noexcept : Condition(rts_invariants) {}
 };
@@ -2113,8 +2089,8 @@ struct FO_COMMON_API AndTuple final : public And {
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
             return true;
-        const auto* rhs_and = dynamic_cast<decltype(this)>(&rhs);
-        return rhs_and && m_operands == rhs_and->m_operands;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
     }
 
     [[nodiscard]] constexpr bool operator==(const AndTuple& rhs) const {
@@ -2213,6 +2189,20 @@ struct FO_COMMON_API AndTuple final : public And {
 
     [[nodiscard]] constexpr const auto& OperandsTuple() noexcept { return m_operands; }
 
+    [[nodiscard]] std::vector<std::unique_ptr<Condition>> Operands() && override {
+        std::vector<std::unique_ptr<Condition>> retval;
+        retval.reserve(N);
+
+        static constexpr auto to_unique_ptr = [](auto& cond)
+        { return std::make_unique<std::decay_t<decltype(cond)>>(std::move(cond)); };
+
+        const auto to_ptrs = [&retval](auto&... ops)
+        { ((retval.push_back(to_unique_ptr(ops))), ...); };
+
+        std::apply(to_ptrs, m_operands);
+        return retval;
+    }
+
     [[nodiscard]] constexpr std::size_t OperandCount() const noexcept override { return N; }
 
     [[nodiscard]] constexpr uint32_t GetCheckSum() const {
@@ -2260,9 +2250,14 @@ struct FO_COMMON_API AndPtrs final : public And {
     using ConditionsT = std::conditional_t<N == 0, std::vector<std::unique_ptr<Condition>>,
                                                    std::array<std::unique_ptr<Condition>, N>>;
 
-    explicit AndPtrs(ConditionsT&& operands) :
+    explicit AndPtrs(ConditionsT&& operands) requires(N == 0) :
         And(ConditionDetail::CondsRTSI(operands)),
-        m_operands(ConditionDetail::DenestOps<std::decay_t<decltype(*this)>>(std::move(operands)))
+        m_operands(ConditionDetail::DenestOps<And>(operands)) // if container is of flexible size, can edit input before storing
+    {}
+
+    explicit AndPtrs(ConditionsT&& operands) requires(N != 0) :
+        And(ConditionDetail::CondsRTSI(operands)),
+        m_operands(std::move(operands))
     {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
@@ -2410,7 +2405,13 @@ struct FO_COMMON_API AndPtrs final : public And {
         return retval;
     }
 
-    [[nodiscard]] auto&& Operands() && noexcept { return std::move(m_operands); }
+    [[nodiscard]] std::vector<std::unique_ptr<Condition>> Operands() && override {
+        using RetvalT = std::vector<std::unique_ptr<Condition>>;
+        if constexpr (std::is_same_v<ConditionsT, RetvalT>)
+            return std::move(m_operands);
+        else
+            return RetvalT(std::make_move_iterator(m_operands.begin()), std::make_move_iterator(m_operands.end()));
+    }
 
     [[nodiscard]] constexpr std::size_t OperandCount() const noexcept override {
         if constexpr (N == 0)
@@ -2443,6 +2444,8 @@ AndPtrs(std::tuple<Ts...>&&) -> AndPtrs<sizeof...(Ts)>;
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API OrBase : public Condition {
     [[nodiscard]] virtual std::vector<const Condition*> OperandsRaw() const = 0;
+    [[nodiscard]] virtual std::vector<std::unique_ptr<Condition>> Operands() && = 0;
+    [[nodiscard]] constexpr virtual std::size_t OperandCount() const noexcept = 0;
     constexpr OrBase(std::array<bool, 3> rts_invariants) noexcept : Condition(rts_invariants) {}
 };
 
@@ -2563,6 +2566,23 @@ struct FO_COMMON_API Or final : public OrBase {
 
     [[nodiscard]] const auto& OperandsTuple() const { return m_operands; }
 
+
+    [[nodiscard]] std::vector<std::unique_ptr<Condition>> Operands() && override {
+        std::vector<std::unique_ptr<Condition>> retval;
+        retval.reserve(N);
+
+        static constexpr auto to_unique_ptr = [](auto& cond)
+        { return std::make_unique<std::decay_t<decltype(cond)>>(std::move(cond)); };
+
+        const auto to_ptrs = [&retval](auto&... ops)
+        { ((retval.push_back(to_unique_ptr(ops))), ...); };
+
+        std::apply(to_ptrs, m_operands);
+        return retval;
+    }
+
+    [[nodiscard]] constexpr std::size_t OperandCount() const noexcept override { return N; }
+
     [[nodiscard]] constexpr uint32_t GetCheckSum() const {
         uint32_t retval{0};
 
@@ -2601,8 +2621,6 @@ private:
 template <typename... Ts>
 Or(Ts...) -> Or<std::decay_t<Ts>...>;
 template <typename... Ts>
-Or(Ts&&...) -> Or<std::decay_t<Ts>...>;
-template <typename... Ts>
 Or(std::tuple<Ts...>&&) -> Or<std::decay_t<Ts>...>;
 
 template <>
@@ -2630,8 +2648,11 @@ struct FO_COMMON_API Or<> final : public OrBase {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     virtual void SetTopLevelContent(const std::string& content_name) override;
+
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
-    [[nodiscard]] std::vector<std::unique_ptr<Condition>> Operands() && noexcept { return std::move(m_operands); }
+    [[nodiscard]] std::vector<std::unique_ptr<Condition>> Operands() && override { return std::move(m_operands); }
+    [[nodiscard]] std::size_t OperandCount() const noexcept override { return m_operands.size(); }
+
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
@@ -2678,7 +2699,7 @@ public:
         if (this == &rhs)
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-        return rhs_p && *rhs_p == *this;
+        return rhs_p && *this == *rhs_p;
     }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,

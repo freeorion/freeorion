@@ -510,9 +510,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
                         std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_RED)
                     })),
                     array_to_vector<Effect::Effect, 2>({
-                        std::make_unique<Effect::SetStarType>(
-                            std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_BLACK)
-                        ),
+                        std::make_unique<Effect::SetStarType>(std::make_unique<ValueRef::Constant< ::StarType>>(::StarType::STAR_BLACK)),
                         std::make_unique<Effect::GenerateSitRepMessage>(
                             std::string{"EFFECT_BLACKHOLE"},
                             std::string{"icons/building/blackhole.png"},

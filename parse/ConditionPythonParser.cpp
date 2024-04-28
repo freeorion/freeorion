@@ -55,48 +55,33 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
     }
 
     return condition_wrapper(std::make_shared<Condition::AndPtrs<2>>(
-        lhs.condition->Clone(),
-        rhs.condition->Clone()
-    ));
+        std::array{lhs.condition->Clone(), rhs.condition->Clone()}));
 }
 
-condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs) {
-    return lhs & rhs.operator condition_wrapper();
-}
+condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs)
+{ return lhs & rhs.operator condition_wrapper(); }
 
-condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs) {
-    return lhs & rhs.operator condition_wrapper();
-}
+condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs & rhs.operator condition_wrapper(); }
 
-condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
-    return lhs.operator condition_wrapper() & rhs.operator condition_wrapper();
-}
+condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs)
+{ return lhs.operator condition_wrapper() & rhs.operator condition_wrapper(); }
 
-condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const condition_wrapper& rhs) {
-    return lhs.operator condition_wrapper() & rhs;
-}
+condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const condition_wrapper& rhs)
+{ return lhs.operator condition_wrapper() & rhs; }
 
 
-condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs) {
-    return condition_wrapper(std::make_shared<Condition::Or<>>(
-        lhs.condition->Clone(),
-        rhs.condition->Clone()
-    ));
-}
+condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs)
+{ return condition_wrapper(std::make_shared<Condition::Or<>>(lhs.condition->Clone(), rhs.condition->Clone())); }
 
-condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs) {
-    return lhs | rhs.operator condition_wrapper();
-}
+condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs | rhs.operator condition_wrapper(); }
 
-condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
-    return lhs.operator condition_wrapper() | rhs.operator condition_wrapper();
-}
+condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs.operator condition_wrapper() | rhs.operator condition_wrapper(); }
 
-condition_wrapper operator~(const condition_wrapper& lhs) {
-    return condition_wrapper(std::make_shared<Condition::Not<>>(
-        lhs.condition->Clone()
-    ));
-}
+condition_wrapper operator~(const condition_wrapper& lhs)
+{ return condition_wrapper(std::make_shared<Condition::Not<>>(lhs.condition->Clone())); }
 
 
 namespace {
@@ -120,13 +105,11 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(std::move(empire), affiliation));
     }
 
-    condition_wrapper insert_contained_by_(const condition_wrapper& cond) {
-        return condition_wrapper(std::make_shared<Condition::ContainedBy>(ValueRef::CloneUnique(cond.condition)));
-    }
+    condition_wrapper insert_contained_by_(const condition_wrapper& cond)
+    { return condition_wrapper(std::make_shared<Condition::ContainedBy>(ValueRef::CloneUnique(cond.condition))); }
 
-    condition_wrapper insert_contains_(const condition_wrapper& cond) {
-        return condition_wrapper(std::make_shared<Condition::Contains>(ValueRef::CloneUnique(cond.condition)));
-    }
+    condition_wrapper insert_contains_(const condition_wrapper& cond)
+    { return condition_wrapper(std::make_shared<Condition::Contains>(ValueRef::CloneUnique(cond.condition))); }
 
     condition_wrapper insert_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw, MeterType m) {
         std::unique_ptr<ValueRef::ValueRef<double>> low;
@@ -180,19 +163,16 @@ namespace {
     condition_wrapper insert_visible_to_empire_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
-        if (empire_args.check()) {
+        if (empire_args.check())
             empire = ValueRef::CloneUnique(empire_args().value_ref);
-        } else {
+        else
             empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
-        }
 
-        if (kw.has_key("turn")) {
+        if (kw.has_key("turn"))
             throw std::runtime_error(std::string("Not implemented ") + __func__);
-        }
 
-        if (kw.has_key("visibility")) {
+        if (kw.has_key("visibility"))
             throw std::runtime_error(std::string("Not implemented ") + __func__);
-        }
 
         return condition_wrapper(std::make_shared<Condition::VisibleToEmpire>(std::move(empire)));
     }
@@ -203,11 +183,10 @@ namespace {
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["type"]), it_end;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto type_arg = boost::python::extract<value_ref_wrapper< ::PlanetType>>(*it);
-                if (type_arg.check()) {
+                if (type_arg.check())
                     types.push_back(ValueRef::CloneUnique(type_arg().value_ref));
-                } else {
+                else
                     types.push_back(std::make_unique<ValueRef::Constant< ::PlanetType>>(boost::python::extract<enum_wrapper< ::PlanetType>>(*it)().value));
-                }
             }
             return condition_wrapper(std::make_shared<Condition::PlanetType>(std::move(types)));
         } else if (kw.has_key("size")) {
@@ -215,11 +194,10 @@ namespace {
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["size"]), it_end;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto size_arg = boost::python::extract<value_ref_wrapper< ::PlanetSize>>(*it);
-                if (size_arg.check()) {
+                if (size_arg.check())
                     sizes.push_back(ValueRef::CloneUnique(size_arg().value_ref));
-                } else {
+                else
                     sizes.push_back(std::make_unique<ValueRef::Constant< ::PlanetSize>>(boost::python::extract<enum_wrapper< ::PlanetSize>>(*it)().value));
-                }
             }
             return condition_wrapper(std::make_shared<Condition::PlanetSize>(std::move(sizes)));
         } else if (kw.has_key("environment")) {
@@ -227,11 +205,10 @@ namespace {
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["environment"]), it_end;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto env_arg = boost::python::extract<value_ref_wrapper< ::PlanetEnvironment>>(*it);
-                if (env_arg.check()) {
+                if (env_arg.check())
                     environments.push_back(ValueRef::CloneUnique(env_arg().value_ref));
-                } else {
+                else
                     environments.push_back(std::make_unique<ValueRef::Constant< ::PlanetEnvironment>>(boost::python::extract<enum_wrapper< ::PlanetEnvironment>>(*it)().value));
-                }
             }
             return condition_wrapper(std::make_shared<Condition::PlanetEnvironment>(std::move(environments)));
         }
@@ -244,11 +221,10 @@ namespace {
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["name"]), it_end;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(*it);
-                if (name_arg.check()) {
+                if (name_arg.check())
                     names.push_back(ValueRef::CloneUnique(name_arg().value_ref));
-                } else {
+                else
                     names.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(*it)()));
-                }
             }
             return condition_wrapper(std::make_shared<Condition::Homeworld>(std::move(names)));
         }
@@ -259,11 +235,10 @@ namespace {
         if (kw.has_key("name")) {
             std::unique_ptr<ValueRef::ValueRef<std::string>> name;
             auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
-            if (name_args.check()) {
+            if (name_args.check())
                 name = ValueRef::CloneUnique(name_args().value_ref);
-            } else {
+            else
                 name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
-            }
             return condition_wrapper(std::make_shared<Condition::HasSpecial>(std::move(name)));
         }
         return condition_wrapper(std::make_shared<Condition::HasSpecial>());
@@ -275,11 +250,10 @@ namespace {
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["name"]), it_end;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto name_arg = boost::python::extract<value_ref_wrapper<std::string>>(*it);
-                if (name_arg.check()) {
+                if (name_arg.check())
                     names.push_back(ValueRef::CloneUnique(name_arg().value_ref));
-                } else {
+                else
                     names.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(*it)()));
-                }
             }
             return condition_wrapper(std::make_shared<Condition::Species>(std::move(names)));
         }

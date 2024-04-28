@@ -130,8 +130,27 @@ namespace {
     }
 }
 
-
 namespace Condition {
+    namespace ConditionDetail {
+        std::vector<upc> Vectorize(upc&& op1, upc&& op2, upc&& op3, upc&& op4, upc&& op5, upc&& op6, upc&& op7, upc&& op8) {
+            static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
+
+            std::vector<upc> retval;
+            retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
+                           isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
+            const auto push_if_not_0 = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
+            push_if_not_0(op1);
+            push_if_not_0(op2);
+            push_if_not_0(op3);
+            push_if_not_0(op4);
+            push_if_not_0(op5);
+            push_if_not_0(op6);
+            push_if_not_0(op7);
+            push_if_not_0(op8);
+            return retval;
+        }
+    }
+
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                                      const ScriptingContext& source_context,
                                                      const UniverseObject* candidate_object)
@@ -314,11 +333,13 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    if (!rhs_p)
-        return false;
-    const Number& rhs_ = *rhs_p;
+    return rhs_p && *this == *rhs_p;
+}
+
+bool Number::operator==(const Number& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
@@ -1533,15 +1554,6 @@ ObjectSet Source::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
     return {};
 }
 
-uint32_t Source::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Source");
-
-    TraceLogger(conditions) << "GetCheckSum(Source): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> Source::Clone() const
 { return std::make_unique<Source>(); }
 
@@ -1616,6 +1628,13 @@ Homeworld::Homeworld(string_vref_ptr_vec&& names) :
 Homeworld::Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Homeworld(Enveculate(std::move(name)))
 {}
+
+bool Homeworld::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
 bool Homeworld::operator==(const Homeworld& rhs_) const {
     if (this == &rhs_)
@@ -2090,7 +2109,16 @@ Type::Type(UniverseObjectType type) :
     Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
 {}
 
+bool Type::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
+
 bool Type::operator==(const Type& rhs_) const {
+    if (this == &rhs_)
+        return true;
     CHECK_COND_VREF_MEMBER(m_type)
     return true;
 }
@@ -2242,7 +2270,7 @@ bool Building::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    return rhs_p && *rhs_p == *this;
+    return rhs_p && *this == *rhs_p;
 }
 
 bool Building::operator==(const Building& rhs_) const {
@@ -2847,7 +2875,7 @@ bool HasTag::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    return rhs_p && *rhs_p == *this;
+    return rhs_p && *this == *rhs_p;
 }
 
 bool HasTag::operator==(const HasTag& rhs) const {
@@ -3619,6 +3647,13 @@ OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
                             (planet_id->LocalCandidateInvariant() && planet_id->RootCandidateInvariant()))),
     m_planet_id(std::move(planet_id))
 {}
+
+bool OnPlanet::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
 bool OnPlanet::operator==(const OnPlanet& rhs) const {
     return (this == &rhs) || (m_planet_id == rhs.m_planet_id) ||
@@ -5513,10 +5548,11 @@ StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>
 bool StarType::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const StarType& rhs_ = static_cast<const StarType&>(rhs);
+bool StarType::operator==(const StarType& rhs_) const {
 
     if (m_types.size() != rhs_.m_types.size())
         return false;
@@ -11556,7 +11592,7 @@ namespace StaticTests {
 Or<>::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     OrBase(ConditionDetail::CondsRTSI(operands)),
     // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(ConditionDetail::DenestOps<Or>(std::move(operands)))
+    m_operands(ConditionDetail::DenestOps<OrBase>(operands))
 {}
 
 Or<>::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
