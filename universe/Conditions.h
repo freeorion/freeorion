@@ -332,7 +332,7 @@ struct FO_COMMON_API Homeworld final : public Condition {
     using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
     explicit Homeworld(string_vref_ptr_vec&& names);
     explicit Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    Homeworld() : Homeworld(string_vref_ptr_vec{}) {}
+    Homeworld() noexcept(noexcept(string_vref_ptr_vec{}));
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Homeworld& rhs) const;

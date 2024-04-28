@@ -544,7 +544,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
             std::make_unique<Condition::AndTuple<Condition::Not<Condition::Contains>,
                                                  Condition::Not<Condition::Enqueued>,
                                                  Condition::EmpireAffiliation>>(
-                Condition::Not<Condition::Contains>(Condition::Contains(
+                Condition::Not(Condition::Contains(
                     std::make_unique<Condition::AndTuple<Condition::Building, Condition::EmpireAffiliation>>(
                         Condition::Building(array_to_vector<ValueRef::ValueRef<std::string>, 1>({
                             std::make_unique<ValueRef::Constant<std::string>>(std::string{ValueRef::Constant<std::string>::current_content})

@@ -231,9 +231,8 @@ namespace {
             Condition::Or(
                 Condition::AndTuple(
                     Condition::Type(UniverseObjectType::OBJ_SHIP),
-                    Condition::Not<Condition::MeterValue>(
-                        Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
-                                              std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                    Condition::Not(Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
+                                                         std::make_unique<ValueRef::Constant<double>>(0.0)))),
                 Condition::Type(UniverseObjectType::OBJ_FIGHTER)),
             VisibleEnemyOfOwnerCondition());
     constexpr auto qq = sizeof(is_enemy_ship_or_fighter);
@@ -241,8 +240,8 @@ namespace {
 
     const Condition::AndTuple is_enemy_ship(
         Condition::Type(UniverseObjectType::OBJ_SHIP),
-        Condition::Not<Condition::MeterValue>(
-            Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr, std::make_unique<ValueRef::Constant<double>>(0.0))),
+        Condition::Not(Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
+                                             std::make_unique<ValueRef::Constant<double>>(0.0))),
         VisibleEnemyOfOwnerCondition());
 
     const Condition::AndTuple is_enemy_ship_fighter_or_armed_planet(
@@ -251,23 +250,19 @@ namespace {
             Condition::Or(
                 Condition::AndTuple(
                     Condition::Type(UniverseObjectType::OBJ_SHIP),
-                    Condition::Not<Condition::MeterValue>(
-                        Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
-                                                std::make_unique<ValueRef::Constant<double>>(0.0)))),
+                    Condition::Not(Condition::MeterValue(MeterType::METER_STRUCTURE, nullptr,
+                                                         std::make_unique<ValueRef::Constant<double>>(0.0)))),
                 Condition::Type(UniverseObjectType::OBJ_FIGHTER)),
 
             Condition::AndTuple(
                 Condition::Type(UniverseObjectType::OBJ_PLANET),
                 Condition::Or(
-                    Condition::Not<Condition::MeterValue>(
-                        Condition::MeterValue(MeterType::METER_DEFENSE, nullptr,
-                                              std::make_unique<ValueRef::Constant<double>>(0.0))),
-                    Condition::Not<Condition::MeterValue>(
-                        Condition::MeterValue(MeterType::METER_SHIELD, nullptr,
-                                              std::make_unique<ValueRef::Constant<double>>(0.0))),
-                    Condition::Not<Condition::MeterValue>(
-                        Condition::MeterValue(MeterType::METER_CONSTRUCTION, nullptr,
-                                              std::make_unique<ValueRef::Constant<double>>(0.0)))))));
+                    Condition::Not(Condition::MeterValue(MeterType::METER_DEFENSE, nullptr,
+                                                         std::make_unique<ValueRef::Constant<double>>(0.0))),
+                    Condition::Not(Condition::MeterValue(MeterType::METER_SHIELD, nullptr,
+                                                         std::make_unique<ValueRef::Constant<double>>(0.0))),
+                    Condition::Not(Condition::MeterValue(MeterType::METER_CONSTRUCTION, nullptr,
+                                                         std::make_unique<ValueRef::Constant<double>>(0.0)))))));
 
     const Condition::Or if_source_is_planet_then_ships_else_all(
         Condition::AndTuple(     // if source is a planet, match ships

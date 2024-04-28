@@ -60,6 +60,7 @@ bool UserStringExists(const std::string& str);
 
 namespace {
     CONSTEXPR_STRING const std::string EMPTY_STRING;
+    const std::vector<std::string> EMPTY_STRING_VEC;
 
     DeclareThreadSafeLogger(conditions);
 
@@ -1629,6 +1630,11 @@ Homeworld::Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
     Homeworld(Enveculate(std::move(name)))
 {}
 
+Homeworld::Homeworld() noexcept(noexcept(string_vref_ptr_vec{})) :
+    Condition(true, true, true),
+    m_names_local_invariant(true)
+{}
+
 bool Homeworld::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
@@ -1664,9 +1670,15 @@ namespace {
     }
 
     struct HomeworldSimpleMatch {
+        HomeworldSimpleMatch(const ObjectMap& objects,
+                             const SpeciesManager& species) noexcept :
+            m_objects(objects),
+            m_species_homeworlds(species.GetSpeciesHomeworldsMap())
+        {}
+
         HomeworldSimpleMatch(const std::vector<std::string>& names,
                              const ObjectMap& objects,
-                             const SpeciesManager& species) :
+                             const SpeciesManager& species) noexcept :
             m_names(names),
             m_objects(objects),
             m_species_homeworlds(species.GetSpeciesHomeworldsMap())
@@ -1701,7 +1713,7 @@ namespace {
         }
 
         using homeworlds_t = std::decay_t<decltype(std::declval<const SpeciesManager>().GetSpeciesHomeworldsMap())>;
-        const std::vector<std::string>& m_names;
+        const std::vector<std::string>& m_names = EMPTY_STRING_VEC;
         const ObjectMap&                m_objects;
         const homeworlds_t&             m_species_homeworlds;
     };
@@ -1714,14 +1726,21 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     const bool simple_eval_safe = m_names_local_invariant &&
         (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
-        // evaluate names once, and use to check all candidate objects
-        std::vector<std::string> names;
-        names.reserve(m_names.size());
-        // get all names from valuerefs
-        std::transform(m_names.begin(), m_names.end(), std::back_inserter(names),
-                       [&parent_context](const auto& ref) { return ref->Eval(parent_context); });
-        HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
-        EvalImpl(matches, non_matches, search_domain, hsm);
+        if (!m_names.empty()) {
+            // evaluate names once, and use to check all candidate objects
+            std::vector<std::string> names;
+            names.reserve(m_names.size());
+            // get all names from valuerefs
+            std::transform(m_names.begin(), m_names.end(), std::back_inserter(names),
+                           [&parent_context](const auto& ref) { return ref->Eval(parent_context); });
+            const HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
+            EvalImpl(matches, non_matches, search_domain, hsm);
+
+        } else {
+            const HomeworldSimpleMatch hsm{parent_context.ContextObjects(), parent_context.species};
+            EvalImpl(matches, non_matches, search_domain, hsm);
+        }
+
     } else {
         // re-evaluate allowed names for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
