@@ -99,12 +99,21 @@ std::string Fleet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval.append(" aggression: ").append(to_string(m_aggression))
+          .append(" ordered given to: ").append(std::to_string(m_ordered_given_to_empire_id))
           .append(" cur system: ").append(std::to_string(SystemID()))
           .append(" moving to: ").append(std::to_string(FinalDestinationID()))
           .append(" prev system: ").append(std::to_string(m_prev_system))
           .append(" next system: ").append(std::to_string(m_next_system))
           .append(" arrival lane: ").append(std::to_string(m_arrival_starlane))
-          .append(" ships: ");
+          .append(" arrived this turn?: ").append(std::to_string(m_arrived_this_turn))
+          .append(" last turn move ordered: ").append(std::to_string(m_last_turn_move_ordered))
+          .append(" route(").append(std::to_string(m_travel_route.size())).append("): ");
+    for (auto it = m_travel_route.begin(); it != m_travel_route.end();) {
+        int sys_id = *it;
+        ++it;
+        retval.append(std::to_string(sys_id)).append(it == m_travel_route.end() ? "" : " -> ");
+    }
+    retval.append(" ships(").append(std::to_string(m_ships.size())).append("): ");
     for (auto it = m_ships.begin(); it != m_ships.end();) {
         int ship_id = *it;
         ++it;
