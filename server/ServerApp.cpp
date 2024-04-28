@@ -4011,20 +4011,22 @@ namespace {
         range_copy(fleets | range_filter(not_null) | range_transform(fleet_to_move_path),
                    std::back_inserter(fleets_move_pathes));
 
-        // "correct" routes and pathes, in case a route is impossible to follow after some system...
-        static constexpr auto not_empty_path = [](const auto& fleet_path) { return !fleet_path.second.empty(); };
-        for (auto& [fleet, move_path] : fleets_move_pathes | range_filter(not_empty_path)) {
-            const auto last_sys_id = move_path.back().object_id;
-            if (last_sys_id == INVALID_OBJECT_ID) {
-                ErrorLogger() << "Unexpected got fleet move path with last node not at a system...";
-                continue;
-            }
-
-            const auto old_route{fleet->TravelRoute()};
-            fleet->TruncateRouteToEndAt(last_sys_id);
-
-            LogTruncation(fleet, old_route, last_sys_id, context);
-        }
+        //// "correct" routes and pathes, in case a route is impossible to follow after some system...
+        //// TODO: need to rethink this, as the end of the valid part of the route (as reflected by
+        ////       how far the path gets, may be in the middle, rather than at either end
+        //static constexpr auto not_empty_path = [](const auto& fleet_path) noexcept { return !fleet_path.second.empty(); };
+        //for (auto& [fleet, move_path] : fleets_move_pathes | range_filter(not_empty_path)) {
+        //    const auto last_sys_id = move_path.back().object_id;
+        //    if (last_sys_id == INVALID_OBJECT_ID) {
+        //        ErrorLogger() << "Unexpected got fleet move path with last node not at a system...";
+        //        continue;
+        //    }
+        //
+        //    const auto old_route{fleet->TravelRoute()};
+        //    fleet->TruncateRouteToEndAtLastOf(last_sys_id);
+        //
+        //    LogTruncation(fleet, old_route, last_sys_id, context);
+        //}
 
 
         // log pathes

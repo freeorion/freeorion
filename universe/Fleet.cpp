@@ -78,7 +78,7 @@ void Fleet::Copy(const Fleet& copied_fleet, const Universe& universe, int empire
                 m_name =        copied_fleet.m_name;
 
             m_travel_route = (vis >= Visibility::VIS_FULL_VISIBILITY) ?
-                copied_fleet.m_travel_route : TruncateRouteToEndAt(copied_fleet.m_travel_route, m_next_system);
+                copied_fleet.m_travel_route : TruncateRouteToEndAtFirstOf(copied_fleet.m_travel_route, m_next_system);
 
             if (vis >= Visibility::VIS_FULL_VISIBILITY) {
                 m_ordered_given_to_empire_id =  copied_fleet.m_ordered_given_to_empire_id;
@@ -775,16 +775,22 @@ void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
     StateChangedSignal();
 }
 
-std::vector<int> Fleet::TruncateRouteToEndAt(std::vector<int> route, int system_id) {
+std::vector<int> Fleet::TruncateRouteToEndAtFirstOf(std::vector<int> route, int system_id) {
     const auto sys_it = std::find(route.begin(), route.end(), system_id);
-    if (sys_it == route.end()) {
+    if (sys_it == route.end())
         route.clear();
-        return route;
-    } else  {
-        const auto after_sys_it = std::next(sys_it);
-        route.erase(after_sys_it, route.end());
-        return route;
-    }
+    else
+        route.erase(std::next(sys_it), route.end());
+    return route;
+}
+
+std::vector<int> Fleet::TruncateRouteToEndAtLastOf(std::vector<int> route, int system_id) {
+    const auto sys_it = std::find(route.rbegin(), route.rend(), system_id);
+    if (sys_it == route.rend())
+        route.clear();
+    else
+        route.erase(sys_it.base(), route.end());
+    return route;
 }
 
 void Fleet::SetAggression(FleetAggression aggression) {
@@ -1292,8 +1298,8 @@ float Fleet::Speed(const ObjectMap& objects) const {
         return 0.0f;
 
     bool fleet_is_scrapped = true;
-    float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
-    for (const auto& ship : objects.find<Ship>(m_ships)) {
+    float retval = MAX_SHIP_SPEED;  // lowest max speed of (unscrapped) ships in fleet
+    for (const auto* ship : objects.findRaw<Ship>(m_ships)) {
         if (!ship || ship->OrderedScrapped())
             continue;
         if (ship->Speed() < retval)
