@@ -41,7 +41,10 @@ BuildingType
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy empire = Source.Owner
+                Not Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
                 WithinDistance distance = NamedReal name = "BLD_LIGHTHOUSE_SPEEDUP_DISTANCE" value = 50 condition = Source
                 Speed low = 1 // Immobile objects do not get the starlane speed boost.
             ]
