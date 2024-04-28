@@ -601,7 +601,7 @@ private:
 
         } else if (!row1_as_directory && !row2_as_directory) {
             // both not directories: compare keys
-            return row1_as_filerow->SortKey(0).compare(row2_as_filerow->SortKey(0)) >= 0;
+            return row1_as_filerow->SortKey(0).compare(row2_as_filerow->SortKey(0)) <= 0;
 
         } else {
             // one directory, one not: put directories first.
