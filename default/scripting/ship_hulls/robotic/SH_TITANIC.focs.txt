@@ -49,6 +49,8 @@ Hull
         ]
     ]
     effectsgroups = [
+        [[ROBOTIC_REPAIR]]
+
         [[BAD_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
