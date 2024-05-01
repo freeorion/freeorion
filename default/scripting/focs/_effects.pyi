@@ -20,6 +20,7 @@ from focs._types import (
     _FloatParam,
     _Focus,
     _IntParam,
+    _MeterType,
     _PlanetEnvironment,
     _PlanetId,
     _PlanetSize,
@@ -32,6 +33,11 @@ from focs._types import (
     _ValueParam,
     _Visibility,
 )
+
+Capacity = _MeterType()
+MaxCapacity = _MeterType()
+SecondaryStat = _MeterType()
+MaxSecondaryStat = _MeterType()
 
 Blue = _StarType()
 White = _StarType()
@@ -91,7 +97,7 @@ class _SystemInfo:
 
 class Source:
     """
-    FOCS Source is IsSource, this class is fpr Source.<something>
+    FOCS Source condition is IsSource, this class is for value ref Source.<something>
     """
 
     Owner: _Empire
@@ -228,6 +234,7 @@ def EmpireStockpile(empire: _EmpireId, resource: _Resource) -> float: ...
 def PartCapacity(*, name: str) -> float: ...
 def PartSecondaryStat(*, name: str) -> float: ...
 def PartsInShipDesign(*, name: str, design: _DesignID) -> float: ...
+def ShipPartMeter(*, part: str, meter: _MeterType, ship: _ID): ...
 def UserString(name: str) -> str: ...
 def EmpireMeterValue(empire: _EmpireId, meter: str) -> float: ...
 def EffectsGroup(
