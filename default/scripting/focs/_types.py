@@ -11,6 +11,9 @@ try:
 
     from typing_extensions import Self
 
+    class _MeterType:
+        ...
+
     class _Effect:
         ...
 

@@ -873,6 +873,38 @@ namespace {
         ));
     }
 
+    value_ref_wrapper<double> insert_ship_part_meter_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> part;
+        if (kw.has_key("part")) {
+            auto part_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["part"]);
+            if (part_args.check()) {
+                part = ValueRef::CloneUnique(part_args().value_ref);
+            } else {
+                part = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["part"])());
+            }
+        }
+
+        auto meter_name = ValueRef::MeterToName(boost::python::extract<enum_wrapper<MeterType>>(kw["meter"])().value);
+        auto meter_type = std::make_unique<ValueRef::Constant<std::string>>(std::string{meter_name});
+
+        std::unique_ptr<ValueRef::ValueRef<int>> ship_id;
+        auto ship_args = boost::python::extract<value_ref_wrapper<int>>(kw["ship"]);
+        if (ship_args.check()) {
+            ship_id = ValueRef::CloneUnique(ship_args().value_ref);
+        } else {
+            ship_id = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["ship"])());
+        }
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            "ShipPartMeter",
+            std::move(ship_id),
+            nullptr,
+            nullptr,
+            std::move(part),
+            std::move(meter_type)
+        ));
+    }
+
     value_ref_wrapper<double> insert_empire_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
@@ -1051,6 +1083,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["JumpsBetween"] = insert_jumps_between_;
     globals["UserString"] = insert_user_string;
     globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
+    globals["ShipPartMeter"] = boost::python::raw_function(insert_ship_part_meter_);
     globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
 

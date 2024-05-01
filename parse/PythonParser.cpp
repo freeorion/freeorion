@@ -165,6 +165,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<effect_group_wrapper>("EffectsGroup", py::no_init);
         py::class_<enum_wrapper<UnlockableItemType>>("__UnlockableItemType", py::no_init);
         py::class_<enum_wrapper<EmpireAffiliationType>>("__EmpireAffiliationType", py::no_init);
+        py::class_<enum_wrapper<MeterType>>("__MeterType", py::no_init);
         py::class_<enum_wrapper<ResourceType>>("__ResourceType", py::no_init);
         py::class_<enum_wrapper< ::PlanetEnvironment>>("__PlanetEnvironment", py::no_init);
         py::class_<enum_wrapper<PlanetSize>>("__PlanetSize", py::no_init);
