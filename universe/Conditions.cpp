@@ -58,10 +58,6 @@ bool UserStringExists(const std::string& str);
 #  endif
 #endif
 
-using Condition::ConditionDetail::EvalImpl;
-using Condition::ConditionDetail::AddAllObjectsSet;
-using Condition::ConditionDetail::AllObjectsSet;
-
 namespace {
     CONSTEXPR_STRING const std::string EMPTY_STRING;
     const std::vector<std::string> EMPTY_STRING_VEC;
@@ -99,25 +95,50 @@ namespace {
 }
 
 namespace Condition {
-    namespace ConditionDetail {
-        std::vector<upc> Vectorize(upc&& op1, upc&& op2, upc&& op3, upc&& op4, upc&& op5, upc&& op6, upc&& op7, upc&& op8) {
-            static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
+//std::string_view to_string(::PlanetType pt) noexcept
+//{ return ::to_string(pt); }
 
-            std::vector<upc> retval;
-            retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
-                           isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
-            const auto push_if_not_0 = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
-            push_if_not_0(op1);
-            push_if_not_0(op2);
-            push_if_not_0(op3);
-            push_if_not_0(op4);
-            push_if_not_0(op5);
-            push_if_not_0(op6);
-            push_if_not_0(op7);
-            push_if_not_0(op8);
-            return retval;
-        }
-    }
+template <typename T = UniverseObject>
+void AddAllObjectsSet(const ObjectMap& objects, ObjectSet& in_out) {
+    const auto& all_t = objects.allExistingRaw<T>();
+    //condition_non_targets.reserve(condition_non_targets.size() + all_t.size()); // should be redundant with insert
+    in_out.insert(in_out.end(), all_t.begin(), all_t.end());
+}
+
+template <typename T = UniverseObject, bool cast = false>
+decltype(auto) AllObjectsSet(const ObjectMap& objects) noexcept
+{
+    const auto& objs = objects.allExistingRaw<T>();
+    if constexpr (cast)
+        return ::Condition::ObjectSet(objs.begin(), objs.end());
+    else
+        return objs;
+}
+
+void AddAllPlanetsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Planet>(objects, in_out); }
+
+void AddAllBuildingsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Building>(objects, in_out); }
+
+
+std::vector<upc> Vectorize(upc&& op1, upc&& op2, upc&& op3, upc&& op4, upc&& op5, upc&& op6, upc&& op7, upc&& op8) {
+    static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
+
+    std::vector<upc> retval;
+    retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
+                    isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
+    const auto push_if_not_0 = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
+    push_if_not_0(op1);
+    push_if_not_0(op2);
+    push_if_not_0(op3);
+    push_if_not_0(op4);
+    push_if_not_0(op5);
+    push_if_not_0(op6);
+    push_if_not_0(op7);
+    push_if_not_0(op8);
+    return retval;
+}
 
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                                      const ScriptingContext& source_context,
@@ -1587,7 +1608,7 @@ namespace {
 }
 
 Homeworld::Homeworld(string_vref_ptr_vec&& names) :
-    Condition(ConditionDetail::CondsRTSI(names)),
+    Condition(CondsRTSI(names)),
     m_names(std::move(names)),
     m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
                                         [](const auto& e) { return e->LocalCandidateInvariant(); }))
@@ -2853,7 +2874,7 @@ HasTag::HasTag(std::string name) :
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(ConditionDetail::CondsRTSI(name)),
+    Condition(CondsRTSI(name)),
     m_name(std::move(name))
 {}
 
@@ -3104,7 +3125,7 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Contains::Contains(std::unique_ptr<Condition>&& condition) :
-    Condition(ConditionDetail::CondsRTSI(condition)),
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition))
 {}
 
@@ -3922,6 +3943,9 @@ const Planet* PlanetType::PlanetFromObject(const UniverseObject* obj, const Obje
 
 ::PlanetType PlanetType::PlanetTypeFromPlanet(const Planet* planet) noexcept
 { return planet ? planet->Type() : ::PlanetType::INVALID_PLANET_TYPE; }
+
+std::string_view PlanetType::to_string(::PlanetType pt) noexcept
+{ return ::to_string(pt); }
 
 
 ///////////////////////////////////////////////////////////
@@ -11419,14 +11443,14 @@ namespace StaticTests {
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or<>::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-    OrBase(ConditionDetail::CondsRTSI(operands)),
+    OrBase(CondsRTSI(operands)),
     // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(ConditionDetail::DenestOps<OrBase>(operands))
+    m_operands(DenestOps<OrBase>(operands))
 {}
 
 Or<>::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
          std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
-    Or(ConditionDetail::Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
+    Or(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
 {}
 
 bool Or<>::operator==(const Or& rhs_) const {
