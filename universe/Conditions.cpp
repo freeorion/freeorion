@@ -58,48 +58,15 @@ bool UserStringExists(const std::string& str);
 #  endif
 #endif
 
+using Condition::ConditionDetail::EvalImpl;
+using Condition::ConditionDetail::AddAllObjectsSet;
+using Condition::ConditionDetail::AllObjectsSet;
+
 namespace {
     CONSTEXPR_STRING const std::string EMPTY_STRING;
     const std::vector<std::string> EMPTY_STRING_VEC;
 
     DeclareThreadSafeLogger(conditions);
-
-    template <typename T = UniverseObject>
-    void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& in_out) {
-        const auto& all_t = objects.allExistingRaw<T>();
-        //condition_non_targets.reserve(condition_non_targets.size() + all_t.size()); // should be redundant with insert
-        in_out.insert(in_out.end(), all_t.begin(), all_t.end());
-    }
-
-    template <typename T = UniverseObject, bool cast = false>
-    decltype(auto) AllObjectsSet(const ObjectMap& objects) noexcept
-    {
-        const auto& objs = objects.allExistingRaw<T>();
-        if constexpr (cast)
-            return Condition::ObjectSet(objs.begin(), objs.end());
-        else
-            return objs;
-    }
-
-
-    /** Used by 4-parameter Condition::Eval function, and some of its overrides,
-      * to scan through \a matches or \a non_matches set and apply \a pred to
-      * each object, to test if it should remain in its current set or be
-      * transferred from the \a search_domain specified set into the other. */
-    inline void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
-                         Condition::SearchDomain search_domain, const auto& pred)
-    {
-        const bool domain_matches = search_domain == Condition::SearchDomain::MATCHES;
-        auto& from_set = domain_matches ? matches : non_matches;
-        auto& to_set = domain_matches ? non_matches : matches;
-
-        // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
-
-        const auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
-            [&pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
-        to_set.insert(to_set.end(), part_it, from_set.end());
-        from_set.erase(part_it, from_set.end());
-    }
 
     /** Description text for input conditions, and true/false whether
       * \a candidate_object is matched by each condition */
@@ -3938,181 +3905,24 @@ std::unique_ptr<Condition> ObjectID::Clone() const
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types) :
-    m_types(std::move(types))
-{
-    m_root_candidate_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->SourceInvariant(); });
-}
-
-bool PlanetType::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const PlanetType& rhs_ = static_cast<const PlanetType&>(rhs);
-
-    if (m_types.size() != rhs_.m_types.size())
-        return false;
-    for (std::size_t i = 0; i < m_types.size(); ++i) {
-        CHECK_COND_VREF_MEMBER(m_types.at(i))
-    }
-
-    return true;
-}
-
-namespace {
-    // gets a planet from \a obj considering obj as a planet or a building on a planet
-    const Planet* PlanetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
-        if (!obj) {
-            return nullptr;
-
-        } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            return static_cast<const ::Planet*>(obj);
-
-        } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-            auto* building = static_cast<const ::Building*>(obj);
-            return objects.getRaw<Planet>(building->PlanetID());
-        }
-
+const Planet* PlanetType::PlanetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
+    if (!obj) {
         return nullptr;
+
+    } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+        return static_cast<const ::Planet*>(obj);
+
+    } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+        auto* building = static_cast<const ::Building*>(obj);
+        return objects.getRaw<Planet>(building->PlanetID());
     }
 
-    struct PlanetTypeSimpleMatch {
-        PlanetTypeSimpleMatch(const std::span< ::PlanetType> types, const ObjectMap& objects) noexcept:
-            m_types(types),
-            m_objects(objects)
-        {}
-
-        bool operator()(const Planet* candidate) const {
-            return candidate&& std::any_of(m_types.begin(), m_types.end(),
-                                           [pt{candidate->Type()}](const auto t) { return t == pt; });
-        }
-
-        bool operator()(const UniverseObject* candidate) const
-        { return operator()(PlanetFromObject(candidate, m_objects)); }
-
-        const std::span< ::PlanetType> m_types;
-        const ObjectMap& m_objects;
-    };
+    return nullptr;
 }
 
-void PlanetType::Eval(const ScriptingContext& parent_context,
-                      ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain) const
-{
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& type : m_types) {
-            if (!type->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
-    if (simple_eval_safe) {
-        // evaluate types once, and use to check all candidate objects
-        std::vector< ::PlanetType> types;
-        types.reserve(m_types.size());
-        // get all types from valuerefs
-        for (auto& type : m_types)
-            types.push_back(type->Eval(parent_context));
-        EvalImpl(matches, non_matches, search_domain, PlanetTypeSimpleMatch(types, parent_context.ContextObjects()));
-    } else {
-        // re-evaluate contained objects for each candidate object
-        Condition::Eval(parent_context, matches, non_matches, search_domain);
-    }
-}
+::PlanetType PlanetType::PlanetTypeFromPlanet(const Planet* planet) noexcept
+{ return planet ? planet->Type() : ::PlanetType::INVALID_PLANET_TYPE; }
 
-std::string PlanetType::Description(bool negated) const {
-    std::string values_str;
-    for (std::size_t i = 0; i < m_types.size(); ++i) {
-        values_str += m_types[i]->ConstantExpr() ?
-                        UserString(to_string(m_types[i]->Eval())) :
-                        m_types[i]->Description();
-        if (2 <= m_types.size() && i < m_types.size() - 2) {
-            values_str += ", ";
-        } else if (i == m_types.size() - 2) {
-            values_str += m_types.size() < 3 ? " " : ", ";
-            values_str += UserString("OR");
-            values_str += " ";
-        }
-    }
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_PLANET_TYPE")
-        : UserString("DESC_PLANET_TYPE_NOT"))
-        % values_str);
-}
-
-std::string PlanetType::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "Planet type = ";
-    if (m_types.size() == 1) {
-        retval += m_types[0]->Dump(ntabs) + "\n";
-    } else {
-        retval += "[ ";
-        for (auto& type : m_types) {
-            retval += type->Dump(ntabs) + " ";
-        }
-        retval += "]\n";
-    }
-    return retval;
-}
-
-ObjectSet PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    // objects that are or are on planets: Building, Planet
-    ObjectSet retval;
-    retval.reserve(parent_context.ContextObjects().size<Planet>() +
-                   parent_context.ContextObjects().size<::Building>());
-    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), retval);
-    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), retval);
-    return retval;
-}
-
-bool PlanetType::Match(const ScriptingContext& local_context) const {
-    const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate)
-        return false;
-
-    const Planet* planet = nullptr;
-    if (candidate->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-        planet = static_cast<const Planet*>(candidate);
-    } else if (candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-        auto building = static_cast<const ::Building*>(candidate);
-        planet = local_context.ContextObjects().getRaw<Planet>(building->PlanetID());
-    }
-
-    if (planet) {
-        auto planet_type = planet->Type();
-        for (auto& type : m_types) {
-            if (type->Eval(local_context) == planet_type)
-                return true;
-        }
-    }
-    return false;
-}
-
-void PlanetType::SetTopLevelContent(const std::string& content_name) {
-    for (auto& type : m_types) {
-        if (type)
-            type->SetTopLevelContent(content_name);
-    }
-}
-
-uint32_t PlanetType::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::PlanetType");
-    CheckSums::CheckSumCombine(retval, m_types);
-
-    TraceLogger(conditions) << "GetCheckSum(PlanetType): retval: " << retval;
-    return retval;
-}
-
-std::unique_ptr<Condition> PlanetType::Clone() const
-{ return std::make_unique<PlanetType>(ValueRef::CloneUnique(m_types)); }
 
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
@@ -4155,7 +3965,7 @@ namespace {
         }
 
         bool operator()(const UniverseObject* candidate) const
-        { return operator()(PlanetFromObject(candidate, m_objects)); }
+        { return operator()( PlanetType::PlanetFromObject(candidate, m_objects)); }
 
         const std::span< ::PlanetSize> m_sizes;
         const ObjectMap& m_objects;
@@ -4337,7 +4147,7 @@ namespace {
         }
 
         bool operator()(const UniverseObject* candidate) const
-        { return operator()(PlanetFromObject(candidate, m_context.ContextObjects())); }
+        { return operator()( PlanetType::PlanetFromObject(candidate, m_context.ContextObjects())); }
 
         const std::span< ::PlanetEnvironment> m_environments;
         const std::string_view                m_species;

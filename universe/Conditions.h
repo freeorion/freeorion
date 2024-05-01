@@ -15,6 +15,7 @@
 #include "../util/Export.h"
 
 const std::string& UserString(const std::string_view);
+constexpr std::string_view to_string(PlanetType) noexcept;
 
 #if !defined(CONSTEXPR_STRING)
 #  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
@@ -90,6 +91,104 @@ enum class ContentType : uint8_t {
     const std::vector<const Condition*>& conditions,
     const ScriptingContext& source_context,
     const UniverseObject* candidate);
+
+
+namespace ConditionDetail {
+    template <class Cond>
+    concept is_condition = std::is_base_of_v<Condition, Cond>;
+
+    using upc = std::unique_ptr<Condition>;
+
+    // flattens nested conditions by extracting contained operands of the same type.
+    // also removes null operands
+    template <is_condition ContainingCondition>
+    std::vector<upc> DenestOps(auto&& in)
+        requires(requires { {*in.begin()} -> std::same_as<upc&>; })
+    {
+        std::vector<upc> retval;
+        retval.reserve(in.size()); // may be underestimate if in has nested and/or conditions
+
+        static constexpr auto not_null = [](auto& op) noexcept -> bool { return !!op; };
+        for (upc& op : in | range_filter(not_null)) {
+            if (auto* op_ = dynamic_cast<ContainingCondition*>(op.get())) {
+                ContainingCondition& op_and_ref = *op_;
+
+                auto sub_ops = std::move(op_and_ref).Operands();
+                auto denested_sub_ops = DenestOps<ContainingCondition>(sub_ops);
+
+                retval.insert(retval.end(), std::make_move_iterator(denested_sub_ops.begin()),
+                              std::make_move_iterator(denested_sub_ops.end()));
+            } else {
+                retval.push_back(std::move(op));
+            }
+        };
+        return retval;
+    }
+
+    std::vector<upc> Vectorize(upc&& op1, upc&& op2, upc&& op3, upc&& op4, upc&& op5 = nullptr,
+                               upc&& op6 = nullptr, upc&& op7 = nullptr, upc&& op8 = nullptr);
+
+    constexpr auto conds_rtsi = [](const auto&... conds) noexcept -> std::array<bool, 3> {
+        return {(conds.RootCandidateInvariant() && ...),
+                (conds.TargetInvariant() && ...),
+                (conds.SourceInvariant() && ...)};
+    };
+
+    constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
+        if constexpr (requires { *operands; operands->TargetInvariant(); }) {
+            return {!operands || operands->RootCandidateInvariant(),
+                    !operands || operands->TargetInvariant(),
+                    !operands || operands->SourceInvariant()};
+
+        } else if constexpr (requires { operands.TargetInvariant(); }) {
+            return {operands->RootCandidateInvariant(), operands->TargetInvariant(), operands->SourceInvariant()};
+
+        } else if constexpr (requires { operands.begin(); operands.begin()->TargetInvariant(); }) {
+            return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+                    std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+                    std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
+        } else {
+            throw "unrecognized type?";
+        }
+    }
+
+    /** Used by 4-parameter Condition::Eval function, and some of its overrides,
+    * to scan through \a matches or \a non_matches set and apply \a pred to
+    * each object, to test if it should remain in its current set or be
+    * transferred from the \a search_domain specified set into the other. */
+    inline void EvalImpl(::Condition::ObjectSet& matches, ::Condition::ObjectSet& non_matches,
+                         ::Condition::SearchDomain search_domain, const auto& pred)
+    {
+        const bool domain_matches = search_domain == ::Condition::SearchDomain::MATCHES;
+        auto& from_set = domain_matches ? matches : non_matches;
+        auto& to_set = domain_matches ? non_matches : matches;
+
+        // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
+
+        const auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
+                                                   [&pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
+        to_set.insert(to_set.end(), part_it, from_set.end());
+        from_set.erase(part_it, from_set.end());
+    }
+
+    template <typename T = UniverseObject>
+    void AddAllObjectsSet(const ObjectMap& objects, ::Condition::ObjectSet& in_out) {
+        const auto& all_t = objects.allExistingRaw<T>();
+        //condition_non_targets.reserve(condition_non_targets.size() + all_t.size()); // should be redundant with insert
+        in_out.insert(in_out.end(), all_t.begin(), all_t.end());
+    }
+
+    template <typename T = UniverseObject, bool cast = false>
+    decltype(auto) AllObjectsSet(const ObjectMap& objects) noexcept
+    {
+        const auto& objs = objects.allExistingRaw<T>();
+        if constexpr (cast)
+            return ::Condition::ObjectSet(objs.begin(), objs.end());
+        else
+            return objs;
+    }
+}
+
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
@@ -763,28 +862,230 @@ private:
 };
 
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
-  * Note that all Building objects which are on matching planets are also
-  * matched. */
-struct FO_COMMON_API PlanetType final : public Condition {
-    PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types);
+  * Note that all Building objects which are on matching planets are also matched. */
+struct FO_COMMON_API PlanetType : public Condition {
+    constexpr PlanetType(std::array<bool, 3> rts_invariants) noexcept : Condition(rts_invariants) {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    // gets a planet from \a obj considering obj as a planet or a building on a planet
+    static const ::Planet* PlanetFromObject(const UniverseObject* obj, const ObjectMap& objects);
+    static ::PlanetType PlanetTypeFromPlanet(const Planet* planet) noexcept;
+
+    template <std::size_t span_extent>
+    struct SimpleMatch {
+        using SpanT = std::span<const ::PlanetType, span_extent>;
+
+        SimpleMatch(SpanT types, const ObjectMap& objects) noexcept :
+            m_types(types),
+            m_objects(objects)
+        {}
+
+        bool operator()(::PlanetType pt) const
+        { return std::any_of(m_types.begin(), m_types.end(), [pt](const auto t) noexcept { return t == pt; }); }
+
+        bool operator()(const ::Planet* candidate) const
+        { return candidate && operator()(PlanetType::PlanetTypeFromPlanet(candidate)); }
+
+        bool operator()(const UniverseObject* candidate) const
+        { return operator()(PlanetType::PlanetFromObject(candidate, m_objects)); }
+
+        const SpanT m_types;
+        const ObjectMap& m_objects;
+    };
+};
+
+template <std::size_t N = 0, typename ValuesT = ::PlanetType>
+    requires (std::is_same_v<ValuesT, ::PlanetType> ||
+              std::is_same_v<ValuesT, std::unique_ptr<ValueRef::ValueRef<::PlanetType>>>)
+struct FO_COMMON_API PlanetTypes final : public PlanetType {
+    static constexpr bool have_specific_pts = std::is_same_v<ValuesT, ::PlanetType>;
+    static constexpr bool have_fixed_number = N != 0;
+
+    using PlanetTypesT = std::conditional_t<have_fixed_number, std::array<ValuesT, N>, std::vector<ValuesT>>;
+
+    PlanetTypes(PlanetTypesT&& types) :
+        PlanetType(have_specific_pts ? std::array{true, true, true} : ConditionDetail::CondsRTSI(types)),
+        m_types(std::move(types))
+    {}
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_and = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_and && *this == *rhs_and;
+    }
+    [[nodiscard]] constexpr bool operator==(const PlanetTypes& rhs) const {
+        if (this == &rhs || m_types == rhs.m_types)
+            return true;
+        // can be (array or vec) of (PlanetType or ValueRef<PlanetType>)
+
+        if constexpr (have_specific_pts) {
+            return false;
+
+        } else {
+            // have ValueRefs; need to inspect number and deep equality of each
+            if (m_types.size() != rhs.m_types.size())
+                return false;
+
+            for (std::size_t i = 0; i < m_types.size(); ++i) {
+                const auto& m_ptr = m_types[i];
+                const auto& rhs_ptr = rhs.m_types[i];
+                if (m_ptr == rhs_ptr)   // two unique_ptr both point to null
+                    continue;
+                if (!m_ptr || !rhs_ptr || *m_ptr != *(rhs_ptr))
+                    return false;       // only one null, or deep inspection of ValueRefs found difference
+            }
+            return true;
+        }
+    };
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
+    {
+        using ConditionDetail::EvalImpl;
+
+        if constexpr (have_specific_pts) {
+            // make a span of the allowed PlanetTypes, test each candidate...
+            const auto simple_match = PlanetType::SimpleMatch(std::span{m_types}, parent_context.ContextObjects());
+            EvalImpl(matches, non_matches, search_domain, simple_match);
+
+        } else {
+            static constexpr auto is_lci = [](const auto& type) noexcept { return type->LocalCandidateInvariant(); };
+            bool simple_eval_safe = (parent_context.condition_root_candidate || RootCandidateInvariant()) &&
+                std::all_of(m_types.begin(), m_types.end(), is_lci);
+
+            if (simple_eval_safe) {
+                // Evaluate refs to determine matched PlanetTypes, test on each candidate
+                const auto ref_to_type = [&parent_context](const auto& tref) { return tref->Eval(parent_context); };
+
+                // evaluate types once, and use to check all candidate objects
+                const auto simple_match = [&parent_context, this, &ref_to_type]() {
+                    if constexpr (have_fixed_number) {
+                        std::array< ::PlanetType, m_types.size()> types{};
+                        std::transform(m_types.begin(), m_types.end(), types.begin(), ref_to_type);
+                        return PlanetType::SimpleMatch(types, parent_context.ContextObjects());
+                    } else {
+                        std::vector< ::PlanetType> types;
+                        types.reserve(m_types.size());
+                        std::transform(m_types.begin(), m_types.end(), std::back_inserter(types), ref_to_type);
+                        return PlanetType::SimpleMatch(types, parent_context.ContextObjects());
+                    }
+                }();
+                EvalImpl(matches, non_matches, search_domain, simple_match);
+
+            } else {
+                // re-evaluate contained objects for each candidate object
+                Condition::Eval(parent_context, matches, non_matches, search_domain);
+            }
+        }
+    }
+
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, candidate}); }
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
-    [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
-    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override {
+        // objects that are or are on planets: Building, Planet
+        ObjectSet retval;
+        retval.reserve(parent_context.ContextObjects().size<::Planet>() +
+                       parent_context.ContextObjects().size<::Building>());
+        ConditionDetail::AddAllObjectsSet<::Planet>(parent_context.ContextObjects(), retval);
+        ConditionDetail::AddAllObjectsSet<::Building>(parent_context.ContextObjects(), retval);
+        return retval;
+    }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override {
+        std::string values_str;
+        for (std::size_t i = 0; i < m_types.size(); ++i) {
+            if constexpr (have_specific_pts) {
+                values_str += UserString(to_string(m_types[i]));
+            } else {
+                values_str += m_types[i]->ConstantExpr() ?
+                    UserString(to_string(m_types[i]->Eval())) :
+                    m_types[i]->Description();
+            }
+            if (2 <= m_types.size() && i < m_types.size() - 2) {
+                values_str += ", ";
+            } else if (i == m_types.size() - 2) {
+                values_str += m_types.size() < 3 ? " " : ", ";
+                values_str += UserString("OR");
+                values_str += " ";
+            }
+        }
+        return str(FlexibleFormat((!negated)
+                                  ? UserString("DESC_PLANET_TYPE")
+                                  : UserString("DESC_PLANET_TYPE_NOT"))
+                   % values_str);
+    }
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
+        std::string retval = DumpIndent(ntabs) + "Planet type = ";
+        if constexpr (have_specific_pts) {
+            // TODO: this
+        } else {
+            if (m_types.size() == 1) {
+                retval += m_types[0]->Dump(ntabs) + "\n";
+            } else {
+                retval += "[ ";
+                for (auto& type : m_types)
+                    retval += type->Dump(ntabs) + " ";
+                retval += "]\n";
+            }
+        }
+        return retval;
+    }
+
+    void SetTopLevelContent(const std::string& content_name) noexcept(have_specific_pts) override {
+        if constexpr (!have_specific_pts) {
+            for (auto& type : m_types) {
+                if (type)
+                    type->SetTopLevelContent(content_name);
+            }
+        }
+    }
+
+    [[nodiscard]] uint32_t GetCheckSum() const
+        noexcept(noexcept(CheckSums::GetCheckSum("")) &&
+                 noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), m_types))) override
+    {
+        uint32_t retval = CheckSums::GetCheckSum("Condition::PlanetType");
+        CheckSums::CheckSumCombine(retval, m_types);
+        return retval;
+    }
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
+        if constexpr (have_specific_pts) {  // array or vector of ::PlanetType
+            return std::make_unique<std::decay_t<decltype(*this)>>(m_types);
+
+        } else {    // array or vector of unique_ptr<ValueRef>
+            decltype(m_types) types{};
+            if constexpr (!have_fixed_number) // vector
+                types.reserve(m_types.size());
+            for (auto idx = 0; idx < m_types.size(); ++idx)
+                types[idx] = m_types[idx]->Clone();
+            return std::make_unique<std::decay_t<decltype(*this)>>(std::move(types));
+        }
+    }
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override {
+        const auto* candidate = local_context.condition_local_candidate;
+        if (!candidate)
+            return false;
+        const Planet* planet = PlanetType::PlanetFromObject(candidate, local_context.ContextObjects());
+        if (!planet)
+            return false;
+        const ::PlanetType pt = PlanetType::PlanetTypeFromPlanet(planet);
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetType>>> m_types;
+        // test candidate's planet type against all matched types or results of refs for matched types
+        const auto is_pt = [pt, &local_context]() noexcept(have_specific_pts) {
+            if constexpr (have_specific_pts)
+                return [pt](const auto pt_test) noexcept { pt_test == pt; };
+            else
+                return [pt, &local_context](const auto& pt_ref) { return pt_ref && pt_ref->Eval(local_context) == pt; };
+        };
+
+        return std::any_of(m_types.begin(), m_types.end(), is_pt);
+    }
+
+    PlanetTypesT m_types;
 };
 
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
@@ -1999,66 +2300,6 @@ private:
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
     const ContentType                                m_content_type;
 };
-
-namespace ConditionDetail {
-    template <class Cond>
-    concept is_condition = std::is_base_of_v<Condition, Cond>;
-
-    using upc = std::unique_ptr<Condition>;
-
-    // flattens nested conditions by extracting contained operands of the same type.
-    // also removes null operands
-    template <is_condition ContainingCondition>
-    std::vector<upc> DenestOps(auto&& in)
-        requires(requires { {*in.begin()} -> std::same_as<upc&>; })
-    {
-        std::vector<upc> retval;
-        retval.reserve(in.size()); // may be underestimate if in has nested and/or conditions
-
-        static constexpr auto not_null = [](auto& op) noexcept -> bool { return !!op; };
-        for (upc& op : in | range_filter(not_null)) {
-            if (auto* op_ = dynamic_cast<ContainingCondition*>(op.get())) {
-                ContainingCondition& op_and_ref = *op_;
-
-                auto sub_ops = std::move(op_and_ref).Operands();
-                auto denested_sub_ops = DenestOps<ContainingCondition>(sub_ops);
-
-                retval.insert(retval.end(), std::make_move_iterator(denested_sub_ops.begin()),
-                              std::make_move_iterator(denested_sub_ops.end()));
-            } else {
-                retval.push_back(std::move(op));
-            }
-        };
-        return retval;
-    }
-
-    std::vector<upc> Vectorize(upc&& op1, upc&& op2, upc&& op3, upc&& op4, upc&& op5 = nullptr,
-                               upc&& op6 = nullptr, upc&& op7 = nullptr, upc&& op8 = nullptr);
-
-    constexpr auto conds_rtsi = [](const auto&... conds) noexcept -> std::array<bool, 3> {
-        return {(conds.RootCandidateInvariant() && ...),
-                (conds.TargetInvariant() && ...),
-                (conds.SourceInvariant() && ...)};
-    };
-
-    constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
-        if constexpr (requires { *operands; operands->TargetInvariant(); }) {
-            return {!operands || operands->RootCandidateInvariant(),
-                    !operands || operands->TargetInvariant(),
-                    !operands || operands->SourceInvariant()};
-
-        } else if constexpr (requires { operands.TargetInvariant(); }) {
-            return {operands->RootCandidateInvariant(), operands->TargetInvariant(), operands->SourceInvariant()};
-
-        } else if constexpr (requires { operands.begin(); operands.begin()->TargetInvariant(); }) {
-            return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-                    std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-                    std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
-        } else {
-            throw "unrecognized type?";
-        }
-    }
-}
 
 struct FO_COMMON_API And : public Condition {
     [[nodiscard]] virtual std::vector<const Condition*> OperandsRaw() const = 0;
