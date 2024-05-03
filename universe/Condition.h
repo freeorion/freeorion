@@ -134,6 +134,9 @@ protected:
     constexpr Condition(std::array<bool, 3> rts_invariants) noexcept :
         Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2])
     {}
+    constexpr Condition(std::array<bool, 3> rts_invariants, bool init_all_match) noexcept :
+        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2], init_all_match)
+    {}
     Condition& operator=(const Condition&) = delete;
     Condition& operator=(Condition&&) = delete;
 
