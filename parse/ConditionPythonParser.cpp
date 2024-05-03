@@ -181,14 +181,33 @@ namespace {
         if (kw.has_key("type")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>> types;
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["type"]), it_end;
+            bool all_constants = true;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto type_arg = boost::python::extract<value_ref_wrapper< ::PlanetType>>(*it);
-                if (type_arg.check())
+                if (type_arg.check()) {
                     types.push_back(ValueRef::CloneUnique(type_arg().value_ref));
-                else
+                    all_constants = false;
+                } else {
                     types.push_back(std::make_unique<ValueRef::Constant< ::PlanetType>>(boost::python::extract<enum_wrapper< ::PlanetType>>(*it)().value));
+                }
             }
-            return condition_wrapper(std::make_shared<Condition::PlanetType>(std::move(types)));
+            if (all_constants) {
+                std::vector<::PlanetType> constant_types;
+                constant_types.reserve(types.size());
+                std::transform(types.begin(), types.end(), std::back_inserter(constant_types),
+                               [](const auto& ref)
+                               { return static_cast<const ValueRef::Constant<::PlanetType>*>(ref.get())->Value(); });
+                if (constant_types.size() == 1) {
+                    return condition_wrapper(std::make_shared<Condition::PlanetTypes<1, ::PlanetType>>(constant_types.front()));
+                } else if (constant_types.size() == 2) {
+                    std::array<::PlanetType, 2> types_arr{constant_types[0], constant_types[1]};
+                    return condition_wrapper(std::make_shared<Condition::PlanetTypes<2, ::PlanetType>>(types_arr));
+                } else {
+                    return condition_wrapper(std::make_shared<Condition::PlanetTypes<0, ::PlanetType>>(std::move(constant_types)));
+                }
+            } else {
+                return condition_wrapper(std::make_shared<Condition::PlanetTypes<0, Condition::up_vref_pt>>(std::move(types)));
+            }
         } else if (kw.has_key("size")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>> sizes;
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["size"]), it_end;

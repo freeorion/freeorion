@@ -142,12 +142,13 @@ constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
                 !operands || operands->SourceInvariant()};
 
     } else if constexpr (requires { operands.TargetInvariant(); }) {
-        return {operands->RootCandidateInvariant(), operands->TargetInvariant(), operands->SourceInvariant()};
+        return {operands.RootCandidateInvariant(), operands.TargetInvariant(), operands.SourceInvariant()};
 
     } else if constexpr (requires { operands.begin(); operands.begin()->TargetInvariant(); }) {
         return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
                 std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
                 std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
+
     } else {
         throw "unrecognized type?";
     }
@@ -745,8 +746,14 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API ContainedBy final : public Condition {
-    ContainedBy(std::unique_ptr<Condition>&& condition);
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    explicit ContainedBy(std::unique_ptr<Condition>&& condition);
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const ContainedBy& rhs) const;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -855,15 +862,24 @@ struct FO_COMMON_API PlanetType : public Condition {
 
     template <std::size_t span_extent>
     struct SimpleMatch {
-        using SpanT = std::span<const ::PlanetType, span_extent>;
+        using SpanT = std::conditional_t<span_extent == 1, ::PlanetType, std::span<const ::PlanetType, span_extent>>;
 
         SimpleMatch(SpanT types, const ObjectMap& objects) noexcept :
             m_types(types),
             m_objects(objects)
         {}
 
-        bool operator()(::PlanetType pt) const
-        { return std::any_of(m_types.begin(), m_types.end(), [pt](const auto t) noexcept { return t == pt; }); }
+        SimpleMatch(std::span<::PlanetType, 1> types, const ObjectMap& objects) noexcept requires (span_extent == 1) :
+            m_types(types.front()),
+            m_objects(objects)
+        {}
+
+        bool operator()(::PlanetType pt) const {
+            if constexpr (span_extent == 1)
+                return pt == m_types;
+            else
+                return std::any_of(m_types.begin(), m_types.end(), [pt](const auto t) noexcept { return t == pt; });
+        }
 
         bool operator()(const ::Planet* candidate) const
         { return candidate && operator()(PlanetType::PlanetTypeFromPlanet(candidate)); }
@@ -875,8 +891,15 @@ struct FO_COMMON_API PlanetType : public Condition {
         const ObjectMap& m_objects;
     };
 
+    SimpleMatch(::PlanetType, const ObjectMap&) -> SimpleMatch<1>;
+    template <std::size_t span_extent>
+    SimpleMatch(std::span<::PlanetType, span_extent>, const ObjectMap&) -> SimpleMatch<span_extent>;
+    template <std::size_t span_extent>
+    SimpleMatch(std::span<const ::PlanetType, span_extent>, const ObjectMap&) -> SimpleMatch<span_extent>;
+
     static std::string_view to_string(::PlanetType) noexcept;
 };
+
 
 using up_vref_pt = std::unique_ptr<ValueRef::ValueRef<::PlanetType>>;
 
@@ -887,10 +910,17 @@ struct FO_COMMON_API PlanetTypes final : public PlanetType {
     static constexpr bool have_specific_pts = std::is_same_v<ValuesT, ::PlanetType>;
     static constexpr bool have_fixed_number = N != 0;
 
-    using PlanetTypesT = std::conditional_t<have_fixed_number, std::array<ValuesT, N>, std::vector<ValuesT>>;
+    using PlanetTypesT = std::conditional_t<have_fixed_number,
+                                            std::conditional_t<N == 1, ValuesT, std::array<ValuesT, N>>,
+                                            std::vector<ValuesT>>;
 
     PlanetTypes(PlanetTypesT types) :
-        PlanetType(have_specific_pts ? std::array{true, true, true} : CondsRTSI(types)),
+        PlanetType([&types]() {
+            if constexpr (have_specific_pts)
+                return std::array{true, true, true};
+            else
+                return CondsRTSI(types);
+        }()),
         m_types(std::move(types))
     {}
 
@@ -929,9 +959,14 @@ struct FO_COMMON_API PlanetTypes final : public PlanetType {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
     {
         if constexpr (have_specific_pts) {
-            // make a span of the allowed PlanetTypes, test each candidate...
-            const auto simple_match = PlanetType::SimpleMatch(std::span{m_types}, parent_context.ContextObjects());
-            EvalImpl(matches, non_matches, search_domain, simple_match);
+            if constexpr (N == 1) {
+                const auto simple_match = PlanetType::SimpleMatch<1>(m_types, parent_context.ContextObjects());
+                EvalImpl(matches, non_matches, search_domain, simple_match);
+            } else {
+                // make a span of the allowed PlanetTypes, test each candidate...
+                const auto simple_match = PlanetType::SimpleMatch(std::span(m_types), parent_context.ContextObjects());
+                EvalImpl(matches, non_matches, search_domain, simple_match);
+            }
 
         } else {
             static constexpr auto is_lci = [](const auto& type) noexcept { return type->LocalCandidateInvariant(); };
@@ -945,15 +980,19 @@ struct FO_COMMON_API PlanetTypes final : public PlanetType {
                 // evaluate types once, and use to check all candidate objects
                 const auto simple_match = [&parent_context, this, &ref_to_type]() {
                     if constexpr (have_fixed_number) {
-                        std::array< ::PlanetType, m_types.size()> types{};
-                        std::transform(m_types.begin(), m_types.end(), types.begin(), ref_to_type);
-                        std::span span{std::as_const(types)};
-                        return PlanetType::SimpleMatch{span, parent_context.ContextObjects()};
+                        if constexpr (N == 1) {
+                            return PlanetType::SimpleMatch(ref_to_type(m_types), parent_context.ContextObjects());
+                        } else {
+                            std::array< ::PlanetType, m_types.size()> types{};
+                            std::transform(m_types.begin(), m_types.end(), types.begin(), ref_to_type);
+                            std::span span(std::as_const(types));
+                            return PlanetType::SimpleMatch{span, parent_context.ContextObjects()};
+                        }
                     } else {
                         std::vector<::PlanetType> types;
                         types.reserve(m_types.size());
                         std::transform(m_types.begin(), m_types.end(), std::back_inserter(types), ref_to_type);
-                        std::span span{std::as_const(types)};
+                        std::span span(std::as_const(types));
                         return PlanetType::SimpleMatch{span, parent_context.ContextObjects()};
                     }
                 }();
@@ -981,20 +1020,28 @@ struct FO_COMMON_API PlanetTypes final : public PlanetType {
 
     [[nodiscard]] std::string Description(bool negated = false) const override {
         std::string values_str;
-        for (std::size_t i = 0; i < m_types.size(); ++i) {
-            if constexpr (have_specific_pts) {
-                values_str += UserString(to_string(m_types[i]));
-            } else {
-                values_str += m_types[i]->ConstantExpr() ?
-                    UserString(to_string(m_types[i]->Eval())) :
-                    m_types[i]->Description();
-            }
-            if (2 <= m_types.size() && i < m_types.size() - 2) {
-                values_str += ", ";
-            } else if (i == m_types.size() - 2) {
-                values_str += m_types.size() < 3 ? " " : ", ";
-                values_str += UserString("OR");
-                values_str += " ";
+        if constexpr (N == 1) {
+            if constexpr (have_specific_pts) 
+                values_str += UserString(to_string(m_types));
+            else
+                values_str += m_types->ConstantExpr() ? UserString(to_string(m_types->Eval())) : m_types->Description();
+
+        } else {
+            for (std::size_t i = 0; i < m_types.size(); ++i) {
+                if constexpr (have_specific_pts) {
+                    values_str += UserString(to_string(m_types[i]));
+                } else {
+                    values_str += m_types[i]->ConstantExpr() ?
+                        UserString(to_string(m_types[i]->Eval())) :
+                        m_types[i]->Description();
+                }
+                if (2 <= m_types.size() && i < m_types.size() - 2) {
+                    values_str += ", ";
+                } else if (i == m_types.size() - 2) {
+                    values_str += m_types.size() < 3 ? " " : ", ";
+                    values_str += UserString("OR");
+                    values_str += " ";
+                }
             }
         }
         return str(FlexibleFormat((!negated)
@@ -1063,12 +1110,20 @@ private:
 
         // test candidate's planet type against all matched types or results of refs for matched types
         if constexpr (have_specific_pts) {
-            const auto is_pt = [pt](const auto pt_test) noexcept { return pt_test == pt; };
-            return std::any_of(m_types.begin(), m_types.end(), is_pt);
+            if constexpr (N == 1) {
+                return pt == m_types;
+            } else {
+                const auto is_pt = [pt](const auto pt_test) noexcept { return pt_test == pt; };
+                return std::any_of(m_types.begin(), m_types.end(), is_pt);
+            }
         } else {
-            const auto is_pt = [pt, &local_context](const auto& pt_ref)
-            { return pt_ref && pt_ref->Eval(local_context) == pt; };
-            return std::any_of(m_types.begin(), m_types.end(), is_pt);
+            if constexpr (N == 1) {
+                return m_types && m_types->Eval(local_context) == pt;
+            } else {
+                const auto is_pt = [pt, &local_context](const auto& pt_ref)
+                { return pt_ref && pt_ref->Eval(local_context) == pt; };
+                return std::any_of(m_types.begin(), m_types.end(), is_pt);
+            }
         }
     }
 
@@ -1081,6 +1136,7 @@ PlanetTypes(std::array<::PlanetType, N>) -> PlanetTypes<N, ::PlanetType>;
 PlanetTypes(std::vector<up_vref_pt>) -> PlanetTypes<0, up_vref_pt>;
 template <std::size_t N>
 PlanetTypes(std::array<up_vref_pt, N>) -> PlanetTypes<N, up_vref_pt>;
+PlanetTypes(::PlanetType) -> PlanetTypes<1>;
 
 
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.

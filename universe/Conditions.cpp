@@ -3130,8 +3130,6 @@ Contains::Contains(std::unique_ptr<Condition>&& condition) :
 {}
 
 bool Contains::operator==(const Contains& rhs) const {
-    if (this == &rhs)
-        return true;
     return (this == &rhs) || (m_condition == rhs.m_condition) ||
         (m_condition && rhs.m_condition && *m_condition == *(rhs.m_condition));
 }
@@ -3301,17 +3299,9 @@ ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
     m_condition(std::move(condition))
 {}
 
-bool ContainedBy::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const ContainedBy& rhs_ = static_cast<const ContainedBy&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_condition)
-
-    return true;
+bool ContainedBy::operator==(const ContainedBy& rhs) const {
+    return (this == &rhs) || (m_condition == rhs.m_condition) ||
+        (m_condition && rhs.m_condition && *m_condition == *(rhs.m_condition));
 }
 
 namespace {
