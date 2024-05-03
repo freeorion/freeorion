@@ -898,14 +898,13 @@ struct FO_COMMON_API PlanetType : public Condition {
     SimpleMatch(std::span<const ::PlanetType, span_extent>, const ObjectMap&) -> SimpleMatch<span_extent>;
 
     static std::string_view to_string(::PlanetType) noexcept;
+    using up_vref_pt = std::unique_ptr<ValueRef::ValueRef<::PlanetType>>;
 };
 
 
-using up_vref_pt = std::unique_ptr<ValueRef::ValueRef<::PlanetType>>;
-
 template <std::size_t N = 0, typename ValuesT = ::PlanetType>
     requires (std::is_same_v<ValuesT, ::PlanetType> ||
-              std::is_same_v<ValuesT, up_vref_pt>)
+              std::is_same_v<ValuesT, PlanetType::up_vref_pt>)
 struct FO_COMMON_API PlanetTypes final : public PlanetType {
     static constexpr bool have_specific_pts = std::is_same_v<ValuesT, ::PlanetType>;
     static constexpr bool have_fixed_number = N != 0;
@@ -1133,9 +1132,9 @@ private:
 PlanetTypes(std::vector<::PlanetType>) -> PlanetTypes<0, ::PlanetType>;
 template <std::size_t N>
 PlanetTypes(std::array<::PlanetType, N>) -> PlanetTypes<N, ::PlanetType>;
-PlanetTypes(std::vector<up_vref_pt>) -> PlanetTypes<0, up_vref_pt>;
+PlanetTypes(std::vector<PlanetType::up_vref_pt>) -> PlanetTypes<0, PlanetType::up_vref_pt>;
 template <std::size_t N>
-PlanetTypes(std::array<up_vref_pt, N>) -> PlanetTypes<N, up_vref_pt>;
+PlanetTypes(std::array<PlanetType::up_vref_pt, N>) -> PlanetTypes<N, PlanetType::up_vref_pt>;
 PlanetTypes(::PlanetType) -> PlanetTypes<1>;
 
 

@@ -206,7 +206,7 @@ namespace {
                     return condition_wrapper(std::make_shared<Condition::PlanetTypes<0, ::PlanetType>>(std::move(constant_types)));
                 }
             } else {
-                return condition_wrapper(std::make_shared<Condition::PlanetTypes<0, Condition::up_vref_pt>>(std::move(types)));
+                return condition_wrapper(std::make_shared<Condition::PlanetTypes<0, Condition::PlanetType::up_vref_pt>>(std::move(types)));
             }
         } else if (kw.has_key("size")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>> sizes;
