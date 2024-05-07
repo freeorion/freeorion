@@ -4,13 +4,21 @@ from focs._effects import (
     EffectsGroup,
     GenerateSitRepMessage,
     IsSource,
+    LocalCandidate,
+    Max,
+    MaxSecondaryStat,
     NamedReal,
+    OwnedBy,
     PartCapacity,
     PartSecondaryStat,
     SetCapacity,
     SetMaxCapacity,
+    SetMaxSecondaryStat,
     SetSecondaryStat,
+    Ship,
+    ShipPartMeter,
     Source,
+    Statistic,
     Target,
     TurnTechResearched,
     Value,
@@ -91,6 +99,58 @@ def WEAPON_UPGRADE_CAPACITY_EFFECTS(
                     "sum": NamedReal(
                         name=tech_name + "_UPGRADED_DAMAGE",
                         value=PartCapacity(name=part_name) + (SHIP_WEAPON_DAMAGE_FACTOR * upgraded_damage),
+                    ),
+                },
+                empire=Target.Owner,
+            ),
+        ),
+    ]
+
+
+# Tech Upgrade a direct weapon number of shots each turn if it was resupplied after the tech was researched.
+# Be careful this does show in the ship damage/shot estimates in the ship designer UI if the tech is not researched.
+# @1@ tech name
+# @2@ part name
+# @3@ extra_shots gets added to max secondary stat
+def WEAPON_UPGRADE_SECONDARY_STAT_EFFECTS(tech_name: str, part_name: str, extra_shots: int):
+    return [
+        EffectsGroup(
+            scope=EMPIRE_OWNED_SHIP_WITH_PART(part_name) & SHIP_PART_UPGRADE_RESUPPLY_CHECK(CurrentContent),
+            accountinglabel=part_name,
+            effects=SetMaxSecondaryStat(partname=part_name, value=Value + extra_shots),
+        ),
+        # Inform the researching empire that ships in supply will get upgraded before next combat
+        # TODO use conditional If effect to print a different message using a different shotsum e.g. "?" when there are no ships built yet
+        #      or do value_ref<string> ops (which does not exist yet AFAIK)
+        #         ("?" * StatisticIf(float, ~( Ship & OwnedBy(empire = Source.Owner) & DesignHasPart(part_name) ) )) + Statistic(...
+        EffectsGroup(
+            scope=IsSource,
+            activation=(CurrentTurn == TurnTechResearched(empire=Source.Owner, name=CurrentContent)),
+            effects=GenerateSitRepMessage(
+                message="SITREP_WEAPON_SHOTS_UPGRADED",
+                label="SITREP_WEAPON_SHOTS_UPGRADED_LABEL",
+                icon="icons/sitrep/weapon_upgrade.png",
+                parameters={
+                    "empire": Source.Owner,
+                    "shippart": part_name,
+                    "tech": CurrentContent,
+                    "shots": NamedReal(
+                        name=tech_name + "_UPGRADE_SHOTS",
+                        value=extra_shots,
+                    ),
+                    # a part value is not changeable. In the backend we also do not know which techs apply to a part
+                    # options. Also note we cant register this as a named value ref as the value changes.
+                    # 0) count the bonus in an empire meter
+                    # 1) register all relevant tech names before calling this; and check here if those are researched
+                    #    a named value ref to a list of strings could help for lazy eval
+                    # 2) trying to get the new value from the highest known one - note this only works if a ship with the part is built
+                    # 3) forget about it
+                    "shotsum": extra_shots
+                    + Statistic(
+                        float,
+                        Max,
+                        value=ShipPartMeter(part=part_name, meter=MaxSecondaryStat, ship=LocalCandidate.ID),
+                        condition=Ship & OwnedBy(empire=Source.Owner),
                     ),
                 },
                 empire=Target.Owner,
