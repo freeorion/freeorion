@@ -1863,7 +1863,7 @@ void Font::Init(FT_Face& face)
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (const auto [low, high] : range_vec) {
+    for (const auto &[low, high] : range_vec) {
         for (uint32_t c = low; c < high; ++c) {
             // skip already-existing glphys
             if (std::any_of(temp_glyph_data.begin(), temp_glyph_data.end(),

@@ -3958,7 +3958,7 @@ namespace {
                     continue;
 
                 // every (blockading fleet) X (blockaded fleet) X (recipient empire) generates a separate sitrep
-                for (const auto [blockading_fleet_id, blockading_empire_id] : blockading_fleets_and_empire_ids) {
+                for (const auto &[blockading_fleet_id, blockading_empire_id] : blockading_fleets_and_empire_ids) {
                     if (context.ContextVis(blockading_fleet_id, recipient_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY) {
                         // if the blockading fleet is also visible, include that info
                         recipient_empire->AddSitRepEntry(

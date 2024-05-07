@@ -339,7 +339,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         // erase invalid empire diplomatic statuses
         std::vector<std::pair<int, int>> to_erase;
         to_erase.reserve(em.m_empire_diplomatic_statuses.size());
-        for (const auto [e1, e2] : em.m_empire_diplomatic_statuses | range_keys) {
+        for (const auto &[e1, e2] : em.m_empire_diplomatic_statuses | range_keys) {
             if (!em.m_empire_map.contains(e1) || !em.m_empire_map.contains(e2)) {
                 to_erase.emplace_back(e1, e2);
                 ErrorLogger() << "Erased invalid diplomatic status between empires " << e1 << " and " << e2;
