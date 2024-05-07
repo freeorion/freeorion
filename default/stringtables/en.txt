@@ -7806,6 +7806,12 @@ All %shippart% weapons on supplied ships have been upgraded to %tech%. Upgraded 
 SITREP_WEAPONS_UPGRADED_LABEL
 Weapon Tech Upgrade
 
+SITREP_WEAPON_SHOTS_UPGRADED
+All %shippart% weapons on supplied ships have been upgraded with %tech% technology. Upgraded weapons do %rawtext:shots% extra shot per bout (%rawtext:shotsum%)
+
+SITREP_WEAPON_SHOTS_UPGRADED_LABEL
+Weapon Tech Upgrade
+
 SITREP_COMBAT_SYSTEM
 At %system%: there was %combat%.
 
@@ -14454,7 +14460,9 @@ SHP_WEAPON_1_3
 Mass Driver 3
 
 SHP_WEAPON_1_3_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_1_3_UPGRADED_DAMAGE]].
+'''Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_1_3_UPGRADED_DAMAGE]].
+
+Also upgrades [[shippart SR_WEAPON_0_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part fires [[value SHP_WEAPON_1_3_UPGRADE_SHOTS]] extra shots per bout.'''
 
 SHP_WEAPON_1_4
 Mass Driver 4
@@ -14478,7 +14486,9 @@ SHP_WEAPON_2_3
 Laser 3
 
 SHP_WEAPON_2_3_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_2_3_UPGRADED_DAMAGE]].
+'''Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_2_3_UPGRADED_DAMAGE]].
+
+Also upgrades [[shippart SR_WEAPON_0_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part fires [[value SHP_WEAPON_2_3_UPGRADE_SHOTS]] extra shots per bout.'''
 
 SHP_WEAPON_2_4
 Laser 4
@@ -14502,7 +14512,9 @@ SHP_WEAPON_3_3
 Plasma Cannon 3
 
 SHP_WEAPON_3_3_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_3_3_UPGRADED_DAMAGE]].
+'''Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_3_3_UPGRADED_DAMAGE]].
+
+Also upgrades [[shippart SR_WEAPON_0_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part fires [[value SHP_WEAPON_3_3_UPGRADE_SHOTS]] extra shots per bout.'''
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
@@ -14526,7 +14538,9 @@ SHP_WEAPON_4_3
 Death Ray 3
 
 SHP_WEAPON_4_3_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_4_3_UPGRADED_DAMAGE]].
+'''Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_4_3_UPGRADED_DAMAGE]].
+
+Also upgrades [[shippart SR_WEAPON_0_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part fires [[value SHP_WEAPON_4_3_UPGRADE_SHOTS]] extra shots per bout.'''
 
 SHP_WEAPON_4_4
 Death Ray 4
@@ -15995,7 +16009,13 @@ Flak Cannon
 SR_WEAPON_0_1_DESC
 '''The flak cannon is inexpensive and effective at destroying fighters, but does not target ships or planets.
 
-Each flak cannon on a ship built by a species with the piloting trait will have an additional number of shots equal to 1 per piloting level (-1 shot for Bad Pilots).'''
+Each flak cannon on a ship built by a species with the piloting trait will have an additional number of shots equal to 1 per piloting level (-1 shot for Bad Pilots).
+Researching advanced weapon technologies also gives additional shots
+- [[tech SHP_WEAPON_1_3]] [[value SHP_WEAPON_1_3_UPGRADE_SHOTS]]
+- [[tech SHP_WEAPON_2_3]] [[value SHP_WEAPON_2_3_UPGRADE_SHOTS]]
+- [[tech SHP_WEAPON_3_3]] [[value SHP_WEAPON_3_3_UPGRADE_SHOTS]]
+- [[tech SHP_WEAPON_4_3]] [[value SHP_WEAPON_4_3_UPGRADE_SHOTS]]
+'''
 
 SR_WEAPON_1_1
 Mass Driver
