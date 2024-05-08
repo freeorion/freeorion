@@ -125,4 +125,11 @@ namespace CheckSums {
         sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 40.0f) * 100000.0f);
         sum %= CHECKSUM_MODULUS;
     }
+
+    constexpr auto xx = []() {
+        uint32_t sum{0};
+        std::tuple tpl{2343, std::string_view{"blah"}, };
+        CheckSumCombine(sum, tpl);
+        return sum;
+    }();
 }

@@ -31,7 +31,7 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
     {
         globals[op.first] = enum_wrapper<EmpireAffiliationType>(op.second);
     }
-                   
+
 
     for (const auto& op : std::initializer_list<std::pair<const char*, ::PlanetEnvironment>>{
             {"Uninhabitable", PlanetEnvironment::PE_UNINHABITABLE},

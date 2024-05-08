@@ -53,10 +53,9 @@ class FO_COMMON_API Message {
 public:
     enum Parts : std::size_t {TYPE = 0, SIZE, Parts_Count};
 
-    typedef std::array<int, Parts::Parts_Count> HeaderBuffer;
+    using HeaderBuffer = std::array<int, Parts::Parts_Count>;
 
-    constexpr static std::size_t HeaderBufferSize =
-        std::tuple_size<HeaderBuffer>::value* sizeof(HeaderBuffer::value_type);
+    static constexpr std::size_t HeaderBufferSize = std::tuple_size_v<HeaderBuffer> * sizeof(HeaderBuffer::value_type);
 
     /** Represents the type of the message */
     FO_ENUM(
