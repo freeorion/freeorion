@@ -32,8 +32,10 @@ namespace CheckSums {
     template <typename T>
     constexpr void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
     {
+#if !defined(__clang_major__) || (__clang_major__ >= 14)
         if (!std::is_constant_evaluated())
             TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
+#endif
         CheckSumCombine(c.GetCheckSum());
     }
 }
@@ -82,9 +84,11 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         uint32_t retval{0};
         CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
         CheckSums::CheckSumCombine(retval, m_value);
+#if !defined(__clang_major__) || (__clang_major__ >= 14)
         if (!std::is_constant_evaluated())
             TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
                           << " value: " << Description() << " retval: " << retval;
+#endif
         return retval;
     }
 
@@ -140,8 +144,10 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
                           << current_content << " in named_values.focs.txt)";
         }
         if (!m_top_level_content.empty() && m_top_level_content != no_current_content) {
+#if !defined(__clang_major__) || (__clang_major__ >= 14)
             if (!std::is_constant_evaluated())
                 ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Tried to overwrite top level content from '" << m_top_level_content << "' to '" << content_name << "'";
+#endif
         } else {
             m_top_level_content = content_name;
         }
@@ -153,9 +159,11 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 
         CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
         CheckSums::CheckSumCombine(retval, m_value);
+#if !defined(__clang_major__) || (__clang_major__ >= 14)
         if (!std::is_constant_evaluated())
             TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
                           << " value: " << Description() << " retval: " << retval;
+#endif
         return retval;
     }
 
