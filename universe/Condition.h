@@ -2,6 +2,7 @@
 #define _Condition_h_
 
 
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
