@@ -313,7 +313,7 @@ public:
     constexpr Flags(FlagType flag) :
         m_flags(flag.m_value)
     {
-#if 0 && defined(__cpp_lib_is_constant_evaluated)
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
         if (!std::is_constant_evaluated()) {
             if (!FlagSpec<FlagType>::instance().contains(flag))
                 throw UnknownFlag("Invalid flag with value " + std::to_string(flag.m_value));
