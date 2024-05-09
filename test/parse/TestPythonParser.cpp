@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(UnlockableItemType::UIT_POLICY, tech_items[0].type);
         BOOST_REQUIRE_EQUAL("PLC_ALGORITHMIC_RESEARCH", tech_items[0].name);
 
-        Tech tech{
+        const Tech tech{
             "LRN_ALGO_ELEGANCE",
             "LRN_ALGO_ELEGANCE_DESC",
             "RESEARCH_SHORT_DESC",
@@ -155,6 +155,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE(tech_effect_scope_and != nullptr);
         BOOST_REQUIRE_EQUAL(2, tech_effect_scope_and->Operands().size());
 
+
         // effects list
         BOOST_REQUIRE_EQUAL(1, tech_effect_gr.Effects().size());
         const auto& tech_effect = tech_effect_gr.Effects().front();
@@ -168,33 +169,35 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(1, prereqs.size());
         BOOST_REQUIRE_EQUAL(1, std::count(prereqs.begin(), prereqs.end(), "PRO_MICROGRAV_MAN"));
 
-        std::vector<std::unique_ptr<Effect::Effect>> effects;
-        effects.push_back(std::make_unique<Effect::SetMeter>(MeterType::METER_TARGET_POPULATION,
-                        std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::PLUS,
-                            std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
-                            std::make_unique<ValueRef::Operation<double>>(ValueRef::OpType::TIMES,
-                                std::make_unique<ValueRef::Constant<double>>(1.0),
-                                std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "HabitableSize"))
-                        ),
-                        "ORBITAL_HAB_LABEL"));
+        static constexpr auto create_effect = []() {
+            return std::make_unique<Effect::SetMeter>(
+                MeterType::METER_TARGET_POPULATION,
+                std::make_unique<ValueRef::Operation<double>>(
+                    ValueRef::OpType::PLUS,
+                    std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE),
+                    std::make_unique<ValueRef::Operation<double>>(
+                        ValueRef::OpType::TIMES,
+                        std::make_unique<ValueRef::Constant<double>>(1.0),
+                        std::make_unique<ValueRef::Variable<double>>(ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE, "HabitableSize"))
+                ),
+                "ORBITAL_HAB_LABEL");
+        };
 
-        auto effect_group = std::make_shared<Effect::EffectsGroup>(
+        static constexpr auto create_eg = []() {
+            std::vector<std::unique_ptr<Effect::Effect>> effects;
+            effects.push_back(create_effect());
+            return std::make_shared<Effect::EffectsGroup>(
                 std::make_unique<Condition::And>(
                     std::make_unique<Condition::Species>(),
                     std::make_unique<Condition::EmpireAffiliation>(
                         std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner")
                     )
                 ),
-                nullptr,
-                std::move(effects),
-                "",
-                "",
-                17,
-                "",
-                ""
-        );
+                nullptr, std::move(effects), "", "", 17, "", ""
+            );
+        };
 
-        Tech tech{
+        const Tech tech{
             "CON_ORBITAL_HAB",
             "CON_ORBITAL_HAB_DESC",
             "POPULATION_SHORT_DESC",
@@ -212,7 +215,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             std::make_unique<ValueRef::Constant<int>>(7),
             true,
             {"PEDIA_GROWTH_CATEGORY"},
-            {effect_group},
+            {create_eg()},
             {"PRO_MICROGRAV_MAN"},
             {},
             "icons/tech/orbital_gardens.png"
@@ -220,6 +223,23 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 #if defined(FREEORION_MACOSX)
         BOOST_WARN(tech == tech_it->second);
 #else
+        BOOST_REQUIRE(tech.Name() == tech_it->second.Name());
+        BOOST_REQUIRE(tech.Description() == tech_it->second.Description());
+        BOOST_REQUIRE(tech.ShortDescription() == tech_it->second.ShortDescription());
+        BOOST_REQUIRE(tech.Category() == tech_it->second.Category());
+        BOOST_REQUIRE(tech.Researchable() == tech_it->second.Researchable());
+        BOOST_REQUIRE(tech.Tags() == tech_it->second.Tags());
+        BOOST_REQUIRE(tech.PediaTags() == tech_it->second.PediaTags());
+        BOOST_REQUIRE(tech.HasTag("PEDIA_GROWTH_CATEGORY") == tech_it->second.HasTag("PEDIA_GROWTH_CATEGORY"));
+        BOOST_REQUIRE(tech.HasTag("NOT_A_TAG") == tech_it->second.HasTag("NOT_A_TAG"));
+        BOOST_REQUIRE(tech.Effects().size() == tech_it->second.Effects().size());
+        BOOST_REQUIRE(tech.Prerequisites() == tech_it->second.Prerequisites());
+        BOOST_REQUIRE(tech.Graphic() == tech_it->second.Graphic());
+        BOOST_REQUIRE(tech.UnlockedItems() == tech_it->second.UnlockedItems());
+        BOOST_REQUIRE(tech.ResearchCostRef() && tech_it->second.ResearchCostRef() && *tech.ResearchCostRef() == *tech_it->second.ResearchCostRef());
+        BOOST_REQUIRE(tech.ResearchTurnsRef() && tech_it->second.ResearchTurnsRef() && *tech.ResearchTurnsRef() == *tech_it->second.ResearchTurnsRef());
+        BOOST_REQUIRE(tech.UnlockedTechs() == tech_it->second.UnlockedTechs());
+        BOOST_REQUIRE(tech.Dump() == tech_it->second.Dump());
         BOOST_REQUIRE(tech == tech_it->second);
 #endif
     }
@@ -287,10 +307,17 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL("", effect_group.GetDescription());
         BOOST_REQUIRE_EQUAL("FOCUS_INDUSTRY_LABEL", effect_group.AccountingLabel());
         BOOST_REQUIRE_EQUAL(98, effect_group.Priority());
+
+        BOOST_REQUIRE_EQUAL(1693, effect_group.Scope()->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(18072, effect_group.Activation()->GetCheckSum());
+        BOOST_REQUIRE_EQUAL("", effect_group.GetDescription());
+
         BOOST_REQUIRE_EQUAL(true, effect_group.HasMeterEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasAppearanceEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasSitrepEffects());
-        BOOST_REQUIRE_EQUAL(36574, effect_group.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(1, effect_group.Effects().size());
+        BOOST_REQUIRE_EQUAL(13882, effect_group.Effects()[0]->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(36575, effect_group.GetCheckSum());
 
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
@@ -306,7 +333,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6765635, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6764385, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -587,10 +614,10 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22501, location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(22500, location_cond->GetCheckSum());
     BOOST_CHECK_EQUAL(3267, location_conds[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(9108, location_conds[1]->GetCheckSum());
-    BOOST_CHECK_EQUAL(5099, location_conds[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5098, location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, location_conds[3]->GetCheckSum());
 
     const Condition::And* test_location_cond = dynamic_cast<const Condition::And*>(test_building.Location());
@@ -601,10 +628,10 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(test_location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(test_location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(test_location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22501, test_location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(22500, test_location_cond->GetCheckSum());
     BOOST_CHECK_EQUAL(3267, test_location_conds[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(9108, test_location_conds[1]->GetCheckSum());
-    BOOST_CHECK_EQUAL(5099, test_location_conds[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5098, test_location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, test_location_conds[3]->GetCheckSum());
 
 #if defined(FREEORION_MACOSX)

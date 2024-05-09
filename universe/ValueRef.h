@@ -8,6 +8,76 @@
 #include <type_traits>
 
 namespace ValueRef {
+enum class ReferenceType : int8_t {
+    INVALID_REFERENCE_TYPE = -1,
+    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
+    SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
+    EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
+    EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the target object value of an effect while it is being executed
+    CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
+    CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
+};
+
+enum class ContainerType : int8_t {
+    NONE = 0,
+    PLANET,
+    SYSTEM,
+    FLEET
+};
+
+enum class OpType : uint8_t {
+    INVALID_OP_TYPE,
+    PLUS,
+    MINUS,
+    TIMES,
+    DIVIDE,
+    REMAINDER,
+    NEGATE,
+    EXPONENTIATE,
+    ABS,
+    LOGARITHM,
+    SINE,
+    COSINE,
+    MINIMUM,
+    MAXIMUM,
+    RANDOM_UNIFORM,
+    RANDOM_PICK,
+    SUBSTITUTION,
+    COMPARE_EQUAL,
+    COMPARE_GREATER_THAN,
+    COMPARE_GREATER_THAN_OR_EQUAL,
+    COMPARE_LESS_THAN,
+    COMPARE_LESS_THAN_OR_EQUAL,
+    COMPARE_NOT_EQUAL,
+    ROUND_NEAREST,
+    ROUND_UP,
+    ROUND_DOWN,
+    SIGN,
+    NOOP
+};
+
+FO_ENUM(
+    (StatisticType),
+    ((INVALID_STATISTIC_TYPE, -1))
+
+    ((IF))          // returns T{1} if anything matches the condition, or T{0} otherwise
+
+    ((COUNT))       // returns the number of objects matching the condition
+    ((UNIQUE_COUNT))// returns the number of distinct property values of objects matching the condition. eg. if 3 objects have the property value "small", and two have "big", then this value is 2, as there are 2 unique property values.
+    ((HISTO_MAX))   // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo max is 3.
+    ((HISTO_MIN))   // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo min is 1.
+    ((HISTO_SPREAD))// returns the (positive) difference between the maximum and minimum numbers of distinct property values. eg. if 5 objects have values, 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the Histo Spread is 3-1 = 2.
+
+    ((SUM))         // returns the sum of the property values of all objects matching the condition
+    ((MEAN))        // returns the mean of the property values of all objects matching the condition
+    ((RMS))         // returns the sqrt of the mean of the squares of the property values of all objects matching the condition
+    ((MODE))        // returns the most common property value of objects matching the condition.  supported for non-numeric types such as enums.
+    ((MAX))         // returns the maximum value of the property amongst objects matching the condition
+    ((MIN))         // returns the minimum value of the property amongst objects matching the condition
+    ((SPREAD))      // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
+    ((STDEV))       // returns the standard deviation of the property values of all objects matching the condition
+    ((PRODUCT))     // returns the product of the property values of all objects matching the condition
+)
 
 //! The common base class for all ValueRef classes. This class provides
 //! some the return-type-independent interface.
@@ -19,6 +89,7 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] constexpr virtual bool SourceInvariant() const         { return m_source_invariant; }
     [[nodiscard]] constexpr virtual bool SimpleIncrement() const         { return m_simple_increment; }
     [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
+    [[nodiscard]] constexpr virtual bool ReturnImmediateValue() const    { return m_return_immediate_value; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
@@ -31,18 +102,67 @@ struct FO_COMMON_API ValueRefBase {
 
     constexpr virtual ~ValueRefBase() noexcept = default;
 
+    [[nodiscard]] virtual constexpr bool operator==(const ValueRefBase& rhs) const = default;
+
 protected:
-    constexpr ValueRefBase() = default;
-    constexpr explicit ValueRefBase(bool constant_expr) :
+    constexpr ValueRefBase() noexcept = default;
+    constexpr ValueRefBase(bool constant_expr, ReferenceType ref_type) noexcept :
+        m_ref_type(ref_type),
+        m_constant_expr(constant_expr)
+    {}
+    constexpr explicit ValueRefBase(ReferenceType ref_type) noexcept :
+        m_ref_type(ref_type)
+    {}
+    constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                           ReferenceType ref_type) noexcept :
+        m_ref_type(ref_type),
+        m_root_candidate_invariant(root_inv),
+        m_local_candidate_invariant(local_inv),
+        m_target_invariant(target_inv),
+        m_source_invariant(source_inv),
+        m_constant_expr(constant_expr)
+    {}
+    constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                           bool return_immediate_value, ReferenceType ref_type) noexcept :
+        m_ref_type(ref_type),
+        m_root_candidate_invariant(root_inv),
+        m_local_candidate_invariant(local_inv),
+        m_target_invariant(target_inv),
+        m_source_invariant(source_inv),
+        m_constant_expr(constant_expr),
+        m_return_immediate_value(return_immediate_value)
+    {}
+    constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                           bool simple_increment, OpType op_type) noexcept :
+        m_op_type(op_type),
+        m_root_candidate_invariant(root_inv),
+        m_local_candidate_invariant(local_inv),
+        m_target_invariant(target_inv),
+        m_source_invariant(source_inv),
+        m_constant_expr(constant_expr),
+        m_simple_increment(simple_increment)
+    {}
+    constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                           StatisticType stat_type) noexcept :
+        m_stat_type(stat_type),
+        m_root_candidate_invariant(root_inv),
+        m_local_candidate_invariant(local_inv),
+        m_target_invariant(target_inv),
+        m_source_invariant(source_inv),
         m_constant_expr(constant_expr)
     {}
 
-    bool m_root_candidate_invariant = false;
-    bool m_local_candidate_invariant = false;
-    bool m_target_invariant = false;
-    bool m_source_invariant = false;
-    bool m_constant_expr = false;
-    bool m_simple_increment = false;
+    const ReferenceType m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
+    const OpType m_op_type = OpType::INVALID_OP_TYPE;
+    const StatisticType m_stat_type = StatisticType::INVALID_STATISTIC_TYPE;
+
+    uint8_t m_root_candidate_invariant : 1 = false;
+    uint8_t m_local_candidate_invariant : 1 = false;
+    uint8_t m_target_invariant : 1 = false;
+    uint8_t m_source_invariant : 1 = false;
+    uint8_t m_constant_expr : 1 = false;
+    uint8_t m_simple_increment : 1 = false;
+    uint8_t m_return_immediate_value : 1 = false;
 };
 
 template<typename T>
@@ -82,16 +202,6 @@ std::string FlexibleToString(T&& t)
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(UniverseObjectType t);
 
 
-enum class ReferenceType : int8_t {
-    INVALID_REFERENCE_TYPE = -1,
-    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
-    SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
-    EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
-    EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the target object value of an effect while it is being executed
-    CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
-    CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
-};
-
 //! The base class for all ValueRef classes returning type T. This class
 //! provides the public interface for a ValueRef expression tree.
 template <typename T>
@@ -120,43 +230,31 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * doesn't supports move semantics for returned values. */
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 
-    [[nodiscard]] virtual constexpr bool operator==(const ValueRef<T>& rhs) const
-    { return (&rhs == this) || (typeid(rhs) == typeid(*this)); }
+    [[nodiscard]] virtual constexpr bool operator==(const ValueRef& rhs) const = 0;
 
 protected:
     constexpr ValueRef() noexcept = default;
     constexpr explicit ValueRef(ReferenceType ref_type) noexcept :
-        m_ref_type(ref_type)
+        ValueRefBase(ref_type)
     {}
-    constexpr explicit ValueRef(bool constant_expr) noexcept :
-        ValueRefBase(constant_expr)
+    constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, ref_type)
     {}
-
-    const ReferenceType m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
+    constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       bool return_immediate_value, ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type)
+    {}
+    constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       bool simple_increment, OpType op_type) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, simple_increment, op_type)
+    {}
+    constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       StatisticType stat_type) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, stat_type)
+    {}
 };
 
-FO_ENUM(
-    (StatisticType),
-    ((INVALID_STATISTIC_TYPE, -1))
-
-    ((IF))          // returns T{1} if anything matches the condition, or T{0} otherwise
-
-    ((COUNT))       // returns the number of objects matching the condition
-    ((UNIQUE_COUNT))// returns the number of distinct property values of objects matching the condition. eg. if 3 objects have the property value "small", and two have "big", then this value is 2, as there are 2 unique property values.
-    ((HISTO_MAX))   // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo max is 3.
-    ((HISTO_MIN))   // returns the maximum number of times a unique property value appears in the property values. eg. if 5 objects have values 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the histo min is 1.
-    ((HISTO_SPREAD))// returns the (positive) difference between the maximum and minimum numbers of distinct property values. eg. if 5 objects have values, 1, 2, 3, 2, 2, then there are 3x2, 1x1, and 1x3, and the Histo Spread is 3-1 = 2.
-
-    ((SUM))         // returns the sum of the property values of all objects matching the condition
-    ((MEAN))        // returns the mean of the property values of all objects matching the condition
-    ((RMS))         // returns the sqrt of the mean of the squares of the property values of all objects matching the condition
-    ((MODE))        // returns the most common property value of objects matching the condition.  supported for non-numeric types such as enums.
-    ((MAX))         // returns the maximum value of the property amongst objects matching the condition
-    ((MIN))         // returns the minimum value of the property amongst objects matching the condition
-    ((SPREAD))      // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
-    ((STDEV))       // returns the standard deviation of the property values of all objects matching the condition
-    ((PRODUCT))     // returns the product of the property values of all objects matching the condition
-)
 
 template<typename T>
 [[nodiscard]] constexpr std::unique_ptr<std::remove_const_t<T>> CloneUnique(const T* ptr)
