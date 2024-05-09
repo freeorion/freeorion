@@ -93,7 +93,7 @@ namespace parse {
             ;
 
         variable_scope_rule = detail::variable_scope(tok);
-        container_type_rule = detail::container_type(tok);
+        container_type_rule = detail::container(tok);
         detail::initialize_bound_variable_parser<std::string>(
             bound_variable, unwrapped_bound_variable, value_wrapped_bound_variable,
             bound_variable_name, variable_scope_rule, container_type_rule,
@@ -197,7 +197,7 @@ namespace parse {
     detail::value_ref_rule<std::string> expr;
     detail::value_ref_rule<std::string> primary_expr;
     detail::reference_token_rule variable_scope_rule;
-    detail::name_token_rule container_type_rule;
+    detail::container_token_rule container_type_rule;
 
 
     bool string_free_variable(std::string& text) {
