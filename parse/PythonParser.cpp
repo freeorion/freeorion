@@ -28,6 +28,7 @@
 #include <boost/python/stl_iterator.hpp>
 #include <boost/operators.hpp>
 #include <memory>
+#include <string>
 
 namespace py = boost::python;
 
@@ -184,118 +185,118 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<FocusType>("__FocusType", py::no_init);
         auto py_variable_wrapper = py::class_<variable_wrapper>("__Variable", py::no_init);
 
-        for (const char* property : {"Owner",
-                                     "OwnerBeforeLastConquered",
-                                     "SupplyingEmpire",
-                                     "ID",
-                                     "CreationTurn",
-                                     "Age",
-                                     "ProducedByEmpireID",
-                                     "ArrivedOnTurn",
-                                     "DesignID",
-                                     "FleetID",
-                                     "PlanetID",
-                                     "SystemID",
-                                     "ContainerID",
-                                     "FinalDestinationID",
-                                     "NextSystemID",
-                                     "NearestSystemID",
-                                     "PreviousSystemID",
-                                     "PreviousToFinalDestinationID",
-                                     "NumShips",
-                                     "NumStarlanes",
-                                     "LastTurnActiveInBattle",
-                                     "LastTurnAnnexed",
-                                     "LastTurnAttackedByShip",
-                                     "LastTurnBattleHere",
-                                     "LastTurnColonized",
-                                     "LastTurnConquered",
-                                     "LastTurnMoveOrdered",
-                                     "LastTurnResupplied",
-                                     "Orbit",
-                                     "TurnsSinceAnnexation",
-                                     "TurnsSinceColonization",
-                                     "TurnsSinceFocusChange",
-                                     "TurnsSinceLastConquered",
-                                     "ETA",
-                                     "LaunchedFrom",
-                                     "OrderedColonizePlanetID",
-                                     "OwnerBeforeLastConquered",
-                                     "LastInvadedByEmpire",
-                                     "LastColonizedByEmpire"})
+        for (std::string_view property : {"Owner",
+                                          "OwnerBeforeLastConquered",
+                                          "SupplyingEmpire",
+                                          "ID",
+                                          "CreationTurn",
+                                          "Age",
+                                          "ProducedByEmpireID",
+                                          "ArrivedOnTurn",
+                                          "DesignID",
+                                          "FleetID",
+                                          "PlanetID",
+                                          "SystemID",
+                                          "ContainerID",
+                                          "FinalDestinationID",
+                                          "NextSystemID",
+                                          "NearestSystemID",
+                                          "PreviousSystemID",
+                                          "PreviousToFinalDestinationID",
+                                          "NumShips",
+                                          "NumStarlanes",
+                                          "LastTurnActiveInBattle",
+                                          "LastTurnAnnexed",
+                                          "LastTurnAttackedByShip",
+                                          "LastTurnBattleHere",
+                                          "LastTurnColonized",
+                                          "LastTurnConquered",
+                                          "LastTurnMoveOrdered",
+                                          "LastTurnResupplied",
+                                          "Orbit",
+                                          "TurnsSinceAnnexation",
+                                          "TurnsSinceColonization",
+                                          "TurnsSinceFocusChange",
+                                          "TurnsSinceLastConquered",
+                                          "ETA",
+                                          "LaunchedFrom",
+                                          "OrderedColonizePlanetID",
+                                          "OwnerBeforeLastConquered",
+                                          "LastInvadedByEmpire",
+                                          "LastColonizedByEmpire"})
         {
-            py_variable_wrapper.add_property(property, py::make_function(
-                [property] (const variable_wrapper& w) { return w.get_int_property(property); },
+            py_variable_wrapper.add_property(property.data(), py::make_function(
+                [property] (const variable_wrapper& w) { return w.get_int_property(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<int>, const variable_wrapper&>()));
         }
 
-        for (const char* property : {"Industry",
-                                     "TargetIndustry",
-                                     "Research",
-                                     "TargetResearch",
-                                     "Influence",
-                                     "TargetInfluence",
-                                     "Construction",
-                                     "TargetConstruction",
-                                     "Population",
-                                     "TargetPopulation",
-                                     "TargetHappiness",
-                                     "Happiness",
-                                     "MaxFuel",
-                                     "Fuel",
-                                     "MaxShield",
-                                     "Shield",
-                                     "MaxDefense",
-                                     "Defense",
-                                     "MaxTroops",
-                                     "Troops",
-                                     "RebelTroops",
-                                     "MaxStructure",
-                                     "Structure",
-                                     "MaxSupply",
-                                     "Supply",
-                                     "MaxStockpile",
-                                     "Stockpile",
-                                     "Stealth",
-                                     "Detection",
-                                     "Speed",
-                                     "X",
-                                     "Y",
-                                     "SizeAsDouble",
-                                     "HabitableSize",
-                                     "Size",
-                                     "DistanceFromOriginalType",
-                                     "DestroyFightersPerBattleMax",
-                                     "DamageStructurePerBattleMax",
-                                     "PropagatedSupplyRange"})
+        for (std::string_view property : {"Industry",
+                                          "TargetIndustry",
+                                          "Research",
+                                          "TargetResearch",
+                                          "Influence",
+                                          "TargetInfluence",
+                                          "Construction",
+                                          "TargetConstruction",
+                                          "Population",
+                                          "TargetPopulation",
+                                          "TargetHappiness",
+                                          "Happiness",
+                                          "MaxFuel",
+                                          "Fuel",
+                                          "MaxShield",
+                                          "Shield",
+                                          "MaxDefense",
+                                          "Defense",
+                                          "MaxTroops",
+                                          "Troops",
+                                          "RebelTroops",
+                                          "MaxStructure",
+                                          "Structure",
+                                          "MaxSupply",
+                                          "Supply",
+                                          "MaxStockpile",
+                                          "Stockpile",
+                                          "Stealth",
+                                          "Detection",
+                                          "Speed",
+                                          "X",
+                                          "Y",
+                                          "SizeAsDouble",
+                                          "HabitableSize",
+                                          "Size",
+                                          "DistanceFromOriginalType",
+                                          "DestroyFightersPerBattleMax",
+                                          "DamageStructurePerBattleMax",
+                                          "PropagatedSupplyRange"})
         {
-            py_variable_wrapper.add_property(property, py::make_function(
-                [property] (const variable_wrapper& w) { return w.get_double_property(property); },
+            py_variable_wrapper.add_property(property.data(), py::make_function(
+                [property](const variable_wrapper& w) { return w.get_double_property(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<double>, const variable_wrapper&>()));
         }
 
-        for (const char* property : {"Name",
-                                     "Species",
-                                     "BuildingType",
-                                     "FieldType",
-                                     "Focus",
-                                     "DefaultFocus",
-                                     "Hull"})
+        for (std::string_view property : {"Name",
+                                          "Species",
+                                          "BuildingType",
+                                          "FieldType",
+                                          "Focus",
+                                          "DefaultFocus",
+                                          "Hull"})
         {
-            py_variable_wrapper.add_property(property, py::make_function(
-                [property] (const variable_wrapper& w) { return w.get_string_property(property); },
+            py_variable_wrapper.add_property(property.data(), py::make_function(
+                [property](const variable_wrapper& w) { return w.get_string_property(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<std::string>, const variable_wrapper&>()));
         }
 
-        for (const char* property : {"Planet",
-                                     "System",
-                                     "Fleet"})
+        for (std::string_view container : {"Planet",
+                                           "System",
+                                           "Fleet"})
         {
-             py_variable_wrapper.add_property(property, py::make_function(
-                [property] (const variable_wrapper& w) { return w.get_variable_property(property); },
+             py_variable_wrapper.add_property(container.data(), py::make_function(
+                [container](const variable_wrapper& w) { return w.get_variable_property(container); },
                 py::default_call_policies(),
                 boost::mpl::vector<variable_wrapper, const variable_wrapper&>()));
         }
@@ -316,11 +317,10 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
-            if (m_python.Initialize()) {
+            if (m_python.Initialize())
                 ErrorLogger() << "Python interpreter successfully restarted.";
-            } else {
+            else
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-            }
         }
         throw std::runtime_error("Python parser failed to initialize");
     }

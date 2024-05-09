@@ -152,7 +152,8 @@ namespace {
     auto StringCastedImmediateValueRef(std::string token) {
         return std::make_unique<ValueRef::StringCast<double>>(
             std::make_unique<ValueRef::Variable<double>>(
-                ValueRef::ReferenceType::SOURCE_REFERENCE, std::move(token), true));
+                ValueRef::ReferenceType::SOURCE_REFERENCE, std::move(token),
+                ValueRef::ContainerType::NONE, ValueRef::ValueToReturn::Immediate));
     }
 
     template <typename T>
