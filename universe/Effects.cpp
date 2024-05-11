@@ -262,9 +262,7 @@ bool EffectsGroup::operator==(const EffectsGroup& rhs) const {
 
             if (my_op == rhs_op)
                 continue;
-            if (!my_op || !rhs_op)
-                return false;
-            if (*my_op != *rhs_op)
+            if (!my_op || !rhs_op || *my_op != *rhs_op)
                 return false;
         }
     } catch (...) {
