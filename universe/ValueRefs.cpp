@@ -127,8 +127,9 @@ namespace {
                 return retval;
             };
 
+
             static constexpr auto name_or_0 = [](const UniverseObject* obj) noexcept -> std::string_view
-            { return obj ? obj->Name() : "0"; };
+            { return obj ? std::string_view{obj->Name()} : std::string_view{"0"}; };
 
             ErrorLogger() << "FollowReference : top level object (" << to_string(ref_type)
                           << ") not defined in scripting context.  strings: " << ref_strings(first, last)
