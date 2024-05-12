@@ -119,8 +119,6 @@ namespace {
         const UniverseObject* obj = GetRefObject(ref_type, context);
 
         if (!obj) {
-            std::string_view type_string{to_string(ref_type)};
-
             static constexpr auto ref_strings = [](auto it, const auto last) {
                 std::string retval;
                 retval.reserve(100); // guesstimate
