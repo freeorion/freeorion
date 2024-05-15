@@ -38,13 +38,13 @@ def default_ship_stats() -> ShipCombatStats:
     return ShipCombatStats(
         attacks={AttackDamage(6.0): AttackCount(1)},
         structure=15,
-        shields=0,
+        shields=0.0,
         fighter_capacity=0,
         fighter_launch_rate=0,
         fighter_damage=0,
         flak_shots=0,
         has_interceptors=False,
-        damage_vs_planets=0,
+        damage_vs_planets=6,
         has_bomber=False,
     )
 
