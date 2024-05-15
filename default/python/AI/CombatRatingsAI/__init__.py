@@ -10,4 +10,4 @@ from CombatRatingsAI._ratings import (
     species_shield_bonus,
 )
 from CombatRatingsAI._ship_combat_stats import ShipCombatStats, get_ship_combat_stats
-from CombatRatingsAI._targets import get_allowed_targets
+from CombatRatingsAI._targets import get_allowed_targets, get_multi_target_split_damage_factor

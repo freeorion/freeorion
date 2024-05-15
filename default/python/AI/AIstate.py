@@ -424,6 +424,14 @@ class AIstate:
 
         e_f_dict = cur_e_fighters or old_e_fighters
         self.__empire_standard_enemy = max(e_f_dict, key=e_f_dict.get)
+        # tweak standard enemy, simulate an extra weak striker hangar
+        if self.__empire_standard_enemy._fighter_capacity < 1:
+            self.__empire_standard_enemy._fighter_capacity = 3
+        if self.__empire_standard_enemy._fighter_launch_rate < 1:
+            self.__empire_standard_enemy._fighter_launch_rate = 2
+        # XXX actually consider upgradability to next level
+        if self.__empire_standard_enemy._fighter_damage < 1:
+            self.__empire_standard_enemy._fighter_damage = 2
         self.empire_standard_enemy_rating = self.get_standard_enemy().get_rating()
 
     def __update_system_status(self):  # noqa: C901
@@ -942,7 +950,7 @@ class AIstate:
         debug(
             dict_to_table(
                 CombatRatingsAI.get_empire_standard_military_ship_stats().__getstate__(),
-                name="Empire standard fighter summary",
+                name="Empire standard military ship summary",
             )
         )
 

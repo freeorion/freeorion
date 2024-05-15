@@ -54,7 +54,7 @@ import AIDependencies
 import FleetUtilsAI
 from AIDependencies import INVALID_ID, Tags
 from aistate_interface import get_aistate
-from CombatRatingsAI import get_allowed_targets, species_shield_bonus
+from CombatRatingsAI import get_allowed_targets, get_multi_target_split_damage_factor, species_shield_bonus
 from freeorion_tools import (
     get_ship_part,
     get_species_attack_troops,
@@ -313,11 +313,22 @@ class ShipDesigner:
                 shots = self._calculate_weapon_shots(part)
                 allowed_targets = get_allowed_targets(part.name)
                 if allowed_targets & AIDependencies.CombatTarget.SHIP:
-                    self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
+                    split_ship_damage_factor = get_multi_target_split_damage_factor(
+                        allowed_targets, AIDependencies.CombatTarget.SHIP
+                    )
+                    self.design_stats.attacks[capacity] = (
+                        self.design_stats.attacks.get(capacity, 0) + split_ship_damage_factor * shots
+                    )
                 if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
-                    self.design_stats.flak_shots += shots
+                    split_destruction_factor = get_multi_target_split_damage_factor(
+                        allowed_targets, AIDependencies.CombatTarget.FIGHTER
+                    )
+                    self.design_stats.flak_shots += split_destruction_factor * shots
                 if allowed_targets & AIDependencies.CombatTarget.PLANET:
-                    self.design_stats.damage_vs_planets += capacity * shots
+                    split_planet_damage_factor = get_multi_target_split_damage_factor(
+                        allowed_targets, AIDependencies.CombatTarget.PLANET
+                    )
+                    self.design_stats.damage_vs_planets += split_planet_damage_factor * capacity * shots
                 # XXX reset damage for multiple flux lances - handling part exclusions would be better
                 if part.name == AIDependencies.SR_FLUX_LANCE:
                     lance_counter += 1
@@ -357,6 +368,7 @@ class ShipDesigner:
                     if allowed_targets & AIDependencies.CombatTarget.FIGHTER:
                         self.design_stats.has_interceptors = True
                     if allowed_targets & AIDependencies.CombatTarget.PLANET:
+                        self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
                         self.design_stats.has_bomber = True
 
         if len(bay_parts) > 0:
@@ -893,6 +905,13 @@ class ShipDesigner:
         """
         rating, parts = self._combinatorial_filling(available_parts)
         return rating, parts
+
+    def _total_shots_vs_fighters(self):
+        """Return the total number of shots against fighters
+
+        :return: summed up shot count vs fighter crafts
+        """
+        return self.design_stats.flak_shots
 
     def _total_dmg_vs_shields(self):
         """Sum up and return the damage of weapon parts vs a shielded enemy as defined in additional_specifications.
