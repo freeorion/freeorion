@@ -391,9 +391,10 @@ WEAPON_UPGRADE_DICT = {
     }.items()
 }
 
+# ROF == rate of fire == weapon shots
 WEAPON_ROF_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, rof_upgrade), (tech_name2, rof_upgrade2), ...)
-    "SR_WEAPON_0_1": (),
+    "SR_WEAPON_0_1": (("SHP_WEAPON_1_3", 1), ("SHP_WEAPON_2_3", 1), ("SHP_WEAPON_3_3", 1), ("SHP_WEAPON_4_3", 1)),
     "SR_WEAPON_1_1": (),
     "SR_WEAPON_2_1": (),
     "SR_WEAPON_3_1": (),
