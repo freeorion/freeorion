@@ -184,6 +184,18 @@ namespace {
     auto SourceOwner()
     { return std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Owner"); }
 
+    auto NoRebelTroops() {
+        return std::make_unique<Condition::MeterValue>(MeterType::METER_REBEL_TROOPS,
+                                                       nullptr,
+                                                       std::make_unique<ValueRef::Constant<double>>(0.0));
+    }
+
+    auto HasPopulation() {
+        return std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
+                                                       std::make_unique<ValueRef::Constant<double>>(0.001),
+                                                       nullptr);
+    }
+
     auto NotConqueredRecently(ValueRef::ReferenceType ref_type = ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE) {
         return std::make_unique<Condition::ValueTest>(
             std::make_unique<ValueRef::Variable<int>>(ref_type, "TurnsSinceLastConquered"),
@@ -206,6 +218,19 @@ namespace {
         );
     }
 
+    auto ResourceSupplyConnectedToAcceptableAnnexerPlanet() {
+        return std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
+            SourceOwner(),
+            std::make_unique<Condition::And>(
+                std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
+                std::make_unique<Condition::EmpireAffiliation>(SourceOwner()),
+                NotConqueredRecently(),
+                NotAnnexedRecently(),
+                NotColonizedRecently()
+            )
+        );
+    }
+
     auto DefaultAnnexationCondition() {
         return std::make_unique<Condition::And>(
             std::make_unique<Condition::Or>(
@@ -216,19 +241,10 @@ namespace {
             NotAnnexedRecently(),
             NotColonizedRecently(),
             std::make_unique<Condition::VisibleToEmpire>(SourceOwner()),
-            std::make_unique<Condition::MeterValue>(MeterType::METER_POPULATION,
-                                                    std::make_unique<ValueRef::Constant<double>>(0.001),
-                                                    nullptr),
-            std::make_unique<Condition::ResourceSupplyConnectedByEmpire>(
-                SourceOwner(),
-                std::make_unique<Condition::And>(
-                    std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET),
-                    std::make_unique<Condition::EmpireAffiliation>(SourceOwner()),
-                    NotConqueredRecently(),
-                    NotAnnexedRecently(),
-                    NotColonizedRecently()
-                )
-            ));
+            HasPopulation(),
+            NoRebelTroops(),
+            ResourceSupplyConnectedToAcceptableAnnexerPlanet()
+            );
     }
 
     auto LocalCandidateOwner()
