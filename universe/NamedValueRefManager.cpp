@@ -154,13 +154,14 @@ namespace {
                               std::string&& valueref_name, std::unique_ptr<VR>&& vref)
     {
         TraceLogger() << "Register " << label << " valueref for " << valueref_name << ": " << vref->Description();
+        std::scoped_lock lock(mutex);
         if (container.contains(valueref_name)) {
             TraceLogger() << "Skip registration for already registered " << label << " valueref for " << valueref_name;
             TraceLogger() << "Number of registered " << label << " ValueRefs: " << container.size();
             return;
         }
         TraceLogger() << "RegisterValueRefImpl Check invariances for info. Then add the value ref in a thread safe way.";
-        std::scoped_lock lock(mutex);
+
         if (!(vref->RootCandidateInvariant() && vref->LocalCandidateInvariant() &&
              vref->TargetInvariant() && vref->SourceInvariant()))
         { ErrorLogger() << "Currently only invariant value refs can be named. " << valueref_name; }
