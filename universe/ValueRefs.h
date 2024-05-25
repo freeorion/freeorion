@@ -185,8 +185,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE,
                     ref_type != ReferenceType::SOURCE_REFERENCE,
                     static_cast<bool>(retval_type),
-                    ref_type),
-        m_container_type(container_type),
+                    ref_type,
+                    container_type),
         m_property_name(std::move(property_name))
     {}
 
@@ -205,7 +205,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
             return true;
         if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
-        return m_container_type == rhs.m_container_type && m_property_name == rhs.m_property_name;
+        return this->m_container_type == rhs.m_container_type && m_property_name == rhs.m_property_name;
     }
 
 
@@ -213,13 +213,13 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] CONSTEXPR_STRING auto& PropertyName() const noexcept { return m_property_name; }
-    [[nodiscard]] constexpr auto GetContainerType() const noexcept { return m_container_type; }
-    [[nodiscard]] constexpr bool ReturnImmediateValue() const noexcept override { return this->m_return_immediate_value; }
+    [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
+    [[nodiscard]] constexpr bool ReturnImmediateValue() const noexcept { return this->m_return_immediate_value; }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
-        return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, m_container_type,
+        return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, this->m_container_type,
                                              this->m_return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial);
     }
 
@@ -228,7 +228,6 @@ protected:
         ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type)
     {}
 
-    const ContainerType m_container_type = ContainerType::NONE;
     const std::string m_property_name{};
 };
 
@@ -623,11 +622,14 @@ FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
 ///////////////////////////////////////////////////////////
 template <typename T>
 std::string Variable<T>::Description() const
-{ return FormatedDescriptionPropertyNames(this->m_ref_type, m_property_name, m_container_type, this->m_return_immediate_value); }
+{
+    return FormatedDescriptionPropertyNames(this->m_ref_type, m_property_name,
+                                            this->m_container_type, this->m_return_immediate_value);
+}
 
 template <typename T>
 std::string Variable<T>::Dump(uint8_t ntabs) const
-{ return ReconstructName(m_property_name, m_container_type, this->m_ref_type, this->m_return_immediate_value); }
+{ return ReconstructName(m_property_name, this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
 
 template <typename T>
 uint32_t Variable<T>::GetCheckSum() const
@@ -637,6 +639,7 @@ uint32_t Variable<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
     CheckSums::CheckSumCombine(retval, this->m_ref_type);
+    CheckSums::CheckSumCombine(retval, this->m_container_type);
     CheckSums::CheckSumCombine(retval, this->m_return_immediate_value);
     TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
