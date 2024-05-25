@@ -89,7 +89,6 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] constexpr virtual bool SourceInvariant() const         { return m_source_invariant; }
     [[nodiscard]] constexpr virtual bool SimpleIncrement() const         { return m_simple_increment; }
     [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
-    [[nodiscard]] constexpr virtual bool ReturnImmediateValue() const    { return m_return_immediate_value; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
@@ -114,8 +113,9 @@ protected:
         m_ref_type(ref_type)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                           ReferenceType ref_type) noexcept :
+                           ReferenceType ref_type, ContainerType container) noexcept :
         m_ref_type(ref_type),
+        m_container_type(container),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
@@ -123,8 +123,9 @@ protected:
         m_constant_expr(constant_expr)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                           bool return_immediate_value, ReferenceType ref_type) noexcept :
+                           bool return_immediate_value, ReferenceType ref_type, ContainerType container) noexcept :
         m_ref_type(ref_type),
+        m_container_type(container),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
@@ -153,6 +154,7 @@ protected:
     {}
 
     const ReferenceType m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
+    const ContainerType m_container_type = ContainerType::NONE;
     const OpType m_op_type = OpType::INVALID_OP_TYPE;
     const StatisticType m_stat_type = StatisticType::INVALID_STATISTIC_TYPE;
 
@@ -239,11 +241,12 @@ protected:
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE) noexcept :
-        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, ref_type)
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, ref_type, ContainerType::NONE)
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                       bool return_immediate_value, ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE) noexcept :
-        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type)
+                       bool return_immediate_value, ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE,
+                       ContainerType container = ContainerType::NONE) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type, container)
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        bool simple_increment, OpType op_type) noexcept :
