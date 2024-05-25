@@ -316,8 +316,8 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(false, effect_group.HasAppearanceEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasSitrepEffects());
         BOOST_REQUIRE_EQUAL(1, effect_group.Effects().size());
-        BOOST_REQUIRE_EQUAL(13882, effect_group.Effects()[0]->GetCheckSum());
-        BOOST_REQUIRE_EQUAL(36575, effect_group.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(13902, effect_group.Effects()[0]->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(36595, effect_group.GetCheckSum());
 
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
@@ -333,7 +333,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6764385, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6767729, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -614,10 +614,10 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22500, location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(22510, location_cond->GetCheckSum());
     BOOST_CHECK_EQUAL(3267, location_conds[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(9108, location_conds[1]->GetCheckSum());
-    BOOST_CHECK_EQUAL(5098, location_conds[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5108, location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, location_conds[3]->GetCheckSum());
 
     const Condition::And* test_location_cond = dynamic_cast<const Condition::And*>(test_building.Location());
@@ -628,10 +628,10 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(test_location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(test_location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(test_location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22500, test_location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(22510, test_location_cond->GetCheckSum());
     BOOST_CHECK_EQUAL(3267, test_location_conds[0]->GetCheckSum());
     BOOST_CHECK_EQUAL(9108, test_location_conds[1]->GetCheckSum());
-    BOOST_CHECK_EQUAL(5098, test_location_conds[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(5108, test_location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, test_location_conds[3]->GetCheckSum());
 
 #if defined(FREEORION_MACOSX)
