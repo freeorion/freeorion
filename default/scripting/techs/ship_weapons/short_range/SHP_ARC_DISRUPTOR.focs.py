@@ -2,7 +2,7 @@ from focs._tech import *
 from macros.base_prod import TECH_COST_MULTIPLIER
 from techs.ship_weapons.ship_weapons import (
     WEAPON_BASE_EFFECTS,
-    WEAPON_UPGRADE_CAPACITY_EFFECTS,
+    WEAPON_UPGRADE_CAPACITY_EFFECTS as w_upgrade_c_e,
 )
 
 AD_2_upgrade = 2
@@ -19,8 +19,11 @@ Tech(
     researchturns=4,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_ROOT_AGGRESSION"],
-    unlock=Item(type=UnlockShipPart, name="SR_ARC_DISRUPTOR"),
-    effectsgroups=WEAPON_BASE_EFFECTS("SR_ARC_DISRUPTOR"),
+    unlock=[Item(type=UnlockShipPart, name="SR_ARC_DISRUPTOR"), Item(type=UnlockShipPart, name="SR_ARC_SYPHON")],
+    effectsgroups=[
+        WEAPON_BASE_EFFECTS("SR_ARC_DISRUPTOR"),
+        WEAPON_BASE_EFFECTS("SR_ARC_SYPHON"),
+    ],
     graphic="icons/ship_parts/pulse-laser-1.png",
 )
 
@@ -33,7 +36,10 @@ Tech(
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_1"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", AD_2_upgrade),
+    effectsgroups=[
+        w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", AD_2_upgrade),
+        w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_SYPHON", 2*AD_2_upgrade),
+    ],
     graphic="icons/ship_parts/pulse-laser-2.png",
 )
 
@@ -47,8 +53,9 @@ Tech(
     researchturns=12,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS(
-        "SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade
-    ),
+    effectsgroups=[
+        w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade),
+        w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_SYPHON", 2*AD_3_upgrade, upgraded_damage_override=2*AD_2_plus_3_upgrade),
+    ],
     graphic="icons/ship_parts/pulse-laser-3.png",
 )
