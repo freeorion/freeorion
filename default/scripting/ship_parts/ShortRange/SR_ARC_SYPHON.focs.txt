@@ -39,18 +39,19 @@ Part
                 [[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
             ]
             stackinggroup = "SR_ARC_SYPHON_CHARGE_STACK"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
                AddSpecial name = "SR_ARC_SYPHON_CHARGE_SPECIAL"
                SetSpecialCapacity
                 name = "SR_ARC_SYPHON_CHARGE_SPECIAL"
-                capacity = Statistic Sum value = ((ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID))
+                capacity = Statistic Sum value = (Value(ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID))
                            condition = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
                GenerateSitRepMessage
                     message = "SITREP_SR_ARC_SYPHON_DEBUG"
                     label = "SITREP_SR_ARC_SYPHON_DEBUG_LABEL"
                     icon = "icons/ship_parts/pulse-laser.png"
                     parameters = [
-                        tag = "syphoned" data = Statistic Sum value = ((ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID)) condition = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
+                        tag = "syphoned" data = Statistic Sum value = (Value(ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID)) condition = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
                         tag = "specialcapacity" data = 0
                         tag = "shipdesign" data = Source.DesignID
                         tag = "ship" data = Source.ID
@@ -69,6 +70,7 @@ Part
                 Source
                 [[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
             ]
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
                 SetMaxSecondaryStat partname = "SR_ARC_SYPHON" value = ((SpecialCapacity name = "SR_ARC_SYPHON_CHARGE_SPECIAL" object = Source.ID) /
                     (Statistic Count condition = [[ALL_ARC_SYPHON_SHIPS_IN_SOURCE_FLEET]] ))
@@ -104,6 +106,7 @@ Part
                 ]
             ]
             stackinggroup = "SR_ARC_SYPHON_NULLIFY_DISRUPTOR_STACK"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
                 SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
                 SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
@@ -112,8 +115,8 @@ Part
                     label = "SITREP_SR_ARC_SYPHON_NULLIFY_LABEL"
                     icon = "icons/ship_parts/pulse-laser.png"
                     parameters = [
-                        tag = "shipdesign" data = Source.DesignID
-                        tag = "ship" data = Source.ID
+                        tag = "shipdesign" data = Target.DesignID
+                        tag = "ship" data = Target.ID
                         tag = "fleet" data = Source.FleetID
                     ]
                     empire = Source.Owner
@@ -157,3 +160,4 @@ ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET
 
 #include "/scripting/macros/upkeep.macros"
 #include "/scripting/ship_parts/targeting.macros"
+#include "/scripting/macros/priorities.macros"
