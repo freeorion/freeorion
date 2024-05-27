@@ -19,23 +19,25 @@ Part
             scope = Source
             activation = And [
                 Source
-                Object id = Statistic Min value = LocalCandidate.ID condition = And [
-                    Ship
-                    ContainedBy condition = Object id = Source.FleetID
-                    DesignHasPart low = 1 high = 999 name = "SR_ARC_SYPHON"
-                ]
+                [[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
             ]
             stackinggroup = "SR_ARC_SYPHON_CHARGE_STACK"
             effects = SetSpecialCapacity
                 name = "SR_ARC_SYPHON_CHARGE"
                 capacity = Statistic Sum value = ((ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID))
-                           condition = And [
-                               Ship
-                               ContainedBy condition = Object id = Source.FleetID
-                               DesignHasPart low = 1 high = 999 name = "SR_ARC_DISRUPTOR"
-                ]
+                           condition = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]]                ]
 
-        // TODO distribute to syphons, at a later priority
+        // TODO distribute to syphons in this fleet, at a later priority
+        // TODO test
+        // TODO need to handle fractions better
+        EffectsGroup
+            scope = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]]
+            activation = And [
+                Source
+		[[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
+            ]
+            effects = SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = ((SpecialCapacity name = "SR_ARC_SYPHON_CHARGE" object = Source.ID) /
+            (Statistic Count condition = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]] ))
 
         // TODO timing; e.g. with the policies
         // then nullify all capacity of arc disruptors
@@ -56,6 +58,24 @@ Part
             effects = SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
     ]
     icon = "icons/ship_parts/pulse-laser.png"
+
+THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET
+'''
+                Object id = Statistic Min value = LocalCandidate.ID condition = And [
+                    Ship
+                    ContainedBy condition = Object id = Source.FleetID
+                    DesignHasPart low = 1 high = 999 name = "SR_ARC_SYPHON"
+                ]
+'''
+
+ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
+'''
+            And [
+                Ship
+                ContainedBy condition = Object id = Source.FleetID
+                DesignHasPart low = 1 high = 999 name = "SR_ARC_SYPHON"
+            ]
+'''
 
 #include "shortrange.macros"
 
