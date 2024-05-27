@@ -3861,7 +3861,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             return LHS()->Eval(context) - RHS()->Eval(context);     break;
 
         case OpType::TIMES: {
-            double op1 = LHS()->Eval(context);
+            int op1 = LHS()->Eval(context);
             if (op1 == 0)
                 return 0;
             return op1 * RHS()->Eval(context);
@@ -3894,7 +3894,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             if (op2 == 0)
                 return 1;
             try {
-                double op1 = LHS()->Eval(context);
+                double op1 = static_cast<double>(LHS()->Eval(context));
                 return static_cast<int>(std::pow(op1, op2));
             } catch (...) {
                 ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
@@ -3905,7 +3905,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
 
         case OpType::NOOP: {
             DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl";
-            auto retval = LHS()->Eval(context);
+            int retval = LHS()->Eval(context);
             DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl. Sub-Expression returned: " << retval
                           << " from: " << LHS()->Dump();
             return retval;
@@ -3913,26 +3913,26 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
         }
 
         case OpType::ABS: {
-            return static_cast<int>(std::abs(LHS()->Eval(context)));
+            return std::abs(LHS()->Eval(context));
             break;
         }
 
         case OpType::LOGARITHM: {
-            double op1 = LHS()->Eval(context);
+            double op1 = static_cast<double>(LHS()->Eval(context));
             if (op1 <= 0.0)
                 return 0;
-            return static_cast<int>(std::log(op1));
+            return static_cast<int>(std::round(std::log(op1)));
             break;
         }
 
         case OpType::SINE: {
-            double op1 = LHS()->Eval(context);
+            double op1 = static_cast<double>(LHS()->Eval(context));
             return static_cast<int>(std::round(std::sin(op1)));
             break;
         }
 
         case OpType::COSINE: {
-            double op1 = LHS()->Eval(context);
+            double op1 = static_cast<double>(LHS()->Eval(context));
             return static_cast<int>(std::round(std::cos(op1)));
             break;
         }
@@ -3946,7 +3946,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
                     vals.push_back(vr->Eval(context));
             }
             if (vals.empty())
-                return 0.0;
+                return 0;
             auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
             return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
             break;
@@ -3965,7 +3965,7 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
             // select one operand, evaluate it, return result
             if (m_operands.empty())
                 return 0;
-            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
+            std::ptrdiff_t idx = static_cast<std::ptrdiff_t>(RandInt(0, m_operands.size() - 1));
             auto& vr = *std::next(m_operands.begin(), idx);
             return vr ? vr->Eval(context) : 0;
             break;
@@ -3977,8 +3977,8 @@ int Operation<int>::EvalImpl(const ScriptingContext& context) const
         case OpType::COMPARE_LESS_THAN:
         case OpType::COMPARE_LESS_THAN_OR_EQUAL:
         case OpType::COMPARE_NOT_EQUAL: {
-            const int&& lhs_val = LHS()->Eval(context);
-            const int&& rhs_val = RHS()->Eval(context);
+            const int lhs_val = LHS()->Eval(context);
+            const int rhs_val = RHS()->Eval(context);
             if (m_operands.size() == 2)
                 return EvalImpl(m_op_type, lhs_val, rhs_val);
 
