@@ -39,7 +39,7 @@ Tech(
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_1"],
     effectsgroups=[
         *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", AD_2_upgrade),
-        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_SYPHON", 2*AD_2_upgrade),
+        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_SYPHON", 2*AD_2_upgrade, stringtable_prefix = "SHP_WEAPON_ARC_DISRUPTOR_2_SYPHON"),
     ],
     graphic="icons/ship_parts/pulse-laser-2.png",
 )
@@ -56,7 +56,7 @@ Tech(
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
     effectsgroups=[
         *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade),
-        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_SYPHON", 2*AD_3_upgrade, upgraded_damage_override=2*AD_2_plus_3_upgrade),
+        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_SYPHON", 2*AD_3_upgrade, upgraded_damage_override=2*AD_2_plus_3_upgrade, stringtable_prefix = "SHP_WEAPON_ARC_DISRUPTOR_3_SYPHON"),
     ],
     graphic="icons/ship_parts/pulse-laser-3.png",
 )
