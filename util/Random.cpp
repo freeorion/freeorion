@@ -35,7 +35,7 @@ namespace StaticTests {
 
     consteval auto GetTestDoubles() {
         std::array<double, 32> doubles{};
-        for (int i = 0; std::cmp_less(i, doubles.size()); ++i)
+        for (int16_t i = 0; i < static_cast<int16_t>(doubles.size()); ++i)
             doubles[static_cast<std::size_t>(i)] = RandDoubleCx(10.0, 1000.0, i);
         return doubles;
     }
