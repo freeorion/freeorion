@@ -25,7 +25,7 @@ Part
             effects = SetSpecialCapacity
                 name = "SR_ARC_SYPHON_CHARGE"
                 capacity = Statistic Sum value = ((ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID))
-                           condition = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]]                ]
+                           condition = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]]
 
         // TODO distribute to syphons in this fleet, at a later priority
         // TODO test
@@ -34,7 +34,7 @@ Part
             scope = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]]
             activation = And [
                 Source
-		[[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
+                [[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
             ]
             effects = SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = ((SpecialCapacity name = "SR_ARC_SYPHON_CHARGE" object = Source.ID) /
             (Statistic Count condition = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]] ))
@@ -61,6 +61,7 @@ Part
 
 THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET
 '''
+                //THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET
                 Object id = Statistic Min value = LocalCandidate.ID condition = And [
                     Ship
                     ContainedBy condition = Object id = Source.FleetID
@@ -71,9 +72,11 @@ THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET
 ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
 '''
             And [
+                // ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
                 Ship
                 ContainedBy condition = Object id = Source.FleetID
                 DesignHasPart low = 1 high = 999 name = "SR_ARC_SYPHON"
+                // end ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
             ]
 '''
 
