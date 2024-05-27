@@ -17,6 +17,18 @@ English
 # یای مجهو
 
 
+SITREP_SR_ARC_SYPHON_DEBUG
+Bookkeep Syphoner: %shipdesign% %ship% (%rawtext:ship%)  Syphoned: %rawtext:syphoned% Fleet: %fleet%
+
+SITREP_SR_ARC_SYPHON_DEBUG_LABEL
+Debug Info Arc Syphon Step
+
+SITREP_SR_ARC_SYPHON_NULLIFY
+Arc Disruptor got syphoned on %shipdesign% %ship% Fleet: %fleet%
+
+SITREP_SR_ARC_SYPHON_NULLIFY_LABEL
+Arc Syphon nullifies Arc Disruptor
+
 ##
 ## Common phrases
 ##

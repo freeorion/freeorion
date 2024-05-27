@@ -22,10 +22,24 @@ Part
                 [[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
             ]
             stackinggroup = "SR_ARC_SYPHON_CHARGE_STACK"
-            effects = SetSpecialCapacity
+            effects = [
+               SetSpecialCapacity
                 name = "SR_ARC_SYPHON_CHARGE"
                 capacity = Statistic Sum value = ((ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID))
-                           condition = [[ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET]]
+                           condition = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
+               GenerateSitRepMessage
+                    message = "SITREP_SR_ARC_SYPHON_DEBUG"
+                    label = "SITREP_SR_ARC_SYPHON_DEBUG_LABEL"
+                    icon = "icons/ship_parts/pulse-laser.png"
+                    parameters = [
+                        tag = "syphoned" data = Statistic Sum value = ((ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = LocalCandidate.ID) * (PartsInShipDesign name = "SR_ARC_DISRUPTOR" design = LocalCandidate.DesignID)) condition = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
+                        tag = "shipdesign" data = Source.DesignID
+                        tag = "ship" data = Source.ID
+                        tag = "fleet" data = Source.FleetID
+                    ]
+                    empire = Source.Owner
+            ]
+
 
         // TODO distribute to syphons in this fleet, at a later priority
         // TODO test
@@ -42,10 +56,7 @@ Part
         // TODO timing; e.g. with the policies
         // then nullify all capacity of arc disruptors
         EffectsGroup
-            scope = And [
-                Ship
-                ContainedBy condition = Object id = Source.FleetID
-            ]
+            scope = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
             activation = And [
                 Object id = Source.FleetID
                 Fleet
@@ -55,7 +66,19 @@ Part
                 ]
             ]
             stackinggroup = "SR_ARC_SYPHON_STACK"
-            effects = SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
+            effects = [
+                SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
+                GenerateSitRepMessage
+                    message = "SITREP_SR_ARC_SYPHON_NULLIFY"
+                    label = "SITREP_SR_ARC_SYPHON_NULLIFY_LABEL"
+                    icon = "icons/ship_parts/pulse-laser.png"
+                    parameters = [
+                        tag = "shipdesign" data = Source.DesignID
+                        tag = "ship" data = Source.ID
+                        tag = "fleet" data = Source.FleetID
+                    ]
+                    empire = Source.Owner
+            ]
     ]
     icon = "icons/ship_parts/pulse-laser.png"
 
@@ -72,11 +95,22 @@ THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET
 ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
 '''
             And [
-                // ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
+                // ALL_ARC_SYPHON_SHIPS_IN_SOURCE_FLEET
                 Ship
                 ContainedBy condition = Object id = Source.FleetID
                 DesignHasPart low = 1 high = 999 name = "SR_ARC_SYPHON"
                 // end ALL_ARC_SIPHON_SHIPS_IN_SOURCE_FLEET
+            ]
+'''
+
+ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET
+'''
+            And [
+                // ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET
+                Ship
+                ContainedBy condition = Object id = Source.FleetID
+                DesignHasPart low = 1 high = 999 name = "SR_ARC_DISRUPTOR"
+                // end ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET
             ]
 '''
 
