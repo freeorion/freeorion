@@ -97,6 +97,8 @@ Part
         EffectsGroup
             scope = [[ALL_ARC_DISRUPTOR_SHIPS_IN_SOURCE_FLEET]]
             activation = And [
+                [[THE_BOOKKEEPING_ARC_SYPHON_SHIP_IN_SOURCE_FLEET]]
+                ((SpecialCapacity name = "SR_ARC_SYPHON_CHARGE_SPECIAL" object = Source.ID) > 0)
                 ContainedBy condition = And [
                     Object id = Source.FleetID
                     Contains condition = And [
