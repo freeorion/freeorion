@@ -4381,7 +4381,7 @@ uint32_t SetVisibility::GetCheckSum() const {
     uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "SetVisibility");
-    CheckSums::CheckSumCombine(retval, m_vis.get());
+    CheckSums::CheckSumCombine(retval, m_vis);
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_affiliation);
     CheckSums::CheckSumCombine(retval, m_condition);
