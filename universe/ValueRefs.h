@@ -35,16 +35,6 @@
 #  endif
 #endif
 
-namespace CheckSums {
-    template <typename T>
-    void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
-    {
-        TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
-        sum += c.GetCheckSum();
-        sum %= CHECKSUM_MODULUS;
-    }
-}
-
 class UniverseObject;
 
 namespace ValueRef {
@@ -91,7 +81,16 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     { return DumpIndent(ntabs) + Description(); }
 
     [[nodiscard]] constexpr T Value() const noexcept(noexcept(T{std::declval<const T>()})) { return m_value; };
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override {
+        uint32_t retval{0};
+
+        CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
+        CheckSums::CheckSumCombine(retval, m_value);
+        //if (!std::is_constant_evaluated())
+        //    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+        //                  << " value: " << Description() << " retval: " << retval;
+        return retval;
+    }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Constant>(m_value); }
@@ -148,13 +147,14 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     }
 
     [[nodiscard]] auto& Value() const noexcept { return m_value; };
-    [[nodiscard]] uint32_t GetCheckSum() const override {
+    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override {
         uint32_t retval{0};
 
         CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
         CheckSums::CheckSumCombine(retval, m_value);
-        TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-                      << " value: " << Description() << " retval: " << retval;
+        //if (!std::is_constant_evaluated())
+        //    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+        //                  << " value: " << Description() << " retval: " << retval;
         return retval;
     }
 
@@ -216,7 +216,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
     [[nodiscard]] constexpr bool ReturnImmediateValue() const noexcept { return this->m_return_immediate_value; }
 
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, this->m_container_type,
@@ -557,18 +557,6 @@ private:
 ///////////////////////////////////////////////////////////
 // Constant                                              //
 ///////////////////////////////////////////////////////////
-template <typename T>
-uint32_t Constant<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
-    CheckSums::CheckSumCombine(retval, m_value);
-    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-                  << " value: " << Description() << " retval: " << retval;
-    return retval;
-}
-
 template <>
 FO_COMMON_API std::string Constant<int>::Description() const;
 
@@ -632,7 +620,7 @@ std::string Variable<T>::Dump(uint8_t ntabs) const
 { return ReconstructName(m_property_name, this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
 
 template <typename T>
-uint32_t Variable<T>::GetCheckSum() const
+CONSTEXPR_STRING uint32_t Variable<T>::GetCheckSum() const
 {
     uint32_t retval{0};
 
@@ -641,7 +629,8 @@ uint32_t Variable<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, this->m_ref_type);
     CheckSums::CheckSumCombine(retval, this->m_container_type);
     CheckSums::CheckSumCombine(retval, this->m_return_immediate_value);
-    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
+    //if (!std::is_constant_evaluated())
+    //    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1940,9 +1929,6 @@ T Operation<T>::EvalImpl() const
     const ScriptingContext context;
     return EvalImpl(context);
 }
-
-template <>
-FO_COMMON_API int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs);
 
 template <>
 FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
