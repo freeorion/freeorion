@@ -110,16 +110,36 @@ Part
             stackinggroup = "SR_ARC_SYPHON_NULLIFY_DISRUPTOR_STACK"
             priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
-                SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
+                GenerateSitRepMessage
+                    message = "SITREP_SR_ARC_SYPHON_NULLIFY"
+                    label = "SITREP_SR_ARC_SYPHON_NULLIFY_LABEL"
+                    icon = "icons/ship_parts/pulse-laser.png"
+                    parameters = [
+                        tag = "pre" data = "before setting stat(s): "
+                        tag = "shipdesign" data = Target.DesignID
+                        tag = "ship" data = Target.ID
+                        tag = "fleet" data = Source.FleetID
+                        tag = "currentSecondaryStat" data = Value(ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = Target.ID)
+                        tag = "initialSecondaryStat" data = ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = Target.ID
+                        tag = "currentMaxSecondaryStat" data = Value(ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = MaxSecondaryStat object = Target.ID)
+                        tag = "initialMaxSecondaryStat" data = ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = MaxSecondaryStat object = Target.ID
+                    ]
+                    empire = Source.Owner
+                SetSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 1
                 SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = 0
                 GenerateSitRepMessage
                     message = "SITREP_SR_ARC_SYPHON_NULLIFY"
                     label = "SITREP_SR_ARC_SYPHON_NULLIFY_LABEL"
                     icon = "icons/ship_parts/pulse-laser.png"
                     parameters = [
+                        tag = "pre" data = "after setting stat(s): "
                         tag = "shipdesign" data = Target.DesignID
                         tag = "ship" data = Target.ID
                         tag = "fleet" data = Source.FleetID
+                        tag = "currentSecondaryStat" data = Value(ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = Target.ID)
+                        tag = "initialSecondaryStat" data = ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = SecondaryStat object = Target.ID
+                        tag = "currentMaxSecondaryStat" data = Value(ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = MaxSecondaryStat object = Target.ID)
+                        tag = "initialMaxSecondaryStat" data = ShipPartMeter part = "SR_ARC_DISRUPTOR" meter = MaxSecondaryStat object = Target.ID
                     ]
                     empire = Source.Owner
             ]

@@ -31,7 +31,7 @@ SITREP_SR_ARC_SYPHON_BOOST_LABEL
 Syphoners Get Extra Shots from Last Turn Charge
 
 SITREP_SR_ARC_SYPHON_NULLIFY
-Arc Disruptor got syphoned on %shipdesign% %ship% Fleet: %fleet%
+%rawtext:pre%Arc Disruptor got syphoned on %shipdesign% %ship% Fleet: %fleet%  cur2nd: %rawtext:currentSecondaryStat% curMax2nd: %rawtext:currentMaxSecondaryStat%  ini2nd: %rawtext:initialSecondaryStat%  iniMax2nd: %rawtext:initialMaxSecondaryStat%
 
 SITREP_SR_ARC_SYPHON_NULLIFY_LABEL
 Arc Syphon nullifies Arc Disruptor
