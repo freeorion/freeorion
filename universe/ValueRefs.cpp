@@ -724,6 +724,7 @@ namespace StaticTests {
     static_assert(cdvr.SourceInvariant());
     static_assert(!cdvr.SimpleIncrement());
     static_assert(cdvr.ConstantExpr());
+    static_assert(cdvr.GetCheckSum() == 4018064);
 
     constexpr auto cdvr_copy(cdvr);
     static_assert(cdvr == cdvr_copy);
@@ -767,6 +768,8 @@ namespace StaticTests {
         const ::ValueRef::ValueRef<int>& vri_ref{visrprop};
         return (vri_ref == visrprop) && (visrprop == vri_ref);
     }());
+
+    static_assert(visrvr.GetCheckSum() == 1755);
 #endif
 }
 
