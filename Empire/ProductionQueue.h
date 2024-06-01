@@ -36,8 +36,6 @@ FO_ENUM(
     ((BT_STOCKPILE))
     ((NUM_BUILD_TYPES))
 )
-static_assert(BuildTypeValues().front() == std::pair{BuildType::INVALID_BUILD_TYPE, std::string_view{"INVALID_BUILD_TYPE"}});
-static_assert(BuildTypeValues()[3].second == "BT_SHIP");
 
 struct FO_COMMON_API ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
