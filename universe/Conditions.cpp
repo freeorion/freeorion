@@ -60,7 +60,15 @@ bool UserStringExists(const std::string& str);
 #  endif
 #endif
 
+
 namespace {
+    static_assert(std::is_enum_v<Condition::SearchDomain>);
+    static_assert(!std::is_arithmetic_v<Condition::SearchDomain>);
+    static_assert(!std::is_signed_v<Condition::SearchDomain>);
+    static_assert(!std::is_signed_v<std::underlying_type_t<Condition::SearchDomain>>);
+    static_assert(!std::is_unsigned_v<Condition::SearchDomain>);
+    static_assert(std::is_unsigned_v<std::underlying_type_t<Condition::SearchDomain>>);
+
     CONSTEXPR_STRING const std::string EMPTY_STRING;
 
     DeclareThreadSafeLogger(conditions);
