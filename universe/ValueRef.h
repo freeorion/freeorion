@@ -13,7 +13,7 @@ enum class ReferenceType : int8_t {
     NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
     EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
-    EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the target object value of an effect while it is being executed
+    EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the value being set by an effect while it is being executed, eg. adding 5 to the current value of a meter
     CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
     CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
 };
@@ -91,6 +91,9 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
+
+    [[nodiscard]] constexpr bool IsEffectModifiedValueReference() const noexcept { return m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE; }
+
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
     [[nodiscard]] virtual std::string EvalAsString() const = 0;             //! Returns a textual representation of the evaluation result  with an empty/default context
     [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const = 0;    //! Returns a textual representation that should be parseable to recreate this ValueRef
@@ -158,12 +161,12 @@ protected:
     const OpType m_op_type = OpType::INVALID_OP_TYPE;
     const StatisticType m_stat_type = StatisticType::INVALID_STATISTIC_TYPE;
 
-    uint8_t m_root_candidate_invariant : 1 = false;
-    uint8_t m_local_candidate_invariant : 1 = false;
-    uint8_t m_target_invariant : 1 = false;
-    uint8_t m_source_invariant : 1 = false;
-    uint8_t m_constant_expr : 1 = false;
-    uint8_t m_simple_increment : 1 = false;
+    uint8_t m_root_candidate_invariant : 1 = false; // does the value of this depend on the Condition root candidate object?
+    uint8_t m_local_candidate_invariant : 1 = false;// does the value of this depend on the Condition local candidate object?
+    uint8_t m_target_invariant : 1 = false;         // does the value of this depend on the Effect target object?
+    uint8_t m_source_invariant : 1 = false;         // does the value of this depend on the Source object?
+    uint8_t m_constant_expr : 1 = false;            // is this a constant expression, which can be evaluated without a ScriptingContext?
+    uint8_t m_simple_increment : 1 = false;         // is this an expression that is 
     uint8_t m_return_immediate_value : 1 = false;
 };
 
