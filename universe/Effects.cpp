@@ -485,69 +485,22 @@ namespace {
         return retval;
     }
 
-    template <typename C, typename T, typename V, typename M>
-    std::pair<double, Meter*> NewMeterValue(C&& context, M meter, const V& value_ref, T&& target)
-    {
-        static_assert(!std::is_pointer_v<T>); // shared_ptr OK, raw pointer not, as it needs to be assignable to a shared_ptr
-        static_assert(std::is_same_v<std::decay_t<C>, ScriptingContext>);
-        static_assert(!std::is_const_v<C>);
-        static_assert(!std::is_const_v<M>);
-        static_assert(std::is_same_v<std::decay_t<M>, MeterType> ||
-                      std::is_same_v<std::decay_t<M>, Meter*>);
-
-        Meter* m = nullptr;
-        if constexpr (std::is_same_v<M, MeterType>)
-            m = target ? target->GetMeter(meter) : nullptr;
-        else if constexpr (std::is_same_v<M, Meter*>)
-            m = meter;
-        if (!m)
-            return {Meter::INVALID_VALUE, m};
-
-        if (value_ref->TargetInvariant())
-            return {value_ref->Eval(context), m};
-        if (!target)
-            return {Meter::INVALID_VALUE, m};
-
-        const ScriptingContext::CurrentValueVariant cvv{m->Current()};
-        const ScriptingContext target_meter_context{
-            std::forward<C>(context), ScriptingContext::Target{}, std::forward<T>(target), cvv};
-        return {value_ref->Eval(target_meter_context), m};
-    }
-
-    template <typename C, typename V, typename M>
-    std::pair<double, Meter*> NewMeterValue(C&& context, M meter, const V& value_ref)
-    {
-        static_assert(std::is_same_v<std::decay_t<C>, ScriptingContext>);
-        static_assert(!std::is_const_v<C>);
-        static_assert(!std::is_const_v<M>);
-        static_assert(std::is_same_v<std::decay_t<M>, MeterType> ||
-                      std::is_same_v<std::decay_t<M>, Meter*>);
-
-        const auto* target = context.effect_target;
-        Meter* m = nullptr;
-        if constexpr (std::is_same_v<M, MeterType>)
-            m = target ? target->GetMeter(meter) : nullptr;
-        else if constexpr (std::is_same_v<M, Meter*>)
-            m = meter;
-        if (!m)
-            return {Meter::INVALID_VALUE, m};
-
-        if (value_ref->TargetInvariant())
-            return {value_ref->Eval(context), m};
-        if (!target)
-            return {Meter::INVALID_VALUE, m};
-
-        const ScriptingContext::CurrentValueVariant meter_cvv{m->Current()};
-        const ScriptingContext target_meter_context{std::forward<C>(context), meter_cvv};
-        return {value_ref->Eval(target_meter_context), m};
-    }
+    double OperateData(::ValueRef::OpType op_type, double lhs, double rhs)
+    { return ::ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs); }
 }
 
 void SetMeter::Execute(ScriptingContext& context) const {
-    if (!context.effect_target) return;
-
-    if (Meter* m = context.effect_target->GetMeter(m_meter))
-        m->SetCurrent(static_cast<float>(NewMeterValue(context, m, m_value).first));
+    if (!context.effect_target || !m_value)
+        return;
+    if (Meter* meter = context.effect_target->GetMeter(m_meter)) {
+        if (m_value->TargetInvariant()) {
+            meter->SetCurrent(static_cast<float>(m_value->Eval(context)));
+        } else {
+            const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+            const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, context.effect_target, cvv);
+            meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
+        }
+    }
 }
 
 void SetMeter::Execute(ScriptingContext& context,
@@ -575,10 +528,10 @@ void SetMeter::Execute(ScriptingContext& context,
     auto update_meter =
         [source_id, &accounting_label, &effect_cause, meter_type{m_meter},
          have_accounting{accounting_map != nullptr}, &accounting]
-        (double new_meter_value, int target_id, Meter* meter) -> void
+        (float new_meter_value, int target_id, Meter* meter) -> void
     {
         auto old_value = meter->Current();
-        meter->SetCurrent(static_cast<float>(new_meter_value));
+        meter->SetCurrent(new_meter_value);
 
         if (have_accounting) {
             auto diff = new_meter_value - old_value;
@@ -590,48 +543,52 @@ void SetMeter::Execute(ScriptingContext& context,
     };
 
 
-    if (targets.size() == 1) {
-        auto* target = targets.front();
-        if (Meter* meter = target->GetMeter(m_meter)) {
-            auto new_val = NewMeterValue(context, meter, m_value, target).first;
-            update_meter(new_val, target->ID(), meter);
-        }
-
-    } else if (m_value->TargetInvariant()) {
+    if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
-        auto new_val = m_value->Eval(context);
+        const auto new_val = static_cast<float>(m_value->Eval(context));
         for (auto* target : targets) {
-            if (Meter* meter = target->GetMeter(m_meter))
-                update_meter(new_val, target->ID(), meter);
-        }
-
-    } else if (m_value->SimpleIncrement()) {
-        auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
-        auto op_type = op_ref->GetOpType();
-        auto rhs = op_ref->RHS()->Eval(context);
-        [[maybe_unused]] auto lhs_ref = op_ref->LHS();
-        assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
-
-        for (auto* target : targets) {
-            if (Meter* meter = target->GetMeter(m_meter)) {
-                auto lhs = meter->Current();
-                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
-                update_meter(new_val, target->ID(), meter);
+            if (target) {
+                if (Meter* meter = target->GetMeter(m_meter))
+                    update_meter(new_val, target->ID(), meter);
             }
         }
 
+    } else if (m_value->SimpleIncrement()) {
+        const auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+        const auto op_type = op_ref->GetOpType();
+        const auto rhs = op_ref->RHS()->Eval(context);
+        assert(op_ref->LHS() && op_ref->LHS()->IsEffectModifiedValueReference());
+
+        for (auto* target : targets) {
+            if (target) {
+                if (Meter* meter = target->GetMeter(m_meter)) {
+                    auto lhs = static_cast<double>(meter->Current());
+                    auto new_val = static_cast<float>(OperateData(op_type, lhs, rhs));
+                    update_meter(new_val, target->ID(), meter);
+                }
+            }
+        }
+
+    } else if (targets.size() == 1) {
+        ScriptingContext target_context{context, ScriptingContext::Target{}, targets.front()};
+        Execute(target_context);
+
     } else {
         // calculate new meter values before modifying anything...
-        std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
+        std::vector<std::tuple<decltype(Meter().Current()), int, Meter*>> target_new_meter_vals;
         target_new_meter_vals.reserve(targets.size());
         for (auto* target : targets) {
-            if (Meter* meter = target->GetMeter(m_meter))
-                target_new_meter_vals.emplace_back(
-                    NewMeterValue(context, meter, m_value, target).first, target->ID(), meter);
+            if (!target)
+                continue;
+            if (Meter* meter = target->GetMeter(m_meter)) {
+                const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+                const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
+                target_new_meter_vals.emplace_back(m_value->Eval(target_meter_context), target->ID(), meter);
+            }
         }
 
         // set new meter values and update accounting
-        for (auto [new_val, target_id, meter] : target_new_meter_vals)
+        for (const auto& [new_val, target_id, meter] : target_new_meter_vals)
             update_meter(new_val, target_id, meter);
     }
 
@@ -713,11 +670,8 @@ uint32_t SetMeter::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetMeter::Clone() const {
-    return std::make_unique<SetMeter>(m_meter,
-                                      ValueRef::CloneUnique(m_value),
-                                      m_accounting_label);
-}
+std::unique_ptr<Effect> SetMeter::Clone() const
+{ return std::make_unique<SetMeter>(m_meter, ValueRef::CloneUnique(m_value), m_accounting_label); }
 
 
 ///////////////////////////////////////////////////////////
@@ -761,11 +715,22 @@ void SetShipPartMeter::Execute(ScriptingContext& context) const {
         //context.effect_target->Dump();
         return;
     }
-    auto ship = static_cast<Ship*>(context.effect_target);
 
-    // get meter, evaluate new value, assign
-    if (Meter* m = ship->GetPartMeter(m_meter, m_part_name->Eval(context)))
-        m->SetCurrent(static_cast<float>(NewMeterValue(context, m, m_value).first));
+    const auto part_name = m_part_name->TargetInvariant() ?
+        m_part_name->Eval(context) :
+        m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, context.effect_target});
+
+    Meter* meter = static_cast<Ship*>(context.effect_target)->GetPartMeter(m_meter, part_name);
+    if (!meter)
+        return;
+
+    if (m_value->TargetInvariant()) {
+        meter->SetCurrent(static_cast<float>(m_value->Eval(context)));
+    } else {
+        const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+        const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, context.effect_target, cvv);
+        meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
+    }
 }
 
 void SetShipPartMeter::Execute(ScriptingContext& context,
@@ -806,145 +771,127 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
 
 
     if (!m_part_name->TargetInvariant()) {
-        if (targets.size() == 1) {
-            auto* target = targets.front();
-            if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
-                return;
-            auto ship = static_cast<Ship*>(target);
+        // part name can be different for each target object, so need to re-evaluate for each
 
-            ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-            auto part_name = m_part_name->Eval(target_context);
+        if (m_value->TargetInvariant()) {
+            // new meter value does not depend on target or value modified by this effect,
+            // so do a single ValueRef evaluation
+            const float new_val = static_cast<float>(m_value->Eval(context));
 
-            if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
-                float new_val = static_cast<float>(NewMeterValue(std::move(target_context), meter, m_value).first);
-                meter->SetCurrent(new_val);
-            }
-
-        } else if (m_value->TargetInvariant()) {
-            // meter value does not depend on target, so handle with single ValueRef evaluation
-            float new_val = static_cast<float>(m_value->Eval(context));
             for (auto* target : targets) {
-                if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
-                auto ship = static_cast<Ship*>(target);
-
-                const ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-                auto part_name = m_part_name->Eval(target_context);
-
-                if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
+                const auto part_name = m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, target});
+                if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name))
                     meter->SetCurrent(new_val);
             }
 
         } else if (m_value->SimpleIncrement()) {
-            auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
-            auto op_type = op_ref->GetOpType();
-            auto rhs = op_ref->RHS()->Eval(context);
-            [[maybe_unused]] auto lhs_ref = op_ref->LHS();
-            assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
+            // new meter value is like "Value + Increment", where + may be any operation and
+            // Increment is a single target-invariant value (effectively constant for this Execute call)
+            const auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+            const auto op_type = op_ref->GetOpType();
+            const auto rhs = op_ref->RHS()->Eval(context);
+            assert(op_ref->LHS() && op_ref->LHS()->IsEffectModifiedValueReference());
 
             for (auto* target : targets) {
-                if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
-                auto ship = static_cast<Ship*>(target);
-
-                const ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-                auto part_name = m_part_name->Eval(target_context);
-
-                if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
-                    auto lhs = meter->Current();
-                    auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
-                    meter->SetCurrent(new_val);
+                const auto part_name = m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, target});
+                if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
+                    auto new_val = OperateData(op_type, static_cast<double>(meter->Current()), rhs);
+                    meter->SetCurrent(static_cast<float>(new_val));
                 }
+            }
+
+        } else if (targets.size() == 1) {
+            auto* target = targets.front();
+            if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                return;
+            const auto part_name = m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, target});
+            if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
+                const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+                const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
+                meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
+            }
+
+        } else {
+            // each new meter value could be anything, including depending on other meter values
+            // that are being modified in this effect. So,  calculate new meter values before modifying anything
+            std::vector<std::pair<float, Meter*>> target_new_meter_vals;
+            target_new_meter_vals.reserve(targets.size());
+
+            for (auto* target : targets) {
+                if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                    continue;
+                const ScriptingContext target_context{context, ScriptingContext::Target{}, target};
+                const auto part_name = m_part_name->Eval(target_context);
+                if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
+                    const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+                    const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
+                    target_new_meter_vals.emplace_back(static_cast<float>(m_value->Eval(target_meter_context)), meter);
+                }
+            }
+
+            // set new meter values and update accounting
+            for (auto& [new_val, meter] : target_new_meter_vals)
+                meter->SetCurrent(new_val);
+        }
+
+    } else {
+        // part name doesn't depend on target, so handle with single ValueRef evaluation
+        const auto part_name = m_part_name->Eval(context);
+
+        if (m_value->TargetInvariant()) {
+            // meter value does not depend on target, so handle with single ValueRef evaluation
+            auto new_val = m_value->Eval(context);
+            for (auto* target : targets) {
+                if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                    continue;
+                if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name))
+                    meter->SetCurrent(new_val);
+            }
+
+        } else if (m_value->SimpleIncrement()) {
+            const auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+            const auto op_type = op_ref->GetOpType();
+            const auto rhs = op_ref->RHS()->Eval(context);
+            assert(op_ref->LHS() && op_ref->LHS()->IsEffectModifiedValueReference());
+
+            for (auto* target : targets) {
+                if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                    continue;
+                if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name))
+                    meter->SetCurrent(OperateData(op_type, static_cast<double>(meter->Current()), rhs));
+            }
+
+        } else if (targets.size() == 1) {
+            auto* target = targets.front();
+            if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                return;
+            if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
+                const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+                const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
+                meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
             }
 
         } else {
             // calculate new meter values before modifying anything...
-            std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
+            std::vector<std::pair<double, Meter*>> target_new_meter_vals;
             target_new_meter_vals.reserve(targets.size());
             for (auto* target : targets) {
-                if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
+                if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
-                auto ship = static_cast<Ship*>(target);
-
-                ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-                auto part_name = m_part_name->Eval(target_context);
-
-                if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
-                    target_new_meter_vals.emplace_back(
-                        NewMeterValue(std::move(target_context), meter, m_value).first,
-                        target->ID(), meter);
+                if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
+                    const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+                    const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
+                    meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
+                }
             }
 
             // set new meter values and update accounting
-            for (auto [new_val, target_id, meter] : target_new_meter_vals)
+            for (auto [new_val, meter] : target_new_meter_vals)
                 meter->SetCurrent(new_val);
-        }
-
-        return;
-    }
-
-
-
-    // part name doesn't depend on target, so handle with single ValueRef evaluation
-    std::string part_name = m_part_name->Eval(context);
-
-    if (targets.size() == 1) {
-        auto* target = targets.front();
-        if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
-            return;
-        auto ship = static_cast<Ship*>(target);
-
-        if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
-            auto new_val = NewMeterValue(context, meter, m_value, target).first;
-            meter->SetCurrent(new_val);
-        }
-
-    } else if (m_value->TargetInvariant()) {
-        // meter value does not depend on target, so handle with single ValueRef evaluation
-        auto new_val = m_value->Eval(context);
-        for (auto* target : targets) {
-            if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
-                continue;
-            auto ship = static_cast<Ship*>(target);
-            if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
-                meter->SetCurrent(new_val);
-        }
-
-    } else if (m_value->SimpleIncrement()) {
-        auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
-        auto op_type = op_ref->GetOpType();
-        auto rhs = op_ref->RHS()->Eval(context);
-        [[maybe_unused]] auto lhs_ref = op_ref->LHS();
-        assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
-
-        for (auto* target : targets) {
-            if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
-                continue;
-            auto ship = static_cast<Ship*>(target);
-            if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
-                auto lhs = meter->Current();
-                auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
-                meter->SetCurrent(new_val);
-            }
-        }
-
-    } else {
-        // calculate new meter values before modifying anything...
-        std::vector<std::tuple<double, int, Meter*>> target_new_meter_vals;
-        target_new_meter_vals.reserve(targets.size());
-        for (auto* target : targets) {
-            if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
-                continue;
-            auto ship = static_cast<Ship*>(target);
-            if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
-                target_new_meter_vals.emplace_back(
-                    NewMeterValue(context, meter, m_value, target).first, target->ID(), meter);
-        }
-
-        // set new meter values and update accounting
-        for (auto [new_val, target_id, meter] : target_new_meter_vals) {
-            (void)target_id;
-            meter->SetCurrent(new_val);
         }
     }
 }
@@ -1029,24 +976,18 @@ bool SetEmpireMeter::operator==(const Effect& rhs) const {
 
 namespace {
     Meter* GetEmpireMeter(ScriptingContext& context, int empire_id, const std::string& meter) {
-        auto empire = context.GetEmpire(empire_id);
+        const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
-            DebugLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
+            ErrorLogger(effects) << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
+            return nullptr;
+        } else if (Meter* m = empire->GetMeter(meter)) {
+            return m;
+        } else {
+            ErrorLogger(effects) << "SetEmpireMeter::Execute empire " << empire->Name()
+                                 << " doesn't have a meter named " << meter;
             return nullptr;
         }
-
-        if (Meter* m = empire->GetMeter(meter))
-            return m;
-
-        DebugLogger(effects) << "SetEmpireMeter::Execute empire " << empire->Name()
-                             << " doesn't have a meter named " << meter;
-        return nullptr;
     }
-
-    Meter* GetEmpireMeter(ScriptingContext& context,
-                          const std::unique_ptr<ValueRef::ValueRef<int>>& empire_id_ref,
-                          const std::string& meter)
-    { return GetEmpireMeter(context, empire_id_ref->Eval(context), meter); }
 }
 
 void SetEmpireMeter::Execute(ScriptingContext& context) const {
@@ -1056,9 +997,19 @@ void SetEmpireMeter::Execute(ScriptingContext& context) const {
         ErrorLogger(effects) << "SetEmpireMeter::Execute missing empire id or value ValueRefs, or given empty meter name";
         return;
     }
-
-    if (auto meter = GetEmpireMeter(context, m_empire_id, m_meter))
-        meter->SetCurrent(NewMeterValue(context, meter, m_value).first);
+    const auto empire_id = m_empire_id->Eval(context);
+    auto* meter = GetEmpireMeter(context, empire_id, m_meter);
+    if (!meter) {
+        ErrorLogger(effects) << "SetEmpireMeter::Execute found no empire " << empire_id << " meter named " << m_meter;
+        return;
+    }
+    if (m_value->TargetInvariant()) {
+        meter->SetCurrent(static_cast<float>(m_value->Eval(context)));
+    } else {
+        const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+        const ScriptingContext target_meter_context{context, cvv};
+        meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
+    }
 }
 
 void SetEmpireMeter::Execute(ScriptingContext& context,
@@ -1087,48 +1038,58 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
         return;
     }
 
-
     if (!m_empire_id->TargetInvariant()) {
-        if (targets.size() == 1) {
-            auto* target = targets.front();
-            ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-            if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
-                auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
-                meter->SetCurrent(new_val);
+        // need to re-evaluate empire id for each target object
+        if (m_value->TargetInvariant()) {
+            // value to set does not depend on target object or current value of meter being set,
+            // so handle with a single ValueRef evaluation
+            const float new_val = static_cast<float>(m_value->Eval(context));
+
+            // empire id, and thus which meter is being modified, can be different per-target,
+            // so re-get for each target
+            for (auto* target : targets) {
+                if (target) {
+                    ScriptingContext target_context{context, ScriptingContext::Target{}, target};
+                    const auto empire_id = m_empire_id->Eval(target_context);
+                    if (auto* meter = GetEmpireMeter(context, empire_id, m_meter))
+                        meter->SetCurrent(new_val);
+                }
             }
 
-        } else if (m_value->TargetInvariant()) {
-            // meter value does not depend on target, so handle with single ValueRef evaluation
-            // value is also target invariant, so just need to set once
-            auto new_val = m_value->Eval(context);
-            if (auto meter = GetEmpireMeter(context, m_empire_id, m_meter))
-                meter->SetCurrent(new_val);
-
         } else if (m_value->SimpleIncrement()) {
-            auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
-            auto op_type = op_ref->GetOpType();
-            auto rhs = op_ref->RHS()->Eval(context);
-            [[maybe_unused]] auto lhs_ref = op_ref->LHS();
-            assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
+            // new meter value is like "Value + Increment", where + may be any operation and
+            // Increment is a single target-invariant value (effectively constant for this Execute call)
+            const auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+            assert(op_ref->RHS()->TargetInvariant());
+            const auto op_type = op_ref->GetOpType();
+            const auto rhs = op_ref->RHS()->Eval(context);
+            assert(op_ref->LHS() && op_ref->LHS()->IsEffectModifiedValueReference());
 
             for (auto* target : targets) {
-                ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-                if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
-                    auto lhs = meter->Current();
-                    auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
-                    meter->SetCurrent(new_val);
+                if (target) {
+                    ScriptingContext target_context{context, ScriptingContext::Target{}, target};
+                    const auto empire_id = m_empire_id->Eval(target_context);
+                    if (auto* meter = GetEmpireMeter(context, empire_id, m_meter)) {
+                        const auto new_val = OperateData(op_type, static_cast<double>(meter->Current()), rhs);
+                        meter->SetCurrent(static_cast<float>(new_val));
+                    }
                 }
             }
 
         } else {
-            // for empire meters, unlike object meters, pre-calculating doesn't work
-            // since multiple target objects could be assoicated with the same
-            // empire meter, so have to calculate new meter values one at a time...
+            // for empire meters, unlike object meters, pre-calculating new meter values
+            // won't work because multiple target objects could be associated with the same
+            // empire meter, which could have its current value modified repeatedly.
+            // thus, all new meter values need to be calculated separately and in order
             for (auto* target : targets) {
-                ScriptingContext target_context{context, ScriptingContext::Target{}, target};
-                if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
-                    auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
-                    meter->SetCurrent(new_val);
+                if (target) {
+                    ScriptingContext target_context{context, ScriptingContext::Target{}, target};
+                    const auto empire_id = m_empire_id->Eval(target_context);
+                    if (auto* meter = GetEmpireMeter(context, empire_id, m_meter)) {
+                        const ScriptingContext::CurrentValueVariant cvv{meter->Current()};
+                        const ScriptingContext target_meter_context{context, ScriptingContext::Target{}, target, cvv};
+                        meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
+                    }
                 }
             }
         }
@@ -1138,47 +1099,45 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
 
 
 
-    // empire_id doesn't depend on target, so handle with single ValueRef evaluation
-    const int empire_id = m_empire_id->Eval(context);
+    // empire id doesn't depend on target, so determine it with a single ValueRef evaluation
+    const auto empire_id = m_empire_id->Eval(context);
+    auto* meter = GetEmpireMeter(context, empire_id, m_meter);
+    if (!meter) {
+        ErrorLogger() << "SetEmpireMeter couldn't get empire id " << empire_id << " meter " << m_meter;
+        return;
+    }
 
-    if (targets.size() == 1) {
-        auto* target = targets.front();
-        if (auto meter = GetEmpireMeter(context, empire_id, m_meter)) {
-            auto new_val = NewMeterValue(context, meter, m_value, target).first;
-            meter->SetCurrent(new_val);
-        }
-
-    } else if (m_value->TargetInvariant()) {
-        // meter value does not depend on target, so handle with single ValueRef evaluation
-        // and just set once
-        auto new_val = m_value->Eval(context);
-        if (auto meter = GetEmpireMeter(context, empire_id, m_meter))
-            meter->SetCurrent(new_val);
+    if (m_value->TargetInvariant()) {
+        // meter value does not depend on target, so handle with single ValueRef evaluation and just set once
+        // if there are multiple targets, that shouldn't matter, since the same empire id will be used for all
+        meter->SetCurrent(static_cast<float>(m_value->Eval(context)));
 
     } else if (m_value->SimpleIncrement()) {
+        // meter value is modified by a fixed other value once per target
         const auto op_ref = static_cast<ValueRef::Operation<double>*>(m_value.get());
+        assert(op_ref->RHS()->TargetInvariant());
         const auto op_type = op_ref->GetOpType();
         const auto rhs = op_ref->RHS()->Eval(context);
-        [[maybe_unused]] auto lhs_ref = op_ref->LHS();
-        assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
+        assert(op_ref->LHS() && op_ref->LHS()->IsEffectModifiedValueReference());
 
-        if (auto meter = GetEmpireMeter(context, empire_id, m_meter)) {
-            auto lhs = meter->Current();
-            for (auto* target : targets) {
-                (void)target; // don't use the target objects, but should re-apply the adjustment once per target
-                lhs = static_cast<float>(ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs));
-            }
-            meter->SetCurrent(lhs);
+        double lhs = static_cast<double>(meter->Current());
+        for (const auto* _ : targets) {
+            (void)_;
+            lhs = OperateData(op_type, lhs, rhs);
         }
+        meter->SetCurrent(static_cast<float>(lhs));
 
     } else {
-        // for empire meters, unlike object meters, pre-calculating doesn't work
-        // since multiple target objects could be assoicated with the same
-        // empire meter, so have to calculate new meter values one at a time...
+        // for empire meters, unlike object meters, pre-calculating new meter values
+        // won't work because multiple target objects are associated with the same
+        // empire meter (all the same empire_id here), and that meter could have its
+        // current value modified repeatedly to different results.
+        // thus, all the new meter values need to be calculated separately and in order
         for (auto* target : targets) {
-            if (auto meter = GetEmpireMeter(context, empire_id, m_meter)) {
-                float new_val = static_cast<float>(NewMeterValue(context, meter, m_value, target).first);
-                meter->SetCurrent(new_val);
+            if (target) {
+                const ScriptingContext::CurrentValueVariant cvv{meter->Current()};
+                const ScriptingContext target_meter_context{context, ScriptingContext::Target{}, target, cvv};
+                meter->SetCurrent(static_cast<float>(m_value->Eval(target_meter_context)));
             }
         }
     }
