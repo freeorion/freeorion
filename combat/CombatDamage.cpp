@@ -181,7 +181,8 @@ std::vector<float> Combat::WeaponDamageImpl(
     if (target_ships) {
         auto temp_ship = TempShipForDamageCalcs(source, context);
         ScriptingContext temp_ship_context{context, empire_object_vis, empire_object_visibility_turns,
-                                           source.get(), temp_ship.get()};
+                                           ScriptingContext::Source{}, source.get(),
+                                           ScriptingContext::Target{}, temp_ship.get()};
 
         return WeaponDamageCalcImpl(source, max, launch_fighters,
                                     target_ships, temp_ship_context);
@@ -190,7 +191,8 @@ std::vector<float> Combat::WeaponDamageImpl(
         // create temporary fighter to test targetting condition on...
         auto temp_fighter = TempFighterForDamageCalcs(source, context);
         ScriptingContext temp_fighter_context{context, empire_object_vis, empire_object_visibility_turns,
-                                              source.get(), temp_fighter.get()};
+                                              ScriptingContext::Source{}, source.get(),
+                                              ScriptingContext::Target{}, temp_fighter.get()};
 
         return WeaponDamageCalcImpl(source, max, launch_fighters,
                                     target_ships, temp_fighter_context);
@@ -214,7 +216,8 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
         {ship->Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
     auto temp_ship = TempShipForDamageCalcs(ship, context);
     ScriptingContext ship_target_context{context, empire_object_vis, empire_object_visibility_turns,
-                                         ship.get(), temp_ship.get()};
+                                         ScriptingContext::Source{}, ship.get(),
+                                         ScriptingContext::Target{}, temp_ship.get()};
 
     for (int bout = 1; bout <= target_bout; ++bout) {
         ship_target_context.combat_bout = bout;

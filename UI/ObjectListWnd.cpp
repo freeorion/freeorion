@@ -1467,7 +1467,7 @@ public:
     [[nodiscard]] const std::string& SortKey(std::size_t column) const {
         const auto get_column_sort_key = [this, column]() -> std::string {
             const auto ref = GetColumnValueRef(column);
-            return ref ? ref->Eval(ScriptingContext{Objects().getRaw(m_object_id)}) : std::string{};
+            return ref ? ref->Eval(ScriptingContext{ScriptingContext::Source{}, Objects().getRaw(m_object_id)}) : std::string{};
         };
 
         try {
