@@ -309,7 +309,8 @@ float ShipHull::ProductionCost(int empire_id, int location_id,
 
     if (m_production_cost->SourceInvariant() && m_production_cost->TargetInvariant()) {
         const ScriptingContext design_id_context{
-            parent_context, nullptr, nullptr, in_design_id, PRODUCTION_BLOCK_SIZE};
+            parent_context, ScriptingContext::Source{}, nullptr, ScriptingContext::Target{}, nullptr,
+            in_design_id, PRODUCTION_BLOCK_SIZE};
         return static_cast<float>(m_production_cost->Eval(design_id_context));
     }
 
@@ -323,8 +324,8 @@ float ShipHull::ProductionCost(int empire_id, int location_id,
         return ARBITRARY_LARGE_COST;
 
     const ScriptingContext design_id_context{
-        parent_context, source.get(),
-        const_cast<UniverseObject*>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
+        parent_context, ScriptingContext::Source{}, source.get(),
+        ScriptingContext::Target{}, const_cast<UniverseObject*>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
         in_design_id, PRODUCTION_BLOCK_SIZE};
     return static_cast<float>(m_production_cost->Eval(design_id_context));
 }
@@ -342,7 +343,8 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
 
     if (m_production_time->SourceInvariant() && m_production_time->TargetInvariant()) {
         const ScriptingContext design_id_context{
-            parent_context, nullptr, nullptr, in_design_id, PRODUCTION_BLOCK_SIZE};
+            parent_context, ScriptingContext::Source{}, nullptr, ScriptingContext::Target{}, nullptr,
+            in_design_id, PRODUCTION_BLOCK_SIZE};
         return m_production_time->Eval(design_id_context);
     }
 
@@ -356,8 +358,8 @@ int ShipHull::ProductionTime(int empire_id, int location_id,
         return ARBITRARY_LARGE_TURNS;
 
     const ScriptingContext design_id_context{
-        parent_context, source.get(),
-        const_cast<UniverseObject*>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
+        parent_context, ScriptingContext::Source{}, source.get(),
+        ScriptingContext::Target{}, const_cast<UniverseObject*>(location), // won't be modified when evaluating a ValueRef, but needs to be a pointer to mutable to be passed as the target object
         in_design_id, PRODUCTION_BLOCK_SIZE};
     return m_production_time->Eval(design_id_context);
 }

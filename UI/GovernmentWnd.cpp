@@ -128,7 +128,7 @@ namespace {
         const auto* empire = context.GetEmpire(empire_id).get();
         if (!empire)
             return true;
-        const ScriptingContext source_context{empire->Source(context.ContextObjects()).get()};
+        const ScriptingContext source_context{ScriptingContext::Source{}, empire->Source(context.ContextObjects()).get()};
 
         const bool policy_adopted = empire->PolicyAdopted(policy.Name());
         const bool policy_affordable = empire->PolicyAffordable(policy.Name(), source_context);
