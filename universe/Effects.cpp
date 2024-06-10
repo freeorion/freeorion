@@ -515,7 +515,8 @@ namespace {
             return {Meter::INVALID_VALUE, m};
 
         const ScriptingContext::CurrentValueVariant cvv{m->Current()};
-        const ScriptingContext target_meter_context{std::forward<C>(context), std::forward<T>(target), cvv};
+        const ScriptingContext target_meter_context{
+            std::forward<C>(context), ScriptingContext::Target{}, std::forward<T>(target), cvv};
         return {value_ref->Eval(target_meter_context), m};
     }
 
@@ -818,7 +819,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto const ship = static_cast<Ship*>(target);
 
             // part name depends on target, so need to specify for this context
-            ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
+            ScriptingContext target_context{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE};
             const auto part_name = m_part_name->Eval(target_context);
 
             if (Meter* const meter = ship->GetPartMeter(m_meter, part_name)) {
@@ -835,7 +836,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
                 auto ship = static_cast<Ship*>(target);
 
                 // part name depends on target, so need to specify for this context
-                const ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
+                const ScriptingContext target_context{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE};
                 auto part_name = m_part_name->Eval(target_context);
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
@@ -854,7 +855,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
                     continue;
                 auto ship = static_cast<Ship*>(target);
 
-                const ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
+                const ScriptingContext target_context{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE};
                 auto part_name = m_part_name->Eval(target_context);
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
@@ -873,7 +874,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
                     continue;
                 auto ship = static_cast<Ship*>(target);
 
-                ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
+                ScriptingContext target_context{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE};
                 auto part_name = m_part_name->Eval(target_context);
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
@@ -1098,7 +1099,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
     if (!m_empire_id->TargetInvariant()) {
         if (targets.size() == 1) {
             auto* target = targets.front();
-            ScriptingContext target_context{context, target, ZERO_INT_CURRENT_VALUE};
+            ScriptingContext target_context{context, ScriptingContext::Target{}, target, ZERO_INT_CURRENT_VALUE};
             if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
                 auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
                 meter->SetCurrent(new_val);
@@ -1119,7 +1120,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
             for (auto* target : targets) {
-                ScriptingContext target_context{context, target, ZERO_INT_CURRENT_VALUE};
+                ScriptingContext target_context{context, ScriptingContext::Target{}, target, ZERO_INT_CURRENT_VALUE};
                 if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
                     auto lhs = meter->Current();
                     auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
@@ -1132,7 +1133,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             // since multiple target objects could be assoicated with the same
             // empire meter, so have to calculate new meter values one at a time...
             for (auto* target : targets) {
-                ScriptingContext target_context{context, target, ZERO_INT_CURRENT_VALUE};
+                ScriptingContext target_context{context, ScriptingContext::Target{}, target, ZERO_INT_CURRENT_VALUE};
                 if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
                     auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
                     meter->SetCurrent(new_val);
@@ -1926,7 +1927,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     planet->Rename(std::move(name_str));
 
     // apply after-creation effects
-    ScriptingContext local_context{context, planet.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
+    ScriptingContext local_context{context, ScriptingContext::Target{}, planet.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
     for (auto& effect : m_effects_to_apply_after) {
         if (effect)
             effect->Execute(local_context);
@@ -2045,7 +2046,7 @@ void CreateBuilding::Execute(ScriptingContext& context) const {
     }
 
     // apply after-creation effects
-    ScriptingContext local_context{context, building.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
+    ScriptingContext local_context{context, ScriptingContext::Target{}, building.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
     for (auto& effect : m_effects_to_apply_after) {
         if (effect)
             effect->Execute(local_context);
@@ -2216,7 +2217,7 @@ void CreateShip::Execute(ScriptingContext& context) const {
     CreateNewFleet(system, ship.get(), context);
 
     // apply after-creation effects
-    ScriptingContext local_context{context, ship.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
+    ScriptingContext local_context{context, ScriptingContext::Target{}, ship.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
     for (auto& effect : m_effects_to_apply_after) {
         if (effect)
             effect->Execute(local_context);
@@ -2376,7 +2377,7 @@ void CreateField::Execute(ScriptingContext& context) const {
     field->Rename(std::move(name_str));
 
     // apply after-creation effects
-    ScriptingContext new_field_target_context{context, field.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
+    ScriptingContext new_field_target_context{context, ScriptingContext::Target{}, field.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
     for (auto& effect : m_effects_to_apply_after) {
         if (effect)
             effect->Execute(new_field_target_context);
@@ -2506,7 +2507,7 @@ void CreateSystem::Execute(ScriptingContext& context) const {
     }
 
     // apply after-creation effects
-    ScriptingContext system_target_context{context, system.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
+    ScriptingContext system_target_context{context, ScriptingContext::Target{}, system.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
     for (auto& effect : m_effects_to_apply_after) {
         if (effect)
             effect->Execute(system_target_context);
