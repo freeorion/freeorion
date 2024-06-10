@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cfloat>
+#include <limits>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
@@ -7380,8 +7381,8 @@ bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
          return false;
 
     try {
-        const float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
-        const float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        const float low = (m_low ? m_low->Eval(local_context) : std::numeric_limits<float>::lowest());
+        const float high = (m_high ? m_high->Eval(local_context) : std::numeric_limits<float>::max());
         const float amount = empire->ResourceStockpile(m_stockpile);
         return (low <= amount && amount <= high);
     } catch (...) {
