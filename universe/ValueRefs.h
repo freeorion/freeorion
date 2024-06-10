@@ -730,7 +730,7 @@ std::vector<V> Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& 
     if (m_value_ref) {
         std::transform(objects.begin(), objects.end(), retval.begin(),
                        [&context, &ref{m_value_ref}](const auto* obj)
-        { return ref->Eval(ScriptingContext(context, obj)); });
+        { return ref->Eval(ScriptingContext(context, ScriptingContext::LocalCandidate{}, obj)); });
     }
 
     return retval;

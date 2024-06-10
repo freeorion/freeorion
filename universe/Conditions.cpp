@@ -234,7 +234,7 @@ void Condition::Eval(const ScriptingContext& parent_context,
     EvalImpl(matches, non_matches, search_domain,
              [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
     {
-        const ScriptingContext candidate_context{parent_context, candidate};
+        const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
         return cond->Match(candidate_context); // this requies a derived Condition class to override either this Eval or Match
     });
 }
@@ -244,7 +244,7 @@ bool Condition::EvalAny(const ScriptingContext& parent_context, const ObjectSet&
         return std::any_of(candidates.begin(), candidates.end(),
                            [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
         {
-            const ScriptingContext candidate_context{parent_context, candidate};
+            const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
             return cond->Match(candidate_context); // this requies a derived Condition class to override either this EvalAny or Match
         });
 
@@ -739,7 +739,7 @@ namespace {
         sort_key_objects.reserve(from_set.size());
         std::transform(from_set.begin(), from_set.end(), std::back_inserter(sort_key_objects),
                        [&context, sort_key](const UniverseObject* obj) -> sort_key_pair_t {
-                           const ScriptingContext source_context{context, obj}; // obj is local candidate
+                           const ScriptingContext source_context{context, ScriptingContext::LocalCandidate{}, obj};
                            return {sort_key->Eval(source_context), obj};
                        });
 
@@ -907,7 +907,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // before the subcondition is evaluated, so the local context that is
     // passed to the subcondition should have a null local candidate.
     static constexpr UniverseObject* const no_object = nullptr;
-    const ScriptingContext local_context{parent_context, no_object};
+    const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
 
     // which input matches match the subcondition?
     ObjectSet subcondition_matching_matches;
@@ -1027,7 +1027,7 @@ bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context, const Objec
         return false;
 
     static constexpr UniverseObject* const no_object = nullptr;
-    const ScriptingContext local_context{parent_context, no_object};
+    const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
 
     // just need to check if at least one object was requested and
     // if anything is matched by the sub-condition
@@ -1450,7 +1450,7 @@ std::string EmpireAffiliation::Description(bool negated) const {
         int empire_id = ALL_EMPIRES;
         if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
-        ScriptingContext context;
+        const ScriptingContext context;
         if (auto empire = context.GetEmpire(empire_id))
             empire_str = empire->Name();
         else
@@ -1930,7 +1930,7 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
             // ID of empire can be different for each candidate object, so need to
             // get empire ID (and thus its capital ID) separately for each object
             auto is_specific_capital = [this, &parent_context](const auto* candidate) {
-                const ScriptingContext local_context{parent_context, candidate};
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
                 const auto* empire = local_context.GetEmpire(m_empire_id->Eval(local_context)).get();
                 return empire && empire->CapitalID() == candidate->ID();
             };
@@ -1976,7 +1976,7 @@ bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& c
             // ID of empire can be different for each candidate object, so need to
             // get empire ID (and thus its capital ID) separately for each object
             auto is_specific_capital = [this, &parent_context](const auto* candidate) {
-                const ScriptingContext local_context{parent_context, candidate};
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
                 const auto* empire = local_context.GetEmpire(m_empire_id->Eval(local_context)).get();
                 return empire && empire->CapitalID() == candidate->ID();
             };
@@ -2195,7 +2195,7 @@ bool Type::EvalAny(const ScriptingContext& parent_context, const ObjectSet& cand
         // re-evaluate allowed turn range for each candidate object
         return std::any_of(candidates.begin(), candidates.end(),
                            [this, &parent_context](const UniverseObject* obj) {
-                               const ScriptingContext candidate_context{parent_context, obj};
+                               const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, obj};
                                return obj->ObjectType() == m_type->Eval(candidate_context);
                            });
     }
@@ -3264,8 +3264,8 @@ void Contains::Eval(const ScriptingContext& parent_context,
         // evaluate contained objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         static constexpr UniverseObject* const no_object = nullptr;
-        const ScriptingContext local_context{parent_context, no_object};
-        ObjectSet subcondition_matches = m_condition->Eval(local_context);
+        const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
+        const ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
         // check all candidates to see if they contain any subcondition matches
         EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
@@ -3417,7 +3417,8 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects that contain the candidate
         const ScriptingContext local_context{
-            parent_context, search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front()};
+            parent_context, ScriptingContext::LocalCandidate{},
+            search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front()};
 
         // initialize subcondition candidates from local candidate's containers
         const ObjectMap& objects = parent_context.ContextObjects();
@@ -3454,7 +3455,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
         // evaluate container objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
         static constexpr UniverseObject* const no_object = nullptr;
-        const ScriptingContext local_context{parent_context, no_object};
+        const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
         ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
         // check all candidates to see if they contain any subcondition matches
@@ -4851,7 +4852,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
         }
         return;
     } else if (from.size() == 1) {
-        const ScriptingContext obj_context{parent_context, from.front()};
+        const ScriptingContext obj_context{parent_context, ScriptingContext::LocalCandidate{}, from.front()};
         if (Match(obj_context) != test_val) {
             to.insert(to.end(), from.begin(), from.end());
             from.clear();
@@ -4948,7 +4949,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
         } else if (!m_species->LocalCandidateInvariant()) {
             auto eval_object_species = [&parent_context, this](const UniverseObject* obj) -> std::string {
                 // get species from reference with object as local candidate
-                const ScriptingContext obj_context{parent_context, obj};
+                const ScriptingContext obj_context{parent_context, ScriptingContext::LocalCandidate{}, obj};
                 return m_species->Eval(obj_context);
             };
 
@@ -7137,7 +7138,7 @@ std::string EmpireMeterValue::Description(bool negated) const {
         int empire_id = ALL_EMPIRES;
         if (m_empire_id->ConstantExpr())
             empire_id = m_empire_id->Eval();
-        ScriptingContext context;
+        const ScriptingContext context;
         if (auto empire = context.GetEmpire(empire_id))
             empire_str = empire->Name();
         else
@@ -8452,7 +8453,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
         {
             if (!candidate)
                 return false;
-            const ScriptingContext candidate_context{parent_context, candidate};
+            const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
             const ObjectSet subcondition_matches = m_condition->Eval(candidate_context);
             if (subcondition_matches.empty())
                 return false;
@@ -8490,7 +8491,7 @@ bool WithinDistance::EvalAny(const ScriptingContext& parent_context, const Objec
         {
             if (!candidate)
                 return false;
-            const ScriptingContext candidate_context{parent_context, candidate};
+            const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
             const ObjectSet subcondition_matches = m_condition->Eval(candidate_context);
             if (subcondition_matches.empty())
                 return false;
@@ -11018,7 +11019,8 @@ void ValueTest::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         std::vector<ScriptingContext> contexts;
         contexts.reserve(from_set.size());
         std::transform(from_set.begin(), from_set.end(), std::back_inserter(contexts),
-                       [&context](const UniverseObject* o) { return ScriptingContext{context, o}; });
+                       [&context](const UniverseObject* o)
+                       { return ScriptingContext{context, ScriptingContext::LocalCandidate{}, o}; });
 
         // get values for ref1 and ref2
         std::vector<RefT> vals1, vals2;

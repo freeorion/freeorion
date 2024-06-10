@@ -509,7 +509,7 @@ namespace {
         if (!ac->SourceInvariant() && !source_for_empire)
             return 0.0;
 
-        ScriptingContext source_planet_context{source_for_empire, context};
+        ScriptingContext source_planet_context{context, ScriptingContext::Source{}, source_for_empire};
         source_planet_context.condition_local_candidate = planet;
         if (!source_planet_context.condition_root_candidate)
             source_planet_context.condition_root_candidate = planet;
@@ -1117,7 +1117,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetChildClippingMode(ChildClippingMode::ClipToWindow);
 
-    ScriptingContext planet_context(planet, context);
+    ScriptingContext planet_context(context, ScriptingContext::Source{}, planet);
     Refresh(planet_context);
 
     RequirePreRender();
@@ -1694,7 +1694,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             retval = planet;
         return retval;
     }();
-    const ScriptingContext source_context{source_for_empire, context_in};
+    const ScriptingContext source_context{context_in, ScriptingContext::Source{}, source_for_empire};
 
 
     // set planet name, formatted to indicate presense of shipyards / homeworlds
@@ -2592,7 +2592,7 @@ void SidePanel::PlanetPanel::ClickAnnex() {
             ErrorLogger() << "No source for empire " << empire->Name();
             return;
         }
-        ScriptingContext empire_context{source, context};
+        ScriptingContext empire_context{context, ScriptingContext::Source{}, source};
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<AnnexOrder>(empire_id, m_planet_id, empire_context),
             empire_context);
