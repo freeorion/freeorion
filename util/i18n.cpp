@@ -598,7 +598,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     if (unit_pow10 < 0)
         unit_pow10 = 0;
 
-    int lowest_digit_pow10 = pow10 - digits + 1;
+    const int lowest_digit_pow10 = pow10 - digits + 1;
 
     //std::cout << "unit power of 10: " << unit_pow10
     //          << "  pow10 digits above pow1000: " << pow10_digits_above_pow1000
@@ -606,7 +606,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     //          << std::endl;
 
     // fraction digits:
-    int fraction_digits = std::max(0, std::min(digits - 1, unit_pow10 - lowest_digit_pow10));
+    const int fraction_digits = std::max(0, std::min(digits - 1, unit_pow10 - lowest_digit_pow10));
     //std::cout << "fraction_digits: " << fraction_digits << std::endl;
 
 
@@ -615,9 +615,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     mag /= pow(10.0, static_cast<double>(unit_pow10));
 
 
-    std::string format;
-    format += "%" + std::to_string(digits) + "." +
-                    std::to_string(fraction_digits) + "f";
+    const std::string format{"%" + std::to_string(digits) + "." + std::to_string(fraction_digits) + "f"};
     text += (boost::format(format) % mag).str();
     text.append(UnitPostFix(unit_pow10));
 
