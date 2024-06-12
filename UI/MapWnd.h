@@ -231,7 +231,7 @@ private:
     struct MovementLineData {
         // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
         struct Vertex {
-            constexpr Vertex(double x_, double y_, int eta_, bool show_eta_,
+            constexpr Vertex(double x_, double y_, uint8_t eta_, bool show_eta_,
                              bool flag_blockade_ = false, bool flag_supply_block_ = false) noexcept :
                 x(x_), y(y_), eta(eta_), show_eta(show_eta_),
                 flag_blockade(flag_blockade_), flag_supply_block(flag_supply_block_)
