@@ -2834,7 +2834,7 @@ void PlayingGame::EstablishPlayer(PlayerConnectionPtr player_connection, std::st
                 !Server().IsHaveWinner())
             {
                 const auto remaining = m_turn_timeout.expires_from_now();
-                player_connection->SendMessage(TurnTimeoutMessage(remaining.total_seconds()));
+                player_connection->SendMessage(TurnTimeoutMessage(static_cast<int>(remaining.total_seconds())));
             } else {
                 player_connection->SendMessage(TurnTimeoutMessage(0));
             }
@@ -3160,7 +3160,7 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
 
     if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
         auto remaining = playing_game.m_turn_timeout.expires_from_now();
-        Server().Networking().SendMessageAll(TurnTimeoutMessage(remaining.total_seconds()));
+        Server().Networking().SendMessageAll(TurnTimeoutMessage(static_cast<int>(remaining.total_seconds())));
     } else {
         Server().Networking().SendMessageAll(TurnTimeoutMessage(0));
     }
