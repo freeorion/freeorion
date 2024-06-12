@@ -1683,10 +1683,10 @@ ColorSelector::ColorSelector(GG::Clr color, GG::Clr default_color) :
 void ColorSelector::InitBuffer() {
     const auto sz = Size();
     m_border_buffer.clear();
-    m_border_buffer.store(0.0f,        0.0f);
-    m_border_buffer.store(Value(sz.x), 0.0f);
-    m_border_buffer.store(Value(sz.x), Value(sz.y));
-    m_border_buffer.store(0.0f,        Value(sz.y));
+    m_border_buffer.store(0.0f,                             0.0f);
+    m_border_buffer.store(static_cast<float>(Value(sz.x)),  0.0f);
+    m_border_buffer.store(static_cast<float>(Value(sz.x)),  static_cast<float>(Value(sz.y)));
+    m_border_buffer.store(0.0f,                             static_cast<float>(Value(sz.y)));
     m_border_buffer.createServerBuffer();
 }
 
@@ -2371,19 +2371,19 @@ void RotatingGraphic::Render() {
     glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
 
 
-    int ticks = GG::GUI::GetGUI()->Ticks();     // in ms
-    float minutes = ticks / 1000.0f / 60.0f;
+    const int ticks = GG::GUI::GetGUI()->Ticks();     // in ms
+    const float minutes = ticks / 1000.0f / 60.0f;
 
     // rotate around centre of rendered area
-    GG::Rect rendered_area = RenderedArea();
-    float angle = 360 * minutes * m_rpm + m_phase_offset;   // in degrees
+    const GG::Rect rendered_area = RenderedArea();
+    const float angle = 360 * minutes * m_rpm + m_phase_offset;   // in degrees
 
 
     glPushMatrix();
 
-    glTranslatef(Value(rendered_area.MidX()), Value(rendered_area.MidY()), 0.0f);   // tx back into position
-    glRotatef(angle, 0.0f, 0.0f, 1.0f);                                             // rotate about centre
-    glTranslatef(-Value(rendered_area.MidX()), -Value(rendered_area.MidY()), 0.0f); // tx to be centred on 0, 0
+    glTranslatef(static_cast<float>(Value(rendered_area.MidX())), static_cast<float>(Value(rendered_area.MidY())), 0.0f);   // tx back into position
+    glRotatef(angle, 0.0f, 0.0f, 1.0f); // rotate about centre
+    glTranslatef(static_cast<float>(-Value(rendered_area.MidX())), static_cast<float>(-Value(rendered_area.MidY())), 0.0f); // tx to be centred on 0, 0
 
     if (rendered_area != last_rendered_area) {
         last_rendered_area = rendered_area;
