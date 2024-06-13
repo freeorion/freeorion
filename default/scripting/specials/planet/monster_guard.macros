@@ -1,11 +1,95 @@
-CHANCE_OF_GUARD_1
+GUARD_PROBABILITY_1
+'''0.7'''
+
+GUARD_PROBABILITY_2
+'''1.0'''
+
+GUARD_PROBABILITY_3
+'''1.0'''
+
+// TODO: Factor in monster frequency?
+GUARD_SHIP_PROBABILITY_1
+'''0.5'''
+
+GUARD_SHIP_PROBABILITY_2
+'''1.0'''
+
+GUARD_SHIP_PROBABILITY_3
+'''1.0'''
+
+GUARD_NATIVE_PROBABILITY_1
+'''0.5'''
+
+GUARD_NATIVE_PROBABILITY_2
+'''0.7'''
+
+GUARD_NATIVE_PROBABILITY_3
+'''0.7'''
+
+PLACE_GUARD_SHIP_WEAK
+'''CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")'''
+
+PLACE_GUARD_SHIP_AVERAGE
+'''CreateShip designname = "SM_GUARD_2"'''
+
+PLACE_GUARD_SHIP_STRONG
+'''CreateShip designname = "SM_GUARD_3"'''
+
+// TODO: Reimplement snails, which were removed to simplify the macro. Consider for lithic growth special + asteroids?
+// Also consider drone factories for robotic growth special and dyson forest for organic growth special
+// PLACE_GUARD_SHIP_ASTEROIDS
+// '''CreateShip designname = OneOf("SM_SNAIL", "SM_GUARD_0", "SM_GUARD_1")'''
+
+// TODO: Consider non-ancient guardians?
+PLACE_GUARD_NATIVE_LOW_TECH
+'''[
+SetSpecies name = "SP_ANCIENT_GUARDIANS"
+SetPopulation value = Target.TargetPopulation
+]
+'''
+
+PLACE_GUARD_NATIVE_MODERATE_TECH
+'''[
+SetSpecies name = "SP_ANCIENT_GUARDIANS"
+SetPopulation value = Target.TargetPopulation
+AddSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
+]
+'''
+
+PLACE_GUARD_NATIVE_HIGH_TECH
+'''[
+SetSpecies name = "SP_ANCIENT_GUARDIANS"
+SetPopulation value = Target.TargetPopulation
+AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
+]
+'''
+
+PLACE_STEALTH_SPECIAL_MINIMAL
+'''AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"'''
+
+PLACE_STEALTH_SPECIAL_LOW
+'''AddSpecial name = OneOf("CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")'''
+
+PLACE_STEALTH_SPECIAL_MEDIUM
+'''AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"'''
+
+PLACE_STEALTH_SPECIAL_HIGH
+'''AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"'''
+
+// TODO: Check if there is a monster already? Allow a 2nd at high monster frequency?
+// @1@ probability of guard
+// @2@ probability of guardship
+// @3@ probability of native guards if not guardship. If not ship or natives then stealth.
+// @4@ picks type of guardship
+// @5@ picks type of native
+// @6@ picks type of stealth special
+CHANCE_OF_GUARD_MASTER
 '''        EffectsGroup
             scope = Source
             activation = And [
                 Turn high = 0
-                Random probability = 0.70
+                Random probability = @1@
                 (GalaxyMaxAIAggression >= 1)
-                (GalaxyMonsterFrequency >= 1)
                 Not ContainedBy Contains Or [
                     Design name = "SM_EXP_OUTPOST"
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
@@ -14,101 +98,30 @@ CHANCE_OF_GUARD_1
             ]
             effects = [
                 If condition = And [
-                        Random probability = 0.5
+                        (GalaxyMonsterFrequency >= 1)
+                        Random probability = @2@
                         [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
                     ]
-                    effects = [
-                        If condition = ContainedBy Contains Planet type = Asteroids
-                                effects = CreateShip designname = OneOf("SM_SNAIL", "SM_GUARD_0", "SM_GUARD_1")
-                        else = [
-                            CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
-                        ]
-                    ]
+                    effects = [[PLACE_GUARD_SHIP_@4@]]
                 else = [
                     If condition = And [
-                            Random probability = 0.5
+                            Random probability = @3@
                             Not Homeworld
                         ]
-                        effects = [
-                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                            SetPopulation value = Target.TargetPopulation
-                        ]
-                    else = [
-                        AddSpecial name = OneOf("CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
-                    ]
+                        effects = [[PLACE_GUARD_NATIVE_@5@]]
+                    else = [[PLACE_STEALTH_SPECIAL_@6@]]
                 ]
             ]
 '''
+
+CHANCE_OF_GUARD_1
+'''[[CHANCE_OF_GUARD_MASTER([[GUARD_PROBABILITY_1]],[[GUARD_SHIP_PROBABILITY_1]],[[GUARD_NATIVE_PROBABILITY_1]],WEAK,LOW_TECH,LOW)]]'''
 
 CHANCE_OF_GUARD_2
-'''        EffectsGroup
-            scope = Source
-            activation = And [
-                Turn high = 0
-                Not ContainedBy Contains Or [
-                    Design name = "SM_EXP_OUTPOST"
-                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
-                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
-                ]
-            ]
-            effects = [
-                If condition = And [
-                        (GalaxyMaxAIAggression >= 1)
-                        (GalaxyMonsterFrequency >= 1)
-                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
-                    ]
-                    effects = CreateShip designname = "SM_GUARD_2"
-                else = [
-                    If condition = And [
-                            Random probability = 0.7
-                            Not Homeworld
-                        ]
-                        effects = [
-                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                            SetPopulation value = Target.TargetPopulation
-                            AddSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
-                        ]
-                    else = [
-                        AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
-                    ]
-                ]
-            ]
-'''
+'''[[CHANCE_OF_GUARD_MASTER([[GUARD_PROBABILITY_2]],[[GUARD_SHIP_PROBABILITY_2]],[[GUARD_NATIVE_PROBABILITY_2]],AVERAGE,MODERATE_TECH,MEDIUM)]]'''
 
 CHANCE_OF_GUARD_3
-'''        EffectsGroup
-            scope = Source
-            activation = And [
-                Turn high = 0
-                Not ContainedBy Contains Or [
-                    Design name = "SM_EXP_OUTPOST"
-                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
-                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
-                ]
-            ]
-            effects = [
-                If condition = And [
-                        (GalaxyMaxAIAggression >= 1)
-                        (GalaxyMonsterFrequency >= 1)
-                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
-                    ]
-                    effects = CreateShip designname = "SM_GUARD_3"
-                else = [
-                    If condition = And [
-                            Random probability = 0.7
-                            Not Homeworld
-                        ]
-                        effects = [
-                            SetSpecies name = "SP_ANCIENT_GUARDIANS"
-                            SetPopulation value = Target.TargetPopulation
-                            AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
-                        ]
-                    else = [
-                        AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
-                    ]
-                ]
-            ]
-'''
+'''[[CHANCE_OF_GUARD_MASTER([[GUARD_PROBABILITY_3]],[[GUARD_SHIP_PROBABILITY_3]],[[GUARD_NATIVE_PROBABILITY_3]],STRONG,HIGH_TECH,HIGH)]]'''
 
 CHANCE_OF_HIDE_1
 '''        EffectsGroup
@@ -127,9 +140,7 @@ CHANCE_OF_HIDE_1
                     Building name = "BLD_EXPERIMENTOR_OUTPOST"
                 ]
             ]
-            effects = [
-                AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
-            ]
+            effects = [[PLACE_STEALTH_SPECIAL_MINIMAL]]
 '''
 
 #include "/scripting/macros/*.macros"
