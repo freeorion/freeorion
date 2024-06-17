@@ -78,6 +78,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
     }
     auto ships = universe_mutable_in.Objects().find<Ship>(system->ShipIDs());
     auto planets = universe_mutable_in.Objects().find<Planet>(system->PlanetIDs());
+    auto fleets = universe_mutable_in.Objects().find<Fleet>(system->FleetIDs());
 
     const auto is_destroyed = [this](int id) { return contains(destroyed_object_ids, id); };
 
@@ -91,6 +92,15 @@ CombatInfo::CombatInfo(int system_id_, int turn_,
         // add ships to objects in combat
         const int ship_id = ship->ID();
         objects.insert(std::move(ship), is_destroyed(ship_id));
+    }
+
+    // find fleets and their owners in system
+    for (auto& fleet : fleets) {
+        // add owner of fleets in system to empires that have assets in this battle
+        empire_ids.insert(fleet->Owner());
+        // add fleets to objects in combat
+        const int fleet_id = fleet->ID();
+        objects.insert(std::move(fleet), is_destroyed(fleet_id));
     }
 
     // find planets and their owners in system
@@ -817,15 +827,16 @@ namespace {
             if (!ship->IsArmed(context))
                 return false;
             const auto fleet = context.ContextObjects().get<Fleet>(ship->FleetID());
-            return !fleet || fleet->Aggression() > FleetAggression::FLEET_PASSIVE;
-            break;
+            if (!fleet) {
+                ErrorLogger(combat) << "ObjectCanAttack unable to find a fleet " << ship->FleetID() << " for ship id " << ship->ID();
+                return true;
+            }
+            return !fleet->Passive();
         }
         case UniverseObjectType::OBJ_PLANET:
             return obj->GetMeter(MeterType::METER_DEFENSE)->Current() > 0.0f;
-            break;
         case UniverseObjectType::OBJ_FIGHTER:
             return static_cast<const Fighter*>(obj)->Damage() > 0.0f;
-            break;
         default:
             return false;
         }
