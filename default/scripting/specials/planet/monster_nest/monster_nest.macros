@@ -15,6 +15,7 @@ MONSTER_NEST
                 Random probability = @3@ * (GameRule name = "RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR")
             ]
             stackinggroup = "@1@_NEST_STACK"  // groups with BLD_NEST_ERADICATOR
+            priority = [[DEFAULT_PRIORITY]]   // eradication is going to happen earlier to prevent monster spawn
             effects = [
                 CreateShip designname = "SM_@1@_1" empire = Source.Owner
                 GenerateSitRepMessage
@@ -38,6 +39,9 @@ MONSTER_NEST
                 ]
                 Random probability = 0.12 * (GameRule name = "RULE_WILD_NEST_MONSTER_SPAWN_FACTOR") * GalaxyMonsterFrequency / 2.0
             ]
-            stackinggroup = "@1@_NEST_STACK"
+            stackinggroup = "@1@_NEST_STACK"  // groups with BLD_NEST_ERADICATOR
+            priority = [[DEFAULT_PRIORITY]]   // eradication is going to happen earlier to prevent monster spawn
             effects = CreateShip designname = "SM_@1@_1"
 '''
+
+#include "/scripting/macros/priorities.macros"

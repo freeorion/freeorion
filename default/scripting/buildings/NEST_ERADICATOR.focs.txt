@@ -33,7 +33,8 @@ EG_NEST_REMOVAL
                 Planet
                 HasSpecial name = "@1@_NEST_SPECIAL"
             ]
-            stackinggroup = "@1@_NEST_STACK"  // groups with @1@_NEST_SPECIAL
+            stackinggroup = "@1@_NEST_STACK"             // groups with @1@_NEST_SPECIAL
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]] // so eradication happens first and any monster spawn is prevented
             effects = [
                 RemoveSpecial name = "@1@_NEST_SPECIAL"
                 GenerateSitRepMessage
@@ -46,4 +47,4 @@ EG_NEST_REMOVAL
 '''
 
 #include "/scripting/macros/base_prod.macros"
-
+#include "/scripting/macros/priorities.macros"
