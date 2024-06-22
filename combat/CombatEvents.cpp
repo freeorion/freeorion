@@ -269,6 +269,10 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id, con
             if (object_vis > Visibility::VIS_NO_VISIBILITY)
                 continue;
 
+            // ignore fleets from mention of being initially unable to detect - individual ships are mentioned already
+            if (obj && obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
+                continue;
+
             // all empires specifies empire to use for link color if this is a fighter
             cloaked_attackers.push_back(FighterOrPublicNameLink(
                 viewing_empire_id, object_id, ALL_EMPIRES, context));
