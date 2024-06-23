@@ -2,6 +2,7 @@
 #define _ValueRefs_h_
 
 
+#include <concepts>
 #include <iterator>
 #include <map>
 #include <numeric>
@@ -67,8 +68,9 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         return m_value == rhs.m_value;
     }
 
-    [[nodiscard]] T Eval(const ScriptingContext& context) const
-        noexcept(noexcept(T{std::declval<const T>()})) override
+    [[nodiscard]] constexpr T Eval() const noexcept(noexcept(T{std::declval<const T>()}))
+    { return m_value; }
+    [[nodiscard]] T Eval(const ScriptingContext&) const noexcept(noexcept(T{std::declval<const T>()})) override
     { return m_value; }
 
     [[nodiscard]] std::string Description() const override;
@@ -125,8 +127,10 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     static constexpr std::string_view current_content = "CurrentContent";
     static constexpr std::string_view no_current_content = "THERE_IS_NO_TOP_LEVEL_CONTENT";
 
-    [[nodiscard]] CONSTEXPR_STRING std::string Eval(const ScriptingContext&) const override
+    [[nodiscard]] CONSTEXPR_STRING const std::string& Eval() const noexcept
     { return (m_value == current_content) ? m_top_level_content : m_value; }
+    [[nodiscard]] std::string Eval(const ScriptingContext&) const override
+    { return Eval(); }
 
     [[nodiscard]] std::string Description() const override
     { return (m_value == current_content) ? m_top_level_content : m_value; }
@@ -182,7 +186,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
         ValueRef<T>(false,
                     ref_type != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE,
                     ref_type != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                    ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE,
+                    ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE, // not all effect target values are properties of the target object, eg. empire meters, but most are
                     ref_type != ReferenceType::SOURCE_REFERENCE,
                     static_cast<bool>(retval_type),
                     ref_type,
@@ -508,8 +512,6 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] OpType      GetOpType() const noexcept { return this->m_op_type; }
 
-    [[nodiscard]] static T    EvalImpl(OpType op_type, T lhs, T rhs);
-
     [[nodiscard]] const auto* LHS() const { return m_operands.empty() ? nullptr : m_operands.front().get(); } // 1st operand (or nullptr if none exists)
     [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
     [[nodiscard]] const std::vector<const ValueRef<T>*> Operands() const; // all operands
@@ -526,8 +528,7 @@ private:
     Operation& operator=(const Operation<T>& rhs) = delete;
     Operation& operator=(Operation<T>&& rhs) = delete;
 
-    [[nodiscard]] T EvalImpl(const ScriptingContext& context) const;
-    [[nodiscard]] T EvalImpl() const;
+    [[nodiscard]] T EvalConstantExpr() const;
 
     const std::vector<std::unique_ptr<ValueRef<T>>> m_operands;
     const T                                         m_cached_const_value = T();
@@ -1761,133 +1762,283 @@ const std::vector<const ValueRef<T>*> Operation<T>::Operands() const
     return retval;
 }
 
-template <typename T>
-T Operation<T>::EvalImpl(OpType op_type, const T lhs, const T rhs)
-{
-    switch (op_type) {
-    case OpType::NOOP : {
-        return lhs;
-        break;
+namespace {
+    auto NoOpLogAndReturn(auto&& val) { // TODO: handle vector<string> ?
+        DebugLogger() << "NoOp<" << typeid(val).name() << ">: " << val;
+        return val;
     }
 
-    case OpType::TIMES: {
-        // useful for writing a "Statistic If" expression with arbitrary types.
-        // If returns T{0} or T{1} for nothing or something matching the
-        // sampling condition. This can be checked here by returning T{0} if
-        // the LHS operand is T{0} and just returning RHS() otherwise.
-        return (lhs == T{0}) ? T{0} : rhs;
-        break;
+    constexpr auto abs(auto val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return std::abs(val);
+#else
+        return (val >= 0) ? val : -val;
+#endif
     }
 
-    case OpType::MAXIMUM: {
-        return std::max<T>(lhs, rhs);
-        break;
-    }
-    case OpType::MINIMUM: {
-        return std::min<T>(lhs, rhs);
-        break;
+    template <typename T>
+    constexpr auto sign(T val) noexcept(noexcept(T()) && noexcept(T{1}))
+    { return (val > T()) ? T{1} : (val < T()) ? T{-1} : T(); }
+
+    template <typename T>
+    constexpr T pow(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::exp(val));
+#else
+        if (std::is_constant_evaluated())
+            return static_cast<T>(CheckSums::pow(val));
+        else
+            return static_cast<T>(std::exp(val));
+#endif
     }
 
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
+    template <typename T>
+    constexpr auto pow(T base, T exp) {
+        // std::pow not constexpr until C++26, so not bothering with it here
+        return static_cast<T>(std::is_constant_evaluated() ? CheckSums::pow(base, exp) : std::pow(base, exp));
     }
 
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs) ? T{1} : T{0};
-        break;
+    template <typename T>
+    constexpr T log(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::log(val));
+#else
+        return static_cast<T>(std::is_constant_evaluated() ? CheckSums::log(val) : std::log(val));
+#endif
     }
 
-    default:
-        break;
+    template <typename T> constexpr T round(T val);
+
+    constexpr auto log(auto base, auto val) {
+        if (base <= 0)
+            throw std::runtime_error("can't take log base <= 0");
+        if (base == 1)
+            throw std::runtime_error("can't take log base = 1");
+        if (val <= 0)
+            throw std::runtime_error("can't take log of <= 0");
+
+        double log_ratio = log(static_cast<double>(val)) / log(static_cast<double>(base));
+
+        if constexpr (std::is_integral_v<std::decay_t<decltype(val)>>)
+            return static_cast<decltype(val)>(round(log_ratio));
+        else
+            return static_cast<decltype(val)>(log_ratio);
     }
-    throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
+
+    template <typename T>
+    constexpr T sin(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::sin(val));
+#else
+        if (std::is_constant_evaluated())
+            throw std::runtime_error("constexpr sin not implemented");
+        else
+            return static_cast<T>(std::sin(val));
+#endif
+    }
+
+    template <typename T>
+    constexpr T cos(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::cos(val));
+#else
+        if (std::is_constant_evaluated())
+            throw std::runtime_error("constexpr cos not implemented");
+        else
+            return static_cast<T>(std::cos(val));
+#endif
+    }
+
+    template <typename T>
+    constexpr T round(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::round(val));
+#else
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+            return val;
+        } else {
+            const auto trunc_val_plus_half = static_cast<std::decay_t<T>>(static_cast<int64_t>(val + 0.5));
+            return (val >= 0) ? trunc_val_plus_half : (trunc_val_plus_half - 1);
+        }
+#endif
+    }
+
+    template <typename T>
+    constexpr T ceil(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::ceil(val));
+#else
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+            return val;
+        } else {
+            const auto trunc_val = static_cast<std::decay_t<T>>(static_cast<int64_t>(val));
+            return (trunc_val == val) ? trunc_val : (val >= 0) ? (trunc_val + 1) : trunc_val;
+        }
+#endif
+    }
+
+    template <typename T>
+    constexpr T floor(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::floor(val));
+#else
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+            return val;
+        } else {
+            const auto trunc_val = static_cast<std::decay_t<T>>(static_cast<int64_t>(val));
+            return (trunc_val == val) ? trunc_val : (val >= 0) ? trunc_val : trunc_val - 1;
+        }
+#endif
+    }
+
+    constexpr bool ValCompareOp(const auto& lhs, OpType op_type, const auto& rhs) noexcept {
+        switch (op_type) {
+        case OpType::COMPARE_EQUAL:                 return lhs == rhs;  break;
+        case OpType::COMPARE_GREATER_THAN:          return lhs > rhs;   break;
+        case OpType::COMPARE_GREATER_THAN_OR_EQUAL: return lhs >= rhs;  break;
+        case OpType::COMPARE_LESS_THAN:             return lhs < rhs;   break;
+        case OpType::COMPARE_LESS_THAN_OR_EQUAL:    return lhs <= rhs;  break;
+        case OpType::COMPARE_NOT_EQUAL:             return lhs != rhs;  break;
+        default:                                      return false;       break;
+        }
+    }
+
+    inline constexpr auto vr_rand_int = [](int low, int high)
+    { return std::is_constant_evaluated() ? std::max(low, std::min(high, 42)) : RandInt(low, high); };
+
+    inline constexpr auto vr_rand_double = [](double low, double high)
+    { return std::is_constant_evaluated() ? std::max(low, std::min(high, 42.6)) : RandDouble(low, high); };
+
+    auto DoFormat(const std::string& lhs, const std::string& rhs) {
+        // insert string into other string in place of %1% or similar placeholder
+        boost::format formatter = FlexibleFormat(lhs);
+        formatter % rhs;
+        return formatter.str();
+    }
 }
 
-template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs);
+template <typename T>
+    requires std::is_enum_v<std::decay_t<T>> || std::is_arithmetic_v<std::decay_t<T>> ||
+             std::is_same_v<std::decay_t<T>, std::string>
+constexpr auto OperateData(OpType op_type, T&& val)
+{
+    using decayed_t = std::decay_t<T>;
+    constexpr bool is_arith = std::is_arithmetic_v<decayed_t>;
 
-template <>
-FO_COMMON_API double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs);
+    if constexpr (is_arith) {
+        switch (op_type) {
+        case OpType::NOOP:          return std::is_constant_evaluated() ?
+                                        std::forward<T>(val) : NoOpLogAndReturn(std::forward<T>(val));  break;
+        case OpType::NEGATE:        return -val;                                                        break;
+        case OpType::EXPONENTIATE:  return pow(val);                                                    break;
+        case OpType::ABS:           return abs(val);                                                    break;
+        case OpType::LOGARITHM:     return log(val);                                                    break;
+        case OpType::SINE:          return sin(val);                                                    break;
+        case OpType::COSINE:        return cos(val);                                                    break;
+        case OpType::ROUND_NEAREST: return round(val);                                                  break;
+        case OpType::ROUND_UP:      return ceil(val);                                                   break;
+        case OpType::ROUND_DOWN:    return floor(val);                                                  break;
+        case OpType::SIGN:          return sign(val);                                                   break;
+        default: break;    // not implemented
+        }
+    } else if (OpType::NOOP == op_type) {
+        return std::is_constant_evaluated() ? std::forward<T>(val) : NoOpLogAndReturn(std::forward<T>(val));
+    }
 
-template <>
-FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
+    throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for one operand.");
+}
 
 template <typename T>
-T Operation<T>::EvalImpl(const ScriptingContext& context) const
+constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs)
 {
-    if (this->m_simple_increment)
-        return EvalImpl(this->m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+    using decayed_t = std::decay_t<T>;
+    constexpr bool is_enum = std::is_enum_v<decayed_t>;
+    constexpr bool is_arith = std::is_arithmetic_v<decayed_t>;
+    constexpr bool is_string = std::is_same_v<decayed_t, std::string>;
 
-    switch (this->m_op_type) {
-    case OpType::NOOP : {
-        DebugLogger() << "ValueRef::Operation<T>::NoOp::EvalImpl";
-        auto retval = LHS()->Eval(context);
-        DebugLogger() << "ValueRef::Operation<T>::NoOp::EvalImpl. Sub-Expression returned: " << retval
-                        << " from: " << LHS()->Dump();
-        return retval;
+    switch (op_type) {
+    case OpType::PLUS: {
+        if constexpr (requires { lhs + rhs; }) {
+            return lhs + rhs;
+        } else if constexpr (requires { lhs.insert(lhs.end(), rhs.begin(), rhs.end()); }) {
+            lhs.insert(lhs.end(), rhs.begin(), rhs.end());
+            return std::forward<T>(lhs);
+        } else if constexpr (std::is_const_v<T> && requires(decayed_t t) { t.insert(lhs.end(), rhs.begin(), rhs.end()); }) {
+            decayed_t retval{std::forward<T>(lhs)};
+            retval.insert(lhs.end(), rhs.begin(), rhs.end());
+            return retval;
+        }
+        break;
+    }
+
+    case OpType::MINUS: {
+        if constexpr (is_arith)
+            return lhs - rhs;
+        break;
     }
 
     case OpType::TIMES: {
-        // useful for writing a "Statistic If" expression with arbitrary types.
-        // If returns T{0} or T{1} for nothing or something matching the
-        // sampling condition. This can be checked here by returning T{0} if
-        // the LHS operand is T{0} and just returning RHS() otherwise.
-        if (LHS()->Eval(context) == T{0})
-            return T{0};
-        return RHS()->Eval(context);
-        break;
-    }
+        if constexpr (is_arith) {
+            return lhs * rhs;
 
-    case OpType::MAXIMUM:
-    case OpType::MINIMUM: {
-        if (m_operands.empty())
-            return T{-1};
+        } else if constexpr (requires { lhs.empty(); }) {
+            // useful for writing a "Statistic If" expression with strings.
+            // An empty string indicates no matches, and non-empty string indicates matches, which is treated
+            // like a multiplicative identity operation, so just returns rhs.
+            return lhs.empty() ? std::forward<T>(lhs) : std::forward<T>(rhs);
 
-        // evaluate all operands, return smallest or biggest
-        std::vector<T> vals;
-        vals.reserve(m_operands.size());
-        for (auto& vr : m_operands) {
-            if (vr)
-                vals.push_back(vr->Eval(context));
+        } else {
+            // useful for writing a "Statistic If" expression with arbitrary types.
+            // If returns T{0} for nothing or T{1} for something matching the
+            // sampling condition. This can be checked here by returning T() if
+            // the LHS operand is T() and just returning RHS() otherwise.
+            return (lhs == T()) ? std::forward<T>(lhs) : std::forward<T>(rhs);
         }
-        if (this->m_op_type == OpType::MINIMUM)
-            return *std::min_element(vals.begin(), vals.end());
-        else
-            return *std::max_element(vals.begin(), vals.end());
         break;
     }
 
-    case OpType::RANDOM_PICK: {
-        // select one operand, evaluate it, return result
-        if (m_operands.empty())
-            return T{-1};   // should be INVALID_T of enum types
-        auto idx = RandInt(0, static_cast<int>(m_operands.size()) - 1);
-        auto& vr = *std::next(m_operands.begin(), idx);
-        if (!vr)
-            return T{-1};   // should be INVALID_T of enum types
-        return vr->Eval(context);
+    case OpType::DIVIDE: {
+        if constexpr (is_arith) {
+            if (rhs == decayed_t{})
+                return decayed_t{0};
+            return lhs / rhs;
+        }
         break;
+    }
+
+    case OpType::REMAINDER: {
+        if constexpr (is_arith) {
+            if (rhs == decayed_t{0})
+                return decayed_t{0};
+            const auto divisor = (rhs >= 0) ? rhs : -rhs;
+            const auto quotient = floor(lhs / divisor);
+            return lhs - (quotient*divisor);
+        }
+        break;
+    }
+
+    case OpType::EXPONENTIATE: {
+        if constexpr (is_arith)
+            return pow(lhs, rhs);
+        break;
+    }
+
+    case OpType::LOGARITHM: {
+        if constexpr (is_arith)
+            return log(lhs, rhs);
+        break;
+    }
+
+    case OpType::MAXIMUM: return std::max(std::forward<T>(lhs), std::forward<T>(rhs)); break;
+    case OpType::MINIMUM: return std::min(std::forward<T>(lhs), std::forward<T>(rhs)); break;
+
+    case OpType::SUBSTITUTION: {
+        if constexpr (is_string) {
+            if (lhs.empty())
+                return std::forward<T>(lhs);
+            else if (!std::is_constant_evaluated())
+                return DoFormat(std::forward<T>(lhs), std::forward<T>(rhs));
+        }
     }
 
     case OpType::COMPARE_EQUAL:
@@ -1896,64 +2047,300 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
     case OpType::COMPARE_LESS_THAN:
     case OpType::COMPARE_LESS_THAN_OR_EQUAL:
     case OpType::COMPARE_NOT_EQUAL: {
-        T lhs_val = LHS()->Eval(context);
-        T rhs_val = RHS()->Eval(context);
-        if (m_operands.size() == 2)
-            return EvalImpl(this->m_op_type, lhs_val, rhs_val);
+        const bool result = ValCompareOp(std::forward<T>(lhs), op_type, std::forward<T>(rhs));
+        if constexpr (is_arith || is_enum)
+            return result ? decayed_t{1} : decayed_t();
+        else if constexpr (is_string)
+            return result ? std::string{"true"} : std::string{};
+        break;
+    }
 
-        bool test_result = false;
-        switch (this->m_op_type) {
-            case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-            case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-            case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-            case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-            case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-            case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-            default:    break;  // ??? do nothing, default to false
-        }
+    default: break;
+    }
 
-        if (m_operands.size() == 3) {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return T{0};
-        } else {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return m_operands[3]->Eval(context);
+    throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for two operands.");
+}
+
+template <typename T>
+constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int)
+    requires requires { {rand_int(0, 1)} -> std::same_as<int>; }
+{
+    using decayed_t = std::decay_t<T>;
+
+    switch (op_type) {
+    case OpType::RANDOM_UNIFORM: {
+        if constexpr (std::is_same_v<decayed_t, int>)
+            return rand_int(std::min(lhs, rhs), std::max(rhs, lhs));
+        else if constexpr (std::is_enum_v<decayed_t>)
+            return static_cast<decayed_t>(rand_int(static_cast<int>(std::min(lhs, rhs)), static_cast<int>(std::max(rhs, lhs))));
+        break;
+    }
+
+    case OpType::RANDOM_PICK: return (rand_int(0, 1) == 0) ? std::forward<T>(lhs) : std::forward<T>(rhs); break;
+
+    default: break;
+    }
+    return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs));
+}
+
+template <typename T>
+constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int, auto rand_double)
+    requires requires { {rand_int(0, 1)} -> std::same_as<int>; {rand_double(0.1, 1.0)} -> std::same_as<double>; }
+{
+    using decayed_t = std::decay_t<T>;
+
+    if constexpr (std::is_same_v<decayed_t, double>) {
+        if (op_type == OpType::RANDOM_UNIFORM)
+            return rand_double(std::min(lhs, rhs), std::max(rhs, lhs));
+    }
+    return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs), rand_int);
+}
+
+template <typename D>
+    requires (requires(D d) { d.begin(); d.end(); d.front(); } && !std::is_same_v<std::decay_t<D>, std::string>)
+constexpr auto OperateData(OpType op_type, D&& data)
+{
+    using T = std::decay_t<decltype(data.front())>;
+    constexpr bool is_enum = std::is_enum_v<T>;
+    constexpr bool is_arith = std::is_arithmetic_v<T>;
+    constexpr bool is_string = std::is_same_v<T, std::string>;
+    static_assert(is_arith || is_string || is_enum);
+
+    if (data.empty())
+        return T();
+
+    switch (op_type) {
+    case OpType::PLUS: {
+        if constexpr (is_arith || is_string) {
+#if defined(__cpp_lib_constexpr_numeric)
+            return std::accumulate(data.begin(), data.end(), T());
+#else
+            T accum{};
+            for (const auto& d : data)
+                accum += d;
+            return accum;
+#endif
         }
+        break;
+    }
+    case OpType::TIMES: {
+        if constexpr (is_arith) {
+#if defined(__cpp_lib_constexpr_numeric)
+            return std::accumulate(data.begin(), data.end(), T(1), std::multiplies{});
+#else
+            T accum{};
+            for (const auto& d : data)
+                accum *= d;
+            return accum;
+#endif
+        }
+        break;
+    }
+    case OpType::MINIMUM: return *std::min_element(data.begin(), data.end()); break;
+    case OpType::MAXIMUM: return *std::max_element(data.begin(), data.end()); break;
+    default: break;
+    }
+
+    throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for data array.");
+}
+
+template <typename D>
+    requires (requires(D d) { d.size(); d[std::size_t{0}]; d.begin(); d.end(); d.front(); } &&
+              !std::is_same_v<std::decay_t<D>, std::string>)
+constexpr auto OperateData(OpType op_type, D&& data, auto rand_int)
+{
+    using T = std::decay_t<decltype(data.front())>;
+    constexpr bool is_enum = std::is_enum_v<T>;
+    constexpr bool is_arith = std::is_arithmetic_v<T>;
+    constexpr bool is_string = std::is_same_v<T, std::string>;
+    static_assert(is_arith || is_string || is_enum);
+
+    switch (op_type) {
+    case OpType::RANDOM_PICK: {
+        const auto data_sz = data.size();
+        const int pick_max = std::max(0, static_cast<int>(data_sz) - 1);
+        const std::size_t pick_idx = static_cast<std::size_t>(rand_int(0, pick_max));
+        const std::size_t idx = std::max<std::size_t>(0, std::min<std::size_t>(pick_max, pick_idx));
+        return std::forward<D>(data)[idx];
+        break;
+    }
+    default: return OperateData(op_type, std::forward<D>(data)); break;
+    }
+}
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const std::unique_ptr<ValueRef<T>>& lhs,
+                      const std::unique_ptr<ValueRef<T>>& rhs, const ScriptingContext& context)
+{ return OperateData(op_type, lhs ? lhs->Eval(context) : T(), rhs ? rhs->Eval(context) : T()); }
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const ValueRef<T>* lhs, const ValueRef<T>* rhs, const ScriptingContext& context)
+{ return OperateData(op_type, lhs ? lhs->Eval(context) : T(), rhs ? rhs->Eval(context) : T()); }
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const ValueRef<T>* lhs, const ValueRef<T>* rhs,
+                      const ScriptingContext& context, auto rand_int, auto rand_double)
+{
+    switch (op_type) {
+    case OpType::RANDOM_PICK: {
+        const bool picker = static_cast<bool>(rand_int(0, 1));
+        const auto& ref = picker ? rhs : lhs;
+        return ref ? ref->Eval(context) : T();
         break;
     }
 
     default:
+        return OperateData(op_type, lhs ? lhs->Eval(context) : T(),
+                           rhs ? rhs->Eval(context) : T(), rand_int, rand_double);
         break;
     }
-
-    throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
 }
 
 template <typename T>
-T Operation<T>::EvalImpl() const
-{
-    if (!this->m_constant_expr)
-        throw std::runtime_error("can't evaluate non constant Operation without a context");
-    const ScriptingContext context;
-    return EvalImpl(context);
+auto OperateValueRefs(OpType op_type, const std::unique_ptr<ValueRef<T>>& lhs,
+                      const std::unique_ptr<ValueRef<T>>& rhs,
+                      const ScriptingContext& context, auto rand_int, auto rand_double)
+{ return OperateValueRefs(op_type, lhs.get(), rhs.get(), context, rand_int, rand_double); }
+
+namespace {
+    // evaulates ref[i], unless ref[i] is null or \a refs is too small, in which case
+    // returns a default value that is 1 or "true" if \a default_val is true, or otherwise 0 or ""
+    constexpr auto EvalIdxConstantRef(const auto& refs, std::size_t i, bool default_val = false) {
+        using T = std::decay_t<decltype(refs[i]->Eval())>;
+        if (refs.size() > i) {
+            const auto& ref{refs[i]};
+            if (!ref)
+                return T();
+            if (!ref->ConstantExpr())
+                throw std::runtime_error("can't evaluate non-constant Operation without a context");
+            return ref->Eval();
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return std::string{default_val ? "true" : ""};
+        } else {
+            return default_val ? T{1} : T();
+        }
+    };
+
+    constexpr auto EvalIdxRef(const ScriptingContext& context, const auto& refs,
+                              std::size_t i, bool default_val = false)
+    {
+        using T = std::decay_t<decltype(refs[i]->Eval())>;
+        if (refs.size() > i) {
+            const auto& ref{refs[i]};
+            return ref ? ref->Eval(context) : T();
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return std::string{default_val ? "true" : ""};
+        } else {
+            return default_val ? T{1} : T();
+        }
+    };
 }
 
-template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
+template <typename D>
+    requires requires(D d) { d.begin(); d.end(); d.empty(); d.front()->Eval(); d[0]->ConstantExpr(); }
+CONSTEXPR_VEC auto OperateConstantValueRefs(OpType op_type, D&& refs)
+{
+    using T = std::decay_t<decltype(refs.front()->Eval())>;
+    if (refs.empty())
+        return T();
 
-template <>
-FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
+    switch (op_type) {
+    case OpType::COMPARE_EQUAL:
+    case OpType::COMPARE_GREATER_THAN:
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
+    case OpType::COMPARE_LESS_THAN:
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL:
+    case OpType::COMPARE_NOT_EQUAL: {
+        return ValCompareOp(EvalIdxConstantRef(refs, 0), op_type, EvalIdxConstantRef(refs, 1)) ?
+            EvalIdxConstantRef(refs, 2, true) : EvalIdxConstantRef(refs, 3, false);
+        break;
+    }
+    default: {
+        std::vector<T> vals;
+        vals.reserve(refs.size());
+#if defined(_MSC_VER) && (_MSC_VER < 1939)
+        // internal compiler error workaround
+        for (auto& ref : refs)
+            vals.push_back((ref && ref->ConstantExpr()) ? ref->Eval() : T());
+#else
+        std::transform(refs.begin(), refs.end(), std::back_inserter(vals),
+                       [](const auto& ref) { return (ref && ref->ConstantExpr()) ? ref->Eval() : T(); });
+#endif
+        return OperateData(op_type, std::move(vals));
+    }
+    }
+}
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const std::vector<std::unique_ptr<ValueRef<T>>>& refs,
+                      const ScriptingContext& context, auto rand_int, auto rand_double)
+{
+    if (refs.empty())
+        return T();
+    const auto refs_sz = refs.size();
+
+    switch (op_type) {
+    case OpType::RANDOM_PICK: {
+        const int pick_max = std::max(0, static_cast<int>(refs_sz) - 1);
+        const std::size_t pick_idx = static_cast<std::size_t>(rand_int(0, pick_max));
+        const std::size_t idx = std::max<std::size_t>(0, std::min<std::size_t>(pick_max, pick_idx));
+        return EvalIdxRef(context, refs, idx);
+        break;
+    }
+    case OpType::COMPARE_EQUAL:
+    case OpType::COMPARE_GREATER_THAN:
+    case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
+    case OpType::COMPARE_LESS_THAN:
+    case OpType::COMPARE_LESS_THAN_OR_EQUAL:
+    case OpType::COMPARE_NOT_EQUAL: {
+        return ValCompareOp(EvalIdxRef(context, refs, 0), op_type, EvalIdxRef(context, refs, 1)) ?
+            EvalIdxRef(context, refs, 2, true) : EvalIdxRef(context, refs, 3, false);
+        break;
+    }
+    default: {
+        std::vector<T> vals;
+        vals.reserve(refs_sz);
+#if defined(_MSC_VER) && (_MSC_VER < 1939)
+        // internal compiler error workaround
+        for (auto& ref : refs)
+            vals.push_back(ref ? ref->Eval(context) : T());
+#else
+        std::transform(refs.begin(), refs.end(), std::back_inserter(vals),
+                       [&context](const auto& ref) { return ref ? ref->Eval(context) : T(); });
+#endif
+        return OperateData(op_type, std::move(vals), rand_int);
+    }
+    }
+}
+
+template <typename T>
+T Operation<T>::EvalConstantExpr() const
+{
+    if (!this->m_constant_expr)
+        throw std::runtime_error("can't evaluate non-constant Operation without a context");
+    else if (m_operands.size() == 1)
+        return OperateData<T>(this->m_op_type, m_operands.front() ? m_operands.front()->Eval() : T());
+    else if (m_operands.size() == 2)
+        return OperateData<T>(this->m_op_type, m_operands.front() ? m_operands.front()->Eval() : T(),
+                              m_operands.back() ? m_operands.back()->Eval() : T());
+    else
+        return OperateConstantValueRefs(this->m_op_type, m_operands);
+}
 
 template <typename T>
 T Operation<T>::Eval(const ScriptingContext& context) const
 {
-    if (this->m_constant_expr)
+    if (this->m_constant_expr) {
         return m_cached_const_value;
-    return this->EvalImpl(context);
+    } else if (this->m_simple_increment) { // assumes simple increment test checks that refs aren't null
+        return OperateData<T>(this->m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+    } else if (m_operands.size() == 1) {
+        return OperateData<T>(this->m_op_type, LHS() ? LHS()->Eval(context) : T());
+    } else if (m_operands.size() == 2) {
+        return OperateValueRefs<T>(this->m_op_type, LHS(), RHS(), context, vr_rand_int, vr_rand_double);
+    } else {
+        return OperateValueRefs<T>(this->m_op_type, m_operands, context, vr_rand_int, vr_rand_double);
+    }
 }
 
 template <typename T>
@@ -2007,7 +2394,7 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
                 op_type
                ),
     m_operands(std::move(operands)),
-    m_cached_const_value(this->m_constant_expr ? this->EvalImpl() : T{})
+    m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
 {
     if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) noexcept -> bool { return !op; }))
         throw std::invalid_argument("Operation passed null operand");
@@ -2175,7 +2562,7 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
         return "RandomNumber(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
 
     if (this->m_op_type == OpType::RANDOM_PICK) {
-        std::string retval = "randompick(";
+        std::string retval = "OneOf(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
