@@ -3229,839 +3229,178 @@ uint32_t NameLookup::GetCheckSum() const {
     return retval;
 }
 
-///////////////////////////////////////////////////////////
-// Operation                                             //
-///////////////////////////////////////////////////////////
-template <>
-std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs)
-{
-    switch (op_type) {
-    case OpType::PLUS: {
-        return lhs + rhs;
-        break;
-    }
+namespace StaticTests {
+    using namespace ::ValueRef;
 
-    case OpType::TIMES: {
-        // useful for writing a "Statistic If" expression with strings. Number-
-        // valued types return 0 or 1 for nothing or something matching the sampling
-        // condition. For strings, an empty string indicates no matches, and non-empty
-        // string indicates matches, which is treated like a multiplicative identity
-        // operation, so just returns the RHS of the expression.
-        return lhs.empty() ? lhs : rhs;
-        break;
-    }
+    // auto abs(auto val)
+    static_assert(abs(0) == 0);
+    static_assert(abs(1) == 1);
+    static_assert(abs(-4.0) == 4.0);
 
-    case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
-        break;
-    }
+    // auto sign(auto val)
+    static_assert(sign(0) == 0);
+    static_assert(sign(1) == 1);
+    static_assert(sign(-4.0) == -1.0);
 
-    case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
-        break;
-    }
+    // auto pow(auto val)
+    static_assert(pow(0) == 1);
 
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
-    }
+    // auto pow(auto base, auto exp)
+    static_assert(pow(0, 1) == 0);
+    static_assert(pow(1, 1) == 1);
+    static_assert(pow(-2, 3) == -8);
+    static_assert(pow(1.0, 2.0) == 1.0);
+    static_assert(pow(2.0, 2.0) == 4.0);
 
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs) ? "true" : "false";
-        break;
-    }
+    // auto round(auto val)
+    static_assert(round(0.0) == 0.0);
+    static_assert(round(42) == 42);
+    static_assert(round(42.0) == 42);
+    static_assert(round(42.9) == 43);
+    static_assert(round(42.1) == 42);
+    static_assert(round(-42.0) == -42);
+    static_assert(round(-42.9) == -43);
+    static_assert(round(-42.1) == -42);
 
-    case OpType::SUBSTITUTION: {
-        // insert string into other string in place of %1% or similar placeholder
-        if (lhs.empty())
-            return lhs;
+    // auto ceil(auto val)
+    static_assert(ceil(0.0) == 0.0);
+    static_assert(ceil(42) == 42);
+    static_assert(ceil(42.0) == 42);
+    static_assert(ceil(42.9) == 43);
+    static_assert(ceil(42.1) == 43);
+    static_assert(ceil(-42.0) == -42);
+    static_assert(ceil(-42.9) == -42);
+    static_assert(ceil(-42.1) == -42);
 
-        boost::format formatter = FlexibleFormat(lhs);
-        formatter % rhs;
-        return formatter.str();
-        break;
-    }
+    // auto floor(auto val)
+    static_assert(floor(0.0) == 0.0);
+    static_assert(floor(42) == 42);
+    static_assert(floor(42.0) == 42);
+    static_assert(floor(42.9) == 42);
+    static_assert(floor(42.1) == 42);
+    static_assert(floor(-42.0) == -42);
+    static_assert(floor(-42.9) == -43);
+    static_assert(floor(-42.1) == -43);
 
-    default: break;
-    }
+    static constexpr double ok_test_frac = 0.00000000001;
 
-    throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
-    return "";
+    // auto log(auto val)
+    static_assert(log(1) == 0);
+    static_assert(log(1.0) == 0.0);
+    static_assert(abs(log(2.0) - 0.6931471805599453) < ok_test_frac);
+    static_assert(abs(log(0.5) + 0.6931471805599453) < ok_test_frac);
+    static_assert(abs(log(2.0) + log(0.5)) < ok_test_frac);
+
+    // auto log(auto val, auto base)
+    static_assert(log(2, 1) == 0);
+    static_assert(abs(log(2.0, 0.5) + 1.0) < ok_test_frac);
+    static_assert(log(2.0, 1.0) == 0.0);
+    static_assert(log(2.0, 2.0) == 1.0);
+    static_assert(log(2, 4) == 2);
+    static_assert(abs(log(2.0, 4.0) - 2.0) < ok_test_frac);
+    static_assert(log(10, 1000) == 3);
+    static_assert(abs(log(10.0, 1000.0) - 3.0) < ok_test_frac);
+    static_assert(abs(log(10.0f, 1000.0f) - 3.0f) < ok_test_frac);
+
+    using enum OpType;
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+    static_assert(OperateData(PLUS, std::string{"start"}, std::string{"end"}) == "startend");
+    static_assert(OperateData(SUBSTITUTION, std::string{""}, std::string{"anything"}).empty());
+    static_assert(OperateData(NOOP, std::string{"noop"}) == "noop");
+    static_assert(OperateData(COMPARE_EQUAL, std::string{"one"}, std::string{"two"}).empty());
+    static_assert(!OperateData(COMPARE_NOT_EQUAL, std::string{"one"}, std::string{"two"}).empty());
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return 0; }) == "one");
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return 1; }) == "two");
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return 4; }) == "two");
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return -4; }) == "two");
+#endif
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(OperateData(PLUS, std::vector{-1, 0, 1, 2, 3}) == 5);
+    static_assert(OperateData(TIMES, std::vector{-1, 1, 2, 3}) == -6);
+    static_assert(OperateData(RANDOM_PICK, std::vector{-1, 1, 2, 3}, [](auto, auto) { return 0; }) == -1);
+    static_assert(OperateData(RANDOM_PICK, std::vector{-1, 1, 2, 3}, [](auto, auto) { return 100; }) == 3);
+    static_assert(OperateData(RANDOM_PICK, std::vector{-1, 1, 2, 3}, [](auto, auto) { return -3; }) == 3);
+#endif
+
+    static_assert(OperateData(PLUS, 0, 42) == 42);
+    static_assert(OperateData(PLUS, 0.25f, 1.25f) == 1.5f);
+    static_assert(OperateData(MINUS, 0, 42) == -42);
+    static_assert(OperateData(MINUS, 0.25f, 1.25f) == -1.0f);
+    static_assert(OperateData(TIMES, 0, 1) == 0);
+    static_assert(OperateData(TIMES, 2, 21) == 42);
+    static_assert(OperateData(TIMES, -2.0, 21.0) == -42.0);
+    static_assert(OperateData(DIVIDE, 5, 9) == 0);
+    static_assert(OperateData(DIVIDE, 84, 2) == 42);
+    static_assert(OperateData(DIVIDE, -84.0f, 2.0f) == -42.0f);
+    static_assert(OperateData(REMAINDER, 5, 9) == 5);
+    static_assert(OperateData(REMAINDER, -5, 9) == -5);
+    static_assert(OperateData(REMAINDER, 5, -9) == 5);
+    static_assert(OperateData(REMAINDER, -5, -9) == -5);
+    static_assert(OperateData(EXPONENTIATE, 0, 1) == 0);
+    static_assert(OperateData(EXPONENTIATE, 5, 0) == 1);
+    static_assert(OperateData(EXPONENTIATE, 2.0f, 4.0f) == 16.0f);
+    static_assert(OperateData(LOGARITHM, 2, 256) == 8);
+    static_assert(OperateData(MINIMUM, -5, -9) == -9);
+    static_assert(OperateData(MAXIMUM, -5, -9) == -5);
+
+    constexpr struct {
+        constexpr int operator()(int l, int h) noexcept { return RandIntCx(std::min(l, h), std::max(l, h)); }
+        constexpr double operator()(double l, double h) noexcept { return RandDoubleCx(std::min(l, h), std::max(l, h)); }
+    } rand_wrapper;
+    static_assert(OperateData(RANDOM_UNIFORM, 5, -5, rand_wrapper) >= -5);
+    static_assert(OperateData(RANDOM_UNIFORM, 5.0, 9.0, rand_wrapper, rand_wrapper) <= 9.0);
+    static_assert(OperateData(RANDOM_UNIFORM, 5.0, 9.0, rand_wrapper, rand_wrapper) >= 5.0);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return 1; }) == 4);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return 0; }) == 3);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return 10; }) == 4);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return -4; }) == 4);
+
+    static_assert(OperateData(COMPARE_EQUAL, 2, 4) == 0);
+    static_assert(OperateData(COMPARE_GREATER_THAN, 2, 4) == 0);
+    static_assert(OperateData(COMPARE_GREATER_THAN_OR_EQUAL, 2, 4) == 0);
+    static_assert(OperateData(COMPARE_LESS_THAN, 2, 4) == 1);
+    static_assert(OperateData(COMPARE_LESS_THAN_OR_EQUAL, 2, 4) == 1);
+    static_assert(OperateData(COMPARE_NOT_EQUAL, 2, 4) == 1);
+
+    static_assert(OperateData(NOOP, 5) == 5);
+    static_assert(OperateData(NEGATE, 5) == -5);
+    static_assert(OperateData(NEGATE, 42.0) == -42.0);
+    static_assert(OperateData(EXPONENTIATE, 0.0) == 1.0);
+    static_assert(OperateData(ABS, 0) == 0);
+    static_assert(OperateData(ABS, 1) == 1);
+    static_assert(OperateData(ABS, -3.25) == 3.25);
+    static_assert(OperateData(LOGARITHM, 1.0) == 0.0);
+    static_assert(OperateData(ROUND_NEAREST, 1.0) == 1.0);
+    static_assert(OperateData(ROUND_NEAREST, 42.6f) == 43.0f);
+    static_assert(OperateData(ROUND_NEAREST, -1.3) == -1);
+    static_assert(OperateData(ROUND_UP, 1.0) == 1.0);
+    static_assert(OperateData(ROUND_UP, 42.6f) == 43.0f);
+    static_assert(OperateData(ROUND_UP, -1.3) == -1);
+    static_assert(OperateData(ROUND_DOWN, 1.0) == 1.0);
+    static_assert(OperateData(ROUND_DOWN, 42.6f) == 42.0f);
+    static_assert(OperateData(ROUND_DOWN, -1.3) == -2);
+    static_assert(OperateData(SIGN, -1.3) == -1);
+    static_assert(OperateData(SIGN, 0) == 0);
+    static_assert(OperateData(SIGN, 42.6f) == 1.0f);
+
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(OperateConstantValueRefs(PLUS, std::array<::ValueRef::Constant<int>*, 4>{}) == 0);
+#  if !defined(_MSC_VER) || (_MSC_VER >= 1939)
+    constexpr ::ValueRef::Constant<int> cxvc1{1}, cxvc2{2}, cxvc3{3};
+    constexpr std::array<const ::ValueRef::Constant<int>*, 4> test_refs{&cxvc1, &cxvc2, &cxvc3, nullptr};
+    static_assert(OperateConstantValueRefs(PLUS, test_refs) == 6);
+    static_assert(OperateConstantValueRefs(TIMES, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(MINIMUM, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(MAXIMUM, test_refs) == 3);
+    static_assert(OperateConstantValueRefs(COMPARE_EQUAL, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(COMPARE_GREATER_THAN, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(COMPARE_GREATER_THAN_OR_EQUAL, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(COMPARE_LESS_THAN, test_refs) == 3);
+    static_assert(OperateConstantValueRefs(COMPARE_LESS_THAN_OR_EQUAL, test_refs) == 3);
+    static_assert(OperateConstantValueRefs(COMPARE_NOT_EQUAL, test_refs) == 3);
+#  endif
+#endif
 }
 
-template <>
-double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs)
-{
-    switch (op_type) {
-    case OpType::PLUS: {
-        return lhs + rhs;
-        break;
-    }
-
-    case OpType::MINUS: {
-        return lhs - rhs;
-        break;
-    }
-
-    case OpType::TIMES: {
-        return lhs * rhs;
-        break;
-    }
-
-    case OpType::DIVIDE: {
-        if (rhs == 0.0)
-            return 0.0;
-        return lhs / rhs;
-        break;
-    }
-
-    case OpType::REMAINDER: {
-        double divisor = std::abs(rhs);
-        if (divisor == 0.0)
-            return 0.0;
-        auto dividend = lhs;
-        auto quotient = std::floor(dividend / divisor);
-        return dividend - quotient * divisor;
-        break;
-    }
-
-    case OpType::NEGATE: {
-        return -lhs;
-        break;
-    }
-
-    case OpType::EXPONENTIATE: {
-        if (rhs == 0.0)
-            return 1.0;
-        try {
-            return static_cast<int>(std::pow(static_cast<double>(lhs), static_cast<double>(rhs)));
-        } catch (...) {
-            ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-            return 0;
-        }
-        break;
-    }
-
-    case OpType::NOOP: {
-        return lhs;
-        break;
-    }
-
-    case OpType::ABS: {
-        return std::abs(lhs);
-        break;
-    }
-
-    case OpType::LOGARITHM: {
-        if (lhs <= 0.0)
-            return 0.0;
-        return std::log(lhs);
-        break;
-    }
-
-    case OpType::SINE: {
-        return std::sin(lhs);
-        break;
-    }
-
-    case OpType::COSINE: {
-        return std::cos(lhs);
-        break;
-    }
-
-    case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
-        break;
-    }
-
-    case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
-        break;
-    }
-
-    case OpType::RANDOM_UNIFORM: {
-        return RandDouble(std::min(lhs, rhs), std::max(rhs, lhs));
-        break;
-    }
-
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
-    }
-
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs);
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs);
-        break;
-    }
-
-    case OpType::ROUND_NEAREST: {
-        return std::round(lhs);
-        break;
-    }
-    case OpType::ROUND_UP: {
-        return std::ceil(lhs);
-        break;
-    }
-    case OpType::ROUND_DOWN: {
-        return std::floor(lhs);
-        break;
-    }
-
-    case OpType::SIGN: {
-        static constexpr double test_case = -42.1;
-        static constexpr double branchless_test = (0.0 < test_case) - (test_case < 0.0);
-        static constexpr double ternary_condition_test = test_case < 0.0 ? -1.0 : test_case > 0.0 ? 1.0 : 0.0;
-        static_assert(branchless_test == ternary_condition_test);
-        return (0.0 < lhs) - (lhs < 0.0);
-        break;
-    }
-
-    default:    break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<double> evaluated with an unknown or invalid OpType.");
-    return 0.0;
-}
-
-template <>
-int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs)
-{
-    switch (op_type) {
-    case OpType::PLUS: {
-        return lhs + rhs;
-        break;
-    }
-
-    case OpType::MINUS: {
-        return lhs - rhs;
-        break;
-    }
-
-    case OpType::TIMES: {
-        return lhs * rhs;
-        break;
-    }
-
-    case OpType::DIVIDE: {
-        if (rhs == 0)
-            return 0;
-        return lhs / rhs;
-        break;
-    }
-
-    case OpType::REMAINDER: {
-        if (rhs == 0)
-            return 0;
-        return lhs % rhs;
-        break;
-    }
-
-    case OpType::NEGATE: {
-        return -lhs;
-        break;
-    }
-
-    case OpType::EXPONENTIATE: {
-        if (rhs == 0)
-            return 1;
-        try {
-            return static_cast<int>(std::pow(static_cast<double>(lhs), static_cast<double>(rhs)));
-        } catch (...) {
-            ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-            return 0;
-        }
-        break;
-    }
-
-    case OpType::NOOP: {
-        return lhs;
-        break;
-    }
-
-    case OpType::ABS: {
-        return std::abs(lhs);
-        break;
-    }
-
-    case OpType::LOGARITHM: {
-        if (lhs <= 0)
-            return 0;
-        return static_cast<int>(std::log(static_cast<double>(lhs)));
-        break;
-    }
-
-    case OpType::SINE: {
-        return static_cast<int>(std::round(std::sin(static_cast<double>(lhs))));
-        break;
-    }
-
-    case OpType::COSINE: {
-        return static_cast<int>(std::round(std::cos(static_cast<double>(lhs))));
-        break;
-    }
-
-    case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
-        break;
-    }
-
-    case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
-        break;
-    }
-
-    case OpType::RANDOM_UNIFORM: {
-        return RandInt(std::min(lhs, rhs), std::max(rhs, lhs));
-        break;
-    }
-
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
-    }
-
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs);
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs);
-        break;
-    }
-
-    case OpType::ROUND_NEAREST:
-    case OpType::ROUND_UP:
-    case OpType::ROUND_DOWN: {
-        // integers don't need to be rounded...
-        return lhs;
-        break;
-    }
-
-    case OpType::SIGN: {
-        static constexpr int test_case = -42;
-        static constexpr int branchless_test = (0 < test_case) - (test_case < 0);
-        static constexpr int ternary_condition_test = test_case < 0 ? -1 : test_case > 0 ? 1 : 0;
-        static_assert(branchless_test == ternary_condition_test);
-        return (0 < lhs) - (lhs < 0);
-        break;
-    }
-
-    default:    break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<int> evaluated with an unknown or invalid OpType.");
-    return 0;
-}
-
-template <>
-std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const
-{
-    if (this->m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
-
-    if (this->m_op_type == OpType::PLUS) {
-
-        return LHS()->Eval(context) + RHS()->Eval(context);
-
-    } else if (this->m_op_type == OpType::TIMES) {
-        // useful for writing a "Statistic If" expression with strings. Number-
-        // valued types return 0 or 1 for nothing or something matching the sampling
-        // condition. For strings, an empty string indicates no matches, and non-empty
-        // string indicates matches, which is treated like a multiplicative identity
-        // operation, so just returns the RHS of the expression.
-        if (LHS()->Eval(context).empty())
-            return "";
-        return RHS()->Eval(context);
-
-    } else if (this->m_op_type == OpType::MINIMUM || m_op_type == OpType::MAXIMUM) {
-        if (m_operands.empty())
-            return "";
-
-        // evaluate all operands, return smallest or biggest
-        std::vector<std::string> vals;
-        vals.reserve(m_operands.size());
-        for (auto& vr : m_operands) {
-            if (vr)
-                vals.emplace_back(vr->Eval(context));
-        }
-        if (this->m_op_type == OpType::MINIMUM)
-            return *std::min_element(vals.begin(), vals.end());
-        else
-            return *std::max_element(vals.begin(), vals.end());
-
-    } else if (this->m_op_type == OpType::RANDOM_PICK) {
-        // select one operand, evaluate it, return result
-        if (m_operands.empty())
-            return "";
-        std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
-        auto& vr = *std::next(m_operands.begin(), idx);
-        if (!vr)
-            return "";
-        return vr->Eval(context);
-
-    } else if (this->m_op_type == OpType::SUBSTITUTION) {
-        // insert string into other string in place of %1% or similar placeholder
-        if (m_operands.empty())
-            return "";
-        auto& template_op = m_operands.front();
-        if (!template_op)
-            return "";
-        const std::string template_str = template_op->Eval(context);
-
-        boost::format formatter = FlexibleFormat(template_str);
-
-        for (auto& op : m_operands)
-            formatter % (op ? op->Eval(context) : "");
-        return formatter.str();
-
-    } else if (this->m_op_type >= OpType::COMPARE_EQUAL && m_op_type <= OpType::COMPARE_NOT_EQUAL) {
-        std::string lhs_val = LHS()->Eval(context);
-        std::string rhs_val = RHS()->Eval(context);
-        bool test_result = false;
-        if (m_operands.size() == 2)
-            return EvalImpl(m_op_type, lhs_val, rhs_val);
-
-        switch (m_op_type) {
-            case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-            case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-            case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-            case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-            case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-            case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-            default:    break;  // ??? do nothing, default to false
-        }
-        if (m_operands.size() < 3) {
-            return test_result ? "true" : "false";
-        } else if (m_operands.size() < 4) {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return "false";
-        } else {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return m_operands[3]->Eval(context);
-        }
-    }
-
-    throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
-    return "";
-}
-
-template <>
-double Operation<double>::EvalImpl(const ScriptingContext& context) const
-{
-    if (m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
-
-    switch (m_op_type) {
-        case OpType::PLUS:
-            return LHS()->Eval(context) + RHS()->Eval(context); break;
-
-        case OpType::MINUS:
-            return LHS()->Eval(context) - RHS()->Eval(context); break;
-
-        case OpType::TIMES: {
-            double op1 = LHS()->Eval(context);
-            if (op1 == 0.0)
-                return 0.0;
-            return op1 * RHS()->Eval(context);
-            break;
-        }
-
-        case OpType::DIVIDE: {
-            double op2 = RHS()->Eval(context);
-            if (op2 == 0.0)
-                return 0.0;
-            return LHS()->Eval(context) / op2;
-            break;
-        }
-
-        case OpType::REMAINDER: {
-            double divisor = std::abs(RHS()->Eval(context));
-            if (divisor == 0.0)
-                return 0.0;
-            auto dividend = LHS()->Eval(context);
-            auto quotient = std::floor(dividend / divisor);
-            return dividend - quotient * divisor;
-            break;
-        }
-
-        case OpType::NEGATE:
-            return -(LHS()->Eval(context)); break;
-
-        case OpType::EXPONENTIATE: {
-            double op2 = RHS()->Eval(context);
-            if (op2 == 0.0)
-                return 1.0;
-            try {
-                double op1 = LHS()->Eval(context);
-                return std::pow(op1, op2);
-            } catch (...) {
-                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-                return 0.0;
-            }
-            break;
-        }
-
-        case OpType::NOOP: {
-            DebugLogger() << "ValueRef::Operation<double>::NoOp::EvalImpl on target: "
-                          << (context.effect_target ? context.effect_target->Dump() : std::string{"(no target)"});
-            auto retval = LHS()->Eval(context);
-            DebugLogger() << "ValueRef::Operation<double>::NoOp::EvalImpl. Sub-Expression returned: " << retval
-                          << " from: " << LHS()->Dump();
-            return retval;
-            break;
-        }
-
-        case OpType::ABS:
-            return std::abs(LHS()->Eval(context)); break;
-
-        case OpType::LOGARITHM: {
-            double op1 = LHS()->Eval(context);
-            if (op1 <= 0.0)
-                return 0.0;
-            return std::log(op1);
-            break;
-        }
-
-        case OpType::SINE:
-            return std::sin(LHS()->Eval(context)); break;
-
-        case OpType::COSINE:
-            return std::cos(LHS()->Eval(context)); break;
-
-        case OpType::MINIMUM:
-        case OpType::MAXIMUM: {
-            std::vector<double> vals;
-            vals.reserve(m_operands.size());
-            for (auto& vr : m_operands) {
-                if (vr)
-                    vals.push_back(vr->Eval(context));
-            }
-            if (vals.empty())
-                return 0.0;
-            auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
-            return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
-            break;
-        }
-
-        case OpType::RANDOM_UNIFORM: {
-            double op1 = LHS()->Eval(context);
-            double op2 = RHS()->Eval(context);
-            double min_val = std::min(op1, op2);
-            double max_val = std::max(op1, op2);
-            return RandDouble(min_val, max_val);
-            break;
-        }
-
-        case OpType::RANDOM_PICK: {
-            // select one operand, evaluate it, return result
-            if (m_operands.empty())
-                return 0.0;
-            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
-            auto& vr = *std::next(m_operands.begin(), idx);
-            if (!vr)
-                return 0.0;
-            return vr->Eval(context);
-            break;
-        }
-
-        case OpType::COMPARE_EQUAL:
-        case OpType::COMPARE_GREATER_THAN:
-        case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-        case OpType::COMPARE_LESS_THAN:
-        case OpType::COMPARE_LESS_THAN_OR_EQUAL:
-        case OpType::COMPARE_NOT_EQUAL: {
-            const double&& lhs_val = LHS()->Eval(context);
-            const double&& rhs_val = RHS()->Eval(context);
-            if (m_operands.size() == 2)
-                return EvalImpl(m_op_type, lhs_val, rhs_val);
-
-            bool test_result = false;
-            switch (m_op_type) {
-                case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-                case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-                case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-                case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-                case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-                case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-                default:    break;  // ??? do nothing, default to false
-            }
-            if (m_operands.size() < 3) {
-                return static_cast<double>(test_result);
-            } else if (m_operands.size() < 4) {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return 0.0;
-            } else {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return m_operands[3]->Eval(context);
-            }
-            break;
-        }
-
-        case OpType::ROUND_NEAREST:
-            return std::round(LHS()->Eval(context)); break;
-        case OpType::ROUND_UP:
-            return std::ceil(LHS()->Eval(context)); break;
-        case OpType::ROUND_DOWN:
-            return std::floor(LHS()->Eval(context)); break;
-
-        case OpType::SIGN: {
-            auto lhs{LHS()->Eval(context)};
-            static constexpr double test_case = -42.1;
-            static constexpr double branchless_test = (0.0 < test_case) - (test_case < 0.0);
-            static constexpr double ternary_condition_test = test_case < 0.0 ? -1.0 : test_case > 0.0 ? 1.0 : 0.0;
-            static_assert(branchless_test == ternary_condition_test);
-            return (0.0 < lhs) - (lhs < 0.0);
-            break;
-        }
-
-        default:
-            break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<double> evaluated with an unknown or invalid OpType.");
-    return 0.0;
-}
-
-template <>
-int Operation<int>::EvalImpl(const ScriptingContext& context) const
-{
-    if (m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
-
-    switch (m_op_type) {
-        case OpType::PLUS:
-            return LHS()->Eval(context) + RHS()->Eval(context);     break;
-
-        case OpType::MINUS:
-            return LHS()->Eval(context) - RHS()->Eval(context);     break;
-
-        case OpType::TIMES: {
-            int op1 = LHS()->Eval(context);
-            if (op1 == 0)
-                return 0;
-            return op1 * RHS()->Eval(context);
-            break;
-        }
-
-        case OpType::DIVIDE: {
-            int op2 = RHS()->Eval(context);
-            if (op2 == 0)
-                return 0;
-            return LHS()->Eval(context) / op2;
-            break;
-        }
-
-        case OpType::REMAINDER: {
-            int op2 = RHS()->Eval(context);
-            if (op2 == 0)
-                return 0;
-            return LHS()->Eval(context) % op2;
-            break;
-        }
-
-        case OpType::NEGATE: {
-            return -LHS()->Eval(context);
-            break;
-        }
-
-        case OpType::EXPONENTIATE: {
-            int op2 = RHS()->Eval(context);
-            if (op2 == 0)
-                return 1;
-            try {
-                double op1 = static_cast<double>(LHS()->Eval(context));
-                return static_cast<int>(std::pow(op1, op2));
-            } catch (...) {
-                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-                return 0;
-            }
-            break;
-        }
-
-        case OpType::NOOP: {
-            DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl";
-            int retval = LHS()->Eval(context);
-            DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl. Sub-Expression returned: " << retval
-                          << " from: " << LHS()->Dump();
-            return retval;
-            break;
-        }
-
-        case OpType::ABS: {
-            return std::abs(LHS()->Eval(context));
-            break;
-        }
-
-        case OpType::LOGARITHM: {
-            double op1 = static_cast<double>(LHS()->Eval(context));
-            if (op1 <= 0.0)
-                return 0;
-            return static_cast<int>(std::round(std::log(op1)));
-            break;
-        }
-
-        case OpType::SINE: {
-            double op1 = static_cast<double>(LHS()->Eval(context));
-            return static_cast<int>(std::round(std::sin(op1)));
-            break;
-        }
-
-        case OpType::COSINE: {
-            double op1 = static_cast<double>(LHS()->Eval(context));
-            return static_cast<int>(std::round(std::cos(op1)));
-            break;
-        }
-
-        case OpType::MINIMUM:
-        case OpType::MAXIMUM: {
-            std::vector<int> vals;
-            vals.reserve(m_operands.size());
-            for (auto& vr : m_operands) {
-                if (vr)
-                    vals.push_back(vr->Eval(context));
-            }
-            if (vals.empty())
-                return 0;
-            auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
-            return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
-            break;
-        }
-
-        case OpType::RANDOM_UNIFORM: {
-            int op1 = LHS()->Eval(context);
-            int op2 = RHS()->Eval(context);
-            int min_val = std::min(op1, op2);
-            int max_val = std::max(op1, op2);
-            return RandInt(min_val, max_val);
-            break;
-        }
-
-        case OpType::RANDOM_PICK: {
-            // select one operand, evaluate it, return result
-            if (m_operands.empty())
-                return 0;
-            std::ptrdiff_t idx = static_cast<std::ptrdiff_t>(RandInt(0, m_operands.size() - 1));
-            auto& vr = *std::next(m_operands.begin(), idx);
-            return vr ? vr->Eval(context) : 0;
-            break;
-        }
-
-        case OpType::COMPARE_EQUAL:
-        case OpType::COMPARE_GREATER_THAN:
-        case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-        case OpType::COMPARE_LESS_THAN:
-        case OpType::COMPARE_LESS_THAN_OR_EQUAL:
-        case OpType::COMPARE_NOT_EQUAL: {
-            const int lhs_val = LHS()->Eval(context);
-            const int rhs_val = RHS()->Eval(context);
-            if (m_operands.size() == 2)
-                return EvalImpl(m_op_type, lhs_val, rhs_val);
-
-            bool test_result = false;
-            switch (m_op_type) {
-                case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-                case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-                case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-                case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-                case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-                case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-                default:    break;  // ??? do nothing, default to false
-            }
-            if (m_operands.size() < 3)
-                return static_cast<int>(test_result);
-            else if (m_operands.size() < 4)
-                return test_result ? m_operands[2]->Eval(context) : 0;
-            else
-                return test_result ? m_operands[2]->Eval(context) : m_operands[3]->Eval(context);
-            break;
-        }
-
-        case OpType::ROUND_NEAREST:
-        case OpType::ROUND_UP:
-        case OpType::ROUND_DOWN: {
-            // integers don't need to be rounded...
-            return LHS()->Eval(context);
-            break;
-        }
-
-        case OpType::SIGN: {
-            auto lhs{LHS()->Eval(context)};
-            static constexpr int test_case = -42;
-            static constexpr int branchless_test = (0 < test_case) - (test_case < 0);
-            static constexpr int ternary_condition_test = test_case < 0 ? -1 : test_case > 0 ? 1 : 0;
-            static_assert(branchless_test == ternary_condition_test);
-            return (0 < lhs) - (lhs < 0);
-            break;
-        }
-
-        default:    break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<int> evaluated with an unknown or invalid OpType.");
-    return 0;
-}
 } // namespace ValueRef

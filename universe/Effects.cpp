@@ -485,8 +485,8 @@ namespace {
         return retval;
     }
 
-    double OperateData(::ValueRef::OpType op_type, double lhs, double rhs)
-    { return ::ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs); }
+    constexpr double OperateData(::ValueRef::OpType op_type, double lhs, double rhs)
+    { return ::ValueRef::OperateData(op_type, lhs, rhs, ::ValueRef::vr_rand_int, ::ValueRef::vr_rand_double); }
 }
 
 void SetMeter::Execute(ScriptingContext& context) const {
