@@ -198,9 +198,28 @@ namespace CheckSums {
         return guess;
     }
 
+    template <typename E> requires std::is_integral_v<std::decay_t<E>>
+    constexpr E log(E x) { return static_cast<E>(log(static_cast<double>(x))); }
+
     template <typename E> requires std::is_floating_point_v<std::decay_t<E>>
     constexpr E log10(const E x, std::size_t max_iter = 20)
     { return log(x, max_iter) / static_cast<E>(log_base_e_of_10); }
+
+    template <typename B = double, typename E = double> requires std::is_floating_point_v<E>
+    constexpr E pow(B base, E exp)
+    {
+        if (base == 0 && exp <= 0)
+            throw std::invalid_argument("0^(<=0) is undefined");
+        if (base == 0 || base == 1)
+            return base;
+        if (static_cast<int64_t>(exp) == exp)
+            return pow(base, static_cast<int64_t>(exp));
+        if (base < 0)
+            throw std::invalid_argument("(-)^(fraction) might require complex values, not handled");
+
+        // base is positive, exp is non-integer
+        return pow(exp*log(static_cast<E>(base)));
+    }
 
 #else
     using std::abs;

@@ -59,6 +59,14 @@ namespace CheckSums {
     static_assert(abs(pow10(0.9999999f)/9.999997f - 1) < ok_frac_ac);
     static_assert(abs(pow10(-0.9999999f)*9.999997f - 1) < ok_frac_ac);
 
+    static_assert(pow(0.0, 17.0) == 0.0);
+    static_assert(pow(1.0f, 17.0f) == 1.0f);
+    static_assert(pow(2.0, 2.0) == 4.0);
+    static_assert(pow(-2.0, 2.0) == 4.0);
+    static_assert(pow(-2.0, 3.0) == -8.0);
+    static_assert(abs(pow(8.0, 1/3.0) - 2.0) < ok_frac_ac);
+    static_assert(abs(pow(8.0, -1/3.0) - 0.5) < ok_frac_ac);
+
     static_assert(GetCheckSum(0.0f) == 0);
     static_assert(GetCheckSum(0.0) == 0);
     static_assert(GetCheckSum(1.0f) == 4000000);
@@ -88,6 +96,8 @@ namespace CheckSums {
 #if !defined(__cpp_lib_constexpr_cmath)
     static_assert(LogNearestInteger(1.0).first == 0);
 #endif
+
+    static_assert(abs(log(10.0) - log_base_e_of_10) < ok_frac_ac);
 
     constexpr double log_base_10_of_e = 1/log_base_e_of_10;
 
