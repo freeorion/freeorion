@@ -518,6 +518,26 @@ private:
 
     [[nodiscard]] T EvalConstantExpr() const;
 
+    [[nodiscard]] static bool IsSimpleIncrement(OpType op_type, const std::vector<std::unique_ptr<ValueRef<T>>>& operands) {
+        if (op_type == OpType::RANDOM_UNIFORM || op_type == OpType::RANDOM_PICK || op_type == OpType::NOOP)
+            return false;
+
+        // determine if this is a simple incrment operation, meaning it is a calculation
+        // that depends only on:
+        // 1) the effect target value (ie. a meter value or some other property that is
+        //    being modified by an effect)
+        // 2) a single target-invariant value (ie. a constant, something that depends only
+        //    on the source object or a target-independent complex value ref)
+        if (operands.size() != 2)
+            return false;
+        const auto& lhs{operands[0]};
+        const auto& rhs{operands[1]};
+
+        // LHS must be just the immediate value of what's being incremented
+        // RHS must be the same value for all targets
+        return lhs && rhs && lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE && rhs->TargetInvariant();
+    }
+
     const std::vector<std::unique_ptr<ValueRef<T>>> m_operands;
     const T                                         m_cached_const_value = T();
 };
@@ -2370,23 +2390,7 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
                 op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
                 std::all_of(operands.begin(), operands.end(),
                             [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
-                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                [](const auto& operands) -> bool {
-                    // determine if this is a simple incrment operation, meaning it is a calculation
-                    // that depends only on:
-                    // 1) the effect target value (ie. a meter value or some other property that is
-                    //    being modified by an effect)
-                    // 2) a single target-invariant value (ie. a constant, something that depends only
-                    //    on the source object or a target-independent complex value ref)
-                    if (operands.size() != 2)
-                        return false;
-                    const auto& lhs{operands[0]};
-                    const auto& rhs{operands[1]};
-                    // LHS must be just the immediate value of what's being incremented
-                    // RHS must be the same value for all targets
-                    return lhs && rhs && lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE &&
-                        rhs->TargetInvariant();
-                }(operands),
+                IsSimpleIncrement(op_type, operands),
                 op_type
                ),
     m_operands(std::move(operands)),
