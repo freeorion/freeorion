@@ -12,7 +12,7 @@ Tech(
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_3_2"],
     effectsgroups=[
-        *WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_3_3", "SR_WEAPON_1_1", 1),
+        *WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_3_3", "SR_WEAPON_3_1", 3),
         *WEAPON_UPGRADE_SECONDARY_STAT_EFFECTS("SHP_WEAPON_3_3", "SR_WEAPON_0_1", 1),
     ],
     graphic="icons/ship_parts/plasma-3.png",
