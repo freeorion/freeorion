@@ -22,6 +22,23 @@
 #include "../util/i18n.h"
 #include <numeric>
 
+namespace {
+    constexpr auto ship_meter_types = []() {
+        using enum MeterType;
+        auto retval = std::array{
+            METER_FUEL, METER_MAX_FUEL, METER_SHIELD, METER_MAX_SHIELD,
+            METER_DETECTION, METER_STRUCTURE, METER_MAX_STRUCTURE,
+            METER_SPEED, METER_TARGET_INDUSTRY, METER_INDUSTRY,
+            METER_TARGET_RESEARCH, METER_RESEARCH, METER_TARGET_INFLUENCE,
+            METER_INFLUENCE, METER_STEALTH  // stealth here means Universe::Init not needed
+        };
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(retval.begin(), retval.end());
+#endif
+        return retval;
+    }();
+}
+
 
 Ship::Ship(int empire_id, int design_id, std::string species_name,
            const Universe& universe, const SpeciesManager& species,
@@ -43,20 +60,6 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     if (!m_species_name.empty() && !ship_species)
         DebugLogger() << "Ship created with invalid species name: " << m_species_name;
 
-
-    static constexpr auto ship_meter_types = []() {
-        std::array<MeterType, 15> retval{{
-            MeterType::METER_FUEL, MeterType::METER_MAX_FUEL, MeterType::METER_SHIELD, MeterType::METER_MAX_SHIELD,
-            MeterType::METER_DETECTION, MeterType::METER_STRUCTURE, MeterType::METER_MAX_STRUCTURE,
-            MeterType::METER_SPEED, MeterType::METER_TARGET_INDUSTRY, MeterType::METER_INDUSTRY,
-            MeterType::METER_TARGET_RESEARCH, MeterType::METER_RESEARCH, MeterType::METER_TARGET_INFLUENCE,
-            MeterType::METER_INFLUENCE, MeterType::METER_STEALTH  // stealth here means Universe::Init not needed
-        }};
-#if defined(__cpp_lib_constexpr_algorithms)
-        std::sort(retval.begin(), retval.end());
-#endif
-        return retval;
-    }();
     AddMeters(ship_meter_types);
 
     if (!design)
@@ -70,21 +73,24 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
                 continue;
             }
 
+            using enum MeterType;
+            using enum ShipPartClass;
+
             switch (part->Class()) {
-            case ShipPartClass::PC_COLONY:
-            case ShipPartClass::PC_TROOPS: {
-                m_part_meters[{part_name, MeterType::METER_CAPACITY}];
+            case PC_COLONY:
+            case PC_TROOPS: {
+                m_part_meters[{part_name, METER_CAPACITY}];
                 break;
             }
-            case ShipPartClass::PC_DIRECT_WEAPON:      // capacity is damage, secondary stat is shots per attack
-            case ShipPartClass::PC_FIGHTER_HANGAR: {   // capacity is how many fighters contained, secondary stat is damage per fighter attack
-                m_part_meters[{part_name, MeterType::METER_SECONDARY_STAT}];
-                m_part_meters[{part_name, MeterType::METER_MAX_SECONDARY_STAT}];
+            case PC_DIRECT_WEAPON:      // capacity is damage, secondary stat is shots per attack
+            case PC_FIGHTER_HANGAR: {   // capacity is how many fighters contained, secondary stat is damage per fighter attack
+                m_part_meters[{part_name, METER_SECONDARY_STAT}];
+                m_part_meters[{part_name, METER_MAX_SECONDARY_STAT}];
             }
             [[fallthrough]];
-            case ShipPartClass::PC_FIGHTER_BAY: {      // capacity is how many fighters launched per combat round
-                m_part_meters[{part_name, MeterType::METER_CAPACITY}];
-                m_part_meters[{part_name, MeterType::METER_MAX_CAPACITY}];
+            case PC_FIGHTER_BAY: {      // capacity is how many fighters launched per combat round
+                m_part_meters[{part_name, METER_CAPACITY}];
+                m_part_meters[{part_name, METER_MAX_CAPACITY}];
                 break;
             }
             default:
