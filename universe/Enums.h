@@ -2,66 +2,11 @@
 #define _Enums_h_
 
 
-#include <cstdint>
-#include <iostream>
-#include <map>
-#include <string>
-#include <vector>
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
-
-/** Types for Meters
-  * Only active paired meters should lie between MeterType::METER_POPULATION and MeterType::METER_TROOPS
-  * (See: UniverseObject::ResetPairedActiveMeters())
-  */
-FO_ENUM(
-    (MeterType),
-    ((INVALID_METER_TYPE, -1))
-    ((METER_TARGET_POPULATION))
-    ((METER_TARGET_INDUSTRY))
-    ((METER_TARGET_RESEARCH))
-    ((METER_TARGET_INFLUENCE))
-    ((METER_TARGET_CONSTRUCTION))
-    ((METER_TARGET_HAPPINESS))
-
-    ((METER_MAX_CAPACITY))
-    ((METER_MAX_SECONDARY_STAT))
-
-    ((METER_MAX_FUEL))
-    ((METER_MAX_SHIELD))
-    ((METER_MAX_STRUCTURE))
-    ((METER_MAX_DEFENSE))
-    ((METER_MAX_SUPPLY))
-    ((METER_MAX_STOCKPILE))
-    ((METER_MAX_TROOPS))
-
-    ((METER_POPULATION))
-    ((METER_INDUSTRY))
-    ((METER_RESEARCH))
-    ((METER_INFLUENCE))
-    ((METER_CONSTRUCTION))
-    ((METER_HAPPINESS))
-
-    ((METER_CAPACITY))
-    ((METER_SECONDARY_STAT))
-
-    ((METER_FUEL))
-    ((METER_SHIELD))
-    ((METER_STRUCTURE))
-    ((METER_DEFENSE))
-    ((METER_SUPPLY))
-    ((METER_STOCKPILE))
-    ((METER_TROOPS))
-
-    ((METER_REBEL_TROOPS))
-    ((METER_SIZE))
-    ((METER_STEALTH))
-    ((METER_DETECTION))
-    ((METER_SPEED))
-
-    ((NUM_METER_TYPES))
-)
+#include <array>
+#include <utility>
 
 /** types of diplomatic empire affiliations to another empire*/
 FO_ENUM(
@@ -78,16 +23,6 @@ FO_ENUM(
 
     ((NUM_AFFIL_TYPES)) ///< keep last, the number of affiliation types
 )
-
-
-/** Returns mapping from active to target or max meter types that correspond.
-  * eg. MeterType::METER_RESEARCH -> MeterType::METER_TARGET_RESEARCH */
-FO_COMMON_API const std::array<std::pair<MeterType, MeterType>, 13>& AssociatedMeterTypes();
-
-/** Returns the target or max meter type that is associated with the given
-  * active meter type.  If no associated meter type exists, MeterType::INVALID_METER_TYPE
-  * is returned. */
-FO_COMMON_API MeterType AssociatedMeterType(MeterType meter_type);
 
 
 #endif

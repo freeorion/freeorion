@@ -60,8 +60,7 @@ Planet::Planet(PlanetType type, PlanetSize size, int creation_turn) :
     m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERESHOLD)
 {
     //DebugLogger() << "Planet::Planet(" << type << ", " << size <<")";
-    UniverseObject::Init();
-    Planet::Init();
+    AddMeters(planet_meter_types);
 
     static constexpr double SPIN_STD_DEV = 0.1;
     static constexpr double REVERSE_SPIN_CHANCE = 0.06;
@@ -235,35 +234,6 @@ int Planet::HabitableSize() const {
     case PlanetSize::SZ_TINY:      return gr.Get<int>("RULE_HABITABLE_SIZE_TINY");      break;
     default:                       return 0;                                            break;
     }
-}
-
-void Planet::Init() {
-    AddMeter(MeterType::METER_POPULATION);
-    AddMeter(MeterType::METER_TARGET_POPULATION);
-    AddMeter(MeterType::METER_HAPPINESS);
-    AddMeter(MeterType::METER_TARGET_HAPPINESS);
-
-    AddMeter(MeterType::METER_INDUSTRY);
-    AddMeter(MeterType::METER_RESEARCH);
-    AddMeter(MeterType::METER_INFLUENCE);
-    AddMeter(MeterType::METER_CONSTRUCTION);
-    AddMeter(MeterType::METER_TARGET_INDUSTRY);
-    AddMeter(MeterType::METER_TARGET_RESEARCH);
-    AddMeter(MeterType::METER_TARGET_INFLUENCE);
-    AddMeter(MeterType::METER_TARGET_CONSTRUCTION);
-
-    AddMeter(MeterType::METER_SUPPLY);
-    AddMeter(MeterType::METER_MAX_SUPPLY);
-    AddMeter(MeterType::METER_STOCKPILE);
-    AddMeter(MeterType::METER_MAX_STOCKPILE);
-    AddMeter(MeterType::METER_SHIELD);
-    AddMeter(MeterType::METER_MAX_SHIELD);
-    AddMeter(MeterType::METER_DEFENSE);
-    AddMeter(MeterType::METER_MAX_DEFENSE);
-    AddMeter(MeterType::METER_TROOPS);
-    AddMeter(MeterType::METER_MAX_TROOPS);
-    AddMeter(MeterType::METER_DETECTION);
-    AddMeter(MeterType::METER_REBEL_TROOPS);
 }
 
 int Planet::TurnsSinceFocusChange(int current_turn) const noexcept {

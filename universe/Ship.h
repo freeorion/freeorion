@@ -122,11 +122,26 @@ public:
         @p production_by_empire_id. */
     Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
          const SpeciesManager& species, int produced_by_empire_id, int current_turn);
-    Ship() : UniverseObject(UniverseObjectType::OBJ_SHIP) {}
+    Ship() : UniverseObject(UniverseObjectType::OBJ_SHIP) { AddMeters(ship_meter_types); }
 
 private:
     friend class Universe;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+
+    static constexpr auto ship_meter_types = []() {
+        using MT = MeterType;
+        auto retval = std::array{
+            MT::METER_FUEL,            MT::METER_MAX_FUEL,        MT::METER_SHIELD,     MT::METER_MAX_SHIELD,
+            MT::METER_DETECTION,       MT::METER_STRUCTURE,       MT::METER_MAX_STRUCTURE,
+            MT::METER_SPEED,           MT::METER_TARGET_INDUSTRY, MT::METER_INDUSTRY,
+            MT::METER_TARGET_RESEARCH, MT::METER_RESEARCH,        MT::METER_TARGET_INFLUENCE,
+            MT::METER_INFLUENCE
+        };
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(retval.begin(), retval.end());
+#endif
+        return retval;
+    }();
 
     PartMeterMap    m_part_meters;
     std::string     m_species_name;

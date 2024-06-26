@@ -37,8 +37,7 @@ public:
     void SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     void ResetTargetMaxUnpairedMeters() override;
 
-    Building(int empire_id, std::string building_type,
-             int produced_by_empire_id, int creation_turn);
+    Building(int empire_id, std::string building_type, int produced_by_empire_id, int creation_turn);
     Building() : UniverseObject(UniverseObjectType::OBJ_BUILDING) {}
 
 private:

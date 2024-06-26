@@ -44,7 +44,7 @@ public:
     void ClampMeters() override;
 
     Field(std::string field_type, double x, double y, double radius, int creation_turn);
-    Field() : UniverseObject(UniverseObjectType::OBJ_FIELD) {}
+    Field() : UniverseObject(UniverseObjectType::OBJ_FIELD) { AddMeters(std::array{MeterType::METER_SIZE, MeterType::METER_SPEED}); }
 
 private:
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
