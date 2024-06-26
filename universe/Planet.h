@@ -183,7 +183,7 @@ public:
 
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size, int creation_turn);
-    Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) {}
+    Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) { AddMeters(planet_meter_types); }
 
     /** returns new copy of this Planet. */
     [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
@@ -194,7 +194,21 @@ private:
     friend class ObjectMap;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-    void Init();
+    static constexpr auto planet_meter_types = []() {
+        using MT = MeterType;
+        auto retval = std::array{
+            MT::METER_POPULATION,   MT::METER_TARGET_POPULATION, MT::METER_HAPPINESS,       MT::METER_TARGET_HAPPINESS,
+            MT::METER_INDUSTRY,     MT::METER_RESEARCH,          MT::METER_INFLUENCE,
+            MT::METER_CONSTRUCTION, MT::METER_TARGET_INDUSTRY,   MT::METER_TARGET_RESEARCH, MT::METER_TARGET_INFLUENCE, MT::METER_TARGET_CONSTRUCTION,
+            MT::METER_SUPPLY,       MT::METER_MAX_SUPPLY,        MT::METER_STOCKPILE,       MT::METER_MAX_STOCKPILE,    MT::METER_SHIELD,       MT::METER_MAX_SHIELD,
+            MT::METER_DEFENSE,      MT::METER_MAX_DEFENSE,       MT::METER_TROOPS,          MT::METER_MAX_TROOPS,       MT::METER_DETECTION,
+            MT::METER_REBEL_TROOPS
+        };
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(retval.begin(), retval.end());
+#endif
+        return retval;
+    }();
 
     void PopGrowthProductionResearchPhase(ScriptingContext& context) override;
 

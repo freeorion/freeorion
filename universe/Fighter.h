@@ -15,7 +15,7 @@
 class FO_COMMON_API Fighter final : public UniverseObject {
 public:
     Fighter(int empire_id, int launched_from_id, const std::string& species_name,
-            float damage, const ::Condition::Condition* combat_targets/*, int current_turn*/);
+            float damage, const ::Condition::Condition* combat_targets);
     Fighter() : UniverseObject(UniverseObjectType::OBJ_FIGHTER) {}
 
     [[nodiscard]] bool               HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
