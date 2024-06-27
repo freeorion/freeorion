@@ -150,7 +150,7 @@ namespace {
                 if (empire->Eliminated()) continue;
                 if (empires.GetDiplomaticStatus(empire_id, m_empire_id) == m_diplo_status) {
                     m_empire_ids.insert(empire_id);
-                    empires_names_text.append(GG::RgbaTag(empire->Color())).append(empire->Name()).append("\n");
+                    empires_names_text.append(GG::RgbaTag(empire->Color())).append(empire->Name()).append("</rgba>\n");
                 }
             }
 
