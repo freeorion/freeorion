@@ -10,7 +10,7 @@
 # The list of species tags provides the order that species are displayed
 # and ordered in the empire Census pop-up.
 try:
-    from focs._species import SpeciesCensusOrdering
+    from focs._species import *
 except ModuleNotFoundError:
     pass
 
