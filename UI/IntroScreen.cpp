@@ -106,7 +106,7 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     auto task_format = boost::format(" - <rgba 204 204 204 255>%1%</rgba>");
     auto resource_format = boost::format("%1% - <rgba 153 153 153 255>%2%</rgba>\n%3% %4%%5%\n");
     auto source_format = boost::format(" - <rgba 153 153 153 255>%1%</rgba>");
-    auto note_format = boost::format("<rgba 204 204 204 255>(%1%)\n");
+    auto note_format = boost::format("<rgba 204 204 204 255>(%1%)</rgba>\n");
 
     for (const XMLElement& group : credits_node.Children()) {
         if (0 == group.Tag().compare("GROUP")) {
