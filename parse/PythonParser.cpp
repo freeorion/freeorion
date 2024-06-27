@@ -399,7 +399,7 @@ py::object PythonParser::find_spec(const std::string& fullname, const py::object
             return py::object(module_spec(fullname, parent, *this));
         else {
             ErrorLogger() << "Couldn't find file for module spec " << fullname;
-            return py::object();
+            throw import_error("Couldn't find file for module spec " + fullname);
         }
     }
 }
@@ -426,7 +426,7 @@ py::object PythonParser::exec_module(py::object& module) {
             bool read_success = ReadFile(module_path, file_contents);
             if (!read_success) {
                 ErrorLogger() << "Unable to open data file " << module_path.string();
-                throw import_error("Unreadable module");
+                throw import_error("Unreadable module " + fullname);
             }
 
             // store globals content in module namespace
