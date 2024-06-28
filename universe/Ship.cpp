@@ -22,23 +22,6 @@
 #include "../util/i18n.h"
 #include <numeric>
 
-namespace {
-    constexpr auto ship_meter_types = []() {
-        using enum MeterType;
-        auto retval = std::array{
-            METER_FUEL, METER_MAX_FUEL, METER_SHIELD, METER_MAX_SHIELD,
-            METER_DETECTION, METER_STRUCTURE, METER_MAX_STRUCTURE,
-            METER_SPEED, METER_TARGET_INDUSTRY, METER_INDUSTRY,
-            METER_TARGET_RESEARCH, METER_RESEARCH, METER_TARGET_INFLUENCE,
-            METER_INFLUENCE, METER_STEALTH  // stealth here means Universe::Init not needed
-        };
-#if defined(__cpp_lib_constexpr_algorithms)
-        std::sort(retval.begin(), retval.end());
-#endif
-        return retval;
-    }();
-}
-
 
 Ship::Ship(int empire_id, int design_id, std::string species_name,
            const Universe& universe, const SpeciesManager& species,

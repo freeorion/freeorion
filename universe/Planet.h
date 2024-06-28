@@ -183,7 +183,7 @@ public:
 
     /** Create planet from @p type and @p size. */
     Planet(PlanetType type, PlanetSize size, int creation_turn);
-    Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) {}
+    Planet() : UniverseObject(UniverseObjectType::OBJ_PLANET) { AddMeters(planet_meter_types); }
 
     /** returns new copy of this Planet. */
     [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
@@ -194,7 +194,21 @@ private:
     friend class ObjectMap;
     template <typename T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
 
-    void Init();
+    static constexpr auto planet_meter_types = []() {
+        using enum MeterType;
+        auto retval = std::array{
+            METER_POPULATION, METER_TARGET_POPULATION, METER_HAPPINESS, METER_TARGET_HAPPINESS,
+            METER_INDUSTRY, METER_RESEARCH, METER_INFLUENCE,
+            METER_CONSTRUCTION, METER_TARGET_INDUSTRY, METER_TARGET_RESEARCH, METER_TARGET_INFLUENCE, METER_TARGET_CONSTRUCTION,
+            METER_SUPPLY, METER_MAX_SUPPLY, METER_STOCKPILE, METER_MAX_STOCKPILE, METER_SHIELD, METER_MAX_SHIELD, 
+            METER_DEFENSE, METER_MAX_DEFENSE, METER_TROOPS, METER_MAX_TROOPS, METER_DETECTION,
+            METER_REBEL_TROOPS
+        };
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(retval.begin(), retval.end());
+#endif
+        return retval;
+    }();
 
     void PopGrowthProductionResearchPhase(ScriptingContext& context) override;
 
