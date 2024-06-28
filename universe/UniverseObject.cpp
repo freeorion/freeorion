@@ -100,9 +100,6 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
     }
 }
 
-void UniverseObject::Init()
-{ AddMeter(MeterType::METER_STEALTH); }
-
 int UniverseObject::AgeInTurns(int current_turn) const noexcept {
     if (m_created_on_turn == BEFORE_FIRST_TURN)
         return SINCE_BEFORE_TIME_AGE;

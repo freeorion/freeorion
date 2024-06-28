@@ -40,8 +40,6 @@ System::System(StarType star, std::string name, double x, double y, int current_
         m_star = StarType::INVALID_STAR_TYPE;
 
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
-
-    UniverseObject::Init();
 }
 
 std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empire_id) const {

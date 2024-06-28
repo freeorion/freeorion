@@ -195,8 +195,10 @@ public:
     static constexpr uint8_t ETA_UNKNOWN = 254;     ///< returned when ETA can't be determined
     static constexpr uint8_t ETA_OUT_OF_RANGE = 253;///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
-    Fleet(std::string name, double x, double y, int owner_id, int creation_turn);
-    Fleet() : UniverseObject(UniverseObjectType::OBJ_FLEET) {}
+    explicit Fleet(std::string name = "", double x = INVALID_POSITION, double y = INVALID_POSITION,
+                   int owner_id = ALL_EMPIRES, int creation_turn = INVALID_GAME_TURN) :
+        UniverseObject(UniverseObjectType::OBJ_FLEET, std::move(name), x, y, owner_id, creation_turn)
+    {}
 
 private:
     friend class ObjectMap;

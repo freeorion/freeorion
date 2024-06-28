@@ -463,7 +463,7 @@ namespace {
             if (consumed < 1)
                 return;
 
-            meters.emplace(mt, std::move(meter));
+            meters.insert_or_assign(mt, std::move(meter));
 
             next += consumed;
             while (std::distance(next, buffer_end) > 0 && *next == ' ')
