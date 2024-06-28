@@ -45,7 +45,7 @@ def default_ship_stats() -> ShipCombatStats:
         fighter_damage=0,
         flak_shots=0,
         has_interceptors=False,
-        damage_vs_planets=0,
+        damage_vs_planets=6,
         has_bomber=False,
     )
 
