@@ -76,6 +76,7 @@ if(BUILD_TESTING)
     message( STATUS "Building Tests")
     enable_testing()
     enable_coverage()
+    add_compile_options(-DSTATIC_RANDOM_TESTS)
 
     if(NOT TARGET unittest)
         add_custom_target(unittest
