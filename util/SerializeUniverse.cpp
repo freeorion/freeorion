@@ -141,7 +141,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     }
 
 
-    const auto copy_map = [](const auto& from, auto& to) {
+    static constexpr auto copy_map = [](const auto& from, auto& to) {
         for (auto& [id, ids] : from)
             to.emplace(std::piecewise_construct,
                        std::forward_as_tuple(id),
