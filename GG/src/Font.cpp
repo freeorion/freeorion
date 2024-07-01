@@ -55,13 +55,25 @@ namespace {
     constexpr std::string_view PRE_TAG = "pre";
 
     template <typename T>
+    [[nodiscard]] constexpr auto abs(T i) noexcept { return (i >= T{0}) ? i : -i; }
+
+    template <typename T>
     constexpr T NextPowerOfTwo(T input)
     {
+        if constexpr (T{-1} <= T{0}) // std::is_signed_v doesn't work due to X and Y being in namespace GG, so can't easily specialized std::is_signed in the macro that defines X and Y
+            input = abs(input);
         T value{1};
         while (value < input)
             value *= 2;
         return value;
     }
+    static_assert(NextPowerOfTwo(-15) == 16);
+    static_assert(NextPowerOfTwo(Y{-15}) == Y{16});
+    static_assert(NextPowerOfTwo(X0) == X1);
+    static_assert(NextPowerOfTwo(2) == 2);
+    static_assert(NextPowerOfTwo(3) == 4);
+    static_assert(NextPowerOfTwo(4) == 4);
+
 
     /** This is used to collect data on the glyphs as they are recorded into buffers,
       * for use in creating Glyph objects at the end of Font's constructor.*/
@@ -78,7 +90,7 @@ namespace {
 
     // utility to less verbosely quiet warnings
     template <typename T>
-    [[nodiscard]] constexpr std::size_t to_sz_t(T i) noexcept { return static_cast<std::size_t>(Value(i)); }
+    [[nodiscard]] constexpr std::size_t to_sz_t(T i) noexcept { return static_cast<std::size_t>(abs(Value(i))); }
 
     /// A two dimensional grid of pixels that expands to
     /// fit any write much like an stl vector, but in 2d.
@@ -91,11 +103,11 @@ namespace {
         /// \param initial_height Initial height to allocate
         /// \param default_value The value to fill empty space with whenever it appears
         Buffer2d(X initial_width, Y initial_height, const T& default_value):
-            m_capacity_width(initial_width),
-            m_capacity_height(initial_height),
-            m_data(to_sz_t(initial_width)*to_sz_t(initial_height), default_value),
-            m_current_width(initial_width),
-            m_current_height(initial_height),
+            m_capacity_width(abs(initial_width)),
+            m_capacity_height(abs(initial_height)),
+            m_data(to_sz_t(abs(initial_width))*to_sz_t(abs(initial_height)), default_value),
+            m_current_width(abs(initial_width)),
+            m_current_height(abs(initial_height)),
             m_default_value(default_value)
         {}
 
@@ -143,16 +155,14 @@ namespace {
 
         void EnsureFit(X x, Y y)
         {
-            X new_width = std::max(m_current_width, x + 1); // Zero indexed => width = max_x + 1
-            Y new_height = std::max(m_current_height, y + 1); // Also zero indexed
+            X new_width = std::max(m_current_width, abs(x) + 1); // Zero indexed => width = max_x + 1
+            Y new_height = std::max(m_current_height, abs(y) + 1); // Also zero indexed
             X new_capacity_width = m_capacity_width;
             Y new_capacity_height = m_capacity_height;
-            while (new_width > new_capacity_width) {
+            while (new_width > new_capacity_width)
                 new_capacity_width *= 2;
-            }
-            while (new_height > new_capacity_height) {
+            while (new_height > new_capacity_height)
                 new_capacity_height *= 2;
-            }
 
             ResizeCapacity(new_capacity_width, new_capacity_height);
             m_current_width = new_width;
@@ -161,6 +171,8 @@ namespace {
 
         void ResizeCapacity(X new_capacity_width, Y new_capacity_height)
         {
+            new_capacity_width = abs(new_capacity_width);
+            new_capacity_height = abs(new_capacity_height);
             // If there really was a change, we need to recreate our storage.
             // This is expensive, but since we double the size every time,
             // the cost of adding data here in some sane order is amortized constant

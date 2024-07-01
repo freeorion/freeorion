@@ -192,12 +192,14 @@
     <ClCompile Include="..\..\test\parse\CommonTest.cpp" />
     <ClCompile Include="..\..\test\parse\main.cpp" />
     <ClCompile Include="..\..\test\parse\ParserAppFixture.cpp" />
+    <ClCompile Include="..\..\test\parse\TestDefaultPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestEnumParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestScriptParser.cpp" />
     <ClCompile Include="..\..\test\system\ClientAppFixture.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestGame.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestHostless.cpp" />
+    <ClCompile Include="..\..\test\system\TestChecksum.cpp" />
     <ClCompile Include="..\..\util\DependencyVersions.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
     <ClCompile Include="StdAfx.cpp">

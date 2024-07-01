@@ -1157,15 +1157,17 @@ namespace {
                     Condition::ObjectSet rejected;
                     rejected.reserve(source_objects.size());
                     retval = source_objects;
-                    ScriptingContext source_context{nullptr, context};
+                    const ScriptingContext source_context{context, ScriptingContext::Source{}, nullptr};
                     activation->Eval(source_context, retval, rejected, Condition::SearchDomain::MATCHES);
 
                 } else {
                     // need to apply separately to each source object, using a context with the object as source
                     retval.reserve(source_objects.size());
                     std::copy_if(source_objects.begin(), source_objects.end(), std::back_inserter(retval),
-                                 [&context, activation](const UniverseObject* obj)
-                                 { return activation->EvalOne(ScriptingContext{obj, context}, obj); });
+                                 [&context, activation](const UniverseObject* obj) {
+                                     const ScriptingContext source_context(context, ScriptingContext::Source{}, obj);
+                                     return activation->EvalOne(source_context, obj);
+                                 });
                 }
 
                 return retval;
@@ -1822,7 +1824,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
             auto source = context.ContextObjects().getRaw(sourced_effects_group.source_object_id);
             if (!source)
                 WarnLogger() << "No source found for ID: " << sourced_effects_group.source_object_id;
-            ScriptingContext source_context{source, context};
+            ScriptingContext source_context{context, ScriptingContext::Source{}, source};
             effects_group->Execute(source_context,
                                    targets_and_cause,
                                    update_effect_accounting ? &m_effect_accounting_map : nullptr,
@@ -1942,7 +1944,8 @@ void Universe::ApplyEffectDerivedVisibilities(const ScriptingContext& context) {
             for (auto& [source_obj_id, vis_val_ref] : src_and_vis_ref_map) {
                 // set up context for executing ValueRef to determine visibility to set
                 const ScriptingContext::CurrentValueVariant vis_cvv{target_initial_vis};
-                const ScriptingContext source_init_vis_context{context, target, vis_cvv, m_objects->getRaw(source_obj_id)};
+                const ScriptingContext source_init_vis_context{context, ScriptingContext::Target{}, target, vis_cvv,
+                                                               ScriptingContext::Source{}, m_objects->getRaw(source_obj_id)};
 
                 // evaluate and store actual new visibility level
                 Visibility vis = vis_val_ref->Eval(source_init_vis_context);
@@ -2802,7 +2805,7 @@ namespace {
 
                 auto& visible_specials = obj_specials_map[object_id];
                 auto& obj_specials = obj->Specials();
-                const ScriptingContext context{obj, input_context};
+                const ScriptingContext context{input_context, ScriptingContext::Source{}, obj};
 
                 // check all object's specials.
                 for (const auto& special_entry : obj_specials) {
@@ -3377,7 +3380,7 @@ void Universe::UpdateStatRecords(const ScriptingContext& context) {
             if (value_ref->SourceInvariant()) {
                 stat_records[empire_id][current_turn] = value_ref->Eval();
             } else if (empire_source) {
-                const ScriptingContext source_context{empire_source, context};
+                const ScriptingContext source_context{context, ScriptingContext::Source{}, empire_source};
                 stat_records[empire_id][current_turn] = value_ref->Eval(source_context);
             }
         }

@@ -62,7 +62,7 @@ void OrderSet::ApplyOrders(ScriptingContext& context) {
                 return;
             }
             const auto source = order_empire->Source(context.ContextObjects()).get();
-            ScriptingContext empire_context(source, context);
+            ScriptingContext empire_context(context, ScriptingContext::Source{}, source);
             order->Execute(empire_context);
             ++executed_count;
         } catch (const std::exception& e) {

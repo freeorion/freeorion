@@ -1,4 +1,4 @@
-#include "ValueRefs.h"
+﻿#include "ValueRefs.h"
 
 #include <algorithm>
 #if __has_include(<charconv>)
@@ -87,52 +87,54 @@ namespace {
         }
     }
 
+    using enum ValueRef::ReferenceType;
+    using enum ValueRef::ContainerType;
+
     [[nodiscard]] constexpr std::string_view to_string(ValueRef::ReferenceType ref_type) noexcept {
         switch (ref_type) {
-        case ValueRef::ReferenceType::NON_OBJECT_REFERENCE:                return "<non-object>";   break;
-        case ValueRef::ReferenceType::SOURCE_REFERENCE:                    return "Source";         break;
-        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             return "Target";         break;
-        case ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE:       return "Value(Target)";  break;
-        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  return "RootCandidate";  break;
-        case ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE: return "LocalCandidate"; break;
-        default:                                                           return "<invalid-ref>";
+        case NON_OBJECT_REFERENCE:                return "<non-object>";   break;
+        case SOURCE_REFERENCE:                    return "Source";         break;
+        case EFFECT_TARGET_REFERENCE:             return "Target";         break;
+        case EFFECT_TARGET_VALUE_REFERENCE:       return "Value(Target)";  break;
+        case CONDITION_ROOT_CANDIDATE_REFERENCE:  return "RootCandidate";  break;
+        case CONDITION_LOCAL_CANDIDATE_REFERENCE: return "LocalCandidate"; break;
+        default:                                  return "<invalid-ref>";
         }
+    }
+
+    [[nodiscard]] constexpr std::string_view to_string(ValueRef::ContainerType container_type) noexcept {
+        switch (container_type) {
+        case PLANET: return "Planet"; break;
+        case SYSTEM: return "System"; break;
+        case FLEET:  return "Fleet";  break;
+        case NONE:   return {};       break;
+        }
+        return {};
     }
 
     [[nodiscard]] const UniverseObject* GetRefObject(ValueRef::ReferenceType ref_type, const ScriptingContext& context) {
         switch (ref_type) {
-        case ValueRef::ReferenceType::SOURCE_REFERENCE:                    return context.source;                       break;
-        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:             return context.effect_target;                break;
-        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  return context.condition_root_candidate;     break;
-        default:                                                           return context.condition_local_candidate;    break;
+        case SOURCE_REFERENCE:                   return context.source;                      break;
+        case EFFECT_TARGET_REFERENCE:            return context.effect_target;               break;
+        case CONDITION_ROOT_CANDIDATE_REFERENCE: return context.condition_root_candidate;    break;
+        default:                                 return context.condition_local_candidate;   break;
         }
     }
 
-
-    const UniverseObject* FollowReference(
-        std::vector<std::string>::const_iterator first, std::vector<std::string>::const_iterator last,
-        ValueRef::ReferenceType ref_type, const ScriptingContext& context)
+    const UniverseObject* FollowReference(ValueRef::ContainerType container_type, ValueRef::ReferenceType ref_type,
+                                          const ScriptingContext& context)
     {
-        if (ref_type == ValueRef::ReferenceType::NON_OBJECT_REFERENCE)
+        if (ref_type == NON_OBJECT_REFERENCE)
             return context.condition_local_candidate;
 
-        const UniverseObject* obj = GetRefObject(ref_type, context);
-
+        const UniverseObject* const obj = GetRefObject(ref_type, context);
         if (!obj) {
-            static constexpr auto ref_strings = [](auto it, const auto last) {
-                std::string retval;
-                retval.reserve(100); // guesstimate
-                for (; it != last; ++it)
-                    retval.append(*it).append(" ");
-                return retval;
-            };
-
-
             static constexpr auto name_or_0 = [](const UniverseObject* obj) noexcept -> std::string_view
             { return obj ? std::string_view{obj->Name()} : std::string_view{"0"}; };
 
             ErrorLogger() << "FollowReference : top level object (" << to_string(ref_type)
-                          << ") not defined in scripting context.  strings: " << ref_strings(first, last)
+                          << ") not defined in scripting context."
+                          << "  container type: " << to_string(container_type)
                           << "  source: " << name_or_0(context.source)
                           << " target: " << name_or_0(context.effect_target)
                           << " local c: " << name_or_0(context.condition_local_candidate)
@@ -143,42 +145,42 @@ namespace {
             return nullptr;
         }
 
-        while (obj && first != last) {
-            const std::string_view property_name = *first;
-            if (property_name == "Planet") {
-                if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) [[likely]] {
-                    const auto b = static_cast<const Building*>(obj);
-                    obj = context.ContextObjects().getRaw<Planet>(b->PlanetID());
-                } else {
-                    ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
-                    return nullptr;
-                }
-                if (!obj) {
-                    ErrorLogger() << "FollowReference : Unable to get planet for building";
-                    return nullptr;
-                }
-
-            } else if (property_name == "System") {
-                obj = context.ContextObjects().getRaw<System>(obj->SystemID());
-                if (!obj) {
-                    ErrorLogger() << "FollowReference : Unable to get system for object";
-                    return nullptr;
-                }
-
-            } else if (property_name == "Fleet") {
-                if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) [[likely]] {
-                    const auto s = static_cast<const Ship*>(obj);
-                    obj = context.ContextObjects().getRaw<Fleet>(s->FleetID());
-                } else {
-                    ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
-                    return nullptr;
-                }
-                if (!obj) {
-                    ErrorLogger() << "FollowReference : Unable to get fleet for ship";
-                    return nullptr;
-                }
+        switch (container_type) {
+        case PLANET: {
+            if (obj->ObjectType() != UniverseObjectType::OBJ_BUILDING) [[unlikely]] {
+                ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
+                return nullptr;
             }
-            ++first;
+            const auto* const building = static_cast<const Building*>(obj);
+            const auto* const planet = context.ContextObjects().getRaw<Planet>(building->PlanetID());
+            if (!planet)
+                ErrorLogger() << "FollowReference : Unable to get planet for building";
+            return planet;
+            break;
+        }
+        case SYSTEM: {
+            const auto* const system = context.ContextObjects().getRaw<System>(obj->SystemID());
+            if (!system)
+                ErrorLogger() << "FollowReference : Unable to get system for object";
+            return system;
+            break;
+        }
+        case FLEET: {
+            if (obj->ObjectType() != UniverseObjectType::OBJ_SHIP) [[unlikely]] {
+                ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
+                return nullptr;
+            }
+            const auto* const ship = static_cast<const Ship*>(obj);
+            const auto* const fleet = context.ContextObjects().getRaw<Fleet>(ship->FleetID());
+            if (!fleet)
+                ErrorLogger() << "FollowReference : Unable to get fleet for ship";
+            return fleet;
+            break;
+        }
+        case NONE: {
+            return obj;
+            break;
+        }
         }
         return obj;
     }
@@ -186,30 +188,30 @@ namespace {
     // Generates a debug trace that can be included in error logs, augmenting
     // the ReconstructName() info with additional info identifying the object
     // references that were successfully followed.
-    std::string TraceReference(const std::vector<std::string>& property_name,
+    std::string TraceReference(std::string_view property_name, ValueRef::ContainerType container_type,
                                ValueRef::ReferenceType ref_type, const ScriptingContext& context)
     {
         const UniverseObject* obj = nullptr;
         const UniverseObject* initial_obj = nullptr;
-        std::string retval = ReconstructName(property_name, ref_type, false) + " : ";
+        std::string retval = ReconstructName(property_name, container_type, ref_type, false) + " : ";
         switch (ref_type) {
-        case ValueRef::ReferenceType::NON_OBJECT_REFERENCE:
+        case NON_OBJECT_REFERENCE:
             retval += " | Non Object Reference |";
             return retval;
             break;
-        case ValueRef::ReferenceType::SOURCE_REFERENCE:
+        case SOURCE_REFERENCE:
             retval += " | Source: ";
             obj = context.source;
             break;
-        case ValueRef::ReferenceType::EFFECT_TARGET_REFERENCE:
+        case EFFECT_TARGET_REFERENCE:
             retval += " | Effect Target: ";
             obj = context.effect_target;
             break;
-        case ValueRef::ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:
+        case CONDITION_ROOT_CANDIDATE_REFERENCE:
             retval += " | Root Candidate: ";
             obj = context.condition_root_candidate;
             break;
-        case ValueRef::ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+        case CONDITION_LOCAL_CANDIDATE_REFERENCE:
         default:
             retval += " | Local Candidate: ";
             obj = context.condition_local_candidate;
@@ -224,42 +226,48 @@ namespace {
         }
         retval += " | ";
 
-        auto first = property_name.begin();
-        const auto last = property_name.end();
-        while (obj && first != last) {
-            std::string property_name_part = *first;
-            retval.append(" ").append(property_name_part).append(" ");
-            if (property_name_part == "Planet") {
-                if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-                    const auto b = static_cast<const Building*>(obj);
-                    retval.append("(").append(std::to_string(b->PlanetID())).append("): ");
-                    obj = context.ContextObjects().getRaw<Planet>(b->PlanetID());
-                } else {
-                    obj = nullptr;
-                }
-
-            } else if (property_name_part == "System") {
-                retval.append("(").append(std::to_string(obj->SystemID())).append("): ");
-                obj = context.ContextObjects().getRaw<System>(obj->SystemID());
-
-            } else if (property_name_part == "Fleet") {
-                if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-                    const auto s = static_cast<const Ship*>(obj);
-                    retval.append("(").append(std::to_string(s->FleetID())).append("): ");
-                    obj = context.ContextObjects().getRaw<Fleet>(s->FleetID());
-                } else {
-                    obj = nullptr;
-                }
+        switch (container_type) {
+        case PLANET: {
+            if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+                const auto b = static_cast<const Building*>(obj);
+                obj = context.ContextObjects().getRaw<Planet>(b->PlanetID());
+                retval.append("(Planet ").append(std::to_string(b->PlanetID())).append("): ");
+            } else {
+                obj = nullptr;
             }
-
-            ++first;
-
-            if (obj && initial_obj != obj) {
-                retval.append("  Referenced Object: ").append(UserString(to_string(obj->ObjectType())))
-                      .append(" ").append(std::to_string(obj->ID())).append(" ( ").append(obj->Name()).append(" )");
-            }
-            retval += " | ";
+            break;
         }
+        case SYSTEM: {
+            retval.append("(System ").append(std::to_string(obj->SystemID())).append("): ");
+            obj = context.ContextObjects().getRaw<System>(obj->SystemID());
+            break;
+        }
+        case FLEET: {
+            if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+                const auto s = static_cast<const Ship*>(obj);
+                obj = context.ContextObjects().getRaw<Fleet>(s->FleetID());
+                retval.append("(Fleet ").append(std::to_string(s->FleetID())).append("): ");
+            } else {
+                obj = nullptr;
+            }
+            break;
+        }
+        case ::ValueRef::ContainerType::NONE:
+        default:
+            return retval;
+            break;
+        }
+
+        if (initial_obj == obj)
+            return retval; // don't need to add anything else
+
+        // output the final reference object, if any
+        if (obj)
+            retval.append("  Referenced Object: ").append(UserString(to_string(obj->ObjectType())))
+                  .append(" ").append(std::to_string(obj->ID())).append(" ( ").append(obj->Name()).append(" )");
+        else
+            retval.append("  Referenced Object: (no object)");
+
         return retval;
     }
 
@@ -420,7 +428,7 @@ namespace {
 
 std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept { return PlanetEnvironmentToStringCX(env); }
 
-std::string ReconstructName(const std::vector<std::string>& property_name,
+std::string ReconstructName(std::string_view property_name, ContainerType container_type,
                             ReferenceType ref_type, bool return_immediate_value)
 {
     std::string retval;
@@ -429,22 +437,29 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     if (return_immediate_value)
         retval += "Value(";
 
+    using enum ReferenceType;
+    using enum ContainerType;
+
     switch (ref_type) {
-    case ReferenceType::SOURCE_REFERENCE:                    retval += "Source";          break;
-    case ReferenceType::EFFECT_TARGET_REFERENCE:             retval += "Target";          break;
-    case ReferenceType::EFFECT_TARGET_VALUE_REFERENCE:       retval += "Value";           break;
-    case ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval += "LocalCandidate";  break;
-    case ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval += "RootCandidate";   break;
-    case ReferenceType::NON_OBJECT_REFERENCE:                retval += "";                break;
-    default:                                                 retval += "?????";           break;
+    case SOURCE_REFERENCE:                    retval += "Source";          break;
+    case EFFECT_TARGET_REFERENCE:             retval += "Target";          break;
+    case EFFECT_TARGET_VALUE_REFERENCE:       retval += "Value";           break;
+    case CONDITION_LOCAL_CANDIDATE_REFERENCE: retval += "LocalCandidate";  break;
+    case CONDITION_ROOT_CANDIDATE_REFERENCE:  retval += "RootCandidate";   break;
+    case NON_OBJECT_REFERENCE:                retval += "";                break;
+    default:                                  retval += "?????";           break;
     }
 
-    if (ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {
-        for (const std::string& property_name_part : property_name) {
-            if (!retval.empty())
-                retval += '.';
-            retval += property_name_part;
+    if (ref_type != EFFECT_TARGET_VALUE_REFERENCE && ref_type != NON_OBJECT_REFERENCE) {
+        switch (container_type) {
+        case PLANET: retval += ".Planet"; break;
+        case SYSTEM: retval += ".System"; break;
+        case FLEET:  retval += ".Fleet";  break;
+        case NONE:                        break;
         }
+
+        if (!property_name.empty())
+            retval.append(".").append(property_name);
     }
 
     if (return_immediate_value)
@@ -453,65 +468,54 @@ std::string ReconstructName(const std::vector<std::string>& property_name,
     return retval;
 }
 
-std::string FormatedDescriptionPropertyNames(ReferenceType ref_type,
-                                             const std::vector<std::string>& property_names,
-                                             bool return_immediate_value)
+std::string FormatedDescriptionPropertyNames(ReferenceType ref_type, std::string_view property_name,
+                                             ContainerType container_type, bool return_immediate_value)
 {
-    int num_references = property_names.size();
-    if (ref_type == ReferenceType::NON_OBJECT_REFERENCE)
-        num_references--;
-    for (const std::string& property_name_part : property_names)
-        if (property_name_part.empty())
-             num_references--;
-    num_references = std::max(0, num_references);
-    const std::string& format_string{
-        [num_references]() {
-            switch (num_references) {
-            case 0: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0"); break;
-            case 1: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1"); break;
-            case 2: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2"); break;
-            case 3: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE3"); break;
-            case 4: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE4"); break;
-            case 5: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE5"); break;
-            case 6: return UserString("DESC_VALUE_REF_MULTIPART_VARIABLE6"); break;
-            default:return UserString("DESC_VALUE_REF_MULTIPART_VARIABLEMANY"); break;
-            }
-        }()};
-
+    const std::string& format_string = (container_type == ContainerType::NONE) ?
+        UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0") : UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1");
     boost::format formatter = FlexibleFormat(format_string);
 
     switch (ref_type) {
-    case ReferenceType::SOURCE_REFERENCE:                    formatter % UserString("DESC_VAR_SOURCE");          break;
-    case ReferenceType::EFFECT_TARGET_REFERENCE:             formatter % UserString("DESC_VAR_TARGET");          break;
-    case ReferenceType::EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
-    case ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
-    case ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    case ReferenceType::NON_OBJECT_REFERENCE:                                                                    break;
-    default:                                                 formatter % "???";                                  break;
+    case SOURCE_REFERENCE:                    formatter % UserString("DESC_VAR_SOURCE");          break;
+    case EFFECT_TARGET_REFERENCE:             formatter % UserString("DESC_VAR_TARGET");          break;
+    case EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
+    case CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
+    case CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
+    case NON_OBJECT_REFERENCE:                                                                    break;
+    default:                                  formatter % "???";                                  break;
     }
 
-    for (const std::string& property_name_part : property_names) {
-        if (property_name_part.empty())  // apparently is empty for a ReferenceType::EFFECT_TARGET_VALUE_REFERENCE
-            continue;
-        formatter % UserString("DESC_VAR_" + boost::to_upper_copy(property_name_part));
+    switch (container_type) {
+    case ContainerType::PLANET: formatter % UserString("DESC_VAR_PLANET"); break;
+    case ContainerType::SYSTEM: formatter % UserString("DESC_VAR_SYSTEM"); break;
+    case ContainerType::FLEET:  formatter % UserString("DESC_VAR_FLEET");  break;
+    case ContainerType::NONE:                                              break;
+    }
+
+    if (!property_name.empty()) {
+        std::string PROP_NAME{property_name};
+        boost::to_upper(PROP_NAME);
+        formatter % UserString("DESC_VAR_" + PROP_NAME);
     }
 
     return boost::io::str(formatter);
 }
 
-std::string ComplexVariableDescription(const std::vector<std::string>& property_names,
+std::string ComplexVariableDescription(std::string_view property_name,
                                        const ValueRef<int>* int_ref1,
                                        const ValueRef<int>* int_ref2,
                                        const ValueRef<int>* int_ref3,
                                        const ValueRef<std::string>* string_ref1,
                                        const ValueRef<std::string>* string_ref2)
 {
-    if (property_names.empty()) {
-        ErrorLogger() << "ComplexVariableDescription passed empty property names?!";
+    if (property_name.empty()) {
+        ErrorLogger() << "ComplexVariableDescription passed empty property name?!";
         return "";
     }
 
-    std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_names.back()));
+    std::string PROP{property_name};
+    boost::to_upper(PROP);
+    const std::string stringtable_key("DESC_VAR_" + PROP);
     if (!UserStringExists(stringtable_key))
         return "";
 
@@ -531,18 +535,18 @@ std::string ComplexVariableDescription(const std::vector<std::string>& property_
     return boost::io::str(formatter);
 }
 
-std::string ComplexVariableDump(const std::vector<std::string>& property_names,
+std::string ComplexVariableDump(std::string_view property_name,
                                 const ValueRef<int>* int_ref1,
                                 const ValueRef<int>* int_ref2,
                                 const ValueRef<int>* int_ref3,
                                 const ValueRef<std::string>* string_ref1,
                                 const ValueRef<std::string>* string_ref2)
 {
-    if (property_names.empty()) {
-        ErrorLogger() << "ComplexVariableDump passed empty property names?!";
+    if (property_name.empty()) {
+        ErrorLogger() << "ComplexVariableDump passed empty property name?!";
         return "ComplexVariable";
     }
-    std::string retval{property_names.back()};
+    std::string retval{property_name};
 
     if (int_ref1)
         retval += " int1 = " + int_ref1->Dump();
@@ -714,11 +718,61 @@ namespace StaticTests {
     constexpr ::ValueRef::Constant<double> cdvr(test_val);
     static_assert(cdvr.Value() == test_val);
     static_assert(cdvr.GetReferenceType() == ::ValueRef::ReferenceType::INVALID_REFERENCE_TYPE);
+    static_assert(cdvr.RootCandidateInvariant());
+    static_assert(cdvr.LocalCandidateInvariant());
+    static_assert(cdvr.TargetInvariant());
+    static_assert(cdvr.SourceInvariant());
+    static_assert(!cdvr.SimpleIncrement());
+    static_assert(cdvr.ConstantExpr());
+    static_assert(cdvr.GetCheckSum() == 4018064);
+
+    constexpr auto cdvr_copy(cdvr);
+    static_assert(cdvr == cdvr_copy);
 }
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
+namespace StaticTests {
+    using VRVI_t = ::ValueRef::Variable<int>;
+    using enum ::ValueRef::ReferenceType;
+    using enum ::ValueRef::ContainerType;
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+    constexpr VRVI_t visrvr(SOURCE_REFERENCE);
+    static_assert(visrvr != VRVI_t(SOURCE_REFERENCE, ::ValueRef::ValueToReturn::Immediate));
+    static_assert(visrvr != VRVI_t(NON_OBJECT_REFERENCE));
+
+    constexpr auto visrvr_copy(visrvr);
+    static_assert(visrvr == visrvr_copy);
+
+    static_assert(VRVI_t(SOURCE_REFERENCE, "Property") != visrvr);
+    static_assert(VRVI_t(SOURCE_REFERENCE, "", NONE) == visrvr);
+    static_assert(VRVI_t(SOURCE_REFERENCE, "Something", SYSTEM) == VRVI_t(SOURCE_REFERENCE, "Something", SYSTEM));
+
+    static_assert([]() {
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property", PLANET);
+        return !visrprop.ReturnImmediateValue() &&
+               (visrprop.GetContainerType() == PLANET) &&
+               (visrprop.PropertyName() == "Property");
+    }());
+
+    static_assert([]() {
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property");
+        const auto visrprop_copy(visrprop);
+        return visrprop == visrprop_copy;
+    }());
+
+    static_assert([]() {
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property");
+        const ::ValueRef::ValueRef<int>& vri_ref{visrprop};
+        return (vri_ref == visrprop) && (visrprop == vri_ref);
+    }());
+
+    static_assert(visrvr.GetCheckSum() == 1755);
+#endif
+}
+
 #define IF_CURRENT_VALUE(T)                                            \
 if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
     try {                                                              \
@@ -731,15 +785,15 @@ if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
     }                                                                  \
 }
 
-#define LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(T)                         \
-ErrorLogger() << "Variable<" #T ">::Eval unrecognized object "         \
-                 "property: "                                          \
-              << TraceReference(m_property_name, m_ref_type, context); \
-if (context.source)                                                    \
-    ErrorLogger() << "source: " << context.source->ObjectType() << " " \
-                  << context.source->ID() << " ( "                     \
-                  << context.source->Name() << " ) ";                  \
-else                                                                   \
+#define LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(T)                                           \
+ErrorLogger() << "Variable<" #T ">::Eval unrecognized object "                           \
+                 "property: "                                                            \
+              << TraceReference(m_property_name, m_container_type, m_ref_type, context); \
+if (context.source)                                                                      \
+    ErrorLogger() << "source: " << context.source->ObjectType() << " "                   \
+                  << context.source->ID() << " ( "                                       \
+                  << context.source->Name() << " ) ";                                    \
+else                                                                                     \
     ErrorLogger() << "source (none)";
 
 template <>
@@ -747,29 +801,25 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(PlanetSize)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    const auto* const object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<PlanetSize>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+        ErrorLogger() << "Variable<PlanetSize>::Eval unable to follow reference: "
+                      << TraceReference(m_property_name, m_container_type, m_ref_type, context);
         return PlanetSize::INVALID_PLANET_SIZE;
     }
 
     std::function<PlanetSize (const Planet&)> planet_property{nullptr};
 
-    if (property_name == "PlanetSize")
+    if (m_property_name == "PlanetSize")
         planet_property = &Planet::Size;
-    else if (property_name == "NextLargerPlanetSize")
+    else if (m_property_name == "NextLargerPlanetSize")
         planet_property = &Planet::NextLargerPlanetSize;
-    else if (property_name == "NextSmallerPlanetSize")
+    else if (m_property_name == "NextSmallerPlanetSize")
         planet_property = &Planet::NextSmallerPlanetSize;
 
     if (planet_property) {
-        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            auto p = static_cast<const Planet*>(object);
-            return planet_property(*p);
-        }
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET)
+            return planet_property(*static_cast<const Planet*>(object));
         return PlanetSize::INVALID_PLANET_SIZE;
     }
 
@@ -783,36 +833,33 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(PlanetType)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<PlanetType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+        ErrorLogger() << "Variable<PlanetType>::Eval unable to follow reference: "
+                      << TraceReference(m_property_name, m_container_type, m_ref_type, context);
         return PlanetType::INVALID_PLANET_TYPE;
     }
 
     std::function<PlanetType (const Planet&)> planet_property{nullptr};
 
-    if (property_name == "PlanetType")
+    if (m_property_name == "PlanetType")
         planet_property = &Planet::Type;
-    else if (property_name == "OriginalType")
+    else if (m_property_name == "OriginalType")
         planet_property = &Planet::OriginalType;
-    else if (property_name == "NextCloserToOriginalPlanetType")
+    else if (m_property_name == "NextCloserToOriginalPlanetType")
         planet_property = &Planet::NextCloserToOriginalPlanetType;
-    else if (property_name == "NextBestPlanetType")
+    else if (m_property_name == "NextBestPlanetType")
         planet_property = [&context](const Planet& p) { return p.NextBestPlanetTypeForSpecies(context); };
-    else if (property_name == "NextBetterPlanetType")
+    else if (m_property_name == "NextBetterPlanetType")
         planet_property = [&context](const Planet& p) { return p.NextBetterPlanetTypeForSpecies(context); };
-    else if (property_name == "ClockwiseNextPlanetType")
+    else if (m_property_name == "ClockwiseNextPlanetType")
         planet_property = &Planet::ClockwiseNextPlanetType;
-    else if (property_name == "CounterClockwiseNextPlanetType")
+    else if (m_property_name == "CounterClockwiseNextPlanetType")
         planet_property = &Planet::CounterClockwiseNextPlanetType;
 
     if (planet_property) {
-        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            auto p = static_cast<const Planet*>(object);
-            return planet_property(*p);
-        }
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET)
+            return planet_property(*static_cast<const Planet*>(object));
         return PlanetType::INVALID_PLANET_TYPE;
     }
 
@@ -826,18 +873,15 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
 {
     IF_CURRENT_VALUE(PlanetEnvironment)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
-    if (property_name == "PlanetEnvironment") {
-        auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    if (m_property_name == "PlanetEnvironment") {
+        auto object = FollowReference(m_container_type, m_ref_type, context);
         if (!object) {
-            ErrorLogger() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+            ErrorLogger() << "Variable<PlanetEnvironment>::Eval unable to follow reference: "
+                          << TraceReference(m_property_name, m_container_type, m_ref_type, context);
             return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
         }
-        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            auto p = static_cast<const Planet*>(object);
-            return p->EnvironmentForSpecies(context.species);
-        }
+        if (object->ObjectType() == UniverseObjectType::OBJ_PLANET)
+            return static_cast<const Planet*>(object)->EnvironmentForSpecies(context.species);
 
         return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
     }
@@ -852,12 +896,11 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
 {
     IF_CURRENT_VALUE(UniverseObjectType)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
-    if (property_name == "ObjectType") {
-        auto object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    if (m_property_name == "ObjectType") {
+        auto object = FollowReference(m_container_type, m_ref_type, context);
         if (!object) {
-            ErrorLogger() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+            ErrorLogger() << "Variable<UniverseObjectType>::Eval unable to follow reference: "
+                          << TraceReference(m_property_name, m_container_type, m_ref_type, context);
             return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
         }
         return object->ObjectType();
@@ -873,29 +916,25 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(StarType)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
-        ErrorLogger() << "Variable<StarType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+        ErrorLogger() << "Variable<StarType>::Eval unable to follow reference: "
+                      << TraceReference(m_property_name, m_container_type, m_ref_type, context);
         return StarType::INVALID_STAR_TYPE;
     }
 
     std::function<StarType (const System&)> system_property{nullptr};
 
-    if (property_name == "StarType")
+    if (m_property_name == "StarType")
         system_property = &System::GetStarType;
-    else if (property_name == "NextOlderStarType")
+    else if (m_property_name == "NextOlderStarType")
         system_property = &System::NextOlderStarType;
-    else if (property_name == "NextYoungerStarType")
+    else if (m_property_name == "NextYoungerStarType")
         system_property = &System::NextYoungerStarType;
 
     if (system_property) {
-        if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
-            auto s = static_cast<const System*>(object);
-            return system_property(*s);
-        }
+        if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
+            return system_property(*static_cast<const System*>(object));
         return StarType::INVALID_STAR_TYPE;
     }
 
@@ -913,7 +952,8 @@ Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
     // return a Visibility, as it will normally need to be queried for a
     // particular empire
 
-    ErrorLogger() << "Variable<Visibility>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    ErrorLogger() << "Variable<Visibility>::Eval unrecognized object property: "
+                  << TraceReference(m_property_name, m_container_type, m_ref_type, context);
 
     return Visibility::INVALID_VISIBILITY;
 }
@@ -923,16 +963,11 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(double)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if ((property_name == "UniverseCentreX") ||
-            (property_name == "UniverseCentreY"))
-        {
+        if ((m_property_name == "UniverseCentreX") || (m_property_name == "UniverseCentreY"))
             return context.ContextUniverse().UniverseWidth() / 2;
-        } else if (property_name == "UniverseWidth") {
+        else if (m_property_name == "UniverseWidth")
             return context.ContextUniverse().UniverseWidth();
-        }
 
         // add more non-object reference double functions here
 
@@ -941,36 +976,34 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(float)
 
         return 0.0;
     }
 
-    MeterType meter_type = NameToMeterCX(property_name);
+    const MeterType meter_type = NameToMeterCX(m_property_name);
     if (object && meter_type != MeterType::INVALID_METER_TYPE) {
-        if (auto* m = object->GetMeter(meter_type)) {
+        if (auto* m = object->GetMeter(meter_type))
             return m_return_immediate_value ? m->Current() : m->Initial();
-        }
         return 0.0;
 
-    } else if (property_name == "X") {
+    } else if (m_property_name == "X") {
         return object->X();
 
-    } else if (property_name == "Y") {
+    } else if (m_property_name == "Y") {
         return object->Y();
 
     }
 
     std::function<double (const Planet&)> planet_property{nullptr};
 
-    if (property_name == "SizeAsDouble")
-        planet_property = [](const Planet& planet) -> double { return static_cast<double>(planet.Size()); };
-    else if (property_name == "HabitableSize")
+    if (m_property_name == "SizeAsDouble")
+        planet_property = [](const Planet& planet) noexcept -> double { return static_cast<double>(planet.Size()); };
+    else if (m_property_name == "HabitableSize")
         planet_property = &Planet::HabitableSize;
-    else if (property_name == "DistanceFromOriginalType")
+    else if (m_property_name == "DistanceFromOriginalType")
         planet_property = &Planet::DistanceFromOriginalType;
 
     if (planet_property) {
@@ -980,13 +1013,13 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     }
 
-    if (property_name == "CombatBout") {
+    if (m_property_name == "CombatBout") {
         return context.combat_bout;
 
-    } else if (property_name == "CurrentTurn") {
+    } else if (m_property_name == "CurrentTurn") {
         return context.current_turn;
 
-    } else if (property_name == "DestroyFightersPerBattleMax") {
+    } else if (m_property_name == "DestroyFightersPerBattleMax") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             auto retval = ship->TotalWeaponsFighterDamage(context);
@@ -996,7 +1029,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         }
         return 0.0;
 
-    } else if (property_name == "DamageStructurePerBattleMax") {
+    } else if (m_property_name == "DamageStructurePerBattleMax") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             // TODO: prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
@@ -1006,14 +1039,14 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         }
         return 0.0;
 
-    } else if (property_name == "PropagatedSupplyRange") {
+    } else if (m_property_name == "PropagatedSupplyRange") {
         const auto& ranges = context.supply.PropagatedSupplyRanges();
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
 
-    } else if (property_name == "PropagatedSupplyDistance") {
+    } else if (m_property_name == "PropagatedSupplyDistance") {
         const auto& ranges = context.supply.PropagatedSupplyDistances();
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
@@ -1031,42 +1064,40 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(int)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if (property_name == "CombatBout")
+        if (m_property_name == "CombatBout")
             return context.combat_bout;
-        if (property_name == "CurrentTurn")
+        if (m_property_name == "CurrentTurn")
             return context.current_turn;
-        if (property_name == "GalaxySize")
+        if (m_property_name == "GalaxySize")
             return context.galaxy_setup_data.GetSize();
-        if (property_name == "GalaxyShape")
+        if (m_property_name == "GalaxyShape")
             return static_cast<int>(context.galaxy_setup_data.GetShape());
-        if (property_name == "GalaxyAge")
+        if (m_property_name == "GalaxyAge")
             return static_cast<int>(context.galaxy_setup_data.GetAge());
-        if (property_name == "GalaxyStarlaneFrequency")
+        if (m_property_name == "GalaxyStarlaneFrequency")
             return static_cast<int>(context.galaxy_setup_data.GetStarlaneFreq());
-        if (property_name == "GalaxyPlanetDensity")
+        if (m_property_name == "GalaxyPlanetDensity")
             return static_cast<int>(context.galaxy_setup_data.GetPlanetDensity());
-        if (property_name == "GalaxySpecialFrequency")
+        if (m_property_name == "GalaxySpecialFrequency")
             return static_cast<int>(context.galaxy_setup_data.GetSpecialsFreq());
-        if (property_name == "GalaxyMonsterFrequency")
+        if (m_property_name == "GalaxyMonsterFrequency")
             return static_cast<int>(context.galaxy_setup_data.GetMonsterFreq());
-        if (property_name == "GalaxyNativeFrequency")
+        if (m_property_name == "GalaxyNativeFrequency")
             return static_cast<int>(context.galaxy_setup_data.GetNativeFreq());
-        if (property_name == "GalaxyMaxAIAggression")
+        if (m_property_name == "GalaxyMaxAIAggression")
             return static_cast<int>(context.galaxy_setup_data.GetAggression());
-        if (property_name == "UsedInDesignID")
+        if (m_property_name == "UsedInDesignID")
             return context.in_design_id;
-        if (property_name == "SelectedSystemID")
+        if (m_property_name == "SelectedSystemID")
             return IApp::GetApp()->SelectedSystemID();
-        if (property_name == "SelectedPlanetID")
+        if (m_property_name == "SelectedPlanetID")
             return IApp::GetApp()->SelectedPlanetID();
-        if (property_name == "SelectedFleetID")
+        if (m_property_name == "SelectedFleetID")
             return IApp::GetApp()->SelectedFleetID();
-        if (property_name == "SelectedPlanetID")
+        if (m_property_name == "SelectedPlanetID")
             return IApp::GetApp()->SelectedPlanetID();
-        if (property_name == "ThisClientEmpireID")
+        if (m_property_name == "ThisClientEmpireID")
             return IApp::GetApp()->EmpireID();
 
         // add more non-object reference int functions here
@@ -1076,39 +1107,38 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
     }
 
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(int)
 
         return 0;
     }
 
-    if (property_name == "Owner")
+    if (m_property_name == "Owner")
         return object->Owner();
-    else if (property_name == "SystemID")
+    else if (m_property_name == "SystemID")
         return object->SystemID();
-    else if (property_name == "ContainerID")
+    else if (m_property_name == "ContainerID")
         return object->ContainerObjectID();
-    else if (property_name == "SupplyingEmpire")
+    else if (m_property_name == "SupplyingEmpire")
         return context.supply.EmpireThatCanSupplyAt(object->SystemID());
-    else if (property_name == "ID")
+    else if (m_property_name == "ID")
         return object->ID();
-    else if (property_name == "CreationTurn")
+    else if (m_property_name == "CreationTurn")
         return object->CreationTurn();
-    else if (property_name == "Age")
+    else if (m_property_name == "Age")
         return object->AgeInTurns(context.current_turn);
 
 
     std::function<int (const Ship&)> ship_property{nullptr};
 
-    if (property_name == "ArrivedOnTurn")
+    if (m_property_name == "ArrivedOnTurn")
         ship_property = &Ship::ArrivedOnTurn;
-    else if (property_name == "LastTurnActiveInBattle")
+    else if (m_property_name == "LastTurnActiveInBattle")
         ship_property = &Ship::LastTurnActiveInCombat;
-    else if (property_name == "LastTurnResupplied")
+    else if (m_property_name == "LastTurnResupplied")
         ship_property = &Ship::LastResuppliedOnTurn;
-    else if (property_name == "OrderedColonizePlanetID")
+    else if (m_property_name == "OrderedColonizePlanetID")
         ship_property = &Ship::OrderedColonizePlanet;
 
     if (ship_property) {
@@ -1121,17 +1151,17 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     std::function<int (const Fleet&)> fleet_property{nullptr};
 
-    if (property_name == "FinalDestinationID")
+    if (m_property_name == "FinalDestinationID")
         fleet_property = &Fleet::FinalDestinationID;
-    else if (property_name == "NextSystemID")
+    else if (m_property_name == "NextSystemID")
         fleet_property = &Fleet::NextSystemID;
-    else if (property_name == "PreviousSystemID")
+    else if (m_property_name == "PreviousSystemID")
         fleet_property = &Fleet::PreviousSystemID;
-    else if (property_name == "PreviousToFinalDestinationID")
+    else if (m_property_name == "PreviousToFinalDestinationID")
         fleet_property = &Fleet::PreviousToFinalDestinationID;
-    else if (property_name == "ArrivalStarlaneID")
+    else if (m_property_name == "ArrivalStarlaneID")
         fleet_property = &Fleet::ArrivalStarlane;
-    else if (property_name == "LastTurnMoveOrdered")
+    else if (m_property_name == "LastTurnMoveOrdered")
         fleet_property = &Fleet::LastTurnMoveOrdered;
 
     if (fleet_property) {
@@ -1144,21 +1174,21 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     std::function<int (const Planet&)> planet_property{nullptr};
 
-    if (property_name == "LastTurnAttackedByShip")
+    if (m_property_name == "LastTurnAttackedByShip")
         planet_property = &Planet::LastTurnAttackedByShip;
-    else if (property_name == "LastTurnColonized")
+    else if (m_property_name == "LastTurnColonized")
         planet_property = &Planet::LastTurnColonized;
-    else if (property_name == "LastTurnConquered")
+    else if (m_property_name == "LastTurnConquered")
         planet_property = &Planet::LastTurnConquered;
-    else if (property_name == "LastTurnAnnexed")
+    else if (m_property_name == "LastTurnAnnexed")
         planet_property = &Planet::LastTurnAnnexed;
-    else if (property_name == "OrderedGivenToEmpire")
+    else if (m_property_name == "OrderedGivenToEmpire")
         planet_property = &Planet::OrderedGivenToEmpire;
-    else if (property_name == "OwnerBeforeLastConquered")
+    else if (m_property_name == "OwnerBeforeLastConquered")
         planet_property = &Planet::OwnerBeforeLastConquered;
-    else if (property_name == "LastInvadedByEmpire")
+    else if (m_property_name == "LastInvadedByEmpire")
         planet_property = &Planet::LastInvadedByEmpire;
-    else if (property_name == "LastColonizedByEmpire")
+    else if (m_property_name == "LastColonizedByEmpire")
         planet_property = &Planet::LastColonizedByEmpire;
 
     if (planet_property) {
@@ -1169,35 +1199,35 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_GAME_TURN;
     }
 
-    if (property_name == "TurnsSinceFocusChange") {
+    if (m_property_name == "TurnsSinceFocusChange") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceFocusChange(context.current_turn);
         }
         return 0; // here, not using planet_property, so that fallback is 0
     }
-    else if (property_name == "TurnsSinceAnnexation") {
+    else if (m_property_name == "TurnsSinceAnnexation") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceLastAnnexed(context.current_turn);
         }
         return 0;
     }
-    else if (property_name == "TurnsSinceColonization") {
+    else if (m_property_name == "TurnsSinceColonization") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceColonization(context.current_turn);
         }
         return 0;
     }
-    else if (property_name == "TurnsSinceLastConquered") {
+    else if (m_property_name == "TurnsSinceLastConquered") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceLastConquered(context.current_turn);
         }
         return 0;
     }
-    else if (property_name == "ProducedByEmpireID") {
+    else if (m_property_name == "ProducedByEmpireID") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             return ship->ProducedByEmpireID();
@@ -1209,7 +1239,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return ALL_EMPIRES;
 
     }
-    else if (property_name == "DesignID") {
+    else if (m_property_name == "DesignID") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             return ship->DesignID();
@@ -1217,7 +1247,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_DESIGN_ID;
 
     }
-    else if (property_name == "FleetID") {
+    else if (m_property_name == "FleetID") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             return ship->FleetID();
@@ -1229,7 +1259,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_OBJECT_ID;
 
     }
-    else if (property_name == "PlanetID") {
+    else if (m_property_name == "PlanetID") {
         if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             auto building = static_cast<const Building*>(object);
             return building->PlanetID();
@@ -1241,14 +1271,14 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_OBJECT_ID;
 
     }
-    else if (property_name == "NearestSystemID") {
+    else if (m_property_name == "NearestSystemID") {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
         return context.ContextUniverse().GetPathfinder()->NearestSystemTo(
             object->X(), object->Y(), context.ContextObjects());
 
     }
-    else if (property_name == "NumShips") {
+    else if (m_property_name == "NumShips") {
         if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             auto fleet = static_cast<const Fleet*>(object);
             return static_cast<int>(fleet->NumShips());
@@ -1256,7 +1286,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
 
     }
-    else if (property_name == "NumStarlanes") {
+    else if (m_property_name == "NumStarlanes") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto system = static_cast<const System*>(object);
             return system->NumStarlanes();
@@ -1264,7 +1294,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
 
     }
-    else if (property_name == "LastTurnBattleHere") {
+    else if (m_property_name == "LastTurnBattleHere") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto system = static_cast<const System*>(object);
             return system->LastTurnBattleHere();
@@ -1275,13 +1305,13 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_GAME_TURN;
 
     }
-    else if (property_name == "Orbit") {
+    else if (m_property_name == "Orbit") {
         if (auto system = context.ContextObjects().getRaw<System>(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 
     }
-    else if (property_name == "ETA") {
+    else if (m_property_name == "ETA") {
         if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             auto fleet = static_cast<const Fleet*>(object);
             return fleet->ETA(context).first;
@@ -1289,11 +1319,11 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
 
     }
-    else if (property_name == "NumSpecials") {
-        return object->Specials().size();
+    else if (m_property_name == "NumSpecials") {
+        return static_cast<int>(object->Specials().size());
 
     }
-    else if (property_name == "LaunchedFrom") {
+    else if (m_property_name == "LaunchedFrom") {
         if (object->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
             auto fighter = static_cast<const Fighter*>(object);
             return fighter->LaunchedFrom();
@@ -1307,12 +1337,9 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-std::vector<std::string> Variable<std::vector<std::string>>::Eval(
-    const ScriptingContext& context) const
+std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(std::vector<std::string>)
-
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
         // add more non-object reference string vector functions here
@@ -1321,15 +1348,14 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
         return {};
     }
 
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::vector<std::string>)
 
         return {};
     }
 
-    if (property_name == "Tags") {
+    if (m_property_name == "Tags") {
         std::vector<std::string> retval;
         auto tags = object->Tags(context);
         retval.reserve(tags.size());
@@ -1337,11 +1363,11 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
         std::transform(tags.second.begin(), tags.second.end(), std::back_inserter(retval), [](auto sv) { return std::string{sv}; });
         return retval;
     }
-    else if (property_name == "Specials") {
+    else if (m_property_name == "Specials") {
         const auto obj_special_names_range = object->Specials() | range_keys;
         return {obj_special_names_range.begin(), obj_special_names_range.end()};
     }
-    else if (property_name == "AvailableFoci") {
+    else if (m_property_name == "AvailableFoci") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             auto foci_views = planet->AvailableFoci(context);
@@ -1349,7 +1375,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(
         }
         return {};
     }
-    else if (property_name == "Parts") {
+    else if (m_property_name == "Parts") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
@@ -1368,10 +1394,8 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 {
     IF_CURRENT_VALUE(std::string)
 
-    const std::string& property_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if (property_name == "GalaxySeed")
+        if (m_property_name == "GalaxySeed")
             return context.galaxy_setup_data.GetSeed();
 
         // add more non-object reference string functions here
@@ -1380,39 +1404,38 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
     }
 
-    auto object = FollowReference(m_property_name.begin(), m_property_name.end(),
-                                  m_ref_type, context);
+    auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(std::string)
 
         return "";
     }
 
-    if (property_name == "Name") {
+    if (m_property_name == "Name") {
         return object->Name();
 
-    } else if (property_name == "OwnerName") {
+    } else if (m_property_name == "OwnerName") {
         int owner_empire_id = object->Owner();
         if (auto empire = context.GetEmpire(owner_empire_id))
             return empire->Name();
         return "";
 
-    } else if (property_name == "TypeName") {
+    } else if (m_property_name == "TypeName") {
         return std::string{to_string(object->ObjectType())};
 
     }
 
     std::function<std::string (const Empire&)> empire_property{nullptr};
 
-    if (property_name == "OwnerLeastExpensiveEnqueuedTech")
+    if (m_property_name == "OwnerLeastExpensiveEnqueuedTech")
         empire_property = [&context](const auto& empire) { return empire.LeastExpensiveEnqueuedTech(context); };
-    else if (property_name == "OwnerMostExpensiveEnqueuedTech")
+    else if (m_property_name == "OwnerMostExpensiveEnqueuedTech")
         empire_property = [&context](const auto& empire) { return empire.MostExpensiveEnqueuedTech(context); };
-    else if (property_name == "OwnerMostRPCostLeftEnqueuedTech")
+    else if (m_property_name == "OwnerMostRPCostLeftEnqueuedTech")
         empire_property = [&context](const auto& empire) { return empire.MostRPCostLeftEnqueuedTech(context); };
-    else if (property_name == "OwnerMostRPSpentEnqueuedTech")
+    else if (m_property_name == "OwnerMostRPSpentEnqueuedTech")
         empire_property = &Empire::MostRPSpentEnqueuedTech;
-    else if (property_name == "OwnerTopPriorityEnqueuedTech")
+    else if (m_property_name == "OwnerTopPriorityEnqueuedTech")
         empire_property = &Empire::TopPriorityEnqueuedTech;
 
     if (empire_property) {
@@ -1422,7 +1445,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return empire_property(*empire);
     }
 
-    if (property_name == "Species") {
+    if (m_property_name == "Species") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->SpeciesName();
@@ -1437,7 +1460,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         }
         return "";
 
-    } else if (property_name == "Hull") {
+    } else if (m_property_name == "Hull") {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
@@ -1445,28 +1468,28 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         }
         return "";
 
-    } else if (property_name == "FieldType") {
+    } else if (m_property_name == "FieldType") {
         if (object->ObjectType() == UniverseObjectType::OBJ_FIELD) {
             auto field = static_cast<const Field*>(object);
             return field->FieldTypeName();
         }
         return "";
 
-    } else if (property_name == "BuildingType") {
+    } else if (m_property_name == "BuildingType") {
         if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             auto building = static_cast<const Building*>(object);
             return building->BuildingTypeName();
         }
         return "";
 
-    } else if (property_name == "Focus") {
+    } else if (m_property_name == "Focus") {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->Focus();
         }
         return "";
 
-    } else if (property_name == "DefaultFocus") {
+    } else if (m_property_name == "DefaultFocus") {
         const Species* species = nullptr;
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
@@ -1500,14 +1523,14 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
         return "";
 
     // special case for IF statistic... return a non-empty string for true
-    if (m_stat_type == StatisticType::IF)
+    if (this->m_stat_type == StatisticType::IF)
         return scond->EvalAny(context) ? " " : "";
 
     // the only other statistic that can be computed on non-number property
     // types and that is itself of a non-number type is the most common value
-    if (m_stat_type != StatisticType::MODE) {
+    if (this->m_stat_type != StatisticType::MODE) {
         ErrorLogger() << "Statistic<std::string, std::string>::Eval has invalid statistic type: "
-                      << m_stat_type;
+                      << this->m_stat_type;
         return "";
     }
     // TODO: consider allowing MAX and MIN using string sorting?
@@ -1529,6 +1552,55 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
                                 [](const auto& p1, const auto& p2) -> bool { return p1.second < p2.second; });
 
     return max->first;
+}
+
+namespace StaticTests {
+    static_assert(::ValueRef::decays_to<const int&&, int>);
+    static_assert(std::is_same_v<int, ::ValueRef::decayed_value_t<std::array<int, 1>>>);
+
+    constexpr auto test_arr = std::array{1, 1, 2, 5, 4, 2, 1, 1, 1, 2, 2, 4, 4};
+
+    static_assert(ReduceData<int>(StatisticType::IF, test_arr));
+    static_assert(ReduceData<int>(StatisticType::IF, test_arr) == 1);
+    static_assert(ReduceData<int>(StatisticType::IF, std::array{::PlanetType::PT_OCEAN}) == 1);
+    static_assert(ReduceData<int>(StatisticType::COUNT, std::array<const int, 3>{1, 2, 3}) == 3);
+#if defined (__cpp_lib_constexpr_algorithms)
+    static_assert(UniqueCount<uint8_t>(test_arr) == 4);
+    static_assert(UniqueCount<float>(std::array{::PlanetType::PT_OCEAN, ::PlanetType::PT_SWAMP}) == 2.0f);
+    static_assert(ReduceData<int>(StatisticType::UNIQUE_COUNT, test_arr) == 4);
+#endif
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(HistoMinMax<int, MinMax::Min>(test_arr) == 1);
+    static_assert(HistoMinMax<int, MinMax::Max>(test_arr) == 5);
+    static_assert(HistoMinMax<int, MinMax::Mode>(test_arr) == 1);
+    static_assert(HistoMinMax<int, MinMax::Spread>(test_arr) == 4);
+    static_assert(ReduceData<uint16_t>(StatisticType::HISTO_MIN, test_arr) == 1);
+    static_assert(ReduceData<uint16_t>(StatisticType::HISTO_MAX, test_arr) == 5);
+    static_assert(ReduceData<uint16_t>(StatisticType::MODE, test_arr) == 1);
+    static_assert(ReduceData<::PlanetType>(StatisticType::MODE, std::array{::PlanetType::PT_OCEAN}) == ::PlanetType::PT_OCEAN);
+    static_assert(ReduceData<uint16_t>(StatisticType::HISTO_SPREAD, test_arr) == 4);
+#  if defined (__cpp_lib_constexpr_algorithms)
+    static_assert(ReduceData<uint16_t>(StatisticType::SUM, test_arr) == 30);
+    static_assert(ReduceData<uint16_t>(StatisticType::MEAN, test_arr) == 2); // after rounding
+#  endif
+#endif
+    static_assert(ReduceData<uint16_t>(StatisticType::MAX, test_arr) == 5);
+    static_assert(ReduceData<uint16_t>(StatisticType::MIN, test_arr) == 1);
+    static_assert(ReduceData<uint16_t>(StatisticType::SPREAD, test_arr) == 4);
+    static_assert(ReduceData<uint16_t>(StatisticType::PRODUCT, test_arr) == 5120);
+    static_assert(RMS<uint8_t>(std::array<const int, 3>{1, 1, 1}) == 1);
+    static_assert(RMS<uint8_t>(std::array<const int, 3>{14, -2, 10}) == 10);
+    static_assert(ReduceData<uint16_t>(StatisticType::RMS, test_arr) == 2);
+    static_assert(STD<int8_t>(std::array{1, 2, 3}) == 1);
+    constexpr auto testf_stdev = STD<float>(std::array{3, 3, 3, 4, 4, 5, 5, 7, 11, 15});
+    static_assert(testf_stdev == 4.0f);
+    static_assert(STD<uint16_t>(std::array{2.0f, 3.0f, 5.0f, 7.0f, 7.0f, 7.0f, 11.0f}) == 3);
+    constexpr auto testd_stdev = ReduceData<double>(StatisticType::STDEV, test_arr);
+    static_assert(testd_stdev > 1.43 && testd_stdev < 1.44);
+
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(ReduceData<int>(StatisticType::UNIQUE_COUNT, std::vector{1, 2, 2, 2}) == 2);
+#endif
 }
 
 ///////////////////////////////////////////////////////////
@@ -1634,9 +1706,7 @@ PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) co
 template <>
 PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.back();
-
-    if (variable_name == "PlanetEnvironmentForSpecies") {
+    if (m_property_name == "PlanetEnvironmentForSpecies") {
         const int planet_id = m_int_ref1 ? m_int_ref1->Eval(context) : INVALID_OBJECT_ID;
         const auto planet = context.ContextObjects().get<Planet>(planet_id);
         if (!planet)
@@ -1660,9 +1730,7 @@ StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
 template <>
 Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.back();
-
-    if (variable_name == "EmpireObjectVisibility") {
+    if (m_property_name == "EmpireObjectVisibility") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
@@ -1686,46 +1754,44 @@ Visibility ComplexVariable<Visibility>::Eval(const ScriptingContext& context) co
 template <>
 int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.back();
-
     using boost::container::flat_map;
     // empire properties indexed by strings
     std::function<const std::map<std::string, int>& (const Empire&)> empire_property_string_key {nullptr};
     std::function<const std::map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key2{nullptr};
     std::function<const flat_map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key3{nullptr};
 
-    if (variable_name == "TurnTechResearched")
+    if (m_property_name == "TurnTechResearched")
         empire_property_string_key3 = &Empire::ResearchedTechs;
 
-    else if (variable_name == "BuildingTypesOwned")
+    else if (m_property_name == "BuildingTypesOwned")
         empire_property_string_key = &Empire::BuildingTypesOwned;
-    else if (variable_name == "BuildingTypesProduced")
+    else if (m_property_name == "BuildingTypesProduced")
         empire_property_string_key = &Empire::BuildingTypesProduced;
-    else if (variable_name == "BuildingTypesScrapped")
+    else if (m_property_name == "BuildingTypesScrapped")
         empire_property_string_key = &Empire::BuildingTypesScrapped;
-    else if (variable_name == "SpeciesColoniesOwned")
+    else if (m_property_name == "SpeciesColoniesOwned")
         empire_property_string_key = &Empire::SpeciesColoniesOwned;
-    else if (variable_name == "SpeciesPlanetsBombed")
+    else if (m_property_name == "SpeciesPlanetsBombed")
         empire_property_string_key = &Empire::SpeciesPlanetsBombed;
-    else if (variable_name == "SpeciesPlanetsDepoped")
+    else if (m_property_name == "SpeciesPlanetsDepoped")
         empire_property_string_key = &Empire::SpeciesPlanetsDepoped;
-    else if (variable_name == "SpeciesPlanetsInvaded")
+    else if (m_property_name == "SpeciesPlanetsInvaded")
         empire_property_string_key = &Empire::SpeciesPlanetsInvaded;
-    else if (variable_name == "SpeciesShipsDestroyed")
+    else if (m_property_name == "SpeciesShipsDestroyed")
         empire_property_string_key = &Empire::SpeciesShipsDestroyed;
-    else if (variable_name == "SpeciesShipsLost")
+    else if (m_property_name == "SpeciesShipsLost")
         empire_property_string_key = &Empire::SpeciesShipsLost;
-    else if (variable_name == "SpeciesShipsOwned")
+    else if (m_property_name == "SpeciesShipsOwned")
         empire_property_string_key = &Empire::SpeciesShipsOwned;
-    else if (variable_name == "SpeciesShipsProduced")
+    else if (m_property_name == "SpeciesShipsProduced")
         empire_property_string_key = &Empire::SpeciesShipsProduced;
-    else if (variable_name == "SpeciesShipsScrapped")
+    else if (m_property_name == "SpeciesShipsScrapped")
         empire_property_string_key = &Empire::SpeciesShipsScrapped;
-    else if (variable_name == "ShipPartsOwned")
+    else if (m_property_name == "ShipPartsOwned")
         empire_property_string_key = &Empire::ShipPartsOwned;
-    else if (variable_name == "TurnsSincePolicyAdopted")
+    else if (m_property_name == "TurnsSincePolicyAdopted")
         empire_property_string_key = &Empire::PolicyCurrentAdoptedDurations;
-    else if (variable_name == "CumulativeTurnsPolicyAdopted")
+    else if (m_property_name == "CumulativeTurnsPolicyAdopted")
         empire_property_string_key = &Empire::PolicyTotalAdoptedDurations;
 
     if (empire_property_string_key || empire_property_string_key2 || empire_property_string_key3) {
@@ -1745,13 +1811,13 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             if (key_string.empty())
                 return 0;
 
-            if (empire && variable_name == "TurnTechResearched" && !empire->TechResearched(key_string))
+            if (empire && m_property_name == "TurnTechResearched" && !empire->TechResearched(key_string))
                 // special case for techs: make unresearched-tech's research-turn a big number
                 return IMPOSSIBLY_LARGE_TURN;
 
             key_filter = [k{std::move(key_string)}](auto e) -> bool { return k == e.first; };
         }
-        else if (variable_name == "ShipPartsOwned" && m_int_ref2) {
+        else if (m_property_name == "ShipPartsOwned" && m_int_ref2) {
             int key_int = m_int_ref2->Eval(context);
             if (key_int <= int(ShipPartClass::INVALID_SHIP_PART_CLASS) ||
                 key_int >= int(ShipPartClass::NUM_SHIP_PART_CLASSES))
@@ -1810,21 +1876,21 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     // empire properties indexed by integers
     std::function<const std::map<int, int>& (const Empire&)> empire_property_int_key{nullptr};
 
-    if (variable_name == "EmpireShipsDestroyed")
+    if (m_property_name == "EmpireShipsDestroyed")
         empire_property_int_key = &Empire::EmpireShipsDestroyed;
-    else if (variable_name == "ShipDesignsDestroyed")
+    else if (m_property_name == "ShipDesignsDestroyed")
         empire_property_int_key = &Empire::ShipDesignsDestroyed;
-    else if (variable_name == "ShipDesignsLost")
+    else if (m_property_name == "ShipDesignsLost")
         empire_property_int_key = &Empire::ShipDesignsLost;
-    else if (variable_name == "ShipDesignsOwned")
+    else if (m_property_name == "ShipDesignsOwned")
         empire_property_int_key = &Empire::ShipDesignsOwned;
-    else if (variable_name == "ShipDesignsInProduction")
+    else if (m_property_name == "ShipDesignsInProduction")
         empire_property_int_key = &Empire::ShipDesignsInProduction;
-    else if (variable_name == "ShipDesignsProduced")
+    else if (m_property_name == "ShipDesignsProduced")
         empire_property_int_key = &Empire::ShipDesignsProduced;
-    else if (variable_name == "ShipDesignsScrapped")
+    else if (m_property_name == "ShipDesignsScrapped")
         empire_property_int_key = &Empire::ShipDesignsScrapped;
-    else if (variable_name == "TurnSystemExplored")
+    else if (m_property_name == "TurnSystemExplored")
         empire_property_int_key = &Empire::TurnsSystemsExplored;
 
     if (empire_property_int_key) {
@@ -1851,7 +1917,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             if (key_string.empty())
                 return 0;
             int key_int = -1; // default
-            if (boost::istarts_with(variable_name, "ShipDesign")) {
+            if (boost::istarts_with(m_property_name, "ShipDesign")) {
                 // look up ship design id corresponding to specified predefined ship design name
                 if (const ShipDesign* design = context.ContextUniverse().GetGenericShipDesign(key_string))
                     key_int = design->ID();
@@ -1874,7 +1940,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
 
     // unindexed empire proprties
-    if (variable_name == "OutpostsOwned") {
+    if (m_property_name == "OutpostsOwned") {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
@@ -1902,7 +1968,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
 
     // non-empire properties
-    if (variable_name == "GameRule") {
+    if (m_property_name == "GameRule") {
         if (!m_string_ref1)
             return 0;
         const std::string rule_name = m_string_ref1->Eval();
@@ -1934,7 +2000,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
         return 0;
     }
-    else if (variable_name == "PartsInShipDesign") {
+    else if (m_property_name == "PartsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -1957,7 +2023,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         const auto& parts = design->Parts();
         return std::count_if(parts.begin(), parts.end(), [&ship_part_name](const auto& part) { return part == ship_part_name; });
     }
-    else if (variable_name == "PartOfClassInShipDesign") {
+    else if (m_property_name == "PartOfClassInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -1985,7 +2051,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         };
         return std::count_if(design->Parts().begin(), design->Parts().end(), part_of_class);
     }
-    else if (variable_name == "JumpsBetween") {
+    else if (m_property_name == "JumpsBetween") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -2000,7 +2066,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return -1;
         return retval;
     }
-    else if (variable_name == "JumpsBetweenByEmpireSupplyConnections") {
+    else if (m_property_name == "JumpsBetweenByEmpireSupplyConnections") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -2021,7 +2087,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return -1;
         return retval;
     }
-    else if (variable_name == "SlotsInHull") {
+    else if (m_property_name == "SlotsInHull") {
         const ShipHull* ship_hull = nullptr;
         if (m_string_ref1) {
             std::string hull_name = m_string_ref1->Eval(context);
@@ -2034,7 +2100,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
         return ship_hull->Slots().size();
     }
-    else if (variable_name == "SlotsInShipDesign") {
+    else if (m_property_name == "SlotsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
@@ -2054,7 +2120,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return 0;
         return ship_hull->Slots().size();
     }
-    else if (variable_name == "SpecialAddedOnTurn") {
+    else if (m_property_name == "SpecialAddedOnTurn") {
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
@@ -2073,7 +2139,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return object->SpecialAddedOnTurn(special_name);
 
     }
-    else if (variable_name == "TurnPolicyAdopted") { // returns by value, so can't assign &Empire::TurnsPoliciesAdopted to empire_property_string_key above
+    else if (m_property_name == "TurnPolicyAdopted") { // returns by value, so can't assign &Empire::TurnsPoliciesAdopted to empire_property_string_key above
         if (!m_string_ref1)
             return 0;
         std::string policy_name = m_string_ref1->Eval();
@@ -2092,7 +2158,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         return empire->TurnPolicyAdopted(policy_name);
     }
-    else if (variable_name == "NumPoliciesAdopted") { // similar to a string-keyed empire property, but does specialized lookups of adopted policy info
+    else if (m_property_name == "NumPoliciesAdopted") { // similar to a string-keyed empire property, but does specialized lookups of adopted policy info
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
             empire_id = m_int_ref1->Eval(context);
@@ -2128,7 +2194,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             return count;
         }
     }
-    else if (variable_name == "PlanetTypeDifference") {
+    else if (m_property_name == "PlanetTypeDifference") {
         // get planet types to find difference between...
         PlanetType pt1;
         if (m_int_ref1) {
@@ -2158,7 +2224,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         return Planet::TypeDifference(pt1, pt2);
     }
-    else if (variable_name == "EmpireObjectVisibilityTurn") {
+    else if (m_property_name == "EmpireObjectVisibilityTurn") {
         if (!m_int_ref1 || !m_int_ref2)
             return 0;
         const auto& vis_turn_map{ context.empire_object_vis_turns };
@@ -2187,17 +2253,15 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 template <>
 double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.back();
-
     std::function<float (const ShipHull&)> hull_property{nullptr};
 
-    if (variable_name == "HullFuel")
+    if (m_property_name == "HullFuel")
         hull_property = &ShipHull::Fuel;
-    else if (variable_name == "HullStealth")
+    else if (m_property_name == "HullStealth")
         hull_property = &ShipHull::Stealth;
-    else if (variable_name == "HullStructure")
+    else if (m_property_name == "HullStructure")
         hull_property = &ShipHull::Structure;
-    else if (variable_name == "HullSpeed")
+    else if (m_property_name == "HullSpeed")
         hull_property = &ShipHull::Speed;
 
     if (hull_property) {
@@ -2215,7 +2279,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     // empire properties indexed by integers
     std::function<const std::map<int, float>& (const Empire&)> empire_property_int_key{nullptr};
 
-    if (variable_name == "SystemSupplyRange") {
+    if (m_property_name == "SystemSupplyRange") {
         if (!m_int_ref2)
             return 0.0; // no system specified... doesn't make sense to sum over systems...
         int system_id = m_int_ref2->Eval(context);
@@ -2251,7 +2315,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     }
 
 
-    if (variable_name == "EmpireStockpile") {
+    if (m_property_name == "EmpireStockpile") {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
@@ -2290,9 +2354,9 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     // non-empire properties
     std::function<const std::map<int, float>& ()> property_int_key{nullptr};
 
-    if (variable_name == "PropagatedSystemSupplyRange") // int_ref2 is system ID
+    if (m_property_name == "PropagatedSystemSupplyRange") // int_ref2 is system ID
         property_int_key = [&context]() -> const auto& { return context.supply.PropagatedSupplyRanges(); };
-    else if (variable_name == "PropagatedSystemSupplyDistance") // int_ref2 is system ID
+    else if (m_property_name == "PropagatedSystemSupplyDistance") // int_ref2 is system ID
         property_int_key = [&context]() -> const auto& { return context.supply.PropagatedSupplyDistances(); };
 
     if (property_int_key) {
@@ -2311,7 +2375,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     }
 
 
-    if (variable_name == "GameRule") {
+    if (m_property_name == "GameRule") {
         if (!m_string_ref1)
             return 0.0;
         std::string rule_name = m_string_ref1->Eval();
@@ -2341,7 +2405,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         }
         return 0.0;
     }
-    else if (variable_name == "PartCapacity") {
+    else if (m_property_name == "PartCapacity") {
         std::string ship_part_name;
         if (m_string_ref1)
             ship_part_name = m_string_ref1->Eval(context);
@@ -2353,7 +2417,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return ship_part->Capacity();
 
     }
-    else if (variable_name == "PartSecondaryStat") {
+    else if (m_property_name == "PartSecondaryStat") {
         std::string ship_part_name;
         if (m_string_ref1)
             ship_part_name = m_string_ref1->Eval(context);
@@ -2365,7 +2429,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return ship_part->SecondaryStat();
 
     }
-    else if (variable_name == "ShipDesignCost") {
+    else if (m_property_name == "ShipDesignCost") {
         const int design_id = m_int_ref1 ? m_int_ref1->Eval(context) : INVALID_DESIGN_ID;
         const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
         if (!design)
@@ -2377,7 +2441,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return design->ProductionCost(empire_id, location_id, context); // overrides source and local candidate to specify empire and location
 
     }
-    else if (variable_name == "BuildingTypeCost") {
+    else if (m_property_name == "BuildingTypeCost") {
         const std::string building_type_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
         const auto* building_type = GetBuildingType(building_type_name);
         if (!building_type)
@@ -2389,7 +2453,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return building_type->ProductionCost(empire_id, location_id, context); // overrides source and local candidate to specify empire and location
 
     }
-    else if (variable_name == "EmpireMeterValue") {
+    else if (m_property_name == "EmpireMeterValue") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)
             empire_id = m_int_ref1->Eval(context);
@@ -2406,7 +2470,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return meter->Current();
 
     }
-    else if (variable_name == "EmpireAnnexationCost") { // intended for use in UI, not in scripted content, due to ambiguity about what the "source" object would be, since this sets the source to specify the empire
+    else if (m_property_name == "EmpireAnnexationCost") { // intended for use in UI, not in scripted content, due to ambiguity about what the "source" object would be, since this sets the source to specify the empire
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const auto empire = context.GetEmpire(empire_id);
         if (!empire)
@@ -2424,7 +2488,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return planet->AnnexationCost(empire_id, context);
 
     }
-    else if (variable_name == "DirectDistanceBetween") {
+    else if (m_property_name == "DirectDistanceBetween") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -2444,7 +2508,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return static_cast<float>(std::sqrt(dx*dx + dy*dy));
 
     }
-    else if (variable_name == "ShortestPath") {
+    else if (m_property_name == "ShortestPath") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -2457,7 +2521,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             object1_id, object2_id, context.ContextObjects());
 
     }
-    else if (variable_name == "SpeciesContentOpinion") {
+    else if (m_property_name == "SpeciesContentOpinion") {
         std::string opinionated_species_name;
         if (m_string_ref1)
             opinionated_species_name = m_string_ref1->Eval(context);
@@ -2481,25 +2545,25 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         { return 0.0; }
 
     }
-    else if (variable_name == "SpeciesEmpireOpinion" || variable_name == "SpeciesEmpireTargetOpinion") {
+    else if (m_property_name == "SpeciesEmpireOpinion" || m_property_name == "SpeciesEmpireTargetOpinion") {
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         const std::string species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
-        const bool target = variable_name == "SpeciesEmpireTargetOpinion";
+        const bool target = m_property_name == "SpeciesEmpireTargetOpinion";
         static constexpr bool current_value = false;
 
         return context.species.SpeciesEmpireOpinion(species_name, empire_id, target, current_value);
 
     }
-    else if (variable_name == "SpeciesSpeciesOpinion" || variable_name == "SpeciesSpeciesTargetOpinion") {
+    else if (m_property_name == "SpeciesSpeciesOpinion" || m_property_name == "SpeciesSpeciesTargetOpinion") {
         const std::string opinionated_species_name = m_string_ref1 ? m_string_ref1->Eval(context) : "";
         const std::string rated_species_name = m_string_ref2 ? m_string_ref2->Eval(context) : "";
-        const bool target = variable_name == "SpeciesSpeciesTargetOpinion";
+        const bool target = m_property_name == "SpeciesSpeciesTargetOpinion";
         static constexpr bool current_value = false;
 
         return context.species.SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, target, current_value);
 
     }
-    else if (variable_name == "SpecialCapacity") {
+    else if (m_property_name == "SpecialCapacity") {
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
@@ -2516,7 +2580,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return object->SpecialCapacity(special_name);
 
     }
-    else if (variable_name == "ShipPartMeter") {
+    else if (m_property_name == "ShipPartMeter") {
         int object_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object_id = m_int_ref1->Eval(context);
@@ -2591,42 +2655,40 @@ namespace {
 template <>
 std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.empty() ? EMPTY_STRING : m_property_name.back();
-
     std::function<std::string (const Empire&)> empire_property{nullptr};
     static constexpr auto null_property =
         [](const Empire&) noexcept(noexcept(std::string{})) { return std::string{}; };
 
     // unindexed empire properties
-    if (variable_name == "LowestCostEnqueuedTech")
+    if (m_property_name == "LowestCostEnqueuedTech")
         empire_property = [&context](const Empire& e) { return e.LeastExpensiveEnqueuedTech(context); };
-    else if (variable_name == "HighestCostEnqueuedTech")
+    else if (m_property_name == "HighestCostEnqueuedTech")
         empire_property = [&context](const Empire& e) { return e.MostExpensiveEnqueuedTech(context); };
-    else if (variable_name == "TopPriorityEnqueuedTech")
+    else if (m_property_name == "TopPriorityEnqueuedTech")
         empire_property = &Empire::TopPriorityEnqueuedTech;
-    else if (variable_name == "MostSpentEnqueuedTech")
+    else if (m_property_name == "MostSpentEnqueuedTech")
         empire_property = &Empire::MostRPSpentEnqueuedTech;
-    else if (variable_name == "LowestCostResearchableTech")
+    else if (m_property_name == "LowestCostResearchableTech")
         empire_property = [&context](const auto& empire) { return empire.LeastExpensiveResearchableTech(context); };
-    else if (variable_name == "HighestCostResearchableTech")
+    else if (m_property_name == "HighestCostResearchableTech")
         empire_property = &Empire::MostExpensiveResearchableTech;
-    else if (variable_name == "TopPriorityResearchableTech")
+    else if (m_property_name == "TopPriorityResearchableTech")
         empire_property = &Empire::TopPriorityResearchableTech;
-    else if (variable_name == "MostSpentResearchableTech")
+    else if (m_property_name == "MostSpentResearchableTech")
         empire_property = &Empire::MostExpensiveResearchableTech;
-    else if (variable_name == "MostSpentTransferrableTech")
+    else if (m_property_name == "MostSpentTransferrableTech")
         empire_property = null_property;
-    else if (variable_name == "RandomTransferrableTech")
+    else if (m_property_name == "RandomTransferrableTech")
         empire_property = null_property;
-    else if (variable_name == "MostPopulousSpecies")
+    else if (m_property_name == "MostPopulousSpecies")
         empire_property = null_property;
-    else if (variable_name == "MostHappySpecies")
+    else if (m_property_name == "MostHappySpecies")
         empire_property = null_property;
-    else if (variable_name == "LeastHappySpecies")
+    else if (m_property_name == "LeastHappySpecies")
         empire_property = null_property;
-    else if (variable_name == "RandomColonizableSpecies")
+    else if (m_property_name == "RandomColonizableSpecies")
         empire_property = null_property;
-    else if (variable_name == "RandomControlledSpecies")
+    else if (m_property_name == "RandomControlledSpecies")
         empire_property = null_property;
 
     if (empire_property) {
@@ -2640,7 +2702,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         return empire_property(*empire);
     }
 
-    if (variable_name == "RandomEnqueuedTech") {
+    if (m_property_name == "RandomEnqueuedTech") {
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
@@ -2656,7 +2718,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         const diff_t idx = static_cast<diff_t>(RandInt(0, static_cast<int>(all_enqueued_techs.size()) - 1));
         return std::move(*std::next(all_enqueued_techs.begin(), idx));
 
-    } else if (variable_name == "RandomResearchableTech") {
+    } else if (m_property_name == "RandomResearchableTech") {
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
@@ -2671,7 +2733,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         const diff_t idx = static_cast<diff_t>(RandInt(0, static_cast<int>(researchable_techs.size()) - 1));
         return std::move(*std::next(researchable_techs.begin(), idx));
 
-    } else if (variable_name == "RandomCompleteTech") {
+    } else if (m_property_name == "RandomCompleteTech") {
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return "";
@@ -2686,7 +2748,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         const diff_t idx = static_cast<diff_t>(RandInt(0, static_cast<int>(complete_techs.size()) - 1));
         return std::move(*std::next(complete_techs.begin(), idx));
 
-    } else if (variable_name == "LowestCostTransferrableTech") {
+    } else if (m_property_name == "LowestCostTransferrableTech") {
         const int empire1_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire1_id == ALL_EMPIRES)
             return "";
@@ -2701,7 +2763,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         const diff_t idx = static_cast<std::size_t>(RandInt(0, static_cast<int>(sendable_techs.size()) - 1));
         return std::move(*std::next(sendable_techs.begin(), idx));
 
-    } else if (variable_name == "HighestCostTransferrableTech") {
+    } else if (m_property_name == "HighestCostTransferrableTech") {
         const int empire1_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire1_id == ALL_EMPIRES)
             return "";
@@ -2729,7 +2791,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
 
         return std::move((*range_max_element(sendable_techs_costs_rng, second_less)).first);
 
-    } else if (variable_name == "TopPriorityTransferrableTech") {
+    } else if (m_property_name == "TopPriorityTransferrableTech") {
         const int empire1_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire1_id == ALL_EMPIRES)
             return "";
@@ -2764,7 +2826,7 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
     }
 
     // non-empire properties
-    if (variable_name == "GameRule") {
+    if (m_property_name == "GameRule") {
         if (!m_string_ref1)
             return "";
         const auto rule_name = m_string_ref1->Eval();
@@ -2791,10 +2853,8 @@ template <>
 std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
     const ScriptingContext& context) const
 {
-    const std::string& variable_name = m_property_name.back();
-
     // unindexed empire properties
-    if (variable_name == "EmpireAdoptedPolices") {
+    if (m_property_name == "EmpireAdoptedPolices") {
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return {};
@@ -2809,7 +2869,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
                        [](const std::string_view sv) -> std::string { return std::string{sv}; });
         return retval;
 
-    } else if (variable_name == "EmpireAvailablePolices") {
+    } else if (m_property_name == "EmpireAvailablePolices") {
         const int empire_id = m_int_ref1 ? m_int_ref1->Eval(context) : ALL_EMPIRES;
         if (empire_id == ALL_EMPIRES)
             return {};
@@ -2829,10 +2889,9 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
 template <>
 std::string ComplexVariable<Visibility>::Dump(uint8_t ntabs) const
 {
-    const std::string& variable_name = m_property_name.back();
-    std::string retval = variable_name;
+    std::string retval = m_property_name;
 
-    if (variable_name == "EmpireObjectVisibility") {
+    if (m_property_name == "EmpireObjectVisibility") {
         if (m_int_ref1)
             retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_int_ref2)
@@ -2845,13 +2904,12 @@ std::string ComplexVariable<Visibility>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
 {
-    const std::string& variable_name = m_property_name.back();
-    std::string retval = variable_name;
+    std::string retval = m_property_name;
 
     // empire properties indexed by integers
-    if (variable_name == "PropagatedSystemSupplyRange" ||
-        variable_name == "SystemSupplyRange" ||
-        variable_name == "PropagatedSystemSupplyDistance")
+    if (m_property_name == "PropagatedSystemSupplyRange" ||
+        m_property_name == "SystemSupplyRange" ||
+        m_property_name == "PropagatedSystemSupplyDistance")
     {
         if (m_int_ref1)
             retval += " empire = " + m_int_ref1->Dump(ntabs);
@@ -2859,26 +2917,26 @@ std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
             retval += " system = " + m_int_ref2->Dump(ntabs);
 
     }
-    else if (variable_name == "GameRule" ||
-             variable_name == "HullFuel" ||
-             variable_name == "HullStealth" ||
-             variable_name == "HullStructure" ||
-             variable_name == "HullSpeed" ||
-             variable_name == "PartCapacity" ||
-             variable_name == "PartSecondaryStat")
+    else if (m_property_name == "GameRule" ||
+             m_property_name == "HullFuel" ||
+             m_property_name == "HullStealth" ||
+             m_property_name == "HullStructure" ||
+             m_property_name == "HullSpeed" ||
+             m_property_name == "PartCapacity" ||
+             m_property_name == "PartSecondaryStat")
     {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
 
     }
-    else if (variable_name == "EmpireMeterValue") {
+    else if (m_property_name == "EmpireMeterValue") {
         if (m_int_ref1)
             retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_string_ref1)
             retval += " meter = " + m_string_ref1->Dump(ntabs);
 
     }
-    else if (variable_name == "ShipPartMeter") {
+    else if (m_property_name == "ShipPartMeter") {
         // ShipPartMeter part = "SR_WEAPON_1_1" meter = Capacity object = Source.ID
         if (m_string_ref1)
             retval += " part = " + m_string_ref1->Dump(ntabs);
@@ -2888,8 +2946,8 @@ std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
             retval += " object = " + m_int_ref1->Dump(ntabs);
 
     }
-    else if (variable_name == "DirectDistanceBetween" ||
-             variable_name == "ShortestPath")
+    else if (m_property_name == "DirectDistanceBetween" ||
+             m_property_name == "ShortestPath")
     {
         if (m_int_ref1)
             retval += " object = " + m_int_ref1->Dump(ntabs);
@@ -2897,28 +2955,28 @@ std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
             retval += " object = " + m_int_ref2->Dump(ntabs);
 
     }
-    else if (variable_name == "SpeciesContentOpinion") {
+    else if (m_property_name == "SpeciesContentOpinion") {
         if (m_string_ref1)
             retval += " species = " + m_string_ref1->Dump(ntabs);
         if (m_string_ref2)
             retval += " name = " + m_string_ref2->Dump(ntabs);
 
     }
-    else if (variable_name == "SpeciesEmpireOpinion") {
+    else if (m_property_name == "SpeciesEmpireOpinion") {
         if (m_int_ref1)
             retval += " empire = " + m_int_ref1->Dump(ntabs);
         if (m_string_ref1)
             retval += " species = " + m_string_ref1->Dump(ntabs);
 
     }
-    else if (variable_name == "SpeciesSpeciesOpinion") {
+    else if (m_property_name == "SpeciesSpeciesOpinion") {
         if (m_string_ref1)
             retval += " species = " + m_string_ref1->Dump(ntabs);
         if (m_string_ref2)
             retval += " species = " + m_string_ref2->Dump(ntabs);
 
     }
-    else if (variable_name == "SpecialCapacity") {
+    else if (m_property_name == "SpecialCapacity") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
         if (m_int_ref1)
@@ -2932,10 +2990,9 @@ std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<int>::Dump(uint8_t ntabs) const
 {
-    const std::string& variable_name = m_property_name.back();
-    std::string retval = variable_name;
+    std::string retval = m_property_name;
     // todo: implement like <double> case
-    if (variable_name == "GameRule") {
+    if (m_property_name == "GameRule") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
     }
@@ -2946,10 +3003,9 @@ std::string ComplexVariable<int>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) const
 {
-    const std::string& variable_name = m_property_name.back();
-    std::string retval = variable_name;
-    // todo: implement like <double> case
-    if (variable_name == "GameRule") {
+    std::string retval = m_property_name;
+    // TODO: implement like <double> case
+    if (m_property_name == "GameRule") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
     }
@@ -2960,10 +3016,9 @@ std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<std::vector<std::string>>::Dump(uint8_t ntabs) const
 {
-    const std::string& variable_name = m_property_name.back();
-    std::string retval = variable_name;
+    std::string retval = m_property_name;
     // todo: implement like <double> case
-    if (variable_name == "GameRule") {
+    if (m_property_name == "GameRule") {
         if (m_string_ref1)
             retval += " name = " + m_string_ref1->Dump(ntabs);
     }
@@ -2980,7 +3035,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     if (!m_value_ref)
         return "";
 
-    auto raw_ref = m_value_ref.get();
+    const auto raw_ref = m_value_ref.get();
     if (!raw_ref)
         return "";
 
@@ -3010,7 +3065,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     };
 
 
-    auto ref = dynamic_cast<Variable<double>*>(raw_ref);
+    const auto* const ref = dynamic_cast<const Variable<double>*>(raw_ref);
     if (!ref)
         return Stringify(result);
 
@@ -3019,12 +3074,8 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     if (property.empty())
         return Stringify(result);
 
-    const auto& end_of_property = property.back();
-    if (end_of_property.empty())
-        return Stringify(result);
-
     // special case for a few sub-value-refs to help with UI representation
-    if (end_of_property == "X" || end_of_property == "Y" || end_of_property == "DirectDistanceBetween") {
+    if (property == "X" || property == "Y" || property == "DirectDistanceBetween") {
         if (result == UniverseObject::INVALID_POSITION)
             return UserString("INVALID_POSITION");
 
@@ -3057,11 +3108,7 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
     if (property.empty())
         return std::to_string(result);
 
-    const auto& end_of_property = property.back();
-    if (end_of_property.empty())
-        return std::to_string(result);
-
-    if (end_of_property == "ETA") {
+    if (property == "ETA") {
         if (result == Fleet::ETA_UNKNOWN) {
             return UserString("FW_FLEET_ETA_UNKNOWN");
         } else if (result == Fleet::ETA_NEVER) {
@@ -3122,27 +3169,18 @@ NameLookup::NameLookup(std::unique_ptr<ValueRef<int>>&& value_ref, LookupType lo
 bool NameLookup::operator==(const ValueRef<std::string>& rhs) const {
     if (&rhs == this)
         return true;
-    if (typeid(rhs) != typeid(*this))
+    if (!this->ValueRefBase::operator==(rhs) || typeid(*this) != typeid(rhs))
         return false;
-    const NameLookup& rhs_ =
-        static_cast<const NameLookup&>(rhs);
 
-    if (m_lookup_type == rhs_.m_lookup_type) {
-        // check next member
-    } else {
+    const NameLookup& rhs_ = static_cast<const NameLookup&>(rhs);
+
+    if (m_lookup_type != rhs_.m_lookup_type)
         return false;
-    }
-
-    if (m_value_ref == rhs_.m_value_ref) {
-        // check next member
-    } else if (!m_value_ref || !rhs_.m_value_ref) {
+    if (m_value_ref == rhs_.m_value_ref)
+        return true;
+    if (!m_value_ref || !rhs_.m_value_ref)
         return false;
-    } else {
-        if (*m_value_ref != *(rhs_.m_value_ref))
-            return false;
-    }
-
-    return true;
+    return *m_value_ref == *(rhs_.m_value_ref);
 }
 
 std::string NameLookup::Eval(const ScriptingContext& context) const {
@@ -3191,838 +3229,178 @@ uint32_t NameLookup::GetCheckSum() const {
     return retval;
 }
 
-///////////////////////////////////////////////////////////
-// Operation                                             //
-///////////////////////////////////////////////////////////
-template <>
-std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs)
-{
-    switch (op_type) {
-    case OpType::PLUS: {
-        return lhs + rhs;
-        break;
-    }
+namespace StaticTests {
+    using namespace ::ValueRef;
 
-    case OpType::TIMES: {
-        // useful for writing a "Statistic If" expression with strings. Number-
-        // valued types return 0 or 1 for nothing or something matching the sampling
-        // condition. For strings, an empty string indicates no matches, and non-empty
-        // string indicates matches, which is treated like a multiplicative identity
-        // operation, so just returns the RHS of the expression.
-        return lhs.empty() ? lhs : rhs;
-        break;
-    }
+    // auto abs(auto val)
+    static_assert(abs(0) == 0);
+    static_assert(abs(1) == 1);
+    static_assert(abs(-4.0) == 4.0);
 
-    case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
-        break;
-    }
+    // auto sign(auto val)
+    static_assert(sign(0) == 0);
+    static_assert(sign(1) == 1);
+    static_assert(sign(-4.0) == -1.0);
 
-    case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
-        break;
-    }
+    // auto pow(auto val)
+    static_assert(pow(0) == 1);
 
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
-    }
+    // auto pow(auto base, auto exp)
+    static_assert(pow(0, 1) == 0);
+    static_assert(pow(1, 1) == 1);
+    static_assert(pow(-2, 3) == -8);
+    static_assert(pow(1.0, 2.0) == 1.0);
+    static_assert(pow(2.0, 2.0) == 4.0);
 
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs) ? "true" : "false";
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs) ? "true" : "false";
-        break;
-    }
+    // auto round(auto val)
+    static_assert(round(0.0) == 0.0);
+    static_assert(round(42) == 42);
+    static_assert(round(42.0) == 42);
+    static_assert(round(42.9) == 43);
+    static_assert(round(42.1) == 42);
+    static_assert(round(-42.0) == -42);
+    static_assert(round(-42.9) == -43);
+    static_assert(round(-42.1) == -42);
 
-    case OpType::SUBSTITUTION: {
-        // insert string into other string in place of %1% or similar placeholder
-        if (lhs.empty())
-            return lhs;
+    // auto ceil(auto val)
+    static_assert(ceil(0.0) == 0.0);
+    static_assert(ceil(42) == 42);
+    static_assert(ceil(42.0) == 42);
+    static_assert(ceil(42.9) == 43);
+    static_assert(ceil(42.1) == 43);
+    static_assert(ceil(-42.0) == -42);
+    static_assert(ceil(-42.9) == -42);
+    static_assert(ceil(-42.1) == -42);
 
-        boost::format formatter = FlexibleFormat(lhs);
-        formatter % rhs;
-        return formatter.str();
-        break;
-    }
+    // auto floor(auto val)
+    static_assert(floor(0.0) == 0.0);
+    static_assert(floor(42) == 42);
+    static_assert(floor(42.0) == 42);
+    static_assert(floor(42.9) == 42);
+    static_assert(floor(42.1) == 42);
+    static_assert(floor(-42.0) == -42);
+    static_assert(floor(-42.9) == -43);
+    static_assert(floor(-42.1) == -43);
 
-    default: break;
-    }
+    static constexpr double ok_test_frac = 0.00000000001;
 
-    throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
-    return "";
+    // auto log(auto val)
+    static_assert(log(1) == 0);
+    static_assert(log(1.0) == 0.0);
+    static_assert(abs(log(2.0) - 0.6931471805599453) < ok_test_frac);
+    static_assert(abs(log(0.5) + 0.6931471805599453) < ok_test_frac);
+    static_assert(abs(log(2.0) + log(0.5)) < ok_test_frac);
+
+    // auto log(auto val, auto base)
+    static_assert(log(2, 1) == 0);
+    static_assert(abs(log(2.0, 0.5) + 1.0) < ok_test_frac);
+    static_assert(log(2.0, 1.0) == 0.0);
+    static_assert(log(2.0, 2.0) == 1.0);
+    static_assert(log(2, 4) == 2);
+    static_assert(abs(log(2.0, 4.0) - 2.0) < ok_test_frac);
+    static_assert(log(10, 1000) == 3);
+    static_assert(abs(log(10.0, 1000.0) - 3.0) < ok_test_frac);
+    static_assert(abs(log(10.0f, 1000.0f) - 3.0f) < ok_test_frac);
+
+    using enum OpType;
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+    static_assert(OperateData(PLUS, std::string{"start"}, std::string{"end"}) == "startend");
+    static_assert(OperateData(SUBSTITUTION, std::string{""}, std::string{"anything"}).empty());
+    static_assert(OperateData(NOOP, std::string{"noop"}) == "noop");
+    static_assert(OperateData(COMPARE_EQUAL, std::string{"one"}, std::string{"two"}).empty());
+    static_assert(!OperateData(COMPARE_NOT_EQUAL, std::string{"one"}, std::string{"two"}).empty());
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return 0; }) == "one");
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return 1; }) == "two");
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return 4; }) == "two");
+    static_assert(OperateData(RANDOM_PICK, std::string{"one"}, std::string{"two"}, [](auto, auto) { return -4; }) == "two");
+#endif
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(OperateData(PLUS, std::vector{-1, 0, 1, 2, 3}) == 5);
+    static_assert(OperateData(TIMES, std::vector{-1, 1, 2, 3}) == -6);
+    static_assert(OperateData(RANDOM_PICK, std::vector{-1, 1, 2, 3}, [](auto, auto) { return 0; }) == -1);
+    static_assert(OperateData(RANDOM_PICK, std::vector{-1, 1, 2, 3}, [](auto, auto) { return 100; }) == 3);
+    static_assert(OperateData(RANDOM_PICK, std::vector{-1, 1, 2, 3}, [](auto, auto) { return -3; }) == 3);
+#endif
+
+    static_assert(OperateData(PLUS, 0, 42) == 42);
+    static_assert(OperateData(PLUS, 0.25f, 1.25f) == 1.5f);
+    static_assert(OperateData(MINUS, 0, 42) == -42);
+    static_assert(OperateData(MINUS, 0.25f, 1.25f) == -1.0f);
+    static_assert(OperateData(TIMES, 0, 1) == 0);
+    static_assert(OperateData(TIMES, 2, 21) == 42);
+    static_assert(OperateData(TIMES, -2.0, 21.0) == -42.0);
+    static_assert(OperateData(DIVIDE, 5, 9) == 0);
+    static_assert(OperateData(DIVIDE, 84, 2) == 42);
+    static_assert(OperateData(DIVIDE, -84.0f, 2.0f) == -42.0f);
+    static_assert(OperateData(REMAINDER, 5, 9) == 5);
+    static_assert(OperateData(REMAINDER, -5, 9) == -5);
+    static_assert(OperateData(REMAINDER, 5, -9) == 5);
+    static_assert(OperateData(REMAINDER, -5, -9) == -5);
+    static_assert(OperateData(EXPONENTIATE, 0, 1) == 0);
+    static_assert(OperateData(EXPONENTIATE, 5, 0) == 1);
+    static_assert(OperateData(EXPONENTIATE, 2.0f, 4.0f) == 16.0f);
+    static_assert(OperateData(LOGARITHM, 2, 256) == 8);
+    static_assert(OperateData(MINIMUM, -5, -9) == -9);
+    static_assert(OperateData(MAXIMUM, -5, -9) == -5);
+
+    constexpr struct {
+        constexpr int operator()(int l, int h) noexcept { return RandIntCx(std::min(l, h), std::max(l, h)); }
+        constexpr double operator()(double l, double h) noexcept { return RandDoubleCx(std::min(l, h), std::max(l, h)); }
+    } rand_wrapper;
+    static_assert(OperateData(RANDOM_UNIFORM, 5, -5, rand_wrapper) >= -5);
+    static_assert(OperateData(RANDOM_UNIFORM, 5.0, 9.0, rand_wrapper, rand_wrapper) <= 9.0);
+    static_assert(OperateData(RANDOM_UNIFORM, 5.0, 9.0, rand_wrapper, rand_wrapper) >= 5.0);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return 1; }) == 4);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return 0; }) == 3);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return 10; }) == 4);
+    static_assert(OperateData(RANDOM_PICK, 3, 4, [](auto, auto) { return -4; }) == 4);
+
+    static_assert(OperateData(COMPARE_EQUAL, 2, 4) == 0);
+    static_assert(OperateData(COMPARE_GREATER_THAN, 2, 4) == 0);
+    static_assert(OperateData(COMPARE_GREATER_THAN_OR_EQUAL, 2, 4) == 0);
+    static_assert(OperateData(COMPARE_LESS_THAN, 2, 4) == 1);
+    static_assert(OperateData(COMPARE_LESS_THAN_OR_EQUAL, 2, 4) == 1);
+    static_assert(OperateData(COMPARE_NOT_EQUAL, 2, 4) == 1);
+
+    static_assert(OperateData(NOOP, 5) == 5);
+    static_assert(OperateData(NEGATE, 5) == -5);
+    static_assert(OperateData(NEGATE, 42.0) == -42.0);
+    static_assert(OperateData(EXPONENTIATE, 0.0) == 1.0);
+    static_assert(OperateData(ABS, 0) == 0);
+    static_assert(OperateData(ABS, 1) == 1);
+    static_assert(OperateData(ABS, -3.25) == 3.25);
+    static_assert(OperateData(LOGARITHM, 1.0) == 0.0);
+    static_assert(OperateData(ROUND_NEAREST, 1.0) == 1.0);
+    static_assert(OperateData(ROUND_NEAREST, 42.6f) == 43.0f);
+    static_assert(OperateData(ROUND_NEAREST, -1.3) == -1);
+    static_assert(OperateData(ROUND_UP, 1.0) == 1.0);
+    static_assert(OperateData(ROUND_UP, 42.6f) == 43.0f);
+    static_assert(OperateData(ROUND_UP, -1.3) == -1);
+    static_assert(OperateData(ROUND_DOWN, 1.0) == 1.0);
+    static_assert(OperateData(ROUND_DOWN, 42.6f) == 42.0f);
+    static_assert(OperateData(ROUND_DOWN, -1.3) == -2);
+    static_assert(OperateData(SIGN, -1.3) == -1);
+    static_assert(OperateData(SIGN, 0) == 0);
+    static_assert(OperateData(SIGN, 42.6f) == 1.0f);
+
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(OperateConstantValueRefs(PLUS, std::array<::ValueRef::Constant<int>*, 4>{}) == 0);
+#  if !defined(_MSC_VER) || (_MSC_VER >= 1939)
+    constexpr ::ValueRef::Constant<int> cxvc1{1}, cxvc2{2}, cxvc3{3};
+    constexpr std::array<const ::ValueRef::Constant<int>*, 4> test_refs{&cxvc1, &cxvc2, &cxvc3, nullptr};
+    static_assert(OperateConstantValueRefs(PLUS, test_refs) == 6);
+    static_assert(OperateConstantValueRefs(TIMES, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(MINIMUM, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(MAXIMUM, test_refs) == 3);
+    static_assert(OperateConstantValueRefs(COMPARE_EQUAL, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(COMPARE_GREATER_THAN, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(COMPARE_GREATER_THAN_OR_EQUAL, test_refs) == 0);
+    static_assert(OperateConstantValueRefs(COMPARE_LESS_THAN, test_refs) == 3);
+    static_assert(OperateConstantValueRefs(COMPARE_LESS_THAN_OR_EQUAL, test_refs) == 3);
+    static_assert(OperateConstantValueRefs(COMPARE_NOT_EQUAL, test_refs) == 3);
+#  endif
+#endif
 }
 
-template <>
-double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs)
-{
-    switch (op_type) {
-    case OpType::PLUS: {
-        return lhs + rhs;
-        break;
-    }
-
-    case OpType::MINUS: {
-        return lhs - rhs;
-        break;
-    }
-
-    case OpType::TIMES: {
-        return lhs * rhs;
-        break;
-    }
-
-    case OpType::DIVIDE: {
-        if (rhs == 0.0)
-            return 0.0;
-        return lhs / rhs;
-        break;
-    }
-
-    case OpType::REMAINDER: {
-        double divisor = std::abs(rhs);
-        if (divisor == 0.0)
-            return 0.0;
-        auto dividend = lhs;
-        auto quotient = std::floor(dividend / divisor);
-        return dividend - quotient * divisor;
-        break;
-    }
-
-    case OpType::NEGATE: {
-        return -lhs;
-        break;
-    }
-
-    case OpType::EXPONENTIATE: {
-        if (rhs == 0.0)
-            return 1.0;
-        try {
-            return static_cast<int>(std::pow(static_cast<double>(lhs), static_cast<double>(rhs)));
-        } catch (...) {
-            ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-            return 0;
-        }
-        break;
-    }
-
-    case OpType::NOOP: {
-        return lhs;
-        break;
-    }
-
-    case OpType::ABS: {
-        return std::abs(lhs);
-        break;
-    }
-
-    case OpType::LOGARITHM: {
-        if (lhs <= 0.0)
-            return 0.0;
-        return std::log(lhs);
-        break;
-    }
-
-    case OpType::SINE: {
-        return std::sin(lhs);
-        break;
-    }
-
-    case OpType::COSINE: {
-        return std::cos(lhs);
-        break;
-    }
-
-    case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
-        break;
-    }
-
-    case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
-        break;
-    }
-
-    case OpType::RANDOM_UNIFORM: {
-        return RandDouble(std::min(lhs, rhs), std::max(rhs, lhs));
-        break;
-    }
-
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
-    }
-
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs);
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs);
-        break;
-    }
-
-    case OpType::ROUND_NEAREST: {
-        return std::round(lhs);
-        break;
-    }
-    case OpType::ROUND_UP: {
-        return std::ceil(lhs);
-        break;
-    }
-    case OpType::ROUND_DOWN: {
-        return std::floor(lhs);
-        break;
-    }
-
-    case OpType::SIGN: {
-        static constexpr double test_case = -42.1;
-        static constexpr double branchless_test = (0.0 < test_case) - (test_case < 0.0);
-        static constexpr double ternary_condition_test = test_case < 0.0 ? -1.0 : test_case > 0.0 ? 1.0 : 0.0;
-        static_assert(branchless_test == ternary_condition_test);
-        return (0.0 < lhs) - (lhs < 0.0);
-        break;
-    }
-
-    default:    break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<double> evaluated with an unknown or invalid OpType.");
-    return 0.0;
-}
-
-template <>
-int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs)
-{
-    switch (op_type) {
-    case OpType::PLUS: {
-        return lhs + rhs;
-        break;
-    }
-
-    case OpType::MINUS: {
-        return lhs - rhs;
-        break;
-    }
-
-    case OpType::TIMES: {
-        return lhs * rhs;
-        break;
-    }
-
-    case OpType::DIVIDE: {
-        if (rhs == 0)
-            return 0;
-        return lhs / rhs;
-        break;
-    }
-
-    case OpType::REMAINDER: {
-        if (rhs == 0)
-            return 0;
-        return lhs % rhs;
-        break;
-    }
-
-    case OpType::NEGATE: {
-        return -lhs;
-        break;
-    }
-
-    case OpType::EXPONENTIATE: {
-        if (rhs == 0)
-            return 1;
-        try {
-            return static_cast<int>(std::pow(static_cast<double>(lhs), static_cast<double>(rhs)));
-        } catch (...) {
-            ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-            return 0;
-        }
-        break;
-    }
-
-    case OpType::NOOP: {
-        return lhs;
-        break;
-    }
-
-    case OpType::ABS: {
-        return std::abs(lhs);
-        break;
-    }
-
-    case OpType::LOGARITHM: {
-        if (lhs <= 0)
-            return 0;
-        return static_cast<int>(std::log(static_cast<double>(lhs)));
-        break;
-    }
-
-    case OpType::SINE: {
-        return static_cast<int>(std::round(std::sin(static_cast<double>(lhs))));
-        break;
-    }
-
-    case OpType::COSINE: {
-        return static_cast<int>(std::round(std::cos(static_cast<double>(lhs))));
-        break;
-    }
-
-    case OpType::MINIMUM: {
-        return std::min(lhs, rhs);
-        break;
-    }
-
-    case OpType::MAXIMUM: {
-        return std::max(lhs, rhs);
-        break;
-    }
-
-    case OpType::RANDOM_UNIFORM: {
-        return RandInt(std::min(lhs, rhs), std::max(rhs, lhs));
-        break;
-    }
-
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
-    }
-
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs);
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs);
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs);
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs);
-        break;
-    }
-
-    case OpType::ROUND_NEAREST:
-    case OpType::ROUND_UP:
-    case OpType::ROUND_DOWN: {
-        // integers don't need to be rounded...
-        return lhs;
-        break;
-    }
-
-    case OpType::SIGN: {
-        static constexpr int test_case = -42;
-        static constexpr int branchless_test = (0 < test_case) - (test_case < 0);
-        static constexpr int ternary_condition_test = test_case < 0 ? -1 : test_case > 0 ? 1 : 0;
-        static_assert(branchless_test == ternary_condition_test);
-        return (0 < lhs) - (lhs < 0);
-        break;
-    }
-
-    default:    break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<int> evaluated with an unknown or invalid OpType.");
-    return 0;
-}
-
-template <>
-std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const
-{
-    if (m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
-
-    if (m_op_type == OpType::PLUS) {
-
-        return LHS()->Eval(context) + RHS()->Eval(context);
-
-    } else if (m_op_type == OpType::TIMES) {
-        // useful for writing a "Statistic If" expression with strings. Number-
-        // valued types return 0 or 1 for nothing or something matching the sampling
-        // condition. For strings, an empty string indicates no matches, and non-empty
-        // string indicates matches, which is treated like a multiplicative identity
-        // operation, so just returns the RHS of the expression.
-        if (LHS()->Eval(context).empty())
-            return "";
-        return RHS()->Eval(context);
-
-    } else if (m_op_type == OpType::MINIMUM || m_op_type == OpType::MAXIMUM) {
-        if (m_operands.empty())
-            return "";
-
-        // evaluate all operands, return smallest or biggest
-        std::vector<std::string> vals;
-        vals.reserve(m_operands.size());
-        for (auto& vr : m_operands) {
-            if (vr)
-                vals.emplace_back(vr->Eval(context));
-        }
-        if (m_op_type == OpType::MINIMUM)
-            return *std::min_element(vals.begin(), vals.end());
-        else
-            return *std::max_element(vals.begin(), vals.end());
-
-    } else if (m_op_type == OpType::RANDOM_PICK) {
-        // select one operand, evaluate it, return result
-        if (m_operands.empty())
-            return "";
-        std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
-        auto& vr = *std::next(m_operands.begin(), idx);
-        if (!vr)
-            return "";
-        return vr->Eval(context);
-
-    } else if (m_op_type == OpType::SUBSTITUTION) {
-        // insert string into other string in place of %1% or similar placeholder
-        if (m_operands.empty())
-            return "";
-        auto& template_op = m_operands.front();
-        if (!template_op)
-            return "";
-        const std::string template_str = template_op->Eval(context);
-
-        boost::format formatter = FlexibleFormat(template_str);
-
-        for (auto& op : m_operands)
-            formatter % (op ? op->Eval(context) : "");
-        return formatter.str();
-
-    } else if (m_op_type >= OpType::COMPARE_EQUAL && m_op_type <= OpType::COMPARE_NOT_EQUAL) {
-        std::string lhs_val = LHS()->Eval(context);
-        std::string rhs_val = RHS()->Eval(context);
-        bool test_result = false;
-        if (m_operands.size() == 2)
-            return EvalImpl(m_op_type, lhs_val, rhs_val);
-
-        switch (m_op_type) {
-            case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-            case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-            case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-            case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-            case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-            case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-            default:    break;  // ??? do nothing, default to false
-        }
-        if (m_operands.size() < 3) {
-            return test_result ? "true" : "false";
-        } else if (m_operands.size() < 4) {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return "false";
-        } else {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return m_operands[3]->Eval(context);
-        }
-    }
-
-    throw std::runtime_error("ValueRef::Operation<std::string> evaluated with an unknown or invalid OpType.");
-    return "";
-}
-
-template <>
-double Operation<double>::EvalImpl(const ScriptingContext& context) const
-{
-    if (m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
-
-    switch (m_op_type) {
-        case OpType::PLUS:
-            return LHS()->Eval(context) + RHS()->Eval(context); break;
-
-        case OpType::MINUS:
-            return LHS()->Eval(context) - RHS()->Eval(context); break;
-
-        case OpType::TIMES: {
-            double op1 = LHS()->Eval(context);
-            if (op1 == 0.0)
-                return 0.0;
-            return op1 * RHS()->Eval(context);
-            break;
-        }
-
-        case OpType::DIVIDE: {
-            double op2 = RHS()->Eval(context);
-            if (op2 == 0.0)
-                return 0.0;
-            return LHS()->Eval(context) / op2;
-            break;
-        }
-
-        case OpType::REMAINDER: {
-            double divisor = std::abs(RHS()->Eval(context));
-            if (divisor == 0.0)
-                return 0.0;
-            auto dividend = LHS()->Eval(context);
-            auto quotient = std::floor(dividend / divisor);
-            return dividend - quotient * divisor;
-            break;
-        }
-
-        case OpType::NEGATE:
-            return -(LHS()->Eval(context)); break;
-
-        case OpType::EXPONENTIATE: {
-            double op2 = RHS()->Eval(context);
-            if (op2 == 0.0)
-                return 1.0;
-            try {
-                double op1 = LHS()->Eval(context);
-                return std::pow(op1, op2);
-            } catch (...) {
-                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-                return 0.0;
-            }
-            break;
-        }
-
-        case OpType::NOOP: {
-            DebugLogger() << "ValueRef::Operation<double>::NoOp::EvalImpl";
-            auto retval = LHS()->Eval(context);
-            DebugLogger() << "ValueRef::Operation<double>::NoOp::EvalImpl. Sub-Expression returned: " << retval
-                          << " from: " << LHS()->Dump();
-            return retval;
-            break;
-        }
-
-        case OpType::ABS:
-            return std::abs(LHS()->Eval(context)); break;
-
-        case OpType::LOGARITHM: {
-            double op1 = LHS()->Eval(context);
-            if (op1 <= 0.0)
-                return 0.0;
-            return std::log(op1);
-            break;
-        }
-
-        case OpType::SINE:
-            return std::sin(LHS()->Eval(context)); break;
-
-        case OpType::COSINE:
-            return std::cos(LHS()->Eval(context)); break;
-
-        case OpType::MINIMUM:
-        case OpType::MAXIMUM: {
-            std::vector<double> vals;
-            vals.reserve(m_operands.size());
-            for (auto& vr : m_operands) {
-                if (vr)
-                    vals.push_back(vr->Eval(context));
-            }
-            if (vals.empty())
-                return 0.0;
-            auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
-            return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
-            break;
-        }
-
-        case OpType::RANDOM_UNIFORM: {
-            double op1 = LHS()->Eval(context);
-            double op2 = RHS()->Eval(context);
-            double min_val = std::min(op1, op2);
-            double max_val = std::max(op1, op2);
-            return RandDouble(min_val, max_val);
-            break;
-        }
-
-        case OpType::RANDOM_PICK: {
-            // select one operand, evaluate it, return result
-            if (m_operands.empty())
-                return 0.0;
-            std::ptrdiff_t idx = RandInt(0, m_operands.size() - 1);
-            auto& vr = *std::next(m_operands.begin(), idx);
-            if (!vr)
-                return 0.0;
-            return vr->Eval(context);
-            break;
-        }
-
-        case OpType::COMPARE_EQUAL:
-        case OpType::COMPARE_GREATER_THAN:
-        case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-        case OpType::COMPARE_LESS_THAN:
-        case OpType::COMPARE_LESS_THAN_OR_EQUAL:
-        case OpType::COMPARE_NOT_EQUAL: {
-            const double&& lhs_val = LHS()->Eval(context);
-            const double&& rhs_val = RHS()->Eval(context);
-            if (m_operands.size() == 2)
-                return EvalImpl(m_op_type, lhs_val, rhs_val);
-
-            bool test_result = false;
-            switch (m_op_type) {
-                case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-                case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-                case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-                case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-                case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-                case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-                default:    break;  // ??? do nothing, default to false
-            }
-            if (m_operands.size() < 3) {
-                return static_cast<double>(test_result);
-            } else if (m_operands.size() < 4) {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return 0.0;
-            } else {
-                if (test_result)
-                    return m_operands[2]->Eval(context);
-                else
-                    return m_operands[3]->Eval(context);
-            }
-            break;
-        }
-
-        case OpType::ROUND_NEAREST:
-            return std::round(LHS()->Eval(context)); break;
-        case OpType::ROUND_UP:
-            return std::ceil(LHS()->Eval(context)); break;
-        case OpType::ROUND_DOWN:
-            return std::floor(LHS()->Eval(context)); break;
-
-        case OpType::SIGN: {
-            auto lhs{LHS()->Eval(context)};
-            static constexpr double test_case = -42.1;
-            static constexpr double branchless_test = (0.0 < test_case) - (test_case < 0.0);
-            static constexpr double ternary_condition_test = test_case < 0.0 ? -1.0 : test_case > 0.0 ? 1.0 : 0.0;
-            static_assert(branchless_test == ternary_condition_test);
-            return (0.0 < lhs) - (lhs < 0.0);
-            break;
-        }
-
-        default:
-            break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<double> evaluated with an unknown or invalid OpType.");
-    return 0.0;
-}
-
-template <>
-int Operation<int>::EvalImpl(const ScriptingContext& context) const
-{
-    if (m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
-
-    switch (m_op_type) {
-        case OpType::PLUS:
-            return LHS()->Eval(context) + RHS()->Eval(context);     break;
-
-        case OpType::MINUS:
-            return LHS()->Eval(context) - RHS()->Eval(context);     break;
-
-        case OpType::TIMES: {
-            int op1 = LHS()->Eval(context);
-            if (op1 == 0)
-                return 0;
-            return op1 * RHS()->Eval(context);
-            break;
-        }
-
-        case OpType::DIVIDE: {
-            int op2 = RHS()->Eval(context);
-            if (op2 == 0)
-                return 0;
-            return LHS()->Eval(context) / op2;
-            break;
-        }
-
-        case OpType::REMAINDER: {
-            int op2 = RHS()->Eval(context);
-            if (op2 == 0)
-                return 0;
-            return LHS()->Eval(context) % op2;
-            break;
-        }
-
-        case OpType::NEGATE: {
-            return -LHS()->Eval(context);
-            break;
-        }
-
-        case OpType::EXPONENTIATE: {
-            int op2 = RHS()->Eval(context);
-            if (op2 == 0)
-                return 1;
-            try {
-                double op1 = static_cast<double>(LHS()->Eval(context));
-                return static_cast<int>(std::pow(op1, op2));
-            } catch (...) {
-                ErrorLogger() << "Error evaluating exponentiation ValueRef::Operation";
-                return 0;
-            }
-            break;
-        }
-
-        case OpType::NOOP: {
-            DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl";
-            int retval = LHS()->Eval(context);
-            DebugLogger() << "ValueRef::Operation<int>::NoOp::EvalImpl. Sub-Expression returned: " << retval
-                          << " from: " << LHS()->Dump();
-            return retval;
-            break;
-        }
-
-        case OpType::ABS: {
-            return std::abs(LHS()->Eval(context));
-            break;
-        }
-
-        case OpType::LOGARITHM: {
-            double op1 = static_cast<double>(LHS()->Eval(context));
-            if (op1 <= 0.0)
-                return 0;
-            return static_cast<int>(std::round(std::log(op1)));
-            break;
-        }
-
-        case OpType::SINE: {
-            double op1 = static_cast<double>(LHS()->Eval(context));
-            return static_cast<int>(std::round(std::sin(op1)));
-            break;
-        }
-
-        case OpType::COSINE: {
-            double op1 = static_cast<double>(LHS()->Eval(context));
-            return static_cast<int>(std::round(std::cos(op1)));
-            break;
-        }
-
-        case OpType::MINIMUM:
-        case OpType::MAXIMUM: {
-            std::vector<int> vals;
-            vals.reserve(m_operands.size());
-            for (auto& vr : m_operands) {
-                if (vr)
-                    vals.push_back(vr->Eval(context));
-            }
-            if (vals.empty())
-                return 0;
-            auto [min_el, max_el] = std::minmax_element(vals.begin(), vals.end());
-            return m_op_type == OpType::MINIMUM ? *min_el : *max_el;
-            break;
-        }
-
-        case OpType::RANDOM_UNIFORM: {
-            int op1 = LHS()->Eval(context);
-            int op2 = RHS()->Eval(context);
-            int min_val = std::min(op1, op2);
-            int max_val = std::max(op1, op2);
-            return RandInt(min_val, max_val);
-            break;
-        }
-
-        case OpType::RANDOM_PICK: {
-            // select one operand, evaluate it, return result
-            if (m_operands.empty())
-                return 0;
-            std::ptrdiff_t idx = static_cast<std::ptrdiff_t>(RandInt(0, m_operands.size() - 1));
-            auto& vr = *std::next(m_operands.begin(), idx);
-            return vr ? vr->Eval(context) : 0;
-            break;
-        }
-
-        case OpType::COMPARE_EQUAL:
-        case OpType::COMPARE_GREATER_THAN:
-        case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-        case OpType::COMPARE_LESS_THAN:
-        case OpType::COMPARE_LESS_THAN_OR_EQUAL:
-        case OpType::COMPARE_NOT_EQUAL: {
-            const int lhs_val = LHS()->Eval(context);
-            const int rhs_val = RHS()->Eval(context);
-            if (m_operands.size() == 2)
-                return EvalImpl(m_op_type, lhs_val, rhs_val);
-
-            bool test_result = false;
-            switch (m_op_type) {
-                case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-                case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-                case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-                case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-                case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-                case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-                default:    break;  // ??? do nothing, default to false
-            }
-            if (m_operands.size() < 3)
-                return static_cast<int>(test_result);
-            else if (m_operands.size() < 4)
-                return test_result ? m_operands[2]->Eval(context) : 0;
-            else
-                return test_result ? m_operands[2]->Eval(context) : m_operands[3]->Eval(context);
-            break;
-        }
-
-        case OpType::ROUND_NEAREST:
-        case OpType::ROUND_UP:
-        case OpType::ROUND_DOWN: {
-            // integers don't need to be rounded...
-            return LHS()->Eval(context);
-            break;
-        }
-
-        case OpType::SIGN: {
-            auto lhs{LHS()->Eval(context)};
-            static constexpr int test_case = -42;
-            static constexpr int branchless_test = (0 < test_case) - (test_case < 0);
-            static constexpr int ternary_condition_test = test_case < 0 ? -1 : test_case > 0 ? 1 : 0;
-            static_assert(branchless_test == ternary_condition_test);
-            return (0 < lhs) - (lhs < 0);
-            break;
-        }
-
-        default:    break;
-    }
-
-    throw std::runtime_error("ValueRef::Operation<int> evaluated with an unknown or invalid OpType.");
-    return 0;
-}
 } // namespace ValueRef

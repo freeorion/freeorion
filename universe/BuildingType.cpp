@@ -258,22 +258,20 @@ float BuildingType::ProductionCost(int empire_id, int location_id,
     // cost uses target object to represent the location where something is
     // being produced, and target object is normally mutable, but will not
     // actually be modified by evaluating the cost ValueRef
-    const ScriptingContext local_context{context, source.get(), const_cast<UniverseObject*>(location),
+    UniverseObject* target = const_cast<UniverseObject*>(location);
+    const ScriptingContext local_context{context, ScriptingContext::Source{}, source.get(),
+                                         ScriptingContext::Target{}, target,
                                          INVALID_DESIGN_ID, 1};
 
     return m_production_cost->Eval(local_context);
 }
 
-float BuildingType::PerTurnCost(int empire_id, int location_id,
-                                const ScriptingContext& context) const
-{
+float BuildingType::PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const {
     return ProductionCost(empire_id, location_id, context) /
         std::max(1, ProductionTime(empire_id, location_id, context));
 }
 
-int BuildingType::ProductionTime(int empire_id, int location_id,
-                                 const ScriptingContext& context) const
-{
+int BuildingType::ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const {
     if (GetGameRules().Get<bool>("RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION") || !m_production_time)
         return 1;
 
@@ -299,8 +297,9 @@ int BuildingType::ProductionTime(int empire_id, int location_id,
     // cost uses target object to represent the location where something is
     // being produced, and target object is normally mutable, but will not
     // actually be modified by evaluating the cost ValueRef
-    const ScriptingContext local_context{context, source.get(), const_cast<UniverseObject*>(location),
-                                         INVALID_DESIGN_ID, 1};
+    UniverseObject* target = const_cast<UniverseObject*>(location);
+    const ScriptingContext local_context{context, ScriptingContext::Source{}, source.get(),
+                                         ScriptingContext::Target{}, target, INVALID_DESIGN_ID, 1};
 
     return m_production_time->Eval(local_context);
 }
@@ -319,7 +318,8 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id, const Scri
         return false;
 
     UniverseObject* target = const_cast<UniverseObject*>(location); // ... hopefully OK, as evaluating condition should not modify the object
-    const ScriptingContext local_context{context, source.get(), target, INVALID_DESIGN_ID, 1};
+    const ScriptingContext local_context{context, ScriptingContext::Source{}, source.get(),
+                                         ScriptingContext::Target{}, target, INVALID_DESIGN_ID, 1};
 
     return m_location->EvalOne(local_context, location);
 }
@@ -338,7 +338,8 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id, const Scripti
         return false;
 
     UniverseObject* target = const_cast<UniverseObject*>(location); // ... hopefully OK, as evaluating condition should not modify the object
-    const ScriptingContext local_context{context, source.get(), target, INVALID_DESIGN_ID, 1};
+    const ScriptingContext local_context{context, ScriptingContext::Source{}, source.get(),
+                                         ScriptingContext::Target{}, target, INVALID_DESIGN_ID, 1};
 
     return m_enqueue_location->EvalOne(local_context, location);
 }

@@ -8,16 +8,13 @@
 #include "../util/i18n.h"
 
 
-Building::Building(int empire_id, std::string building_type, int produced_by_empire_id,
-                   int creation_turn) :
+Building::Building(int empire_id, std::string building_type, int produced_by_empire_id, int creation_turn) :
     UniverseObject{UniverseObjectType::OBJ_BUILDING, "", empire_id, creation_turn},
     m_building_type(std::move(building_type)),
     m_produced_by_empire_id(produced_by_empire_id)
 {
     const BuildingType* type = GetBuildingType(m_building_type);
     Rename(type ? UserString(type->Name()) : UserString("ENC_BUILDING"));
-
-    UniverseObject::Init();
 }
 
 std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, int empire_id) const {

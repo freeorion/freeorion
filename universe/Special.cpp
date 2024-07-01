@@ -202,7 +202,7 @@ float Special::InitialCapacity(int object_id, const ScriptingContext& context) c
     if (!obj)
         return 0.0f;
 
-    const ScriptingContext local_context{obj, context};
+    const ScriptingContext local_context{context, ScriptingContext::Source{}, obj};
     return m_initial_capacity->Eval(local_context);
 }
 
