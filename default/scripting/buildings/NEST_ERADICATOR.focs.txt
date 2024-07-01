@@ -33,7 +33,13 @@ EG_NEST_REMOVAL
                 Planet
                 HasSpecial name = "@1@_NEST_SPECIAL"
             ]
-            stackinggroup = "@1@_NEST_STACK"  // groups with @1@_NEST_SPECIAL
+
+            // Remove the special at very late priority so meter changes based on it
+            // (e.g. stability likes/dislikes) are allowed to happen beforehand.
+            // This is to consistent with meter prediction in UI (which does not take special removal into account)
+            // NB: only works as intended if we do not do a second full effect application round for setting meters of newly created objects)
+            //     else the special will be already removed when the second application happens and the meter effects wont happen
+            priority = [[SPECIAL_REMOVAL_PRIORITY]]
             effects = [
                 RemoveSpecial name = "@1@_NEST_SPECIAL"
                 GenerateSitRepMessage
@@ -46,4 +52,4 @@ EG_NEST_REMOVAL
 '''
 
 #include "/scripting/macros/base_prod.macros"
-
+#include "/scripting/macros/priorities.macros"
