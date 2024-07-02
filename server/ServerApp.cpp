@@ -4538,11 +4538,10 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    std::vector<int> newly_created_ids;
-    for (auto& object : m_universe.Objects().all<UniverseObject>()) {
-        if (context.current_turn == object->CreationTurn())
-            newly_created_ids.push_back(object->ID());
-    }
+    const auto newly_created = [this, curturn{context.current_turn}](const UniverseObject& object) {
+        return curturn == object.CreationTurn();
+    };
+    std::vector<int> newly_created_ids = m_universe.Objects().findIDs<UniverseObject>(newly_created);
     if (!newly_created_ids.empty())
         m_universe.ApplyMeterEffectsAndUpdateMeters(newly_created_ids, context, false);
 
