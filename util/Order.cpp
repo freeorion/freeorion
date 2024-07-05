@@ -1767,11 +1767,12 @@ bool ShipDesignOrder::CheckRename(int empire_id, int existing_design_id, const s
     }
 
     const auto& universe = context.ContextUniverse();
-    // check if a design with this ID already exists
-    if (const auto existing = universe.GetShipDesign(existing_design_id)) {
+    // check if a design with this ID exists
+    auto existing = universe.GetShipDesign(existing_design_id);
+    if (!existing) {
         ErrorLogger() << "Empire " << empire_id
-                      << " tried to create a new ShipDesign with an id, " << existing_design_id
-                      << " of an already-existing ShipDesign " << existing->Name();
+                      << " tried to rename a ShipDesign with an id, " << existing_design_id
+                      << " that does not exist";
         return false;
     }
 
