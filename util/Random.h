@@ -71,7 +71,11 @@ inline consteval int32_t RandIntCx(const int32_t min, const int32_t max,
     return min + static_cast<int32_t>(val_in_range);
 }
 inline consteval int32_t RandIntCx(const int32_t min, const int32_t max, const int16_t n,
-                                   const std::array<char, 9> seed = std::array<char, 9>{__TIME__}) noexcept
+#ifdef STATIC_RANDOM_TESTS
+        const std::array<char, 9> seed = std::array<char, 9>{__TIME__}) noexcept
+#else
+        const std::array<char, 9> seed = std::array<char, 9>{"12:34:45"}) noexcept
+#endif
 {
     if (min >= max)
         return min;
