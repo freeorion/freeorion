@@ -577,10 +577,18 @@ namespace {
         {}
 
         /** Add a tag to the set of known tags.*/
-        void Insert(std::vector<std::string_view> tags)
+        void Insert(std::vector<std::string> tags)
         {
-            std::copy_if(tags.begin(), tags.end(), std::back_inserter(m_custom_tags),
-                         [this](const auto tag) { return !IsKnown(tag); });
+            std::copy_if(std::make_move_iterator(tags.begin()), std::make_move_iterator(tags.end()),
+                         std::back_inserter(m_custom_tags), [this](const auto& tag) { return !IsKnown(tag); });
+        }
+
+        /** Add a tag to the set of known tags.*/
+        void Insert(const std::vector<std::string_view>& tags)
+        {
+            for (const auto& tag : tags)
+                if (!IsKnown(tag))
+                    m_custom_tags.emplace_back(tag);
         }
 
         /** Remove a tag from the set of known tags.*/
@@ -618,7 +626,7 @@ namespace {
             {ITALIC_TAG, SHADOW_TAG, UNDERLINE_TAG, SUPERSCRIPT_TAG, SUBSCRIPT_TAG,
              RGBA_TAG, ALIGN_LEFT_TAG, ALIGN_CENTER_TAG, ALIGN_RIGHT_TAG, PRE_TAG}};
 
-        std::vector<std::string_view> m_custom_tags;
+        std::vector<std::string> m_custom_tags;
 
         // Compiled regular expression including tag stack
         CompiledRegex<TagHandler> m_regex_w_tags;
@@ -1208,6 +1216,9 @@ Pt Font::TextExtent(const std::vector<LineData>& line_data) const noexcept
     Y y = is_empty ? Y0 : ((ld_size - 1) * m_lineskip + m_height);
     return {x, y};
 }
+
+void Font::RegisterKnownTags(std::vector<std::string> tags)
+{ tag_handler.Insert(std::move(tags)); }
 
 void Font::RegisterKnownTags(std::vector<std::string_view> tags)
 { tag_handler.Insert(std::move(tags)); }

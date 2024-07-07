@@ -32,6 +32,8 @@ public:
     //! Calculate the size based on the width it should take.
     Pt SetMaxWidth(X width) override;
 
+    static std::shared_ptr<RichText::IBlockControlFactory> GetFactory();
+
 private:
     std::shared_ptr<TextControl> m_text; //! The text control used to handle the text.
 };

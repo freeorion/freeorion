@@ -9,8 +9,10 @@
 
 #include <cctype>
 #include <sstream>
+#include <GG/RichText/ImageBlock.h>
 #include <GG/RichText/RichText.h>
 #include "TagParser.h"
+#include "TextBlock.h"
 
 
 using namespace GG;
@@ -132,9 +134,7 @@ auto ExtractParameters(std::string_view params_string)
 }
 }
 
-/**
-    * \brief Private implementation class for rich text control.
-    */
+/** Private implementation class for rich text control. */
 class GG::RichTextPrivate {
 public:
     RichTextPrivate(RichText& q, const std::string& content,
@@ -175,7 +175,7 @@ private:
     RichText&                   m_owner;                    //!< The public control.
     std::shared_ptr<Font>       m_font;                     //!< The font to use for text.
     RichText::BlockFactoryMap   m_block_factory_map;        //!< A map that tells us how to generate block controls from tags.
-    std::vector<std::shared_ptr<BlockControl>>  m_blocks;   //!< The blocks generated from our content.
+    std::vector<std::shared_ptr<BlockControl>> m_blocks;   //!< The blocks generated from our content.
     int                         m_padding = 0;
     Clr                         m_color;                    //! < The color to use for text.
     Flags<TextFormat>           m_format;                   //!< Text format.
@@ -183,8 +183,7 @@ private:
     friend class RichText;
 };
 
-RichTextPrivate::RichTextPrivate(RichText& q, const std::string& content,
-                                 std::shared_ptr<Font> font,
+RichTextPrivate::RichTextPrivate(RichText& q, const std::string& content, std::shared_ptr<Font> font,
                                  Clr color, Flags<TextFormat> format) :
     m_owner(q),
     m_font(std::move(font)),
@@ -263,15 +262,13 @@ void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
     for (RichTextTag& tag : tags) {
         const auto params = ExtractParameters(tag.tag_params);
         const auto it = std::find_if(m_block_factory_map.begin(), m_block_factory_map.end(),
-                                     [tag = std::string_view{tag.tag}](const auto& key_fac)
+                                     [tag = std::string_view{tag.tag}](const auto& key_fac) noexcept
                                      { return key_fac.first == tag; });
         if (it == m_block_factory_map.end())
             continue;
-        const auto* fac = it->second.get();
-        if (!fac)
-            continue;
-        if (auto block = fac->CreateFromTag(params, std::move(tag.content), m_font, m_color, m_format))
-            m_blocks.push_back(std::move(block));
+        if (const auto* fac = it->second.get())
+            if (auto block = fac->CreateFromTag(params, std::move(tag.content), m_font, m_color, m_format))
+                m_blocks.push_back(std::move(block));
     }
 }
 
@@ -327,9 +324,9 @@ RichText::~RichText() = default;
 
 void RichText::SetText(const std::string& str)
 {
-    std::string name_start = "RichText (" + std::to_string(str.size()) + "): \"" + str.substr(0, 16) + "\" blocks: ";
     m_self->SetText(str);
-    SetName(name_start + std::to_string(m_self->BlockCount()));
+    SetName("RichText (" + std::to_string(str.size()) + "): \"" + str.substr(0, 16) +
+            "\" blocks: " + std::to_string(m_self->BlockCount()));
 }
 
 void RichText::SetPadding(int pixels) { m_self->SetPadding(pixels); }
@@ -340,17 +337,12 @@ void RichText::SetBlockFactoryMap(BlockFactoryMap block_factory_map)
 { m_self->SetBlockFactoryMap(std::move(block_factory_map)); }
 
 namespace {
-    RichText::BlockFactoryMap default_block_factories{};
+    const RichText::BlockFactoryMap default_block_factories{{
+        {ImageBlock::IMAGE_TAG, ImageBlock::GetFactory()},
+        {RichText::PLAINTEXT_TAG, TextBlock::GetFactory()}
+    }};
 }
 
 const RichText::BlockFactoryMap& RichText::DefaultBlockFactoryMap()
 { return default_block_factories; }
 
-int RichText::RegisterDefaultBlock(std::string_view tag, std::shared_ptr<IBlockControlFactory> factory)
-{
-    Font::RegisterKnownTags({tag});
-    default_block_factories.emplace_back(tag, std::move(factory));
-
-    // Return a dummy to enable static registration.
-    return 0;
-}

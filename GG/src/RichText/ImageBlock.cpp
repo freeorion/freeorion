@@ -114,7 +114,7 @@ private:
     {
         // Find the src.
         const auto src_param_it = std::find_if(params.begin(), params.end(),
-                                               [](const auto p) { return p.first == "src"; });
+                                               [](const auto p) noexcept { return p.first == "src"; });
 
         // If src not found, error out.
         if (src_param_it == params.end()) {
@@ -135,20 +135,12 @@ private:
     }
 };
 
-namespace {
-    // Register image block as the image tag handler.
-    const auto dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG,
-                                                      std::make_shared<ImageBlockFactory>());
-}
-
 //! Set the root path from which to look for images with the factory.
 bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, fs::path path)
 {
     // Try to convert the factory to an image factory.
-    ImageBlockFactory* image_factory = dynamic_cast<ImageBlockFactory*>(factory);
-
     // If successful, set the root path.
-    if (image_factory) {
+    if (ImageBlockFactory* image_factory = dynamic_cast<ImageBlockFactory*>(factory)) {
         image_factory->SetRootPath(std::move(path));
         return true;
     } else {
@@ -168,3 +160,7 @@ bool ImageBlock::SetDefaultImagePath(fs::path path)
     }
     return false;
 }
+
+std::shared_ptr<RichText::IBlockControlFactory> ImageBlock::GetFactory()
+{ return std::make_shared<ImageBlockFactory>(); }
+

@@ -50,19 +50,11 @@ Pt TextBlock::SetMaxWidth(X width)
 class TextBlockFactory: public RichText::IBlockControlFactory {
 public:
     //! Create a Text block from a plain text tag.
-    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS&,
-                                                std::string content,
-                                                std::shared_ptr<Font> font,
-                                                Clr color,
-                                                Flags<TextFormat> format) const override
-    {
-        return Wnd::Create<TextBlock>(X0, Y0, X1, std::move(content), std::move(font),
-                                      color, format, NO_WND_FLAGS);
-    }
+    std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS&, std::string content, std::shared_ptr<Font> font,
+                                                Clr color, Flags<TextFormat> format) const override
+    { return Wnd::Create<TextBlock>(X0, Y0, X1, std::move(content), std::move(font), color, format, NO_WND_FLAGS); }
 };
 
-namespace {
-    // Register text block as the default plaintext handler.
-    const auto dummy = RichText::RegisterDefaultBlock(RichText::PLAINTEXT_TAG,
-                                                      std::make_shared<TextBlockFactory>());
-}
+std::shared_ptr<RichText::IBlockControlFactory> TextBlock::GetFactory()
+{ return std::make_shared<TextBlockFactory>(); }
+

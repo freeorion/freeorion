@@ -669,6 +669,7 @@ public:
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
         "<foo [arg1 [arg2 ...]]>", and "</foo>" as tags. */
+    static void RegisterKnownTags(std::vector<std::string> tags);
     static void RegisterKnownTags(std::vector<std::string_view> tags);
 
     /** Removes \a tag from the known tag list.  Does not remove the built in

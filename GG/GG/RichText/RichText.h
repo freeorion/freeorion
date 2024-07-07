@@ -23,8 +23,7 @@ namespace GG {
 
 class RichTextPrivate;
 
-/** \brief A control for showing text and images.
- */
+/** \brief A control for showing text and images. */
 class GG_API RichText: public Control
 {
 public:
@@ -36,10 +35,8 @@ public:
     public:
         virtual ~IBlockControlFactory() = default;
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
-        //! You own the returned control.
-        virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, std::string,
-                                                            std::shared_ptr<Font>, Clr,
-                                                            Flags<TextFormat>) const = 0;
+        virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, std::string, std::shared_ptr<Font>,
+                                                            Clr, Flags<TextFormat>) const = 0;
     };
 
     //! The special tag that is used to represent plaintext.
@@ -74,11 +71,6 @@ public:
 
     //! Use this to customize the handling of tags in the text on a per-object basis.
     void SetBlockFactoryMap(BlockFactoryMap block_factory_map);
-
-    /** Registers a factory in the default block factory map. \a tag must be a view of
-      * persistant storage that will be valid indefinitely after this call. */
-    static int RegisterDefaultBlock(std::string_view tag, std::shared_ptr<IBlockControlFactory> factory);
-    static int RegisterDefaultBlock(std::string, std::shared_ptr<IBlockControlFactory>) = delete;
 
     //! Access the default block factory map.
     static const RichText::BlockFactoryMap& DefaultBlockFactoryMap();
