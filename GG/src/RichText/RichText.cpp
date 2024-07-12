@@ -340,16 +340,20 @@ void RichText::SetBlockFactoryMap(BlockFactoryMap block_factory_map)
 { m_self->SetBlockFactoryMap(std::move(block_factory_map)); }
 
 namespace {
-    RichText::BlockFactoryMap default_block_factories{};
+    RichText::BlockFactoryMap& defaultBlockFactoryMapSingleton()
+    {
+        static RichText::BlockFactoryMap default_block_factories{};
+        return default_block_factories;
+    }
 }
 
 const RichText::BlockFactoryMap& RichText::DefaultBlockFactoryMap()
-{ return default_block_factories; }
+{ return defaultBlockFactoryMapSingleton(); }
 
 int RichText::RegisterDefaultBlock(std::string_view tag, std::shared_ptr<IBlockControlFactory> factory)
 {
     Font::RegisterKnownTags({tag});
-    default_block_factories.emplace_back(tag, std::move(factory));
+    defaultBlockFactoryMapSingleton().emplace_back(tag, std::move(factory));
 
     // Return a dummy to enable static registration.
     return 0;
