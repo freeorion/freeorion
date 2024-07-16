@@ -4411,6 +4411,43 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
     }
 }
 
+void ServerApp::PostCombatProcessTurnsApplyUniverseChangingEffectsAndUpdateSupply(ScriptingContext& context) {
+
+    m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
+
+    // regenerate system connectivity graph after executing effects, which may
+    // have added or removed starlanes.
+    m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
+    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
+    TraceLogger(effects) << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
+    TraceLogger(effects) << m_universe.Objects().Dump();
+
+    DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
+
+    // now that we've had combat and applied Effects, update visibilities again, prior
+    //  to updating system obstructions below.
+    m_universe.UpdateEmpireObjectVisibilities(context);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+
+    UpdateEmpireSupply(context, m_supply_manager, false);
+    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+                        m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs,
+                        m_cached_empire_production_costs_times);
+
+    // Update fleet travel restrictions (monsters and empire fleets)
+    UpdateMonsterTravelRestrictions();
+    for (auto& [empire_id, empire] : m_empires) {
+        if (!empire->Eliminated()) {
+            empire->UpdatePreservedLanes();
+            empire->UpdateUnobstructedFleets(
+                m_universe.Objects(), m_universe.EmpireKnownDestroyedObjectIDs(empire_id)); // must be done after *all* noneliminated empires have updated their unobstructed systems
+        }
+    }
+
+    TraceLogger(effects) << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+    TraceLogger(effects) << m_universe.Objects().Dump();
+}
+
 void ServerApp::PostCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PostCombatProcessTurns");
 
@@ -4439,8 +4476,6 @@ void ServerApp::PostCombatProcessTurns() {
 
     // notify players that production and growth is being processed
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::EMPIRE_PRODUCTION));
-    DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
-
     TraceLogger(effects) << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
@@ -4449,40 +4484,13 @@ void ServerApp::PostCombatProcessTurns() {
         static boost::hash<std::string> pcpt_string_hash;
         Seed(static_cast<unsigned int>(context.current_turn) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
-    m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
-
-    // regenerate system connectivity graph after executing effects, which may
-    // have added or removed starlanes.
-    m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
-    m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
-
-    TraceLogger(effects) << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
-    TraceLogger(effects) << m_universe.Objects().Dump();
-
-    DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
-
-    // now that we've had combat and applied Effects, update visibilities again, prior
-    //  to updating system obstructions below.
-    m_universe.UpdateEmpireObjectVisibilities(context);
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
-
-    UpdateEmpireSupply(context, m_supply_manager, false);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times,
-                        m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs,
-                        m_cached_empire_production_costs_times);
-
-    // Update fleet travel restrictions (monsters and empire fleets)
-    UpdateMonsterTravelRestrictions();
-    for (auto& [empire_id, empire] : m_empires) {
-        if (!empire->Eliminated()) {
-            empire->UpdatePreservedLanes();
-            empire->UpdateUnobstructedFleets(
-                m_universe.Objects(), m_universe.EmpireKnownDestroyedObjectIDs(empire_id)); // must be done after *all* noneliminated empires have updated their unobstructed systems
-        }
+    if (GetGameRules().Get<bool>("RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION")) {
+      TraceLogger(effects) << "!!!!!!! DO NOT APPLY ALL EFFECT BEFORE PRODUCTION as RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION is set true";
+      TraceLogger(effects) << "recalculate supply networks for resource propagation after combat";
+      UpdateEmpireSupply(context, m_supply_manager, false);
+    } else {
+      PostCombatProcessTurnsApplyUniverseChangingEffectsAndUpdateSupply(context);
     }
-
-    TraceLogger(effects) << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-    TraceLogger(effects) << m_universe.Objects().Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
@@ -4538,7 +4546,12 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
+    if (GetGameRules().Get<bool>("RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION")) {
+      TraceLogger(effects) << "!!!!!!! DO APPLY ALL EFFECTS AFTER PRODUCTION as RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION is set true (instead of meter effects only)";
+      PostCombatProcessTurnsApplyUniverseChangingEffectsAndUpdateSupply(context);
+    } else {
+      m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
+    }
 
     TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
     TraceLogger(effects) << m_universe.Objects().Dump();

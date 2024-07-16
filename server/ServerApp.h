@@ -130,6 +130,9 @@ public:
      *  so that they can impose blockades */
     void UpdateMonsterTravelRestrictions();
 
+    /** TODO description */
+    void PostCombatProcessTurnsApplyUniverseChangingEffectsAndUpdateSupply(ScriptingContext& context);
+
     /** Determines resource and supply distribution pathes and connections,
       * updates research, production, influence spending,
       * does population growth, updates current turn number, checks for
