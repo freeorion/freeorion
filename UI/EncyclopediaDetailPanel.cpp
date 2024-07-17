@@ -3161,9 +3161,7 @@ namespace {
         return retval;
     }
 
-    std::unordered_map<std::string_view, std::string> SpeciesSuitabilityColumn1(
-        const std::vector<std::string_view>& species_names)
-    {
+    auto SpeciesSuitabilityColumn1(const std::vector<std::string_view>& species_names) {
         std::unordered_map<std::string_view, std::string> retval;
         auto font = ClientUI::GetFont();
 
