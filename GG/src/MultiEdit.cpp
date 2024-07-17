@@ -277,10 +277,10 @@ void MultiEdit::SetText(std::string str)
     const Pt cl_sz = ClientSize();
     Flags<TextFormat> format = GetTextFormat();
     const auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
-    const auto lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
+    const auto new_lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
     const auto& line_data{GetLineData()};
 
-    if (m_max_lines_history == ALL_LINES || m_max_lines_history >= lines.size()) {
+    if (m_max_lines_history == ALL_LINES || m_max_lines_history >= new_lines.size()) {
         TextControl::SetText(std::move(str), std::move(text_elements));
 
     } else {
@@ -289,19 +289,21 @@ void MultiEdit::SetText(std::string str)
         CPSize cursor_begin_idx = INVALID_CP_SIZE; // used to correct the cursor range when lines get chopped
         CPSize cursor_end_idx = INVALID_CP_SIZE;
         if (m_style & MULTI_TERMINAL_STYLE) {
-            first_line = lines.size() - 1 - m_max_lines_history;
-            last_line = lines.size() - 1;
+            first_line = new_lines.size() - 1 - m_max_lines_history;
+            last_line = new_lines.size() - 1;
         }
-        const CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, &lines);
+        const CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, &new_lines);
         if (m_style & MULTI_TERMINAL_STYLE) {
             // chopping these lines off the front will invalidate the cursor range unless we do this
-            const CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, &lines);
+            const CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, &new_lines);
             cursor_begin_idx = first_line_first_char_idx < cursor_begin_string_index ? CP0 : cursor_begin_string_index - first_line_first_char_idx;
-            const CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, &lines);
+            const CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, &new_lines);
             cursor_end_idx = first_line_first_char_idx < cursor_end_string_index ? CP0 : cursor_end_string_index - first_line_first_char_idx;
         }
-        const StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, lines);
-        const StrSize last_line_last_string_idx = last_line < lines.size() - 1 ? StringIndexOf(last_line + 1, CP0, lines) : StringIndexOf(lines.size() - 1, CP0, lines);
+        const StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, new_lines);
+        const StrSize last_line_last_string_idx = (last_line < new_lines.size() - 1) ?
+            StringIndexOf(last_line + 1, CP0, new_lines) :
+            StringIndexOf(new_lines.size() - 1, CP0, new_lines);
 
         // set text to a substring of visible
         TextControl::SetText(str.substr(Value(first_line_first_string_idx),
