@@ -43,17 +43,6 @@ namespace {
     constexpr uint32_t WIDE_FF = '\f';
     constexpr uint32_t WIDE_TAB = '\t';
 
-    constexpr std::string_view ITALIC_TAG = "i";
-    constexpr std::string_view SHADOW_TAG = "s";
-    constexpr std::string_view UNDERLINE_TAG = "u";
-    constexpr std::string_view SUPERSCRIPT_TAG = "sup";
-    constexpr std::string_view SUBSCRIPT_TAG = "sub";
-    constexpr std::string_view RGBA_TAG = "rgba";
-    constexpr std::string_view ALIGN_LEFT_TAG = "left";
-    constexpr std::string_view ALIGN_CENTER_TAG = "center";
-    constexpr std::string_view ALIGN_RIGHT_TAG = "right";
-    constexpr std::string_view PRE_TAG = "pre";
-
     template <typename T>
     constexpr T NextPowerOfTwo(T input)
     {
@@ -201,7 +190,7 @@ namespace {
                         const boost::xpressive::ssub_match& sub) const
         {
             tag_stack.emplace(*str, sub);
-            if (tag_stack.top() == PRE_TAG)
+            if (tag_stack.top() == Font::PRE_TAG)
                 ignore_tags = true;
         }
     };
@@ -549,7 +538,7 @@ namespace {
             bool retval = !m_tag_stack.empty() && m_tag_stack.top() == sub;
             if (retval) {
                 m_tag_stack.pop();
-                if (m_tag_stack.empty() || m_tag_stack.top() != PRE_TAG)
+                if (m_tag_stack.empty() || m_tag_stack.top() != Font::PRE_TAG)
                     m_ignore_tags = false;
             }
             return retval;
@@ -615,8 +604,8 @@ namespace {
     private:
         // set of tags known to the handler
         static constexpr std::array<std::string_view, 10> m_default_tags{
-            {ITALIC_TAG, SHADOW_TAG, UNDERLINE_TAG, SUPERSCRIPT_TAG, SUBSCRIPT_TAG,
-             RGBA_TAG, ALIGN_LEFT_TAG, ALIGN_CENTER_TAG, ALIGN_RIGHT_TAG, PRE_TAG}};
+            {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG, Font::SUBSCRIPT_TAG,
+            Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG}};
 
         std::vector<std::string_view> m_custom_tags;
 
@@ -628,6 +617,34 @@ namespace {
     };
 
     TagHandler tag_handler{};
+}
+
+
+namespace {
+    void FillTemplatedText(const std::string& text, std::vector<Font::TextElement>& text_elements,
+                           std::vector<Font::TextElement>::iterator start,
+                           const Font::GlyphMap& glyphs, int8_t space_width)
+    {
+        // For each TextElement in text_elements starting from start.
+        for (auto te_it = start; te_it != text_elements.end(); ++te_it) {
+            auto& elem = *te_it;
+
+            // For each character in the TextElement.
+            auto text_it = elem.text.begin();
+            const auto end_it = elem.text.end();
+            while (text_it != end_it) {
+                // Find and set the width of the character glyph.
+                elem.widths.push_back(0);
+                uint32_t c = utf8::next(text_it, end_it);
+                if (c != WIDE_NEWLINE) {
+                    auto it = glyphs.find(c);
+                    // use a space when an unrendered glyph is requested (the
+                    // space chararacter is always renderable)
+                    elem.widths.back() = (it != glyphs.end()) ? it->second.advance : space_width;
+                }
+            }
+        }
+    }
 }
 
 ///////////////////////////////////////
@@ -661,10 +678,11 @@ public:
     const auto& Text() const noexcept
     { return m_text; }
 
-    std::pair<std::string, std::vector<TextElement>> Extract()
+    auto Extract()
     {
         if (!m_are_widths_calculated)
-            m_font.FillTemplatedText(m_text, m_text_elements, m_text_elements.begin());
+            FillTemplatedText(m_text, m_text_elements, m_text_elements.begin(),
+                              m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
         return std::pair(std::move(m_text), std::move(m_text_elements));
     }
 
@@ -672,7 +690,8 @@ public:
     const auto& Elements()
     {
         if (!m_are_widths_calculated)
-            m_font.FillTemplatedText(m_text, m_text_elements, m_text_elements.begin());
+            FillTemplatedText(m_text, m_text_elements, m_text_elements.begin(),
+                              m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
         return m_text_elements;
     }
 
@@ -1035,6 +1054,123 @@ namespace {
     { return origin + (static_cast<int>(line_num) - static_cast<int>(begin_line)) * lineskip; }
 }
 
+
+namespace {
+    constexpr uint8_t CharsToUInt8(std::string_view txt) {
+        if (txt.empty())
+            return 0u;
+
+        uint32_t retval = 0u;
+        for (auto c : txt) {
+            if (c > '9' || c < '0')
+                break;
+            retval *= 10;
+            retval += (c - '0');
+        }
+
+        return static_cast<uint8_t>(retval);
+    }
+    static_assert(CharsToUInt8("") == 0);
+    static_assert(CharsToUInt8("abcdefgh") == 0);
+    static_assert(CharsToUInt8("0") == 0);
+    static_assert(CharsToUInt8("-25") == 0);
+    static_assert(CharsToUInt8("25") == 25);
+    static_assert(CharsToUInt8("00001") == 1);
+    static_assert(CharsToUInt8("888") == 888-3*256);
+    static_assert(CharsToUInt8(std::string_view{one_zero_nine.data()}) == 109);
+    static_assert(CharsToUInt8(std::string_view{three_zero.data()}) == 30);
+
+
+    std::pair<std::array<GLubyte, 4u>, bool> TagParamsToColor(const std::vector<Font::Substring>& params) {
+        std::array<GLubyte, 4u> retval{0, 0, 0, 255};
+        const auto param_count = std::min(retval.size(), params.size());
+
+#if defined(__cpp_lib_to_chars)
+        for (std::size_t n = 0u; n < param_count; ++n) {
+            const auto& param{params[n]};
+            if (param.empty())
+                return {retval, false};
+            auto ec = std::from_chars(param.data(), param.data() + param.size(), retval[n]).ec;
+            if (ec != std::errc())
+                return {retval, false};
+        }
+#else
+        for (std::size_t n = 0u; n < param_count; ++n) {
+            const auto& param{params[n]};
+            if (param.empty())
+                return {retval, false};
+            retval[n] = CharsToUInt8(param);
+        }
+#endif
+
+        return {retval, true};
+    }
+
+    void HandleTag(const Font::TextElement& tag, Font::RenderState& render_state)
+    {
+        if (tag.tag_name == Font::ITALIC_TAG) {
+            if (tag.IsCloseTag()) {
+                if (render_state.use_italics)
+                    --render_state.use_italics;
+            } else {
+                ++render_state.use_italics;
+            }
+        } else if (tag.tag_name == Font::UNDERLINE_TAG) {
+            if (tag.IsCloseTag()) {
+                if (render_state.draw_underline)
+                    --render_state.draw_underline;
+            } else {
+                ++render_state.draw_underline;
+            }
+        } else if (tag.tag_name == Font::SHADOW_TAG) {
+            if (tag.IsCloseTag()) {
+                if (render_state.use_shadow)
+                    --render_state.use_shadow;
+            } else {
+                ++render_state.use_shadow;
+            }
+        } else if (tag.tag_name == Font::SUPERSCRIPT_TAG) {
+            if (tag.IsCloseTag())
+                --render_state.super_sub_shift;
+            else
+                ++render_state.super_sub_shift;
+
+        } else if (tag.tag_name == Font::SUBSCRIPT_TAG) {
+            if (tag.IsCloseTag())
+                ++render_state.super_sub_shift;
+            else
+                --render_state.super_sub_shift;
+
+        } else if (tag.tag_name == Font::RGBA_TAG) {
+            if (tag.IsCloseTag()) {
+                // Popping is ok also for an empty color stack.
+                render_state.PopColor();
+
+            } else {
+                auto [color, well_formed_tag] = TagParamsToColor(tag.params);
+                if (well_formed_tag) {
+                    glColor4ubv(color.data());
+                    render_state.PushColor(color[0], color[1], color[2], color[3]);
+                }
+                /*else {
+                    std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag from text";
+                    if (tag.text.IsDefaultEmpty())
+                        std::cerr << ": (default EMPTY Substring)";
+                    else if (tag.text.empty())
+                        std::cerr << ": (empty Substring)";
+                    else
+                        std::cerr << " (" << tag.text.size() << "): " << tag.text;
+                    std::cerr << " ... tag_name: " << tag.tag_name << " ... params (" << tag.params.size() << ") :";
+                    for (const auto& p : tag.params)
+                        std::cerr << " (" << p.size() << "):" << p;
+                    std::cerr << std::endl;
+                }*/
+            }
+        }
+    }
+}
+
+
 void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
                          const std::vector<LineData>& line_data, RenderState& render_state,
                          std::size_t begin_line, CPSize begin_char,
@@ -1136,24 +1272,35 @@ void Font::RenderCachedText(RenderCache& cache) const
     glPopClientAttrib();
 }
 
+void Font::ProcessLineTagsBefore(const std::vector<LineData::CharData>& char_data,
+                                 RenderState& render_state, CPSize end_char)
+{
+    const auto end_char_idx = std::min(Value(end_char), char_data.size());
+    for (std::size_t j = 0; j < end_char_idx; ++j)
+        for (auto& tag : char_data[j].tags)
+            HandleTag(tag, render_state);
+}
+
+void Font::ProcessLineTags(const std::vector<LineData::CharData>& char_data, RenderState& render_state)
+{ ProcessLineTagsBefore(char_data, render_state, static_cast<CPSize>(char_data.size())); }
+
 void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
-                             std::size_t begin_line, CPSize begin_char) const
+                             std::size_t begin_line, CPSize begin_char)
 {
     if (line_data.empty())
         return;
+    begin_line = std::min(begin_line, line_data.size());
 
     for (std::size_t i = 0; i <= begin_line; ++i) {
-        const LineData& line = line_data[i];
-        for (CPSize j = CP0;
-             j < ((i == begin_line) ? begin_char : CPSize(line.char_data.size()));
-             ++j)
-        {
-            for (auto& tag : line.char_data[Value(j)].tags) {
-                HandleTag(tag, render_state);
-            }
-        }
+        const auto& char_data = line_data[i].char_data;
+        const auto line_end_char = (i == begin_line && Value(begin_char) <= char_data.size()) ?
+            begin_char : static_cast<CPSize>(char_data.size());
+        ProcessLineTagsBefore(char_data, render_state, line_end_char);
     }
 }
+
+void Font::ProcessTags(const std::vector<LineData>& line_data, RenderState& render_state)
+{ ProcessTagsBefore(line_data, render_state, std::numeric_limits<std::size_t>::max(), std::numeric_limits<CPSize>::max()); }
 
 std::string Font::StripTags(std::string_view text, bool strip_unpaired_tags)
 {
@@ -1373,7 +1520,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     }
 
     // fill in the widths of code points in each TextElement
-    FillTemplatedText(text, text_elements, text_elements.begin());
+    FillTemplatedText(text, text_elements, text_elements.begin(), m_glyphs, m_space_width);
 
 #if DEBUG_DETERMINELINES
     DebugOutput::PrintParseResults(text_elements);
@@ -1381,33 +1528,9 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     return text_elements;
 }
 
-
-void Font::FillTemplatedText(const std::string& text, std::vector<Font::TextElement>& text_elements,
-                             std::vector<Font::TextElement>::iterator start) const
-{
-    // For each TextElement in text_elements starting from start.
-    for (auto te_it = start; te_it != text_elements.end(); ++te_it) {
-        auto& elem = *te_it;
-
-        // For each character in the TextElement.
-        auto text_it = elem.text.begin();
-        const auto end_it = elem.text.end();
-        while (text_it != end_it) {
-            // Find and set the width of the character glyph.
-            elem.widths.push_back(0);
-            uint32_t c = utf8::next(text_it, end_it);
-            if (c != WIDE_NEWLINE) {
-                auto it = m_glyphs.find(c);
-                // use a space when an unrendered glyph is requested (the
-                // space chararacter is always renderable)
-                elem.widths.back() = (it != m_glyphs.end()) ? it->second.advance : m_space_width;
-            }
-        }
-    }
-}
-
-void Font::ChangeTemplatedText(std::string& text, std::vector<Font::TextElement>& text_elements,
-                               const std::string& new_text, std::size_t targ_offset) const
+void Font::ChangeTemplatedText(std::string& text, std::vector<TextElement>& text_elements,
+                               const std::string& new_text, std::size_t targ_offset,
+                               const GlyphMap& glyphs, uint8_t space_width)
 {
     if (targ_offset >= text_elements.size())
         return;
@@ -1421,7 +1544,7 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<Font::TextElement>
     std::size_t curr_offset = 0;
     auto te_it = text_elements.begin();
     while (te_it != text_elements.end()) {
-        if (te_it->Type() == TextElement::TextElementType::TEXT) {
+        if (te_it->Type() == Font::TextElement::TextElementType::TEXT) {
             // Change the target text element
             if (targ_offset == curr_offset) {
                 // Change text
@@ -1431,7 +1554,7 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<Font::TextElement>
                 text.insert(ii_sub_begin, new_text);
 
                 change_of_len = static_cast<decltype(change_of_len)>(new_text.size() - sub_len);
-                te_it->text = Substring(text, ii_sub_begin, ii_sub_begin + new_text.size());
+                te_it->text = Font::Substring(text, ii_sub_begin, ii_sub_begin + new_text.size());
                 break;
             }
             ++curr_offset;
@@ -1451,15 +1574,14 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<Font::TextElement>
         {
             auto ii_sub_begin = te_it->text.begin() - text.begin();
             auto ii_sub_end = te_it->text.end() - text.begin();
-            te_it->text = Substring(text, ii_sub_begin + change_of_len, ii_sub_end + change_of_len);
+            te_it->text = Font::Substring(text, ii_sub_begin + change_of_len, ii_sub_end + change_of_len);
 
             ++te_it;
         }
     }
 
-    FillTemplatedText(text, text_elements, start_of_reflow);
+    FillTemplatedText(text, text_elements, start_of_reflow, glyphs, space_width);
 }
-
 
 namespace {
     [[nodiscard]] constexpr Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
@@ -1673,13 +1795,13 @@ namespace {
                     bool& last_line_of_curr_just, CPSize& code_point_offset,
                     std::vector<Font::TextElement>& pending_formatting_tags)
     {
-        if (elem.tag_name == ALIGN_LEFT_TAG)
+        if (elem.tag_name == Font::ALIGN_LEFT_TAG)
             justification = ALIGN_LEFT;
-        else if (elem.tag_name == ALIGN_CENTER_TAG)
+        else if (elem.tag_name == Font::ALIGN_CENTER_TAG)
             justification = ALIGN_CENTER;
-        else if (elem.tag_name == ALIGN_RIGHT_TAG)
+        else if (elem.tag_name == Font::ALIGN_RIGHT_TAG)
             justification = ALIGN_RIGHT;
-        else if (elem.tag_name != PRE_TAG)
+        else if (elem.tag_name != Font::PRE_TAG)
             pending_formatting_tags.push_back(elem);
         last_line_of_curr_just = false;
         code_point_offset += elem.CodePointSize();
@@ -1689,12 +1811,12 @@ namespace {
                      bool& last_line_of_curr_just, CPSize& code_point_offset,
                      std::vector<Font::TextElement>& pending_formatting_tags)
     {
-        if ((elem.tag_name == ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
-            (elem.tag_name == ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
-            (elem.tag_name == ALIGN_RIGHT_TAG && justification == ALIGN_RIGHT))
+        if ((elem.tag_name == Font::ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
+            (elem.tag_name == Font::ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
+            (elem.tag_name == Font::ALIGN_RIGHT_TAG && justification == ALIGN_RIGHT))
         {
             last_line_of_curr_just = true;
-        } else if (elem.tag_name != PRE_TAG) {
+        } else if (elem.tag_name != Font::PRE_TAG) {
             pending_formatting_tags.push_back(elem);
         }
         code_point_offset += elem.CodePointSize();
@@ -2058,120 +2180,6 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_st
     }
 
     return X{glyph.advance};
-}
-
-namespace {
-    constexpr uint8_t CharsToUInt8(std::string_view txt) {
-        if (txt.empty())
-            return 0u;
-
-        uint32_t retval = 0u;
-        for (auto c : txt) {
-            if (c > '9' || c < '0')
-                break;
-            retval *= 10;
-            retval += (c - '0');
-        }
-
-        return static_cast<uint8_t>(retval);
-    }
-    static_assert(CharsToUInt8("") == 0);
-    static_assert(CharsToUInt8("abcdefgh") == 0);
-    static_assert(CharsToUInt8("0") == 0);
-    static_assert(CharsToUInt8("-25") == 0);
-    static_assert(CharsToUInt8("25") == 25);
-    static_assert(CharsToUInt8("00001") == 1);
-    static_assert(CharsToUInt8("888") == 888-3*256);
-    static_assert(CharsToUInt8(std::string_view{one_zero_nine.data()}) == 109);
-    static_assert(CharsToUInt8(std::string_view{three_zero.data()}) == 30);
-
-    std::pair<std::array<GLubyte, 4u>, bool> TagParamsToColor(const std::vector<Font::Substring>& params) {
-        std::array<GLubyte, 4u> retval{};
-        if (params.size() != 4u)
-            return {retval, false};
-
-#if defined(__cpp_lib_to_chars)
-        for (std::size_t n = 0u; n < 4u; ++n) {
-            const auto& param{params[n]};
-            if (param.empty())
-                return {retval, false};
-            auto ec = std::from_chars(param.data(), param.data() + param.size(), retval[n]).ec;
-            if (ec != std::errc())
-                return {retval, false};
-        }
-#else
-        for (std::size_t n = 0u; n < 4u; ++n) {
-            const auto& param{params[n]};
-            if (param.empty())
-                return {retval, false};
-            retval[n] = CharsToUInt8(param);
-        }
-#endif
-
-        return {retval, true};
-    }
-}
-
-void Font::HandleTag(const TextElement& tag, RenderState& render_state) const
-{
-    if (tag.tag_name == ITALIC_TAG) {
-        if (tag.IsCloseTag()) {
-            if (render_state.use_italics)
-                --render_state.use_italics;
-        } else {
-            ++render_state.use_italics;
-        }
-    } else if (tag.tag_name == UNDERLINE_TAG) {
-        if (tag.IsCloseTag()) {
-            if (render_state.draw_underline)
-                --render_state.draw_underline;
-        } else {
-            ++render_state.draw_underline;
-        }
-    } else if (tag.tag_name == SHADOW_TAG) {
-        if (tag.IsCloseTag()) {
-            if (render_state.use_shadow)
-                --render_state.use_shadow;
-        } else {
-            ++render_state.use_shadow;
-        }
-    } else if (tag.tag_name == SUPERSCRIPT_TAG) {
-        if (tag.IsCloseTag())
-            --render_state.super_sub_shift;
-        else
-            ++render_state.super_sub_shift;
-
-    } else if (tag.tag_name == SUBSCRIPT_TAG) {
-        if (tag.IsCloseTag())
-            ++render_state.super_sub_shift;
-        else
-            --render_state.super_sub_shift;
-
-    } else if (tag.tag_name == RGBA_TAG) {
-        if (tag.IsCloseTag()) {
-            // Popping is ok also for an empty color stack.
-            render_state.PopColor();
-
-        } else {
-            auto [color, well_formed_tag] = TagParamsToColor(tag.params);
-            if (well_formed_tag) {
-                glColor4ubv(color.data());
-                render_state.PushColor(color[0], color[1], color[2], color[3]);
-            } else {
-                std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag from text";
-                if (tag.text.IsDefaultEmpty())
-                    std::cerr << ": (default EMPTY Substring)";
-                else if (tag.text.empty())
-                    std::cerr << ": (empty Substring)";
-                else
-                    std::cerr << " (" << tag.text.size() << "): " << tag.text;
-                std::cerr << " ... tag_name: " << tag.tag_name << " ... params (" << tag.params.size() << ") :";
-                for (const auto& p : tag.params)
-                    std::cerr << " (" << p.size() << "):" << p;
-                std::cerr << std::endl;
-            }
-        }
-    }
 }
 
 bool Font::IsDefaultFont() const noexcept

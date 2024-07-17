@@ -112,6 +112,17 @@ GG_API std::string RgbaTag(Clr c);
 class GG_API Font
 {
 public:
+    static constexpr std::string_view ITALIC_TAG = "i";
+    static constexpr std::string_view SHADOW_TAG = "s";
+    static constexpr std::string_view UNDERLINE_TAG = "u";
+    static constexpr std::string_view SUPERSCRIPT_TAG = "sup";
+    static constexpr std::string_view SUBSCRIPT_TAG = "sub";
+    static constexpr std::string_view RGBA_TAG = "rgba";
+    static constexpr std::string_view ALIGN_LEFT_TAG = "left";
+    static constexpr std::string_view ALIGN_CENTER_TAG = "center";
+    static constexpr std::string_view ALIGN_RIGHT_TAG = "right";
+    static constexpr std::string_view PRE_TAG = "pre";
+
     /** \brief A range of iterators into a std::string that defines a
         substring found in a string being rendered by Font.
 
@@ -447,9 +458,11 @@ public:
         if present. */
     struct GG_API RenderState
     {
-        RenderState();
+        explicit RenderState(Clr color) : //< Takes default text color as parameter
+            color_stack{std::stack<Clr>::container_type{color}}
+        {}
 
-        RenderState(Clr color); //< Takes default text color as parameter
+        RenderState() : RenderState(Clr{0, 0, 0, 0}) {}
 
         /** The count of open \<i> tags seen since the last \</i> seen. */
         uint8_t use_italics = 0;
@@ -478,9 +491,6 @@ public:
         void PopColor();
 
         Clr CurrentColor() const noexcept { return color_stack.top(); }
-
-        /// Return true if there are no more colors to pop.
-        bool ColorsEmpty() const noexcept { return color_stack.size() <= 1; }
     };
 
     /** \brief Holds precomputed glyph position information for rendering. */
@@ -510,16 +520,14 @@ public:
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
-    Font(std::string font_filename, unsigned int pts,
-         const std::vector<uint8_t>& file_contents);
+    Font(std::string font_filename, unsigned int pts, const std::vector<uint8_t>& file_contents);
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
     template <typename CharSetIter>
-    Font(std::string font_filename, unsigned int pts,
-         CharSetIter first, CharSetIter last);
+    Font(std::string font_filename, unsigned int pts, CharSetIter first, CharSetIter last);
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last), from the in-memory
@@ -527,8 +535,7 @@ public:
         of Font::Exception if the condition specified for the subclass is
         met. */
     template <typename CharSetIter>
-    Font(std::string font_filename, unsigned int pts,
-         const std::vector<uint8_t>& file_contents,
+    Font(std::string font_filename, unsigned int pts, const std::vector<uint8_t>& file_contents,
          CharSetIter first, CharSetIter last);
 
     ~Font() = default;
@@ -561,6 +568,8 @@ public:
     /** Returns the width of the glyph for the space character. */
     X    SpaceWidth() const noexcept { return X{m_space_width}; }
 
+    const auto& GetGlyphs() const noexcept { return m_glyphs; }
+
     /** Unformatted text rendering; repeatedly calls RenderGlyph, then returns
         advance of entire string. */
     X    RenderText(Pt pt, const std::string_view text, const RenderState& render_state) const;
@@ -592,10 +601,19 @@ public:
     /** Render the glyphs from the \p cache.*/
     void RenderCachedText(RenderCache& cache) const;
 
-    /** Sets \a render_state as if all the text before (<i>begin_line</i>,
-        <i>begin_char</i>) had just been rendered. */
-    void ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
-                           std::size_t begin_line, CPSize begin_char) const;
+    /** Sets \a render_state as if all the text in \a line_data
+      * before (<i>begin_line</i>, <i>begin_char</i>) had just been rendered. */
+    static void ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
+                                  std::size_t begin_line, CPSize begin_char);
+    /** Sets \a render_state as if all the text in \a line_data had just been rendered. */
+    static void ProcessTags(const std::vector<LineData>& line_data, RenderState& render_state);
+
+    /** Sets \a render_state as if all the text in \a char_aata before \a begin_char had just been rendered. */
+    static void ProcessLineTagsBefore(const std::vector<LineData::CharData>& char_data,
+                                      RenderState& render_state, CPSize begin_char);
+    /** Sets \a render_state as if all the text in \a char_data had just been rendered. */
+    static void ProcessLineTags(const std::vector<LineData::CharData>& char_data, RenderState& render_state);
+
 
     /** Return a vector of TextElements parsed from \p text, using the
         FORMAT_IGNORETAGS bit in \p format to determine if all KnownTags()
@@ -608,11 +626,21 @@ public:
     std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
         const std::string& text, const Flags<TextFormat> format) const;
 
-    /** Fill \p text_elements with the font widths of characters from \p text starting from \p
-        starting_from. */
-    void FillTemplatedText(const std::string& text,
-                           std::vector<TextElement>& text_elements,
-                           std::vector<TextElement>::iterator starting_from) const;
+    /** \brief This just holds the essential data necessary to render a glyph
+    from the OpenGL texture(s) created at GG::Font creation time. */
+    struct Glyph
+    {
+        Glyph() = default;
+        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv);
+
+        SubTexture  sub_texture;      ///< The subtexture containing just this glyph
+        int8_t      y_offset = 0;     ///< The vertical offset to draw this glyph (may be negative!)
+        int8_t      left_bearing = 0; ///< The space that should remain before the glyph
+        int8_t      advance = 0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
+        int8_t      width = 0;        ///< The width of the glyph only
+    };
+
+    using GlyphMap = boost::unordered_map<uint32_t, Glyph>;
 
     /** Change \p text_elements and \p text to replace the text of the TextElement at
         \p targ_offset with \p new_text.
@@ -642,10 +670,12 @@ public:
         changed text:              "<i>Ship:<\i> New Ship Name ID:"
         changed text_elements:     [<OPEN_TAG i>, <TEXT "Ship:">, <CLOSE_TAG i>, <WHITESPACE>, <TEXT New Ship Name>, <WHITESPACE>, <TEXT ID:>]
     */
-    void ChangeTemplatedText(std::string& text,
-                             std::vector<TextElement>& text_elements,
-                             const std::string& new_text,
-                             std::size_t targ_offset) const;
+    static void ChangeTemplatedText(std::string& text, std::vector<TextElement>& text_elements,
+                                    const std::string& new_text, std::size_t targ_offset,
+                                    const GlyphMap& glyphs, uint8_t space_width);
+    void ChangeTemplatedText(std::string& text, std::vector<TextElement>& text_elements,
+                             const std::string& new_text, std::size_t targ_offset) const
+    { ChangeTemplatedText(text, text_elements, new_text, targ_offset, m_glyphs, m_space_width); }
 
     /** DetermineLines() returns the \p line_data resulting from adding the necessary line
         breaks, to the \p text formatted with \p format and parsed into \p text_elements, to fit
@@ -715,22 +745,6 @@ protected:
     Font() = default;
 
 private:
-    /** \brief This just holds the essential data necessary to render a glyph
-        from the OpenGL texture(s) created at GG::Font creation time. */
-    struct Glyph
-    {
-        Glyph() = default;
-        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv);
-
-        SubTexture  sub_texture;      ///< The subtexture containing just this glyph
-        int8_t      y_offset = 0;     ///< The vertical offset to draw this glyph (may be negative!)
-        int8_t      left_bearing = 0; ///< The space that should remain before the glyph
-        int8_t      advance = 0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
-        int8_t      width = 0;        ///< The width of the glyph only
-    };
-
-    using GlyphMap = boost::unordered_map<uint32_t, Glyph>;
-
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
     void              CheckFace(FT_Face font, FT_Error error);
@@ -747,7 +761,6 @@ private:
                                          const Glyph& glyph, Y descent, Y height,
                                          Y underline_height, Y underline_offset) const;
 
-    void              HandleTag(const TextElement& tag, RenderState& render_state) const;
     bool              IsDefaultFont() const noexcept;
 
     static std::shared_ptr<Font> GetDefaultFont(unsigned int pts);
