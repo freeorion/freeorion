@@ -57,11 +57,13 @@ jobs:
           restore-keys: |
             build-${{ matrix.image }}-docker-ccache-
       - name: Detect godot
+        if: ${{ matrix.image != 'manjaro' && matrix.image != 'void-musl' }}
         id: detect-godot
         run: |
           touch ${GITHUB_OUTPUT}
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" --mount type=bind,source=${GITHUB_OUTPUT},target=/github-output.file -e CCACHE_DIR='/ccache_dir' -e GITHUB_OUTPUT=/github-output.file -w /freeorion ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -P /freeorion/.github/godot-detect.cmake
       - name: Copy godot
+        if: ${{ matrix.image != 'manjaro' && matrix.image != 'void-musl' }}
         run: |
           mkdir build
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} cp ${{ steps.detect-godot.outputs.godot }} /freeorion/build/godot
@@ -69,10 +71,6 @@ jobs:
         if: ${{ matrix.image != 'manjaro' && matrix.image != 'void-musl' }}
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /freeorion/build/godot --gdnative-generate-json-api /freeorion/build/godot-api.json
-      - name: Generate godot API file
-        if: ${{ matrix.image == 'manjaro' && false }} # Manjaro stopped to support Godot 3
-        run: |
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/xvfb-run /freeorion/build/godot --no-window --disable-render-loop --video-driver GLES2 --gdnative-generate-json-api /freeorion/build/godot-api.json
       - name: Configure freeorion
         if: ${{ matrix.image == 'ubuntu-23.04' }}
         run: |
@@ -95,10 +93,6 @@ jobs:
         if: ${{ matrix.image != 'manjaro' && matrix.image != 'void-musl' }}
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/ ${{ steps.prep.outputs.tagged_image }} /freeorion/build/godot --disable-render-loop --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
-      - name: Run godot
-        if: ${{ matrix.image == 'manjaro' && false }} # Manjaro stopped to support Godot 3
-        run: |
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/ ${{ steps.prep.outputs.tagged_image }} /usr/bin/xvfb-run /freeorion/build/godot --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
       - name: Cleanup
         run: |
           docker run -v "$(pwd):/freeorion" -w /freeorion/ ${{ steps.prep.outputs.tagged_image }} rm -rf /freeorion/build/
