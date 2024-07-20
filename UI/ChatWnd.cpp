@@ -371,21 +371,39 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
                                          int recipient_player_id,
                                          bool pm)
 {
+    std::string filtered_message = StringtableTextSubstitute(text);
     std::string wrapped_text;
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
     if (utf8::is_valid(formatted_timestamp.begin(), formatted_timestamp.end()))
         wrapped_text.append(formatted_timestamp);
     
     if (player_name.empty()) {
-        wrapped_text.append(RgbaTag(text_color)).append(filtered_message).append("</rgba>");
+        // This is likely a server message
+        wrapped_text.append(RgbaTag(text_color))
+                    .append(filtered_message)
+                    .append("</rgba>");
     } else {
-        wrapped_text.append(RgbaTag(text_color)).append(player_name).append("</rgba>");
+        // This is a player message
+        wrapped_text.append(RgbaTag(text_color))
+                    .append(player_name)
+                    .append("</rgba>");
         if (pm)
             wrapped_text.append(UserString("MESSAGES_WHISPER"));
-        wrapped_text.append(": ").append(RgbaTag(GG::CLR_WHITE)).append(filtered_message).append("</rgba>");
+        
+        // Append the message content without wrapping it in a color tag
+        wrapped_text.append(": ")
+                    .append(filtered_message);
     }
+
     *m_display += wrapped_text.append("\n");
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
+
+    // Preserve original logging
+    TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
+                  << "  sender colour rgba tag: " << RgbaTag(text_color)
+                  << "  filtered message: " << filtered_message
+                  << "  timestamp text: " << ClientUI::FormatTimestamp(timestamp)
+                  << "  wrapped text: " << wrapped_text;
 
     // if client empire is target of message, show message window
     const ClientApp* app = ClientApp::GetApp();
