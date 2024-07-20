@@ -371,25 +371,19 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
                                          int recipient_player_id,
                                          bool pm)
 {
-    std::string filtered_message = StringtableTextSubstitute(text);
-    std::string wrapped_text = RgbaTag(text_color);
+    std::string wrapped_text;
     const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
     if (utf8::is_valid(formatted_timestamp.begin(), formatted_timestamp.end()))
         wrapped_text.append(formatted_timestamp);
+    
     if (player_name.empty()) {
-        wrapped_text.append(filtered_message).append("</rgba>");
+        wrapped_text.append(RgbaTag(text_color)).append(filtered_message).append("</rgba>");
     } else {
-        wrapped_text.append(player_name);
+        wrapped_text.append(RgbaTag(text_color)).append(player_name).append("</rgba>");
         if (pm)
             wrapped_text.append(UserString("MESSAGES_WHISPER"));
-        wrapped_text.append(": ").append(filtered_message).append("</rgba>");
+        wrapped_text.append(": ").append(RgbaTag(GG::CLR_WHITE)).append(filtered_message).append("</rgba>");
     }
-    TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
-                  << "  sender colour rgba tag: " << RgbaTag(text_color)
-                  << "  filtered message: " << filtered_message
-                  << "  timestamp text: " << ClientUI::FormatTimestamp(timestamp)
-                  << "  wrapped text: " << wrapped_text;
-
     *m_display += wrapped_text.append("\n");
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 
