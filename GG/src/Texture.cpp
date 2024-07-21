@@ -12,6 +12,7 @@
 #include <iostream>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/gil/extension/dynamic_image/any_image.hpp>
 #if GG_HAVE_LIBTIFF
 # include <boost/gil/extension/io/tiff_dynamic_io.hpp>
@@ -140,23 +141,27 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap)
     if (m_opengl_id)
         Clear();
 
+    // convert path into UTF-8 format filename string for potential error reporting
+    // but do the work only if actually throwing error to log
+    const auto loggable_path = [this](const fs::path& p) {
+#if defined (_WIN32)
+        boost::filesystem::path::string_type path_native = p.native();
+        std::string filename;
+        utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(filename));
+        return filename;
+#else
+        return p.generic_string();
+#endif
+    };
+
     if (!fs::exists(path)) {
         std::cerr << "Texture::Load passed non-existant path: " << path.generic_string() << std::endl;
-        throw BadFile("Texture file \"" + path.generic_string() + "\" does not exist");
+        throw BadFile("Texture file \"" + loggable_path(path) + "\" does not exist");
     }
     if (!fs::is_regular_file(path)) {
         std::cerr << "Texture::Load passed non-file path: " << path.generic_string() << std::endl;
-        throw BadFile("Texture \"file\" \"" + path.generic_string() + "\" is not a file");
+        throw BadFile("Texture \"file\" \"" + loggable_path(path) + "\" is not a file");
     }
-
-    // convert path into UTF-8 format filename string
-#if defined (_WIN32)
-    boost::filesystem::path::string_type path_native = path.native();
-    std::string filename;
-    utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(filename));
-#else
-    std::string filename = path.generic_string();
-#endif
 
     static_assert(sizeof(gil::gray8_pixel_t) == 1, "gray8 pixel type does not match expected type size");
     static_assert(sizeof(gil::gray_alpha8_pixel_t) == 2, "gray_alpha8 pixel type does not match expected type size");
@@ -181,42 +186,43 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap)
     > ImageTypes;
     typedef gil::any_image<ImageTypes> ImageType;
 #endif
-    if (!fs::exists(path))
-        throw BadFile("Texture file \"" + filename + "\" does not exist");
-    if (!fs::is_regular_file(path))
-        throw BadFile("Texture \"file\" \"" + filename + "\" is not a file");
 
     std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
-
     ImageType image;
     try {
-        // First attempt -- try just to read the file in one of the default
-        // formats above.
+        // First attempt -- try just to read the file in one of the default formats above.
+        // using ifstream version instead of file name version of read_image goes around unicode paths translation issues
 #if GG_HAVE_LIBPNG
-        if (extension == ".png")
-            gil::read_image(filename, image, gil::image_read_settings<gil::png_tag>());
+        if (extension == ".png") {
+            boost::filesystem::ifstream in(path, std::ios::binary);
+            gil::read_image(in, image, gil::image_read_settings<gil::png_tag>());
+        }
         else
 #endif
 #if GG_HAVE_LIBTIFF
-        if (extension == ".tif" || extension == ".tiff")
-            gil::read_image(filename, image, gil::image_read_settings<gil::tiff_tag>());
+        if (extension == ".tif" || extension == ".tiff") {
+            boost::filesystem::ifstream in(path, std::ios::binary);
+            gil::read_image(in, image, gil::image_read_settings<gil::tiff_tag>());
+        }
         else
 #endif
-            throw BadFile("Texture file \"" + filename + "\" does not have a supported file extension");
+            throw BadFile("Texture file \"" + loggable_path(path) + "\" does not have a supported file extension");
     } catch (const std::ios_base::failure&) {
         // Second attempt -- If *_read_image() throws, see if we can convert
         // the image to RGBA.  This is needed for color-indexed images.
 #if GG_HAVE_LIBPNG
         if (extension == ".png") {
             gil::rgba8_image_t rgba_image;
-            gil::read_and_convert_image(filename, rgba_image, gil::image_read_settings<gil::png_tag>());
+            boost::filesystem::ifstream in(path, std::ios::binary);
+            gil::read_and_convert_image(in, rgba_image, gil::image_read_settings<gil::png_tag>());
             image = std::move(rgba_image);
         }
 #endif
 #if GG_HAVE_LIBTIFF
         if (extension == ".tif" || extension == ".tiff") {
             gil::rgba8_image_t rgba_image;
-            gil::read_and_convert_image(filename, rgba_image, gil::image_read_settings<gil::tiff_tag>());
+            boost::filesystem::ifstream in(path, std::ios::binary);
+            gil::read_and_convert_image(in, rgba_image, gil::image_read_settings<gil::tiff_tag>());
             image = std::move(rgba_image);
         }
 #endif
@@ -264,7 +270,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap)
     case 2:  m_format = GL_LUMINANCE_ALPHA; break;
     case 3:  m_format = GL_RGB; break;
     case 4:  m_format = GL_RGBA; break;
-    default: throw BadFile("Texture file \"" + filename + "\" does not have a supported number of color channels (1-4)");
+    default: throw BadFile("Texture file \"" + loggable_path(path) + "\" does not have a supported number of color channels (1-4)");
     }
 
     assert(image_data);
