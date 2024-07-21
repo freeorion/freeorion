@@ -252,7 +252,7 @@ adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-god
 [FreeType2]: https://www.freetype.org/download.html
 [libpng]: http://www.libpng.org/pub/png/libpng.html
 [libogg]: https://xiph.org/downloads/
-[OpenAL Soft]: http://kcat.strangesoft.net/openal.html
+[OpenAL Soft]: https://openal-soft.org/
 [libvorbis]: https://xiph.org/downloads/
 [SDL2]: https://www.libsdl.org/download-2.0.php
 [Software Development Kit]: https://github.com/freeorion/freeorion-sdk
