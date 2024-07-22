@@ -7806,6 +7806,12 @@ Tous les armements %shippart% des astronefs à portée d'approvisionnement ont �
 SITREP_WEAPONS_UPGRADED_LABEL
 Amélioration technologique Armement
 
+SITREP_WEAPON_SHOTS_UPGRADED
+Tous les armements %shippart% des astronefs à portée d'approvisionnement ont été améliorés par la technologie %tech%. Les armements améliorés effectuent %rawtext:shots% tir additionnel par passe de combat (%rawtext:shotsum%).
+
+SITREP_WEAPON_SHOTS_UPGRADED_LABEL
+Amélioration technologique Armement
+
 SITREP_COMBAT_SYSTEM
 Dans %system% : un %combat% a eu lieu.
 
@@ -14454,7 +14460,9 @@ SHP_WEAPON_1_3
 Canon Mitrailleur 3
 
 SHP_WEAPON_1_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_1_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+'''Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_1_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+
+Améliore également l'équipement [[shippart SR_WEAPON_0_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). L'équipement amélioré effectue [[value SHP_WEAPON_1_3_UPGRADE_SHOTS]] tirs additionnels par passe de combat.'''
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
@@ -14478,7 +14486,9 @@ SHP_WEAPON_2_3
 Canon Laser 3
 
 SHP_WEAPON_2_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_2_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+'''Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_2_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+
+Améliore également l'équipement [[shippart SR_WEAPON_0_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). L'équipement amélioré effectue [[value SHP_WEAPON_2_3_UPGRADE_SHOTS]] tirs additionnels par passe de combat.'''
 
 SHP_WEAPON_2_4
 Canon Laser 4
@@ -14502,7 +14512,9 @@ SHP_WEAPON_3_3
 Canon Plasma 3
 
 SHP_WEAPON_3_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_3_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+'''Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_3_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+
+Améliore également l'équipement [[shippart SR_WEAPON_0_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). L'équipement amélioré effectue [[value SHP_WEAPON_3_3_UPGRADE_SHOTS]] tirs additionnels par passe de combat.'''
 
 SHP_WEAPON_3_4
 Canon Plasma 4
@@ -14526,7 +14538,9 @@ SHP_WEAPON_4_3
 Rayon Gamma 3
 
 SHP_WEAPON_4_3_DESC
-Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_4_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+'''Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de [[value SHP_WEAPON_4_3_UPGRADED_DAMAGE]] une fois l'équipement amélioré.
+
+Améliore également l'équipement [[shippart SR_WEAPON_0_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). L'équipement amélioré effectue [[value SHP_WEAPON_4_3_UPGRADE_SHOTS]] tirs additionnels par passe de combat.'''
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
@@ -15995,7 +16009,13 @@ Canon Antiaérien
 SR_WEAPON_0_1_DESC
 '''Le Canon Antiaérien est peu coûteux et efficace pour contrer les chasseurs, mais ne permet pas de cibler les astronefs et planètes.
 
-Chaque Canon Antiaérien monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", aura un nombre additionnel de tirs égal à 1 par rang de Pilotes (-1 tir pour "Mauvais Pilotes").'''
+Chaque Canon Antiaérien monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", aura un nombre additionnel de tirs égal à 1 par rang de Pilotes (-1 tir pour "Mauvais Pilotes").
+La recherche de technologies d'armement avancé octroie également des tirs additionnels:
+- [[tech SHP_WEAPON_1_3]] [[value SHP_WEAPON_1_3_UPGRADE_SHOTS]]
+- [[tech SHP_WEAPON_2_3]] [[value SHP_WEAPON_2_3_UPGRADE_SHOTS]]
+- [[tech SHP_WEAPON_3_3]] [[value SHP_WEAPON_3_3_UPGRADE_SHOTS]]
+- [[tech SHP_WEAPON_4_3]] [[value SHP_WEAPON_4_3_UPGRADE_SHOTS]]
+'''
 
 SR_WEAPON_1_1
 Canon Mitrailleur
