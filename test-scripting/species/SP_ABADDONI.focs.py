@@ -1,6 +1,6 @@
 try:
     from focs._effects import EffectsGroup, GiveEmpireTech, IsSource, Target, Turn
-    from focs._species import Species
+    from focs._species import *
 except ModuleNotFoundError:
     pass
 from species.species_macros.env import BROAD_EP, INFERNO_BROAD_EP
