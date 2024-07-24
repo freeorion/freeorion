@@ -223,7 +223,7 @@ public:
             return *this;
         }
 
-        Substring() noexcept = default;
+        constexpr Substring() noexcept = default;
 
     private:
         static const std::string EMPTY_STRING;
@@ -708,7 +708,7 @@ public:
     static void ClearKnownTags();
 
     /** Returns the input \a text, stripped of any formatting tags. */
-    static std::string StripTags(std::string_view text, bool strip_unpaired_tags = true);
+    static std::string StripTags(std::string_view text);
 
     /** The base class for Font exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
