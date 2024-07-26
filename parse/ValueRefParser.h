@@ -33,8 +33,9 @@ namespace parse::detail {
 
     using name_token_rule = rule<std::string ()>;
     using reference_token_rule = rule<ValueRef::ReferenceType ()>;
+    using container_token_rule = rule<ValueRef::ContainerType ()>;
     const parse::detail::reference_token_rule variable_scope(const parse::lexer& tok);
-    const parse::detail::name_token_rule container_type(const parse::lexer& tok);
+    const parse::detail::container_token_rule container(const parse::lexer& tok);
 
 
     template <typename T>
@@ -45,8 +46,9 @@ namespace parse::detail {
     using variable_rule = rule<
         variable_signature<T>,
         boost::spirit::qi::locals<
-            std::vector<std::string>,
-            ValueRef::ReferenceType
+            std::string,
+            ValueRef::ReferenceType,
+            ValueRef::ContainerType
             >
         >;
 
@@ -64,7 +66,7 @@ namespace parse::detail {
         variable_rule<T>            value_wrapped_bound_variable;
         detail::value_ref_rule<T>   simple;
         reference_token_rule        variable_scope_rule;
-        name_token_rule             container_type_rule;
+        container_token_rule        container_type_rule;
     };
 
     template <typename T>
@@ -150,41 +152,43 @@ namespace parse::detail {
         variable_rule<T>& value_wrapped_bound_variable,
         const name_token_rule& variable_name,
         const reference_token_rule& variable_scope_rule,
-        const name_token_rule& container_type_rule,
+        const container_token_rule& container_type_rule,
         const parse::lexer& tok)
     {
         using boost::phoenix::construct;
         using boost::phoenix::new_;
-        using boost::phoenix::push_back;
 
-        boost::spirit::qi::_1_type _1;
-        boost::spirit::qi::_2_type _2;
-        boost::spirit::qi::_3_type _3;
-        boost::spirit::qi::lit_type lit;
-        boost::spirit::qi::_val_type _val;
-        boost::spirit::qi::omit_type omit_;
-        const boost::phoenix::function<construct_movable> construct_movable_;
-        //const boost::phoenix::function<deconstruct_movable> deconstruct_movable_;
+        boost::spirit::qi::_1_type _1{};
+        boost::spirit::qi::_a_type _a{}; // string
+        boost::spirit::qi::_b_type _b{}; // ReferenceType
+        boost::spirit::qi::_c_type _c{}; // ContainerType
+        boost::spirit::qi::_val_type _val{};
+        boost::spirit::qi::omit_type omit_{};
+        boost::spirit::qi::eps_type eps{};
+        const boost::phoenix::function<construct_movable> construct_movable_{};
 
         unwrapped_bound_variable
             = (
-                     variable_scope_rule >> '.'
-                >> -(container_type_rule > '.')
-                >>   variable_name
+                     variable_scope_rule [ _b = _1 ] >> '.'
+                >>  (
+                       (container_type_rule [ _c = _1 ] >> '.') |
+                        eps [ _c = ValueRef::ContainerType::NONE ]
+                    )
+                >>  (variable_name [ _a = construct<std::string>(_1) ])
               ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
-                  _1, construct<boost::optional<std::string>>(_2),
-                  construct<std::string>(_3), false)) ];
+                  _b, _a, _c, ValueRef::ValueToReturn::Initial)) ];
 
         value_wrapped_bound_variable
             = (
                 omit_[tok.Value_] >> '('
-                >>   variable_scope_rule >> '.'
-                >> -(container_type_rule > '.')
-                >>   variable_name
-                >>   ')'
+                >>   variable_scope_rule [ _b = _1 ] >> '.'
+                >>  (
+                       (container_type_rule [ _c = _1 ] >> '.') |
+                        eps [ _c = ValueRef::ContainerType::NONE ]
+                    )
+                >>  (variable_name [ _a = construct<std::string>(_1) ]) > ')'
               ) [ _val = construct_movable_(new_<ValueRef::Variable<T>>(
-                  _1, construct<boost::optional<std::string>>(_2),
-                  construct<std::string>(_3), true)) ];
+                  _b, _a, _c, ValueRef::ValueToReturn::Immediate)) ];
 
         bound_variable
             =
@@ -194,15 +198,17 @@ namespace parse::detail {
     }
 
     template <typename T>
-    void open_and_register_as_string(std::string& nameref, ::parse::detail::MovableEnvelope<ValueRef::ValueRef<T>>& obj, bool& pass)
+    void open_and_register_as_string(const std::string& nameref,
+                                     ::parse::detail::MovableEnvelope<ValueRef::ValueRef<T>>& obj,
+                                     bool& pass)
     {
         if (obj.IsEmptiedEnvelope()) {
-            ErrorLogger() <<
-                "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once - while looking at a valueref envelope for use in ValueRef registration ";
+            ErrorLogger() << "The parser attempted to extract the unique_ptr from a MovableEnvelope more than once "
+                          << "- while looking at a valueref envelope for use in ValueRef registration ";
             pass = false;
-            return;
+        } else {
+            ::RegisterValueRef<T>(nameref, obj.OpenEnvelope(pass));
         }
-        ::RegisterValueRef<T>(nameref, obj.OpenEnvelope(pass));
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(void, open_and_register_as_string_, open_and_register_as_string, 3)
@@ -232,7 +238,7 @@ namespace parse {
         detail::value_ref_rule<std::string>     expr;
         detail::value_ref_rule<std::string>     primary_expr;
         detail::reference_token_rule            variable_scope_rule;
-        detail::name_token_rule                 container_type_rule;
+        detail::container_token_rule            container_type_rule;
     };
 
     struct int_arithmetic_rules;

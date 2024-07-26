@@ -23,11 +23,6 @@ namespace {
     constexpr double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
 }
 
-
-Fleet::Fleet(std::string name, double x, double y, int owner_id, int creation_turn) :
-    UniverseObject{UniverseObjectType::OBJ_FLEET, std::move(name), owner_id, creation_turn}
-{ UniverseObject::Init(); }
-
 std::shared_ptr<UniverseObject> Fleet::Clone(const Universe& universe, int empire_id) const {
     const Visibility vis = empire_id == ALL_EMPIRES ?
         Visibility::VIS_FULL_VISIBILITY : universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);

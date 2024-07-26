@@ -2,6 +2,7 @@
 #define _ValueRefs_h_
 
 
+#include <concepts>
 #include <iterator>
 #include <map>
 #include <numeric>
@@ -20,15 +21,20 @@
 #include "../util/i18n.h"
 #include "../util/Random.h"
 
-namespace CheckSums {
-    template <typename T>
-    void CheckSumCombine(uint32_t& sum, const typename ValueRef::ValueRef<T>& c)
-    {
-        TraceLogger() << "CheckSumCombine(ValueRef::ValueRef<T>): " << typeid(c).name();
-        sum += c.GetCheckSum();
-        sum %= CHECKSUM_MODULUS;
-    }
-}
+#if !defined(CONSTEXPR_VEC)
+#  if defined(__cpp_lib_constexpr_vector)
+#    define CONSTEXPR_VEC constexpr
+#  else
+#    define CONSTEXPR_VEC
+#  endif
+#endif
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
 
 class UniverseObject;
 
@@ -38,29 +44,38 @@ template <typename T>
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     template <typename TT> requires (std::is_convertible_v<TT, T>)
-    constexpr explicit Constant(TT&& value)
-        noexcept(noexcept(std::string{}) && noexcept(T{std::declval<TT>()})) :
+    [[nodiscard]] constexpr explicit Constant(TT&& value) noexcept(noexcept(std::string{}) && noexcept(T{std::declval<TT>()})) :
+        ValueRef<T>(true, true, true, true, true),
         m_value(std::forward<TT>(value))
     {
         static_assert(std::is_nothrow_move_constructible_v<T>);
-        this->m_root_candidate_invariant = true;
-        this->m_local_candidate_invariant = true;
-        this->m_target_invariant = true;
-        this->m_source_invariant = true;
     }
-    constexpr virtual ~Constant() noexcept = default;
 
-    [[nodiscard]] constexpr bool operator==(const ValueRef<T>& rhs) const override {
+    [[nodiscard]] constexpr explicit Constant(const Constant& value)
+        noexcept(noexcept(std::string{}) && noexcept(T{std::declval<const T>()})) :
+        ValueRef<T>(value),
+        m_value(value.m_value)
+    {}
+
+    constexpr virtual ~Constant() noexcept override = default;
+
+    [[nodiscard]] constexpr bool operator==(const ValueRef<T>& rhs) const noexcept override {
         if (&rhs == this)
             return true;
-        if (typeid(rhs) != typeid(*this))
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] constexpr bool operator==(const Constant& rhs) const noexcept {
+        if (&rhs == this)
+            return true;
+        if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
-        const Constant<T>& rhs_ = static_cast<const Constant<T>&>(rhs);
-        return m_value == rhs_.m_value;
+        return m_value == rhs.m_value;
     }
 
-    [[nodiscard]] T Eval(const ScriptingContext& context) const
-        noexcept(noexcept(T{std::declval<const T>()})) override
+    [[nodiscard]] constexpr T Eval() const noexcept(noexcept(T{std::declval<const T>()}))
+    { return m_value; }
+    [[nodiscard]] T Eval(const ScriptingContext&) const noexcept(noexcept(T{std::declval<const T>()})) override
     { return m_value; }
 
     [[nodiscard]] std::string Description() const override;
@@ -68,7 +83,16 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     { return DumpIndent(ntabs) + Description(); }
 
     [[nodiscard]] constexpr T Value() const noexcept(noexcept(T{std::declval<const T>()})) { return m_value; };
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override {
+        uint32_t retval{0};
+
+        CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
+        CheckSums::CheckSumCombine(retval, m_value);
+        //if (!std::is_constant_evaluated())
+        //    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+        //                  << " value: " << Description() << " retval: " << retval;
+        return retval;
+    }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Constant>(m_value); }
@@ -77,29 +101,18 @@ private:
     const T m_value{};
 };
 
-#if !defined(CONSTEXPR_STRING)
-#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
-#    define CONSTEXPR_STRING constexpr
-#  else
-#    define CONSTEXPR_STRING
-#  endif
-#endif
-
 template <>
 struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 {
     template <typename S> requires (std::is_convertible_v<S, std::string>)
     CONSTEXPR_STRING explicit Constant(S&& value)
         noexcept(noexcept(std::string{}) && noexcept(std::string{std::declval<S>()})) :
+        ValueRef<std::string>(true, true, true, true, true),
         m_value(std::forward<S>(value))
     {
         static_assert(std::is_nothrow_move_constructible_v<std::string>);
-        this->m_root_candidate_invariant = true;
-        this->m_local_candidate_invariant = true;
-        this->m_target_invariant = true;
-        this->m_source_invariant = true;
     }
-    CONSTEXPR_STRING virtual ~Constant() noexcept = default;
+    CONSTEXPR_STRING virtual ~Constant() noexcept override = default;
 
     [[nodiscard]] constexpr bool operator==(const ValueRef<std::string>& rhs) const override {
         if (&rhs == this)
@@ -114,8 +127,10 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     static constexpr std::string_view current_content = "CurrentContent";
     static constexpr std::string_view no_current_content = "THERE_IS_NO_TOP_LEVEL_CONTENT";
 
-    [[nodiscard]] std::string Eval(const ScriptingContext&) const override
+    [[nodiscard]] CONSTEXPR_STRING const std::string& Eval() const noexcept
     { return (m_value == current_content) ? m_top_level_content : m_value; }
+    [[nodiscard]] std::string Eval(const ScriptingContext&) const override
+    { return Eval(); }
 
     [[nodiscard]] std::string Description() const override
     { return (m_value == current_content) ? m_top_level_content : m_value; }
@@ -136,13 +151,14 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     }
 
     [[nodiscard]] auto& Value() const noexcept { return m_value; };
-    [[nodiscard]] uint32_t GetCheckSum() const override {
+    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override {
         uint32_t retval{0};
 
         CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
         CheckSums::CheckSumCombine(retval, m_value);
-        TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-                      << " value: " << Description() << " retval: " << retval;
+        //if (!std::is_constant_evaluated())
+        //    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
+        //                  << " value: " << Description() << " retval: " << retval;
         return retval;
     }
 
@@ -157,44 +173,66 @@ private:
     std::string m_top_level_content; // if m_value is "CurrentContent", return this instead
 };
 
+enum class ValueToReturn : bool { Initial = false, Immediate = true };
 
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <typename T>
 struct FO_COMMON_API Variable : public ValueRef<T>
 {
-    template <typename S>
-    Variable(ReferenceType ref_type, S&& property_name, bool return_immediate_value = false);
+    CONSTEXPR_STRING Variable(ReferenceType ref_type, std::string property_name,
+                              ContainerType container_type = ContainerType::NONE,
+                              ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
+        ValueRef<T>(false,
+                    ref_type != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE,
+                    ref_type != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
+                    ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE, // not all effect target values are properties of the target object, eg. empire meters, but most are
+                    ref_type != ReferenceType::SOURCE_REFERENCE,
+                    static_cast<bool>(retval_type),
+                    ref_type,
+                    container_type),
+        m_property_name(std::move(property_name))
+    {}
 
-    Variable(ReferenceType ref_type, const char* property_name, bool return_immediate_value = false);
+    CONSTEXPR_STRING explicit Variable(ReferenceType ref_type, ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
+        Variable(ref_type, std::string{}, ContainerType::NONE, retval_type)
+    {}
 
-    explicit Variable(ReferenceType ref_type, bool return_immediate_value = false);
+    [[nodiscard]] CONSTEXPR_STRING bool operator==(const ValueRef<T>& rhs) const override {
+        if (&rhs == this)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *rhs_p == *this;
+    }
+    [[nodiscard]] CONSTEXPR_STRING bool operator==(const Variable<T>& rhs) const noexcept {
+        if (&rhs == this)
+            return true;
+        if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
+            return false;
+        return this->m_container_type == rhs.m_container_type && m_property_name == rhs.m_property_name;
+    }
 
-    template <typename S>
-    Variable(ReferenceType ref_type,  boost::optional<std::string>&& container_name,
-             S&& property_name, bool return_immediate_value = false);
 
-    Variable(ReferenceType ref_type, std::vector<std::string>&& property_name, bool return_immediate_value = false);
-
-    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name, bool return_immediate_value = false);
-
-    [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] auto& PropertyName() const noexcept { return m_property_name; }
-    [[nodiscard]] bool ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
+    [[nodiscard]] CONSTEXPR_STRING auto& PropertyName() const noexcept { return m_property_name; }
+    [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
+    [[nodiscard]] constexpr bool ReturnImmediateValue() const noexcept { return this->m_return_immediate_value; }
 
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override;
 
-    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
-    { return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, m_return_immediate_value); }
+    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
+        return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, this->m_container_type,
+                                             this->m_return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial);
+    }
 
 protected:
-    void InitInvariants();
+    CONSTEXPR_STRING Variable(bool root_inv, bool local_inv, bool target_inv, bool source_inv, StatisticType stat_type) :
+        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type)
+    {}
 
-    const std::vector<std::string> m_property_name;
-    const bool                     m_return_immediate_value = false;
+    const std::string m_property_name{};
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -216,7 +254,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] StatisticType GetStatisticType() const noexcept { return m_stat_type; }
+    [[nodiscard]] StatisticType GetStatisticType() const noexcept { return this->m_stat_type; }
 
     [[nodiscard]] const auto* GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
@@ -226,7 +264,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
-                                                 m_stat_type,
+                                                 this->m_stat_type,
                                                  CloneUnique(m_sampling_condition));
     }
 
@@ -236,7 +274,6 @@ protected:
                                            const Condition::ObjectSet& objects) const;
 
 private:
-    const StatisticType                         m_stat_type;
     const std::unique_ptr<Condition::Condition> m_sampling_condition;
     const std::unique_ptr<ValueRef<V>>          m_value_ref;
 };
@@ -273,24 +310,31 @@ private:
 template <typename T>
 struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
-    template<typename S>
+    template<typename S> requires requires(S s) { std::vector<std::string>{s}; }
     explicit ComplexVariable(S&& variable_name,
                              std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
-                             bool return_immediate_value = false);
+                             bool return_immediate_value = false) :
+        Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, std::forward<S>(variable_name), ContainerType::NONE,
+                    return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial),
+        m_int_ref1(std::move(int_ref1)),
+        m_int_ref2(std::move(int_ref2)),
+        m_int_ref3(std::move(int_ref3)),
+        m_string_ref1(std::move(string_ref1)),
+        m_string_ref2(std::move(string_ref2))
+    { InitInvariants(); } // TODO: remove InitInvariants, determine in Variable<T> constructor call
 
-    explicit ComplexVariable(const char* variable_name,
-                             std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
-                             std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
-                             std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
-                             std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
-                             std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
-                             bool return_immediate_value = false);
-
-    explicit ComplexVariable(const ComplexVariable<T>& rhs);
+    explicit ComplexVariable(const ComplexVariable<T>& rhs) :
+        Variable<T>(rhs),
+        m_int_ref1(CloneUnique(rhs.m_int_ref1)),
+        m_int_ref2(CloneUnique(rhs.m_int_ref2)),
+        m_int_ref3(CloneUnique(rhs.m_int_ref3)),
+        m_string_ref1(CloneUnique(rhs.m_string_ref1)),
+        m_string_ref2(CloneUnique(rhs.m_string_ref2))
+    {}
 
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
@@ -432,36 +476,6 @@ private:
     const LookupType m_lookup_type;
 };
 
-enum class OpType : uint8_t {
-    PLUS,
-    MINUS,
-    TIMES,
-    DIVIDE,
-    REMAINDER,
-    NEGATE,
-    EXPONENTIATE,
-    ABS,
-    LOGARITHM,
-    SINE,
-    COSINE,
-    MINIMUM,
-    MAXIMUM,
-    RANDOM_UNIFORM,
-    RANDOM_PICK,
-    SUBSTITUTION,
-    COMPARE_EQUAL,
-    COMPARE_GREATER_THAN,
-    COMPARE_GREATER_THAN_OR_EQUAL,
-    COMPARE_LESS_THAN,
-    COMPARE_LESS_THAN_OR_EQUAL,
-    COMPARE_NOT_EQUAL,
-    ROUND_NEAREST,
-    ROUND_UP,
-    ROUND_DOWN,
-    SIGN,
-    NOOP
-};
-
 /** An arithmetic operation node ValueRef class. Unary or binary operations such
   * as addition, mutiplication, negation, exponentiation, rounding,
   * value substitution, value comparisons, or random value selection or
@@ -484,13 +498,11 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] OpType      GetOpType() const noexcept { return m_op_type; }
-
-    [[nodiscard]] static T    EvalImpl(OpType op_type, T lhs, T rhs);
+    [[nodiscard]] OpType      GetOpType() const noexcept { return this->m_op_type; }
 
     [[nodiscard]] const auto* LHS() const { return m_operands.empty() ? nullptr : m_operands.front().get(); } // 1st operand (or nullptr if none exists)
     [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
-    [[nodiscard]] const std::vector<ValueRef<T>*> Operands() const; // all operands
+    [[nodiscard]] const std::vector<const ValueRef<T>*> Operands() const; // all operands
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -504,11 +516,28 @@ private:
     Operation& operator=(const Operation<T>& rhs) = delete;
     Operation& operator=(Operation<T>&& rhs) = delete;
 
-    void InitInvariants();
+    [[nodiscard]] T EvalConstantExpr() const;
 
-    [[nodiscard]] T EvalImpl(const ScriptingContext& context) const;
+    [[nodiscard]] static bool IsSimpleIncrement(OpType op_type, const std::vector<std::unique_ptr<ValueRef<T>>>& operands) {
+        if (op_type == OpType::RANDOM_UNIFORM || op_type == OpType::RANDOM_PICK || op_type == OpType::NOOP)
+            return false;
 
-    const OpType                                    m_op_type = OpType::TIMES;
+        // determine if this is a simple incrment operation, meaning it is a calculation
+        // that depends only on:
+        // 1) the effect target value (ie. a meter value or some other property that is
+        //    being modified by an effect)
+        // 2) a single target-invariant value (ie. a constant, something that depends only
+        //    on the source object or a target-independent complex value ref)
+        if (operands.size() != 2)
+            return false;
+        const auto& lhs{operands[0]};
+        const auto& rhs{operands[1]};
+
+        // LHS must be just the immediate value of what's being incremented
+        // RHS must be the same value for all targets
+        return lhs && rhs && lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE && rhs->TargetInvariant();
+    }
+
     const std::vector<std::unique_ptr<ValueRef<T>>> m_operands;
     const T                                         m_cached_const_value = T();
 };
@@ -520,16 +549,15 @@ private:
 
 [[nodiscard]] FO_COMMON_API std::string_view PlanetTypeToString(PlanetType type) noexcept;
 [[nodiscard]] FO_COMMON_API std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept;
-[[nodiscard]] FO_COMMON_API std::string      ReconstructName(const std::vector<std::string>& property_name,
-                                                             ReferenceType ref_type,
-                                                             bool return_immediate_value = false);
+[[nodiscard]] FO_COMMON_API std::string      ReconstructName(std::string_view property_name, ContainerType container_type,
+                                                             ReferenceType ref_type, bool return_immediate_value = false);
 
 [[nodiscard]] FO_COMMON_API std::string FormatedDescriptionPropertyNames(
-    ReferenceType ref_type, const std::vector<std::string>& property_names,
+    ReferenceType ref_type, std::string_view property_name, ContainerType container_type,
     bool return_immediate_value = false);
 
 [[nodiscard]] FO_COMMON_API std::string ComplexVariableDescription(
-    const std::vector<std::string>& property_names,
+    std::string_view property_name,
     const ValueRef<int>* int_ref1,
     const ValueRef<int>* int_ref2,
     const ValueRef<int>* int_ref3,
@@ -537,7 +565,7 @@ private:
     const ValueRef<std::string>* string_ref2);
 
 [[nodiscard]] FO_COMMON_API std::string ComplexVariableDump(
-    const std::vector<std::string>& property_names,
+    std::string_view property_name,
     const ValueRef<int>* int_ref1,
     const ValueRef<int>* int_ref2,
     const ValueRef<int>* int_ref3,
@@ -550,18 +578,6 @@ private:
 ///////////////////////////////////////////////////////////
 // Constant                                              //
 ///////////////////////////////////////////////////////////
-template <typename T>
-uint32_t Constant<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
-    CheckSums::CheckSumCombine(retval, m_value);
-    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name()
-                  << " value: " << Description() << " retval: " << retval;
-    return retval;
-}
-
 template <>
 FO_COMMON_API std::string Constant<int>::Description() const;
 
@@ -614,104 +630,28 @@ FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, std::vector<std::string>&& property_name,
-                      bool return_immediate_value) :
-    ValueRef<T>(ref_type),
-    m_property_name(std::move(property_name)),
-    m_return_immediate_value(return_immediate_value)
-{ InitInvariants(); }
-
-template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name,
-                      bool return_immediate_value) :
-    ValueRef<T>(ref_type),
-    m_property_name(property_name),
-    m_return_immediate_value(return_immediate_value)
-{ InitInvariants(); }
-
-template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, bool return_immediate_value) :
-    Variable<T>(ref_type, std::vector<std::string>{}, return_immediate_value)
-{}
-
-template <typename T>
-Variable<T>::Variable(ReferenceType ref_type, const char* property_name,
-                      bool return_immediate_value) :
-    Variable<T>(ref_type, std::vector<std::string>{1, property_name}, return_immediate_value)
-{}
-
-template <typename T>
-template <typename S>
-Variable<T>::Variable(ReferenceType ref_type, S&& property_name,
-                      bool return_immediate_value) :
-    ValueRef<T>(ref_type),
-    m_property_name{std::forward<S>(property_name)},
-    m_return_immediate_value(return_immediate_value)
-{ InitInvariants(); }
-
-template <typename T>
-template <typename S>
-Variable<T>::Variable(ReferenceType ref_type,
-                      boost::optional<std::string>&& container_name,
-                      S&& property_name,
-                      bool return_immediate_value) :
-    ValueRef<T>(ref_type),
-    m_property_name([&container_name, &property_name]() -> std::vector<std::string> {
-        std::vector<std::string> pn;
-        const bool cnhs = container_name.has_value();
-        pn.reserve(1 + cnhs);
-        if (cnhs)
-            pn.push_back(std::move(*container_name));
-        pn.push_back(std::forward<S>(property_name));
-        return pn;
-    }()),
-    m_return_immediate_value(return_immediate_value)
-{
-    InitInvariants();
-}
-
-template <typename T>
-void Variable<T>::InitInvariants()
-{
-    const auto rt = this->m_ref_type;
-    this->m_root_candidate_invariant = rt != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE;
-    this->m_local_candidate_invariant = rt != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    this->m_target_invariant = rt != ReferenceType::EFFECT_TARGET_REFERENCE &&
-                               rt != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE;
-    this->m_source_invariant = rt != ReferenceType::SOURCE_REFERENCE;
-}
-
-template <typename T>
-bool Variable<T>::operator==(const ValueRef<T>& rhs) const
-{
-    if (&rhs == this)
-        return true;
-    if (typeid(rhs) != typeid(*this))
-        return false;
-    const Variable<T>& rhs_ = static_cast<const Variable<T>&>(rhs);
-    return (this->m_ref_type == rhs_.m_ref_type) &&
-           (m_property_name == rhs_.m_property_name) &&
-           (m_return_immediate_value == rhs_.m_return_immediate_value);
-}
-
-template <typename T>
 std::string Variable<T>::Description() const
-{ return FormatedDescriptionPropertyNames(this->m_ref_type, m_property_name, m_return_immediate_value); }
+{
+    return FormatedDescriptionPropertyNames(this->m_ref_type, m_property_name,
+                                            this->m_container_type, this->m_return_immediate_value);
+}
 
 template <typename T>
 std::string Variable<T>::Dump(uint8_t ntabs) const
-{ return ReconstructName(m_property_name, this->m_ref_type, m_return_immediate_value); }
+{ return ReconstructName(m_property_name, this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
 
 template <typename T>
-uint32_t Variable<T>::GetCheckSum() const
+CONSTEXPR_STRING uint32_t Variable<T>::GetCheckSum() const
 {
     uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
     CheckSums::CheckSumCombine(retval, this->m_ref_type);
-    CheckSums::CheckSumCombine(retval, m_return_immediate_value);
-    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
+    CheckSums::CheckSumCombine(retval, this->m_container_type);
+    CheckSums::CheckSumCombine(retval, this->m_return_immediate_value);
+    //if (!std::is_constant_evaluated())
+    //    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -752,27 +692,23 @@ FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 template <typename T, typename V>
 Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticType stat_type,
                            std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<T>(ReferenceType::NON_OBJECT_REFERENCE),
-    m_stat_type(stat_type),
+    Variable<T>((!sampling_condition || sampling_condition->RootCandidateInvariant()) &&
+                    (!value_ref || value_ref->RootCandidateInvariant()),
+                true,
+                (!sampling_condition || sampling_condition->TargetInvariant()) &&
+                    (!value_ref || value_ref->TargetInvariant()),
+                (!sampling_condition || sampling_condition->SourceInvariant()) &&
+                    (!value_ref || value_ref->SourceInvariant()),
+                stat_type),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
 {
-    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant()) &&
-                                       (!m_value_ref || m_value_ref->RootCandidateInvariant());
-
     // don't need to check if sampling condition is LocalCandidateInvariant, as
-    // all conditions aren't, but that refers to their own local candidate.  no
-    // condition is explicitly dependent on the parent context's local candidate.
+    // all conditions aren't, but that refers to their own local candidate.
+    // no condition is explicitly dependent on the parent context's local candidate.
     // also don't need to check if sub-value-ref is local candidate invariant,
     // as it is applied to the subcondition matches, not the local candidate of
     // any containing condition
-    this->m_local_candidate_invariant = true;
-
-    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant()) &&
-                               (!m_value_ref || m_value_ref->TargetInvariant());
-
-    this->m_source_invariant = (!m_sampling_condition || m_sampling_condition->SourceInvariant()) &&
-                               (!m_value_ref || m_value_ref->SourceInvariant());
 }
 
 template <typename T, typename V>
@@ -784,7 +720,7 @@ bool Statistic<T, V>::operator==(const ValueRef<T>& rhs) const
         return false;
     const Statistic<T, V>& rhs_ = static_cast<const Statistic<T, V>&>(rhs);
 
-    if (m_stat_type != rhs_.m_stat_type)
+    if (this->m_stat_type != rhs_.m_stat_type)
         return false;
 
     if (m_value_ref == rhs_.m_value_ref) { // both unique_ptr could be nullptr
@@ -815,7 +751,7 @@ std::vector<V> Statistic<T, V>::GetObjectPropertyValues(const ScriptingContext& 
     if (m_value_ref) {
         std::transform(objects.begin(), objects.end(), retval.begin(),
                        [&context, &ref{m_value_ref}](const auto* obj)
-        { return ref->Eval(ScriptingContext(context, obj)); });
+        { return ref->Eval(ScriptingContext(context, ScriptingContext::LocalCandidate{}, obj)); });
     }
 
     return retval;
@@ -825,14 +761,14 @@ template <typename T, typename V>
 std::string Statistic<T, V>::Description() const
 {
     if (m_value_ref)
-        return StatisticDescription(m_stat_type, m_value_ref->Description(),
+        return StatisticDescription(this->m_stat_type, m_value_ref->Description(),
                                     m_sampling_condition ? m_sampling_condition->Description() : "");
 
     auto temp = Variable<T>::Description();
     if (!temp.empty())
-        return StatisticDescription(m_stat_type, temp, m_sampling_condition ? m_sampling_condition->Description() : "");
+        return StatisticDescription(this->m_stat_type, temp, m_sampling_condition ? m_sampling_condition->Description() : "");
 
-    return StatisticDescription(m_stat_type, "", m_sampling_condition ? m_sampling_condition->Description() : "");
+    return StatisticDescription(this->m_stat_type, "", m_sampling_condition ? m_sampling_condition->Description() : "");
 }
 
 template <typename T, typename V>
@@ -840,7 +776,7 @@ std::string Statistic<T, V>::Dump(uint8_t ntabs) const
 {
     std::string retval = "Statistic ";
 
-    switch (m_stat_type) {
+    switch (this->m_stat_type) {
         case StatisticType::IF:             retval += "If";                break;
         case StatisticType::COUNT:          retval += "Count";             break;
         case StatisticType::UNIQUE_COUNT:   retval += "CountUnique";       break;
@@ -874,8 +810,185 @@ void Statistic<T, V>::SetTopLevelContent(const std::string& content_name)
         m_value_ref->SetTopLevelContent(content_name);
 }
 
-template<typename T, typename V> requires (std::is_arithmetic_v<T> && std::is_arithmetic_v<V>)
-T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
+namespace {
+    template <typename T, typename V>
+    concept decays_to = std::is_same_v<V, std::decay_t<T>>;
+
+    template <typename C>
+    using decayed_value_t = std::decay_t<decltype(*std::declval<C>().begin())>;
+
+    template <typename T>
+    constexpr T UniqueCount(auto&& opv)
+    {
+        // how many unique values appear
+        constexpr auto sort_and_count = [](auto&& opv) {
+            std::sort(opv.begin(), opv.end());
+            auto unique_it = std::unique(opv.begin(), opv.end());
+            return static_cast<T>(std::distance(opv.begin(), unique_it));
+        };
+
+        using opv_t = decltype(opv);
+        using opv_decay_t = std::decay_t<opv_t>;
+        using opv_val_t = std::decay_t<decltype(*opv.begin())>;
+
+        if constexpr (requires { opv[0] = opv_val_t{}; })
+            return sort_and_count(std::forward<decltype(opv)>(opv));
+        else if constexpr (requires { std::declval<opv_decay_t>()[0] = opv_val_t{}; })
+            return sort_and_count(opv_decay_t(std::forward<opv_t>(opv)));
+        else
+            return sort_and_count(std::vector<opv_val_t>(opv.begin(), opv.end()));
+    };
+
+    enum class MinMax : uint8_t { Min, Max, Spread, Mode };
+    static constexpr auto second_less = [](const auto& p1, const auto& p2) { return p1.second < p2.second; };
+
+    template <typename T, MinMax min_or_max = MinMax::Min, typename C, typename V = decayed_value_t<C>>
+    constexpr T HistoMinMax(C&& opv)
+    {
+        // number of times the most common value appears
+        std::vector<std::pair<V, unsigned int>> observed_values;
+        observed_values.reserve(opv.size());
+        const auto count = [&observed_values](auto&& v) {
+            for (auto& [ov, c] : observed_values) {
+                if (ov == v) {
+                    ++c;
+                    return;
+                }
+            }
+            observed_values.emplace_back(std::forward<decltype(v)>(v), 1u);
+        };
+        for (const auto& entry : opv)
+            count(entry);
+
+        if constexpr (min_or_max == MinMax::Min) {
+            // number of times least common element appears
+            auto min = std::min_element(observed_values.begin(), observed_values.end(), second_less);
+            return T(min->second);
+
+        } else if constexpr (min_or_max == MinMax::Max) {
+            // number of times most common element appears
+            auto max = std::max_element(observed_values.begin(), observed_values.end(), second_less);
+            return T(max->second);
+
+        } else if constexpr (min_or_max == MinMax::Spread) {
+            // positive difference between the number of times the most and least common values appear
+            auto [min, max] = std::minmax_element(observed_values.begin(), observed_values.end(), second_less);
+            return T(max->second - min->second);
+
+        } else if constexpr (min_or_max == MinMax::Mode) {
+            // value of most common element
+            auto max = std::max_element(observed_values.begin(), observed_values.end(), second_less);
+            return T(max->first);
+        }
+    }
+
+    constexpr double constexprsqrt(double val2) {
+        if (val2 >= 0 && val2 < std::numeric_limits<double>::infinity()) {
+            auto recurse = [val2](double guess) { return 0.5*(guess + val2/guess); };
+
+            double guess = val2, old_guess = 0;
+            while (guess != old_guess)
+                old_guess = std::exchange(guess, recurse(guess));
+            return guess;
+        } else {
+            return std::numeric_limits<double>::quiet_NaN();
+        }
+    }
+
+    template <typename T>
+    constexpr T CXRMS(const auto& c)
+    {
+        using V_t = decayed_value_t<decltype(c)>;
+        V_t sum{0};
+        for (const auto& v : c)
+            sum += (v*v);
+        return static_cast<T>(constexprsqrt(static_cast<double>(sum) / c.size()));
+    }
+
+    template <typename T>
+    T RTRMS(const auto& c)
+    {
+        using V_t = decayed_value_t<decltype(c)>;
+    #if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
+        V_t sum{0};
+        for (const auto& v : c)
+            sum += (v*v);
+    #else
+        V_t sum = std::transform_reduce(c.begin(), c.end(), V_t{0}, std::plus{},
+                                        [](const auto& a) noexcept { return a*a; });
+    #endif
+        const auto sz = std::max<std::size_t>(c.size(), 1u);
+        return static_cast<T>(std::sqrt(sum/sz));
+    }
+
+    template <typename T>
+    constexpr T RMS(const auto& c)
+    { return std::is_constant_evaluated() ? CXRMS<T>(c) : RTRMS<T>(c); }
+
+    constexpr auto Square(const auto vmm) noexcept { return vmm*vmm; };
+
+    constexpr double CXMeanSqDiff(const auto& c) {
+        if (c.empty())
+            return 0.0;
+
+        // find sample mean
+        double sum{0.0};
+        for (const auto& v : c)
+            sum += static_cast<double>(v);
+
+        const double MEAN = sum / c.size();
+
+        // find average of squared deviations from sample mean
+        double sum_sqdiff = 0.0;
+        for (const auto& v : c)
+            sum_sqdiff += Square(static_cast<double>(v) - MEAN);
+
+        return sum_sqdiff / (c.size() - 1);
+    }
+
+    template <typename T>
+    constexpr T CXSTD(const auto& c)
+    {
+        if (c.size() < 2)
+            return T{0};
+        if constexpr (std::is_floating_point_v<T>)
+            return static_cast<T>(constexprsqrt(CXMeanSqDiff(c)));
+        else
+            return static_cast<T>(constexprsqrt(CXMeanSqDiff(c)) + 0.5); // + 0.5 to round rather then floor when truncating
+    }
+
+    template <typename T>
+    T RTSTD(const auto& c)
+    {
+        if (c.size() < 2)
+            return T{0};
+
+#if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
+        const double mean_sqdiff = CXMeanSqDiff(c);
+#else
+        const double sum = std::transform_reduce(c.begin(), c.end(), 0.0, std::plus{},
+                                                 [](const auto& a) noexcept { return static_cast<double>(a); });
+        const double MEAN = sum / c.size();
+        const double sum_sqdiff = std::transform_reduce(c.begin(), c.end(), 0.0, std::plus{},
+                                                        [MEAN](const auto& a) noexcept
+                                                        { return Square(static_cast<double>(a - MEAN)); });
+        const double mean_sqdiff = sum_sqdiff / static_cast<double>(c.size() - 1.0);
+#endif
+        if constexpr (std::is_floating_point_v<T>)
+            return static_cast<T>(std::sqrt(mean_sqdiff));
+        else
+            return static_cast<T>(std::sqrt(mean_sqdiff) + 0.5); // + 0.5 to round rather then floor when truncating
+    }
+
+    template <typename T>
+    constexpr T STD(const auto& c)
+    { return std::is_constant_evaluated() ? CXSTD<T>(c) : RTSTD<T>(c); }
+}
+
+template<typename T, typename C, typename V = decayed_value_t<C>>
+    requires (std::is_arithmetic_v<T> && std::is_arithmetic_v<V> &&
+              requires(C c) { c.size(); {*c.begin() } -> decays_to<V>; } )
+constexpr T ReduceData(StatisticType stat_type, C&& object_property_values)
 {
     if (object_property_values.empty())
         return T{0};
@@ -897,55 +1010,22 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         }
 
         case StatisticType::UNIQUE_COUNT: {
-            // how many unique values appear
-            std::unordered_set<V> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto entry : object_property_values)
-                observed_values.insert(entry);
-
-            return T(observed_values.size());
+            return UniqueCount<T>(std::forward<C>(object_property_values));
             break;
         }
 
         case StatisticType::HISTO_MAX: {
-            // number of times the most common value appears
-            std::unordered_map<V, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto entry : object_property_values)
-                observed_values[entry]++;
-
-            auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return T(max->second);
+            return HistoMinMax<T, MinMax::Max>(std::forward<C>(object_property_values));
             break;
         }
 
         case StatisticType::HISTO_MIN: {
-            // number of times the least common value appears
-            std::unordered_map<V, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto entry : object_property_values)
-                observed_values[entry]++;
-
-            auto min = std::min_element(observed_values.begin(), observed_values.end(),
-                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return T(min->second);
+            return HistoMinMax<T, MinMax::Min>(std::forward<C>(object_property_values));
             break;
         }
 
         case StatisticType::HISTO_SPREAD: {
-            // positive difference between the number of times the most and least common values appear
-            std::unordered_map<V, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto entry : object_property_values)
-                observed_values[entry]++;
-
-            auto [min, max] = std::minmax_element(observed_values.begin(), observed_values.end(),
-                                                  [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return T(max->second - min->second);
+            return HistoMinMax<T, MinMax::Spread>(std::forward<C>(object_property_values));
             break;
         }
 
@@ -962,29 +1042,12 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         }
 
         case StatisticType::RMS: {
-#if (defined(__clang_major__)) || (defined(__GNUC__) && (__GNUC__ < 11))
-            V accumulator{0};
-            for (auto entry : object_property_values)
-                accumulator += (entry * entry);
-#else
-            V accumulator = std::transform_reduce(
-                object_property_values.begin(), object_property_values.end(),
-                V{0}, std::plus{}, [](const auto& a) { return a*a; });
-#endif
-            double tempval = static_cast<double>(accumulator) / object_property_values.size();
-            return static_cast<T>(std::sqrt(tempval));
+            return RMS<T>(object_property_values);
             break;
         }
 
         case StatisticType::MODE: {
-            // value that appears the most often
-            std::map<V, unsigned int> observed_values;
-            for (auto& entry : object_property_values)
-                observed_values[entry]++;
-
-            auto max = std::max_element(observed_values.begin(), observed_values.end());
-
-            return T(max->first);
+            return HistoMinMax<T, MinMax::Mode>(std::forward<C>(object_property_values));
             break;
         }
 
@@ -1010,23 +1073,7 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         }
 
         case StatisticType::STDEV: {
-            if (object_property_values.size() < 2)
-                return T{0};
-
-            // find sample mean
-            double accumulator = 0.0;
-            for (auto entry : object_property_values)
-                accumulator += static_cast<double>(entry);
-
-            double MEAN = accumulator / object_property_values.size();
-
-            // find average of squared deviations from sample mean
-            accumulator = 0.0;
-            for (auto entry : object_property_values)
-                accumulator += (static_cast<double>(entry) - MEAN) * (static_cast<double>(entry) - MEAN);
-
-            double retval = accumulator / static_cast<double>(object_property_values.size() - 1.0);
-            return static_cast<T>(std::sqrt(retval));
+            return STD<T>(object_property_values);
             break;
         }
 
@@ -1045,8 +1092,10 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
     }
 }
 
-template <typename T, typename V> requires (std::is_enum_v<T> && std::is_same_v<T, V>)
-T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
+template <typename T, typename C, typename V = decayed_value_t<C>>
+    requires (std::is_enum_v<T> && std::is_same_v<T, V> &&
+              requires(C c) { c.size(); { *c.begin() } -> decays_to<V>; })
+constexpr T ReduceData(StatisticType stat_type, C&& object_property_values)
 {
     if (object_property_values.empty())
         return T{0};
@@ -1064,16 +1113,7 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
         }
 
         case StatisticType::MODE: {
-            // value that appears the most often
-            std::unordered_map<T, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto entry : object_property_values)
-                observed_values[entry]++;
-
-            auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return max->first;
+            return HistoMinMax<T, MinMax::Mode>(std::forward<C>(object_property_values));
             break;
         }
 
@@ -1083,8 +1123,10 @@ T ReduceData(StatisticType stat_type, std::vector<T> object_property_values)
     }
 }
 
-template <typename T, typename V> requires (std::is_arithmetic_v<T> && !std::is_arithmetic_v<V>)
-T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
+template <typename T, typename C, typename V = decayed_value_t<C>>
+    requires (std::is_arithmetic_v<T> && !std::is_arithmetic_v<V>  &&
+              requires(C c) { c.size(); { *c.begin() } -> decays_to<V>; })
+constexpr T ReduceData(StatisticType stat_type, C&& object_property_values)
 {
     if (object_property_values.empty())
         return T{0};
@@ -1109,56 +1151,22 @@ T ReduceData(StatisticType stat_type, std::vector<V> object_property_values)
         }
 
         case StatisticType::UNIQUE_COUNT: {
-            // how many unique values appear
-            std::unordered_set<V> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto& entry : object_property_values)
-                observed_values.insert(std::move(entry));
-
-            return T(observed_values.size());
+            return UniqueCount<T>(std::forward<C>(object_property_values));
             break;
         }
 
         case StatisticType::HISTO_MAX: {
-            // number of times the most common value appears
-            std::unordered_map<V, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto& entry : object_property_values)
-                observed_values[std::move(entry)]++;
-
-            auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return T(max->second);
+            return HistoMinMax<T, MinMax::Max>(std::forward<C>(object_property_values));
             break;
         }
 
         case StatisticType::HISTO_MIN: {
-            // number of times the least common value appears
-            std::unordered_map<V, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto& entry : object_property_values)
-                observed_values[std::move(entry)]++;
-
-            auto min = std::min_element(observed_values.begin(), observed_values.end(),
-                                        [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return T(min->second);
+            return HistoMinMax<T, MinMax::Min>(std::forward<C>(object_property_values));
             break;
         }
 
         case StatisticType::HISTO_SPREAD: {
-            // positive difference between the number of times the most and least common values appear
-            std::unordered_map<V, unsigned int> observed_values;
-            observed_values.reserve(object_property_values.size());
-            for (auto& entry : object_property_values)
-                observed_values[std::move(entry)]++;
-
-            auto [min, max] = std::minmax_element(
-                observed_values.begin(), observed_values.end(),
-                [](const auto& p1, const auto& p2) { return p1.second < p2.second; });
-
-            return T(max->second - min->second);
+            return HistoMinMax<T, MinMax::Spread>(std::forward<C>(object_property_values));
             break;
         }
 
@@ -1173,17 +1181,17 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
 {
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
-    if (m_stat_type == StatisticType::IF)
+    if (this->m_stat_type == StatisticType::IF)
         return (m_sampling_condition && m_sampling_condition->EvalAny(context)) ? T{1} : T{0};
 
     const auto condition_matches = m_sampling_condition ?
         m_sampling_condition->Eval(context) : Condition::ObjectSet{};
 
-    if (m_stat_type == StatisticType::COUNT)
+    if (this->m_stat_type == StatisticType::COUNT)
         return static_cast<T>(condition_matches.size());
 
     // evaluate property for each condition-matched object
-    return ReduceData<T, V>(m_stat_type, GetObjectPropertyValues(context, condition_matches));
+    return ReduceData<T>(this->m_stat_type, GetObjectPropertyValues(context, condition_matches));
 }
 
 template <typename T, typename V>
@@ -1192,7 +1200,7 @@ uint32_t Statistic<T, V>::GetCheckSum() const
     uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
-    CheckSums::CheckSumCombine(retval, m_stat_type);
+    CheckSums::CheckSumCombine(retval, this->m_stat_type);
     CheckSums::CheckSumCombine(retval, m_sampling_condition);
     CheckSums::CheckSumCombine(retval, m_value_ref);
     TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
@@ -1212,55 +1220,6 @@ FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const Script
 // ComplexVariable                                       //
 ///////////////////////////////////////////////////////////
 template <typename T>
-template <typename S>
-ComplexVariable<T>::ComplexVariable(S&& variable_name,
-                                    std::unique_ptr<ValueRef<int>>&& int_ref1,
-                                    std::unique_ptr<ValueRef<int>>&& int_ref2,
-                                    std::unique_ptr<ValueRef<int>>&& int_ref3,
-                                    std::unique_ptr<ValueRef<std::string>>&& string_ref1,
-                                    std::unique_ptr<ValueRef<std::string>>&& string_ref2,
-                                    bool return_immediate_value) :
-    Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, std::forward<S>(variable_name), return_immediate_value),
-    m_int_ref1(std::move(int_ref1)),
-    m_int_ref2(std::move(int_ref2)),
-    m_int_ref3(std::move(int_ref3)),
-    m_string_ref1(std::move(string_ref1)),
-    m_string_ref2(std::move(string_ref2))
-{ InitInvariants(); }
-
-template <typename T>
-ComplexVariable<T>::ComplexVariable(const char* variable_name,
-                                    std::unique_ptr<ValueRef<int>>&& int_ref1,
-                                    std::unique_ptr<ValueRef<int>>&& int_ref2,
-                                    std::unique_ptr<ValueRef<int>>&& int_ref3,
-                                    std::unique_ptr<ValueRef<std::string>>&& string_ref1,
-                                    std::unique_ptr<ValueRef<std::string>>&& string_ref2,
-                                    bool return_immediate_value) :
-    Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, variable_name, return_immediate_value),
-    m_int_ref1(std::move(int_ref1)),
-    m_int_ref2(std::move(int_ref2)),
-    m_int_ref3(std::move(int_ref3)),
-    m_string_ref1(std::move(string_ref1)),
-    m_string_ref2(std::move(string_ref2))
-{ InitInvariants(); }
-
-template <typename T>
-ComplexVariable<T>::ComplexVariable(const ComplexVariable<T>& rhs) :
-    Variable<T>(rhs.m_ref_type, rhs.m_property_name, rhs.m_return_immediate_value),
-    m_int_ref1(CloneUnique(rhs.m_int_ref1)),
-    m_int_ref2(CloneUnique(rhs.m_int_ref2)),
-    m_int_ref3(CloneUnique(rhs.m_int_ref3)),
-    m_string_ref1(CloneUnique(rhs.m_string_ref1)),
-    m_string_ref2(CloneUnique(rhs.m_string_ref2))
-{
-    this->m_root_candidate_invariant = rhs.m_root_candidate_invariant;
-    this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
-    this->m_target_invariant = rhs.m_target_invariant;
-    this->m_source_invariant = rhs.m_source_invariant;
-    // this->m_constant_expr and this->m_simple_increment should always be false
-}
-
-template <typename T>
 void ComplexVariable<T>::InitInvariants()
 {
     std::initializer_list<const ValueRefBase*> refs =
@@ -1278,6 +1237,8 @@ bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
     if (&rhs == this)
         return true;
     if (typeid(rhs) != typeid(*this))
+        return false;
+    if (!Variable<T>::operator==(static_cast<const Variable<T>&>(rhs)))
         return false;
     const ComplexVariable<T>& rhs_ = static_cast<const ComplexVariable<T>&>(rhs);
 
@@ -1533,11 +1494,17 @@ StringCast<FromType>::StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref
             else
                 return ReferenceType::NON_OBJECT_REFERENCE;
         }(),
-        [ref{value_ref.get()}]() -> std::vector<std::string> {
+        [ref{value_ref.get()}]() -> std::string {
             if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
                 return var_ref->PropertyName();
             else
                 return {};
+        }(),
+        [ref{value_ref.get()}]() -> ContainerType {
+            if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
+                return var_ref->GetContainerType();
+            else
+                return ContainerType::NONE;
         }()),
     m_value_ref(std::move(value_ref))
 {
@@ -1645,11 +1612,17 @@ UserStringLookup<FromType>::UserStringLookup(std::unique_ptr<ValueRef<FromType>>
             else
                 return ReferenceType::NON_OBJECT_REFERENCE;
         }(),
-        [ref{value_ref.get()}]() -> std::vector<std::string> {
+        [ref{value_ref.get()}]() -> std::string {
             if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
                 return var_ref->PropertyName();
             else
                 return {};
+        }(),
+        [ref{value_ref.get()}]() -> ContainerType {
+            if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
+                return var_ref->GetContainerType();
+            else
+                return ContainerType::NONE;
         }()),
     m_value_ref(std::move(value_ref))
 {
@@ -1749,62 +1722,10 @@ Operation<T>::Operation(OpType op_type,
 
 template <typename T>
 Operation<T>::Operation(const Operation<T>& rhs) :
-    m_op_type(rhs.m_op_type),
+    ValueRef<T>::ValueRef(rhs),
     m_operands(CloneUnique(rhs.m_operands)),
     m_cached_const_value(rhs.m_cached_const_value)
-{
-    this->m_root_candidate_invariant = rhs.m_root_candidate_invariant;
-    this->m_local_candidate_invariant = rhs.m_local_candidate_invariant;
-    this->m_target_invariant = rhs.m_target_invariant;
-    this->m_source_invariant = rhs.m_source_invariant;
-    this->m_constant_expr = rhs.m_constant_expr;
-    this->m_simple_increment = rhs.m_simple_increment; // this is the only type of ValueRef that can be a simple increment ref
-}
-
-template <typename T>
-void Operation<T>::InitInvariants()
-{
-    if (m_op_type == OpType::RANDOM_UNIFORM || m_op_type == OpType::RANDOM_PICK || m_op_type == OpType::NOOP) {
-        // all defaults for invariants = false should apply
-        //this->m_root_candidate_invariant = false;
-        //this->m_local_candidate_invariant = false;
-        //this->m_target_invariant = false;
-        //this->m_source_invariant = false;
-        //this->m_simple_increment = false;
-        return;
-    }
-
-    this->m_root_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
-        [](const auto& operand) { return operand && operand->RootCandidateInvariant(); });
-    this->m_local_candidate_invariant = std::all_of(m_operands.begin(), m_operands.end(),
-        [](const auto& operand) { return operand && operand->LocalCandidateInvariant(); });
-    this->m_target_invariant = std::all_of(m_operands.begin(), m_operands.end(),
-        [](const auto& operand) { return operand && operand->TargetInvariant(); });
-    this->m_source_invariant = std::all_of(m_operands.begin(), m_operands.end(),
-        [](const auto& operand) { return operand && operand->SourceInvariant(); });
-
-
-    // m_simple_increment = false by default
-    // determine if this is a simple incrment operation, meaning it is a calculation
-    // that depends only on:
-    // 1) the effect target value (ie. a meter value or some other property that is
-    //    being modified by an effect)
-    // 2) a single target-invariant value (ie. a constant, something that depends only
-    //    on the source object or a target-independent complex value ref)
-
-    if (m_operands.size() != 2)
-        return;
-    auto& lhs{m_operands[0]};
-    auto& rhs{m_operands[1]};
-    if (!rhs || !lhs)
-        return;
-    // RHS must be the same value for all targets
-    if (!rhs->TargetInvariant())
-        return;
-    // LHS must be just the immediate value of what's being incremented
-    this->m_simple_increment = !this->m_constant_expr &&
-        (lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
-}
+{}
 
 template <typename T>
 bool Operation<T>::operator==(const ValueRef<T>& rhs) const
@@ -1815,7 +1736,7 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
         return false;
     const Operation<T>& rhs_ = static_cast<const Operation<T>&>(rhs);
 
-    if (m_op_type != rhs_.m_op_type)
+    if (this->m_op_type != rhs_.m_op_type)
         return false;
     if (m_operands.size() != rhs_.m_operands.size())
         return false;
@@ -1840,193 +1761,602 @@ bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 }
 
 template <typename T>
-const std::vector<ValueRef<T>*> Operation<T>::Operands() const
+const std::vector<const ValueRef<T>*> Operation<T>::Operands() const
 {
-    std::vector<ValueRef<T>*> retval;
+    std::vector<const ValueRef<T>*> retval;
     retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
-                   [](const auto& xx){ return xx.get(); });
+                   [](const auto& xx) noexcept { return xx.get(); });
     return retval;
 }
 
-template <typename T>
-T Operation<T>::EvalImpl(OpType op_type, const T lhs, const T rhs)
-{
-    switch (op_type) {
-    case OpType::NOOP : {
-        return lhs;
-        break;
+namespace {
+    auto NoOpLogAndReturn(auto&& val) { // TODO: handle vector<string> ?
+        DebugLogger() << "NoOp<" << typeid(val).name() << ">: " << val;
+        return val;
     }
 
-    case OpType::TIMES: {
-        // useful for writing a "Statistic If" expression with arbitrary types.
-        // If returns T{0} or T{1} for nothing or something matching the
-        // sampling condition. This can be checked here by returning T{0} if
-        // the LHS operand is T{0} and just returning RHS() otherwise.
-        return (lhs == T{0}) ? T{0} : rhs;
-        break;
+    constexpr auto abs(auto val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return std::abs(val);
+#else
+        return (val >= 0) ? val : -val;
+#endif
     }
 
-    case OpType::MAXIMUM: {
-        return std::max<T>(lhs, rhs);
-        break;
-    }
-    case OpType::MINIMUM: {
-        return std::min<T>(lhs, rhs);
-        break;
+    template <typename T>
+    constexpr auto sign(T val) noexcept(noexcept(T()) && noexcept(T{1}))
+    { return (val > T()) ? T{1} : (val < T()) ? T{-1} : T(); }
+
+    template <typename T>
+    constexpr T pow(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::exp(val));
+#else
+        if (std::is_constant_evaluated())
+            return static_cast<T>(CheckSums::pow(val));
+        else
+            return static_cast<T>(std::exp(val));
+#endif
     }
 
-    case OpType::RANDOM_PICK: {
-        return (RandInt(0, 1) == 0) ? lhs : rhs;
-        break;
+    template <typename T>
+    constexpr auto pow(T base, T exp) {
+        // std::pow not constexpr until C++26, so not bothering with it here
+        return static_cast<T>(std::is_constant_evaluated() ? CheckSums::pow(base, exp) : std::pow(base, exp));
     }
 
-    case OpType::COMPARE_EQUAL: {
-        return (lhs == rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN: {
-        return (lhs > rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: {
-        return (lhs >= rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN: {
-        return (lhs < rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL: {
-        return (lhs <= rhs) ? T{1} : T{0};
-        break;
-    }
-    case OpType::COMPARE_NOT_EQUAL:  {
-        return (lhs != rhs) ? T{1} : T{0};
-        break;
+    template <typename T>
+    constexpr T log(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::log(val));
+#else
+        return static_cast<T>(std::is_constant_evaluated() ? CheckSums::log(val) : std::log(val));
+#endif
     }
 
-    default:
-        break;
+    template <typename T> constexpr T round(T val);
+
+    constexpr auto log(auto base, auto val) {
+        if (base <= 0)
+            throw std::runtime_error("can't take log base <= 0");
+        if (base == 1)
+            throw std::runtime_error("can't take log base = 1");
+        if (val <= 0)
+            throw std::runtime_error("can't take log of <= 0");
+
+        double log_ratio = log(static_cast<double>(val)) / log(static_cast<double>(base));
+
+        if constexpr (std::is_integral_v<std::decay_t<decltype(val)>>)
+            return static_cast<decltype(val)>(round(log_ratio));
+        else
+            return static_cast<decltype(val)>(log_ratio);
     }
-    throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
+
+    template <typename T>
+    constexpr T sin(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::sin(val));
+#else
+        if (std::is_constant_evaluated())
+            throw std::runtime_error("constexpr sin not implemented");
+        else
+            return static_cast<T>(std::sin(val));
+#endif
+    }
+
+    template <typename T>
+    constexpr T cos(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::cos(val));
+#else
+        if (std::is_constant_evaluated())
+            throw std::runtime_error("constexpr cos not implemented");
+        else
+            return static_cast<T>(std::cos(val));
+#endif
+    }
+
+    template <typename T>
+    constexpr T round(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::round(val));
+#else
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+            return val;
+        } else {
+            const auto trunc_val_plus_half = static_cast<std::decay_t<T>>(static_cast<int64_t>(val + 0.5));
+            return (val >= 0) ? trunc_val_plus_half : (trunc_val_plus_half - 1);
+        }
+#endif
+    }
+
+    template <typename T>
+    constexpr T ceil(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::ceil(val));
+#else
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+            return val;
+        } else {
+            const auto trunc_val = static_cast<std::decay_t<T>>(static_cast<int64_t>(val));
+            return (trunc_val == val) ? trunc_val : (val >= 0) ? (trunc_val + 1) : trunc_val;
+        }
+#endif
+    }
+
+    template <typename T>
+    constexpr T floor(T val) {
+#if defined(__cpp_lib_constexpr_cmath)
+        return static_cast<T>(std::floor(val));
+#else
+        if constexpr (std::is_integral_v<std::decay_t<T>>) {
+            return val;
+        } else {
+            const auto trunc_val = static_cast<std::decay_t<T>>(static_cast<int64_t>(val));
+            return (trunc_val == val) ? trunc_val : (val >= 0) ? trunc_val : trunc_val - 1;
+        }
+#endif
+    }
+
+    constexpr bool ValCompareOp(const auto& lhs, OpType op_type, const auto& rhs) noexcept {
+        using enum OpType;
+        switch (op_type) {
+        case COMPARE_EQUAL:                 return lhs == rhs;  break;
+        case COMPARE_GREATER_THAN:          return lhs > rhs;   break;
+        case COMPARE_GREATER_THAN_OR_EQUAL: return lhs >= rhs;  break;
+        case COMPARE_LESS_THAN:             return lhs < rhs;   break;
+        case COMPARE_LESS_THAN_OR_EQUAL:    return lhs <= rhs;  break;
+        case COMPARE_NOT_EQUAL:             return lhs != rhs;  break;
+        default:                            return false;       break;
+        }
+    }
+
+    inline constexpr auto vr_rand_int = [](int low, int high)
+    { return std::is_constant_evaluated() ? std::max(low, std::min(high, 42)) : RandInt(low, high); };
+
+    inline constexpr auto vr_rand_double = [](double low, double high)
+    { return std::is_constant_evaluated() ? std::max(low, std::min(high, 42.6)) : RandDouble(low, high); };
+
+    auto DoFormat(const std::string& lhs, const std::string& rhs) {
+        // insert string into other string in place of %1% or similar placeholder
+        boost::format formatter = FlexibleFormat(lhs);
+        formatter % rhs;
+        return formatter.str();
+    }
 }
 
-template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(OpType op_type, std::string lhs, std::string rhs);
+template <typename T>
+    requires std::is_enum_v<std::decay_t<T>> || std::is_arithmetic_v<std::decay_t<T>> ||
+             std::is_same_v<std::decay_t<T>, std::string>
+constexpr auto OperateData(OpType op_type, T&& val)
+{
+    using enum OpType;
+    using decayed_t = std::decay_t<T>;
+    constexpr bool is_arith = std::is_arithmetic_v<decayed_t>;
 
-template <>
-FO_COMMON_API double Operation<double>::EvalImpl(OpType op_type, double lhs, double rhs);
+    if constexpr (is_arith) {
+        switch (op_type) {
+        case NOOP:          return std::is_constant_evaluated() ?
+                                std::forward<T>(val) : NoOpLogAndReturn(std::forward<T>(val));  break;
+        case NEGATE:        return -val;                                                        break;
+        case EXPONENTIATE:  return pow(val);                                                    break;
+        case ABS:           return abs(val);                                                    break;
+        case LOGARITHM:     return log(val);                                                    break;
+        case SINE:          return sin(val);                                                    break;
+        case COSINE:        return cos(val);                                                    break;
+        case ROUND_NEAREST: return round(val);                                                  break;
+        case ROUND_UP:      return ceil(val);                                                   break;
+        case ROUND_DOWN:    return floor(val);                                                  break;
+        case SIGN:          return sign(val);                                                   break;
+        default: break;    // not implemented
+        }
+    } else if (NOOP == op_type) {
+        return std::is_constant_evaluated() ? std::forward<T>(val) : NoOpLogAndReturn(std::forward<T>(val));
+    }
 
-template <>
-FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
+    throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for one operand.");
+}
 
 template <typename T>
-T Operation<T>::EvalImpl(const ScriptingContext& context) const
+constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs)
 {
-    if (this->m_simple_increment)
-        return EvalImpl(m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+    using enum OpType;
+    using decayed_t = std::decay_t<T>;
+    constexpr bool is_enum = std::is_enum_v<decayed_t>;
+    constexpr bool is_arith = std::is_arithmetic_v<decayed_t>;
+    constexpr bool is_string = std::is_same_v<decayed_t, std::string>;
 
-    switch (m_op_type) {
-    case OpType::NOOP : {
-        DebugLogger() << "ValueRef::Operation<T>::NoOp::EvalImpl";
-        auto retval = LHS()->Eval(context);
-        DebugLogger() << "ValueRef::Operation<T>::NoOp::EvalImpl. Sub-Expression returned: " << retval
-                        << " from: " << LHS()->Dump();
-        return retval;
-    }
-
-    case OpType::TIMES: {
-        // useful for writing a "Statistic If" expression with arbitrary types.
-        // If returns T{0} or T{1} for nothing or something matching the
-        // sampling condition. This can be checked here by returning T{0} if
-        // the LHS operand is T{0} and just returning RHS() otherwise.
-        if (LHS()->Eval(context) == T{0})
-            return T{0};
-        return RHS()->Eval(context);
-        break;
-    }
-
-    case OpType::MAXIMUM:
-    case OpType::MINIMUM: {
-        if (m_operands.empty())
-            return T{-1};
-
-        // evaluate all operands, return smallest or biggest
-        std::vector<T> vals;
-        vals.reserve(m_operands.size());
-        for (auto& vr : m_operands) {
-            if (vr)
-                vals.push_back(vr->Eval(context));
+    switch (op_type) {
+    case PLUS: {
+        if constexpr (requires { lhs + rhs; }) {
+            return lhs + rhs;
+        } else if constexpr (requires { lhs.insert(lhs.end(), rhs.begin(), rhs.end()); }) {
+            lhs.insert(lhs.end(), rhs.begin(), rhs.end());
+            return std::forward<T>(lhs);
+        } else if constexpr (std::is_const_v<T> && requires(decayed_t t) { t.insert(lhs.end(), rhs.begin(), rhs.end()); }) {
+            decayed_t retval{std::forward<T>(lhs)};
+            retval.insert(lhs.end(), rhs.begin(), rhs.end());
+            return retval;
         }
-        if (m_op_type == OpType::MINIMUM)
-            return *std::min_element(vals.begin(), vals.end());
-        else
-            return *std::max_element(vals.begin(), vals.end());
         break;
     }
 
-    case OpType::RANDOM_PICK: {
-        // select one operand, evaluate it, return result
-        if (m_operands.empty())
-            return T{-1};   // should be INVALID_T of enum types
-        auto idx = RandInt(0, static_cast<int>(m_operands.size()) - 1);
-        auto& vr = *std::next(m_operands.begin(), idx);
-        if (!vr)
-            return T{-1};   // should be INVALID_T of enum types
-        return vr->Eval(context);
+    case MINUS: {
+        if constexpr (is_arith)
+            return lhs - rhs;
         break;
     }
 
-    case OpType::COMPARE_EQUAL:
-    case OpType::COMPARE_GREATER_THAN:
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL:
-    case OpType::COMPARE_LESS_THAN:
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL:
-    case OpType::COMPARE_NOT_EQUAL: {
-        T lhs_val = LHS()->Eval(context);
-        T rhs_val = RHS()->Eval(context);
-        if (m_operands.size() == 2)
-            return EvalImpl(m_op_type, lhs_val, rhs_val);
+    case TIMES: {
+        if constexpr (is_arith) {
+            return lhs * rhs;
 
-        bool test_result = false;
-        switch (m_op_type) {
-            case OpType::COMPARE_EQUAL:                 test_result = lhs_val == rhs_val;   break;
-            case OpType::COMPARE_GREATER_THAN:          test_result = lhs_val > rhs_val;    break;
-            case OpType::COMPARE_GREATER_THAN_OR_EQUAL: test_result = lhs_val >= rhs_val;   break;
-            case OpType::COMPARE_LESS_THAN:             test_result = lhs_val < rhs_val;    break;
-            case OpType::COMPARE_LESS_THAN_OR_EQUAL:    test_result = lhs_val <= rhs_val;   break;
-            case OpType::COMPARE_NOT_EQUAL:             test_result = lhs_val != rhs_val;   break;
-            default:    break;  // ??? do nothing, default to false
-        }
+        } else if constexpr (requires { lhs.empty(); }) {
+            // useful for writing a "Statistic If" expression with strings.
+            // An empty string indicates no matches, and non-empty string indicates matches, which is treated
+            // like a multiplicative identity operation, so just returns rhs.
+            return lhs.empty() ? std::forward<T>(lhs) : std::forward<T>(rhs);
 
-        if (m_operands.size() == 3) {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return T{0};
         } else {
-            if (test_result)
-                return m_operands[2]->Eval(context);
-            else
-                return m_operands[3]->Eval(context);
+            // useful for writing a "Statistic If" expression with arbitrary types.
+            // If returns T{0} for nothing or T{1} for something matching the
+            // sampling condition. This can be checked here by returning T() if
+            // the LHS operand is T() and just returning RHS() otherwise.
+            return (lhs == T()) ? std::forward<T>(lhs) : std::forward<T>(rhs);
         }
+        break;
+    }
+
+    case DIVIDE: {
+        if constexpr (is_arith) {
+            if (rhs == decayed_t{})
+                return decayed_t{0};
+            return lhs / rhs;
+        }
+        break;
+    }
+
+    case REMAINDER: {
+        if constexpr (is_arith) {
+            if (rhs == decayed_t{0})
+                return decayed_t{0};
+            const auto divisor = (rhs >= 0) ? rhs : -rhs;
+            const auto quotient = floor(lhs / divisor);
+            return lhs - (quotient*divisor);
+        }
+        break;
+    }
+
+    case EXPONENTIATE: {
+        if constexpr (is_arith)
+            return pow(lhs, rhs);
+        break;
+    }
+
+    case LOGARITHM: {
+        if constexpr (is_arith)
+            return log(lhs, rhs);
+        break;
+    }
+
+    case MAXIMUM: return std::max(std::forward<T>(lhs), std::forward<T>(rhs)); break;
+    case MINIMUM: return std::min(std::forward<T>(lhs), std::forward<T>(rhs)); break;
+
+    case SUBSTITUTION: {
+        if constexpr (is_string) {
+            if (lhs.empty())
+                return std::forward<T>(lhs);
+            else if (!std::is_constant_evaluated())
+                return DoFormat(std::forward<T>(lhs), std::forward<T>(rhs));
+        }
+    }
+
+    case COMPARE_EQUAL:
+    case COMPARE_GREATER_THAN:
+    case COMPARE_GREATER_THAN_OR_EQUAL:
+    case COMPARE_LESS_THAN:
+    case COMPARE_LESS_THAN_OR_EQUAL:
+    case COMPARE_NOT_EQUAL: {
+        const bool result = ValCompareOp(std::forward<T>(lhs), op_type, std::forward<T>(rhs));
+        if constexpr (is_arith || is_enum)
+            return result ? decayed_t{1} : decayed_t();
+        else if constexpr (is_string)
+            return result ? std::string{"true"} : std::string{};
+        break;
+    }
+    }
+
+    throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for two operands.");
+}
+
+template <typename T>
+constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int)
+    requires requires { {rand_int(0, 1)} -> std::same_as<int>; }
+{
+    using enum OpType;
+    using decayed_t = std::decay_t<T>;
+
+    switch (op_type) {
+    case RANDOM_UNIFORM: {
+        if constexpr (std::is_same_v<decayed_t, int>)
+            return rand_int(std::min(lhs, rhs), std::max(rhs, lhs));
+        else if constexpr (std::is_enum_v<decayed_t>)
+            return static_cast<decayed_t>(rand_int(static_cast<int>(std::min(lhs, rhs)), static_cast<int>(std::max(rhs, lhs))));
+        break;
+    }
+
+    case RANDOM_PICK: return (rand_int(0, 1) == 0) ? std::forward<T>(lhs) : std::forward<T>(rhs); break;
+
+    default: break;
+    }
+    return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs));
+}
+
+template <typename T>
+constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int, auto rand_double)
+    requires requires { {rand_int(0, 1)} -> std::same_as<int>; {rand_double(0.1, 1.0)} -> std::same_as<double>; }
+{
+    using enum OpType;
+    using decayed_t = std::decay_t<T>;
+
+    if constexpr (std::is_same_v<decayed_t, double>) {
+        if (op_type == RANDOM_UNIFORM)
+            return rand_double(std::min(lhs, rhs), std::max(rhs, lhs));
+    }
+    return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs), rand_int);
+}
+
+template <typename D>
+    requires (requires(D d) { d.begin(); d.end(); d.front(); } && !std::is_same_v<std::decay_t<D>, std::string>)
+constexpr auto OperateData(OpType op_type, D&& data)
+{
+    using enum OpType;
+    using T = std::decay_t<decltype(data.front())>;
+    constexpr bool is_enum = std::is_enum_v<T>;
+    constexpr bool is_arith = std::is_arithmetic_v<T>;
+    constexpr bool is_string = std::is_same_v<T, std::string>;
+    static_assert(is_arith || is_string || is_enum);
+
+    if (data.empty())
+        return T();
+
+    switch (op_type) {
+    case PLUS: {
+        if constexpr (is_arith || is_string) {
+#if defined(__cpp_lib_constexpr_numeric)
+            return std::accumulate(data.begin(), data.end(), T());
+#else
+            T accum{};
+            for (const auto& d : data)
+                accum += d;
+            return accum;
+#endif
+        }
+        break;
+    }
+    case TIMES: {
+        if constexpr (is_arith) {
+#if defined(__cpp_lib_constexpr_numeric)
+            return std::accumulate(data.begin(), data.end(), T(1), std::multiplies{});
+#else
+            T accum{};
+            for (const auto& d : data)
+                accum *= d;
+            return accum;
+#endif
+        }
+        break;
+    }
+    case MINIMUM: return *std::min_element(data.begin(), data.end()); break;
+    case MAXIMUM: return *std::max_element(data.begin(), data.end()); break;
+    default: break;
+    }
+
+    throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for data array.");
+}
+
+template <typename D>
+    requires (requires(D d) { d.size(); d[std::size_t{0}]; d.begin(); d.end(); d.front(); } &&
+              !std::is_same_v<std::decay_t<D>, std::string>)
+constexpr auto OperateData(OpType op_type, D&& data, auto rand_int)
+{
+    using T = std::decay_t<decltype(data.front())>;
+    constexpr bool is_enum = std::is_enum_v<T>;
+    constexpr bool is_arith = std::is_arithmetic_v<T>;
+    constexpr bool is_string = std::is_same_v<T, std::string>;
+    static_assert(is_arith || is_string || is_enum);
+
+    switch (op_type) {
+    case OpType::RANDOM_PICK: {
+        const auto data_sz = data.size();
+        const int pick_max = std::max(0, static_cast<int>(data_sz) - 1);
+        const std::size_t pick_idx = static_cast<std::size_t>(rand_int(0, pick_max));
+        const std::size_t idx = std::max<std::size_t>(0, std::min<std::size_t>(pick_max, pick_idx));
+        return std::forward<D>(data)[idx];
+        break;
+    }
+    default: return OperateData(op_type, std::forward<D>(data)); break;
+    }
+}
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const std::unique_ptr<ValueRef<T>>& lhs,
+                      const std::unique_ptr<ValueRef<T>>& rhs, const ScriptingContext& context)
+{ return OperateData(op_type, lhs ? lhs->Eval(context) : T(), rhs ? rhs->Eval(context) : T()); }
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const ValueRef<T>* lhs, const ValueRef<T>* rhs, const ScriptingContext& context)
+{ return OperateData(op_type, lhs ? lhs->Eval(context) : T(), rhs ? rhs->Eval(context) : T()); }
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const ValueRef<T>* lhs, const ValueRef<T>* rhs,
+                      const ScriptingContext& context, auto rand_int, auto rand_double)
+{
+    using enum OpType;
+
+    switch (op_type) {
+    case RANDOM_PICK: {
+        const bool picker = static_cast<bool>(rand_int(0, 1));
+        const auto& ref = picker ? rhs : lhs;
+        return ref ? ref->Eval(context) : T();
         break;
     }
 
     default:
+        return OperateData(op_type, lhs ? lhs->Eval(context) : T(),
+                           rhs ? rhs->Eval(context) : T(), rand_int, rand_double);
         break;
     }
+}
 
-    throw std::runtime_error("ValueRef::Operation<T>::EvalImpl evaluated with an unknown or invalid OpType.");
+template <typename T>
+auto OperateValueRefs(OpType op_type, const std::unique_ptr<ValueRef<T>>& lhs,
+                      const std::unique_ptr<ValueRef<T>>& rhs,
+                      const ScriptingContext& context, auto rand_int, auto rand_double)
+{ return OperateValueRefs(op_type, lhs.get(), rhs.get(), context, rand_int, rand_double); }
+
+namespace {
+    // evaulates ref[i], unless ref[i] is null or \a refs is too small, in which case
+    // returns a default value that is 1 or "true" if \a default_val is true, or otherwise 0 or ""
+    constexpr auto EvalIdxConstantRef(const auto& refs, std::size_t i, bool default_val = false) {
+        using T = std::decay_t<decltype(refs[i]->Eval())>;
+        if (refs.size() > i) {
+            const auto& ref{refs[i]};
+            if (!ref)
+                return T();
+            if (!ref->ConstantExpr())
+                throw std::runtime_error("can't evaluate non-constant Operation without a context");
+            return ref->Eval();
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return std::string{default_val ? "true" : ""};
+        } else {
+            return default_val ? T{1} : T();
+        }
+    };
+
+    constexpr auto EvalIdxRef(const ScriptingContext& context, const auto& refs,
+                              std::size_t i, bool default_val = false)
+    {
+        using T = std::decay_t<decltype(refs[i]->Eval())>;
+        if (refs.size() > i) {
+            const auto& ref{refs[i]};
+            return ref ? ref->Eval(context) : T();
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return std::string{default_val ? "true" : ""};
+        } else {
+            return default_val ? T{1} : T();
+        }
+    };
+}
+
+template <typename D>
+    requires requires(D d) { d.begin(); d.end(); d.empty(); d.front()->Eval(); d[0]->ConstantExpr(); }
+CONSTEXPR_VEC auto OperateConstantValueRefs(OpType op_type, D&& refs)
+{
+    using T = std::decay_t<decltype(refs.front()->Eval())>;
+    if (refs.empty())
+        return T();
+
+    using enum OpType;
+    switch (op_type) {
+    case COMPARE_EQUAL:
+    case COMPARE_GREATER_THAN:
+    case COMPARE_GREATER_THAN_OR_EQUAL:
+    case COMPARE_LESS_THAN:
+    case COMPARE_LESS_THAN_OR_EQUAL:
+    case COMPARE_NOT_EQUAL: {
+        return ValCompareOp(EvalIdxConstantRef(refs, 0), op_type, EvalIdxConstantRef(refs, 1)) ?
+            EvalIdxConstantRef(refs, 2, true) : EvalIdxConstantRef(refs, 3, false);
+        break;
+    }
+    default: {
+        std::vector<T> vals;
+        vals.reserve(refs.size());
+#if defined(_MSC_VER) && (_MSC_VER < 1939)
+        // internal compiler error workaround
+        for (auto& ref : refs)
+            vals.push_back((ref && ref->ConstantExpr()) ? ref->Eval() : T());
+#else
+        std::transform(refs.begin(), refs.end(), std::back_inserter(vals),
+                       [](const auto& ref) { return (ref && ref->ConstantExpr()) ? ref->Eval() : T(); });
+#endif
+        return OperateData(op_type, std::move(vals));
+    }
+    }
+}
+
+template <typename T>
+auto OperateValueRefs(OpType op_type, const std::vector<std::unique_ptr<ValueRef<T>>>& refs,
+                      const ScriptingContext& context, auto rand_int, auto rand_double)
+{
+    if (refs.empty())
+        return T();
+    const auto refs_sz = refs.size();
+
+    using enum OpType;
+    switch (op_type) {
+    case RANDOM_PICK: {
+        const int pick_max = std::max(0, static_cast<int>(refs_sz) - 1);
+        const std::size_t pick_idx = static_cast<std::size_t>(rand_int(0, pick_max));
+        const std::size_t idx = std::max<std::size_t>(0, std::min<std::size_t>(pick_max, pick_idx));
+        return EvalIdxRef(context, refs, idx);
+        break;
+    }
+    case COMPARE_EQUAL:
+    case COMPARE_GREATER_THAN:
+    case COMPARE_GREATER_THAN_OR_EQUAL:
+    case COMPARE_LESS_THAN:
+    case COMPARE_LESS_THAN_OR_EQUAL:
+    case COMPARE_NOT_EQUAL: {
+        return ValCompareOp(EvalIdxRef(context, refs, 0), op_type, EvalIdxRef(context, refs, 1)) ?
+            EvalIdxRef(context, refs, 2, true) : EvalIdxRef(context, refs, 3, false);
+        break;
+    }
+    default: {
+        std::vector<T> vals;
+        vals.reserve(refs_sz);
+#if defined(_MSC_VER) && (_MSC_VER < 1939)
+        // internal compiler error workaround
+        for (auto& ref : refs)
+            vals.push_back(ref ? ref->Eval(context) : T());
+#else
+        std::transform(refs.begin(), refs.end(), std::back_inserter(vals),
+                       [&context](const auto& ref) { return ref ? ref->Eval(context) : T(); });
+#endif
+        return OperateData(op_type, std::move(vals), rand_int);
+    }
+    }
+}
+
+template <typename T>
+T Operation<T>::EvalConstantExpr() const
+{
+    if (!this->m_constant_expr)
+        throw std::runtime_error("can't evaluate non-constant Operation without a context");
+    else if (m_operands.size() == 1)
+        return OperateData<T>(this->m_op_type, m_operands.front() ? m_operands.front()->Eval() : T());
+    else if (m_operands.size() == 2)
+        return OperateData<T>(this->m_op_type, m_operands.front() ? m_operands.front()->Eval() : T(),
+                              m_operands.back() ? m_operands.back()->Eval() : T());
+    else
+        return OperateConstantValueRefs(this->m_op_type, m_operands);
 }
 
 template <typename T>
 T Operation<T>::Eval(const ScriptingContext& context) const
 {
-    if (this->m_constant_expr)
+    if (this->m_constant_expr) {
         return m_cached_const_value;
-    return this->EvalImpl(context);
+    } else if (this->m_simple_increment) { // assumes simple increment test checks that refs aren't null
+        return OperateData<T>(this->m_op_type, LHS()->Eval(context), RHS()->Eval(context));
+    } else if (m_operands.size() == 1) {
+        return OperateData<T>(this->m_op_type, LHS() ? LHS()->Eval(context) : T());
+    } else if (m_operands.size() == 2) {
+        return OperateValueRefs<T>(this->m_op_type, LHS(), RHS(), context, vr_rand_int, vr_rand_double);
+    } else {
+        return OperateValueRefs<T>(this->m_op_type, m_operands, context, vr_rand_int, vr_rand_double);
+    }
 }
 
 template <typename T>
@@ -2035,7 +2365,7 @@ uint32_t Operation<T>::GetCheckSum() const
     uint32_t retval{0};
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
-    CheckSums::CheckSumCombine(retval, m_op_type);
+    CheckSums::CheckSumCombine(retval, this->m_op_type);
     CheckSums::CheckSumCombine(retval, m_operands);
     // derived member values should not be part of checksums
     // e.g. the invariants and m_cached_const_value
@@ -2043,35 +2373,39 @@ uint32_t Operation<T>::GetCheckSum() const
     return retval;
 }
 
-template <>
-FO_COMMON_API int Operation<int>::EvalImpl(OpType op_type, int lhs, int rhs);
-
-template <>
-FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
-
-template <>
-FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
-
 template <typename T>
 Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
-    ValueRef<T>(op_type != OpType::RANDOM_UNIFORM &&
-                op_type != OpType::RANDOM_PICK &&
-                op_type != OpType::NOOP &&
+    ValueRef<T>(op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
                 std::all_of(operands.begin(), operands.end(),
-                            [](const auto& operand) { return operand && operand->ConstantExpr(); })),
-    m_op_type(op_type),
+                            [](const auto& operand) noexcept { return operand && operand->ConstantExpr(); }),
+                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                std::all_of(operands.begin(), operands.end(),
+                            [](const auto& operand) noexcept { return operand && operand->RootCandidateInvariant(); }),
+                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                std::all_of(operands.begin(), operands.end(),
+                            [](const auto& operand) noexcept { return operand && operand->LocalCandidateInvariant(); }),
+                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                std::all_of(operands.begin(), operands.end(),
+                            [](const auto& operand) noexcept { return operand && operand->TargetInvariant(); }),
+                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                std::all_of(operands.begin(), operands.end(),
+                            [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
+                IsSimpleIncrement(op_type, operands),
+                op_type
+               ),
     m_operands(std::move(operands)),
-    m_cached_const_value(this->m_constant_expr ? this->EvalImpl(ScriptingContext{}) : T{})
+    m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
 {
-    if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) -> bool { return !op; }))
+    if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) noexcept -> bool { return !op; }))
         throw std::invalid_argument("Operation passed null operand");
-    InitInvariants();
+    if (this->m_op_type == OpType::INVALID_OP_TYPE)
+        throw std::invalid_argument("Operation has invalid operation type");
 }
 
 template <typename T>
 std::string Operation<T>::Description() const
 {
-    if (m_op_type == OpType::NEGATE) {
+    if (this->m_op_type == OpType::NEGATE) {
         if (auto rhs = dynamic_cast<const Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
             if (op_type == OpType::PLUS   || op_type == OpType::MINUS ||
@@ -2084,18 +2418,18 @@ std::string Operation<T>::Description() const
         }
     }
 
-    if (m_op_type == OpType::NOOP)
+    if (this->m_op_type == OpType::NOOP)
         return LHS()->Description();
-    if (m_op_type == OpType::ABS)
+    if (this->m_op_type == OpType::ABS)
         return "abs(" + LHS()->Description() + ")";
-    if (m_op_type == OpType::LOGARITHM)
+    if (this->m_op_type == OpType::LOGARITHM)
         return "log(" + LHS()->Description() + ")";
-    if (m_op_type == OpType::SINE)
+    if (this->m_op_type == OpType::SINE)
         return "sin(" + LHS()->Description() + ")";
-    if (m_op_type == OpType::COSINE)
+    if (this->m_op_type == OpType::COSINE)
         return "cos(" + LHS()->Description() + ")";
 
-    if (m_op_type == OpType::MINIMUM) {
+    if (this->m_op_type == OpType::MINIMUM) {
         std::string retval = "min(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2105,7 +2439,7 @@ std::string Operation<T>::Description() const
         retval += ")";
         return retval;
     }
-    if (m_op_type == OpType::MAXIMUM) {
+    if (this->m_op_type == OpType::MAXIMUM) {
         std::string retval = "max(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2116,10 +2450,10 @@ std::string Operation<T>::Description() const
         return retval;
     }
 
-    if (m_op_type == OpType::RANDOM_UNIFORM)
+    if (this->m_op_type == OpType::RANDOM_UNIFORM)
         return "RandomNumber(" + LHS()->Description() + ", " + RHS()->Description() + ")";
 
-    if (m_op_type == OpType::RANDOM_PICK) {
+    if (this->m_op_type == OpType::RANDOM_PICK) {
         std::string retval = "OneOf(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2130,13 +2464,13 @@ std::string Operation<T>::Description() const
         return retval;
     }
 
-    if (m_op_type == OpType::ROUND_NEAREST)
+    if (this->m_op_type == OpType::ROUND_NEAREST)
         return "round(" + LHS()->Description() + ")";
-    if (m_op_type == OpType::ROUND_UP)
+    if (this->m_op_type == OpType::ROUND_UP)
         return "ceil(" + LHS()->Description() + ")";
-    if (m_op_type == OpType::ROUND_DOWN)
+    if (this->m_op_type == OpType::ROUND_DOWN)
         return "floor(" + LHS()->Description() + ")";
-    if (m_op_type == OpType::SIGN)
+    if (this->m_op_type == OpType::SIGN)
         return "sign(" + LHS()->Description() + ")";
 
     bool parenthesize_lhs = false;
@@ -2144,37 +2478,35 @@ std::string Operation<T>::Description() const
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
-            (m_op_type == OpType::EXPONENTIATE &&
+            (this->m_op_type == OpType::EXPONENTIATE &&
              (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
               op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE ||
               op_type == OpType::REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
+            (((this->m_op_type == OpType::TIMES || this->m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
+              (op_type == OpType::PLUS          || op_type == OpType::MINUS)) ||
+             op_type == OpType::NEGATE)
            )
             parenthesize_lhs = true;
     }
     if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
-            (m_op_type == OpType::EXPONENTIATE &&
+            (this->m_op_type == OpType::EXPONENTIATE &&
              (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
               op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE ||
               op_type == OpType::REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
+            (((this->m_op_type == OpType::TIMES || this->m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
+              (op_type == OpType::PLUS          || op_type == OpType::MINUS)) ||
+             op_type == OpType::NEGATE)
            )
             parenthesize_rhs = true;
     }
 
-    std::string retval;
-    if (parenthesize_lhs)
-        retval += '(' + LHS()->Description() + ')';
-    else
-        retval += LHS()->Description();
+    std::string retval = parenthesize_lhs ? ('(' + LHS()->Description() + ')') : LHS()->Description();
 
-    switch (m_op_type) {
+    switch (this->m_op_type) {
     case OpType::PLUS:         retval += " + "; break;
     case OpType::MINUS:        retval += " - "; break;
     case OpType::TIMES:        retval += " * "; break;
@@ -2184,10 +2516,7 @@ std::string Operation<T>::Description() const
     default:                   retval += " ? "; break;
     }
 
-    if (parenthesize_rhs)
-        retval += '(' + RHS()->Description() + ')';
-    else
-        retval += RHS()->Description();
+    retval += parenthesize_rhs ? ('(' + RHS()->Description() + ')') : RHS()->Description();
 
     return retval;
 }
@@ -2195,20 +2524,21 @@ std::string Operation<T>::Description() const
 template <typename T>
 std::string Operation<T>::Dump(uint8_t ntabs) const
 {
-    if (m_op_type == OpType::NEGATE)
+    using enum OpType;
+    if (this->m_op_type == NEGATE)
         return "-(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::NOOP)
+    if (this->m_op_type == NOOP)
         return "(" + LHS()->Dump() + ")";
-    if (m_op_type == OpType::ABS)
+    if (this->m_op_type == ABS)
         return "abs(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::LOGARITHM)
+    if (this->m_op_type == LOGARITHM)
         return "log(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::SINE)
+    if (this->m_op_type == SINE)
         return "sin(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::COSINE)
+    if (this->m_op_type == COSINE)
         return "cos(" + LHS()->Dump(ntabs) + ")";
 
-    if (m_op_type == OpType::MINIMUM) {
+    if (this->m_op_type == MINIMUM) {
         std::string retval = "min(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2218,7 +2548,7 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
         retval += ")";
         return retval;
     }
-    if (m_op_type == OpType::MAXIMUM) {
+    if (this->m_op_type == MAXIMUM) {
         std::string retval = "max(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
@@ -2229,11 +2559,11 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
         return retval;
     }
 
-    if (m_op_type == OpType::RANDOM_UNIFORM)
+    if (this->m_op_type == RANDOM_UNIFORM)
         return "RandomNumber(" + LHS()->Dump(ntabs) + ", " + LHS()->Dump(ntabs) + ")";
 
-    if (m_op_type == OpType::RANDOM_PICK) {
-        std::string retval = "randompick(";
+    if (this->m_op_type == RANDOM_PICK) {
+        std::string retval = "OneOf(";
         for (auto it = m_operands.begin(); it != m_operands.end(); ++it) {
             if (it != m_operands.begin())
                 retval += ", ";
@@ -2243,23 +2573,23 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
         return retval;
     }
 
-    if (m_op_type == OpType::ROUND_NEAREST)
+    if (this->m_op_type == ROUND_NEAREST)
         return "round(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::ROUND_UP)
+    if (this->m_op_type == ROUND_UP)
         return "ceil(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::ROUND_DOWN)
+    if (this->m_op_type == ROUND_DOWN)
         return "floor(" + LHS()->Dump(ntabs) + ")";
-    if (m_op_type == OpType::SIGN)
+    if (this->m_op_type == SIGN)
         return "sign(" + LHS()->Dump(ntabs) + ")";
 
     bool parenthesize_whole = [this]() {
-        switch (m_op_type) {
-        case OpType::COMPARE_EQUAL: [[fallthrough]];
-        case OpType::COMPARE_GREATER_THAN: [[fallthrough]];
-        case OpType::COMPARE_GREATER_THAN_OR_EQUAL: [[fallthrough]];
-        case OpType::COMPARE_LESS_THAN: [[fallthrough]];
-        case OpType::COMPARE_LESS_THAN_OR_EQUAL: [[fallthrough]];
-        case OpType::COMPARE_NOT_EQUAL: return true; break;
+        switch (this->m_op_type) {
+        case COMPARE_EQUAL: [[fallthrough]];
+        case COMPARE_GREATER_THAN: [[fallthrough]];
+        case COMPARE_GREATER_THAN_OR_EQUAL: [[fallthrough]];
+        case COMPARE_LESS_THAN: [[fallthrough]];
+        case COMPARE_LESS_THAN_OR_EQUAL: [[fallthrough]];
+        case COMPARE_NOT_EQUAL: return true; break;
         default: return false;
         }
     }();
@@ -2268,57 +2598,53 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
     if (auto lhs = dynamic_cast<const Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
-            (m_op_type == OpType::EXPONENTIATE &&
-             (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES  || op_type == OpType::DIVIDE ||
-              op_type == OpType::PLUS         || op_type == OpType::MINUS  || op_type == OpType::NEGATE ||
-              op_type == OpType::REMAINDER)
+            (this->m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE || op_type == TIMES  || op_type == DIVIDE ||
+              op_type == PLUS         || op_type == MINUS  || op_type == NEGATE ||
+              op_type == REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
+            (((this->m_op_type == TIMES || this->m_op_type == DIVIDE || op_type == REMAINDER) &&
+              (op_type == PLUS          || op_type == MINUS)) ||
+             op_type == NEGATE)
            )
             parenthesize_lhs = true;
     }
     if (auto rhs = dynamic_cast<const Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
-            (m_op_type == OpType::EXPONENTIATE &&
-             (op_type == OpType::EXPONENTIATE || op_type == OpType::TIMES   || op_type == OpType::DIVIDE ||
-              op_type == OpType::PLUS         || op_type == OpType::MINUS   || op_type == OpType::NEGATE ||
-              op_type == OpType::REMAINDER)
+            (this->m_op_type == EXPONENTIATE &&
+             (op_type == EXPONENTIATE || op_type == TIMES   || op_type == DIVIDE ||
+              op_type == PLUS         || op_type == MINUS   || op_type == NEGATE ||
+              op_type == REMAINDER)
             ) ||
-            (((m_op_type == OpType::TIMES     || m_op_type == OpType::DIVIDE || op_type == OpType::REMAINDER) &&
-              (op_type == OpType::PLUS        || op_type == OpType::MINUS))  || op_type == OpType::NEGATE)
+            (((this->m_op_type == TIMES || this->m_op_type == DIVIDE || op_type == REMAINDER) &&
+              (op_type == PLUS          || op_type == MINUS))
+             || op_type == NEGATE)
            )
             parenthesize_rhs = true;
     }
 
     std::string retval = parenthesize_whole ? "(" : "";
-    if (parenthesize_lhs)
-        retval += '(' + LHS()->Dump(ntabs) + ')';
-    else
-        retval += LHS()->Dump(ntabs);
+    retval += parenthesize_lhs ? ('(' + LHS()->Dump(ntabs) + ')') : LHS()->Dump(ntabs);
 
-    switch (m_op_type) {
-    case OpType::PLUS:                          retval += " + "; break;
-    case OpType::MINUS:                         retval += " - "; break;
-    case OpType::TIMES:                         retval += " * "; break;
-    case OpType::DIVIDE:                        retval += " / "; break;
-    case OpType::REMAINDER:                     retval += " % "; break;
-    case OpType::EXPONENTIATE:                  retval += " ^ "; break;
-    case OpType::SUBSTITUTION:                  retval += " % "; break;
-    case OpType::COMPARE_EQUAL:                 retval += " == "; break;
-    case OpType::COMPARE_GREATER_THAN:          retval += " > "; break;
-    case OpType::COMPARE_GREATER_THAN_OR_EQUAL: retval += " >= "; break;
-    case OpType::COMPARE_LESS_THAN:             retval += " < "; break;
-    case OpType::COMPARE_LESS_THAN_OR_EQUAL:    retval += " <= "; break;
-    case OpType::COMPARE_NOT_EQUAL:             retval += " != "; break;
+    switch (this->m_op_type) {
+    case PLUS:                          retval += " + "; break;
+    case MINUS:                         retval += " - "; break;
+    case TIMES:                         retval += " * "; break;
+    case DIVIDE:                        retval += " / "; break;
+    case REMAINDER:                     retval += " % "; break;
+    case EXPONENTIATE:                  retval += " ^ "; break;
+    case SUBSTITUTION:                  retval += " % "; break;
+    case COMPARE_EQUAL:                 retval += " == "; break;
+    case COMPARE_GREATER_THAN:          retval += " > "; break;
+    case COMPARE_GREATER_THAN_OR_EQUAL: retval += " >= "; break;
+    case COMPARE_LESS_THAN:             retval += " < "; break;
+    case COMPARE_LESS_THAN_OR_EQUAL:    retval += " <= "; break;
+    case COMPARE_NOT_EQUAL:             retval += " != "; break;
     default: break;
     }
 
-    if (parenthesize_rhs)
-        retval += '(' + RHS()->Dump(ntabs) + ')';
-    else
-        retval += RHS()->Dump(ntabs);
+    retval += parenthesize_rhs ? ('(' + RHS()->Dump(ntabs) + ')') : RHS()->Dump(ntabs);
 
     retval += parenthesize_whole ? ")" : "";
 

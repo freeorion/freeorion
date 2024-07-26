@@ -19,6 +19,9 @@ using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
 using namespace Networking;
 
+#if BOOST_VERSION < 107600
+namespace boost::asio::ip { using port_type = uint_least16_t; }
+#endif
 
 namespace {
     DeclareThreadSafeLogger(network);
@@ -29,8 +32,9 @@ namespace {
 ServerNetworking::DiscoveryServer::DiscoveryServer(boost::asio::io_context& io_context) :
     m_socket(io_context)
 {
+    const auto disc_port = static_cast<boost::asio::ip::port_type>(Networking::DiscoveryPort());
     // use a dual stack (ipv6 + ipv4) socket
-    udp::endpoint discovery_endpoint(udp::v6(), Networking::DiscoveryPort());
+    udp::endpoint discovery_endpoint(udp::v6(), disc_port);
 
     if (GetOptionsDB().Get<bool>("singleplayer")) {
         // when hosting a single player game only accept connections from
@@ -46,7 +50,7 @@ ServerNetworking::DiscoveryServer::DiscoveryServer(boost::asio::io_context& io_c
     } catch (const std::exception &e) {
         ErrorLogger(network) << "DiscoveryServer cannot open IPv6 socket: " << e.what()
                                 << ". Fallback to IPv4";
-        discovery_endpoint = udp::endpoint(udp::v4(), Networking::DiscoveryPort());
+        discovery_endpoint = udp::endpoint(udp::v4(), disc_port);
         if (GetOptionsDB().Get<bool>("singleplayer"))
             discovery_endpoint.address(boost::asio::ip::address_v4::loopback());
 
@@ -769,7 +773,8 @@ void ServerNetworking::Init() {
     } catch (const std::exception &e) {
         ErrorLogger(network) << "Server cannot open IPv6 socket: " << e.what()
                              << ". Fallback to IPv4";
-        message_endpoint = tcp::endpoint(tcp::v4(), Networking::MessagePort());
+        const auto msg_port = static_cast<boost::asio::ip::port_type>(Networking::MessagePort());
+        message_endpoint = tcp::endpoint(tcp::v4(), msg_port);
         if (GetOptionsDB().Get<bool>("singleplayer"))
             message_endpoint.address(boost::asio::ip::address_v4::loopback());
 

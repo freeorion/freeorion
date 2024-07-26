@@ -141,7 +141,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     }
 
 
-    const auto copy_map = [](const auto& from, auto& to) {
+    static constexpr auto copy_map = [](const auto& from, auto& to) {
         for (auto& [id, ids] : from)
             to.emplace(std::piecewise_construct,
                        std::forward_as_tuple(id),
@@ -463,7 +463,7 @@ namespace {
             if (consumed < 1)
                 return;
 
-            meters.emplace(mt, std::move(meter));
+            meters.insert_or_assign(mt, std::move(meter));
 
             next += consumed;
             while (std::distance(next, buffer_end) > 0 && *next == ' ')

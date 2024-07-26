@@ -181,7 +181,8 @@ std::vector<float> Combat::WeaponDamageImpl(
     if (target_ships) {
         auto temp_ship = TempShipForDamageCalcs(source, context);
         ScriptingContext temp_ship_context{context, empire_object_vis, empire_object_visibility_turns,
-                                           source.get(), temp_ship.get()};
+                                           ScriptingContext::Source{}, source.get(),
+                                           ScriptingContext::Target{}, temp_ship.get()};
 
         return WeaponDamageCalcImpl(source, max, launch_fighters,
                                     target_ships, temp_ship_context);
@@ -190,7 +191,8 @@ std::vector<float> Combat::WeaponDamageImpl(
         // create temporary fighter to test targetting condition on...
         auto temp_fighter = TempFighterForDamageCalcs(source, context);
         ScriptingContext temp_fighter_context{context, empire_object_vis, empire_object_visibility_turns,
-                                              source.get(), temp_fighter.get()};
+                                              ScriptingContext::Source{}, source.get(),
+                                              ScriptingContext::Target{}, temp_fighter.get()};
 
         return WeaponDamageCalcImpl(source, max, launch_fighters,
                                     target_ships, temp_fighter_context);
@@ -214,7 +216,8 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
         {ship->Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
     auto temp_ship = TempShipForDamageCalcs(ship, context);
     ScriptingContext ship_target_context{context, empire_object_vis, empire_object_visibility_turns,
-                                         ship.get(), temp_ship.get()};
+                                         ScriptingContext::Source{}, ship.get(),
+                                         ScriptingContext::Target{}, temp_ship.get()};
 
     for (int bout = 1; bout <= target_bout; ++bout) {
         ship_target_context.combat_bout = bout;
@@ -251,22 +254,17 @@ int Combat::TotalFighterShots(const ScriptingContext& context, const Ship& ship,
 {
     // Iterate over context, but change bout number
     ScriptingContext mut_context{context};
-    int launch_capacity = static_cast<int>(ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_BAY, context.ContextUniverse()));
+    const int launch_capacity = static_cast<int>(ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_BAY, context.ContextUniverse()));
     int hangar_fighters = static_cast<int>(ship.SumCurrentPartMeterValuesForPartClass(MeterType::METER_CAPACITY, ShipPartClass::PC_FIGHTER_HANGAR, context.ContextUniverse()));
     int launched_fighters = 0;
     int shots_total = 0;
-    Condition::ObjectSet condition_matches;
 
     for (int bout = 1; bout <= GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS"); ++bout) {
         mut_context.combat_bout = bout;
-        int launch_this_bout = std::min(launch_capacity, hangar_fighters);
+        const int launch_this_bout = std::min(launch_capacity, hangar_fighters);
         int shots_this_bout = launched_fighters;
-        if (sampling_condition && launched_fighters > 0) {
-            // check if not shooting
-            condition_matches = sampling_condition->Eval(std::as_const(mut_context));
-            if (condition_matches.size() == 0)
-                shots_this_bout = 0;
-        }
+        if (sampling_condition && launched_fighters > 0 && !sampling_condition->EvalAny(mut_context))
+            shots_this_bout = 0;
         shots_total += shots_this_bout;
         launched_fighters += launch_this_bout;
         hangar_fighters -= launch_this_bout;

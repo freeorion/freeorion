@@ -71,5 +71,11 @@
     <ClCompile Include="..\..\test\parse\TestPythonParser.cpp">
       <Filter>Test\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\system\TestChecksum.cpp">
+      <Filter>Test\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\TestDefaultPythonParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

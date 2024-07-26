@@ -38,7 +38,7 @@ namespace parse::detail {
         complex_variable_rule<T> complex_expr;
         value_ref_rule<T> expr;
         reference_token_rule variable_scope_rule;
-        name_token_rule container_type_rule;
+        container_token_rule container_type_rule;
     };
 
     template <typename T>
@@ -97,7 +97,7 @@ namespace parse::detail {
             ;
 
         variable_scope_rule = variable_scope(tok);
-        container_type_rule = container_type(tok);
+        container_type_rule = container(tok);
         initialize_bound_variable_parser<T>(
             bound_variable_expr, unwrapped_bound_variable_expr,
             value_wrapped_bound_variable_expr, variable_name,

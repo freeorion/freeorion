@@ -52,34 +52,27 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
     if (&copied_object == this)
         return;
 
+    static constexpr Meter DEFAULT_METER;
+
     auto censored_meters = copied_object.CensoredMeters(vis);
     for (const auto type : copied_object.m_meters | range_keys) {
-        // get existing meter in this object, or create a default one
-        auto m_meter_it = m_meters.find(type);
-        bool meter_already_known = (m_meter_it != m_meters.end());
-        if (!meter_already_known)
-            m_meters[type]; // default initialize to (0, 0).  Alternative: = Meter(Meter::INVALID_VALUE, Meter::INVALID_VALUE);
-        Meter& this_meter = m_meters[type];
-
         // if there is an update to meter from censored meters, update this object's copy
         auto censored_it = censored_meters.find(type);
-        if (censored_it != censored_meters.end()) {
-            const Meter& copied_object_meter = censored_it->second;
+        const bool have_censored_meter = censored_it != censored_meters.end();
+        const Meter& copied_object_meter = have_censored_meter ? censored_it->second : DEFAULT_METER;
 
-            if (!meter_already_known) {
-                // have no previous info, so just use whatever is given
-                this_meter = copied_object_meter;
+        // get existing meter in this object, or insert a copy
+        auto [this_meter_it, inserted_new] = m_meters.try_emplace(type, copied_object_meter);
+        if (!have_censored_meter || inserted_new)
+            continue;
 
-            } else {
-                // don't want to override legit meter history with sentinel values used for insufficiently visible objects
-                if (copied_object_meter.Initial() != Meter::LARGE_VALUE ||
-                    copied_object_meter.Current() != Meter::LARGE_VALUE)
-                {
-                    // some new info available, so can overwrite only meter info
-                    this_meter = copied_object_meter;
-                }
-            }
-        }
+        // don't overwrite previously-known meter value history with sentinel values used for insufficiently visible objects
+        if (copied_object_meter == Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE})
+            continue;
+
+        // some new info available, so can overwrite only meter info
+        Meter& this_meter = this_meter_it->second;
+        this_meter = copied_object_meter;
     }
 
 
@@ -106,9 +99,6 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
         }
     }
 }
-
-void UniverseObject::Init()
-{ AddMeter(MeterType::METER_STEALTH); }
 
 int UniverseObject::AgeInTurns(int current_turn) const noexcept {
     if (m_created_on_turn == BEFORE_FIRST_TURN)
@@ -341,12 +331,11 @@ void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }
 
 UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
-    MeterMap retval;
-    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-        retval = m_meters;
-    } else if (vis == Visibility::VIS_BASIC_VISIBILITY && m_meters.contains(MeterType::METER_STEALTH))
-        retval.emplace(MeterType::METER_STEALTH, Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE});
-    return retval;
+    if (vis >= Visibility::VIS_PARTIAL_VISIBILITY)
+        return m_meters;
+    else if (vis == Visibility::VIS_BASIC_VISIBILITY && m_meters.contains(MeterType::METER_STEALTH))
+        return MeterMap{{MeterType::METER_STEALTH, Meter{Meter::LARGE_VALUE, Meter::LARGE_VALUE}}};
+    return {};
 }
 
 void UniverseObject::ResetTargetMaxUnpairedMeters() {
