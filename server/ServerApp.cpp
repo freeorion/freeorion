@@ -4538,9 +4538,13 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
+    const auto newly_created = [curturn{context.current_turn}](const UniverseObject& object) noexcept
+    { return curturn == object.CreationTurn(); };
+    auto newly_created_ids = m_universe.Objects().findIDs<UniverseObject>(newly_created);
+    if (!newly_created_ids.empty())
+        m_universe.ApplyMeterEffectsAndUpdateMeters(newly_created_ids, context, false);
 
-    TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
+    TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL NEWLY CREATED OBJECTS (CREATED BY EFFECTS OR PRODUCTION)";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
     // Planet depopulation, some in-C++ meter modifications

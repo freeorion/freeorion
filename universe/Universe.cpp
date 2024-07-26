@@ -579,13 +579,13 @@ void Universe::ApplyAllEffectsAndUpdateMeters(ScriptingContext& context, bool do
         object->ClampMeters();
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids, ScriptingContext& context,
+void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& target_ids, ScriptingContext& context,
                                                 bool do_accounting)
 {
     CheckContextVsThisUniverse(*this, context);
-    if (object_ids.empty())
+    if (target_ids.empty())
         return;
-    ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + std::to_string(object_ids.size()) + " objects");
+    ScopedTimer timer("Universe::ApplyMeterEffectsAndUpdateMeters on " + std::to_string(target_ids.size()) + " objects");
     if (do_accounting) {
         // override if disabled
         do_accounting = GetOptionsDB().Get<bool>("effects.accounting.enabled");
@@ -593,16 +593,16 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     std::map<int, Effect::SourcesEffectsTargetsAndCausesVec> source_effects_targets_causes;
-    GetEffectsAndTargets(source_effects_targets_causes, object_ids, context, true);
+    GetEffectsAndTargets(source_effects_targets_causes, target_ids, context, true);
 
-    auto objects = context.ContextObjects().find(object_ids);
+    auto objects = context.ContextObjects().find(target_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so meter
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (auto* object : context.ContextObjects().findRaw(object_ids)) {
+    for (auto* object : context.ContextObjects().findRaw(target_ids)) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
