@@ -73,6 +73,13 @@ namespace {
                         true, true,
                         GameRuleRanks::RULE_RESEED_PRNG_SERVER_RANK);
 
+	// XXX experimental feature should be removed before end of 2024
+        rules.Add<bool>(UserStringNop("RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION"),
+                        UserStringNop("RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION_DESC"),
+                        GameRuleCategories::GameRuleCategory::TEST,
+                        false, true,
+                        GameRuleRanks::RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION_RANK);
+
         rules.Add<bool>(UserStringNop("RULE_STARLANES_EVERYWHERE"),
                         UserStringNop("RULE_STARLANES_EVERYWHERE_DESC"),
                         GameRuleCategories::GameRuleCategory::TEST,

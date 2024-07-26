@@ -1153,6 +1153,12 @@ Random Reseeding
 RULE_RESEED_PRNG_SERVER_DESC
 With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results or if a player wants to 're-roll' the results of a battle or random effect when re-playing a turn, and not get the same results as a previous attempt.
 
+RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION
+No Preproduction Effects (Experimental)
+
+RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION
+Apply all effect evaluations after production of ships and buildings. Without this, all content effects are applied before production and the meter effects get reevaluated after production again in order to initialise newly build objects. This is an experimental feature and should either become the normal behavior or be removed before end of 2024.
+
 RULE_SHIP_SPEED_FACTOR
 Ship Speed Scaling
 

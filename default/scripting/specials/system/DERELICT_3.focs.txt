@@ -23,7 +23,9 @@ Special
                 ]
             ]
             effects = [
-                AddSpecial name = "DERELICT_SPECIAL3"
+                If condition = (GameRule name = "RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION" = 0 ) effects =
+                    AddSpecial name = "DERELICT_SPECIAL3"
+                    else = SetFuel value = Value + 100
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_FUEL"
                     label = "EFFECT_DERELICT_FUEL_LABEL"
@@ -56,6 +58,8 @@ Special
                 Source
                 Ship
             ]
+            // NOTE: the whole special could be removed if the are no before-production effects
+            activation = (GameRule name = "RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION" = 0 )
             effects = [
                 SetFuel value = Value + 100
                 RemoveSpecial name = "DERELICT_SPECIAL3"

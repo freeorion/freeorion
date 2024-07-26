@@ -33,6 +33,8 @@ namespace GameRuleRanks {
         RULE_ALL_SYSTEMS_VISIBLE_RANK = 131,
         RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_RANK = 132,
         RULE_STARLANES_EVERYWHERE_RANK = 135,
+	// EXPERIMENTAL FEATURES in "TEST" category
+        RULE_APPLY_ALL_EFFECTS_AFTER_PRODUCTION_RANK = 500,
 
         // "BALANCE_STABILITY" category (should there be a separate opinion and annexation group?)
         RULE_ANNEX_COST_OPINION_EXP_BASE_RANK = 5500,
