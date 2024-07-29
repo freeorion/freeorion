@@ -36,7 +36,7 @@ public:
 
     /** Plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a
         loops + 1 times otherwise. */
-    void PlayMusic(const boost::filesystem::path& path, int loops = 0);
+    void PlayMusic(const std::string& path, int loops = 0);
 
     /** Pauses music play, to be continued from the same position */
     void PauseMusic();
@@ -48,10 +48,10 @@ public:
     void StopMusic();
 
     /** Plays a sound file. */
-    void PlaySound(const boost::filesystem::path& path, bool is_ui_sound = false);
+    void PlaySound(const std::string& path, bool is_ui_sound = false);
 
     /** Frees the cached sound data associated with the filename. */
-    void FreeSound(const boost::filesystem::path& path);
+    void FreeSound(const std::string& path);
 
     /** Frees all cached sound data. */
     void FreeAllSounds();
@@ -217,7 +217,7 @@ void Sound::Enable()
 void Sound::Disable()
 { m_impl->Disable(); }
 
-void Sound::PlayMusic(const boost::filesystem::path& path, int loops)
+void Sound::PlayMusic(const std::string& path, int loops)
 { m_impl->PlayMusic(path, loops); }
 
 void Sound::PauseMusic()
@@ -229,10 +229,10 @@ void Sound::ResumeMusic()
 void Sound::StopMusic()
 { m_impl->StopMusic(); }
 
-void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound)
+void Sound::PlaySound(const std::string& path, bool is_ui_sound)
 { m_impl->PlaySound(path, is_ui_sound); }
 
-void Sound::FreeSound(const boost::filesystem::path& path)
+void Sound::FreeSound(const std::string& path)
 { m_impl->FreeSound(path); }
 
 void Sound::FreeAllSounds()
@@ -429,7 +429,12 @@ namespace {
 
 
         // not already buffered, so buffer it
-        auto file = fopen(filename.c_str(), "rb");
+#ifdef FREEORION_WIN32
+        auto fs_path = FilenameToPath(filename);
+        FILE* file = _wfopen(fs_path.c_str(), L"rb");
+#else
+        FILE* file = fopen(filename.c_str(), "rb");
+#endif
         if (!file)
             return {0, false};
 
@@ -475,27 +480,33 @@ namespace {
     }
 }
 
-void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
+void Sound::Impl::PlayMusic(const std::string& path, int loops) {
     if (!m_initialized)
         return;
     if (!alcGetCurrentContext())
         return;
 
-    std::string filename = PathToString(path);
     m_music_loops = 0;
 
     if (m_music_name.size() > 0)
         StopMusic();
 
-    FILE* file = fopen(filename.c_str(), "rb");
+#ifdef FREEORION_WIN32
+    auto fs_path = FilenameToPath(path);
+    FILE* file = _wfopen(fs_path.c_str(), L"rb");
+#else
+    FILE* file = fopen(path.c_str(), "rb");
+#endif
+
+
     if (!file) {
-        ErrorLogger() << "PlayMusic: unable to open file " << filename << " I/O Error. Aborting\n";
+        ErrorLogger() << "PlayMusic: unable to open file " << path << " I/O Error. Aborting\n";
         return;
     }
 
     int file_bad = FileIsBad(m_music_ogg_file, file);
     if (file_bad > 0) {
-        ErrorLogger() << "PlayMusic: unable to open file " << filename
+        ErrorLogger() << "PlayMusic: unable to open file " << path
                       << " possibly not a .ogg vorbis file. Aborting\n";
         m_music_name.clear();
         ov_clear(&m_music_ogg_file);
@@ -528,7 +539,7 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
                                      m_music_buffers[1], MUSIC_BUFFER_SIZE, m_music_loops);
         if (refill_failed == 0) {
             alSourceQueueBuffers(m_sources[0], 1, &m_music_buffers[1]);
-            m_music_name = filename; //playing something that takes up more than 2 buffers
+            m_music_name = path; //playing something that takes up more than 2 buffers
         } else {
             openal_error = alGetError();
             if (openal_error != AL_NONE)
@@ -574,7 +585,7 @@ void Sound::Impl::StopMusic() {
     alSourcei(m_sources[0], AL_BUFFER, 0);
 }
 
-void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound) {
+void Sound::Impl::PlaySound(const std::string& path, bool is_ui_sound) {
     if (!m_initialized || !GetOptionsDB().Get<bool>("audio.effects.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
@@ -583,8 +594,7 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
         return;
     }
 
-    std::string filename = PathToString(path);
-    auto [current_buffer, found_buffer] = GetSoundBuffer(m_sound_buffers, filename);
+    auto [current_buffer, found_buffer] = GetSoundBuffer(m_sound_buffers, path);
 
     if (found_buffer) {
         bool found_source = false;
@@ -613,12 +623,11 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
         ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(source_state);
 }
 
-void Sound::Impl::FreeSound(const boost::filesystem::path& path) {
+void Sound::Impl::FreeSound(const std::string& path) {
     if (!m_initialized)
         return;
-    std::string filename = PathToString(path);
 
-    auto it = m_sound_buffers.find(filename);
+    auto it = m_sound_buffers.find(path);
     if (it != m_sound_buffers.end()) {
         alDeleteBuffers(1, &(it->second));
         ALenum openal_error = alGetError();

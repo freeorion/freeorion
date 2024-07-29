@@ -4,8 +4,6 @@
 #include <stdexcept>
 #include <memory>
 
-namespace boost::filesystem { class path; }
-
 class Sound {
 public:
     /** Temporarily disables UI sound effects, saving the old state (on or off), for later restoration upon object
@@ -28,7 +26,7 @@ public:
 
     /** Plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a
         loops + 1 times otherwise. */
-    void PlayMusic(const boost::filesystem::path& path, int loops = 0);
+    void PlayMusic(const std::string& path, int loops = 0);
 
     /** Pauses music play, to be continued from the same position */
     void PauseMusic();
@@ -40,10 +38,10 @@ public:
     void StopMusic();
 
     /** Plays a sound file. */
-    void PlaySound(const boost::filesystem::path& path, bool is_ui_sound = false);
+    void PlaySound(const std::string& path, bool is_ui_sound = false);
 
     /** Frees the cached sound data associated with the filename. */
-    void FreeSound(const boost::filesystem::path& path);
+    void FreeSound(const std::string& path);
 
     /** Frees all cached sound data. */
     void FreeAllSounds();

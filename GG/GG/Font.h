@@ -735,6 +735,7 @@ private:
     FT_Error          GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
     void              CheckFace(FT_Face font, FT_Error error);
     void              Init(FT_Face& font);
+    void              Init();
 
     bool              GenerateGlyph(FT_Face font, uint32_t ch);
 
@@ -930,6 +931,10 @@ namespace detail {
         FTFaceWrapper() = default;
         ~FTFaceWrapper();
         FT_Face m_face = nullptr;
+#ifdef WIN32
+        // buffer in case we need to fall back to FT_New_Memory_Face, kept here so it is around until FT_Done_Face
+        std::vector<uint8_t> file_contents;
+#endif
     };
 }
 }
@@ -942,12 +947,7 @@ GG::Font::Font(std::string font_filename, unsigned int pts,
     m_pt_sz(pts),
     m_charsets(first, last)
 {
-    if (!m_font_filename.empty()) {
-        detail::FTFaceWrapper wrapper;
-        FT_Error error = GetFace(wrapper.m_face);
-        CheckFace(wrapper.m_face, error);
-        Init(wrapper.m_face);
-    }
+    Init();
 }
 
 template <typename CharSetIter>
