@@ -888,29 +888,14 @@ Font::RenderState::RenderState()
 }
 
 Font::RenderState::RenderState(Clr color)
-{ PushColor(color.r, color.g, color.b, color.a); }
-
-void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
-{
-    // The same color may end up being stored multiple times, but the cost of
-    // deduplication is greater than the cost of just letting it be so.
-    color_index_stack.push(static_cast<uint8_t>(used_colors.size()));
-    used_colors.emplace_back(r, g, b, a);
-}
-
-void Font::RenderState::PushColor(Clr clr)
-{ PushColor(clr.r, clr.g, clr.b, clr.a); }
+{ PushColor(color); }
 
 void Font::RenderState::PopColor()
 {
     // Never remove the initial color from the stack
-    if (color_index_stack.size() > 1)
-        color_index_stack.pop();
+    if (color_stack.size() > 1)
+        color_stack.pop();
 }
-
-Clr Font::RenderState::CurrentColor() const
-{ return used_colors[CurrentIndex()]; }
-
 
 ///////////////////////////////////////
 // class GG::Font::LineData::CharData
