@@ -391,6 +391,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const AuthRequest& msg) {
 
     auto password_dialog = Client().GetClientUI().GetPasswordEnterWnd();
     password_dialog->SetPlayerName(player_name);
+    password_dialog->ModalInit();
     Client().Register(password_dialog);
 
     return discard_event();
