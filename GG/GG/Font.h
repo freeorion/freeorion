@@ -464,25 +464,23 @@ public:
         int8_t super_sub_shift = 0;
 
         /** The stack of text color indexes (as set by previous tags). */
-        std::stack<uint8_t> color_index_stack;
-
-        /** All colors that have been used. **/
-        std::vector<Clr> used_colors;
+        std::stack<Clr> color_stack;
 
         /// Add color to stack and remember it has been used
-        void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a);
-        void PushColor(Clr clr);
+        void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a) {
+            // The same color may end up being stored multiple times, but the cost of
+            // deduplication is greater than the cost of just letting it be so.
+            color_stack.emplace(r, g, b, a);
+        }
+        void PushColor(Clr clr) { color_stack.push(std::move(clr)); };
 
         /// Return to the previous used color, or remain as default
         void PopColor();
 
-        /// Return the index of the current color in used_colors
-        int CurrentIndex() const noexcept { return color_index_stack.top(); }
-
-        Clr CurrentColor() const;
+        Clr CurrentColor() const noexcept { return color_stack.top(); }
 
         /// Return true if there are no more colors to pop.
-        bool ColorsEmpty() const noexcept { return color_index_stack.size() <= 1; }
+        bool ColorsEmpty() const noexcept { return color_stack.size() <= 1; }
     };
 
     /** \brief Holds precomputed glyph position information for rendering. */
