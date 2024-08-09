@@ -100,25 +100,29 @@ void PythonBase::Finalize() {
     }
 }
 
-void PythonBase::SetCurrentDir(const std::string dir) {
+void PythonBase::SetCurrentDir(const fs::path& dir) {
     if (!fs::exists(dir)) {
-        ErrorLogger() << "Tried setting current dir to non-existing dir: " << dir;
+        ErrorLogger() << "Tried setting current dir to non-existing dir: " << PathToString(dir);
         return;
     }
-    std::string script = "import os\n"
-    "os.chdir(r'" + dir + "')\n"
-    "print ('Python current directory set to', os.getcwd())";
-    exec(script.c_str(), *m_namespace, *m_namespace);
+    py::str script = "import os\n"
+        "os.chdir(r'";
+    script += dir.native();
+    script += "')\n"
+        "print ('Python current directory set to', os.getcwd())";
+    exec(script, *m_namespace, *m_namespace);
 }
 
-void PythonBase::AddToSysPath(const std::string dir) {
+void PythonBase::AddToSysPath(const fs::path& dir) {
     if (!fs::exists(dir)) {
-        ErrorLogger() << "Tried adding non-existing dir to sys.path: " << dir;
+        ErrorLogger() << "Tried adding non-existing dir to sys.path: " << PathToString(dir);
         return;
     }
-    std::string script = "import sys\n"
-        "sys.path.append(r'" + dir + "')";
-    exec(script.c_str(), *m_namespace, *m_namespace);
+    py::str script = "import sys\n"
+        "sys.path.append(r'";
+    script += dir.native();
+    script += "')";
+    exec(script, *m_namespace, *m_namespace);
 }
 
 void PythonBase::SetErrorModule(py::object& module)
@@ -149,8 +153,8 @@ std::vector<std::string> PythonBase::ErrorReport() {
     return err_list;
 }
 
-const std::string GetPythonDir()
-{ return GetResourceDir().string() + "/python"; }
+fs::path GetPythonDir()
+{ return GetResourceDir() / "python"; }
 
-const std::string GetPythonCommonDir()
+fs::path GetPythonCommonDir()
 { return GetPythonDir(); }

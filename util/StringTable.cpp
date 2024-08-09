@@ -146,7 +146,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
     bool read_success = ReadFile(path, file_contents);
     if (!read_success) {
         [[unlikely]]
-        ErrorLogger() << "StringTable::Load failed to read file at path: " << path.string();
+        ErrorLogger() << "StringTable::Load failed to read file at path: " << m_filename;
         //m_initialized intentionally left false
         return;
     }

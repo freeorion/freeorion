@@ -5,6 +5,7 @@
 #include "../python/CommonWrappers.h"
 
 #include "../util/Logger.h"
+#include "../util/Directories.h"
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
 
@@ -62,31 +63,34 @@ auto PythonServer::InitModules() -> bool
     // Confirm existence of the directory containing the universe generation
     // Python scripts and add it to Pythons sys.path to make sure Python will
     // find our scripts
-    if (!fs::exists(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't find folder containing universe generation scripts";
+    auto python_universe_generator_dir = GetPythonUniverseGeneratorDir();
+    if (!fs::exists(python_universe_generator_dir)) {
+        ErrorLogger() << "Can't find folder containing universe generation scripts: " << PathToString(python_universe_generator_dir);
         return false;
     }
-    AddToSysPath(GetPythonUniverseGeneratorDir());
+    AddToSysPath(python_universe_generator_dir);
 
     // Confirm existence of the directory containing the turn event Python
     // scripts and add it to Pythons sys.path to make sure Python will find
     // our scripts
-    if (!fs::exists(GetPythonTurnEventsDir())) {
-        ErrorLogger() << "Can't find folder containing turn events scripts";
+    auto python_turn_events_dir = GetPythonTurnEventsDir();
+    if (!fs::exists(python_turn_events_dir)) {
+        ErrorLogger() << "Can't find folder containing turn events scripts:" << PathToString(python_turn_events_dir);
         return false;
     }
-    AddToSysPath(GetPythonTurnEventsDir());
+    AddToSysPath(python_turn_events_dir);
 
     // import universe generator script file
     m_python_module_turn_events = py::import("turn_events");
 
     // Confirm existence of the directory containing the auth Python scripts
     // and add it to Pythons sys.path to make sure Python will find our scripts
-    if (!fs::exists(GetPythonAuthDir())) {
-        ErrorLogger() << "Can't find folder containing auth scripts";
+    auto python_auth_dir = GetPythonAuthDir();
+    if (!fs::exists(python_auth_dir)) {
+        ErrorLogger() << "Can't find folder containing auth scripts:" << PathToString(python_auth_dir);
         return false;
     }
-    AddToSysPath(GetPythonAuthDir());
+    AddToSysPath(python_auth_dir);
 
     // import auth script file
     m_python_module_auth = py::import("auth");
@@ -282,11 +286,12 @@ auto PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_d
     // Confirm existence of the directory containing the universe generation
     // Python scripts and add it to Pythons sys.path to make sure Python will
     // find our scripts
-    if (!fs::exists(GetPythonUniverseGeneratorDir())) {
-        ErrorLogger() << "Can't find folder containing universe generation scripts";
+    auto python_universe_generator_dir = GetPythonUniverseGeneratorDir();
+    if (!fs::exists(python_universe_generator_dir)) {
+        ErrorLogger() << "Can't find folder containing universe generation scripts: " << PathToString(python_universe_generator_dir);
         return false;
     }
-    AddToSysPath(GetPythonUniverseGeneratorDir());
+    AddToSysPath(python_universe_generator_dir);
 
     // import universe generator script file
     m_python_module_universe_generator = py::import("universe_generator");
@@ -338,14 +343,14 @@ auto PythonServer::AsyncIOTick() -> bool
     return true;
 }
 
-auto GetPythonUniverseGeneratorDir() -> const std::string
-{ return GetPythonDir() + "/universe_generation"; }
+auto GetPythonUniverseGeneratorDir() -> fs::path
+{ return GetPythonDir() / "universe_generation"; }
 
-auto GetPythonTurnEventsDir() -> const std::string
-{ return GetPythonDir() + "/turn_events"; }
+auto GetPythonTurnEventsDir() -> fs::path
+{ return GetPythonDir() / "turn_events"; }
 
-auto GetPythonAuthDir() -> const std::string
-{ return GetPythonDir() + "/auth"; }
+auto GetPythonAuthDir() -> fs::path
+{ return GetPythonDir() / "auth"; }
 
-auto GetPythonChatDir() -> const std::string
-{ return GetPythonDir() + "/chat"; }
+auto GetPythonChatDir() -> fs::path
+{ return GetPythonDir() / "chat"; }

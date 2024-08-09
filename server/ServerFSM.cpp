@@ -192,7 +192,7 @@ namespace {
 
         std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % current_turn % datetime_str % extension);
         boost::filesystem::path save_path(autosave_dir_path / save_filename);
-        return save_path.string();
+        return PathToString(save_path);
     }
 
     bool IsMultiplayerSaveFile(const boost::filesystem::path& path)
@@ -1836,7 +1836,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             if (!m_lobby_data->new_game) {
                 // Load game ...
-                std::string save_filename = (GetServerSaveDir() / m_lobby_data->save_game).string();
+                std::string save_filename = PathToString((GetServerSaveDir() / m_lobby_data->save_game));
 
                 try {
                     LoadGame(save_filename,             *m_server_save_game_data,
