@@ -5,7 +5,44 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 
+#ifdef FREEORION_WIN32
+#ifndef NOMINMAX
+#  define NOMINMAX
+#endif
+#include <windows.h>
+#endif
+
 namespace py = boost::python;
+
+
+inline wchar_t* GetFilePath(const boost::filesystem::path& path)
+{
+#if defined(FREEORION_WIN32)
+    const std::wstring_view native_path = path.native();
+    wchar_t* py_path = (wchar_t*)PyMem_RawCalloc(native_path.size() + 1, sizeof(wchar_t));
+    native_path.copy(py_path, native_path.size());
+    py_path[native_path.size()] = L'\0';
+    return py_path;
+#else
+    return Py_DecodeLocale(path.string().c_str(), nullptr);
+#endif
+}
+
+inline auto GetLoggableString(const wchar_t* const original)
+{
+#if defined(FREEORION_WIN32)
+    const std::wstring_view view(original);
+    const size_t original_size = view.size(); // passing -1 would compute size for null terminated string, but would include the null
+    int utf8_size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, original, original_size, nullptr, 0, nullptr, nullptr);
+    std::string utf8_string(utf8_size, '\0');
+    if (utf8_size > 0) {
+        WideCharToMultiByte(CP_UTF8, 0, original, original_size, utf8_string.data(), utf8_size, nullptr, nullptr);
+    }
+    return utf8_string;
+#else
+    return original;
+#endif
+}
 
 PythonCommon::~PythonCommon()
 { Finalize(); }
@@ -21,14 +58,16 @@ bool PythonCommon::Initialize() {
         // There have been recurring issues on Windows and OSX to get FO to use the
         // Python framework shipped with the app (instead of falling back on the ones
         // provided by the system). These API calls have been added in an attempt to
-        // solve the problems. Not sure if they are really required, but better save
+        // solve the problems. Not sure if they are really required, but better safe
         // than sorry... ;)
-        m_home_dir = Py_DecodeLocale(GetPythonHome().string().c_str(), nullptr);
+
+        m_home_dir = GetFilePath(GetPythonHome());
         Py_SetPythonHome(m_home_dir);
-        DebugLogger() << "Python home set to " << Py_GetPythonHome();
-        m_program_name = Py_DecodeLocale((GetPythonHome() / "Python").string().c_str(), nullptr);
+        DebugLogger() << "Python home set to " << GetLoggableString(Py_GetPythonHome());
+
+        m_program_name = GetFilePath(GetPythonHome() / "Python");
         Py_SetProgramName(m_program_name);
-        DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
+        DebugLogger() << "Python program name set to " << GetLoggableString(Py_GetProgramName());
 #endif
 
 #if defined(FREEORION_ANDROID)
@@ -41,9 +80,10 @@ bool PythonCommon::Initialize() {
         // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
         DebugLogger() << "Python initialized";
+        DebugLogger() << "Python program: " << GetLoggableString(Py_GetProgramFullPath());
         DebugLogger() << "Python version: " << Py_GetVersion();
-        DebugLogger() << "Python prefix: " << Py_GetPrefix();
-        DebugLogger() << "Python module search path: " << Py_GetPath();
+        DebugLogger() << "Python prefix: " << GetLoggableString(Py_GetPrefix());
+        DebugLogger() << "Python module search path: " << GetLoggableString(Py_GetPath());
     }
     catch (...) {
         ErrorLogger() << "Unable to initialize Python interpreter";
