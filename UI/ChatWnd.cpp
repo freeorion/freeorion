@@ -49,7 +49,7 @@ namespace {
         auto formatter = FlexibleFormat(key);
 
         std::size_t arg = 1;
-        for (auto submatch : match.nested_results())
+        for (const auto& submatch : match.nested_results())
             formatter.bind_arg(arg++, submatch.str());
 
         return formatter.str();
@@ -111,9 +111,7 @@ MessageWndEdit::MessageWndEdit() :
     CUIEdit("")
 {}
 
-void MessageWndEdit::KeyPress(GG::Key key, uint32_t key_code_point,
-                              GG::Flags<GG::ModKey> mod_keys)
-{
+void MessageWndEdit::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     switch (key) {
     case GG::Key::GGK_RETURN:
     case GG::Key::GGK_KP_ENTER:
@@ -373,13 +371,16 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
 {
     std::string filtered_message = StringtableTextSubstitute(text);
     std::string wrapped_text = RgbaTag(text_color);
-    const std::string&& formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
-    if (utf8::is_valid(formatted_timestamp.begin(), formatted_timestamp.end()))
-        wrapped_text.append(formatted_timestamp);
+    {
+        const auto formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
+        if (utf8::is_valid(formatted_timestamp.begin(), formatted_timestamp.end()))
+            wrapped_text.append(formatted_timestamp);
+    }
     if (player_name.empty()) {
         wrapped_text.append(filtered_message).append("</rgba>");
     } else {
         wrapped_text.append(player_name);
+
         if (pm)
             wrapped_text.append(UserString("MESSAGES_WHISPER"));
         wrapped_text.append(": ").append(filtered_message).append("</rgba>");
@@ -390,21 +391,19 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
                   << "  timestamp text: " << ClientUI::FormatTimestamp(timestamp)
                   << "  wrapped text: " << wrapped_text;
 
-    *m_display += wrapped_text.append("\n");
+    wrapped_text.append("\n");
+
+    *m_display += wrapped_text;
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 
-    // if client empire is target of message, show message window
-    const ClientApp* app = ClientApp::GetApp();
-    if (!app) {
-        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
-        return;
-    }
-    // only show and flash message window if other player sent message
-    const auto& players = app->Players();
-    const auto it = players.find(app->PlayerID());
-    if (it == players.end() || it->second.name != player_name) {
-        Flash();
-        Show();
+    if (const ClientApp* app = ClientApp::GetApp()) {
+        // if client empire is target of message, show message window
+        const auto& players = app->Players();
+        const auto it = players.find(app->PlayerID());
+        if (it == players.end() || it->second.name != player_name) {
+            Flash();
+            Show();
+        }
     }
 }
 
