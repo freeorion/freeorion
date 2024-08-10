@@ -181,20 +181,21 @@ namespace {
         FT_Library m_library = nullptr;
     } g_library;
 
-    struct PushSubmatchOntoStackP
+    struct SetPreformattedIfPREP
     {
         typedef void result_type;
-        void operator()(const std::string* str,
-                        std::stack<Font::Substring>& tag_stack,
-                        bool& ignore_tags,
-                        const boost::xpressive::ssub_match& sub) const
+
+        void operator()(const std::string* str, const Font::Substring::IterPair& tag_match_iter_pair,
+                        bool& is_preformatted, bool set_to_value) const
         {
-            tag_stack.emplace(*str, sub);
-            if (tag_stack.top() == Font::PRE_TAG)
-                ignore_tags = true;
+            if (str) {
+                const Font::Substring tag_ss(*str, tag_match_iter_pair);
+                if (tag_ss == Font::PRE_TAG)
+                    is_preformatted = set_to_value;
+            }
         }
     };
-    const boost::xpressive::function<PushSubmatchOntoStackP>::type PushP = {{}};
+    const boost::xpressive::function<SetPreformattedIfPREP>::type SetPreformattedIfPRE = {{}};
 
     constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
     const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
@@ -456,7 +457,7 @@ namespace {
     template <typename TagHandlerT>
     class CompiledRegex {
     public:
-        CompiledRegex(const TagHandlerT& tag_handler, bool strip_unpaired_tags) :
+        CompiledRegex(const TagHandlerT& tag_handler) :
             m_tag_handler(tag_handler)
         {
             // Synonyms for s1 thru s5 sub matches
@@ -476,13 +477,9 @@ namespace {
             static const xpr::sregex TAG_PARAM =
                 -+~xpr::set[xpr::_s | '<'];
 
-            //+_w one or more greed word chars,  () group no capture,  [] semantic operation
-            const xpr::sregex OPEN_TAG_NAME =
+            //+_w one or more greedy word chars,  () group no capture,  [] semantic operation
+            const xpr::sregex TAG_NAME =
                 (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
-
-            // (+_w) one or more greedy word check matches stack
-            const xpr::sregex CLOSE_TAG_NAME =
-                (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesTopOfStack, this, _1))];
 
             // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
             // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
@@ -493,35 +490,29 @@ namespace {
             static const xpr::sregex TEXT =
                 ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
 
-            if (!strip_unpaired_tags) {
-                m_EVERYTHING =
-                    ('<' >> (tag_name_tag = OPEN_TAG_NAME)           // < followed by TAG_NAME
-                     >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)  // repeat 0 to 9 a single blank followed
-                                                                     // by TAG_PARAM
-                     >> (open_bracket_tag.proto_base() = '>'))       // s1. close tag and push operation
-                    [PushP(xpr::ref(m_text), xpr::ref(m_tag_stack), xpr::ref(m_ignore_tags), tag_name_tag)] |
-                    ("</" >> (tag_name_tag = CLOSE_TAG_NAME) >> (close_bracket_tag.proto_base() = '>')) |
-                    (whitespace_tag = WHITESPACE) |
-                    (text_tag = TEXT);
-            } else {
-                // don't care about matching with tag stack when
-                // matching close tags, or updating the stack when
-                // matching open tags
-                m_EVERYTHING =
-                    ('<' >> OPEN_TAG_NAME >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM) >> '>') |
-                    ("</" >> OPEN_TAG_NAME >> '>') |
-                    (whitespace_tag = WHITESPACE) |
-                    (text_tag = TEXT);
-            }
+            m_EVERYTHING =
+                ('<'                                                                    // < open tag
+                 >> (tag_name_tag = TAG_NAME)                                           // TAG_NAME 
+                    [xpr::check(boost::bind(&CompiledRegex::NotPreformatted, this, _1))]// unless in preformatted mode
+                 >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)                         // repeat 0 to 9 times: blank followed by TAG_PARAM
+                 >> (open_bracket_tag.proto_base() = '>')                               // > close tag
+                    [SetPreformattedIfPRE(xpr::ref(m_text), tag_name_tag, xpr::ref(m_preformatted), true)]
+                ) |
+
+                ("</"                                                                           // </ open tag with slash
+                 >> (tag_name_tag = TAG_NAME)                                                   // TAG_NAME
+                    [xpr::check(boost::bind(&CompiledRegex::NotPreformattedOrIsPre, this, _1))] // unless in preformatted mode or unless tag is </pre>
+                 >> (close_bracket_tag.proto_base() = '>')                                      // > close tag
+                    [SetPreformattedIfPRE(xpr::ref(m_text), tag_name_tag, xpr::ref(m_preformatted), false)]
+                ) |
+
+                (whitespace_tag = WHITESPACE) |
+
+                (text_tag = TEXT);
         }
 
-        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags)
-            noexcept(noexcept(std::stack<Font::Substring>{}))
+        xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) noexcept
         {
-            if (!m_tag_stack.empty()) {
-                std::stack<Font::Substring> empty_stack;
-                std::swap(m_tag_stack, empty_stack);
-            }
             m_text = &new_text;
             m_ignore_tags = ignore_tags;
             return m_EVERYTHING;
@@ -531,22 +522,16 @@ namespace {
         bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) const
         { return !m_ignore_tags && m_tag_handler.IsKnown(sub.str()); }
 
-        bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) noexcept {
-            bool retval = !m_tag_stack.empty() && m_tag_stack.top() == sub;
-            if (retval) {
-                m_tag_stack.pop();
-                if (m_tag_stack.empty() || m_tag_stack.top() != Font::PRE_TAG)
-                    m_ignore_tags = false;
-            }
-            return retval;
-        }
+        bool NotPreformatted(const boost::xpressive::ssub_match&) const noexcept
+        { return !m_preformatted; }
+
+        bool NotPreformattedOrIsPre(const boost::xpressive::ssub_match& sub) const
+        { return !m_preformatted || sub.str() == Font::PRE_TAG; }
 
         const std::string* m_text = nullptr;
         const TagHandlerT& m_tag_handler;
         bool m_ignore_tags = false;
-
-        // m_tag_stack is used to track XML opening/closing tags.
-        std::stack<Font::Substring> m_tag_stack;
+        bool m_preformatted = false;
 
         // The combined regular expression.
         xpr::sregex m_EVERYTHING;
@@ -558,8 +543,7 @@ namespace {
     class TagHandler {
     public:
         TagHandler() :
-            m_regex_w_tags(*this, false),
-            m_regex_w_tags_skipping_unmatched(*this, true)
+            m_regex_w_tags(*this)
         {}
 
         /** Add a tag to the set of known tags.*/
@@ -578,13 +562,8 @@ namespace {
 
         // Return a regex bound to \p text using the currently known
         // tags.  If required \p ignore_tags and/or \p strip_unpaired_tags.
-        xpr::sregex& Regex(const std::string& text, bool ignore_tags, bool strip_unpaired_tags = false)
-        {
-            if (!strip_unpaired_tags)
-                return m_regex_w_tags.BindRegexToText(text, ignore_tags);
-            else
-                return m_regex_w_tags_skipping_unmatched.BindRegexToText(text, ignore_tags);
-        }
+        xpr::sregex& Regex(const std::string& text, bool ignore_tags)
+        { return m_regex_w_tags.BindRegexToText(text, ignore_tags); }
 
     private:
         // set of tags known to the handler
@@ -594,11 +573,7 @@ namespace {
 
         std::vector<std::string_view> m_custom_tags;
 
-        // Compiled regular expression including tag stack
         CompiledRegex<TagHandler> m_regex_w_tags;
-
-        // Compiled regular expression using tags but skipping unmatched tags.
-        CompiledRegex<TagHandler> m_regex_w_tags_skipping_unmatched;
     };
 
     TagHandler tag_handler{};
@@ -1277,11 +1252,11 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
 void Font::ProcessTags(const std::vector<LineData>& line_data, RenderState& render_state)
 { ProcessTagsBefore(line_data, render_state, std::numeric_limits<std::size_t>::max(), std::numeric_limits<CPSize>::max()); }
 
-std::string Font::StripTags(std::string_view text, bool strip_unpaired_tags)
+std::string Font::StripTags(std::string_view text)
 {
     using namespace boost::xpressive;
     std::string text_str{text}; // temporary until tag_handler.Regex returns a cregex
-    auto& regex = tag_handler.Regex(text_str, false, strip_unpaired_tags);
+    auto& regex = tag_handler.Regex(text_str, false);
 
     std::string retval;
     retval.reserve(text.size());
@@ -1403,6 +1378,14 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     std::vector<TextElement> text_elements;
 
     using namespace boost::xpressive;
+#if defined(__cpp_using_enum)
+    using enum TextElement::TextElementType;
+#else
+    static constexpr auto OPEN_TAG = TextElement::TextElementType::OPEN_TAG;
+    static constexpr auto CLOSE_TAG = TextElement::TextElementType::CLOSE_TAG;
+    static constexpr auto WHITESPACE = TextElement::TextElementType::WHITESPACE;
+    static constexpr auto NEWLINE = TextElement::TextElementType::NEWLINE;
+#endif
 
     if (text.empty())
         return text_elements;
@@ -1416,14 +1399,14 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     const sregex_iterator end_it;
     while (it != end_it)
     {
-        // Consolidate adjacent blocks of text.  If adjacent found substrings are all text, merge
-        // them into a single Substring.
+        // Consolidate adjacent blocks of text.
+        // If adjacent found substrings are all text, merge them into a single Substring.
         bool need_increment = true;
         Substring combined_text;
         sub_match<std::string::const_iterator> const* text_match;
-        while (it != end_it
-               && (text_match = &(*it)[text_tag_idx])
-               && text_match->matched)
+        while (it != end_it &&
+               (text_match = &(*it)[text_tag_idx]) &&
+               text_match->matched)
         {
             need_increment = false;
             if (combined_text.empty())
@@ -1433,55 +1416,48 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
             ++it;
         }
 
-        // If the element is not a text element then it must be an open tag, a close tag or whitespace.
-        if (combined_text.empty()) {
-            const auto& it_elem = *it;
+        const auto& it_elem = *it;
 
-            if (it_elem[open_bracket_tag_idx].matched) {
-                // Open XML tag.
-                Substring text_substr{text, it_elem[full_regex_tag_idx]};
-                Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
+        if (!combined_text.empty()) {
+            text_elements.emplace_back(combined_text); // Basic text element.
 
-                // Check open tags for submatches which are parameters.  For example, a color tag
-                // might have RGB parameters.
-                const auto& nested_results{it_elem.nested_results()};
-                std::vector<Substring> params;
-                if (1 < nested_results.size()) {
-                    params.reserve(nested_results.size() - 1);
-                    for (auto nested_it = std::next(nested_results.begin());
-                         nested_it != nested_results.end(); ++nested_it)
-                    {
-                        const auto& nested_elem = *nested_it;
-                        params.emplace_back(text, nested_elem[full_regex_tag_idx]);
-                    }
+        } else if (it_elem[open_bracket_tag_idx].matched) {
+            // Open XML tag.
+            Substring text_substr{text, it_elem[full_regex_tag_idx]};
+            Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
+
+            // Check open tags for submatches which are parameters.
+            // For example, a color tag might have RGB parameters.
+            const auto& nested_results{it_elem.nested_results()};
+            std::vector<Substring> params;
+            if (1 < nested_results.size()) {
+                params.reserve(nested_results.size() - 1);
+                for (auto nested_it = std::next(nested_results.begin()); nested_it != nested_results.end(); ++nested_it)
+                {
+                    const auto& nested_elem = *nested_it;
+                    params.emplace_back(text, nested_elem[full_regex_tag_idx]);
                 }
-
-                text_elements.emplace_back(text_substr, tag_name_substr, std::move(params),
-                                           Font::TextElement::TextElementType::OPEN_TAG);
-
-            } else if (it_elem[close_bracket_tag_idx].matched) {
-                // Close XML tag
-                Substring text_substr{text, it_elem[full_regex_tag_idx]};
-                Substring tag_substr{text, it_elem[tag_name_tag_idx]};
-                text_elements.emplace_back(text_substr, tag_substr,
-                                           Font::TextElement::TextElementType::CLOSE_TAG);
-
-            } else if (it_elem[whitespace_tag_idx].matched) {
-                // Whitespace element
-                Substring text_substr{text, it_elem[whitespace_tag_idx]};
-                const auto& ws_elem = text_elements.emplace_back(
-                    text_substr, Font::TextElement::TextElementType::WHITESPACE);
-                const char last_char = ws_elem.text.empty() ? static_cast<char>(0) : *std::prev(ws_elem.text.end());
-
-                // If the last character of a whitespace element is a line ending then create a
-                // newline TextElement.
-                if (last_char == '\n' || last_char == '\f' || last_char == '\r')
-                    text_elements.emplace_back(Font::TextElement::TextElementType::NEWLINE);
             }
 
-        // Basic text element.
-        } else {
-            text_elements.emplace_back(combined_text);
+            text_elements.emplace_back(text_substr, tag_name_substr, std::move(params), OPEN_TAG);
+
+        } else if (it_elem[close_bracket_tag_idx].matched) {
+            // Close XML tag
+            Substring text_substr{text, it_elem[full_regex_tag_idx]};
+            Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
+
+            text_elements.emplace_back(text_substr, tag_name_substr, CLOSE_TAG);
+
+        } else if (it_elem[whitespace_tag_idx].matched) {
+            // Whitespace element
+            Substring text_substr{text, it_elem[full_regex_tag_idx]};
+            const auto& ws_elem = text_elements.emplace_back(text_substr, WHITESPACE);
+            const char last_char = ws_elem.text.empty() ? static_cast<char>(0) : *std::prev(ws_elem.text.end());
+
+            // If the last character of a whitespace element is a line ending then create a
+            // newline TextElement.
+            if (last_char == '\n' || last_char == '\f' || last_char == '\r')
+                text_elements.emplace_back(NEWLINE);
         }
 
         if (need_increment)

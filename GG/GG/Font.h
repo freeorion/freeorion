@@ -700,7 +700,7 @@ public:
     static void RegisterKnownTags(std::vector<std::string_view> tags);
 
     /** Returns the input \a text, stripped of any formatting tags. */
-    static std::string StripTags(std::string_view text, bool strip_unpaired_tags = true);
+    static std::string StripTags(std::string_view text);
 
     /** The base class for Font exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
