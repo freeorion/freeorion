@@ -699,16 +699,8 @@ public:
         "<foo [arg1 [arg2 ...]]>", and "</foo>" as tags. */
     static void RegisterKnownTags(std::vector<std::string_view> tags);
 
-    /** Removes \a tag from the known tag list.  Does not remove the built in
-        tags: \<i>, \<u>, \<rgba r g b a>, and \<pre>. */
-    static void RemoveKnownTag(std::string_view tag);
-
-    /** Removes all tags from the known tag list.  Does not remove the built
-        in tags: \<i>, \<u>, \<rgba r g b a>, and \<pre>. */
-    static void ClearKnownTags();
-
     /** Returns the input \a text, stripped of any formatting tags. */
-    static std::string StripTags(std::string_view text);
+    static std::string StripTags(std::string_view text, bool strip_unpaired_tags = true);
 
     /** The base class for Font exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

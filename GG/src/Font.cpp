@@ -390,8 +390,7 @@ CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
     return retval;
 }
 
-StrSize GG::StringIndexOf(std::size_t line, CPSize index,
-                          const std::vector<Font::LineData>& line_data)
+StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
 {
     StrSize retval(S0);
     if (line_data.size() <= line) {
@@ -420,11 +419,9 @@ StrSize GG::StringIndexOf(std::size_t line, CPSize index,
     return retval;
 }
 
-std::pair<std::size_t, CPSize> GG::LinePositionOf(
-    CPSize index, const std::vector<Font::LineData>& line_data)
+std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data)
 {
-    std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(),
-                                          INVALID_CP_SIZE);
+    std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE);
     for (std::size_t i = 0; i < line_data.size(); ++i) {
         const auto& char_data = line_data[i].char_data;
         if (!char_data.empty() &&
@@ -531,7 +528,7 @@ namespace {
         }
 
     private:
-        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub)
+        bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) const
         { return !m_ignore_tags && m_tag_handler.IsKnown(sub.str()); }
 
         bool MatchesTopOfStack(const boost::xpressive::ssub_match& sub) noexcept {
@@ -571,18 +568,6 @@ namespace {
             std::copy_if(tags.begin(), tags.end(), std::back_inserter(m_custom_tags),
                          [this](const auto tag) { return !IsKnown(tag); });
         }
-
-        /** Remove a tag from the set of known tags.*/
-        void Erase(std::string_view tag)
-        {
-            const auto it = std::find(m_custom_tags.begin(), m_custom_tags.end(), tag);
-            if (it != m_custom_tags.end())
-                m_custom_tags.erase(it);
-        }
-
-        /** Remove all tags from the set of known tags.*/
-        void Clear() noexcept
-        { m_custom_tags.clear(); }
 
         bool IsKnown(std::string_view tag) const
         {
@@ -898,16 +883,6 @@ namespace {
                                       static_cast<GLubyte>(current_float[3]*255)};
     }
 }
-
-Font::RenderState::RenderState()
-{
-    // Initialize the color stack with the current color
-    auto clr = GetCurrentByteColor();
-    PushColor(clr[0], clr[1], clr[2], clr[3]);
-}
-
-Font::RenderState::RenderState(Clr color)
-{ PushColor(color); }
 
 void Font::RenderState::PopColor()
 {
@@ -1343,12 +1318,6 @@ Pt Font::TextExtent(const std::vector<LineData>& line_data) const noexcept
 
 void Font::RegisterKnownTags(std::vector<std::string_view> tags)
 { tag_handler.Insert(std::move(tags)); }
-
-void Font::RemoveKnownTag(std::string_view tag)
-{ tag_handler.Erase(tag); }
-
-void Font::ClearKnownTags()
-{ tag_handler.Clear(); }
 
 void Font::ThrowBadGlyph(const std::string& format_str, uint32_t c)
 {
