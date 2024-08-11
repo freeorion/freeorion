@@ -1721,14 +1721,17 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     wrapped_planet_name = planet->Name();
     if (is_homeworld)
         wrapped_planet_name = "<i>" + wrapped_planet_name + "</i>";
+    static_assert(GG::Font::ITALIC_TAG == "i");
     if (has_shipyard)
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
+    static_assert(GG::Font::UNDERLINE_TAG == "u");
     if (GetOptionsDB().Get<bool>("ui.name.id.shown"))
         wrapped_planet_name = wrapped_planet_name + " (" + std::to_string(m_planet_id) + ")";
 
 
     // set name
     m_planet_name->SetText("<s>" + wrapped_planet_name + "</s>");
+    static_assert(GG::Font::SHADOW_TAG == "s");
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
 
