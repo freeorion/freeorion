@@ -77,9 +77,6 @@ public:
     /** Returns the color used to render hiliting around selected text. */
     Clr HiliteColor() const noexcept { return m_hilite_color; }
 
-    /** Returns the color used to render selected text. */
-    Clr SelectedTextColor() const noexcept { return m_sel_text_color; }
-
     /** The edited signal object for this Edit. */
     mutable EditedSignalType EditedSignal;
 
@@ -95,9 +92,6 @@ public:
 
     /** Sets the color used to render hiliting around selected text. */
     void SetHiliteColor(Clr c);
-
-    /** Sets the color used to render selected text. */
-    void SetSelectedTextColor(Clr c);
 
     /** Selects all text in the given range.  When \a from == \a to, this
         function just places the caret at \a from.  Note that it is legal to
@@ -208,7 +202,6 @@ private:
     CPSize m_first_char_shown = CP0;    ///< Index of the first character on the left end of the control's viewable area
     Clr    m_int_color;                 ///< Color of background inside text box
     Clr    m_hilite_color = CLR_SHADOW; ///< Color behind selected range
-    Clr    m_sel_text_color = CLR_WHITE;///< Color of selected text
 
     bool   m_recently_edited = false; ///< The contents when the focus was last gained
 };

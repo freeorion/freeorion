@@ -95,7 +95,6 @@ void MultiEdit::Render()
 {
     const Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     const Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
-    const Clr sel_text_color_to_use = Disabled() ? DisabledColor(SelectedTextColor()) : SelectedTextColor();
     const Clr hilite_color_to_use = Disabled() ? DisabledColor(HiliteColor()) : HiliteColor();
     const Clr text_color_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
 
@@ -140,9 +139,9 @@ void MultiEdit::Render()
 
     auto text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
-        bool is_caret_row = (caret_row == row);
+        const bool is_caret_row = (caret_row == row);
 
-        Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < Y0) ?
+        const Y row_y_pos = ((m_style & MULTI_TOP) || m_contents_sz.y - ClientSize().y < Y0) ?
             cl_ul.y + static_cast<int>(row) * LINESKIP - m_first_row_shown_y_from_top_of_text :
             cl_lr.y - static_cast<int>(lines.size() - row) * LINESKIP -
                 m_first_row_shown_y_from_top_of_text + (m_vscroll && m_hscroll ? BottomMargin() : Y0);
@@ -152,12 +151,16 @@ void MultiEdit::Render()
 
         const auto& line = lines[row];
         if (!line.Empty()) {
-            // if one or more chars of this row are selected, highlight, then
-            // draw the range in the selected-text color
+            if (!multiselected || low_cursor_pos.first > row || row > high_cursor_pos.first) {
+                // just draw normal text on this line
+                Pt text_lr = text_pos + Pt(line.char_data.back().extent, HEIGHT);
+                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, CP0, row + 1, CPSize(line.char_data.size()));
 
-            if (multiselected && low_cursor_pos.first <= row && row <= high_cursor_pos.first) {
-                // idx0 to idx1 is unhilited, idx1 to idx2 is hilited, and
-                // idx2 to idx3 is unhilited; each range may be empty
+            } else {
+                // one or more chars of this row are selected, so highlight, then draw the range in the selected-text color
+
+                // idx0 to idx1 is unhighlighted, idx1 to idx2 is hilited, and
+                // idx2 to idx3 is unhighlighted; each range may be empty
                 const CPSize idx0{0};
                 const CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
                 const bool ends_with_newline = LineEndsWithEndlineCharacter(lines, row, text);
@@ -172,15 +175,13 @@ void MultiEdit::Render()
                 font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
-                // draw hiliting
+                // draw highlighting
                 if (idx1 != idx2)
                     text_lr.x = initial_text_x_pos + line.char_data[Value(idx2) - 1].extent;
                 FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
 
-                // draw hilited text
-                rs.PushColor(sel_text_color_to_use);
+                // draw highlighted text
                 font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx1, row + 1, idx2);
-                rs.PopColor();
                 text_pos.x = text_lr.x;
 
                 if (idx2 != idx3) {
@@ -192,10 +193,6 @@ void MultiEdit::Render()
                     font->RenderText(text_pos, text_lr, text, text_format, lines, rs,
                                      row, idx2, row + 1, CPSize(line.char_data.size()));
                 }
-
-            } else { // just draw normal text on this line
-                Pt text_lr = text_pos + Pt(line.char_data.back().extent, HEIGHT);
-                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, CP0, row + 1, CPSize(line.char_data.size()));
             }
         }
 

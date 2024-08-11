@@ -83,7 +83,6 @@ public:
     Clr InteriorColor() const noexcept { return m_int_color; }          ///< returns the color used to render the interior of the control
     Clr TextColor() const noexcept { return m_text_color; }             ///< returns the color used to render menu item text
     Clr HiliteColor() const noexcept { return m_hilite_color; }         ///< returns the color used to indicate a hilited menu item
-    Clr SelectedTextColor() const noexcept { return m_sel_text_color; } ///< returns the color used to render a hilited menu item's text
 
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
     void AddMenuItem(MenuItem&& menu_item);
@@ -104,7 +103,6 @@ public:
     void SetInteriorColor(Clr clr);     ///< sets the color used to render the interior of the control
     void SetTextColor(Clr clr);         ///< sets the color used to render menu item text
     void SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
-    void SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
 
     static constexpr std::size_t INVALID_CARET = std::numeric_limits<std::size_t>::max();;
 
@@ -125,7 +123,6 @@ private:
     Clr               m_int_color;      ///< color painted into the client area of the control
     Clr               m_text_color;     ///< color used to paint text in control
     Clr               m_hilite_color;   ///< color behind selected items
-    Clr               m_sel_text_color; ///< color of selected text
 
     MenuItem          m_menu_data;      ///< this is not just a single menu item; the next_level element represents the entire menu
 

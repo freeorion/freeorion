@@ -38,7 +38,6 @@ PopupMenu::PopupMenu(X x, Y y, std::shared_ptr<Font> font, Clr text_color,
     m_int_color(interior_color),
     m_text_color(text_color),
     m_hilite_color(hilite_color),
-    m_sel_text_color(text_color),
     m_caret(1, INVALID_CARET),
     m_origin(x, y)
 { m_open_levels.resize(1); }
@@ -128,13 +127,7 @@ void PopupMenu::Render()
         Font::RenderState rs{m_text_color};
 
         for (std::size_t j = 0; j < menu.next_level.size(); ++j) {
-            const Clr clr = (m_caret[i] == j)
-                ? (menu.next_level[j].disabled
-                   ? DisabledColor(m_sel_text_color)
-                   : m_sel_text_color)
-                : (menu.next_level[j].disabled
-                   ? DisabledColor(m_text_color)
-                   : m_text_color);
+            const Clr clr = (menu.next_level[j].disabled) ? DisabledColor(m_text_color) : m_text_color;
 
             if (!menu.next_level[j].separator) {
                 // TODO cache line data v expensive calculation
@@ -262,9 +255,6 @@ void PopupMenu::SetTextColor(Clr clr)
 
 void PopupMenu::SetHiliteColor(Clr clr)
 { m_hilite_color = clr; }
-
-void PopupMenu::SetSelectedTextColor(Clr clr)
-{ m_sel_text_color = clr; }
 
 const std::shared_ptr<Font>& PopupMenu::GetFont() const
 { return m_font; }
