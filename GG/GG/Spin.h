@@ -82,7 +82,6 @@ public:
     Clr     TextColor() const;          ///< returns the text color
     Clr     InteriorColor() const;      ///< returns the interior color of the control
     Clr     HiliteColor() const;        ///< returns the color used to render hiliting around selected text
-    Clr     SelectedTextColor() const;  ///< returns the color used to render selected text
 
     mutable ValueChangedSignalType ValueChangedSignal; ///< the value changed signal object for this Spin
 
@@ -104,7 +103,6 @@ public:
     void SetTextColor(Clr c);           ///< sets the text color
     void SetInteriorColor(Clr c);       ///< sets the interior color of the control
     void SetHiliteColor(Clr c);         ///< sets the color used to render hiliting around selected text
-    void SetSelectedTextColor(Clr c);   ///< sets the color used to render selected text   
 
 protected:
     typedef T ValueType;
@@ -228,10 +226,6 @@ Clr Spin<T>::HiliteColor() const
 { return m_edit->HiliteColor(); }
 
 template <typename T>
-Clr Spin<T>::SelectedTextColor() const
-{ return m_edit->SelectedTextColor(); }
-
-template <typename T>
 void Spin<T>::Render()
 {
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
@@ -327,10 +321,6 @@ void Spin<T>::SetInteriorColor(Clr c)
 template <typename T>
 void Spin<T>::SetHiliteColor(Clr c)
 { m_edit->SetHiliteColor(c); }
-
-template <typename T>
-void Spin<T>::SetSelectedTextColor(Clr c)
-{ m_edit->SetSelectedTextColor(c); }
 
 template <typename T>
 Button* Spin<T>::UpButton() const

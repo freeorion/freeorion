@@ -55,7 +55,6 @@ void Edit::Render()
 {
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     Clr int_color_to_use = Disabled() ? DisabledColor(m_int_color) : m_int_color;
-    Clr sel_text_color_to_use = Disabled() ? DisabledColor(m_sel_text_color) : m_sel_text_color;
     Clr hilite_color_to_use = Disabled() ? DisabledColor(m_hilite_color) : m_hilite_color;
     Clr text_color_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
 
@@ -83,35 +82,17 @@ void Edit::Render()
         CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::max(CP0, std::min(m_cursor_pos.first, m_cursor_pos.second)));
         CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(CP0, std::max(m_cursor_pos.first, m_cursor_pos.second)));
 
-        // draw hiliting
+        // draw hilighting background box
         Pt hilite_ul(client_ul.x + (low_cursor_pos < CP1 ? X0 : char_data[Value(low_cursor_pos - CP1)].extent) - first_char_offset, client_ul.y);
         Pt hilite_lr(client_ul.x + (high_cursor_pos < CP1 ? X0 : char_data[Value(high_cursor_pos - CP1)].extent) - first_char_offset, client_lr.y);
         FlatRectangle(hilite_ul, hilite_lr, hilite_color_to_use, CLR_ZERO, 0);
 
-        // INDEX_0 to INDEX_1 is unhilited, INDEX_1 to
-        // INDEX_2 is hilited, and INDEX_2 to INDEX_3 is
-        // unhilited; each range may be empty
-        const StrSize INDEX_1 = StringIndexOf(0, std::max(low_cursor_pos, m_first_char_shown), GetLineData());
-        const StrSize INDEX_2 = StringIndexOf(0, std::min(high_cursor_pos, last_visible_char), GetLineData());
-
         // draw text
-        X text_x_pos = client_ul.x;
-        text_x_pos +=
-            font->RenderText(Pt(text_x_pos, text_y_pos),
-                             Text().substr(Value(INDEX_0), Value(INDEX_1 - INDEX_0)), rs);
-
-        rs.PushColor(sel_text_color_to_use);
-        text_x_pos +=
-            font->RenderText(Pt(text_x_pos, text_y_pos),
-                             Text().substr(Value(INDEX_1), Value(INDEX_2 - INDEX_1)), rs);
-        rs.PopColor();
-        text_x_pos +=
-            font->RenderText(Pt(text_x_pos, text_y_pos),
-                             Text().substr(Value(INDEX_2), Value(INDEX_END - INDEX_2)), rs);
+        font->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)), rs);
 
     } else { // no selected text
-        font->RenderText(Pt(client_ul.x, text_y_pos),
-                         Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)), rs);
+        font->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)), rs);
+
         if (GUI::GetGUI()->FocusWnd().get() == this) {
             // if we have focus, draw the caret as a simple vertical line
             X caret_x = ScreenPosOfChar(m_cursor_pos.second);
@@ -130,9 +111,6 @@ void Edit::SetInteriorColor(Clr c)
 
 void Edit::SetHiliteColor(Clr c)
 { m_hilite_color = c; }
-
-void Edit::SetSelectedTextColor(Clr c)
-{ m_sel_text_color = c; }
 
 void Edit::SelectAll()
 {
