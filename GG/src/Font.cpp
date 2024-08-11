@@ -1,4 +1,4 @@
-//! GiGi - A GUI for OpenGL
+﻿//! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
 //!  Copyright (C) 2013-2021 The FreeOrion Project
@@ -340,7 +340,6 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::Substring
 ///////////////////////////////////////
-const std::string Font::Substring::EMPTY_STRING{};
 
 bool Font::Substring::operator==(const std::string& rhs) const
 { return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data(), size()); }
@@ -350,6 +349,13 @@ bool Font::Substring::operator==(std::string_view rhs) const
 
 bool Font::Substring::operator==(const Substring& rhs) const
 { return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data() + rhs.first, size()); }
+
+#if !(defined(__cpp_lib_constexpr_string) && defined(_MSC_VER) && (_MSC_VER >= 1934))
+const std::string Font::Substring::EMPTY_STRING{};
+#else
+static_assert(Font::Substring(Font::Substring::EMPTY_STRING).empty());
+static_assert(Font::Substring(Font::Substring::EMPTY_STRING).data() == Font::Substring::EMPTY_STRING.data());
+#endif
 
 ///////////////////////////////////////
 // Free Functions
@@ -858,24 +864,6 @@ namespace {
                                       static_cast<GLubyte>(current_float[3]*255)};
     }
 }
-
-
-///////////////////////////////////////
-// class GG::Font::LineData::CharData
-///////////////////////////////////////
-Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
-                                   const std::vector<TextElement>& tags_) :
-    extent(extent_),
-    string_index(str_index),
-    string_size(str_size),
-    code_point_index(cp_index)
-{
-    tags.reserve(tags_.size());
-    for (auto& tag : tags_)
-        if (tag.IsTag())
-            tags.push_back(tag);
-}
-
 
 ///////////////////////////////////////
 // struct GG::Font::Glyph

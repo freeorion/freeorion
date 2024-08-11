@@ -42,6 +42,11 @@ class GL2DVertexBuffer;
     channels r, b, g, a. */
 GG_API std::string RgbaTag(Clr c);
 
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string)
+#  define CONSTEXPR_FONT constexpr
+#else
+#  define CONSTEXPR_FONT
+#endif
 
 /** \brief A bitmapped font rendering class.
 
@@ -135,15 +140,15 @@ public:
     public:
         using IterPair = std::pair<std::string::const_iterator, std::string::const_iterator>;
 
-        explicit Substring(const std::string& str_) noexcept :
+        CONSTEXPR_FONT explicit Substring(const std::string& str_) noexcept :
             str(&str_)
         {}
-        constexpr explicit Substring(const std::string* str_) noexcept :
+        CONSTEXPR_FONT explicit Substring(const std::string* str_) noexcept :
             str(str_)
         {}
 
         /** Construction from two offsets. \a first_ must be <= \a second_. */
-        constexpr Substring(const std::string* str_, uint32_t first_, uint32_t second_) noexcept :
+        CONSTEXPR_FONT Substring(const std::string* str_, uint32_t first_, uint32_t second_) noexcept :
             str(str_),
             first(first_),
             second(second_)
@@ -153,24 +158,24 @@ public:
             assert(second_ <= str->size());
         }
         template <typename T, std::enable_if_t<std::is_unsigned_v<T>>* = nullptr>
-        Substring(const std::string& str_, T first_, T second_) noexcept :
+        CONSTEXPR_FONT Substring(const std::string& str_, T first_, T second_) noexcept :
             Substring(&str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
         {}
 
-        Substring(const std::string& str_, std::ptrdiff_t first_, std::ptrdiff_t second_) noexcept :
+        CONSTEXPR_FONT Substring(const std::string& str_, std::ptrdiff_t first_, std::ptrdiff_t second_) noexcept :
             Substring(str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
         {}
 
         /** Construction from two iterators. \a first_ must be <= \a second_.
           * Both must be valid iterators into \a str_. */
-        Substring(const std::string& str_,
-                  std::string::const_iterator first_,
-                  std::string::const_iterator second_) :
+        CONSTEXPR_FONT Substring(const std::string& str_,
+                                 std::string::const_iterator first_,
+                                 std::string::const_iterator second_) :
             Substring(str_,
                       static_cast<uint32_t>(std::distance(str_.begin(), first_)),
                       static_cast<uint32_t>(std::distance(str_.begin(), second_)))
         {}
-        Substring(const std::string& str_, const IterPair& pair) :
+        CONSTEXPR_FONT Substring(const std::string& str_, const IterPair& pair) :
             Substring(str_, pair.first, pair.second)
         {}
 
@@ -178,36 +183,36 @@ public:
         /** Attach this Substring to \p str_.
           * This changes any future-returned iterators from pointing into the previously-bound
           * string to pointing into \p str_. */
-        void Bind(const std::string& str_) noexcept
+        CONSTEXPR_FONT void Bind(const std::string& str_) noexcept
         {
             assert(std::distance(str_.begin(), str_.end()) >= second);
             str = &str_;
         }
 
-        [[nodiscard]] auto data() const noexcept -> const std::string::value_type*
+        [[nodiscard]] CONSTEXPR_FONT auto data() const noexcept -> const std::string::value_type*
         { return (str && (str->size() >= first)) ? (str->data() + first) : EMPTY_STRING.data(); }
 
         /** Returns an iterator to the beginning of the substring. */
-        [[nodiscard]] auto begin() const noexcept -> std::string::const_iterator
+        [[nodiscard]] CONSTEXPR_FONT auto begin() const noexcept -> std::string::const_iterator
         { return (str && str->size() >= first) ? (str->cbegin() + first) : EMPTY_STRING.cbegin(); }
 
         /** Returns an iterator to one-past-the-end of the substring. */
-        [[nodiscard]] auto end() const noexcept -> std::string::const_iterator
+        [[nodiscard]] CONSTEXPR_FONT auto end() const noexcept -> std::string::const_iterator
         { return (str && str->size() >= second) ? (str->cbegin() + second) : EMPTY_STRING.cend(); }
 
         /** True iff .first == .second. */
-        [[nodiscard]] bool empty() const noexcept { return first == second; }
+        [[nodiscard]] CONSTEXPR_FONT bool empty() const noexcept { return first == second; }
 
-        [[nodiscard]] bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
+        [[nodiscard]] CONSTEXPR_FONT bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
 
         /** Length, in original string chars, of the substring. */
-        [[nodiscard]] std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
-        [[nodiscard]] auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
+        [[nodiscard]] CONSTEXPR_FONT std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
+        [[nodiscard]] CONSTEXPR_FONT auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
 
         /** Implicit conversion to std::string. */
-        [[nodiscard]] operator std::string() const { return std::string(begin(), end()); }
+        [[nodiscard]] CONSTEXPR_FONT operator std::string() const { return std::string(begin(), end()); }
         static constexpr bool op_sv_nox = noexcept(std::string_view{(const char*)(nullptr), std::size_t{}});
-        [[nodiscard]] operator std::string_view() const noexcept(op_sv_nox) { return {data(), size()}; }
+        [[nodiscard]] CONSTEXPR_FONT operator std::string_view() const noexcept(op_sv_nox) { return {data(), size()}; }
 
         /** Comparison with std::string. */
         bool operator==(const std::string& rhs) const;
@@ -216,7 +221,7 @@ public:
 
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
           * .second must be equal to \a rhs.first (*this and \a rhs must be contiguous). */
-        Substring& operator+=(const IterPair& rhs)
+        CONSTEXPR_FONT Substring& operator+=(const IterPair& rhs)
         {
             assert(rhs.first <= rhs.second);
             assert(std::distance(str->begin(), rhs.first) == second);
@@ -224,11 +229,15 @@ public:
             return *this;
         }
 
-        constexpr Substring() noexcept = default;
+        CONSTEXPR_FONT Substring() noexcept = default;
+
+#if defined(__cpp_lib_constexpr_string) && defined(_MSC_VER) && (_MSC_VER >= 1934)
+        static constexpr std::string EMPTY_STRING;
+#else
+        static const std::string EMPTY_STRING;
+#endif
 
     private:
-        static const std::string EMPTY_STRING;
-
         const std::string* str = &EMPTY_STRING;
         uint32_t first = 0;
         uint32_t second = 0;
@@ -250,26 +259,26 @@ public:
             NEWLINE
         };
 
-        explicit TextElement(TextElementType type_) noexcept :
+        CONSTEXPR_FONT explicit TextElement(TextElementType type_) noexcept :
             type(type_)
         {}
-        explicit TextElement(Substring text_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+        CONSTEXPR_FONT explicit TextElement(Substring text_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             type(TextElementType::TEXT)
         {}
 
-        TextElement(Substring text_, TextElementType type_)
+        CONSTEXPR_FONT TextElement(Substring text_, TextElementType type_)
             noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             type(type_)
         {}
-        TextElement(Substring text_, Substring tag_name_,
+        CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_,
                     TextElementType type_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             tag_name(tag_name_),
             type(type_)
         {}
-        TextElement(Substring text_, Substring tag_name_, std::vector<Substring> params_,
+        CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, std::vector<Substring> params_,
                     TextElementType type_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             tag_name(tag_name_),
@@ -298,7 +307,7 @@ public:
             entire vectors of TextElement with different std::strings
             without re-parsing the std::string.
          */
-        void Bind(const std::string& whole_text) noexcept
+        CONSTEXPR_FONT void Bind(const std::string& whole_text) noexcept
         {
             text.Bind(whole_text);
             tag_name.Bind(whole_text);
@@ -307,24 +316,24 @@ public:
         }
 
         /** Returns the TextElementType of the element. */
-        [[nodiscard]] TextElementType Type() const noexcept { return type; };
-        [[nodiscard]] bool IsCloseTag() const noexcept { return type == TextElementType::CLOSE_TAG; }
-        [[nodiscard]] bool IsOpenTag() const noexcept { return type == TextElementType::OPEN_TAG; }
-        [[nodiscard]] bool IsTag() const noexcept { return IsCloseTag() || IsOpenTag(); }
-        [[nodiscard]] bool IsWhiteSpace() const noexcept { return type == TextElementType::WHITESPACE; }
-        [[nodiscard]] bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
+        [[nodiscard]] CONSTEXPR_FONT TextElementType Type() const noexcept { return type; };
+        [[nodiscard]] CONSTEXPR_FONT bool IsCloseTag() const noexcept { return type == TextElementType::CLOSE_TAG; }
+        [[nodiscard]] CONSTEXPR_FONT bool IsOpenTag() const noexcept { return type == TextElementType::OPEN_TAG; }
+        [[nodiscard]] CONSTEXPR_FONT bool IsTag() const noexcept { return IsCloseTag() || IsOpenTag(); }
+        [[nodiscard]] CONSTEXPR_FONT bool IsWhiteSpace() const noexcept { return type == TextElementType::WHITESPACE; }
+        [[nodiscard]] CONSTEXPR_FONT bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
 
         /** Returns the width of the element. */
         [[nodiscard]] X Width() const;
 
         /* Returns the number of characters in the original string that the
            element represents. */
-        [[nodiscard]] StrSize StringSize() const noexcept
+        [[nodiscard]] CONSTEXPR_FONT StrSize StringSize() const noexcept
         { return StrSize(text.size()); }
 
         /** Returns the number of code points in the original string that the
             element represents. */
-        [[nodiscard]] CPSize CodePointSize() const noexcept
+        [[nodiscard]] CONSTEXPR_FONT CPSize CodePointSize() const noexcept
         { return CPSize(widths.size()); }
 
         bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
@@ -352,7 +361,7 @@ public:
         TextElementType type = TextElementType::TEXT;
 
     protected:
-        TextElement() = default;
+        CONSTEXPR_FONT TextElement() = default;
 
     private:
         mutable X cached_width{-X1};
@@ -410,8 +419,8 @@ public:
         formatting tags present on that line as well. */
     struct GG_API LineData
     {
-        LineData() noexcept = default;
-        explicit LineData(Alignment justification_) noexcept :
+        CONSTEXPR_FONT LineData() noexcept = default;
+        CONSTEXPR_FONT explicit LineData(Alignment justification_) noexcept :
             justification(justification_)
         {}
 
@@ -420,10 +429,20 @@ public:
             rendering of a visible glyph. */
         struct GG_API CharData
         {
-            CharData() = default;
+            CONSTEXPR_FONT CharData() = default;
 
-            CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
-                     const std::vector<TextElement>& tags_);
+            CONSTEXPR_FONT CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
+                                    const std::vector<TextElement>& tags_) :
+                extent(extent_),
+                string_index(str_index),
+                string_size(str_size),
+                code_point_index(cp_index)
+            {
+                tags.reserve(tags_.size());
+                for (auto& tag : tags_)
+                    if (tag.IsTag())
+                        tags.push_back(tag);
+            }
 
             /** The furthest-right extent of this glyph as it appears on the line. */
             X extent = X0;
@@ -441,8 +460,8 @@ public:
             std::vector<TextElement> tags;
         };
 
-        X    Width() const noexcept { return char_data.empty() ? X0 : char_data.back().extent; }
-        bool Empty() const noexcept { return char_data.empty(); }
+        CONSTEXPR_FONT X    Width() const noexcept { return char_data.empty() ? X0 : char_data.back().extent; }
+        CONSTEXPR_FONT bool Empty() const noexcept { return char_data.empty(); }
 
         /** Data on each individual glyph. */
         std::vector<CharData> char_data;
