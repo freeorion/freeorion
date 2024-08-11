@@ -67,6 +67,10 @@ GG_API void EndStencilClipping();
     color and thickness. */
 GG_API void Line(Pt pt1, Pt pt2, Clr color, float thick = 1.0f);
 
+/** Renders a line between the specified coordinates, with the specified
+    color and thickness. */
+GG_API void Line(X x1, Y y1, X x2, Y y2, Clr color, float thick = 1.0f);
+
 /** Renders line between specified coordinates. */
 GG_API void Line(X x1, Y y1, X x2, Y y2);
 

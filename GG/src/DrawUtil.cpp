@@ -679,6 +679,13 @@ void GG::Line(Pt pt1, Pt pt2, Clr color, float thick)
     Line(pt1.x, pt1.y, pt2.x, pt2.y);
 }
 
+void GG::Line(X x1, Y y1, X x2, Y y2, Clr color, float thick)
+{
+    glLineWidth(thick);
+    glColor(color);
+    Line(x1, y1, x2, y2);
+}
+
 void GG::Line(X x1, Y y1, X x2, Y y2)
 {
     const GLfloat vertices[4] = {GLfloat(Value(x1)), GLfloat(Value(y1)),
