@@ -15,31 +15,24 @@ BuildingType
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
     
         EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
+            scope = Source
+            activation = Or [
+                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
+                Not ProducedByEmpire empire = Source.Owner
             ]
-            activation = ContainedBy And [
-                Object id = Source.PlanetID
-                Planet
-                OwnedBy empire = Source.Owner
-            ]
-            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
-            effects = SetTargetIndustry value = Value + Target.Population
-                        * (NamedReal name = "BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP"
-                                     value = 3.75 * [[INDUSTRY_PER_POP]])
+            effects = Destroy
 
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Or [
-                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
-                ContainedBy And [
-                    Object id = Source.PlanetID
-                    OwnedBy empire = Source.Owner
-                    Population low = 0.0001
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+		OwnedBy empire = Source.Owner
+		Population low = 0.0001
+                Or [
+                    Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
                     Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
                 ]
             ]
@@ -68,6 +61,21 @@ BuildingType
             ]
             activation = ContainedBy And [
                 Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetTargetIndustry value = Value + Target.Population
+                        * (NamedReal name = "BLD_CONC_CAMP_TARGET_INDUSTRY_PERPOP"
+                                     value = 3.75 * [[INDUSTRY_PER_POP]])
+
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
                 OwnedBy empire = Source.Owner
                 HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
@@ -81,14 +89,6 @@ BuildingType
                 SetPopulation value = min(Value, Target.Population + (NamedReal name = "BLD_CONC_CAMP_POPULATION_FLAT" value = -3))
                 SetIndustry value = Target.TargetIndustry
             ]
-
-        EffectsGroup
-            scope = Source
-            activation = Or [
-                Not EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_RACIAL_PURITY"
-                Not ProducedByEmpire empire = Source.Owner
-            ]
-            effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"
 

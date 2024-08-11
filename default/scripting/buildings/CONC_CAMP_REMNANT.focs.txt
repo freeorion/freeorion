@@ -8,6 +8,16 @@ BuildingType
         [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
 
         EffectsGroup
+            scope = Source
+            activation =  ContainedBy And [
+                Object id = Source.PlanetID
+                Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+                Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+                Industry high = Source.Planet.TargetIndustry + 2
+            ]
+            effects = Destroy
+
+        EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
                 Planet
@@ -19,16 +29,6 @@ BuildingType
             ]
             priority = [[CONCENTRATION_CAMP_PRIORITY]]
             effects = SetIndustry value = Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation =  ContainedBy And [
-                Object id = Source.PlanetID
-                Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
-                Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
-                Industry high = Source.Planet.TargetIndustry + 2
-            ]
-            effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"
     
