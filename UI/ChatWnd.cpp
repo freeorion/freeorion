@@ -364,32 +364,33 @@ void MessageWnd::PreRender() {
 
 void MessageWnd::HandlePlayerChatMessage(const std::string& text,
                                          const std::string& player_name,
-                                         GG::Clr text_color,
+                                         GG::Clr player_name_color,
                                          const boost::posix_time::ptime& timestamp,
                                          int recipient_player_id,
                                          bool pm)
 {
     std::string filtered_message = StringtableTextSubstitute(text);
-    std::string wrapped_text = RgbaTag(text_color);
+    std::string wrapped_text;
     {
         const auto formatted_timestamp = ClientUI::FormatTimestamp(timestamp);
         if (utf8::is_valid(formatted_timestamp.begin(), formatted_timestamp.end()))
             wrapped_text.append(formatted_timestamp);
     }
-    if (player_name.empty()) {
-        wrapped_text.append(filtered_message);
-    } else {
-        wrapped_text.append(player_name);
-
-        if (pm)
-            wrapped_text.append(UserString("MESSAGES_WHISPER"));
-        wrapped_text.append(": ").append(filtered_message);
-    }
-    wrapped_text.append("<reset>");
+    const auto filtered_name = GG::Font::StripTags(player_name);
+    wrapped_text.append(RgbaTag(player_name_color))
+                .append(!filtered_name.empty() ? filtered_name : UserString("PLAYER"))
+                .append("</rgba>");
+    static_assert(GG::Font::RGBA_TAG == "rgba");
+    if (pm)
+        wrapped_text.append(UserString("MESSAGES_WHISPER"));
+    wrapped_text.append(": ")
+                .append(filtered_message)
+                .append("</pre>").append("<reset>"); // ensure message doesn't leave text state in preformatted mode or with any other tags applied
+    static_assert(GG::Font::PRE_TAG == "pre");
     static_assert(GG::Font::RESET_TAG == "reset");
 
     TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
-                  << "  sender colour rgba tag: " << RgbaTag(text_color)
+                  << "  sender colour tag: " << RgbaTag(player_name_color)
                   << "  filtered message: " << filtered_message
                   << "  timestamp text: " << ClientUI::FormatTimestamp(timestamp)
                   << "  wrapped text: " << wrapped_text;
