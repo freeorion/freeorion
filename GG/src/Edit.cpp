@@ -115,7 +115,7 @@ void Edit::Render()
         if (GUI::GetGUI()->FocusWnd().get() == this) {
             // if we have focus, draw the caret as a simple vertical line
             X caret_x = ScreenPosOfChar(m_cursor_pos.second);
-            Line(caret_x, client_ul.y, caret_x, client_lr.y);
+            Line(caret_x, client_ul.y, caret_x, client_lr.y, text_color_to_use);
         }
     }
 
