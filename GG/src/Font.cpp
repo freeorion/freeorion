@@ -567,9 +567,9 @@ namespace {
 
     private:
         // set of tags known to the handler
-        static constexpr std::array<std::string_view, 10> m_default_tags{
+        static constexpr std::array<std::string_view, 11> m_default_tags{
             {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG, Font::SUBSCRIPT_TAG,
-            Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG}};
+             Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG, Font::RESET_TAG}};
 
         std::vector<std::string_view> m_custom_tags;
 
@@ -859,12 +859,6 @@ namespace {
     }
 }
 
-void Font::RenderState::PopColor()
-{
-    // Never remove the initial color from the stack
-    if (color_stack.size() > 1)
-        color_stack.pop();
-}
 
 ///////////////////////////////////////
 // class GG::Font::LineData::CharData
@@ -1116,6 +1110,8 @@ namespace {
                     std::cerr << std::endl;
                 }*/
             }
+        } else if (tag.tag_name == Font::RESET_TAG) {
+            render_state.Reset();
         }
     }
 }

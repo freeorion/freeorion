@@ -122,6 +122,7 @@ public:
     static constexpr std::string_view ALIGN_CENTER_TAG = "center";
     static constexpr std::string_view ALIGN_RIGHT_TAG = "right";
     static constexpr std::string_view PRE_TAG = "pre";
+    static constexpr std::string_view RESET_TAG = "reset";
 
     /** \brief A range of iterators into a std::string that defines a
         substring found in a string being rendered by Font.
@@ -480,7 +481,8 @@ public:
         std::stack<Clr> color_stack;
 
         /// Add color to stack and remember it has been used
-        void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a) {
+        void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
+        {
             // The same color may end up being stored multiple times, but the cost of
             // deduplication is greater than the cost of just letting it be so.
             color_stack.emplace(r, g, b, a);
@@ -488,9 +490,27 @@ public:
         void PushColor(Clr clr) { color_stack.push(std::move(clr)); };
 
         /// Return to the previous used color, or remain as default
-        void PopColor();
+        void PopColor() noexcept(noexcept(color_stack.size()) && noexcept(color_stack.pop()))
+        {
+            // Never remove the initial color from the stack
+            if (color_stack.size() > 1)
+                color_stack.pop();
+        }
 
-        Clr CurrentColor() const noexcept { return color_stack.top(); }
+        // Revert to no tags and initial color
+        void Reset() noexcept(noexcept(color_stack.size()) && noexcept(color_stack.pop()))
+        {
+            // remove all but initial color
+            while (color_stack.size() > 1)
+                color_stack.pop();
+            // remove all tags
+            use_italics = 0;
+            use_shadow = 0;
+            draw_underline = 0;
+            super_sub_shift = 0;
+        }
+
+        Clr CurrentColor() const noexcept(noexcept(color_stack.top())) { return color_stack.top(); }
     };
 
     /** \brief Holds precomputed glyph position information for rendering. */
