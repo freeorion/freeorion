@@ -377,14 +377,17 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
             wrapped_text.append(formatted_timestamp);
     }
     if (player_name.empty()) {
-        wrapped_text.append(filtered_message).append("</rgba>");
+        wrapped_text.append(filtered_message);
     } else {
         wrapped_text.append(player_name);
 
         if (pm)
             wrapped_text.append(UserString("MESSAGES_WHISPER"));
-        wrapped_text.append(": ").append(filtered_message).append("</rgba>");
+        wrapped_text.append(": ").append(filtered_message);
     }
+    wrapped_text.append("<reset>");
+    static_assert(GG::Font::RESET_TAG == "reset");
+
     TraceLogger() << "HandlePlayerChatMessage sender: " << player_name
                   << "  sender colour rgba tag: " << RgbaTag(text_color)
                   << "  filtered message: " << filtered_message
