@@ -471,6 +471,8 @@ public:
         Alignment justification = ALIGN_CENTER;
     };
 
+
+
     /** \brief Holds the state of tags during rendering of text.
 
         By keeping track of this state across multiple calls to RenderText(),
