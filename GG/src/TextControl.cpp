@@ -141,13 +141,9 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     auto high_it = m_text.begin() + Value(high_string_idx);
 
     try {
-        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl;
-        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl;
-        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl;
-
         return {&*low_it, static_cast<std::size_t>(std::distance(low_it, high_it))};
     } catch (...) {
-        return "";
+        return {};
     }
 }
 

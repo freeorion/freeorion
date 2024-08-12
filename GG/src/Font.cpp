@@ -587,9 +587,15 @@ namespace {
 
 
 namespace {
-    void FillTemplatedText(const std::string& text, std::vector<Font::TextElement>& text_elements,
-                           std::vector<Font::TextElement>::iterator start,
-                           const Font::GlyphMap& glyphs, int8_t space_width)
+    constexpr struct U8NextFn {
+        uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
+        { return utf8::next(text_it, end_it); }
+    } u8next_fn;
+
+    template <typename GlyphMap, typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void FillTemplatedText(const std::string& text, std::vector<Font::TextElement>& text_elements,
+                                          std::vector<Font::TextElement>::iterator start,
+                                          const GlyphMap& glyphs, int8_t space_width, const TextNextFn& text_next_fn = u8next_fn)
     {
         // For each TextElement in text_elements starting from start.
         for (auto te_it = start; te_it != text_elements.end(); ++te_it) {
@@ -601,7 +607,7 @@ namespace {
             while (text_it != end_it) {
                 // Find and set the width of the character glyph.
                 elem.widths.push_back(0);
-                uint32_t c = utf8::next(text_it, end_it);
+                uint32_t c = text_next_fn(text_it, end_it);
                 if (c != WIDE_NEWLINE) {
                     auto it = glyphs.find(c);
                     // use a space when an unrendered glyph is requested (the
@@ -622,6 +628,53 @@ X Font::TextElement::Width() const
         cached_width = std::accumulate(widths.begin(), widths.end(), X0);
     return cached_width;
 }
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+namespace {
+    constexpr struct DummyNextFn {
+        constexpr uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
+        {
+            if (text_it == end_it)
+                return 0u;
+            uint32_t retval = *text_it;
+            ++text_it;
+            return retval;
+        }
+    } dummy_next_fn;
+
+    constexpr struct DummyGlyphMap {
+        struct DummyGlyph { int8_t advance = 4; };
+        static constexpr std::pair<uint32_t, DummyGlyph> value{};
+
+        constexpr auto* find(uint32_t) const noexcept { return &value; }
+        constexpr decltype(value)* end() const noexcept { return nullptr; }
+    } dummy_glyph_map;
+
+    static_assert([]() {
+        const std::string TEST_TEXT_WITH_TAG("default<i>ital<u>_ul_it_</i>   _just_ul_");
+        std::vector<Font::TextElement> text_elems;
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 0u, 7u));
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 7u, 10u), Font::Substring(TEST_TEXT_WITH_TAG, 8u, 9u),
+                                Font::TextElement::TextElementType::OPEN_TAG);
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 10u, 14u));
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 14u, 17u), Font::Substring(TEST_TEXT_WITH_TAG, 15u, 16u),
+                                Font::TextElement::TextElementType::OPEN_TAG);
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 17u, 24u));
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 24u, 28u), Font::Substring(TEST_TEXT_WITH_TAG, 26u, 27u),
+                                Font::TextElement::TextElementType::CLOSE_TAG);
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 28u, 31u), Font::TextElement::TextElementType::WHITESPACE);
+        text_elems.emplace_back(Font::Substring(TEST_TEXT_WITH_TAG, 31u, 40u));
+
+        FillTemplatedText(TEST_TEXT_WITH_TAG, text_elems, text_elems.begin(),
+                          dummy_glyph_map, 4, dummy_next_fn);
+
+        return text_elems[1].IsOpenTag() && text_elems[1].StringSize() == GG::StrSize(3) &&
+            std::string_view{text_elems[1].text} == "<i>" && std::string_view{text_elems[1].tag_name} == "i" &&
+            text_elems[6].IsWhiteSpace() && text_elems[4].widths.size() == 7 &&
+            std::string_view{text_elems[4].text} == "_ul_it_";
+    }());
+}
+#endif
 
 
 ///////////////////////////////////////
