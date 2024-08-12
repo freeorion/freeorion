@@ -215,9 +215,14 @@ public:
         [[nodiscard]] CONSTEXPR_FONT operator std::string_view() const noexcept(op_sv_nox) { return {data(), size()}; }
 
         /** Comparison with std::string. */
-        bool operator==(const std::string& rhs) const;
-        bool operator==(std::string_view rhs) const;
-        bool operator==(const Substring& rhs) const;
+        CONSTEXPR_FONT bool operator==(const std::string& rhs) const
+        { return size() == rhs.size() && std::string_view(*this) == rhs; }
+
+        CONSTEXPR_FONT bool operator==(std::string_view rhs) const
+        { return size() == rhs.size() && std::string_view(*this) == rhs; }
+
+        CONSTEXPR_FONT bool operator==(const Substring& rhs) const
+        { return size() == rhs.size() && std::string_view(*this) == std::string_view(rhs); }
 
         /** Concatenation with base.  \a rhs.first must be <= \a rhs.second.
           * .second must be equal to \a rhs.first (*this and \a rhs must be contiguous). */

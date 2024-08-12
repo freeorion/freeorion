@@ -1,4 +1,4 @@
-﻿//! GiGi - A GUI for OpenGL
+//! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
 //!  Copyright (C) 2013-2021 The FreeOrion Project
@@ -340,16 +340,6 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::Substring
 ///////////////////////////////////////
-
-bool Font::Substring::operator==(const std::string& rhs) const
-{ return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data(), size()); }
-
-bool Font::Substring::operator==(std::string_view rhs) const
-{ return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data(), size()); }
-
-bool Font::Substring::operator==(const Substring& rhs) const
-{ return size() == rhs.size() && !std::memcmp(str->data() + first, rhs.data() + rhs.first, size()); }
-
 #if !(defined(__cpp_lib_constexpr_string) && defined(_MSC_VER) && (_MSC_VER >= 1934))
 const std::string Font::Substring::EMPTY_STRING{};
 #else
@@ -1591,8 +1581,8 @@ namespace {
         return format;
     }
 
-    void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
-                          Alignment orig_just, Alignment prev_just) noexcept
+    CONSTEXPR_FONT void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
+                                         Alignment orig_just, Alignment prev_just) noexcept
     {
         if (last_line_of_curr_just) {
             line_data.justification = orig_just;
@@ -1602,8 +1592,8 @@ namespace {
         }
     }
 
-    void AddNewline(X& x, bool& last_line_of_curr_just, std::vector<Font::LineData>& line_data,
-                    const Alignment orig_just)
+    CONSTEXPR_FONT void AddNewline(X& x, bool& last_line_of_curr_just, std::vector<Font::LineData>& line_data,
+                                   const Alignment orig_just)
     {
         line_data.emplace_back();
         SetJustification(last_line_of_curr_just,
@@ -1613,11 +1603,11 @@ namespace {
         x = X0;
     }
 
-    void AddWhitespace(X& x, const Font::Substring elem_text, const int8_t space_width, const X box_width,
-                       const bool expand_tabs, const X tab_pixel_width, const Flags<TextFormat> format,
-                       std::vector<Font::LineData>& line_data, bool& last_line_of_curr_just,
-                       const Alignment orig_just, const StrSize original_string_offset,
-                       CPSize& code_point_offset, std::vector<Font::TextElement>& pending_formatting_tags)
+    CONSTEXPR_FONT void AddWhitespace(X& x, const Font::Substring elem_text, const int8_t space_width, const X box_width,
+                                      const bool expand_tabs, const X tab_pixel_width, const Flags<TextFormat> format,
+                                      std::vector<Font::LineData>& line_data, bool& last_line_of_curr_just,
+                                      const Alignment orig_just, const StrSize original_string_offset,
+                                      CPSize& code_point_offset, std::vector<Font::TextElement>& pending_formatting_tags)
     {
         auto it = elem_text.begin();
         const auto end_it = elem_text.end();
@@ -1674,12 +1664,12 @@ namespace {
             ++code_point_offset;
         }
     }
-
-    void AddTextWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                          const X box_width, std::vector<Font::LineData>& line_data,
-                          bool& last_line_of_curr_just, const Alignment orig_just,
-                          const StrSize original_string_offset, CPSize& code_point_offset,
-                          std::vector<Font::TextElement>& pending_formatting_tags)
+ 
+    CONSTEXPR_FONT void AddTextWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                                         const X box_width, std::vector<Font::LineData>& line_data,
+                                         bool& last_line_of_curr_just, const Alignment orig_just,
+                                         const StrSize original_string_offset, CPSize& code_point_offset,
+                                         std::vector<Font::TextElement>& pending_formatting_tags)
     {
         // if the text "word" overruns this line, and isn't alone on
         // this line, move it down to the next line
@@ -1711,11 +1701,11 @@ namespace {
         }
     }
 
-    void AddTextNoWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                            const X box_width, std::vector<Font::LineData>& line_data,
-                            bool& last_line_of_curr_just, const Alignment orig_just,
-                            const StrSize original_string_offset, CPSize& code_point_offset,
-                            std::vector<Font::TextElement>& pending_formatting_tags)
+    CONSTEXPR_FONT void AddTextNoWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                                           const X box_width, std::vector<Font::LineData>& line_data,
+                                           bool& last_line_of_curr_just, const Alignment orig_just,
+                                           const StrSize original_string_offset, CPSize& code_point_offset,
+                                           std::vector<Font::TextElement>& pending_formatting_tags)
     {
         auto it = elem.text.begin();
         const auto end_it = elem.text.end();
@@ -1756,11 +1746,11 @@ namespace {
         }
     }
 
-    void AddText(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                 const X box_width, std::vector<Font::LineData>& line_data,
-                 bool& last_line_of_curr_just, const Alignment orig_just,
-                 const StrSize original_string_offset, CPSize& code_point_offset,
-                 std::vector<Font::TextElement>& pending_formatting_tags)
+    CONSTEXPR_FONT void AddText(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                                const X box_width, std::vector<Font::LineData>& line_data,
+                                bool& last_line_of_curr_just, const Alignment orig_just,
+                                const StrSize original_string_offset, CPSize& code_point_offset,
+                                std::vector<Font::TextElement>& pending_formatting_tags)
     {
         if (format & FORMAT_WORDBREAK) {
             AddTextWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
@@ -1773,9 +1763,9 @@ namespace {
         }
     }
 
-    void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
-                    bool& last_line_of_curr_just, CPSize& code_point_offset,
-                    std::vector<Font::TextElement>& pending_formatting_tags)
+    CONSTEXPR_FONT void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
+                                   bool& last_line_of_curr_just, CPSize& code_point_offset,
+                                   std::vector<Font::TextElement>& pending_formatting_tags)
     {
         if (elem.tag_name == Font::ALIGN_LEFT_TAG)
             justification = ALIGN_LEFT;
@@ -1789,9 +1779,9 @@ namespace {
         code_point_offset += elem.CodePointSize();
     }
 
-    void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
-                     bool& last_line_of_curr_just, CPSize& code_point_offset,
-                     std::vector<Font::TextElement>& pending_formatting_tags)
+    CONSTEXPR_FONT void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
+                                    bool& last_line_of_curr_just, CPSize& code_point_offset,
+                                    std::vector<Font::TextElement>& pending_formatting_tags)
     {
         if ((elem.tag_name == Font::ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
             (elem.tag_name == Font::ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
@@ -1802,6 +1792,64 @@ namespace {
             pending_formatting_tags.push_back(elem);
         }
         code_point_offset += elem.CodePointSize();
+    }
+
+    CONSTEXPR_FONT auto AssembleLineData(Flags<TextFormat> format, X box_width,
+                                         const std::vector<Font::TextElement>& text_elements, int8_t space_width)
+    {
+        format = ValidateFormat(format); // may modify format
+
+        using TextElement = Font::TextElement;
+
+        constexpr int tab_width = 8; // default tab width
+        const X tab_pixel_width = X{tab_width * space_width}; // get the length of a tab stop
+        const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
+        const Alignment orig_just =
+            (format & FORMAT_LEFT) ? ALIGN_LEFT :
+            (format & FORMAT_CENTER) ? ALIGN_CENTER :
+            (format & FORMAT_RIGHT) ? ALIGN_RIGHT : ALIGN_NONE;
+        bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
+
+        std::vector<Font::LineData> line_data;
+        if (!text_elements.empty())
+            line_data.emplace_back(orig_just);
+
+        X x = X0;
+        // the position within the original string of the current TextElement
+        StrSize original_string_offset(S0);
+        // the index of the first code point of the current TextElement
+        CPSize code_point_offset(CP0);
+        std::vector<TextElement> pending_formatting_tags;
+
+        for (const auto& elem : text_elements) {
+            switch (elem.Type()) {
+            case TextElement::TextElementType::NEWLINE:
+                AddNewline(x, last_line_of_curr_just, line_data, orig_just);
+                break;
+            case TextElement::TextElementType::WHITESPACE:
+                AddWhitespace(x, elem.text, space_width, box_width, expand_tabs, tab_pixel_width, format,
+                              line_data, last_line_of_curr_just, orig_just, original_string_offset,
+                              code_point_offset, pending_formatting_tags);
+                break;
+            case TextElement::TextElementType::TEXT:
+                AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
+                        original_string_offset, code_point_offset, pending_formatting_tags);
+                break;
+            case TextElement::TextElementType::OPEN_TAG:
+                AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
+                           code_point_offset, pending_formatting_tags);
+                break;
+            case TextElement::TextElementType::CLOSE_TAG:
+                AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
+                            code_point_offset, pending_formatting_tags);
+                break;
+            }
+            original_string_offset += elem.StringSize();
+        }
+        // disregard the final pending formatting tag, if any, since this is the
+        // end of the text, and so it cannot have any effect
+
+        return line_data;
     }
 }
 
@@ -1816,61 +1864,13 @@ std::vector<Font::LineData> Font::DetermineLines(
         return std::vector<Font::LineData>{};
     }
 
-    format = ValidateFormat(format); // may modify format
-
-    static constexpr int tab_width = 8; // default tab width
-    const X tab_pixel_width = X{tab_width * m_space_width}; // get the length of a tab stop
-    const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
-    const Alignment orig_just =
-        (format & FORMAT_LEFT) ? ALIGN_LEFT :
-        (format & FORMAT_CENTER) ? ALIGN_CENTER :
-        (format & FORMAT_RIGHT) ? ALIGN_RIGHT : ALIGN_NONE;
-    bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
-
-    std::vector<Font::LineData> line_data;
-    if (!text_elements.empty())
-        line_data.emplace_back(orig_just);
-
-    X x = X0;
-    // the position within the original string of the current TextElement
-    StrSize original_string_offset(S0);
-    // the index of the first code point of the current TextElement
-    CPSize code_point_offset(CP0);
-    std::vector<TextElement> pending_formatting_tags;
-
-    for (const auto& elem : text_elements) {
-        switch (elem.Type()) {
-        case TextElement::TextElementType::NEWLINE:
-            AddNewline(x, last_line_of_curr_just, line_data, orig_just);
-            break;
-        case TextElement::TextElementType::WHITESPACE:
-            AddWhitespace(x, elem.text, m_space_width, box_width, expand_tabs, tab_pixel_width, format,
-                          line_data, last_line_of_curr_just, orig_just, original_string_offset,
-                          code_point_offset, pending_formatting_tags);
-            break;
-        case TextElement::TextElementType::TEXT:
-            AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
-                    original_string_offset, code_point_offset, pending_formatting_tags);
-            break;
-        case TextElement::TextElementType::OPEN_TAG:
-            AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
-                       code_point_offset, pending_formatting_tags);
-            break;
-        case TextElement::TextElementType::CLOSE_TAG:
-            AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
-                        code_point_offset, pending_formatting_tags);
-            break;
-        }
-        original_string_offset += elem.StringSize();
-    }
-    // disregard the final pending formatting tag, if any, since this is the
-    // end of the text, and so it cannot have any effect
-
-#if DEBUG_DETERMINELINES
+ #if DEBUG_DETERMINELINES
+    auto line_data = AssembleLineData(format, box_width, text_elements, m_space_width);
     DebugOutput::PrintLineBreakdown(text, format, box_width, line_data);
-#endif
-
     return line_data;
+#else
+    return AssembleLineData(format, box_width, text_elements, m_space_width);
+#endif
 }
 
 FT_Error Font::GetFace(FT_Face& face)
