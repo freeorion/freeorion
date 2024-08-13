@@ -660,20 +660,8 @@ public:
     /** Sets \a render_state as if all the text in \a char_data had just been rendered. */
     static void ProcessLineTags(const std::vector<LineData::CharData>& char_data, RenderState& render_state);
 
-
-    /** Return a vector of TextElements parsed from \p text, using the
-        FORMAT_IGNORETAGS bit in \p format to determine if all KnownTags()
-        are ignored.
-
-        This function is costly even on single character texts. Do not call
-        it from tight loops.  Do not call it from within Render().  Do not
-        call it repeatedly on a known text.
-    */
-    std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
-        const std::string& text, const Flags<TextFormat> format) const;
-
     /** \brief This just holds the essential data necessary to render a glyph
-    from the OpenGL texture(s) created at GG::Font creation time. */
+        from the OpenGL texture(s) created at GG::Font creation time. */
     struct Glyph
     {
         Glyph() = default;
@@ -687,6 +675,20 @@ public:
     };
 
     using GlyphMap = boost::unordered_map<uint32_t, Glyph>;
+
+    /** Return a vector of TextElements parsed from \p text, using the
+        FORMAT_IGNORETAGS bit in \p format to determine if all KnownTags()
+        are ignored.
+
+        This function is costly even on single character texts. Do not call
+        it from tight loops.  Do not call it from within Render().  Do not
+        call it repeatedly on a known text. */
+    static std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
+        const std::string& text, const Flags<TextFormat> format, const GlyphMap& glyphs, int8_t space_width);
+    std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
+        const std::string& text, const Flags<TextFormat> format) const
+    { return ExpensiveParseFromTextToTextElements(text, format, m_glyphs, m_space_width); }
+
 
     /** Change \p text_elements and \p text to replace the text of the TextElement at
         \p targ_offset with \p new_text.
