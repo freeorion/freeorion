@@ -143,12 +143,12 @@ public:
         CONSTEXPR_FONT explicit Substring(const std::string& str_) noexcept :
             str(&str_)
         {}
-        CONSTEXPR_FONT explicit Substring(const std::string* str_) noexcept :
+        constexpr explicit Substring(const std::string* str_) noexcept :
             str(str_)
         {}
 
         /** Construction from two offsets. \a first_ must be <= \a second_. */
-        CONSTEXPR_FONT Substring(const std::string* str_, uint32_t first_, uint32_t second_) noexcept :
+        constexpr Substring(const std::string* str_, uint32_t first_, uint32_t second_) noexcept :
             str(str_),
             first(first_),
             second(second_)
@@ -201,13 +201,13 @@ public:
         { return (str && str->size() >= second) ? (str->cbegin() + second) : EMPTY_STRING.cend(); }
 
         /** True iff .first == .second. */
-        [[nodiscard]] CONSTEXPR_FONT bool empty() const noexcept { return first == second; }
+        [[nodiscard]] constexpr bool empty() const noexcept { return first == second; }
 
         [[nodiscard]] CONSTEXPR_FONT bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
 
         /** Length, in original string chars, of the substring. */
-        [[nodiscard]] CONSTEXPR_FONT std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
-        [[nodiscard]] CONSTEXPR_FONT auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
+        [[nodiscard]] constexpr std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
+        [[nodiscard]] constexpr auto offsets() const noexcept { return std::pair<uint32_t, uint32_t>{first, second}; }
 
         /** Implicit conversion to std::string. */
         [[nodiscard]] CONSTEXPR_FONT operator std::string() const { return std::string(begin(), end()); }
