@@ -706,20 +706,16 @@ public:
 
     auto Extract()
     {
-        if (!m_are_widths_calculated)
-            SetTextElementWidths(m_text, m_text_elements, m_text_elements.begin(),
-                                 m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
+        SetTextElementWidths(m_text, m_text_elements, m_text_elements.begin(),
+                             m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
         return std::pair(std::move(m_text), std::move(m_text_elements));
     }
 
     /** Return the constructed TextElements.*/
     const auto& Elements()
     {
-        if (!m_are_widths_calculated) {
-            SetTextElementWidths(m_text, m_text_elements, m_text_elements.begin(),
-                                 m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
-            m_are_widths_calculated = true;
-        }
+        SetTextElementWidths(m_text, m_text_elements, m_text_elements.begin(),
+                             m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
         return m_text_elements;
     }
 
@@ -728,8 +724,6 @@ public:
     {
         if (!tag_handler.IsKnown(tag))
             return;
-
-        m_are_widths_calculated = false;
 
         // Create open tag like "<tag>" with no parameters
         const auto tag_begin = m_text.size();
@@ -747,8 +741,6 @@ public:
     {
         if (!tag_handler.IsKnown(tag))
             return;
-
-        m_are_widths_calculated = false;
 
         const auto tag_begin = m_text.size();
 
@@ -780,8 +772,6 @@ public:
         if (!tag_handler.IsKnown(tag))
             return;
 
-        m_are_widths_calculated = false;
-
         // Create a close tag that looks like "</tag>"
         const auto tag_begin = m_text.size();
         const auto tag_name_begin = m_text.append("</").size();
@@ -797,8 +787,6 @@ public:
     template <typename S>
     void AddText(S&& text)
     {
-        m_are_widths_calculated = false;
-
         const auto begin = m_text.size();
         const auto end = m_text.append(text).size();
         m_text_elements.emplace_back(Substring{m_text, begin, end});
@@ -807,21 +795,15 @@ public:
     /** Add a white space element.*/
     void AddWhitespace(std::string_view whitespace)
     {
-        m_are_widths_calculated = false;
-
         auto begin = m_text.size();
         auto end = m_text.append(whitespace).size();
-
         m_text_elements.emplace_back(Substring(m_text, begin, end),
                                      Font::TextElement::TextElementType::WHITESPACE);
     }
 
     /** Add a newline element.*/
     void AddNewline()
-    {
-        m_are_widths_calculated = false;
-        m_text_elements.emplace_back(Font::TextElement::TextElementType::NEWLINE);
-    }
+    { m_text_elements.emplace_back(Font::TextElement::TextElementType::NEWLINE); }
 
     /** Add open color tag.*/
     void AddOpenTag(Clr color)
@@ -838,7 +820,6 @@ private:
     const Font& m_font;
     std::string m_text;
     std::vector<TextElement> m_text_elements;
-    bool m_are_widths_calculated = false;
 };
 
 
