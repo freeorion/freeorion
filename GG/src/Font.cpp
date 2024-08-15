@@ -387,35 +387,6 @@ CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
     return retval;
 }
 
-StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
-{
-    StrSize retval(S0);
-    if (line_data.size() <= line) {
-        auto it = line_data.rbegin();
-        auto end_it = line_data.rend();
-        while (it != end_it) {
-            if (!it->char_data.empty()) {
-                retval = it->char_data.back().string_index + it->char_data.back().string_size;
-                break;
-            }
-            ++it;
-        }
-    } else if (Value(index) < line_data[line].char_data.size()) {
-        retval = line_data[line].char_data[Value(index)].string_index;
-    } else {
-        auto it = line_data.rbegin() + (line_data.size() - 1 - line);
-        auto end_it = line_data.rend();
-        while (it != end_it) {
-            if (!it->char_data.empty()) {
-                retval = it->char_data.back().string_index + it->char_data.back().string_size;
-                break;
-            }
-            ++it;
-        }
-    }
-    return retval;
-}
-
 std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data)
 {
     std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE);
@@ -707,23 +678,25 @@ namespace {
     }().first;
 
     constexpr decltype(element_widths) element_widths_expected{{28,0,16,0,28,0,12,0, 16,0,24,0,16,0,20,0}};
-    static_assert(element_widths.size() == element_widths_expected.size());
-    static_assert(element_widths[0] == element_widths_expected[0]);
-    static_assert(element_widths[1] == element_widths_expected[1]);
-    static_assert(element_widths[2] == element_widths_expected[2]);
-    static_assert(element_widths[3] == element_widths_expected[3]);
-    static_assert(element_widths[4] == element_widths_expected[4]);
-    static_assert(element_widths[5] == element_widths_expected[5]);
-    static_assert(element_widths[6] == element_widths_expected[6]);
-    static_assert(element_widths[7] == element_widths_expected[7]);
-    static_assert(element_widths[8] == element_widths_expected[8]);
-    static_assert(element_widths[9] == element_widths_expected[9]);
-    static_assert(element_widths[10] == element_widths_expected[10]);
-    static_assert(element_widths[11] == element_widths_expected[11]);
-    static_assert(element_widths[12] == element_widths_expected[12]);
-    static_assert(element_widths[13] == element_widths_expected[13]);
-    static_assert(element_widths[14] == element_widths_expected[14]);
-    static_assert(element_widths[15] == element_widths_expected[15]);
+    namespace{
+        static_assert(element_widths.size() == element_widths_expected.size());
+        static_assert(element_widths[0] == element_widths_expected[0]);
+        static_assert(element_widths[1] == element_widths_expected[1]);
+        static_assert(element_widths[2] == element_widths_expected[2]);
+        static_assert(element_widths[3] == element_widths_expected[3]);
+        static_assert(element_widths[4] == element_widths_expected[4]);
+        static_assert(element_widths[5] == element_widths_expected[5]);
+        static_assert(element_widths[6] == element_widths_expected[6]);
+        static_assert(element_widths[7] == element_widths_expected[7]);
+        static_assert(element_widths[8] == element_widths_expected[8]);
+        static_assert(element_widths[9] == element_widths_expected[9]);
+        static_assert(element_widths[10] == element_widths_expected[10]);
+        static_assert(element_widths[11] == element_widths_expected[11]);
+        static_assert(element_widths[12] == element_widths_expected[12]);
+        static_assert(element_widths[13] == element_widths_expected[13]);
+        static_assert(element_widths[14] == element_widths_expected[14]);
+        static_assert(element_widths[15] == element_widths_expected[15]);
+    }
 }
 #endif
 
@@ -865,7 +838,6 @@ private:
     std::string m_text;
     std::vector<TextElement> m_text_elements;
 };
-
 
 Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
     m_impl(std::make_unique<Impl>(font))
@@ -1976,11 +1948,11 @@ namespace {
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), text_elems, 4u, dummy_next_fn);
 
-        const auto& ln0 = line_data[0];
-        const auto& cd0 = ln0.char_data;
+        const auto& cd0 = line_data[0].char_data;
+        const auto& cd1 = line_data[1].char_data;
 
-        std::array<StrSize, 30> test_text_str_idxs{S0};
-        std::array<char, 31> test_text_chars{0};
+        std::array<StrSize, 30 + 13> test_text_str_idxs{S0};
+        std::array<char, 30 + 13 + 1> test_text_chars{0};
         std::size_t out_idx = 0;
 
         for (std::size_t char_data_idx = 0u; char_data_idx < cd0.size(); ++char_data_idx) {
@@ -1989,12 +1961,38 @@ namespace {
             test_text_chars[out_idx++] = test_text.at(Value(str_idx));
         }
 
+        for (std::size_t char_data_idx = 0u; char_data_idx < cd1.size(); ++char_data_idx) {
+            const auto str_idx = cd1[char_data_idx].string_index;
+            test_text_str_idxs[out_idx] = str_idx;
+            test_text_chars[out_idx++] = test_text.at(Value(str_idx));
+        }
+
         return std::pair(test_text_str_idxs, test_text_chars);
     }();
+    constexpr std::string_view test_text_chars(test_text_str_idxs_chars.second.data(), 43);
+    static_assert(test_text_chars.size() == 43 && test_text_chars == "defaultital_ul_it_   _just_ul_second lineis");
+
     constexpr auto test_text_str_idxs = test_text_str_idxs_chars.first;
-    constexpr auto test_text_chars = std::string_view{test_text_str_idxs_chars.second.data(), 30};
-    static_assert(test_text_str_idxs.size() == 30 && test_text_chars.size() == 30 &&
-                  test_text_chars == "defaultital_ul_it_   _just_ul_");
+    static_assert(test_text_str_idxs.size() == 43);
+    constexpr auto idxs_expected = []() {
+        std::array<uint8_t, test_text_str_idxs.size()> temp{
+             0,1,2,3,4,5,6,             // default
+             10,11,12,13,               // ital
+             17,18,19,20,21,22,23,      // _ul_ital_
+             28,29,30,                  // "   "
+             31,32,33,34,35,36,37,38,39,// _just_ul_
+             45,46,47,48,49,50,         // second
+             51,                        // " "
+             52,53,54,55,               // line
+             64,65                      // is
+        };
+        std::array<StrSize, test_text_str_idxs.size()> rv{};
+        for (std::size_t idx = 0; idx < rv.size(); ++idx)
+            rv[idx] = StrSize(temp[idx]);
+        return rv;
+    }();
+    static_assert(static_cast<decltype(test_text_str_idxs)>(idxs_expected) == test_text_str_idxs);
+
 #endif
 }
 
@@ -2017,6 +2015,41 @@ std::vector<Font::LineData> Font::DetermineLines(
     return AssembleLineData(format, box_width, text_elements, m_space_width);
 #endif
 }
+
+namespace {
+    CONSTEXPR_FONT StrSize StringIndexInLines(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+    {
+        StrSize retval(GG::S0);
+        if (line_data.size() <= line) {
+            auto it = line_data.rbegin();
+            auto end_it = line_data.rend();
+            while (it != end_it) {
+                if (!it->char_data.empty()) {
+                    retval = it->char_data.back().string_index + it->char_data.back().string_size;
+                    break;
+                }
+                ++it;
+            }
+        } else if (Value(index) < line_data[line].char_data.size()) {
+            retval = line_data[line].char_data[Value(index)].string_index;
+        } else {
+            auto it = line_data.rbegin() + (line_data.size() - 1 - line);
+            auto end_it = line_data.rend();
+            while (it != end_it) {
+                if (!it->char_data.empty()) {
+                    retval = it->char_data.back().string_index + it->char_data.back().string_size;
+                    break;
+                }
+                ++it;
+            }
+        }
+        return retval;
+    }
+}
+
+StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+{ return StringIndexInLines(line, index, line_data); }
+
 
 FT_Error Font::GetFace(FT_Face& face)
 { return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, &face); }
