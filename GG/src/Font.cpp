@@ -612,13 +612,6 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::TextElement
 ///////////////////////////////////////
-X Font::TextElement::Width() const
-{
-    if (cached_width == -X1)
-        cached_width = std::accumulate(widths.begin(), widths.end(), X0);
-    return cached_width;
-}
-
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 namespace {
     constexpr struct DummyNextFn {
@@ -643,7 +636,7 @@ namespace {
         constexpr decltype(value)* end() const noexcept { return nullptr; }
     } dummy_glyph_map;
 
-    constexpr std::string_view TEST_TEXT_WITH_TAGS = "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line";
+    constexpr std::string_view TEST_TEXT_WITH_TAGS = "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line<i><sup>is";
 
     constexpr auto TestTextElems(const std::string& text)
     {
@@ -659,12 +652,17 @@ namespace {
                                 Font::TextElement::TextElementType::CLOSE_TAG);
         text_elems.emplace_back(Font::Substring(text, 28u, 31u), Font::TextElement::TextElementType::WHITESPACE);
         text_elems.emplace_back(Font::Substring(text, 31u, 40u));
-        text_elems.emplace_back(Font::Substring(text, 40u, 44u), Font::Substring(text, 26u, 27u),
+        text_elems.emplace_back(Font::Substring(text, 40u, 44u), Font::Substring(text, 42u, 43u),
                                 Font::TextElement::TextElementType::CLOSE_TAG);
         text_elems.emplace_back(Font::Substring(text, 44u, 45u), Font::TextElement::TextElementType::NEWLINE);
         text_elems.emplace_back(Font::Substring(text, 45u, 51u));
         text_elems.emplace_back(Font::Substring(text, 51u, 52u), Font::TextElement::TextElementType::WHITESPACE);
         text_elems.emplace_back(Font::Substring(text, 52u, 56u));
+        text_elems.emplace_back(Font::Substring(text, 56u, 59u), Font::Substring(text, 57u, 58u),
+                                Font::TextElement::TextElementType::OPEN_TAG);
+        text_elems.emplace_back(Font::Substring(text, 59u, 64u), Font::Substring(text, 60u, 63u),
+                                Font::TextElement::TextElementType::OPEN_TAG);
+        text_elems.emplace_back(Font::Substring(text, 64u, 66u));
 
         SetTextElementWidths(text, text_elems, text_elems.begin(), dummy_glyph_map, 4, dummy_next_fn);
 
@@ -675,11 +673,57 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto text_elems = TestTextElems(test_text);
 
-        return text_elems[1].IsOpenTag() && text_elems[1].StringSize() == GG::StrSize(3) &&
-            std::string_view{text_elems[1].text} == "<i>" && std::string_view{text_elems[1].tag_name} == "i" &&
-            text_elems[6].IsWhiteSpace() && text_elems[4].widths.size() == 7 &&
-            std::string_view{text_elems[4].text} == "_ul_it_" && std::string_view{text_elems[9].text} == "\n";
+        return text_elems.size() == 16 &&
+            std::string_view{text_elems[0].text} == "default" &&
+            text_elems[1].IsOpenTag() && std::string_view{text_elems[1].tag_name} == "i" && Value(text_elems[1].StringSize()) == 3 &&
+            std::string_view{text_elems[2].text} == "ital" &&
+            text_elems[3].IsOpenTag() && std::string_view{text_elems[3].tag_name} == "u" && Value(text_elems[3].StringSize()) == 3 &&
+            std::string_view{text_elems[4].text} == "_ul_it_" &&
+            text_elems[5].IsCloseTag() && std::string_view{text_elems[5].tag_name} == "i" && Value(text_elems[5].StringSize()) == 4 &&
+            text_elems[6].IsWhiteSpace() && std::string_view{text_elems[6].text} == "   " &&
+            std::string_view{text_elems[7].text} == "_just_ul_" &&
+            text_elems[8].IsCloseTag() && std::string_view{text_elems[8].tag_name} == "u" && Value(text_elems[8].StringSize()) == 4 &&
+            text_elems[9].IsNewline() && std::string_view{text_elems[9].text} == "\n" &&
+            std::string_view{text_elems[10].text} == "second" &&
+            text_elems[11].IsWhiteSpace() &&
+            std::string_view{text_elems[12].text} == "line" &&
+            text_elems[13].IsOpenTag() &&
+            text_elems[14].IsOpenTag() &&
+            std::string_view{text_elems[15].text} == "is";
     }());
+
+    constexpr auto element_widths = []() {
+        const std::string test_text(TEST_TEXT_WITH_TAGS);
+        const auto text_elems = TestTextElems(test_text);
+
+        std::array<int, 16> widths{0};
+        std::array<std::size_t, 16> widths_sizes{0};
+
+        for (std::size_t idx = 0; idx < std::min(widths.size(), text_elems.size()); ++idx) {
+            widths[idx] = Value(text_elems[idx].Width());
+            widths_sizes[idx++] = text_elems[idx].widths.size();
+        }
+        return std::pair{widths, widths_sizes};
+    }().first;
+
+    constexpr decltype(element_widths) element_widths_expected{{28,0,16,0,28,0,12,0, 16,0,24,0,16,0,20,0}};
+    static_assert(element_widths.size() == element_widths_expected.size());
+    static_assert(element_widths[0] == element_widths_expected[0]);
+    static_assert(element_widths[1] == element_widths_expected[1]);
+    static_assert(element_widths[2] == element_widths_expected[2]);
+    static_assert(element_widths[3] == element_widths_expected[3]);
+    static_assert(element_widths[4] == element_widths_expected[4]);
+    static_assert(element_widths[5] == element_widths_expected[5]);
+    static_assert(element_widths[6] == element_widths_expected[6]);
+    static_assert(element_widths[7] == element_widths_expected[7]);
+    static_assert(element_widths[8] == element_widths_expected[8]);
+    static_assert(element_widths[9] == element_widths_expected[9]);
+    static_assert(element_widths[10] == element_widths_expected[10]);
+    static_assert(element_widths[11] == element_widths_expected[11]);
+    static_assert(element_widths[12] == element_widths_expected[12]);
+    static_assert(element_widths[13] == element_widths_expected[13]);
+    static_assert(element_widths[14] == element_widths_expected[14]);
+    static_assert(element_widths[15] == element_widths_expected[15]);
 }
 #endif
 
@@ -1866,14 +1910,91 @@ namespace {
     }
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-    static_assert([]() {
+
+    constexpr auto lines_and_lengths = []() {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto text_elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), text_elems, 4u, dummy_next_fn);
 
-        return true; // WIP
-    }());
+        return std::array<std::size_t, 3>{line_data.size(), line_data[0].char_data.size(), line_data[1].char_data.size()};
+    }();
+    static_assert(lines_and_lengths == std::array<std::size_t, 3>{2, 30, 13});
+
+    constexpr auto test_text_tags_line0 = []() {
+        const std::string test_text(TEST_TEXT_WITH_TAGS);
+        const auto text_elems = TestTextElems(test_text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), text_elems, 4u, dummy_next_fn);
+
+        const auto& ln0 = line_data[0];
+        const auto& cd0 = ln0.char_data;
+        std::array<char, 30> tag_names0{0};
+        for (std::size_t char_idx = 0u; char_idx < std::min(tag_names0.size(), cd0.size()); ++char_idx) {
+            const auto& tags = cd0[char_idx].tags;
+            if (!tags.empty())
+                if (!tags.front().tag_name.empty())
+                    tag_names0[char_idx] = tags.front().tag_name.data()[0];
+        }
+        return tag_names0;
+    }();
+    static_assert(test_text_tags_line0.size() == 30);
+
+    static_assert(std::array<std::array<int, 2>, 3>{0} == std::array<std::array<int, 2>, 3>{{{0,0}, {0,0}, {0,0}}});
+
+    constexpr auto test_text_tags_line1 = []() {
+        const std::string test_text(TEST_TEXT_WITH_TAGS);
+        const auto text_elems = TestTextElems(test_text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), text_elems, 4u, dummy_next_fn);
+
+        const auto& ln1 = line_data[1];
+        const auto& cd1 = ln1.char_data;
+        std::array<std::array<char, 2>, 13> tag_names1{{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}}};
+        for (std::size_t char_idx = 0u; char_idx < std::min(tag_names1.size(), cd1.size()); ++char_idx) {
+            const auto& tags = cd1[char_idx].tags;
+            if (!tags.empty()) {
+                if (!tags.front().tag_name.empty())
+                    tag_names1[char_idx][0] = tags.front().tag_name.data()[0];
+                if (tags.size() > 1) {
+                    if (!tags.back().tag_name.empty())
+                        tag_names1[char_idx][1] = tags.back().tag_name.data()[0];
+                }
+            }
+        }
+        return tag_names1;
+    }();
+
+    constexpr std::array<std::array<char, 2>, 13> test_text_tags_line1_expected{{
+        {'u',0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {0,0}, {'i','s'}, {0,0}}};
+    static_assert(test_text_tags_line1.size() == test_text_tags_line1_expected.size());
+    static_assert(test_text_tags_line1 == test_text_tags_line1_expected);
+
+    constexpr auto test_text_str_idxs_chars = []() {
+        const std::string test_text(TEST_TEXT_WITH_TAGS);
+        const auto text_elems = TestTextElems(test_text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), text_elems, 4u, dummy_next_fn);
+
+        const auto& ln0 = line_data[0];
+        const auto& cd0 = ln0.char_data;
+
+        std::array<StrSize, 30> test_text_str_idxs{S0};
+        std::array<char, 31> test_text_chars{0};
+        std::size_t out_idx = 0;
+
+        for (std::size_t char_data_idx = 0u; char_data_idx < cd0.size(); ++char_data_idx) {
+            const auto str_idx = cd0[char_data_idx].string_index;
+            test_text_str_idxs[out_idx] = str_idx;
+            test_text_chars[out_idx++] = test_text.at(Value(str_idx));
+        }
+
+        return std::pair(test_text_str_idxs, test_text_chars);
+    }();
+    constexpr auto test_text_str_idxs = test_text_str_idxs_chars.first;
+    constexpr auto test_text_chars = std::string_view{test_text_str_idxs_chars.second.data(), 30};
+    static_assert(test_text_str_idxs.size() == 30 && test_text_chars.size() == 30 &&
+                  test_text_chars == "defaultital_ul_it_   _just_ul_");
 #endif
 }
 

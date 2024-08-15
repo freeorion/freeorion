@@ -329,7 +329,18 @@ public:
         [[nodiscard]] CONSTEXPR_FONT bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
 
         /** Returns the width of the element. */
-        [[nodiscard]] X Width() const;
+        [[nodiscard]] CONSTEXPR_FONT X Width() const
+        {
+            if (cached_width == -X1)
+                cached_width = [](const auto& widths) -> X {
+                    X rv = X0;
+                    for (const auto& w : widths)
+                        rv += w;
+                    return rv;
+                }(widths);
+            return cached_width;
+        }
+
 
         /* Returns the number of characters in the original string that the
            element represents. */
