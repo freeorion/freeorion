@@ -347,6 +347,356 @@ static_assert(Font::Substring(Font::Substring::EMPTY_STRING).empty());
 static_assert(Font::Substring(Font::Substring::EMPTY_STRING).data() == Font::Substring::EMPTY_STRING.data());
 #endif
 
+
+namespace {
+    constexpr struct U8NextFn {
+        uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
+        { return utf8::next(text_it, end_it); }
+    } u8next_fn;
+
+    template <typename GlyphMap, typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void SetTextElementWidths(const std::string& text, std::vector<Font::TextElement>& text_elements,
+                                             std::vector<Font::TextElement>::iterator start, const GlyphMap& glyphs,
+                                             int8_t space_width, const TextNextFn& text_next_fn = u8next_fn)
+    {
+        // For each TextElement in text_elements starting from start.
+        for (auto te_it = start; te_it != text_elements.end(); ++te_it) {
+            auto& elem = *te_it;
+
+            // For each character in the TextElement.
+            auto text_it = elem.text.begin();
+            const auto end_it = elem.text.end();
+            while (text_it != end_it) {
+                // Find and set the width of the character glyph.
+                elem.widths.push_back(0);
+                uint32_t c = text_next_fn(text_it, end_it);
+                if (c != WIDE_NEWLINE) {
+                    auto it = glyphs.find(c);
+                    // use a space when an unrendered glyph is requested (the
+                    // space chararacter is always renderable)
+                    elem.widths.back() = (it != glyphs.end()) ? it->second.advance : space_width;
+                }
+            }
+        }
+    }
+
+    template <typename GlyphMap, typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void SetTextElementWidths(const std::string& text, std::vector<Font::TextElement>& text_elements,
+                                             const GlyphMap& glyphs, int8_t space_width, const TextNextFn& text_next_fn = u8next_fn)
+    { return SetTextElementWidths(text, text_elements, text_elements.begin(), glyphs, space_width, text_next_fn); }
+}
+
+
+namespace {
+    [[nodiscard]] constexpr Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
+    {
+        // correct any disagreements in the format flags
+        uint8_t dup_ct = 0;   // duplication count
+        if (format & FORMAT_LEFT) ++dup_ct;
+        if (format & FORMAT_RIGHT) ++dup_ct;
+        if (format & FORMAT_CENTER) ++dup_ct;
+        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_LEFT by default
+            format &= ~(FORMAT_RIGHT | FORMAT_CENTER);
+            format |= FORMAT_LEFT;
+        }
+        uint8_t dup_ct2 = 0;
+        if (format & FORMAT_TOP) ++dup_ct2;
+        if (format & FORMAT_BOTTOM) ++dup_ct2;
+        if (format & FORMAT_VCENTER) ++dup_ct2;
+        if (dup_ct2 != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
+            format &= ~(FORMAT_BOTTOM | FORMAT_VCENTER);
+            format |= FORMAT_TOP;
+        }
+        if ((format & FORMAT_WORDBREAK) && (format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
+            format &= ~FORMAT_LINEWRAP;
+
+        return format;
+    }
+
+    CONSTEXPR_FONT void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
+                                         Alignment orig_just, Alignment prev_just) noexcept
+    {
+        if (last_line_of_curr_just) {
+            line_data.justification = orig_just;
+            last_line_of_curr_just = false;
+        } else {
+            line_data.justification = prev_just;
+        }
+    }
+
+    CONSTEXPR_FONT void AddNewline(X& x, bool& last_line_of_curr_just, std::vector<Font::LineData>& line_data,
+                                   const Alignment orig_just)
+    {
+        line_data.emplace_back();
+        SetJustification(last_line_of_curr_just,
+                         line_data.back(),
+                         orig_just,
+                         line_data[line_data.size() - 2].justification);
+        x = X0;
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void AddWhitespace(X& x, const Font::Substring elem_text, const int8_t space_width, const X box_width,
+                                      const bool expand_tabs, const X tab_pixel_width, const Flags<TextFormat> format,
+                                      std::vector<Font::LineData>& line_data, bool& last_line_of_curr_just,
+                                      const Alignment orig_just, const StrSize original_string_offset,
+                                      CPSize& code_point_offset, std::vector<Font::TextElement>& pending_formatting_tags,
+                                      const TextNextFn& text_next_fn)
+    {
+        auto it = elem_text.begin();
+        const auto end_it = elem_text.end();
+        while (it != end_it) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(elem_text.begin(), it))};
+            const uint32_t c = text_next_fn(it, end_it);
+            const StrSize char_size{std::distance(elem_text.begin(), it) - Value(char_index)};
+            if (c != WIDE_CR && c != WIDE_FF) {
+                const X advance_position =
+                    (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
+                    (c == WIDE_NEWLINE) ? x : (x + space_width);
+                const X advance = advance_position - x;
+
+                // if we're using linewrap and this space won't fit on this line
+                if ((format & FORMAT_LINEWRAP) && (box_width < advance_position)) {
+                    if (x == X0 && box_width < advance) {
+                        // if the space is larger than the line and alone
+                        // on the line, let the space overrun this line
+                        // and then start a new one
+                        line_data.emplace_back();
+                        x = X0; // reset the x-position to 0
+                        SetJustification(last_line_of_curr_just,
+                                         line_data.back(),
+                                         orig_just,
+                                         line_data[line_data.size() - 2].justification);
+                    } else {
+                        // otherwise start a new line and put the space there
+                        line_data.emplace_back();
+                        x = advance;
+                        line_data.back().char_data.emplace_back(
+                            x,
+                            original_string_offset + char_index,
+                            char_size,
+                            code_point_offset,
+                            pending_formatting_tags);
+
+                        pending_formatting_tags.clear();
+                        SetJustification(last_line_of_curr_just,
+                                         line_data.back(),
+                                         orig_just,
+                                         line_data[line_data.size() - 2].justification);
+                    }
+                } else { // there's room for the space, or we're not using linewrap
+                    x += advance;
+                    line_data.back().char_data.emplace_back(
+                        x,
+                        original_string_offset + char_index,
+                        char_size,
+                        code_point_offset,
+                        pending_formatting_tags);
+                    pending_formatting_tags.clear();
+                }
+            }
+            ++code_point_offset;
+        }
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void AddTextWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                                         const X box_width, std::vector<Font::LineData>& line_data,
+                                         bool& last_line_of_curr_just, const Alignment orig_just,
+                                         const StrSize original_string_offset, CPSize& code_point_offset,
+                                         std::vector<Font::TextElement>& pending_formatting_tags,
+                                         const TextNextFn& text_next_fn)
+    {
+        // if the text "word" overruns this line, and isn't alone on
+        // this line, move it down to the next line
+        if (box_width < x + elem.Width() && x != X0) {
+            line_data.emplace_back();
+            x = X0;
+            SetJustification(last_line_of_curr_just,
+                             line_data.back(),
+                             orig_just,
+                             line_data[line_data.size() - 2].justification);
+        }
+        auto it = elem.text.begin();
+        const auto end_it = elem.text.end();
+        std::size_t j = 0;
+        while (it != end_it) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
+            text_next_fn(it, end_it);
+            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
+            x += elem.widths[j];
+            line_data.back().char_data.emplace_back(
+                x,
+                original_string_offset + char_index,
+                char_size,
+                code_point_offset,
+                pending_formatting_tags);
+            pending_formatting_tags.clear();
+            ++j;
+            ++code_point_offset;
+        }
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void AddTextNoWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                                           const X box_width, std::vector<Font::LineData>& line_data,
+                                           bool& last_line_of_curr_just, const Alignment orig_just,
+                                           const StrSize original_string_offset, CPSize& code_point_offset,
+                                           std::vector<Font::TextElement>& pending_formatting_tags,
+                                           const TextNextFn& text_next_fn)
+    {
+        auto it = elem.text.begin();
+        const auto end_it = elem.text.end();
+        std::size_t j = 0;
+        while (it != end_it) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
+            text_next_fn(it, end_it);
+            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
+            // if the char overruns this line, and isn't alone on this
+            // line, move it down to the next line
+            if ((format & FORMAT_LINEWRAP) && box_width < x + elem.widths[j] && x != X0) {
+                line_data.emplace_back();
+                x = X{elem.widths[j]};
+                line_data.back().char_data.emplace_back(
+                    x,
+                    original_string_offset + char_index,
+                    char_size,
+                    code_point_offset,
+                    pending_formatting_tags);
+                pending_formatting_tags.clear();
+                SetJustification(last_line_of_curr_just,
+                                 line_data.back(),
+                                 orig_just,
+                                 line_data[line_data.size() - 2].justification);
+            } else {
+                // there's room for this char on this line, or there's no wrapping in use
+                x += elem.widths[j];
+                line_data.back().char_data.emplace_back(
+                    x,
+                    original_string_offset + char_index,
+                    char_size,
+                    code_point_offset,
+                    pending_formatting_tags);
+                pending_formatting_tags.clear();
+            }
+            ++j;
+            ++code_point_offset;
+        }
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void AddText(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+                                const X box_width, std::vector<Font::LineData>& line_data,
+                                bool& last_line_of_curr_just, const Alignment orig_just,
+                                const StrSize original_string_offset, CPSize& code_point_offset,
+                                std::vector<Font::TextElement>& pending_formatting_tags,
+                                const TextNextFn& text_next_fn)
+    {
+        if (format & FORMAT_WORDBREAK) {
+            AddTextWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
+                             orig_just, original_string_offset, code_point_offset,
+                             pending_formatting_tags, text_next_fn);
+        } else {
+            AddTextNoWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
+                               orig_just, original_string_offset, code_point_offset,
+                               pending_formatting_tags, text_next_fn);
+        }
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
+                                   bool& last_line_of_curr_just, CPSize& code_point_offset,
+                                   std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        if (elem.tag_name == Font::ALIGN_LEFT_TAG)
+            justification = ALIGN_LEFT;
+        else if (elem.tag_name == Font::ALIGN_CENTER_TAG)
+            justification = ALIGN_CENTER;
+        else if (elem.tag_name == Font::ALIGN_RIGHT_TAG)
+            justification = ALIGN_RIGHT;
+        else if (elem.tag_name != Font::PRE_TAG)
+            pending_formatting_tags.push_back(elem);
+        last_line_of_curr_just = false;
+        code_point_offset += elem.CodePointSize();
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
+                                    bool& last_line_of_curr_just, CPSize& code_point_offset,
+                                    std::vector<Font::TextElement>& pending_formatting_tags)
+    {
+        if ((elem.tag_name == Font::ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
+            (elem.tag_name == Font::ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
+            (elem.tag_name == Font::ALIGN_RIGHT_TAG && justification == ALIGN_RIGHT))
+        {
+            last_line_of_curr_just = true;
+        } else if (elem.tag_name != Font::PRE_TAG) {
+            pending_formatting_tags.push_back(elem);
+        }
+        code_point_offset += elem.CodePointSize();
+    }
+
+    template <typename TextNextFn = U8NextFn>
+    CONSTEXPR_FONT auto AssembleLineData(Flags<TextFormat> format, X box_width,
+                                         const std::vector<Font::TextElement>& text_elements, int8_t space_width,
+                                         const TextNextFn& text_next_fn = u8next_fn)
+    {
+        format = ValidateFormat(format); // may modify format
+
+        using TextElement = Font::TextElement;
+
+        constexpr int tab_width = 8; // default tab width
+        const X tab_pixel_width = X{tab_width * space_width}; // get the length of a tab stop
+        const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
+        const Alignment orig_just =
+            (format & FORMAT_LEFT) ? ALIGN_LEFT :
+            (format & FORMAT_CENTER) ? ALIGN_CENTER :
+            (format & FORMAT_RIGHT) ? ALIGN_RIGHT : ALIGN_NONE;
+        bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
+
+        std::vector<Font::LineData> line_data;
+        if (!text_elements.empty())
+            line_data.emplace_back(orig_just);
+
+        X x = X0;
+        // the position within the original string of the current TextElement
+        StrSize original_string_offset(S0);
+        // the index of the first code point of the current TextElement
+        CPSize code_point_offset(CP0);
+        std::vector<TextElement> pending_formatting_tags;
+
+        for (const auto& elem : text_elements) {
+            switch (elem.Type()) {
+            case TextElement::TextElementType::NEWLINE:
+                AddNewline(x, last_line_of_curr_just, line_data, orig_just);
+                break;
+            case TextElement::TextElementType::WHITESPACE:
+                AddWhitespace(x, elem.text, space_width, box_width, expand_tabs, tab_pixel_width, format,
+                              line_data, last_line_of_curr_just, orig_just, original_string_offset,
+                              code_point_offset, pending_formatting_tags, text_next_fn);
+                break;
+            case TextElement::TextElementType::TEXT:
+                AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
+                        original_string_offset, code_point_offset, pending_formatting_tags, text_next_fn);
+                break;
+            case TextElement::TextElementType::OPEN_TAG:
+                AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
+                           code_point_offset, pending_formatting_tags);
+                break;
+            case TextElement::TextElementType::CLOSE_TAG:
+                AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
+                            code_point_offset, pending_formatting_tags);
+                break;
+            }
+            original_string_offset += elem.StringSize();
+        }
+        // disregard the final pending formatting tag, if any, since this is the
+        // end of the text, and so it cannot have any effect
+
+        return line_data;
+    }
+}
+
 ///////////////////////////////////////
 // Free Functions
 ///////////////////////////////////////
@@ -387,22 +737,79 @@ CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
     return retval;
 }
 
-std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data)
-{
-    std::pair<std::size_t, CPSize> retval(std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE);
-    for (std::size_t i = 0; i < line_data.size(); ++i) {
-        const auto& char_data = line_data[i].char_data;
-        if (!char_data.empty() &&
-            char_data.front().code_point_index <= index &&
-            index <= char_data.back().code_point_index)
-        {
-            retval.first = i;
-            retval.second = index - char_data.front().code_point_index;
-            break;
+namespace {
+    CONSTEXPR_FONT std::pair<std::size_t, CPSize>
+    LineIndexAndCPIndexInLines(CPSize index, const std::vector<Font::LineData>& line_data)
+    {
+        for (std::size_t i = 0; i < line_data.size(); ++i) {
+            const auto& char_data = line_data[i].char_data;
+            if (!char_data.empty() &&
+                char_data.front().code_point_index <= index &&
+                index <= char_data.back().code_point_index)
+            { return {i, index - char_data.front().code_point_index}; }
         }
+        return {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE};
     }
-    return retval;
+
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr struct DummyNextFn {
+        // constexpr OK alternative to utf8::next that will only work for single-byte character strings
+        constexpr uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
+        {
+            if (text_it == end_it)
+                return 0u;
+            uint32_t retval = *text_it;
+            ++text_it;
+            if (retval >= 128)
+                throw std::invalid_argument("dummy next function only works for single-byte character strings");
+            return retval;
+        }
+    } dummy_next_fn;
+
+    constexpr struct DummyGlyphMap {
+        struct DummyGlyph { int8_t advance = 4; };
+        static constexpr std::pair<uint32_t, DummyGlyph> value{};
+
+        constexpr auto* find(uint32_t) const noexcept { return &value; }
+        constexpr decltype(value)* end() const noexcept { return nullptr; }
+    } dummy_glyph_map;
+
+    constexpr auto test_line_and_cp0 = []() {
+        const std::string text = "ab\ncd\n\nef";
+        std::vector<Font::TextElement> elems;
+        elems.emplace_back(Font::Substring(text, 0u, 2u));
+        elems.emplace_back(Font::Substring(text, 2u, 3u), Font::TextElement::TextElementType::NEWLINE);
+        elems.emplace_back(Font::Substring(text, 3u, 5u));
+        elems.emplace_back(Font::Substring(text, 5u, 6u), Font::TextElement::TextElementType::NEWLINE);
+        elems.emplace_back(Font::Substring(text, 6u, 7u), Font::TextElement::TextElementType::NEWLINE);
+        elems.emplace_back(Font::Substring(text, 7u, 9u));
+
+        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
+
+        return std::array{
+            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}), c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
+            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}), c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7})
+        };
+    }();
+
+    constexpr std::array<std::pair<std::size_t, CPSize>, 8> test_line_and_cp_expected0{{
+        {0u, CPSize{0}}, {0u, CPSize{1}},
+        {1u, CPSize{0}}, {1u, CPSize{1}},
+        {3u, CPSize{0}}, {3u, CPSize{1}},
+        {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}, {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}
+    }};
+
+    static_assert(test_line_and_cp0 == test_line_and_cp_expected0);
+#endif
 }
+
+std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data)
+{ return LineIndexAndCPIndexInLines(index, line_data); }
 
 namespace {
     // These are the types found by the regular expression: XML open/close tags, text and
@@ -547,71 +954,11 @@ namespace {
 }
 
 
-namespace {
-    constexpr struct U8NextFn {
-        uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
-        { return utf8::next(text_it, end_it); }
-    } u8next_fn;
-
-    template <typename GlyphMap, typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void SetTextElementWidths(const std::string& text, std::vector<Font::TextElement>& text_elements,
-                                             std::vector<Font::TextElement>::iterator start, const GlyphMap& glyphs,
-                                             int8_t space_width, const TextNextFn& text_next_fn = u8next_fn)
-    {
-        // For each TextElement in text_elements starting from start.
-        for (auto te_it = start; te_it != text_elements.end(); ++te_it) {
-            auto& elem = *te_it;
-
-            // For each character in the TextElement.
-            auto text_it = elem.text.begin();
-            const auto end_it = elem.text.end();
-            while (text_it != end_it) {
-                // Find and set the width of the character glyph.
-                elem.widths.push_back(0);
-                uint32_t c = text_next_fn(text_it, end_it);
-                if (c != WIDE_NEWLINE) {
-                    auto it = glyphs.find(c);
-                    // use a space when an unrendered glyph is requested (the
-                    // space chararacter is always renderable)
-                    elem.widths.back() = (it != glyphs.end()) ? it->second.advance : space_width;
-                }
-            }
-        }
-    }
-
-    template <typename GlyphMap, typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void SetTextElementWidths(const std::string& text, std::vector<Font::TextElement>& text_elements,
-                                             const GlyphMap& glyphs, int8_t space_width, const TextNextFn& text_next_fn = u8next_fn)
-    { return SetTextElementWidths(text, text_elements, text_elements.begin(), glyphs, space_width, text_next_fn); }
-}
-
 ///////////////////////////////////////
 // class GG::Font::TextElement
 ///////////////////////////////////////
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 namespace {
-    constexpr struct DummyNextFn {
-        // constexpr OK alternative to utf8::next that will only work for single-byte character strings
-        constexpr uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
-        {
-            if (text_it == end_it)
-                return 0u;
-            uint32_t retval = *text_it;
-            ++text_it;
-            if (retval >= 128)
-                throw std::invalid_argument("dummy next function only works for single-byte character strings");
-            return retval;
-        }
-    } dummy_next_fn;
-
-    constexpr struct DummyGlyphMap {
-        struct DummyGlyph { int8_t advance = 4; };
-        static constexpr std::pair<uint32_t, DummyGlyph> value{};
-
-        constexpr auto* find(uint32_t) const noexcept { return &value; }
-        constexpr decltype(value)* end() const noexcept { return nullptr; }
-    } dummy_glyph_map;
-
     constexpr std::string_view TEST_TEXT_WITH_TAGS = "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line<i><sup>is";
 
     constexpr auto TestTextElems(const std::string& text)
@@ -1575,317 +1922,9 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<TextElement>& text
     SetTextElementWidths(text, text_elements, start_of_reflow, glyphs, space_width);
 }
 
-namespace {
-    [[nodiscard]] constexpr Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
-    {
-        // correct any disagreements in the format flags
-        uint8_t dup_ct = 0;   // duplication count
-        if (format & FORMAT_LEFT) ++dup_ct;
-        if (format & FORMAT_RIGHT) ++dup_ct;
-        if (format & FORMAT_CENTER) ++dup_ct;
-        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_LEFT by default
-            format &= ~(FORMAT_RIGHT | FORMAT_CENTER);
-            format |= FORMAT_LEFT;
-        }
-        uint8_t dup_ct2 = 0;
-        if (format & FORMAT_TOP) ++dup_ct2;
-        if (format & FORMAT_BOTTOM) ++dup_ct2;
-        if (format & FORMAT_VCENTER) ++dup_ct2;
-        if (dup_ct2 != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
-            format &= ~(FORMAT_BOTTOM | FORMAT_VCENTER);
-            format |= FORMAT_TOP;
-        }
-        if ((format & FORMAT_WORDBREAK) && (format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
-            format &= ~FORMAT_LINEWRAP;
-
-        return format;
-    }
-
-    CONSTEXPR_FONT void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
-                                         Alignment orig_just, Alignment prev_just) noexcept
-    {
-        if (last_line_of_curr_just) {
-            line_data.justification = orig_just;
-            last_line_of_curr_just = false;
-        } else {
-            line_data.justification = prev_just;
-        }
-    }
-
-    CONSTEXPR_FONT void AddNewline(X& x, bool& last_line_of_curr_just, std::vector<Font::LineData>& line_data,
-                                   const Alignment orig_just)
-    {
-        line_data.emplace_back();
-        SetJustification(last_line_of_curr_just,
-                         line_data.back(),
-                         orig_just,
-                         line_data[line_data.size() - 2].justification);
-        x = X0;
-    }
-
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddWhitespace(X& x, const Font::Substring elem_text, const int8_t space_width, const X box_width,
-                                      const bool expand_tabs, const X tab_pixel_width, const Flags<TextFormat> format,
-                                      std::vector<Font::LineData>& line_data, bool& last_line_of_curr_just,
-                                      const Alignment orig_just, const StrSize original_string_offset,
-                                      CPSize& code_point_offset, std::vector<Font::TextElement>& pending_formatting_tags,
-                                      const TextNextFn& text_next_fn)
-    {
-        auto it = elem_text.begin();
-        const auto end_it = elem_text.end();
-        while (it != end_it) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(elem_text.begin(), it))};
-            const uint32_t c = text_next_fn(it, end_it);
-            const StrSize char_size{std::distance(elem_text.begin(), it) - Value(char_index)};
-            if (c != WIDE_CR && c != WIDE_FF) {
-                const X advance_position =
-                    (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
-                    (c == WIDE_NEWLINE) ? x : (x + space_width);
-                const X advance = advance_position - x;
-
-                // if we're using linewrap and this space won't fit on this line
-                if ((format & FORMAT_LINEWRAP) && (box_width < advance_position)) {
-                    if (x == X0 && box_width < advance) {
-                        // if the space is larger than the line and alone
-                        // on the line, let the space overrun this line
-                        // and then start a new one
-                        line_data.emplace_back();
-                        x = X0; // reset the x-position to 0
-                        SetJustification(last_line_of_curr_just,
-                                         line_data.back(),
-                                         orig_just,
-                                         line_data[line_data.size() - 2].justification);
-                    } else {
-                        // otherwise start a new line and put the space there
-                        line_data.emplace_back();
-                        x = advance;
-                        line_data.back().char_data.emplace_back(
-                            x,
-                            original_string_offset + char_index,
-                            char_size,
-                            code_point_offset,
-                            pending_formatting_tags);
-
-                        pending_formatting_tags.clear();
-                        SetJustification(last_line_of_curr_just,
-                                         line_data.back(),
-                                         orig_just,
-                                         line_data[line_data.size() - 2].justification);
-                    }
-                } else { // there's room for the space, or we're not using linewrap
-                    x += advance;
-                    line_data.back().char_data.emplace_back(
-                        x,
-                        original_string_offset + char_index,
-                        char_size,
-                        code_point_offset,
-                        pending_formatting_tags);
-                    pending_formatting_tags.clear();
-                }
-            }
-            ++code_point_offset;
-        }
-    }
- 
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddTextWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                                         const X box_width, std::vector<Font::LineData>& line_data,
-                                         bool& last_line_of_curr_just, const Alignment orig_just,
-                                         const StrSize original_string_offset, CPSize& code_point_offset,
-                                         std::vector<Font::TextElement>& pending_formatting_tags,
-                                         const TextNextFn& text_next_fn)
-    {
-        // if the text "word" overruns this line, and isn't alone on
-        // this line, move it down to the next line
-        if (box_width < x + elem.Width() && x != X0) {
-            line_data.emplace_back();
-            x = X0;
-            SetJustification(last_line_of_curr_just,
-                             line_data.back(),
-                             orig_just,
-                             line_data[line_data.size() - 2].justification);
-        }
-        auto it = elem.text.begin();
-        const auto end_it = elem.text.end();
-        std::size_t j = 0;
-        while (it != end_it) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
-            text_next_fn(it, end_it);
-            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
-            x += elem.widths[j];
-            line_data.back().char_data.emplace_back(
-                x,
-                original_string_offset + char_index,
-                char_size,
-                code_point_offset,
-                pending_formatting_tags);
-            pending_formatting_tags.clear();
-            ++j;
-            ++code_point_offset;
-        }
-    }
-
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddTextNoWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                                           const X box_width, std::vector<Font::LineData>& line_data,
-                                           bool& last_line_of_curr_just, const Alignment orig_just,
-                                           const StrSize original_string_offset, CPSize& code_point_offset,
-                                           std::vector<Font::TextElement>& pending_formatting_tags,
-                                           const TextNextFn& text_next_fn)
-    {
-        auto it = elem.text.begin();
-        const auto end_it = elem.text.end();
-        std::size_t j = 0;
-        while (it != end_it) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
-            text_next_fn(it, end_it);
-            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
-            // if the char overruns this line, and isn't alone on this
-            // line, move it down to the next line
-            if ((format & FORMAT_LINEWRAP) && box_width < x + elem.widths[j] && x != X0) {
-                line_data.emplace_back();
-                x = X{elem.widths[j]};
-                line_data.back().char_data.emplace_back(
-                    x,
-                    original_string_offset + char_index,
-                    char_size,
-                    code_point_offset,
-                    pending_formatting_tags);
-                pending_formatting_tags.clear();
-                SetJustification(last_line_of_curr_just,
-                                 line_data.back(),
-                                 orig_just,
-                                 line_data[line_data.size() - 2].justification);
-            } else {
-                // there's room for this char on this line, or there's no wrapping in use
-                x += elem.widths[j];
-                line_data.back().char_data.emplace_back(
-                    x,
-                    original_string_offset + char_index,
-                    char_size,
-                    code_point_offset,
-                    pending_formatting_tags);
-                pending_formatting_tags.clear();
-            }
-            ++j;
-            ++code_point_offset;
-        }
-    }
-
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddText(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                                const X box_width, std::vector<Font::LineData>& line_data,
-                                bool& last_line_of_curr_just, const Alignment orig_just,
-                                const StrSize original_string_offset, CPSize& code_point_offset,
-                                std::vector<Font::TextElement>& pending_formatting_tags,
-                                const TextNextFn& text_next_fn)
-    {
-        if (format & FORMAT_WORDBREAK) {
-            AddTextWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
-                             orig_just, original_string_offset, code_point_offset,
-                             pending_formatting_tags, text_next_fn);
-        } else {
-            AddTextNoWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
-                               orig_just, original_string_offset, code_point_offset,
-                               pending_formatting_tags, text_next_fn);
-        }
-    }
-
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
-                                   bool& last_line_of_curr_just, CPSize& code_point_offset,
-                                   std::vector<Font::TextElement>& pending_formatting_tags)
-    {
-        if (elem.tag_name == Font::ALIGN_LEFT_TAG)
-            justification = ALIGN_LEFT;
-        else if (elem.tag_name == Font::ALIGN_CENTER_TAG)
-            justification = ALIGN_CENTER;
-        else if (elem.tag_name == Font::ALIGN_RIGHT_TAG)
-            justification = ALIGN_RIGHT;
-        else if (elem.tag_name != Font::PRE_TAG)
-            pending_formatting_tags.push_back(elem);
-        last_line_of_curr_just = false;
-        code_point_offset += elem.CodePointSize();
-    }
-
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
-                                    bool& last_line_of_curr_just, CPSize& code_point_offset,
-                                    std::vector<Font::TextElement>& pending_formatting_tags)
-    {
-        if ((elem.tag_name == Font::ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
-            (elem.tag_name == Font::ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
-            (elem.tag_name == Font::ALIGN_RIGHT_TAG && justification == ALIGN_RIGHT))
-        {
-            last_line_of_curr_just = true;
-        } else if (elem.tag_name != Font::PRE_TAG) {
-            pending_formatting_tags.push_back(elem);
-        }
-        code_point_offset += elem.CodePointSize();
-    }
-
-    template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT auto AssembleLineData(Flags<TextFormat> format, X box_width,
-                                         const std::vector<Font::TextElement>& text_elements, int8_t space_width,
-                                         const TextNextFn& text_next_fn = u8next_fn)
-    {
-        format = ValidateFormat(format); // may modify format
-
-        using TextElement = Font::TextElement;
-
-        constexpr int tab_width = 8; // default tab width
-        const X tab_pixel_width = X{tab_width * space_width}; // get the length of a tab stop
-        const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
-        const Alignment orig_just =
-            (format & FORMAT_LEFT) ? ALIGN_LEFT :
-            (format & FORMAT_CENTER) ? ALIGN_CENTER :
-            (format & FORMAT_RIGHT) ? ALIGN_RIGHT : ALIGN_NONE;
-        bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
-
-        std::vector<Font::LineData> line_data;
-        if (!text_elements.empty())
-            line_data.emplace_back(orig_just);
-
-        X x = X0;
-        // the position within the original string of the current TextElement
-        StrSize original_string_offset(S0);
-        // the index of the first code point of the current TextElement
-        CPSize code_point_offset(CP0);
-        std::vector<TextElement> pending_formatting_tags;
-
-        for (const auto& elem : text_elements) {
-            switch (elem.Type()) {
-            case TextElement::TextElementType::NEWLINE:
-                AddNewline(x, last_line_of_curr_just, line_data, orig_just);
-                break;
-            case TextElement::TextElementType::WHITESPACE:
-                AddWhitespace(x, elem.text, space_width, box_width, expand_tabs, tab_pixel_width, format,
-                              line_data, last_line_of_curr_just, orig_just, original_string_offset,
-                              code_point_offset, pending_formatting_tags, text_next_fn);
-                break;
-            case TextElement::TextElementType::TEXT:
-                AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
-                        original_string_offset, code_point_offset, pending_formatting_tags, text_next_fn);
-                break;
-            case TextElement::TextElementType::OPEN_TAG:
-                AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
-                           code_point_offset, pending_formatting_tags);
-                break;
-            case TextElement::TextElementType::CLOSE_TAG:
-                AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
-                            code_point_offset, pending_formatting_tags);
-                break;
-            }
-            original_string_offset += elem.StringSize();
-        }
-        // disregard the final pending formatting tag, if any, since this is the
-        // end of the text, and so it cannot have any effect
-
-        return line_data;
-    }
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-
+namespace {
     constexpr auto lines_and_lengths = []() {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto text_elems = TestTextElems(test_text);
@@ -1995,9 +2034,8 @@ namespace {
         return rv;
     }();
     static_assert(static_cast<decltype(test_text_str_idxs)>(idxs_expected) == test_text_str_idxs);
-
-#endif
 }
+#endif
 
 std::vector<Font::LineData> Font::DetermineLines(
     const std::string& text, Flags<TextFormat> format, X box_width,
