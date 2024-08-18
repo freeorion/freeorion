@@ -126,22 +126,29 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
-    CPSize low = std::max(CP0, std::min(from, to));
-    CPSize high = std::min(Length(), std::max(from, to));
 
-    //std::cout << "low: " << low << "  high: " << high << std::endl;
+    std::cout << "full text(" << m_text.size() << "): " << m_text << std::endl;
 
-    auto low_pos = LinePositionOf(low, m_line_data);
-    auto high_pos = LinePositionOf(high, m_line_data);
+    auto [from_line_idx, from_cp_in_line_dx] = LinePositionOf(from, m_line_data);
+    auto from_stridx = StringIndexOf(from_line_idx, from_cp_in_line_dx, m_line_data);
+    std::cout << "from CPSize: " << Value(from) << " : " << m_text[Value(from_stridx)] << std::endl;
 
-    StrSize low_string_idx = StringIndexOf(low_pos.first, low_pos.second, m_line_data);
-    StrSize high_string_idx = StringIndexOf(high_pos.first, high_pos.second, m_line_data);
+    auto [to_line_idx, to_cp_in_line_dx] = LinePositionOf(to, m_line_data);
+    auto to_stridx = StringIndexOf(to_line_idx, to_cp_in_line_dx, m_line_data);
+    std::cout << "to CPSize: " << Value(to) << " : " << m_text[Value(to_stridx)] << std::endl;
 
-    auto low_it = m_text.begin() + Value(low_string_idx);
-    auto high_it = m_text.begin() + Value(high_string_idx);
+
+    const auto txt_sz = m_text.size();
+    auto [low_string_idx_strsz, high_string_idx_strsz] = CodePointIndicesRangeToStringSizeIndices(from, to, m_line_data);
+    const auto low_string_idx = std::min(Value(low_string_idx_strsz), txt_sz);
+    const auto high_string_idx = std::min(Value(high_string_idx_strsz), txt_sz);
+    const auto out_length = std::max(low_string_idx, high_string_idx) - std::min(low_string_idx, high_string_idx);
+
+    const auto low_it = m_text.begin() + low_string_idx;
+    const auto high_it = m_text.begin() + high_string_idx;
 
     try {
-        return {&*low_it, static_cast<std::size_t>(std::distance(low_it, high_it))};
+        return {&*low_it, out_length};
     } catch (...) {
         return {};
     }
@@ -228,7 +235,7 @@ void TextControl::RecomputeLineData() {
     if (!m_font)
         return;
 
-    m_code_points = CPSize(utf8::distance(m_text.begin(), m_text.end()));
+    m_code_points = CPSize(utf8::distance(m_text.begin(), m_text.end())); // ??? should be based on line data probably?
 
     m_line_data = m_font->DetermineLines(m_text, m_format, ClientSize().x, m_text_elements);
     Pt text_sz = m_font->TextExtent(m_line_data);
