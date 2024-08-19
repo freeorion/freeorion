@@ -289,12 +289,12 @@ void MultiEdit::SetText(std::string str)
             first_line = new_lines.size() - 1 - m_max_lines_history;
             last_line = new_lines.size() - 1;
         }
-        const CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, &new_lines);
+        const CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, new_lines);
         if (m_style & MULTI_TERMINAL_STYLE) {
             // chopping these lines off the front will invalidate the cursor range unless we do this
-            const CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, &new_lines);
+            const CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, new_lines);
             cursor_begin_idx = first_line_first_char_idx < cursor_begin_string_index ? CP0 : cursor_begin_string_index - first_line_first_char_idx;
-            const CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, &new_lines);
+            const CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, new_lines);
             cursor_end_idx = first_line_first_char_idx < cursor_end_string_index ? CP0 : cursor_end_string_index - first_line_first_char_idx;
         }
         const StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, new_lines);
@@ -474,25 +474,21 @@ Pt MultiEdit::ScrollPosition() const
             m_vscroll ? Y{m_vscroll->PosnRange().first} : Y0};
 }
 
-CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
-                              const std::vector<Font::LineData>* line_data) const
+CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>& line_data)
 {
-    const auto& lines = line_data ? *line_data : GetLineData();
-
-    if (lines.empty())
+    if (line_data.empty())
         return CP0; // no text
-    if (lines[row].Empty() && row == 0)
+    const Font::LineData& line = line_data[row];
+    if (line.Empty() && row == 0)
         return CP0; // empty first line
 
     // if selecting into an empty line, return one past the end of the previous line
-    if (lines[row].Empty())
-        return lines[row-1].char_data.back().code_point_index + CP1;
+    if (line.Empty())
+        return line_data[row-1].char_data.back().code_point_index + CP1;
 
     // if at start of (non-empty) line, return first character of that line
     if (char_idx == CP0)
-        return lines[row].char_data.front().code_point_index;
-
-    const Font::LineData& line = lines[row];
+        return line.char_data.front().code_point_index;
 
     // if at end of line, go with one past the last character of the line
     if (Value(char_idx) >= line.char_data.size())
@@ -565,14 +561,15 @@ std::size_t MultiEdit::RowAt(Y y) const
 
 CPSize MultiEdit::CharAt(std::size_t row, X x) const
 {
-    if (GetLineData().empty())
+    const auto& line_data = GetLineData();
+    if (line_data.empty())
         return CP0;
     // out of range of rows?
-    if (row >= GetLineData().size())
-        return CPSize(GetLineData().back().char_data.size());
+    if (row >= line_data.size())
+        return CPSize(line_data.back().char_data.size());
 
     //std::cout << "CharAt row: " << row << " X: " << x << std::endl;
-    const Font::LineData& line = GetLineData()[row];
+    const Font::LineData& line = line_data[row];
     // empty line?
     if (line.char_data.empty())
         return CP0;
@@ -582,8 +579,8 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
     // past end of line?
     if (x > line.char_data.back().extent) {
         //std::cout << "past line right edge at: " << line.char_data.back().extent << "\n";
-        //std::cout << "row: " << "  last row: " << GetLineData().size() - 1 << std::endl;
-        if (row < GetLineData().size() - 1) {
+        //std::cout << "row: " << "  last row: " << line_data.size() - 1 << std::endl;
+        if (row < line_data.size() - 1) {
             // know this row is not empty due to above check
             return CPSize(line.char_data.size()-1); // last character should be a newline if this is not the last row
         } else {
@@ -632,22 +629,26 @@ std::size_t MultiEdit::LastFullyVisibleRow() const
 
 CPSize MultiEdit::FirstVisibleChar(std::size_t row) const
 {
-    if (GetLineData().empty())
+    const auto& line_data = GetLineData();
+    if (line_data.empty())
         return CP0;
-    if (GetLineData()[row].Empty())
+    const auto& line = line_data[row];
+    if (line.Empty())
         return CharAt(row, X0);
     else
-        return std::min(CharAt(row, X0), CPSize(GetLineData()[row].char_data.size()) - CP1);
+        return std::min(CharAt(row, X0), CPSize(line.char_data.size()) - CP1);
 }
 
 CPSize MultiEdit::LastVisibleChar(std::size_t row) const
 {
-    if (GetLineData().empty())
+    const auto& line_data = GetLineData();
+    if (line_data.empty())
         return CP0;
-    if (GetLineData()[row].Empty())
+    const auto& line = line_data[row];
+    if (line.Empty())
         return CharAt(row, ClientSize().x);
     else
-        return std::min(CharAt(row, ClientSize().x), CPSize(GetLineData()[row].char_data.size()) - CP1);
+        return std::min(CharAt(row, ClientSize().x), CPSize(line.char_data.size()) - CP1);
 }
 
 std::pair<std::size_t, CPSize> MultiEdit::HighCursorPos() const
