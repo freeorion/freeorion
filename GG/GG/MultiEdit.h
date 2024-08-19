@@ -117,13 +117,14 @@ protected:
     std::pair<std::size_t, CPSize> CharAt(CPSize idx) const;
 
     /** Returns the code point index of the start of the UTF-8 sequence for
-        the code point at \a <i>char_idx</i> in row \a row, using \a line_data
-        instead of the current line data, if it is supplied.  If \a row, \a
-        char_idx refers to a character preceeded by formatting tags, the index
-        of the first character of the first formatting tag is returned instead.
-        Not range-checked. */
-    CPSize CharIndexOf(std::size_t row, CPSize char_idx,
-                       const std::vector<Font::LineData>* line_data = nullptr) const;
+        the code point at \a char_idx in row \a row, using \a line_data
+        instead of the current line data, if it is supplied.
+        If \a row, \a char_idx refers to a character preceeded by formatting
+        tags, the index of the first character of the first formatting tag is
+        returned instead. Not range-checked. */
+    static CPSize CharIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>& line_data);
+    CPSize CharIndexOf(std::size_t row, CPSize char_idx) const
+    { return CharIndexOf(row, char_idx, GetLineData()); }
 
     /** Returns the x-coordinate of the beginning of row \a row, in
         cleint-space coordinates.  Not range-checked. */
