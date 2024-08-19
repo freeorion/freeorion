@@ -127,15 +127,15 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
 
-    std::cout << "full text(" << m_text.size() << "): " << m_text << std::endl;
+    //std::cout << "full text(" << m_text.size() << "): " << m_text << std::endl;
 
     auto [from_line_idx, from_cp_in_line_dx] = LinePositionOf(from, m_line_data);
     auto from_stridx = StringIndexOf(from_line_idx, from_cp_in_line_dx, m_line_data);
-    std::cout << "from CPSize: " << Value(from) << " : " << m_text[Value(from_stridx)] << std::endl;
+    //std::cout << "from CPSize: " << Value(from) << " : " << m_text[Value(from_stridx)] << std::endl;
 
     auto [to_line_idx, to_cp_in_line_dx] = LinePositionOf(to, m_line_data);
     auto to_stridx = StringIndexOf(to_line_idx, to_cp_in_line_dx, m_line_data);
-    std::cout << "to CPSize: " << Value(to) << " : " << m_text[Value(to_stridx)] << std::endl;
+    //std::cout << "to CPSize: " << Value(to) << " : " << m_text[Value(to_stridx)] << std::endl;
 
 
     const auto txt_sz = m_text.size();
