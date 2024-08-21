@@ -1,0 +1,16 @@
+Special
+    name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL"
+    description = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_DESC"
+    spawnrate = 0.0
+    effectsgroups = EffectsGroup
+            scope = Source
+            priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
+            effects = [
+                SetResearch value = Value - (SpecialCapacity name = ThisSpecial object = Source.ID)
+                RemoveSpecial name = ThisSpecial
+            ]
+
+    graphic = "icons/policies/military_exploration.png"
+
+#include "/scripting/macros/misc.macros"
+#include "/scripting/macros/priorities.macros"

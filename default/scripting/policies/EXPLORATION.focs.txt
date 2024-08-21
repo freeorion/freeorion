@@ -47,7 +47,15 @@ Policy
                         Ship
                         OwnedBy empire = Source.Owner
                     ])
-        
+
+                // FIXME the research boost needs to be temporary/removed after resource creation/next turn
+                //       else it is like a super-charged research growth
+                //       or better add directly to the empire research without tinkering on meters
+                //       current workaround would be to add this after resource growth and
+                //       * add a special to remember how much this added and then
+                //       * remove that from research at the beginning of next turn
+                // FIXME parser does not want this as data for GenerateSitrepMessage:
+                //       data = (Statistic·Count·condition·=·[ [ NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET ] ] )
         EffectsGroup
             scope = And [
                 System
@@ -64,8 +72,42 @@ Policy
                     icon = "icons/tech/environmental_encapsulation.png"
                     parameters = tag = "system" data = Target.SystemID
                     empire = Source.Owner
+
+        EffectsGroup
+            scope = Source
+            activation = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                SetResearch value = Value +
+                    Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                SetSpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL"
+                    capacity = Statistic Count condition =[[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                SetTargetResearch value = Value +
+                    Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                GenerateSitRepMessage
+                    message = "SITREP_FIELD_RESEARCH_KILLED"
+                    label = "SITREP_FIELD_RESEARCH_LABEL"
+                    icon = "icons/tech/environmental_encapsulation.png"
+                    parameters = [
+                        tag = "system" data = Target.SystemID
+                        tag = "rawtext" data = SpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET" object = Source.ID
+                    ]
+                    empire = Source.Owner
+           ]
     ]
     graphic = "icons/policies/military_exploration.png"
+
+NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET
+'''
+             And [
+                System
+                (CurrentTurn == TurnSystemExplored empire = Source.Owner id = LocalCandidate.ID)
+                Contains And [
+                    Fleet
+                    OwnedBy empire = Source.Owner
+                ]
+            ]
+'''
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/macros/priorities.macros"
