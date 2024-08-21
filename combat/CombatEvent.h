@@ -24,7 +24,7 @@ combat events.
 
 Many combat events are created, but few are examined by players.
 The constructors must be fast.  They should not do any string processing
-in the contructor. The descriptions can be expanded on request.
+in the constructor. The descriptions can be expanded on request.
 
 */
 struct FO_COMMON_API CombatEvent {

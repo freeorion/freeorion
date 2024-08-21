@@ -67,10 +67,10 @@ namespace Pending {
             // multiple threads might be waiting but not care about the results
             if (do_not_care_about_result) {
                 if (pending.pending->valid()) {
-                    DebugLogger() << "Dont care for result of parsing \"" << pending.filename << "\". Have to get() once to release shared state in pending future.";
+                    DebugLogger() << "Don't care for result of parsing \"" << pending.filename << "\". Have to get() once to release shared state in pending future.";
                     pending.pending->get(); // needs to be called once to release state
                 }
-                DebugLogger() << "Dont care for result of parsing \"" << pending.filename << "\". Was already released.";
+                DebugLogger() << "Don't care for result of parsing \"" << pending.filename << "\". Was already released.";
                 return boost::none;
             }
             DebugLogger() << "Retrieve result of parsing \"" << pending.filename << "\".";

@@ -2002,14 +2002,14 @@ sc::result MPLobby::react(const StartMPGame& msg) {
 }
 
 sc::result MPLobby::react(const HostMPGame& msg) {
-    ErrorLogger(FSM) << "MPLobby::react(const HostMPGame& msg) recived HostMPGame message but is already in the MP Lobby.  Aborting connection";
+    ErrorLogger(FSM) << "MPLobby::react(const HostMPGame& msg) received HostMPGame message but is already in the MP Lobby.  Aborting connection";
     msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
 }
 
 sc::result MPLobby::react(const HostSPGame& msg) {
-    ErrorLogger(FSM) << "MPLobby::react(const HostSPGame& msg) recived HostSPGame message but is already in the MP Lobby.  Aborting connection";
+    ErrorLogger(FSM) << "MPLobby::react(const HostSPGame& msg) received HostSPGame message but is already in the MP Lobby.  Aborting connection";
     msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
@@ -2708,7 +2708,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     Networking::ClientType client_type = sender->GetClientType();
 
     if (client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
-        ErrorLogger(FSM) << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignorning";
+        ErrorLogger(FSM) << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignoring";
         return discard_event();
     }
 

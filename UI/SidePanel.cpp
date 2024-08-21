@@ -2742,7 +2742,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
     // parameter, does some safety checks, and disables UI sounds
     DebugLogger() << "SidePanel::PlanetPanel::FocusDropListSelectionChanged";
     if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
-        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged passed end / invalid interator";
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged passed end / invalid iterator";
         return;
     }
 
