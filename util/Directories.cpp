@@ -873,7 +873,7 @@ auto ListDir(const fs::path& path, std::function<bool (const fs::path&)> predica
 #else
     bool is_rel = path.is_relative();
     if (!is_rel && (fs::is_empty(path) || !fs::is_directory(path))) {
-        DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directoy";
+        DebugLogger() << "ListDir: File " << PathToString(path) << " was not included as it is empty or not a directory";
     } else {
         const fs::path& default_path = is_rel ? GetResourceDir() / path : path;
 

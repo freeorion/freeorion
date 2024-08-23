@@ -151,7 +151,7 @@ effectsgroups = [
         scope=System &
         # The following assets need protection
         Contains((Planet() | Ship) & OwnedBy(empire=Source.Owner)) &
-        # Dont warn about system where there are already enemies this turn
+        # Don't warn about system where there are already enemies this turn
         ~Contains(
             Ship & (OwnedBy(affiliation=EnemyOf, empire=Source.Owner) | Unowned) & VisibleToEmpire(empire=Source.Owner)
         ),

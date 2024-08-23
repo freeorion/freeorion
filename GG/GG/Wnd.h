@@ -1017,11 +1017,11 @@ private:
     bool                            m_needs_prerender = false;  ///< Indicates if Wnd needs a PreRender();
 
     /** The default time to set for the first (and only) value in
-        m_browse_mode_times during Wnd contruction */
+        m_browse_mode_times during Wnd construction */
     static unsigned int s_default_browse_time;
 
     /** The default BrowseInfoWmd to set for the first (and only) value in
-        m_browse_mode_times during Wnd contruction */
+        m_browse_mode_times during Wnd construction */
     static std::shared_ptr<BrowseInfoWnd> s_default_browse_info_wnd;
 
     friend class GUI;   ///< GUI needs access to \a m_children, etc.

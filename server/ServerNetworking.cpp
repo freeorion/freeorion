@@ -653,7 +653,7 @@ void ServerNetworking::Disconnect(int id) {
     }
     const PlayerConnectionPtr player = *it;
     if (player->PlayerID() != id) {
-        ErrorLogger(network) << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requrested (" << id << ")";
+        ErrorLogger(network) << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requested (" << id << ")";
         return;
     }
     Disconnect(player);

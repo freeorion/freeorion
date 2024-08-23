@@ -52,7 +52,7 @@ class Texture;
     GG does not apply; when you set the end frame index to N, the last frame
     to be shown will be N, not N - 1. Also, while this control does not need
     to be the same size as the frames replayed within it, the size of the
-    frames is taken from the size of the control when it is contructed. */
+    frames is taken from the size of the control when it is constructed. */
 class GG_API DynamicGraphic : public Control
 {
 public:

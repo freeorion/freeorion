@@ -21,7 +21,7 @@ public:
     using TechClickSignalType = boost::signals2::signal<void (std::string, GG::Flags<GG::ModKey>)>;
     using QueueAddTechsSignalType = boost::signals2::signal<void (std::vector<std::string>, int)>;
 
-    /** TechTreeWnd contructor is usually called before client has
+    /** TechTreeWnd constructor is usually called before client has
         access to techs.  Attempting to show the tech tree takes a long
         time and generates errors.  If \p initially_hidden is true then the
         tech categories are not parsed until the first time Show() is
