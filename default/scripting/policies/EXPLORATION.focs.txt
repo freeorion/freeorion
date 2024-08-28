@@ -70,27 +70,50 @@ Policy
                     message = "SITREP_FIELD_RESEARCH"
                     label = "SITREP_FIELD_RESEARCH_LABEL"
                     icon = "icons/tech/environmental_encapsulation.png"
-                    parameters = tag = "system" data = Target.SystemID
+                    parameters = [
+                        tag = "system" data = Target.SystemID
+                        tag = "policy" data = "PLC_EXPLORATION"
+                    ]
                     empire = Source.Owner
 
         EffectsGroup
-            scope = Source
-            activation = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+            scope = And [ Source (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] > 0) ]
+            activation = Source
             priority = [[END_CLEANUP_PRIORITY]]
             effects = [
                 SetResearch value = Value +
-                    Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                    (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] * NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL")
                 SetSpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL"
-                    capacity = Statistic Count condition =[[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                    capacity = (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] * NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL")
                 SetTargetResearch value = Value +
-                    Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                    (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] * NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL")
                 GenerateSitRepMessage
                     message = "SITREP_FIELD_RESEARCH_KILLED"
-                    label = "SITREP_FIELD_RESEARCH_LABEL"
+                    label = "SITREP_FIELD_RESEARCH_KILLED_LABEL"
                     icon = "icons/tech/environmental_encapsulation.png"
                     parameters = [
                         tag = "system" data = Target.SystemID
-                        tag = "rawtext" data = SpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET" object = Source.ID
+//                        tag = "turn" data = CurrentTurn
+//                        tag = "rpbonusspecialisnotaccessible" data = SpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET" object = Source.ID
+                        tag = "rpbonus" data = Statistic Count condition =[[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+                    ]
+                    empire = Source.Owner
+           ]
+
+        EffectsGroup
+            scope = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+            activation = Source
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_FIELD_RESEARCH_KILLED_SYSTEM"
+                    label = "SITREP_FIELD_RESEARCH_KILLED_SYSTEM_LABEL"
+                    icon = "icons/tech/environmental_encapsulation.png"
+                    parameters = [
+                        tag = "system" data = Target.SystemID
+                        tag = "system" data = Target.SystemID
+                        tag = "rpbonus" data = NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL"
+                        tag = "turn" data = CurrentTurn
                     ]
                     empire = Source.Owner
            ]
@@ -102,7 +125,7 @@ NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET
              And [
                 System
                 (CurrentTurn == TurnSystemExplored empire = Source.Owner id = LocalCandidate.ID)
-                Contains And [
+                Not Contains And [
                     Fleet
                     OwnedBy empire = Source.Owner
                 ]
