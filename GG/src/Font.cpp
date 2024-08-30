@@ -707,8 +707,7 @@ std::ostream& GG::operator<<(std::ostream& os, Font::Substring substr)
     return os;
 }
 
-CPSize GG::CodePointIndexOf(std::size_t line, CPSize index,
-                            const std::vector<Font::LineData>& line_data)
+CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
 {
     CPSize retval(CP0);
     if (line_data.size() <= line) {
@@ -777,6 +776,7 @@ namespace {
 
     constexpr std::string_view multi_line_text = "ab\ncd\n\nef";
 
+    // tests getting line and code point index in line from overall code point index text with newlines
     constexpr auto test_line_and_cp0 = []() {
         const std::string text(multi_line_text);
         std::vector<Font::TextElement> elems;
@@ -858,9 +858,9 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 
-
+    // tests getting string index from code point index in text with newlines
     constexpr auto test_line_cp_str_idx0 = []() {
-        const std::string text = "ab\ncd\n\nef";
+        const std::string text(multi_line_text);
         std::vector<Font::TextElement> elems;
         elems.emplace_back(Font::Substring(text, 0u, 2u));
         elems.emplace_back(Font::Substring(text, 2u, 3u), Font::TextElement::TextElementType::NEWLINE);
@@ -898,7 +898,8 @@ namespace {
 
     constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";
 
-    constexpr auto test_line_cp_str_idx1 = []() {
+    // tests getting string index and code point string length from code point index in text with tags
+    constexpr auto test_cp_idx_to_str_idx = [](std::size_t idx) {
         const std::string text(tagged_test_text);
         std::vector<Font::TextElement> elems;
         elems.emplace_back(Font::Substring(text, 0u, 2u));
@@ -911,15 +912,22 @@ namespace {
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
-        const auto c_to_s = [line_data](CPSize c_idx) { return StringIndexInLines(0u, c_idx, line_data).first; };
-        std::array<StrSize, 8> rv{};
-        for (CPSize c = CP0; c < CPSize{rv.size()}; ++c)
-            rv[Value(c)] = c_to_s(c);
-        return rv;
-    }();
-    constexpr std::array<StrSize, 8> test_line_cp_str_idx_expected1{
-        StrSize{0}, StrSize{1}, StrSize{5}, StrSize{6}, StrSize{11}, StrSize{12}, StrSize{13}, StrSize{13}};
-    static_assert(test_line_cp_str_idx1 == test_line_cp_str_idx_expected1);
+
+        const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexInLines(CPSize(idx), line_data);
+        return StringIndexInLines(line_idx, cp_in_line_idx, line_data);
+    };
+
+    constexpr std::pair<std::size_t, std::size_t> Value(std::pair<StrSize, StrSize> szs)
+    { return {Value(szs.first), Value(szs.second)}; };
+
+    static_assert(Value(test_cp_idx_to_str_idx(0u)) == std::pair{0, 1});
+    static_assert(Value(test_cp_idx_to_str_idx(1u)) == std::pair{1, 1});
+    static_assert(Value(test_cp_idx_to_str_idx(2u)) == std::pair{5, 1});
+    static_assert(Value(test_cp_idx_to_str_idx(3u)) == std::pair{6, 1});
+    static_assert(Value(test_cp_idx_to_str_idx(4u)) == std::pair{11, 1});
+    static_assert(Value(test_cp_idx_to_str_idx(5u)) == std::pair{12, 1});
+    static_assert(Value(test_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
+    static_assert(Value(test_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
 #endif
 }
 
@@ -955,37 +963,10 @@ namespace {
     }
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-    constexpr auto test_cp_idx_to_str_idx = [](std::size_t idx) {
-        const std::string text(tagged_test_text);
-        std::vector<Font::TextElement> elems;
-        elems.emplace_back(Font::Substring(text, 0u, 2u));
-        elems.emplace_back(Font::Substring(text, 2u, 5u), Font::Substring(text, 3u, 4u), Font::TextElement::TextElementType::OPEN_TAG);
-        elems.emplace_back(Font::Substring(text, 5u, 7u));
-        elems.emplace_back(Font::Substring(text, 7u, 11u), Font::Substring(text, 9u, 10u), Font::TextElement::TextElementType::OPEN_TAG);
-        elems.emplace_back(Font::Substring(text, 11u, 13u));
 
-        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
-
-        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
-
-        const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexInLines(CPSize(idx), line_data);
-        return StringIndexInLines(line_idx, cp_in_line_idx, line_data);
-    };
-
-    constexpr std::pair<std::size_t, std::size_t> Value(std::pair<StrSize, StrSize> szs)
-    { return {Value(szs.first), Value(szs.second)}; };
-
-    static_assert(Value(test_cp_idx_to_str_idx(0u)) == std::pair{0, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(1u)) == std::pair{1, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(2u)) == std::pair{5, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(3u)) == std::pair{6, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(4u)) == std::pair{11, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(5u)) == std::pair{12, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
-    static_assert(Value(test_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
-
-
+    // tests getting a range pair of string indices from a range pair of code point indices into text with tags,
+    // where the second value should be just after the previous character in the text, which is not the same as
+    // before the second character, since there could be non-rendered tag-text code points between them
     constexpr auto test_cp_idx_to_str_idx_range = [](std::size_t low_idx, std::size_t high_idx) {
         const std::string text(tagged_test_text);
         std::vector<Font::TextElement> elems;
@@ -1004,7 +985,7 @@ namespace {
     };
 
 
-    constexpr auto to_chars = [](std::pair<StrSize, StrSize> idx)
+    constexpr auto to_chars = [](std::pair<StrSize, StrSize> idx) -> std::pair<char, char>
     { return std::pair(tagged_test_text[Value(idx.first)], tagged_test_text[Value(idx.second)]); };
 
     static_assert(to_chars(test_cp_idx_to_str_idx_range(0u, 999u)) == std::pair('a', 0));
@@ -1013,7 +994,7 @@ namespace {
     static_assert(to_chars(test_cp_idx_to_str_idx_range(2u, 4u)) == std::pair('c', '<'));
 
 
-    constexpr auto to_sv = [](std::pair<StrSize, StrSize> idx)
+    constexpr auto to_sv = [](std::pair<StrSize, StrSize> idx) -> std::string_view
     { return tagged_test_text.substr(Value(idx.first), Value(idx.second-idx.first)); };
 
     static_assert(to_sv(test_cp_idx_to_str_idx_range(0u, 999u)) == tagged_test_text);
