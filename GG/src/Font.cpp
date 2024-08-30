@@ -1,4 +1,4 @@
-//! GiGi - A GUI for OpenGL
+﻿//! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
 //!  Copyright (C) 2013-2021 The FreeOrion Project
@@ -753,18 +753,131 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
     constexpr struct DummyNextFn {
-        // constexpr OK alternative to utf8::next that will only work for single-byte character strings
-        constexpr uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
+
+        static constexpr uint32_t cont_byte(uint8_t c) noexcept
+        { return c & 0b00111111; };
+
+        static constexpr uint32_t cont_byte(char c) noexcept
+        { return cont_byte(static_cast<uint8_t>(c)); };
+
+        template <typename char_iterator_t>
+        static constexpr uint32_t cont_byte(char_iterator_t char_it) noexcept
         {
+            static_assert(std::is_same_v<std::decay_t<decltype(*char_it)>, char>);
+            return cont_byte(*char_it);
+        };
+
+        // constexpr OK alternative to utf8::next
+        // does not validate utf8 continuation bytes, but just increments
+        // based on initial byte-determined utf8 sequence length
+        template <typename char_iterator_t>
+        constexpr uint32_t operator()(char_iterator_t& text_it, const char_iterator_t& end_it) const
+        {
+            static_assert(std::is_same_v<std::decay_t<decltype(*text_it)>, char>);
             if (text_it == end_it)
                 return 0u;
-            uint32_t retval = *text_it;
-            ++text_it;
-            if (retval >= 128)
-                throw std::invalid_argument("dummy next function only works for single-byte character strings");
-            return retval;
+
+            // first byte determines sequence length
+            uint32_t c0 = static_cast<uint32_t>(static_cast<uint8_t>(*text_it)); // via uint8_t to ensure values map to 0-255
+            const std::ptrdiff_t sequence_length =
+                (c0 <= 0x7F) ? 1 :
+                (c0 >= 0xC2 && c0 <= 0xDF) ? 2 :
+                (c0 >= 0xE0 && c0 <= 0xEF) ? 3 :
+                (c0 >= 0xF0) ? 4 : 0;
+
+            if (sequence_length == 0)
+                throw std::invalid_argument("dummy utf8 next given invalid initial byte");
+            if (sequence_length == 1) {
+                ++text_it;
+                return c0;
+            }
+
+            // verify that there are enough bytes in iterator range for sequence length
+            const std::ptrdiff_t it_length = std::distance(text_it, end_it);
+            if (it_length < sequence_length)
+                throw std::invalid_argument("dummy utf8 next given too short sequence for indicated sequence length");
+
+            // extract, mask, and compile continuation bytes with masked initial byte
+            if (sequence_length == 2) {
+                c0 &= 0b00011111;
+                uint32_t c1 = cont_byte(text_it + 1);
+                text_it += 2;
+                return (c0 << 6) + c1;
+
+            } else if (sequence_length == 3) {
+                c0 &= 0b00001111;
+                uint32_t c1 = cont_byte(text_it + 1);
+                uint32_t c2 = cont_byte(text_it + 2);
+                text_it += 3;
+                return (c0 << 12) + (c1 << 6) + c2;
+
+            } else if (sequence_length == 4) {
+                c0 &= 0b00000111;
+                uint32_t c1 = cont_byte(text_it + 1);
+                uint32_t c2 = cont_byte(text_it + 2);
+                uint32_t c3 = cont_byte(text_it + 3);
+                text_it += 4;
+                return (c0 << 18) + (c1 << 12) + (c2 << 6) + c3;
+
+            } else {
+                throw std::invalid_argument("dummy utf8 next somehow got unexpected sequence length");
+            }
         }
+
+        template <typename char_iterator_t>
+        constexpr std::pair<uint32_t, std::ptrdiff_t> operator()(const char_iterator_t&& text_it, const char_iterator_t&& end_it) const
+        {
+            char_iterator_t local_it(text_it);
+            const char_iterator_t local_end_it(end_it);
+            return {operator()(local_it, local_end_it), std::distance(text_it, local_it)};
+        }
+
+        constexpr std::pair<uint32_t, std::ptrdiff_t> operator()(const std::string_view sv) const
+        { return operator()(sv.begin(), sv.end()); }
+
+        constexpr std::pair<uint32_t, std::ptrdiff_t> operator()(const std::string_view sv, std::size_t offset) const
+        { return operator()(sv.substr(offset)); }
     } dummy_next_fn;
+
+    static_assert('!' < 0b00111111 && DummyNextFn::cont_byte('!') == '!');
+    static_assert('A' > 0b00111111 && DummyNextFn::cont_byte('A') == (uint8_t('A') & 0b00111111));
+
+
+    // text with all single-byte chars
+    constexpr std::string_view all_ascii_sv = "!Ascii";
+    using cdp = std::pair<uint32_t, std::ptrdiff_t>;
+    static_assert(dummy_next_fn(all_ascii_sv) == cdp('!', 1));
+    static_assert(dummy_next_fn(all_ascii_sv, 1) == cdp('A', 1));
+    static_assert(dummy_next_fn(all_ascii_sv.end(), all_ascii_sv.end()) == cdp(0, 0));
+
+
+    // text with multi-byte chars
+#if defined(__cpp_lib_char8_t)
+    constexpr std::u8string_view long_chars = u8"αbåオ🠞و";
+    constexpr auto long_chars_arr = []() {
+        std::array<std::string_view::value_type, long_chars.size()> retval{};
+        for (std::size_t idx = 0; idx < retval.size(); ++idx)
+            retval[idx] = long_chars[idx];
+        return retval;
+    }();
+    constexpr std::string_view long_chars_sv(long_chars_arr.data(), long_chars_arr.size());
+#else
+    constexpr std::string_view long_chars_sv = u8"αbåオ🠞و";
+#endif
+
+    constexpr std::array<uint8_t, 14> long_chars_as_uint8_expected{
+        0xCE, 0xB1,   'b',   0xC3, 0xA5,   0xE3, 0x82, 0xAA,   0xF0, 0x9F, 0xA0, 0x9E,   0xD9, 0x88};
+
+    constexpr auto check_eq = [](const auto& lhs, const auto& rhs) -> bool {
+        if (lhs.size() != rhs.size())
+            return false;
+        for (std::size_t idx = 0; idx < lhs.size(); ++idx)
+            if (lhs[idx] != static_cast<std::decay_t<decltype(lhs[0])>>(rhs[idx]))
+                return false;
+        return true;
+    };
+    static_assert(check_eq(long_chars_arr, long_chars_as_uint8_expected));
+
 
     constexpr struct DummyGlyphMap {
         struct DummyGlyph { int8_t advance = 4; };
