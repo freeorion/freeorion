@@ -884,6 +884,13 @@ namespace {
     };
     static_assert(check_eq(long_chars_arr, long_chars_as_uint8_expected));
 
+    constexpr std::array<cdp, 6> long_chars_as_uint32_t_and_length_expected{{
+        {0x3B1, 2}, {'b', 1}, {0xE5, 2}, {0x30AA, 3}, {0x1F81E, 4}, {0x648, 2}}};
+    constexpr std::array<cdp, 6> long_chars_as_uint32_t_and_length_extracted{{
+        dummy_next_fn(long_chars_sv), dummy_next_fn(long_chars_sv.substr(2)), dummy_next_fn(long_chars_sv.substr(3)),
+        dummy_next_fn(long_chars_sv.substr(5)), dummy_next_fn(long_chars_sv.substr(8)), dummy_next_fn(long_chars_sv.substr(12))}};
+    static_assert(check_eq(long_chars_as_uint32_t_and_length_expected, long_chars_as_uint32_t_and_length_extracted));
+
 
     constexpr struct DummyGlyphMap {
         struct DummyGlyph { int8_t advance = 4; };
