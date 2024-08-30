@@ -900,12 +900,12 @@ namespace {
         constexpr decltype(value)* end() const noexcept { return nullptr; }
     } dummy_glyph_map;
 
-    constexpr std::string_view multi_line_text = "ab\ncd\n\nef";
 
-    // tests getting line and code point index in line from overall code point index text with newlines
-    constexpr auto test_line_and_cp0 = []() {
-        const std::string text(multi_line_text);
+    constexpr std::string_view multi_line_text = "ab\ncd\n\nef";
+    constexpr std::vector<Font::TextElement> ElementsForMultiLineText(const std::string& text)
+    {
         std::vector<Font::TextElement> elems;
+        elems.reserve(6);
         elems.emplace_back(Font::Substring(text, 0u, 2u));
         elems.emplace_back(Font::Substring(text, 2u, 3u), Font::TextElement::TextElementType::NEWLINE);
         elems.emplace_back(Font::Substring(text, 3u, 5u));
@@ -914,6 +914,14 @@ namespace {
         elems.emplace_back(Font::Substring(text, 7u, 9u));
 
         SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+
+        return elems;
+    }
+
+    // tests getting line and code point index in line from overall code point index text with newlines
+    constexpr auto test_line_and_cp0 = []() {
+        const std::string text(multi_line_text);
+        const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
@@ -987,15 +995,7 @@ namespace {
     // tests getting string index from code point index in text with newlines
     constexpr auto test_line_cp_str_idx0 = []() {
         const std::string text(multi_line_text);
-        std::vector<Font::TextElement> elems;
-        elems.emplace_back(Font::Substring(text, 0u, 2u));
-        elems.emplace_back(Font::Substring(text, 2u, 3u), Font::TextElement::TextElementType::NEWLINE);
-        elems.emplace_back(Font::Substring(text, 3u, 5u));
-        elems.emplace_back(Font::Substring(text, 5u, 6u), Font::TextElement::TextElementType::NEWLINE);
-        elems.emplace_back(Font::Substring(text, 6u, 7u), Font::TextElement::TextElementType::NEWLINE);
-        elems.emplace_back(Font::Substring(text, 7u, 9u));
-
-        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+        const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
@@ -1023,11 +1023,10 @@ namespace {
     static_assert(test_line_cp_str_idx0 == test_line_cp_str_idx_expected0);
 
     constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";
-
-    // tests getting string index and code point string length from code point index in text with tags
-    constexpr auto test_cp_idx_to_str_idx = [](std::size_t idx) {
-        const std::string text(tagged_test_text);
+    constexpr std::vector<Font::TextElement> ElementsForTaggedText(const std::string& text)
+    {
         std::vector<Font::TextElement> elems;
+        elems.reserve(5);
         elems.emplace_back(Font::Substring(text, 0u, 2u));
         elems.emplace_back(Font::Substring(text, 2u, 5u), Font::Substring(text, 3u, 4u), Font::TextElement::TextElementType::OPEN_TAG);
         elems.emplace_back(Font::Substring(text, 5u, 7u));
@@ -1036,6 +1035,14 @@ namespace {
 
         SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
 
+        return elems;
+    }
+
+
+    // tests getting string index and code point string length from code point index in text with tags
+    constexpr auto test_cp_idx_to_str_idx = [](std::size_t idx) {
+        const std::string text(tagged_test_text);
+        const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
@@ -1054,6 +1061,36 @@ namespace {
     static_assert(Value(test_cp_idx_to_str_idx(5u)) == std::pair{12, 1});
     static_assert(Value(test_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
     static_assert(Value(test_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
+
+
+    constexpr std::vector<Font::TextElement> ElementsForLongCharsText(const std::string& text)
+    {
+        std::vector<Font::TextElement> elems;
+        elems.emplace_back(Font::Substring(text, 0u, 14u));
+        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+        return elems;
+    }
+
+    // tests getting string index and code point string length from code point index in text with multi-byte characters
+    constexpr auto test_multibyte_line_and_cp0 = [](std::size_t idx) {
+        const std::string text(long_chars_sv);
+        const auto elems = ElementsForLongCharsText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+
+        const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexInLines(CPSize(idx), line_data);
+        return StringIndexInLines(line_idx, cp_in_line_idx, line_data);
+    };
+
+    static_assert(Value(test_multibyte_line_and_cp0(0u)) == std::pair{0, 2});
+    static_assert(Value(test_multibyte_line_and_cp0(1u)) == std::pair{2, 1});
+    static_assert(Value(test_multibyte_line_and_cp0(2u)) == std::pair{3, 2});
+    static_assert(Value(test_multibyte_line_and_cp0(3u)) == std::pair{5, 3});
+    static_assert(Value(test_multibyte_line_and_cp0(4u)) == std::pair{8, 4});
+    static_assert(Value(test_multibyte_line_and_cp0(5u)) == std::pair{12, 2});
+    static_assert(Value(test_multibyte_line_and_cp0(6u)) == std::pair{14, 0});
+
 #endif
 }
 
@@ -1095,15 +1132,7 @@ namespace {
     // before the second character, since there could be non-rendered tag-text code points between them
     constexpr auto test_cp_idx_to_str_idx_range = [](std::size_t low_idx, std::size_t high_idx) {
         const std::string text(tagged_test_text);
-        std::vector<Font::TextElement> elems;
-        elems.emplace_back(Font::Substring(text, 0u, 2u));
-        elems.emplace_back(Font::Substring(text, 2u, 5u), Font::Substring(text, 3u, 4u), Font::TextElement::TextElementType::OPEN_TAG);
-        elems.emplace_back(Font::Substring(text, 5u, 7u));
-        elems.emplace_back(Font::Substring(text, 7u, 11u), Font::Substring(text, 9u, 10u), Font::TextElement::TextElementType::OPEN_TAG);
-        elems.emplace_back(Font::Substring(text, 11u, 13u));
-
-        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
-
+        const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
