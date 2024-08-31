@@ -854,6 +854,16 @@ namespace {
     static_assert(dummy_next_fn(all_ascii_sv.end(), all_ascii_sv.end()) == cdp(0, 0));
 
 
+    // for constexpr test purposes
+    constexpr struct DummyGlyphMap {
+        struct DummyGlyph { int8_t advance = 4; };
+        static constexpr std::pair<uint32_t, DummyGlyph> value{};
+
+        constexpr auto* find(uint32_t) const noexcept { return &value; }
+        constexpr decltype(value)* end() const noexcept { return nullptr; }
+    } dummy_glyph_map;
+
+
     // text with multi-byte chars
 #  if defined(__cpp_lib_char8_t)
     constexpr std::u8string_view long_chars = u8"αbåオ🠞و";
@@ -873,6 +883,15 @@ namespace {
         return retval;
     }();
 #  endif
+
+    constexpr std::vector<Font::TextElement> ElementsForLongCharsText(const std::string& text)
+    {
+        std::vector<Font::TextElement> elems;
+        elems.emplace_back(Font::Substring(text, 0u, 14u));
+        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+        return elems;
+    }
+
 
     constexpr std::array<uint8_t, 14> long_chars_as_uint8_expected{
         0xCE, 0xB1,   'b',   0xC3, 0xA5,   0xE3, 0x82, 0xAA,   0xF0, 0x9F, 0xA0, 0x9E,   0xD9, 0x88};
@@ -895,13 +914,31 @@ namespace {
     static_assert(check_eq(long_chars_as_uint32_t_and_length_expected, long_chars_as_uint32_t_and_length_extracted));
 
 
-    constexpr struct DummyGlyphMap {
-        struct DummyGlyph { int8_t advance = 4; };
-        static constexpr std::pair<uint32_t, DummyGlyph> value{};
+    // tests getting line and code point index in line from overall code point index text with multi-byte chars
+    constexpr auto test_multibyte_cpidx_to_line_and_cp = []() {
+        const std::string text(long_chars_sv);
+        const auto elems = ElementsForLongCharsText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        constexpr auto* find(uint32_t) const noexcept { return &value; }
-        constexpr decltype(value)* end() const noexcept { return nullptr; }
-    } dummy_glyph_map;
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
+
+        return std::array{
+            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
+            c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
+            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}),
+            c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7})
+        };
+    }();
+
+    constexpr std::array<std::pair<std::size_t, CPSize>, 8> test_multibyte_line_and_cp_expected{{
+        {0u, CPSize{0}}, {0u, CPSize{1}},
+        {0u, CPSize{2}}, {0u, CPSize{3}},
+        {0u, CPSize{4}}, {0u, CPSize{5}},
+        {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}, {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}
+    }};
+
+    static_assert(test_multibyte_cpidx_to_line_and_cp == test_multibyte_line_and_cp_expected);
 
 
     constexpr std::string_view multi_line_text = "ab\ncd\n\nef";
@@ -922,7 +959,7 @@ namespace {
     }
 
     // tests getting line and code point index in line from overall code point index text with newlines
-    constexpr auto test_line_and_cp0 = []() {
+    constexpr auto test_multiline_cpidx_to_line_and_cp = []() {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
 
@@ -931,19 +968,21 @@ namespace {
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
 
         return std::array{
-            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}), c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
-            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}), c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7})
+            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
+            c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
+            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}),
+            c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7})
         };
     }();
 
-    constexpr std::array<std::pair<std::size_t, CPSize>, 8> test_line_and_cp_expected0{{
+    constexpr std::array<std::pair<std::size_t, CPSize>, 8> test_multiline_line_and_cp_expected{{
         {0u, CPSize{0}}, {0u, CPSize{1}},
         {1u, CPSize{0}}, {1u, CPSize{1}},
         {3u, CPSize{0}}, {3u, CPSize{1}},
         {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}, {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}
     }};
 
-    static_assert(test_line_and_cp0 == test_line_and_cp_expected0);
+    static_assert(test_multiline_cpidx_to_line_and_cp == test_multiline_line_and_cp_expected);
 #endif
 }
 
@@ -963,8 +1002,8 @@ namespace {
     // no code points on the requested line
     //
     // if searching back and no previous lines have a code point on them, return string index S0
-    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexInLines(
-        std::size_t line_idx, CPSize index, const std::vector<Font::LineData>& line_data)
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexInLines(std::size_t line_idx, CPSize index,
+                                                                  const std::vector<Font::LineData>& line_data)
     {
         if (line_idx < line_data.size() && Value(index) < line_data[line_idx].char_data.size()) {
             // line is valid, and requested code point index is within the line
@@ -1065,14 +1104,6 @@ namespace {
     static_assert(Value(test_tagged_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
     static_assert(Value(test_tagged_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
 
-
-    constexpr std::vector<Font::TextElement> ElementsForLongCharsText(const std::string& text)
-    {
-        std::vector<Font::TextElement> elems;
-        elems.emplace_back(Font::Substring(text, 0u, 14u));
-        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
-        return elems;
-    }
 
     // tests getting string index and code point string length from code point index in text with multi-byte characters
     constexpr auto test_multibyte_cp_to_str_idx_len = [](std::size_t idx) {
@@ -1204,7 +1235,7 @@ namespace {
     // tests getting a range pair of string indices from a range pair of code point indices into text with tags,
     // where the second value should be just after the previous character in the text, which is not the same as
     // before the second character, since there could be non-rendered tag-text code points between them
-    constexpr auto test_cp_idx_to_str_idx_range = [](std::size_t low_idx, std::size_t high_idx) {
+    constexpr auto test_tagged_cp_idx_to_str_idx_range = [](std::size_t low_idx, std::size_t high_idx) {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
@@ -1217,25 +1248,25 @@ namespace {
     constexpr auto to_chars = [](std::pair<StrSize, StrSize> idx) -> std::pair<char, char>
     { return std::pair(tagged_test_text[Value(idx.first)], tagged_test_text[Value(idx.second)]); };
 
-    static_assert(to_chars(test_cp_idx_to_str_idx_range(0u, 999u)) == std::pair('a', 0));
-    static_assert(to_chars(test_cp_idx_to_str_idx_range(1u, 2u)) == std::pair('b', '<'));
-    static_assert(to_chars(test_cp_idx_to_str_idx_range(0u, 4u)) == std::pair('a', '<'));
-    static_assert(to_chars(test_cp_idx_to_str_idx_range(2u, 4u)) == std::pair('c', '<'));
+    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(0u, 999u)) == std::pair('a', 0));
+    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(1u, 2u)) == std::pair('b', '<'));
+    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(0u, 4u)) == std::pair('a', '<'));
+    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(2u, 4u)) == std::pair('c', '<'));
 
 
     constexpr auto to_sv = [](std::pair<StrSize, StrSize> idx) -> std::string_view
     { return tagged_test_text.substr(Value(idx.first), Value(idx.second-idx.first)); };
 
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(0u, 999u)) == tagged_test_text);
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(0u, 6u)) == tagged_test_text);
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(0u, 5u)) == "ab<i>cd</i>e");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(0u, 4u)) == "ab<i>cd");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(0u, 3u)) == "ab<i>c");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(1u, 2u)) == "b");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(1u, 3u)) == "b<i>c");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(1u, 5u)) == "b<i>cd</i>e");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(2u, 4u)) == "cd");
-    static_assert(to_sv(test_cp_idx_to_str_idx_range(2u, 5u)) == "cd</i>e");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 999u)) == tagged_test_text);
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 6u)) == tagged_test_text);
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 5u)) == "ab<i>cd</i>e");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 4u)) == "ab<i>cd");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 3u)) == "ab<i>c");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(1u, 2u)) == "b");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(1u, 3u)) == "b<i>c");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(1u, 5u)) == "b<i>cd</i>e");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(2u, 4u)) == "cd");
+    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(2u, 5u)) == "cd</i>e");
 
 #endif
 }
