@@ -840,12 +840,27 @@ private:
 /** Stream output operator for Font::Substring. */
 GG_API std::ostream& operator<<(std::ostream& os, Font::Substring substr);
 
-/** Returns the code point index of the <i>index</i>-th code point on line \a
+/** Returns the code point index of the <i>index</i>-th glyph on line \a
     line within the text represented by \a line_data.  Returns the index of
-    the code point one past the end of the text if \a line or \a index are out
-    of bounds. */
-GG_API CPSize CodePointIndexOf(std::size_t line, CPSize index,
+    the code point one past the end of the text if \a line is out of bounds.
+    Returns the index of the next previous code point from the end of line
+    \a line if \a glyph_index is out of bounds on that line. */
+GG_API CPSize CodePointIndexOf(std::size_t line_index, CPSize glyph_index,
                                const std::vector<Font::LineData>& line_data);
+
+/** Returns the code point index (CPI) after the previous glyph to the glyph at \a glyph_index.
+  *
+  * Ranges of glyphs are specified [closed, open) eg. [1, 3) includes glyphs
+  * 1 and 2, but not the 3rd glyph. If finding the corresponding CPI range,
+  * for the end glyph, the result should not include any CPI after the end of
+  * the second to last glyph, even if there are non-glyph code points between them.
+  *
+  * For example, "ab<i>c" has glyphs at CPIs 0 (a), 1 (b), and 5 (c) and also has
+  * non-glyph (ie. tag) CPIs 2 (<), 3 (i), and 4 (>). If just getting the CPI for
+  * the starts of glyphs, the end glyph would start at code point 5 (c), but the
+  * CPI after the last glyph included in the range is actually 2 (<). */
+GG_API CPSize CodePointIndexAfterPreviousGlyph(std::size_t line_index, CPSize glyph_index,
+                                               const std::vector<Font::LineData>& line_data);
 
 /** Returns the string index of the <i>index</i>-th code point on line \a line
     within the text represented by \a line_data.  Returns the index of the
