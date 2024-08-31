@@ -139,7 +139,7 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
 
 
     const auto txt_sz = m_text.size();
-    auto [low_string_idx_strsz, high_string_idx_strsz] = CodePointIndicesRangeToStringSizeIndices(from, to, m_line_data);
+    auto [low_string_idx_strsz, high_string_idx_strsz] = GlyphIndicesRangeToStringSizeIndices(from, to, m_line_data);
     const auto low_string_idx = std::min(Value(low_string_idx_strsz), txt_sz);
     const auto high_string_idx = std::min(Value(high_string_idx_strsz), txt_sz);
     const auto out_length = std::max(low_string_idx, high_string_idx) - std::min(low_string_idx, high_string_idx);

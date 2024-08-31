@@ -130,7 +130,7 @@ protected:
 
     /** Returns the index of the code point \a x pixels from left edge of
         visible portion of string. */
-    CPSize CharIndexOf(X x) const;
+    CPSize GlyphIndexOf(X x) const;
 
     /** Returns the distance from the beginning of the string to just before
         the first visible character. */

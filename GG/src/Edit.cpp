@@ -179,7 +179,7 @@ void Edit::AcceptPastedText(const std::string& text)
 
     if (modified_text) {
         // moves cursor to end of pasted text
-        const CPSize text_span{static_cast<std::size_t>(utf8::distance(text.begin(), text.end()))};
+        const CPSize text_span{static_cast<std::size_t>(utf8::distance(text.begin(), text.end()))}; // TODO: this looks wrong... CPSize should be code points or glyphs, not char (byte) index in string
         m_cursor_pos.second = std::max(CP0, std::min(Length(), m_cursor_pos.second + text_span));
 
         // ensure nothing is selected after pasting
@@ -190,7 +190,7 @@ void Edit::AcceptPastedText(const std::string& text)
     }
 }
 
-CPSize Edit::CharIndexOf(X x) const
+CPSize Edit::GlyphIndexOf(X x) const
 {
     CPSize retval;
     const X first_char_offset = FirstCharOffset();
@@ -278,7 +278,7 @@ void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
         return;
     //std::cout << "Edit::LButtonDown start" << std::endl;
     const X click_xpos = ScreenToClient(pt).x; // x coord of click within text space
-    const CPSize idx = CharIndexOf(click_xpos);
+    const CPSize idx = GlyphIndexOf(click_xpos);
     //std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
 
     const auto word_indices = GetDoubleButtonDownWordIndices(idx);
@@ -294,8 +294,8 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         return;
 
     const X xpos = ScreenToClient(pt).x; // x coord for mouse position within text space
-    const CPSize idx = CharIndexOf(xpos);
-    //std::cout << "CharIndexOf mouse x-pos: " << xpos << std::endl;
+    const CPSize idx = GlyphIndexOf(xpos);
+    //std::cout << "GlyphIndexOf mouse x-pos: " << xpos << std::endl;
 
     if (m_in_double_click_mode) {
         const auto word_indices = GetDoubleButtonDownDragWordIndices(idx);

@@ -14,7 +14,7 @@
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
 #include <GG/WndEvent.h>
-
+#include <boost/nowide/iostream.hpp>
 
 using namespace GG;
 
@@ -240,8 +240,8 @@ void MultiEdit::SelectAll()
         GetLineData().size() - 1,
         CPSize(GetLineData()[GetLineData().size() - 1].char_data.size()));
 
-    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    CPSize begin_cursor_pos = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 }
 
@@ -250,7 +250,7 @@ void MultiEdit::DeselectAll()
     m_cursor_begin = std::pair<std::size_t, CPSize>(0, CP0);
     m_cursor_end = m_cursor_begin;
 
-    const CPSize cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    const CPSize cursor_pos = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     this->m_cursor_pos = {cursor_pos, cursor_pos};
 }
 
@@ -273,7 +273,7 @@ void MultiEdit::SetText(std::string str)
     // trim the rows, if required by m_max_lines_history
     const Pt cl_sz = ClientSize();
     Flags<TextFormat> format = GetTextFormat();
-    const auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
+    auto text_elements = GetFont()->ExpensiveParseFromTextToTextElements(str, format);
     const auto new_lines = GetFont()->DetermineLines(str, format, cl_sz.x, text_elements);
     const auto& line_data{GetLineData()};
 
@@ -289,12 +289,12 @@ void MultiEdit::SetText(std::string str)
             first_line = new_lines.size() - 1 - m_max_lines_history;
             last_line = new_lines.size() - 1;
         }
-        const CPSize first_line_first_char_idx = CharIndexOf(first_line, CP0, new_lines);
+        const CPSize first_line_first_char_idx = GlyphIndexOf(first_line, CP0, new_lines);
         if (m_style & MULTI_TERMINAL_STYLE) {
             // chopping these lines off the front will invalidate the cursor range unless we do this
-            const CPSize cursor_begin_string_index = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second, new_lines);
+            const CPSize cursor_begin_string_index = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second, new_lines);
             cursor_begin_idx = first_line_first_char_idx < cursor_begin_string_index ? CP0 : cursor_begin_string_index - first_line_first_char_idx;
-            const CPSize cursor_end_string_index = CharIndexOf(m_cursor_end.first, m_cursor_end.second, new_lines);
+            const CPSize cursor_end_string_index = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second, new_lines);
             cursor_end_idx = first_line_first_char_idx < cursor_end_string_index ? CP0 : cursor_end_string_index - first_line_first_char_idx;
         }
         const StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, new_lines);
@@ -317,12 +317,12 @@ void MultiEdit::SetText(std::string str)
 
                 if (!found_cursor_begin && cursor_begin_idx <= char_back_cp) {
                     m_cursor_begin.first = i;
-                    m_cursor_begin.second = cursor_begin_idx - CharIndexOf(i, CP0);
+                    m_cursor_begin.second = cursor_begin_idx - GlyphIndexOf(i, CP0);
                     found_cursor_begin = true;
                 }
                 if (!found_cursor_end && cursor_end_idx <= char_back_cp) {
                     m_cursor_end.first = i;
-                    m_cursor_end.second = cursor_end_idx - CharIndexOf(i, CP0);
+                    m_cursor_end.second = cursor_end_idx - GlyphIndexOf(i, CP0);
                     found_cursor_end = true;
                 }
             }
@@ -341,7 +341,7 @@ void MultiEdit::SetText(std::string str)
     }
     m_cursor_begin = m_cursor_end; // eliminate any hiliting
 
-    const CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    const CPSize cursor_pos = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = {cursor_pos, cursor_pos};
 
     m_contents_sz = GetFont()->TextExtent(line_data);
@@ -435,7 +435,7 @@ X MultiEdit::RightMargin() const noexcept
 Y MultiEdit::BottomMargin() const noexcept
 { return Y(m_hscroll ? SCROLL_WIDTH : 0); }
 
-std::pair<std::size_t, CPSize> MultiEdit::CharAt(Pt pt) const
+std::pair<std::size_t, CPSize> MultiEdit::GlyphAt(Pt pt) const
 {
     const auto& line_data = GetLineData();
     if (line_data.empty())
@@ -445,12 +445,12 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(Pt pt) const
     const auto constrained_row = std::min(row, line_data.size() - 1);
     const CPSize line_sz{line_data[constrained_row].char_data.size()};
 
-    const auto char_idx = (row > constrained_row) ? line_sz : std::min(CharAt(row, pt.x), line_sz);
+    const auto char_idx = (row > constrained_row) ? line_sz : std::min(GlyphAt(row, pt.x), line_sz);
 
     return {constrained_row, char_idx};
 }
 
-std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
+std::pair<std::size_t, CPSize> MultiEdit::GlyphAt(CPSize idx) const
 {
     const auto& lines = GetLineData();
 
@@ -474,7 +474,7 @@ Pt MultiEdit::ScrollPosition() const
             m_vscroll ? Y{m_vscroll->PosnRange().first} : Y0};
 }
 
-CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>& line_data)
+CPSize MultiEdit::GlyphIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>& line_data)
 {
     if (line_data.empty())
         return CP0; // no text
@@ -559,7 +559,7 @@ std::size_t MultiEdit::RowAt(Y y) const
     }
 }
 
-CPSize MultiEdit::CharAt(std::size_t row, X x) const
+CPSize MultiEdit::GlyphAt(std::size_t row, X x) const
 {
     const auto& line_data = GetLineData();
     if (line_data.empty())
@@ -568,7 +568,7 @@ CPSize MultiEdit::CharAt(std::size_t row, X x) const
     if (row >= line_data.size())
         return CPSize(line_data.back().char_data.size());
 
-    //std::cout << "CharAt row: " << row << " X: " << x << std::endl;
+    //std::cout << "GlyphAt row: " << row << " X: " << x << std::endl;
     const Font::LineData& line = line_data[row];
     // empty line?
     if (line.char_data.empty())
@@ -634,9 +634,9 @@ CPSize MultiEdit::FirstVisibleChar(std::size_t row) const
         return CP0;
     const auto& line = line_data[row];
     if (line.Empty())
-        return CharAt(row, X0);
+        return GlyphAt(row, X0);
     else
-        return std::min(CharAt(row, X0), CPSize(line.char_data.size()) - CP1);
+        return std::min(GlyphAt(row, X0), CPSize(line.char_data.size()) - CP1);
 }
 
 CPSize MultiEdit::LastVisibleChar(std::size_t row) const
@@ -646,9 +646,9 @@ CPSize MultiEdit::LastVisibleChar(std::size_t row) const
         return CP0;
     const auto& line = line_data[row];
     if (line.Empty())
-        return CharAt(row, ClientSize().x);
+        return GlyphAt(row, ClientSize().x);
     else
-        return std::min(CharAt(row, ClientSize().x), CPSize(line.char_data.size()) - CP1);
+        return std::min(GlyphAt(row, ClientSize().x), CPSize(line.char_data.size()) - CP1);
 }
 
 std::pair<std::size_t, CPSize> MultiEdit::HighCursorPos() const
@@ -701,10 +701,10 @@ void MultiEdit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 
     // when a button press occurs, record the character position under the
     // cursor, and remove any previous selection range
-    const auto click_pos = CharAt(ScreenToClient(pt));
+    const auto click_pos = GlyphAt(ScreenToClient(pt));
     m_cursor_begin = m_cursor_end = click_pos;
 
-    CPSize idx = CharIndexOf(click_pos.first, click_pos.second);
+    CPSize idx = GlyphIndexOf(click_pos.first, click_pos.second);
     this->m_cursor_pos = {idx, idx};
 
     // double-click-drag whole-word selection disabled due to the following code
@@ -725,7 +725,7 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     // when a drag occurs, move m_cursor_end to where the mouse is, which
     // selects a range of characters
     Pt click_pos = ScreenToClient(pt);
-    m_cursor_end = CharAt(click_pos);
+    m_cursor_end = GlyphAt(click_pos);
 
     //std::cout << "MultiEdit::LDrag at row: " << m_cursor_end.first << ", col: " << m_cursor_end.second << std::endl;
 
@@ -733,7 +733,7 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         // if drag-selecting after a double click, select full words
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
 
-        CPSize idx = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+        CPSize idx = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
         std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
 
         std::pair<CPSize, CPSize> final_indices;
@@ -756,8 +756,8 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
                 final_indices.first = initial_indices.first;
             }
         }
-        m_cursor_begin = CharAt(final_indices.first);
-        m_cursor_end = CharAt(final_indices.second);
+        m_cursor_begin = GlyphAt(final_indices.first);
+        m_cursor_end = GlyphAt(final_indices.second);
     }
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
@@ -894,7 +894,7 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
             X row_start = RowStartX(m_cursor_end.first);
             X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
             --m_cursor_end.first;
-            m_cursor_end.second = CharAt(m_cursor_end.first, row_start + char_offset);
+            m_cursor_end.second = GlyphAt(m_cursor_end.first, row_start + char_offset);
             if (!shift_down)
                 m_cursor_begin = m_cursor_end;
         }
@@ -908,7 +908,7 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
             X row_start = RowStartX(m_cursor_end.first);
             X char_offset = CharXOffset(m_cursor_end.first, m_cursor_end.second);
             ++m_cursor_end.first;
-            m_cursor_end.second = CharAt(m_cursor_end.first, row_start + char_offset);
+            m_cursor_end.second = GlyphAt(m_cursor_end.first, row_start + char_offset);
             if (!shift_down)
                 m_cursor_begin = m_cursor_end;
         }
@@ -1014,8 +1014,8 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
     }
     }
 
-    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    CPSize begin_cursor_pos = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 
     AdjustView();
@@ -1090,7 +1090,7 @@ void MultiEdit::ClearSelected()
     m_cursor_end = m_cursor_begin = low_pos;
     //std::cout << "low of cursor begin/end:  line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
 
-    CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    CPSize cursor_pos = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
     //std::cout << "got cursor pos: " << cursor_pos << std::endl;
     this->m_cursor_pos = {cursor_pos, cursor_pos};
 }
@@ -1375,7 +1375,7 @@ void MultiEdit::AcceptPastedText(const std::string& text)
         m_cursor_pos.first = m_cursor_pos.second;
 
         // convert Edit::m_cursor_pos to equivalent MultiEdit::m_cursor_begin and MultiEdit::m_cursor_end
-        m_cursor_begin = CharAt(m_cursor_pos.first);
+        m_cursor_begin = GlyphAt(m_cursor_pos.first);
         m_cursor_end = m_cursor_begin;
         //std::cout << "after positioning at cursor pos, cursor begin/end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
 
@@ -1393,8 +1393,8 @@ void MultiEdit::AcceptPastedText(const std::string& text)
         //std::cout << "after newline checks, cursor begin/end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
     }
 
-    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    CPSize begin_cursor_pos = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
     this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 
     //std::cout << "after converting cursor begin/end to cursor pos, cursor pos: " << m_cursor_pos.first << " - " << m_cursor_pos.second << std::endl;
