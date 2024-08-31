@@ -1094,9 +1094,9 @@ namespace {
     static_assert(Value(test_multibyte_cp_to_str_idx_len(6u)) == std::pair{14, 0});
 
 
-    // tests getting the nth code point on a single line of text with multi-byte characters.
-    // should output same index as input index, up to the limit of characters in string, and
-    // one past end otherwise
+    // tests getting the code point from line and glyph index in text with a
+    // single line with multi-byte characters. should output same index as input
+    // index, up to the limit of characters in string, and one past end otherwise
     constexpr auto test_multibyte_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
@@ -1138,6 +1138,33 @@ namespace {
     static_assert(Value(test_tagged_line_idx_to_cp(2u, CP1)) == 13u);
 
 
+    // tests getting the code point from line and glyph index in text with newlines
+    constexpr auto test_multiline_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
+        const std::string text(multi_line_text);
+        const auto elems = ElementsForMultiLineText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+
+        return CodePointIndexInLines(line_idx, index, line_data);
+    };
+
+    static_assert(Value(test_multiline_line_idx_to_cp(0u, CP0)) == 0u);
+    static_assert(Value(test_multiline_line_idx_to_cp(0u, CP1)) == 1u);
+    static_assert(Value(test_multiline_line_idx_to_cp(0u, CPSize{2})) == 2u);
+    static_assert(Value(test_multiline_line_idx_to_cp(0u, CPSize{3})) == 2u);
+    static_assert(Value(test_multiline_line_idx_to_cp(1u, CP0)) == 2u);
+    static_assert(Value(test_multiline_line_idx_to_cp(1u, CP1)) == 3u);
+    static_assert(Value(test_multiline_line_idx_to_cp(1u, CPSize{2})) == 4u);
+    static_assert(Value(test_multiline_line_idx_to_cp(1u, CPSize{3})) == 4u);
+    static_assert(Value(test_multiline_line_idx_to_cp(2u, CP0)) == 4u);
+    static_assert(Value(test_multiline_line_idx_to_cp(2u, CP1)) == 4u);
+    static_assert(Value(test_multiline_line_idx_to_cp(3u, CP0)) == 4u);
+    static_assert(Value(test_multiline_line_idx_to_cp(3u, CP1)) == 5u);
+    static_assert(Value(test_multiline_line_idx_to_cp(3u, CPSize{2})) == 6u);
+    static_assert(Value(test_multiline_line_idx_to_cp(4u, CP1)) == 6u);
+    static_assert(Value(test_multiline_line_idx_to_cp(4u, CP1)) == 6u);
+    static_assert(Value(test_multiline_line_idx_to_cp(5u, CPSize{2})) == 6u);
+    static_assert(Value(test_multiline_line_idx_to_cp(6u, CPSize{3})) == 6u);
 #endif
 }
 
