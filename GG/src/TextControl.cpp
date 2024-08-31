@@ -328,9 +328,18 @@ void TextControl::SetResetMinSize(bool b)
 void TextControl::operator+=(const std::string& s)
 { SetText(m_text + s); }
 
+namespace {
+    constexpr bool IsValidUTFChar(char c) noexcept {
+        if constexpr (std::is_signed_v<char>)
+            return c >= 0;
+        else
+            return c <= 0x7f;
+    }
+}
+
 void TextControl::operator+=(char c)
 {
-    if (!detail::ValidUTFChar<char>()(c))
+    if (!IsValidUTFChar(c))
         throw utf8::invalid_utf8(c);
     SetText(m_text + c);
 }
@@ -361,7 +370,7 @@ void TextControl::Erase(CPSize pos, CPSize num)
 
 void TextControl::Insert(std::size_t line, CPSize pos, char c)
 {
-    if (!detail::ValidUTFChar<char>()(c))
+    if (!IsValidUTFChar(c))
         return;
     m_text.insert(Value(StringIndexOf(line, pos, m_line_data)), 1, c);
     SetText(std::move(m_text));

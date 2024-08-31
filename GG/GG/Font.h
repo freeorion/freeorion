@@ -976,21 +976,6 @@ GG_API FontManager& GetFontManager();
 GG_EXCEPTION(FailedFTLibraryInit);
 
 namespace detail {
-    template <typename CharT, bool CharIsSigned = std::is_signed_v<CharT>>
-    struct ValidUTFChar;
-
-    template <typename CharT>
-    struct ValidUTFChar<CharT, true>
-    {
-        constexpr bool operator()(CharT c) noexcept { return 0x0 <= c; }
-    };
-
-    template <typename CharT>
-    struct ValidUTFChar<CharT, false>
-    {
-        constexpr bool operator()(CharT c) noexcept { return c <= 0x7f; }
-    };
-
     struct GG_API FTFaceWrapper
     {
         FTFaceWrapper() = default;
