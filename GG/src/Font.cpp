@@ -707,34 +707,37 @@ std::ostream& GG::operator<<(std::ostream& os, Font::Substring substr)
     return os;
 }
 
-CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
-{
-    CPSize retval(CP0);
-    if (line_data.size() <= line) {
-        auto it = line_data.rbegin();
-        auto end_it = line_data.rend();
-        while (it != end_it) {
-            if (!it->char_data.empty()) {
-                retval = it->char_data.back().code_point_index + CP1;
-                break;
+namespace {
+    CONSTEXPR_FONT CPSize CodePointIndexInLines(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+    {
+        if (line_data.size() <= line) {
+            auto it = line_data.rbegin();
+            auto end_it = line_data.rend();
+            while (it != end_it) {
+                if (!it->char_data.empty())
+                    return it->char_data.back().code_point_index + CP1;
+                ++it;
             }
-            ++it;
-        }
-    } else if (Value(index) < line_data[line].char_data.size()) {
-        retval = line_data[line].char_data[Value(index)].code_point_index;
-    } else {
-        auto it = line_data.rbegin() + (line_data.size() - 1 - line);
-        auto end_it = line_data.rend();
-        while (it != end_it) {
-            if (!it->char_data.empty()) {
-                retval = it->char_data.back().code_point_index + CP1;
-                break;
+
+        } else if (Value(index) < line_data[line].char_data.size()) {
+            return line_data[line].char_data[Value(index)].code_point_index;
+
+        } else {
+            auto it = line_data.rbegin() + (line_data.size() - 1 - line);
+            auto end_it = line_data.rend();
+            while (it != end_it) {
+                if (!it->char_data.empty())
+                    return it->char_data.back().code_point_index + CP1;
+                ++it;
             }
-            ++it;
         }
+
+        return CP0;
     }
-    return retval;
 }
+
+CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndexInLines(line, index, line_data); }
 
 namespace {
     CONSTEXPR_FONT std::pair<std::size_t, CPSize>
@@ -993,7 +996,7 @@ namespace {
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 
     // tests getting string index from code point index in text with newlines
-    constexpr auto test_line_cp_str_idx0 = []() {
+    constexpr auto test_line_cp_str_idx = []() {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
 
@@ -1012,7 +1015,7 @@ namespace {
             c_to_s(5,CP0), c_to_s(5,CP1), c_to_s(5,CP2), c_to_s(5,CP3),
         };
     }();
-    constexpr std::array<StrSize, 24> test_line_cp_str_idx_expected0{
+    constexpr std::array<StrSize, 24> test_line_cp_str_idx_expected{
         StrSize{0}, StrSize{1}, StrSize{2}, StrSize{2},
         StrSize{3}, StrSize{4}, StrSize{5}, StrSize{5},
         StrSize{5}, StrSize{5}, StrSize{5}, StrSize{5},
@@ -1020,7 +1023,7 @@ namespace {
         StrSize{9}, StrSize{9}, StrSize{9}, StrSize{9},
         StrSize{9}, StrSize{9}, StrSize{9}, StrSize{9}
     };
-    static_assert(test_line_cp_str_idx0 == test_line_cp_str_idx_expected0);
+    static_assert(test_line_cp_str_idx == test_line_cp_str_idx_expected);
 
     constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";
     constexpr std::vector<Font::TextElement> ElementsForTaggedText(const std::string& text)
@@ -1072,7 +1075,7 @@ namespace {
     }
 
     // tests getting string index and code point string length from code point index in text with multi-byte characters
-    constexpr auto test_multibyte_line_and_cp0 = [](std::size_t idx) {
+    constexpr auto test_multibyte_cp_to_str_idx_len = [](std::size_t idx) {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
 
@@ -1083,13 +1086,36 @@ namespace {
         return StringIndexInLines(line_idx, cp_in_line_idx, line_data);
     };
 
-    static_assert(Value(test_multibyte_line_and_cp0(0u)) == std::pair{0, 2});
-    static_assert(Value(test_multibyte_line_and_cp0(1u)) == std::pair{2, 1});
-    static_assert(Value(test_multibyte_line_and_cp0(2u)) == std::pair{3, 2});
-    static_assert(Value(test_multibyte_line_and_cp0(3u)) == std::pair{5, 3});
-    static_assert(Value(test_multibyte_line_and_cp0(4u)) == std::pair{8, 4});
-    static_assert(Value(test_multibyte_line_and_cp0(5u)) == std::pair{12, 2});
-    static_assert(Value(test_multibyte_line_and_cp0(6u)) == std::pair{14, 0});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(0u)) == std::pair{0, 2});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(1u)) == std::pair{2, 1});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(2u)) == std::pair{3, 2});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(3u)) == std::pair{5, 3});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(4u)) == std::pair{8, 4});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(5u)) == std::pair{12, 2});
+    static_assert(Value(test_multibyte_cp_to_str_idx_len(6u)) == std::pair{14, 0});
+
+
+    // tests getting the nth code point on a single line of text with multi-byte characters.
+    // should output same index as input index, up to the limit of characters in string, and
+    // one past end otherwise
+    constexpr auto test_multibyte_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
+        const std::string text(long_chars_sv);
+        const auto elems = ElementsForLongCharsText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+
+        return CodePointIndexInLines(line_idx, index, line_data);
+    };
+
+    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CP0)) == 0u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CP1)) == 1u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{4})) == 4u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{5})) == 5u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{6})) == 6u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{7})) == 6u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(1u, CP0)) == 6u);
+    static_assert(Value(test_multibyte_line_idx_to_cp(1u, CP1)) == 6u);
 
 #endif
 }
