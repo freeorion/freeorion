@@ -736,19 +736,19 @@ namespace {
     }
 }
 
-CPSize GG::CodePointIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
-{ return CodePointIndexInLines(line, index, line_data); }
+CPSize GG::CodePointIndexOf(std::size_t line, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndexInLines(line, glyph_index, line_data); }
 
 namespace {
     CONSTEXPR_FONT std::pair<std::size_t, CPSize>
-    LineIndexAndCPIndexInLines(CPSize index, const std::vector<Font::LineData>& line_data)
+    LineIndexAndCPIndexInLines(CPSize glyph_index, const std::vector<Font::LineData>& line_data)
     {
         for (std::size_t i = 0; i < line_data.size(); ++i) {
             const auto& char_data = line_data[i].char_data;
             if (!char_data.empty() &&
-                char_data.front().code_point_index <= index &&
-                index <= char_data.back().code_point_index)
-            { return {i, index - char_data.front().code_point_index}; }
+                char_data.front().code_point_index <= glyph_index &&
+                glyph_index <= char_data.back().code_point_index)
+            { return {i, glyph_index - char_data.front().code_point_index}; }
         }
         return {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE};
     }
@@ -987,6 +987,53 @@ namespace {
     }};
 
     static_assert(test_multiline_cpidx_to_line_and_cp == test_multiline_line_and_cp_expected);
+
+
+    constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";
+    constexpr std::vector<Font::TextElement> ElementsForTaggedText(const std::string& text)
+    {
+        std::vector<Font::TextElement> elems;
+        elems.reserve(5);
+        elems.emplace_back(Font::Substring(text, 0u, 2u));
+        elems.emplace_back(Font::Substring(text, 2u, 5u), Font::Substring(text, 3u, 4u), Font::TextElement::TextElementType::OPEN_TAG);
+        elems.emplace_back(Font::Substring(text, 5u, 7u));
+        elems.emplace_back(Font::Substring(text, 7u, 11u), Font::Substring(text, 9u, 10u), Font::TextElement::TextElementType::OPEN_TAG);
+        elems.emplace_back(Font::Substring(text, 11u, 13u));
+
+        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+
+        return elems;
+    }
+
+    // tests getting line and code point index in line from overall code point index text with tags
+    constexpr auto test_tagged_cpidx_to_line_and_cp = []() {
+        const std::string text(tagged_test_text);
+        const auto elems = ElementsForTaggedText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
+
+        return std::array{
+            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
+            c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
+            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}),
+            c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7}),
+            c_to_l_and_c(CPSize{8}), c_to_l_and_c(CPSize{9}),
+            c_to_l_and_c(CPSize{10}), c_to_l_and_c(CPSize{11}),
+            c_to_l_and_c(CPSize{12}), c_to_l_and_c(CPSize{13})
+        };
+    }();
+
+    constexpr std::array<std::pair<std::size_t, CPSize>, 14> test_tagged_line_and_cp_expected{{
+        {0u, CPSize{0}}, {0u, CPSize{1}}, {0u, CPSize{2}}, {0u, CPSize{3}},
+        {0u, CPSize{4}}, {0u, CPSize{5}}, {0u, CPSize{6}}, {0u, CPSize{7}},
+        {0u, CPSize{8}}, {0u, CPSize{9}}, {0u, CPSize{10}}, {0u, CPSize{11}},
+        {0u, CPSize{12}}, {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE}
+    }};
+
+    static_assert(test_tagged_cpidx_to_line_and_cp == test_tagged_line_and_cp_expected);
+
 #endif
 }
 
@@ -1068,25 +1115,9 @@ namespace {
     };
     static_assert(test_line_cp_str_idx == test_line_cp_str_idx_expected);
 
-    constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";
-    constexpr std::vector<Font::TextElement> ElementsForTaggedText(const std::string& text)
-    {
-        std::vector<Font::TextElement> elems;
-        elems.reserve(5);
-        elems.emplace_back(Font::Substring(text, 0u, 2u));
-        elems.emplace_back(Font::Substring(text, 2u, 5u), Font::Substring(text, 3u, 4u), Font::TextElement::TextElementType::OPEN_TAG);
-        elems.emplace_back(Font::Substring(text, 5u, 7u));
-        elems.emplace_back(Font::Substring(text, 7u, 11u), Font::Substring(text, 9u, 10u), Font::TextElement::TextElementType::OPEN_TAG);
-        elems.emplace_back(Font::Substring(text, 11u, 13u));
 
-        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
-
-        return elems;
-    }
-
-
-    // tests getting string index and code point string length from code point index in text with tags
-    constexpr auto test_tagged_cp_idx_to_str_idx = [](std::size_t idx) {
+    // tests getting string index and code point string length from glyph index in text with tags
+    constexpr auto test_tagged_glyph_idx_to_str_idx = [](std::size_t idx) {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
@@ -1099,14 +1130,14 @@ namespace {
     constexpr std::pair<std::size_t, std::size_t> Value(std::pair<StrSize, StrSize> szs)
     { return {Value(szs.first), Value(szs.second)}; };
 
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(0u)) == std::pair{0, 1});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(1u)) == std::pair{1, 1});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(2u)) == std::pair{5, 1});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(3u)) == std::pair{6, 1});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(4u)) == std::pair{11, 1});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(5u)) == std::pair{12, 1});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
-    static_assert(Value(test_tagged_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(0u)) == std::pair{0, 1});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(1u)) == std::pair{1, 1});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(2u)) == std::pair{5, 1});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(3u)) == std::pair{6, 1});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(4u)) == std::pair{11, 1});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(5u)) == std::pair{12, 1});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(6u)) == std::pair{13, 0});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(999u)) == std::pair{13, 0});
 
 
     // tests getting string index and code point string length from code point index in text with multi-byte characters
