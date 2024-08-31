@@ -861,7 +861,7 @@ GG_API StrSize StringIndexOf(std::size_t line, CPSize index,
 GG_API std::pair<std::size_t, CPSize>
 LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data);
 
-GG_API std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndices(
+GG_API std::pair<StrSize, StrSize> GlyphIndicesRangeToStringSizeIndices(
     CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data);
 
 /** \brief A singleton that loads and stores fonts for use by GG.

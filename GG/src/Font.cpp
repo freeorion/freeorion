@@ -963,8 +963,8 @@ namespace {
     // no code points on the requested line
     //
     // if searching back and no previous lines have a code point on them, return string index S0
-    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexInLines(std::size_t line_idx, CPSize index,
-                                                                  const std::vector<Font::LineData>& line_data)
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexInLines(
+        std::size_t line_idx, CPSize index, const std::vector<Font::LineData>& line_data)
     {
         if (line_idx < line_data.size() && Value(index) < line_data[line_idx].char_data.size()) {
             // line is valid, and requested code point index is within the line
@@ -1169,7 +1169,7 @@ namespace {
 }
 
 namespace {
-    CONSTEXPR_FONT std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndicesInLines(
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> GlyphIndicesRangeToStringSizeIndicesInLines(
         CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data)
     {
         if (start_idx == INVALID_CP_SIZE || end_idx == INVALID_CP_SIZE)
@@ -1210,7 +1210,7 @@ namespace {
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        return CodePointIndicesRangeToStringSizeIndicesInLines(CPSize{low_idx}, CPSize{high_idx}, line_data);
+        return GlyphIndicesRangeToStringSizeIndicesInLines(CPSize{low_idx}, CPSize{high_idx}, line_data);
     };
 
 
@@ -1241,9 +1241,9 @@ namespace {
 }
 
 
-std::pair<StrSize, StrSize> GG::CodePointIndicesRangeToStringSizeIndices(CPSize start_idx, CPSize end_idx,
-                                                                         const std::vector<Font::LineData>& line_data)
-{ return CodePointIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data); }
+std::pair<StrSize, StrSize> GG::GlyphIndicesRangeToStringSizeIndices(
+    CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data)
+{ return GlyphIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data); }
 
 
 namespace {
