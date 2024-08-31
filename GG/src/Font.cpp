@@ -708,9 +708,12 @@ std::ostream& GG::operator<<(std::ostream& os, Font::Substring substr)
 }
 
 namespace {
-    CONSTEXPR_FONT CPSize CodePointIndexInLines(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+    CONSTEXPR_FONT CPSize CodePointIndexInLines(
+        std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
     {
-        if (line_data.size() <= line) {
+        if (line_data.size() <= line_index) {
+            // requested line is not present
+            // return one past the last code point in the last non-empty line
             auto it = line_data.rbegin();
             auto end_it = line_data.rend();
             while (it != end_it) {
@@ -719,11 +722,14 @@ namespace {
                 ++it;
             }
 
-        } else if (Value(index) < line_data[line].char_data.size()) {
-            return line_data[line].char_data[Value(index)].code_point_index;
+        } else if (Value(glyph_index) < line_data[line_index].char_data.size()) {
+            // requested line and glyph index are valid
+            return line_data[line_index].char_data[Value(glyph_index)].code_point_index;
 
         } else {
-            auto it = line_data.rbegin() + (line_data.size() - 1 - line);
+            // requested line is OK but requested glyph is not present on that line.
+            // return the last code point in the next prior non-empty line
+            auto it = line_data.rbegin() + (line_data.size() - 1 - line_index);
             auto end_it = line_data.rend();
             while (it != end_it) {
                 if (!it->char_data.empty())
@@ -738,6 +744,58 @@ namespace {
 
 CPSize GG::CodePointIndexOf(std::size_t line, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
 { return CodePointIndexInLines(line, glyph_index, line_data); }
+
+namespace {
+  /** Returns the code point index (CPI) after the previous glyph to the glyph at \a glyph_index.
+    *
+    * Ranges of glyphs are specified [closed, open) eg. [1, 3) includes glyphs
+    * 1 and 2, but not the 3rd glyph. If finding the corresponding CPI range,
+    * for the end glyph, the result should not include any CPI after the end of
+    * the second to last glyph, even if there are non-glyph code points between them.
+    *
+    * For example, "ab<i>c" has glyphs at CPIs 0 (a), 1 (b), and 5 (c) and also has
+    * non-glyph (ie. tag) CPIs 2 (<), 3 (i), and 4 (>). If just getting the CPI for
+    * the starts of glyphs, the end glyph would start at code point 5 (c), but the
+    * CPI after the last glyph included in the range is actually 2 (<). */
+    CONSTEXPR_FONT CPSize CodePointIndexAfterPreviousGlyphInLines(
+        std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+    {
+        if (glyph_index == CP0 && line_index == 0)
+            return CP0; // there is no prior glyph, so just use the first code point, which will be before any tags that affect the first glyph
+
+        if (line_data.size() <= line_index) // requested line is not present; return one past the last code point in the last non-empty line
+            return CodePointIndexInLines(line_index, glyph_index, line_data);
+
+        const auto& cd = line_data[line_index].char_data;
+
+        if (glyph_index == CP0 || cd.empty()) {
+            // get glyph at the end of the next previous non-empty line
+            auto it = line_data.rbegin() + (line_data.size() - 1 - (line_index-1));
+            const auto end_it = line_data.rend();
+            while (it != end_it) {
+                const auto& cd = it->char_data;
+                if (cd.empty()) {
+                    ++it; // keep searching
+                    continue;
+                }
+                return cd.back().code_point_index + CP1; // code point immediately after prior glyph
+            }
+            return CP0; // there is no prior glyph, so just use the first code point, which will be before any tags that affect the first glyph
+        }
+
+        if (Value(glyph_index) >= cd.size()) // line is present but requested glyph is past end of that line, return one past end of line
+            return cd.back().code_point_index + CP1;
+
+        // line is present and glyph is present and is not the first glyph in the line
+        // return one past code point of previous glyph in the line
+        return cd[Value(glyph_index) - 1].code_point_index + CP1;
+    }
+}
+
+CPSize GG::CodePointIndexAfterPreviousGlyph(
+    std::size_t line, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndexAfterPreviousGlyphInLines(line, glyph_index, line_data); }
+
 
 namespace {
     CONSTEXPR_FONT std::pair<std::size_t, CPSize>
@@ -962,6 +1020,42 @@ namespace {
         return elems;
     }
 
+
+    // tests line data for multi-line text
+    constexpr auto test_multline_line_data = []() {
+        const std::string text(multi_line_text);
+        const auto elems = ElementsForMultiLineText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        return AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+    };
+    static_assert(test_multline_line_data().size() == 4);
+    static_assert(test_multline_line_data()[0].char_data.size() == 2);
+    static_assert(test_multline_line_data()[0].char_data[0].string_index == S0);
+    static_assert(test_multline_line_data()[0].char_data[0].string_size == S1);
+    static_assert(test_multline_line_data()[0].char_data[0].code_point_index == CP0);
+    static_assert(test_multline_line_data()[0].char_data[0].tags.empty());
+    static_assert(test_multline_line_data()[0].char_data[1].string_index == S1);
+    static_assert(test_multline_line_data()[0].char_data[1].string_size == S1);
+    static_assert(test_multline_line_data()[0].char_data[1].code_point_index == CP1);
+    static_assert(test_multline_line_data()[1].char_data.size() == 2);
+    static_assert(test_multline_line_data()[1].char_data[0].string_index == StrSize{3});    // newlines count for string index
+    static_assert(test_multline_line_data()[1].char_data[0].string_size == S1);
+    static_assert(test_multline_line_data()[1].char_data[0].code_point_index == CPSize{2}); // newlines don't count for code-point indices
+    static_assert(test_multline_line_data()[1].char_data[0].tags.empty());
+    static_assert(test_multline_line_data()[1].char_data[1].string_index == StrSize{4});
+    static_assert(test_multline_line_data()[1].char_data[1].string_size == S1);
+    static_assert(test_multline_line_data()[1].char_data[1].code_point_index == CPSize{3});
+    static_assert(test_multline_line_data()[2].char_data.empty());
+    static_assert(test_multline_line_data()[3].char_data.size() == 2);
+    static_assert(test_multline_line_data()[3].char_data[0].string_index == StrSize{7});
+    static_assert(test_multline_line_data()[3].char_data[0].string_size == S1);
+    static_assert(test_multline_line_data()[3].char_data[0].code_point_index == CPSize{4});
+    static_assert(test_multline_line_data()[3].char_data[0].tags.empty());
+    static_assert(test_multline_line_data()[3].char_data[1].string_index == StrSize{8});
+    static_assert(test_multline_line_data()[3].char_data[1].string_size == S1);
+    static_assert(test_multline_line_data()[3].char_data[1].code_point_index == CPSize{5});
+
+
     // tests getting line and code point index in line from overall code point index text with newlines
     constexpr auto test_multiline_cpidx_to_line_and_cp = []() {
         const std::string text(multi_line_text);
@@ -1005,6 +1099,7 @@ namespace {
         return elems;
     }
 
+
     // tests getting line and code point index in line from overall code point index text with tags
     constexpr auto test_tagged_cpidx_to_line_and_cp = []() {
         const std::string text(tagged_test_text);
@@ -1033,6 +1128,56 @@ namespace {
     }};
 
     static_assert(test_tagged_cpidx_to_line_and_cp == test_tagged_line_and_cp_expected);
+
+
+    // tests getting code point index after previous glyph in text with newlines
+    constexpr auto test_multiline_line_glyph_to_after_prev_glyph_cpi = [](std::size_t line_idx, std::size_t glyph_idx) {
+        const std::string text(multi_line_text);
+        const auto elems = ElementsForMultiLineText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+        return Value(CodePointIndexAfterPreviousGlyphInLines(line_idx, CPSize{glyph_idx}, line_data));
+    };
+
+    //  CPSize: 01  23    456
+    //  line:   00  11    33
+    //  glyph:  01  01    01
+    //         "ab\ncd\n\nef";
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(0, 0) == 0); // a
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(0, 1) == 1); // b
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(0, 2) == 2); // c
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(0, 3) == 2); // c
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(1, 0) == 2); // c
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(1, 1) == 3); // d
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(2, 0) == 4); // e
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(3, 0) == 4); // e
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(3, 1) == 5); // f
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(3, 2) == 6); // null
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(5, 0) == 6); // null
+    static_assert(test_multiline_line_glyph_to_after_prev_glyph_cpi(5, 999) == 6); // null
+
+
+    // tests getting code point index after previous glyph in text with tags
+    constexpr auto test_tagged_line_glyph_to_after_prev_glyph_cpi = [](std::size_t glyph_idx) {
+        const std::string text(tagged_test_text);
+        const auto elems = ElementsForTaggedText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+        return Value(CodePointIndexAfterPreviousGlyphInLines(0u, CPSize{glyph_idx}, line_data));
+    };
+
+    //  CPSize: 01234567890123
+    //  glyph:  01   23    45
+    //         "ab<i>cd</i>ef";
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(0) == 0); // a
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(1) == 1); // b
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(2) == 2); // <
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(3) == 6); // d
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(4) == 7); // <
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(5) == 12); // f
+    static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(6) == 13); // null
 
 #endif
 }
