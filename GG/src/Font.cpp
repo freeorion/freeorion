@@ -1043,7 +1043,7 @@ namespace {
 
 
     // tests getting string index and code point string length from code point index in text with tags
-    constexpr auto test_cp_idx_to_str_idx = [](std::size_t idx) {
+    constexpr auto test_tagged_cp_idx_to_str_idx = [](std::size_t idx) {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
@@ -1056,14 +1056,14 @@ namespace {
     constexpr std::pair<std::size_t, std::size_t> Value(std::pair<StrSize, StrSize> szs)
     { return {Value(szs.first), Value(szs.second)}; };
 
-    static_assert(Value(test_cp_idx_to_str_idx(0u)) == std::pair{0, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(1u)) == std::pair{1, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(2u)) == std::pair{5, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(3u)) == std::pair{6, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(4u)) == std::pair{11, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(5u)) == std::pair{12, 1});
-    static_assert(Value(test_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
-    static_assert(Value(test_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(0u)) == std::pair{0, 1});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(1u)) == std::pair{1, 1});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(2u)) == std::pair{5, 1});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(3u)) == std::pair{6, 1});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(4u)) == std::pair{11, 1});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(5u)) == std::pair{12, 1});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(6u)) == std::pair{13, 0});
+    static_assert(Value(test_tagged_cp_idx_to_str_idx(999u)) == std::pair{13, 0});
 
 
     constexpr std::vector<Font::TextElement> ElementsForLongCharsText(const std::string& text)
@@ -1078,7 +1078,6 @@ namespace {
     constexpr auto test_multibyte_cp_to_str_idx_len = [](std::size_t idx) {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
-
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
@@ -1101,7 +1100,6 @@ namespace {
     constexpr auto test_multibyte_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
-
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
@@ -1116,6 +1114,29 @@ namespace {
     static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{7})) == 6u);
     static_assert(Value(test_multibyte_line_idx_to_cp(1u, CP0)) == 6u);
     static_assert(Value(test_multibyte_line_idx_to_cp(1u, CP1)) == 6u);
+
+
+    // tests getting the code point from line and glyph index in text with tags
+    constexpr auto test_tagged_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
+        const std::string text(tagged_test_text);
+        const auto elems = ElementsForTaggedText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+
+        return CodePointIndexInLines(line_idx, index, line_data);
+    };
+
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CP0)) == 0u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CP1)) == 1u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CPSize{2})) == 5u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CPSize{3})) == 6u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CPSize{4})) == 11u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CPSize{5})) == 12u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CPSize{6})) == 13u);
+    static_assert(Value(test_tagged_line_idx_to_cp(0u, CPSize{7})) == 13u);
+    static_assert(Value(test_tagged_line_idx_to_cp(1u, CP0)) == 13u);
+    static_assert(Value(test_tagged_line_idx_to_cp(2u, CP1)) == 13u);
+
 
 #endif
 }
