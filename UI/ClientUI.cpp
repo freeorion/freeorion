@@ -431,7 +431,7 @@ namespace {
             {
                 std::string file_name = GetOptionsDB().Get<std::string>("resource.stringtable.path");
                 std::string stringtable_str;
-                boost::filesystem::ifstream ifs(file_name);
+                boost::filesystem::ifstream ifs(FilenameToPath(file_name));
                 while (ifs) {
                     std::string line;
                     std::getline(ifs, line);
@@ -447,7 +447,7 @@ namespace {
                 DebugLogger() << "Non-default stringtable!";
                 std::string file_name = GetOptionsDB().GetDefault<std::string>("resource.stringtable.path");
                 std::string stringtable_str;
-                boost::filesystem::ifstream ifs(file_name);
+                boost::filesystem::ifstream ifs(FilenameToPath(file_name));
                 while (ifs) {
                     std::string line;
                     std::getline(ifs, line);

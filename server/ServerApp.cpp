@@ -93,7 +93,7 @@ ServerApp::ServerApp() :
 {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
+        const std::string SERVER_LOG_FILENAME(PathToString(GetUserDataDir() / "freeoriond.log"));
         GetOptionsDB().Set("log-file", SERVER_LOG_FILENAME);
     }
     // Force the log threshold if requested.
@@ -182,7 +182,7 @@ namespace {
 #else
             "freeorionca";
 #endif
-        return (GetBinDir() / ai_client_exe_filename).string();
+        return PathToString(GetBinDir() / ai_client_exe_filename);
     }
 }
 

@@ -232,7 +232,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
 
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
+        const std::string HUMAN_CLIENT_LOG_FILENAME(PathToString(GetUserDataDir() / "freeorion.log"));
         GetOptionsDB().Set("log-file", HUMAN_CLIENT_LOG_FILENAME);
     }
     // Force the log threshold if requested.

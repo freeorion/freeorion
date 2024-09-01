@@ -131,22 +131,21 @@ namespace {
         // set option default value based on system locale
         auto default_stringtable_path = GetDefaultStringTableFileName();
         auto default_stringtable_path_string = PathToString(default_stringtable_path);
-        GetOptionsDB().SetDefault("resource.stringtable.path", PathToString(default_stringtable_path));
+        GetOptionsDB().SetDefault("resource.stringtable.path", default_stringtable_path_string);
 
         // get option-configured stringtable path. may be the default empty
         // string (set by call to:   db.Add<std::string>("resource.stringtable.path" ...
         // or this may have been overridden from one of the config XML files or from
         // a command line argument.
         std::string option_path = GetOptionsDB().Get<std::string>("resource.stringtable.path");
-        boost::filesystem::path stringtable_path{option_path};
+        boost::filesystem::path stringtable_path = FilenameToPath(option_path);
 
         // verify that option-derived stringtable file exists, with fallbacks
         DebugLogger() << "Stringtable option path: " << option_path;
 
         if (option_path.empty()) {
             DebugLogger() << "Stringtable option path not specified yet, using default: " << default_stringtable_path_string;
-            stringtable_path = std::move(default_stringtable_path_string);
-            GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_path));
+            GetOptionsDB().Set("resource.stringtable.path", default_stringtable_path_string);
             stringtable_filename_init = true;
             return;
         }
@@ -156,12 +155,12 @@ namespace {
         if (!IsExistingFile(stringtable_path)) {
             set_option = true;
             // try interpreting path as a filename located in the stringtables directory
-            stringtable_path = GetResourceDir() / "stringtables" / option_path;
+            stringtable_path = GetResourceDir() / "stringtables" / FilenameToPath(option_path);
         }
         if (!IsExistingFile(stringtable_path)) {
             set_option = true;
             // try interpreting path as directory and filename in resources directory
-            stringtable_path = GetResourceDir() / option_path;
+            stringtable_path = GetResourceDir() / FilenameToPath(option_path);
         }
         if (!IsExistingFile(stringtable_path)) {
             set_option = true;

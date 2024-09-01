@@ -23,6 +23,8 @@
 #include <boost/optional.hpp>
 #include <boost/unordered_map.hpp>
 
+#include "Directories.h"
+
 #ifdef _MSC_VER
 #  include <ctime>
 #else
@@ -275,7 +277,7 @@ void InitLoggingSystem(const std::string& log_file, std::string_view _unnamed_lo
     // Create a sink backend that logs to a file
     auto& file_sink_backend = FileSinkBackend();
     file_sink_backend = boost::make_shared<LoggerTextFileSinkFrontend::sink_backend_type>(
-        keywords::file_name = log_file.c_str(),
+        keywords::file_name = FilenameToPath(log_file),
         keywords::auto_flush = true
     );
 
