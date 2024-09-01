@@ -708,6 +708,34 @@ std::ostream& GG::operator<<(std::ostream& os, Font::Substring substr)
 }
 
 namespace {
+    CONSTEXPR_FONT CPSize GlyphIndexInLines(
+        std::size_t line_idx, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+    {
+        const auto num_lines = line_data.size();
+        CPSize retval = CP0;
+        if (line_data.empty() || (num_lines == 1u && line_data.front().Empty()))
+            return retval; // no text
+
+        // sum line glyph counts before the target row
+        for (std::size_t loop_line_idx = 0u; loop_line_idx < line_idx && loop_line_idx < num_lines; ++loop_line_idx)
+            retval += line_data[loop_line_idx].char_data.size();
+
+        if (line_idx >= num_lines)
+            return retval; // 
+
+        // add glyphs for target row: lesser of number of glyphs in row and requested glyph index
+        const auto& line_chars = line_data[line_idx].char_data;
+        retval += std::min(glyph_index, CPSize(line_chars.size()));
+
+        return retval;
+    }
+}
+
+CPSize GG::GlyphIndexOf(std::size_t line_idx, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+{ return GlyphIndexInLines(line_idx, glyph_index, line_data); }
+
+
+namespace {
     CONSTEXPR_FONT CPSize CodePointIndexInLines(
         std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
     {
@@ -742,8 +770,8 @@ namespace {
     }
 }
 
-CPSize GG::CodePointIndexOf(std::size_t line, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
-{ return CodePointIndexInLines(line, glyph_index, line_data); }
+CPSize GG::CodePointIndexOf(std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndexInLines(line_index, glyph_index, line_data); }
 
 namespace {
   /** Returns the code point index (CPI) after the previous glyph to the glyph at \a glyph_index.
@@ -793,8 +821,8 @@ namespace {
 }
 
 CPSize GG::CodePointIndexAfterPreviousGlyph(
-    std::size_t line, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
-{ return CodePointIndexAfterPreviousGlyphInLines(line, glyph_index, line_data); }
+    std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndexAfterPreviousGlyphInLines(line_index, glyph_index, line_data); }
 
 
 namespace {
@@ -1081,6 +1109,60 @@ namespace {
     }};
 
     static_assert(test_multiline_cpidx_to_line_and_cp == test_multiline_line_and_cp_expected);
+
+
+    // tests getting overall glyph index from line and in-line glyph index in text with newlines
+    constexpr auto test_multiline_lineidx_and_inline_glyph_to_overall_glyph =
+        [](std::size_t line_idx, std::size_t glyph_idx)
+    {
+        const std::string text(multi_line_text);
+        const auto elems = ElementsForMultiLineText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+
+        return Value(GlyphIndexInLines(line_idx, CPSize(glyph_idx), line_data));
+    };
+
+    constexpr auto gltg00 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(0, 0);
+    constexpr auto gltg01 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(0, 1);
+    constexpr auto gltg02 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(0, 2);
+    constexpr auto gltg03 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(0, 3);
+    constexpr auto gltg10 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(1, 0);
+    constexpr auto gltg11 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(1, 1);
+    constexpr auto gltg12 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(1, 2);
+    constexpr auto gltg20 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(2, 0);
+    constexpr auto gltg21 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(2, 1);
+    constexpr auto gltg22 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(2, 2);
+    constexpr auto gltg30 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(3, 0);
+    constexpr auto gltg31 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(3, 1);
+    constexpr auto gltg32 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(3, 2);
+    constexpr auto gltg40 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(4, 0);
+    constexpr auto gltg41 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(4, 1);
+    constexpr auto gltg50 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(5, 0);
+    constexpr auto gltg51 = test_multiline_lineidx_and_inline_glyph_to_overall_glyph(5, 1);
+
+    // total glyph: 01  23    456
+    // line:        00  11  2 33
+    // lineglyph:   01  01    01
+    //             "ab\ncd\n\nef";
+    static_assert(gltg00 == 0u);
+    static_assert(gltg01 == 1u);
+    static_assert(gltg02 == 2u);
+    static_assert(gltg03 == 2u);
+    static_assert(gltg10 == 2u);
+    static_assert(gltg11 == 3u);
+    static_assert(gltg12 == 4u);
+    static_assert(gltg20 == 4u);
+    static_assert(gltg21 == 4u);
+    static_assert(gltg22 == 4u);
+    static_assert(gltg30 == 4u);
+    static_assert(gltg31 == 5u);
+    static_assert(gltg32 == 6u);
+    static_assert(gltg40 == 6u);
+    static_assert(gltg41 == 6u);
+    static_assert(gltg50 == 6u);
+    static_assert(gltg51 == 6u);
 
 
     constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";

@@ -840,6 +840,9 @@ private:
 /** Stream output operator for Font::Substring. */
 GG_API std::ostream& operator<<(std::ostream& os, Font::Substring substr);
 
+GG_API CPSize GlyphIndexOf(std::size_t line_index, CPSize glyph_index,
+                           const std::vector<Font::LineData>& line_data);
+
 /** Returns the code point index of the <i>index</i>-th glyph on line \a
     line within the text represented by \a line_data.  Returns the index of
     the code point one past the end of the text if \a line is out of bounds.

@@ -289,12 +289,12 @@ void MultiEdit::SetText(std::string str)
             first_line = new_lines.size() - 1 - m_max_lines_history;
             last_line = new_lines.size() - 1;
         }
-        const CPSize first_line_first_char_idx = GlyphIndexOf(first_line, CP0, new_lines);
+        const CPSize first_line_first_char_idx = GG::GlyphIndexOf(first_line, CP0, new_lines);
         if (m_style & MULTI_TERMINAL_STYLE) {
             // chopping these lines off the front will invalidate the cursor range unless we do this
-            const CPSize cursor_begin_string_index = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second, new_lines);
+            const CPSize cursor_begin_string_index = GG::GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second, new_lines);
             cursor_begin_idx = first_line_first_char_idx < cursor_begin_string_index ? CP0 : cursor_begin_string_index - first_line_first_char_idx;
-            const CPSize cursor_end_string_index = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second, new_lines);
+            const CPSize cursor_end_string_index = GG::GlyphIndexOf(m_cursor_end.first, m_cursor_end.second, new_lines);
             cursor_end_idx = first_line_first_char_idx < cursor_end_string_index ? CP0 : cursor_end_string_index - first_line_first_char_idx;
         }
         const StrSize first_line_first_string_idx = StringIndexOf(first_line, CP0, new_lines);
@@ -474,35 +474,6 @@ Pt MultiEdit::ScrollPosition() const
             m_vscroll ? Y{m_vscroll->PosnRange().first} : Y0};
 }
 
-CPSize MultiEdit::GlyphIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>& line_data)
-{
-    if (line_data.empty())
-        return CP0; // no text
-    const Font::LineData& line = line_data[row];
-    if (line.Empty() && row == 0)
-        return CP0; // empty first line
-
-    // if selecting into an empty line, return one past the end of the previous line
-    if (line.Empty())
-        return line_data[row-1].char_data.back().code_point_index + CP1;
-
-    // if at start of (non-empty) line, return first character of that line
-    if (char_idx == CP0)
-        return line.char_data.front().code_point_index;
-
-    // if at end of line, go with one past the last character of the line
-    if (Value(char_idx) >= line.char_data.size())
-        return line.char_data.back().code_point_index + CP1;
-
-    // "rewind" the first position to encompass all tag text that is
-    // associated with that position
-    CPSize retval = line.char_data[Value(char_idx)].code_point_index;
-    for (const auto& tag : line.char_data[Value(char_idx)].tags)
-        retval -= tag.CodePointSize();
-
-    return retval;
-}
-
 X MultiEdit::RowStartX(std::size_t row) const
 {
     X retval = -m_first_col_shown_x_from_left_of_text;
@@ -582,9 +553,9 @@ CPSize MultiEdit::GlyphAt(std::size_t row, X x) const
         //std::cout << "row: " << "  last row: " << line_data.size() - 1 << std::endl;
         if (row < line_data.size() - 1) {
             // know this row is not empty due to above check
-            return CPSize(line.char_data.size()-1); // last character should be a newline if this is not the last row
+            return CPSize(line.char_data.size()-1); // last glyph should be a newline if this is not the last row
         } else {
-            return CPSize(line.char_data.size());   // want one past the last actual character
+            return CPSize(line.char_data.size());   // one past the last glyph
         }
     }
 
@@ -760,8 +731,8 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         m_cursor_end = GlyphAt(final_indices.second);
     }
 
-    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+    CPSize begin_cursor_pos = GlyphIndexOf(m_cursor_begin.first, m_cursor_begin.second);
+    CPSize end_cursor_pos = GlyphIndexOf(m_cursor_end.first, m_cursor_end.second);
 
     //std::cout << "MultiEdit::LDrag cursor covers code points: " << begin_cursor_pos << " to " << end_cursor_pos << std::endl;
 

@@ -117,15 +117,9 @@ protected:
         a non-visible character. */
     std::pair<std::size_t, CPSize> GlyphAt(CPSize idx) const;
 
-    /** Returns the code point index of the start of the UTF-8 sequence for
-        the code point at \a char_idx in row \a row, using \a line_data
-        instead of the current line data, if it is supplied.
-        If \a row, \a char_idx refers to a character preceeded by formatting
-        tags, the index of the first character of the first formatting tag is
-        returned instead. Not range-checked. */
-    static CPSize GlyphIndexOf(std::size_t row, CPSize char_idx, const std::vector<Font::LineData>& line_data);
-    CPSize GlyphIndexOf(std::size_t row, CPSize char_idx) const
-    { return GlyphIndexOf(row, char_idx, GetLineData()); }
+    /** Returns the code point index of the glyph at position \a glyph_idx in row \a row_idx within \a line_data */
+    CPSize GlyphIndexOf(std::size_t row_idx, CPSize glyph_idx) const
+    { return GG::GlyphIndexOf(row_idx, glyph_idx, GetLineData()); }
 
     /** Returns the x-coordinate of the beginning of row \a row, in
         cleint-space coordinates.  Not range-checked. */
