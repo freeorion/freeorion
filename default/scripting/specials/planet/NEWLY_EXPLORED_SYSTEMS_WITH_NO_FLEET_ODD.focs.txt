@@ -1,12 +1,12 @@
 Special
-    name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL"
+    name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_ODD"
     description = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_DESC"
     spawnrate = 0.0
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = (CurrentTurn % 2 == 0)
-            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_GROUP"
+            activation = (CurrentTurn % 2 == 1)
+            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_ODD_GROUP"
             priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
             effects = [
                 RemoveSpecial name = ThisSpecial
@@ -14,8 +14,8 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = Turn high = ( 1 + SpecialAddedOnTurn name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL" object = Source.ID )
-            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_GROUP"
+            activation = Turn high = (1 + SpecialAddedOnTurn name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_ODD" object = Source.ID )
+            stackinggroup = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_ODD_GROUP"
             priority = [[BEFORE_ANYTHING_ELSE_PRIORITY]]
             effects = [
                 SetResearch value = Value + (SpecialCapacity name = ThisSpecial object = Source.ID)
