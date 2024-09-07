@@ -1024,13 +1024,14 @@ LoadShipDesignsAndManifestOrderFromParseResults(
         std::vector<std::pair<std::string_view, boost::uuids::uuid>> names_and_missing_uuids;
         names_and_missing_uuids.reserve(saved_designs.size());
 
-        const auto not_in_ordering = [&ordering](const auto& uuid_and_x) {
-            const auto uuid = uuid_and_x.first;
+        const auto in_ordering = [&ordering](const auto& uuid) {
             return std::any_of(ordering.begin(), ordering.end(),
                                [uuid](const auto uuid_in_order) noexcept { return uuid == uuid_in_order; });
         };
 
-        for (auto& [uuid, design_and_filename] : saved_designs | range_filter(not_in_ordering)) {
+        for (auto& [uuid, design_and_filename] : saved_designs) {
+            if (!in_ordering(uuid)) // using range_filter above may cause an internal compiler error in MSVC
+                continue;
             ship_manifest_inconsistent = true;
             names_and_missing_uuids.emplace_back(design_and_filename.first->Name(), uuid);
         }
