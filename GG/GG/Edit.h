@@ -69,7 +69,7 @@ public:
     auto CursorPosn() const noexcept { return m_cursor_pos; }
 
     /** Returns the text that is selected in this control. */
-    std::string_view SelectedText() const { return Text(m_cursor_pos.first, m_cursor_pos.second); }
+    std::string_view SelectedText() const;
 
     /** Returns the color used to render the iterior of the control. */
     Clr InteriorColor() const noexcept { return m_int_color; }
@@ -187,7 +187,8 @@ protected:
         called in LClick() and LButtonUp() overrides. */
     void ClearDoubleButtonDownMode();
 
-    /** If .first == .second, the caret is drawn before character at
+    /** Code point indices (not glyphs) of cursor.
+        If .first == .second, the caret is drawn before character at
         m_cursor_pos.first; otherwise, the range is selected (when range is
         selected, caret is considered at .second) */
     std::pair<CPSize, CPSize> m_cursor_pos = {CP0, CP0};

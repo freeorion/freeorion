@@ -1041,12 +1041,10 @@ void CensoredCUIEdit::AcceptPastedText(const std::string& text) {
     }
 
     if (!text.empty()) {
-        GG::CPSize pos;
-        std::size_t line;
-        std::tie(line, pos) = LinePositionOf(m_cursor_pos.first, GetLineData());
+        const auto [line, pos] = LinePositionOfGlyph(m_cursor_pos.first, GetLineData()); // TODO: should look up code point, not glyph index
 
         std::string new_raw_text = m_raw_text;
-        new_raw_text.insert(Value(StringIndexOf(line, pos, GetLineData())), text);
+        new_raw_text.insert(Value(StringIndexOfLineAndGlyph(line, pos, GetLineData())), text);
 
         SetText(std::move(new_raw_text));
 

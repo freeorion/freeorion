@@ -840,16 +840,20 @@ private:
 /** Stream output operator for Font::Substring. */
 GG_API std::ostream& operator<<(std::ostream& os, Font::Substring substr);
 
-GG_API CPSize GlyphIndexOf(std::size_t line_index, CPSize glyph_index,
-                           const std::vector<Font::LineData>& line_data);
+GG_API CPSize GlyphIndexOfLineAndGlyph(std::size_t line_index, CPSize glyph_index,
+                                       const std::vector<Font::LineData>& line_data);
 
 /** Returns the code point index of the <i>index</i>-th glyph on line \a
     line within the text represented by \a line_data.  Returns the index of
     the code point one past the end of the text if \a line is out of bounds.
     Returns the index of the next previous code point from the end of line
     \a line if \a glyph_index is out of bounds on that line. */
-GG_API CPSize CodePointIndexOf(std::size_t line_index, CPSize glyph_index,
-                               const std::vector<Font::LineData>& line_data);
+GG_API CPSize CodePointIndexOfLineAndGlyph(std::size_t line_index, CPSize glyph_index,
+                                           const std::vector<Font::LineData>& line_data);
+
+GG_API CPSize CodePointIndexOfLineAndCodePoint(std::size_t line_index, CPSize cp_index,
+                                               const std::vector<Font::LineData>& line_data);
+
 
 /** Returns the code point index (CPI) after the previous glyph to the glyph at \a glyph_index.
   *
@@ -865,22 +869,32 @@ GG_API CPSize CodePointIndexOf(std::size_t line_index, CPSize glyph_index,
 GG_API CPSize CodePointIndexAfterPreviousGlyph(std::size_t line_index, CPSize glyph_index,
                                                const std::vector<Font::LineData>& line_data);
 
-/** Returns the string index of the <i>index</i>-th code point on line \a line
+/** Returns the string index of the <i>index</i>-th glyph on line \a line
     within the text represented by \a line_data.  Returns the index of the
     character one past the end of the text if \a line or \a index are out of
     bounds. */
-GG_API StrSize StringIndexOf(std::size_t line, CPSize index,
-                             const std::vector<Font::LineData>& line_data);
+GG_API StrSize StringIndexOfLineAndGlyph(std::size_t line, CPSize index,
+                                         const std::vector<Font::LineData>& line_data);
+
+/** Returns the string indiex of the <i>index</i>-th code point in \a line_data */
+GG_API StrSize StringIndexOfCodePoint(CPSize index, const std::vector<Font::LineData>& line_data);
 
 /** Returns the line L and the code point index within L of the
-    <i>index</i>-th code point within the text represented by \a line_data.
+    <i>index</i>-th glyph within the text represented by \a line_data.
     Returns (std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE) if \a
     index is out of bounds. */
 GG_API std::pair<std::size_t, CPSize>
-LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data);
+LinePositionOfGlyph(CPSize index, const std::vector<Font::LineData>& line_data);
+
+GG_API std::pair<std::size_t, CPSize>
+LinePositionOfCodePoint(CPSize index, const std::vector<Font::LineData>& line_data);
 
 GG_API std::pair<StrSize, StrSize> GlyphIndicesRangeToStringSizeIndices(
     CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data);
+
+GG_API std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndices(
+    CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data);
+
 
 /** \brief A singleton that loads and stores fonts for use by GG.
 

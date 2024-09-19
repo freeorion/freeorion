@@ -127,19 +127,9 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
 
-    //std::cout << "full text(" << m_text.size() << "): " << m_text << std::endl;
-
-    auto [from_line_idx, from_cp_in_line_dx] = LinePositionOf(from, m_line_data);
-    auto from_stridx = StringIndexOf(from_line_idx, from_cp_in_line_dx, m_line_data);
-    //std::cout << "from CPSize: " << Value(from) << " : " << m_text[Value(from_stridx)] << std::endl;
-
-    auto [to_line_idx, to_cp_in_line_dx] = LinePositionOf(to, m_line_data);
-    auto to_stridx = StringIndexOf(to_line_idx, to_cp_in_line_dx, m_line_data);
-    //std::cout << "to CPSize: " << Value(to) << " : " << m_text[Value(to_stridx)] << std::endl;
-
 
     const auto txt_sz = m_text.size();
-    auto [low_string_idx_strsz, high_string_idx_strsz] = GlyphIndicesRangeToStringSizeIndices(from, to, m_line_data);
+    auto [low_string_idx_strsz, high_string_idx_strsz] = CodePointIndicesRangeToStringSizeIndices(from, to, m_line_data);
     const auto low_string_idx = std::min(Value(low_string_idx_strsz), txt_sz);
     const auto high_string_idx = std::min(Value(high_string_idx_strsz), txt_sz);
     const auto out_length = std::max(low_string_idx, high_string_idx) - std::min(low_string_idx, high_string_idx);
@@ -350,21 +340,21 @@ void TextControl::Clear()
 void TextControl::Insert(CPSize pos, char c)
 {
     std::size_t line;
-    std::tie(line, pos) = LinePositionOf(pos, m_line_data);
+    std::tie(line, pos) = LinePositionOfGlyph(pos, m_line_data);
     Insert(line, pos, c);
 }
 
 void TextControl::Insert(CPSize pos, const std::string& s)
 {
     std::size_t line;
-    std::tie(line, pos) = LinePositionOf(pos, m_line_data);
+    std::tie(line, pos) = LinePositionOfGlyph(pos, m_line_data);
     Insert(line, pos, s);
 }
 
 void TextControl::Erase(CPSize pos, CPSize num)
 {
     std::size_t line;
-    std::tie(line, pos) = LinePositionOf(pos, m_line_data);
+    std::tie(line, pos) = LinePositionOfGlyph(pos, m_line_data);
     Erase(line, pos, num);
 }
 
@@ -372,7 +362,7 @@ void TextControl::Insert(std::size_t line, CPSize pos, char c)
 {
     if (!IsValidUTFChar(c))
         return;
-    m_text.insert(Value(StringIndexOf(line, pos, m_line_data)), 1, c);
+    m_text.insert(Value(StringIndexOfLineAndGlyph(line, pos, m_line_data)), 1, c);
     SetText(std::move(m_text));
 }
 
@@ -380,14 +370,14 @@ void TextControl::Insert(std::size_t line, CPSize pos, const std::string& s)
 {
     if (!utf8::is_valid(s.begin(), s.end()))
         return;
-    m_text.insert(Value(StringIndexOf(line, pos, m_line_data)), s);
+    m_text.insert(Value(StringIndexOfLineAndGlyph(line, pos, m_line_data)), s);
     SetText(std::move(m_text));
 }
 
 void TextControl::Erase(std::size_t line, CPSize pos, CPSize num)
 {
-    auto it = m_text.begin() + Value(StringIndexOf(line, pos, m_line_data));
-    auto end_it = m_text.begin() + Value(StringIndexOf(line, pos + num, m_line_data));
+    auto it = m_text.begin() + Value(StringIndexOfLineAndGlyph(line, pos, m_line_data));
+    auto end_it = m_text.begin() + Value(StringIndexOfLineAndGlyph(line, pos + num, m_line_data));
     if (it == end_it)
         return;
     m_text.erase(it, end_it);
@@ -398,8 +388,8 @@ void TextControl::Erase(std::size_t line1, CPSize pos1, std::size_t line2, CPSiz
 {
     //std::cout << "TextControl::Erase(" << line1 << ", " << pos1 << "," << line2 << ", " << pos2 << ")" << std::endl;
 
-    std::size_t offset1 = Value(StringIndexOf(line1, pos1, m_line_data));
-    std::size_t offset2 = Value(StringIndexOf(line2, pos2, m_line_data));
+    std::size_t offset1 = Value(StringIndexOfLineAndGlyph(line1, pos1, m_line_data));
+    std::size_t offset2 = Value(StringIndexOfLineAndGlyph(line2, pos2, m_line_data));
     if (offset1 == offset2)
         return;
     //std::cout << "TextControl::Erase offsets: " << offset1 << " // " << offset2 << std::endl;
