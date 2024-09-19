@@ -14,7 +14,6 @@
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
 #include <GG/WndEvent.h>
-#include <boost/nowide/iostream.hpp>
 
 using namespace GG;
 
@@ -448,7 +447,7 @@ std::pair<std::size_t, CPSize> MultiEdit::GlyphAt(Pt pt) const
 
     const auto char_idx = (row > constrained_row) ? line_sz : std::min(GlyphAt(row, pt.x), line_sz);
 
-    std::cout << "glyph at " << pt << ": line: " << constrained_row << "  glyph idx: " << Value(char_idx) << std::endl;
+    //std::cout << "glyph at " << pt << ": line: " << constrained_row << "  glyph idx: " << Value(char_idx) << std::endl;
 
     return {constrained_row, char_idx};
 }
@@ -701,7 +700,7 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     Pt click_pos = ScreenToClient(pt);
     m_cursor_end = GlyphAt(click_pos);
 
-    std::cout << "\n\nMultiEdit::LDrag at row: " << m_cursor_end.first << ", glyph: " << Value(m_cursor_end.second) << std::endl;
+    //std::cout << "\n\nMultiEdit::LDrag at row: " << m_cursor_end.first << ", glyph: " << Value(m_cursor_end.second) << std::endl;
 
     if (m_in_double_click_mode) {
         // if drag-selecting after a double click, select full words
@@ -736,30 +735,13 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 
     const auto& line_data = GetLineData();
 
-    CPSize begin_cursor_glyph_idx = GlyphIndexOfLineAndGlyph(m_cursor_begin.first, m_cursor_begin.second, line_data);
-    CPSize end_cursor_pos = GlyphIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, line_data);
-    std::cout << "MultiEdit::LDrag cursor covers glyph indices: " << Value(begin_cursor_glyph_idx) << " to " << Value(end_cursor_pos) << std::endl;
-
     // need to convert from rendered character (glyph) index to code point index in the underlying text
     // any tags that are not rendered will not be included in character counting but will affect the
     // code point index
     const auto begin_cursor_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_begin.first, m_cursor_begin.second, line_data);
     const auto end_cursor_cp_idx = CodePointIndexAfterPreviousGlyph(m_cursor_end.first, m_cursor_end.second, line_data);
-    std::cout << "MultiEdit::LDrag cursor covers code points: " << Value(begin_cursor_cp_idx)
-              << " to " << Value(end_cursor_cp_idx) << std::endl;
 
-
-    // NOT TEST
     m_cursor_pos = {begin_cursor_cp_idx, end_cursor_cp_idx};
-    // END NOT TEXT
-
-
-    const std::pair<StrSize, StrSize> str_idxs =
-        GlyphIndicesRangeToStringSizeIndices(begin_cursor_glyph_idx, end_cursor_pos, line_data);
-    const auto txt_u8 = Text().substr(Value(str_idxs.first), Value(str_idxs.second - str_idxs.first));
-    boost::nowide::cout << "MultiEdit::LDrag cursor covers substring: " << txt_u8 << std::endl;
-
-    boost::nowide::cout << "this->SelectedText():" << this->SelectedText() << std::endl;
 
 
     // if dragging past the currently visible text, adjust
