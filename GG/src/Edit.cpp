@@ -51,6 +51,11 @@ Edit::Edit(std::string str, std::shared_ptr<Font> font,
 Pt Edit::MinUsableSize() const noexcept
 { return Pt(X(4 * PIXEL_MARGIN), HeightFromFont(GetFont(), PIXEL_MARGIN)); }
 
+std::string_view Edit::SelectedText() const
+{
+    return Text(m_cursor_pos.first, m_cursor_pos.second);
+}
+
 void Edit::Render()
 {
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
@@ -68,8 +73,8 @@ void Edit::Render()
     X first_char_offset = FirstCharOffset();
     Y text_y_pos = ToY(ul.y + ((lr.y - ul.y) - GetFont()->Height()) / 2.0);
     CPSize last_visible_char = LastVisibleChar();
-    const StrSize INDEX_0 = StringIndexOf(0, m_first_char_shown, GetLineData());
-    const StrSize INDEX_END = StringIndexOf(0, last_visible_char, GetLineData());
+    const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, GetLineData());
+    const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, GetLineData());
     Font::RenderState rs{text_color_to_use};
     const auto& font = GetFont();
 
@@ -77,8 +82,7 @@ void Edit::Render()
     if (!GetLineData().empty() && MultiSelected()) {
         const auto& char_data = GetLineData()[0].char_data;
 
-        // if one or more chars are selected, hilite, then draw the range in
-        // the selected-text color
+        // if one or more chars are selected, hilite, then draw the range in the selected-text color
         CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::max(CP0, std::min(m_cursor_pos.first, m_cursor_pos.second)));
         CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(CP0, std::max(m_cursor_pos.first, m_cursor_pos.second)));
 
@@ -523,11 +527,13 @@ void Edit::ClearSelected()
         m_cursor_pos.first = m_cursor_pos.second;
     Erase(0, low, high - low);
 
+    const auto& line_data = GetLineData();
+
     // make sure deletion has not left m_first_char_shown in an out-of-bounds position
-    if (GetLineData().empty() || GetLineData()[0].char_data.empty())
+    if (line_data.empty() || line_data.front().char_data.empty())
         m_first_char_shown = CP0;
-    else if (GetLineData()[0].char_data.size() <= Value(m_first_char_shown))
-        m_first_char_shown = CodePointIndexOf(0, INVALID_CP_SIZE, GetLineData());
+    else if (line_data.front().char_data.size() <= Value(m_first_char_shown))
+        m_first_char_shown = CodePointIndexOfLineAndGlyph(0, INVALID_CP_SIZE, line_data);
 }
 
 void Edit::AdjustView()

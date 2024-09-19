@@ -117,10 +117,6 @@ protected:
         a non-visible character. */
     std::pair<std::size_t, CPSize> GlyphAt(CPSize idx) const;
 
-    /** Returns the code point index of the glyph at position \a glyph_idx in row \a row_idx within \a line_data */
-    CPSize GlyphIndexOf(std::size_t row_idx, CPSize glyph_idx) const
-    { return GG::GlyphIndexOf(row_idx, glyph_idx, GetLineData()); }
-
     /** Returns the x-coordinate of the beginning of row \a row, in
         cleint-space coordinates.  Not range-checked. */
     X RowStartX(std::size_t row) const;

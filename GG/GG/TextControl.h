@@ -109,7 +109,7 @@ public:
     const std::string& Text() const noexcept { return m_text; }
 
     /** Returns the text displayed in this control between the specified
-        position \a from through position \a to. */
+        position code point indices \a from through position \a to. */
     std::string_view Text(CPSize from, CPSize to) const;
 
     /** Returns the text format (vertical and horizontal justification, use of

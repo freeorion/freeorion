@@ -731,12 +731,12 @@ namespace {
     }
 }
 
-CPSize GG::GlyphIndexOf(std::size_t line_idx, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+CPSize GG::GlyphIndexOfLineAndGlyph(std::size_t line_idx, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
 { return GlyphIndexInLines(line_idx, glyph_index, line_data); }
 
 
 namespace {
-    CONSTEXPR_FONT CPSize CodePointIndexInLines(
+    CONSTEXPR_FONT CPSize CodePointIndexFromLineAndGlyphInLines(
         std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
     {
         if (line_data.size() <= line_index) {
@@ -770,8 +770,9 @@ namespace {
     }
 }
 
-CPSize GG::CodePointIndexOf(std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
-{ return CodePointIndexInLines(line_index, glyph_index, line_data); }
+CPSize GG::CodePointIndexOfLineAndGlyph(
+    std::size_t line_index, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndexFromLineAndGlyphInLines(line_index, glyph_index, line_data); }
 
 namespace {
   /** Returns the code point index (CPI) after the previous glyph to the glyph at \a glyph_index.
@@ -792,7 +793,7 @@ namespace {
             return CP0; // there is no prior glyph, so just use the first code point, which will be before any tags that affect the first glyph
 
         if (line_data.size() <= line_index) // requested line is not present; return one past the last code point in the last non-empty line
-            return CodePointIndexInLines(line_index, glyph_index, line_data);
+            return CodePointIndexFromLineAndGlyphInLines(line_index, glyph_index, line_data);
 
         const auto& cd = line_data[line_index].char_data;
 
@@ -827,14 +828,14 @@ CPSize GG::CodePointIndexAfterPreviousGlyph(
 
 namespace {
     CONSTEXPR_FONT std::pair<std::size_t, CPSize>
-    LineIndexAndCPIndexInLines(CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+    LineIndexAndCPIndexFromCodePointInLines(CPSize cp_index, const std::vector<Font::LineData>& line_data)
     {
         for (std::size_t i = 0; i < line_data.size(); ++i) {
             const auto& char_data = line_data[i].char_data;
             if (!char_data.empty() &&
-                char_data.front().code_point_index <= glyph_index &&
-                glyph_index <= char_data.back().code_point_index)
-            { return {i, glyph_index - char_data.front().code_point_index}; }
+                char_data.front().code_point_index <= cp_index &&
+                cp_index <= char_data.back().code_point_index)
+            { return {i, cp_index - char_data.front().code_point_index}; }
         }
         return {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE};
     }
@@ -1011,7 +1012,7 @@ namespace {
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
             c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
@@ -1091,7 +1092,7 @@ namespace {
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
-        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
             c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
@@ -1189,7 +1190,7 @@ namespace {
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
-        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexInLines(c_idx, line_data); };
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
             c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
@@ -1264,24 +1265,127 @@ namespace {
 #endif
 }
 
-std::pair<std::size_t, CPSize> GG::LinePositionOf(CPSize index, const std::vector<Font::LineData>& line_data)
-{ return LineIndexAndCPIndexInLines(index, line_data); }
+
+namespace {
+    CONSTEXPR_FONT std::pair<std::size_t, CPSize> LineIndexAndCPIndexFromGlyphInLines(
+        std::size_t target_glyph_index, const std::vector<Font::LineData>& line_data)
+    {
+        // find target glyph index, return corresponding line and codepoint index
+        std::size_t glyph_count = 0u;
+        for (std::size_t loop_line_idx = 0; loop_line_idx < line_data.size(); ++loop_line_idx) {
+            const auto& cd = line_data[loop_line_idx].char_data;
+            const auto num_line_glyphs = cd.size();
+            const auto& target_glyph_idx_in_line = target_glyph_index - glyph_count;
+
+            if (target_glyph_idx_in_line >= num_line_glyphs) {
+                // target glyph is on a later line, if any
+                glyph_count += num_line_glyphs; // skip whole line
+                continue;
+            }
+            // glyph should be on this line
+            const auto& target_glyph = cd[target_glyph_idx_in_line];
+            const auto target_glyph_cp_idx = target_glyph.code_point_index;
+            const auto& first_glyph_in_line = cd.front();
+            const auto first_glyph_in_line_cp_idx = first_glyph_in_line.code_point_index;
+
+            return {loop_line_idx, target_glyph_cp_idx - first_glyph_in_line_cp_idx};
+        }
+        return {std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE};
+    }
+}
 
 
 namespace {
-    // if line_idx is past the last line, return the string index of just past the last code point on the last line
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexAndStrSizeOfGlyphIndex(CPSize glyph_idx, const std::vector<Font::LineData>& line_data)
+    {
+        if (line_data.empty())
+            return {S0, S0}; // no glyphs, so just return default 0 position and length
+
+        // seach through lines for the requested glyph
+        CPSize glyph_count = CP0;
+        for (const auto& line : line_data) {
+            const auto line_sz = CPSize(line.char_data.size());
+            if (glyph_count + line_sz <= glyph_idx) {
+                // requested glyph is on a later line
+                glyph_count += line_sz;
+                continue;
+            }
+            // glyph should be on this line
+            const auto glyph_offset_in_line = Value(glyph_idx - glyph_count);
+            const auto& glyph = line.char_data[glyph_offset_in_line];
+            return {glyph.string_index, glyph.string_size};
+        }
+
+        // glyph not found, return past end of last glyph by searching backwards from end for a line with a glyph
+        for (std::size_t loop_line_idx = line_data.size()-1u; loop_line_idx >= 0u; --loop_line_idx) {
+            const auto& line = line_data[loop_line_idx];
+            if (line.Empty())
+                continue;
+            const auto& last_glyph = line.char_data.back();
+            return {last_glyph.string_index + last_glyph.string_size, S0};
+        }
+
+        return {S0, S0}; // no glyphs, so just return default 0 position and length
+    }
+
+
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexAndLengthOfLineAndGlyphInLines(
+        std::size_t line_idx, CPSize glyph_index, const std::vector<Font::LineData>& line_data)
+    {
+        if (line_data.empty())
+            return {S0, S0};
+
+        // get requested line
+        if (line_idx >= line_data.size()) {
+            // no such line, return string index after last glyph
+
+            // find last glyph by searching backwards from end for a line with a glyph
+            for (std::size_t loop_line_idx = line_data.size()-1u; loop_line_idx >= 0u; --loop_line_idx) {
+                const auto& line = line_data[loop_line_idx];
+                if (line.Empty())
+                    continue;
+                const auto& last_glyph = line.char_data.back();
+                return {last_glyph.string_index + last_glyph.string_size, S0};
+            }
+            return {S0, S0}; // no glyphs, so just return default 0 position and length
+        }
+        const auto& line = line_data[line_idx];
+        const auto& cd = line.char_data;
+        
+        // get requested glyph
+        if (Value(glyph_index) >= cd.size()) {
+            // no such glyph. return string index after last glyph of this line
+            return {cd.back().string_index + cd.back().string_size, S0};
+        }
+
+        // return requeste glyph position and length
+        return {cd[Value(glyph_index)].string_index, cd[Value(glyph_index)].string_size};
+    }
+}
+
+
+std::pair<std::size_t, CPSize> GG::LinePositionOfGlyph(CPSize index, const std::vector<Font::LineData>& line_data)
+{ return LineIndexAndCPIndexFromGlyphInLines(Value(index), line_data); }
+
+std::pair<std::size_t, CPSize> GG::LinePositionOfCodePoint(CPSize index, const std::vector<Font::LineData>& line_data)
+{ return LineIndexAndCPIndexFromCodePointInLines(index, line_data); }
+
+
+
+namespace {
+    // if line_idx is past the last line, return the string index of just past the last glyph on the last line
     //
-    // if line_idx is within the valid lines and the requested code point is within the number of code points in that line,
-    // return the string index of that code point on that line
+    // if line_idx is within the valid lines and the requested code point is within the number of glyphs in that line,
+    // return the string index of that glyph on that line
     //
-    // if line_idx is within the valid lines but the requested code point index is past the end of that line,
-    // return the string index of just past the previous code point, searching backwards from the end of that line
-    // the returned string index may be for the last code point on the same line, or on a previous line if there are
-    // no code points on the requested line
+    // if line_idx is within the valid lines but the requested glyph index is past the end of that line,
+    // return the string index of just past the previous glyph, searching backwards from the end of that line
+    // the returned string index may be for the last glyph on the same line, or on a previous line if there are
+    // no glyphs on the requested line
     //
     // if searching back and no previous lines have a code point on them, return string index S0
-    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexInLines(std::size_t line_idx, CPSize index,
-                                                                  const std::vector<Font::LineData>& line_data)
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexFromLineAndGlyphInLines(
+        std::size_t line_idx, CPSize index, const std::vector<Font::LineData>& line_data)
     {
         if (line_idx < line_data.size() && Value(index) < line_data[line_idx].char_data.size()) {
             // line is valid, and requested code point index is within the line
@@ -1301,9 +1405,9 @@ namespace {
         for (auto rit = line_data.rbegin() + roffset; rit != line_data.rend(); ++rit) {
             if (rit->char_data.empty())
                 continue;
-            // found a line with at least one glyph/character on it
+            // found a line with at least one glyph on it
             const auto& cd = rit->char_data.back();
-            return std::pair(cd.string_index + cd.string_size, S0); // return string index to after the last character on the line
+            return std::pair(cd.string_index + cd.string_size, S0); // return string index to after the last glyph on the line
         }
 
         return std::pair(S0, S0); // no code point found, so just return index 0
@@ -1312,15 +1416,15 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 
-    // tests getting string index from code point index in text with newlines
-    constexpr auto test_line_cp_str_idx = []() {
+    // tests getting string index from glyph index in text with newlines
+    constexpr auto test_line_glyph_to_str_idx = []() {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
         const auto c_to_s = [line_data](std::size_t line_idx, CPSize c_idx)
-        { return StringIndexInLines(line_idx, c_idx, line_data).first; };
+        { return StringIndexFromLineAndGlyphInLines(line_idx, c_idx, line_data).first; };
         const CPSize CP2{2u}, CP3{3u};
 
         return std::array{
@@ -1332,7 +1436,7 @@ namespace {
             c_to_s(5,CP0), c_to_s(5,CP1), c_to_s(5,CP2), c_to_s(5,CP3),
         };
     }();
-    constexpr std::array<StrSize, 24> test_line_cp_str_idx_expected{
+    constexpr std::array<StrSize, 24> test_line_glyph_str_idx_expected{
         StrSize{0}, StrSize{1}, StrSize{2}, StrSize{2},
         StrSize{3}, StrSize{4}, StrSize{5}, StrSize{5},
         StrSize{5}, StrSize{5}, StrSize{5}, StrSize{5},
@@ -1340,7 +1444,7 @@ namespace {
         StrSize{9}, StrSize{9}, StrSize{9}, StrSize{9},
         StrSize{9}, StrSize{9}, StrSize{9}, StrSize{9}
     };
-    static_assert(test_line_cp_str_idx == test_line_cp_str_idx_expected);
+    static_assert(test_line_glyph_to_str_idx == test_line_glyph_str_idx_expected);
 
 
     // tests getting string index and code point string length from glyph index in text with tags
@@ -1350,8 +1454,7 @@ namespace {
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexInLines(CPSize(idx), line_data);
-        return StringIndexInLines(line_idx, cp_in_line_idx, line_data);
+        return StringIndexAndLengthOfLineAndGlyphInLines(0u, CPSize(idx), line_data);
     };
 
     constexpr std::pair<std::size_t, std::size_t> Value(std::pair<StrSize, StrSize> szs)
@@ -1367,46 +1470,46 @@ namespace {
     static_assert(Value(test_tagged_glyph_idx_to_str_idx(999u)) == std::pair{13, 0});
 
 
-    // tests getting string index and code point string length from code point index in text with multi-byte characters
-    constexpr auto test_multibyte_cp_to_str_idx_len = [](std::size_t idx) {
+    // tests getting string index and code point string length from glyph index in text with multi-byte characters
+    constexpr auto test_multibyte_glyph_to_str_idx_len = [](std::size_t glyph_idx) {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexInLines(CPSize(idx), line_data);
-        return StringIndexInLines(line_idx, cp_in_line_idx, line_data);
+        const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexFromGlyphInLines(glyph_idx, line_data);
+        return StringIndexAndLengthOfLineAndGlyphInLines(line_idx, cp_in_line_idx, line_data);
     };
 
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(0u)) == std::pair{0, 2});
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(1u)) == std::pair{2, 1});
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(2u)) == std::pair{3, 2});
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(3u)) == std::pair{5, 3});
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(4u)) == std::pair{8, 4});
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(5u)) == std::pair{12, 2});
-    static_assert(Value(test_multibyte_cp_to_str_idx_len(6u)) == std::pair{14, 0});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(0u)) == std::pair{0, 2});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(1u)) == std::pair{2, 1});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(2u)) == std::pair{3, 2});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(3u)) == std::pair{5, 3});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(4u)) == std::pair{8, 4});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(5u)) == std::pair{12, 2});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(6u)) == std::pair{14, 0});
 
 
     // tests getting the code point from line and glyph index in text with a
     // single line with multi-byte characters. should output same index as input
     // index, up to the limit of characters in string, and one past end otherwise
-    constexpr auto test_multibyte_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
+    constexpr auto test_multibyte_line_glyph_to_cp = [](std::size_t line_idx, CPSize index) {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        return CodePointIndexInLines(line_idx, index, line_data);
+        return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
 
-    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CP0)) == 0u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CP1)) == 1u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{4})) == 4u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{5})) == 5u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{6})) == 6u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(0u, CPSize{7})) == 6u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(1u, CP0)) == 6u);
-    static_assert(Value(test_multibyte_line_idx_to_cp(1u, CP1)) == 6u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(0u, CP0)) == 0u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(0u, CP1)) == 1u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(0u, CPSize{4})) == 4u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(0u, CPSize{5})) == 5u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(0u, CPSize{6})) == 6u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(0u, CPSize{7})) == 6u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(1u, CP0)) == 6u);
+    static_assert(Value(test_multibyte_line_glyph_to_cp(1u, CP1)) == 6u);
 
 
     // tests getting the code point from line and glyph index in text with tags
@@ -1416,7 +1519,7 @@ namespace {
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        return CodePointIndexInLines(line_idx, index, line_data);
+        return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
 
     static_assert(Value(test_tagged_line_idx_to_cp(0u, CP0)) == 0u);
@@ -1432,61 +1535,67 @@ namespace {
 
 
     // tests getting the code point from line and glyph index in text with newlines
-    constexpr auto test_multiline_line_idx_to_cp = [](std::size_t line_idx, CPSize index) {
+    constexpr auto test_multiline_line_glyph_to_cp = [](std::size_t line_idx, CPSize index) {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
         const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
 
-        return CodePointIndexInLines(line_idx, index, line_data);
+        return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
 
-    static_assert(Value(test_multiline_line_idx_to_cp(0u, CP0)) == 0u);
-    static_assert(Value(test_multiline_line_idx_to_cp(0u, CP1)) == 1u);
-    static_assert(Value(test_multiline_line_idx_to_cp(0u, CPSize{2})) == 2u);
-    static_assert(Value(test_multiline_line_idx_to_cp(0u, CPSize{3})) == 2u);
-    static_assert(Value(test_multiline_line_idx_to_cp(1u, CP0)) == 2u);
-    static_assert(Value(test_multiline_line_idx_to_cp(1u, CP1)) == 3u);
-    static_assert(Value(test_multiline_line_idx_to_cp(1u, CPSize{2})) == 4u);
-    static_assert(Value(test_multiline_line_idx_to_cp(1u, CPSize{3})) == 4u);
-    static_assert(Value(test_multiline_line_idx_to_cp(2u, CP0)) == 4u);
-    static_assert(Value(test_multiline_line_idx_to_cp(2u, CP1)) == 4u);
-    static_assert(Value(test_multiline_line_idx_to_cp(3u, CP0)) == 4u);
-    static_assert(Value(test_multiline_line_idx_to_cp(3u, CP1)) == 5u);
-    static_assert(Value(test_multiline_line_idx_to_cp(3u, CPSize{2})) == 6u);
-    static_assert(Value(test_multiline_line_idx_to_cp(4u, CP1)) == 6u);
-    static_assert(Value(test_multiline_line_idx_to_cp(4u, CP1)) == 6u);
-    static_assert(Value(test_multiline_line_idx_to_cp(5u, CPSize{2})) == 6u);
-    static_assert(Value(test_multiline_line_idx_to_cp(6u, CPSize{3})) == 6u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(0u, CP0)) == 0u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(0u, CP1)) == 1u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(0u, CPSize{2})) == 2u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(0u, CPSize{3})) == 2u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(1u, CP0)) == 2u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(1u, CP1)) == 3u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(1u, CPSize{2})) == 4u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(1u, CPSize{3})) == 4u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(2u, CP0)) == 4u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(2u, CP1)) == 4u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(3u, CP0)) == 4u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(3u, CP1)) == 5u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(3u, CPSize{2})) == 6u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(4u, CP1)) == 6u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(4u, CP1)) == 6u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(5u, CPSize{2})) == 6u);
+    static_assert(Value(test_multiline_line_glyph_to_cp(6u, CPSize{3})) == 6u);
 #endif
 }
 
 namespace {
+    CONSTEXPR_FONT CPSize OnePastLastGlyphIdx(const std::vector<Font::LineData>& line_data)
+    {
+        // index of one past last glyph in line data: search backwards from last line for a glyph
+        for (auto rit = line_data.rbegin(); rit != line_data.rend(); ++rit) {
+            const auto& cd = rit->char_data;
+            if (!cd.empty())
+                return CPSize(cd.size()) + CP1;
+        }
+        return CP0; // no glyphs in text?
+    }
+
+
     CONSTEXPR_FONT std::pair<StrSize, StrSize> GlyphIndicesRangeToStringSizeIndicesInLines(
         CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data)
     {
         if (start_idx == INVALID_CP_SIZE || end_idx == INVALID_CP_SIZE)
             return {S0, S0};
-        CPSize checked_start_idx = std::max(CP0, std::min(start_idx, end_idx));
+        CPSize checked_start_glyph_idx = std::max(CP0, std::min(start_idx, end_idx));
 
-        CPSize end_of_line_data_idx = [&line_data]() {
-            for (auto rit = line_data.rbegin(); rit != line_data.rend(); ++rit) {
-                const auto& cd = rit->char_data;
-                if (!cd.empty())
-                    return cd.back().code_point_index + CP1; // one past last code point
-            }
-            return CP0;
-        }();
-        CPSize clamped_end_idx = std::min(end_of_line_data_idx, std::max(start_idx, end_idx));
+        // index of one past last glyph
+        CPSize end_glyph_idx = OnePastLastGlyphIdx(line_data);
+        CPSize clamped_end_idx = std::min(end_glyph_idx, std::max(start_idx, end_idx));
 
-        const auto [start_line_idx, start_cp_in_line_idx] = LineIndexAndCPIndexInLines(checked_start_idx, line_data);
-        const auto start_str_idx = StringIndexInLines(start_line_idx, start_cp_in_line_idx, line_data).first;
-        if (checked_start_idx == clamped_end_idx || clamped_end_idx == CP0)
+        // get string index of first glyph
+        const auto start_str_idx = StringIndexAndStrSizeOfGlyphIndex(checked_start_glyph_idx, line_data).first;
+        if (checked_start_glyph_idx == clamped_end_idx || clamped_end_idx == CP0)
             return {start_str_idx, start_str_idx};
 
-        // get the string index and size of the code point index previous to the end index
-        const auto [last_line_idx, last_cp_in_line_idx] = LineIndexAndCPIndexInLines(clamped_end_idx-CP1, line_data);
-        const auto [last_str_idx, last_str_size] = StringIndexInLines(last_line_idx, last_cp_in_line_idx, line_data);
+        // get string index of glyph prior to end index
+        const auto [last_str_idx, last_str_size] = StringIndexAndStrSizeOfGlyphIndex(clamped_end_idx - CP1, line_data);
+
 
         // string index of start code point and just after final code point...
         return {start_str_idx, last_str_idx + last_str_size};
@@ -1494,10 +1603,10 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 
-    // tests getting a range pair of string indices from a range pair of code point indices into text with tags,
+    // tests getting a range pair of string indices from a range pair of glyph indices into text with tags,
     // where the second value should be just after the previous character in the text, which is not the same as
     // before the second character, since there could be non-rendered tag-text code points between them
-    constexpr auto test_tagged_cp_idx_to_str_idx_range = [](std::size_t low_idx, std::size_t high_idx) {
+    constexpr auto test_tagged_glyph_to_str_idx_range = [](std::size_t low_idx, std::size_t high_idx) {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
@@ -1510,25 +1619,25 @@ namespace {
     constexpr auto to_chars = [](std::pair<StrSize, StrSize> idx) -> std::pair<char, char>
     { return std::pair(tagged_test_text[Value(idx.first)], tagged_test_text[Value(idx.second)]); };
 
-    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(0u, 999u)) == std::pair('a', 0));
-    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(1u, 2u)) == std::pair('b', '<'));
-    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(0u, 4u)) == std::pair('a', '<'));
-    static_assert(to_chars(test_tagged_cp_idx_to_str_idx_range(2u, 4u)) == std::pair('c', '<'));
+    static_assert(to_chars(test_tagged_glyph_to_str_idx_range(0u, 999u)) == std::pair('a', 0));
+    static_assert(to_chars(test_tagged_glyph_to_str_idx_range(1u, 2u)) == std::pair('b', '<'));
+    static_assert(to_chars(test_tagged_glyph_to_str_idx_range(0u, 4u)) == std::pair('a', '<'));
+    static_assert(to_chars(test_tagged_glyph_to_str_idx_range(2u, 4u)) == std::pair('c', '<'));
 
 
     constexpr auto to_sv = [](std::pair<StrSize, StrSize> idx) -> std::string_view
     { return tagged_test_text.substr(Value(idx.first), Value(idx.second-idx.first)); };
 
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 999u)) == tagged_test_text);
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 6u)) == tagged_test_text);
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 5u)) == "ab<i>cd</i>e");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 4u)) == "ab<i>cd");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(0u, 3u)) == "ab<i>c");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(1u, 2u)) == "b");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(1u, 3u)) == "b<i>c");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(1u, 5u)) == "b<i>cd</i>e");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(2u, 4u)) == "cd");
-    static_assert(to_sv(test_tagged_cp_idx_to_str_idx_range(2u, 5u)) == "cd</i>e");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(0u, 999u)) == tagged_test_text);
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(0u, 6u)) == tagged_test_text);
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(0u, 5u)) == "ab<i>cd</i>e");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(0u, 4u)) == "ab<i>cd");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(0u, 3u)) == "ab<i>c");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(1u, 2u)) == "b");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(1u, 3u)) == "b<i>c");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(1u, 5u)) == "b<i>cd</i>e");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(2u, 4u)) == "cd");
+    static_assert(to_sv(test_tagged_glyph_to_str_idx_range(2u, 5u)) == "cd</i>e");
 
 #endif
 }
@@ -1537,6 +1646,45 @@ namespace {
 std::pair<StrSize, StrSize> GG::GlyphIndicesRangeToStringSizeIndices(
     CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data)
 { return GlyphIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data); }
+
+
+namespace {
+    CONSTEXPR_FONT StrSize CodePointIndexToStringSizeIndexInLines(
+        CPSize cp_idx, const std::vector<Font::LineData>& line_data)
+    {
+        // LineData contain info about glyphs, not code points, so can't directly access
+        // the underlying code points in the text. Instead, can check the code point indices
+        // of the glyphs to find the requested ones.
+        for (const auto& line : line_data) {
+            if (line.Empty())
+                continue;
+            const auto& char_data = line.char_data;
+            if (char_data.front().code_point_index > cp_idx)
+                break; // no such code point in glyphs
+            if (char_data.back().code_point_index < cp_idx)
+                continue; // is not yet on this line
+            // does a glyph in this line have the requested code point index?
+            for (const auto& glyph : char_data) {
+                if (glyph.code_point_index == cp_idx)
+                    return glyph.string_index;
+            }
+        }
+        return INVALID_S_SIZE; // didn't find glyph with requested code point index
+    }
+
+
+    CONSTEXPR_FONT std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndicesInLines(
+        CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data)
+    {
+        return {CodePointIndexToStringSizeIndexInLines(start_idx, line_data),
+                CodePointIndexToStringSizeIndexInLines(end_idx, line_data)};
+    }
+
+}
+
+std::pair<StrSize, StrSize> GG::CodePointIndicesRangeToStringSizeIndices(
+    CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data)
+{ return CodePointIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data); }
 
 
 namespace {
@@ -2786,9 +2934,16 @@ std::vector<Font::LineData> Font::DetermineLines(
 }
 
 
-StrSize GG::StringIndexOf(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
-{ return StringIndexInLines(line, index, line_data).first; }
+StrSize GG::StringIndexOfLineAndGlyph(std::size_t line, CPSize index, const std::vector<Font::LineData>& line_data)
+{ return StringIndexFromLineAndGlyphInLines(line, index, line_data).first; }
 
+namespace {
+    StrSize StringIndexOfCodePointInLines(CPSize index, const std::vector<Font::LineData>& line_data)
+    { return S0; } // TODO!
+}
+
+StrSize GG::StringIndexOfCodePoint(CPSize index, const std::vector<Font::LineData>& line_data)
+{ return StringIndexOfCodePointInLines(index, line_data); }
 
 FT_Error Font::GetFace(FT_Face& face)
 { return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, &face); }
