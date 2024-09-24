@@ -44,7 +44,7 @@ Tech(
             )
             & Turn(low=LocalCandidate.System.LastTurnBattleHere + 1)
             & Structure(high=LocalCandidate.MaxStructure - 0.001)
-            & ResourceSupplyConnected(empire=Source.Owner, condition=Source),
+            & ResourceSupplyConnected(empire=Source.Owner, condition=IsSource),
             stackinggroup="FLEET_REPAIR",
             effects=SetStructure(value=Value + (Target.MaxStructure / 10)),
         )
