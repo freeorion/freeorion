@@ -15,13 +15,13 @@
 class FO_COMMON_API Meter {
 public:
     Meter() = default;
-    constexpr explicit Meter(float v) :
-        cur(FromFloat(v)),
-        init(FromFloat(v))
+    constexpr explicit Meter(float v) noexcept :
+        cur(Clamp(FromFloat(v))),
+        init(Clamp(FromFloat(v)))
     {};
-    constexpr Meter(float c, float i) :
-        cur(FromFloat(c)),
-        init(FromFloat(i))
+    constexpr Meter(float c, float i) noexcept :
+        cur(Clamp(FromFloat(c))),
+        init(Clamp(FromFloat(i)))
     {}
 
     [[nodiscard]] constexpr float Current() const noexcept { return FromInt(cur); };
@@ -35,23 +35,26 @@ public:
     [[nodiscard]] constexpr bool operator<(const Meter& rhs) const noexcept
     { return cur < rhs.cur || (cur == rhs.cur && init < rhs.init); }
 
-    constexpr void SetCurrent(float current_value) noexcept { cur = FromFloat(current_value); }
+    constexpr void SetCurrent(float current_value) noexcept
+    { cur = Clamp(FromFloat(current_value)); }
 
     constexpr void Set(float current_value, float initial_value) noexcept {
-        cur = FromFloat(current_value);
-        init = FromFloat(initial_value);
+        cur = Clamp(FromFloat(current_value));
+        init = Clamp(FromFloat(initial_value));
     }
 
-    constexpr void ResetCurrent() noexcept { cur = FromFloat(DEFAULT_VALUE); } // initial unchanged
+    constexpr void ResetCurrent() noexcept { cur = DEFAULT_AS_INT; } // initial unchanged
 
     constexpr void Reset() noexcept {
-        cur = FromFloat(DEFAULT_VALUE);
-        init = FromFloat(DEFAULT_VALUE);
+        cur = DEFAULT_AS_INT;
+        init = DEFAULT_AS_INT;
     }
 
-    constexpr void AddToCurrent(float adjustment) noexcept { cur += FromFloat(adjustment); }
+    constexpr void AddToCurrent(float adjustment) noexcept
+    { cur = Clamp(FromFloat(FromInt(cur) + adjustment)); }
 
-    void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE) noexcept; ///< ensures the current value falls in the range [\a min, \a max]
+    constexpr void ClampCurrentToRange(float min = DEFAULT_VALUE, float max = LARGE_VALUE) noexcept
+    { cur = Clamp(cur, min, max); }
 
     constexpr void BackPropagate() noexcept { init = cur; }
 
@@ -71,8 +74,19 @@ private:
     static constexpr int32_t FromFloat(float f) { return static_cast<int32_t>(f * FLOAT_INT_SCALE + (f > 0 ? 0.5f : -0.5f)); }
     static constexpr float FromInt(int32_t i) { return i / FLOAT_INT_SCALE; }
 
-    int32_t cur = FromFloat(DEFAULT_VALUE);
-    int32_t init = FromFloat(DEFAULT_VALUE);
+    static constexpr int32_t DEFAULT_AS_INT = static_cast<int32_t>(DEFAULT_VALUE * FLOAT_INT_SCALE + 0.5f);
+    static constexpr int32_t LARGE_AS_INT = static_cast<int32_t>(LARGE_VALUE * FLOAT_INT_SCALE + 0.5f);
+
+    static constexpr int32_t Clamp(int32_t i, const int32_t min_as_int = -LARGE_AS_INT,
+                                   const int32_t max_as_int = LARGE_AS_INT)
+    {
+        i = (max_as_int > i) ? i : max_as_int;
+        i = (min_as_int < i) ? i : min_as_int;
+        return i;
+    }
+
+    int32_t cur = DEFAULT_AS_INT;
+    int32_t init = DEFAULT_AS_INT;
 
     friend class boost::serialization::access;
     template <typename Archive>
