@@ -3650,11 +3650,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
     {
         auto scrap_action = [fleet, client_empire_id]() {
             const auto ship_ids{fleet->ShipIDs()};
+            OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
             ScriptingContext context;
             for (const auto ship_id : ship_ids) {
-                GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<ScrapOrder>(client_empire_id, ship_id, context),
-                    context);
+                orders.IssueOrder(std::make_shared<ScrapOrder>(client_empire_id, ship_id, context),
+                                  context);
             }
         };
 
@@ -3669,18 +3669,23 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator())
     {
         auto unscrap_action = [fleet]() {
-            const OrderSet orders = GGHumanClientApp::GetApp()->Orders();
+            OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
             ScriptingContext context;
+            std::vector<int> order_ids_to_rescind;
+
             for (int ship_id : fleet->ShipIDs()) {
-                for (auto& [order_id, order] : orders) {
+                for (const auto& [order_id, order] : orders) {
                     if (auto scrap_order = std::dynamic_pointer_cast<ScrapOrder>(order)) {
                         if (scrap_order->ObjectID() == ship_id) {
-                            GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
+                            order_ids_to_rescind.push_back(order_id);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
                 }
             }
+
+            for (const auto& order_id : order_ids_to_rescind)
+                orders.RescindOrder(order_id, context);
         };
 
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_SCRAP"),
@@ -3703,9 +3708,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
                 continue;
             auto gift_action = [rei{recipient_empire_id}, fid{fleet->ID()}, client_empire_id]() {
                 ScriptingContext context;
-                GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, fid, rei, context),
-                    context);
+                OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
+                orders.IssueOrder(std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, fid, rei, context),
+                                  context);
             };
             give_away_menu.next_level.emplace_back(recipient_empire->Name(),
                                                    false, false, std::move(gift_action));
@@ -3714,18 +3719,21 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet]() {
-                const ClientApp* app = ClientApp::GetApp();
-                if (!app)
-                    return;
+                OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
                 ScriptingContext context;
-                for (const auto& [order_id, order] : app->Orders()) {
+                std::vector<int> order_ids_to_rescind;
+
+                for (const auto& [order_id, order] : orders) {
                     if (auto give_order = std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(order)) {
                         if (give_order->ObjectID() == fleet->ID()) {
-                            GGHumanClientApp::GetApp()->Orders().RescindOrder(order_id, context);
+                            order_ids_to_rescind.push_back(order_id);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
                 }
+
+                for (const auto& order_id : order_ids_to_rescind)
+                    orders.RescindOrder(order_id, context);
             };
             GG::MenuItem cancel_give_away_menu{UserString("ORDER_CANCEL_GIVE_FLEET"),
                                                false, false, ungift_action};
@@ -3781,12 +3789,12 @@ namespace {
         const ObjectMap& objects{u.Objects()};
         auto fleet = objects.get<Fleet>(fleet_id);
         if (!fleet)
-            return "";
+            return {};
 
         int nearest_system_id(u.GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y(), objects));
         if (auto system = objects.get<System>(nearest_system_id))
             return system->ApparentName(client_empire_id, u);
-        return "";
+        return {};
     }
 }
 
