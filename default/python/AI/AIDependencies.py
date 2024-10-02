@@ -19,6 +19,7 @@ Example usage:
     import AIDependencies
     my_industry = AIDependencies.INDUSTRY_PER_POP * my_population
 """
+
 import freeOrionAIInterface as fo
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
