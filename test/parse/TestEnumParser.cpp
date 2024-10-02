@@ -87,6 +87,12 @@ struct EnumParserFixture {
 
 BOOST_FIXTURE_TEST_SUITE(TestEnumParser, EnumParserFixture)
 
+// TODO run only when env variable "GITHUB_ACTIONS" is true
+// https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+BOOST_TEST_MESSAGE("::group::Test Enum parser");
+
+
+
 #define CHECK_ENUM_AND_RESULT(string, expected, result_type, grammar_type) \
     {                                                                   \
         result_type result;                                             \
@@ -358,3 +364,4 @@ BOOST_AUTO_TEST_CASE(UniverseObjectTypeParser)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+BOOST_TEST_MESSAGE("::engroup::");
