@@ -5,6 +5,7 @@ constexpr int INVALID_DESIGN_ID = -1;
 constexpr int INCOMPLETE_DESIGN_ID = -4;
 constexpr int INVALID_OBJECT_ID = -1; // The ID number assigned to a UniverseObject upon construction; It is assigned an ID later when it is placed in the universe
 constexpr int ALL_EMPIRES = -1;
+constexpr int DUMMY_EVIL_EMPIRE = -2; // non-existent "Empire" which is enemy of all empires and also of neutral objects
 
 // sentinel values returned by CurrentTurn().  Can't be an enum since
 // CurrentGameTurn() needs to return an integer game turn number
