@@ -707,7 +707,7 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
 
         CPSize idx = GlyphIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, GetLineData());
-        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
+        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordCPIndices(idx);
 
         std::pair<CPSize, CPSize> final_indices;
         if (word_indices.first == word_indices.second) {
@@ -1068,9 +1068,9 @@ void MultiEdit::ClearSelected()
     m_cursor_end = m_cursor_begin = low_pos;
     //std::cout << "low of cursor begin/end:  line: " << m_cursor_begin.first << " char: " << m_cursor_begin.second << std::endl;
 
-    CPSize cursor_pos = CodePointIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, GetLineData());
+    CPSize cursor_pos_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, GetLineData());
     //std::cout << "got cursor pos: " << cursor_pos << std::endl;
-    this->m_cursor_pos = {cursor_pos, cursor_pos};
+    this->m_cursor_pos = {cursor_pos_cp_idx, cursor_pos_cp_idx};
 }
 
 void MultiEdit::AdjustView()
