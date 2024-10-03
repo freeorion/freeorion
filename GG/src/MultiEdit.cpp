@@ -706,16 +706,16 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         // if drag-selecting after a double click, select full words
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
 
-        CPSize idx = GlyphIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, GetLineData());
-        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordCPIndices(idx);
+        CPSize cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, GetLineData());
+        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordCPIndices(cp_idx);
 
         std::pair<CPSize, CPSize> final_indices;
         if (word_indices.first == word_indices.second) {
-            if (idx < initial_indices.first) {
-                final_indices.second = idx;
+            if (cp_idx < initial_indices.first) {
+                final_indices.second = cp_idx;
                 final_indices.first = initial_indices.second;
-            } else if (initial_indices.second < idx) {
-                final_indices.second = idx;
+            } else if (initial_indices.second < cp_idx) {
+                final_indices.second = cp_idx;
                 final_indices.first = initial_indices.first;
             } else {
                 final_indices = initial_indices;
