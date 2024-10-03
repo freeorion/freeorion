@@ -365,7 +365,9 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
             AdjustView();
     }
 
-    //std::cout << "LDrag selected from: " << m_cursor_pos.first << "  to: " << m_cursor_pos.second << std::endl;
+    //std::cout << "LDrag at glyph: " << Value(GlyphIndexAt(xpos))
+    //          << " selected from cp idx: " << Value(m_cursor_pos.first)
+    //          << " to cp idx: " << Value(m_cursor_pos.second) << std::endl;
 }
 
 void Edit::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
