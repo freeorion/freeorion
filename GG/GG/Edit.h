@@ -128,9 +128,13 @@ protected:
         the focus was gained. */
     bool RecentlyEdited() const noexcept { return m_recently_edited; }
 
-    /** Returns the index of the code point \a x pixels from left edge of
+    /** Returns the index of the glyph \a x pixels from left edge of
         visible portion of string. */
-    CPSize GlyphIndexOf(X x) const;
+    CPSize GlyphIndexAt(X x) const;
+
+    /** Returns the code point index of the start of the glyph \a x pixels from left edge of
+        visible portion of string. */
+    CPSize CPIndexOfGlyphAt(X x) const;
 
     /** Returns the distance from the beginning of the string to just before
         the first visible character. */
@@ -174,14 +178,14 @@ protected:
         exists, the returned range will be empty (its .first and .second
         members will be equal).  This function should be called in
         LButtonDown() overrides. */
-    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index);
+    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize cp_index);
 
     /** Returns the code point indices that delimit the word around index \a
         char_index.  If no such word exists, the returned range will be empty
         (its .first and .second members will be equal).  This function should
         be called in LDrag() overrides when InDoubleButtonDownMode() is
         true. */
-    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownDragWordIndices(CPSize char_index);
+    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownDragWordCPIndices(CPSize cp_index);
 
     /** Sets the value of InDoubleButtonDownMode() to false.  This should be
         called in LClick() and LButtonUp() overrides. */

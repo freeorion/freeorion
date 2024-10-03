@@ -194,14 +194,22 @@ void Edit::AcceptPastedText(const std::string& text)
     }
 }
 
-CPSize Edit::GlyphIndexOf(X x) const
+CPSize Edit::GlyphIndexAt(X x) const
 {
-    CPSize retval;
+    const auto& line_data = GetLineData();
+    if (line_data.empty())
+        return CP0;
+    const auto& char_data = GetLineData().front().char_data;
+    if (char_data.empty())
+        return CP0;
+
+    CPSize retval = CP0;
     const X first_char_offset = FirstCharOffset();
-    for (retval = CP0; retval < Length(); ++retval) {
+    for (retval = CP0; Value(retval) < char_data.size(); ++retval) {
         X curr_extent;
-        if (x + first_char_offset <= (curr_extent = GetLineData()[0].char_data[Value(retval)].extent)) { // the point falls within the character at index retval
-            const X prev_extent = retval != CP0 ? GetLineData()[0].char_data[Value(retval - CP1)].extent : X0;
+        if (x + first_char_offset <= (curr_extent = char_data[Value(retval)].extent)) {
+            // the point falls within the character at index retval
+            const X prev_extent = retval != CP0 ? char_data[Value(retval - CP1)].extent : X0;
             const X half_way = (prev_extent + curr_extent) / 2;
             if (half_way <= x + first_char_offset) // if the point is more than halfway across the character, put the cursor *after* the character
                 ++retval;
@@ -209,6 +217,32 @@ CPSize Edit::GlyphIndexOf(X x) const
         }
     }
     return retval;
+}
+
+CPSize Edit::CPIndexOfGlyphAt(X x) const
+{
+    const auto& line_data = GetLineData();
+    if (line_data.empty())
+        return CP0;
+    const auto& char_data = GetLineData().front().char_data;
+    if (char_data.empty())
+        return CP0;
+
+    CPSize retval_idx = CP0;
+    const X first_char_offset = FirstCharOffset();
+    for (retval_idx = CP0; Value(retval_idx) < char_data.size(); ++retval_idx) {
+        X curr_extent;
+        if (x + first_char_offset <= (curr_extent = char_data[Value(retval_idx)].extent)) {
+            // the point falls within the character at retval_idx
+            const X prev_extent = retval_idx != CP0 ? char_data[Value(retval_idx - CP1)].extent : X0;
+            const X half_way = (prev_extent + curr_extent) / 2;
+            if (half_way <= x + first_char_offset) // if the point is more than halfway across the character, put the cursor *after* the character
+                ++retval_idx;
+            break;
+        }
+    }
+
+    return char_data[Value(retval_idx)].code_point_index;
 }
 
 X Edit::FirstCharOffset() const
@@ -282,7 +316,7 @@ void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
         return;
     //std::cout << "Edit::LButtonDown start" << std::endl;
     const X click_xpos = ScreenToClient(pt).x; // x coord of click within text space
-    const CPSize idx = GlyphIndexOf(click_xpos);
+    const CPSize idx = GlyphIndexAt(click_xpos);
     //std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
 
     const auto word_indices = GetDoubleButtonDownWordIndices(idx);
@@ -298,18 +332,18 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         return;
 
     const X xpos = ScreenToClient(pt).x; // x coord for mouse position within text space
-    const CPSize idx = GlyphIndexOf(xpos);
-    //std::cout << "GlyphIndexOf mouse x-pos: " << xpos << std::endl;
+    const CPSize cp_idx = CPIndexOfGlyphAt(xpos);
+    //std::cout << "CPIndexAt mouse x-pos: " << xpos << std::endl;
 
     if (m_in_double_click_mode) {
-        const auto word_indices = GetDoubleButtonDownDragWordIndices(idx);
+        const auto word_indices = GetDoubleButtonDownDragWordCPIndices(cp_idx);
 
         if (word_indices.first == word_indices.second) {
-            if (idx < m_double_click_cursor_pos.first) {
-                m_cursor_pos.second = idx;
+            if (cp_idx < m_double_click_cursor_pos.first) {
+                m_cursor_pos.second = cp_idx;
                 m_cursor_pos.first = m_double_click_cursor_pos.second;
-            } else if (m_double_click_cursor_pos.second < idx) {
-                m_cursor_pos.second = idx;
+            } else if (m_double_click_cursor_pos.second < cp_idx) {
+                m_cursor_pos.second = cp_idx;
                 m_cursor_pos.first = m_double_click_cursor_pos.first;
             } else {
                 m_cursor_pos = m_double_click_cursor_pos;
@@ -324,8 +358,9 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
             }
         }
     } else {
-        // when a single-click drag occurs, move m_cursor_pos.second to where the mouse is, which selects a range of characters
-        m_cursor_pos.second = idx;
+        // when a single-click drag occurs, move m_cursor_pos.second to where the mouse is,
+        // which selects a range of characters
+        m_cursor_pos.second = cp_idx;
         if (xpos < X0 || ClientSize().x < xpos) // if we're dragging past the currently visible text
             AdjustView();
     }
@@ -492,26 +527,26 @@ void Edit::LosingFocus()
         FocusUpdateSignal(Text());
 }
 
-std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownWordIndices(CPSize char_index)
+std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownWordIndices(CPSize cp_index)
 {
     const auto ticks = GUI::GetGUI()->Ticks();
     if (ticks - m_last_button_down_time <= GUI::GetGUI()->DoubleClickInterval())
         m_in_double_click_mode = true;
     m_last_button_down_time = ticks;
 
-    m_double_click_cursor_pos = std::pair<CPSize, CPSize>(char_index, char_index);
+    m_double_click_cursor_pos = std::pair<CPSize, CPSize>(cp_index, cp_index);
     if (m_in_double_click_mode)
-        m_double_click_cursor_pos = GetDoubleButtonDownDragWordIndices(char_index);
+        m_double_click_cursor_pos = GetDoubleButtonDownDragWordCPIndices(cp_index);
 
     return m_double_click_cursor_pos;
 }
 
-std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordIndices(CPSize char_index)
+std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordCPIndices(CPSize cp_index)
 {
-    const auto words = GUI::GetGUI()->FindWords(Text());
-    const auto it = std::find_if(words.begin(), words.end(),
-                                 [char_index](auto word) { return word.first < char_index && char_index < word.second; });
-    return (it != words.end()) ? *it : std::pair<CPSize, CPSize>{char_index, char_index};
+    const auto words_cp_indices = GUI::GetGUI()->FindWords(Text());
+    const auto it = std::find_if(words_cp_indices.begin(), words_cp_indices.end(),
+                                 [cp_index](auto word) { return word.first < cp_index && cp_index < word.second; });
+    return (it != words_cp_indices.end()) ? *it : std::pair<CPSize, CPSize>{cp_index, cp_index};
 }
 
 void Edit::ClearDoubleButtonDownMode()
