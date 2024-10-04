@@ -738,11 +738,17 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     // need to convert from rendered character (glyph) index to code point index in the underlying text
     // any tags that are not rendered will not be included in character counting but will affect the
     // code point index
-    const auto begin_cursor_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_begin.first, m_cursor_begin.second, line_data);
-    const auto end_cursor_cp_idx = CodePointIndexAfterPreviousGlyph(m_cursor_end.first, m_cursor_end.second, line_data);
+    const auto [begin_cursor_cp_idx, end_cursor_cp_idx] = (m_cursor_end >= m_cursor_begin) ?
+        std::pair{CodePointIndexOfLineAndGlyph(m_cursor_begin.first, m_cursor_begin.second, line_data),
+                  CodePointIndexAfterPreviousGlyph(m_cursor_end.first, m_cursor_end.second, line_data)} :
+        std::pair{CodePointIndexAfterPreviousGlyph(m_cursor_begin.first, m_cursor_begin.second, line_data),
+                  CodePointIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, line_data)};
 
     m_cursor_pos = {begin_cursor_cp_idx, end_cursor_cp_idx};
 
+    //std::cout << "cursor begin: " << Value(m_cursor_begin.second) << " end: " << Value(m_cursor_end.second)
+    //          << " cp idx begin: " << Value(begin_cursor_cp_idx) << " end: " << Value(end_cursor_cp_idx)
+    //          << std::endl;
 
     // if dragging past the currently visible text, adjust
     // the view so more text can be selected
