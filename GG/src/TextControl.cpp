@@ -127,6 +127,7 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
 
+    std::tie(from, to) = [from, to]() { return std::pair{std::min(from, to), std::max(from, to)}; }();
 
     const auto txt_sz = m_text.size();
     auto [low_string_idx_strsz, high_string_idx_strsz] = CodePointIndicesRangeToStringSizeIndices(from, to, m_line_data);
