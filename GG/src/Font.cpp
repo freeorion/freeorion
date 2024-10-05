@@ -852,7 +852,7 @@ namespace {
 
 
     // text with multi-byte chars
-#if defined(__cpp_lib_char8_t)
+#  if defined(__cpp_lib_char8_t)
     constexpr std::u8string_view long_chars = u8"αbåオ🠞و";
     constexpr auto long_chars_arr = []() {
         std::array<std::string_view::value_type, long_chars.size()> retval{};
@@ -861,9 +861,15 @@ namespace {
         return retval;
     }();
     constexpr std::string_view long_chars_sv(long_chars_arr.data(), long_chars_arr.size());
-#else
+#  else
     constexpr std::string_view long_chars_sv = u8"αbåオ🠞و";
-#endif
+    constexpr auto long_chars_arr = []() {
+        std::array<std::string_view::value_type, long_chars_sv.size()> retval{};
+        for (std::size_t idx = 0; idx < retval.size(); ++idx)
+            retval[idx] = long_chars_sv[idx];
+        return retval;
+    }();
+#  endif
 
     constexpr std::array<uint8_t, 14> long_chars_as_uint8_expected{
         0xCE, 0xB1,   'b',   0xC3, 0xA5,   0xE3, 0x82, 0xAA,   0xF0, 0x9F, 0xA0, 0x9E,   0xD9, 0x88};
