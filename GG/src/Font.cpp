@@ -843,7 +843,6 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
     constexpr struct DummyNextFn {
-
         static constexpr uint32_t cont_byte(uint8_t c) noexcept
         { return c & 0b00111111; };
 
@@ -975,14 +974,15 @@ namespace {
     }();
 #  endif
 
-    constexpr std::vector<Font::TextElement> ElementsForLongCharsText(const std::string& text)
+#  if defined(__cpp_lib_constexpr_vector)
+    CONSTEXPR_FONT std::vector<Font::TextElement> ElementsForLongCharsText(const std::string& text)
     {
         std::vector<Font::TextElement> elems;
         elems.emplace_back(Font::Substring(text, 0u, 14u));
         SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
         return elems;
     }
-
+#  endif
 
     constexpr std::array<uint8_t, 14> long_chars_as_uint8_expected{
         0xCE, 0xB1,   'b',   0xC3, 0xA5,   0xE3, 0x82, 0xAA,   0xF0, 0x9F, 0xA0, 0x9E,   0xD9, 0x88};
@@ -1004,7 +1004,7 @@ namespace {
         dummy_next_fn(long_chars_sv.substr(5)), dummy_next_fn(long_chars_sv.substr(8)), dummy_next_fn(long_chars_sv.substr(12))}};
     static_assert(check_eq(long_chars_as_uint32_t_and_length_expected, long_chars_as_uint32_t_and_length_extracted));
 
-
+#  if defined(__cpp_lib_constexpr_vector)
     // tests getting line and code point index in line from overall code point index text with multi-byte chars
     constexpr auto test_multibyte_cpidx_to_line_and_cp = []() {
         const std::string text(long_chars_sv);
@@ -1030,10 +1030,11 @@ namespace {
     }};
 
     static_assert(test_multibyte_cpidx_to_line_and_cp == test_multibyte_line_and_cp_expected);
-
+#  endif
 
     constexpr std::string_view multi_line_text = "ab\ncd\n\nef";
-    constexpr std::vector<Font::TextElement> ElementsForMultiLineText(const std::string& text)
+#  if defined(__cpp_lib_constexpr_vector)
+    CONSTEXPR_FONT std::vector<Font::TextElement> ElementsForMultiLineText(const std::string& text)
     {
         std::vector<Font::TextElement> elems;
         elems.reserve(6);
@@ -1048,8 +1049,9 @@ namespace {
 
         return elems;
     }
+#  endif
 
-
+#  if defined(__cpp_lib_constexpr_vector)
     // tests line data for multi-line text
     constexpr auto test_multline_line_data = []() {
         const std::string text(multi_line_text);
@@ -1164,10 +1166,11 @@ namespace {
     static_assert(gltg41 == 6u);
     static_assert(gltg50 == 6u);
     static_assert(gltg51 == 6u);
-
+#  endif
 
     constexpr std::string_view tagged_test_text = "ab<i>cd</i>ef";
-    constexpr std::vector<Font::TextElement> ElementsForTaggedText(const std::string& text)
+#  if defined(__cpp_lib_constexpr_vector)
+    CONSTEXPR_FONT std::vector<Font::TextElement> ElementsForTaggedText(const std::string& text)
     {
         std::vector<Font::TextElement> elems;
         elems.reserve(5);
@@ -1181,8 +1184,9 @@ namespace {
 
         return elems;
     }
+#  endif
 
-
+#  if defined(__cpp_lib_constexpr_vector)
     // tests getting line and code point index in line from overall code point index text with tags
     constexpr auto test_tagged_cpidx_to_line_and_cp = []() {
         const std::string text(tagged_test_text);
@@ -1261,7 +1265,7 @@ namespace {
     static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(4) == 7); // <
     static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(5) == 12); // f
     static_assert(test_tagged_line_glyph_to_after_prev_glyph_cpi(6) == 13); // null
-
+#  endif
 #endif
 }
 
@@ -1416,6 +1420,7 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 
+#  if defined(__cpp_lib_constexpr_vector)
     // tests getting string index from glyph index in text with newlines
     constexpr auto test_line_glyph_to_str_idx = []() {
         const std::string text(multi_line_text);
@@ -1561,6 +1566,7 @@ namespace {
     static_assert(Value(test_multiline_line_glyph_to_cp(4u, CP1)) == 6u);
     static_assert(Value(test_multiline_line_glyph_to_cp(5u, CPSize{2})) == 6u);
     static_assert(Value(test_multiline_line_glyph_to_cp(6u, CPSize{3})) == 6u);
+#  endif
 #endif
 }
 
@@ -1602,7 +1608,7 @@ namespace {
     }
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-
+#  if defined(__cpp_lib_constexpr_vector)
     // tests getting a range pair of string indices from a range pair of glyph indices into text with tags,
     // where the second value should be just after the previous character in the text, which is not the same as
     // before the second character, since there could be non-rendered tag-text code points between them
@@ -1638,7 +1644,7 @@ namespace {
     static_assert(to_sv(test_tagged_glyph_to_str_idx_range(1u, 5u)) == "b<i>cd</i>e");
     static_assert(to_sv(test_tagged_glyph_to_str_idx_range(2u, 4u)) == "cd");
     static_assert(to_sv(test_tagged_glyph_to_str_idx_range(2u, 5u)) == "cd</i>e");
-
+#  endif
 #endif
 }
 
@@ -1837,6 +1843,7 @@ namespace {
 namespace {
     constexpr std::string_view TEST_TEXT_WITH_TAGS = "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line<i><sup>is";
 
+#  if defined(__cpp_lib_constexpr_vector)
     constexpr auto TestTextElems(const std::string& text)
     {
         std::vector<Font::TextElement> text_elems;
@@ -1925,6 +1932,7 @@ namespace {
         static_assert(element_widths[14] == element_widths_expected[14]);
         static_assert(element_widths[15] == element_widths_expected[15]);
     }
+#  endif
 }
 #endif
 
@@ -2801,6 +2809,7 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<TextElement>& text
 
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
 namespace {
+#  if defined(__cpp_lib_constexpr_vector)
     constexpr auto lines_and_lengths = []() {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto text_elems = TestTextElems(test_text);
@@ -2910,6 +2919,7 @@ namespace {
         return rv;
     }();
     static_assert(static_cast<decltype(test_text_str_idxs)>(idxs_expected) == test_text_str_idxs);
+#  endif
 }
 #endif
 
