@@ -855,13 +855,17 @@ namespace {
 
 
     // for constexpr test purposes
+    struct DummyPair {
+        uint32_t first = 0;
+        struct { int8_t advance = 4; } second;
+    };
     constexpr struct DummyGlyphMap {
-        struct DummyGlyph { int8_t advance = 4; };
-        static constexpr std::pair<uint32_t, DummyGlyph> value{};
-
+        static constexpr DummyPair value{};
         constexpr auto* find(uint32_t) const noexcept { return &value; }
         constexpr decltype(value)* end() const noexcept { return nullptr; }
     } dummy_glyph_map;
+
+    static_assert(dummy_glyph_map.find(0)->second.advance == 4);
 
 
     // text with multi-byte chars
