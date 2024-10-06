@@ -42,7 +42,7 @@ public:
     int                                 bout = 0;                      ///< current combat bout, used with CombatBout ValueRef for implementing bout dependent targeting. First combat bout is 1
     int                                 turn = INVALID_GAME_TURN;      ///< main game turn
     int                                 system_id = INVALID_OBJECT_ID; ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
-    std::set<int>                       empire_ids;                    ///< IDs of empires involved in combat
+    std::set<int>                       empire_ids;                    ///< IDs of empires involved in combat (could include ALL_EMPIRES to indicate unowned monster or planet involvement)
 
     std::unordered_set<int>                damaged_object_ids;         ///< ids of objects damaged during this battle
     std::unordered_set<int>                destroyed_object_ids;       ///< ids of objects destroyed during this battle
