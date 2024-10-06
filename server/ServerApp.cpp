@@ -2497,6 +2497,7 @@ namespace {
             DebugLogger(combat) << "   Only one combatant present: no combat.";
             return false;
         }
+        DebugLogger(combat) << "   Empires with planets (or populated unowned) present:  " << to_string(empires_here);
         empires_here.insert(empires_here.end(),
                             empires_with_fleets_here.begin(), empires_with_fleets_here.end());
         Uniquify(empires_here);
@@ -2543,13 +2544,14 @@ namespace {
 
             // is any planet owned by an empire at war with aggressive empire?
             for (const auto* planet : aggressive_empire_visible_planets | range_filter(not_null)) {
-                int visible_planet_empire_id = planet->Owner();
+                const int visible_planet_empire_id = planet->Owner();
 
                 if (aggressive_empire_id != visible_planet_empire_id &&
                     at_war_with_empire_ids.contains(visible_planet_empire_id))
                 {
                     DebugLogger(combat) << "   Aggressive fleet empire " << aggressive_empire_id
-                                        << " sees at war target planet " << planet->Name();
+                                        << " sees at war target planet " << planet->Name()
+                                        << " (owner: " << visible_planet_empire_id << ")";
                     return true;  // an aggressive empire can see a planet onwned by an empire it is at war with
                 }
             }
