@@ -19,23 +19,20 @@ CHANCE_OF_GUARD_1
                     ]
                     effects = [
                         If condition = ContainedBy Contains Planet type = Asteroids
-                                effects = CreateShip designname = OneOf("SM_SNAIL", "SM_GUARD_0", "SM_GUARD_1")
-                        else = [
-                            CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
-                        ]
+                            effects = CreateShip designname = OneOf("SM_SNAIL", "SM_GUARD_0", "SM_GUARD_1")
+                            else = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
                     ]
                 else = [
                     If condition = And [
-                            Random probability = 0.5
-                            Not Homeworld
-                        ]
+                        Random probability = 0.5
+                        Not Homeworld
+                    ]
                         effects = [
                             SetSpecies name = "SP_ANCIENT_GUARDIANS"
                             SetPopulation value = Target.TargetPopulation
                         ]
-                    else = [
-                        AddSpecial name = OneOf("CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
-                    ]
+                        else =
+                            AddSpecial name = OneOf("CLOUD_COVER_MASTER_SPECIAL", "VOLCANIC_ASH_MASTER_SPECIAL")
                 ]
             ]
 '''
@@ -53,25 +50,22 @@ CHANCE_OF_GUARD_2
             ]
             effects = [
                 If condition = And [
-                        (GalaxyMaxAIAggression >= 1)
-                        (GalaxyMonsterFrequency >= 1)
-                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
-                    ]
+                    (GalaxyMaxAIAggression >= 1)
+                    (GalaxyMonsterFrequency >= 1)
+                    [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+                ]
                     effects = CreateShip designname = "SM_GUARD_2"
-                else = [
-                    If condition = And [
-                            Random probability = 0.7
-                            Not Homeworld
-                        ]
+                    else = If condition = And [
+                        Random probability = 0.7
+                        Not Homeworld
+                    ]
                         effects = [
                             SetSpecies name = "SP_ANCIENT_GUARDIANS"
                             SetPopulation value = Target.TargetPopulation
                             AddSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
                         ]
-                    else = [
-                        AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
-                    ]
-                ]
+                        else =
+                            AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
             ]
 '''
 
@@ -88,25 +82,22 @@ CHANCE_OF_GUARD_3
             ]
             effects = [
                 If condition = And [
-                        (GalaxyMaxAIAggression >= 1)
-                        (GalaxyMonsterFrequency >= 1)
-                        [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
-                    ]
+                    (GalaxyMaxAIAggression >= 1)
+                    (GalaxyMonsterFrequency >= 1)
+                    [[MINIMUM_DISTANCE_EMPIRE_CHECK]]
+                ]
                     effects = CreateShip designname = "SM_GUARD_3"
-                else = [
-                    If condition = And [
-                            Random probability = 0.7
-                            Not Homeworld
-                        ]
+                    else = If condition = And [
+                        Random probability = 0.7
+                        Not Homeworld
+                    ]
                         effects = [
                             SetSpecies name = "SP_ANCIENT_GUARDIANS"
                             SetPopulation value = Target.TargetPopulation
                             AddSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
                         ]
-                    else = [
-                        AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
-                    ]
-                ]
+                        else =
+                            AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
             ]
 '''
 

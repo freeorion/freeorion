@@ -183,7 +183,7 @@ void CombatInfo::InitializeObjectVisibility() {
 }
 
 
-ScriptingContext::ScriptingContext(CombatInfo& info, UniverseObject* attacker_as_source) noexcept :
+ScriptingContext::ScriptingContext(CombatInfo& info, Attacker, UniverseObject* attacker_as_source) noexcept :
     source(                 attacker_as_source),
     combat_bout(            info.bout),
     galaxy_setup_data(      info.galaxy_setup_data),
@@ -1394,7 +1394,7 @@ namespace {
         //             const SpeciesManager& species_,
         //             const SupplyManager& supply_) 
 
-        ScriptingContext context{combat_state.combat_info, attacker};
+        ScriptingContext context{combat_state.combat_info, ScriptingContext::Attacker{}, attacker};
 
         TraceLogger(combat) << "Set up context in ShootAllWeapons: objects: " << context.ContextObjects().size()
                             << "  const objects: " << context.ContextObjects().size()

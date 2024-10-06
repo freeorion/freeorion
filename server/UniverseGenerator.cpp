@@ -733,11 +733,11 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
     for (const auto& object : object_map.all()) {
-        for (auto& entry : AssociatedMeterTypes()) {
-            if (Meter* meter = object->GetMeter(entry.first)) {
-                if (Meter* targetmax_meter = object->GetMeter(entry.second))
-                    meter->SetCurrent(targetmax_meter->Current());
-            }
+        for (auto& [meter_type, assoc_type] : AssociatedMeterTypes()) {
+            Meter* meter = object->GetMeter(meter_type);
+            Meter* targetmax_meter = object->GetMeter(assoc_type);
+            if (meter && targetmax_meter)
+                meter->SetCurrent(targetmax_meter->Current());
         }
     }
 }

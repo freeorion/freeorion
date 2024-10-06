@@ -25,6 +25,15 @@ namespace std {
 }
 #endif
 
+static_assert(BuildTypeValues().front() == std::pair{BuildType::INVALID_BUILD_TYPE, std::string_view{"INVALID_BUILD_TYPE"}});
+static_assert(BuildTypeValues()[3].second == "BT_SHIP");
+static_assert(std::is_enum_v<BuildType>);
+static_assert(!std::is_arithmetic_v<BuildType>);
+static_assert(!std::is_signed_v<BuildType>);
+static_assert(std::is_signed_v<std::underlying_type_t<BuildType>>);
+static_assert(!std::is_unsigned_v<BuildType>);
+
+
 namespace {
     constexpr float EPSILON = 0.001f;
 
@@ -406,8 +415,8 @@ bool ProductionQueue::ProductionItem::EnqueueConditionPassedAt(int location_id,
             auto c = bt->EnqueueLocation();
             if (!c)
                 return true;
-            auto location_obj = context.ContextObjects().getRaw(location_id);
-            const ScriptingContext location_context(location_obj, context);
+            const auto location_obj = context.ContextObjects().getRaw(location_id);
+            const ScriptingContext location_context(context, ScriptingContext::Source{}, location_obj);
             return c->EvalOne(location_context, location_obj);
         }
         return true;
@@ -432,7 +441,7 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     case BuildType::BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
             auto location_obj = context.ContextObjects().getRaw(location_id);
-            ScriptingContext location_target_context{location_obj, context}; // non-const but should be OK as only passed below to function taking const ScriptingContext&
+            ScriptingContext location_target_context{context, ScriptingContext::Source{}, location_obj}; // this context is created non-const but should be OK as only passed below to function taking const ScriptingContext&
 
             for (const auto& [special_name, consumption] : bt->ProductionSpecialConsumption()) {
                 const auto& [amount, cond] = consumption;
@@ -457,8 +466,8 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
     }
     case BuildType::BT_SHIP: {
         if (const ShipDesign* sd = context.ContextUniverse().GetShipDesign(design_id)) {
-            auto location_obj = context.ContextObjects().getRaw(location_id);
-            const ScriptingContext location_target_context{location_obj, context};
+            auto* location_obj = context.ContextObjects().getRaw(location_id);
+            const ScriptingContext location_target_context{context, ScriptingContext::Source{}, location_obj};
 
             if (const ShipHull* ship_hull = GetShipHull(sd->Hull())) {
                 for (const auto& [special_name, consumption] : ship_hull->ProductionSpecialConsumption()) {
@@ -492,7 +501,8 @@ ProductionQueue::ProductionItem::CompletionMeterConsumption(
 {
     std::map<MeterType, std::map<int, float>> retval;
 
-    const ScriptingContext location_context{context.ContextObjects().getRaw(location_id), context};
+    auto* location_obj = context.ContextObjects().getRaw(location_id);
+    const ScriptingContext location_context{context, ScriptingContext::Source{}, location_obj};
 
     switch (build_type) {
     case BuildType::BT_BUILDING: {

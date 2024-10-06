@@ -202,7 +202,7 @@ namespace {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        const ScriptingContext location_as_source_context{location, location};
+        const ScriptingContext location_as_source_context{ScriptingContext::Source{}, location, ScriptingContext::Target{}, location};
         return hull.Location()->EvalOne(location_as_source_context, location);
     }
 
@@ -213,7 +213,7 @@ namespace {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        const ScriptingContext location_as_source_context{location, location};
+        const ScriptingContext location_as_source_context{ScriptingContext::Source{}, location, ScriptingContext::Target{}, location};
         return part_type.Location()->EvalOne(location_as_source_context, location);
     }
 

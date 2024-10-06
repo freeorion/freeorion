@@ -1183,11 +1183,8 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
 }
 
 int FontBasedUpscale(int x) {
-    int retval = x;
-    int font_pts = ClientUI::Pts();
-    if (font_pts > 12)
-        retval *= static_cast<float>(font_pts) / 12.0f;
-    return retval;
+    const int font_pts = ClientUI::Pts();
+    return (font_pts <= 12) ? x : (font_pts * x / 12);
 }
 
 namespace GG {

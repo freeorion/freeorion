@@ -147,7 +147,7 @@ float Policy::AdoptionCost(int empire_id, const ScriptingContext& context) const
             return arbitrary_large_number;
 
         // construct new context with source specified
-        const ScriptingContext source_context{source.get(), context};
+        const ScriptingContext source_context{context, ScriptingContext::Source{}, source.get()};
         return static_cast<float>(m_adoption_cost->Eval(source_context));
     }
 }
