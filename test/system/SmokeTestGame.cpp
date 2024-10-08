@@ -11,6 +11,7 @@
 #include "util/SitRepEntry.h"
 
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/string_generator.hpp>
 
 #ifdef FREEORION_MACOSX
 #include <stdlib.h>
@@ -172,7 +173,9 @@ BOOST_AUTO_TEST_CASE(host_server) {
             // enqueue Troop Ship
             ScriptingContext context;
 
-            static constexpr boost::uuids::uuid troop_ship_uuid{0x08, 0xa5, 0x8b, 0x08, 0x09, 0x29, 0x49, 0x6d, 0x84, 0xfc, 0xfa, 0xa9, 0x14, 0x24, 0xca, 0x02};
+            static const boost::uuids::uuid troop_ship_uuid =
+                boost::uuids::string_generator{}("08a58b080929496d84fcfaa91424ca02");
+
             for (const auto* design : GetPredefinedShipDesignManager().GetOrderedShipDesigns()) {
                 BOOST_TEST_MESSAGE("Predefined ship design " << design->Name() << " " << design->UUID());
                 if (design->UUID() == troop_ship_uuid) {
