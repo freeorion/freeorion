@@ -174,11 +174,8 @@ public:
     typedef std::list<std::shared_ptr<Row>>::iterator iterator;
     typedef std::list<std::shared_ptr<Row>>::const_iterator const_iterator;
 
-    struct IteratorHash
-    {
-        std::size_t operator()(const iterator it) const
-        { return boost::hash<const std::shared_ptr<Row>>()(*it); }
-    };
+    struct GG_API IteratorHash
+    { std::size_t operator()(const iterator it) const; };
     typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
 
     /** emitted when the list box is cleared */

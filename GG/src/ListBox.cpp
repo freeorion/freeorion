@@ -452,6 +452,9 @@ namespace {
     { return lhs.SortKey(column) < rhs.SortKey(column); };
 }
 
+std::size_t ListBox::IteratorHash::operator()(const ListBox::iterator it) const
+{ return boost::hash<const std::shared_ptr<ListBox::Row>>()(*it); }
+
 
 ////////////////////////////////////////////////
 // GG::ListBox

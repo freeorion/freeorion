@@ -16,6 +16,7 @@
 #define _GG_UnicodeCharsets_h_
 
 
+#include <cassert>
 #include <set>
 #include <vector>
 #include <GG/Base.h>
@@ -40,7 +41,7 @@ struct GG_API UnicodeCharset
         m_first_char(first_char),
         m_last_char(last_char + 1)
     {
-        assert(script_name != "");
+        assert(!script_name.empty());
         assert(m_first_char % BLOCK_SIZE == 0);
         assert(m_last_char % BLOCK_SIZE == 0);
         assert(m_first_char < m_last_char);
