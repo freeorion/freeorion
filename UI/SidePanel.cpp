@@ -823,7 +823,7 @@ public:
         const auto planet_data_it = planet_data.find(planet->Type());
         if (planet_data_it != planet_data.end() && planet_data_it->second.size() > 0) {
             const auto num_planets_of_type = planet_data_it->second.size();
-            const unsigned int hash_value = static_cast<int>(m_planet_id);
+            const auto hash_value = static_cast<unsigned int>(m_planet_id);
             const RotatingPlanetData& rpd = planet_data_it->second[hash_value % num_planets_of_type];
             m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / rpd.filename, true);
             m_shininess = rpd.shininess;
