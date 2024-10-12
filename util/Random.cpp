@@ -24,14 +24,17 @@ namespace {
 namespace StaticTests {
     using namespace RandomImpl;
 
+    constexpr auto test_num_hash0 = hash(uint8_t{0});
+    constexpr auto test_num_hash1 = hash(uint8_t{1});
+
     constexpr std::array<char, 9> zt{"00:00:00"};
     constexpr std::array test_nums{CxPRNG(0, zt), CxPRNG(1, zt) % 20, CxPRNG(2, zt) % 20, CxPRNG(3, zt) % 20,
         CxPRNG(4, zt) % 20, CxPRNG(5, zt) % 20, CxPRNG(6, zt) % 20, CxPRNG(7, zt) % 20};
-    static_assert(test_nums == std::array{0u, 9u, 6u, 2u, 14u, 17u, 11u, 1u});
+    static_assert(test_nums == std::array{0u, 6u, 15u, 19u, 7u, 5u, 8u, 16u});
 
     constexpr std::array more_test_nums{RandIntCx(0, 10000, 0, zt), RandIntCx(0, 10000, 1, zt),
                                         RandIntCx(0, 10000, 2, zt), RandIntCx(0, 10000, 3, zt)};
-    static_assert(more_test_nums == std::array{0, 352, 2853, 4659});
+    static_assert(more_test_nums == std::array{0, 4040, 6150, 9697});
 
     consteval auto GetTestDoubles() {
         std::array<double, 32> doubles{};
