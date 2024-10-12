@@ -14,8 +14,6 @@
 #ifndef _GG_PtRect_h_
 #define _GG_PtRect_h_
 
-
-#include <boost/functional/hash.hpp>
 #include <GG/Base.h>
 #include <GG/StrongTypedef.h>
 
@@ -130,6 +128,20 @@ struct GG_API Pt
 
     X x = X0;
     Y y = Y0;
+
+    static constexpr std::size_t hash(std::size_t x) {
+        // from Boost hash_mix_impl
+        const std::size_t m = (std::size_t(0xe9846afu) << 32u) + std::size_t(0x9b1a615du);
+        x ^= x >> 32u;
+        x *= m;
+        x ^= x >> 32u;
+        x *= m;
+        x ^= x >> 28u;
+        return x;
+    }
+
+    static constexpr std::size_t hash(std::size_t x, std::size_t y)
+    { return hash(x + std::size_t{0x9e3779b9u} + y); } // from Boost hash_combine
 };
 
 inline constexpr Pt Pt0{GG::X0, GG::Y0};
@@ -200,21 +212,16 @@ GG_API std::ostream& operator<<(std::ostream& os, Pt pt); ///< Pt stream-output 
 GG_API std::ostream& operator<<(std::ostream& os, Rect rect); ///< Rect stream-output operator for debug output
 
 // Hash functions
-// Replace with C++11 equilvalent when converted to C++11
-[[nodiscard]] GG_API inline std::size_t hash_value(X x) { return boost::hash<int>()(Value(x)); }
-[[nodiscard]] GG_API inline std::size_t hash_value(Y y) { return boost::hash<int>()(Value(y)); }
+[[nodiscard]] GG_API inline std::size_t hash_value(X x) { return std::hash<int32_t>()(Value(x)); }
+[[nodiscard]] GG_API inline std::size_t hash_value(Y y) { return std::hash<int32_t>()(Value(y)); }
 [[nodiscard]] GG_API inline std::size_t hash_value(Pt pt) {
-    std::size_t seed(0);
-    boost::hash_combine(seed, pt.x);
-    boost::hash_combine(seed, pt.y);
-    return seed;
+    static_assert(std::is_same_v<std::decay_t<decltype(Value(pt.x))>, int32_t>);
+    static_assert(static_cast<int64_t>(1) + (static_cast<int64_t>(1) << 32u) == 4294967297);
+    auto temp = static_cast<int64_t>(Value(pt.x)) + (static_cast<int64_t>(Value(pt.y)) << 32u);
+    return std::hash<decltype(temp)>()(temp);
 }
-[[nodiscard]] GG_API inline std::size_t hash_value(Rect r) {
-    std::size_t seed(0);
-    boost::hash_combine(seed, r.ul);
-    boost::hash_combine(seed, r.lr);
-    return seed;
-}
+[[nodiscard]] GG_API inline std::size_t hash_value(Rect r)
+{ return Pt::hash(hash_value(r.ul), hash_value(r.lr)); }
 
 }
 
