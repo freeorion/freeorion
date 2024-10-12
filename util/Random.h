@@ -40,7 +40,17 @@ namespace RandomImpl {
     // shuffle bits in number
     inline consteval uint32_t hash(auto val_in) {
         auto val = static_cast<uint32_t>(val_in);
-        val ^= 0x9e3779b9 + (val<<6) + (val>>2);
+        val ^= 0x5A5C3AF5;
+
+        // copied from Boost "hash_mix for 32 bit size_t"
+        constexpr uint32_t m1 = 0x21f0aaad;
+        constexpr uint32_t m2 = 0x735a2d97;
+        val ^= val >> 16;
+        val *= m1;
+        val ^= val >> 15;
+        val *= m2;
+        val ^= val >> 15;
+
         return val;
     }
     // generate a compile-time PRNG int that is seeded differently for each second of the day.
