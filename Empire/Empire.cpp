@@ -2,6 +2,8 @@
 
 #include "../util/i18n.h"
 #include "../util/Random.h"
+#include "../util/GameRules.h"
+#include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
 #include "../util/SitRepEntry.h"
@@ -64,6 +66,14 @@ namespace {
     }
 
     DeclareThreadSafeLogger(supply);
+
+    void AddRules(GameRules& rules) {
+        // makes all policies cost 1 influence to adopt
+        rules.Add<bool>(UserStringNop("RULE_HIDDEN_POLICIES"), UserStringNop("RULE_HIDDEN_POLICIES_DESC"),
+                        GameRuleCategories::GameRuleCategory::GENERAL, false, true,
+                        GameRuleRanks::RULE_HIDDEN_POLICIES_RANK);
+    }
+    bool temp_bool = RegisterGameRules(&AddRules);
 }
 
 ////////////
@@ -3111,4 +3121,50 @@ int Empire::TotalBuildingsOwned() const {
     for (const auto& entry : m_building_types_owned)
         counter += entry.second;
     return counter;
+}
+
+decltype(Empire::m_adopted_policies)
+Empire::GetAdoptedPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const
+{
+    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
+        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
+        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
+    { return m_adopted_policies; }
+    return {};
+}
+
+decltype(Empire::m_initial_adopted_policies)
+Empire::GetInitialPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
+    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
+        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
+        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
+    { return m_adopted_policies; }
+    return {};
+}
+
+decltype(Empire::m_policy_adoption_total_duration)
+Empire::GetAdoptionTotalDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
+    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
+        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
+        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
+    { return m_policy_adoption_total_duration; }
+    return {};
+}
+
+decltype(Empire::m_policy_adoption_current_duration)
+Empire::GetAdoptionCurrentDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
+    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
+        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
+        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
+    { return m_policy_adoption_current_duration; }
+    return {};
+}
+
+decltype(Empire::m_available_policies)
+Empire::GetAvailablePoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
+    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
+        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
+        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
+    { return m_available_policies; }
+    return {};
 }

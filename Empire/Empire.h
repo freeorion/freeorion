@@ -522,6 +522,12 @@ private:
     std::map<std::string, int>                             m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
     std::set<std::string, std::less<>>                     m_available_policies;               ///< names of unlocked policies
 
+    decltype(m_adopted_policies) GetAdoptedPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
+    decltype(m_initial_adopted_policies) GetInitialPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
+    decltype(m_policy_adoption_total_duration) GetAdoptionTotalDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
+    decltype(m_policy_adoption_current_duration) GetAdoptionCurrentDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
+    decltype(m_available_policies) GetAvailablePoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
+
     using StringFlatSet = boost::container::flat_set<std::string, std::less<>>;
     using StringIntMap = boost::container::flat_map<std::string, int, std::less<>>;
     using MeterMap = boost::container::flat_map<std::string, Meter, std::less<>>;
@@ -601,6 +607,8 @@ private:
     bool                            m_ready = false;            ///< readiness status of empire
     bool                            m_authenticated = false;    ///< Empire's Player's authentication flag. Set if only player with empire's player's name should play this empire.
     bool                            m_eliminated = false;       ///< Whether the empire has lost
+
+
 
     friend class boost::serialization::access;
     Empire();

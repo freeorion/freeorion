@@ -48,14 +48,15 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 
 
-    auto encoding_empire = GlobalSerializationEncodingForEmpire();
+    const auto encoding_empire = GlobalSerializationEncodingForEmpire();
+    const auto diplo_status = Empires().GetDiplomaticStatus(m_id, encoding_empire); // TODO: pass in diplo status map?
+
     bool visible =
         (ALL_EMPIRES == encoding_empire) ||
         (m_id == encoding_empire); // TODO: GameRule for all empire info known to other empires
     bool allied_visible = visible;
     if constexpr (Archive::is_saving::value)
-        allied_visible = allied_visible || Empires().GetDiplomaticStatus(m_id, GlobalSerializationEncodingForEmpire()) ==
-            DiplomaticStatus::DIPLO_ALLIED; // TODO: pass in diplo status map?
+        allied_visible = allied_visible || diplo_status == DiplomaticStatus::DIPLO_ALLIED;
 
     TraceLogger() << "serializing empire " << m_id << ": " << m_name;
     TraceLogger() << "encoding empire: " << encoding_empire;
@@ -97,13 +98,25 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         m_available_policies.clear();
         m_available_policies.insert(available_policies.begin(), available_policies.end());
 
-    } else {
+    } else if constexpr (Archive::is_loading::value) {
         ar  & BOOST_SERIALIZATION_NVP(m_adopted_policies)
             & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
             & BOOST_SERIALIZATION_NVP(m_available_policies);
+    } else {
+        const auto adopted_to_serialize = GetAdoptedPoliciesToSerialize(encoding_empire, diplo_status);
+        const auto initial_to_serialize = GetInitialPoliciesToSerialize(encoding_empire, diplo_status);
+        const auto available_to_serialize = GetAvailablePoliciesToSerialize(encoding_empire, diplo_status);
+        ar  & boost::serialization::make_nvp("m_adopted_policies", adopted_to_serialize)
+            & boost::serialization::make_nvp("m_initial_adopted_policies", initial_to_serialize)
+            & boost::serialization::make_nvp("m_available_policies", available_to_serialize);
     }
 
-    ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
+    if constexpr (Archive::is_loading::value) {
+        ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
+    } else {
+        const auto adopted_durations_to_serialize = GetAdoptionTotalDurationsToSerialize(encoding_empire, diplo_status);
+        ar  & boost::serialization::make_nvp("m_policy_adoption_total_duration", adopted_durations_to_serialize);
+    }
 
     if (Archive::is_loading::value && version < 7) {
         const auto* app = IApp::GetApp();
@@ -114,8 +127,11 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             m_policy_adoption_current_duration[policy_name] =
                 app ? (current_turn - adoption_info.adoption_turn) : 0;
         }
-    } else {
+    } else if constexpr (Archive::is_loading::value) {
         ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_current_duration);
+    } else {
+        const auto current_durations_to_serialize = GetAdoptionCurrentDurationsToSerialize(encoding_empire, diplo_status);
+        ar  & boost::serialization::make_nvp("m_policy_adoption_current_duration", current_durations_to_serialize);
     }
 
     if (Archive::is_loading::value && version < 11) {
