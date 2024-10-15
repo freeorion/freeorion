@@ -68,7 +68,7 @@ namespace {
     DeclareThreadSafeLogger(supply);
 
     void AddRules(GameRules& rules) {
-        // makes all policies cost 1 influence to adopt
+        // makes all policies hidden to no allies
         rules.Add<bool>(UserStringNop("RULE_HIDDEN_POLICIES"), UserStringNop("RULE_HIDDEN_POLICIES_DESC"),
                         GameRuleCategories::GameRuleCategory::GENERAL, false, true,
                         GameRuleRanks::RULE_HIDDEN_POLICIES_RANK);
