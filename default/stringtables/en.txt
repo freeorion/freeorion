@@ -1325,6 +1325,14 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
 
 <u>If Off</u>: Basic level visible systems that have never been detected at higher visiblity have unknown name and star type.'''
 
+RULE_HIDDEN_POLICIES
+Hide Empire Policies
+
+RULE_HIDDEN_POLICIES_DESC
+'''<u>If On</u>: Players who are not allied to an empire do not know other empires' adopted or available policies.
+
+<u>If Off</u>: All players know all other empires' adopted and available policies.'''
+
 RULE_HABITABLE_SIZE_TINY
 Tiny planets Habitable size
 
@@ -5702,7 +5710,7 @@ ADOPTED_POLICIES
 '''Adopted Policies: '''
 
 NO_POLICIES_ADOPTED
-No Policies Adopted
+No Policies Known Adopted
 
 AVAILABLE_PARTS
 '''Available Parts: '''
