@@ -3107,20 +3107,14 @@ void Empire::RecordPlanetDepopulated(const Planet& planet)
 
 int Empire::TotalShipPartsOwned() const {
     // sum counts of all ship parts owned by this empire
-    int retval = 0;
-
-    for (const auto& part_class : m_ship_part_class_owned)
-        retval += part_class.second;
-
-    return retval;
+    auto owned_nums_rng = m_ship_part_class_owned | range_values;
+    return std::accumulate(owned_nums_rng.begin(), owned_nums_rng.end(), 0);
 }
 
 int Empire::TotalBuildingsOwned() const {
     // sum up counts for each building type owned by this empire
-    int counter = 0;
-    for (const auto& entry : m_building_types_owned)
-        counter += entry.second;
-    return counter;
+    auto owned_nums_rng = m_building_types_owned | range_values;
+    return std::accumulate(owned_nums_rng.begin(), owned_nums_rng.end(), 0);
 }
 
 decltype(Empire::m_adopted_policies)
