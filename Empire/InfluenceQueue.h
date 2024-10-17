@@ -51,6 +51,7 @@ struct FO_COMMON_API InfluenceQueue {
     using iterator = QueueType::iterator ;
     using const_iterator = QueueType::const_iterator;
 
+    InfluenceQueue() = default;
     explicit InfluenceQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
