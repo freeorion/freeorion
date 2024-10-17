@@ -37,7 +37,8 @@ struct FO_COMMON_API ResearchQueue {
     /** The const ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::const_iterator const_iterator;
 
-    ResearchQueue(int empire_id) :
+    ResearchQueue() = default;
+    explicit ResearchQueue(int empire_id) :
         m_empire_id(empire_id)
     {}
 
