@@ -2066,13 +2066,16 @@ void ResourceInfoPanel::DoLayout() {
 MultiTurnProgressBar::MultiTurnProgressBar(int num_segments, float percent_completed, float percent_predicted,
                                            GG::Clr bar_color, GG::Clr bg_color, GG::Clr outline_color) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_num_segments(num_segments),
+    m_num_segments(std::min<int>(2048, std::max<int>(1, num_segments))),
     m_perc_completed(percent_completed),
     m_perc_predicted(percent_predicted),
     m_clr_bar(bar_color),
     m_clr_bg(bg_color),
     m_clr_outline(outline_color)
 {
+    if (m_num_segments > 1000)
+        WarnLogger() << "Very many segments in MultiTurnProgressBar!";
+
     // validate percentage values
     if (m_perc_completed < 0.0f || m_perc_predicted < 0.0f ||
         (m_perc_completed + m_perc_predicted) > 1.0f)
@@ -2118,21 +2121,23 @@ void MultiTurnProgressBar::Render() {
     // segment lines
     GG::GL2DVertexBuffer segment_verts;
     GG::GLRGBAColorBuffer segment_colors;
-    if (m_num_segments > 1u) {
-        segment_verts.reserve(std::size_t{2u} * m_num_segments);
-        segment_colors.reserve(std::size_t{2u} * m_num_segments);
+    if (m_num_segments > 1u && m_num_segments < Value(Width())) {
+        try {
+            segment_verts.reserve(std::size_t{2u} * m_num_segments);
+            segment_colors.reserve(std::size_t{2u} * m_num_segments);
 
-        GG::Clr current_colour(GG::DarkenClr(m_clr_bar));
+            GG::Clr current_colour(GG::DarkenClr(m_clr_bar));
 
-        for (int n = 1; n < static_cast<int>(m_num_segments); ++n) {
-            GG::X separator_x(ul.x + Width() * n / static_cast<int>(m_num_segments));
-            if (separator_x > comp_rect.lr.x)
-                current_colour = GG::LightenClr(m_clr_bg);
-            segment_verts.store(separator_x, ul.y);
-            segment_verts.store(separator_x, lr.y);
-            segment_colors.store(current_colour);
-            segment_colors.store(current_colour);
-        }
+            for (int n = 1; n < static_cast<int>(m_num_segments); ++n) {
+                GG::X separator_x(ul.x + Width() * n / static_cast<int>(m_num_segments));
+                if (separator_x > comp_rect.lr.x)
+                    current_colour = GG::LightenClr(m_clr_bg);
+                segment_verts.store(separator_x, ul.y);
+                segment_verts.store(separator_x, lr.y);
+                segment_colors.store(current_colour);
+                segment_colors.store(current_colour);
+            }
+        } catch (...) {}
     }
 
     glDisable(GL_TEXTURE_2D);
