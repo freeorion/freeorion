@@ -184,7 +184,6 @@ public:
      * is determined in Empire::UpdateSupplyUnobstructedSystems(). */
     [[nodiscard]] bool        PreservedLaneTravel(int start_system_id, int dest_system_id) const;
 
-    using IntSet = boost::container::flat_set<int>;
     struct LaneEndpoints {
         int start = INVALID_OBJECT_ID;
         int end = INVALID_OBJECT_ID;
@@ -199,6 +198,8 @@ public:
 #endif
     };
     using LaneSet = boost::container::flat_set<LaneEndpoints>;
+
+    using IntSet = boost::container::flat_set<int>;
 
     [[nodiscard]] IntSet      ExploredSystems() const;     ///< ids of systems that this empire has explored
     [[nodiscard]] int         TurnSystemExplored(int system_id) const;
@@ -522,11 +523,23 @@ private:
     std::map<std::string, int>                             m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
     std::set<std::string, std::less<>>                     m_available_policies;               ///< names of unlocked policies
 
-    decltype(m_adopted_policies) GetAdoptedPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
-    decltype(m_initial_adopted_policies) GetInitialPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
-    decltype(m_policy_adoption_total_duration) GetAdoptionTotalDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
-    decltype(m_policy_adoption_current_duration) GetAdoptionCurrentDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
-    decltype(m_available_policies) GetAvailablePoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const;
+public:
+    // prepare policy info to serialize for various recipient empires
+    void PrepPolicyInfoForSerialization(const ScriptingContext& context);
+
+private:
+    std::map<int, decltype(m_adopted_policies)>                 m_adopted_policies_to_serialize_for_empires;
+    std::map<int, decltype(m_initial_adopted_policies)>         m_initial_adopted_policies_to_serialize_for_empires;
+    std::map<int, decltype(m_policy_adoption_total_duration)>   m_policy_adoption_total_duration_to_serialize_for_empires;
+    std::map<int, decltype(m_policy_adoption_current_duration)> m_policy_adoption_current_duration_to_serialize_for_empires;
+    std::map<int, decltype(m_available_policies)>               m_available_policies_to_serialize_for_empires;
+
+    const decltype(m_adopted_policies)& GetAdoptedPoliciesToSerialize(int encoding_empire) const;
+    const decltype(m_initial_adopted_policies)& GetInitialPoliciesToSerialize(int encoding_empire) const;
+    const decltype(m_policy_adoption_total_duration)& GetAdoptionTotalDurationsToSerialize(int encoding_empire) const;
+    const decltype(m_policy_adoption_current_duration)& GetAdoptionCurrentDurationsToSerialize(int encoding_empire) const;
+    const decltype(m_available_policies)& GetAvailablePoliciesToSerialize(int encoding_empire) const;
+
 
     using StringFlatSet = boost::container::flat_set<std::string, std::less<>>;
     using StringIntMap = boost::container::flat_map<std::string, int, std::less<>>;
@@ -598,20 +611,42 @@ private:
     int                             m_auto_turn_count = 0;          ///< auto-turn counter value
     int                             m_last_turn_received = INVALID_GAME_TURN; ///< last turn empire completedly received game state
 
+public:
+    // prepare tech, queue, and availability info for serialization for various empires
+    void PrepQueueAvailabilityInfoForSerialization(const ScriptingContext& context);
+
+private:
+    std::map<int, decltype(m_techs)>                    m_techs_to_serialize_for_empires;
+    std::map<int, decltype(m_research_queue)>           m_research_queue_to_serialize_for_empires;
+    std::map<int, decltype(m_research_progress)>        m_research_progress_to_serialize_for_empires;
+    std::map<int, decltype(m_production_queue)>         m_production_queue_to_serialize_for_empires;
+    std::map<int, decltype(m_influence_queue)>          m_influence_queue_to_serialize_for_empires;
+    std::map<int, decltype(m_available_building_types)> m_available_building_types_to_serialize_for_empires;
+    std::map<int, decltype(m_available_ship_parts)>     m_available_ship_parts_to_serialize_for_empires;
+    std::map<int, decltype(m_available_ship_hulls)>     m_available_ship_hulls_to_serialize_for_empires;
+
+    const decltype(Empire::m_techs)& GetTechsToSerialize(int encoding_empire);
+    const decltype(Empire::m_research_queue)& GetResearchQueueToSerialize(int encoding_empire);
+    const decltype(Empire::m_research_progress)& GetResearchProgressToSerialize(int encoding_empire);
+    const decltype(Empire::m_production_queue)& GetProductionQueueToSerialize(int encoding_empire);
+    const decltype(Empire::m_influence_queue)& GetInfluenceQueueToSerialize(int encoding_empire);
+    const decltype(Empire::m_available_building_types)& GetAvailableBuildingsToSerialize(int encoding_empire);
+    const decltype(Empire::m_available_ship_parts)& GetAvailablePartsToSerialize(int encoding_empire);
+    const decltype(Empire::m_available_ship_hulls)& GetAvailableHullsToSerialize(int encoding_empire);
+
+
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */
-    mutable int                     m_source_id = INVALID_OBJECT_ID;
+    mutable int m_source_id = INVALID_OBJECT_ID;
 
-    int                             m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
+    int         m_outposts_owned = 0;       ///< how many uncolonized outposts does this empire currently own?
 
-    bool                            m_ready = false;            ///< readiness status of empire
-    bool                            m_authenticated = false;    ///< Empire's Player's authentication flag. Set if only player with empire's player's name should play this empire.
-    bool                            m_eliminated = false;       ///< Whether the empire has lost
-
-
+    bool        m_ready = false;            ///< readiness status of empire
+    bool        m_authenticated = false;    ///< Empire's Player's authentication flag. Set if only player with empire's player's name should play this empire.
+    bool        m_eliminated = false;       ///< Whether the empire has lost
 
     friend class boost::serialization::access;
-    Empire();
+    Empire() { Init(); }
     template <typename Archive>
     void serialize(Archive& ar, const unsigned int version);
 };

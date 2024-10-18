@@ -3418,7 +3418,15 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
     server.ClearEmpireTurnOrders(empire_id);
 
     // re-send player initial turn update
-    bool use_binary_serialization = sender->IsBinarySerializationUsed();
+    const ScriptingContext context{server.GetUniverse(), server.Empires(), server.GetGalaxySetupData(),
+                                   server.GetSpeciesManager(), server.GetSupplyManager()};
+    for (auto& empire : server.Empires() | range_values) {
+        empire->UpdateOwnedObjectCounters(server.GetUniverse());
+        empire->PrepQueueAvailabilityInfoForSerialization(context);
+        empire->PrepPolicyInfoForSerialization(context);
+    }
+
+    const bool use_binary_serialization = sender->IsBinarySerializationUsed();
     sender->SendMessage(TurnUpdateMessage(empire_id,                  server.CurrentTurn(),
                                           server.Empires(),           server.GetUniverse(),
                                           server.GetSpeciesManager(), GetCombatLogManager(),
