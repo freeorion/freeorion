@@ -72,6 +72,12 @@ namespace {
         rules.Add<bool>(UserStringNop("RULE_HIDDEN_POLICIES"), UserStringNop("RULE_HIDDEN_POLICIES_DESC"),
                         GameRuleCategories::GameRuleCategory::GENERAL, false, true,
                         GameRuleRanks::RULE_HIDDEN_POLICIES_RANK);
+
+        // makes all techs hidden to no allies
+        rules.Add<bool>(UserStringNop("RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES"),
+                        UserStringNop("RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES_DESC"),
+                        GameRuleCategories::GameRuleCategory::GENERAL, false, true,
+                        GameRuleRanks::RULE_HIDDEN_TECHS_RANK);
     }
     bool temp_bool = RegisterGameRules(&AddRules);
 }
@@ -79,12 +85,6 @@ namespace {
 ////////////
 // Empire //
 ////////////
-Empire::Empire() :
-    m_research_queue(m_id),
-    m_production_queue(m_id),
-    m_influence_queue(m_id)
-{ Init(); }
-
 Empire::Empire(std::string name, std::string player_name,
                int empire_id, EmpireColor color, bool authenticated) :
     m_id(empire_id),
@@ -2559,8 +2559,8 @@ void Empire::CheckProductionProgress(
 
 
         // consume the item's special and meter consumption
-        for (auto& [special_name, consumption_map] : sc) {
-            for (auto [obj_id, consumption] : consumption_map) {
+        for (const auto& [special_name, consumption_map] : sc) {
+            for (const auto& [obj_id, consumption] : consumption_map) {
                 auto obj = context.ContextObjects().getRaw(obj_id);
                 if (!obj || !obj->HasSpecial(special_name))
                     continue;
@@ -2570,7 +2570,7 @@ void Empire::CheckProductionProgress(
             }
         }
         for (const auto& [meter_type, consumption_map] : mc) {
-            for (const auto [obj_id, consumption] : consumption_map) {
+            for (const auto& [obj_id, consumption] : consumption_map) {
                 auto* obj = context.ContextObjects().getRaw(obj_id);
                 if (!obj)
                     continue;
@@ -3004,7 +3004,7 @@ void Empire::UpdateOwnedObjectCounters(const Universe& universe) {
     // update ship part counts
     m_ship_parts_owned.clear();
     m_ship_part_class_owned.clear();
-    for (const auto [design_id, design_count] : m_ship_designs_owned) {
+    for (const auto& [design_id, design_count] : m_ship_designs_owned) {
         const ShipDesign* design = universe.GetShipDesign(design_id);
         if (!design)
             continue;
@@ -3117,48 +3117,168 @@ int Empire::TotalBuildingsOwned() const {
     return std::accumulate(owned_nums_rng.begin(), owned_nums_rng.end(), 0);
 }
 
-decltype(Empire::m_adopted_policies)
-Empire::GetAdoptedPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const
-{
-    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
-        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
-        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
-    { return m_adopted_policies; }
-    return {};
+void Empire::PrepPolicyInfoForSerialization(const ScriptingContext& context) {
+    m_adopted_policies_to_serialize_for_empires.clear();
+    m_initial_adopted_policies_to_serialize_for_empires.clear();
+    m_policy_adoption_total_duration_to_serialize_for_empires.clear();
+    m_policy_adoption_current_duration_to_serialize_for_empires.clear();
+    m_available_policies_to_serialize_for_empires.clear();
+
+    // no entry for an empire ID indicates that the true full state should be used for that empire ID
+
+    if (!GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
+        return; // all empires see truth by default
+
+    for (const auto eid : context.EmpireIDs()) {
+        if (eid == m_id)
+            continue; // true policies for self
+        if (context.ContextDiploStatus(m_id, eid) == DiplomaticStatus::DIPLO_ALLIED)
+            continue; // true policies for allies
+
+        // default: no info
+        m_adopted_policies_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                            std::forward_as_tuple(eid),
+                                                            std::forward_as_tuple());
+        m_initial_adopted_policies_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                    std::forward_as_tuple(eid),
+                                                                    std::forward_as_tuple());
+        m_policy_adoption_total_duration_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                          std::forward_as_tuple(eid),
+                                                                          std::forward_as_tuple());
+        m_policy_adoption_current_duration_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                            std::forward_as_tuple(eid),
+                                                                            std::forward_as_tuple());
+        m_available_policies_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                              std::forward_as_tuple(eid),
+                                                              std::forward_as_tuple());
+    }
 }
 
-decltype(Empire::m_initial_adopted_policies)
-Empire::GetInitialPoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
-    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
-        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
-        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
-    { return m_adopted_policies; }
-    return {};
+const decltype(Empire::m_adopted_policies)&
+Empire::GetAdoptedPoliciesToSerialize(int encoding_empire) const {
+    const auto it = m_adopted_policies_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_adopted_policies_to_serialize_for_empires.end()) ?
+        m_adopted_policies : it->second;
 }
 
-decltype(Empire::m_policy_adoption_total_duration)
-Empire::GetAdoptionTotalDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
-    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
-        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
-        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
-    { return m_policy_adoption_total_duration; }
-    return {};
+const decltype(Empire::m_initial_adopted_policies)&
+Empire::GetInitialPoliciesToSerialize(int encoding_empire) const {
+    const auto it = m_initial_adopted_policies_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_initial_adopted_policies_to_serialize_for_empires.end()) ?
+        m_initial_adopted_policies : it->second;
 }
 
-decltype(Empire::m_policy_adoption_current_duration)
-Empire::GetAdoptionCurrentDurationsToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
-    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
-        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
-        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
-    { return m_policy_adoption_current_duration; }
-    return {};
+const decltype(Empire::m_policy_adoption_total_duration)&
+Empire::GetAdoptionTotalDurationsToSerialize(int encoding_empire) const {
+    const auto it = m_policy_adoption_total_duration_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_policy_adoption_total_duration_to_serialize_for_empires.end()) ?
+        m_policy_adoption_total_duration : it->second;
 }
 
-decltype(Empire::m_available_policies)
-Empire::GetAvailablePoliciesToSerialize(int encoding_empire, DiplomaticStatus diplo_status) const {
-    if (encoding_empire == ALL_EMPIRES || encoding_empire == m_id ||
-        diplo_status == DiplomaticStatus::DIPLO_ALLIED ||
-        !GetGameRules().Get<bool>("RULE_HIDDEN_POLICIES"))
-    { return m_available_policies; }
-    return {};
+const decltype(Empire::m_policy_adoption_current_duration)&
+Empire::GetAdoptionCurrentDurationsToSerialize(int encoding_empire) const {
+    const auto it = m_policy_adoption_current_duration_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_policy_adoption_current_duration_to_serialize_for_empires.end()) ?
+        m_policy_adoption_current_duration : it->second;
+}
+
+const decltype(Empire::m_available_policies)&
+Empire::GetAvailablePoliciesToSerialize(int encoding_empire) const {
+    const auto it = m_available_policies_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_available_policies_to_serialize_for_empires.end()) ?
+        m_available_policies : it->second;
+}
+
+void Empire::PrepQueueAvailabilityInfoForSerialization(const ScriptingContext& context) {
+    m_techs_to_serialize_for_empires.clear();
+    m_research_progress_to_serialize_for_empires.clear();
+    m_production_queue_to_serialize_for_empires.clear();
+    m_influence_queue_to_serialize_for_empires.clear();
+    m_available_building_types_to_serialize_for_empires.clear();
+    m_available_ship_parts_to_serialize_for_empires.clear();
+    m_available_ship_hulls_to_serialize_for_empires.clear();
+
+    // no entry for an empire ID indicates that the true full state should be used for that empire ID
+
+    if (!GetGameRules().Get<bool>("RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES"))
+        return; // all empires see truth by default
+
+    for (const auto eid : context.EmpireIDs()) {
+        if (eid == m_id)
+            continue; // true policies for self
+        if (context.ContextDiploStatus(m_id, eid) == DiplomaticStatus::DIPLO_ALLIED)
+            continue; // true policies for allies
+
+        // default: no info
+        m_techs_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                 std::forward_as_tuple(eid),
+                                                 std::forward_as_tuple());
+
+        m_research_progress_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                             std::forward_as_tuple(eid),
+                                                             std::forward_as_tuple());
+        m_production_queue_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                            std::forward_as_tuple(eid),
+                                                            std::forward_as_tuple());
+        m_influence_queue_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                           std::forward_as_tuple(eid),
+                                                           std::forward_as_tuple());
+        m_available_building_types_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                    std::forward_as_tuple(eid),
+                                                                    std::forward_as_tuple());
+        m_available_ship_parts_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                std::forward_as_tuple(eid),
+                                                                std::forward_as_tuple());
+        m_available_ship_hulls_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                std::forward_as_tuple(eid),
+                                                                std::forward_as_tuple());
+    }
+}
+
+const decltype(Empire::m_techs)& Empire::GetTechsToSerialize(int encoding_empire) {
+    const auto it = m_techs_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_techs_to_serialize_for_empires.end()) ?
+        m_techs : it->second;
+}
+
+const decltype(Empire::m_research_queue)& Empire::GetResearchQueueToSerialize(int encoding_empire) {
+    const auto it = m_research_queue_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_research_queue_to_serialize_for_empires.end()) ?
+        m_research_queue : it->second;
+}
+
+const decltype(Empire::m_research_progress)& Empire::GetResearchProgressToSerialize(int encoding_empire) {
+    const auto it = m_research_progress_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_research_progress_to_serialize_for_empires.end()) ?
+        m_research_progress : it->second;
+}
+
+const decltype(Empire::m_production_queue)& Empire::GetProductionQueueToSerialize(int encoding_empire) {
+    const auto it = m_production_queue_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_production_queue_to_serialize_for_empires.end()) ?
+        m_production_queue : it->second;
+}
+
+const decltype(Empire::m_influence_queue)& Empire::GetInfluenceQueueToSerialize(int encoding_empire) {
+    const auto it = m_influence_queue_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_influence_queue_to_serialize_for_empires.end()) ?
+        m_influence_queue : it->second;
+}
+
+const decltype(Empire::m_available_building_types)& Empire::GetAvailableBuildingsToSerialize(int encoding_empire) {
+    const auto it = m_available_building_types_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_available_building_types_to_serialize_for_empires.end()) ?
+        m_available_building_types : it->second;
+}
+
+const decltype(Empire::m_available_ship_parts)& Empire::GetAvailablePartsToSerialize(int encoding_empire) {
+    const auto it = m_available_ship_parts_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_available_ship_parts_to_serialize_for_empires.end()) ?
+        m_available_ship_parts : it->second;
+}
+
+const decltype(Empire::m_available_ship_hulls)& Empire::GetAvailableHullsToSerialize(int encoding_empire) {
+    const auto it = m_available_ship_hulls_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_available_ship_hulls_to_serialize_for_empires.end()) ?
+        m_available_ship_hulls : it->second;
 }

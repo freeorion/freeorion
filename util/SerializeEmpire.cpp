@@ -38,6 +38,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_capital_id)
         & BOOST_SERIALIZATION_NVP(m_source_id)
         & BOOST_SERIALIZATION_NVP(m_eliminated);
+
+
     if (Archive::is_loading::value && version < 13) {
         std::set<std::string> victories;
         ar  & boost::serialization::make_nvp("m_victories", victories);
@@ -49,23 +51,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 
 
     const auto encoding_empire = GlobalSerializationEncodingForEmpire();
-    const auto diplo_status = Empires().GetDiplomaticStatus(m_id, encoding_empire); // TODO: pass in diplo status map?
-
-    bool visible =
-        (ALL_EMPIRES == encoding_empire) ||
-        (m_id == encoding_empire); // TODO: GameRule for all empire info known to other empires
-    bool allied_visible = visible;
-    if constexpr (Archive::is_saving::value)
-        allied_visible = allied_visible || diplo_status == DiplomaticStatus::DIPLO_ALLIED;
-
-    TraceLogger() << "serializing empire " << m_id << ": " << m_name;
-    TraceLogger() << "encoding empire: " << encoding_empire;
-    if constexpr (Archive::is_loading::value) {
-        TraceLogger() << std::string(visible ? "visible" : "NOT visible");
-    } else {
-        TraceLogger() << std::string(visible ? "visible" : "NOT visible") << "  /  "
-                      << std::string(allied_visible ? "allied visible" : "NOT allied visible");
-    }
+    TraceLogger() << "serializing empire " << m_id << ": " << m_name
+                  << " for encoding empire: " << encoding_empire;
 
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, int> techs;
@@ -77,8 +64,12 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & boost::serialization::make_nvp("m_techs", techs);
         m_techs.insert(boost::container::ordered_unique_range, techs.begin(), techs.end());
 
+    } else if constexpr (Archive::is_loading::value) {
+        ar  & boost::serialization::make_nvp("m_techs", m_techs);
+
     } else {
-        ar  & BOOST_SERIALIZATION_NVP(m_techs);
+        const auto& techs_to_serialize = GetTechsToSerialize(encoding_empire);
+        ar  & boost::serialization::make_nvp("m_techs", techs_to_serialize);
     }
 
     if (Archive::is_loading::value && version < 10) {
@@ -103,9 +94,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_initial_adopted_policies)
             & BOOST_SERIALIZATION_NVP(m_available_policies);
     } else {
-        const auto adopted_to_serialize = GetAdoptedPoliciesToSerialize(encoding_empire, diplo_status);
-        const auto initial_to_serialize = GetInitialPoliciesToSerialize(encoding_empire, diplo_status);
-        const auto available_to_serialize = GetAvailablePoliciesToSerialize(encoding_empire, diplo_status);
+        const auto& adopted_to_serialize = GetAdoptedPoliciesToSerialize(encoding_empire);
+        const auto& initial_to_serialize = GetInitialPoliciesToSerialize(encoding_empire);
+        const auto& available_to_serialize = GetAvailablePoliciesToSerialize(encoding_empire);
         ar  & boost::serialization::make_nvp("m_adopted_policies", adopted_to_serialize)
             & boost::serialization::make_nvp("m_initial_adopted_policies", initial_to_serialize)
             & boost::serialization::make_nvp("m_available_policies", available_to_serialize);
@@ -114,7 +105,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if constexpr (Archive::is_loading::value) {
         ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_total_duration);
     } else {
-        const auto adopted_durations_to_serialize = GetAdoptionTotalDurationsToSerialize(encoding_empire, diplo_status);
+        const auto& adopted_durations_to_serialize = GetAdoptionTotalDurationsToSerialize(encoding_empire);
         ar  & boost::serialization::make_nvp("m_policy_adoption_total_duration", adopted_durations_to_serialize);
     }
 
@@ -127,10 +118,12 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             m_policy_adoption_current_duration[policy_name] =
                 app ? (current_turn - adoption_info.adoption_turn) : 0;
         }
+
     } else if constexpr (Archive::is_loading::value) {
         ar  & BOOST_SERIALIZATION_NVP(m_policy_adoption_current_duration);
+
     } else {
-        const auto current_durations_to_serialize = GetAdoptionCurrentDurationsToSerialize(encoding_empire, diplo_status);
+        const auto& current_durations_to_serialize = GetAdoptionCurrentDurationsToSerialize(encoding_empire);
         ar  & boost::serialization::make_nvp("m_policy_adoption_current_duration", current_durations_to_serialize);
     }
 
@@ -149,33 +142,14 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         ar  & BOOST_SERIALIZATION_NVP(m_meters);
     }
 
-    if (Archive::is_saving::value && !allied_visible) {
-        // don't send what other empires building and researching
-        // and which building and ship parts are available to them
-        ResearchQueue empty_research_queue(m_id);
-        decltype(this->m_research_progress) empty_research_progress;
-        ProductionQueue empty_production_queue(m_id);
-        decltype(this->m_available_building_types) empty_string_set;
-        static_assert(std::is_same_v<decltype(empty_string_set), decltype(this->m_available_ship_parts)>);
-        static_assert(std::is_same_v<decltype(empty_string_set), decltype(this->m_available_ship_hulls)>);
-        InfluenceQueue empty_influence_queue(m_id);
-
-        ar  & boost::serialization::make_nvp("m_research_queue", empty_research_queue)
-            & boost::serialization::make_nvp("m_research_progress", empty_research_progress)
-            & boost::serialization::make_nvp("m_production_queue", empty_production_queue)
-            & boost::serialization::make_nvp("m_influence_queue", empty_influence_queue)
-            & boost::serialization::make_nvp("m_available_building_types", empty_string_set)
-            & boost::serialization::make_nvp("m_available_part_types", empty_string_set)
-            & boost::serialization::make_nvp("m_available_hull_types", empty_string_set);
-    } else {
-        // processing all data on deserialization, saving to savegame,
-        // or sending data to the current empire itself
+    if constexpr (Archive::is_loading::value) {
+        // loading
         ar  & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_influence_queue);
 
-        if (Archive::is_loading::value && version < 13) {
+        if (version < 13) {
             std::set<std::string> buf;
             ar  & boost::serialization::make_nvp("m_available_building_types", buf);
             m_available_building_types.insert(boost::container::ordered_unique_range, buf.begin(), buf.end());
@@ -191,11 +165,31 @@ void Empire::serialize(Archive& ar, const unsigned int version)
                 & boost::serialization::make_nvp("m_available_part_types", m_available_ship_parts)
                 & boost::serialization::make_nvp("m_available_hull_types", m_available_ship_hulls);
         }
+
+    } else {
+        const auto& research_queue = GetResearchQueueToSerialize(encoding_empire);
+        const auto& research_progress = GetResearchProgressToSerialize(encoding_empire);
+        const auto& prod_queue = GetProductionQueueToSerialize(encoding_empire);
+        const auto& influence_queue = GetInfluenceQueueToSerialize(encoding_empire);
+        const auto& buildings = GetAvailableBuildingsToSerialize(encoding_empire);
+        const auto& parts = GetAvailablePartsToSerialize(encoding_empire);
+        const auto& hulls = GetAvailableHullsToSerialize(encoding_empire);
+
+        ar  & boost::serialization::make_nvp("m_research_queue", research_queue)
+            & boost::serialization::make_nvp("m_research_progress", research_progress)
+            & boost::serialization::make_nvp("m_production_queue", prod_queue)
+            & boost::serialization::make_nvp("m_influence_queue", influence_queue)
+            & boost::serialization::make_nvp("m_available_building_types", buildings)
+            & boost::serialization::make_nvp("m_available_part_types", parts)
+            & boost::serialization::make_nvp("m_available_hull_types", hulls);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_supply_system_ranges);
     ar  & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems);
     ar  & BOOST_SERIALIZATION_NVP(m_preserved_system_exit_lanes);
+
+
+    const bool visible = (ALL_EMPIRES == encoding_empire) || (m_id == encoding_empire);
 
     if (visible) {
         try {
@@ -268,6 +262,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             ErrorLogger() << "Empire::serialize failed to (de)serialize stuff for visible empire: " << e.what();
         }
     }
+
 
     ar  & BOOST_SERIALIZATION_NVP(m_authenticated);
     ar  & BOOST_SERIALIZATION_NVP(m_ready);
