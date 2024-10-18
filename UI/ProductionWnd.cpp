@@ -340,13 +340,16 @@ namespace {
             const ScriptingContext context;
 
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
-            auto [total_cost, minimum_turns] = elem.ProductionCostAndTime(context);
+            auto [total_cost, minimum_turns] = elem.ProductionCostAndTime(context); // may return {-1.0f, -1}
             total_cost *= elem.blocksize;
 
+            total_cost = std::max(total_cost, 0.0f);
+            minimum_turns = std::max(1, minimum_turns);
+
             auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
-            float pp_accumulated = empire ? empire->ProductionStatus(queue_index, context) : 0.0f; // returns as PP
-            if (pp_accumulated == -1.0f)
-                pp_accumulated = 0.0f;
+            const float pp_accumulated = std::max<float>(
+                0.0f,
+                empire ? empire->ProductionStatus(queue_index, context) : 0.0f); // returns as PP
 
             panel = GG::Wnd::Create<QueueProductionItemPanel>(
                 GG::X0, GG::Y0, ClientWidth() - X_MARGIN,
@@ -410,7 +413,10 @@ namespace {
         m_turn_spending(turn_spending),
         m_total_cost(total_cost),
         m_completed_progress(completed_progress)
-    {}
+    {
+        if (m_total_turns < 1 || m_total_cost < 0)
+            WarnLogger() << "Low turns or total cost";
+    }
 
     void QueueProductionItemPanel::CompleteConstruction() {
         GG::Control::CompleteConstruction();
@@ -523,11 +529,11 @@ namespace {
             outline_color = GG::LightenClr(outline_color);
 
         m_progress_bar = GG::Wnd::Create<MultiTurnProgressBar>(
-            m_total_turns, perc_complete, next_progress,
+            std::max<int>(m_total_turns, 1), perc_complete, next_progress,
             GG::LightenClr(ClientUI::TechWndProgressBarBackgroundColor()),
             ClientUI::TechWndProgressBarColor(), outline_color);
 
-        double max_spending_per_turn = m_total_cost / m_total_turns;
+        double max_spending_per_turn = m_total_cost / std::max<int>(m_total_turns, 1);
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))
             % DoubleToString(m_turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
