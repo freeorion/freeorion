@@ -208,8 +208,9 @@ void CUIWnd::InitSizeMove(GG::Pt ul, GG::Pt lr) {
 
     // If the window has already had its default position specified (either in the ctor
     // or a previous call to this function), apply this position to the window.
+    const std::string option_window_left_name = option_prefix + window_mode + ".left";
     if (db.Get<bool>(option_initialized_name) ||
-        db.Get<GG::X>(option_prefix + window_mode + ".left") == INVALID_X)
+        db.Get<GG::X>(option_window_left_name) == INVALID_X)
     {
         SetDefaultedOptions();
         SizeMove(ul, lr);
