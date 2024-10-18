@@ -29,10 +29,13 @@
 #include <type_traits>
 #include <utility>
 #if !defined(__cpp_lib_integer_comparison_functions)
-namespace std {
-    inline auto cmp_greater_equal(auto&& lhs, auto&& rhs) { return lhs >= rhs; }
-    inline auto cmp_less_equal(auto&& lhs, auto&& rhs) { return lhs <= rhs; }
+namespace {
+    constexpr auto cmp_greater_equal(const auto& lhs, const auto& rhs) { return lhs >= rhs; }
+    constexpr auto cmp_less_equal(const auto& lhs, const auto& rhs) { return lhs <= rhs; }
 }
+#else
+using std::cmp_greater_equal;
+using std::cmp_less_equal;
 #endif
 
 namespace {
@@ -258,7 +261,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // convert to vector
     std::vector<std::string> adopted_policies_in_category(total_slots_in_category, "");
     for (auto& [adopted_policy_slot, adopted_policy_name] : adopted_policies_in_category_map) {
-        if (adopted_policy_slot < 0 || std::cmp_greater_equal(adopted_policy_slot, adopted_policies_in_category.size())) {
+        if (adopted_policy_slot < 0 || cmp_greater_equal(adopted_policy_slot, adopted_policies_in_category.size())) {
             ErrorLogger() << "AdoptPolicy somehow got slot " << adopted_policy_slot << " of adopted policy " << adopted_policy_name
                           << " outside the suitable range with total slots size: " << adopted_policies_in_category.size();
             continue;
@@ -819,7 +822,7 @@ bool Empire::ShipHullAvailable(const std::string& name) const
 { return m_available_ship_hulls.contains(name); }
 
 float Empire::ProductionStatus(int i, const ScriptingContext& context) const {
-    if (0 > i || std::cmp_greater_equal(i, m_production_queue.size()))
+    if (0 > i || cmp_greater_equal(i, m_production_queue.size()))
         return -1.0f;
     const float item_progress = m_production_queue[i].progress;
     const auto item_cost = m_production_queue[i].ProductionCostAndTime(context).first;
@@ -1583,7 +1586,7 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos) {
 
     auto it = m_research_queue.find(name);
 
-    if (pos < 0 || std::cmp_less_equal(m_research_queue.size(), pos)) {
+    if (pos < 0 || cmp_less_equal(m_research_queue.size(), pos)) {
         // default to putting at end
         bool paused = false;
         if (it != m_research_queue.end()) {
@@ -1690,14 +1693,14 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
     }
 
     ProductionQueue::Element elem{item, m_id, uuid, number, number, blocksize, location};
-    if (pos < 0 || std::cmp_less_equal(m_production_queue.size(), pos))
+    if (pos < 0 || cmp_less_equal(m_production_queue.size(), pos))
         m_production_queue.push_back(std::move(elem));
     else
         m_production_queue.insert(m_production_queue.begin() + pos, std::move(elem));
 }
 
 void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize) {
-    if (index < 0 || std::cmp_less_equal(m_production_queue.size(), index))
+    if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     DebugLogger() << "Empire::SetProductionQuantityAndBlocksize() called for item "<< m_production_queue[index].item.name << "with new quant " << quantity << " and new blocksize " << blocksize;
     if (quantity < 1)
@@ -1722,7 +1725,7 @@ void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int bloc
 
 void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
     DebugLogger() << "Empire::SplitIncompleteProductionItem() called for index " << index;
-    if (index < 0 || std::cmp_less_equal(m_production_queue.size(), index))
+    if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::SplitIncompleteProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     if (m_production_queue[index].item.build_type == BuildType::BT_BUILDING)
         throw std::runtime_error("Empire::SplitIncompleteProductionItem() : Attempted to split a production item that is not a ship.");
@@ -1741,7 +1744,7 @@ void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
 
 void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid) {
     DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index << " with new UUID: " << boost::uuids::to_string(uuid);
-    if (index < 0 || std::cmp_less_equal(m_production_queue.size(), index))
+    if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 
     auto& elem = m_production_queue[index];
@@ -1749,13 +1752,13 @@ void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid) {
 }
 
 void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
-    if (index < 0 || std::cmp_less_equal(m_production_queue.size(), index))
+    if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     m_production_queue[index].rally_point_id = rally_point_id;
 }
 
 void Empire::SetProductionQuantity(int index, int quantity) {
-    if (index < 0 || std::cmp_less_equal(m_production_queue.size(), index))
+    if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
     if (quantity < 1)
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to set the quantity of a build run to a value less than zero.");
