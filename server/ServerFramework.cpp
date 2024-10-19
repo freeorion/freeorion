@@ -110,7 +110,8 @@ auto PythonServer::InitModules() -> bool
     if (GetOptionsDB().Get<int>("network.server.python.asyncio-interval") > 0) {
         py::object asyncio = py::import("asyncio");
 
-        m_asyncio_event_loop = asyncio.attr("get_event_loop")();
+        m_asyncio_event_loop = asyncio.attr("new_event_loop")();
+	asyncio.attr("set_event_loop")(m_asyncio_event_loop);
     }
 
     DebugLogger() << "Server Python modules successfully initialized!";
