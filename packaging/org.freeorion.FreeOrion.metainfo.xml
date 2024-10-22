@@ -20,6 +20,7 @@
   <url type="faq">http://www.freeorion.org/index.php/FAQ</url>
   <url type="help">http://www.freeorion.org/forum/viewforum.php?f=25</url>
   <url type="homepage">http://www.freeorion.org</url>
+  <url type="vcs-browser">https://github.com/freeorion/freeorion</url>
   <screenshots>
     <screenshot type="default">
       <caption>Galaxy map with system statistics</caption>
