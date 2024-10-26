@@ -14,7 +14,7 @@
 
 class ObjectMap;
 
-//! Types of resources that Empire%s can produce
+//! Types of resources that Empires can produce
 FO_ENUM(
     (ResourceType),
     ((INVALID_RESOURCE_TYPE, -1))

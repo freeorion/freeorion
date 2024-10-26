@@ -396,11 +396,11 @@ public:
 
     /** Resets production of resources and calculates allocated resources (on
       * each item in queues and overall) for each resource by calling
-      * UpdateResearchQueue, UpdateProductionQueue, UpdateInfluenceSpending.  Does
-      * not actually "spend" resources, but just determines how much and on what
-      * to spend.  Actual consumption of resources, removal of items from queue,
-      * processing of finished items and population growth happens in various
-      * Check(Whatever)Progress functions. */
+      * UpdateResearchQueue, UpdateProductionQueue, UpdateInfluenceSpending.
+      * Does not actually "spend" resources, but just determines how much and
+      * on what to spend.  Actual consumption of resources, removal of items
+      * from queue, processing of finished items and population growth happens
+      * in various Check(Whatever)Progress functions. */
     void UpdateResourcePools(const ScriptingContext& context,
                              const std::vector<std::tuple<std::string_view, double, int>>& research_costs,
                              const std::vector<std::pair<int, double>>& annex_costs,
