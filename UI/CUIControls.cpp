@@ -2121,7 +2121,7 @@ void MultiTurnProgressBar::Render() {
     // segment lines
     GG::GL2DVertexBuffer segment_verts;
     GG::GLRGBAColorBuffer segment_colors;
-    if (m_num_segments > 1u && m_num_segments < Value(Width())) {
+    if (m_num_segments > 1u && std::cmp_less(m_num_segments, Value(Width()))) {
         try {
             segment_verts.reserve(std::size_t{2u} * m_num_segments);
             segment_colors.reserve(std::size_t{2u} * m_num_segments);
