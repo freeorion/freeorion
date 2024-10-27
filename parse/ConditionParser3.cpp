@@ -213,7 +213,7 @@ namespace parse::detail {
         unique_of1
             = ( omit_[tok.Unique_]
             >>  label(tok.sortkey_)  >> double_rules.expr
-            >   label(tok.condition_) > condition_parser)
+            >  (label(tok.condition_) > condition_parser))
             [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                 deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<int>>(std::numeric_limits<int>::max())), _pass),
                 deconstruct_movable_(_1, _pass),
@@ -224,7 +224,7 @@ namespace parse::detail {
         unique_of2
             = ( omit_[tok.Unique_]
             >>  label(tok.sortkey_) >> string_grammar
-            >   label(tok.condition_) > condition_parser)
+            >  (label(tok.condition_) > condition_parser))
             [ _val = construct_movable_(new_<Condition::SortedNumberOf>(
                 deconstruct_movable_(construct_movable_(new_<ValueRef::Constant<int>>(std::numeric_limits<int>::max())), _pass),
                 deconstruct_movable_(_1, _pass),
