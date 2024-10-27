@@ -1668,12 +1668,12 @@ namespace {
             ships_fighters_to_add_back[launched_from_id]++;
         }
         DebugLogger() << "Fighters left at end of combat:";
-        for (const auto [ship_id, fighter_count] : ships_fighters_to_add_back)
+        for (const auto& [ship_id, fighter_count] : ships_fighters_to_add_back)
             DebugLogger() << " ... from ship id " << ship_id << " : " << fighter_count;
 
 
         DebugLogger() << "Returning fighters to ships:";
-        for (const auto [ship_id, fighter_count] : ships_fighters_to_add_back) {
+        for (const auto& [ship_id, fighter_count] : ships_fighters_to_add_back) {
             auto ship = combat_info.objects.getRaw<Ship>(ship_id);
             if (!ship) {
                 ErrorLogger(combat) << "Couldn't get ship with id " << ship_id << " for fighter to return to...";
