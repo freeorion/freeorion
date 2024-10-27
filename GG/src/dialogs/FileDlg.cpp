@@ -711,9 +711,8 @@ void FileDlg::OpenDirectory()
         // remain in current directory
         UpdateList();
         return;
-    }
 
-    else if (directory_sv == "..") {
+    } else if (directory_sv == "..") {
         // move to parent directory of current directory
         if (s_working_dir.string() != s_working_dir.root_path().string() &&
             !s_working_dir.parent_path().string().empty())
@@ -731,10 +730,9 @@ void FileDlg::OpenDirectory()
             UpdateList();
         }
         return;
-    }
 
-    else {
-        std::string const directory{directory_sv.substr(1, directory.size() - 2)}; // strip off '[' and ']'
+    } else {
+        std::string const directory{directory_sv.substr(1, directory_sv.size() - 2)}; // strip off '[' and ']'
 
         // move to contained directory, which may be a drive selection...
         if (!m_in_win32_drive_selection) {
