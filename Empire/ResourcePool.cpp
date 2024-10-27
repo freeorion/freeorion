@@ -157,6 +157,7 @@ void ResourcePool::Update(const ObjectMap& objects) {
         // resource when, for instance, distributing pp
         if (object_system_group.empty()) {
             // store object id in set, even though it is not likely actually a system
+            object_system_group.reserve(1); // quiet GCC warning https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100366
             object_system_group.insert(object_id);
 
             const auto* mmt = obj->GetMeter(meter_type);
