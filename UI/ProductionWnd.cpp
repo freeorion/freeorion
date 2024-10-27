@@ -408,11 +408,11 @@ namespace {
         double turn_spending, double total_cost, int turns, int number, double completed_progress) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         elem(build),
-        m_in_progress(build.allocated_pp || build.turns_left_to_next_item == 1),
-        m_total_turns(turns),
         m_turn_spending(turn_spending),
         m_total_cost(total_cost),
-        m_completed_progress(completed_progress)
+        m_completed_progress(completed_progress),
+        m_total_turns(turns),
+        m_in_progress(build.allocated_pp || build.turns_left_to_next_item == 1)
     {
         if (m_total_turns < 1 || m_total_cost < 0)
             WarnLogger() << "Low turns or total cost";
