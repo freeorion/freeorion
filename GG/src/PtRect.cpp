@@ -109,18 +109,18 @@ namespace StaticTests {
     static_assert([](){ Y y(Y1); y--; return y; }() == Y0);
     static_assert([](){ Y y(Y0); y--; return y; }() != Y0);
 
-    inline constexpr Y szy{22};
-    inline constexpr int margin = 3;
-    inline constexpr int tw = Value(szy - 4 * margin);
+    constexpr Y szy{22};
+    constexpr int margin = 3;
+    constexpr int tw = Value(szy - 4 * margin);
     static_assert(tw == 10);
-    inline constexpr int ow = tw + 3 * margin;
+    constexpr int ow = tw + 3 * margin;
     static_assert(ow == 19);
-    inline constexpr X szx{5};
-    inline constexpr X tl = szx - tw - margin * 5 / 2;
+    constexpr X szx{5};
+    constexpr X tl = szx - tw - margin * 5 / 2;
     static_assert(Value(tl) == -12);
-    inline constexpr auto btnl = szx - ow - margin;
+    constexpr auto btnl = szx - ow - margin;
     static_assert(btnl == GG::X(-17));
-    inline constexpr auto btnr = szx - margin;
+    constexpr auto btnr = szx - margin;
     static_assert(Value(btnr) == 2);
     static_assert(margin - szx == -Value(btnr));
 }
