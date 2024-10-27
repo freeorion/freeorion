@@ -2145,20 +2145,6 @@ Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(Clr c
 
 
 ///////////////////////////////////////
-// class GG::Font::RenderState
-///////////////////////////////////////
-namespace {
-    std::array<GLubyte, 4> GetCurrentByteColor() {
-        std::array<GLfloat, 4> current_float{};
-        glGetFloatv(GL_CURRENT_COLOR, current_float.data());
-        return std::array<GLubyte, 4>{static_cast<GLubyte>(current_float[0]*255),
-                                      static_cast<GLubyte>(current_float[1]*255),
-                                      static_cast<GLubyte>(current_float[2]*255),
-                                      static_cast<GLubyte>(current_float[3]*255)};
-    }
-}
-
-///////////////////////////////////////
 // struct GG::Font::Glyph
 ///////////////////////////////////////
 Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv) :
