@@ -3574,6 +3574,9 @@ Music files
 OPTIONS_SOUND_FILE
 Sound files
 
+OPTIONS_FONT_FILE
+Font files
+
 OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Auto-generated effect descriptions
 
