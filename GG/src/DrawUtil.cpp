@@ -16,8 +16,33 @@
 
 
 #if !defined(__cpp_lib_integer_comparison_functions)
-constexpr bool cmp_less_equal(std::size_t l, int r) noexcept { return l <= r; }
-constexpr bool cmp_greater(std::size_t l, int r) noexcept { return l > r; }
+constexpr bool cmp_less_equal(std::size_t l, int r) noexcept
+{ return (r < 0) ? false : (l <= static_cast<std::size_t>(r)); }
+static_assert(cmp_less_equal(0u, 0));
+static_assert(cmp_less_equal(0u, 1));
+static_assert(cmp_less_equal(1u, 1));
+static_assert(!cmp_less_equal(1u, 0));
+static_assert(cmp_less_equal(1u, 2));
+static_assert(cmp_less_equal(0u, INT_MAX));
+static_assert(cmp_less_equal(static_cast<std::size_t>(INT_MAX), INT_MAX));
+static_assert(!cmp_less_equal(static_cast<std::size_t>(INT_MAX), 0));
+static_assert(!cmp_less_equal(0u, -1));
+static_assert(!cmp_less_equal(0u, INT_MIN));
+static_assert(!cmp_less_equal(static_cast<std::size_t>(INT_MAX), INT_MIN));
+
+constexpr bool cmp_greater(std::size_t l, int r) noexcept
+{ return (r < 0) ? true : (l > static_cast<std::size_t>(r)); }
+static_assert(!cmp_greater(0u, 0));
+static_assert(!cmp_greater(0u, 1));
+static_assert(!cmp_greater(1u, 1));
+static_assert(cmp_greater(1u, 0));
+static_assert(!cmp_greater(1u, 2));
+static_assert(!cmp_greater(0u, INT_MAX));
+static_assert(!cmp_greater(static_cast<std::size_t>(INT_MAX), INT_MAX));
+static_assert(cmp_greater(static_cast<std::size_t>(INT_MAX), 0));
+static_assert(cmp_greater(0u, -1));
+static_assert(cmp_greater(0u, INT_MIN));
+static_assert(cmp_greater(static_cast<std::size_t>(INT_MAX), INT_MIN));
 #else
 using std::cmp_less_equal;
 using std::cmp_greater;
