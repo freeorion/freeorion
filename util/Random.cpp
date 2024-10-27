@@ -25,7 +25,9 @@ namespace StaticTests {
     using namespace RandomImpl;
 
     constexpr auto test_num_hash0 = hash(uint8_t{0});
+    static_assert(test_num_hash0 == 220086046u);
     constexpr auto test_num_hash1 = hash(uint8_t{1});
+    static_assert(test_num_hash1 == 555565661u);
 
     constexpr std::array<char, 9> zt{"00:00:00"};
     constexpr std::array test_nums{CxPRNG(0, zt), CxPRNG(1, zt) % 20, CxPRNG(2, zt) % 20, CxPRNG(3, zt) % 20,
