@@ -435,23 +435,32 @@ void FileDlg::CancelClicked()
     m_result.clear();
 }
 
-void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
+void FileDlg::FileSetChanged(const ListBox::SelectionSet& file_rows)
 {
+    using sel_t = std::decay_t<decltype(*file_rows.begin())>;
+    static_assert(std::is_same_v<sel_t, ListBox::iterator>);
+
+    static constexpr auto to_filename = [](ListBox::iterator file_row_it) -> std::string_view {
+        const auto& sh_ptr = *file_row_it;
+        if (!sh_ptr || sh_ptr->empty())
+            return {};
+        const auto* ctrl = sh_ptr->at(0);
+        const auto* tc = dynamic_cast<const TextControl*>(ctrl);
+        return tc ? tc->Text() : std::string_view{};
+    };
+
+
     std::string all_files;
-    all_files.reserve(files.size() * 50); // guesstimate
+    all_files.reserve(file_rows.size() * 50); // guesstimate
     bool dir_selected = false;
-    for (const auto& file : files) {
-        const auto filename = [file{file->get()}]() -> std::string_view {
-            if (!file || file->empty())
-                return {};
-            const auto* tc = dynamic_cast<TextControl*>(file);
-            return tc ? std::string_view{tc->Text()} : std::string_view{};
-        }();
+
+    for (const auto& file_row_it : file_rows) {
+        auto filename = to_filename(file_row_it);
 
         if (filename.empty()) {
             continue;
 
-        } else if (filename[0] != '[') {
+        } else if (filename.front() != '[') { // not a directory
             if (!all_files.empty())
                 all_files += " ";
             all_files += filename;
@@ -693,7 +702,7 @@ void FileDlg::OpenDirectory()
     if (sels.empty())
         return;
 
-    const auto directory_sv = [sel{(*sels.begin())->get()}]() -> std::string_view {
+    const auto wrapped_directory_sv = [sel{(*sels.begin())->get()}]() -> std::string_view {
         if (!sel || sel->empty())
             return {};
         try {
@@ -704,8 +713,10 @@ void FileDlg::OpenDirectory()
         }
     }();
 
-    if (directory_sv.size() < 2 || directory_sv[0] != '[')
+    if (wrapped_directory_sv.size() < 2 || wrapped_directory_sv.front() != '[' || wrapped_directory_sv.back() != ']')
         return;
+
+    const auto directory_sv = wrapped_directory_sv.substr(1, wrapped_directory_sv.size() - 2u);
 
     if (directory_sv == ".") {
         // remain in current directory
@@ -732,23 +743,21 @@ void FileDlg::OpenDirectory()
         return;
 
     } else {
-        std::string const directory{directory_sv.substr(1, directory_sv.size() - 2)}; // strip off '[' and ']'
-
         // move to contained directory, which may be a drive selection...
         if (!m_in_win32_drive_selection) {
 #if defined(_WIN32)
             // convert UTF-8 file name to UTF-16
             boost::filesystem::path::string_type directory_native;
-            utf8::utf8to16(directory.begin(), directory.end(), std::back_inserter(directory_native));
+            utf8::utf8to16(directory_sv.begin(), directory_sv.end(), std::back_inserter(directory_native));
             SetWorkingDirectory(s_working_dir / fs::path(directory_native));
 #else
-            SetWorkingDirectory(s_working_dir / fs::path(directory));
+            SetWorkingDirectory(s_working_dir / fs::path(std::string{directory_sv}));
 #endif
 
         } else {
             m_in_win32_drive_selection = false;
             try {
-                SetWorkingDirectory(fs::path(directory + "\\"));
+                SetWorkingDirectory(fs::path(std::string{directory_sv} + "\\"));
             } catch (const fs::filesystem_error& e) {
                 if (e.code() != boost::system::errc::io_error)
                     throw;
