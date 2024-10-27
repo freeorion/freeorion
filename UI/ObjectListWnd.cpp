@@ -1678,7 +1678,7 @@ public:
         m_panel->Resize(Size() - border);
     }
 
-    [[nodiscard]] GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const noexcept
+    [[nodiscard]] GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
     { return m_panel ? m_panel->SortKey(column) : EMPTY_STRING; }
 
     [[nodiscard]] int ObjectID() const noexcept
