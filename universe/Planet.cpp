@@ -1222,10 +1222,9 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
     // give bonuses for allied ground combat, so allies can effectively fight together
     auto effective_empires_troops{empires_troops};
     for (const auto empire1_id : empires_troops | range_keys) {
-        for (const auto [empire2_id, troop2_count] : empires_troops
-             | range_filter([empire1_id](const auto& id2_troops)
-                            { return empire1_id != id2_troops.first; }))
-        {
+        const auto not_empire1 = [empire1_id](const auto& id2_troops) noexcept { return empire1_id != id2_troops.first; };
+
+        for (const auto& [empire2_id, troop2_count] : empires_troops | range_filter(not_empire1)) {
             const auto it = diplo_statuses.find(DiploKey(empire1_id, empire2_id));
             if (it != diplo_statuses.end() && it->second == DiplomaticStatus::DIPLO_ALLIED)
                 effective_empires_troops[empire1_id] += troop2_count;
@@ -1234,8 +1233,8 @@ void Planet::ResolveGroundCombat(std::map<int, double>& empires_troops,
 
     // find effective troops and ID of victor...
     std::multimap<double, int> inverted_empires_troops;
-    for (const auto& entry : effective_empires_troops)
-        inverted_empires_troops.emplace(entry.second, entry.first);
+    for (const auto& [eff_emp_id, eff_troops] : effective_empires_troops)
+        inverted_empires_troops.emplace(eff_troops, eff_emp_id);
 
     const auto [victor_self_troops, victor_id] = *inverted_empires_troops.rbegin();
     static_assert(std::is_integral_v<decltype(victor_id)>);
