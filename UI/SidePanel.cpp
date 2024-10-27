@@ -896,7 +896,7 @@ namespace {
 
         [[nodiscard]] int SystemID() const noexcept { return m_system_id; }
 
-        [[nodiscard]] SortKeyType SortKey(std::size_t) const noexcept { return EMPTY_STRING; }
+        [[nodiscard]] SortKeyType SortKey(std::size_t) const noexcept override { return EMPTY_STRING; }
 
     private:
         int m_system_id;
