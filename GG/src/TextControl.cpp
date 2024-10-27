@@ -136,7 +136,6 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     const auto out_length = std::max(low_string_idx, high_string_idx) - std::min(low_string_idx, high_string_idx);
 
     const auto low_it = m_text.begin() + low_string_idx;
-    const auto high_it = m_text.begin() + high_string_idx;
 
     try {
         return {&*low_it, out_length};
