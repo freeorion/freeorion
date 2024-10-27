@@ -56,14 +56,15 @@ struct GG_API Pt
     Y y = Y0;
 
     static constexpr std::size_t hash(std::size_t x) {
+        uint64_t h = static_cast<uint64_t>(x);
         // from Boost hash_mix_impl
-        const std::size_t m = (std::size_t(0xe9846afu) << 32u) + std::size_t(0x9b1a615du);
-        x ^= x >> 32u;
-        x *= m;
-        x ^= x >> 32u;
-        x *= m;
-        x ^= x >> 28u;
-        return x;
+        const uint64_t m = (uint64_t(0xe9846afu) << 32u) + uint64_t(0x9b1a615du);
+        h ^= h >> 32u;
+        h *= m;
+        h ^= h >> 32u;
+        h *= m;
+        h ^= h >> 28u;
+        return static_cast<std::size_t>(h);
     }
 
     static constexpr std::size_t hash(std::size_t x, std::size_t y)
