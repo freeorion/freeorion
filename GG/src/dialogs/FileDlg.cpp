@@ -493,7 +493,7 @@ void FileDlg::SetWorkingDirectory(const fs::path& p)
 {
     m_files_edit->Clear();
     FilesEditChanged(m_files_edit->Text());
-    s_working_dir = p;
+    s_working_dir = fs::canonical(p);
     UpdateDirectoryText();
     UpdateList();
 }
