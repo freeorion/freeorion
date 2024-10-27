@@ -1284,8 +1284,8 @@ void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, std::strin
                             std::string text)
 {
     FileOption(page, indentation_level, std::move(option_name), std::move(text),
-               GetRootDataDir() / "default", {std::string(option_name), "*" + FONT_FILE_SUFFIX},
-               ValidFontFile);
+               GetRootDataDir() / "default",
+               {UserString("OPTIONS_FONT_FILE"), "*" + FONT_FILE_SUFFIX}, ValidFontFile);
 }
 
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
