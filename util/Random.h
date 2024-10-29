@@ -55,7 +55,11 @@ namespace RandomImpl {
     }
     // generate a compile-time PRNG int that is seeded differently for each second of the day.
     // \a n indicates which value for the current seed to return.
+#ifdef STATIC_RANDOM_TESTS
     inline consteval uint32_t CxPRNG(int16_t n = counter_val, std::array<char, 9> seed = std::array<char, 9>{__TIME__}) {
+#else
+    inline consteval uint32_t CxPRNG(int16_t n = counter_val, std::array<char, 9> seed = std::array<char, 9>{"12:34:56"}) {
+#endif
         uint32_t retval{TimeToInt(seed)};
         for (; n > 0; --n)
             retval = hash(retval);
@@ -77,7 +81,11 @@ inline consteval int32_t RandIntCx(const int32_t min, const int32_t max,
     return min + static_cast<int32_t>(val_in_range);
 }
 inline consteval int32_t RandIntCx(const int32_t min, const int32_t max, const int16_t n,
-                                   const std::array<char, 9> seed = std::array<char, 9>{__TIME__}) noexcept
+#ifdef STATIC_RANDOM_TESTS
+        const std::array<char, 9> seed = std::array<char, 9>{__TIME__}) noexcept
+#else
+        const std::array<char, 9> seed = std::array<char, 9>{"12:34:45"}) noexcept
+#endif
 {
     if (min >= max)
         return min;
