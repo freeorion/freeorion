@@ -313,7 +313,7 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::HasTag>(std::move(name)));
     }
 
-    condition_wrapper insert_has_starline_(const boost::python::tuple& args, const boost::python::dict& kw) {
+    condition_wrapper insert_has_starlane_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
 
         return condition_wrapper(std::make_shared<Condition::HasStarlaneTo>(std::move(from)));
@@ -868,7 +868,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["NoObject"] = condition_wrapper(std::make_shared<Condition::None>());
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);
-    globals["HasStarline"] = boost::python::raw_function(insert_has_starline_);
+    globals["HasStarlane"] = boost::python::raw_function(insert_has_starlane_);
     globals["Planet"] = boost::python::raw_function(insert_planet_);
     globals["Homeworld"] = boost::python::raw_function(insert_homeworld_);
     globals["HasSpecial"] = boost::python::raw_function(insert_has_special_);
