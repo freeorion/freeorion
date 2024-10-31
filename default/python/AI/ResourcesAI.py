@@ -479,6 +479,7 @@ class PlanetFocusManager:
         target_ip_production = sum(
             pi.possible_output[pi.current_focus].influence
             for pi in chain(self.planet_info.values(), self.baked_planet_info.values())
+            if pi.current_focus in pi.possible_output
         )
         ratio = (current_ip + 10 * target_ip_production) / max(1.5, self.priority_influence)  # in turn 1 prio is 0
         debug(
@@ -585,10 +586,12 @@ class PlanetFocusManager:
         planned_pp_target = sum(
             pi.possible_output[pi.future_focus].industry
             for pi in chain(self.baked_planet_info.values(), self.planet_info.values())
+            if pi.future_focus in pi.possible_output
         )
         planned_rp_target = sum(
             pi.possible_output[pi.future_focus].research
             for pi in chain(self.baked_planet_info.values(), self.planet_info.values())
+            if pi.future_focus in pi.possible_output
         )
         pp_per_priority = planned_pp_target / self.priority_industry
         # When the AI finished all research, research prio becomes 0
@@ -742,13 +745,15 @@ class Reporter:
             if pinfo.current_focus != pinfo.future_focus:
                 total_changed += 1
 
-            old_pp, old_rp, *_ = pinfo.possible_output[pinfo.current_focus]
-            current_industry_target += old_pp
-            current_research_target += old_rp
+            if pinfo.current_focus in pinfo.possible_output:
+                old_pp, old_rp, *_ = pinfo.possible_output[pinfo.current_focus]
+                current_industry_target += old_pp
+                current_research_target += old_rp
 
-            future_pp, future_rp, *_ = pinfo.possible_output[pinfo.future_focus]
-            new_industry_target += future_pp
-            new_research_target += future_rp
+            if pinfo.future_focus in pinfo.possible_output:
+                future_pp, future_rp, *_ = pinfo.possible_output[pinfo.future_focus]
+                new_industry_target += future_pp
+                new_research_target += future_rp
 
             industry_pp, industry_rp, *_ = (
                 pinfo.possible_output[INDUSTRY] if INDUSTRY in pinfo.possible_output else (future_pp, future_rp, 0, 0)
