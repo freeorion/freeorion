@@ -196,7 +196,7 @@ void InGameMenu::Options() {
 void InGameMenu::Concede() {
     // show confirmation dialog
     std::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+    auto prompt = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
         GG::X(200), GG::Y(75), UserString("GAME_MENU_REALLY_CONCEDE"), font,
         ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
         2, UserString("YES"), UserString("CANCEL"));

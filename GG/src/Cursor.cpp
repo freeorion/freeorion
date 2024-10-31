@@ -25,7 +25,7 @@ TextureCursor::TextureCursor(std::shared_ptr<Texture> texture, Pt hotspot) :
     m_hotspot.y = std::max(Y0, std::min(m_hotspot.y, m_texture->DefaultHeight() - 1));
 }
 
-void TextureCursor::Render(Pt pt)
+void TextureCursor::Render(Pt pt) const
 {
     assert(m_texture);
     Pt ul = pt - m_hotspot;

@@ -264,8 +264,8 @@ std::shared_ptr<Layout> Wnd::GetLayout() const noexcept
 Layout* Wnd::ContainingLayout() const noexcept
 { return LockAndResetIfExpired(m_containing_layout).get(); }
 
-const std::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
-{ return m_style_factory ? m_style_factory : GUI::GetGUI()->GetStyleFactory(); }
+const StyleFactory& Wnd::GetStyleFactory() const noexcept
+{ return m_style_factory ? std::as_const(*m_style_factory) : GUI::GetGUI()->GetStyleFactory(); }
 
 WndRegion Wnd::WindowRegion(Pt pt) const
 {

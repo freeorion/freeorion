@@ -287,7 +287,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
         ErrorLogger() << "OpenGL version is less than 2.1; FreeOrion may crash during initialization";
     }
 
-    SetStyleFactory(std::make_shared<CUIStyle>());
+    SetStyleFactory(std::make_unique<CUIStyle>());
 
     SetMinDragTime(0);
 
@@ -322,7 +322,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
     auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(std::make_shared<GG::TextureCursor>(std::move(cursor_texture),
+    SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture),
                                                   GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
@@ -1489,8 +1489,8 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
             !m_empires.GetEmpire(m_empire_id)->Ready() &&
             GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
         {
-            std::shared_ptr<GG::Font> font = ClientUI::GetFont();
-            auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+            auto font = ClientUI::GetFont();
+            auto prompt = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
                 GG::X(275), GG::Y(75), UserString("GAME_MENU_CONFIRM_NOT_READY"), font,
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
                 2, UserString("YES"), UserString("CANCEL"));
@@ -1509,7 +1509,7 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
         if (!m_game_saves_in_progress.empty()) {
             DebugLogger() << "save game in progress. Checking with player.";
             // Ask the player if they want to wait for the save game to complete
-            auto dlg = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+            auto dlg = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
                 GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
                 ClientUI::GetFont(ClientUI::Pts()+2),
                 ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),

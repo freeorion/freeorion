@@ -53,7 +53,7 @@ MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS, std::strin
     cursor_texture->Init(GG::X(16), GG::Y(16), cursor_data, GL_RGBA, GL_UNSIGNED_BYTE, 1);
 
     GG::GetTextureManager().StoreTexture(cursor_texture, "test_cursor");
-    SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(1), GG::Y(1))));
+    SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture), GG::Pt(GG::X(1), GG::Y(1))));
     RenderCursor(true);
 
     GLInit();

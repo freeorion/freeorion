@@ -44,26 +44,26 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<
     const auto& style = GetStyleFactory();
 
     auto message_text =
-        style->NewTextControl(std::move(msg), font, m_text_color,
-                              FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
+        style.NewTextControl(std::move(msg), font, m_text_color,
+                             FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
     message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
     message_text->SetResetMinSize(true);
     m_button_layout->Add(std::move(message_text), 0, 0);
     m_button_layout->SetRowStretch(0, 1);
     m_button_layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
 
-    m_button_0 = style->NewButton((zero.empty() ? (buttons < 3 ? "Ok" : "Yes") : std::move(zero)),
-                                  font, m_button_color, m_text_color);
+    m_button_0 = style.NewButton((zero.empty() ? (buttons < 3 ? "Ok" : "Yes") : std::move(zero)),
+                                 font, m_button_color, m_text_color);
     button_layout->Add(m_button_0, 0, 0);
 
     if (2 <= buttons) {
-        m_button_1 = style->NewButton((one.empty() ? (buttons < 3 ? "Cancel" : "No") : std::move(one)),
-                                      font, m_button_color, m_text_color);
+        m_button_1 = style.NewButton((one.empty() ? (buttons < 3 ? "Cancel" : "No") : std::move(one)),
+                                     font, m_button_color, m_text_color);
         button_layout->Add(m_button_1, 0, 1);
     }
     if (3 <= buttons) {
-        m_button_2 = style->NewButton((two.empty() ? "Cancel" : std::move(two)),
-                                      font, m_button_color, m_text_color);
+        m_button_2 = style.NewButton((two.empty() ? "Cancel" : std::move(two)),
+                                     font, m_button_color, m_text_color);
         button_layout->Add(m_button_2, 0, 2);
     }
     m_button_layout->Add(std::move(button_layout), 1, 0);

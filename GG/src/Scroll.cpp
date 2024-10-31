@@ -53,13 +53,13 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
     Control::SetColor(color);
     const auto& style = GetStyleFactory();
     if (m_orientation == Orientation::VERTICAL) {
-        m_decr = style->NewScrollUpButton(color);
-        m_incr = style->NewScrollDownButton(color);
-        m_tab = style->NewVScrollTabButton(color);
+        m_decr = style.NewScrollUpButton(color);
+        m_incr = style.NewScrollDownButton(color);
+        m_tab = style.NewVScrollTabButton(color);
     } else {
-        m_decr = style->NewScrollLeftButton(color);
-        m_incr = style->NewScrollRightButton(color);
-        m_tab = style->NewHScrollTabButton(color);
+        m_decr = style.NewScrollLeftButton(color);
+        m_incr = style.NewScrollRightButton(color);
+        m_tab = style.NewHScrollTabButton(color);
     }
 }
 

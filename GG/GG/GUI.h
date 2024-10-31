@@ -166,10 +166,10 @@ public:
     bool                        DragDropWnd(const Wnd* wnd) const;  ///< returns true if \a wnd is currently begin dragged as part of a drag-and-drop operation
     bool                        AcceptedDragDropWnd(const Wnd* wnd) const;  ///< returns true if \a wnd is currently begin dragged as part of a drag-and-drop operation, and it is over a drop target that will accept it
     bool                        MouseButtonDown(unsigned int bn) const;     ///< returns the up/down states of the mouse buttons
-    Pt                          MousePosition() const;              ///< returns the absolute position of mouse, based on the last mouse motion event
-    Pt                          MouseMovement() const;              ///< returns the relative position of mouse, based on the last mouse motion event
-    Flags<ModKey>               ModKeys() const;                    ///< returns the set of modifier keys that are currently depressed, based on the last event
-    bool                        MouseLRSwapped() const;             ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
+    Pt                          MousePosition() const noexcept;     ///< returns the absolute position of mouse, based on the last mouse motion event
+    Pt                          MouseMovement() const noexcept;     ///< returns the relative position of mouse, based on the last mouse motion event
+    Flags<ModKey>               ModKeys() const noexcept;           ///< returns the set of modifier keys that are currently depressed, based on the last event
+    bool                        MouseLRSwapped() const noexcept;    ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
     virtual std::string         ClipboardText() const;              ///< returns text stored in a clipboard
 
     /** Returns the (begin, end) code point indices of the of the word-tokens in the given string. */
@@ -179,12 +179,12 @@ public:
     std::vector<std::string_view>            FindWordsStringViews(std::string_view str) const;
 
     /** Returns the currently-installed style factory. */
-    const std::shared_ptr<StyleFactory>&    GetStyleFactory() const;
+    const StyleFactory&                     GetStyleFactory() const noexcept;
 
     bool                                    RenderCursor() const; ///< returns true iff the GUI is responsible for rendering the cursor
 
     /* Returns the currently-installed cursor. */
-    const std::shared_ptr<Cursor>&          GetCursor() const;
+    const Cursor&                           GetCursor() const noexcept;
 
     /** Returns an iterator to one past the first defined keyboard accelerator. */
     const_accel_iterator                    accel_begin() const;
@@ -330,17 +330,17 @@ public:
       * generated if \a mipmap is true. */
     std::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
-    /** Removes the desired texture from the managed pool; since shared_ptr's
+    /** Removes the desired texture from the managed pool; since shared_ptr
       * are used, the texture may be deleted much later. */
     void FreeTexture(const boost::filesystem::path& path);
 
     /** Sets the currently-installed style factory. */
-    void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);
+    void SetStyleFactory(std::unique_ptr<StyleFactory>&& factory) noexcept;
 
-    void RenderCursor(bool render); ///< set this to true iff the GUI should render the cursor
+    void RenderCursor(bool render) noexcept; ///< set this to true iff the GUI should render the cursor
 
     /** Sets the currently-installed cursor. */
-    void SetCursor(const std::shared_ptr<Cursor>& cursor);
+    void SetCursor(std::unique_ptr<Cursor>&& cursor) noexcept;
 
     virtual bool SetClipboardText(std::string text);        ///< sets text stored in clipboard
     bool CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard

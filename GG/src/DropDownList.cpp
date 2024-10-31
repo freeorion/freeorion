@@ -151,7 +151,7 @@ struct ModalListPickerSelChangedEcho
 ////////////////////////////////////////////////
 ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, std::size_t num_rows) :
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
-    m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
+    m_lb_wnd(GetStyleFactory().NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max(std::size_t{1u}, num_rows)),
     m_relative_to_wnd(relative_to_wnd)
 {}
