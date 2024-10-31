@@ -104,7 +104,7 @@ class GG_API GUI
 private:
     struct OrCombiner
     {
-        typedef bool result_type; 
+        typedef bool result_type;
         template <typename InIt> bool operator()(InIt first, InIt last) const;
     };
 
@@ -133,11 +133,11 @@ public:
 
     /** The type of iterator returned by non-const accel_begin() and
         accel_end(). */
-    typedef std::set<std::pair<Key, Flags<ModKey>>>::iterator accel_iterator;
+    using accel_iterator = std::vector<std::pair<Key, Flags<ModKey>>>::iterator;
 
     /** The type of iterator returned by const accel_begin() and
         accel_end(). */
-    typedef std::set<std::pair<Key, Flags<ModKey>>>::const_iterator const_accel_iterator;
+    using const_accel_iterator = std::vector<std::pair<Key, Flags<ModKey>>>::const_iterator ;
 
     virtual ~GUI();
 
@@ -187,16 +187,16 @@ public:
     const Cursor&                           GetCursor() const noexcept;
 
     /** Returns an iterator to one past the first defined keyboard accelerator. */
-    const_accel_iterator                    accel_begin() const;
+    const_accel_iterator                    accel_begin() const noexcept;
 
     /** Returns an iterator to one past the last defined keyboard accelerator. */
-    const_accel_iterator                    accel_end() const;
+    const_accel_iterator                    accel_end() const noexcept;
 
     /** Returns the signal that is emitted when the requested keyboard accelerator is invoked. */
     AcceleratorSignalType&                  AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;
 
     /** Returns true iff keyboard accelerator signals fire while modal windows are open. */
-    bool                                    ModalAcceleratorSignalsEnabled() const;
+    bool                                    ModalAcceleratorSignalsEnabled() const noexcept;
 
     /** Returns true iff any modal Wnds are open. */
     bool                                    ModalWndsOpen() const;
@@ -445,12 +445,14 @@ GG_API Flags<ModKey> MassagedAccelModKeys(Flags<ModKey> mod_keys);
 
 
 template <typename InIt>
-bool GUI::OrCombiner::operator()(InIt first, InIt last) const
+bool GUI::OrCombiner::operator()(InIt first, const InIt last) const
 {
-    bool retval = false;
-    while (first != last)
-        retval |= static_cast<bool>(*first++);
-    return retval;
+    static constexpr bool scb_nx = noexcept(static_cast<bool>(*first));
+    return std::any_of(first, last, [](const auto& x) noexcept(scb_nx) { return static_cast<bool>(x); });
+    //bool retval = false;
+    //while (first != last)
+    //    retval |= static_cast<bool>(*first++);
+    //return retval;
 }
 
 template <typename CharSetIter>
