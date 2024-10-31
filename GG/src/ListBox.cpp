@@ -2040,7 +2040,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     // Add necessary vscroll
     if (!m_vscroll && vertical_needed) {
         vscroll_added_or_removed = true;
-        m_vscroll = style->NewListBoxVScroll(m_color, CLR_SHADOW);
+        m_vscroll = style.NewListBoxVScroll(m_color, CLR_SHADOW);
         m_vscroll->NonClientChild(true);
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
@@ -2090,7 +2090,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     // Add necessary hscroll
     if (!m_hscroll && horizontal_needed) {
         hscroll_added_or_removed = true;
-        m_hscroll = style->NewListBoxHScroll(m_color, CLR_SHADOW);
+        m_hscroll = style.NewListBoxHScroll(m_color, CLR_SHADOW);
         m_hscroll->NonClientChild(true);
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));

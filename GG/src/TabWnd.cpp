@@ -137,7 +137,7 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
                Clr text_color) :
     Wnd(x, y, w, h, INTERACTIVE),
-    m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
+    m_tab_bar(GetStyleFactory().NewTabBar(font, color, text_color)),
     m_overlay(Wnd::Create<OverlayWnd>(X0, Y0, X1, Y1))
 {}
 
@@ -246,7 +246,7 @@ void TabBar::CompleteConstruction()
 
     const auto& style_factory = GetStyleFactory();
 
-    m_tabs = style_factory->NewRadioButtonGroup(Orientation::HORIZONTAL);
+    m_tabs = style_factory.NewRadioButtonGroup(Orientation::HORIZONTAL);
     m_tabs->ExpandButtons(true);
     m_tabs->ExpandButtonsProportionally(true);
 
@@ -254,8 +254,8 @@ void TabBar::CompleteConstruction()
     m_left_right_button_layout->SetColumnStretch(1, 0);
     m_left_right_button_layout->SetColumnStretch(2, 0);
 
-    m_left_button = style_factory->NewTabBarLeftButton(m_font, Color(), m_text_color);
-    m_right_button = style_factory->NewTabBarRightButton(m_font, Color(), m_text_color);
+    m_left_button = style_factory.NewTabBarLeftButton(m_font, Color(), m_text_color);
+    m_right_button = style_factory.NewTabBarRightButton(m_font, Color(), m_text_color);
     m_left_button->Resize(Pt(ButtonWidth(), Height()));
     m_right_button->Resize(Pt(ButtonWidth(), Height()));
     m_left_right_button_layout->SetMinimumColumnWidth(1, m_left_button->Width());
@@ -340,8 +340,7 @@ std::size_t TabBar::AddTab(std::string name)
 void TabBar::InsertTab(std::size_t index, std::string name)
 {
     assert(index <= m_tab_buttons.size());
-    const auto& style_factory = GetStyleFactory();
-    auto button = style_factory->NewTabBarTab(
+    auto button = GetStyleFactory().NewTabBarTab(
         std::move(name), m_font, FORMAT_CENTER, Color(), m_text_color);
     button->InstallEventFilter(shared_from_this());
     m_tab_buttons.insert(m_tab_buttons.begin() + index, button);

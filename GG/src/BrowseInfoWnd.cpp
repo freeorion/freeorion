@@ -26,8 +26,8 @@ void BrowseInfoWnd::Update(std::size_t mode, const Wnd* target)
 {
     UpdateImpl(mode, target);
     Pt new_pos;
-    if (PositionWnd) {
-        new_pos = PositionWnd(m_cursor_pos, GUI::GetGUI()->GetCursor(), *this, *target);
+    if (m_position_wnd_fn) {
+        new_pos = m_position_wnd_fn(m_cursor_pos, GUI::GetGUI()->GetCursor(), *this, *target);
     } else {
         static constexpr Y MARGIN{2};
         new_pos = m_cursor_pos - Pt(Width() / 2, Height() + MARGIN);
@@ -59,7 +59,7 @@ TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& fon
     m_border_color(border_color),
     m_border_width(border_width),
     m_preferred_width(w),
-    m_text_control(GetStyleFactory()->NewTextControl("", m_font, text_color, format)),
+    m_text_control(GetStyleFactory().NewTextControl("", m_font, text_color, format)),
     m_text_margin(text_margin)
 {}
 

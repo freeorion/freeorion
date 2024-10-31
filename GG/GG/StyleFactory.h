@@ -56,7 +56,13 @@ struct UnicodeCharset;
 class GG_API StyleFactory
 {
 public:
+#if defined(__cpp_constexpr) && (__cpp_constexpr >= 201907L)
+    constexpr StyleFactory() = default;
+    constexpr virtual ~StyleFactory() = default;
+#else
+    StyleFactory() = default;
     virtual ~StyleFactory() = default;
+#endif
 
     /** Returns the default font for this style, in the size \a pts,
         supporting all printable ASCII characters. */

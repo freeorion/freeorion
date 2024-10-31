@@ -109,7 +109,7 @@ namespace {
 
     bool Prompt(std::string question) {
         const auto font = ClientUI::GetFont();
-        auto prompt = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+        auto prompt = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
             PROMT_WIDTH, PROMPT_HEIGHT, std::move(question), font,
             ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(),
             ClientUI::CtrlColor(), ClientUI::TextColor(),

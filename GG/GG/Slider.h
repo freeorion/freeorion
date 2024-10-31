@@ -138,8 +138,8 @@ Slider<T>::Slider(T min, T max, Orientation orientation,
     m_tab_width(tab_width),
     m_tab_drag_offset(-1),
     m_tab(m_orientation == Orientation::VERTICAL ?
-          GetStyleFactory()->NewVSliderTabButton(color) :
-          GetStyleFactory()->NewHSliderTabButton(color)),
+          GetStyleFactory().NewVSliderTabButton(color) :
+          GetStyleFactory().NewHSliderTabButton(color)),
     m_dragging_tab(false)
 {
     Control::SetColor(color);

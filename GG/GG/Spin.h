@@ -156,10 +156,10 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
 {
     const auto& style = GetStyleFactory();
     Control::SetColor(color);
-    m_edit = style->NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
+    m_edit = style.NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
     auto small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
-    m_up_button = style->NewSpinIncrButton(small_font, color);
-    m_down_button = style->NewSpinDecrButton(small_font, color);
+    m_up_button = style.NewSpinIncrButton(small_font, color);
+    m_down_button = style.NewSpinDecrButton(small_font, color);
 
     if (INSTRUMENT_ALL_SIGNALS)
         ValueChangedSignal.connect(&ValueChangedEcho);
