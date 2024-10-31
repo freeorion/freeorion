@@ -488,7 +488,7 @@ public:
 
     /** Returns the currently-installed style factory if none exists, or the
         GUI-wide one otherwise. */
-    [[nodiscard]] const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
+    [[nodiscard]] const StyleFactory& GetStyleFactory() const noexcept;
 
     /** Returns the region under point \a pt. */
     [[nodiscard]] virtual WndRegion WindowRegion(Pt pt) const;

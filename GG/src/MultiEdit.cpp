@@ -1264,7 +1264,7 @@ void MultiEdit::AdjustScrolls()
                                    scroll_y + cl_sz.y + 2 * INT_GAP - (need_horz ? INT_SCROLL_WIDTH : 0)));
         }
     } else if (!m_vscroll && need_vert) { // if scroll doesn't exist but is needed
-        m_vscroll = style->NewMultiEditVScroll(m_color, CLR_SHADOW);
+        m_vscroll = style.NewMultiEditVScroll(m_color, CLR_SHADOW);
         m_vscroll->MoveTo(Pt(cl_sz.x + INT_GAP - INT_SCROLL_WIDTH, Y(-GAP)));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y + 2 * INT_GAP - (need_horz ? INT_SCROLL_WIDTH : 0)));
 
@@ -1303,7 +1303,7 @@ void MultiEdit::AdjustScrolls()
                                    scroll_y + INT_SCROLL_WIDTH));
         }
     } else if (!m_hscroll && need_horz) { // if scroll doesn't exist but is needed
-        m_hscroll = style->NewMultiEditHScroll(m_color, CLR_SHADOW);
+        m_hscroll = style.NewMultiEditHScroll(m_color, CLR_SHADOW);
         m_hscroll->MoveTo(Pt(X(-GAP), cl_sz.y + GAP - INT_SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x + 2 * GAP - (need_vert ? INT_SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 

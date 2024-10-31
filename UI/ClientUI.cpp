@@ -1062,7 +1062,7 @@ ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
-    auto dlg = GG::GUI::GetGUI()->GetStyleFactory()->NewThreeButtonDlg(
+    auto dlg = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
         GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
         WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(),
         1, UserString("OK"));
@@ -1110,7 +1110,7 @@ std::shared_ptr<GG::Font> ClientUI::GetFont(int pts) {
             return gui->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
                                 pts, rqcs.begin(), rqcs.end());
         } catch (...) {
-             return gui->GetStyleFactory()->DefaultFont(pts);
+             return gui->GetStyleFactory().DefaultFont(pts);
         }
     }
 }
@@ -1126,7 +1126,7 @@ std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts) {
              return gui->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
                                  pts, rqcs.begin(), rqcs.end());
         } catch (...) {
-             return gui->GetStyleFactory()->DefaultFont(pts);
+             return gui->GetStyleFactory().DefaultFont(pts);
         }
     }
 }
@@ -1142,7 +1142,7 @@ std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts) {
             return gui->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
                                 pts, rqcs.begin(), rqcs.end());
         } catch (...) {
-             return gui->GetStyleFactory()->DefaultFont(pts);
+             return gui->GetStyleFactory().DefaultFont(pts);
         }
    }
 }

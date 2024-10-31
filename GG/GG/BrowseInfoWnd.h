@@ -59,9 +59,7 @@ public:
         currently-set cursor, this BrowseInfoWnd, and the Wnd that is
         displaying this BrowseInfoWnd as parameters, and returns the desired
         upper-left corner of this BrowseInfoWnd. */
-    mutable std::function<
-        Pt (Pt, const std::shared_ptr<Cursor>&, const BrowseInfoWnd&, const Wnd&)
-    > PositionWnd;
+    mutable std::function<Pt (Pt, const Cursor&, const BrowseInfoWnd&, const Wnd&)> m_position_wnd_fn;
 
 protected:
     BrowseInfoWnd(X x, Y y, X w, Y h) :

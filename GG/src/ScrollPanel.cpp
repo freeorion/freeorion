@@ -51,7 +51,7 @@ void ScrollPanel::CompleteConstruction()
 
     // Get the scroll bar from the current style factory.
     const auto& style = GetStyleFactory();
-    m_vscroll = style->NewMultiEditVScroll(CLR_WHITE, CLR_BLACK);
+    m_vscroll = style.NewMultiEditVScroll(CLR_WHITE, CLR_BLACK);
 
     // Don't accept less than MIN_SCROLL_WIDTH pixels wide scrolls.
     if (m_vscroll->Width() < MIN_SCROLL_WIDTH) {

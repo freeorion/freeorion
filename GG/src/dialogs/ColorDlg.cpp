@@ -391,12 +391,10 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
                                                  1, 1, 0, 4);
     m_new_color_square = Wnd::Create<ColorDisplay>(color);
     if (m_original_color_specified) {
-        m_new_color_square_text = style->NewTextControl(style->Translate("New"), font,
-                                                        m_text_color, FORMAT_RIGHT);
+        m_new_color_square_text = style.NewTextControl(style.Translate("New"), font, m_text_color, FORMAT_RIGHT);
         m_color_squares_layout->Add(m_new_color_square_text, 0, 0);
         m_color_squares_layout->Add(m_new_color_square, 0, 1);
-        m_old_color_square_text = style->NewTextControl(style->Translate("Old"), font,
-                                                        m_text_color, FORMAT_RIGHT);
+        m_old_color_square_text = style.NewTextControl(style.Translate("Old"), font, m_text_color, FORMAT_RIGHT);
         m_color_squares_layout->Add(m_old_color_square_text, 1, 0);
         m_old_color_square = Wnd::Create<ColorDisplay>(m_original_color);
         m_color_squares_layout->Add(m_old_color_square, 1, 1);
@@ -436,22 +434,20 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
             std::make_tuple(static_cast<int>(m_current_color.v * 255), 0, 255, "V:")
         })
     {
-        m_slider_labels.push_back(style->NewTextControl(style->Translate(color_label), font,
-                                                        m_text_color, FORMAT_RIGHT));
+        m_slider_labels.push_back(style.NewTextControl(style.Translate(color_label), font, m_text_color, FORMAT_RIGHT));
         m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), row, 0);
-        m_slider_values.push_back(style->NewTextControl(std::to_string(color_value),
-                                                        font, m_text_color, FORMAT_LEFT));
+        m_slider_values.push_back(style.NewTextControl(std::to_string(color_value), font, m_text_color, FORMAT_LEFT));
         m_sliders_ok_cancel_layout->Add(m_slider_values.back(), row, 1);
-        m_sliders.push_back(style->NewIntSlider(color_min, color_max, Orientation::HORIZONTAL, m_color, 10));
+        m_sliders.push_back(style.NewIntSlider(color_min, color_max, Orientation::HORIZONTAL, m_color, 10));
         m_sliders.back()->SlideTo(color_value);
         m_sliders_ok_cancel_layout->Add(m_sliders.back(), row, 2);
 
         ++row;
     }
 
-    m_ok = style->NewButton(style->Translate("Ok"), font, m_color, m_text_color);
+    m_ok = style.NewButton(style.Translate("Ok"), font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_ok, 7, 0, 1, 3);
-    m_cancel = style->NewButton(style->Translate("Cancel"), font, m_color, m_text_color);
+    m_cancel = style.NewButton(style.Translate("Cancel"), font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_cancel, 8, 0, 1, 3);
 }
 

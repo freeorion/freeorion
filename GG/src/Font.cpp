@@ -3331,7 +3331,7 @@ bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
 std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
-{ return GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts); }
+{ return GUI::GetGUI()->GetStyleFactory().DefaultFont(pts); }
 
 
 ///////////////////////////////////////

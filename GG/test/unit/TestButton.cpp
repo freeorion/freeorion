@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(!button.GetLayout());
     BOOST_CHECK(!button.ContainingLayout());
     BOOST_CHECK(button.BrowseModes().size() == 1);
-    BOOST_CHECK(button.GetStyleFactory() == gui.GetStyleFactory());
+    BOOST_CHECK(&button.GetStyleFactory() == &gui.GetStyleFactory());
     BOOST_CHECK(button.WindowRegion(GG::Pt0) == GG::WndRegion::WR_NONE);
 }
 
