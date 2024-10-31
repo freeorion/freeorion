@@ -190,45 +190,31 @@ void PopupMenu::LClick(Pt pt, Flags<ModKey> mod_keys)
 void PopupMenu::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     bool cursor_is_in_menu = false;
+    for (int i = static_cast<int>(m_open_levels.size()) - 1; i >= 0; --i) {
+        // get the correct submenu
+        MenuItem* menu_ptr = &m_menu_data;
+        for (int j = 0; j < i; ++j)
+            menu_ptr = &menu_ptr->next_level[m_caret[j]];
+        MenuItem& menu = *menu_ptr;
 
-    if (!m_open_levels.empty() && m_caret.size() >= m_open_levels.size()) {
-        static constexpr auto get_caret_submenu =
-            [](const MenuItem& menu, const std::vector<std::size_t>& caret_idxs, std::size_t depth) -> const MenuItem&
+        if (pt.x >= m_open_levels[i].ul.x && pt.x <= m_open_levels[i].lr.x &&
+            pt.y >= m_open_levels[i].ul.y && pt.y <= m_open_levels[i].lr.y)
         {
-            if (caret_idxs.size() <= depth) // probably redundant check
-                return menu;
-            const auto depth_caret = caret_idxs[depth];
-            if (menu.next_level.size() <= depth_caret)
-                return menu;
-            return menu.next_level[depth_caret];
-        };
-
-        // using int to reverse iterate while avoiding underflow when using decrement
-        for (int igte0 = m_open_levels.size() - 1; igte0 >= 0; --igte0) {
-            const std::size_t i = static_cast<std::size_t>(igte0);
-            const MenuItem& menu = get_caret_submenu(m_menu_data, m_caret, i);
-            const Rect open_level = m_open_levels[i];
-
-            if (pt.x >= open_level.ul.x && pt.x <= open_level.lr.x &&
-                pt.y >= open_level.ul.y && pt.y <= open_level.lr.y)
-            {
-                const std::size_t row_selected = (pt.y - open_level.ul.y) / m_font->Lineskip();
-                if (row_selected == m_caret[i]) {
-                    cursor_is_in_menu = true;
-                } else if (row_selected < menu.next_level.size()) {
-                    m_caret[i] = row_selected;
-                    m_open_levels.resize(i + 1u);
-                    m_caret.resize(i + 1u);
-                    if (!menu.next_level[row_selected].disabled && menu.next_level[row_selected].next_level.size()) {
-                        m_caret.emplace_back(INVALID_CARET);
-                        m_open_levels.emplace_back();
-                    }
-                    cursor_is_in_menu = true;
+            const std::size_t row_selected = (pt.y - m_open_levels[i].ul.y) / m_font->Lineskip();
+            if (row_selected == m_caret[i]) {
+                cursor_is_in_menu = true;
+            } else if (row_selected < menu.next_level.size()) {
+                m_caret[i] = row_selected;
+                m_open_levels.resize(i + 1);
+                m_caret.resize(i + 1);
+                if (!menu.next_level[row_selected].disabled && menu.next_level[row_selected].next_level.size()) {
+                    m_caret.emplace_back(INVALID_CARET);
+                    m_open_levels.emplace_back();
                 }
+                cursor_is_in_menu = true;
             }
         }
     }
-
     if (!cursor_is_in_menu) {
         m_open_levels.resize(1);
         m_caret.resize(1);
