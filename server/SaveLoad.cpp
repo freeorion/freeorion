@@ -202,17 +202,14 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     save_preview_data.save_format_marker = XML_COMPRESSED_BASE64_MARKER;
 
                     // allocate buffers for serialized gamestate
-                    DebugLogger() << "Allocating buffers for XML serialization...";
                     std::string serial_str, compressed_str;
                     try {
-                        DebugLogger() << "String Max Size: " << serial_str.max_size();
                         const std::string::size_type capacity = std::min(serial_str.max_size(), Pow(2,29)-12); // I read on StackOverflow that Qt grows string capacity to slightly less than powers of two due to some allocators perform worse at exact powers of 2
-                        DebugLogger() << "Reserving Capacity:: " << capacity;
+                        DebugLogger() << "Reserving buffers for XML serialization capacity: " << capacity;
                         serial_str.reserve(capacity);
                         compressed_str.reserve(Pow(2,26)-12);
-                    }
-                    catch (...) {
-                        DebugLogger() << "Unable to preallocate full serialization buffers. Attempting serialization with dynamic buffer allocation.";
+                    } catch (...) {
+                        DebugLogger() << "Unable to reserve full serialization buffers. Attempting serialization with dynamic buffer allocation.";
                     }
 
                     // wrap buffer string in iostream::stream to receive serialized data
@@ -275,6 +272,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
                     timer.EnterSection("");
                     save_completed_as_xml = true;
+
+                    DebugLogger() << "Final size of buffers for XML serialization: serial: " << serial_str.size() << "  compressed: " << compressed_str.size();
                 } catch (...) {
                     save_completed_as_xml = false;  // redundant, but here for clarity
                 }
@@ -339,7 +338,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
         ErrorLogger() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
         throw e;
     }
-    DebugLogger() << "SaveGame : Successfully wrote save file";
+    DebugLogger() << "SaveGame : Successfully wrote save file bytes: " << bytes_written;
 
     return bytes_written;
 }
