@@ -191,6 +191,7 @@ std::vector<RichTextTag> TagParser::ParseTags(const std::string& text, std::set<
 
     // Filter out unregistered tags.
     std::vector<RichTextTag> relevant_tags;
+    relevant_tags.reserve(tags.size());
     for (RichTextTag& tag : tags) {
         if (known_tags.count(tag.tag))
             ParseTagsImpl::AddWithPlaintextSquashing(relevant_tags, std::move(tag));
