@@ -62,6 +62,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     if (!design)
         return;
 
+    m_part_meters.reserve(design->Parts().size() * 2); // guesstimate
     for (const std::string& part_name : design->Parts()) {
         if (!part_name.empty()) {
             const ShipPart* part = GetShipPart(part_name);
