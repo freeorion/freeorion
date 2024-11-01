@@ -116,10 +116,10 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, const UniverseObject* target_object, ScriptingContext& context) {
-        if (!target_object || target_object->Unowned() || system_id == INVALID_OBJECT_ID)
+    void ExploreSystem(int system_id, int empire_id, ScriptingContext& context) {
+        if (empire_id == ALL_EMPIRES || system_id == INVALID_OBJECT_ID)
             return;
-        if (auto empire = context.GetEmpire(target_object->Owner()))
+        if (auto empire = context.GetEmpire(empire_id))
             empire->AddExploredSystem(system_id, context.current_turn, context.ContextObjects());
     }
 
@@ -2967,7 +2967,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
                     dest_system->Insert(ship, System::NO_ORBIT, context.current_turn, objects);
                 }
 
-                ExploreSystem(dest_system->ID(), fleet, context);
+                ExploreSystem(dest_system->ID(), fleet->Owner(), context);
                 UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID, context);  // inserted into dest_system, so next and previous systems are invalid objects
             }
 
@@ -3078,7 +3078,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
             if (auto dest_system = objects.getRaw<System>(dest_sys_id)) {
                 // creates new fleet, inserts fleet into system and ship into fleet
                 CreateNewFleet(dest_system, ship, context, aggr);
-                ExploreSystem(dest_sys_id, ship, context);
+                ExploreSystem(dest_sys_id, ship->Owner(), context);
 
             } else {
                 // creates new fleet and inserts ship into fleet
@@ -3119,7 +3119,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         // buildings planet should be unchanged by move, as should planet's
         // records of its buildings
 
-        ExploreSystem(dest_system->ID(), planet, context);
+        ExploreSystem(dest_system->ID(), planet->Owner(), context);
 
 
     } else if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
@@ -3151,7 +3151,7 @@ void MoveTo::Execute(ScriptingContext& context) const {
         building->SetPlanetID(dest_planet->ID());
 
         dest_system->Insert(building, System::NO_ORBIT, context.current_turn, objects);
-        ExploreSystem(dest_system->ID(), building, context);
+        ExploreSystem(dest_system->ID(), building->Owner(), context);
 
 
     } else if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
