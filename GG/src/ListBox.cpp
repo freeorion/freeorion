@@ -555,7 +555,7 @@ ListBox::iterator ListBox::LastVisibleRow() const
     Y visible_pixels = ClientSize().y;
     Y acc(Y0);
     iterator it = m_first_row_shown;
-    for (; it != m_rows.end(); ) {
+    for (; it != m_rows.end();) {
         acc += (*it)->Height();
         iterator next_it = it;
         ++next_it;

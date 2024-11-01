@@ -1829,7 +1829,7 @@ void TechTreeWnd::TechListBox::Update(bool populate) {
     bool first_tech_set = first_tech_shown.empty();
 
     // remove techs in listbox, then reset the rest of its state
-    for (iterator it = begin(); it != end(); ) {
+    for (iterator it = begin(); it != end();) {
         iterator temp_it = it++;
         Erase(temp_it);
     }
@@ -1837,14 +1837,13 @@ void TechTreeWnd::TechListBox::Update(bool populate) {
     Clear();
 
     // Add rows from cache
-    for (auto& row : m_tech_row_cache) {
-        auto& tech_row = row.second;
-        if (TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
+    for (const auto& [tech_name, tech_row] : m_tech_row_cache) {
+        if (tech_row && TechVisible(tech_row->GetTech(), m_categories_shown, m_tech_statuses_shown)) {
             tech_row->Update();
             insertion_timer.restart();
             auto listbox_row_it = Insert(tech_row);
             insertion_elapsed += insertion_timer.duration();
-            if (!first_tech_set && row.first == first_tech_shown) {
+            if (!first_tech_set && tech_name == first_tech_shown) {
                 first_tech_set = true;
                 SetFirstRowShown(listbox_row_it);
             }
@@ -1871,9 +1870,9 @@ void TechTreeWnd::TechListBox::Update(bool populate) {
 void TechTreeWnd::TechListBox::Populate(bool update ) {
     DebugLogger() << "Tech List Box Populating";
 
-    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
+    const GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
 
-    ScopedTimer creation_timer;
+    const ScopedTimer creation_timer;
 
     // Skip lookup check when starting with empty cache
 
@@ -1887,16 +1886,16 @@ void TechTreeWnd::TechListBox::Populate(bool update ) {
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(std::string category) {
-    if (m_categories_shown.emplace(std::move(category)).second)
+    if (m_categories_shown.insert(std::move(category)).second)
         Populate();
 }
 
 void TechTreeWnd::TechListBox::ShowAllCategories() {
-    auto all_cats = GetTechManager().CategoryNames();
+    const auto all_cats = GetTechManager().CategoryNames();
     if (all_cats.size() == m_categories_shown.size())
         return;
     for (auto& category_name : all_cats)
-        m_categories_shown.insert(std::string{category_name});
+        m_categories_shown.emplace(category_name);
     Populate();
 }
 
@@ -1914,7 +1913,7 @@ void TechTreeWnd::TechListBox::HideAllCategories() {
 }
 
 void TechTreeWnd::TechListBox::ShowStatus(TechStatus status) {
-    if (m_tech_statuses_shown.emplace(status).second)
+    if (m_tech_statuses_shown.insert(status).second)
         Populate();
 }
 
@@ -1990,7 +1989,7 @@ void TechTreeWnd::CompleteConstruction() {
     m_layout_panel->TechSelectedSignal.connect(boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_layout_panel->TechDoubleClickedSignal.connect(
         [this](std::string tech_name, GG::Flags<GG::ModKey> modkeys)
-    { this->AddTechToResearchQueue(std::move(tech_name), modkeys & GG::MOD_KEY_CTRL); });
+        { AddTechToResearchQueue(std::move(tech_name), modkeys & GG::MOD_KEY_CTRL); });
     m_layout_panel->TechPediaDisplaySignal.connect(boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
@@ -1998,7 +1997,7 @@ void TechTreeWnd::CompleteConstruction() {
     m_tech_list->TechLeftClickedSignal.connect(boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
     m_tech_list->TechDoubleClickedSignal.connect(
         [this](std::string tech_name, GG::Flags<GG::ModKey> modkeys)
-    { this->AddTechToResearchQueue(std::move(tech_name), modkeys & GG::MOD_KEY_CTRL); });
+        { AddTechToResearchQueue(std::move(tech_name), modkeys & GG::MOD_KEY_CTRL); });
     m_tech_list->TechPediaDisplaySignal.connect(
         boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
@@ -2032,19 +2031,14 @@ void TechTreeWnd::CompleteConstruction() {
 
     // connect button for all categories to update display
     m_tech_tree_controls->m_all_cat_button->CheckedSignal.connect(
-        [this](bool checked) {
-            if (checked)
-                this->ShowAllCategories();
-            else
-                this->HideAllCategories();
-        }
+        [this](bool checked) { checked ? ShowAllCategories() : HideAllCategories(); }
     );
 
     // connect status and type button clicks to update display
     for (auto& status_button : m_tech_tree_controls->m_status_buttons) {
         TechStatus tech_status = status_button.first;
         status_button.second->CheckedSignal.connect(
-            [this, tech_status](bool checked){ this->SetTechStatus(tech_status, checked); });
+            [this, tech_status](bool checked){ SetTechStatus(tech_status, checked); });
     }
 
     // connect view type selector
@@ -2071,8 +2065,8 @@ void TechTreeWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     if (old_size != Size()) {
         m_enc_detail_panel->ValidatePosition();
         m_tech_tree_controls->ValidatePosition();
-        m_layout_panel->Resize(this->Size());
-        m_tech_list->Resize(this->Size());
+        m_layout_panel->Resize(Size());
+        m_tech_list->Resize(Size());
     }
 }
 
@@ -2140,8 +2134,8 @@ void TechTreeWnd::ShowAllCategories() {
     m_layout_panel->ShowAllCategories();
     m_tech_list->ShowAllCategories();
 
-    for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
-        cat_button.second->SetCheck(true);
+    for (auto& button : m_tech_tree_controls->m_cat_buttons | range_values)
+        button->SetCheck(true);
 }
 
 void TechTreeWnd::HideCategory(const std::string& category) {
@@ -2157,8 +2151,8 @@ void TechTreeWnd::HideAllCategories() {
     m_layout_panel->HideAllCategories();
     m_tech_list->HideAllCategories();
 
-    for (auto& cat_button : m_tech_tree_controls->m_cat_buttons)
-        cat_button.second->SetCheck(false);
+    for (auto& button : m_tech_tree_controls->m_cat_buttons | range_values)
+        button->SetCheck(false);
 }
 
 void TechTreeWnd::ToggleAllCategories() {

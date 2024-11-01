@@ -248,7 +248,7 @@ void StringTable::Load(std::shared_ptr<const StringTable> fallback) {
                                   << match[1].length() << "and matchlen: " << match.length();
                 // clear out any keywords that have been fully processed
                 for (auto ref_check_it = cyclic_reference_check.begin();
-                     ref_check_it != cyclic_reference_check.end(); )
+                     ref_check_it != cyclic_reference_check.end();)
                 {
                     if (ref_check_it->second <= position) {
                         //DebugLogger() << "Popping from cyclic ref check: " << ref_check_it->first;

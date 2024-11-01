@@ -23,7 +23,7 @@ bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
     if (idx + node->weight > size)
         column.resize(idx + node->weight, nullptr);
 
-    for (auto j = idx + node->weight; j-->idx; ) {
+    for (auto j = idx + node->weight; j --> idx;) {
         if (column[j] != nullptr && column[j] != node)
             return false;
     }
@@ -52,7 +52,7 @@ int TechTreeLayout::Column::ClosestFreeIndex(int index, TechTreeLayout::Node* no
 
 bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
     if (Fit(index, node)) {
-        for (int i = index + node->weight; i-->index; )
+        for (int i = index + node->weight; i-->index;)
             column[i] = node;
 
         node->row = index;
@@ -176,7 +176,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
     unsigned int row_count = 0;
     for (int i = row_index.size(); i-->0;) {
         unsigned int cur_row_count = 0;
-        for (unsigned int j = row_index[i].column.size(); j --> 0; ) {
+        for (unsigned int j = row_index[i].column.size(); j --> 0;) {
             if (row_index[i].column[j]) {
                 cur_row_count = j;
                 break;
@@ -185,14 +185,14 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         row_count = std::max(row_count, cur_row_count);
     }
     //4.e. set size
-    for (int i = m_nodes.size(); i --> 0 ; )
+    for (int i = m_nodes.size(); i --> 0;)
          m_nodes[i]->CalculateCoordinate(column_width, internal_height);
 
     m_width = column_count * column_width;
     m_height = row_count * internal_height;
 
     //5. create edges
-    for (int i = m_nodes.size(); i --> 0 ; )
+    for (int i = m_nodes.size(); i --> 0;)
         m_nodes[i]->CreateEdges(x_margin, column_width, internal_height);
 }
 
@@ -362,7 +362,7 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
     double improvement = std::abs(dist) - std::abs(new_dist);
     if (improvement > 0.25) {
         if (column.Fit(closest_free_index, this)) {
-            for (int i = row + weight; i --> row; )
+            for (int i = row + weight; i --> row;)
                 column.column[i] = nullptr;
 
             column.Place(closest_free_index, this);
@@ -567,7 +567,7 @@ void TechTreeLayout::Node::DoLayout(std::vector<Column>& row_index, bool cat) {
 
 void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, double row_height) {
     assert(column_width > 0);
-    for (int i = children.size(); i --> 0; ) {
+    for (int i = children.size(); i --> 0;) {
         //find next real node and create coordinates
         Node* next = children[i];
         uint32_t placeholders = 0;
@@ -606,17 +606,17 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
 void TechTreeLayout::Node::Debug() const {
     DebugLogger() << "Tech - " << tech_name << " (" << m_x << "," << m_y << ") #" << depth << "\n";
     DebugLogger() << "  Parents - ";
-    for (int i = parents.size(); i --> 0; )
+    for (int i = parents.size(); i --> 0;)
         DebugLogger() << parents[i]->tech_name << "#" << parents[i]->depth;
 
     DebugLogger() << "\n";
     DebugLogger() << "  Children - ";
-    for (int i = children.size(); i --> 0; )
+    for (int i = children.size(); i --> 0;)
         DebugLogger() << children[i]->tech_name << "#" << children[i]->depth;
 
     DebugLogger() << "\n";
 
-    for (int i = outgoing_edges.size(); i-->0; ) {
+    for (int i = outgoing_edges.size(); i-->0;) {
         DebugLogger() << "     - ";
         outgoing_edges[i].Debug();
     }
