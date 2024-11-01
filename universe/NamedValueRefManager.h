@@ -128,7 +128,7 @@ private:
             DebugLogger() << "NamedRef<T>::NamedRefInitInvariants() could not find value ref, will sleep a bit and retry.";
         }
 
-        constexpr int MAX_TRIES = 5;
+        static constexpr int MAX_TRIES = 5;
         for (int try_num = 1; try_num <= MAX_TRIES; ++try_num) {
             if (vref) {
                 std::scoped_lock invariants_lock(m_invariants_mutex);

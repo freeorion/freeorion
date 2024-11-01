@@ -11,9 +11,6 @@
 class Fleet;
 class ObjectMap;
 
-namespace {
-    constexpr int SYSTEM_ORBITS = 7;
-}
 struct UniverseObjectVisitor;
 
 
@@ -139,6 +136,8 @@ private:
 
     /** Returns new copy of this System. */
     [[nodiscard]] std::shared_ptr<UniverseObject> Clone(const Universe& universe, int empire_id = ALL_EMPIRES) const override;
+
+    static constexpr int SYSTEM_ORBITS = 7;
 
     StarType            m_star = StarType::INVALID_STAR_TYPE;
     std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
