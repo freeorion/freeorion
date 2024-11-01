@@ -156,18 +156,18 @@ namespace {
 
         const int dest_system = fleet->FinalDestinationID();
 
-        auto route_pair = context.ContextUniverse().GetPathfinder()->ShortestPath(
-            start_system, dest_system, fleet->Owner(), objects);
+        auto route = context.ContextUniverse().GetPathfinder()->ShortestPath(
+            start_system, dest_system, fleet->Owner(), objects).first;
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
-        if (route_pair.first.empty())
-            route_pair.first.push_back(new_next_system);
+        if (route.empty())
+            route.push_back(new_next_system);
 
 
         // set fleet with newly recalculated route
         try {
-            fleet->SetRoute(std::move(route_pair.first), objects);
+            fleet->SetRoute(std::move(route), objects);
         } catch (const std::exception& e) {
             ErrorLogger(effects) << "Caught exception updating fleet route in effect code: " << e.what();
         }

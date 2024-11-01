@@ -1046,7 +1046,7 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
     if (m_prev_system != INVALID_OBJECT_ID && SystemID() == m_prev_system) {
         // if we haven't actually left yet, we have to move from whichever system we are at now
 
-        if (!objects.get<System>(target_system_id)) {
+        if (!objects.getRaw<System>(target_system_id)) {
             // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
             try {
                 ClearRoute(objects);
@@ -1056,18 +1056,15 @@ void Fleet::CalculateRouteTo(int target_system_id, const Universe& universe) {
             return;
         }
 
-        std::pair<std::vector<int>, double> path;
         try {
-            path = universe.GetPathfinder()->ShortestPath(m_prev_system, target_system_id, this->Owner(), objects);
+            SetRoute(universe.GetPathfinder()->ShortestPath(m_prev_system, target_system_id,
+                                                            this->Owner(), objects).first,
+                     objects);
         } catch (...) {
-            DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
+            DebugLogger() << "Fleet::CalculateRouteTo couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
         }
-        try {
-            SetRoute(std::move(path.first), objects);
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Caught exception in Fleet CalculateRouteTo: " << e.what();
-        }
+
         return;
     }
 
