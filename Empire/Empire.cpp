@@ -1875,7 +1875,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
 
         ProductionQueue& queue = from_empire->m_production_queue;
 
-        for (auto queue_it = queue.begin(); queue_it != queue.end(); ) {
+        for (auto queue_it = queue.begin(); queue_it != queue.end();) {
             const auto& elem = *queue_it;
             if (elem.location != location_id) {
                 ++queue_it;
