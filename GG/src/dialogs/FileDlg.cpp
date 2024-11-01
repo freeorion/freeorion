@@ -218,15 +218,14 @@ void FileDlg::CompleteConstruction()
     PopulateFilters();
     UpdateList();
 
-    namespace ph = boost::placeholders;
-
-    // TODO: store scoped connections in member vector?
-    m_ok_button->LeftClickedSignal.connect(boost::bind(&FileDlg::OkClicked, this));
-    m_cancel_button->LeftClickedSignal.connect(boost::bind(&FileDlg::CancelClicked, this));
-    m_files_list->SelRowsChangedSignal.connect(boost::bind(&FileDlg::FileSetChanged, this, ph::_1));
-    m_files_list->DoubleClickedRowSignal.connect(boost::bind(&FileDlg::FileDoubleClicked, this, ph::_1, ph::_2, ph::_3));
-    m_files_edit->EditedSignal.connect(boost::bind(&FileDlg::FilesEditChanged, this, ph::_1));
-    m_filter_list->SelChangedSignal.connect(boost::bind(&FileDlg::FilterChanged, this, ph::_1));
+    m_connections[0] = m_ok_button->LeftClickedSignal.connect([this]() { OkClicked(); });
+    m_connections[1] = m_cancel_button->LeftClickedSignal.connect([this]() { CancelClicked(); });
+    m_connections[2] = m_files_list->SelRowsChangedSignal.connect(
+        [this](const auto& sels) { FileSetChanged(sels); });
+    m_connections[3] = m_files_list->DoubleClickedRowSignal.connect(
+        [this](auto it, auto pt, auto modkeys) { FileDoubleClicked(it, pt, modkeys); });
+    m_connections[4] = m_files_edit->EditedSignal.connect([this](const auto& str) { FilesEditChanged(str); });
+    m_connections[5] = m_filter_list->SelChangedSignal.connect([this](auto it) { FilterChanged(it); });
 
     if (!m_init_filename.empty()) {
         fs::path filename_path = fs::system_complete(fs::path(m_init_filename));
