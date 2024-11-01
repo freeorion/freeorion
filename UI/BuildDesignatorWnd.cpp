@@ -756,7 +756,7 @@ private:
     GG::Pt                                                  m_original_ul;
     int                                                     m_production_location;
     int                                                     m_empire_id;
-    mutable boost::signals2::scoped_connection              m_empire_ship_designs_changed_signal;
+    mutable boost::signals2::scoped_connection              m_empire_ship_designs_changed_connection;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
@@ -875,12 +875,11 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_
     } else {
         // ensure signal connection set up properly, without actually
         // repopulating the list, as would be dine in Refresh()
-        m_empire_ship_designs_changed_signal.disconnect();
-        ScriptingContext context;
+        m_empire_ship_designs_changed_connection.disconnect();
+        const ScriptingContext context;
         if (auto empire = context.GetEmpire(m_empire_id))
-            m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
-                boost::signals2::at_front);
+            m_empire_ship_designs_changed_connection = empire->ShipDesignsChangedSignal.connect(
+                [this]() { Refresh(); }, boost::signals2::at_front);
     }
 }
 
@@ -891,12 +890,11 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
     else
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
 
-    m_empire_ship_designs_changed_signal.disconnect();
+    m_empire_ship_designs_changed_connection.disconnect();
     const ScriptingContext context;
     if (auto empire = context.GetEmpire(m_empire_id))
-        m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-            boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
-            boost::signals2::at_front);
+        m_empire_ship_designs_changed_connection = empire->ShipDesignsChangedSignal.connect(
+            [this]() { Refresh(); }, boost::signals2::at_front);
     PopulateList();
 }
 
@@ -1029,7 +1027,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 }
 
 void BuildDesignatorWnd::BuildSelector::PopulateList() {
-    ScriptingContext context;
+    const ScriptingContext context;
     const Universe& universe{context.ContextUniverse()};
     auto empire = context.GetEmpire(m_empire_id);
     if (!empire)
@@ -1132,14 +1130,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
                                                              GG::Pt pt, GG::Flags<GG::ModKey> modkeys)
 {
-    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>((*it).get());
+    ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(it->get());
     if (!item_row)
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
-    BuildType build_type = item.build_type;
+    const BuildType build_type = item.build_type;
 
-    ScriptingContext context;
+    const ScriptingContext context;
     const Universe& universe{context.ContextUniverse()};
 
     if (build_type == BuildType::BT_BUILDING) {
