@@ -5343,7 +5343,7 @@ void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
     GG::X map_margin_width(app_width);
 
     //std::cout << "MapWnd::CorrectMapPosition appwidth: " << Value(app_width) << " appheight: " << Value(app_height)
-    //          << " to_x: " << Value(move_to_pt.x) << " to_y: " << Value(move_to_pt.y) << std::endl;;
+    //          << " to_x: " << Value(move_to_pt.x) << " to_y: " << Value(move_to_pt.y) << std::endl;
 
     // restrict map positions to prevent map from being dragged too far off screen.
     // add extra padding to restrictions when universe to be shown is larger than

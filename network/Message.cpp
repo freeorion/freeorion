@@ -990,7 +990,7 @@ void ExtractGameStartMessageData(std::string text, bool& single_player_game, int
 
             deserialize_timer.restart();
             Deserialize(ia, universe);
-            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << deserialize_timer.DurationString();;
+            DebugLogger() << "ExtractGameStartMessage universe deserialization time " << deserialize_timer.DurationString();
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)

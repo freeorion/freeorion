@@ -612,7 +612,7 @@ void TechTreeLayout::Node::Debug() const {
     DebugLogger() << "\n";
     DebugLogger() << "  Children - ";
     for (int i = children.size(); i --> 0; )
-        DebugLogger() << children[i]->tech_name << "#" << children[i]->depth;;
+        DebugLogger() << children[i]->tech_name << "#" << children[i]->depth;
 
     DebugLogger() << "\n";
 
