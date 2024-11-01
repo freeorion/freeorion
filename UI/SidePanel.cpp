@@ -1870,8 +1870,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             const auto owner_op = sm.SpeciesEmpireOpinion(planet_species_name, planet->Owner(), false, true);
             auto opinion_of_owner = DoubleToString(owner_op, 3, false);
 
-            auto stability = DoubleToString(planet->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false);;
-            auto population = DoubleToString(planet->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false);;
+            auto stability = DoubleToString(planet->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false);
+            auto population = DoubleToString(planet->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false);
 
             const auto building_costs = [&source_context, planet, client_empire_id]() {
                 const auto to_building_type_name = [](const Building* building) -> const auto&

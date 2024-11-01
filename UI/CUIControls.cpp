@@ -405,7 +405,7 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
                    inside_color, outside_color, 1);
     } else {
         GG::Clr inside_color = AdjustBrightness(border_color_to_use, -75);
-        GG::Clr outside_color = AdjustBrightness(inside_color, 40);;
+        GG::Clr outside_color = AdjustBrightness(inside_color, 40);
         FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
                    GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
                    inside_color, outside_color, 1);

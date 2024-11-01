@@ -135,9 +135,9 @@ private:
                      m_file_filters;
     std::set<std::string>
                      m_result;
-    bool             m_select_directories = false;;
-    bool             m_append_missing_save_extension = false;;
-    bool             m_in_win32_drive_selection = false;;
+    bool             m_select_directories = false;
+    bool             m_append_missing_save_extension = false;
+    bool             m_in_win32_drive_selection = false;
 
     std::string      m_save_str;
     std::string      m_open_str;

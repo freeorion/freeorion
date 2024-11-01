@@ -224,7 +224,7 @@ public:
     virtual void PopGrowthProductionResearchPhase(ScriptingContext&) {}
 
     static constexpr double INVALID_POSITION = -100000.0;           ///< the position in x and y at which default-constructed objects are placed
-    static constexpr int    INVALID_OBJECT_AGE = -(1 << 30) - 1;;   ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
+    static constexpr int    INVALID_OBJECT_AGE = -(1 << 30) - 1;    ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
     static constexpr int    SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
     virtual ~UniverseObject() = default;

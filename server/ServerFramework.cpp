@@ -228,6 +228,7 @@ auto PythonServer::GetPlayerDelegation(const std::string& player_name,
 
 auto PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& chat_history) -> bool
 {
+    std::this_thread::sleep_for(std::chrono::seconds(8));
     py::object chat_provider = m_python_module_chat.attr("__dict__")["chat_history_provider"];
     if (!chat_provider) {
         ErrorLogger() << "Unable to get Python object chat_history_provider";
@@ -244,7 +245,7 @@ auto PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
         py::stl_input_iterator<py::tuple> entity_begin(py_history), entity_end;
         for (auto& it = entity_begin; it != entity_end; ++it) {
             ChatHistoryEntity e;
-            e.timestamp = boost::posix_time::from_time_t(py::extract<time_t>((*it)[0]));;
+            e.timestamp = boost::posix_time::from_time_t(py::extract<time_t>((*it)[0]));
             e.player_name = py::extract<std::string>((*it)[1]);
             e.text = py::extract<std::string>((*it)[2]);
             py::tuple color = py::extract<py::tuple>((*it)[3]);

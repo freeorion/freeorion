@@ -2196,7 +2196,7 @@ namespace {
         for (const auto& [species_name_, num] : species_ships_destroyed) {
             const std::string num_str = ToChars(num);
             const auto& species_name = species_name_.empty() ? UserString("NONE") : UserString(species_name_);
-            detailed_description += "\n" + species_name + " : " + num_str;;
+            detailed_description += "\n" + species_name + " : " + num_str;
         }
 
 
@@ -3219,7 +3219,7 @@ namespace {
                               << " - " << ToChars(Value(column1_species_extents.at(species_name).x))
                               << " = " << ToChars(Value(distance))
                               << " / " << ToChars(Value(hair_space_width))
-                              << " = " << ToChars(num_spaces);;
+                              << " = " << ToChars(num_spaces);
                 for (std::size_t i = 0; i < num_spaces; ++i)
                     formatted_col1.append(hair_space_str);
 

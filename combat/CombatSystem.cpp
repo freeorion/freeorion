@@ -797,7 +797,7 @@ namespace {
         const auto target_planet = target->ObjectType() == UniverseObjectType::OBJ_PLANET ?
             static_cast<Planet*>(target) : nullptr;
         const auto target_fighter = target->ObjectType() == UniverseObjectType::OBJ_FIGHTER ?
-            static_cast<Fighter*>(target) : nullptr;;
+            static_cast<Fighter*>(target) : nullptr;
 
         if (attack_ship && target_ship) {
             AttackShipShip(         attack_ship,    weapon, target_ship,    combat_info, bout, round, platform_event);
@@ -1498,7 +1498,7 @@ namespace {
 
         const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
         if (!design) {
-            ErrorLogger(combat) << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();;
+            ErrorLogger(combat) << "ReduceStoredFighterCount couldn't get ship design with id " << ship->DesignID();
             return;
         }
 
@@ -1605,7 +1605,7 @@ namespace {
 
         const ShipDesign* design = universe.GetShipDesign(ship.DesignID());
         if (!design) {
-            ErrorLogger(combat) << "IncreaseStoredFighterCount couldn't get ship design with id " << ship.DesignID();;
+            ErrorLogger(combat) << "IncreaseStoredFighterCount couldn't get ship design with id " << ship.DesignID();
             return;
         }
 
