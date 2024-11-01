@@ -255,8 +255,8 @@ namespace parse {
                     lexer::tok, manifest_file, ordering);
 
             } catch (const std::runtime_error& e) {
-                ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
-                              << " because " << e.what();;
+                ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file
+                              << " from " << path << " because " << e.what();
             }
         }
 

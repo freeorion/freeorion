@@ -244,7 +244,7 @@ auto PythonServer::LoadChatHistory(boost::circular_buffer<ChatHistoryEntity>& ch
         py::stl_input_iterator<py::tuple> entity_begin(py_history), entity_end;
         for (auto& it = entity_begin; it != entity_end; ++it) {
             ChatHistoryEntity e;
-            e.timestamp = boost::posix_time::from_time_t(py::extract<time_t>((*it)[0]));;
+            e.timestamp = boost::posix_time::from_time_t(py::extract<time_t>((*it)[0]));
             e.player_name = py::extract<std::string>((*it)[1]);
             e.text = py::extract<std::string>((*it)[2]);
             py::tuple color = py::extract<py::tuple>((*it)[3]);

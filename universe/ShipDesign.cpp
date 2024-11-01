@@ -526,7 +526,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
                 if (std::count(parts.begin(), parts.end(), x) > 1) {
                     is_valid = false;
                     if (produce_log)
-                        WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes itself. Removing first copy.";;
+                        WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes itself. Removing first copy.";
                     part_name.clear();
                     break; // don't need to check any later exclusions of removed part
                 }
