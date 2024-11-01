@@ -45,8 +45,8 @@ IDAllocator::IDAllocator(const int server_id,
     for (const auto empire_id : client_ids) {
         if (empire_id == m_server_id)
             continue;
-         AssigningEmpireForID(ii) = empire_id;
-         m_empire_id_to_next_assigned_object_id.emplace(empire_id, ii);
+        AssigningEmpireForID(ii) = empire_id;
+        m_empire_id_to_next_assigned_object_id.emplace(empire_id, ii);
         ++ii;
     }
 }
