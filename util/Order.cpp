@@ -478,7 +478,11 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     if (!Check(empire_id, fleet_id, dest_system_id, append, context))
         return;
 
-    auto fleet = context.ContextObjects().get<Fleet>(m_fleet);
+    auto fleet = context.ContextObjects().getRaw<Fleet>(m_fleet);
+    //if (!fleet) { // additional check not necessary after calling Check(...)
+    //    ErrorLogger() << "FleetMoveOrder has invalid fleed id:" << m_fleet;
+    //    return;
+    //}
 
     int start_system = fleet->SystemID();
     if (start_system == INVALID_OBJECT_ID)
@@ -487,8 +491,8 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
         start_system = fleet->TravelRoute().back();
 
     auto short_path = context.ContextUniverse().GetPathfinder()->ShortestPath(
-        start_system, m_dest_system, EmpireID(), context.ContextObjects());
-    if (short_path.first.empty()) {
+        start_system, m_dest_system, EmpireID(), context.ContextObjects()).first;
+    if (short_path.empty()) {
         ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << start_system
                       << " and " << m_dest_system << " for empire " << EmpireID()
                       << " with fleet " << m_fleet;
@@ -496,14 +500,14 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     }
 
     // if in a system now, don't include it in the route
-    if (short_path.first.front() == fleet->SystemID()) {
+    if (short_path.front() == fleet->SystemID()) {
         DebugLogger() << "FleetMoveOrder removing fleet " << m_fleet
                       << " current system location " << fleet->SystemID()
                       << " from shortest path to system " << m_dest_system;
-        short_path.first.erase(short_path.first.begin()); // pop_front();
+        short_path.erase(short_path.begin()); // pop_front();
     }
 
-    m_route = std::move(short_path.first);
+    m_route = std::move(short_path);
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
