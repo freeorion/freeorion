@@ -27,7 +27,7 @@ struct ScriptingContext;
 struct UniverseObjectVisitor;
 
 // The ID number assigned to temporary universe objects
-constexpr int TEMPORARY_OBJECT_ID = -2;
+inline constexpr int TEMPORARY_OBJECT_ID = -2;
 
 
 //! The various major subclasses of UniverseObject
