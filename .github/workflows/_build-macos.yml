@@ -75,7 +75,7 @@ jobs:
           export DYLD_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release:$DYLD_LIBRARY_PATH"
           cmake --build . --config Release --target unittest --verbose
       - name: Generate binaries
-        if: inputs.os != 'macos-13'
+        if: ${{ inputs.weekly-deploy }}
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
