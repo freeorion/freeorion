@@ -587,13 +587,16 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                                 % log->turn) + "\n"));
 
 
-    const auto invisible_to_client_empire =
-        [client_empire_id, &universe](const std::shared_ptr<UniverseObject>& object)
-        { return universe.GetObjectVisibilityByEmpire(object->ID(), client_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY; };
+    const auto invisible_to_client_empire_planet =
+        [client_empire_id, &universe](const std::shared_ptr<UniverseObject>& object) {
+        return object &&
+            object->ObjectType() == UniverseObjectType::OBJ_PLANET &&
+            universe.GetObjectVisibilityByEmpire(object->ID(), client_empire_id) < Visibility::VIS_PARTIAL_VISIBILITY;
+        };
 
     AddRow(DecorateLinkText(UserString("COMBAT_INITIAL_FORCES")));
     const auto initial_forces =
-        SegregateForces(log->empire_ids, log->object_ids, {IsShip, HasPopulation, invisible_to_client_empire},
+        SegregateForces(log->empire_ids, log->object_ids, {IsShip, HasPopulation, invisible_to_client_empire_planet},
                         OrderByNameAndId(client_empire_id));
     for (const auto& empire_forces : initial_forces)
         AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
