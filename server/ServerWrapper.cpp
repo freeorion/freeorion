@@ -984,7 +984,7 @@ namespace {
         py::stl_input_iterator<int> end;
 
         std::vector<int> systems{py::stl_input_iterator<int>(sys_ids), end};
-        auto systems_in_vicinity = ServerApp::GetApp()->GetContext().ContextUniverse().GetPathfinder()->WithinJumps(jumps, std::move(systems));
+        auto systems_in_vicinity = ServerApp::GetApp()->GetContext().ContextUniverse().GetPathfinder().WithinJumps(jumps, std::move(systems));
 
         TraceLogger() << "within " << jumps << " jumps: " << systems_in_vicinity.size() << " systems";
 
@@ -1412,8 +1412,8 @@ namespace FreeOrionPython {
 
         py::def("get_universe_width",               +[]() -> double { return ServerApp::GetApp()->GetContext().ContextUniverse().UniverseWidth(); });
         py::def("set_universe_width",               +[](double width) { GetUniverse().SetUniverseWidth(width); });
-        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetUniverse().GetPathfinder()->LinearDistance(system1_id, system2_id, Objects()); });
-        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetUniverse().GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id); });
+        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetUniverse().GetPathfinder().LinearDistance(system1_id, system2_id, Objects()); });
+        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetUniverse().GetPathfinder().JumpDistanceBetweenSystems(system1_id, system2_id); });
         py::def("get_all_objects",                  GetAllObjects);
         py::def("get_systems",                      GetSystems);
         py::def("create_system",                    CreateSystem);

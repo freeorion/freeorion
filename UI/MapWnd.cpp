@@ -5571,7 +5571,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        auto route = universe.GetPathfinder()->ShortestPath(
+        auto route = universe.GetPathfinder().ShortestPath(
             start_system, system_id, empire_id, objects).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
@@ -7420,8 +7420,8 @@ namespace {
         const auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
         const auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
         auto [system_list, path_length] = ignore_hostile ?
-            universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, objects) :
-            universe.GetPathfinder()->ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
+            universe.GetPathfinder().ShortestPath(start_id, destination_id, empire_id, objects) :
+            universe.GetPathfinder().ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
 
         if (!system_list.empty() && path_length > 0.0)
             return {path_length, std::move(system_list)};

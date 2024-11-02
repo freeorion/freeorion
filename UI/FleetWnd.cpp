@@ -3806,7 +3806,7 @@ namespace {
         if (!fleet)
             return {};
 
-        int nearest_system_id(u.GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y(), objects));
+        int nearest_system_id(u.GetPathfinder().NearestSystemTo(fleet->X(), fleet->Y(), objects));
         if (auto system = objects.get<System>(nearest_system_id))
             return system->ApparentName(client_empire_id, u);
         return {};
