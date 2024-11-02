@@ -1839,7 +1839,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     // their info is available even if they are destroyed by the upcoming effect
     // destruction
     for (auto& [obj_id, destructors] : context.ContextUniverse().m_marked_destroyed) {
-        auto obj = m_objects.get(obj_id);
+        const auto* obj = m_objects.getRaw(obj_id);
         if (!obj)
             continue;
 
@@ -1855,9 +1855,12 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
         // not worried about fleets being deleted because all their ships were
         // destroyed...  as of this writing there are no stats tracking
         // destruction of fleets.
+    }
 
+    for (auto obj_id : context.ContextUniverse().m_marked_destroyed | range_keys) {
         // do actual recursive destruction.
-        RecursiveDestroy(obj_id, empire_ids);
+        if (const auto* obj = m_objects.getRaw(obj_id))
+            RecursiveDestroy(obj_id, empire_ids);
     }
 }
 
