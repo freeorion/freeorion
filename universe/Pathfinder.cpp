@@ -44,7 +44,7 @@ namespace {
         //TODO C++11 Move Constructor.
 
         /**Number of rows and columns. (N)*/
-        std::size_t size() const
+        auto size() const noexcept
         { return m_data.size(); }
 
         /**Resize and clear all mutexes.  Assumes that table is locked.*/
