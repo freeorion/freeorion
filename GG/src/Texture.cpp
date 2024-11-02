@@ -143,7 +143,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap)
 
     // convert path into UTF-8 format filename string for potential error reporting
     // but do the work only if actually throwing error to log
-    const auto loggable_path = [this](const fs::path& p) {
+    constexpr auto loggable_path = [](const fs::path& p) {
 #if defined (_WIN32)
         boost::filesystem::path::string_type path_native = p.native();
         std::string filename;
