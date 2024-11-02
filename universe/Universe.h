@@ -343,18 +343,21 @@ public:
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
       * object ids.  If \a update_destroyed_object_knowers is true, empires
-      * that currently have visibility of the object have its id added to
-      * their set of objects' ids that are known to have been destroyed.  Older
-      * or limited versions of objects remain in empires latest known objects
-      * ObjectMap, regardless of whether the empire knows the object is
-      * destroyed. */
+      * whose ID is in \a empire_ids and that currently have visibility of the
+      * object have its id added to their set of objects' ids that are known
+      * to have been destroyed.  Older or limited versions of objects remain
+      * in empires latest known objects ObjectMap, regardless of whether the
+      * empire knows the object is destroyed. */
     void Destroy(int object_id, const std::span<const int> empire_ids,
                  bool update_destroyed_object_knowers = true);
 
     /** Destroys object with ID \a object_id, and destroys any associted
       * objects, such as contained buildings of planets, contained anything of
       * systems, or fleets if their last ship has id \a object_id and the fleet
-      * is thus empty. Returns the ids of all destroyed objects. */
+      * is thus empty. Returns the ids of all destroyed objects. Empires
+      * whose ID is in \a empire_ids and that currently have visibility of the
+      * object have its id added to their set of objects' ids that are known
+      * to have been destroyed. */
     std::vector<int> RecursiveDestroy(int object_id, const std::span<const int> empire_ids);
 
     /** Used by the Destroy effect to mark an object for destruction later
@@ -362,10 +365,10 @@ public:
       * other effects might depend on their existence) */
     void EffectDestroy(int destroyed_object_id, int source_object_id = INVALID_OBJECT_ID);
 
-    /** Permanently deletes object with ID number \a object_id.  no
-      * information about this object is retained in the Universe.  Can be
-      * performed on objects whether or not the have been destroyed.  Returns
-      * true if such an object was found, false otherwise. */
+    /** Permanently deletes object with ID number \a object_id.
+      * No information about this object is retained in the Universe.
+      * Can be performed on objects whether or not the have been destroyed.
+      * Returns true if such an object was found, false otherwise. */
     bool Delete(int object_id);
 
     /** Permanently deletes the ship design with ID number \a design_id. No
