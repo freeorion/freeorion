@@ -490,7 +490,7 @@ FleetMoveOrder::FleetMoveOrder(int empire_id, int fleet_id, int dest_system_id,
     if (append && !fleet->TravelRoute().empty())
         start_system = fleet->TravelRoute().back();
 
-    auto short_path = context.ContextUniverse().GetPathfinder()->ShortestPath(
+    auto short_path = context.ContextUniverse().GetPathfinder().ShortestPath(
         start_system, m_dest_system, EmpireID(), context.ContextObjects()).first;
     if (short_path.empty()) {
         ErrorLogger() << "FleetMoveOrder generated empty shortest path between system " << start_system

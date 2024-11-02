@@ -1244,7 +1244,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     else if (property_name == "NearestSystemID") {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
-        return context.ContextUniverse().GetPathfinder()->NearestSystemTo(
+        return context.ContextUniverse().GetPathfinder().NearestSystemTo(
             object->X(), object->Y(), context.ContextObjects());
 
     }
@@ -1994,7 +1994,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        const int retval = context.ContextUniverse().GetPathfinder()->JumpDistanceBetweenObjects(
+        const int retval = context.ContextUniverse().GetPathfinder().JumpDistanceBetweenObjects(
             object1_id, object2_id, context.ContextObjects());
         if (retval == INT_MAX)
             return -1;
@@ -2015,7 +2015,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         //if (m_int_ref3)
         //    empire_id = m_int_ref3->Eval(context);
 
-        const int retval = context.ContextUniverse().GetPathfinder()->JumpDistanceBetweenObjects(
+        const int retval = context.ContextUniverse().GetPathfinder().JumpDistanceBetweenObjects(
             object1_id, object2_id, context.ContextObjects());
         if (retval == INT_MAX)
             return -1;
@@ -2453,7 +2453,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        return context.ContextUniverse().GetPathfinder()->ShortestPathDistance(
+        return context.ContextUniverse().GetPathfinder().ShortestPathDistance(
             object1_id, object2_id, context.ContextObjects());
 
     }

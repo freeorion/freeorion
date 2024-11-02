@@ -17,12 +17,13 @@ namespace Condition {
 /** The Pathfinder  class contains the locations of systems, the
   * starlanes and functions to determine pathing and trip duration
   * around the Universe. */
-class FO_COMMON_API Pathfinder {
+class FO_COMMON_API Pathfinder final {
 public:
     typedef std::shared_ptr<UniverseObjectVisitor> SystemExclusionPredicateType;
 
     Pathfinder();
-    virtual ~Pathfinder();
+    ~Pathfinder();
+    Pathfinder& operator=(Pathfinder&&) noexcept;
 
     /** Returns the straight-line distance between the objects with the given
       * IDs. \throw std::out_of_range This function will throw if either object
@@ -141,7 +142,7 @@ public:
 
     class PathfinderImpl;
 private:
-    const std::unique_ptr<PathfinderImpl> pimpl;
+    std::unique_ptr<PathfinderImpl> pimpl;
 };
 
 

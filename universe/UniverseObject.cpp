@@ -155,7 +155,7 @@ std::string UniverseObject::Dump(uint8_t ntabs) const {
     } else {
         retval.append("  at: (").append(std::to_string(this->X())).append(", ")
               .append(std::to_string(this->Y())).append(")");
-        int near_id = universe.GetPathfinder()->NearestSystemTo(this->X(), this->Y(), objects);
+        int near_id = universe.GetPathfinder().NearestSystemTo(this->X(), this->Y(), objects);
         auto near_system = objects.get<System>(near_id);
         if (near_system) {
             auto& sys_name = near_system->Name();
