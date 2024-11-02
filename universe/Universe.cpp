@@ -3324,11 +3324,8 @@ bool Universe::Delete(int object_id) {
     return true;
 }
 
-void Universe::EffectDestroy(int object_id, int source_object_id) {
-    if (m_marked_destroyed.contains(object_id))
-        return;
-    m_marked_destroyed[object_id].insert(source_object_id);
-}
+void Universe::EffectDestroy(int destroyed_object_id, int source_object_id)
+{ m_marked_destroyed[destroyed_object_id].insert(source_object_id); }
 
 void Universe::InitializeSystemGraph(const EmpireManager& empires, const ObjectMap& objects)
 { m_pathfinder.InitializeSystemGraph(objects, empires); }
