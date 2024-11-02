@@ -62,6 +62,7 @@ bool UserStringExists(const std::string& str);
 
 namespace {
     CONSTEXPR_STRING const std::string EMPTY_STRING;
+    constexpr const UniverseObject* no_object = nullptr;
 
     DeclareThreadSafeLogger(conditions);
 
@@ -898,7 +899,6 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // SortedNumberOf does not have a valid local candidate to be matched
     // before the subcondition is evaluated, so the local context that is
     // passed to the subcondition should have a null local candidate.
-    static constexpr const UniverseObject* const no_object = nullptr;
     const ScriptingContext local_context{parent_context, no_object};
 
     // which input matches match the subcondition?
@@ -1018,7 +1018,6 @@ bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context, const Objec
     if (!m_condition || !m_number || candidates.empty())
         return false;
 
-    static constexpr const UniverseObject* const no_object = nullptr;
     const ScriptingContext local_context{parent_context, no_object};
 
     // just need to check if at least one object was requested and
@@ -3255,7 +3254,6 @@ void Contains::Eval(const ScriptingContext& parent_context,
     } else if (search_domain_size > 1u) {
         // evaluate contained objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
-        static constexpr const UniverseObject* const no_object = nullptr;
         const ScriptingContext local_context{parent_context, no_object};
         ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
@@ -3445,7 +3443,6 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     } else {
         // evaluate container objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
-        static constexpr const UniverseObject* const no_object = nullptr;
         const ScriptingContext local_context{parent_context, no_object};
         ObjectSet subcondition_matches = m_condition->Eval(local_context);
 
