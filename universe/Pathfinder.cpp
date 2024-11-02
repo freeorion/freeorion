@@ -721,6 +721,8 @@ Pathfinder::Pathfinder() :
 
 Pathfinder::~Pathfinder() = default;
 
+Pathfinder& Pathfinder::operator=(Pathfinder&&) noexcept = default;
+
 namespace {
     const Fleet* FleetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
         if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET)

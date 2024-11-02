@@ -160,7 +160,6 @@ namespace boost {
 // class Universe
 /////////////////////////////////////////////
 Universe::Universe() :
-    m_pathfinder(std::make_shared<Pathfinder>()),
     m_object_id_allocator(std::make_unique<IDAllocator>(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
                                                         TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
     m_design_id_allocator(std::make_unique<IDAllocator>(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
@@ -234,8 +233,6 @@ void Universe::Clear() {
     m_stat_records.clear();
 
     m_universe_width = 1000.0;
-
-    m_pathfinder = std::make_shared<Pathfinder>();
 }
 
 void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
@@ -2182,7 +2179,7 @@ std::size_t Universe::SizeInMemory() const {
     std::size_t retval = 0;
     retval += sizeof(Universe);
 
-    retval += sizeof(decltype(m_pathfinder)::element_type);             // TODO: include internal dynamic storage in m_pathfinder
+    retval += sizeof(decltype(m_pathfinder));                           // TODO: include internal dynamic storage in m_pathfinder
     retval += sizeof(decltype(m_object_id_allocator)::element_type);    // TODO: include internal dynamic storage in m_object_id_allocator
     retval += sizeof(decltype(m_design_id_allocator)::element_type);    // TODO: include internal dynamic storage in m_design_id_allocator
     retval += sizeof(decltype(m_empire_latest_known_objects)::value_type)*m_empire_latest_known_objects.size(); // individual latest known objects accounted separately.
@@ -3329,13 +3326,13 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 }
 
 void Universe::InitializeSystemGraph(const EmpireManager& empires, const ObjectMap& objects)
-{ m_pathfinder->InitializeSystemGraph(objects, empires); }
+{ m_pathfinder.InitializeSystemGraph(objects, empires); }
 
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const EmpireManager& empires)
-{ m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_empire_latest_known_objects); }
+{ m_pathfinder.UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_empire_latest_known_objects); }
 
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires)
-{ m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_objects); }
+{ m_pathfinder.UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_objects); }
 
 void Universe::UpdateStatRecords(const ScriptingContext& context) {
     CheckContextVsThisUniverse(*this, context);

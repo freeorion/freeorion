@@ -104,7 +104,7 @@ namespace {
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto path = universe.GetPathfinder()->ShortestPath(
+        auto path = universe.GetPathfinder().ShortestPath(
             start_sys, end_sys, empire_id, universe.EmpireKnownObjects(empire_id)).first;
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
@@ -114,7 +114,7 @@ namespace {
     {
         const auto& empires{Empires()};
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
-        auto path = universe.GetPathfinder()->ShortestPath(
+        auto path = universe.GetPathfinder().ShortestPath(
             start_sys, end_sys, empire_id, fleet_pred, empires, universe.EmpireKnownObjects(empire_id)).first;
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
@@ -122,14 +122,14 @@ namespace {
 
     auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto path = universe.GetPathfinder()->LeastJumpsPath(start_sys, end_sys, empire_id).first;
+        auto path = universe.GetPathfinder().LeastJumpsPath(start_sys, end_sys, empire_id).first;
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
     }
 
     auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
     {
-        auto neighbours{universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id)};
+        auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
         std::vector<int> retval;
         retval.reserve(neighbours.size());
         std::transform(neighbours.begin(), neighbours.end(), std::back_inserter(retval),
@@ -139,7 +139,7 @@ namespace {
 
     auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id) -> std::map<int, double>
     {
-        auto neighbours{universe.GetPathfinder()->ImmediateNeighbors(system1_id, empire_id)};
+        auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
         std::map<int, double> retval;
         std::transform(neighbours.begin(), neighbours.end(), std::inserter(retval, retval.end()),
                        [](auto& n) { return std::pair{n.second, n.first}; });
@@ -404,17 +404,17 @@ namespace FreeOrionPython {
             .def("destroyedObjectIDs",          +[](const Universe& u, int id) -> std::set<int> { const std::unordered_set<int>& ekdoi{u.EmpireKnownDestroyedObjectIDs(id)}; return {ekdoi.begin(), ekdoi.end()}; },
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("systemHasStarlane",           +[](const Universe& u, int system_id, int empire_id) -> bool { return u.GetPathfinder()->SystemHasVisibleStarlanes(system_id, u.EmpireKnownObjects(empire_id)); },
+            .def("systemHasStarlane",           +[](const Universe& u, int system_id, int empire_id) -> bool { return u.GetPathfinder().SystemHasVisibleStarlanes(system_id, u.EmpireKnownObjects(empire_id)); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("updateMeterEstimates",        &UpdateMetersWrapper)
             .add_property("effectAccounting",   make_function(+[](Universe& u) -> const Effect::AccountingMap& { return u.GetEffectAccountingMap(); },
                                                                                         py::return_value_policy<py::reference_existing_object>()))
 
-            .def("linearDistance",              +[](const Universe& u, int system1_id, int system2_id) -> double { return u.GetPathfinder()->LinearDistance(system1_id, system2_id, u.Objects()); },
+            .def("linearDistance",              +[](const Universe& u, int system1_id, int system2_id) -> double { return u.GetPathfinder().LinearDistance(system1_id, system2_id, u.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("jumpDistance",                +[](const Universe& u, int object1_id, int object2_id) -> int { return u.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id, u.Objects()); },
+            .def("jumpDistance",                +[](const Universe& u, int object1_id, int object2_id) -> int { return u.GetPathfinder().JumpDistanceBetweenObjects(object1_id, object2_id, u.Objects()); },
                                                 py::return_value_policy<py::return_by_value>(),
                                                 "If two system ids are passed or both objects are within a system, "
                                                 "return the jump distance between the two systems. If one object "
@@ -431,13 +431,13 @@ namespace FreeOrionPython {
                                                 "System (number2) with no hostile Fleets as determined by visibility "
                                                 "of Empire (number3).  (number3) must be a valid empire.")
 
-            .def("shortestPathDistance",        +[](const Universe& u, int object1_id, int object2_id) -> double { return u.GetPathfinder()->ShortestPathDistance(object1_id, object2_id, u.Objects()); },
+            .def("shortestPathDistance",        +[](const Universe& u, int object1_id, int object2_id) -> double { return u.GetPathfinder().ShortestPathDistance(object1_id, object2_id, u.Objects()); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("leastJumpsPath",              LeastJumpsPath,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("systemsConnected",            +[](const Universe& u, int system1_id, int system2_id, int empire_id) -> bool { return u.GetPathfinder()->SystemsConnected(system1_id, system2_id, empire_id); },
+            .def("systemsConnected",            +[](const Universe& u, int system1_id, int system2_id, int empire_id) -> bool { return u.GetPathfinder().SystemsConnected(system1_id, system2_id, empire_id); },
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("getImmediateNeighbors",       ImmediateNeighbors,

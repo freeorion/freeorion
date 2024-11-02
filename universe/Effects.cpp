@@ -156,7 +156,7 @@ namespace {
 
         const int dest_system = fleet->FinalDestinationID();
 
-        auto route = context.ContextUniverse().GetPathfinder()->ShortestPath(
+        auto route = context.ContextUniverse().GetPathfinder().ShortestPath(
             start_system, dest_system, fleet->Owner(), objects).first;
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
@@ -3551,7 +3551,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
         return;
 
     // find shortest path for fleet's owner
-    auto route_list = context.ContextUniverse().GetPathfinder()->ShortestPath(
+    auto route_list = context.ContextUniverse().GetPathfinder().ShortestPath(
         start_system_id, destination_system_id, target_fleet->Owner(), context.ContextObjects()).first;
 
     // reject empty move paths (no path exists).
