@@ -2,7 +2,6 @@
 #define _Universe_h_
 
 
-#include <list>
 #include <map>
 #include <memory>
 #include <set>
@@ -361,7 +360,7 @@ public:
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
-    void EffectDestroy(int object_id, int source_object_id = INVALID_OBJECT_ID);
+    void EffectDestroy(int destroyed_object_id, int source_object_id = INVALID_OBJECT_ID);
 
     /** Permanently deletes object with ID number \a object_id.  no
       * information about this object is retained in the Universe.  Can be
