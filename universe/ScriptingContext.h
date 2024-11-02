@@ -171,27 +171,10 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     // disable implicit conversions to CurrentValueVariant
-    ScriptingContext(ScriptingContext&&, int) = delete;
-    ScriptingContext(const ScriptingContext&, int) = delete;
-    ScriptingContext(ScriptingContext&&, double) = delete;
-    ScriptingContext(const ScriptingContext&, double) = delete;
-    ScriptingContext(ScriptingContext&&, PlanetType) = delete;
-    ScriptingContext(const ScriptingContext&, PlanetType) = delete;
-    ScriptingContext(ScriptingContext&&, PlanetSize) = delete;
-    ScriptingContext(const ScriptingContext&, PlanetSize) = delete;
-    ScriptingContext(ScriptingContext&&, ::PlanetEnvironment) = delete;
-    ScriptingContext(const ScriptingContext&, ::PlanetEnvironment) = delete;
-    ScriptingContext(ScriptingContext&&, StarType) = delete;
-    ScriptingContext(const ScriptingContext&, StarType) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObjectType) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObjectType) = delete;
-    ScriptingContext(ScriptingContext&&, Visibility) = delete;
-    ScriptingContext(const ScriptingContext&, Visibility) = delete;
-    ScriptingContext(ScriptingContext&&, std::string) = delete;
-    ScriptingContext(const ScriptingContext&, std::string) = delete;
-    ScriptingContext(ScriptingContext&&, std::vector<std::string>) = delete;
-    ScriptingContext(const ScriptingContext&, std::vector<std::string>) = delete;
-
+    template <typename T>
+    ScriptingContext(ScriptingContext&&, T) = delete;
+    template <typename T>
+    ScriptingContext(const ScriptingContext&, T) = delete;
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    const UniverseObject* source_,
@@ -248,38 +231,12 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     // disable implicit conversions to CurrentValueVariant
-    ScriptingContext(const ScriptingContext&, UniverseObject*, int) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, double) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, PlanetType) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, PlanetSize) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, ::PlanetEnvironment) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, StarType) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, UniverseObjectType) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, Visibility) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, std::string) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, std::vector<std::string>) = delete;
-
-    ScriptingContext(const ScriptingContext&, UniverseObject*, int, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, double, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, PlanetType, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, PlanetSize, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, ::PlanetEnvironment, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, StarType, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, UniverseObjectType, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, Visibility, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, std::string, const UniverseObject*) = delete;
-    ScriptingContext(const ScriptingContext&, UniverseObject*, std::vector<std::string>, const UniverseObject*) = delete;
-
-    ScriptingContext(ScriptingContext&&, UniverseObject*, int, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, double, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, PlanetType, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, PlanetSize, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, ::PlanetEnvironment, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, StarType, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, UniverseObjectType, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, Visibility, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, std::string, const UniverseObject*) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, std::vector<std::string>, const UniverseObject*) = delete;
+    template <typename T>
+    ScriptingContext(const ScriptingContext&, UniverseObject*, T) = delete;
+    template <typename T>
+    ScriptingContext(const ScriptingContext&, UniverseObject*, T, const UniverseObject*) = delete;
+    template <typename T>
+    ScriptingContext(ScriptingContext&&, UniverseObject*, T, const UniverseObject*) = delete;
 
     [[nodiscard]] ScriptingContext(ScriptingContext&& parent_context,
                                    UniverseObject* target_,
@@ -308,16 +265,8 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     // disable implicit conversions to CurrentValueVariant
-    ScriptingContext(ScriptingContext&&, UniverseObject*, int) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, double) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, PlanetType) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, PlanetSize) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, ::PlanetEnvironment) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, StarType) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, UniverseObjectType) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, Visibility) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, std::string) = delete;
-    ScriptingContext(ScriptingContext&&, UniverseObject*, std::vector<std::string>) = delete;
+    template <typename T>
+    ScriptingContext(ScriptingContext&&, UniverseObject*, T) = delete;
 
     [[nodiscard]] ScriptingContext(const UniverseObject* source_, UniverseObject* target_) noexcept :
         source(           source_),
@@ -364,39 +313,12 @@ struct [[nodiscard]] ScriptingContext {
     {}
 
     // disable implicit conversions to CurrentValueVariant
-    ScriptingContext(const Universe&, const EmpireManager&, int) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, double) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, PlanetType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, PlanetSize) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, ::PlanetEnvironment) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, StarType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, UniverseObjectType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, Visibility) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, std::string) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, std::vector<std::string>) = delete;
-
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, int) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, double) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, PlanetType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, PlanetSize) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, ::PlanetEnvironment) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, StarType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObjectType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, Visibility) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, std::string) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, std::vector<std::string>) = delete;
-
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, int) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, double) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, PlanetType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, PlanetSize) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, ::PlanetEnvironment) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, StarType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, UniverseObjectType) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, Visibility) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, std::string) = delete;
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, std::vector<std::string>) = delete;
-
+    template <typename T>
+    ScriptingContext(const Universe&, const EmpireManager&, T) = delete;
+    template <typename T>
+    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, T) = delete;
+    template <typename T>
+    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, T) = delete;
 
     // helper functions for accessing state in this context
 

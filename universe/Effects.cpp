@@ -44,6 +44,11 @@ using boost::io::str;
 
 
 namespace {
+    static CONSTEXPR_VEC_AND_STRING const ScriptingContext::CurrentValueVariant
+        EMPTY_STRING_CURRENT_VALUE{std::string{}};
+    static CONSTEXPR_VEC_AND_STRING const ScriptingContext::CurrentValueVariant&
+        ZERO_INT_CURRENT_VALUE{ScriptingContext::DEFAULT_CURRENT_VALUE};
+
     /** creates a new fleet at a specified \a x and \a y location within the
      * Universe, and and inserts \a ship into it.  Used when a ship has been
      * moved by the MoveTo effect separately from the fleet that previously
@@ -808,15 +813,16 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
 
     if (!m_part_name->TargetInvariant()) {
         if (targets.size() == 1) {
-            auto* target = targets.front();
+            UniverseObject* const target = targets.front();
             if (target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                 return;
-            auto ship = static_cast<Ship*>(target);
+            auto const ship = static_cast<Ship*>(target);
 
-            ScriptingContext target_context{context, target};
-            auto part_name = m_part_name->Eval(target_context);
+            // part name depends on target, so need to specify for this context
+            ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
+            const auto part_name = m_part_name->Eval(target_context);
 
-            if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
+            if (Meter* const meter = ship->GetPartMeter(m_meter, part_name)) {
                 float new_val = static_cast<float>(NewMeterValue(std::move(target_context), meter, m_value).first);
                 meter->SetCurrent(new_val);
             }
@@ -829,7 +835,8 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
                     continue;
                 auto ship = static_cast<Ship*>(target);
 
-                const ScriptingContext target_context{context, target};
+                // part name depends on target, so need to specify for this context
+                const ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
                 auto part_name = m_part_name->Eval(target_context);
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
@@ -848,7 +855,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
                     continue;
                 auto ship = static_cast<Ship*>(target);
 
-                const ScriptingContext target_context{context, target};
+                const ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
                 auto part_name = m_part_name->Eval(target_context);
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name)) {
@@ -867,7 +874,7 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
                     continue;
                 auto ship = static_cast<Ship*>(target);
 
-                ScriptingContext target_context{context, target};
+                ScriptingContext target_context{context, target, EMPTY_STRING_CURRENT_VALUE};
                 auto part_name = m_part_name->Eval(target_context);
 
                 if (Meter* meter = ship->GetPartMeter(m_meter, part_name))
@@ -1092,7 +1099,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
     if (!m_empire_id->TargetInvariant()) {
         if (targets.size() == 1) {
             auto* target = targets.front();
-            ScriptingContext target_context{context, target};
+            ScriptingContext target_context{context, target, ZERO_INT_CURRENT_VALUE};
             if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
                 auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
                 meter->SetCurrent(new_val);
@@ -1113,7 +1120,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             assert(lhs_ref && lhs_ref->GetReferenceType() == ValueRef::ReferenceType::EFFECT_TARGET_VALUE_REFERENCE);
 
             for (auto* target : targets) {
-                ScriptingContext target_context{context, target};
+                ScriptingContext target_context{context, target, ZERO_INT_CURRENT_VALUE};
                 if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
                     auto lhs = meter->Current();
                     auto new_val = ValueRef::Operation<double>::EvalImpl(op_type, lhs, rhs);
@@ -1126,7 +1133,7 @@ void SetEmpireMeter::Execute(ScriptingContext& context, const TargetSet& targets
             // since multiple target objects could be assoicated with the same
             // empire meter, so have to calculate new meter values one at a time...
             for (auto* target : targets) {
-                ScriptingContext target_context{context, target};
+                ScriptingContext target_context{context, target, ZERO_INT_CURRENT_VALUE};
                 if (auto meter = GetEmpireMeter(target_context, m_empire_id, m_meter)) {
                     auto new_val = NewMeterValue(std::move(target_context), meter, m_value).first;
                     meter->SetCurrent(new_val);
@@ -1893,8 +1900,7 @@ void CreatePlanet::Execute(ScriptingContext& context) const {
     }
 
     // determine if and which orbits are available
-    std::set<int> free_orbits = system->FreeOrbits();
-    if (free_orbits.empty()) {
+    if (system->FreeOrbits().empty()) {
         ErrorLogger(effects) << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
         return;
     }
