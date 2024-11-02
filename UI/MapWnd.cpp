@@ -148,7 +148,7 @@ namespace {
         db.Add("ui.map.fleet.supply.dot.spacing",           UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),          20,                             RangedStepValidator<int>(1, 3, 40));
         db.Add("ui.map.fleet.supply.dot.rate",              UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),             0.02,                           RangedStepValidator<double>(0.01, 0.01, 0.1));
 
-        db.Add("ui.fleet.explore.hostile.ignored",          UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),           false,                          Validator<bool>());
+        //db.Add("ui.fleet.explore.hostile.ignored",          UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),           false,                          Validator<bool>());
         db.Add("ui.fleet.explore.system.route.limit",       UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"),       25,                             StepValidator<int>(1, -1));
         db.Add("ui.fleet.explore.system.known.multiplier",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"),  10.0f,                          Validator<float>());
 
@@ -7406,7 +7406,6 @@ namespace {
     OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id) {
         const Universe& universe = GetUniverse();
         const ObjectMap& objects = universe.Objects();
-        const EmpireManager& empires = Empires();
         const auto start_system = objects.getRaw<System>(start_id);
         const auto dest_system = objects.getRaw<System>(destination_id);
         if (!start_system || !dest_system) {
@@ -7414,14 +7413,11 @@ namespace {
             return {};
         }
 
-        const auto ignore_hostile = GetOptionsDB().Get<bool>("ui.fleet.explore.hostile.ignored");
-        const auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
-        auto [system_list, path_length] = ignore_hostile ?
-            universe.GetPathfinder().ShortestPath(start_id, destination_id, empire_id, objects) :
-            universe.GetPathfinder().ShortestPath(start_id, destination_id, empire_id, fleet_pred, empires, objects);
+        auto [system_list, path_length] =
+            universe.GetPathfinder().ShortestPath(start_id, destination_id, empire_id, objects);
 
         if (!system_list.empty() && path_length > 0.0)
-            return {path_length, std::move(system_list)};
+            return {path_length, system_list};
 
         return {};
     }
