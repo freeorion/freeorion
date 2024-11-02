@@ -2367,15 +2367,15 @@ void CreateField::Execute(ScriptingContext& context) const {
             system->Insert(field, System::NO_ORBIT, context.current_turn, context.ContextObjects());
     }
 
-    std::string name_str;
     if (m_name) {
-        name_str = m_name->Eval(context);
+        auto name_str = m_name->Eval(context);
         if (m_name->ConstantExpr() && UserStringExists(name_str))
-            name_str = UserString(name_str);
+            field->Rename(UserString(name_str));
+        else
+            field->Rename(std::move(name_str));
     } else {
-        name_str = UserString(field_type->Name());
+        field->Rename(UserString(field_type->Name()));
     }
-    field->Rename(std::move(name_str));
 
     // apply after-creation effects
     ScriptingContext new_field_target_context{context, field.get(), ScriptingContext::DEFAULT_CURRENT_VALUE};
