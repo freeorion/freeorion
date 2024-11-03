@@ -111,9 +111,9 @@ git tag --annotate --message="X.Y.Z Stable Release"  vX.Y.Z
 * [ ] Prune release branch.
 
 
-### Blocking issues
+### Blocking Issues and PRs
 
 <!--
 Provide link to filtered list of issues which are blocking the release
 -->
-[Issues blocking vX.Y.Z](https://github.com/freeorion/freeorion/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22vX.Y.Z%22)
+[Issues blocking vX.Y.Z](https://github.com/freeorion/freeorion/milestone/<release_milestone#>)
