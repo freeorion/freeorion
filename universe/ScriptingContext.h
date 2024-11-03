@@ -318,13 +318,13 @@ struct [[nodiscard]] ScriptingContext {
 
     // disable implicit conversions to CurrentValueVariant
     template <typename T>
-    ScriptingContext(const ScriptingContext&, UniverseObject*, T) = delete;
+    ScriptingContext(const ScriptingContext&, Target, UniverseObject*, T) = delete;
     template <typename T>
-    ScriptingContext(const ScriptingContext&, UniverseObject*, T, const UniverseObject*) = delete;
+    ScriptingContext(const ScriptingContext&, Target, UniverseObject*, T, Source, const UniverseObject*) = delete;
     template <typename T>
-    ScriptingContext(ScriptingContext&&, UniverseObject*, T, const UniverseObject*) = delete;
+    ScriptingContext(ScriptingContext&&, Target, UniverseObject*, T, Source, const UniverseObject*) = delete;
     template <typename T>
-    ScriptingContext(ScriptingContext&&, UniverseObject*, T) = delete;
+    ScriptingContext(ScriptingContext&&, Target, UniverseObject*, T) = delete;
 
     [[nodiscard]] ScriptingContext(Source, const UniverseObject* source_,
                                    Target, UniverseObject* target_) noexcept :
@@ -357,27 +357,9 @@ struct [[nodiscard]] ScriptingContext {
     [[nodiscard]] explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
                                             Attacker = Attacker{}, UniverseObject* attacker_as_source = nullptr) noexcept;
 
-    [[nodiscard]] ScriptingContext(const Universe& universe, const EmpireManager& empires_,
-                                   Source = Source{}, const UniverseObject* source_ = nullptr,
-                                   Target = Target{}, UniverseObject* target_ = nullptr,
-                                   const CurrentValueVariant& current_value_ = DEFAULT_CURRENT_VALUE) noexcept :
-        source(        source_),
-        effect_target( target_),
-        current_value( current_value_),
-        universe(      nullptr),
-        const_universe(universe),
-        empires(       nullptr),
-        const_empires( empires_),
-        diplo_statuses(empires_.GetDiplomaticStatuses())
-    {}
-
     // disable implicit conversions to CurrentValueVariant
     template <typename T>
-    ScriptingContext(const Universe&, const EmpireManager&, T) = delete;
-    template <typename T>
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, T) = delete;
-    template <typename T>
-    ScriptingContext(const Universe&, const EmpireManager&, const UniverseObject*, UniverseObject*, T) = delete;
+    ScriptingContext(const Universe&, const EmpireManager&, Source, const UniverseObject*, Target, UniverseObject*, T) = delete;
 
     // helper functions for accessing state in this context
 
