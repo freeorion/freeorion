@@ -576,8 +576,14 @@ void SetMeter::Execute(ScriptingContext& context,
         }
 
     } else if (targets.size() == 1) {
-        ScriptingContext target_context{context, ScriptingContext::Target{}, targets.front()};
-        Execute(target_context);
+        if (auto* target = targets.front()) {
+            if (Meter* meter = target->GetMeter(m_meter)) {
+                const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
+                const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
+                auto new_val = static_cast<float>(m_value->Eval(target_meter_context));
+                update_meter(new_val, target->ID(), meter);
+            }
+        }
 
     } else {
         // calculate new meter values before modifying anything...
