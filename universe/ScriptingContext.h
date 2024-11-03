@@ -61,18 +61,6 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(           parent_context.diplo_statuses)
     {}
 
-    [[nodiscard]] ScriptingContext(Source, const UniverseObject* source_) noexcept :
-        source(           source_),
-        galaxy_setup_data(GetGalaxySetupData()),
-        species(          GetSpeciesManager()),
-        supply(           GetSupplyManager()),
-        universe(         &GetUniverse()),
-        const_universe(   GetUniverse()),
-        empires(          &(::Empires())),
-        const_empires(    ::Empires()),
-        diplo_statuses(   ::Empires().GetDiplomaticStatuses())
-    {}
-
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    Source, const UniverseObject* source_) noexcept :
         source(                   source_),
