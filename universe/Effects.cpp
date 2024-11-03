@@ -44,9 +44,10 @@ using boost::io::str;
 
 
 namespace {
-    static CONSTEXPR_VEC_AND_STRING const ScriptingContext::CurrentValueVariant
-        EMPTY_STRING_CURRENT_VALUE{std::string{}};
-    static CONSTEXPR_VEC_AND_STRING const ScriptingContext::CurrentValueVariant&
+    CONSTEXPR_VEC_AND_STRING const std::string EMPTY_STRING;
+    CONSTEXPR_VEC_AND_STRING const ScriptingContext::CurrentValueVariant
+        EMPTY_STRING_CURRENT_VALUE{EMPTY_STRING};
+    CONSTEXPR_VEC_AND_STRING const ScriptingContext::CurrentValueVariant&
         ZERO_INT_CURRENT_VALUE{ScriptingContext::DEFAULT_CURRENT_VALUE};
 
     /** creates a new fleet at a specified \a x and \a y location within the
