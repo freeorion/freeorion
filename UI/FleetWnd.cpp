@@ -842,9 +842,9 @@ namespace {
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
-        const Universe& u = GetUniverse();
-        const ObjectMap& o = u.Objects();
-        const ScriptingContext context{u, Empires()};
+        const ScriptingContext context;
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& o = context.ContextObjects();
 
         if (auto ship = o.get<Ship>(m_ship_id)) {
             if (stat_name == MeterType::METER_CAPACITY)
@@ -913,8 +913,8 @@ namespace {
         if (!ship)
             return;
 
-        const Universe& universe = GetUniverse();
-        const ScriptingContext context{universe, Empires()};
+        const ScriptingContext context;
+        const Universe& universe = context.ContextUniverse();
         if (const ShipDesign* design = universe.GetShipDesign(ship->DesignID())) {
             m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
             AttachChild(m_design_name_text);
@@ -1356,9 +1356,10 @@ void FleetDataPanel::Refresh() {
         DetachChildAndReset(overlay);
     m_fleet_icon_overlays.clear();
 
-    const Universe& u = GetUniverse();
-    const ObjectMap& o = u.Objects();
-    const EmpireManager& e = Empires();
+    const ScriptingContext context;
+    const Universe& u = context.ContextUniverse();
+    const ObjectMap& o = context.ContextObjects();
+    const EmpireManager& e = context.Empires();
 
     if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
@@ -1386,7 +1387,6 @@ void FleetDataPanel::Refresh() {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             m_fleet_name_text->SetText(std::move(public_fleet_name));
         }
-        ScriptingContext context{u, e};
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id, context));
 
         // set icons
@@ -1490,10 +1490,9 @@ void FleetDataPanel::RefreshStateChangedSignals() {
 
 void FleetDataPanel::SetStatIconValues() {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Universe& universe = GetUniverse();
-    const ObjectMap& objects = universe.Objects();
-    const ScriptingContext context{universe, Empires()};
-
+    const ScriptingContext context;
+    const Universe& universe = context.ContextUniverse();
+    const ObjectMap& objects = context.ContextObjects();
 
     const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
@@ -1514,7 +1513,7 @@ void FleetDataPanel::SetStatIconValues() {
 
     fuels.reserve(fleet->NumShips());
     speeds.reserve(fleet->NumShips());
-    for (auto& ship : objects.find<const Ship>(fleet->ShipIDs())) {
+    for (const auto& ship : objects.find<const Ship>(fleet->ShipIDs())) {
         int ship_id = ship->ID();
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.contains(ship_id))
@@ -2918,15 +2917,15 @@ void FleetWnd::SetStatIconValues() {
     float troop_tally =     0.0f;
     float colony_tally =    0.0f;
 
-    const Universe& universe = GetUniverse();
-    const ObjectMap& objects = universe.Objects();
-    const ScriptingContext context{universe, Empires()};
+    const ScriptingContext context;
+    const Universe& universe = context.ContextUniverse();
+    const ObjectMap& objects = context.ContextObjects();
 
     const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
 
-    for (auto& fleet : objects.find<const Fleet>(m_fleet_ids)) {
+    for (const auto& fleet : objects.find<const Fleet>(m_fleet_ids)) {
         if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
             continue;
 

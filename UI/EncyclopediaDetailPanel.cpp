@@ -2656,8 +2656,8 @@ namespace {
         // use the current meter values here, not initial, as this is used
         // within a loop that sets the species, updates meter, then checks
         // meter values for display
+        const ScriptingContext context;
         const Universe& universe = GetUniverse();
-        const ScriptingContext context{universe, Empires()};
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
         const float structure = ship->GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
