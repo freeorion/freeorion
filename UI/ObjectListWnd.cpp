@@ -1466,11 +1466,20 @@ public:
 
     [[nodiscard]] const std::string& SortKey(std::size_t column) const {
         const auto get_column_sort_key = [this, column]() -> std::string {
-            const auto ref = GetColumnValueRef(column);
-            return ref ? ref->Eval(ScriptingContext{ScriptingContext::Source{}, Objects().getRaw(m_object_id)}) : std::string{};
+            const auto* ref = GetColumnValueRef(column);
+            if (!ref)
+                return {};
+            const ScriptingContext context;
+            if (const auto* source = context.ContextObjects().getRaw(m_object_id)) {
+                const ScriptingContext source_context{context, ScriptingContext::Source{}, source};
+                return ref->Eval(source_context);
+            } else {
+                return EMPTY_STRING;
+            }
         };
 
         try {
+            // evaluates once, caches result for later
             return m_column_val_cache.try_emplace(column, get_column_sort_key()).first->second;
         } catch (...) {
             return EMPTY_STRING;
