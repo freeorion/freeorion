@@ -102,9 +102,10 @@ namespace {
 
     void UpdateMetersWrapper(Universe& universe, const py::object&)
     {
-        ScriptingContext context{universe, Empires(), GetGalaxySetupData(),
-                                 GetSpeciesManager(), GetSupplyManager()};
-        universe.UpdateMeterEstimates(context);
+        if (auto* app = IApp::GetApp()) {
+            ScriptingContext context{*app};
+            universe.UpdateMeterEstimates(context);
+        }
     }
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
