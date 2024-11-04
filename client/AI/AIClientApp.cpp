@@ -268,9 +268,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (loaded_game_data) {
             TraceLogger() << "Message::GAME_START save_state_string: " << save_state_string;
             m_AI->ResumeLoadedGame(save_state_string);
-            ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                                     m_species_manager, m_supply_manager};
-            Orders().ApplyOrders(context);
+            ScriptingContext context{*this};
+            m_orders.ApplyOrders(context);
         } else {
             DebugLogger() << "Message::GAME_START Starting New Game!";
             m_AI->StartNewGame();

@@ -805,8 +805,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
     // so that a set of SitReps intended as the player's initial greeting will be segregated
     m_current_turn = 0;
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                             m_species_manager, m_supply_manager};
+    ScriptingContext context{*this};
     m_universe.ApplyGenerateSitRepEffects(context);
 
     //can set current turn to 1 for start of game
@@ -928,8 +927,7 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
 void ServerApp::SendNewGameStartMessages() {
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
-    const ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                                   m_species_manager, m_supply_manager};
+    const ScriptingContext context{*this};
 
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
@@ -1468,7 +1466,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager,m_supply_manager};
+    ScriptingContext context{*this};
     UpdateEmpireSupply(context, m_supply_manager, true);  // precombat supply update
     CacheCostsTimes(context);
     UpdateResourcePools(context, m_cached_empire_research_costs_times,
@@ -1636,7 +1634,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     DebugLogger() << "Applying first turn effects and updating meters";
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+    ScriptingContext context{*this};
 
     // Apply effects for 1st turn.
     m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
@@ -2114,8 +2112,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     const auto player_info_map = GetPlayerInfoMap();
     const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
-    const ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                                   m_species_manager, m_supply_manager};
+    const ScriptingContext context{*this};
 
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
@@ -2123,17 +2120,15 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         empire->PrepPolicyInfoForSerialization(context);
     }
 
-    player_connection->SendMessage(GameStartMessage(
-        m_single_player_game, empire_id,
-        m_current_turn, m_empires, m_universe,
-        m_species_manager, GetCombatLogManager(),
-        m_supply_manager, player_info_map, orders,
-        ui_data,
-        m_galaxy_setup_data,
-        use_binary_serialization,
-        !player_connection->IsLocalConnection()),
-        empire_id,
-        m_current_turn);
+    player_connection->SendMessage(
+        GameStartMessage(m_single_player_game, empire_id,
+                         m_current_turn, m_empires, m_universe,
+                         m_species_manager, GetCombatLogManager(),
+                         m_supply_manager, player_info_map, orders,
+                         ui_data, m_galaxy_setup_data,
+                         use_binary_serialization,
+                         !player_connection->IsLocalConnection()),
+        empire_id, m_current_turn);
 
     return empire_id;
 }
@@ -4321,7 +4316,7 @@ void ServerApp::PreCombatProcessTurns() {
     // determined by what orders set.
     CleanUpBombardmentStateInfo(m_universe.Objects());
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+    ScriptingContext context{*this};
 
     // execute orders
     for (auto& [orders_empire_id, save_game_data] : m_turn_sequence) {
@@ -4444,7 +4439,7 @@ void ServerApp::ProcessCombats() {
     DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COMBAT));
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data, m_species_manager, m_supply_manager};
+    ScriptingContext context{*this};
 
     // collect data about locations where combat is to occur:
     // map from system ID to CombatInfo for that system
@@ -4479,8 +4474,7 @@ void ServerApp::ProcessCombats() {
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
-    const ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                                   m_species_manager, m_supply_manager};
+    const ScriptingContext context{*this};
 
     for (auto const* system : m_universe.Objects().allRaw<System>()) {
         bool unrestricted_monsters_present = false;
@@ -4523,8 +4517,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 void ServerApp::PostCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PostCombatProcessTurns");
 
-    ScriptingContext context{m_universe, m_empires, m_galaxy_setup_data,
-                             m_species_manager, m_supply_manager};
+    ScriptingContext context{*this};
 
     // post-combat visibility update
     m_universe.UpdateEmpireObjectVisibilities(context);

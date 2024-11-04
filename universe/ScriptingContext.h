@@ -30,8 +30,18 @@ struct [[nodiscard]] ScriptingContext {
     class Attacker {};
 
     [[nodiscard]] ScriptingContext() noexcept :
-        ScriptingContext(GetUniverse(), ::Empires(), GetGalaxySetupData(),
-                         GetSpeciesManager(), GetSupplyManager())
+        ScriptingContext(*IApp::GetApp())
+    {}
+
+    [[nodiscard]] explicit ScriptingContext(IApp& app) noexcept :
+        current_turn(     app.CurrentTurn()),
+        galaxy_setup_data(app.GetGalaxySetupData()),
+        species(          app.GetSpeciesManager()),
+        supply(           app.GetSupplyManager()),
+        universe(         &app.GetUniverse()),
+        const_universe(   app.GetUniverse()),
+        empires(          &app.Empires()),
+        const_empires(    app.Empires())
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
@@ -303,26 +313,8 @@ struct [[nodiscard]] ScriptingContext {
         diplo_statuses(   ::Empires().GetDiplomaticStatuses())
     {}
 
-    [[nodiscard]] ScriptingContext(Universe& universe, EmpireManager& empires_,
-                                   const GalaxySetupData& galaxy_setup_data_ = GetGalaxySetupData(),
-                                   SpeciesManager& species_ = GetSpeciesManager(),
-                                   const SupplyManager& supply_ = GetSupplyManager()) noexcept :
-        galaxy_setup_data(galaxy_setup_data_),
-        species(          species_),
-        supply(           supply_),
-        universe(         &universe),
-        const_universe(   universe),
-        empires(          &empires_),
-        const_empires(    empires_),
-        diplo_statuses(   empires_.GetDiplomaticStatuses())
-    {}
-
     [[nodiscard]] explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
                                             Attacker = Attacker{}, UniverseObject* attacker_as_source = nullptr) noexcept;
-
-    // disable implicit conversions to CurrentValueVariant
-    template <typename T>
-    ScriptingContext(const Universe&, const EmpireManager&, Source, const UniverseObject*, Target, UniverseObject*, T) = delete;
 
     // helper functions for accessing state in this context
 
@@ -407,15 +399,15 @@ struct [[nodiscard]] ScriptingContext {
 
     // general gamestate info
     int                                            combat_bout = 0; // first round of battle is combat_bout == 1
-    int                                            current_turn = CurrentTurn();
+    int                                            current_turn;
     int                                            in_design_id = INVALID_DESIGN_ID;
     int                                            production_block_size = 1;
-    const GalaxySetupData&                         galaxy_setup_data{GetGalaxySetupData()};
-    SpeciesManager&                                species{GetSpeciesManager()};
-    const SupplyManager&                           supply{GetSupplyManager()};
+    const GalaxySetupData&                         galaxy_setup_data;
+    SpeciesManager&                                species;
+    const SupplyManager&                           supply;
 private: // Universe and ObjectMap getters select one of these based on constness
     Universe*                                      universe = nullptr;
-    const Universe&                                const_universe{universe ? *universe : GetUniverse()};
+    const Universe&                                const_universe;
     ObjectMap*                                     objects = universe ? &(universe->Objects()) : nullptr;
     const ObjectMap&                               const_objects{objects ? *objects : const_universe.Objects()};
 public:
@@ -423,9 +415,9 @@ public:
     const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
 private:
     EmpireManager*                                 empires = nullptr;
-    const EmpireManager&                           const_empires{empires ? *empires : (::Empires())};
+    const EmpireManager&                           const_empires;
 public:
-    const DiploStatusMap&                          diplo_statuses{::Empires().GetDiplomaticStatuses()};
+    const DiploStatusMap&                          diplo_statuses{const_empires.GetDiplomaticStatuses()};
 };
 
 

@@ -3068,9 +3068,8 @@ namespace {
         const std::vector<int> planet_id_vec{planet->ID()};
         const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-        Universe& universe = GetUniverse();
-        ScriptingContext context{universe, Empires(), GetGalaxySetupData(),
-                                 GetSpeciesManager(), GetSupplyManager()};
+        ScriptingContext context;
+        Universe& universe = context.ContextUniverse();
         universe.InhibitUniverseObjectSignals(true);
 
         for (const auto species_name : species_names) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
