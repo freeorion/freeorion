@@ -163,6 +163,7 @@ add_compile_options(
     # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
     $<$<CXX_COMPILER_ID:Clang>:-Wall>
     $<$<CXX_COMPILER_ID:Clang>:-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST>
+    $<$<CXX_COMPILER_ID:Clang>:-Wunsafe-buffer-usage>
     # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
 
