@@ -162,6 +162,7 @@ add_compile_options(
     $<$<CXX_COMPILER_ID:GNU>:-Wall>
     # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
     $<$<CXX_COMPILER_ID:Clang>:-Wall>
+    $<$<CXX_COMPILER_ID:Clang>:-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_FAST>
     # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
     $<$<CXX_COMPILER_ID:MSVC>:/W4>
 
