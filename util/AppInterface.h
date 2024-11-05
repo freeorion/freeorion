@@ -22,7 +22,7 @@ class Building;
 class Field;
 class PythonParser;
 struct GalaxySetupData;
-
+ 
 class FO_COMMON_API IApp {
 protected:
     IApp();
