@@ -189,7 +189,6 @@ ScriptingContext::ScriptingContext(CombatInfo& info, Attacker, UniverseObject* a
     galaxy_setup_data(      info.galaxy_setup_data),
     species(                info.species),
     supply(                 info.supply),
-    universe(               nullptr),
     const_universe(         info.universe),
     objects(                &info.objects), // not taken from Universe!
     const_objects(          info.objects),
