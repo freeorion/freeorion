@@ -203,7 +203,9 @@ namespace {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        const ScriptingContext location_as_source_context{ScriptingContext::Source{}, location, ScriptingContext::Target{}, location};
+        const ScriptingContext context;
+        const ScriptingContext location_as_source_context{context, ScriptingContext::Source{}, location,
+                                                          ScriptingContext::Target{}, location};
         return hull.Location()->EvalOne(location_as_source_context, location);
     }
 
@@ -214,15 +216,16 @@ namespace {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        const ScriptingContext location_as_source_context{ScriptingContext::Source{}, location, ScriptingContext::Target{}, location};
+        const ScriptingContext context;
+        const ScriptingContext location_as_source_context{context, ScriptingContext::Source{}, location,
+                                                          ScriptingContext::Target{}, location};
         return part_type.Location()->EvalOne(location_as_source_context, location);
     }
 
     template <typename X>
     struct PairToTupleConverter {
-        static PyObject* convert(X pair) {
-            return py::incref(py::make_tuple(pair.first, pair.second).ptr());
-        }
+        static PyObject* convert(X pair)
+        { return py::incref(py::make_tuple(pair.first, pair.second).ptr()); }
     };
 
     std::vector<std::string> ExtractList(const py::list& py_string_list) {
