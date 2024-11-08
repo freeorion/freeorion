@@ -15,6 +15,7 @@ Policy
                 OwnedBy empire = Source.Owner
                 Species
             ]
+            activation = EmpireStockpile empire = Source.Owner resource = Influence low = 0
             priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
             effects = [
                 SetTargetInfluence value = Value - max(0.0,
