@@ -17,17 +17,17 @@
 
 struct CombatInfo;
 
-struct [[nodiscard]] ScriptingContext {
+struct [[nodiscard]] ScriptingContext final {
     using CurrentValueVariant = std::variant<
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
         UniverseObjectType, Visibility, std::string, std::vector<std::string>>;
     inline static CONSTEXPR_VEC_AND_STRING const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
 
     // used to disambiguate constructors
-    class LocalCandidate {};
-    class Source {};
-    class Target {};
-    class Attacker {};
+    class LocalCandidate final {};
+    class Source final {};
+    class Target final {};
+    class Attacker final {};
 
     [[nodiscard]] ScriptingContext() noexcept :
         ScriptingContext(*IApp::GetApp())
