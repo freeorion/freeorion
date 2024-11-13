@@ -17,7 +17,7 @@ jobs:
         run: |
           timeout 1m godot --no-window --disable-render-loop --video-driver Dummy --gdnative-generate-json-api godot-api.json
       - name: Upload binaries
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: godot-api
           path: godot-api.json
@@ -34,7 +34,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Dowload Godot API
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: godot-api
           path: .
@@ -62,9 +62,9 @@ jobs:
           pushd build
           cmake --build . -- -j2
       - name: Upload binaries
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: android-binaries
+          name: android-binaries-${{ matrix.arch }}
           path: godot/bin/
           if-no-files-found: error
           retention-days: 1
