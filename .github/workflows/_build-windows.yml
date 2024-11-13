@@ -80,7 +80,7 @@ jobs:
         if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
       - name: Upload binaries artefacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: freeorion-binaries-win32-build-${{ github.run_number }}
           path: build/FreeOrion_*.zip
