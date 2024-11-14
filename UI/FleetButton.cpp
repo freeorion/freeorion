@@ -92,7 +92,7 @@ void FleetButton::CompleteConstruction() {
 }
 
 void FleetButton::Refresh(SizeType size_type) {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const EmpireManager& e = context.Empires();
@@ -305,7 +305,7 @@ void FleetButton::SizeMove(GG::Pt ul, GG::Pt lr) {
 }
 
 void FleetButton::LayoutIcons() {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
     for (auto& graphic : m_icons) {
@@ -438,7 +438,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     bool hasMonsters = false;
     bool canDamageShips = false;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& u = context.ContextUniverse();
 
     for (const auto* fleet : fleets) {

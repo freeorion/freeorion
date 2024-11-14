@@ -538,7 +538,7 @@ void ShipDamageBrowseWnd::UpdateSummary() {
     if (!ship)
         return;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = ClientApp::GetApp()->GetContext();
 
     // unpaired meter total for breakdown summary
     float total_structure_damage = ship->TotalWeaponsShipDamage(context, 0.0f, false);
@@ -553,7 +553,7 @@ void ShipDamageBrowseWnd::UpdateSummary() {
 }
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
-    const ScriptingContext context;
+    const ScriptingContext& context = ClientApp::GetApp()->GetContext();
 
     // clear existing labels
     for (const auto& [label, value] : m_effect_labels_and_values) {
@@ -757,7 +757,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_bay_list->DetachChildren();
     m_hangar_list->DetachChildren();
 
-    ScriptingContext context;
+    const ScriptingContext& context = ClientApp::GetApp()->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 

@@ -47,8 +47,7 @@ namespace {
 
     auto ObjectTagsAsStringVec(const UniverseObject& o) -> std::vector<std::string>
     {
-        const ScriptingContext context;
-        UniverseObject::TagVecs tags = o.Tags(context);
+        UniverseObject::TagVecs tags = o.Tags(IApp::GetApp()->GetContext());
 
         std::vector<std::string> result;
         result.reserve(tags.size());
@@ -101,12 +100,7 @@ namespace {
     }
 
     void UpdateMetersWrapper(Universe& universe, const py::object&)
-    {
-        if (auto* app = IApp::GetApp()) {
-            ScriptingContext context{*app};
-            universe.UpdateMeterEstimates(context);
-        }
-    }
+    { universe.UpdateMeterEstimates(IApp::GetApp()->GetContext()); }
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
@@ -198,12 +192,14 @@ namespace {
 
     auto HullProductionLocation(const ShipHull& hull, int location_id) -> bool
     {
-        UniverseObject* location = Objects().getRaw(location_id); // intentionally getting a mutable pointer to construct context with
+        ScriptingContext& context = IApp::GetApp()->GetContext();
+
+        UniverseObject* location = context.ContextObjects().getRaw(location_id); // intentionally getting a mutable pointer to construct context with
         if (!location) {
             ErrorLogger() << "UniverseWrapper::HullProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        const ScriptingContext context;
+
         const ScriptingContext location_as_source_context{context, ScriptingContext::Source{}, location,
                                                           ScriptingContext::Target{}, location};
         return hull.Location()->EvalOne(location_as_source_context, location);
@@ -211,12 +207,13 @@ namespace {
 
     auto ShipPartProductionLocation(const ShipPart& part_type, int location_id) -> bool
     {
-        UniverseObject*  location = Objects().getRaw(location_id);
+        ScriptingContext& context = IApp::GetApp()->GetContext();
+
+        UniverseObject* location = context.ContextObjects().getRaw(location_id);
         if (!location) {
             ErrorLogger() << "UniverseWrapper::PartTypeProductionLocation Could not find location with id " << location_id;
             return false;
         }
-        const ScriptingContext context;
         const ScriptingContext location_as_source_context{context, ScriptingContext::Source{}, location,
                                                           ScriptingContext::Target{}, location};
         return part_type.Location()->EvalOne(location_as_source_context, location);
@@ -352,10 +349,9 @@ namespace FreeOrionPython {
         py::def("getNamedReal",
                 +[](const std::string& name) -> double {
                     if (const auto ref = GetValueRef<double>(name, true)) {
-                        if (ref->ConstantExpr()) 
+                        if (ref->ConstantExpr())
                             return ref->Eval();
-                        const ScriptingContext context;
-                        return ref->Eval(context);
+                        return ref->Eval(IApp::GetApp()->GetContext());
                     }
                     return 0.0;
                 },
@@ -366,8 +362,7 @@ namespace FreeOrionPython {
                     if (const auto ref = GetValueRef<int>(name, true)) {
                         if (ref->ConstantExpr())
                             return ref->Eval();
-                        const ScriptingContext context;
-                        return ref->Eval(context);
+                        return ref->Eval(IApp::GetApp()->GetContext());
                     }
                     return 0;
                 },
@@ -499,7 +494,7 @@ namespace FreeOrionPython {
             .def("currentMeterValue",           ObjectCurrentMeterValue,             py::return_value_policy<py::return_by_value>())
             .def("initialMeterValue",           ObjectInitialMeterValue,             py::return_value_policy<py::return_by_value>())
             .add_property("tags",               make_function(ObjectTagsAsStringVec, py::return_value_policy<py::return_by_value>()))
-            .def("hasTag",                      +[](const UniverseObject& obj, const std::string& tag) -> bool { const ScriptingContext context; return obj.HasTag(tag, context); })
+            .def("hasTag",                      +[](const UniverseObject& obj, const std::string& tag) -> bool { return obj.HasTag(tag, IApp::GetApp()->GetContext()); })
             .add_property("meters",             make_function(
                                                     +[](const UniverseObject& o) -> std::map<MeterType, Meter> { return {o.Meters().begin(), o.Meters().end()}; },
                                                     py::return_value_policy<py::return_by_value>()
@@ -527,7 +522,7 @@ namespace FreeOrionPython {
             .add_property("speed",                     +[](const Fleet& fleet) -> float { return fleet.Speed(Objects()); })
             .add_property("canChangeDirectionEnRoute", &Fleet::CanChangeDirectionEnRoute)
             .add_property("hasMonsters",               +[](const Fleet& fleet) -> bool { return fleet.HasMonsters(GetUniverse()); })
-            .add_property("hasArmedShips",             +[](const Fleet& fleet) -> bool { return fleet.HasArmedShips(ScriptingContext{}); })
+            .add_property("hasArmedShips",             +[](const Fleet& fleet) -> bool { return fleet.HasArmedShips(IApp::GetApp()->GetContext()); })
             .add_property("hasFighterShips",           +[](const Fleet& fleet) -> bool { return fleet.HasFighterShips(GetUniverse()); })
             .add_property("hasColonyShips",            +[](const Fleet& fleet) -> bool { return fleet.HasColonyShips(GetUniverse()); })
             .add_property("hasOutpostShips",           +[](const Fleet& fleet) -> bool { return fleet.HasOutpostShips(GetUniverse()); })
@@ -552,7 +547,7 @@ namespace FreeOrionPython {
             .add_property("lastResuppliedOnTurn",   &Ship::LastResuppliedOnTurn)
             .add_property("lastTurnActiveInCombat", &Ship::LastTurnActiveInCombat)
             .add_property("isMonster",              +[](const Ship& ship) -> bool { return ship.IsMonster(GetUniverse()); })
-            .add_property("isArmed",                +[](const Ship& ship) -> bool { return ship.IsArmed(ScriptingContext{}); })
+            .add_property("isArmed",                +[](const Ship& ship) -> bool { return ship.IsArmed(IApp::GetApp()->GetContext()); })
             .add_property("hasFighters",            +[](const Ship& ship) -> bool { return ship.HasFighters(GetUniverse()); })
             .add_property("canColonize",            +[](const Ship& ship) -> bool { return ship.CanColonize(GetUniverse(), GetSpeciesManager()); })
             .add_property("canInvade",              +[](const Ship& ship) -> bool { return ship.HasTroops(GetUniverse()); })
@@ -607,9 +602,9 @@ namespace FreeOrionPython {
             .add_property("hasFighters",        make_function(&ShipDesign::HasFighters,     py::return_value_policy<py::return_by_value>()))
             .add_property("hasDirectWeapons",   make_function(&ShipDesign::HasDirectWeapons,py::return_value_policy<py::return_by_value>()))
             .add_property("isMonster",          make_function(&ShipDesign::IsMonster,       py::return_value_policy<py::return_by_value>()))
-            .def("productionCost",              +[](const ShipDesign& ship_design, int empire_id, int location_id) -> float { return ship_design.ProductionCost(empire_id, location_id, ScriptingContext{}); })
-            .def("productionTime",              +[](const ShipDesign& ship_design, int empire_id, int location_id) -> int { return ship_design.ProductionTime(empire_id, location_id, ScriptingContext{}); })
-            .def("perTurnCost",                 +[](const ShipDesign& ship_design, int empire_id, int location_id) -> float { return ship_design.PerTurnCost(empire_id, location_id, ScriptingContext{}); })
+            .def("productionCost",              +[](const ShipDesign& ship_design, int empire_id, int location_id) -> float { return ship_design.ProductionCost(empire_id, location_id, IApp::GetApp()->GetContext()); })
+            .def("productionTime",              +[](const ShipDesign& ship_design, int empire_id, int location_id) -> int { return ship_design.ProductionTime(empire_id, location_id, IApp::GetApp()->GetContext()); })
+            .def("perTurnCost",                 +[](const ShipDesign& ship_design, int empire_id, int location_id) -> float { return ship_design.PerTurnCost(empire_id, location_id, IApp::GetApp()->GetContext()); })
             .add_property("costTimeLocationInvariant",
                                                 &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            py::return_value_policy<py::return_by_value>()))
@@ -626,7 +621,7 @@ namespace FreeOrionPython {
                                                     py::return_value_policy<py::return_by_value>()
                                                 ))
 
-            .def("productionLocationForEmpire", +[](const ShipDesign& ship_design, int empire_id, int location_id) { const ScriptingContext context; return ship_design.ProductionLocation(empire_id, location_id, context); })
+            .def("productionLocationForEmpire", +[](const ShipDesign& ship_design, int empire_id, int location_id) { return ship_design.ProductionLocation(empire_id, location_id, IApp::GetApp()->GetContext()); })
             .def("dump",                        &ShipDesign::Dump,                          py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
         py::def("validShipDesign",
@@ -637,10 +632,10 @@ namespace FreeOrionPython {
                 " that can't accept that type of part, and contain only hulls"
                 " and parts that exist (and may also need to contain the"
                 " correct number of parts - this needs to be verified).");
-        py::def("getShipDesign",                +[](int id) -> const ShipDesign* { return GetUniverse().GetShipDesign(id); },
+        py::def("getShipDesign",                +[](int id) -> const ShipDesign* { return IApp::GetApp()->GetContext().ContextUniverse().GetShipDesign(id); },
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the ship design (ShipDesign) with the indicated id number (int).");
-        py::def("getPredefinedShipDesign",      +[](const std::string& name) -> const ShipDesign* { return GetUniverse().GetGenericShipDesign(name); },
+        py::def("getPredefinedShipDesign",      +[](const std::string& name) -> const ShipDesign* { return IApp::GetApp()->GetContext().ContextUniverse().GetGenericShipDesign(name); },
                 py::return_value_policy<py::reference_existing_object>(),
                 "Returns the ship design (ShipDesign) with the indicated name (string).");
 
@@ -650,8 +645,8 @@ namespace FreeOrionPython {
             .add_property("capacity",           &ShipPart::Capacity)
             .add_property("secondaryStat",      &ShipPart::SecondaryStat)
             .add_property("mountableSlotTypes", make_function(&ShipPart::MountableSlotTypes,py::return_value_policy<py::return_by_value>()))
-            .def("productionCost",              +[](const ShipPart& ship_part, int empire_id, int location_id, int design_id) -> float { return ship_part.ProductionCost(empire_id, location_id, ScriptingContext{}, design_id); })
-            .def("productionTime",              +[](const ShipPart& ship_part, int empire_id, int location_id, int design_id) -> int { return ship_part.ProductionTime(empire_id, location_id, ScriptingContext{}, design_id); })
+            .def("productionCost",              +[](const ShipPart& ship_part, int empire_id, int location_id, int design_id) -> float { return ship_part.ProductionCost(empire_id, location_id, IApp::GetApp()->GetContext(), design_id); })
+            .def("productionTime",              +[](const ShipPart& ship_part, int empire_id, int location_id, int design_id) -> int { return ship_part.ProductionTime(empire_id, location_id, IApp::GetApp()->GetContext(), design_id); })
             .def("canMountInSlotType",          &ShipPart::CanMountInSlotType)
             .add_property("costTimeLocationInvariant",
                                                 &ShipPart::ProductionCostTimeLocationInvariant)
@@ -676,8 +671,8 @@ namespace FreeOrionPython {
                                                     HullSlots,
                                                     py::return_value_policy<py::return_by_value>()
                                                 ))
-            .def("productionCost",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> float { ScriptingContext context; return ship_hull.ProductionCost(empire_id, location_id, context, design_id); })
-            .def("productionTime",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> int { ScriptingContext context; return ship_hull.ProductionTime(empire_id, location_id, context, design_id); })
+            .def("productionCost",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> float { return ship_hull.ProductionCost(empire_id, location_id, IApp::GetApp()->GetContext(), design_id); })
+            .def("productionTime",              +[](const ShipHull& ship_hull, int empire_id, int location_id, int design_id) -> int { return ship_hull.ProductionTime(empire_id, location_id, IApp::GetApp()->GetContext(), design_id); })
             .add_property("costTimeLocationInvariant",
                                                 &ShipHull::ProductionCostTimeLocationInvariant)
             .def("hasTag",                      +[](const ShipHull& hull, const std::string& tag) -> bool { return hull.HasTag(tag); })
@@ -703,12 +698,12 @@ namespace FreeOrionPython {
         py::class_<BuildingType, boost::noncopyable>("buildingType", py::no_init)
             .add_property("name",               make_function(&BuildingType::Name,          py::return_value_policy<py::copy_const_reference>()))
             .add_property("description",        make_function(&BuildingType::Description,   py::return_value_policy<py::copy_const_reference>()))
-            .def("productionCost",              +[](const BuildingType& bt, int empire_id, int location_id) -> float { return bt.ProductionCost(empire_id, location_id, ScriptingContext{}); })
-            .def("productionTime",              +[](const BuildingType& bt, int empire_id, int location_id) -> int { return bt.ProductionTime(empire_id, location_id, ScriptingContext{}); })
-            .def("perTurnCost",                 +[](const BuildingType& bt, int empire_id, int location_id) -> float { return bt.PerTurnCost(empire_id, location_id, ScriptingContext{}); })
+            .def("productionCost",              +[](const BuildingType& bt, int empire_id, int location_id) -> float { return bt.ProductionCost(empire_id, location_id, IApp::GetApp()->GetContext()); })
+            .def("productionTime",              +[](const BuildingType& bt, int empire_id, int location_id) -> int { return bt.ProductionTime(empire_id, location_id, IApp::GetApp()->GetContext()); })
+            .def("perTurnCost",                 +[](const BuildingType& bt, int empire_id, int location_id) -> float { return bt.PerTurnCost(empire_id, location_id, IApp::GetApp()->GetContext()); })
             .def("captureResult",               &BuildingType::GetCaptureResult)
-            .def("canBeProduced",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { const ScriptingContext context; return building_type.ProductionLocation(empire_id, loc_id, context); })
-            .def("canBeEnqueued",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { const ScriptingContext context; return building_type.EnqueueLocation(empire_id, loc_id, context); })
+            .def("canBeProduced",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { return building_type.ProductionLocation(empire_id, loc_id, IApp::GetApp()->GetContext()); })
+            .def("canBeEnqueued",               +[](const BuildingType& building_type, int empire_id, int loc_id) -> bool { return building_type.EnqueueLocation(empire_id, loc_id, IApp::GetApp()->GetContext()); })
             .add_property("costTimeLocationInvariant",
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
             .def("dump",                        &BuildingType::Dump,                        py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
@@ -724,7 +719,7 @@ namespace FreeOrionPython {
             .add_property("speciesName",                    make_function(&Planet::SpeciesName, py::return_value_policy<py::copy_const_reference>()))
             .add_property("focus",                          make_function(&Planet::Focus,       py::return_value_policy<py::copy_const_reference>()))
             .add_property("turnsSinceFocusChange" ,         +[](const Planet& rc) { return rc.TurnsSinceFocusChange(CurrentTurn()); })
-            .add_property("availableFoci",                  +[](const Planet& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(ScriptingContext{})); })
+            .add_property("availableFoci",                  +[](const Planet& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(IApp::GetApp()->GetContext())); })
             .add_property("size",                           &Planet::Size)
             .add_property("type",                           &Planet::Type)
             .add_property("originalType",                   &Planet::OriginalType)
@@ -793,7 +788,7 @@ namespace FreeOrionPython {
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      py::return_value_policy<py::return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     py::return_value_policy<py::return_by_value>()))
             .def("dump",                        &Special::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
-            .def("initialCapacity",             +[](const Special& special, int obj_id) -> float { const ScriptingContext context; return special.InitialCapacity(obj_id, context); })
+            .def("initialCapacity",             +[](const Special& special, int obj_id) -> float { return special.InitialCapacity(obj_id, IApp::GetApp()->GetContext()); })
         ;
         py::def("getSpecial",                   +[](const std::string& name) { return ::GetSpecial(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),
@@ -819,7 +814,7 @@ namespace FreeOrionPython {
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
             .def("dump",                        &Species::Dump,                         py::return_value_policy<py::return_by_value>(), "Returns string with debug information, use '0' as argument.")
         ;
-        py::def("getSpecies",                   +[](const std::string& name) { const ScriptingContext context; return context.species.GetSpecies(name); },
+        py::def("getSpecies",                   +[](const std::string& name) { return IApp::GetApp()->GetContext().species.GetSpecies(name); },
                                                 py::return_value_policy<py::reference_existing_object>(),
                                                 "Returns the species (Species) with the indicated name (string).");
     }

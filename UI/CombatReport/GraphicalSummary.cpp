@@ -264,7 +264,7 @@ public:
         m_participant(participant),
         m_sizer(sizer)
     {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         if (auto object = context.ContextObjects().getRaw(participant.object_id)) {
             SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), context.ContextUniverse()) +
                           " " + DoubleToString(participant.current_health, 3, false) +

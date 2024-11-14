@@ -99,7 +99,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const EmpireManager& empire_manager = context.Empires();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();

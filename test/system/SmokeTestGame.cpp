@@ -153,13 +153,13 @@ BOOST_AUTO_TEST_CASE(host_server) {
             }
         }
 
-        const auto is_owned = [this](const UniverseObject* obj) { return obj->OwnedBy(m_empire_id); };
+        const auto is_owned = [this](const UniverseObject* obj) noexcept { return obj->OwnedBy(m_empire_id); };
 
         if (m_current_turn == 2) {
             // check home planet meters
             const Planet* home_planet = nullptr;
 
-            for (const auto* planet : Objects().findRaw<Planet>(is_owned)) {
+            for (const auto* planet : m_universe.Objects().findRaw<Planet>(is_owned)) {
                 BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
                 BOOST_TEST_MESSAGE("Population: " << planet->GetMeter(MeterType::METER_POPULATION)->Current());
                 BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_INDUSTRY)->Current());
@@ -171,8 +171,6 @@ BOOST_AUTO_TEST_CASE(host_server) {
             BOOST_REQUIRE(home_planet != nullptr);
 
             // enqueue Troop Ship
-            ScriptingContext context;
-
             static const boost::uuids::uuid troop_ship_uuid =
                 boost::uuids::string_generator{}("08a58b080929496d84fcfaa91424ca02");
 
@@ -180,7 +178,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
                 BOOST_TEST_MESSAGE("Predefined ship design " << design->Name() << " " << design->UUID());
                 if (design->UUID() == troop_ship_uuid) {
                     BOOST_REQUIRE_EQUAL(troop_design_id, INVALID_DESIGN_ID);
-                    troop_design_id = my_empire->AddShipDesign(*design, context.ContextUniverse());
+                    troop_design_id = my_empire->AddShipDesign(*design, m_universe);
                     BOOST_REQUIRE_NE(troop_design_id, INVALID_DESIGN_ID);
                     BOOST_TEST_MESSAGE("Found predefined troop ship design " << troop_design_id << " " << design->Name() << " " << design->UUID());
                 }
@@ -188,23 +186,22 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
             BOOST_REQUIRE_NE(troop_design_id, INVALID_DESIGN_ID);
 
-            BOOST_REQUIRE(my_empire->ProducibleItem(BuildType::BT_SHIP, troop_design_id, home_planet->ID(), context));
+            BOOST_REQUIRE(my_empire->ProducibleItem(BuildType::BT_SHIP, troop_design_id, home_planet->ID(), m_context));
 
             m_orders.IssueOrder(std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
                 m_empire_id,
-                ProductionQueue::ProductionItem(BuildType::BT_SHIP, troop_design_id, context.ContextUniverse()),
+                ProductionQueue::ProductionItem(BuildType::BT_SHIP, troop_design_id, m_universe),
                 1,
                 home_planet->ID()),
-                context);
+                m_context);
         }
 
         if (m_current_turn > 2) {
             if (my_empire->GetProductionQueue().empty()) {
-                for (const auto* ship : Objects().findRaw<Ship>(is_owned)) {
+                for (const auto* ship : m_universe.Objects().findRaw<Ship>(is_owned)) {
                     if (ship->DesignID() == troop_design_id) {
-                        ScriptingContext context;
-                        BOOST_TEST_MESSAGE("Found troop ship with troops " << ship->TroopCapacity(context.ContextUniverse()));
-                        BOOST_REQUIRE_GT(ship->TroopCapacity(context.ContextUniverse()), 0.0f);
+                        BOOST_TEST_MESSAGE("Found troop ship with troops " << ship->TroopCapacity(m_universe));
+                        BOOST_REQUIRE_GT(ship->TroopCapacity(m_universe), 0.0f);
                     }
                 }
             }

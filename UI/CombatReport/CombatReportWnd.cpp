@@ -104,8 +104,7 @@ public:
             } else if (link_type == VarText::DESIGN_ID_TAG) {
                 ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-                const ScriptingContext context;
-                if (const ShipDesign* design = context.ContextUniverse().GetGenericShipDesign(data))
+                if (const ShipDesign* design = IApp::GetApp()->GetContext().ContextUniverse().GetGenericShipDesign(data))
                     ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
 
             } else if (link_type == VarText::TECH_TAG) {

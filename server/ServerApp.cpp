@@ -81,7 +81,6 @@ void Seed(unsigned int seed);
 // ServerApp
 ////////////////////////////////////////////////
 ServerApp::ServerApp() :
-    IApp(),
     m_signals(m_io_context, SIGINT, SIGTERM),
     m_timer(m_io_context),
     m_networking(m_io_context,
@@ -89,6 +88,7 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::HandleMessage, this, boost::placeholders::_1, boost::placeholders::_2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, boost::placeholders::_1)),
     m_fsm(std::make_unique<ServerFSM>(*this)),
+    m_context(*this),
     m_chat_history(1000)
 {
     // Force the log file if requested.

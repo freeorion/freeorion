@@ -231,7 +231,7 @@ namespace {
     // ProductionItemBrowseWnd //
     /////////////////////////////
     std::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
 
         std::string main_text;
         std::string item_name;
@@ -337,7 +337,7 @@ namespace {
             queue_index(queue_index_),
             elem(elem_)
         {
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
 
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
             auto [total_cost, minimum_turns] = elem.ProductionCostAndTime(context); // may return {-1.0f, -1}
@@ -425,7 +425,7 @@ namespace {
         const GG::Clr clr = m_in_progress ? GG::LightenClr(ClientUI::ResearchableTechTextAndBorderColor()) :
             ClientUI::ResearchableTechTextAndBorderColor();
 
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
 
         // get graphic and player-visible name text for item
         std::shared_ptr<GG::Texture> graphic;
@@ -733,7 +733,7 @@ namespace {
             auto& row = *it;
             QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row.get()) : nullptr;
 
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             const Universe& u = context.ContextUniverse();
 
             int remaining = 0;
@@ -852,7 +852,7 @@ public:
     ProdQueueListBox* GetQueueListBox() { return m_queue_lb.get(); }
 
     void SetEmpire(int id) {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         if (auto empire = context.GetEmpire(id)) {
             SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) %
                                    empire->Name()));
@@ -1061,7 +1061,7 @@ void ProductionWnd::SelectDefaultPlanet(const ObjectMap& objects)
 
 void ProductionWnd::SelectSystem(int system_id) {
     if (system_id != SidePanel::SystemID()) {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         m_build_designator_wnd->SelectSystem(system_id, context.ContextObjects());
         // refresh so as to correctly highlight builds for selected system
         Update(context);
@@ -1073,7 +1073,7 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator row_it,
 {
     if (!m_order_issuing_enabled)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1099,7 +1099,7 @@ void ProductionWnd::Sanitize(const ObjectMap& objects)
 { m_build_designator_wnd->Clear(objects); }
 
 void ProductionWnd::ProductionQueueChangedSlot() {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     UpdateInfoPanel(context);
     UpdateQueue(context);
     m_build_designator_wnd->Update();
@@ -1232,7 +1232,7 @@ void ProductionWnd::AddBuildToQueueSlot(ProductionQueue::ProductionItem item, in
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1253,7 +1253,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) const {
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1276,7 +1276,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1299,7 +1299,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it, bool do_delete) {
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1333,7 +1333,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, GG::Pt pt, GG
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1356,7 +1356,7 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1388,7 +1388,7 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1413,7 +1413,7 @@ void ProductionWnd::QueueItemDuped(GG::ListBox::iterator it) {
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1437,7 +1437,7 @@ void ProductionWnd::QueueItemSplit(GG::ListBox::iterator it) {
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
@@ -1461,7 +1461,7 @@ void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow)
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (client_empire_id != m_empire_shown_id)
         return;
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
     if (!empire)
         return;

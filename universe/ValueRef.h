@@ -220,8 +220,8 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     /** Evaluates the expression tree with a default context.  Useful for
       * evaluating expressions that do not depend on source, target, or
       * candidate objects. */
-    [[nodiscard]] T Eval() const
-    { return Eval(::ScriptingContext{}); }
+    [[nodiscard]] T Eval() const // TODO: virtual?
+    { return Eval(IApp::GetApp()->GetContext()); }
 
     /** Evaluates the expression tree and return the results; \a context
       * is used to fill in any instances of the "Value" variable or references

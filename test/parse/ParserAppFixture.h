@@ -3,6 +3,7 @@
 
 #include "Empire/EmpireManager.h"
 #include "Empire/Supply.h"
+#include "universe/ScriptingContext.h"
 #include "universe/Species.h"
 #include "universe/Universe.h"
 #include "util/AppInterface.h"
@@ -36,6 +37,9 @@ public:
     SupplyManager& GetSupplyManager() noexcept override;
     int EffectsProcessingThreads() const override;
 
+    [[nodiscard]] ScriptingContext& GetContext() noexcept override { return m_context; };
+    [[nodiscard]] const ScriptingContext& GetContext() const noexcept override { return m_context; };
+
 protected:
     boost::filesystem::path m_test_scripting_dir;
     boost::filesystem::path m_default_scripting_dir;
@@ -48,6 +52,8 @@ protected:
     SpeciesManager              m_species_manager;
     SupplyManager               m_supply_manager;
     // End Gamestate
+
+    ScriptingContext            m_context;
 };
 
 

@@ -11,7 +11,8 @@
 #include <stdexcept>
 
 ClientApp::ClientApp() :
-    m_networking(std::make_shared<ClientNetworking>())
+    m_networking(std::make_shared<ClientNetworking>()),
+    m_context(*this)
 {}
 
 int ClientApp::PlayerID() const noexcept

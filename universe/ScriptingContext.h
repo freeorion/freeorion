@@ -29,9 +29,7 @@ struct [[nodiscard]] ScriptingContext final {
     class Target final {};
     class Attacker final {};
 
-    [[nodiscard]] ScriptingContext() noexcept :
-        ScriptingContext(*IApp::GetApp())
-    {}
+    // TODO: = delete copy constructor?
 
     [[nodiscard]] explicit ScriptingContext(IApp& app) noexcept :
         current_turn(     app.CurrentTurn()),

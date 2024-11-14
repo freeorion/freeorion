@@ -98,7 +98,7 @@ void BuildingsPanel::Update() {
     const int indicator_size = static_cast<int>(Width() / static_cast<float>(m_columns));
 
     const int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto& this_client_known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = context.ContextUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
@@ -307,7 +307,7 @@ void BuildingIndicator::PreRender() {
 void BuildingIndicator::Refresh() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     auto building = context.ContextObjects().get<Building>(m_building_id);
     if (!building)
@@ -369,8 +369,8 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // verify that this indicator represents an existing building, and not a
     // queued production item, and that the owner of the building is this
     // client's player's empire
-    ScriptingContext context;
-    ObjectMap& objects{context.ContextObjects()};
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const ObjectMap& objects{context.ContextObjects()};
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto building = objects.get<Building>(m_building_id);
@@ -386,7 +386,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     auto scrap_building_action = [this, empire_id]() {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ScrapOrder>(empire_id, m_building_id, context),
             context);
@@ -394,7 +394,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto un_scrap_building_action = [building]() {
         // find order to scrap this building, and recind it
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         auto pending_scrap_orders = PendingScrapOrders();
         auto it = pending_scrap_orders.find(building->ID());
         if (it != pending_scrap_orders.end())
@@ -416,8 +416,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     const std::string& building_type = building->BuildingTypeName();
-    const BuildingType* bt = GetBuildingType(building_type);
-    if (bt) {
+    if (const BuildingType* bt = GetBuildingType(building_type)) {
         auto pedia_lookup_building_type_action = [building_type]()
         { ClientUI::GetClientUI()->ZoomToBuildingType(building_type); };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));

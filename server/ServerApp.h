@@ -10,6 +10,7 @@
 #include "ServerNetworking.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/Species.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
@@ -40,6 +41,9 @@ public:
     [[nodiscard]] Empire* GetEmpire(int id) override;
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
+
+    [[nodiscard]] ScriptingContext& GetContext() noexcept override { return m_context; };
+    [[nodiscard]] const ScriptingContext& GetContext() const noexcept override { return m_context; };
 
     [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
 
@@ -317,6 +321,8 @@ private:
     SpeciesManager   m_species_manager;
     SupplyManager    m_supply_manager;
     ServerNetworking m_networking;
+
+    ScriptingContext m_context;
 
     std::unique_ptr<ServerFSM> m_fsm;
 

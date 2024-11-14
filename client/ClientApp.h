@@ -5,6 +5,7 @@
 #include "../Empire/Supply.h"
 #include "../network/Message.h"
 #include "../universe/Species.h"
+#include "../universe/ScriptingContext.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
 #include "../util/AppInterface.h"
@@ -155,6 +156,9 @@ public:
         the orders. */
     virtual void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {}
 
+    [[nodiscard]] ScriptingContext& GetContext() noexcept override { return m_context; };
+    [[nodiscard]] const ScriptingContext& GetContext() const noexcept override { return m_context; };
+
     /** @brief Return the set of known Empire s for this client
      *
      * @return The EmpireManager instance in charge of maintaining the Empire
@@ -190,7 +194,7 @@ public:
      *
      * @param turn The new turn number of this client.
      */
-    void SetCurrentTurn(int turn) noexcept { m_current_turn = turn; }
+    void SetCurrentTurn(int turn) noexcept { m_current_turn = turn; m_context.current_turn = turn; }
 
     /** @brief Set the Message::PlayerStatus @a status for @a empire_id
      *
@@ -228,6 +232,8 @@ protected:
     std::shared_ptr<ClientNetworking> m_networking;
     int                               m_empire_id = ALL_EMPIRES;
     int                               m_current_turn = INVALID_GAME_TURN;
+
+    ScriptingContext m_context;
 
     /** Indexed by player id, contains info about all players in the game */
     std::map<int, PlayerInfo>         m_player_info;

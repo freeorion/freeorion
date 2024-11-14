@@ -1,5 +1,6 @@
 #include "ServerNetworking.h"
 
+#include "ServerApp.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
@@ -92,7 +93,7 @@ void ServerNetworking::DiscoveryServer::HandleReceive(boost::system::error_code 
     DebugLogger(network) << "DiscoveryServer evaluating FOCS expression: " << message;
     std::string reply;
     try {
-        ScriptingContext context;
+        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
         if (parse::int_free_variable(message)) {
             auto value_ref = std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
             reply = std::to_string(value_ref->Eval(context));

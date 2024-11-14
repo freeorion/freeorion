@@ -5,7 +5,9 @@
 
 namespace fs = boost::filesystem;
 
-ParserAppFixture::ParserAppFixture() {
+ParserAppFixture::ParserAppFixture() :
+    m_context(*this)
+{
     BOOST_TEST_MESSAGE("Init parse tests " << boost::unit_test::framework::master_test_suite().argv[0]);
     InitDirs(boost::unit_test::framework::master_test_suite().argv[0], true);
 

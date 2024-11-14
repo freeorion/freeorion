@@ -540,7 +540,7 @@ namespace {
             if (m_empire_id == ALL_EMPIRES)
                 return;
 
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             const Universe& universe = context.ContextUniverse();
             const ObjectMap& objects = context.ContextObjects();
             const SpeciesManager& sm = context.species;
@@ -923,8 +923,8 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
     int     next_sys_id =               INVALID_OBJECT_ID;
     auto    prev_eta =                  first_node.eta;
 
-    const ScriptingContext context;
-    const Empire* empire = GetEmpire(empireID);
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const auto empire = context.GetEmpire(empireID);
     std::set<int> unobstructed;
     bool s_flag = false;
     bool calc_s_flag = false;
@@ -1021,7 +1021,7 @@ void MapWnd::CompleteConstruction() {
     using boost::placeholders::_1;
     using boost::placeholders::_2;
 
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     m_obj_delete_connection =  context.ContextUniverse().UniverseObjectDeleteSignal.connect(
         [this](std::shared_ptr<const UniverseObject> obj) { UniverseObjectDeleted(obj); });
@@ -1155,10 +1155,7 @@ void MapWnd::CompleteConstruction() {
         InWndRect(m_toolbar.get()));
     m_btn_research->SetMinSize(MENU_ICON_SIZE);
     m_btn_research->LeftClickedSignal.connect(
-        [this]() {
-            const ScriptingContext context;
-            ToggleResearch(context);
-        });
+        [this]() { ToggleResearch(IApp::GetApp()->GetContext()); });
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_research->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
@@ -1241,7 +1238,7 @@ void MapWnd::CompleteConstruction() {
     m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_RESEARCH),
                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
-    m_research->LeftClickedSignal.connect([this](auto) { ToggleResearch(ScriptingContext{}); });
+    m_research->LeftClickedSignal.connect([this](auto) { ToggleResearch(IApp::GetApp()->GetContext()); });
 
     m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INFLUENCE),
                                                  0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1282,7 +1279,7 @@ void MapWnd::CompleteConstruction() {
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     m_industry_wasted->LeftClickedSignal.connect([this]() { ZoomToSystemWithWastedPP(); });
-    m_research_wasted->LeftClickedSignal.connect([this]() { ToggleResearch(ScriptingContext{}); });
+    m_research_wasted->LeftClickedSignal.connect([this]() { ToggleResearch(IApp::GetApp()->GetContext()); });
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -1405,7 +1402,7 @@ void MapWnd::CompleteConstruction() {
     // and resource pools due to this will be in the same system
     SidePanel::ResourceCenterChangedSignal.connect([this](){
         if (GetOptionsDB().Get<bool>("ui.map.object-changed.meter-refresh")) {
-            ScriptingContext context;
+            ScriptingContext& context = IApp::GetApp()->GetContext();
             context.ContextUniverse().UpdateMeterEstimates(context);
             UpdateEmpireResourcePools();
         }
@@ -1955,7 +1952,7 @@ void MapWnd::RenderSystems() {
     bool circles = GetOptionsDB().Get<bool>("ui.map.system.circle.shown");
     bool fog_scanlines = false;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
     const EmpireManager& empires = context.Empires();
@@ -2557,7 +2554,7 @@ void MapWnd::RenderVisibilityRadii() {
         glDisable(GL_STENCIL_TEST);
 
         // future position ranges for selected fleets
-        ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         auto future_turn_circles = GetFleetFutureTurnDetectionRangeCircles(context, m_selected_fleet_ids);
         GG::GL2DVertexBuffer verts;
         verts.reserve(120);
@@ -3739,7 +3736,7 @@ namespace {
     {
         rendered_half_starlanes.clear();
 
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return;
@@ -4106,7 +4103,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     ClearVisibilityRadiiRenderingBuffers();
 
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
@@ -4444,7 +4441,9 @@ void MapWnd::ReselectLastSystem() {
 }
 
 void MapWnd::SelectSystem(int system_id) {
-    auto system = Objects().get<System>(system_id);
+    ScriptingContext& context = IApp::GetApp()->GetContext();
+
+    auto system = context.ContextObjects().get<System>(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
         ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
@@ -4453,7 +4452,6 @@ void MapWnd::SelectSystem(int system_id) {
 
     if (system && GetOptionsDB().Get<bool>("ui.map.sidepanel.meter-refresh")) {
         // ensure meter estimates are up to date, particularly for which ship is selected
-        ScriptingContext context;
         context.ContextUniverse().UpdateMeterEstimates(context, true);
     }
 
@@ -4537,13 +4535,11 @@ void MapWnd::ReselectLastFleet() {
 void MapWnd::SelectPlanet(int planetID, const ScriptingContext& context)
 { m_production_wnd->SelectPlanet(planetID, context); }
 
-void MapWnd::SelectPlanet(int planetID) {
-    const ScriptingContext context;
-    m_production_wnd->SelectPlanet(planetID, context);
-}
+void MapWnd::SelectPlanet(int planetID)
+{ m_production_wnd->SelectPlanet(planetID, IApp::GetApp()->GetContext()); }
 
 void MapWnd::SelectFleet(int fleet_id)
-{ SelectFleet(Objects().get<Fleet>(fleet_id)); }
+{ SelectFleet(IApp::GetApp()->GetContext().ContextObjects().get<Fleet>(fleet_id)); }
 
 void MapWnd::SelectFleet(const std::shared_ptr<Fleet>& fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
@@ -4627,7 +4623,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     }
     //std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
@@ -4674,7 +4670,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>&
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     // ensure passed fleet exists
     auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
@@ -4748,7 +4744,7 @@ void MapWnd::ForgetObject(int id) {
     // Tell the server to change what the empire wants to know
     // in future so that the server doesn't keep resending this
     // object information.
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     ObjectMap& objects{context.ContextObjects()};
     Universe& universe{context.ContextUniverse()};
     auto obj = objects.get(id);
@@ -4929,7 +4925,7 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
         return std::pair(fleet->X(), fleet->Y());
     }
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     // return apparent position of fleet on starlane
     const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
@@ -5461,7 +5457,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
     if (planet_id == INVALID_OBJECT_ID)
         return;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     // retrieve system_id from planet_id
     auto planet = context.ContextObjects().get<Planet>(planet_id);
@@ -5540,7 +5536,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const ObjectMap& objects{context.ContextObjects()};
     const Universe& universe{context.ContextUniverse()};
 
@@ -5985,9 +5981,11 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
 }
 
 void MapWnd::ResetEmpireShown() {
-    const ScriptingContext context;
-    m_production_wnd->SetEmpireShown(GGHumanClientApp::GetApp()->EmpireID(), context);
-    m_research_wnd->SetEmpireShown(GGHumanClientApp::GetApp()->EmpireID(), context);
+    const auto* app = GGHumanClientApp::GetApp();
+    const auto empire_id = app->EmpireID();
+    const ScriptingContext& context = app->GetContext();
+    m_production_wnd->SetEmpireShown(empire_id, context);
+    m_research_wnd->SetEmpireShown(empire_id, context);
     // TODO: Design?
 }
 
@@ -6038,7 +6036,7 @@ void MapWnd::Sanitize() {
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
     m_zoom_steps_in = 1.0;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize(context.ContextObjects());
@@ -6146,8 +6144,7 @@ bool MapWnd::ReturnToMap() {
     if (wnd == m_sitrep_panel) {
         ToggleSitRep();
     } else if (wnd == m_research_wnd) {
-        ScriptingContext context;
-        ToggleResearch(context);
+        ToggleResearch(IApp::GetApp()->GetContext());
     } else if (wnd == m_design_wnd) {
         ToggleDesign();
     } else if (wnd == m_production_wnd) {
@@ -6586,7 +6583,7 @@ void MapWnd::ShowProduction() {
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
     m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capital is)
@@ -6878,7 +6875,7 @@ void MapWnd::RefreshDetectionIndicator() {
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_industry->SetValue(0.0);
@@ -7014,7 +7011,7 @@ void MapWnd::RefreshPopulationIndicator() {
 }
 
 void MapWnd::UpdateEmpireResourcePools() {
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
 
     auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
@@ -7196,8 +7193,8 @@ bool MapWnd::ZoomToNextFleet()
 { return ZoomToPrevOrNextOwnedFleet(SearchDir::FORWARD, *this); }
 
 bool MapWnd::ZoomToSystemWithWastedPP() {
-    const ScriptingContext context;
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return false;
     const ProductionQueue& queue = empire->GetProductionQueue();
@@ -7243,7 +7240,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
     hkm.Connect(boost::bind(&MapWnd::ToggleSitRep, this), "ui.map.sitrep",
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
-    hkm.Connect([this]() { return ToggleResearch(ScriptingContext{}); }, "ui.research",
+    hkm.Connect([this]() { return ToggleResearch(IApp::GetApp()->GetContext()); }, "ui.research",
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
     hkm.Connect(boost::bind(&MapWnd::ToggleProduction, this), "ui.production",
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
@@ -7712,7 +7709,7 @@ namespace {
 };
 
 void MapWnd::DispatchFleetsExploring() {
-    ScriptingContext context;
+    ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto& universe{context.ContextUniverse()};
     const auto& objects{context.ContextObjects()};
 

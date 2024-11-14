@@ -136,7 +136,7 @@ namespace {
         std::string retval;
         static constexpr std::size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
         retval.reserve(retval_sz);
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         if (const auto empire = context.GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
                          .append(std::to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
@@ -158,7 +158,7 @@ namespace {
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
                         const std::shared_ptr<UniverseObject>& rhs)
         {
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, context.ContextUniverse());
             const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, context.ContextUniverse());
             if (lhs_public_name != rhs_public_name) {
@@ -185,7 +185,7 @@ namespace {
         const std::string_view delimiter = ", ",
         const std::string_view category_delimiter = "\n-\n")
     {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
 
         std::stringstream ss;
         bool first_category = true;
@@ -246,7 +246,7 @@ namespace {
         log(log_),
         viewing_empire_id(viewing_empire_id_),
         event(event_),
-        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, ScriptingContext{})))
+        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, IApp::GetApp()->GetContext())))
     {}
 
     void CombatLogAccordionPanel::CompleteConstruction() {
@@ -535,7 +535,7 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
         return new_logs;
     }
 
-    std::string title = event->CombatLogDescription(viewing_empire_id, ScriptingContext{});
+    std::string title = event->CombatLogDescription(viewing_empire_id, IApp::GetApp()->GetContext());
     if (!(event->FlattenSubEvents() && title.empty()))
         new_logs.push_back(DecorateLinkText(title));
 
@@ -569,7 +569,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                                                      );
     m_wnd.SetLayout(layout);
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
     const Universe& universe = context.ContextUniverse();

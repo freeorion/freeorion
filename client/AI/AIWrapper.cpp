@@ -134,7 +134,7 @@ namespace {
     }
 
     void InitMeterEstimatesAndDiscrepancies() {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         context.ContextUniverse().InitMeterEstimatesAndDiscrepancies(context);
     }
 
@@ -150,7 +150,7 @@ namespace {
         std::vector<Planet*> unowned_planets;
         int player_id = -1;
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         Universe& universe = context.ContextUniverse();
 
         if (pretend_to_own_unowned_planets) {
@@ -191,7 +191,7 @@ namespace {
     }
 
     void UpdateResourcePools() {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         const int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -206,7 +206,7 @@ namespace {
     }
 
     void UpdateResearchQueue() {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -217,7 +217,7 @@ namespace {
     }
 
     void UpdateProductionQueue() {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         const int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -239,7 +239,7 @@ namespace {
     auto Issue(Args &&... args) -> int
     {
         auto app = ClientApp::GetApp();
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         if (!OrderType::Check(app->EmpireID(), args..., context))
             return 0;
@@ -255,7 +255,7 @@ namespace {
     {
         std::vector<int> ship_ids{ship_id};
         auto app = ClientApp::GetApp();
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         if (!NewFleetOrder::Check(app->EmpireID(), fleet_name, ship_ids,
                                   FleetAggression::FLEET_OBSTRUCTIVE, context))
@@ -284,7 +284,7 @@ namespace {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ResearchQueueOrder>(empire_id, tech_name, position),
             context);
@@ -302,7 +302,7 @@ namespace {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         AIClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ResearchQueueOrder>(empire_id, tech_name),
             context);
@@ -324,7 +324,7 @@ namespace {
             return 0;
         }
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
@@ -347,7 +347,7 @@ namespace {
     auto IssueDeadoptPolicyOrder(const std::string& policy_name) -> int
     {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -369,7 +369,7 @@ namespace {
 
     auto IsProducibleBuilding(const std::string& item_name, int location_id) -> bool
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -381,7 +381,7 @@ namespace {
 
     auto IsEnqueuableBuilding(const std::string& item_name, int location_id) -> bool
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -393,7 +393,7 @@ namespace {
 
     auto IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) -> int
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
@@ -419,7 +419,7 @@ namespace {
 
     auto IsEnqueuableShip(int design_id, int location_id) -> bool
     {
-        ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
@@ -432,7 +432,7 @@ namespace {
 
     auto IssueEnqueueShipProductionOrder(int design_id, int location_id) -> int
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         const Universe& universe{context.ContextUniverse()};
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
@@ -459,7 +459,7 @@ namespace {
 
     auto IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) -> int
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
@@ -497,7 +497,7 @@ namespace {
             return 0;
         }
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
@@ -537,7 +537,7 @@ namespace {
 
     auto IssueDequeueProductionOrder(int queue_index) -> int
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         const int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
@@ -566,7 +566,7 @@ namespace {
 
     auto IssuePauseProductionOrder(int queue_index, bool pause) -> int
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         const int empire_id = AIClientApp::GetApp()->EmpireID();
         const auto empire = context.GetEmpire(empire_id);
@@ -595,7 +595,7 @@ namespace {
 
     auto IssueAllowStockpileProductionOrder(int queue_index, bool use_stockpile) -> int
     {
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
@@ -638,7 +638,7 @@ namespace {
             parts.push_back(py::extract<std::string>(parts_list[i]));
 
         const int empire_id = AIClientApp::GetApp()->EmpireID();
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         const auto uuid = boost::uuids::random_generator()();
 

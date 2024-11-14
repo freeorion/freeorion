@@ -105,7 +105,7 @@ struct FO_COMMON_API Condition {
     //! source object.
     [[nodiscard]] constexpr bool SourceInvariant() const noexcept { return m_source_invariant; }
 
-    [[nodiscard]] virtual std::string Description(bool negated = false) const { return ""; }
+    [[nodiscard]] virtual std::string Description(bool negated = false) const { return ""; } // TODO: pass in ScriptingContext
     [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const { return ""; }
 
     virtual void SetTopLevelContent(const std::string& content_name) {}

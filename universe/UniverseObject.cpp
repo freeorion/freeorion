@@ -126,7 +126,7 @@ float UniverseObject::SpecialCapacity(std::string_view name) const {
 }
 
 std::string UniverseObject::Dump(uint8_t ntabs) const {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto& universe = context.ContextUniverse();
     const auto& objects = context.ContextObjects();
     auto system = objects.get<System>(this->SystemID());

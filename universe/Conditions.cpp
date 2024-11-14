@@ -1446,11 +1446,8 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
 std::string EmpireAffiliation::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        const ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -3589,14 +3586,9 @@ void InOrIsSystem::Eval(const ScriptingContext& parent_context,
 }
 
 std::string InOrIsSystem::Description(bool negated) const {
-    const ScriptingContext context;
-    const auto& objects = context.ContextObjects();
-
     std::string system_str;
-    int system_id = INVALID_OBJECT_ID;
-    if (m_system_id && m_system_id->ConstantExpr())
-        system_id = m_system_id->Eval();
-    if (auto system = objects.getRaw<System>(system_id))
+    int system_id = m_system_id && m_system_id->ConstantExpr() ? m_system_id->Eval() : INVALID_OBJECT_ID;
+    if (auto system = IApp::GetApp()->GetContext().ContextObjects().getRaw<System>(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -3744,14 +3736,9 @@ void OnPlanet::Eval(const ScriptingContext& parent_context,
 }
 
 std::string OnPlanet::Description(bool negated) const {
-    const ScriptingContext context;
-    const auto& objects = context.ContextObjects();
-
     std::string planet_str;
-    int planet_id = INVALID_OBJECT_ID;
-    if (m_planet_id && m_planet_id->ConstantExpr())
-        planet_id = m_planet_id->Eval();
-    if (auto planet = objects.getRaw<Planet>(planet_id))
+    int planet_id = m_planet_id && m_planet_id->ConstantExpr() ? planet_id = m_planet_id->Eval() : INVALID_OBJECT_ID;
+    if (auto planet = IApp::GetApp()->GetContext().ContextObjects().getRaw<Planet>(planet_id))
         planet_str = planet->Name();
     else if (m_planet_id)
         planet_str = m_planet_id->Description();
@@ -3887,14 +3874,9 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
 }
 
 std::string ObjectID::Description(bool negated) const {
-    const ScriptingContext context;
-    const auto& objects = context.ContextObjects();
-
     std::string object_str;
-    int object_id = INVALID_OBJECT_ID;
-    if (m_object_id && m_object_id->ConstantExpr())
-        object_id = m_object_id->Eval();
-    if (auto system = objects.getRaw<System>(object_id))
+    int object_id = m_object_id && m_object_id->ConstantExpr() ? m_object_id->Eval() : INVALID_OBJECT_ID;
+    if (auto system = IApp::GetApp()->GetContext().ContextObjects().getRaw<System>(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -5268,11 +5250,8 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
 std::string Enqueued::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        const ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -6543,11 +6522,8 @@ void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
 std::string ProducedByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -7132,11 +7108,8 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
 std::string EmpireMeterValue::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        const ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -8257,11 +8230,8 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
 std::string VisibleToEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -9802,11 +9772,8 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
 std::string ExploredByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -10029,11 +9996,8 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
 std::string FleetSupplyableByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -10227,11 +10191,8 @@ bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_contex
 std::string ResourceSupplyConnectedByEmpire::Description(bool negated) const {
     std::string empire_str;
     if (m_empire_id) {
-        int empire_id = ALL_EMPIRES;
-        if (m_empire_id->ConstantExpr())
-            empire_id = m_empire_id->Eval();
-        ScriptingContext context;
-        if (auto empire = context.GetEmpire(empire_id))
+        int empire_id = m_empire_id->ConstantExpr() ? m_empire_id->Eval() : ALL_EMPIRES;
+        if (auto empire = IApp::GetApp()->GetContext().GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
