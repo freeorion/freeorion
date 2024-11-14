@@ -340,7 +340,7 @@ std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id)) {
         std::string_view icon_name = design->Icon();
         if (icon_name.empty())
@@ -754,7 +754,7 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
 }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     // try first by finding the object by name TODO: use getRaw or find or somesuch
     for (auto obj : context.ContextObjects().allRaw<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
@@ -960,7 +960,7 @@ bool ClientUI::ZoomToFieldType(std::string field_type_name) {
 }
 
 bool ClientUI::ZoomToShipDesign(int design_id) {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     if (!context.ContextUniverse().GetShipDesign(design_id))
         return false;
     GetMapWnd()->ShowShipDesign(design_id);

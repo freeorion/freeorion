@@ -130,7 +130,7 @@ void MessageWndEdit::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG
 }
 
 void MessageWndEdit::FindGameWords() {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
      // add player and empire names
     for (const auto& empire : Empires() | range_values) {
@@ -457,7 +457,7 @@ void MessageWnd::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
         return;
     }
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     int client_empire_id = app->EmpireID();
     DiplomaticStatus status = context.ContextDiploStatus(empire1_id, empire2_id);

@@ -1162,7 +1162,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
 
-    ScriptingContext context;
+    ScriptingContext& context = Client().GetContext();
 
     Client().Register(Client().GetClientUI().GetMapWnd());
     Client().GetClientUI().GetMapWnd()->InitTurn(context);

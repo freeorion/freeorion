@@ -54,6 +54,9 @@ public:
       * Requires \a python to be initialized. */
     virtual void StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier);
 
+    [[nodiscard]] virtual ScriptingContext& GetContext() noexcept = 0;
+    [[nodiscard]] virtual const ScriptingContext& GetContext() const noexcept = 0;
+
     /** Returns the set of known Empires for this application. */
     [[nodiscard]] virtual EmpireManager& Empires() noexcept = 0;
 

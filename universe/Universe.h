@@ -107,8 +107,8 @@ public:
 
 
     /** Returns objects in this Universe. */
-    [[nodiscard]] const ObjectMap& Objects() const noexcept { return *m_objects; }
-    [[nodiscard]] ObjectMap&       Objects() noexcept       { return *m_objects; }
+    [[nodiscard]] const ObjectMap& Objects() const noexcept { return m_objects; }
+    [[nodiscard]] ObjectMap&       Objects() noexcept       { return m_objects; }
 
     /** Returns latest known state of objects for the Empire with
       * id \a empire_id or the true / complete state of all objects in this
@@ -321,7 +321,7 @@ public:
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems based on the objects in \a objects */
     void InitializeSystemGraph(const EmpireManager& empires, const ObjectMap& objects);
-    void InitializeSystemGraph(const EmpireManager& empires) { InitializeSystemGraph(empires, *m_objects); }
+    void InitializeSystemGraph(const EmpireManager& empires) { InitializeSystemGraph(empires, m_objects); }
 
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibility.  Does not regenerate the base
@@ -410,7 +410,7 @@ public:
                 continue;
             retval.push_back(ID);
             obj->SetID(ID); // assign and decrement temporary ID
-            m_objects->insert(std::move(obj)); // directly insert into objects, skipping ID validation
+            m_objects.insert(std::move(obj)); // directly insert into objects, skipping ID validation
             ID--;
         }
         return retval;
@@ -521,7 +521,7 @@ private:
       * vector is passed, it will instead update all existing objects. */
     void UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, ScriptingContext& context, bool do_accounting);
 
-    std::unique_ptr<ObjectMap>      m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
+    ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
     std::unordered_set<int>         m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)

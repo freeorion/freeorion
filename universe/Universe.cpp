@@ -161,7 +161,6 @@ namespace boost {
 /////////////////////////////////////////////
 Universe::Universe() :
     m_pathfinder(std::make_shared<Pathfinder>()),
-    m_objects(std::make_unique<ObjectMap>()),
     m_object_id_allocator(std::make_unique<IDAllocator>(ALL_EMPIRES, std::vector<int>(), INVALID_OBJECT_ID,
                                                         TEMPORARY_OBJECT_ID, INVALID_OBJECT_ID)),
     m_design_id_allocator(std::make_unique<IDAllocator>(ALL_EMPIRES, std::vector<int>(), INVALID_DESIGN_ID,
@@ -199,7 +198,7 @@ Universe& Universe::operator=(Universe&& other) noexcept {
     m_design_id_allocator = std::move(other.m_design_id_allocator);
 
     // use the Universe u's flag to enable/disable StateChangedSignal for these UniverseObject
-    for (auto& obj : m_objects->all())
+    for (auto* obj : m_objects.allRaw())
         obj->SetSignalCombiner(*this);
 
     return *this;
@@ -209,8 +208,7 @@ Universe::~Universe() = default;
 
 void Universe::Clear() {
     // empty object maps
-    if (m_objects)
-        m_objects->clear();
+    m_objects.clear();
 
     ResetAllIDAllocation();
 
@@ -243,10 +241,8 @@ void Universe::Clear() {
 void Universe::ResetAllIDAllocation(const std::vector<int>& empire_ids) {
     // Find the highest already allocated id for saved games that did not partition ids by client
     int highest_allocated_id = INVALID_OBJECT_ID;
-    if (m_objects) {
-        for (const auto& obj: m_objects->all())
-            highest_allocated_id = std::max(highest_allocated_id, obj->ID());
-    }
+    for (const auto* obj: m_objects.allRaw())
+        highest_allocated_id = std::max(highest_allocated_id, obj->ID());
 
     m_object_id_allocator = std::make_unique<IDAllocator>(ALL_EMPIRES, empire_ids, INVALID_OBJECT_ID,
                                                           TEMPORARY_OBJECT_ID, highest_allocated_id);
@@ -305,7 +301,7 @@ const Universe::EmpireStatsMap& Universe::EmpireStats() const
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
-        return *m_objects;
+        return m_objects;
 
     auto it = m_empire_latest_known_objects.find(empire_id);
     if (it != m_empire_latest_known_objects.end())
@@ -317,7 +313,7 @@ const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
 
 ObjectMap& Universe::EmpireKnownObjects(int empire_id) {
     if (empire_id == ALL_EMPIRES)
-        return *m_objects;
+        return m_objects;
 
     auto it = m_empire_latest_known_objects.find(empire_id);
     if (it != m_empire_latest_known_objects.end())
@@ -341,14 +337,14 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireMana
                            { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; });
     };
 
-    auto ids_rng = m_objects->allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);
+    auto ids_rng = m_objects.allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);
     Universe::IDSet retval;
 #if BOOST_VERSION > 107800
-    retval.reserve(m_objects->size());
+    retval.reserve(m_objects.size());
     retval.insert(boost::container::ordered_unique_range, ids_rng.begin(), ids_rng.end());
 #else
     Empire::IntSet::sequence_type scratch;
-    scratch.reserve(m_objects->size());
+    scratch.reserve(m_objects.size());
     range_copy(ids_rng, std::back_inserter(scratch));
     retval.adopt_sequence(boost::container::ordered_unique_range, std::move(scratch));
 #endif
@@ -452,7 +448,7 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         return object_it->second;
     } else {
-        auto obj = m_objects->get(object_id);
+        auto obj = m_objects.get(object_id);
         if (!obj)
             return std::set<std::string>();
         // all specials visible
@@ -496,7 +492,7 @@ void Universe::InsertIDCore(std::shared_ptr<UniverseObject> obj, int id) {
 
     obj->StateChangedSignal.set_combiner(UniverseObject::CombinerType{*this});
 
-    m_objects->insert(std::move(obj), m_destroyed_object_ids.contains(id));
+    m_objects.insert(std::move(obj), m_destroyed_object_ids.contains(id));
 }
 
 int Universe::InsertShipDesign(ShipDesign ship_design) {
@@ -536,7 +532,7 @@ bool Universe::DeleteShipDesign(int design_id) {
 }
 
 void Universe::ResetAllObjectMeters(bool target_max_unpaired, bool active) {
-    for (const auto& object : m_objects->all()) {
+    for (const auto& object : m_objects.all()) {
         if (target_max_unpaired)
             object->ResetTargetMaxUnpairedMeters();
         if (active)
@@ -692,15 +688,15 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
     // clear old discrepancies and accounting
     m_effect_discrepancy_map.clear();
     m_effect_accounting_map.clear();
-    m_effect_discrepancy_map.reserve(m_objects->size());
-    m_effect_accounting_map.reserve(m_objects->size());
+    m_effect_discrepancy_map.reserve(m_objects.size());
+    m_effect_accounting_map.reserve(m_objects.size());
 
     TraceLogger(effects) << "IMEAD: updating meter estimates";
 
     // save starting meter vales
     DiscrepancyMap starting_current_meter_values;
-    starting_current_meter_values.reserve(m_objects->size());
-    for (const auto& obj : m_objects->all()) {
+    starting_current_meter_values.reserve(m_objects.size());
+    for (const auto& obj : m_objects.all()) {
         auto& obj_discrep = starting_current_meter_values[obj->ID()];
         obj_discrep.reserve(obj->Meters().size());
         for (const auto& meter_pair : obj->Meters()) {
@@ -724,7 +720,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies(ScriptingContext& context) {
         if (m_destroyed_object_ids.contains(object_id))
             continue;
         // get object
-        auto obj = m_objects->get(object_id);
+        auto obj = m_objects.get(object_id);
         if (!obj) {
             ErrorLogger(effects) << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -780,7 +776,7 @@ void Universe::UpdateMeterEstimates(ScriptingContext& context)
 { UpdateMeterEstimates(context, GetOptionsDB().Get<bool>("effects.accounting.enabled")); }
 
 void Universe::UpdateMeterEstimates(ScriptingContext& context, bool do_accounting) {
-    for (int obj_id : m_objects->FindExistingObjectIDs())
+    for (int obj_id : m_objects.FindExistingObjectIDs())
         m_effect_accounting_map[obj_id].clear();
     // update meters for all objects.
     UpdateMeterEstimatesImpl(std::vector<int>(), context, do_accounting);
@@ -801,7 +797,7 @@ void Universe::UpdateMeterEstimates(int object_id, ScriptingContext& context, bo
         if (collected_ids.contains(cur_id))
             return true;
 
-        auto cur_object = m_objects->get(cur_id);
+        auto cur_object = m_objects.get(cur_id);
         if (!cur_object) {
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object for id " << cur_id
                           << " in container " << container_id
@@ -851,20 +847,19 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
                                         ScriptingContext& context, bool do_accounting)
 {
     CheckContextVsThisUniverse(*this, context);
-    ObjectMap& objects{*m_objects};
 
     auto number_text = std::to_string(objects_vec.empty() ?
-                                      objects.allExisting().size() : objects_vec.size()) + 
+                                      m_objects.allExisting().size() : objects_vec.size()) + 
         (objects_vec.empty() ? " (all)" : "");
     ScopedTimer timer("Universe::UpdateMeterEstimatesImpl on " + number_text + " objects", true);
 
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
-    auto object_ptrs = objects.find(objects_vec);
+    auto object_ptrs = m_objects.find(objects_vec);
     if (objects_vec.empty()) {
-        object_ptrs.reserve(objects.allExisting().size());
-        std::transform(objects.allExisting().begin(), objects.allExisting().end(),
+        object_ptrs.reserve(m_objects.allExisting().size());
+        std::transform(m_objects.allExisting().begin(), m_objects.allExisting().end(),
                        std::back_inserter(object_ptrs), [](const auto& p) {
             return std::const_pointer_cast<UniverseObject>(p.second);
         });
@@ -978,7 +973,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
 }
 
 void Universe::BackPropagateObjectMeters() {
-    for (const auto& obj : m_objects->all())
+    for (const auto& obj : m_objects.all())
         obj->BackPropagateMeters();
 }
 
@@ -1847,7 +1842,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
     // their info is available even if they are destroyed by the upcoming effect
     // destruction
     for (auto& [obj_id, destructors] : context.ContextUniverse().m_marked_destroyed) {
-        auto obj = m_objects->get(obj_id);
+        auto obj = m_objects.get(obj_id);
         if (!obj)
             continue;
 
@@ -1872,12 +1867,10 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 void Universe::CountDestructionInStats(int object_id, int source_object_id,
                                        const std::map<int, std::shared_ptr<Empire>>& empires)
 {
-    const ObjectMap& objects{*m_objects};
-
-    const auto* obj = objects.getRaw(object_id);
+    const auto* obj = m_objects.getRaw(object_id);
     if (!obj)
         return;
-    const auto* source = objects.getRaw(source_object_id);
+    const auto* source = m_objects.getRaw(source_object_id);
     if (!source)
         return;
     if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
@@ -1927,7 +1920,7 @@ void Universe::ApplyEffectDerivedVisibilities(const ScriptingContext& context) {
         for (const auto& [viewed_obj_id, src_and_vis_ref_map] : obj_src_vis_ref_map) {
             if (viewed_obj_id <= INVALID_OBJECT_ID)
                 continue;   // can't set a non-object's visibility
-            auto const target = m_objects->getRaw(viewed_obj_id);
+            auto const target = m_objects.getRaw(viewed_obj_id);
             if (!target)
                 continue;   // don't need to set a non-gettable object's visibility
 
@@ -1945,7 +1938,7 @@ void Universe::ApplyEffectDerivedVisibilities(const ScriptingContext& context) {
                 // set up context for executing ValueRef to determine visibility to set
                 const ScriptingContext::CurrentValueVariant vis_cvv{target_initial_vis};
                 const ScriptingContext source_init_vis_context{context, ScriptingContext::Target{}, target, vis_cvv,
-                                                               ScriptingContext::Source{}, m_objects->getRaw(source_obj_id)};
+                                                               ScriptingContext::Source{}, m_objects.getRaw(source_obj_id)};
 
                 // evaluate and store actual new visibility level
                 Visibility vis = vis_val_ref->Eval(source_init_vis_context);
@@ -1969,12 +1962,12 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     // immediately forget information without waiting for the turn update.
     ObjectMap& objects = [empire_id, this]() -> ObjectMap& {
         if (empire_id == ALL_EMPIRES)
-            return *m_objects;
+            return m_objects;
 
         auto empire_it = m_empire_latest_known_objects.find(empire_id);
         if (empire_it == m_empire_latest_known_objects.end()) {
             ErrorLogger() << "ForgetKnownObject bad empire id: " << empire_id;
-            return *m_objects;
+            return m_objects;
         }
         return empire_it->second;
     }();
@@ -2039,7 +2032,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-        if (auto ship = m_objects->getRaw<const Ship>(object_id))
+        if (auto ship = m_objects.getRaw<const Ship>(object_id))
             SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
     }
 }
@@ -2192,7 +2185,6 @@ std::size_t Universe::SizeInMemory() const {
     retval += sizeof(decltype(m_pathfinder)::element_type);             // TODO: include internal dynamic storage in m_pathfinder
     retval += sizeof(decltype(m_object_id_allocator)::element_type);    // TODO: include internal dynamic storage in m_object_id_allocator
     retval += sizeof(decltype(m_design_id_allocator)::element_type);    // TODO: include internal dynamic storage in m_design_id_allocator
-    retval += sizeof(decltype(m_objects)::element_type);                // individual objects accounted separately.
     retval += sizeof(decltype(m_empire_latest_known_objects)::value_type)*m_empire_latest_known_objects.size(); // individual latest known objects accounted separately.
     retval += sizeof(decltype(m_destroyed_object_ids)::value_type)*m_destroyed_object_ids.size(); // TODO: this is an underestimate. probably convert to a flat_set
 
@@ -2910,11 +2902,11 @@ void Universe::UpdateEmpireObjectVisibilities(const ScriptingContext& context) {
             return retval;
         };
 
-        const auto empire_position_detection_ranges = GetEmpiresAndNeutralPositionDetectionRanges(*m_objects);
+        const auto empire_position_detection_ranges = GetEmpiresAndNeutralPositionDetectionRanges(m_objects);
         DebugLogger() << "for empires/neutral have # detector positions: " << stringify(empire_position_detection_ranges);
 
         const auto empire_position_potentially_detectable_objects =
-            GetEmpiresPositionsPotentiallyDetectableObjects(*m_objects, context.Empires());
+            GetEmpiresPositionsPotentiallyDetectableObjects(m_objects, context.Empires());
         DebugLogger() << "for empires have # detectable object positions: " << stringify(empire_position_potentially_detectable_objects);
 
         SetEmpireObjectVisibilitiesFromRanges(empire_position_detection_ranges,
@@ -2930,11 +2922,11 @@ void Universe::UpdateEmpireObjectVisibilities(const ScriptingContext& context) {
     ApplyObjectVisibilityOverrides();
     ApplyEffectDerivedVisibilities(context);
 
-    PropagateVisibilityToContainerObjects(*m_objects, m_empire_object_visibility);
+    PropagateVisibilityToContainerObjects(m_objects, m_empire_object_visibility);
 
-    PropagateVisibilityToSystemsAlongStarlanes(*m_objects, m_empire_object_visibility);
+    PropagateVisibilityToSystemsAlongStarlanes(m_objects, m_empire_object_visibility);
 
-    SetTravelledStarlaneEndpointsVisible(*m_objects, m_empire_object_visibility);
+    SetTravelledStarlaneEndpointsVisible(m_objects, m_empire_object_visibility);
 
     SetEmpireSpecialVisibilities(context, m_empire_object_visibility, m_empire_object_visible_specials);
 
@@ -2955,7 +2947,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
     //          update empire's visbilility turn history
 
     // for each object in universe
-    for (const auto& full_object : m_objects->all()) {
+    for (const auto& full_object : m_objects.all()) {
         if (!full_object) {
             ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects";
             continue;
@@ -3023,7 +3015,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge(EmpireManager& empires) {
     // detectable by that empire, then the latest known state of the objects
     // (including stealth and position) appears to be stale / out of date.
 
-    const auto empire_location_detection_ranges = GetEmpiresAndNeutralPositionDetectionRanges(*m_objects);
+    const auto empire_location_detection_ranges = GetEmpiresAndNeutralPositionDetectionRanges(m_objects);
 
     for (const auto& [empire_id, latest_known_objects] : m_empire_latest_known_objects) {
         const ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
@@ -3159,7 +3151,7 @@ void Universe::Destroy(int object_id, const std::span<const int> empire_ids,
                        bool update_destroyed_object_knowers)
 {
     // remove object from any containing UniverseObject
-    auto obj = m_objects->get(object_id);
+    auto obj = m_objects.get(object_id);
     if (!obj) {
         ErrorLogger() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
@@ -3179,18 +3171,18 @@ void Universe::Destroy(int object_id, const std::span<const int> empire_ids,
 
     // signal that an object has been deleted
     UniverseObjectDeleteSignal(obj);
-    m_objects->erase(object_id);
+    m_objects.erase(object_id);
 }
 
 std::vector<int> Universe::RecursiveDestroy(int object_id, const std::span<const int> empire_ids) {
     std::vector<int> retval;
 
-    auto* obj = m_objects->getRaw(object_id);
+    auto* obj = m_objects.getRaw(object_id);
     if (!obj) {
         DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
     }
-    auto* system = m_objects->getRaw<System>(obj->SystemID());
+    auto* system = m_objects.getRaw<System>(obj->SystemID());
 
     retval.reserve(obj->ContainedObjectIDs().size() + 1);
 
@@ -3200,7 +3192,7 @@ std::vector<int> Universe::RecursiveDestroy(int object_id, const std::span<const
         auto* ship = static_cast<Ship*>(obj);
         const auto ship_id = obj->ID();
         const auto fleet_id = ship->FleetID();
-        if (auto* fleet = m_objects->getRaw<Fleet>(fleet_id)) {
+        if (auto* fleet = m_objects.getRaw<Fleet>(fleet_id)) {
             // if a ship is being deleted, and it is the last ship in
             // its fleet, then the empty fleet should also be deleted
             fleet->RemoveShips({ship_id});
@@ -3259,13 +3251,13 @@ std::vector<int> Universe::RecursiveDestroy(int object_id, const std::span<const
         }
 
         // remove any starlane connections to this system
-        for (auto* sys : m_objects->allRaw<System>())
+        for (auto* sys : m_objects.allRaw<System>())
             sys->RemoveStarlane(this_sys_id);
 
         // remove fleets / ships moving along destroyed starlane
         std::vector<int> fleets_to_destroy;
-        fleets_to_destroy.reserve(m_objects->size<Fleet>());
-        for (const auto* fleet : m_objects->allRaw<Fleet>()) { // TODO: rangify?
+        fleets_to_destroy.reserve(m_objects.size<Fleet>());
+        for (const auto* fleet : m_objects.allRaw<Fleet>()) { // TODO: rangify?
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
@@ -3284,7 +3276,7 @@ std::vector<int> Universe::RecursiveDestroy(int object_id, const std::span<const
     case UniverseObjectType::OBJ_BUILDING: {
         retval.push_back(object_id);
         const auto* building = static_cast<Building*>(obj);
-        if (auto* planet = m_objects->getRaw<Planet>(building->PlanetID()))
+        if (auto* planet = m_objects.getRaw<Planet>(building->PlanetID()))
             planet->RemoveBuilding(object_id);
         if (system)
             system->Remove(object_id);
@@ -3312,7 +3304,7 @@ bool Universe::Delete(int object_id) {
     DebugLogger() << "Universe::Delete with ID: " << object_id;
     // find object amongst existing objects and delete directly, without storing
     // any info about the previous object (as is done for destroying an object)
-    auto obj = m_objects->get(object_id);
+    auto obj = m_objects.get(object_id);
     if (!obj) {
         ErrorLogger() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;
@@ -3322,7 +3314,7 @@ bool Universe::Delete(int object_id) {
     // contained it and propagating associated signals
     obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
     // remove from existing objects set
-    m_objects->erase(object_id);
+    m_objects.erase(object_id);
 
     // TODO: Should this also remove the object from the latest known objects
     // and known destroyed objects for each empire?
@@ -3343,7 +3335,7 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const
 { m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_empire_latest_known_objects); }
 
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires)
-{ m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, *m_objects); }
+{ m_pathfinder->UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_objects); }
 
 void Universe::UpdateStatRecords(const ScriptingContext& context) {
     CheckContextVsThisUniverse(*this, context);
@@ -3360,7 +3352,7 @@ void Universe::UpdateStatRecords(const ScriptingContext& context) {
     for (auto& [empire_id, empire] : empires) {
         if (empire->Eliminated())
             continue;
-        auto source = empire->Source(*m_objects).get();
+        auto source = empire->Source(m_objects).get();
         if (!source) {
             ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire, id = "
                           <<  empire->EmpireID();
@@ -3423,7 +3415,7 @@ const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
 }
 
 void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const {
-    if (&objects == m_objects.get())
+    if (&objects == &m_objects)
         return;
 
     objects.clear();
@@ -3431,11 +3423,11 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
     if (encoding_empire == ALL_EMPIRES) {
         // if encoding for all empires, copy true full universe state, and use the
         // streamlined option
-        objects.CopyForSerialize(*m_objects);
+        objects.CopyForSerialize(m_objects);
 
     } else if constexpr (!ENABLE_VISIBILITY_EMPIRE_MEMORY) {
         // if encoding without memory, copy all info visible to specified empire
-        objects.Copy(*m_objects, *this, encoding_empire);
+        objects.Copy(m_objects, *this, encoding_empire);
 
     } else {
         // if encoding for a specific empire with memory...
@@ -3506,7 +3498,7 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     // than no visibility of.  TODO: include what requested empire knows about
     // other empires' visibilites of objects
     empire_object_visibility.clear();
-    for (const auto& object : m_objects->all()) {
+    for (const auto& object : m_objects.all()) {
         Visibility vis = (encoding_empire == ALL_EMPIRES) ?
             Visibility::VIS_FULL_VISIBILITY : GetObjectVisibilityByEmpire(object->ID(), encoding_empire);
         if (vis > Visibility::VIS_NO_VISIBILITY)

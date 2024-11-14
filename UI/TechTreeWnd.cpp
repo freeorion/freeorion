@@ -126,7 +126,7 @@ namespace {
 //   TechRowBrowseWnd    //
 ///////////////////////////
 std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
     if (!tech)
@@ -944,7 +944,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     Select(m_layout_panel->m_selected_tech_name == m_tech_name);
 
     const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     if (auto empire = context.GetEmpire(client_empire_id)) {
         m_status = empire->GetTechStatus(m_tech_name);
@@ -1610,7 +1610,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     const Tech* this_row_tech = ::GetTech(m_tech);
     if (!this_row_tech)
         return;
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     const auto col_widths = ColWidths(Width());
     const GG::X GRAPHIC_WIDTH = col_widths.empty() ? GG::X{48} : col_widths.front();
@@ -1667,7 +1667,7 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     std::string just_pad = "    ";
 
     auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(client_empire_id);
 
     std::string cost_str = std::to_string(std::lround(
@@ -2278,7 +2278,7 @@ void TechTreeWnd::AddTechToResearchQueue(std::string tech_name, bool to_front) {
     const Tech* tech = GetTech(tech_name);
     if (!tech) return;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;

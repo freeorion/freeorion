@@ -904,7 +904,7 @@ private:
         GG::X param_widget_left = DropListWidth() + PAD;
         GG::Y param_widget_top = GG::Y0;
 
-        ScriptingContext context;
+        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
         const ObjectMap& objects = context.ContextObjects();
 
 
@@ -933,14 +933,12 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add empty row, allowing for matching any species
-            auto row_it = m_string_drop->Insert(
-                GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
+            auto row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
-            for (const auto& entry : GetSpeciesManager()) {
+            for (const auto& entry : GetSpeciesManager()) { // TODO: range_values
                 const std::string& species_name = entry.first;
-                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
-                    species_name, GG::Y(ClientUI::Pts())));
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(species_name, GG::Y(ClientUI::Pts())));
             }
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
@@ -1123,7 +1121,7 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add rows for empire names
-            for (const auto& entry : context.Empires()) {
+            for (const auto& entry : context.Empires()) { // TODO: range_values
                 const std::string& empire_name = entry.second->Name();
                 m_string_drop->Insert(GG::Wnd::Create<StringRow>(
                     empire_name, GG::Y(ClientUI::Pts()), false));
@@ -1469,7 +1467,7 @@ public:
             const auto* ref = GetColumnValueRef(column);
             if (!ref)
                 return {};
-            const ScriptingContext context;
+            const ScriptingContext& context = ClientApp::GetApp()->GetContext();
             if (const auto* source = context.ContextObjects().getRaw(m_object_id)) {
                 const ScriptingContext source_context{context, ScriptingContext::Source{}, source};
                 return ref->Eval(source_context);
@@ -2173,8 +2171,11 @@ public:
         std::map<int, std::vector<std::shared_ptr<const Planet>>>   system_planets;
         std::map<int, std::vector<std::shared_ptr<const Building>>> planet_buildings;
         std::map<int, std::vector<std::shared_ptr<const Field>>>    system_fields;
-        ScriptingContext context;
+
+        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
         const ObjectMap& objects{context.ContextObjects()};
+
+        // TODO: set up predicate for ObjectShown and pass to objects.find instead of objects.all
 
         timer.EnterSection("object cast-sorting");
         systems.reserve(objects.size<System>());
@@ -2685,9 +2686,6 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
-    ScriptingContext context;
-    Universe& universe{context.ContextUniverse()};
-
     // Right click on an unselected row should automatically select it
     m_list_box->SelectRow(it, true);
 
@@ -2707,7 +2705,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     // create popup menu with object commands in it
     popup->AddMenuItem(UserString("DUMP"), false, false, dump_action);
 
-    auto obj = universe.Objects().get(object_id);
+    ScriptingContext& context = app->GetContext();
+    auto obj = context.ContextObjects().get(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
     if (!obj)
         return;
@@ -2731,7 +2730,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
             if (!row)
                 continue;
 
-            auto one_planet = universe.Objects().getRaw<const Planet>(row->ObjectID());
+            auto one_planet = context.ContextObjects().getRaw<const Planet>(row->ObjectID());
             if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
                 for (const auto& planet_focus : one_planet->AvailableFoci(context))
                     all_foci[std::string{planet_focus}]++;
@@ -2759,15 +2758,16 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
         for (auto& [focus_name, count_of_planets_that_have_focus_available] : all_foci) {
             menuitem_id++;
             auto focus_action = [focus{focus_name}, empire_id{app_empire_id},
-                                 &orders, &universe, &context, lb{m_list_box},
+                                 &orders, &context, lb{m_list_box},
                                  &focus_ship_building_common_action]()
             {
+                auto& objs = context.ContextObjects();
                 for (const auto& selection : lb->Selections()) {
                     ObjectRow* row = dynamic_cast<ObjectRow*>(selection->get());
                     if (!row)
                         continue;
 
-                    auto one_planet = universe.Objects().getRaw<const Planet>(row->ObjectID());
+                    auto one_planet = objs.getRaw<const Planet>(row->ObjectID());
                     if (!(one_planet && one_planet->OwnedBy(empire_id)))
                         continue;
 
@@ -2796,7 +2796,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
         {
             ship_menuitem_id++;
 
-            auto produce_ship_action = [this, design_it, app, cur_empire, &universe, &context,
+            auto produce_ship_action = [this, design_it, app, cur_empire, &context,
                                         &focus_ship_building_common_action](int pos)
             {
                 int ship_design = design_it->first;
@@ -2805,7 +2805,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                     ObjectRow* row = dynamic_cast<ObjectRow*>(entry->get());
                     if (!row)
                         continue;
-                    auto one_planet = universe.Objects().get<Planet>(row->ObjectID());
+                    auto one_planet = context.ContextObjects().get<Planet>(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) ||
                         !cur_empire->ProducibleItem(BuildType::BT_SHIP, ship_design,
                                                     row->ObjectID(), context))
@@ -2813,7 +2813,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
                     app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
-                        ProductionQueue::ProductionItem{BuildType::BT_SHIP, ship_design, universe},
+                        ProductionQueue::ProductionItem{BuildType::BT_SHIP, ship_design, context.ContextUniverse()},
                         1, row->ObjectID(), pos),
                         context);
                     needs_queue_update = true;
@@ -2827,7 +2827,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
             auto produce_ship_action_bottom = std::bind(produce_ship_action, -1);
 
             std::stringstream out;
-            out << GetUniverse().GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
+            out << context.ContextUniverse().GetShipDesign(design_it->first)->Name() << " (" << design_it->second << ")";
             ship_menu_item_top.next_level.emplace_back(out.str(), false, false, produce_ship_action_top);
             ship_menu_item.next_level.emplace_back(out.str(), false, false, produce_ship_action_bottom);
         }

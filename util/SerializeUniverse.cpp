@@ -54,8 +54,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    std::unique_ptr<ObjectMap>                objects_ptr = std::make_unique<ObjectMap>();
-    ObjectMap& objects =                     *objects_ptr;
+    ObjectMap                                 objects;
     std::set<int>                             destroyed_object_ids;
     Universe::EmpireObjectMap                 empire_latest_known_objects;
     Universe::EmpireObjectVisibilityMap       empire_object_visibility;
@@ -188,14 +187,14 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     timer.EnterSection("objects");
     ar  & make_nvp("objects", objects);
     if constexpr (Archive::is_loading::value) {
-        u.m_objects.swap(objects_ptr);
+        u.m_objects = std::move(objects);
 
         // use the Universe u's flag to enable/disable StateChangedSignal for these UniverseObject
-        for (auto* obj : u.m_objects->allRaw())
+        for (auto* obj : u.m_objects.allRaw())
             obj->SetSignalCombiner(u);
     }
     timer.EnterSection("");
-    DebugLogger() << "Universe::" << serializing_label << " " << u.m_objects->size() << " objects";
+    DebugLogger() << "Universe::" << serializing_label << " " << u.m_objects.size() << " objects";
 
     timer.EnterSection("destroyed ids");
     ar  & make_nvp("destroyed_object_ids", destroyed_object_ids);
@@ -203,7 +202,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     if constexpr (Archive::is_loading::value) {
         u.m_destroyed_object_ids.clear();
         u.m_destroyed_object_ids.insert(destroyed_object_ids.begin(), destroyed_object_ids.end());
-        u.m_objects->UpdateCurrentDestroyedObjects(u.m_destroyed_object_ids);
+        u.m_objects.UpdateCurrentDestroyedObjects(u.m_destroyed_object_ids);
     }
 
     timer.EnterSection("latest known objects");
@@ -274,7 +273,7 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
                               [](auto& o) { return objects_mem_size(o.second) + sizeof(o); });
 
     DebugLogger() << "Universe " << serializing_label << " done. UniverseObjects take at least: "
-                  << objects_mem_size(u.Objects())/1024 << " kB and empire known objects at least: "
+                  << objects_mem_size(u.m_objects)/1024 << " kB and empire known objects at least: "
                   << empire_objects_mem_sz/1024 << " kB";
     DebugLogger() << "Universe other stuff takes at least: " << u.SizeInMemory()/1024u << " kB";
 }

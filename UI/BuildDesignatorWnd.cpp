@@ -156,7 +156,7 @@ namespace {
                 return;
             m_initialized = true;
 
-            ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             auto empire = context.GetEmpire(m_empire_id);
 
             std::shared_ptr<GG::Texture>                texture;
@@ -253,16 +253,17 @@ namespace {
             enqueue_conditions.push_back(building_type->Location());
         }
 
-        ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         const auto& objects = context.ContextObjects();
-        if (auto empire = context.GetEmpire(empire_id))
-            context.source = empire->Source(objects).get();
+        const auto empire = context.GetEmpire(empire_id);
+        const ScriptingContext source_context(context, ScriptingContext::Source{},
+                                              empire ? empire->Source(objects).get() : nullptr);
         const UniverseObject* candidate = objects.getRaw(candidate_object_id);
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(enqueue_conditions, context, candidate);
+            return ConditionFailedDescription(enqueue_conditions, source_context, candidate);
         else
-            return ConditionDescription(enqueue_conditions, context, candidate);
+            return ConditionDescription(enqueue_conditions, source_context, candidate);
     }
 
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
@@ -281,7 +282,7 @@ namespace {
         location_conditions.push_back(&can_prod_ship_cond);
         location_conditions.push_back(&ship_avail_cond);
 
-        ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         const Universe& universe = context.ContextUniverse();
 
         if (const ShipDesign* ship_design = universe.GetShipDesign(ship_design_id)) {
@@ -294,14 +295,14 @@ namespace {
         }
 
         const ObjectMap& objects = context.ContextObjects();
-        if (auto empire = context.GetEmpire(empire_id))
-            context.source = empire->Source(objects).get();
+        auto empire = context.GetEmpire(empire_id);
+        const ScriptingContext source_context{context, ScriptingContext::Source{}, empire->Source(objects).get()};
         const auto* candidate = objects.getRaw(candidate_object_id);
 
         if (only_failed_conditions)
-            return ConditionFailedDescription(location_conditions, context, candidate);
+            return ConditionFailedDescription(location_conditions, source_context, candidate);
         else
-            return ConditionDescription(location_conditions, context, candidate);
+            return ConditionDescription(location_conditions, source_context, candidate);
     }
 
     class ProductionItemRowBrowseWnd : public GG::BrowseInfoWnd {
@@ -402,7 +403,7 @@ namespace {
         }
 
         std::pair<std::shared_ptr<GG::Texture>, std::string> PreRenderBuilding() {
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             auto [obj, candidate_name] = GetObjName(context);
             auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
 
@@ -480,7 +481,7 @@ namespace {
         }
 
         std::pair<std::shared_ptr<GG::Texture>, std::string> PreRenderDesign() {
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             auto [obj, candidate_name] = GetObjName(context);
             auto [local_pp_output, stockpile, stockpile_limit_per_turn] = GetOutputStockpile(context);
 
@@ -612,7 +613,7 @@ namespace {
 
             m_panel = GG::Wnd::Create<ProductionItemPanel>(w, h, m_item, empire_id, location_id);
 
-            const ScriptingContext context;
+            const ScriptingContext& context = IApp::GetApp()->GetContext();
             if (auto empire = context.GetEmpire(empire_id)) {
                 if (!empire->ProducibleItem(m_item, location_id, context)) {
                     this->Disable(true);
@@ -876,7 +877,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_
         // ensure signal connection set up properly, without actually
         // repopulating the list, as would be dine in Refresh()
         m_empire_ship_designs_changed_signal.disconnect();
-        ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         if (auto empire = context.GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
                 boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
@@ -892,7 +893,7 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
 
     m_empire_ship_designs_changed_signal.disconnect();
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     if (auto empire = context.GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
             boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
@@ -967,7 +968,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (build_type != BuildType::BT_STOCKPILE)
         throw std::invalid_argument("BuildableItemVisible was passed an invalid build type without id");
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     if (auto empire = context.GetEmpire(m_empire_id))
         return empire->ProducibleItem(build_type, m_production_location, context);
     return true;
@@ -984,7 +985,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!building_type || !building_type->Producible())
         return false;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(m_empire_id);
     if (!empire)
         return true;
@@ -1009,7 +1010,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!m_build_types_shown.contains(build_type))
         return false;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
     if (!design || !design->Producible())
@@ -1029,7 +1030,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 }
 
 void BuildDesignatorWnd::BuildSelector::PopulateList() {
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& universe{context.ContextUniverse()};
     auto empire = context.GetEmpire(m_empire_id);
     if (!empire)
@@ -1139,9 +1140,6 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
 
     BuildType build_type = item.build_type;
 
-    ScriptingContext context;
-    const Universe& universe{context.ContextUniverse()};
-
     if (build_type == BuildType::BT_BUILDING) {
         const BuildingType* building_type = GetBuildingType(item.name);
         if (!building_type) {
@@ -1151,7 +1149,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
         DisplayBuildingTypeSignal(building_type);
 
     } else if (build_type == BuildType::BT_SHIP) {
-        const ShipDesign* design = universe.GetShipDesign(item.design_id);
+        const ShipDesign* design = IApp::GetApp()->GetContext().ContextUniverse().GetShipDesign(item.design_id);
         if (!design) {
             ErrorLogger() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << item.design_id;
             return;
@@ -1178,14 +1176,11 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
-    ScriptingContext context;
-    const Universe& universe{context.ContextUniverse()};
-
-    std::string_view item_name = "";
+    std::string_view item_name;
     if (item.build_type == BuildType::BT_BUILDING) {
         item_name = item.name;
     } else if (item.build_type == BuildType::BT_SHIP) {
-        item_name = universe.GetShipDesign(item.design_id)->Name(false);
+        item_name = IApp::GetApp()->GetContext().ContextUniverse().GetShipDesign(item.design_id)->Name(false);
     } else if (item.build_type == BuildType::BT_STOCKPILE) {
         item_name = UserStringNop("PROJECT_BT_STOCKPILE");
     } else {
@@ -1224,8 +1219,6 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 
 void BuildDesignatorWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
-
-    const ScriptingContext context;
 
     m_enc_detail_panel = GG::Wnd::Create<EncyclopediaDetailPanel>(
         GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
@@ -1280,7 +1273,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     MoveChildUp(m_enc_detail_panel.get());
     MoveChildUp(m_build_selector.get());
 
-    Clear(context.ContextObjects());
+    Clear(IApp::GetApp()->GetContext().ContextObjects());
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const noexcept
@@ -1311,7 +1304,7 @@ void BuildDesignatorWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     SetBuild(queue_idx);
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const ObjectMap& objects = context.ContextObjects();
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
@@ -1338,7 +1331,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
 }
 
 void BuildDesignatorWnd::SetBuild(int queue_idx) {
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
 
     int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);
@@ -1346,8 +1339,6 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
         ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
         return;
     }
-
-    const Universe& universe = context.ContextUniverse();
 
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
@@ -1357,7 +1348,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
             assert(building_type);
             m_build_selector->DisplayBuildingTypeSignal(building_type);
         } else if (buildType == BuildType::BT_SHIP) {
-            const ShipDesign* design = universe.GetShipDesign(queue[queue_idx].item.design_id);
+            const ShipDesign* design = context.ContextUniverse().GetShipDesign(queue[queue_idx].item.design_id);
             assert(design);
             m_build_selector->DisplayShipDesignSignal(design);
         } else if (buildType == BuildType::BT_STOCKPILE) {
@@ -1583,7 +1574,7 @@ int BuildDesignatorWnd::BuildLocation() const
 void BuildDesignatorWnd::BuildItemRequested(ProductionQueue::ProductionItem item,
                                             int num_to_build, int pos)
 {
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation(), context))
         AddBuildToQueueSignal(std::move(item), num_to_build, BuildLocation(), pos);

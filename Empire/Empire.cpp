@@ -1670,7 +1670,7 @@ void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
         return;
     }
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext(); // TODO: PASS IN context!
 
     if (item.build_type == BuildType::BT_BUILDING) {
         // only buildings have a distinction between enqueuable and producible...

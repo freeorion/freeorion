@@ -16,7 +16,7 @@ class Order;
 struct ScriptingContext;
 
 /** The pointer type used to store Orders in OrderSets. */
-typedef std::shared_ptr<Order> OrderPtr;
+typedef std::shared_ptr<Order> OrderPtr; // TODO: can this be unique_ptr ?
 
 /** A collection of orders that may be searched using arbitrary predicate
     functions and functors.

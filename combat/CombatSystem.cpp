@@ -185,6 +185,7 @@ void CombatInfo::InitializeObjectVisibility() {
 
 ScriptingContext::ScriptingContext(CombatInfo& info, Attacker, UniverseObject* attacker_as_source) noexcept :
     source(                 attacker_as_source),
+    current_turn(           info.turn),
     combat_bout(            info.bout),
     galaxy_setup_data(      info.galaxy_setup_data),
     species(                info.species),

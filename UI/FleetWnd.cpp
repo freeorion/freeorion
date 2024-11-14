@@ -165,7 +165,7 @@ namespace {
     { return GGHumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     bool CanDamageShips(const std::vector<int>& ship_ids) {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         const auto ships = Objects().findRaw<Ship>(ship_ids);
         return std::any_of(ships.begin(), ships.end(), [&context](const auto* ship)
                            { return ship && ship->CanDamageShips(context); });
@@ -326,7 +326,7 @@ namespace {
    /** Returns map from object ID to issued colonize orders affecting it. */
     auto PendingScrapOrders() { // TODO: return vector<pair> ?
         std::map<int, int> retval;
-        const ClientApp* app = ClientApp::GetApp();
+        const auto* app = GGHumanClientApp::GetApp();
         if (!app)
             return retval;
         for (const auto& [order_id, order] : app->Orders()) {
@@ -842,7 +842,7 @@ namespace {
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         const Universe& u = context.ContextUniverse();
         const ObjectMap& o = context.ContextObjects();
 
@@ -913,7 +913,7 @@ namespace {
         if (!ship)
             return;
 
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
         const Universe& universe = context.ContextUniverse();
         if (const ShipDesign* design = universe.GetShipDesign(ship->DesignID())) {
             m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
@@ -1302,11 +1302,10 @@ void FleetDataPanel::ToggleAggression() {
     if (!m_aggression_toggle)
         return;
 
-    ScriptingContext context;
-    auto fleet = context.ContextObjects().get<Fleet>(m_fleet_id);
-    if (fleet) {
+    ScriptingContext& context = IApp::GetApp()->GetContext();
+    if (auto fleet = context.ContextObjects().get<const Fleet>(m_fleet_id)) {
         if (ClientPlayerIsModerator())
-            return; // todo: handle moderator actions for this...
+            return; // TODO: handle moderator actions for this...
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
         if (client_empire_id == ALL_EMPIRES)
             return;
@@ -1356,7 +1355,7 @@ void FleetDataPanel::Refresh() {
         DetachChildAndReset(overlay);
     m_fleet_icon_overlays.clear();
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const EmpireManager& e = context.Empires();
@@ -1490,7 +1489,7 @@ void FleetDataPanel::RefreshStateChangedSignals() {
 
 void FleetDataPanel::SetStatIconValues() {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
@@ -1877,11 +1876,10 @@ public:
             return;
         }
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
 
         int target_fleet_id = drop_target_fleet_row->FleetID();
-        auto target_fleet = context.ContextObjects().get<const Fleet>(target_fleet_id);
-        if (!target_fleet) {
+        if (!context.ContextObjects().getRaw<const Fleet>(target_fleet_id)) {
             ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get target fleet with id: " << target_fleet_id;
             return;
         }
@@ -2342,7 +2340,7 @@ public:
             }
         }
 
-        ScriptingContext context;
+        ScriptingContext& context = IApp::GetApp()->GetContext();
         if (!context.ContextObjects().check_if_any<const Ship>(ship_ids))
             return;
         if (ClientPlayerIsModerator())
@@ -2432,13 +2430,11 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
 
     namespace ph = boost::placeholders;
 
-    ScriptingContext context;
-
     m_ships_lb->SelRowsChangedSignal.connect(
         boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, ph::_1));
     m_ships_lb->RightClickedRowSignal.connect(
         boost::bind(&FleetDetailPanel::ShipRightClicked, this, ph::_1, ph::_2, ph::_3));
-    context.ContextUniverse().UniverseObjectDeleteSignal.connect(
+    GGHumanClientApp::GetApp()->GetContext().ContextUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, ph::_1));
 }
 
@@ -2591,8 +2587,8 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     if (!ship_row)
         return;
 
-    ScriptingContext context;
-    ObjectMap& objects{context.ContextObjects()};
+    const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
+    const ObjectMap& objects{context.ContextObjects()};
     const Universe& universe{context.ContextUniverse()};
 
     auto ship = objects.get<Ship>(ship_row->ShipID());
@@ -2631,11 +2627,12 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
                 // TODO: Moderator action for renaming ships
                 return;
 
-            ScriptingContext context;
+            auto* app = GGHumanClientApp::GetApp();
+            ScriptingContext& context = app->GetContext();
             if (!RenameOrder::Check(client_empire_id, ship->ID(), edit_wnd->Result(), context))
                 return;
 
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(
+            app->Orders().IssueOrder(
                 std::make_shared<RenameOrder>(client_empire_id, ship->ID(), edit_wnd->Result(), context),
                 context);
         };
@@ -2649,10 +2646,9 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     {
         // create popup menu with "Scrap" option
         auto scrap_action = [ship, client_empire_id]() {
-            ScriptingContext context;
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ScrapOrder>(client_empire_id, ship->ID(), context),
-                context);
+            auto* app = GGHumanClientApp::GetApp();
+            ScriptingContext& context = app->GetContext();
+            app->Orders().IssueOrder(std::make_shared<ScrapOrder>(client_empire_id, ship->ID(), context), context);
         };
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
 
@@ -2664,8 +2660,8 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
             auto pending_scrap_orders = PendingScrapOrders();
             auto pending_order_it = pending_scrap_orders.find(ship->ID());
             if (pending_order_it != pending_scrap_orders.end()) {
-                ScriptingContext context;
-                GGHumanClientApp::GetApp()->Orders().RescindOrder(pending_order_it->second, context);
+                auto app = GGHumanClientApp::GetApp();
+                app->Orders().RescindOrder(pending_order_it->second, app->GetContext());
             }
         };
         // create popup menu with "Cancel Scrap" option
@@ -2679,31 +2675,28 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     {
         auto split_one_design_action = [this, design, fleet]() {
             // split ships with same design as clicked ship into separate fleet
-            const auto&& parent = this->Parent();
-            if (!parent)
-                return;
+            if (!design || !fleet) return;
+            const auto parent = this->Parent();
+            if (!parent) return;
             const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent.get());
             if (!parent_fleet_wnd)
                 return;
-            if (!design)
-                return;
-            ScriptingContext context;
             CreateNewFleetFromShipsWithDesign(fleet->ShipIDs(), design->ID(),
                                               parent_fleet_wnd->GetNewFleetAggression(),
-                                              context);
+                                              IApp::GetApp()->GetContext());
         };
 
         auto split_all_designs_action = [this, fleet]() {
             // split all ships into new fleets by ship design
-            const auto&& parent = this->Parent();
+            if (!fleet) return;
+            const auto parent = this->Parent();
             if (!parent)
                 return;
             const FleetWnd* parent_fleet_wnd = dynamic_cast<const FleetWnd*>(parent.get());
             if (!parent_fleet_wnd)
                 return;
-            ScriptingContext context;
-            CreateNewFleetsFromShipsForEachDesign(
-                fleet->ShipIDs(), parent_fleet_wnd->GetNewFleetAggression(), context);
+            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), parent_fleet_wnd->GetNewFleetAggression(),
+                                                  IApp::GetApp()->GetContext());
         };
 
         if (design)
@@ -2917,7 +2910,7 @@ void FleetWnd::SetStatIconValues() {
     float troop_tally =     0.0f;
     float colony_tally =    0.0f;
 
-    const ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
@@ -3432,7 +3425,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-    ScriptingContext context;
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 
@@ -3514,10 +3507,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator()
        )
     {
-        auto merge_action = [id{fleet->ID()}]() {
-            ScriptingContext context;
-            MergeFleetsIntoFleet(id, context);
-        };
+        auto merge_action = [id{fleet->ID()}]() { MergeFleetsIntoFleet(id, IApp::GetApp()->GetContext()); };
         popup->AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"), false, false,
                                         std::move(merge_action)));
         popup->AddMenuItem(GG::MenuItem(true));
@@ -3532,10 +3522,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator()
        )
     {
-        auto split_damage_action = [nfa{fleet->Aggression()}, &damaged_ship_ids]() {
-            ScriptingContext context;
-            CreateNewFleetFromShips(damaged_ship_ids, nfa, context);
-        };
+        auto split_damage_action = [nfa{fleet->Aggression()}, &damaged_ship_ids]()
+        { CreateNewFleetFromShips(damaged_ship_ids, nfa, IApp::GetApp()->GetContext()); };
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_DAMAGED_FLEET"),
                                         false, false, std::move(split_damage_action)));
     }
@@ -3549,10 +3537,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator()
        )
     {
-        auto split_unfueled_action = [nfa{fleet->Aggression()}, unfueled_ship_ids]() {
-            ScriptingContext context;
-            CreateNewFleetFromShips(unfueled_ship_ids, nfa, context);
-        };
+        auto split_unfueled_action = [nfa{fleet->Aggression()}, unfueled_ship_ids]()
+        { CreateNewFleetFromShips(unfueled_ship_ids, nfa, IApp::GetApp()->GetContext()); };
 
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"), false, false,
                                         std::move(split_unfueled_action)));
@@ -3567,10 +3553,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator()
        )
     {
-        auto split_not_full_fighters_action = [nfa{fleet->Aggression()}, not_full_fighters_ship_ids]() {
-            ScriptingContext context;
-            CreateNewFleetFromShips(not_full_fighters_ship_ids, nfa, context);
-        };
+        auto split_not_full_fighters_action = [nfa{fleet->Aggression()}, not_full_fighters_ship_ids]()
+        { CreateNewFleetFromShips(not_full_fighters_ship_ids, nfa, IApp::GetApp()->GetContext()); };
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_NOT_FULL_FIGHTERS_FLEET"),
                                         false, false, std::move(split_not_full_fighters_action)));
     }
@@ -3591,11 +3575,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
 
             // assemble container of containers of ids of fleets to create.
             // one ship id per vector
-            for (int ship_id : ship_ids_set) {
-                ScriptingContext context;
-                CreateNewFleetFromShips(std::vector<int>{ship_id},
-                                        new_aggression_setting, context);
-            }
+            for (int ship_id : ship_ids_set)
+                CreateNewFleetFromShips(std::vector<int>{ship_id}, new_aggression_setting, IApp::GetApp()->GetContext());
         };
 
         auto split_per_design_action = [this, fleet]() {
@@ -3603,8 +3584,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
             if (m_new_fleet_drop_target)
                 new_aggression_setting = m_new_fleet_drop_target->GetFleetAggression();
 
-            ScriptingContext context;
-            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), new_aggression_setting, context);
+            CreateNewFleetsFromShipsForEachDesign(fleet->ShipIDs(), new_aggression_setting,
+                                                  IApp::GetApp()->GetContext());
         };
 
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_FLEET"),
@@ -3626,7 +3607,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
                 // TODO: handle moderator actions for this...
                 return;
 
-            ScriptingContext context;
+            ScriptingContext& context = IApp::GetApp()->GetContext();
+
             if (!RenameOrder::Check(client_empire_id, fleet->ID(), edit_wnd->Result(), context))
                 return;
 
@@ -3650,7 +3632,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         auto scrap_action = [fleet, client_empire_id]() {
             const auto ship_ids{fleet->ShipIDs()};
             OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
-            ScriptingContext context;
+            ScriptingContext& context = IApp::GetApp()->GetContext();
             for (const auto ship_id : ship_ids) {
                 orders.IssueOrder(std::make_shared<ScrapOrder>(client_empire_id, ship_id, context),
                                   context);
@@ -3669,7 +3651,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
     {
         auto unscrap_action = [fleet]() {
             OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
-            ScriptingContext context;
+            ScriptingContext& context = IApp::GetApp()->GetContext();
             std::vector<int> order_ids_to_rescind;
 
             for (int ship_id : fleet->ShipIDs()) {
@@ -3706,7 +3688,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
             if (!peaceful_empires_in_system.contains(recipient_empire_id))
                 continue;
             auto gift_action = [rei{recipient_empire_id}, fid{fleet->ID()}, client_empire_id]() {
-                ScriptingContext context;
+                ScriptingContext& context = IApp::GetApp()->GetContext();
                 OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
                 orders.IssueOrder(std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, fid, rei, context),
                                   context);
@@ -3719,7 +3701,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet]() {
                 OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
-                ScriptingContext context;
+                ScriptingContext& context = IApp::GetApp()->GetContext();
                 std::vector<int> order_ids_to_rescind;
 
                 for (const auto& [order_id, order] : orders) {
@@ -3746,13 +3728,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         auto forget_fleet_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(fleet->ID()); };
         const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
         auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
-        if (const ClientApp* app = ClientApp::GetApp()) {
-            if (last_turn_visible_it != visibility_turn_map.end()
-                && last_turn_visible_it->second < app->CurrentTurn())
-            {
-                popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),
-                                                false, false, std::move(forget_fleet_action)));
-            }
+        if (last_turn_visible_it != visibility_turn_map.end()
+            && last_turn_visible_it->second < IApp::GetApp()->CurrentTurn())
+        {
+            popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),
+                                            false, false, std::move(forget_fleet_action)));
         }
     }
 
@@ -3801,9 +3781,10 @@ std::string FleetWnd::TitleText() const {
     // if no fleets available, default to indicating no fleets
     if (m_fleet_ids.empty())
         return UserString("FW_NO_FLEET");
-    const Universe& u{GetUniverse()};
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const Universe& u{context.ContextUniverse()};
     const ObjectMap& objects{u.Objects()};
-    const EmpireManager& empires{Empires()};
+    const EmpireManager& empires{context.Empires()};
 
     int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
@@ -3849,8 +3830,7 @@ void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
     // to get the selected ships that are no longer in their old fleet.
     m_fleet_detail_panel->SelectShips(std::set<int>());
 
-    ScriptingContext context;
-    CreateNewFleetFromShips(ship_ids, aggression, context);
+    CreateNewFleetFromShips(ship_ids, aggression, IApp::GetApp()->GetContext());
 }
 
 void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
@@ -3863,11 +3843,12 @@ void FleetWnd::UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>
     if (!deleted_fleet)
         return;
 
-    // if detail panel is showing the deleted fleet, reset to show nothing
-    if (Objects().get<Fleet>(m_fleet_detail_panel->FleetID()) == deleted_fleet)
-        m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
+    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const ObjectMap& objects = context.ContextObjects();
 
-    const ObjectMap& objects = GetUniverse().Objects();
+    // if detail panel is showing the deleted fleet, reset to show nothing
+    if (objects.get<Fleet>(m_fleet_detail_panel->FleetID()) == deleted_fleet)
+        m_fleet_detail_panel->SetFleet(INVALID_OBJECT_ID);
 
     // remove deleted fleet's row
     for (auto it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {

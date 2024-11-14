@@ -233,10 +233,9 @@ namespace {
             GG::X icon_left(spacer.x);
             GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
             GG::X text_width(ClientWidth() - text_left - spacer.x);
-            const ScriptingContext context;
 
             m_link_text = GG::Wnd::Create<SitRepLinkText>(
-                GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText(context) + " ", ClientUI::GetFont(),
+                GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText(IApp::GetApp()->GetContext()) + " ", ClientUI::GetFont(),
                 GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, TextLinker::DecoratorType::ColorByEmpire);
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, TextLinker::DecoratorType::PathType);
@@ -494,7 +493,7 @@ namespace {
         if (hidden_templates.contains(label))
             return true;
 
-        const ScriptingContext context;
+        const ScriptingContext& context = IApp::GetApp()->GetContext();
 
         // Validation is time consuming because all variables are substituted.
         // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
@@ -643,8 +642,7 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG
     if (sitrep.GetTurn() <= 0)
         return;
 
-    const ScriptingContext context;
-    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText(context));
+    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText(IApp::GetApp()->GetContext()));
 
     Update();
 }
@@ -661,9 +659,8 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<G
     submenu_ignore.label = entry_margin + UserString("SITREP_IGNORE_MENU");
 
     if (sitrep_row) {
-        const ScriptingContext context;
         const SitRepEntry& sitrep_entry = sitrep_row->GetSitRepEntry();
-        sitrep_text = sitrep_entry.GetText(context);
+        sitrep_text = sitrep_entry.GetText(IApp::GetApp()->GetContext());
         start_turn = sitrep_entry.GetTurn();
         if (start_turn > 0) {
             auto snooze5_action = [&sitrep_text, start_turn]() { SnoozeSitRepForNTurns(sitrep_text, start_turn, 5); };
