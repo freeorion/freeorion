@@ -91,8 +91,7 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
-
-    [[nodiscard]] constexpr bool IsEffectModifiedValueReference() const noexcept { return m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE; }
+    [[nodiscard]] constexpr bool      IsEffectModifiedValueReference() const noexcept { return m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE; }
 
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
     [[nodiscard]] virtual std::string EvalAsString() const = 0;             //! Returns a textual representation of the evaluation result  with an empty/default context
@@ -176,7 +175,7 @@ protected:
 };
 
 template<typename T>
-std::string FlexibleToString(T&& t)
+decltype(auto) FlexibleToString(T&& t)
 {
     static_assert(!std::is_enum_v<T>);
 
@@ -217,11 +216,10 @@ std::string FlexibleToString(T&& t)
 template <typename T>
 struct FO_COMMON_API ValueRef : public ValueRefBase
 {
-    /** Evaluates the expression tree with a default context.  Useful for
+    /** Evaluates the expression tree with no input context.  Useful for
       * evaluating expressions that do not depend on source, target, or
       * candidate objects. */
-    [[nodiscard]] T Eval() const // TODO: virtual?
-    { return Eval(IApp::GetApp()->GetContext()); }
+    [[nodiscard]] virtual T Eval() const { return Eval(IApp::GetApp()->GetContext()); }
 
     /** Evaluates the expression tree and return the results; \a context
       * is used to fill in any instances of the "Value" variable or references
@@ -232,7 +230,12 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
     /** Evaluates the expression tree with an empty context and returns the
       * a string representation of the result value iff the result type is
       * supported. Otherwise returns and empty string. */
-    [[nodiscard]] std::string EvalAsString() const final { return FlexibleToString(Eval()); }
+    [[nodiscard]] std::string EvalAsString() const override final {
+        if constexpr (std::is_same_v<T, std::string>)
+            return Eval();
+        else
+            return FlexibleToString(Eval());
+    }
 
     [[nodiscard]] constexpr auto GetReferenceType() const noexcept { return m_ref_type; }
 
@@ -240,7 +243,7 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
       * doesn't supports move semantics for returned values. */
     [[nodiscard]] virtual std::unique_ptr<ValueRef<T>> Clone() const = 0;
 
-    [[nodiscard]] virtual constexpr bool operator==(const ValueRef& rhs) const = 0;
+    [[nodiscard]] virtual bool operator==(const ValueRef& rhs) const = 0;
 
 protected:
     constexpr ValueRef() noexcept = default;

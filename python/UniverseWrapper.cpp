@@ -348,22 +348,16 @@ namespace FreeOrionPython {
                 "scripted constant with name (string).");
         py::def("getNamedReal",
                 +[](const std::string& name) -> double {
-                    if (const auto ref = GetValueRef<double>(name, true)) {
-                        if (ref->ConstantExpr())
-                            return ref->Eval();
-                        return ref->Eval(IApp::GetApp()->GetContext());
-                    }
+                    if (const auto ref = GetValueRef<double>(name, true))
+                        return ref->Eval();
                     return 0.0;
                 },
                 "Returns the named real value of the scripted constant with name (string). "
                 "If no such named constant exists, returns 0.0.");
         py::def("getNamedInt",
                 +[](const std::string& name) -> int {
-                    if (const auto ref = GetValueRef<int>(name, true)) {
-                        if (ref->ConstantExpr())
-                            return ref->Eval();
-                        return ref->Eval(IApp::GetApp()->GetContext());
-                    }
+                    if (const auto ref = GetValueRef<int>(name, true))
+                        return ref->Eval();
                     return 0;
                 },
                 "Returns the named integer value of the scripted constant with name (string). "

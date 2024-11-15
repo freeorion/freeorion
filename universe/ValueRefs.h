@@ -68,7 +68,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
         return m_value == rhs.m_value;
     }
 
-    [[nodiscard]] constexpr T Eval() const noexcept(noexcept(T{std::declval<const T>()}))
+    [[nodiscard]] constexpr T Eval() const noexcept(noexcept(T{std::declval<const T>()})) override
     { return m_value; }
     [[nodiscard]] T Eval(const ScriptingContext&) const noexcept(noexcept(T{std::declval<const T>()})) override
     { return m_value; }
@@ -127,9 +127,10 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     static constexpr std::string_view current_content = "CurrentContent";
     static constexpr std::string_view no_current_content = "THERE_IS_NO_TOP_LEVEL_CONTENT";
 
-    [[nodiscard]] CONSTEXPR_STRING const std::string& Eval() const noexcept
+    [[nodiscard]] CONSTEXPR_STRING std::string Eval() const noexcept(noexcept(std::string{std::declval<const std::string>()})) override
     { return (m_value == current_content) ? m_top_level_content : m_value; }
-    [[nodiscard]] std::string Eval(const ScriptingContext&) const override
+
+    [[nodiscard]] CONSTEXPR_STRING std::string Eval(const ScriptingContext&) const override
     { return Eval(); }
 
     [[nodiscard]] std::string Description() const override
@@ -224,7 +225,6 @@ struct FO_COMMON_API Variable : public ValueRef<T>
         return this->m_container_type == rhs.m_container_type && m_property_name == rhs.m_property_name;
     }
 
-
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -244,7 +244,7 @@ protected:
         ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type)
     {}
 
-    const std::string m_property_name{};
+    const std::string m_property_name;
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -299,13 +299,13 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
     TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
                       std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
 
-    bool                      operator==(const ValueRef<int>& rhs) const override;
-    [[nodiscard]] int         Eval(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string Description() const override;
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void                      SetTopLevelContent(const std::string& content_name) override;
+    bool                        operator==(const ValueRef<int>& rhs) const override;
+    [[nodiscard]] int           Eval(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string   Description() const override;
+    [[nodiscard]] std::string   Dump(uint8_t ntabs = 0) const override;
+    void                        SetTopLevelContent(const std::string& content_name) override;
 
-    [[nodiscard]] const auto* GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
+    [[nodiscard]] const auto*   GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
@@ -507,6 +507,8 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     explicit Operation(const Operation<T>& rhs);
 
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
+    [[nodiscard]] T           Eval() const override
+    { return this->m_constant_expr ? m_cached_const_value : Eval(IApp::GetApp()->GetContext()); };
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -1929,7 +1931,7 @@ namespace {
     inline constexpr auto vr_rand_double = [](double low, double high)
     { return std::is_constant_evaluated() ? std::max(low, std::min(high, 42.6)) : RandDouble(low, high); };
 
-    auto DoFormat(const std::string& lhs, const std::string& rhs) {
+    auto DoFormat(const std::string& lhs, const std::string& rhs) { // TODO: remove this?
         // insert string into other string in place of %1% or similar placeholder
         boost::format formatter = FlexibleFormat(lhs);
         formatter % rhs;
