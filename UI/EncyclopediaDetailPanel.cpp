@@ -2563,16 +2563,17 @@ namespace {
         }
 
         // get current fields from map
+        const auto* app = GGHumanClientApp::GetApp();
         const ScriptingContext& context = IApp::GetApp()->GetContext();
-        const Universe& u = GetUniverse();
-        const ObjectMap& objects = u.Objects();
+        const Universe& u = context.ContextUniverse();
+        const ObjectMap& objects = context.ContextObjects();
         const auto current_fields = objects.findRaw<Field>(
             [item_name](auto* f) { return f->FieldTypeName() == item_name; });
 
         detailed_description.append("\n\n").append(UserString("KNOWN_FIELDS_OF_THIS_TYPE")).append("\n");
         if (!current_fields.empty()) {
-            const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-            for (auto& obj : current_fields) {
+            const int client_empire_id = app->EmpireID();
+            for (auto* obj : current_fields) {
                 auto TEXT_TAG = VarText::FIELD_ID_TAG;
                 detailed_description.append(
                     LinkTaggedIDText(
