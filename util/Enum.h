@@ -2,8 +2,9 @@
 #define _Enum_h_
 
 #include <algorithm>
-#include <iostream>
 #include <array>
+#include <cstdint>
+#include <iostream>
 #include <string>
 
 #include <boost/preprocessor/comparison/equal.hpp>
