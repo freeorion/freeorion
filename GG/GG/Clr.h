@@ -148,6 +148,7 @@ struct Clr
 
     [[nodiscard]] static constexpr auto UInt8ToCharArray(uint8_t num) noexcept
     {
+        static_assert(std::array<std::string::value_type, 4>{}.back() == 0);
         std::array<std::string::value_type, 4> buf{};
         UInt8ToChars(buf.data(), num);
         return buf;
