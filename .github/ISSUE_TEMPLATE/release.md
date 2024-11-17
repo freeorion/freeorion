@@ -72,6 +72,8 @@ git checkout -b release-vX.Y.Z master
 
 * [ ] Integrate incoming bugfixes.
 * [ ] Update `ChangeLog.md` again if needed.
+* [ ] Update the release date in `packaging/org.freeorion.FreeOrion.metainfo.xml` if necessary
+* [ ] Update the screenshots in `packaging/org.freeorion.FreeOrion.metainfo.xml` if necessary
 * [ ] *On release branch HEAD* - Tag the release candidate by using:
 ```
 git tag --annotate --message="X.Y.Z Release Candidate #"  vX.Y.Z-rc#
