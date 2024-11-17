@@ -267,16 +267,17 @@ public:
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
       * placed at the end of the queue. */
     void PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
-                                boost::uuids::uuid uuid, int number,
-                                int blocksize, int location, int pos = -1);
+                                boost::uuids::uuid uuid,
+                                const ScriptingContext& context,
+                                int number, int blocksize, int location, int pos = -1);
 
     /** Adds a copy of the production item at position \a index below it in
       * the queue, with one less quantity. Sets the quantity of the production
       * item at position \a index to 1, retaining its incomplete progress. */
-    void SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid);
+    void SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid, const ScriptingContext& context);
     /** Adds a copy of the production item at position \a index below it in
       * the queue, with no progress. */
-    void DuplicateProductionItem(int index, boost::uuids::uuid uuid);
+    void DuplicateProductionItem(int index, boost::uuids::uuid uuid, const ScriptingContext& context);
 
     void SetProductionQuantity(int index, int quantity);     ///< Changes the remaining number to produce for queue item \a index to \a quantity
     void SetProductionQuantityAndBlocksize(int index, int quantity, int blocksize);   ///< Changes the remaining number and blocksize to produce for queue item \a index to \a quantity and \a blocksize

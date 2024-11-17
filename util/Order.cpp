@@ -1449,7 +1449,7 @@ void ProductionQueueOrder::ExecuteImpl(ScriptingContext& context) const {
             {
                 DebugLogger() << "ProductionQueueOrder place in queue: " << m_item.Dump()
                               << "  at index: " << m_new_index;
-                empire->PlaceProductionOnQueue(m_item, m_uuid, m_new_quantity, 1, m_location, m_new_index);
+                empire->PlaceProductionOnQueue(m_item, m_uuid, context, m_new_quantity, 1, m_location, m_new_index);
             } else {
                 ErrorLogger() << "ProductionQueueOrder tried to place invalid build type in queue!";
             }
@@ -1481,7 +1481,7 @@ void ProductionQueueOrder::ExecuteImpl(ScriptingContext& context) const {
                 ErrorLogger() << "ProductionQueueOrder asked to split invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder splitting incomplete from item";
-                empire->SplitIncompleteProductionItem(idx, m_uuid2);
+                empire->SplitIncompleteProductionItem(idx, m_uuid2, context);
             }
             break;
         }
@@ -1491,7 +1491,7 @@ void ProductionQueueOrder::ExecuteImpl(ScriptingContext& context) const {
                 ErrorLogger() << "ProductionQueueOrder asked to duplicate invalid UUID: " << boost::uuids::to_string(m_uuid);
             } else {
                 DebugLogger() << "ProductionQueueOrder duplicating item";
-                empire->DuplicateProductionItem(idx, m_uuid2);
+                empire->DuplicateProductionItem(idx, m_uuid2, context);
             }
             break;
         }
