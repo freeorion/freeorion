@@ -1662,15 +1662,13 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress,
 constexpr unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceProductionOnQueue(const ProductionQueue::ProductionItem& item,
-                                    boost::uuids::uuid uuid, int number,
-                                    int blocksize, int location, int pos)
+                                    boost::uuids::uuid uuid, const ScriptingContext& context,
+                                    int number, int blocksize, int location, int pos)
 {
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
         ErrorLogger() << "Empire::PlaceProductionOnQueue() : Maximum queue size reached. Aborting enqueue";
         return;
     }
-
-    const ScriptingContext& context = IApp::GetApp()->GetContext(); // TODO: PASS IN context!
 
     if (item.build_type == BuildType::BT_BUILDING) {
         // only buildings have a distinction between enqueuable and producible...
@@ -1734,7 +1732,7 @@ void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int bloc
     }
 }
 
-void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
+void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid, const ScriptingContext& context) {
     DebugLogger() << "Empire::SplitIncompleteProductionItem() called for index " << index;
     if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::SplitIncompleteProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
@@ -1750,16 +1748,16 @@ void Empire::SplitIncompleteProductionItem(int index, boost::uuids::uuid uuid) {
     // add duplicate
     int new_item_quantity = elem.remaining - 1;
     elem.remaining = 1; // reduce remaining on specified to 1
-    PlaceProductionOnQueue(elem.item, uuid, new_item_quantity, elem.blocksize, elem.location, index + 1);
+    PlaceProductionOnQueue(elem.item, uuid, context, new_item_quantity, elem.blocksize, elem.location, index + 1);
 }
 
-void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid) {
+void Empire::DuplicateProductionItem(int index, boost::uuids::uuid uuid, const ScriptingContext& context) {
     DebugLogger() << "Empire::DuplicateProductionItem() called for index " << index << " with new UUID: " << boost::uuids::to_string(uuid);
     if (index < 0 || cmp_less_equal(m_production_queue.size(), index))
         throw std::runtime_error("Empire::DuplicateProductionItem() : Attempted to adjust the quantity of items to be built in a nonexistent production queue item.");
 
     auto& elem = m_production_queue[index];
-    PlaceProductionOnQueue(elem.item, uuid, elem.remaining, elem.blocksize, elem.location, index + 1);
+    PlaceProductionOnQueue(elem.item, uuid, context, elem.remaining, elem.blocksize, elem.location, index + 1);
 }
 
 void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
