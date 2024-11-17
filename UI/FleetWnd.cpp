@@ -720,8 +720,10 @@ namespace {
         m_ship_icon_overlays.clear();
         DetachChildAndReset(m_scanline_control);
 
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
+        const Universe& universe = context.ContextUniverse();
+        const ObjectMap& objects = context.ContextObjects();
 
         auto ship = objects.get<Ship>(m_ship_id);
         if (!ship)
@@ -754,8 +756,7 @@ namespace {
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID)
             add_overlay("bombarding.png");
 
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        if ((ship->GetVisibility(client_empire_id, universe) < Visibility::VIS_BASIC_VISIBILITY)
+        if ((ship->GetVisibility(app->EmpireID(), universe) < Visibility::VIS_BASIC_VISIBILITY)
             && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(
@@ -770,7 +771,12 @@ namespace {
 
         SetShipIcon();
 
-        auto ship = Objects().get<Ship>(m_ship_id);
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
+        const Universe& universe = context.ContextUniverse();
+        const ObjectMap& objects = context.ContextObjects();
+
+        auto ship = objects.get<Ship>(m_ship_id);
         if (!ship) {
             // blank text and delete icons
             m_ship_name_text->SetText("");
@@ -781,9 +787,7 @@ namespace {
             return;
         }
 
-
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const Universe& universe = GetUniverse();
+        int empire_id = app->EmpireID();
 
         // name and design name update
         const std::string& ship_name = ship->PublicName(empire_id, universe);
@@ -791,7 +795,7 @@ namespace {
             ? " (" + std::to_string(m_ship_id) + ")"
             : ""};
         if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
-            const Empire* ship_owner_empire = GetEmpire(ship->Owner());
+            const auto ship_owner_empire = context.GetEmpire(ship->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             m_ship_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_SHIP")) % owner_name) + id_name_part);
         } else {
@@ -842,7 +846,8 @@ namespace {
     }
 
     double ShipDataPanel::StatValue(MeterType stat_name) const {
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
         const Universe& u = context.ContextUniverse();
         const ObjectMap& o = context.ContextObjects();
 
@@ -875,7 +880,7 @@ namespace {
 
         // position ship name text at the top to the right of icons
         const GG::Pt name_ul = GG::Pt(DataPanelIconSpace().x + DATA_PANEL_TEXT_PAD, GG::Y0);
-        const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
+        const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD, LabelHeight());
         if (m_ship_name_text)
             m_ship_name_text->SizeMove(name_ul, name_lr);
         if (m_design_name_text)
@@ -899,8 +904,13 @@ namespace {
             return;
         m_initialized = true;
 
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
+        const Universe& universe = context.ContextUniverse();
+        const ObjectMap& objects = context.ContextObjects();
+
         // ship name text.  blank if no ship.
-        auto ship = Objects().get<Ship>(m_ship_id);
+        auto ship = objects.get<const Ship>(m_ship_id);
         std::string ship_name{
             (ship ? ship->Name() : "") +
             (GetOptionsDB().Get<bool>("ui.name.id.shown") ? " (" + std::to_string(m_ship_id) + ")" : "")
@@ -913,8 +923,6 @@ namespace {
         if (!ship)
             return;
 
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
-        const Universe& universe = context.ContextUniverse();
         if (const ShipDesign* design = universe.GetShipDesign(ship->DesignID())) {
             m_design_name_text = GG::Wnd::Create<CUILabel>(design->Name(), GG::FORMAT_RIGHT);
             AttachChild(m_design_name_text);
@@ -973,7 +981,7 @@ namespace {
         m_ship_connection = ship->StateChangedSignal.connect(
             boost::bind(&ShipDataPanel::RequireRefresh, this));
 
-        if (auto fleet = Objects().get<Fleet>(ship->FleetID()))
+        if (auto fleet = objects.get<const Fleet>(ship->FleetID()))
             m_fleet_connection = fleet->StateChangedSignal.connect(
                 boost::bind(&ShipDataPanel::RequireRefresh, this));
     }
@@ -990,7 +998,7 @@ namespace {
         {
             SetName("ShipRow");
             SetChildClippingMode(ChildClippingMode::ClipToClient);
-            if (Objects().get<Ship>(m_ship_id))
+            if (GGHumanClientApp::GetApp()->GetContext().ContextObjects().get<const Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
         }
 
@@ -1007,7 +1015,7 @@ namespace {
                 m_panel->Resize(Size());
         }
 
-        int ShipID() const {return m_ship_id;}
+        [[nodiscard]] int ShipID() const noexcept { return m_ship_id; }
 
     private:
         int                             m_ship_id = INVALID_OBJECT_ID;
@@ -1715,6 +1723,9 @@ void FleetDataPanel::Init() {
     m_fleet_destination_text = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
     AttachChild(m_fleet_destination_text);
 
+    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const Universe& u = GetUniverse();
+
     if (m_fleet_id == INVALID_OBJECT_ID) {
         m_aggression_toggle = Wnd::Create<CUIButton>(
             GG::SubTexture(FleetAggressiveIcon()),
@@ -1763,8 +1774,7 @@ void FleetDataPanel::Init() {
             AttachChild(std::move(stat_icon));
         }
 
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const Universe& u = GetUniverse();
+
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id, u) >= Visibility::VIS_FULL_VISIBILITY) {
             m_aggression_toggle = Wnd::Create<CUIButton>(
                 GG::SubTexture(FleetAggressiveIcon()),
