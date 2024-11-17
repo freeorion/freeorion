@@ -1325,6 +1325,22 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
 
 <u>Si désactivé</u>: Les systèmes d'un niveau de visibilité basique n'ayant jamais été détectés à un niveau de visibilité supérieure ont un nom et un type d'étoile inconnus.'''
 
+RULE_HIDDEN_POLICIES
+Cacher Politiques des empires
+
+RULE_HIDDEN_POLICIES_DESC
+'''<u>Si activé</u>: Les joueurs n'étant pas alliés avec un empire ne peuvent pas voir les politiques disponibles ou adoptées par les autres empires.
+
+<u>Si désactivé</u>: Tous les joueurs peuvent voir les politiques disponibles ou adoptées par les autres empires.'''
+
+RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES
+Cacher Technologies, Files d'attente, et Objets disponibles des empires
+
+RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES_DESC
+'''<u>Si activé</u>: Les joueurs n'étant pas alliés avec un empire ne peuvent pas voir les technologies recherchées, les files d'attente, les équipements, coques, et structures disponibles des autres empires.
+
+<u>Si désactivé</u>: Tous les joueurs peuvent voir les technologies recherchées, les files d'attente, et objets disponibles des autres empires.'''
+
 RULE_HABITABLE_SIZE_TINY
 Zone habitable Minuscules Planètes
 
@@ -3558,6 +3574,9 @@ Fichiers de musiques
 OPTIONS_SOUND_FILE
 Fichiers de sons
 
+OPTIONS_FONT_FILE
+Fichiers de police
+
 OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Génération automatique des descriptions d'effets
 
@@ -5702,7 +5721,7 @@ ADOPTED_POLICIES
 '''Politiques adoptées : '''
 
 NO_POLICIES_ADOPTED
-Aucune Politique adoptée
+Aucune Politique connue adoptée
 
 AVAILABLE_PARTS
 '''Équipements disponibles : '''
@@ -12873,7 +12892,7 @@ PLC_DREAM_RECURSION
 Récursivité Imaginaire
 
 PLC_DREAM_RECURSION_DESC
-'''Augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]]. Cette limite est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire ayant adopté cette Politique.
+'''Si l'empire n'a pas de dette d'[[RE_INFLUENCE]] (c-à-d. un [[IP_STOCKPILE]] d'au moins zéro), augmente la [[metertype METER_TARGET_HAPPINESS]] des planètes habitées de la valeur nécessaire pour atteindre [[value PLC_INDOCTRINATION_STRENGTH_BASE]]. Cette valeur de projection est augmentée de [[value PLC_INDOCTRINATION_STRENGTH_PER_COLLECTIVE_NET]] pour chaque structure [[buildingtype BLD_COLLECTIVE_NET]] contrôlée par l'empire ayant adopté cette Politique.
 
 Réduit l'[[metertype METER_INFLUENCE]] de chaque planète de la racine carrée de la valeur augmentant leur [[metertype METER_TARGET_HAPPINESS]].'''
 
