@@ -2815,6 +2815,8 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     //DebugLogger() << GetSupplyManager().Dump();
 
+    GGHumanClientApp* app = GGHumanClientApp::GetApp();
+    const auto client_empire_id = app->EmpireID();
     Universe& universe = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects();
 
@@ -2831,7 +2833,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     // if we've just loaded the game there may be some unexecuted orders, we
     // should reapply them now, so they are reflected in the UI, but do not
     // influence current meters or their discrepancies for this turn
-    GGHumanClientApp::GetApp()->Orders().ApplyOrders(context);
+    app->Orders().ApplyOrders(context);
 
     timer.EnterSection("meter estimates");
     universe.UpdateMeterEstimates(context);
@@ -2915,10 +2917,11 @@ void MapWnd::InitTurn(ScriptingContext& context) {
         ShowSystemNames();
 
 
+    auto this_client_empire = context.GetEmpire(client_empire_id);
+
     // empire is recreated each turn based on turn update from server, so
     // connections of signals emitted from the empire must be remade each turn
     // (unlike connections to signals from the sidepanel)
-    auto this_client_empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         this_client_empire->GetInfluencePool().ChangedSignal.connect(
             boost::bind(&MapWnd::RefreshInfluenceResourceIndicator, this));
@@ -2989,12 +2992,12 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
 
+
     timer.EnterSection("dispatch exploring");
-    FleetUIManager::GetFleetUIManager().RefreshAll();
+    FleetUIManager::GetFleetUIManager().RefreshAll(client_empire_id, context);
     DispatchFleetsExploring();
 
     timer.EnterSection("enable observers");
-    GGHumanClientApp* app = GGHumanClientApp::GetApp();
     if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
         // this client is a moderator
         m_btn_moderator->Disable(false);
@@ -3020,13 +3023,16 @@ void MapWnd::MidTurnUpdate() {
     DebugLogger() << "MapWnd::MidTurnUpdate";
     ScopedTimer timer("MapWnd::MidTurnUpdate");
 
-    GetUniverse().InitializeSystemGraph(Empires(), Objects());
-    GetUniverse().UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(Empires());
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext();
+
+    context.ContextUniverse().InitializeSystemGraph(context.Empires(), context.ContextObjects());
+    context.ContextUniverse().UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(context.Empires());
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
-    FleetUIManager::GetFleetUIManager().RefreshAll();
+    FleetUIManager::GetFleetUIManager().RefreshAll(app->EmpireID(), context);
     SidePanel::Refresh();
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom

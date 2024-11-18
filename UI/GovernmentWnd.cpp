@@ -1367,9 +1367,10 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
 }
 
 void GovernmentWnd::MainPanel::PostChangeBigUpdate() {
-    ScriptingContext& context = ClientApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    auto& context = app->GetContext();
 
-    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = app->EmpireID();
     auto empire = context.GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
@@ -1384,7 +1385,7 @@ void GovernmentWnd::MainPanel::PostChangeBigUpdate() {
         gov_wnd->DoLayout();
     context.ContextUniverse().UpdateMeterEstimates(context);
     SidePanel::Refresh();
-    FleetUIManager::GetFleetUIManager().RefreshAll();
+    FleetUIManager::GetFleetUIManager().RefreshAll(empire_id, context);
 }
 
 void GovernmentWnd::MainPanel::SetPolicies(const std::vector<std::string>& policies) {
