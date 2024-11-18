@@ -505,8 +505,12 @@ bool FleetUIManager::CloseAll() {
     return retval;
 }
 
-void FleetUIManager::RefreshAll()
-{ GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds, [](const std::shared_ptr<FleetWnd>& wnd) { wnd->Refresh(); }); }
+void FleetUIManager::RefreshAll(int this_client_empire_id, const ScriptingContext& context) {
+    auto refresh_fleetwnd = [this_client_empire_id, &context](auto& wnd)
+    { wnd->Refresh(this_client_empire_id, context); };
+
+    GG::ProcessThenRemoveExpiredPtrs(m_fleet_wnds, refresh_fleetwnd);
+}
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
     static FleetUIManager retval;
@@ -539,11 +543,11 @@ void FleetUIManager::EnableOrderIssuing(bool enable) {
 }
 
 namespace {
-    bool ValidShipTransfer(std::shared_ptr<const Ship> ship, std::shared_ptr<const Fleet> new_fleet) {
+    bool ValidShipTransfer(const auto& ship, const auto& new_fleet, const ObjectMap& objects) {
         if (!ship || !new_fleet)
             return false;   // can't transfer no ship or to no fleet
 
-        std::shared_ptr<const Fleet> current_fleet = Objects().get<Fleet>(ship->FleetID());
+        const auto current_fleet = objects.get<const Fleet>(ship->FleetID());
         if (current_fleet && current_fleet->ID() == new_fleet->ID())
             return false;   // can't transfer a fleet to a fleet it already is in
 
@@ -566,7 +570,7 @@ namespace {
         return true;
     }
 
-    bool ValidFleetMerge(std::shared_ptr<const Fleet> fleet, std::shared_ptr<const Fleet> target_fleet) {
+    bool ValidFleetMerge(const auto& fleet, const auto& target_fleet) {
         if (!fleet || !target_fleet)
             return false;   // missing objects
 
@@ -2010,7 +2014,11 @@ public:
         if (!drop_target_fleet_row)
             return;
 
-        auto drop_target_fleet = Objects().get<Fleet>(drop_target_fleet_row->FleetID());
+        const auto& app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
+        const auto& objects = context.ContextObjects();
+
+        const auto drop_target_fleet = objects.get<Fleet>(drop_target_fleet_row->FleetID());
         if (!drop_target_fleet)
             return;
 
@@ -2039,7 +2047,7 @@ public:
                 const FleetRow* fleet_row = dynamic_cast<const FleetRow*>(dropped_wnd);
                 if (!fleet_row)
                     return;
-                auto fleet = Objects().get<Fleet>(fleet_row->FleetID());
+                const auto fleet = objects.get<Fleet>(fleet_row->FleetID());
 
                 if (!ValidFleetMerge(fleet, drop_target_fleet))
                     return; // not a valid drop
@@ -2052,9 +2060,9 @@ public:
                 const ShipRow* ship_row = dynamic_cast<const ShipRow*>(dropped_wnd);
                 if (!ship_row)
                     return;
-                auto ship = Objects().get<Ship>(ship_row->ShipID());
+                const auto ship = objects.get<Ship>(ship_row->ShipID());
 
-                if (!ValidShipTransfer(ship, drop_target_fleet))
+                if (!ValidShipTransfer(ship, drop_target_fleet, objects))
                     return; // not a valid drop
             }
         }
@@ -2109,11 +2117,14 @@ protected:
         if (row == end())
             return;
 
+        const auto* app = GGHumanClientApp::GetApp();
+        const auto& objects = app->GetContext().ContextObjects();
+
         // extract drop target fleet from row under drop point
         const FleetRow* target_fleet_row = dynamic_cast<const FleetRow*>(row->get());
         std::shared_ptr<const Fleet> target_fleet;
         if (target_fleet_row)
-            target_fleet = Objects().get<Fleet>(target_fleet_row->FleetID());
+            target_fleet = objects.get<Fleet>(target_fleet_row->FleetID());
 
         // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
         // consider whether there is a mixture of fleets and ships, as each row is considered
@@ -2127,13 +2138,13 @@ protected:
             // if any of the nested if's fail, the default rejection of the drop will remain set
             if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 if (const FleetRow* fleet_row = dynamic_cast<const FleetRow*>(it->first))
-                    if (auto fleet = Objects().get<Fleet>(fleet_row->FleetID()))
+                    if (auto fleet = objects.get<Fleet>(fleet_row->FleetID()))
                         it->second = ValidFleetMerge(fleet, target_fleet);
 
             } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 if (const ShipRow* ship_row = dynamic_cast<const ShipRow*>(it->first))
-                    if (auto ship = Objects().get<Ship>(ship_row->ShipID()))
-                        it->second = ValidShipTransfer(ship, target_fleet);
+                    if (auto ship = objects.get<Ship>(ship_row->ShipID()))
+                        it->second = ValidShipTransfer(ship, target_fleet, objects);
             } else {
                 // no valid drop type string
                 ErrorLogger() << "FleetsListBox unrecognized drop type: " << it->first->DragDropDataType();
@@ -2251,7 +2262,12 @@ public:
     void Refresh() {
         ScopedTimer timer("ShipsListBox::Refresh");
 
-        auto fleet = Objects().get<Fleet>(m_fleet_id);
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
+        const auto& objects = context.ContextObjects();
+        const auto& universe = context.ContextUniverse();
+
+        auto fleet = objects.get<Fleet>(m_fleet_id);
         if (!fleet) {
             Clear();
             return;
@@ -2265,11 +2281,9 @@ public:
         SetNumCols(1);
         ManuallyManageColProps();
 
-        int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const auto& this_client_known_destroyed_objects =
-            GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-        const auto& this_client_stale_object_info =
-            GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+        int this_client_empire_id = app->EmpireID();
+        const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+        const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
         const auto& ship_ids = fleet->ShipIDs();
         std::vector<std::shared_ptr<GG::ListBox::Row>> rows;
@@ -2305,6 +2319,9 @@ public:
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override
     {
+        const auto* app = GGHumanClientApp::GetApp();
+        const auto& objects = app->GetContext().ContextObjects();
+
         for (DropsAcceptableIter it = first; it != last; ++it) {
             it->second = false; // default
 
@@ -2315,19 +2332,19 @@ public:
             if (!ship_row)
                 continue;
 
-            auto ship = Objects().get<Ship>(ship_row->ShipID());
+            const auto ship = objects.get<Ship>(ship_row->ShipID());
             if (!ship) {
                 ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
                 continue;
             }
 
-            auto fleet = Objects().get<Fleet>(ship->FleetID());
+            const auto fleet = objects.get<Fleet>(ship->FleetID());
             if (!fleet) {
                 ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
                 continue;
             }
 
-            if (ship && ValidShipTransfer(ship, fleet))
+            if (ship && ValidShipTransfer(ship, fleet, objects))
                 continue;   // leave false: ship transfer not valid
 
             // all tests passed; can drop
@@ -2350,14 +2367,15 @@ public:
             }
         }
 
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto* app = GGHumanClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
         if (!context.ContextObjects().check_if_any<const Ship>(ship_ids))
             return;
         if (ClientPlayerIsModerator())
             return; // TODO: handle moderator actions for this...
 
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
+        int empire_id = app->EmpireID();
+        app->Orders().IssueOrder(
             std::make_shared<FleetTransferOrder>(empire_id, m_fleet_id, ship_ids, context),
             context);
     }
@@ -2861,8 +2879,11 @@ void FleetWnd::CompleteConstruction() {
         ShipRightClickedSignal);
     AttachChild(m_fleet_detail_panel);
 
+    const auto* app = GGHumanClientApp::GetApp();
+    const auto& context = app->GetContext();
+
     // determine fleets to show and populate list
-    Refresh();
+    Refresh(app->EmpireID(), context);
 
     using boost::placeholders::_1;
 
@@ -2872,7 +2893,7 @@ void FleetWnd::CompleteConstruction() {
     m_new_fleet_drop_target->NewFleetFromShipsSignal.connect(
         boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
 
-    GetUniverse().UniverseObjectDeleteSignal.connect(
+    context.ContextUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetWnd::UniverseObjectDeleted, this, _1));
 
     RefreshStateChangedSignals();
@@ -2899,8 +2920,10 @@ FleetWnd::~FleetWnd() {
 void FleetWnd::PreRender() {
     MapWndPopup::PreRender();
 
-    if (m_needs_refresh)
-        Refresh();
+    if (m_needs_refresh) {
+        const auto* app = GGHumanClientApp::GetApp();
+        Refresh(app->EmpireID(), app->GetContext());
+    }
 }
 
 GG::Rect FleetWnd::CalculatePosition() const {
@@ -2910,7 +2933,8 @@ GG::Rect FleetWnd::CalculatePosition() const {
 }
 
 void FleetWnd::SetStatIconValues() {
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto* app = GGHumanClientApp::GetApp();
+    int client_empire_id = app->EmpireID();
     int ship_count =        0;
     float damage_tally =    0.0f;
     float destroy_tally   = 0.0f; // number of destroyed fighters
@@ -2920,7 +2944,7 @@ void FleetWnd::SetStatIconValues() {
     float troop_tally =     0.0f;
     float colony_tally =    0.0f;
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const ScriptingContext& context = app->GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
@@ -2994,12 +3018,14 @@ void FleetWnd::RequireRefresh() {
     RequirePreRender();
 }
 
-void FleetWnd::Refresh() {
+void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& context) {
     m_needs_refresh = false;
 
-    const int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
-    const auto& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
+    const auto& universe = context.ContextUniverse();
+    const auto& objects = context.ContextObjects();
+
+    const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this_client_empire_id);
+    const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // save selected fleet(s) and ships(s)
     const auto initially_selected_fleets{this->SelectedFleetIDs()};
@@ -3015,7 +3041,7 @@ void FleetWnd::Refresh() {
     // Check all fleets in initial_fleet_ids and keep those that exist.
     std::unordered_set<int> fleets_that_exist;
     GG::Rect fleets_bounding_box;
-    for (const auto* fleet : Objects().findRaw<const Fleet>(initial_fleet_ids)) {
+    for (const auto* fleet : objects.findRaw<const Fleet>(initial_fleet_ids)) {
         if (!fleet)
             continue;
 
@@ -3038,7 +3064,7 @@ void FleetWnd::Refresh() {
 
     // Filter initially selected fleets according to existing fleets
     GG::Rect selected_fleets_bounding_box;
-    for (const auto* fleet : Objects().findRaw<const Fleet>(initially_selected_fleets)) {
+    for (const auto* fleet : objects.findRaw<const Fleet>(initially_selected_fleets)) {
         if (!fleet)
             continue;
 
@@ -3104,7 +3130,7 @@ void FleetWnd::Refresh() {
         }
         fleet_locations_ids.swap(fleets_near_enough);
 
-    } else if (auto system = Objects().get<System>(m_system_id)) {
+    } else if (const auto system = objects.get<System>(m_system_id)) {
         location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
     } else {
@@ -3124,10 +3150,10 @@ void FleetWnd::Refresh() {
         m_new_fleet_drop_target->SetSystemID(m_system_id);
 
     // If the location is a system add in any ships from m_empire_id that are in the system.
-    if (auto system = Objects().get<System>(m_system_id).get()) {
+    if (const auto system = objects.get<System>(m_system_id).get()) {
         m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
-        for (auto& fleet : Objects().find<Fleet>(system->FleetIDs())) {
+        for (const auto& fleet : objects.find<Fleet>(system->FleetIDs())) {
             int fleet_id = fleet->ID();
 
             // skip known destroyed and stale info objects
