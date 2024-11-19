@@ -6,8 +6,8 @@
 
 std::string OrderSet::Dump() const {
     std::string retval;
-    for (const auto& order : m_orders)
-        retval += std::to_string(order.first) + ": " + order.second->Dump() + "\n";
+    for (const auto& [order_id, order] : m_orders)
+        retval += std::to_string(order_id) + ": " + order->Dump() + "\n";
     return retval;
 }
 
