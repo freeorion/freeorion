@@ -123,7 +123,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer specialized class for RGBA color values
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<uint8_t, 4>
+class GG_API GLRGBAColorBuffer final : public GLClientAndServerBufferBase<uint8_t, 4>
 {
 public:
     using base_t = GLClientAndServerBufferBase<uint8_t, 4>;
@@ -174,7 +174,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GL2DVertexBuffer specialized class for 2d vertex data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GL2DVertexBuffer : public GLClientAndServerBufferBase<float, 2>
+class GG_API GL2DVertexBuffer final : public GLClientAndServerBufferBase<float, 2>
 {
 public:
     using base_t = GLClientAndServerBufferBase<float, 2>;
@@ -194,7 +194,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GLTexCoordBuffer specialized class for texture coordinate data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float, 2>
+class GG_API GLTexCoordBuffer final : public GLClientAndServerBufferBase<float, 2>
 {
 public:
     using base_t = GLClientAndServerBufferBase<float, 2>;
@@ -208,7 +208,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GL3DVertexBuffer specialized class for 3d vertex data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GL3DVertexBuffer : public GLClientAndServerBufferBase<float, 3>
+class GG_API GL3DVertexBuffer final : public GLClientAndServerBufferBase<float, 3>
 {
 public:
     using base_t = GLClientAndServerBufferBase<float, 3>;
@@ -222,7 +222,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GLNormalBuffer specialized class for 3d normal data
 ///////////////////////////////////////////////////////////////////////////
-class GG_API GLNormalBuffer : public GLClientAndServerBufferBase<float, 3>
+class GG_API GLNormalBuffer final : public GLClientAndServerBufferBase<float, 3>
 {
 public:
     using base_t = GLClientAndServerBufferBase<float, 3>;
