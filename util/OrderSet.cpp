@@ -4,17 +4,6 @@
 #include "Order.h"
 
 
-namespace {
-    constinit OrderPtr EMPTY_ORDER_PTR;
-}
-
-OrderPtr& OrderSet::operator[](std::size_t i) {
-    auto it = m_orders.find(i);
-    if (it == m_orders.end())
-        return EMPTY_ORDER_PTR;
-    return it->second;
-}
-
 std::string OrderSet::Dump() const {
     std::string retval;
     for (const auto& order : m_orders)
