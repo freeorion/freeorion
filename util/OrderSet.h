@@ -57,8 +57,6 @@ public:
     [[nodiscard]] iterator       find(const key_type& k)       { return m_orders.find(k); }
     auto                         insert(const value_type& val) { return m_orders.insert(val); }
     auto                         erase(const key_type& k)      { return m_orders.erase(k); }
-    [[nodiscard]] OrderPtr&      operator[](std::size_t i);
-    [[nodiscard]] key_compare    key_comp() const              { return m_orders.key_comp(); }
 
     [[nodiscard]] std::string Dump() const;
 
