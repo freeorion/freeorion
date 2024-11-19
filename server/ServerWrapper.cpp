@@ -530,7 +530,7 @@ namespace {
     auto LoadMonsterFleetPlanList() -> py::list
     {
         py::list py_monster_fleet_plans;
-        const auto monster_fleet_plans = GetUniverse().MonsterFleetPlans();
+        const auto monster_fleet_plans = ServerApp::GetApp()->GetContext().ContextUniverse().MonsterFleetPlans();
         for (auto* fleet_plan : monster_fleet_plans)
             py_monster_fleet_plans.append(MonsterFleetPlanWrapper(MonsterFleetPlan(*fleet_plan)));
 
@@ -1410,7 +1410,7 @@ namespace FreeOrionPython {
         py::def("add_special",                      AddSpecial);
         py::def("remove_special",                   RemoveSpecial);
 
-        py::def("get_universe_width",               +[]() -> double { return GetUniverse().UniverseWidth(); });
+        py::def("get_universe_width",               +[]() -> double { return ServerApp::GetApp()->GetContext().ContextUniverse().UniverseWidth(); });
         py::def("set_universe_width",               +[](double width) { GetUniverse().SetUniverseWidth(width); });
         py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetUniverse().GetPathfinder()->LinearDistance(system1_id, system2_id, Objects()); });
         py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetUniverse().GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id); });
