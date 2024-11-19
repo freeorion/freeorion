@@ -16,6 +16,7 @@
 
 
 #if !defined(__cpp_lib_integer_comparison_functions)
+namespace {
 constexpr bool cmp_less_equal(std::size_t l, int r) noexcept
 { return (r < 0) ? false : (l <= static_cast<std::size_t>(r)); }
 static_assert(cmp_less_equal(0u, 0));
@@ -43,6 +44,7 @@ static_assert(cmp_greater(static_cast<std::size_t>(INT_MAX), 0));
 static_assert(cmp_greater(0u, -1));
 static_assert(cmp_greater(0u, INT_MIN));
 static_assert(cmp_greater(static_cast<std::size_t>(INT_MAX), INT_MIN));
+}
 #else
 using std::cmp_less_equal;
 using std::cmp_greater;
