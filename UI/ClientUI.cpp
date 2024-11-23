@@ -284,9 +284,8 @@ std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(std::string_view special_name
 }
 
 std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(std::string_view species_name) {
-    const Species* species = GetSpeciesManager().GetSpecies(species_name);
     std::string_view texture_name = "";
-    if (species)
+    if (const Species* species = ClientApp::GetApp()->GetSpeciesManager().GetSpecies(species_name))
         texture_name = species->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "meter" / "pop.png", true);
@@ -885,7 +884,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
                 return ZoomToShipPart(part_name);
         }
 
-        for (const auto& species_name : GetSpeciesManager() | range_keys) {
+        for (const auto& species_name : ClientApp::GetApp()->GetSpeciesManager() | range_keys) {
             if (boost::iequals(name, UserString(species_name)))
                 return ZoomToSpecies(species_name);
         }
@@ -946,7 +945,7 @@ bool ClientUI::ZoomToShipPart(std::string part_name) {
 }
 
 bool ClientUI::ZoomToSpecies(std::string species_name) {
-    if (!GetSpeciesManager().GetSpecies(species_name))
+    if (!ClientApp::GetApp()->GetSpeciesManager().GetSpecies(species_name))
         return false;
     GetMapWnd()->ShowSpecies(std::move(species_name));
     return true;

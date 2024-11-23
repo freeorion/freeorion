@@ -92,7 +92,7 @@ namespace {
 
     auto SpeciesHomeworlds(const Species& species) -> std::set<int>
     {
-        const auto& species_homeworlds{GetSpeciesManager().GetSpeciesHomeworldsMap()};
+        const auto& species_homeworlds{IApp::GetApp()->GetSpeciesManager().GetSpeciesHomeworldsMap()};
         auto it = species_homeworlds.find(species.Name());
         if (it == species_homeworlds.end())
             return {};
@@ -539,16 +539,16 @@ namespace FreeOrionPython {
             .add_property("arrivedOnTurn",          &Ship::ArrivedOnTurn)
             .add_property("lastResuppliedOnTurn",   &Ship::LastResuppliedOnTurn)
             .add_property("lastTurnActiveInCombat", &Ship::LastTurnActiveInCombat)
-            .add_property("isMonster",              +[](const Ship& ship) -> bool { return ship.IsMonster(GetUniverse()); })
+            .add_property("isMonster",              +[](const Ship& ship) -> bool { return ship.IsMonster(IApp::GetApp()->GetContext().ContextUniverse()); })
             .add_property("isArmed",                +[](const Ship& ship) -> bool { return ship.IsArmed(IApp::GetApp()->GetContext()); })
-            .add_property("hasFighters",            +[](const Ship& ship) -> bool { return ship.HasFighters(GetUniverse()); })
-            .add_property("canColonize",            +[](const Ship& ship) -> bool { return ship.CanColonize(GetUniverse(), GetSpeciesManager()); })
-            .add_property("canInvade",              +[](const Ship& ship) -> bool { return ship.HasTroops(GetUniverse()); })
-            .add_property("canBombard",             +[](const Ship& ship) -> bool { return ship.CanBombard(GetUniverse()); })
+            .add_property("hasFighters",            +[](const Ship& ship) -> bool { return ship.HasFighters(IApp::GetApp()->GetContext().ContextUniverse()); })
+            .add_property("canColonize",            +[](const Ship& ship) -> bool { const auto& context = IApp::GetApp()->GetContext(); return ship.CanColonize(context.ContextUniverse(), context.species); })
+            .add_property("canInvade",              +[](const Ship& ship) -> bool { return ship.HasTroops(IApp::GetApp()->GetContext().ContextUniverse()); })
+            .add_property("canBombard",             +[](const Ship& ship) -> bool { return ship.CanBombard(IApp::GetApp()->GetContext().ContextUniverse()); })
             .add_property("speciesName",            make_function(&Ship::SpeciesName,       py::return_value_policy<py::copy_const_reference>()))
             .add_property("speed",                  &Ship::Speed)
-            .add_property("colonyCapacity",         +[](const Ship& ship) -> float { return ship.ColonyCapacity(GetUniverse()); })
-            .add_property("troopCapacity",          +[](const Ship& ship) -> float { return ship.TroopCapacity(GetUniverse()); })
+            .add_property("colonyCapacity",         +[](const Ship& ship) -> float { return ship.ColonyCapacity(IApp::GetApp()->GetContext().ContextUniverse()); })
+            .add_property("troopCapacity",          +[](const Ship& ship) -> float { return ship.TroopCapacity(IApp::GetApp()->GetContext().ContextUniverse()); })
             .add_property("orderedScrapped",        &Ship::OrderedScrapped)
             .add_property("orderedColonizePlanet",  &Ship::OrderedColonizePlanet)
             .add_property("orderedInvadePlanet",    &Ship::OrderedInvadePlanet)
@@ -717,7 +717,7 @@ namespace FreeOrionPython {
             .add_property("type",                           &Planet::Type)
             .add_property("originalType",                   &Planet::OriginalType)
             .add_property("distanceFromOriginalType",       &Planet::DistanceFromOriginalType)
-            .def("environmentForSpecies",                   +[](const Planet& planet, const std::string& species) { return planet.EnvironmentForSpecies(GetSpeciesManager(), species); })
+            .def("environmentForSpecies",                   +[](const Planet& planet, const std::string& species) { return planet.EnvironmentForSpecies(IApp::GetApp()->GetContext().species, species); })
             .def("nextBetterPlanetTypeForSpecies",          &Planet::NextBetterPlanetTypeForSpecies)
             .add_property("clockwiseNextPlanetType",        &Planet::ClockwiseNextPlanetType)
             .add_property("counterClockwiseNextPlanetType", &Planet::CounterClockwiseNextPlanetType)

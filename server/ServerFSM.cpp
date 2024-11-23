@@ -3414,7 +3414,8 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
     server.ClearEmpireTurnOrders(empire_id);
 
     // re-send player initial turn update
-    const ScriptingContext context{server};
+    const auto& context = server.GetContext();
+
     for (auto& loop_empire : server.Empires() | range_values) {
         loop_empire->UpdateOwnedObjectCounters(server.GetUniverse());
         loop_empire->PrepQueueAvailabilityInfoForSerialization(context);
