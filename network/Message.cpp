@@ -221,7 +221,7 @@ Message GameStartMessage(bool single_player_game, int empire_id,
                          const Universe& universe, const SpeciesManager& species,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
                          const std::map<int, PlayerInfo>& players,
-                         const OrderSet& orders, const SaveGameUIData* ui_data,
+                         const OrderSet& orders, const SaveGameUIData& ui_data,
                          GalaxySetupData galaxy_setup_data,
                          bool use_binary_serialization, bool use_compression)
 {
@@ -247,10 +247,9 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
-            bool ui_data_available = (ui_data != nullptr);
+            bool ui_data_available = true;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data)
-                oa << boost::serialization::make_nvp("ui_data", *ui_data);
+            oa << boost::serialization::make_nvp("ui_data", ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             galaxy_setup_data.encoding_empire = empire_id;
@@ -270,17 +269,9 @@ Message GameStartMessage(bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
-            bool ui_data_available = (ui_data != nullptr);
+            bool ui_data_available = true;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data_available) {
-                if (ui_data) {
-                    oa << boost::serialization::make_nvp("ui_data", *ui_data);
-                } else {
-                    ErrorLogger() << "GameStartMessage expected UI data but it was nullptr";
-                    SaveGameUIData temp_UI_data;
-                    oa << boost::serialization::make_nvp("ui_data", temp_UI_data);
-                }
-            }
+            oa << boost::serialization::make_nvp("ui_data", ui_data);
             bool save_state_string_available = false;
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             galaxy_setup_data.encoding_empire = empire_id;

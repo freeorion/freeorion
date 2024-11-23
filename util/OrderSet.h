@@ -56,6 +56,7 @@ public:
     [[nodiscard]] bool           empty() const noexcept        { return m_orders.empty(); }
     [[nodiscard]] iterator       find(const key_type& k)       { return m_orders.find(k); }
     auto                         insert(const value_type& val) { return m_orders.insert(val); }
+    auto                         insert(iterator begin, iterator end) { return m_orders.insert(begin, end); }
     auto                         erase(const key_type& k)      { return m_orders.erase(k); }
 
     [[nodiscard]] std::string Dump() const;
