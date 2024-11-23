@@ -177,6 +177,13 @@ struct FO_COMMON_API SaveGameEmpireData {
 
 /** Contains basic data about a player in a game. */
 struct FO_COMMON_API PlayerSaveHeaderData {
+    PlayerSaveHeaderData() = default;
+    PlayerSaveHeaderData(std::string name_, int empire_id_, Networking::ClientType client_type_) :
+        name(std::move(name_)),
+        empire_id(empire_id_),
+        client_type(client_type_)
+    {}
+
     std::string             name;
     int                     empire_id = ALL_EMPIRES;
     Networking::ClientType  client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
@@ -186,15 +193,14 @@ struct FO_COMMON_API PlayerSaveHeaderData {
 struct FO_COMMON_API PlayerSaveGameData final : public PlayerSaveHeaderData {
     PlayerSaveGameData() = default;
 
-    PlayerSaveGameData(std::string name, int empire_id,
-                       std::shared_ptr<OrderSet> orders_,
-                       std::shared_ptr<SaveGameUIData> ui_data_,
-                       std::string save_state_string_,
-                       Networking::ClientType client_type);
+    PlayerSaveGameData(std::string name, int empire_id, OrderSet orders_, SaveGameUIData ui_data_,
+                       std::string save_state_string_, Networking::ClientType client_type);
 
-    std::string                     save_state_string;
-    std::shared_ptr<OrderSet>       orders;
-    std::shared_ptr<SaveGameUIData> ui_data;
+    PlayerSaveGameData(std::string name, int empire_id, Networking::ClientType client_type);
+
+    std::string    save_state_string;
+    OrderSet       orders;
+    SaveGameUIData ui_data;
 };
 
 /** Data that must be retained by the server when saving and loading a

@@ -225,7 +225,7 @@ FO_COMMON_API Message GameStartMessage(
     const EmpireManager& empires, const Universe& universe,
     const SpeciesManager& species, CombatLogManager& combat_logs,
     const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
-    const OrderSet& orders, const SaveGameUIData* ui_data,
+    const OrderSet& orders, const SaveGameUIData& ui_data,
     GalaxySetupData galaxy_setup_data, bool use_binary_serialization,
     bool use_compression);
 

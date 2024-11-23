@@ -980,10 +980,10 @@ MPLobby::~MPLobby()
 void MPLobby::ValidateClientLimits() {
     int human_count = 0;
     int ai_count = 0;
-    for (const auto& plr : m_lobby_data->players) {
-        if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+    for (const auto& plr : m_lobby_data->players | range_values) {
+        if (plr.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
             human_count++;
-        else if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+        else if (plr.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
             ai_count++;
     }
 
@@ -3180,13 +3180,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    auto order_set = std::make_shared<OrderSet>();
-    auto ui_data = std::make_shared<SaveGameUIData>();
+    OrderSet order_set;
+    SaveGameUIData ui_data;
     bool ui_data_available = false;
     std::string save_state_string;
     bool save_state_string_available = false;
     try {
-        ExtractTurnOrdersMessageData(message, *order_set, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+        ExtractTurnOrdersMessageData(message, order_set, ui_data_available, ui_data,
+                                     save_state_string_available, save_state_string);
     } catch (const std::exception&) {
         // incorrect turn orders. disconnect player with wrong client.
         sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
@@ -3197,9 +3198,9 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     int player_id = sender->PlayerID();
     const Networking::ClientType client_type = sender->GetClientType();
 
-    // ensure ui data availability flag is consistent with ui data
+    // clear if it shouldn't have been available...
     if (!ui_data_available)
-        ui_data.reset();
+        ui_data = SaveGameUIData();
 
     if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
@@ -3246,15 +3247,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             return discard_event();
         }
 
-        for (const auto& id_and_order : *order_set) {
-            auto& order = id_and_order.second;
+        for (const auto& order : order_set | range_values) {
             if (!order) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
                 continue;
             }
             if (empire_id != order->EmpireID()) {
-                ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                                 << player_id << ") who controls empire " << empire_id
+                ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName()
+                                 << "(id: " << player_id << ") who controls empire " << empire_id
                                  << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
                 sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
@@ -3262,13 +3262,10 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         }
 
         DebugLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id
-                         << " for empire " << empire_id << " count of " << order_set->size();
+                         << " for empire " << empire_id << " count of " << order_set.size();
 
-        server.SetEmpireSaveGameData(
-            empire_id,
-            std::make_unique<PlayerSaveGameData>(sender->PlayerName(), empire_id, std::move(order_set),
-                                                 std::move(ui_data), std::move(save_state_string),
-                                                 client_type));
+        server.AddEmpireData(PlayerSaveGameData(sender->PlayerName(), empire_id, std::move(order_set),
+                                                std::move(ui_data), std::move(save_state_string), client_type));
         empire->SetAutoTurn(0);
         empire->SetReady(true);
 
@@ -3308,10 +3305,10 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    auto added = std::make_shared<OrderSet>();
+    OrderSet added;
     std::set<int> deleted;
     try {
-        ExtractTurnPartialOrdersMessageData(message, *added, deleted);
+        ExtractTurnPartialOrdersMessageData(message, added, deleted);
     } catch (const std::exception&) {
         // incorrect turn orders. disconnect player with wrong client.
         sender->SendMessage(ErrorMessage(UserStringNop("ERROR_INCOMPATIBLE_VERSION")));
@@ -3336,7 +3333,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player "
                          << sender->PlayerName()
                          << "(player id: " << player_id << ") "
-                               << "who has an invalid player type. The server is confused, and the orders being ignored.";
+                         << "who has an invalid player type. The server is confused, and the orders being ignored.";
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
@@ -3346,22 +3343,21 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
         // store empire orders and resume waiting for more
         auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
-            ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get empire for player with id:" << player_id;
+            ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get empire for player with id: " << player_id;
             sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
             return discard_event();
         }
 
         int empire_id = empire->EmpireID();
         if (empire->Eliminated()) {
-            ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                             << player_id << ") who controls empire " << empire_id
+            ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) received orders from player " << empire->PlayerName()
+                             << " (id: " << player_id << ") who controls empire " << empire_id
                              << " but empire was eliminated";
             sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
             return discard_event();
         }
 
-        for (const auto& id_and_order : *added) {
-            auto& order = id_and_order.second;
+        for (const auto& [order_id, order] : added) {
             if (!order) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnPartialOrders&) couldn't get order from order set!";
                 continue;
@@ -3377,7 +3373,7 @@ sc::result WaitingForTurnEnd::react(const TurnPartialOrders& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnPartialOrders : Received partial orders from player " << player_id;
 
-        server.UpdatePartialOrders(empire_id, *added, deleted);
+        server.UpdatePartialOrders(empire_id, std::move(added), deleted);
     }
 
     return discard_event();

@@ -155,7 +155,7 @@ extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_x
 
 struct PlayerSaveGameData;
 
-BOOST_CLASS_VERSION(PlayerSaveGameData, 2);
+BOOST_CLASS_VERSION(PlayerSaveGameData, 3);
 
 template <typename Archive>
 void serialize(Archive&, PlayerSaveGameData&, unsigned int const);

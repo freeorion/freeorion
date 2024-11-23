@@ -784,7 +784,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     }
 
     // clear previous game player state info
-    m_turn_sequence.clear();
+    m_player_data.clear();
     m_player_empire_ids.clear();
     m_empires.Clear();
 
@@ -820,9 +820,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
         // add empires to turn processing
         if (auto empire = m_empires.GetEmpire(empire_id)) {
-            AddEmpireTurn(empire_id, PlayerSaveGameData(psd.player_name, empire_id,
-                                                        nullptr, nullptr, std::string(),
-                                                        psd.client_type));
+            AddEmpireData(PlayerSaveGameData(psd.player_name, empire_id, psd.client_type));
             empire->SetReady(false);
         }
     }
@@ -1390,7 +1388,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
     // clear previous game player state info
-    m_turn_sequence.clear();
+    m_player_data.clear();
     m_player_empire_ids.clear();
 
 
@@ -1449,14 +1447,14 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             empire->SetAuthenticated(player_connection->IsAuthenticated());
     }
 
-    for (const auto& psgd : player_save_game_data) {
-        const int empire_id = psgd.empire_id;
+    for (auto& psgd : player_save_game_data) {
         // add empires to turn processing, and restore saved orders and UI data or save state data
-        if (auto empire = m_empires.GetEmpire(empire_id)) {
+        if (auto empire = m_empires.GetEmpire(psgd.empire_id)) {
             if (!empire->Eliminated())
-                AddEmpireTurn(empire_id, psgd);
+                AddEmpireData(std::move(psgd));
         } else {
-            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing";
+            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << psgd.empire_id
+                          << " to add to turn processing";
         }
     }
 
@@ -1495,12 +1493,10 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         Networking::ClientType client_type = player_connection->GetClientType();
 
         // attempt to find saved state data for this player.
-        PlayerSaveGameData psgd;
+
         const auto save_data_it = player_id_save_game_data.find(player_id);
-        if (save_data_it != player_id_save_game_data.end())
-            psgd = save_data_it->second;
-        if (!psgd.orders)
-            psgd.orders = std::make_shared<OrderSet>(); // need an empty order set pointed to for serialization in case no data is loaded but the game start message wants orders to send
+        PlayerSaveGameData psgd = (save_data_it != player_id_save_game_data.end()) ?
+            std::move(save_data_it->second) : PlayerSaveGameData{};
 
         // get empire ID for player. safety check on it.
         const int empire_id = PlayerEmpireID(player_id);
@@ -1511,11 +1507,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // Without doing it, server would immediatly advance the turn because saves are made when
         // all players sent orders and became ready.
         RevokeEmpireTurnReadyness(empire_id);
-
-        // restore saved orders.  these will be re-executed on client and
-        // re-sent to the server (after possibly modification) by clients
-        // when they end their turn
-        const auto orders{psgd.orders};
 
         const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
@@ -1528,7 +1519,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             m_species_manager, GetCombatLogManager(),
-                                                            m_supply_manager, player_info_map, *orders, sss,
+                                                            m_supply_manager, player_info_map, psgd.orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization,
                                                             !player_connection->IsLocalConnection()),
                                            empire_id, m_current_turn);
@@ -1537,8 +1528,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             m_species_manager, GetCombatLogManager(),
-                                                            m_supply_manager, player_info_map, *orders,
-                                                            psgd.ui_data.get(), m_galaxy_setup_data,
+                                                            m_supply_manager, player_info_map, psgd.orders,
+                                                            psgd.ui_data, m_galaxy_setup_data,
                                                             use_binary_serialization,
                                                             !player_connection->IsLocalConnection()),
                                             empire_id, m_current_turn);
@@ -1976,7 +1967,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
     }
 
     // Don't wait for turn
-    RemoveEmpireTurn(empire_id);
+    RemoveEmpireData(empire_id);
 
     // break link between player and empire
     m_player_empire_ids.erase(player_id);
@@ -2058,13 +2049,17 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     if (empire->Eliminated())
         return ALL_EMPIRES;
 
-    auto orders_it = m_turn_sequence.find(empire_id);
-    if (orders_it == m_turn_sequence.end()) {
+    auto orders_it = std::find_if(m_player_data.begin(), m_player_data.end(),
+                                  [empire_id](const auto& pd) { return pd.empire_id == empire_id; });
+    if (orders_it == m_player_data.end()) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " for \"" << player_connection->PlayerName()
                      << "\" doesn't wait for orders";
         return ALL_EMPIRES;
     }
+    const OrderSet& orders = orders_it->orders;
+    const SaveGameUIData& ui_data = orders_it->ui_data;
+
 
     int previous_player_id = EmpirePlayerID(empire_id);
 
@@ -2099,10 +2094,6 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
 
     InfoLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id << " connected to " << player_connection->PlayerID();
 
-    const OrderSet dummy;
-    const OrderSet& orders = orders_it->second && orders_it->second->orders ? *(orders_it->second->orders) : dummy;
-    const SaveGameUIData* ui_data = orders_it->second ? orders_it->second->ui_data.get() : nullptr;
-
     if (GetOptionsDB().Get<bool>("network.server.drop-empire-ready")) {
         // drop ready status
         empire->SetReady(false);
@@ -2112,12 +2103,10 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     const auto player_info_map = GetPlayerInfoMap();
     const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
-    const ScriptingContext context{*this};
-
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
-        empire->PrepQueueAvailabilityInfoForSerialization(context);
-        empire->PrepPolicyInfoForSerialization(context);
+        empire->PrepQueueAvailabilityInfoForSerialization(m_context);
+        empire->PrepPolicyInfoForSerialization(m_context);
     }
 
     player_connection->SendMessage(
@@ -2168,19 +2157,6 @@ bool ServerApp::IsHostless() const
 const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() const
 { return m_chat_history; }
 
-std::vector<PlayerSaveGameData> ServerApp::GetPlayerSaveGameData() const {
-    std::vector<PlayerSaveGameData> player_save_game_data;
-    for (const auto& [empire_id, save_data] : m_turn_sequence) {
-        DebugLogger() << "ServerApp::GetPlayerSaveGameData() Empire " << empire_id
-                      << " type: " << to_string(save_data->client_type)
-                      << " save_game_data state string size: " << save_data->save_state_string.size()
-                      << " UI data?: " << save_data->ui_data;
-        if (save_data)
-            player_save_game_data.push_back(*save_data);
-    }
-    return player_save_game_data;
-}
-
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }
 
@@ -2198,41 +2174,52 @@ Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
 int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects.server.threads"); }
 
-void ServerApp::AddEmpireTurn(int empire_id, const PlayerSaveGameData& psgd)
-{ m_turn_sequence[empire_id] = std::make_unique<PlayerSaveGameData>(psgd); }
+void ServerApp::AddEmpireData(PlayerSaveGameData psgd) {
+    if (psgd.empire_id == ALL_EMPIRES)
+        return;
+    auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
+                           [eid{psgd.empire_id}](const auto& pd) { return pd.empire_id == eid; });
+    if (it != m_player_data.end())
+        *it = std::move(psgd);
+    else
+        m_player_data.push_back(std::move(psgd));
+}
 
-void ServerApp::RemoveEmpireTurn(int empire_id)
-{ m_turn_sequence.erase(empire_id); }
+void ServerApp::RemoveEmpireData(int empire_id) {
+    if (empire_id == ALL_EMPIRES)
+        return;
+    auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
+                           [empire_id](const auto& pd) { return pd.empire_id == empire_id; });
+    if (it != m_player_data.end())
+        m_player_data.erase(it);
+}
 
 void ServerApp::ClearEmpireTurnOrders(int empire_id) {
-    for (auto& [stored_empire_id, save_game_data] : m_turn_sequence) {
-        if (empire_id != ALL_EMPIRES && stored_empire_id != empire_id)
-            continue; // all empires, unless a single one was specified
-        if (save_game_data) {
-            // reset only orders
-            // left UI data and AI state intact
-            save_game_data->orders.reset();
-        }
+    if (empire_id == ALL_EMPIRES) {
+        for (auto& pd : m_player_data)
+            pd.orders.Reset();
+    } else {
+        auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
+                               [empire_id](const auto& pd) { return pd.empire_id == empire_id; });
+        if (it != m_player_data.end())
+            it->orders.Reset(); // leaving UI data and AI state intact
     }
 }
 
-void ServerApp::SetEmpireSaveGameData(int empire_id, std::unique_ptr<PlayerSaveGameData>&& save_game_data)
-{ m_turn_sequence[empire_id] = std::move(save_game_data); }
-
-void ServerApp::UpdatePartialOrders(int empire_id, const OrderSet& added,
-                                    const std::set<int>& deleted)
-{
-    const auto& psgd = m_turn_sequence[empire_id];
-    if (psgd) {
-        if (psgd->orders) {
-            for (int del_id : deleted)
-                 psgd->orders->erase(del_id);
-            for (auto& add_set : added)
-                 psgd->orders->insert(add_set);
-        } else {
-            psgd->orders = std::make_shared<OrderSet>(added);
-        }
+void ServerApp::UpdatePartialOrders(int empire_id, OrderSet added, const std::set<int>& deleted) {
+    if (empire_id == ALL_EMPIRES)
+        return;
+    auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
+                           [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; });
+    if (it == m_player_data.end()) {
+        ErrorLogger() << "Server given partial orders for unknown empire id: " << empire_id;
+        return;
     }
+    auto& orders = it->orders;
+
+    for (int del_id : deleted)
+        orders.erase(del_id);
+    orders.insert(added.begin(), added.end());
 }
 
 void ServerApp::RevokeEmpireTurnReadyness(int empire_id) {
@@ -2245,36 +2232,25 @@ bool ServerApp::AllOrdersReceived() {
     DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn
                   << (m_turn_expired ? " (expired)" : "");
     bool all_orders_received = true;
-    for (const auto& [empire_id, save_data] : m_turn_sequence) {
-        bool empire_orders_received = true;
-        const auto empire = m_empires.GetEmpire(empire_id);
+    for (const auto& psgd : m_player_data) {
+        const auto empire = m_empires.GetEmpire(psgd.empire_id);
         if (!empire) {
-            ErrorLogger() << " ... invalid empire id in turn sequence: "<< empire_id;
+            ErrorLogger() << " ... invalid empire id in turn sequence: " << psgd.empire_id;
             continue;
         } else if (empire->Eliminated()) {
-            ErrorLogger() << " ... eliminated empire in turn sequence: " << empire_id;
+            ErrorLogger() << " ... eliminated empire in turn sequence: " << psgd.empire_id;
             continue;
         } else if (!empire->Ready()) {
-            DebugLogger() << " ... not ready empire id: " << empire_id;
-            empire_orders_received = false;
-        } else if (!save_data) {
-            DebugLogger() << " ... no orders from empire id: " << empire_id;
-            empire_orders_received = false;
-        } else if (!save_data->orders) {
-            DebugLogger() << " ... no orders from empire id: " << empire_id;
-            empire_orders_received = false;
+            DebugLogger() << " ... not ready empire id: " << psgd.empire_id;
         } else {
-            DebugLogger() << " ... have orders from empire id: " << empire_id;
+            DebugLogger() << " ... have orders from empire id: " << psgd.empire_id;
+            continue;
         }
-        if (!empire_orders_received) {
-            if (GetEmpireClientType(empire_id) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
-                && m_turn_expired)
-            {
-                DebugLogger() << " ...... turn expired for empire id: " << empire_id;
-            } else {
-                all_orders_received = false;
-            }
-        }
+
+        if (GetEmpireClientType(psgd.empire_id) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER && m_turn_expired)
+            DebugLogger() << " ...... turn expired for empire id: " << psgd.empire_id;
+        else
+            all_orders_received = false;
     }
     return all_orders_received;
 }
@@ -4319,17 +4295,9 @@ void ServerApp::PreCombatProcessTurns() {
     ScriptingContext context{*this};
 
     // execute orders
-    for (auto& [orders_empire_id, save_game_data] : m_turn_sequence) {
-        if (!save_game_data) {
-            DebugLogger() << "No SaveGameData for empire " << orders_empire_id;
-            continue;
-        }
-        if (!save_game_data->orders) {
-            DebugLogger() << "No OrderSet for empire " << orders_empire_id;
-            continue;
-        }
-        DebugLogger() << "<<= Executing Orders for empire " << orders_empire_id << " =>>";
-        save_game_data->orders->ApplyOrders(context);
+    for (auto& pd : m_player_data) {
+        DebugLogger() << "<<= Executing Orders for empire " << pd.empire_id << " =>>";
+        pd.orders.ApplyOrders(context);
     }
 
 
@@ -4819,7 +4787,7 @@ void ServerApp::CheckForEmpireElimination() {
             continue;   // don't double-eliminate an empire
         } else if (EmpireEliminated(empire_id, m_universe.Objects())) {
             empire->Eliminate(m_empires, m_current_turn);
-            RemoveEmpireTurn(empire_id);
+            RemoveEmpireData(empire_id);
             const int player_id = EmpirePlayerID(empire_id);
             DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
                           << " of player #" << player_id << " eliminated";

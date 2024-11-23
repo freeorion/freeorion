@@ -285,13 +285,28 @@ void serialize(Archive& ar, PlayerSaveGameData& obj, unsigned int const version)
     using namespace boost::serialization;
 
     ar  & make_nvp("m_name", obj.name)
-        & make_nvp("m_empire_id", obj.empire_id)
-        & make_nvp("m_orders", obj.orders)
-        & make_nvp("m_ui_data", obj.ui_data)
-        & make_nvp("m_save_state_string", obj.save_state_string)
+        & make_nvp("m_empire_id", obj.empire_id);
+
+    if (Archive::is_loading::value && version < 3) {
+        auto orders = std::make_shared<OrderSet>();
+        auto ui_data = std::make_shared<SaveGameUIData>();
+        ar  & make_nvp("m_orders", orders)
+            & make_nvp("m_ui_data", ui_data);
+        if (orders)
+            obj.orders = std::move(*orders);
+        if (ui_data)
+            obj.ui_data = std::move(*ui_data);
+
+    } else {
+        ar  & make_nvp("m_orders", obj.orders)
+            & make_nvp("m_ui_data", obj.ui_data);
+    }
+
+    ar  & make_nvp("m_save_state_string", obj.save_state_string)
         & make_nvp("m_client_type", obj.client_type);
-    if (version == 1) {
-        bool ready{false};
+
+    if (Archive::is_loading::value && version < 2) {
+        bool ready = false;
         ar & make_nvp("m_ready", ready);
     }
 }
