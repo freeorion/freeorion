@@ -133,7 +133,7 @@ namespace {
             ErrorLogger() << "SpeciesAddHomeworld: couldn't get species " << species_name;
             return;
         }
-        GetSpeciesManager().AddSpeciesHomeworld(species_name, homeworld_id);
+        context.species.AddSpeciesHomeworld(species_name, homeworld_id);
     }
 
     void SpeciesRemoveHomeworld(const std::string& species_name, int homeworld_id)
@@ -144,7 +144,7 @@ namespace {
             ErrorLogger() << "SpeciesAddHomeworld: couldn't get species " << species_name;
             return;
         }
-        GetSpeciesManager().RemoveSpeciesHomeworld(species_name, homeworld_id);
+        context.species.RemoveSpeciesHomeworld(species_name, homeworld_id);
     }
 
     auto SpeciesCanColonize(const std::string& species_name) -> bool
@@ -197,10 +197,12 @@ namespace {
         if (!cond)
             DebugLogger() << "FilterIDsWithCondition passed null condition";
 
+        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+
         Condition::ObjectSet objs;
         py::stl_input_iterator<int> end;
         for (py::stl_input_iterator<int> id(obj_ids); id != end; ++id) {
-            if (auto obj = Objects().getRaw(*id))
+            if (auto obj = context.ContextObjects().getRaw(*id))
                 objs.push_back(obj);
             else
                 ErrorLogger() << "FilterIDsWithCondition:: Passed an invalid universe object id " << *id;
@@ -215,7 +217,7 @@ namespace {
         // get location condition and evaluate it with the specified universe object
         // if no location condition has been defined, all objects matches
         if (cond && cond->SourceInvariant()) {
-            cond->Eval(ServerApp::GetApp()->GetContext(), permitted_objs, objs);
+            cond->Eval(context, permitted_objs, objs);
         } else {
             permitted_objs = std::move(objs);
         }
@@ -644,8 +646,8 @@ namespace {
     auto GetAllObjects() -> py::list
     {
         py::list py_all_objects;
-        for (const auto& object : ServerApp::GetApp()->GetContext().ContextObjects().all())
-            py_all_objects.append(object->ID());
+        for (auto oid : ServerApp::GetApp()->GetContext().ContextObjects().allWithIDs() | range_keys)
+            py_all_objects.append(oid);
         return py_all_objects;
     }
 
@@ -860,7 +862,7 @@ namespace {
 
         // create new ship
         auto ship = universe.InsertNew<Ship>(empire_id, ship_design->ID(), species, universe,
-                                             GetSpeciesManager(), empire_id, context.current_turn);
+                                             context.species, empire_id, context.current_turn);
         if (!ship) {
             ErrorLogger() << "CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;
@@ -1411,9 +1413,9 @@ namespace FreeOrionPython {
         py::def("remove_special",                   RemoveSpecial);
 
         py::def("get_universe_width",               +[]() -> double { return ServerApp::GetApp()->GetContext().ContextUniverse().UniverseWidth(); });
-        py::def("set_universe_width",               +[](double width) { GetUniverse().SetUniverseWidth(width); });
-        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { return GetUniverse().GetPathfinder().LinearDistance(system1_id, system2_id, Objects()); });
-        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetUniverse().GetPathfinder().JumpDistanceBetweenSystems(system1_id, system2_id); });
+        py::def("set_universe_width",               +[](double width) { ServerApp::GetApp()->GetContext().ContextUniverse().SetUniverseWidth(width); });
+        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { const auto& context = ServerApp::GetApp()->GetContext(); return context.ContextUniverse().GetPathfinder().LinearDistance(system1_id, system2_id, context.ContextObjects()); });
+        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return ServerApp::GetApp()->GetContext().ContextUniverse().GetPathfinder().JumpDistanceBetweenSystems(system1_id, system2_id); });
         py::def("get_all_objects",                  GetAllObjects);
         py::def("get_systems",                      GetSystems);
         py::def("create_system",                    CreateSystem);

@@ -98,11 +98,12 @@ namespace {
     auto PlanetsWithAvailablePP(const Empire& empire) -> std::map<std::set<int>, float>
     {
         std::map<std::set<int>, float> planets_with_available_pp;
+        const auto& objects = IApp::GetApp()->GetContext().ContextObjects();
 
         // filter industry pool output to get just planet IDs
         for (auto& [object_ids, PP] : empire.GetIndustryPool().Output()) {
             std::set<int> planet_ids;
-            for (const auto* planet : Objects().findRaw<Planet>(object_ids)) {
+            for (const auto* planet : objects.findRaw<Planet>(object_ids)) {
                 if (planet)
                     planet_ids.insert(planet->ID());
             }
@@ -114,14 +115,14 @@ namespace {
 
     auto PlanetsWithAllocatedPP(const Empire& empire) -> std::map<std::set<int>, float>
     {
+        const auto& objects = IApp::GetApp()->GetContext().ContextObjects();
         const auto& prod_queue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planets_with_allocated_pp;
         for (const auto& objects_pp : prod_queue.AllocatedPP()) {
             std::set<int> planets;
-            for (const auto& planet : Objects().find<Planet>(objects_pp.first)) {
-                if (!planet)
-                    continue;
-                planets.insert(planet->ID());
+            for (const auto* planet : objects.findRaw<Planet>(objects_pp.first)) {
+                if (planet)
+                    planets.insert(planet->ID());
             }
             if (!planets.empty())
                 planets_with_allocated_pp[planets] = objects_pp.second;
@@ -131,11 +132,12 @@ namespace {
 
     auto PlanetsWithWastedPP(const Empire& empire) -> std::set<std::set<int>>
     {
+        const auto& objects = IApp::GetApp()->GetContext().ContextObjects();
         const ProductionQueue& prod_queue = empire.GetProductionQueue();
         std::set<std::set<int>> planets_with_wasted_pp;
         for (const auto& object_ids : prod_queue.ObjectsWithWastedPP(empire.GetIndustryPool())) {
             std::set<int> planet_ids;
-            for (const auto* planet : Objects().findRaw<Planet>(object_ids)) {
+            for (const auto* planet : objects.findRaw<Planet>(object_ids)) {
                 if (planet)
                     planet_ids.insert(planet->ID());
             }
