@@ -256,6 +256,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                     m_player_info,           m_orders,               loaded_game_data,
                                     ui_data_available,       ui_data,                state_string_available,
                                     save_state_string,       m_galaxy_setup_data);
+        m_context.current_turn = m_current_turn;
 
         DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
@@ -268,8 +269,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (loaded_game_data) {
             TraceLogger() << "Message::GAME_START save_state_string: " << save_state_string;
             m_AI->ResumeLoadedGame(save_state_string);
-            ScriptingContext context{*this};
-            m_orders.ApplyOrders(context);
+            m_orders.ApplyOrders(m_context);
         } else {
             DebugLogger() << "Message::GAME_START Starting New Game!";
             m_AI->StartNewGame();
@@ -291,6 +291,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         ExtractTurnUpdateMessageData(msg,                   m_empire_id,      m_current_turn,
                                      m_empires,             m_universe,       m_species_manager,
                                      GetCombatLogManager(), m_supply_manager, m_player_info);
+        m_context.current_turn = m_current_turn;
         //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
         m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
         m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);

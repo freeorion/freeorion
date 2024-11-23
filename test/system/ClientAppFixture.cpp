@@ -213,6 +213,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
                                     m_player_info,           m_orders,               loaded_game_data,
                                     ui_data_available,       ui_data,                state_string_available,
                                     save_state_string,       m_galaxy_setup_data);
+        m_context.current_turn = m_current_turn;
 
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
@@ -252,6 +253,7 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         ExtractTurnUpdateMessageData(msg,                   m_empire_id,      m_current_turn,
                                      m_empires,             m_universe,       m_species_manager,
                                      GetCombatLogManager(), m_supply_manager, m_player_info);
+        m_context.current_turn = m_current_turn;
         m_turn_done = true;
         BOOST_TEST_MESSAGE("Full turn update unpacked");
         return true;
