@@ -790,6 +790,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // set server state info for new game
     m_current_turn = BEFORE_FIRST_TURN;
+    m_context.current_turn = m_current_turn;
     m_turn_expired = false;
 
     // create universe and empires for players
@@ -805,11 +806,12 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
     // so that a set of SitReps intended as the player's initial greeting will be segregated
     m_current_turn = 0;
-    ScriptingContext context{*this};
-    m_universe.ApplyGenerateSitRepEffects(context);
+    m_context.current_turn = m_current_turn;
+    m_universe.ApplyGenerateSitRepEffects(m_context);
 
     //can set current turn to 1 for start of game
     m_current_turn = 1;
+    m_context.current_turn = m_current_turn;
 
     // record empires for each active player. Note: active_empire_id_setup_data
     // contains only data of players who control an empire; observers and
@@ -827,18 +829,18 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // update visibility information to ensure data sent out is up-to-date
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners: Updating first-turn Empire stuff";
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
 
     // initialize empire owned object counters
     for (auto& entry : m_empires)
         entry.second->UpdateOwnedObjectCounters(m_universe);
 
-    UpdateEmpireSupply(context, m_supply_manager, false);
-    CacheCostsTimes(context);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+    UpdateEmpireSupply(m_context, m_supply_manager, false);
+    CacheCostsTimes(m_context);
+    UpdateResourcePools(m_context, m_cached_empire_research_costs_times,
                         m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs,
                         m_cached_empire_production_costs_times);
-    m_universe.UpdateStatRecords(context);
+    m_universe.UpdateStatRecords(m_context);
 }
 
 bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& player_setup_data) {
@@ -925,12 +927,10 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
 void ServerApp::SendNewGameStartMessages() {
     std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
-    const ScriptingContext context{*this};
-
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
-        empire->PrepQueueAvailabilityInfoForSerialization(context);
-        empire->PrepPolicyInfoForSerialization(context);
+        empire->PrepQueueAvailabilityInfoForSerialization(m_context);
+        empire->PrepPolicyInfoForSerialization(m_context);
     }
 
     // send new game start messages
@@ -1394,6 +1394,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // restore server state info from save
     m_current_turn = server_save_game_data->current_turn;
+    m_context.current_turn = m_current_turn;
 
     std::map<int, PlayerSaveGameData> player_id_save_game_data;
 
@@ -1464,10 +1465,9 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(m_empires);
 
-    ScriptingContext context{*this};
-    UpdateEmpireSupply(context, m_supply_manager, true);  // precombat supply update
-    CacheCostsTimes(context);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+    UpdateEmpireSupply(m_context, m_supply_manager, true);  // precombat supply update
+    CacheCostsTimes(m_context);
+    UpdateResourcePools(m_context, m_cached_empire_research_costs_times,
                         m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs,
                         m_cached_empire_production_costs_times);
 
@@ -1477,8 +1477,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
-        empire->PrepQueueAvailabilityInfoForSerialization(context);
-        empire->PrepPolicyInfoForSerialization(context);
+        empire->PrepQueueAvailabilityInfoForSerialization(m_context);
+        empire->PrepPolicyInfoForSerialization(m_context);
     }
 
 
@@ -1625,17 +1625,15 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     DebugLogger() << "Applying first turn effects and updating meters";
 
-    ScriptingContext context{*this};
-
     // Apply effects for 1st turn.
-    m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
+    m_universe.ApplyAllEffectsAndUpdateMeters(m_context, false);
 
     TraceLogger(effects) << "After First turn meter effect applying: " << m_universe.Objects().Dump();
     // Set active meters to targets or maxes after first meter effects application
     m_universe.BackPropagateObjectMeters();
     m_species_manager.BackPropagateOpinions();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
-    m_universe.UpdateMeterEstimates(context);
+    m_universe.UpdateMeterEstimates(m_context);
     m_universe.BackPropagateObjectMeters();
     m_species_manager.BackPropagateOpinions();
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
@@ -1652,7 +1650,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
 
     // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
-    m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
+    m_universe.ApplyMeterEffectsAndUpdateMeters(m_context, false);
     // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(m_universe.Objects());
     // Set the population of unowned planets to a random fraction of their target values.
@@ -1665,7 +1663,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     TraceLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
     TraceLogger() << m_universe.Objects().Dump();
 
-    m_universe.UpdateEmpireObjectVisibilities(context);
+    m_universe.UpdateEmpireObjectVisibilities(m_context);
 }
 
 void ServerApp::ExecuteScriptedTurnEvents() {
@@ -4286,19 +4284,18 @@ void ServerApp::PreCombatProcessTurns() {
     // determined by what orders set.
     CleanUpBombardmentStateInfo(m_universe.Objects());
 
-    ScriptingContext context{*this};
 
     // execute orders
     for (auto& pd : m_player_data) {
         DebugLogger() << "<<= Executing Orders for empire " << pd.empire_id << " =>>";
-        pd.orders.ApplyOrders(context);
+        pd.orders.ApplyOrders(m_context);
     }
 
 
     // cache costs of stuff (policy adoption, research, production, annexation before anything more changes
     // costs are determined after executing orders, adopting policies, queue manipulations, etc. but before
     // any production, research, combat, annexation, gifting, etc. happens
-    CacheCostsTimes(context);
+    CacheCostsTimes(m_context);
 
 
     // clean up orders, which are no longer needed
@@ -4309,14 +4306,14 @@ void ServerApp::PreCombatProcessTurns() {
 
 
     // update focus history info
-    UpdateResourceCenterFocusHistoryInfo(context.ContextObjects());
+    UpdateResourceCenterFocusHistoryInfo(m_context.ContextObjects());
 
     // validate adopted policies, and update Empire Policy history
     // actual policy adoption occurs during order execution above
-    UpdateEmpirePolicies(m_empires, context.current_turn, false);
+    UpdateEmpirePolicies(m_empires, m_context.current_turn, false);
 
     // clean up empty fleets that empires didn't order deleted
-    CleanEmptyFleets(context);
+    CleanEmptyFleets(m_context);
 
     // update production queues after order execution
     for (auto& [empire_id, empire] : m_empires) {
@@ -4329,7 +4326,7 @@ void ServerApp::PreCombatProcessTurns() {
             ErrorLogger() << "Couldn't find cached production costs/times in PreCombatProcessTurns for empire " << empire_id;
             continue;
         }
-        empire->UpdateProductionQueue(context, pct_it->second);
+        empire->UpdateProductionQueue(m_context, pct_it->second);
     }
 
 
@@ -4338,16 +4335,16 @@ void ServerApp::PreCombatProcessTurns() {
 
 
     DebugLogger() << "ServerApp::ProcessTurns colonization";
-    auto [colonized_planet_ids, colonizing_ship_ids] = HandleColonization(context);
+    auto [colonized_planet_ids, colonizing_ship_ids] = HandleColonization(m_context);
 
     DebugLogger() << "ServerApp::ProcessTurns invasion";
-    auto [invaded_planet_ids, invading_ship_ids] = HandleInvasion(context);
+    auto [invaded_planet_ids, invading_ship_ids] = HandleInvasion(m_context);
 
     DebugLogger() << "ServerApp::ProcessTurns annexation";
-    auto annexed_ids = HandleAnnexation(context, invaded_planet_ids, m_cached_empire_annexation_costs);
+    auto annexed_ids = HandleAnnexation(m_context, invaded_planet_ids, m_cached_empire_annexation_costs);
 
     DebugLogger() << "ServerApp::ProcessTurns gifting";
-    auto gifted_ids = HandleGifting(m_empires, m_universe.Objects(), context.current_turn, invaded_planet_ids,
+    auto gifted_ids = HandleGifting(m_empires, m_universe.Objects(), m_context.current_turn, invaded_planet_ids,
                                     invading_ship_ids, colonizing_ship_ids, annexed_ids);
 
     DebugLogger() << "ServerApp::ProcessTurns scrapping";
@@ -4362,10 +4359,10 @@ void ServerApp::PreCombatProcessTurns() {
     // Update system-obstruction after orders, colonization, invasion, gifting, scrapping
     static constexpr auto not_eliminated = [](auto& id_e) { return !id_e.second->Eliminated(); };
     for (auto& empire : m_empires | range_filter(not_eliminated) | range_values)
-        empire->UpdateSupplyUnobstructedSystems(context, true);
+        empire->UpdateSupplyUnobstructedSystems(m_context, true);
 
 
-    m_empire_fleet_combat_initiation_vis_overrides = HandleFleetMovement(context);
+    m_empire_fleet_combat_initiation_vis_overrides = HandleFleetMovement(m_context);
 
 
     // indicate that the clients are waiting for their new Universes
@@ -4373,8 +4370,8 @@ void ServerApp::PreCombatProcessTurns() {
 
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
-        empire->PrepQueueAvailabilityInfoForSerialization(context);
-        empire->PrepPolicyInfoForSerialization(context);
+        empire->PrepQueueAvailabilityInfoForSerialization(m_context);
+        empire->PrepPolicyInfoForSerialization(m_context);
     }
 
     // send partial turn updates to all players after orders and movement
@@ -4401,11 +4398,9 @@ void ServerApp::ProcessCombats() {
     DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::COMBAT));
 
-    ScriptingContext context{*this};
-
     // collect data about locations where combat is to occur:
     // map from system ID to CombatInfo for that system
-    auto combats = AssembleSystemCombatInfo(context, m_empire_fleet_combat_initiation_vis_overrides);
+    auto combats = AssembleSystemCombatInfo(m_context, m_empire_fleet_combat_initiation_vis_overrides);
     m_empire_fleet_combat_initiation_vis_overrides.clear();
 
     // loop through assembled combat infos, handling each combat to update the
@@ -4413,7 +4408,7 @@ void ServerApp::ProcessCombats() {
     for (CombatInfo& combat_info : combats) {
         const auto combat_system = combat_info.GetSystem();
         if (combat_system)
-            combat_system->SetLastTurnBattleHere(context.current_turn);
+            combat_system->SetLastTurnBattleHere(m_context.current_turn);
 
         DebugLogger(combat) << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System id: " + std::to_string(combat_info.system_id) + ")");
         TraceLogger(combat) << combat_info.objects.Dump();
@@ -4423,11 +4418,11 @@ void ServerApp::ProcessCombats() {
 
     BackProjectSystemCombatInfoObjectMeters(combats);
 
-    UpdateEmpireCombatDestructionInfo(combats, context);
+    UpdateEmpireCombatDestructionInfo(combats, m_context);
 
     DisseminateSystemCombatInfo(combats, m_universe, m_empires);
     // update visibilities with any new info gleaned during combat
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
     // update stale object info based on any mid- combat glimpses
     // before visibility is totally recalculated in the post combat processing
     m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
@@ -4436,8 +4431,6 @@ void ServerApp::ProcessCombats() {
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
-    const ScriptingContext context{*this};
-
     for (auto const* system : m_universe.Objects().allRaw<System>()) {
         bool unrestricted_monsters_present = false;
         bool empires_present = false;
@@ -4450,7 +4443,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
                                  && fleet->Obstructive()
-                                 && fleet->CanDamageShips(context));
+                                 && fleet->CanDamageShips(m_context));
             if (fleet->Unowned()) {
                 monsters.push_back(fleet);
                 if (unrestricted)
@@ -4479,11 +4472,9 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
 void ServerApp::PostCombatProcessTurns() {
     ScopedTimer timer("ServerApp::PostCombatProcessTurns");
 
-    ScriptingContext context{*this};
-
     // post-combat visibility update
-    m_universe.UpdateEmpireObjectVisibilities(context);
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+    m_universe.UpdateEmpireObjectVisibilities(m_context);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
 
 
     // check for loss of empire capitals
@@ -4511,9 +4502,9 @@ void ServerApp::PostCombatProcessTurns() {
     // execute all effects and update meters prior to production, research, etc.
     if (GetGameRules().Get<bool>("RULE_RESEED_PRNG_SERVER")) {
         static boost::hash<std::string> pcpt_string_hash;
-        Seed(static_cast<unsigned int>(context.current_turn) + pcpt_string_hash(m_galaxy_setup_data.seed));
+        Seed(static_cast<unsigned int>(m_context.current_turn) + pcpt_string_hash(m_galaxy_setup_data.seed));
     }
-    m_universe.ApplyAllEffectsAndUpdateMeters(context, false);
+    m_universe.ApplyAllEffectsAndUpdateMeters(m_context, false);
 
     // regenerate system connectivity graph after executing effects, which may
     // have added or removed starlanes.
@@ -4527,11 +4518,11 @@ void ServerApp::PostCombatProcessTurns() {
 
     // now that we've had combat and applied Effects, update visibilities again, prior
     //  to updating system obstructions below.
-    m_universe.UpdateEmpireObjectVisibilities(context);
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+    m_universe.UpdateEmpireObjectVisibilities(m_context);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
 
-    UpdateEmpireSupply(context, m_supply_manager, false);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+    UpdateEmpireSupply(m_context, m_supply_manager, false);
+    UpdateResourcePools(m_context, m_cached_empire_research_costs_times,
                         m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs,
                         m_cached_empire_production_costs_times);
 
@@ -4562,7 +4553,7 @@ void ServerApp::PostCombatProcessTurns() {
             ErrorLogger() << "no cached research costs info for empire " << empire_id;
         } else {
             const auto& costs_times = cached_tech_cost_it->second;
-            const auto new_techs = empire->CheckResearchProgress(context, costs_times);
+            const auto new_techs = empire->CheckResearchProgress(m_context, costs_times);
             for (const auto& tech : new_techs)
                 empire->AddNewlyResearchedTechToGrantAtStartOfNextTurn(tech);
         }
@@ -4572,7 +4563,7 @@ void ServerApp::PostCombatProcessTurns() {
             ErrorLogger() << "no cached production costs info for empire " << empire_id;
         } else {
             const auto& costs_times = cached_prod_cost_it->second;
-            empire->CheckProductionProgress(context, costs_times);
+            empire->CheckProductionProgress(m_context, costs_times);
         }
 
         //const auto cached_policy_cost_it = m_cached_empire_policy_adoption_costs.find(empire_id);
@@ -4602,14 +4593,14 @@ void ServerApp::PostCombatProcessTurns() {
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(context, false);
+    m_universe.ApplyMeterEffectsAndUpdateMeters(m_context, false);
 
     TraceLogger(effects) << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
     // Planet depopulation, some in-C++ meter modifications
     for (const auto& obj : m_universe.Objects().all()) {
-        obj->PopGrowthProductionResearchPhase(context);
+        obj->PopGrowthProductionResearchPhase(m_context);
         obj->ClampMeters();  // ensures no meters are over MAX.  probably redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
@@ -4624,8 +4615,8 @@ void ServerApp::PostCombatProcessTurns() {
     // check for loss of empire capitals
     for (auto& [empire_id, empire] : m_empires) {
         int capital_id = empire->CapitalID();
-        if (auto capital = m_universe.Objects().get(capital_id)) {
-            if (!capital->OwnedBy(empire_id))
+        if (const auto* capital = m_universe.Objects().getRaw(capital_id)) {
+            if (!capital || !capital->OwnedBy(empire_id))
                 empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
         } else {
             empire->SetCapitalID(INVALID_OBJECT_ID, m_universe.Objects());
@@ -4639,10 +4630,10 @@ void ServerApp::PostCombatProcessTurns() {
     // visibility update removes an empires ability to detect an object, the
     // empire will still know the latest state on the
     // turn when the empire did have detection ability for the object
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
 
     // post-production and meter-effects visibility update
-    m_universe.UpdateEmpireObjectVisibilities(context);
+    m_universe.UpdateEmpireObjectVisibilities(m_context);
 
     m_universe.UpdateEmpireStaleObjectKnowledge(m_empires);
 
@@ -4657,12 +4648,13 @@ void ServerApp::PostCombatProcessTurns() {
 
     // update current turn number so that following visibility updates and info
     // sent to players will have updated turn associated with them
-    context.current_turn = ++m_current_turn;
+    ++m_current_turn;
+    m_context.current_turn = m_current_turn;
     DebugLogger() << "ServerApp::PostCombatProcessTurns Turn number incremented to " << m_current_turn;
 
 
     // new turn visibility update
-    m_universe.UpdateEmpireObjectVisibilities(context);
+    m_universe.UpdateEmpireObjectVisibilities(m_context);
 
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns applying Newly Added Techs";
@@ -4676,35 +4668,35 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // do another policy update before final meter update to be consistent with what clients calculate...
-    UpdateEmpirePolicies(m_empires, context.current_turn, true);
+    UpdateEmpirePolicies(m_empires, m_context.current_turn, true);
 
 
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns Before Final Meter Estimate Update: ";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
     // redo meter estimates to hopefully be consistent with what happens in clients
-    m_universe.UpdateMeterEstimates(context, false);
+    m_universe.UpdateMeterEstimates(m_context, false);
 
     TraceLogger(effects) << "ServerApp::PostCombatProcessTurns After Final Meter Estimate Update: ";
     TraceLogger(effects) << m_universe.Objects().Dump();
 
 
     // Re-determine supply distribution and exchanging and resource pools for empires
-    UpdateEmpireSupply(context, m_supply_manager, true);
-    UpdateResourcePools(context, m_cached_empire_research_costs_times,
+    UpdateEmpireSupply(m_context, m_supply_manager, true);
+    UpdateResourcePools(m_context, m_cached_empire_research_costs_times,
                         m_cached_empire_annexation_costs, m_cached_empire_policy_adoption_costs,
                         m_cached_empire_production_costs_times);
 
     // copy latest visible gamestate to each empire's known object state
-    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(context.current_turn);
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
 
 
     // misc. other updates and records
-    m_universe.UpdateStatRecords(context);
+    m_universe.UpdateStatRecords(m_context);
     for (auto& empire : m_empires | range_values) {
         empire->UpdateOwnedObjectCounters(m_universe);
-        empire->PrepQueueAvailabilityInfoForSerialization(context);
-        empire->PrepPolicyInfoForSerialization(context);
+        empire->PrepQueueAvailabilityInfoForSerialization(m_context);
+        empire->PrepPolicyInfoForSerialization(m_context);
     }
 
 
