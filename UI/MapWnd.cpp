@@ -3173,11 +3173,11 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (std::size_t i = 0; i < m_system_icons.size(); ++i)
         GG::Texture::InitBuffer(m_star_texture_coords, tex_coords);
 
+    const auto& objects = GGHumanClientApp::GetApp()->GetContext().ContextObjects();
 
-    for (const auto& system_icon : m_system_icons) {
-        const auto& icon = system_icon.second;
-        int system_id = system_icon.first;
-        auto* system = Objects().getRaw<const System>(system_id);
+
+    for (const auto& [system_id, icon] : m_system_icons) {
+        auto* system = objects.getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -3661,13 +3661,14 @@ namespace {
 
     void PrepFullLanesToRender(const std::unordered_map<int, std::shared_ptr<SystemIcon>>& sys_icons,
                                GG::GL2DVertexBuffer& starlane_vertices,
-                               GG::GLRGBAColorBuffer& starlane_colors)
+                               GG::GLRGBAColorBuffer& starlane_colors,
+                               int empire_id, const ScriptingContext& context)
     {
         const auto& this_client_known_destroyed_objects =
-            GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
-        const auto& empires = Empires();
-        const auto& sm = GetSupplyManager();
-        const auto& o = Objects();
+            context.ContextUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
+        const auto& empires = context.Empires();
+        const auto& sm = context.supply;
+        const auto& o = context.ContextObjects();
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
         std::set<std::pair<int, int>> already_rendered_full_lanes;
@@ -3738,11 +3739,11 @@ namespace {
                                              int empire_id,
                                              std::set<std::pair<int, int>>& rendered_half_starlanes,
                                              GG::GL2DVertexBuffer& rc_starlane_vertices,
-                                             GG::GLRGBAColorBuffer& rc_starlane_colors)
+                                             GG::GLRGBAColorBuffer& rc_starlane_colors,
+                                             const ScriptingContext& context)
     {
         rendered_half_starlanes.clear();
 
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
         auto empire = context.GetEmpire(empire_id);
         if (!empire)
             return;
@@ -3755,14 +3756,11 @@ namespace {
               under_alloc_res_grp_core_members] =
             GetResPoolLaneInfo(context.ContextObjects(), *empire, context.supply);
 
-        const auto& this_client_known_destroyed_objects =
-            context.ContextUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+        const auto& this_client_known_destroyed_objects = context.ContextUniverse().DestroyedObjectIds();
         //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
 
 
-        for (const auto& id_icon : sys_icons) {
-            const int system_id = id_icon.first;
-
+        for (const auto system_id : sys_icons | range_keys) {
             // skip systems that don't actually exist
             if (this_client_known_destroyed_objects.contains(system_id))
                 continue;
@@ -3820,34 +3818,24 @@ namespace {
         }
     }
 
-    void PrepObstructedLaneTraversalsToRender(const auto& sys_icons, int empire_id,
+    void PrepObstructedLaneTraversalsToRender(const auto& sys_icons,
                                               std::set<std::pair<int, int>>& rendered_half_starlanes, // TODO: pass as better container...
                                               GG::GL2DVertexBuffer& starlane_vertices,
-                                              GG::GLRGBAColorBuffer& starlane_colors)
+                                              GG::GLRGBAColorBuffer& starlane_colors,
+                                              const ScriptingContext& context)
     {
         static_assert(std::is_same_v<int, std::decay_t<decltype(sys_icons.begin()->first)>>);
         static_assert(std::is_same_v<SystemIcon, std::decay_t<decltype(*sys_icons.begin()->second)>>);
 
-        auto this_empire = GetEmpire(empire_id);
-        if (!this_empire)
-            return;
-
-        const auto& this_client_known_destroyed_objects =
-            GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+        const auto& this_client_known_destroyed_objects = context.ContextUniverse().DestroyedObjectIds();
 
 
-        for (const auto& id_icon : sys_icons) {
-            int system_id = id_icon.first;
-
+        for (const auto system_id : sys_icons | range_keys) {
             // skip systems that don't actually exist
             if (this_client_known_destroyed_objects.contains(system_id))
                 continue;
 
-            // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.contains(system_id))
-                continue;
-
-            auto start_system = Objects().get<System>(system_id);
+            auto start_system = context.ContextObjects().get<System>(system_id);
             if (!start_system) {
                 ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
                 continue;
@@ -3859,7 +3847,7 @@ namespace {
                 if (this_client_known_destroyed_objects.contains(lane_end_sys_id))
                     continue;
 
-                auto dest_system = Objects().get<System>(lane_end_sys_id);
+                auto dest_system = context.ContextObjects().get<System>(lane_end_sys_id);
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3871,9 +3859,9 @@ namespace {
 
 
                 // add obstructed lane traversals as half lanes
-                for (const auto& [loop_empire_id, loop_empire] : Empires()) {
+                for (const auto& [loop_empire_id, loop_empire] : context.Empires()) {
                     const auto& resource_obstructed_supply_lanes =
-                        GetSupplyManager().SupplyObstructedStarlaneTraversals(loop_empire_id);
+                        context.supply.SupplyObstructedStarlaneTraversals(loop_empire_id);
 
                     // see if this lane exists in this empire's obstructed supply propagation lanes set.  either direction accepted.
                     if (!resource_obstructed_supply_lanes.contains({start_system->ID(), dest_system->ID()}))
@@ -3953,15 +3941,16 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // temp storage
     std::set<std::pair<int, int>> rendered_half_starlanes;  // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
+    const auto* app = GGHumanClientApp::GetApp();
+    const int empire_id = app->EmpireID();
+    const auto& context = app->GetContext();
 
     // add vertices and colours to lane rendering buffers
-    PrepFullLanesToRender(m_system_icons, m_starlane_vertices, m_starlane_colors);
-    PrepResourceConnectionLanesToRender(m_system_icons, GGHumanClientApp::GetApp()->EmpireID(),
-                                        rendered_half_starlanes,
-                                        m_RC_starlane_vertices, m_RC_starlane_colors);
-    PrepObstructedLaneTraversalsToRender(m_system_icons, GGHumanClientApp::GetApp()->EmpireID(),
-                                         rendered_half_starlanes,
-                                         m_starlane_vertices, m_starlane_colors);
+    PrepFullLanesToRender(m_system_icons, m_starlane_vertices, m_starlane_colors, empire_id, context);
+    PrepResourceConnectionLanesToRender(m_system_icons, empire_id, rendered_half_starlanes,
+                                        m_RC_starlane_vertices, m_RC_starlane_colors, context);
+    PrepObstructedLaneTraversalsToRender(m_system_icons, rendered_half_starlanes,
+                                         m_starlane_vertices, m_starlane_colors, context);
 
 
     // fill new buffers
