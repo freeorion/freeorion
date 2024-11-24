@@ -780,7 +780,7 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    if (auto planet = Objects().get<Planet>(id)) {
+    if (auto planet = ClientApp::GetApp()->GetContext().ContextObjects().get<Planet>(id)) {
         GetMapWnd()->CenterOnObject(planet->SystemID());
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
@@ -790,13 +790,13 @@ bool ClientUI::ZoomToPlanet(int id) {
 }
 
 bool ClientUI::ZoomToPlanetPedia(int id) {
-    if (Objects().get<Planet>(id))
+    if (ClientApp::GetApp()->GetContext().ContextObjects().get<Planet>(id))
         GetMapWnd()->ShowPlanet(id);
     return false;
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (auto system = Objects().get<System>(id)) {
+    if (auto system = ClientApp::GetApp()->GetContext().ContextObjects().get<System>(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -804,7 +804,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (auto fleet = Objects().get<Fleet>(id)) {
+    if (auto fleet = ClientApp::GetApp()->GetContext().ContextObjects().get<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -812,13 +812,13 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (auto ship = Objects().get<Ship>(id))
+    if (auto ship = ClientApp::GetApp()->GetContext().ContextObjects().get<Ship>(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (auto building = Objects().get<Building>(id)) {
+    if (auto building = ClientApp::GetApp()->GetContext().ContextObjects().get<Building>(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }
@@ -826,7 +826,7 @@ bool ClientUI::ZoomToBuilding(int id) {
 }
 
 bool ClientUI::ZoomToField(int id) {
-    if (auto field = Objects().get<Field>(id))
+    if (auto field = ClientApp::GetApp()->GetContext().ContextObjects().get<Field>(id))
         GetMapWnd()->CenterOnObject(id);
     return false;
 }
@@ -989,7 +989,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(std::string str) {
 }
 
 void ClientUI::DumpObject(int object_id) {
-    if (auto obj = Objects().get(object_id))
+    if (auto obj = ClientApp::GetApp()->GetContext().ContextObjects().get(object_id))
         m_message_wnd->HandleLogMessage(obj->Dump());
 }
 

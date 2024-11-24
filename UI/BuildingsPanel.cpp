@@ -65,8 +65,9 @@ void BuildingsPanel::CompleteConstruction() {
     m_expand_button->LeftPressedSignal.connect([this]() { ExpandCollapseButtonPressed(); });
 
     // get owner, connect its production queue changed signal to update this panel
-    if (auto planet = Objects().getRaw(m_planet_id)) {
-        if (auto empire = Empires().GetEmpire(planet->Owner())) {
+    const auto& context = GGHumanClientApp::GetApp()->GetContext();
+    if (auto planet = context.ContextObjects().getRaw(m_planet_id)) {
+        if (auto empire = context.GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
             m_queue_connection = queue.ProductionQueueChangedSignal.connect([this]() { RequirePreRender(); });
         }
@@ -88,7 +89,9 @@ void BuildingsPanel::Update() {
         DetachChild(indicator.get());
     m_building_indicators.clear();
 
-    auto planet = Objects().get<Planet>(m_planet_id);
+    const auto* app = GGHumanClientApp::GetApp();
+    const auto& context = app->GetContext();
+    auto planet = context.ContextObjects().get<Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
@@ -97,8 +100,7 @@ void BuildingsPanel::Update() {
 
     const int indicator_size = static_cast<int>(Width() / static_cast<float>(m_columns));
 
-    const int this_client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const int this_client_empire_id = app->EmpireID();
     const auto& this_client_known_destroyed_objects = context.ContextUniverse().EmpireKnownDestroyedObjectIDs(this_client_empire_id);
     const auto& this_client_stale_object_info = context.ContextUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
@@ -110,7 +112,7 @@ void BuildingsPanel::Update() {
         if (this_client_stale_object_info.contains(object_id))
             continue;
 
-        auto building = Objects().get<Building>(object_id);
+        auto building = context.ContextObjects().get<Building>(object_id);
         if (!building) {
             ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id
                           << " on planet " << planet->Name();
@@ -126,7 +128,7 @@ void BuildingsPanel::Update() {
     }
 
     // get in-progress buildings
-    const auto empire = Empires().GetEmpire(planet->Owner());
+    const auto empire = context.GetEmpire(planet->Owner());
     if (!empire)
         return;
 
@@ -248,7 +250,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     m_scanlines(GG::Wnd::Create<ScanlineControl>()),
     m_building_id(building_id)
 {
-    if (auto building = Objects().getRaw<Building>(m_building_id))
+    if (auto building = GGHumanClientApp::GetApp()->GetContext().ContextObjects().getRaw<Building>(m_building_id))
         m_signal_connection = building->StateChangedSignal.connect([this]() { RequirePreRender(); });
 }
 
@@ -307,7 +309,7 @@ void BuildingIndicator::PreRender() {
 void BuildingIndicator::Refresh() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
 
     auto building = context.ContextObjects().get<Building>(m_building_id);
     if (!building)
@@ -369,10 +371,11 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // verify that this indicator represents an existing building, and not a
     // queued production item, and that the owner of the building is this
     // client's player's empire
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const auto* app = GGHumanClientApp::GetApp();
+    const ScriptingContext& context = app->GetContext();
     const ObjectMap& objects{context.ContextObjects()};
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    int empire_id = app->EmpireID();
     auto building = objects.get<Building>(m_building_id);
     if (!building)
         return;

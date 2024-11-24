@@ -100,7 +100,7 @@ namespace {
     {
         decltype(SegregateForces(owners, objects, categories, order)) forces;
 
-        for (const auto& object: Objects().find(objects)) {
+        for (const auto& object : ClientApp::GetApp()->GetContext().ContextObjects().find(objects)) {
             if (!object || !owners.contains(object->Owner()))
                 continue;
 
