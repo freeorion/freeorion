@@ -128,8 +128,7 @@ public:
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed
-      * or not.  If \a empire_id = ALL_EMPIRES an empty set of IDs is
-      * returned. */
+      * or not. */
     [[nodiscard]] const std::unordered_set<int>& EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
     /** Returns IDs of objects that the Empire with id \a empire_id has stale
