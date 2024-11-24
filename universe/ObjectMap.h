@@ -203,10 +203,7 @@ public:
     /** Returns all the ids and objects of type T */
     template <typename T, bool only_existing = false> requires (std::is_const_v<T>)
     [[nodiscard]] const auto& allWithIDs()
-    {
-        const auto& const_this = *this;
-        return const_this.allWithIDs<T, only_existing>();
-    }
+    { return std::as_const(*this).allWithIDs<T, only_existing>(); }
 
     /** Returns all the ids and objects of type T */
     template <typename T = UniverseObject, bool only_existing = false> requires (!std::is_const_v<T>)
