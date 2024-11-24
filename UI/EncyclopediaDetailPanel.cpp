@@ -1901,9 +1901,10 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const Universe& u = GetUniverse();
-        const ObjectMap& objects = u.Objects();
+        const auto* app = GGHumanClientApp::GetApp();
+        int client_empire_id = app->EmpireID();
+        const Universe& u = app->GetContext().ContextUniverse();
+        const ObjectMap& objects = app->GetContext().ContextObjects();
 
 
         // Specials
@@ -1918,7 +1919,7 @@ namespace {
         // objects that have special
         std::vector<const UniverseObject*> objects_with_special;
         objects_with_special.reserve(objects.size());
-        for (const auto& obj : objects.allRaw())
+        for (const auto* obj : objects.allRaw())
             if (obj->HasSpecial(item_name))
                 objects_with_special.push_back(obj);
 
@@ -1951,7 +1952,7 @@ namespace {
 
 
         // species that like / dislike special
-        const auto& sm = GGHumanClientApp::GetApp()->GetSpeciesManager();
+        const auto& sm = app->GetSpeciesManager();
         auto species_that_like = sm.SpeciesThatLike(item_name);
         auto species_that_dislike = sm.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
@@ -1981,22 +1982,23 @@ namespace {
                                             GG::Clr& color, bool only_description = false)
     {
         const int empire_id = ToInt(item_name, ALL_EMPIRES);
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
         }
 
-        const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
+        const int client_empire_id = app->EmpireID();
+        const Universe& universe = context.ContextUniverse();
+        const ObjectMap& objects = context.ContextObjects();
 
         if (!only_description)
             name = empire->Name();
 
         // Capital
-        if (const auto capital = objects.get<Planet>(empire->CapitalID()))
+        if (const auto capital = objects.getRaw<Planet>(empire->CapitalID()))
             detailed_description += UserString("EMPIRE_CAPITAL") +
                 LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
         else
@@ -2974,10 +2976,10 @@ namespace {
                                             GG::Clr& color, bool only_description = false)
     {
         int object_id = ToInt(item_name, INVALID_OBJECT_ID);
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
+        const auto* app = GGHumanClientApp::GetApp();
+        int client_empire_id = app->EmpireID();
+        const Universe& universe = app->GetContext().ContextUniverse();
+        const ObjectMap& objects = app->GetContext().ContextObjects();
 
         auto obj = objects.get(object_id);
         if (!obj) {
@@ -3002,12 +3004,13 @@ namespace {
     std::vector<std::string_view> ReportedSpeciesForPlanet(Planet& planet) {
         std::vector<std::string_view> retval;
 
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const auto* app = GGHumanClientApp::GetApp();
+        const ScriptingContext& context = app->GetContext();
         const ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
         const EmpireManager& empires = context.Empires();
 
-        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const auto empire_id = app->EmpireID();
         const auto empire = empires.GetEmpire(empire_id);
         if (!empire)
             return retval;
@@ -3355,8 +3358,9 @@ namespace {
 
         general_type = UserString("SP_PLANET_SUITABILITY");
 
-        Universe& universe = GetUniverse();
-        ObjectMap& objects = universe.Objects();
+        auto& context = GGHumanClientApp::GetApp()->GetContext();
+        auto& objects = context.ContextObjects();
+        auto& universe = context.ContextUniverse();
 
         int planet_id = ToInt(item_name, INVALID_OBJECT_ID);
         auto planet = objects.get<Planet>(planet_id); // non-const so it can be test modified to check results for various species

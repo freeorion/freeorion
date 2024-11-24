@@ -877,7 +877,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_
         // ensure signal connection set up properly, without actually
         // repopulating the list, as would be dine in Refresh()
         m_empire_ship_designs_changed_connection.disconnect();
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
         if (auto empire = context.GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_connection = empire->ShipDesignsChangedSignal.connect(
                 [this]() { Refresh(); }, boost::signals2::at_front);
@@ -886,13 +886,14 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id, bool refresh_
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
     ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()");
-    if (auto prod_loc = Objects().get(this->m_production_location))
+    const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
+
+    if (auto prod_loc = context.ContextObjects().get(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
 
     m_empire_ship_designs_changed_connection.disconnect();
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
     if (auto empire = context.GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_connection = empire->ShipDesignsChangedSignal.connect(
             [this]() { Refresh(); }, boost::signals2::at_front);
@@ -1271,7 +1272,7 @@ void BuildDesignatorWnd::CompleteConstruction() {
     MoveChildUp(m_enc_detail_panel.get());
     MoveChildUp(m_build_selector.get());
 
-    Clear(IApp::GetApp()->GetContext().ContextObjects());
+    Clear(GGHumanClientApp::GetApp()->GetContext().ContextObjects());
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const noexcept
@@ -1302,10 +1303,11 @@ void BuildDesignatorWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     SetBuild(queue_idx);
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    const ScriptingContext& context = app->GetContext();
     const ObjectMap& objects = context.ContextObjects();
+    int empire_id = app->EmpireID();
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = context.GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
@@ -1318,11 +1320,12 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
         if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
-            auto&& map = ClientUI::GetClientUI()->GetMapWnd();
-            map->CenterOnObject(system_id);
-            if (open) {
-                GGHumanClientApp::GetApp()->GetClientUI().GetMapWnd()->SelectSystem(system_id);
-                SelectPlanet(location_id, objects);
+            if (auto map = ClientUI::GetClientUI()->GetMapWnd()) {
+                map->CenterOnObject(system_id);
+                if (open) {
+                    map->SelectSystem(system_id);
+                    SelectPlanet(location_id, objects);
+                }
             }
         }
     }

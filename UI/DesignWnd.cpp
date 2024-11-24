@@ -1586,8 +1586,10 @@ void PartsListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X{PAD}));
 
-    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);  // may be nullptr
+    const auto* app = GGHumanClientApp::GetApp();
+    const auto& context = app->GetContext();
+    const int empire_id = app->EmpireID();
+    const auto empire = context.GetEmpire(empire_id);  // may be nullptr
 
     int cur_col = NUM_COLUMNS;
     std::shared_ptr<PartsListBoxRow> cur_row;
@@ -1616,12 +1618,12 @@ void PartsListBox::Populate() {
      */
 
     /// filter parts by availability and current designation of classes for display; group according to (class, slot)
-    PartGroupsType part_groups = GroupAvailableDisplayableParts(empire);
+    PartGroupsType part_groups = GroupAvailableDisplayableParts(empire.get());
 
     // get empire id and location to use for cost and time comparisons
     int loc_id = INVALID_OBJECT_ID;
     if (empire) {
-        auto location = Objects().get(empire->CapitalID());
+        auto location = context.ContextObjects().get(empire->CapitalID());
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;
     }
 
