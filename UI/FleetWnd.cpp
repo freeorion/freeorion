@@ -164,19 +164,20 @@ namespace {
     bool ClientPlayerIsModerator()
     { return GGHumanClientApp::GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 
-    bool CanDamageShips(const std::vector<int>& ship_ids) {
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
-        const auto ships = Objects().findRaw<Ship>(ship_ids);
+    bool CanDamageShips(const std::vector<int>& ship_ids, const ScriptingContext& context) {
+        const auto ships = context.ContextObjects().findRaw<Ship>(ship_ids);
         return std::any_of(ships.begin(), ships.end(), [&context](const auto* ship)
                            { return ship && ship->CanDamageShips(context); });
     }
 
-    FleetAggression AggressionForFleet(FleetAggression aggression_mode, const std::vector<int>& ship_ids) {
+    FleetAggression AggressionForFleet(FleetAggression aggression_mode, const std::vector<int>& ship_ids,
+                                       const ScriptingContext& context)
+    {
         if (aggression_mode < FleetAggression::NUM_FLEET_AGGRESSIONS &&
             aggression_mode > FleetAggression::INVALID_FLEET_AGGRESSION)
         { return aggression_mode; }
         // auto aggression; examine ships to see if any are armed...
-        if (CanDamageShips(ship_ids))
+        if (CanDamageShips(ship_ids, context))
             return FleetDefaults::FLEET_DEFAULT_ARMED;
         return FleetDefaults::FLEET_DEFAULT_UNARMED;
     }
@@ -221,9 +222,9 @@ namespace {
         }
 
         // create new fleet with ships
+        const auto aggr = AggressionForFleet(aggression, ship_ids, context);
         GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<NewFleetOrder>(
-                client_empire_id, "", ship_ids, AggressionForFleet(aggression, ship_ids), context),
+            std::make_shared<NewFleetOrder>(client_empire_id, "", ship_ids, aggr, context),
             context);
     }
 
