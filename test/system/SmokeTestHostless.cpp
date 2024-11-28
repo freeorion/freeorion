@@ -203,8 +203,8 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             BOOST_TEST_MESSAGE("Turn updated " << m_current_turn);
 
             // output sitreps
-            const auto& my_empire = m_empires.GetEmpire(m_empire_id);
-            BOOST_REQUIRE(my_empire != nullptr);
+            const auto my_empire = m_empires.GetEmpire(m_empire_id);
+            BOOST_REQUIRE(!!my_empire);
             for (const auto& sitrep : my_empire->SitReps()) {
                 if (sitrep.GetTurn() == m_current_turn) {
                     BOOST_TEST_MESSAGE("Sitrep: " << sitrep.Dump());
@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
 
                 auto is_owned = [this](const UniverseObject* obj) { return obj->OwnedBy(m_empire_id); };
 
-                for (const auto* planet : Objects().findRaw<Planet>(is_owned)) {
+                for (const auto* planet : m_universe.Objects().findRaw<const Planet>(is_owned)) {
                     BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
                     BOOST_TEST_MESSAGE("Population: " << planet->GetMeter(MeterType::METER_POPULATION)->Current());
                     BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_INDUSTRY)->Current());
