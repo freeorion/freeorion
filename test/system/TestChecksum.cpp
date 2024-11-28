@@ -39,7 +39,7 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int calcula
  */
 
 BOOST_AUTO_TEST_CASE(compare_checksum) {
-    auto checksums = CheckSumContent(IApp::GetApp()->GetSpeciesManager());
+    auto checksums = CheckSumContent(m_context.species);
 
     TestCheckSumFromEnv("FO_CHECKSUM_BUILDING", 6401719, checksums["BuildingTypeManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_ENCYCLOPEDIA", 1125744, checksums["Encyclopedia"]);

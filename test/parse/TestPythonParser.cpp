@@ -90,10 +90,8 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(true, tech_it->second.Researchable());
         BOOST_REQUIRE_EQUAL("icons/tech/algorithmic_elegance.png", tech_it->second.Graphic());
 
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        BOOST_REQUIRE_CLOSE(0.0, tech_it->second.ResearchCost(ALL_EMPIRES, context), 0.1);
-        BOOST_REQUIRE_EQUAL(3, tech_it->second.ResearchTime(ALL_EMPIRES, context));
+        BOOST_REQUIRE_CLOSE(0.0, tech_it->second.ResearchCost(ALL_EMPIRES, m_context), 0.1);
+        BOOST_REQUIRE_EQUAL(3, tech_it->second.ResearchTime(ALL_EMPIRES, m_context));
         BOOST_REQUIRE_EQUAL(0, tech_it->second.Effects().size());
         BOOST_REQUIRE_EQUAL(0, tech_it->second.UnlockedTechs().size());
         BOOST_REQUIRE_EQUAL(0, tech_it->second.Prerequisites().size());
