@@ -98,7 +98,7 @@ public:
     bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
     /** Return true if this FleetWnd contains all \p fleet_ids. */
     template <typename Set>
-    bool                    ContainsFleets(const Set& fleet_ids) const;
+    bool                    ContainsFleets(Set fleet_ids) const;
     const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
@@ -144,7 +144,7 @@ private:
 
     int         FleetInRow(GG::ListBox::iterator it) const;
     std::string TitleText() const;
-    void        CreateNewFleetFromDrops(const std::vector<int>& ship_ids);
+    void        CreateNewFleetFromDrops(const std::vector<int>& ship_ids, ScriptingContext& context, int empire_id);
 
     void ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj);
