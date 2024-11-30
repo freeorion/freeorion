@@ -1827,7 +1827,7 @@ namespace {
             GG::ListBox::Row(w, h),
             m_fleet_id(fleet_id)
         {
-            if (Objects().get<Fleet>(fleet_id))
+            if (GGHumanClientApp::GetApp()->GetContext().ContextObjects().getRaw<Fleet>(fleet_id))
                 SetDragDropDataType(FLEET_DROP_TYPE_STRING);
             SetName("FleetRow");
             SetChildClippingMode(ChildClippingMode::ClipToClient);
@@ -3304,7 +3304,7 @@ void FleetWnd::DoLayout() {
 }
 
 void FleetWnd::AddFleet(int fleet_id) {
-    auto fleet = GGHumanClientApp::GetApp()->GetContext().ContextObjects().get<Fleet>(fleet_id);
+    auto fleet = GGHumanClientApp::GetApp()->GetContext().ContextObjects().getRaw<const Fleet>(fleet_id);
     if (!fleet /*|| fleet->Empty()*/)
         return;
 
@@ -3321,7 +3321,7 @@ void FleetWnd::DeselectAllFleets() {
 }
 
 void FleetWnd::SelectFleet(int fleet_id) {
-    if (fleet_id == INVALID_OBJECT_ID || !(Objects().get<Fleet>(fleet_id))) {
+    if (fleet_id == INVALID_OBJECT_ID || !(GGHumanClientApp::GetApp()->GetContext().ContextObjects().getRaw<Fleet>(fleet_id))) {
         ErrorLogger() << "FleetWnd::SelectFleet invalid id " << fleet_id;
         DeselectAllFleets();
         return;
@@ -3547,7 +3547,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
              && !ClientPlayerIsModerator()
              && fleet->OwnedBy(client_empire_id))
     {
-        auto stop_explore_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID()); };
+        auto stop_explore_action = [fleet]()
+        { ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID(), IApp::GetApp()->GetContext().ContextObjects()); };
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false,
                                         std::move(stop_explore_action)));
         popup->AddMenuItem(GG::MenuItem(true));
