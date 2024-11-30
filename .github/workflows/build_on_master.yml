@@ -1,7 +1,9 @@
 name: "Build master"
 on:
   push:
-    branches: [ 'master' ]
+    branches:
+      - master
+      - 'release-v*'
 jobs:
   android:
     uses: ./.github/workflows/_build-android.yml
