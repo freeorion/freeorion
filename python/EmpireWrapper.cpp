@@ -274,9 +274,9 @@ namespace FreeOrionPython {
             .add_property("availableBuildingTypes", +[](const Empire& empire) { return ToVec(empire.AvailableBuildingTypes()); })
 
             .add_property("totalShipsOwned",        make_function(&Empire::TotalShipsOwned,         py::return_value_policy<py::return_by_value>()))
-            .def("shipDesignAvailable",             +[](const Empire& empire, int id) -> bool { return empire.ShipDesignAvailable(id, GetUniverse()); })
+            .def("shipDesignAvailable",             +[](const Empire& empire, int id) -> bool { return empire.ShipDesignAvailable(id, IApp::GetApp()->GetContext().ContextUniverse()); })
             .add_property("allShipDesigns",         make_function(&Empire::ShipDesigns,             py::return_value_policy<py::return_by_value>()))
-            .add_property("availableShipDesigns",   +[](const Empire& empire) -> std::set<int> { auto temp{empire.AvailableShipDesigns(GetUniverse())}; return {temp.begin(), temp.end()}; })
+            .add_property("availableShipDesigns",   +[](const Empire& empire) -> std::set<int> { auto temp{empire.AvailableShipDesigns(IApp::GetApp()->GetContext().ContextUniverse())}; return {temp.begin(), temp.end()}; })
 
 
             .add_property("availableShipParts",     +[](const Empire& empire) { return ToVec(empire.AvailableShipParts()); })
