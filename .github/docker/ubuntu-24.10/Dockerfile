@@ -1,18 +1,18 @@
-FROM docker.io/ubuntu:lunar
+FROM docker.io/ubuntu:oracular
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN echo "# don't install documentation inside container\n\
 path-exclude=/usr/share/doc/*\n\
 path-exclude=/usr/share/man/*\n\
-path-exclude=/usr/share/cmake-3.18/Help/*\n\
+path-exclude=/usr/share/cmake-*/Help/*\n\
 " > /etc/dpkg/dpkg.cfg.d/docker-no-documentation
 
 RUN echo "# don't install static libraries inside container\n\
 path-exclude=/usr/lib/x86_64-linux-gnu/*.a\n\
-path-exclude=/usr/lib/python3.9/config-x86_64-linux-gnu/*.a\n\
+path-exclude=/usr/lib/python3.*/config-x86_64-linux-gnu/*.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libc_nonshared.a\n\
-path-include=/usr/lib/gcc/x86_64-linux-gnu/11/libgcc.a\n\
+path-include=/usr/lib/gcc/x86_64-linux-gnu/*/libgcc.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libmvec_nonshared.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libpthread.a\n\
 path-include=/usr/lib/x86_64-linux-gnu/libpthread-2.0.a\n\
@@ -27,7 +27,7 @@ APT::Install-Suggests \"false\";\n\
 RUN apt-get update --assume-yes
 RUN apt-get install --assume-yes \
         git \
-        g++-12 \
+        g++-14 \
 	make \
         cmake \
         python3 \
