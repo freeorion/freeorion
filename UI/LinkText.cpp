@@ -262,9 +262,10 @@ namespace {
         GG::Clr color = ClientUI::DefaultLinkColor();
         // get object indicated by object_id, and then get object's owner, if any
         int object_id = CastStringToInt(object_id_str);
-        auto object = Objects().get(object_id);
+        const auto& context = IApp::GetApp()->GetContext();
+        auto object = context.ContextObjects().get(object_id);
         if (object && !object->Unowned())
-            if (auto empire = Empires().GetEmpire(object->Owner()))
+            if (auto empire = context.GetEmpire(object->Owner()))
                 color = empire->Color();
         return GG::RgbaTag(color).append(content).append("</rgba>");
     }
