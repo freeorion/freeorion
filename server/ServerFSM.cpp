@@ -2727,7 +2727,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         bool use_binary_serialization = sender->IsBinarySerializationUsed();
         sender->SendMessage(TurnProgressMessage(Message::TurnProgressPhase::DOWNLOADING));
         sender->SendMessage(TurnPartialUpdateMessage(server.PlayerEmpireID(player_id),
-                                                     GetUniverse(), use_binary_serialization,
+                                                     server.GetUniverse(), use_binary_serialization,
                                                      !sender->IsLocalConnection()));
     }
 
