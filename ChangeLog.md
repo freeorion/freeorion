@@ -4,6 +4,189 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
+[v0.5.1] - 2024-12-??
+---------------
+
+### Key Changes
+
+- Species opinions of empires, depending on:
+    - Empire policies
+    - Species' planets being invaded
+    - Being the capital species
+    - Losing or destroying ships crewed by the species
+    - Colonizing planets with the species
+- Annexation of planets by empires allows non-combat conquest
+    - Species opinions of empires affects annexation cost
+- Blockading with stealthy ships reveals the minimum needed to do the blockade
+
+
+### Detailed Changelog
+
+#### Graphics / Interface
+
+- Increased default and suggested "minimum" resolution to 1280x800
+- Added a Revert Orders popup command to the Turn button
+- Added an Annex planet button to the planet panels
+- Added tooltips to Annex button to explain annexability and cost
+- Fixed text cursor rendering issues
+- Fixed double-rendering of last character of multiline text when the last character is selected
+- Stopped showing scrap/unscrap popup menus for buildings not owned by the client
+- Tweaked formatting of nested And conditions when generating building production location descriptions
+- Render smaller fields on top of bigger ones on map
+- Add ordering for game rules on galaxy setup window
+- Fail to menu instead of aborting if attempting to load a missing save game file
+- In list of named references, don't include the explanitory text at the top in the sorting of the entries
+- Indicate paused techs on queue
+- Improved reporting of detection of ships that launch fighters in combat logs
+- Added sitreps for when a fleet's movement is blockaded
+- Don't show scanlines on the map when there is no client empire
+- In combat log, improve description of ships being detected when launching fighters
+- Put default input focus in the password field of the password dialog
+- Fixed some issues with text selection and copying text
+- Fixed broken text formatting in chat window
+- Improved reporting of initial forces in client log, in particular for stealthy neutral populated planets
+- Properly labeled "Font Files" file dialog filter
+
+
+#### Content and Balance
+
+- Government
+    - Tweaked ordering of Centralization, Checkpoints, and Indoctrination IP costs to not be affected by species modifiers
+    - Marine Recruitment removes outpost troop penalty
+    - Reduced Vassalization influence bonus
+    - Adjusted various species' likes, dislikes, and free techs
+    - Remove exclusion between Exploration and Colonization policies
+    - Reworked Augmentation policy
+    - Tweaked Isolation policy
+    - Reworked Centralization policy
+    - Bar Ancient Guardians from Vassalization effects
+    - Increased speed requirement for Charge policy effects to 120 pp/turn
+    - Species policy dislikes affect species' empire opinions
+    - Added Insurgency policy that lowers enemy planet stability
+    - Allowe Traffic Control and Lighthouses to work for peaceful and allied empires
+
+- Ships
+    - Made Snowflake detection range consistent with Radar Scouts
+    - Made Psyonic Snowflake detection range consistent with Black Kraken/Bloating Juggernaut
+    - Fix scaling for various weapon effects
+    - Increase refuel rate of Ramscoop
+    - Reskinned Acirema Guardship
+    - Prevented Large Laser from targeting fighters
+    - Gave Flak +1 shot with various weapon refinement techs
+
+- Planets / Buildings
+    - Resonant moon specials can appear on gas giants
+    - Made Military Command cheaper
+    - Require production locations to be visible to the producing empire and not destroyed
+    - Prohibited annexation of and using recently conquered, annexed, or colonized planets
+    - Make Ancient Guardians default focus Protection
+    - Tweaked Kobuntura and Mu Ursh defense, detection, shield planet effects
+    - Reduced cost of Energy Compressor to 150 PP
+    - Tweak start location selection to have more planet type balance
+    - Prevent Eccentric Orbit and Tidal Lock specials in starless systems
+    - Make Philosopher special not modify planet type, but instead only appear on Radiated planets
+    - Added a rule for Experimentor spawn base turn
+    - Added Shipyard and Energy Compressor to Acirema planets
+    - Don't deny Exobots focus due to the Racial Purity policy
+    - Allowed directly terraforming outposts without using Exobots
+    - Terror Suppression stability effects require aggressive fleet stance to work
+    - Applied self-sustaining xenophobic malu sonly where self-sustaining bonus applies
+    - Moved Bootstrapping growth boost after target/max effects
+    - Made Bootstrapping never decrease industry, influence, stability, and research
+    - Allowed Independence Decree to be built on populated planets
+    - Allowed Environmentalism to affect all planet types
+    - Tweaked Augmentation growth effects
+    - Adjusting timing of policy effects to not be affected by species scaling and avoid quirks with focus changing
+    - Made Marine Recruitment remove output troop reduction
+
+- Pedia and Stringtables
+    - Translation updates: French
+    - Added details to various articles
+    - Added some missing strings
+    - Fixed some tpyos
+    - Fixed accounting label for Fighters and Launch Bays 4 tech
+
+- Other
+    - Added Sitrep for neutral ship blocking colonization
+    - Rebalanced Domesticated Monsters and Nest Eradication techs
+    - Reworked how ships are revealed when blockading, so a few stealthy ships as is needed for the blockade are revealed
+    - Added rules for what to do with planets, buildings, and ships when an empire concedes
+    - Added rule for hiding other empires' adopted and available policies
+    - Allow range 0 detection at the same location
+    - Prevent monster spawning if a nest eradicator present
+
+
+#### AI
+
+- Correct some detection values
+- Fixed serialization bugs
+- Fixed some AI crash bugs
+- Adjusted / fixed rating of Algorithmic Research policy
+- Reworked focus switching logic
+- Build prerequisite ship facilities when needed
+
+
+#### Other Features
+
+- Implemented species opinions of empires and related content
+- Added game rules to support Tower Defense game mode
+- Aggressive ships aren't revealed by blockading, but will reveal themselves if a combat occurs by attacking if able to do so
+- Visibility by neutrals/non-empires is tracked in detail with mechanics similar to empire visiblity, rather than being always visible
+
+
+#### Other Bug Fixes
+
+- Fixed various issues with non-Latin Unicode paths on Windows
+
+- Crashes or Disconnects
+    - Fixed crash when opening sidepanel in moderator mode
+    - Fixed crash when cancelling orders due to looping over orders while rescinding them
+
+- Gameplay
+    - Fix capital influence malus on first turn
+    - Separate reporting of original and annexing empire in annexation sitrep
+    - Fixed monster detection determiniation in combat
+
+- Content
+    - Fixed inconsistent documentation for Environmentalism and Border Checkpoints
+    - Reorder policy effect priorities to avoid quirks when changing focus
+    - Corrected Heavy Asteroid Hull description
+    - Corrected Logistics Facilitator Hull description
+    - Fixed Megalith effects preventing eachother from working
+    - Correcting engine part references to speed effects
+    - Fixed an initial turn influence malus at capital
+    - Fixed interaction of Engineering policy with rule for ship part based upkeep
+    - Fixed allie fleet repair supply connectivity logic
+    
+
+#### Technical / Internal
+
+- Python parsing supports more conditions and effects
+- Added Python typing
+- Converted some content scripts from FOCS to Python
+- Improved support for newer Boost releases
+- Replaced lexical_casts with custom CharsToUInt8 function
+- Various internal refactorings
+- Avoid global gamestate lookups by passing in gamestate to various functions
+- Increased minimum Boost version to 1.73
+- Increased minimum Python version to 3.9
+- Increased minimum MacOS version to 10.15
+- Increased minimum Fedora version to 33
+- Increased minimum CMake version to 3.21 on Windows
+- Removed MSVC 2019 project files
+- Required C++20 in non-GiGi code
+- Use C++20 features in various places
+- Improved Wayland support on Fedora and Gnome
+- Replaced CanAddStarlaneTo condition with separate conditions HasStarlane, StarlaneToWouldCrossExistingStarlane, StarlaneToWouldBeAngularlyCloseToExistingStarlane, and StarlaneToWouldBeCloseToObject
+- Added a SetFocus effect
+- Added some constexpr / compile time testing support
+- Include species info in content checksum
+- Implemented CanSee affiliation for scripting
+- Reworked how Font tag matching processing works
+- Added a <reset> font tag to cancel all open tags
+- Reworked text formatting to better distinguish between underlying data characters, UTF-8 code points, and rendered glyph indices
+
+
 [v0.5.0.1] - 2024-03-04
 ---------------
 
