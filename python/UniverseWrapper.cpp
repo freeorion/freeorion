@@ -530,7 +530,7 @@ namespace FreeOrionPython {
         //////////////////
         py::class_<Ship, py::bases<UniverseObject>, boost::noncopyable>("ship", py::no_init)
             .add_property("design",                 make_function(
-                                                        +[](const Ship& ship) -> const ShipDesign* { return GetUniverse().GetShipDesign(ship.DesignID()); },
+                                                        +[](const Ship& ship) -> const ShipDesign* { return IApp::GetApp()->GetContext().ContextUniverse().GetShipDesign(ship.DesignID()); },
                                                         py::return_value_policy<py::reference_existing_object>()
                                                     ))
             .add_property("designID",               &Ship::DesignID)
