@@ -33,11 +33,11 @@ public:
     /** Returns true if \a pt is within or over the button. */
     bool InWindow(GG::Pt pt) const noexcept override;
 
-    const auto& Fleets() const   { return m_fleets; }    ///< returns the fleets represented by this control
-    bool        Selected() const { return m_selected; }  ///< returns whether this button has been marked selected
+    const auto& Fleets() const noexcept  { return m_fleets; }    ///< returns the fleets represented by this control
+    bool        Selected() const noexcept { return m_selected; } ///< returns whether this button has been marked selected
     void        MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void        SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void        SetSelected(bool selected = true);       ///< sets selection status of button.  if selected = true, marks button as selected.  otherwise marks button as not selected
+    void        SetSelected(bool selected = true);               ///< sets selection status of button.  if selected = true, marks button as selected.  otherwise marks button as not selected
 
     static void PlayFleetButtonOpenSound();
     static void PlayFleetButtonRolloverSound();
