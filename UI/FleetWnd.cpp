@@ -274,20 +274,22 @@ namespace {
 
     void MergeFleetsIntoFleet(int fleet_id, ScriptingContext& context) {
         if (ClientPlayerIsModerator())
-            return; // todo: handle moderator actions for this...
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+            return; // TODO: handle moderator actions for this...
+
+        auto* app = GGHumanClientApp::GetApp();
+        int client_empire_id = app->EmpireID();
         if (client_empire_id == ALL_EMPIRES)
             return;
 
         ObjectMap& objects{context.ContextObjects()};
 
-        auto target_fleet = objects.getRaw<Fleet>(fleet_id);
+        const auto* target_fleet = objects.getRaw<const Fleet>(fleet_id);
         if (!target_fleet) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
             return;
         }
 
-        auto system = objects.getRaw<System>(target_fleet->SystemID());
+        const auto* system = objects.getRaw<const System>(target_fleet->SystemID());
         if (!system) {
             ErrorLogger() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
             return;
@@ -297,7 +299,7 @@ namespace {
 
         // filter fleets in system to select just those owned by this client's
         // empire, and collect their ship ids
-        auto all_system_fleets = objects.findRaw<Fleet>(system->FleetIDs());
+        const auto all_system_fleets = objects.findRaw<const Fleet>(system->FleetIDs());
         std::vector<int> empire_system_fleet_ids;
         empire_system_fleet_ids.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
@@ -317,10 +319,8 @@ namespace {
 
 
         // order ships moved into target fleet
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<FleetTransferOrder>(client_empire_id, target_fleet->ID(),
-                                                 std::move(empire_system_ship_ids), context),
-            context);
+        app->Orders().IssueOrder<FleetTransferOrder>(
+            context, client_empire_id, target_fleet->ID(), std::move(empire_system_ship_ids));
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
@@ -1899,7 +1899,8 @@ public:
             return;
         }
 
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto* app = GGHumanClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
 
         int target_fleet_id = drop_target_fleet_row->FleetID();
         if (!context.ContextObjects().getRaw<const Fleet>(target_fleet_id)) {
@@ -1977,11 +1978,8 @@ public:
         }
 
         // order the transfer
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
         if (!ship_ids.empty())
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetTransferOrder>(empire_id, target_fleet_id, ship_ids, context),
-                context);
+            app->Orders().IssueOrder<FleetTransferOrder>(context, app->EmpireID(), target_fleet_id, ship_ids);
     }
 
     void DragDropHere(GG::Pt pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
@@ -2023,7 +2021,7 @@ public:
         if (!drop_target_fleet_row)
             return;
 
-        const auto& app = GGHumanClientApp::GetApp();
+        const auto* app = GGHumanClientApp::GetApp();
         const ScriptingContext& context = app->GetContext();
         const auto& objects = context.ContextObjects();
 
@@ -3662,12 +3660,13 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
                 // TODO: handle moderator actions for this...
                 return;
 
-            ScriptingContext& context = IApp::GetApp()->GetContext();
+            auto* app = GGHumanClientApp::GetApp();
+            ScriptingContext& context = app->GetContext();
 
             if (!RenameOrder::Check(client_empire_id, fleet->ID(), edit_wnd->Result(), context))
                 return;
 
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(
+            app->Orders().IssueOrder(
                 std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), edit_wnd->Result(), context),
                 context);
         };
@@ -3749,8 +3748,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
                 auto* app = GGHumanClientApp::GetApp();
                 OrderSet& orders = app->Orders();
                 ScriptingContext& context = app->GetContext();
-                orders.IssueOrder(std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, fid, rei, context),
-                                  context);
+                orders.IssueOrder<GiveObjectToEmpireOrder>(context, client_empire_id, fid, rei);
             };
             give_away_menu.next_level.emplace_back(recipient_empire->Name(),
                                                    false, false, std::move(gift_action));

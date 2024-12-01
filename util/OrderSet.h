@@ -66,6 +66,16 @@ public:
         Return an index that can be used to reference the order. */
     int IssueOrder(OrderPtr order, ScriptingContext& context);
 
+    template <typename OrderType, typename... ParamTs>
+    int IssueOrder(ScriptingContext& context, ParamTs&&... params)
+    {
+        static_assert(std::is_base_of_v<Order, std::decay_t<OrderType>>);
+        if constexpr (requires { OrderType(std::forward<ParamTs>(params)..., context); })
+            return IssueOrder(std::make_shared<OrderType>(std::forward<ParamTs>(params)..., context), context);
+        else
+            return IssueOrder(std::make_shared<OrderType>(std::forward<ParamTs>(params)...), context);
+    }
+
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
         client-side during game loading. */
     void ApplyOrders(ScriptingContext& context);

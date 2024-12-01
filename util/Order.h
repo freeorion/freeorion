@@ -28,14 +28,14 @@ class ShipDesign;
   * the colonize button, she is locked in to this decision. */
 class FO_COMMON_API Order {
 public:
-    Order() = default;
+    constexpr Order() noexcept = default;
 
     /** ctor taking the ID of the Empire issuing the order. */
-    Order(int empire) :
+    constexpr Order(int empire) noexcept :
         m_empire(empire)
     {}
 
-    virtual ~Order() = default;
+    constexpr virtual ~Order() noexcept = default;
 
     [[nodiscard]] virtual std::string Dump() const { return ""; }
 

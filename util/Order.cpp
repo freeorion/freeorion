@@ -1812,10 +1812,7 @@ bool ShipDesignOrder::CheckRename(int empire_id, int existing_design_id, const s
 ScrapOrder::ScrapOrder(int empire, int object_id, const ScriptingContext& context) :
     Order(empire),
     m_object_id(object_id)
-{
-    if (!Check(empire, object_id, context))
-        return;
-}
+{ Check(empire, object_id, context); }
 
 std::string ScrapOrder::Dump() const
 { return UserString("ORDER_SCRAP"); }
@@ -1886,10 +1883,7 @@ AggressiveOrder::AggressiveOrder(int empire, int object_id, FleetAggression aggr
     Order(empire),
     m_object_id(object_id),
     m_aggression(aggression)
-{
-    if (!Check(empire, object_id, m_aggression, context))
-        return;
-}
+{ Check(empire, object_id, m_aggression, context); }
 
 std::string AggressiveOrder::Dump() const
 { return UserString("ORDER_FLEET_AGGRESSION"); }
@@ -1933,10 +1927,7 @@ GiveObjectToEmpireOrder::GiveObjectToEmpireOrder(int empire, int object_id, int 
     Order(empire),
     m_object_id(object_id),
     m_recipient_empire_id(recipient)
-{
-    if (!Check(empire, object_id, recipient, context))
-        return;
-}
+{ Check(empire, object_id, recipient, context); }
 
 std::string GiveObjectToEmpireOrder::Dump() const
 { return UserString("ORDER_GIVE_TO_EMPIRE"); }
