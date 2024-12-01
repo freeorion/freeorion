@@ -231,6 +231,7 @@ public:
       * the policy if \a adopt is false; */
     void AdoptPolicy(const std::string& name, const std::string& category,
                      const ScriptingContext& context, bool adopt = true, int slot = -1);
+    void DeAdoptPolicy(const std::string& name);
 
     /** Reverts adopted policies to the initial state for the current turn.
       * Does not verify if the initial adopted policies were in a valid
