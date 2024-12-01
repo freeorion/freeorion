@@ -536,7 +536,8 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
     if (!queue_row)
         return;
 
-    ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext();
 
     // This precorrects the position for a factor in Empire::PlaceTechInQueue
     const int new_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(row_it);
@@ -544,14 +545,12 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
     const auto direction = original_position < new_position;
     const int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = app->EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
-    GGHumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name,
-                                             static_cast<int>(corrected_new_position)),
-        context);
+    app->Orders().IssueOrder<ResearchQueueOrder>(context, empire_id, queue_row->elem.name,
+                                                 static_cast<int>(corrected_new_position));
 
     if (auto empire = context.GetEmpire(empire_id))
         empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
@@ -658,13 +657,10 @@ void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos
         // adding/moving a group of techs to the queue beginning, we increment our insertion point for every tech we add, 
         // or that we skipped because it happened to already be in the right spot.
         if (pos == -1) {
-            if (!queue.InQueue(tech_name)) {
-                orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, std::move(tech_name), pos),
-                                  context);
-            }
+            if (!queue.InQueue(tech_name))
+                orders.IssueOrder<ResearchQueueOrder>(context, empire_id, std::move(tech_name), pos);
         } else if (!queue.InQueue(tech_name) || ((queue.find(tech_name) - queue.begin()) > pos)) {
-            orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, std::move(tech_name), pos),
-                              context);
+            orders.IssueOrder<ResearchQueueOrder>(context, empire_id, std::move(tech_name), pos);
             pos += 1;
         } else {
             if ((queue.find(tech_name) - queue.begin()) == pos)
@@ -678,12 +674,12 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!m_enabled || m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0)
         return;
 
-    ScriptingContext& context = IApp::GetApp()->GetContext();
-
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext();
+    int empire_id = app->EmpireID();
+    OrderSet& orders = app->Orders();
     if (auto queue_row = dynamic_cast<const QueueRow*>(it->get()))
-        orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name), context);
+        orders.IssueOrder<ResearchQueueOrder>(context, empire_id, queue_row->elem.name);
     if (auto empire = context.GetEmpire(empire_id))
         empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));
 }
@@ -715,8 +711,9 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     if (!m_enabled || m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0)
         return;
 
-    ScriptingContext& context = IApp::GetApp()->GetContext();
-    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext();
+    const int client_empire_id = app->EmpireID();
     auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
@@ -724,9 +721,8 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     // TODO: reject action if shown queue is not this client's empire's queue
 
     if (auto* queue_row = dynamic_cast<const QueueRow*>(it->get())) {
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f),
-            context);
+        app->Orders().IssueOrder<ResearchQueueOrder>(
+            context, client_empire_id, queue_row->elem.name, pause, -1.0f);
     }
 
     empire->UpdateResearchQueue(context, empire->TechCostsTimes(context));

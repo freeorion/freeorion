@@ -4750,7 +4750,8 @@ void MapWnd::ForgetObject(int id) {
     // Tell the server to change what the empire wants to know
     // in future so that the server doesn't keep resending this
     // object information.
-    ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext();
     ObjectMap& objects{context.ContextObjects()};
     Universe& universe{context.ContextUniverse()};
     auto obj = objects.get(id);
@@ -4768,11 +4769,9 @@ void MapWnd::ForgetObject(int id) {
         }
     }
 
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int client_empire_id = app->EmpireID();
 
-    GGHumanClientApp::GetApp()->Orders().IssueOrder(
-        std::make_shared<ForgetOrder>(client_empire_id, obj->ID()),
-        context);
+    app->Orders().IssueOrder<ForgetOrder>(context, client_empire_id, obj->ID());
 
     // Client changes for immediate effect
     // Force the client to change immediately.
@@ -5592,9 +5591,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
-            app->Orders().IssueOrder(
-                std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(), system_id, append, context),
-                context);
+            app->Orders().IssueOrder<FleetMoveOrder>(context, empire_id, fleet->ID(), system_id, append);
             StopFleetExploring(fleet->ID(), objects);
         }
 
@@ -7625,10 +7622,9 @@ namespace {
         auto num_jumps_resupply = JumpsForRoute(route.second);
         int max_fleet_jumps = std::trunc(fleet->Fuel(context.ContextObjects()));
         if (num_jumps_resupply <= max_fleet_jumps) {
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<FleetMoveOrder>(
-                    fleet->Owner(), fleet->ID(), *route.second.crbegin(), false, context),
-                context);
+            auto* app = GGHumanClientApp::GetApp();
+            app->Orders().IssueOrder<FleetMoveOrder>(
+                context, fleet->Owner(), fleet->ID(), *route.second.crbegin(), false);
         } else {
             TraceLogger() << "Not enough fuel for fleet " << fleet->ID()
                           << " to resupply at system " << *route.second.crbegin();
@@ -7666,10 +7662,8 @@ namespace {
             return false;
         }
 
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<FleetMoveOrder>(fleet->Owner(), fleet->ID(),
-                                             route.back(), false, context),
-            context);
+        GGHumanClientApp::GetApp()->Orders().IssueOrder<FleetMoveOrder>(
+            context, fleet->Owner(), fleet->ID(), route.back(), false);
         if (fleet->FinalDestinationID() == route.back()) {
             TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << route.back();
             return true;
