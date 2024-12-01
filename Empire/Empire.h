@@ -230,7 +230,7 @@ public:
     /** Adopts the specified policy, assuming its conditions are met. Revokes
       * the policy if \a adopt is false; */
     void AdoptPolicy(const std::string& name, const std::string& category,
-                     const ScriptingContext& context, bool adopt = true, int slot = -1);
+                     const ScriptingContext& context, int slot = -1);
     void DeAdoptPolicy(const std::string& name);
 
     /** Reverts adopted policies to the initial state for the current turn.
