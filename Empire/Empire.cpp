@@ -176,14 +176,9 @@ void Empire::DeAdoptPolicy(const std::string& name) {
 }
 
 void Empire::AdoptPolicy(const std::string& name, const std::string& category,
-                         const ScriptingContext& context, bool adopt, int slot)
+                         const ScriptingContext& context, int slot)
 {
-    if (!adopt) {
-        DeAdoptPolicy(name);
-        return;
-    }
-
-    if (adopt && name.empty()) {
+    if (name.empty()) {
         ErrorLogger() << "Empire::AdoptPolicy asked to adopt empty policy name in category " << category << " slot " << slot;
         return;
     }

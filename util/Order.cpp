@@ -1308,7 +1308,7 @@ void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
     if (m_adopt) {
         DebugLogger() << "PolicyOrder adopt " << m_policy_name << " in category " << m_category
                       << " in slot " << m_slot;
-        empire->AdoptPolicy(m_policy_name, m_category, context, m_adopt, m_slot);
+        empire->AdoptPolicy(m_policy_name, m_category, context, m_slot);
     } else if (!m_revert) {
         DebugLogger() << "PolicyOrder de-adopt " << m_policy_name;
         empire->DeAdoptPolicy(m_policy_name);
