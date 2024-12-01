@@ -235,18 +235,16 @@ namespace {
         return ret_list;
     }
 
-    template<typename OrderType, typename... Args>
-    auto Issue(Args &&... args) -> int
+    template <typename OrderType, typename... Args>
+    auto Issue(Args&&... args) -> int
     {
-        auto app = ClientApp::GetApp();
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto* app = ClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
 
         if (!OrderType::Check(app->EmpireID(), args..., context))
             return 0;
 
-        app->Orders().IssueOrder(
-            std::make_shared<OrderType>(app->EmpireID(), std::forward<Args>(args)..., context),
-            context);
+        app->Orders().IssueOrder<OrderType>(context, app->EmpireID(), std::forward<Args>(args)...);
 
         return 1;
     }
@@ -282,12 +280,8 @@ namespace {
             return 0;
         }
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ResearchQueueOrder>(empire_id, tech_name, position),
-            context);
+        auto* app = AIClientApp::GetApp();
+        app->Orders().IssueOrder<ResearchQueueOrder>(app->GetContext(), app->EmpireID(), tech_name, position);
 
         return 1;
     }
@@ -300,12 +294,8 @@ namespace {
             return 0;
         }
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ResearchQueueOrder>(empire_id, tech_name),
-            context);
+        auto* app = AIClientApp::GetApp();
+        app->Orders().IssueOrder<ResearchQueueOrder>(app->GetContext(), app->EmpireID(), tech_name);
 
         return 1;
     }
@@ -324,10 +314,11 @@ namespace {
             return 0;
         }
 
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
+
         if (!empire) {
             ErrorLogger() << "IssueAdoptPolicyOrder : couldn't get empire with id " << empire_id;
             return 0;
@@ -338,18 +329,17 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<PolicyOrder>(empire_id, policy_name, category, true, slot),
-            context);
+        app->Orders().IssueOrder<PolicyOrder>(context, empire_id, policy_name, category, slot);
         return 1;
     }
 
     auto IssueDeadoptPolicyOrder(const std::string& policy_name) -> int
     {
-        int empire_id = AIClientApp::GetApp()->EmpireID();
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
+
         if (!empire) {
             ErrorLogger() << "IssueDeadoptPolicyOrder : couldn't get empire with id " << empire_id;
             return 0;
@@ -360,11 +350,8 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<PolicyOrder>(empire_id, policy_name, "", false),
-            context);  // category and slot ignored for de-adtopting
+        app->Orders().IssueOrder<PolicyOrder>(context, empire_id, policy_name);
         return 1;
-
     }
 
     auto IsProducibleBuilding(const std::string& item_name, int location_id) -> bool

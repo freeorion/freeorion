@@ -1297,14 +1297,6 @@ void ChangeFocusOrder::ExecuteImpl(ScriptingContext& context) const {
 ////////////////////////////////////////////////
 // PolicyOrder
 ////////////////////////////////////////////////
-PolicyOrder::PolicyOrder(int empire, std::string name, std::string category, bool adopt, int slot) :
-    Order(empire),
-    m_policy_name(std::move(name)),
-    m_category(std::move(category)),
-    m_slot(slot),
-    m_adopt(adopt)
-{}
-
 std::string PolicyOrder::Dump() const {
     const auto& template_str = m_adopt ? UserString("ORDER_POLICY_ADOPT") : UserString("ORDER_POLICY_ABANDON");
     return boost::io::str(FlexibleFormat(template_str)
@@ -1318,9 +1310,8 @@ void PolicyOrder::ExecuteImpl(ScriptingContext& context) const {
                       << " in slot " << m_slot;
         empire->AdoptPolicy(m_policy_name, m_category, context, m_adopt, m_slot);
     } else if (!m_revert) {
-        DebugLogger() << "PolicyOrder revoke " << m_policy_name << " from category " << m_category
-                      << " in slot " << m_slot;
-        empire->AdoptPolicy(m_policy_name, m_category, context, m_adopt, m_slot);
+        DebugLogger() << "PolicyOrder de-adopt " << m_policy_name;
+        empire->DeAdoptPolicy(m_policy_name);
     } else {
         empire->RevertPolicies();
     }

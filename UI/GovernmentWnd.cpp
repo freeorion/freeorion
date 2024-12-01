@@ -1301,9 +1301,10 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
         return;
     }
 
-    ScriptingContext& context = ClientApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext();
+    const int empire_id = app->EmpireID();
 
-    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto empire = std::as_const(context).GetEmpire(empire_id);  // may be nullptr
     if (!empire) {
         ErrorLogger() << "GovernmentWnd::MainPanel::SetPolicy has no empire to set policies for";
@@ -1341,7 +1342,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
 
     // check if adopting or revoking a policy. If adopting, then pass along the name of
     // the policy to adopt. If de-adeopting, then pass the name of the policy to de-adopt.
-    const bool adopt = policy;
+    const bool adopt = !!policy;
 
     if (!adopt && initial_policy_name.empty()) {
         DebugLogger() << "GovernmentWnd::MainPanel::SetPolicy requested to de-adopt policy in slot " << slot
@@ -1357,10 +1358,11 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     }
 
     // issue order to adopt or revoke
-    auto order = std::make_shared<PolicyOrder>(empire_id, std::move(order_policy_name),
-                                               std::string{adopt_in_category},
-                                               adopt, adopt_in_category_slot);
-    GGHumanClientApp::GetApp()->Orders().IssueOrder(std::move(order), context);
+    if (adopt)
+        app->Orders().IssueOrder<PolicyOrder>(context, empire_id, std::move(order_policy_name),
+                                              std::string{adopt_in_category}, adopt_in_category_slot);
+    else
+        app->Orders().IssueOrder<PolicyOrder>(context, empire_id, std::move(order_policy_name));
 
     if (update_empire_and_refresh)
         PostChangeBigUpdate();
@@ -1449,8 +1451,8 @@ void GovernmentWnd::MainPanel::RevertPolicies() {
     if (!empire->PoliciesModified())
         return;
 
-    // issue order to adopt or revoke
-    app->Orders().IssueOrder(std::make_shared<PolicyOrder>(empire_id), context);
+    // issue order to revoke changes
+    app->Orders().IssueOrder<PolicyOrder>(context, empire_id);
 
     PostChangeBigUpdate();
 }
