@@ -223,9 +223,8 @@ namespace {
 
         // create new fleet with ships
         const auto aggr = AggressionForFleet(aggression, ship_ids, context);
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<NewFleetOrder>(empire_id, "", ship_ids, aggr, context),
-            context);
+        GGHumanClientApp::GetApp()->Orders().IssueOrder<NewFleetOrder>(
+            context, empire_id, "", ship_ids, aggr);
     }
 
     void CreateNewFleetFromShipsWithDesign(const auto& ship_ids,
@@ -1321,7 +1320,9 @@ void FleetDataPanel::ToggleAggression() {
     if (auto fleet = context.ContextObjects().get<const Fleet>(m_fleet_id)) {
         if (ClientPlayerIsModerator())
             return; // TODO: handle moderator actions for this...
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+
+        auto* app = GGHumanClientApp::GetApp();
+        int client_empire_id = app->EmpireID();
         if (client_empire_id == ALL_EMPIRES)
             return;
 
@@ -1337,9 +1338,7 @@ void FleetDataPanel::ToggleAggression() {
 
         // toggle fleet aggression status
         context.ContextUniverse().InhibitUniverseObjectSignals(true);
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<AggressiveOrder>(client_empire_id, m_fleet_id, new_aggression_state, context),
-            context);
+        app->Orders().IssueOrder<AggressiveOrder>(context, client_empire_id, m_fleet_id, new_aggression_state);
         context.ContextUniverse().InhibitUniverseObjectSignals(false);
         UpdateAggressionToggle();
 
@@ -2382,9 +2381,7 @@ public:
             return; // TODO: handle moderator actions for this...
 
         int empire_id = app->EmpireID();
-        app->Orders().IssueOrder(
-            std::make_shared<FleetTransferOrder>(empire_id, m_fleet_id, ship_ids, context),
-            context);
+        app->Orders().IssueOrder<FleetTransferOrder>(context, empire_id, m_fleet_id, ship_ids);
     }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override {
@@ -2667,9 +2664,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
             if (!RenameOrder::Check(client_empire_id, ship->ID(), edit_wnd->Result(), context))
                 return;
 
-            app->Orders().IssueOrder(
-                std::make_shared<RenameOrder>(client_empire_id, ship->ID(), edit_wnd->Result(), context),
-                context);
+            app->Orders().IssueOrder<RenameOrder>(context, client_empire_id, ship->ID(), edit_wnd->Result());
         };
         popup->AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false, rename_action));
     }
@@ -2683,7 +2678,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         auto scrap_action = [ship, client_empire_id]() {
             auto* app = GGHumanClientApp::GetApp();
             ScriptingContext& context = app->GetContext();
-            app->Orders().IssueOrder(std::make_shared<ScrapOrder>(client_empire_id, ship->ID(), context), context);
+            app->Orders().IssueOrder<ScrapOrder>(context, client_empire_id, ship->ID());
         };
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
 
@@ -2695,7 +2690,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
             auto pending_scrap_orders = PendingScrapOrders();
             auto pending_order_it = pending_scrap_orders.find(ship->ID());
             if (pending_order_it != pending_scrap_orders.end()) {
-                auto app = GGHumanClientApp::GetApp();
+                auto* app = GGHumanClientApp::GetApp();
                 app->Orders().RescindOrder(pending_order_it->second, app->GetContext());
             }
         };
@@ -3666,9 +3661,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
             if (!RenameOrder::Check(client_empire_id, fleet->ID(), edit_wnd->Result(), context))
                 return;
 
-            app->Orders().IssueOrder(
-                std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), edit_wnd->Result(), context),
-                context);
+            app->Orders().IssueOrder<RenameOrder>(context, client_empire_id, fleet->ID(), edit_wnd->Result());
         };
         popup->AddMenuItem(GG::MenuItem(UserString("RENAME"), false, false,
                                         std::move(rename_action)));
@@ -3688,10 +3681,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
             auto* app = GGHumanClientApp::GetApp();
             OrderSet& orders = app->Orders();
             ScriptingContext& context = app->GetContext();
-            for (const auto ship_id : ship_ids) {
-                orders.IssueOrder(std::make_shared<ScrapOrder>(client_empire_id, ship_id, context),
-                                  context);
-            }
+            for (const auto ship_id : ship_ids)
+                orders.IssueOrder<ScrapOrder>(context, client_empire_id, ship_id);
         };
 
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_SCRAP"),
