@@ -2772,9 +2772,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                         continue;
 
                     one_planet->SetFocus(focus, context);
-                    orders.IssueOrder(std::make_shared<ChangeFocusOrder>(
-                        empire_id, one_planet->ID(), focus, context),
-                        context);
+                    orders.IssueOrder<ChangeFocusOrder>(context, empire_id, one_planet->ID(), focus);
                 }
 
                 focus_ship_building_common_action();
@@ -2811,11 +2809,11 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                                                     row->ObjectID(), context))
                     { continue; }
 
-                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
+                    app->Orders().IssueOrder<ProductionQueueOrder>(
+                        context,
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
-                        ProductionQueue::ProductionItem{BuildType::BT_SHIP, ship_design, context.ContextUniverse()},
-                        1, row->ObjectID(), pos),
-                        context);
+                        ProductionQueue::ProductionItem{BuildType::BT_SHIP, ship_design,
+                        context.ContextUniverse()}, 1, row->ObjectID(), pos);
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2862,11 +2860,11 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
                                                        row->ObjectID(), context))
                     { continue; }
 
-                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(
+                    app->Orders().IssueOrder<ProductionQueueOrder>(
+                        context,
                         ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE, app->EmpireID(),
                         ProductionQueue::ProductionItem{BuildType::BT_BUILDING, building_type_name},
-                        1, row->ObjectID(), pos), // TODO: pass bld_item with move?
-                        context);
+                        1, row->ObjectID(), pos); // TODO: pass bld_item with move?
 
                     needs_queue_update = true;
                 }

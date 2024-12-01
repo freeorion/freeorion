@@ -389,10 +389,8 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     auto scrap_building_action = [this, empire_id]() {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-        GGHumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ScrapOrder>(empire_id, m_building_id, context),
-            context);
+        auto* app = GGHumanClientApp::GetApp();
+        app->Orders().IssueOrder<ScrapOrder>(app->GetContext(), empire_id, m_building_id);
     };
 
     auto un_scrap_building_action = [building]() {

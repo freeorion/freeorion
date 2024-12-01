@@ -380,9 +380,10 @@ namespace {
 
     auto IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) -> int
     {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueEnqueueBuildingProductionOrder : couldn't get empire with id " << empire_id;
@@ -394,12 +395,12 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-                                                   empire_id,
-                                                   ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name),
-                                                   1, location_id),
-            context);
+        app->Orders().IssueOrder<ProductionQueueOrder>(
+            context,
+            ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
+            empire_id,
+            ProductionQueue::ProductionItem(BuildType::BT_BUILDING, item_name),
+            1, location_id);
 
         return 1;
     }
@@ -419,10 +420,11 @@ namespace {
 
     auto IssueEnqueueShipProductionOrder(int design_id, int location_id) -> int
     {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
         const Universe& universe{context.ContextUniverse()};
+        int empire_id = app->EmpireID();
 
-        int empire_id = AIClientApp::GetApp()->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueEnqueueShipProductionOrder : couldn't get empire with id " << empire_id;
@@ -434,21 +436,21 @@ namespace {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
-                                                   empire_id,
-                                                   ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe),
-                                                   1, location_id),
-            context);
+        app->Orders().IssueOrder<ProductionQueueOrder>(
+            context,
+            ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
+            empire_id,
+            ProductionQueue::ProductionItem(BuildType::BT_SHIP, design_id, universe),
+            1, location_id);
 
         return 1;
     }
 
     auto IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) -> int
     {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueChangeProductionQuantityOrder : couldn't get empire with id " << empire_id;
@@ -468,11 +470,10 @@ namespace {
         auto queue_it = empire->GetProductionQueue().find(queue_index);
 
         if (queue_it != empire->GetProductionQueue().end())
-            AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(
-                    ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
-                    empire_id, queue_it->uuid, new_quantity, new_blocksize),
-                context);
+            app->Orders().IssueOrder<ProductionQueueOrder>(
+                context,
+                ProductionQueueOrder::ProdQueueOrderAction::SET_QUANTITY_AND_BLOCK_SIZE,
+                empire_id, queue_it->uuid, new_quantity, new_blocksize);
 
         return 1;
     }
@@ -484,9 +485,9 @@ namespace {
             return 0;
         }
 
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueRequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -514,19 +515,19 @@ namespace {
         auto queue_it = empire->GetProductionQueue().find(old_queue_index);
 
         if (queue_it != empire->GetProductionQueue().end())
-            AIClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
-                                                   empire_id, queue_it->uuid, new_queue_index),
-                context);
+            app->Orders().IssueOrder<ProductionQueueOrder>(
+                context,
+                ProductionQueueOrder::ProdQueueOrderAction::MOVE_ITEM_TO_INDEX,
+                empire_id, queue_it->uuid, new_queue_index);
 
         return 1;
     }
 
     auto IssueDequeueProductionOrder(int queue_index) -> int
     {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueDequeueProductionOrder : couldn't get empire with id " << empire_id;
@@ -542,21 +543,20 @@ namespace {
         auto queue_it = queue.find(queue_index);
 
         if (queue_it != queue.end())
-            AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(
-                    ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
-                    empire_id, queue_it->uuid),
-                context);
+            app->Orders().IssueOrder<ProductionQueueOrder>(
+                context,
+                ProductionQueueOrder::ProdQueueOrderAction::REMOVE_FROM_QUEUE,
+                empire_id, queue_it->uuid);
 
         return 1;
     }
 
     auto IssuePauseProductionOrder(int queue_index, bool pause) -> int
     {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
-        const auto empire = context.GetEmpire(empire_id);
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
+        auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssuePauseProductionOrder : couldn't get empire with id " << empire_id;
             return 0;
@@ -571,20 +571,19 @@ namespace {
         auto queue_it = queue.find(queue_index);
 
         if (queue_it != queue.end())
-            AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(
-                    ProductionQueueOrder::ProdQueueOrderAction::PAUSE_PRODUCTION,
-                    empire_id, queue_it->uuid),
-                context);
+            app->Orders().IssueOrder<ProductionQueueOrder>(
+                context,
+                ProductionQueueOrder::ProdQueueOrderAction::PAUSE_PRODUCTION,
+                empire_id, queue_it->uuid);
 
         return 1;
     }
 
     auto IssueAllowStockpileProductionOrder(int queue_index, bool use_stockpile) -> int
     {
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
-        int empire_id = AIClientApp::GetApp()->EmpireID();
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "IssueAllowStockpileProductionOrder : couldn't get empire with id " << empire_id;
@@ -600,10 +599,10 @@ namespace {
         auto queue_it = empire->GetProductionQueue().find(queue_index);
 
         if (queue_it != empire->GetProductionQueue().end())
-            AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::ALLOW_STOCKPILE_USE,
-                                                       empire_id, queue_it->uuid),
-                context);
+            app->Orders().IssueOrder<ProductionQueueOrder>(
+                context,
+                ProductionQueueOrder::ProdQueueOrderAction::ALLOW_STOCKPILE_USE,
+                empire_id, queue_it->uuid);
 
         return 1;
     }
@@ -624,9 +623,9 @@ namespace {
         for (int i = 0; i < num_parts; i++)
             parts.push_back(py::extract<std::string>(parts_list[i]));
 
-        const int empire_id = AIClientApp::GetApp()->EmpireID();
-        ScriptingContext& context = IApp::GetApp()->GetContext();
-
+        auto* app = AIClientApp::GetApp();
+        ScriptingContext& context = app->GetContext();
+        int empire_id = app->EmpireID();
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
@@ -634,9 +633,7 @@ namespace {
             auto design = std::make_unique<ShipDesign>(
                 std::invalid_argument(""), name, description, context.current_turn,
                 empire_id, hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
-            AIClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, *design, context),
-                context);
+            app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, *design);
             return 1;
 
         } catch (const std::invalid_argument&) {

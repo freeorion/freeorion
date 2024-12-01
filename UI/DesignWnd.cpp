@@ -408,9 +408,7 @@ namespace {
 
         if (obsolete) {
             // make empire forget on the server
-            app->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true, context),
-                context);
+            app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design_id, true);
         } else {
             const auto design = std::as_const(context).ContextUniverse().GetShipDesign(design_id);
             if (!design) {
@@ -420,9 +418,7 @@ namespace {
             }
 
             //make known to empire on server
-            app->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, context),
-                context);
+            app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design_id);
         }
     }
 
@@ -434,9 +430,8 @@ namespace {
 
         const auto maybe_obsolete = manager.IsObsolete(design_id, context); // purpose of this obsolescence check is unclear... author didn't comment
         if (maybe_obsolete && !*maybe_obsolete)
-            app->Orders().IssueOrder(  // erase design id order : empire should forget this design
-                std::make_shared<ShipDesignOrder>(app->EmpireID(), design_id, true, context),
-                context);
+            app->Orders().IssueOrder<ShipDesignOrder>(  // erase design id order : empire should forget this design
+                context, app->EmpireID(), design_id, true);
         manager.Remove(design_id);
     }
 
@@ -1152,11 +1147,8 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         // Remove the default designs from the empire's current designs.
         // Purpose and logic of this is unclear... author didn't comment upon inquiry, but having this here reportedly fixes some issues...
         DebugLogger() << "Remove default designs from empire";
-        for (const auto design_id : empire->ShipDesigns()) {
-            app->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true, context),
-                context);
-        }
+        for (const auto design_id : empire->ShipDesigns())
+            app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design_id, true);
     }
 
     TraceLogger() << "ShipDesignManager initialized";
@@ -3035,13 +3027,11 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt 
         auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
             GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd->Run();
-        auto& result = edit_wnd->Result();
+        const auto& result = edit_wnd->Result();
         if (!result.empty() && result != design->Name()) {
             auto* app = GGHumanClientApp::GetApp();
-            ScriptingContext& context = app->GetContext();
-            app->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, result, design->Description(), context),
-                context);
+            app->Orders().IssueOrder<ShipDesignOrder>(
+                app->GetContext(), empire_id, design_id, result, design->Description());
             design_row->SetDisplayName(design->Name());
         }
     };
@@ -3065,9 +3055,8 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt 
 
     // toggle the option to add all saved designs at game start.
     const auto add_defaults = GetOptionsDB().Get<bool>("resource.shipdesign.default.enabled");
-    auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
-        GetOptionsDB().Set<bool>("resource.shipdesign.default.enabled", !add_defaults);
-    };
+    auto toggle_add_default_designs_at_game_start_action = [add_defaults]()
+    { GetOptionsDB().Set<bool>("resource.shipdesign.default.enabled", !add_defaults); };
 
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -4849,10 +4838,13 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
         auto new_uuid = boost::uuids::random_generator()();
         auto new_design_id = INVALID_DESIGN_ID;
 
+        auto* app = GGHumanClientApp::GetApp();
+        int empire_id = app->EmpireID();
+
         // create design from stuff chosen in UI
         ShipDesign design(std::invalid_argument(""),
                           name.StoredString(), description.StoredString(),
-                          ClientApp::GetApp()->CurrentTurn(), ClientApp::GetApp()->EmpireID(),
+                          app->CurrentTurn(), empire_id,
                           hull_name, parts, icon, "some model", name.IsInStringtable(),
                           false, new_uuid);
 
@@ -4864,13 +4856,12 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
 
         // Otherwise insert into current empire designs
         } else {
-            ScriptingContext& context = IApp::GetApp()->GetContext();
-            int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+            ScriptingContext& context = app->GetContext();
             auto empire = context.GetEmpire(empire_id);
             if (!empire) return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
 
             auto order = std::make_shared<ShipDesignOrder>(empire_id, design, context);
-            GGHumanClientApp::GetApp()->Orders().IssueOrder(order, context);
+            app->Orders().IssueOrder(order, context);
             new_design_id = order->DesignID();
 
             auto& manager = GetDisplayedDesignsManager();
@@ -4918,20 +4909,17 @@ void DesignWnd::MainPanel::ReplaceDesign() {
         const auto existing_design = CurrentDesignIsRegistered();
         if (current_maybe_design || existing_design) {
             auto& manager = GetDisplayedDesignsManager();
-            int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+            auto* app = GGHumanClientApp::GetApp();
             int replaced_id = (*(current_maybe_design ? current_maybe_design : existing_design))->ID();
 
             if (new_design_id == INVALID_DESIGN_ID) return;
 
             // Remove the old id from the Empire.
-            ScriptingContext& context = IApp::GetApp()->GetContext();
+            ScriptingContext& context = app->GetContext();
             const auto maybe_obsolete = manager.IsObsolete(replaced_id, context);
             bool is_obsolete = maybe_obsolete && *maybe_obsolete;
-            if (!is_obsolete) {
-                GGHumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true, context),
-                    context);
-            }
+            if (!is_obsolete)
+                app->Orders().IssueOrder<ShipDesignOrder>(context, app->EmpireID(), replaced_id, true);
 
             // Replace the old id in the manager.
             manager.MoveBefore(new_design_id, replaced_id);

@@ -188,12 +188,13 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
             BOOST_REQUIRE(my_empire->ProducibleItem(BuildType::BT_SHIP, troop_design_id, home_planet->ID(), m_context));
 
-            m_orders.IssueOrder(std::make_shared<ProductionQueueOrder>(ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
+            m_orders.IssueOrder<ProductionQueueOrder>(
+                m_context,
+                ProductionQueueOrder::ProdQueueOrderAction::PLACE_IN_QUEUE,
                 m_empire_id,
                 ProductionQueue::ProductionItem(BuildType::BT_SHIP, troop_design_id, m_universe),
                 1,
-                home_planet->ID()),
-                m_context);
+                home_planet->ID());
         }
 
         if (m_current_turn > 2) {
