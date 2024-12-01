@@ -165,21 +165,26 @@ void Empire::SetCapitalID(int id, const ObjectMap& objects) {
         m_source_id = id;
 }
 
-void Empire::AdoptPolicy(const std::string& name, const std::string& category,
-                         const ScriptingContext& context, bool adopt, int slot)
-{
-    if (adopt && name.empty()) {
-        ErrorLogger() << "Empire::AdoptPolicy asked to adopt empty policy name in category " << category << " slot " << slot;
-        return;
-    } else if (name.empty()) {
+void Empire::DeAdoptPolicy(const std::string& name) {
+    if (name.empty()) {
         ErrorLogger() << "Empire::AdoptPolicy asked to de-adopt empty policy name";
         return;
     }
 
+    if (m_adopted_policies.erase(name))
+        PoliciesChangedSignal();
+}
+
+void Empire::AdoptPolicy(const std::string& name, const std::string& category,
+                         const ScriptingContext& context, bool adopt, int slot)
+{
     if (!adopt) {
-        // revoke policy
-        if (m_adopted_policies.erase(name))
-            PoliciesChangedSignal();
+        DeAdoptPolicy(name);
+        return;
+    }
+
+    if (adopt && name.empty()) {
+        ErrorLogger() << "Empire::AdoptPolicy asked to adopt empty policy name in category " << category << " slot " << slot;
         return;
     }
 
