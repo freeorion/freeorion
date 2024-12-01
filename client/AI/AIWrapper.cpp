@@ -259,11 +259,10 @@ namespace {
                                   FleetAggression::FLEET_OBSTRUCTIVE, context))
         { return INVALID_OBJECT_ID; }
 
-        auto order = std::make_shared<NewFleetOrder>(app->EmpireID(), fleet_name, ship_ids,
-                                                     FleetAggression::FLEET_OBSTRUCTIVE, context);
-        app->Orders().IssueOrder(order, context);
+        const auto order = app->Orders().IssueOrder<NewFleetOrder>(
+            context, app->EmpireID(), fleet_name, ship_ids, FleetAggression::FLEET_OBSTRUCTIVE);
 
-        return order->FleetID();
+        return order ? order->FleetID() : INVALID_OBJECT_ID;
     }
 
     auto IssueFleetTransferOrder(int ship_id, int new_fleet_id) -> int

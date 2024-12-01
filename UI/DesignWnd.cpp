@@ -380,13 +380,12 @@ namespace {
         auto new_current_design{*design};
         new_current_design.SetUUID(boost::uuids::random_generator()());
 
-        auto order = std::make_shared<ShipDesignOrder>(empire_id, new_current_design, context);
-        app->Orders().IssueOrder(order, context);
+        auto order = app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, new_current_design);
 
         auto& current_manager = GetDisplayedDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
         const int before_id = (all_ids.empty() || !is_front) ? INVALID_OBJECT_ID : all_ids.front();
-        current_manager.InsertBefore(order->DesignID(), before_id);
+        current_manager.InsertBefore(order ? order->DesignID() : INVALID_DESIGN_ID, before_id);
     }
 
     /** Set whether a currently known design is obsolete or not. Not obsolete
@@ -4860,9 +4859,8 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
             auto empire = context.GetEmpire(empire_id);
             if (!empire) return {INVALID_DESIGN_ID, boost::uuids::nil_generator()()};
 
-            auto order = std::make_shared<ShipDesignOrder>(empire_id, design, context);
-            app->Orders().IssueOrder(order, context);
-            new_design_id = order->DesignID();
+            const auto order = app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design);
+            new_design_id = order ? order->DesignID() : INVALID_DESIGN_ID;
 
             auto& manager = GetDisplayedDesignsManager();
             const auto& all_ids = manager.AllOrderedIDs();
