@@ -62,18 +62,26 @@ public:
     [[nodiscard]] std::string Dump() const;
 
     /** Execute the \p order immediately on the client.
-        Store the \p order in the OrderSet to be executed later on the server.
-        Return an index that can be used to reference the order. */
-    int IssueOrder(OrderPtr order, ScriptingContext& context);
+      * Store the \p order in the OrderSet to be executed later on the server. */
+    void IssueOrder(OrderPtr order, ScriptingContext& context);
+
+    /** Construct and execute an order of specified type on the client.
+      * Store the order in the OrderSet to be executed later on the server.
+      * Returns a pointer to the order. */
 
     template <typename OrderType, typename... ParamTs>
-    int IssueOrder(ScriptingContext& context, ParamTs&&... params)
+    auto IssueOrder(ScriptingContext& context, ParamTs&&... params)
     {
         static_assert(std::is_base_of_v<Order, std::decay_t<OrderType>>);
-        if constexpr (requires { OrderType(std::forward<ParamTs>(params)..., context); })
-            return IssueOrder(std::make_shared<OrderType>(std::forward<ParamTs>(params)..., context), context);
-        else
-            return IssueOrder(std::make_shared<OrderType>(std::forward<ParamTs>(params)...), context);
+        if constexpr (requires { OrderType(std::forward<ParamTs>(params)..., context); }) {
+            auto order = std::make_shared<OrderType>(std::forward<ParamTs>(params)..., context);
+            IssueOrder(order, context);
+            return order;
+        } else {
+            auto order = std::make_shared<OrderType>(std::forward<ParamTs>(params)...);
+            IssueOrder(order, context);
+            return order;
+        }
     }
 
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet

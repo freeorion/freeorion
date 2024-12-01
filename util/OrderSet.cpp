@@ -11,15 +11,15 @@ std::string OrderSet::Dump() const {
     return retval;
 }
 
-int OrderSet::IssueOrder(OrderPtr order, ScriptingContext& context) {
-    const int retval = (!m_orders.empty() ? m_orders.rbegin()->first + 1 : 0);
+void OrderSet::IssueOrder(OrderPtr order, ScriptingContext& context) {
+    const int order_id = (!m_orders.empty() ? m_orders.rbegin()->first + 1 : 0);
 
     // Insert the order into the m_orders map.  forward the rvalue to use the move constructor.
-    auto [it, insert_ran] = m_orders.emplace(retval, std::move(order));
+    auto [it, insert_ran] = m_orders.emplace(order_id, std::move(order));
     if (!insert_ran)
         ErrorLogger() << "OrderSet::IssueOrder unexpected didn't succeed inserting order";
 
-    m_last_added_orders.insert(retval);
+    m_last_added_orders.insert(order_id);
 
     try {
         it->second->Execute(context);
@@ -28,8 +28,6 @@ int OrderSet::IssueOrder(OrderPtr order, ScriptingContext& context) {
     }
 
     TraceLogger() << "OrderSetIssueOrder m_orders size: " << m_orders.size();
-
-    return retval;
 }
 
 void OrderSet::ApplyOrders(ScriptingContext& context) {
