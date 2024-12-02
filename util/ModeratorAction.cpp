@@ -18,14 +18,13 @@
 /////////////////////////////////////////////////////
 // Moderator::DestroyUniverseObject
 /////////////////////////////////////////////////////
-Moderator::DestroyUniverseObject::DestroyUniverseObject(int object_id) :
-    m_object_id(object_id)
-{}
-
 void Moderator::DestroyUniverseObject::Execute() const {
-    const auto& ids_as_flatset = Empires().EmpireIDs();
-    GetUniverse().RecursiveDestroy(m_object_id, std::vector<int>{ids_as_flatset.begin(), ids_as_flatset.end()});
-    GetUniverse().InitializeSystemGraph(Empires());
+    auto* app = IApp::GetApp();
+    const auto& empires = app->Empires();
+    auto& universe = app->GetUniverse();
+    const auto& ids_as_flatset = empires.EmpireIDs();
+    universe.RecursiveDestroy(m_object_id, std::vector<int>{ids_as_flatset.begin(), ids_as_flatset.end()});
+    universe.InitializeSystemGraph(empires);
 }
 
 std::string Moderator::DestroyUniverseObject::Dump() const
@@ -34,16 +33,8 @@ std::string Moderator::DestroyUniverseObject::Dump() const
 /////////////////////////////////////////////////////
 // Moderator::SetOwner
 /////////////////////////////////////////////////////
-Moderator::SetOwner::SetOwner()
-{}
-
-Moderator::SetOwner::SetOwner(int object_id, int new_owner_empire_id) :
-    m_object_id(object_id),
-    m_new_owner_empire_id(new_owner_empire_id)
-{}
-
 void Moderator::SetOwner::Execute() const {
-    auto obj = Objects().get(m_object_id);
+    auto obj = IApp::GetApp()->GetUniverse().Objects().getRaw(m_object_id);
     if (!obj) {
         ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
@@ -62,30 +53,25 @@ std::string Moderator::SetOwner::Dump() const {
 /////////////////////////////////////////////////////
 // Moderator::AddStarlane
 /////////////////////////////////////////////////////
-Moderator::AddStarlane::AddStarlane() :
-    m_id_1(INVALID_OBJECT_ID),
-    m_id_2(INVALID_OBJECT_ID)
-{}
-
-Moderator::AddStarlane::AddStarlane(int system_1_id, int system_2_id) :
-    m_id_1(system_1_id),
-    m_id_2(system_2_id)
-{}
-
 void Moderator::AddStarlane::Execute() const {
-    auto sys1 = Objects().get<System>(m_id_1);
+    auto* app = IApp::GetApp();
+    auto& universe = app->GetUniverse();
+    auto& objects = universe.Objects();
+    const auto& empires = app->Empires();
+
+    auto sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    auto sys2 = Objects().get<System>(m_id_2);
+    auto sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
     }
     sys1->AddStarlane(m_id_2);
     sys2->AddStarlane(m_id_1);
-    GetUniverse().InitializeSystemGraph(Empires());
+    universe.InitializeSystemGraph(empires);
 }
 
 std::string Moderator::AddStarlane::Dump() const {
@@ -99,30 +85,25 @@ std::string Moderator::AddStarlane::Dump() const {
 /////////////////////////////////////////////////////
 // Moderator::RemoveStarlane
 /////////////////////////////////////////////////////
-Moderator::RemoveStarlane::RemoveStarlane() :
-    m_id_1(INVALID_OBJECT_ID),
-    m_id_2(INVALID_OBJECT_ID)
-{}
-
-Moderator::RemoveStarlane::RemoveStarlane(int system_1_id, int system_2_id) :
-    m_id_1(system_1_id),
-    m_id_2(system_2_id)
-{}
-
 void Moderator::RemoveStarlane::Execute() const {
-    auto sys1 = Objects().get<System>(m_id_1);
+    auto* app = IApp::GetApp();
+    auto& universe = app->GetUniverse();
+    auto& objects = universe.Objects();
+    const auto& empires = app->Empires();
+
+    auto sys1 = objects.getRaw<System>(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    auto sys2 = Objects().get<System>(m_id_2);
+    auto sys2 = objects.getRaw<System>(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
     }
     sys1->RemoveStarlane(m_id_2);
     sys2->RemoveStarlane(m_id_1);
-    GetUniverse().InitializeSystemGraph(Empires());
+    universe.InitializeSystemGraph(empires);
 }
 
 std::string Moderator::RemoveStarlane::Dump() const {
@@ -136,18 +117,6 @@ std::string Moderator::RemoveStarlane::Dump() const {
 /////////////////////////////////////////////////////
 // Moderator::CreateSystem
 /////////////////////////////////////////////////////
-Moderator::CreateSystem::CreateSystem() :
-    m_x(UniverseObject::INVALID_POSITION),
-    m_y(UniverseObject::INVALID_POSITION),
-    m_star_type(StarType::STAR_NONE)
-{}
-
-Moderator::CreateSystem::CreateSystem(double x, double y, StarType star_type) :
-    m_x(x),
-    m_y(y),
-    m_star_type(star_type)
-{}
-
 namespace {
     std::string GenerateSystemName(const ObjectMap& objects) {
         static std::vector<std::string> star_names = UserStringList("STAR_NAMES");
@@ -171,11 +140,10 @@ namespace {
 
 void Moderator::CreateSystem::Execute() const {
     auto* app = IApp::GetApp();
-    const auto current_turn = app->CurrentTurn();
     auto& universe = app->GetUniverse();
 
     auto system = universe.InsertNew<System>(m_star_type, GenerateSystemName(universe.Objects()),
-                                             m_x, m_y, current_turn);
+                                             m_x, m_y, app->CurrentTurn());
     universe.InitializeSystemGraph(app->Empires());
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
@@ -195,30 +163,19 @@ std::string Moderator::CreateSystem::Dump() const {
 /////////////////////////////////////////////////////
 // Moderator::CreatePlanet
 /////////////////////////////////////////////////////
-Moderator::CreatePlanet::CreatePlanet() :
-    m_system_id(INVALID_OBJECT_ID),
-    m_planet_type(PlanetType::PT_SWAMP),
-    m_planet_size(PlanetSize::SZ_MEDIUM)
-{}
-
-Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size) :
-    m_system_id(system_id),
-    m_planet_type(planet_type),
-    m_planet_size(planet_size)
-{}
-
 void Moderator::CreatePlanet::Execute() const {
     auto* app = IApp::GetApp();
     const auto current_turn = app->CurrentTurn();
     auto& universe = app->GetUniverse();
-    auto location = universe.Objects().get<System>(m_system_id);
+
+    auto location = universe.Objects().getRaw<System>(m_system_id);
     if (!location) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
     }
 
     //  determine if and which orbits are available
-    std::set<int> free_orbits = location->FreeOrbits();
+    const auto free_orbits = location->FreeOrbits();
     if (free_orbits.empty()) {
         ErrorLogger() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
         return;
