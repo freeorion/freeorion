@@ -59,7 +59,7 @@ namespace py = boost::python;
 // server side Python scripts
 namespace {
     // Wrapper for getting empire objects
-    auto GetAllEmpires() -> py::list
+    auto GetAllEmpiresIDs() -> py::list
     {
         const ScriptingContext& context = ServerApp::GetApp()->GetContext();
         py::list empire_list;
@@ -800,8 +800,7 @@ namespace {
         }
 
         // Insert fleet into specified system
-        int turn = CurrentTurn();
-        system->Insert(fleet, System::NO_ORBIT, turn, context.ContextObjects());
+        system->Insert(fleet, System::NO_ORBIT, context.current_turn, context.ContextObjects());
 
         // check if we got a fleet name...
         if (name.empty()) {
@@ -1347,9 +1346,13 @@ namespace FreeOrionPython {
             .def("spawn_limit",                 &MonsterFleetPlanWrapper::SpawnLimit)
             .def("locations",                   &MonsterFleetPlanWrapper::Locations);
 
-        py::def("get_universe",                 GetUniverse, py::return_value_policy<py::reference_existing_object>());
-        py::def("get_all_empires",              GetAllEmpires);
-        py::def("get_empire",                   GetEmpire, py::return_value_policy<py::reference_existing_object>());
+        py::def("get_universe",
+                +[]() -> const Universe& { return ServerApp::GetApp()->GetUniverse(); },
+                py::return_value_policy<py::reference_existing_object>());
+        py::def("get_all_empires",              GetAllEmpiresIDs);
+        py::def("get_empire",
+                +[](int id) -> const Empire* { return ServerApp::GetApp()->GetEmpire(id); },
+                py::return_value_policy<py::reference_existing_object>());
 
         py::def("userString",
                 +[](const std::string& key) -> const std::string& { return UserString(key); },

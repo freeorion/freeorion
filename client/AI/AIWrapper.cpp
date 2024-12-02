@@ -722,9 +722,14 @@ namespace FreeOrionPython {
                 +[](int empire_id1, int empire_id2) -> const DiplomaticStatus { return AIClientApp::GetApp()->Empires().GetDiplomaticStatus(empire_id1, empire_id2); },
                 "Returns the diplomatic status between two empires");
 
-        py::def("getUniverse",              GetUniverse,       py::return_value_policy<py::reference_existing_object>(), "Returns the universe object (Universe)");
+        py::def("getUniverse",
+                +[]() -> const Universe& { return ClientApp::GetApp()->GetUniverse(); },
+                py::return_value_policy<py::reference_existing_object>(),
+                "Returns the universe object (Universe)");
 
-        py::def("currentTurn",              CurrentTurn,       "Returns the current game turn (int).");
+        py::def("currentTurn",
+                +[]() -> int { return ClientApp::GetApp()->CurrentTurn(); },
+                "Returns the current game turn (int).");
 
         py::def("getAIDir",
                 +[]() -> std::string { return PathToString(GetResourceDir() / FilenameToPath(GetOptionsDB().Get<std::string>("ai-path"))); },
@@ -736,10 +741,10 @@ namespace FreeOrionPython {
                 "between actual meters and what the known universe should produce. "
                 "This is used later when updating meter estimates to incorporate "
                 "those discrepancies.");
-        py::def("updateMeterEstimates",                 UpdateMeterEstimates);
-        py::def("updateResourcePools",                  UpdateResourcePools);
-        py::def("updateResearchQueue",                  UpdateResearchQueue);
-        py::def("updateProductionQueue",                UpdateProductionQueue);
+        py::def("updateMeterEstimates",  UpdateMeterEstimates);
+        py::def("updateResourcePools",   UpdateResourcePools);
+        py::def("updateResearchQueue",   UpdateResearchQueue);
+        py::def("updateProductionQueue", UpdateProductionQueue);
 
         py::def("isProducibleBuilding",
                 IsProducibleBuilding,

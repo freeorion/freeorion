@@ -112,7 +112,7 @@ namespace {
 
     auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        const auto& empires{Empires()};
+        const auto& empires{IApp::GetApp()->Empires()};
         auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
         auto path = universe.GetPathfinder().ShortestPath(
             start_sys, end_sys, empire_id, fleet_pred, empires, universe.EmpireKnownObjects(empire_id)).first;
@@ -476,7 +476,7 @@ namespace FreeOrionPython {
             .add_property("owner",              &UniverseObject::Owner)
             .def("ownedBy",                     &UniverseObject::OwnedBy)
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
-            .add_property("ageInTurns",         +[](const UniverseObject& o) { return o.AgeInTurns(CurrentTurn()); })
+            .add_property("ageInTurns",         +[](const UniverseObject& o) { return o.AgeInTurns(IApp::GetApp()->CurrentTurn()); })
             .add_property("specials",           make_function(ObjectSpecials,        py::return_value_policy<py::return_by_value>()))
             .def("hasSpecial",                  &UniverseObject::HasSpecial)
             .def("specialAddedOnTurn",          &UniverseObject::SpecialAddedOnTurn)
@@ -711,7 +711,7 @@ namespace FreeOrionPython {
         py::class_<Planet, py::bases<UniverseObject>, boost::noncopyable>("planet", py::no_init)
             .add_property("speciesName",                    make_function(&Planet::SpeciesName, py::return_value_policy<py::copy_const_reference>()))
             .add_property("focus",                          make_function(&Planet::Focus,       py::return_value_policy<py::copy_const_reference>()))
-            .add_property("turnsSinceFocusChange" ,         +[](const Planet& rc) { return rc.TurnsSinceFocusChange(CurrentTurn()); })
+            .add_property("turnsSinceFocusChange",          +[](const Planet& rc) { return rc.TurnsSinceFocusChange(IApp::GetApp()->CurrentTurn()); })
             .add_property("availableFoci",                  +[](const Planet& rc) -> std::vector<std::string> { return ViewsToStrings(rc.AvailableFoci(IApp::GetApp()->GetContext())); })
             .add_property("size",                           &Planet::Size)
             .add_property("type",                           &Planet::Type)
