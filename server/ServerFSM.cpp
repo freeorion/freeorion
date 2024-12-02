@@ -480,7 +480,7 @@ void ServerFSM::UpdateIngameLobby() {
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
         if ((*player_it)->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-            !GetEmpire(m_server.PlayerEmpireID((*player_it)->PlayerID())))
+            !m_server.GetEmpire(m_server.PlayerEmpireID((*player_it)->PlayerID())))
         {
             (*player_it)->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
         } else {
