@@ -631,7 +631,7 @@ public:
     void Select(bool selected);
 
     void Clear();
-    void Refresh(ScriptingContext& context); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
+    void Refresh(ScriptingContext& context, int empire_id); ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
     void EnableOrderIssuing(bool enable = true);
@@ -726,6 +726,7 @@ public:
      *  @param[in] excluded_planet_id Excludes panels with this planet id
      *  @param[in] require_prerender Set panels to RequirePreRender */
     void RefreshAllPlanetPanels(ScriptingContext& context,
+                                int empire_id,
                                 int excluded_planet_id = INVALID_OBJECT_ID,
                                 bool require_prerender = false);
 
@@ -1007,7 +1008,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     SetName(UserString("PLANET_PANEL"));
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    const ScriptingContext& context = app->GetContext();
     auto* planet = context.ContextObjects().getRaw<const Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
@@ -1114,7 +1116,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     SetChildClippingMode(ChildClippingMode::ClipToWindow);
 
     ScriptingContext planet_context(context, ScriptingContext::Source{}, planet);
-    Refresh(planet_context);
+    Refresh(planet_context, app->EmpireID());
 
     RequirePreRender();
 }
@@ -1666,7 +1668,7 @@ namespace {
     }
 }
 
-void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
+void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id) {
     Clear();
 
     Universe& u = context_in.ContextUniverse();       // must be mutable for object signal inhibition
@@ -1680,12 +1682,11 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
         return;
     }
 
-    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto client_empire = client_empire_id != ALL_EMPIRES ? context_in.GetEmpire(client_empire_id).get() : nullptr;
+    const auto empire = empire_id != ALL_EMPIRES ? context_in.GetEmpire(empire_id).get() : nullptr;
 
     // use source object owned by client empire, unless there isn't one
-    const auto* const source_for_empire = [client_empire, planet, &objects]() {
-        const auto* retval = client_empire ? client_empire->Source(objects).get() : nullptr;
+    const auto* const source_for_empire = [empire, planet, &objects]() {
+        const auto* retval = empire ? empire->Source(objects).get() : nullptr;
         if (!retval && !planet->Unowned())
             retval = planet;
         return retval;
@@ -1702,7 +1703,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     const bool is_homeworld = range_any_of(sm.GetSpeciesHomeworldsMap() | range_values,
                                            [this](const auto& ids) { return FlexibleContains(ids, m_planet_id); });
 
-    const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(empire_id);
     const auto not_destroyed_is_shipyard_tag = [&known_destroyed_object_ids](const Building* building) {
         return building &&
             !known_destroyed_object_ids.contains(building->ID()) &&
@@ -1770,12 +1771,12 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
 
     // calculate truth tables for planet colonization and invasion
     const bool has_owner =       !planet->Unowned();
-    const bool mine =             planet->OwnedBy(client_empire_id);
+    const bool mine =             planet->OwnedBy(empire_id);
     const bool populated =        planet->GetMeter(MeterType::METER_POPULATION)->Initial() > 0.0f;
     const bool habitable =        planet_env_for_colony_species >= PlanetEnvironment::PE_HOSTILE &&
                                   planet_env_for_colony_species <= PlanetEnvironment::PE_GOOD;
-    const bool visible =          (client_empire_id == ALL_EMPIRES) ||
-                                    (u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY);
+    const bool visible =          (empire_id == ALL_EMPIRES) ||
+                                    (u.GetObjectVisibilityByEmpire(m_planet_id, empire_id) >= Visibility::VIS_PARTIAL_VISIBILITY);
     const bool shielded =         planet->GetMeter(MeterType::METER_SHIELD)->Initial() > 0.0f;
     const bool has_defenses =     planet->GetMeter(MeterType::METER_MAX_SHIELD)->Initial() > 0.0f ||
                                   planet->GetMeter(MeterType::METER_MAX_DEFENSE)->Initial() > 0.0f ||
@@ -1787,7 +1788,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
                                                            || (outpostable && (colony_ship_capacity == 0.0f)));
     const bool at_war_with_me =   !mine && (
                                     (!has_owner && populated) ||
-                                    (has_owner && source_context.ContextDiploStatus(client_empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR)
+                                    (has_owner && source_context.ContextDiploStatus(empire_id, planet->Owner()) == DiplomaticStatus::DIPLO_WAR)
                                   );
 
     const bool being_invaded =    planet->IsAboutToBeInvaded();
@@ -1800,9 +1801,9 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     const bool potentially_annexable = annexability_test(planet);
     const auto this_planet_annexation_cost = source_for_empire ? PlanetAnnexationCost(planet, source_for_empire, source_context) : 0.0;
     const double empire_annexations_cost = source_for_empire ? PendingAnnexationOrderCost(source_for_empire, source_context) : 0.0;
-    const double empire_adopted_policies_cost = client_empire ? client_empire->ThisTurnAdoptedPoliciesCost(source_context) : 0.0;
+    const double empire_adopted_policies_cost = empire ? empire->ThisTurnAdoptedPoliciesCost(source_context) : 0.0;
     const double total_costs = empire_annexations_cost + empire_adopted_policies_cost + this_planet_annexation_cost;
-    const double available_ip = client_empire ? client_empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
+    const double available_ip = empire ? empire->ResourceStockpile(ResourceType::RE_INFLUENCE) : 0.0;
     const bool annexation_affordable = total_costs <= available_ip;
     const bool annexable =        visible && !being_annexed && populated && !being_invaded &&
                                   species && potentially_annexable && annexation_affordable;
@@ -1854,12 +1855,12 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
         m_annex_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         // checked above for non-null planeted
-        auto annex_tooltip = [planet, &planet_species_name, client_empire, client_empire_id, &sm,
+        auto annex_tooltip = [planet, &planet_species_name, empire, empire_id, &sm,
                               &source_context, this_planet_annexation_cost, annexation_condition]() -> std::string
         {
-            const auto& client_empire_name = client_empire ? client_empire->Name() : UserString("UNOWNED");
-            const auto client_op = sm.SpeciesEmpireOpinion(planet_species_name, client_empire_id, false, true);
-            auto opinion_of_client_empire = DoubleToString(client_op, 3, false);
+            const auto& empire_name = empire ? empire->Name() : UserString("UNOWNED");
+            const auto op = sm.SpeciesEmpireOpinion(planet_species_name, empire_id, false, true);
+            auto opinion_of_empire = DoubleToString(op, 3, false);
 
             const auto owner_empire = source_context.GetEmpire(planet->Owner());
             const auto& owner_name = owner_empire ? owner_empire->Name() : UserString("UNOWNED");
@@ -1869,15 +1870,15 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             auto stability = DoubleToString(planet->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false);
             auto population = DoubleToString(planet->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false);
 
-            const auto building_costs = [&source_context, planet, client_empire_id]() {
+            const auto building_costs = [&source_context, planet, empire_id]() {
                 const auto to_building_type_name = [](const Building* building) -> const auto&
                 { return building ? building->BuildingTypeName() : EMPTY_STRING; };
 
-                const auto to_cost = [client_empire_id, location_id{planet->ID()}, &source_context](const std::string& bt_name) {
+                const auto to_cost = [empire_id, location_id{planet->ID()}, &source_context](const std::string& bt_name) {
                     if (bt_name.empty())
                         return 0.0;
                     const auto* building_type = GetBuildingType(bt_name);
-                    return building_type ? building_type->ProductionCost(client_empire_id, location_id, source_context) : 0.0;
+                    return building_type ? building_type->ProductionCost(empire_id, location_id, source_context) : 0.0;
                 };
 
                 auto buildings = source_context.ContextObjects().findRaw<Building>(planet->BuildingIDs());
@@ -1890,7 +1891,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             auto condition_txt = AnnexConditionDescription(annexation_condition, source_context, planet);
 
             return boost::io::str(FlexibleFormat(UserString("ANNEX_BUTTON_TOOLTIP"))
-                                  % UserString(planet_species_name) % client_empire_name % opinion_of_client_empire
+                                  % UserString(planet_species_name) % empire_name % opinion_of_empire
                                   % owner_name % opinion_of_owner
                                   % stability % population % building_costs_pp % annex_cost_ip
                                   % condition_txt);
@@ -1925,7 +1926,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             const auto orig_species{planet_species_name}; //want to store by value, not reference. should be just ""
             const int orig_owner = planet->Owner();
             const float orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
-            planet->SetOwner(client_empire_id);
+            planet->SetOwner(empire_id);
             planet->SetSpecies(std::string{colony_ship_species_name}, source_context.current_turn, sm);
             planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Reset();
 
@@ -2079,7 +2080,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             m_focus_drop->SetBrowseText(std::move(focus_text));
 
             // prevent manipulation for unowned planets
-            if (!planet->OwnedBy(client_empire_id))
+            if (!planet->OwnedBy(empire_id))
                 m_focus_drop->Disable();
         }
     }
@@ -2092,7 +2093,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     m_specials_panel->Update();
 
     // create planet status marker
-    if (planet->OwnedBy(client_empire_id)) {
+    if (planet->OwnedBy(empire_id)) {
         std::vector<std::string> planet_status_messages;
         std::shared_ptr<GG::Texture> planet_status_texture;
 
@@ -2152,10 +2153,10 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     // set planetpanel stealth browse text
     ClearBrowseInfoWnd();
 
-    if (client_empire_id != ALL_EMPIRES) {
-        const Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
-        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
-        const float client_empire_detection_strength = client_empire ? client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0f;
+    if (empire_id != ALL_EMPIRES) {
+        const Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, empire_id);
+        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, empire_id);
+        const float empire_detection_strength = empire ? empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0f;
         const float apparent_stealth = planet->GetMeter(MeterType::METER_STEALTH)->Initial();
 
         std::string visibility_info;
@@ -2171,22 +2172,22 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
-                ErrorLogger() << "Empire " << client_empire_id << " knows about planet " << planet->Name() <<
+                ErrorLogger() << "Empire " << empire_id << " knows about planet " << planet->Name() <<
                                  " (id: " << m_planet_id << ") without having seen it before!";
             }
 
             auto system = objects.get<const System>(planet->SystemID());
-            if (system && system->GetVisibility(client_empire_id, u) <= Visibility::VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
+            if (system && system->GetVisibility(empire_id, u) <= Visibility::VIS_BASIC_VISIBILITY) { // HACK: system is basically visible or less, so we must not be in detection range of the planet.
                 detection_info = UserString("PL_NOT_IN_RANGE");
             }
-            else if (apparent_stealth > client_empire_detection_strength) {
+            else if (apparent_stealth > empire_detection_strength) {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
                                                 std::to_string(apparent_stealth) %
-                                                std::to_string(client_empire_detection_strength));
+                                                std::to_string(empire_detection_strength));
             }
             else {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION")) %
-                                                std::to_string(client_empire_detection_strength));
+                                                std::to_string(empire_detection_strength));
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
@@ -2204,14 +2205,14 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
                 visibility_info += "  " + UserString("PL_NEVER_SCANNED");
             }
 
-            if (apparent_stealth > client_empire_detection_strength) {
+            if (apparent_stealth > empire_detection_strength) {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
-                                                std::to_string(apparent_stealth)                  %
-                                                std::to_string(client_empire_detection_strength));
+                                                std::to_string(apparent_stealth) %
+                                                std::to_string(empire_detection_strength));
             }
             else {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION")) %
-                                                std::to_string(client_empire_detection_strength));
+                                                std::to_string(empire_detection_strength));
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
@@ -2224,7 +2225,10 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in) {
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 
     m_planet_connection = planet->StateChangedSignal.connect(
-        [this]() { Refresh(GGHumanClientApp::GetApp()->GetContext()); },
+        [this]() {
+            auto* app = GGHumanClientApp::GetApp();
+            Refresh(app->GetContext(), app->EmpireID());
+        },
         boost::signals2::at_front);
 }
 
@@ -2296,14 +2300,14 @@ void SidePanel::PlanetPanel::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_k
 }
 
 void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
     auto* app = GGHumanClientApp::GetApp();
     ScriptingContext& context = app->GetContext();
     const ObjectMap& objects = context.ContextObjects();
     auto planet = objects.getRaw<const Planet>(m_planet_id);
     if (!planet)
         return;
+    const int empire_id = app->EmpireID();
+
 
     auto system = objects.getRaw<const System>(planet->SystemID());
 
@@ -2313,13 +2317,13 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (system) {
         auto system_objects = objects.findRaw<UniverseObject>(system->ObjectIDs());
         for (auto* obj : system_objects) {
-            if (obj->GetVisibility(client_empire_id, context.ContextUniverse()) < Visibility::VIS_PARTIAL_VISIBILITY)
+            if (obj->GetVisibility(empire_id, context.ContextUniverse()) < Visibility::VIS_PARTIAL_VISIBILITY)
                 continue;
-            if (obj->OwnedBy(client_empire_id)|| obj->Unowned())
+            if (obj->OwnedBy(empire_id)|| obj->Unowned())
                 continue;
             if (peaceful_empires_in_system.contains(obj->Owner()))
                 continue;
-            if (context.ContextDiploStatus(client_empire_id, obj->Owner()) < DiplomaticStatus::DIPLO_PEACE)
+            if (context.ContextDiploStatus(empire_id, obj->Owner()) < DiplomaticStatus::DIPLO_PEACE)
                 continue;
             peaceful_empires_in_system.insert(obj->Owner());
         }
@@ -2334,10 +2338,10 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (planet->OwnedBy(client_empire_id) && m_order_issuing_enabled
+    if (planet->OwnedBy(empire_id) && m_order_issuing_enabled
         && m_planet_name->InClient(pt))
     {
-        auto rename_action = [&context, app, this, planet, client_empire_id]() mutable { // rename planet
+        auto rename_action = [&context, app, this, planet, empire_id]() mutable { // rename planet
             auto edit_wnd = GG::Wnd::Create<CUIEditWnd>(
                 GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
             edit_wnd->Run();
@@ -2347,12 +2351,12 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
             auto result{edit_wnd->Result()};
 
-            if (!RenameOrder::Check(client_empire_id, planet->ID(), result, context))
+            if (!RenameOrder::Check(empire_id, planet->ID(), result, context))
                 return;
 
-            app->Orders().IssueOrder<RenameOrder>(context, client_empire_id, planet->ID(), std::move(result));
+            app->Orders().IssueOrder<RenameOrder>(context, empire_id, planet->ID(), std::move(result));
 
-            Refresh(context);
+            Refresh(context, empire_id);
         };
         popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
     }
@@ -2361,7 +2365,7 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
 
-    if (planet->OwnedBy(client_empire_id)
+    if (planet->OwnedBy(empire_id)
         && !peaceful_empires_in_system.empty()
         && !ClientPlayerIsModerator())
     {
@@ -2371,10 +2375,10 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), false, false);
         for (auto& [recipient_empire_id, recipient_empire] : context.Empires()) {
             auto gift_action = [&context, app, recipient_empire_id{recipient_empire_id},
-                                client_empire_id, planet]() mutable
+                                empire_id, planet]() mutable
             {
                 app->Orders().IssueOrder<GiveObjectToEmpireOrder>(
-                    context, client_empire_id, planet->ID(), recipient_empire_id);
+                    context, empire_id, planet->ID(), recipient_empire_id);
             };
             if (!peaceful_empires_in_system.contains(recipient_empire_id))
                 continue;
@@ -2385,10 +2389,10 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [&context, app, planet_id{planet->ID()}]() mutable { // cancel give away order for this fleet
                 const OrderSet orders = app->Orders(); // copy to avoid changing container being iteratred
-                for (const auto& id_and_order : orders) {
-                    if (auto order = std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(id_and_order.second)) {
-                        if (order->ObjectID() == planet_id) {
-                            app->Orders().RescindOrder(id_and_order.first, context);
+                for (auto& [order_id, order] : orders) {
+                    if (auto give_order = std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(order)) {
+                        if (give_order->ObjectID() == planet_id) {
+                            app->Orders().RescindOrder(order_id, context);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
@@ -2892,8 +2896,10 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
         m_planet_panels.back()->ResizedSignal.connect(
             boost::bind(&SidePanel::PlanetPanelContainer::RequirePreRender, this));
         m_planet_panels.back()->OrderButtonChangedSignal.connect(
-            [this](int excluded_planet_id)
-            { RefreshAllPlanetPanels(GGHumanClientApp::GetApp()->GetContext(), excluded_planet_id, true); });
+            [this](int excluded_planet_id) {
+                auto* app = GGHumanClientApp::GetApp();
+                RefreshAllPlanetPanels(app->GetContext(), app->EmpireID(), excluded_planet_id, true);
+            });
     }
 
     // disable non-selectable planet panels
@@ -2901,7 +2907,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
 
     // redo contents and layout of panels, after enabling or disabling, so
     // they take this into account when doing contents
-    RefreshAllPlanetPanels(context);
+    RefreshAllPlanetPanels(context, GGHumanClientApp::GetApp()->EmpireID());
 
     SelectPlanet(initial_selected_planet_panel);
 
@@ -3074,12 +3080,12 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
-    ScriptingContext& context, int excluded_planet_id, bool require_prerender)
+    ScriptingContext& context, int empire_id, int excluded_planet_id, bool require_prerender)
 {
     for (auto& panel : m_planet_panels) {
         if (excluded_planet_id > 0 && panel->PlanetID() == INVALID_OBJECT_ID)
             continue;
-        panel->Refresh(context);
+        panel->Refresh(context, empire_id);
         if (require_prerender)
             panel->RequirePreRender();
     }
@@ -3396,7 +3402,9 @@ void SidePanel::PreRender() {
     // save initial scroll position so it can be restored after repopulating the planet panel container
     const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
 
-    ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext(); // mutable because RefreshInPreRender modifies universe to simulate effects
+    auto* app = GGHumanClientApp::GetApp();
+    ScriptingContext& context = app->GetContext(); // mutable because RefreshInPreRender modifies universe to simulate effects
+    const auto empire_id = app->EmpireID();
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
@@ -3406,7 +3414,7 @@ void SidePanel::PreRender() {
     if (s_needs_update) {
         for (auto& weak_panel : s_side_panels)
             if (auto panel = weak_panel.lock())
-                panel->UpdateImpl(context);
+                panel->UpdateImpl(context, empire_id);
     }
 
     // On a resize only DoLayout should be called.
@@ -3430,12 +3438,12 @@ void SidePanel::Update() {
             panel->RequirePreRender();
 }
 
-void SidePanel::UpdateImpl(ScriptingContext& context) {
+void SidePanel::UpdateImpl(ScriptingContext& context, int empire_id) {
     //std::cout << "SidePanel::UpdateImpl" << std::endl;
     if (m_system_resource_summary)
         m_system_resource_summary->Update();
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
-    m_planet_panel_container->RefreshAllPlanetPanels(context);
+    m_planet_panel_container->RefreshAllPlanetPanels(context, empire_id);
 }
 
 void SidePanel::Refresh() {

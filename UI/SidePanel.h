@@ -100,7 +100,7 @@ private:
 
     void DoLayout();
 
-    void UpdateImpl(ScriptingContext& context); ///< updates contents quickly.  to be used when meters or other objects' data changes
+    void UpdateImpl(ScriptingContext& context, int empire_id); ///< updates contents quickly.  to be used when meters or other objects' data changes
 
     /** Fully refreshes sidepanel and contents, recreating all contents from
       * stored system id.  All SidePanels are refreshed. */
