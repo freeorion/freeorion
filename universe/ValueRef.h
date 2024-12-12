@@ -109,8 +109,6 @@ struct FO_COMMON_API ValueRefBase {
         = default;
 #endif
 
-    [[nodiscard]] virtual constexpr bool operator==(const ValueRefBase& rhs) const = default;
-
 protected:
     constexpr ValueRefBase() noexcept = default;
     constexpr ValueRefBase(bool constant_expr, ReferenceType ref_type) noexcept :
@@ -160,6 +158,8 @@ protected:
         m_source_invariant(source_inv),
         m_constant_expr(constant_expr)
     {}
+
+    [[nodiscard]] constexpr bool operator==(const ValueRefBase& rhs) const = default;
 
     const ReferenceType m_ref_type = ReferenceType::INVALID_REFERENCE_TYPE;
     const ContainerType m_container_type = ContainerType::NONE;
