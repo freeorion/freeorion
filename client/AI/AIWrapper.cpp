@@ -241,7 +241,7 @@ namespace {
         auto app = ClientApp::GetApp();
         ScriptingContext context;
 
-        if (!OrderType::Check(app->EmpireID(), std::forward<Args>(args)..., context))
+        if (!OrderType::Check(app->EmpireID(), args..., context))
             return 0;
 
         app->Orders().IssueOrder(
