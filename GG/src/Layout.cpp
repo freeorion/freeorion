@@ -68,10 +68,10 @@ Flags<Alignment> Layout::ChildAlignment(const Wnd* wnd) const
     return it->second.alignment;
 }
 
-double Layout::RowStretch(std::size_t row) const
+float Layout::RowStretch(std::size_t row) const
 { return m_row_params[row].stretch; }
 
-double Layout::ColumnStretch(std::size_t column) const
+float Layout::ColumnStretch(std::size_t column) const
 { return m_column_params[column].stretch; }
 
 Y Layout::MinimumRowHeight(std::size_t row) const
