@@ -169,9 +169,10 @@ void ResourcePool::Update(const ObjectMap& objects) {
         } else {
             // if resource center's system is in a system group, put system
             // and its id into object group for that system group
-            auto& [objects, ids] = system_groups_to_object_groups.try_emplace(std::move(object_system_group)).first->second;
-            objects.insert(obj);
-            ids.insert(object_id);
+            auto& [sys_group_objs, obj_ids_in_sys_group] =
+                system_groups_to_object_groups.try_emplace(std::move(object_system_group)).first->second;
+            sys_group_objs.insert(obj);
+            obj_ids_in_sys_group.insert(object_id);
         }
     }
 

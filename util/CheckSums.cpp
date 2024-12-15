@@ -147,17 +147,17 @@ namespace CheckSums {
     static_assert(std::is_convertible_v<char, unsigned char> || std::is_convertible_v<char, signed char>);
 
     constexpr auto uc2scvals = [](const auto ucvals){
-        std::array<signed char, ucvals.size()> uc2scvals{};
+        std::array<signed char, ucvals.size()> uc2scvals_retval{};
         for (size_t idx = 0u; idx < ucvals.size(); ++idx)
-            uc2scvals[idx] = static_cast<signed char>(ucvals[idx]);
-        return uc2scvals;
+            uc2scvals_retval[idx] = static_cast<signed char>(ucvals[idx]);
+        return uc2scvals_retval;
     }(ucvals);
 
     constexpr auto sc2ucvals = [](const auto scvals) {
-        std::array<unsigned char, scvals.size()> sc2ucvals{};
+        std::array<unsigned char, scvals.size()> sc2ucvals_retval{};
         for (size_t idx = 0u; idx < scvals.size(); ++idx)
-            sc2ucvals[idx] = static_cast<unsigned char>(scvals[idx]);
-        return sc2ucvals;
+            sc2ucvals_retval[idx] = static_cast<unsigned char>(scvals[idx]);
+        return sc2ucvals_retval;
     }(scvals);
 
     constexpr auto csc1 = csc(ucvals);

@@ -807,9 +807,9 @@ namespace {
         if (line_data.size() <= line_index) // requested line is not present; return one past the last code point in the last non-empty line
             return CodePointIndexFromLineAndGlyphInLines(line_index, glyph_index, line_data);
 
-        const auto& cd = line_data.at(line_index).char_data;
+        const auto& cds = line_data.at(line_index).char_data;
 
-        if (glyph_index == CP0 || cd.empty()) {
+        if (glyph_index == CP0 || cds.empty()) {
             // get glyph at the end of the next previous non-empty line
             auto it = line_data.rbegin() + (line_data.size() - 1 - (line_index-1));
             const auto end_it = line_data.rend();
@@ -824,12 +824,12 @@ namespace {
             return CP0; // there is no prior glyph, so just use the first code point, which will be before any tags that affect the first glyph
         }
 
-        if (Value(glyph_index) >= cd.size()) // line is present but requested glyph is past end of that line, return one past end of line
-            return cd.back().code_point_index + CP1;
+        if (Value(glyph_index) >= cds.size()) // line is present but requested glyph is past end of that line, return one past end of line
+            return cds.back().code_point_index + CP1;
 
         // line is present and glyph is present and is not the first glyph in the line
         // return one past code point of previous glyph in the line
-        return cd.at(Value(glyph_index - CP1)).code_point_index + CP1;
+        return cds.at(Value(glyph_index - CP1)).code_point_index + CP1;
     }
 }
 
@@ -1725,8 +1725,8 @@ namespace {
     template <typename TagHandlerT>
     class CompiledRegex {
     public:
-        CompiledRegex(const TagHandlerT& tag_handler) :
-            m_tag_handler(tag_handler)
+        CompiledRegex(const TagHandlerT& tag_handler_in) :
+            m_tag_handler(tag_handler_in)
         {
             // Synonyms for s1 thru s5 sub matches
             xpr::mark_tag tag_name_tag(tag_name_tag_idx);
