@@ -9,7 +9,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DisableSpecificWarnings>4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4244;4251;4267;4275;4996</DisableSpecificWarnings>
       <ErrorReporting>None</ErrorReporting>
     </ClCompile>
     <Link>
