@@ -2103,10 +2103,10 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     const auto player_info_map = GetPlayerInfoMap();
     const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
-    for (auto& empire : m_empires | range_values) {
-        empire->UpdateOwnedObjectCounters(m_universe);
-        empire->PrepQueueAvailabilityInfoForSerialization(m_context);
-        empire->PrepPolicyInfoForSerialization(m_context);
+    for (auto& loop_empire : m_empires | range_values) {
+        loop_empire->UpdateOwnedObjectCounters(m_universe);
+        loop_empire->PrepQueueAvailabilityInfoForSerialization(m_context);
+        loop_empire->PrepPolicyInfoForSerialization(m_context);
     }
 
     player_connection->SendMessage(
@@ -3692,10 +3692,10 @@ namespace {
                     if (!building)
                         continue;
                     const auto building_id = building->ID();
-                    const auto initial_owner_id = building->Owner();
+                    const auto building_initial_owner_id = building->Owner();
                     building->SetOwner(annexer_empire_id);
                     annexed_object_ids.push_back(building_id);
-                    emit_annexation_sitrep(initial_owner_id, building_id, UniverseObjectType::OBJ_BUILDING);
+                    emit_annexation_sitrep(building_initial_owner_id, building_id, UniverseObjectType::OBJ_BUILDING);
                 }
             }
         }
