@@ -3415,10 +3415,10 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
 
     // re-send player initial turn update
     const ScriptingContext context{server};
-    for (auto& empire : server.Empires() | range_values) {
-        empire->UpdateOwnedObjectCounters(server.GetUniverse());
-        empire->PrepQueueAvailabilityInfoForSerialization(context);
-        empire->PrepPolicyInfoForSerialization(context);
+    for (auto& loop_empire : server.Empires() | range_values) {
+        loop_empire->UpdateOwnedObjectCounters(server.GetUniverse());
+        loop_empire->PrepQueueAvailabilityInfoForSerialization(context);
+        loop_empire->PrepPolicyInfoForSerialization(context);
     }
 
     const bool use_binary_serialization = sender->IsBinarySerializationUsed();
