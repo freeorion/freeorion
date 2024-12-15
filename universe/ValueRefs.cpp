@@ -2800,8 +2800,6 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
             };
         auto sendable_techs_costs_rng = sendable_techs | range_transform(name_to_name_tech_and_cost);
 
-        static constexpr auto second_less = [](const auto& l, const auto& r) noexcept -> bool
-        { return l.second < r.second; };
         using qq = decltype(*range_max_element(sendable_techs_costs_rng, second_less));
         static_assert(std::is_same_v<qq, std::pair<std::string&, float>>);
 
