@@ -69,22 +69,22 @@ Flags<Alignment> Layout::ChildAlignment(const Wnd* wnd) const
 }
 
 float Layout::RowStretch(std::size_t row) const
-{ return m_row_params[row].stretch; }
+{ return (row < m_row_params.size()) ? m_row_params[row].stretch : 0.0f; }
 
 float Layout::ColumnStretch(std::size_t column) const
-{ return m_column_params[column].stretch; }
+{ return (column < m_column_params.size()) ?  m_column_params[column].stretch : 0.0f; }
 
 Y Layout::MinimumRowHeight(std::size_t row) const
-{ return Y(m_row_params[row].min); }
+{ return (row < m_row_params.size()) ? Y(m_row_params[row].min) : Y0; }
 
 X Layout::MinimumColumnWidth(std::size_t column) const
-{ return X(m_column_params[column].min); }
+{ return (column < m_column_params.size()) ? X(m_column_params[column].min) : X0; }
 
 std::vector<std::vector<const Wnd*>> Layout::Cells() const
 {
     std::vector<std::vector<const Wnd*>> retval(m_cells.size());
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
-        retval[i].resize(m_cells[i].size());
+        retval[i].resize(m_cells[i].size(), nullptr);
         for (std::size_t j = 0; j < m_cells[i].size(); ++j) {
             retval[i][j] = m_cells[i][j].lock().get();
         }
@@ -130,19 +130,19 @@ std::vector<std::vector<Rect>> Layout::RelativeCellRects() const
 
 void Layout::StartingChildDragDrop(const Wnd* wnd, Pt offset)
 {
-    if (auto&& parent = Parent())
+    if (auto parent = Parent())
         parent->StartingChildDragDrop(wnd, offset);
 }
 
 void Layout::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
 {
-    if (auto&& parent = Parent())
+    if (auto parent = Parent())
         parent->CancellingChildDragDrop(wnds);
 }
 
 void Layout::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
 {
-    if (auto&& parent = Parent())
+    if (auto parent = Parent())
         parent->ChildrenDraggedAway(wnds, destination);
 }
 
