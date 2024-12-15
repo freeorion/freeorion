@@ -112,11 +112,11 @@ void TextBoxBrowseInfoWnd::InitBuffer()
 {
     const auto sz = Size();
     m_buffer.clear();
-    m_buffer.store(0.0f,        0.0f);
-    m_buffer.store(Value(sz.x), 0.0f);
-    m_buffer.store(Value(sz.x), Value(sz.y));
-    m_buffer.store(0.0f,        Value(sz.y));
-    m_buffer.store(0.0f,        0.0f);
+    m_buffer.store(0.0f,                            0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), 0.0f);
+    m_buffer.store(static_cast<float>(Value(sz.x)), Value(sz.y));
+    m_buffer.store(0.0f,                            static_cast<float>(Value(sz.y)));
+    m_buffer.store(0.0f,                            0.0f);
     m_buffer.createServerBuffer();
 }
 
@@ -136,7 +136,7 @@ void TextBoxBrowseInfoWnd::Render()
     glLoadIdentity();
     glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
     glDisable(GL_TEXTURE_2D);
-    glLineWidth(m_border_width);
+    glLineWidth(static_cast<GLfloat>(m_border_width));
     glEnableClientState(GL_VERTEX_ARRAY);
 
     m_buffer.activate();

@@ -588,14 +588,14 @@ void RadioButtonGroup::InsertButton(std::size_t index, std::shared_ptr<StateButt
         bn->Resize(Pt(std::max(bn->Width(), min_usable_size.x), std::max(bn->Height(), min_usable_size.y)));
     }
     Pt bn_sz = bn->Size();
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     if (!layout) {
         layout = Wnd::Create<Layout>(X0, Y0, ClientWidth(), ClientHeight(), 1, 1);
         SetLayout(layout);
     }
     const int CELLS_PER_BUTTON = m_expand_buttons ? 1 : 2;
-    const int X_STRETCH = (m_expand_buttons && m_expand_buttons_proportionally) ? Value(bn_sz.x) : 1;
-    const int Y_STRETCH = (m_expand_buttons && m_expand_buttons_proportionally) ? Value(bn_sz.y) : 1;
+    const float X_STRETCH = (m_expand_buttons && m_expand_buttons_proportionally) ? Value(bn_sz.x) : 1.0f;
+    const float Y_STRETCH = (m_expand_buttons && m_expand_buttons_proportionally) ? Value(bn_sz.y) : 1.0f;
     if (m_button_slots.empty()) {
         layout->Add(bn, 0, 0);
         if (m_expand_buttons) {
