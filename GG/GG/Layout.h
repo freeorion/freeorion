@@ -97,8 +97,8 @@ public:
     Flags<Alignment> ChildAlignment(const Wnd* wnd) const;          //! returns the aligment of child \a wnd.  \throw GG::Layout::NoSuchChild Throws if no such child exists.
     auto             BorderMargin() const noexcept { return m_border_margin; } //! returns the number of pixels that the layout will leave between its edges and the windows it contains
     auto             CellMargin() const noexcept { return m_cell_margin; }     //! returns the number of pixels the layout leaves between the edges of windows in adjacent cells
-    double           RowStretch(std::size_t row) const;             //! returns the stretch factor for row \a row.  Note that \a row is not range-checked.
-    double           ColumnStretch(std::size_t column) const;       //! returns the stretch factor for column \a column.  Note that \a column is not range-checked.
+    float            RowStretch(std::size_t row) const;             //! returns the stretch factor for row \a row.  Note that \a row is not range-checked.
+    float            ColumnStretch(std::size_t column) const;       //! returns the stretch factor for column \a column.  Note that \a column is not range-checked.
     Y                MinimumRowHeight(std::size_t row) const;       //! returns the minimum height allowed for row \a row.  Note that \a row is not range-checked.
     X                MinimumColumnWidth(std::size_t column) const;  //! returns the minimum height allowed for column \a column.  Note that \a column is not range-checked.
 
