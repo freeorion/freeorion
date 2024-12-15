@@ -801,8 +801,8 @@ std::vector<const std::decay_t<T>*> ObjectMap::findRaw(Pred pred) const
 
     auto& map{Map<DecayT, only_existing>()};
 
-    static constexpr auto not_null = [](const auto& p) -> bool { return p; };
-    static constexpr auto get_rawptr = [](const auto& p) { return p.get(); };
+    static constexpr auto not_null = [](const auto& p) noexcept(noexcept(bool(p))) -> bool { return p; };
+    static constexpr auto get_rawptr = [](const auto& p) noexcept(noexcept(p.get())) -> auto* { return p.get(); };
 
     if constexpr (is_int_range) {
         // TODO: special case for sorted range of int?
