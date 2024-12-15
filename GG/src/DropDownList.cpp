@@ -296,28 +296,34 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
     }
 }
 
-Pt ModalListPicker::DetermineListHeight(Pt _drop_down_size) {
-    auto drop_down_size = _drop_down_size;
+Pt ModalListPicker::DetermineListHeight(Pt drop_down_size) {
+    auto* const lb = LB();
+    if (!lb)
+        return drop_down_size;
 
     // Determine the expected height
     auto border_thick = 2 * GG::Y(ListBox::BORDER_THICK);
-    auto num_rows = std::min<int>(m_num_shown_rows, LB()->NumRows());
-    auto row_height = (*LB()->FirstRowShown())->Height();
+    auto num_rows = std::min<int>(m_num_shown_rows, lb->NumRows());
+
+    const auto first_shown_row_it = lb->FirstRowShown();
+    auto row_height = (*first_shown_row_it)->Height();
     auto expected_height = num_rows * row_height + border_thick;
 
+    const auto* const gui = GUI::GetGUI();
+
     // Shrink the height if too near app edge.
-    auto dist_to_app_edge = GUI::GetGUI()->AppHeight() - m_relative_to_wnd->Bottom();
+    const auto dist_to_app_edge = gui->AppHeight() - m_relative_to_wnd->Bottom();
     if (expected_height > dist_to_app_edge && row_height > Y0) {
-        auto reduced_num_rows = std::max(1, (dist_to_app_edge-border_thick) / row_height);
+        auto reduced_num_rows = std::max<int>(1, (dist_to_app_edge-border_thick) / row_height);
         expected_height = reduced_num_rows*row_height + border_thick;
     }
 
-    drop_down_size.y = GG::Y{expected_height};
+    lb->Resize(GG::Pt{drop_down_size.x, expected_height});
 
-    LB()->Resize(drop_down_size);
-    if (!LB()->Selections().empty())
-        LB()->BringRowIntoView(*(LB()->Selections().begin()));
-    GUI::GetGUI()->PreRenderWindow(LB());
+    const auto& sels = lb->Selections();
+    if (!sels.empty())
+        lb->BringRowIntoView(*(sels.begin()));
+    gui->PreRenderWindow(lb);
 
     return drop_down_size;
 }
@@ -330,45 +336,48 @@ void ModalListPicker::CorrectListSize() {
     if (!m_relative_to_wnd)
         return;
 
-    if (LB()->Visible())
+    auto* const lb = LB();
+
+    if (!lb || lb->Visible())
         return;
 
-    LB()->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
+    lb->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
 
-    Pt drop_down_size(m_relative_to_wnd->DroppedRowWidth(), m_relative_to_wnd->ClientHeight());
+    const Pt drop_down_size_initial_guess(m_relative_to_wnd->DroppedRowWidth(),
+                                          m_relative_to_wnd->ClientHeight());
 
-    if (LB()->Empty()) {
-        LB()->Resize(drop_down_size);
-    } else {
-        LB()->Show();
-
-        // The purpose of this code is to produce a drop down list that
-        // will be exactly m_num_shown_rows high and make sure that the
-        // selected row is prerendered in the same way when the drop down
-        // list is open or closed.
-
-        // The list needs to be resized twice.  The first resize with an
-        // estimated row height will add any list box chrome, like scroll
-        // bars to the list and may change the height of the row.  The
-        // second resize uses the corrected row height to finalize the drop
-        // down list size.
-
-        // Note:  Placing a tighter constraint on valid DropDownList rows
-        // of always returning the same fixed height regardless of status
-        // (width, prerender etc.) would mean this code could be reduced to
-        // check height and resize list just once.
-
-        drop_down_size = DetermineListHeight(drop_down_size);
-        DetermineListHeight(drop_down_size);
-
-        LB()->Hide();
+    if (lb->Empty()) {
+        lb->Resize(drop_down_size_initial_guess);
+        return;
     }
+
+    lb->Show();
+
+    // The purpose of this code is to produce a drop down list that
+    // will be exactly m_num_shown_rows high and make sure that the
+    // selected row is prerendered in the same way when the drop down
+    // list is open or closed.
+
+    // The list needs to be resized twice.  The first resize with an
+    // estimated row height will add any list box chrome, like scroll
+    // bars to the list and may change the height of the row.  The
+    // second resize uses the corrected row height to finalize the drop
+    // down list size.
+
+    // Note:  Placing a tighter constraint on valid DropDownList rows
+    // of always returning the same fixed height regardless of status
+    // (width, prerender etc.) would mean this code could be reduced to
+    // check height and resize list just once.
+    const auto drop_down_size_updated = DetermineListHeight(drop_down_size_initial_guess);
+    DetermineListHeight(drop_down_size_updated);
+
+    lb->Hide();
 }
 
 boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
-    bool numlock_on = mod_keys & MOD_KEY_NUM;
+    const bool numlock_on = mod_keys & MOD_KEY_NUM;
     if (!numlock_on) {
         // convert keypad keys into corresponding non-number keys
         switch (key) {
