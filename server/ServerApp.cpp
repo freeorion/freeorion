@@ -2294,7 +2294,7 @@ namespace {
         return retval;
     };
 
-    constexpr auto not_null = [](const auto* p) noexcept { return !!p; };
+    constexpr auto not_null = [](const auto* p) noexcept -> bool { return !!p; };
     constexpr auto to_owner = [](const auto* p) noexcept { return p->Owner(); };
 
     // .first: IDs of all empires with fleets at system with id \a system_id
@@ -2517,8 +2517,6 @@ namespace {
             DebugLogger(combat) << "   No warring combatants present: no combat.";
             return false;
         }
-
-        static constexpr auto not_null = [](const auto* p) noexcept -> bool { return !!p; };
 
         const auto overrides_for_empire =
             [&empire_vis_overrides](const int override_empire_id) -> const std::vector<int>& {
@@ -3688,9 +3686,7 @@ namespace {
                 emit_annexation_sitrep(initial_owner_id, planet_id, UniverseObjectType::OBJ_PLANET);
 
                 auto buildings = objects.findRaw<Building>(planet->BuildingIDs());
-                for (auto* building : buildings) {
-                    if (!building)
-                        continue;
+                for (auto* building : buildings | range_filter(not_null)) {
                     const auto building_id = building->ID();
                     const auto building_initial_owner_id = building->Owner();
                     building->SetOwner(annexer_empire_id);
@@ -3861,8 +3857,6 @@ namespace {
             retval[empire_id].reserve(fleets.size()); // reveal at most one ship per fleet
 
         // TODO: could consolidate fleets at the same system and only reveal one ship per system?
-
-        static constexpr auto not_null = [](const Fleet* f) noexcept -> bool { return !!f; };
 
         static constexpr auto is_obstructive = [](const Fleet* f) noexcept -> bool
         { return f->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
