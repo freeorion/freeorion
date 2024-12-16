@@ -1,7 +1,7 @@
 //! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
-//!  Copyright (C) 2013-2020 The FreeOrion Project
+//!  Copyright (C) 2013-2024 The FreeOrion Project
 //!
 //! Released under the GNU Lesser General Public License 2.1 or later.
 //! Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
@@ -195,55 +195,10 @@ void Edit::AcceptPastedText(const std::string& text)
 }
 
 CPSize Edit::GlyphIndexAt(X x) const
-{
-    const auto& line_data = GetLineData();
-    if (line_data.empty())
-        return CP0;
-    const auto& char_data = GetLineData().front().char_data;
-    if (char_data.empty())
-        return CP0;
-
-    CPSize retval = CP0;
-    const X first_char_offset = FirstCharOffset();
-    for (retval = CP0; Value(retval) < char_data.size(); ++retval) {
-        X curr_extent;
-        if (x + first_char_offset <= (curr_extent = char_data[Value(retval)].extent)) {
-            // the point falls within the character at index retval
-            const X prev_extent = retval != CP0 ? char_data[Value(retval - CP1)].extent : X0;
-            const X half_way = (prev_extent + curr_extent) / 2;
-            if (half_way <= x + first_char_offset) // if the point is more than halfway across the character, put the cursor *after* the character
-                ++retval;
-            break;
-        }
-    }
-    return retval;
-}
+{ return GG::GlyphIndexOfXOnLine0(GetLineData(), x, FirstCharOffset()); }
 
 CPSize Edit::CPIndexOfGlyphAt(X x) const
-{
-    const auto& line_data = GetLineData();
-    if (line_data.empty())
-        return CP0;
-    const auto& char_data = GetLineData().front().char_data;
-    if (char_data.empty())
-        return CP0;
-
-    CPSize retval_idx = CP0;
-    const X first_char_offset = FirstCharOffset();
-    for (retval_idx = CP0; Value(retval_idx) < char_data.size(); ++retval_idx) {
-        X curr_extent;
-        if (x + first_char_offset <= (curr_extent = char_data[Value(retval_idx)].extent)) {
-            // the point falls within the character at retval_idx
-            const X prev_extent = retval_idx != CP0 ? char_data[Value(retval_idx - CP1)].extent : X0;
-            const X half_way = (prev_extent + curr_extent) / 2;
-            if (half_way <= x + first_char_offset) // if the point is more than halfway across the character, put the cursor *after* the character
-                ++retval_idx;
-            break;
-        }
-    }
-
-    return char_data[Value(retval_idx)].code_point_index;
-}
+{ return GG::CodePointIndexOfXOnLine0(GetLineData(), x, FirstCharOffset()); }
 
 X Edit::FirstCharOffset() const
 {
@@ -255,7 +210,8 @@ X Edit::FirstCharOffset() const
     if (char_data.empty())
         return X0;
 
-    auto char_idx = std::min(char_data.size() - 1, Value(m_first_char_shown) - 1);
+    const auto first_char_shown = (m_first_char_shown > CP0) ? (m_first_char_shown - CP1) : CP0;
+    const auto char_idx = std::min(char_data.size() - 1, Value(first_char_shown));
     return char_data[char_idx].extent;
 }
 
