@@ -1937,6 +1937,64 @@ namespace {
 #endif
 
 
+namespace {
+    CONSTEXPR_FONT std::pair<CPSize, CPSize> GlyphAndCPIndicesOfXInLine(
+        const std::vector<::GG::Font::LineData::CharData>& char_data, X x, X offset)
+    {
+        if (char_data.empty())
+            return {CP0, CP0};
+        const CPSize cd_size_cp{char_data.size()}; // must be >= CP1
+
+        CPSize glyph_idx = CP0;
+        for (; glyph_idx < cd_size_cp; ++glyph_idx) {
+            const X curr_extent = char_data[Value(glyph_idx)].extent;
+
+            if (x + offset <= curr_extent) {
+                // the point falls within the character at index retval
+                const X prev_extent = (glyph_idx > CP0) ? char_data[Value(glyph_idx - CP1)].extent : X0;
+                const X half_way = (prev_extent + curr_extent) / 2;
+                if (half_way <= x + offset) // if the point is more than halfway across the character, put the cursor *after* the character
+                    ++glyph_idx;
+                break;
+            }
+        }
+
+        glyph_idx = std::min(glyph_idx, cd_size_cp); // range check for safety
+
+        CPSize cp_idx = CP0;
+        if (glyph_idx == CP0) {
+            cp_idx = CP0;
+        } else if (glyph_idx < cd_size_cp) {
+            cp_idx = char_data[Value(glyph_idx)].code_point_index;
+        } else {
+            const auto& last_glyph_data = char_data[Value(glyph_idx - CP1)];
+            cp_idx = last_glyph_data.code_point_index + CP1; // one code point past last glyph
+        }
+        return {glyph_idx, cp_idx};
+    }
+}
+
+CPSize GG::GlyphIndexOfX(const std::vector<Font::LineData::CharData>& char_data, X x, X offset)
+{ return GlyphAndCPIndicesOfXInLine(char_data, x, offset).first; }
+
+CPSize GG::GlyphIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X x, X offset)
+{
+    if (line_data.empty())
+        return CP0;
+    return GlyphIndexOfX(line_data.front().char_data, x, offset);
+}
+
+CPSize GG::CodePointIndexOfX(const std::vector<Font::LineData::CharData>& char_data, X x, X offset)
+{ return GlyphAndCPIndicesOfXInLine(char_data, x, offset).second; }
+
+CPSize GG::CodePointIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X x, X offset)
+{
+    if (line_data.empty())
+        return CP0;
+    return CodePointIndexOfX(line_data.front().char_data, x, offset);
+}
+
+
 ///////////////////////////////////////
 // class GG::Font::TextAndElementsAssembler
 ///////////////////////////////////////
