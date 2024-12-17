@@ -150,10 +150,13 @@ void MultiEdit::Render()
 
         const auto& line = lines[row];
         if (!line.Empty()) {
+            const auto& line_char_data = line.char_data;
+            const CPSize cd_size{line_char_data.size()};
+
             if (!multiselected || low_cursor_pos.first > row || row > high_cursor_pos.first) {
                 // just draw normal text on this line
-                Pt text_lr = text_pos + Pt(line.char_data.back().extent, HEIGHT);
-                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, CP0, row + 1, CPSize(line.char_data.size()));
+                Pt text_lr = text_pos + Pt(line_char_data.back().extent, HEIGHT);
+                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, CP0, row + 1, cd_size);
 
             } else {
                 // one or more chars of this row are selected, so highlight, then draw the range in the selected-text color
@@ -164,19 +167,19 @@ void MultiEdit::Render()
                 const CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
                 const bool ends_with_newline = LineEndsWithEndlineCharacter(lines, row, text);
                 // TODO: review if the following adjustment to idx3 is truly necessary; tests suggest it is not. if it is determined necessary, please comment why
-                const CPSize idx3{line.char_data.size() - (ends_with_newline ? 1u : 0u)}; 
+                const CPSize idx3{cd_size - (ends_with_newline ? CP1 : CP0)};
                 const CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
 
                 // draw text
                 const X text_l = (idx0 == idx1) ? text_pos.x :
-                                                  initial_text_x_pos + line.char_data[Value(idx1) - 1].extent;
+                                                  initial_text_x_pos + line_char_data[Value(idx1) - 1].extent;
                 Pt text_lr{text_l, text_pos.y + HEIGHT};
                 font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
                 // draw highlighting
                 if (idx1 != idx2)
-                    text_lr.x = initial_text_x_pos + line.char_data[Value(idx2) - 1].extent;
+                    text_lr.x = initial_text_x_pos + line_char_data[Value(idx2) - 1].extent;
                 FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
 
                 // draw highlighted text
@@ -190,7 +193,7 @@ void MultiEdit::Render()
                     // of the line, even if ends with newline, so that any tags associated with that
                     // final character will be processed.
                     font->RenderText(text_pos, text_lr, text, text_format, lines, rs,
-                                     row, idx2, row + 1, CPSize(line.char_data.size()));
+                                     row, idx2, row + 1, cd_size);
                 }
             }
         }
