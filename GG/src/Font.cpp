@@ -1939,7 +1939,7 @@ namespace {
 
 namespace {
     CONSTEXPR_FONT std::pair<CPSize, CPSize> GlyphAndCPIndicesOfXInLine(
-        const std::vector<::GG::Font::LineData::CharData>& char_data, X x, X offset)
+        const std::vector<::GG::Font::LineData::CharData>& char_data, X x)
     {
         if (char_data.empty())
             return {CP0, CP0};
@@ -1949,11 +1949,12 @@ namespace {
         for (; glyph_idx < cd_size_cp; ++glyph_idx) {
             const X curr_extent = char_data[Value(glyph_idx)].extent;
 
-            if (x + offset <= curr_extent) {
+            if (x <= curr_extent) {
                 // the point falls within the character at index retval
                 const X prev_extent = (glyph_idx > CP0) ? char_data[Value(glyph_idx - CP1)].extent : X0;
-                const X half_way = (prev_extent + curr_extent) / 2;
-                if (half_way <= x + offset) // if the point is more than halfway across the character, put the cursor *after* the character
+
+                // if the point is more than halfway across the character, put the cursor *after* the character
+                if ((prev_extent + curr_extent) <= x*2)
                     ++glyph_idx;
                 break;
             }
@@ -1972,10 +1973,45 @@ namespace {
         }
         return {glyph_idx, cp_idx};
     }
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#  if defined(__cpp_lib_constexpr_vector)
+
+    constexpr auto x_glyph_cp = []() {            //  01234567890123    // code points
+        const std::string text(tagged_test_text); // "ab<i>cd</i>ef"    // raw text
+                                                  //  01   23    45     // glyphs
+        const auto elems = ElementsForTaggedText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, dummy_next_fn);
+        const auto& cd0 = line_data.front().char_data;
+
+        const auto get_gly_cp = [&cd0](uint8_t x) {
+            const auto temp = GlyphAndCPIndicesOfXInLine(cd0, X{x});
+            return std::pair{static_cast<uint8_t>(temp.first), static_cast<uint8_t>(temp.second)};
+        };
+
+        std::array<uint8_t, 32> retval1{};
+        std::array<uint8_t, 32> retval2{};
+        for (uint8_t x_idx = 0u; x_idx < retval1.size(); ++x_idx)
+            std::tie(retval1[x_idx], retval2[x_idx]) = get_gly_cp(x_idx);
+
+        return std::pair{retval1, retval2};
+    }();
+
+    constexpr std::array<uint8_t, 32> glyphs_of_x_expected{0,0, 1,1,1,1, 2,2,2,2, 3,3,3,3, 4,4,4,4,
+                                                                5,5,5,5, 6,6,6,6, 6,6,6,6, 6,6};
+    static_assert(x_glyph_cp.first == glyphs_of_x_expected);
+
+    constexpr std::array<uint8_t, 32> cps_of_x_expected{0,0, 1,1,1,1, 5,5,5,5, 6,6,6,6, 11,11,11,11,
+                                                             12,12,12,12, 13,13,13,13, 13,13,13,13, 13,13};
+    static_assert(x_glyph_cp.second == cps_of_x_expected);
+
+#  endif
+#endif
 }
 
 CPSize GG::GlyphIndexOfX(const std::vector<Font::LineData::CharData>& char_data, X x, X offset)
-{ return GlyphAndCPIndicesOfXInLine(char_data, x, offset).first; }
+{ return GlyphAndCPIndicesOfXInLine(char_data, x + offset).first; }
 
 CPSize GG::GlyphIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X x, X offset)
 {
@@ -1985,7 +2021,7 @@ CPSize GG::GlyphIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X 
 }
 
 CPSize GG::CodePointIndexOfX(const std::vector<Font::LineData::CharData>& char_data, X x, X offset)
-{ return GlyphAndCPIndicesOfXInLine(char_data, x, offset).second; }
+{ return GlyphAndCPIndicesOfXInLine(char_data, x + offset).second; }
 
 CPSize GG::CodePointIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X x, X offset)
 {
