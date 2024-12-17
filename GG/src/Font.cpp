@@ -2529,34 +2529,34 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
 
 
     for (std::size_t i = begin_line; i < end_line; ++i) {
-        const LineData& line = line_data[i];
+        const auto& line = line_data[i];
+        if (line.Empty())
+            continue;
+        const auto& line_char_data = line.char_data;
+        const CPSize cd_size{line_char_data.size()};
 
         const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
         X x = x_origin;
 
         const Y y = LinePosY(y_origin, i, begin_line, m_lineskip);
 
-
-        const CPSize start = (i != begin_line) ?
-            CP0 : std::max(CP0, std::min(begin_char, CPSize(line.char_data.size() - 1)));
-        const CPSize end = (i != end_line - 1) ? CPSize(line.char_data.size()) :
-            std::max(CP0, std::min(end_char, CPSize(line.char_data.size())));
+        const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
+        const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
 
 
         for (CPSize j = start; j < end; ++j) {
-            const auto& char_data = line.char_data[Value(j)];
-            for (const auto& tag : char_data.tags)
+            const auto& glyph = line_char_data[Value(j)];
+            for (const auto& tag : glyph.tags)
                 HandleTag(tag, render_state);
-            const uint32_t c = get_next_char(Value(char_data.string_index));
+            const uint32_t c = get_next_char(Value(glyph.string_index));
 
             if (c == WIDE_NEWLINE)
                 continue;
             const auto it = m_glyphs.find(c);
             if (it == m_glyphs.end())
-                x = x_origin + char_data.extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
+                x = x_origin + glyph.extent; // move forward to the right-side extent of the character when a whitespace or unprintable glyph is requested
             else
                 x += StoreGlyph(Pt(x, y), it->second, render_state, cache);
-
         }
     }
 
