@@ -70,32 +70,35 @@ void Edit::Render()
 
     BeginScissorClipping(Pt(client_ul.x - 1, client_ul.y), client_lr);
 
-    X first_char_offset = FirstCharOffset();
-    Y text_y_pos = ToY(ul.y + ((lr.y - ul.y) - GetFont()->Height()) / 2.0);
-    CPSize last_visible_char = LastVisibleChar();
-    const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, GetLineData());
-    const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, GetLineData());
-    Font::RenderState rs{text_color_to_use};
     const auto& font = GetFont();
+    const auto& line_data = GetLineData();
 
+    X first_char_offset = FirstCharOffset();
+    Y text_y_pos = ToY(ul.y + ((lr.y - ul.y) - font->Height()) / 2.0);
+    CPSize last_visible_char = LastVisibleChar();
+    const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, line_data);
+    const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
+    Font::RenderState rs{text_color_to_use};
 
-    if (!GetLineData().empty() && MultiSelected()) {
-        const auto& char_data = GetLineData()[0].char_data;
+    const auto text_sv = std::string_view(Text()).substr(Value(INDEX_0), Value(INDEX_END - INDEX_0));
+
+    if (!line_data.empty() && MultiSelected()) {
+        const auto& char_data = line_data.front().char_data;
 
         // if one or more chars are selected, hilite, then draw the range in the selected-text color
         CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::max(CP0, std::min(m_cursor_pos.first, m_cursor_pos.second)));
         CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(CP0, std::max(m_cursor_pos.first, m_cursor_pos.second)));
 
         // draw hilighting background box
-        Pt hilite_ul(client_ul.x + (low_cursor_pos < CP1 ? X0 : char_data[Value(low_cursor_pos - CP1)].extent) - first_char_offset, client_ul.y);
-        Pt hilite_lr(client_ul.x + (high_cursor_pos < CP1 ? X0 : char_data[Value(high_cursor_pos - CP1)].extent) - first_char_offset, client_lr.y);
+        Pt hilite_ul(client_ul.x + ((low_cursor_pos < CP1) ? X0 : char_data[Value(low_cursor_pos - CP1)].extent) - first_char_offset, client_ul.y);
+        Pt hilite_lr(client_ul.x + ((high_cursor_pos < CP1) ? X0 : char_data[Value(high_cursor_pos - CP1)].extent) - first_char_offset, client_lr.y);
         FlatRectangle(hilite_ul, hilite_lr, hilite_color_to_use, CLR_ZERO, 0);
 
         // draw text
-        font->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)), rs);
+        font->RenderText(Pt(client_ul.x, text_y_pos), text_sv, rs);
 
     } else { // no selected text
-        font->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)), rs);
+        font->RenderText(Pt(client_ul.x, text_y_pos), text_sv, rs);
 
         if (GUI::GetGUI()->FocusWnd().get() == this) {
             // if we have focus, draw the caret as a simple vertical line
@@ -225,13 +228,16 @@ X Edit::ScreenPosOfChar(CPSize idx) const
     if (idx == CP0)
         return line_first_char_x;
 
-    const auto& char_data{line_data.front().char_data};
+    const auto& char_data = line_data.front().char_data;
+    if (char_data.empty())
+        return line_first_char_x;
+
     // get index of previous character to the location of the requested char
     // get the extent to the right of that char to get the left position of the requested char
-    auto char_idx = std::min(char_data.size() - 1, Value(idx) - 1);
-    X line_extent_to_idx_char = char_data[char_idx].extent;
+    auto char_idx = std::min(char_data.size() - 1, Value(idx - CP1));
+    X line_extent_to_right_of_idx_char = char_data[char_idx].extent;
 
-    return line_first_char_x + line_extent_to_idx_char;
+    return line_first_char_x + line_extent_to_right_of_idx_char;
 }
 
 CPSize Edit::LastVisibleChar() const
@@ -239,7 +245,7 @@ CPSize Edit::LastVisibleChar() const
     const auto& line_data = GetLineData();
     if (line_data.empty())
         return CP0;
-    const auto& char_data = line_data[0].char_data;
+    const auto& char_data = line_data.front().char_data;
 
     const CPSize line_limit = std::min(Length(), CPSize(char_data.size()));
     const X client_size_x = ClientSize().x;
@@ -251,7 +257,7 @@ CPSize Edit::LastVisibleChar() const
             if (client_size_x <= X0 - first_char_offset)
                 break;
         } else {
-            const std::size_t retval_minus_1 = Value(retval) - 1;
+            const std::size_t retval_minus_1 = Value(retval - CP1);
             const auto retval_minus_1_char_data{char_data.at(retval_minus_1)};
             if (client_size_x <= retval_minus_1_char_data.extent - first_char_offset)
                 break;
