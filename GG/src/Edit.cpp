@@ -86,8 +86,8 @@ void Edit::Render()
         const auto& char_data = line_data.front().char_data;
 
         // if one or more chars are selected, hilite, then draw the range in the selected-text color
-        CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::max(CP0, std::min(m_cursor_pos.first, m_cursor_pos.second)));
-        CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(CP0, std::max(m_cursor_pos.first, m_cursor_pos.second)));
+        CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::min(m_cursor_pos.first, m_cursor_pos.second));
+        CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(m_cursor_pos.first, m_cursor_pos.second));
 
         // draw hilighting background box
         Pt hilite_ul(client_ul.x + ((low_cursor_pos < CP1) ? X0 : char_data[Value(low_cursor_pos - CP1)].extent) - first_char_offset, client_ul.y);
