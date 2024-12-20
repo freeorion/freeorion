@@ -90,10 +90,10 @@ namespace {
                 m_timer.expires_after(std::chrono::seconds(2));
                 m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_context->run();
-                m_io_context->reset();
+                m_io_context->restart();
                 if (m_receive_successful) {
                     auto address = (m_server_name == "localhost") ?
-                        address::from_string("127.0.0.1") : m_sender_endpoint.address();
+                        make_address("127.0.0.1") : m_sender_endpoint.address();
                     m_servers.emplace_back(address, m_server_name);
                 }
                 m_receive_successful = false;
@@ -377,13 +377,13 @@ bool ClientNetworking::Impl::ConnectToServer(const ClientNetworking* const self,
     TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Resolved.";
     // configure the deadline timer to close socket and cancel connection attempts at timeout
     m_deadline_has_expired = false;
-    m_deadline_timer.expires_from_now(timeout);
+    m_deadline_timer.expires_after(timeout);
     m_deadline_timer.async_wait([this](const auto& err) { HandleDeadlineTimeout(err); });
 
     try {
         TraceLogger(network) << "ClientNetworking::Impl::ConnectToServer() - Starting asio event loop";
         m_io_context.run(); // blocks until connection or timeout
-        m_io_context.reset();
+        m_io_context.restart();
 
         if (IsConnected()) {
             const auto connection_time = Clock::now() - start_time;
@@ -438,7 +438,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
     }
 
     if (is_open)
-        m_io_context.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
+        boost::asio::post(m_io_context, boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
 }
 
 void ClientNetworking::Impl::SetPlayerID(int player_id) {
@@ -452,7 +452,7 @@ void ClientNetworking::Impl::SendMessage(Message&& message) {
         return;
     }
     TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_context.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, std::move(message)));
+    boost::asio::post(m_io_context, boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, std::move(message)));
 }
 
 void ClientNetworking::Impl::SendSelfMessage(Message&& message) {
@@ -510,7 +510,7 @@ void ClientNetworking::Impl::HandleConnection(const boost::system::error_code& e
                 m_socket.async_connect(*endpoint_it, handle_connection);
             };
 
-            m_reconnect_timer.expires_from_now(std::chrono::milliseconds(100));
+            m_reconnect_timer.expires_after(std::chrono::milliseconds(100));
             m_reconnect_timer.async_wait(handle_connection_deadlined);
 
         } else {
@@ -601,7 +601,7 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     }
     decltype(m_outgoing_messages) empty_queue;
     m_outgoing_messages.swap(empty_queue); // clear queue
-    m_io_context.reset();
+    m_io_context.restart();
     { // Mutex scope
         std::scoped_lock lock(m_mutex);
         m_rx_connected = false;
