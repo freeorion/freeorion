@@ -324,7 +324,7 @@ public:
     CUILinkTextMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
-    const std::vector<GG::Font::LineData>& GetLineData() const noexcept override { return CUIMultiEdit::GetLineData(); }
+    const GG::Font::LineVec& GetLineData() const noexcept override { return CUIMultiEdit::GetLineData(); }
     const std::shared_ptr<GG::Font>& GetFont() const noexcept override { return CUIMultiEdit::GetFont(); }
 
     GG::Pt TextUpperLeft() const override;
