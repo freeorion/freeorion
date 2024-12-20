@@ -18,14 +18,22 @@
 using namespace GG;
 
 namespace {
-    bool LineEndsWithEndlineCharacter(const std::vector<Font::LineData>& lines,
-                                      std::size_t line, std::string_view original_string)
+    CONSTEXPR_FONT bool LineEndsWithEndlineCharacter(const Font::LineData& line, std::string_view original_string)
     {
-        assert(line < lines.size());
-        if (lines[line].Empty())
+        if (line.Empty())
             return false;
-        else
-            return original_string[Value(lines[line].char_data.back().string_index)] == '\n';
+        const auto str_idx = Value(line.char_data.back().string_index);
+        if (str_idx < original_string.size())
+            return original_string[str_idx] == '\n';
+        return false;
+    }
+
+    CONSTEXPR_FONT bool LineEndsWithEndlineCharacter(const Font::LineVec& lines,
+                                                     std::size_t line_idx, std::string_view original_string)
+    {
+        if (line_idx < lines.size())
+            return false;
+        return LineEndsWithEndlineCharacter(lines.at(line_idx), original_string);
     }
 }
 
@@ -148,7 +156,7 @@ void MultiEdit::Render()
         Pt text_pos(cl_ul.x + RowStartX(row), row_y_pos);
         const X initial_text_x_pos = text_pos.x;
 
-        const auto& line = lines[row];
+        const auto& line = lines.at(row);
         if (!line.Empty()) {
             const auto& line_char_data = line.char_data;
             const CPSize cd_size{line_char_data.size()};
@@ -172,14 +180,14 @@ void MultiEdit::Render()
 
                 // draw text
                 const X text_l = (idx0 == idx1) ? text_pos.x :
-                                                  initial_text_x_pos + line_char_data[Value(idx1) - 1].extent;
+                                                  initial_text_x_pos + line_char_data.at(Value(idx1 - CP1)).extent;
                 Pt text_lr{text_l, text_pos.y + HEIGHT};
                 font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx0, row + 1, idx1);
                 text_pos.x = text_lr.x;
 
                 // draw highlighting
                 if (idx1 != idx2)
-                    text_lr.x = initial_text_x_pos + line_char_data[Value(idx2) - 1].extent;
+                    text_lr.x = initial_text_x_pos + line_char_data.at(Value(idx2 - CP1)).extent;
                 FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
 
                 // draw highlighted text
@@ -187,7 +195,7 @@ void MultiEdit::Render()
                 text_pos.x = text_lr.x;
 
                 if (idx2 != idx3) {
-                    text_lr.x = initial_text_x_pos + line.char_data[Value(idx3) - 1].extent;
+                    text_lr.x = initial_text_x_pos + line.char_data.at(Value(idx3 - CP1)).extent;
 
                     // render the text after the highlighted text, all the way through to the end
                     // of the line, even if ends with newline, so that any tags associated with that
@@ -204,7 +212,7 @@ void MultiEdit::Render()
             X caret_x = initial_text_x_pos;
             if (!line.Empty() && m_cursor_begin.second > CP0) {
                 const auto caret_char_idx = Value(m_cursor_begin.second - CP1);
-                caret_x += line.char_data[caret_char_idx].extent;
+                caret_x += line.char_data.at(caret_char_idx).extent;
             }
             glColor(text_color_to_use);
             Line(caret_x, row_y_pos, caret_x, row_y_pos + LINESKIP);
@@ -313,7 +321,7 @@ void MultiEdit::SetText(std::string str)
             bool found_cursor_begin = false;
             bool found_cursor_end = false;
             for (std::size_t i = 0; i < line_data.size(); ++i) {
-                const auto& ldi{line_data[i]};
+                const auto& ldi{line_data.at(i)};
                 if (ldi.Empty())
                     continue;
                 const auto char_back_cp{ldi.char_data.back().code_point_index};
@@ -338,9 +346,9 @@ void MultiEdit::SetText(std::string str)
         m_cursor_end.second = CP0;
     } else if (line_data.size() <= m_cursor_end.first) {
         m_cursor_end.first = line_data.size() - 1;
-        m_cursor_end.second = CPSize(line_data[m_cursor_end.first].char_data.size());
-    } else if (line_data[m_cursor_end.first].char_data.size() < Value(m_cursor_end.second)) {
-        m_cursor_end.second = CPSize(line_data[m_cursor_end.first].char_data.size());
+        m_cursor_end.second = CPSize(line_data.at(m_cursor_end.first).char_data.size());
+    } else if (line_data.at(m_cursor_end.first).char_data.size() < Value(m_cursor_end.second)) {
+        m_cursor_end.second = CPSize(line_data.at(m_cursor_end.first).char_data.size());
     }
     m_cursor_begin = m_cursor_end; // eliminate any hiliting
 
@@ -445,8 +453,8 @@ std::pair<std::size_t, CPSize> MultiEdit::GlyphAt(Pt pt) const
         return {0, CP0};
 
     const auto row = RowAt(pt.y);
-    const auto constrained_row = std::min(row, line_data.size() - 1);
-    const CPSize line_sz{line_data[constrained_row].char_data.size()};
+    const auto constrained_row = std::min(row, line_data.size() - 1u);
+    const CPSize line_sz{line_data.at(constrained_row).char_data.size()};
 
     const auto char_idx = (row > constrained_row) ? line_sz : std::min(GlyphAt(row, pt.x), line_sz);
 
@@ -493,7 +501,7 @@ X MultiEdit::RowStartX(std::size_t row) const
     const auto& line_data = GetLineData();
     if (line_data.empty() || line_data.size() <= row)
         return retval;
-    const auto& row_data = line_data[row];
+    const auto& row_data = line_data.at(row);
     if (row_data.Empty())
         return retval;
     const X line_width = row_data.char_data.back().extent;
@@ -511,14 +519,17 @@ X MultiEdit::RowStartX(std::size_t row) const
 
 X MultiEdit::CharXOffset(std::size_t row, CPSize idx) const
 {
-    if (idx <= CP0)
+    if (idx == CP0)
         return X0; // first char starts at position 0 on line (assuming ALIGN_LEFT ?)
     const auto& ld{GetLineData()};
     if (ld.empty() || row >= ld.size())
         return X0;
-    const auto& cd{ld[row].char_data};
-    const std::size_t idxm1 = Value(idx) - std::size_t(1u); // previous char
-    return cd[idxm1].extent; // right side of previous char is left side of current char
+    const auto& cd = ld.at(row).char_data;
+    if (cd.empty())
+        return X0;
+    if (Value(idx) >= cd.size())
+        return cd.back().extent; // right side of last char
+    return cd.at(Value(idx - CP1)).extent; // right side of previous char is left side of requested char
 }
 
 std::size_t MultiEdit::RowAt(Y y) const
@@ -526,12 +537,14 @@ std::size_t MultiEdit::RowAt(Y y) const
     const auto format = GetTextFormat();
     y += m_first_row_shown_y_from_top_of_text;
 
+    const auto lineskip = std::max(GG::Y1, GetFont()->Lineskip());
+
     if ((format & FORMAT_TOP) || m_contents_sz.y - ClientSize().y < Y0) {
-        return y / GetFont()->Lineskip();
+        return y / lineskip;
 
     } else {
         return NumLines() -
-            (ClientSize().y + (m_vscroll && m_hscroll ? BottomMargin() : Y0) - y - 1) / GetFont()->Lineskip();
+            (ClientSize().y + (m_vscroll && m_hscroll ? BottomMargin() : Y0) - y - 1) / lineskip;
     }
 }
 
@@ -545,7 +558,7 @@ CPSize MultiEdit::GlyphAt(std::size_t row, X x) const
         return CPSize(line_data.back().char_data.size());
 
     //std::cout << "GlyphAt row: " << row << " X: " << x << std::endl;
-    const Font::LineData& line = line_data[row];
+    const auto& line = line_data.at(row);
     // empty line?
     if (line.char_data.empty())
         return CP0;
@@ -567,13 +580,13 @@ CPSize MultiEdit::GlyphAt(std::size_t row, X x) const
     // in middle of line. advance characters until within or left of position x
     CPSize retval(CP0);
     while (Value(retval) < line.char_data.size() &&
-           line.char_data[Value(retval)].extent < x)
+           line.char_data.at(Value(retval)).extent < x)
     { ++retval; }
 
     // pick between previous and partially-past character
     if (Value(retval) < line.char_data.size()) {
-        X prev_extent = (retval != CP0) ? line.char_data[Value(retval) - 1].extent : X0;
-        X half_way = (prev_extent + line.char_data[Value(retval)].extent) / 2;
+        X prev_extent = (retval != CP0) ? line.char_data.at(Value(retval - CP1)).extent : X0;
+        X half_way = (prev_extent + line.char_data.at(Value(retval)).extent) / 2;
         if (half_way < x) // if the point is more than halfway across the character, put the cursor *after* the character
             ++retval;
     }
@@ -608,7 +621,7 @@ CPSize MultiEdit::FirstVisibleChar(std::size_t row) const
     const auto& line_data = GetLineData();
     if (line_data.empty())
         return CP0;
-    const auto& line = line_data[row];
+    const auto& line = line_data.at(row);
     if (line.Empty())
         return GlyphAt(row, X0);
     else
@@ -620,7 +633,7 @@ CPSize MultiEdit::LastVisibleChar(std::size_t row) const
     const auto& line_data = GetLineData();
     if (line_data.empty())
         return CP0;
-    const auto& line = line_data[row];
+    const auto& line = line_data.at(row);
     if (line.Empty())
         return GlyphAt(row, ClientSize().x);
     else
@@ -808,9 +821,9 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
 
     const auto& linedata{GetLineData()};
     const CPSize cd_cursor_first_sz = (linedata.size() > m_cursor_begin.first) ?
-        CPSize{linedata[m_cursor_begin.first].char_data.size()} : CP0;
+        CPSize{linedata.at(m_cursor_begin.first).char_data.size()} : CP0;
     const CPSize cd_cursor_end_sz = (linedata.size() > m_cursor_end.first) ?
-        CPSize{linedata[m_cursor_end.first].char_data.size()} : CP0;
+        CPSize{linedata.at(m_cursor_end.first).char_data.size()} : CP0;
 
     switch (key) {
     case Key::GGK_RETURN:
@@ -839,16 +852,25 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
         if (MultiSelected() && !shift_down) {
             m_cursor_begin = m_cursor_end = LowCursorPos();
         } else if (CP0 < m_cursor_end.second) {
+            // move to previous char on current line
             --m_cursor_end.second;
         } else if (0 < m_cursor_end.first) {
+            // move to previous line
             if (linedata.empty()) {
                 m_cursor_end.first = 0;
                 m_cursor_end.second = CP0;
             } else {
                 --m_cursor_end.first;
-                m_cursor_end.second = cd_cursor_first_sz;
-                if (LineEndsWithEndlineCharacter(linedata, m_cursor_end.first, Text()))
+                const auto& line = linedata.at(m_cursor_end.first);
+                m_cursor_end.second = CPSize(line.char_data.size());
+                //std::cout << "put cursor end at " << m_cursor_end.first
+                //          << " : " << Value(m_cursor_end.second) << std::endl;
+                
+                if (auto res = LineEndsWithEndlineCharacter(line, Text())) {
                     --m_cursor_end.second;
+                    //std::cout << "last char is newline so moved to " << m_cursor_end.first
+                    //          << " : " << Value(m_cursor_end.second) << std::endl;
+                }
             }
         }
         if (!shift_down)
@@ -960,7 +982,7 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
             emit_signal = true;
         } else if (!linedata.empty() && 0 < m_cursor_begin.first) {
             m_cursor_end.first = --m_cursor_begin.first;
-            m_cursor_begin.second = CPSize(linedata[m_cursor_begin.first].char_data.size());
+            m_cursor_begin.second = CPSize(linedata.at(m_cursor_begin.first).char_data.size());
             if (LineEndsWithEndlineCharacter(linedata, m_cursor_begin.first, Text()))
                 --m_cursor_begin.second;
             m_cursor_end.second = m_cursor_begin.second;
@@ -975,7 +997,7 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
             ClearSelected();
             emit_signal = true;
         } else if (!linedata.empty() &&
-                   Value(m_cursor_begin.second) < linedata[m_cursor_begin.first].char_data.size())
+                   Value(m_cursor_begin.second) < linedata.at(m_cursor_begin.first).char_data.size())
         {
             // cursor is not at the end of its current line
             Erase(m_cursor_begin.first, m_cursor_begin.second, CP1);
@@ -1349,6 +1371,8 @@ void MultiEdit::AcceptPastedText(const std::string& text)
         //std::cout << "right after inserting, cursor pose: " << this->m_cursor_pos.first << " // " << this->m_cursor_pos.second << std::endl;
     }
 
+    const auto& line_data = GetLineData();
+
     if (modified_text) {
         // moves cursor to end of pasted text
         //std::cout << "initial cursor pos: " << m_cursor_pos.first << " - " << m_cursor_pos.second << std::endl;
@@ -1368,20 +1392,20 @@ void MultiEdit::AcceptPastedText(const std::string& text)
 
         // the cursor might be off the bottom if the bottom row was just
         // chopped off to satisfy m_max_lines_history
-        if (GetLineData().empty()) {
+        if (line_data.empty()) {
             m_cursor_begin.first = 0;
             m_cursor_begin.second = CP0;
-        } else if (GetLineData().size() - 1 < m_cursor_begin.first) {
-            m_cursor_begin.first = GetLineData().size() - 1;
-            m_cursor_begin.second = CPSize(GetLineData()[m_cursor_begin.first].char_data.size());
+        } else if (line_data.size() - 1 < m_cursor_begin.first) {
+            m_cursor_begin.first = line_data.size() - 1;
+            m_cursor_begin.second = CPSize(line_data.at(m_cursor_begin.first).char_data.size());
         }
         m_cursor_end = m_cursor_begin;
 
         //std::cout << "after newline checks, cursor begin/end at line: " << m_cursor_end.first << " char: " << m_cursor_end.second << std::endl;
     }
 
-    CPSize begin_cursor_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_begin.first, m_cursor_begin.second, GetLineData());
-    CPSize end_cursor_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, GetLineData());
+    CPSize begin_cursor_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_begin.first, m_cursor_begin.second, line_data);
+    CPSize end_cursor_cp_idx = CodePointIndexOfLineAndGlyph(m_cursor_end.first, m_cursor_end.second, line_data);
     this->m_cursor_pos = {begin_cursor_cp_idx, end_cursor_cp_idx};
 
     //std::cout << "after converting cursor begin/end to cursor pos, cursor pos: " << m_cursor_pos.first << " - " << m_cursor_pos.second << std::endl;

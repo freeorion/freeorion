@@ -506,10 +506,10 @@ void TextLinker::LocateLinks() {
             current_link->rects.emplace_back(GG::X0, y_posn, GG::X0, y_posn + font->Height());
 
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
-            const GG::X x_posn = (i > 0) ? curr_line.char_data[static_cast<std::size_t>(i - 1)].extent : GG::X0;
+            const GG::X x_posn = (i > 0) ? curr_line.char_data.at(static_cast<std::size_t>(i - 1)).extent : GG::X0;
             // The link text_posn is at the beginning of the tag, whereas
             // char_data jumps over tags. That is why we cannot test for precise equality
-            const auto cdsi = Value(curr_line.char_data[i].string_index);
+            const auto cdsi = Value(curr_line.char_data.at(i).string_index);
             const auto [first, lastplusone] = current_link->real_text_posn;
 
             if (!inside_link &&
