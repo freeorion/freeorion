@@ -115,7 +115,7 @@ Pt TextControl::MinUsableSize(X width) const
     // Create dummy line data with line breaks added so that lines are not wider than width.
     Flags<TextFormat> dummy_format(m_format);
     auto dummy_line_data = m_font ?
-        m_font->DetermineLines(m_text, dummy_format, width, m_text_elements) : std::vector<Font::LineData>{};
+        m_font->DetermineLines(m_text, dummy_format, width, m_text_elements) : Font::LineVec{};
     m_cached_minusable_size = (m_font ? m_font->TextExtent(dummy_line_data) : Pt{})
         + (ClientUpperLeft() - UpperLeft()) + (LowerRight() - ClientLowerRight());
     m_cached_minusable_size_width = width;

@@ -480,13 +480,14 @@ public:
         CONSTEXPR_FONT bool Empty() const noexcept { return char_data.empty(); }
 
         /** Data on each individual glyph. */
-        std::vector<CharData> char_data;
+        using CharVec = std::vector<CharData>;
+        CharVec char_data;
 
         /** FORMAT_LEFT, FORMAT_CENTER, or FORMAT_RIGHT; derived from text
             format flags and/or formatting tags in the text. */
         Alignment justification = ALIGN_CENTER;
     };
-
+    using LineVec = std::vector<LineData>;
 
 
     /** \brief Holds the state of tags during rendering of text.
@@ -633,25 +634,25 @@ public:
 
     /** Formatted text rendering. */
     void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
-                    const std::vector<LineData>& line_data, RenderState& render_state) const;
+                    const LineVec& line_data, RenderState& render_state) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
         <i>begin_char</i>, <i>line_data</i>), CodePointIndexOf(<i>end_line</i> -
         1, <i>end_char</i>, <i>line_data</i>)). */
     void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
-                    const std::vector<LineData>& line_data, RenderState& render_state,
+                    const LineVec& line_data, RenderState& render_state,
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
 
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
-                       RenderCache& cache, const std::vector<LineData>& line_data,
+                       RenderCache& cache, const LineVec& line_data,
                        RenderState& render_state) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(Pt pt1, Pt pt2, const std::string& text,
-                       const Flags<TextFormat> format, const std::vector<LineData>& line_data,
+                       const Flags<TextFormat> format, const LineVec& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
 
@@ -660,16 +661,16 @@ public:
 
     /** Sets \a render_state as if all the text in \a line_data
       * before (<i>begin_line</i>, <i>begin_char</i>) had just been rendered. */
-    static void ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
+    static void ProcessTagsBefore(const LineVec& line_data, RenderState& render_state,
                                   std::size_t begin_line, CPSize begin_char);
     /** Sets \a render_state as if all the text in \a line_data had just been rendered. */
-    static void ProcessTags(const std::vector<LineData>& line_data, RenderState& render_state);
+    static void ProcessTags(const LineVec& line_data, RenderState& render_state);
 
     /** Sets \a render_state as if all the text in \a char_aata before \a begin_char had just been rendered. */
-    static void ProcessLineTagsBefore(const std::vector<LineData::CharData>& char_data,
+    static void ProcessLineTagsBefore(const LineData::CharVec& char_data,
                                       RenderState& render_state, CPSize begin_char);
     /** Sets \a render_state as if all the text in \a char_data had just been rendered. */
-    static void ProcessLineTags(const std::vector<LineData::CharData>& char_data, RenderState& render_state);
+    static void ProcessLineTags(const LineData::CharVec& char_data, RenderState& render_state);
 
     /** \brief This just holds the essential data necessary to render a glyph
         from the OpenGL texture(s) created at GG::Font creation time. */
@@ -747,11 +748,11 @@ public:
         Supplying a \p text and \p text_elements that are incompatible will result in undefined
         behavior.  \p text_elements contains internal pointers to the \p text to which it is
         bound.  Compatible means the exact same \p text object, not the same text content. */
-    std::vector<LineData> DetermineLines(const std::string& text, Flags<TextFormat> format, X box_width,
-                                         const std::vector<TextElement>& text_elements) const;
+    LineVec DetermineLines(const std::string& text, Flags<TextFormat> format, X box_width,
+                           const std::vector<TextElement>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
-    Pt TextExtent(const std::vector<LineData>& line_data) const noexcept;
+    Pt TextExtent(const LineVec& line_data) const noexcept;
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
@@ -841,7 +842,7 @@ private:
 GG_API std::ostream& operator<<(std::ostream& os, Font::Substring substr);
 
 GG_API CPSize GlyphIndexOfLineAndGlyph(std::size_t line_index, CPSize glyph_index,
-                                       const std::vector<Font::LineData>& line_data);
+                                       const Font::LineVec& line_data);
 
 /** Returns the code point index of the <i>index</i>-th glyph on line \a
     line within the text represented by \a line_data.  Returns the index of
@@ -849,10 +850,10 @@ GG_API CPSize GlyphIndexOfLineAndGlyph(std::size_t line_index, CPSize glyph_inde
     Returns the index of the next previous code point from the end of line
     \a line if \a glyph_index is out of bounds on that line. */
 GG_API CPSize CodePointIndexOfLineAndGlyph(std::size_t line_index, CPSize glyph_index,
-                                           const std::vector<Font::LineData>& line_data);
+                                           const Font::LineVec& line_data);
 
 GG_API CPSize CodePointIndexOfLineAndCodePoint(std::size_t line_index, CPSize cp_index,
-                                               const std::vector<Font::LineData>& line_data);
+                                               const Font::LineVec& line_data);
 
 
 /** Returns the code point index (CPI) after the previous glyph to the glyph at \a glyph_index.
@@ -867,39 +868,39 @@ GG_API CPSize CodePointIndexOfLineAndCodePoint(std::size_t line_index, CPSize cp
   * the starts of glyphs, the end glyph would start at code point 5 (c), but the
   * CPI after the last glyph included in the range is actually 2 (<). */
 GG_API CPSize CodePointIndexAfterPreviousGlyph(std::size_t line_index, CPSize glyph_index,
-                                               const std::vector<Font::LineData>& line_data);
+                                               const Font::LineVec& line_data);
 
 /** Returns the string index of the <i>index</i>-th glyph on line \a line
     within the text represented by \a line_data.  Returns the index of the
     character one past the end of the text if \a line or \a index are out of
     bounds. */
 GG_API StrSize StringIndexOfLineAndGlyph(std::size_t line, CPSize index,
-                                         const std::vector<Font::LineData>& line_data);
+                                         const Font::LineVec& line_data);
 
 /** Returns the string indiex of the <i>index</i>-th code point in \a line_data */
-GG_API StrSize StringIndexOfCodePoint(CPSize index, const std::vector<Font::LineData>& line_data);
+GG_API StrSize StringIndexOfCodePoint(CPSize index, const Font::LineVec& line_data);
 
 /** Returns the line L and the code point index within L of the
     <i>index</i>-th glyph within the text represented by \a line_data.
     Returns (std::numeric_limits<std::size_t>::max(), INVALID_CP_SIZE) if \a
     index is out of bounds. */
 GG_API std::pair<std::size_t, CPSize>
-LinePositionOfGlyph(CPSize index, const std::vector<Font::LineData>& line_data);
+LinePositionOfGlyph(CPSize index, const Font::LineVec& line_data);
 
 GG_API std::pair<std::size_t, CPSize>
-LinePositionOfCodePoint(CPSize index, const std::vector<Font::LineData>& line_data);
+LinePositionOfCodePoint(CPSize index, const Font::LineVec& line_data);
 
 GG_API std::pair<StrSize, StrSize> GlyphIndicesRangeToStringSizeIndices(
-    CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data);
+    CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data);
 
 GG_API std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndices(
-    CPSize start_idx, CPSize end_idx, const std::vector<Font::LineData>& line_data);
+    CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data);
 
-GG_API CPSize GlyphIndexOfX(const std::vector<Font::LineData::CharData>& char_data, X x, X offset = X0);
-GG_API CPSize GlyphIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X x, X offset = X0);
+GG_API CPSize GlyphIndexOfX(const Font::LineData::CharVec& char_data, X x, X offset = X0);
+GG_API CPSize GlyphIndexOfXOnLine0(const Font::LineVec& line_data, X x, X offset = X0);
 
-GG_API CPSize CodePointIndexOfX(const std::vector<Font::LineData::CharData>& char_data, X x, X offset = X0);
-GG_API CPSize CodePointIndexOfXOnLine0(const std::vector<Font::LineData>& line_data, X x, X offset = X0);
+GG_API CPSize CodePointIndexOfX(const Font::LineData::CharVec& char_data, X x, X offset = X0);
+GG_API CPSize CodePointIndexOfXOnLine0(const Font::LineVec& line_data, X x, X offset = X0);
 
 /** \brief A singleton that loads and stores fonts for use by GG.
 
