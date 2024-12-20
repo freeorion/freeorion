@@ -247,19 +247,18 @@ private:
     }
 
     static GG::X ComputeFixedWidth(const std::string& title, const std::string& wide_as, GG::X max_width) {
-        auto font = ClientUI::GetFont();
+        const auto font = ClientUI::GetFont();
         // We need to maintain the fixed sizes since the base list box messes them
-        std::vector<GG::Font::LineData> lines;
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
 
         //TODO: cache this resulting extent
-        auto text_elements = font->ExpensiveParseFromTextToTextElements(wide_as, fmt);
-        lines = font->DetermineLines(wide_as, fmt, max_width, text_elements);
-        GG::Pt extent1 = font->TextExtent(lines);
+        auto text_elements1 = font->ExpensiveParseFromTextToTextElements(wide_as, fmt);
+        auto lines1 = font->DetermineLines(wide_as, fmt, max_width, text_elements1);
+        GG::Pt extent1 = font->TextExtent(lines1);
 
-        text_elements = font->ExpensiveParseFromTextToTextElements(title, fmt);
-        lines = font->DetermineLines(title, fmt, max_width, text_elements);
-        GG::Pt extent2 = font->TextExtent(lines);
+        auto text_elements2 = font->ExpensiveParseFromTextToTextElements(title, fmt);
+        auto lines2 = font->DetermineLines(title, fmt, max_width, text_elements2);
+        GG::Pt extent2 = font->TextExtent(lines2);
 
         return std::max(extent1.x, extent2.x) + GG::X(SAVE_FILE_CELL_MARGIN);
     }
