@@ -215,7 +215,8 @@ void PlayerConnection::SendMessage(const Message& message, int empire_id, int tu
         MessageSentSignal(false, empire_id, turn);
         return;
     }
-    m_service.post(boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(), message, empire_id, turn));
+    boost::asio::post(m_service, boost::bind(&PlayerConnection::SendMessageImpl, shared_from_this(),
+                                             message, empire_id, turn));
 }
 
 bool PlayerConnection::IsEstablished() const noexcept {
