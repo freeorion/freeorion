@@ -317,13 +317,11 @@ bool ClientNetworking::Impl::HasAuthRole(Networking::RoleType role) const
 { return m_roles.HasRole(role); }
 
 ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
-    if (!IsConnected())
-        return ServerNames();
     ServerDiscoverer discoverer(m_io_context);
     discoverer.DiscoverServers();
     ServerNames names;
-    for (const auto& server : discoverer.Servers())
-        names.push_back(server.second);
+    for (const auto& [server_address, server_name] : discoverer.Servers())
+        names.push_back(server_name.empty() ? server_address.to_string() : server_name);
     return names;
 }
 
