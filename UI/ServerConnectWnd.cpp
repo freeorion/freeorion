@@ -197,11 +197,13 @@ namespace {
 
 void ServerConnectWnd::PopulateServerList() {
     m_servers_lb->Clear();
-    const auto server_names = GGHumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
-    for (const auto& server : server_names) {
-        auto row = GG::Wnd::Create<GG::ListBox::Row>();
-        row->push_back(GG::Wnd::Create<CUILabel>(server));
-        m_servers_lb->Insert(row);
+    {
+        auto server_names = GGHumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
+        for (const auto& server_name : server_names) {
+            auto row = GG::Wnd::Create<GG::ListBox::Row>();
+            row->push_back(GG::Wnd::Create<CUILabel>(std::move(server_name)));
+            m_servers_lb->Insert(row);
+        }
     }
     // make local copies of server name options, since code below will possibly add more options.
     // that could invalidate any views into names of existing options.
