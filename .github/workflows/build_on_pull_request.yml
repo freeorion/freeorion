@@ -1,7 +1,9 @@
 name: "Build PR"
 on:
   pull_request:
-    branches: [ 'master' ]
+    branches:
+      - master
+      - 'release-v*'
     types: ['opened', 'reopened', 'synchronize']
 jobs:
   detect_changed_files:
