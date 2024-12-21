@@ -123,6 +123,40 @@ namespace {
         std::string::size_type name_len = mode_substr_pos - prefix_len;
         return option_name.substr(prefix_len, name_len);
     }
+
+    std::string_view to_string(GG::Font::TextElement::TextElementType t) {
+        switch (t) {
+        case GG::Font::TextElement::TextElementType::OPEN_TAG: return "opentag";
+        case GG::Font::TextElement::TextElementType::CLOSE_TAG: return "closetag";
+        case GG::Font::TextElement::TextElementType::TEXT: return "text";
+        case GG::Font::TextElement::TextElementType::WHITESPACE: return "ws";
+        case GG::Font::TextElement::TextElementType::NEWLINE: return "newline";
+        default: return "???";
+        }
+    }
+
+    void TestParse(std::string text, const GG::Font& font) {
+        auto parse_results1 = font.ExpensiveParseFromTextToTextElements(text, GG::FORMAT_LEFT);
+        std::cout << "text: \"" << text << "\"\n . parsed as:  " << std::flush << [&]() {
+            std::string retval;
+            for (const auto& res : parse_results1) {
+                retval += "\n ... ";
+                retval += to_string(res.Type());
+                retval += ": \"" + std::string(res.text) + "\"  ";
+            }
+            return retval;
+            }() << "\n\n";
+    }
+
+    bool TestFontParseLogResults() {
+        const auto font = ClientUI::GetFont();
+        TestParse("some simple text", *font);
+        TestParse("", *font);
+        TestParse("line1\nline2\n\nline4\n", *font);
+        TestParse("plain<i>ital</i><u>", *font);
+
+        return true;
+    }
 }
 
 
@@ -156,6 +190,9 @@ CUIWnd::CUIWnd(std::string wnd_name, GG::Flags<GG::WndFlag> flags,
 
 void CUIWnd::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
+
+    static const bool dummy = TestFontParseLogResults();
+
     Init();
     ValidatePosition();
     SetDefaultedOptions();
