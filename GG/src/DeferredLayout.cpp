@@ -41,7 +41,7 @@ void DeferredLayout::SizeMove(Pt ul, Pt lr)
 void DeferredLayout::PreRender()
 {
     Layout::PreRender();
-    ScopedAssign<bool> assignment(m_make_resize_immediate_during_prerender, true);
+    ScopedAssign assignment(m_make_resize_immediate_during_prerender, true);
     DoLayout(m_ul_prerender, m_lr_prerender);
     m_ul_prerender = RelativeUpperLeft();
     m_lr_prerender = RelativeLowerRight();

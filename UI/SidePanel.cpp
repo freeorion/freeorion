@@ -2925,14 +2925,13 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     if (m_ignore_recursive_resize)
         return;
 
-    GG::ScopedAssign<bool> prevent_inifinite_recursion(m_ignore_recursive_resize, true);
+    GG::ScopedAssign prevent_inifinite_recursion(m_ignore_recursive_resize, true);
 
     // Determine if scroll bar is required for height or expected because it is already present.
     GG::Y available_height = Height();
     GG::Y initially_used_height = GG::Y0;
-    for (auto& panel : m_planet_panels) {
+    for (const auto& panel : m_planet_panels)
         initially_used_height += panel->Height() + EDGE_PAD;
-    }
 
     bool vscroll_expected((initially_used_height > available_height)
                           || ((m_vscroll->Parent().get() == this)
