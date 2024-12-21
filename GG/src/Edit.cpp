@@ -17,14 +17,6 @@
 using namespace GG;
 
 namespace {
-    struct EditedEcho
-    {
-        EditedEcho(const std::string& name) : m_name(name) {}
-        void operator()(const std::string& str)
-        { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")" << std::endl; }
-        std::string m_name;
-    };
-
     Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin) noexcept
     { return font->Height() + 2 * static_cast<int>(pixel_margin); }
 }
@@ -43,8 +35,8 @@ Edit::Edit(std::string str, std::shared_ptr<Font> font,
     Edit::SetText(std::move(str));
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        EditedSignal.connect(EditedEcho("Edit::EditedSignal"));
-        FocusUpdateSignal.connect(EditedEcho("Edit::FocusUpdateSignal"));
+        EditedSignal.connect([](const std::string& str) { std::cerr << "GG SIGNAL : Edit::EditedSignal (str=" << str << ")" << std::endl; });
+        FocusUpdateSignal.connect([](const std::string& str) { std::cerr << "GG SIGNAL : Edit::FocusUpdateSignal (str=" << str << ")" << std::endl; });
     }
 }
 
