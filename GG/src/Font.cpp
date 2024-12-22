@@ -1716,17 +1716,44 @@ namespace {
     constexpr std::size_t text_tag_idx = 5;
 
 
+
+
+    /** TagHandler stores a set of all known tags and provides pre-compiled regexs for those tags.
+
+    Known tags are tags that will be parsed into TextElement OPEN_TAG or CLOSE_TAG. */
+    class TagHandler {
+    public:
+        /** Add a tag to the set of known tags.*/
+        void Insert(std::vector<std::string_view> tags)
+        {
+            std::copy_if(tags.begin(), tags.end(), std::back_inserter(m_custom_tags),
+                         [this](const auto tag) { return !IsKnown(tag); });
+        }
+
+        bool IsKnown(std::string_view tag) const
+        {
+            const auto matches_tag = [tag](const auto sv) noexcept{ return sv == tag; };
+            return std::any_of(m_default_tags.begin(), m_default_tags.end(), matches_tag)
+                || std::any_of(m_custom_tags.begin(), m_custom_tags.end(), matches_tag);
+        }
+
+    private:
+        // set of tags known to the handler
+        static constexpr std::array<std::string_view, 11> m_default_tags{
+            {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG, Font::SUBSCRIPT_TAG,
+            Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG, Font::RESET_TAG}};
+
+        std::vector<std::string_view> m_custom_tags;
+    } tag_handler;
     namespace xpr = boost::xpressive;
 
     /** CompiledRegex maintains a compiled boost::xpressive regular
         expression that includes a tag stack which can be cleared and
         provided to callers without the overhead of recompiling the
         regular expression.*/
-    template <typename TagHandlerT>
     class CompiledRegex {
     public:
-        CompiledRegex(const TagHandlerT& tag_handler_in) :
-            m_tag_handler(tag_handler_in)
+        CompiledRegex()
         {
             // Synonyms for s1 thru s5 sub matches
             xpr::mark_tag tag_name_tag(tag_name_tag_idx);
@@ -1788,7 +1815,7 @@ namespace {
 
     private:
         bool MatchesKnownTag(const boost::xpressive::ssub_match& sub) const
-        { return !m_ignore_tags && m_tag_handler.IsKnown(sub.str()); }
+        { return !m_ignore_tags && tag_handler.IsKnown(sub.str()); }
 
         bool NotPreformatted(const boost::xpressive::ssub_match&) const noexcept
         { return !m_preformatted; }
@@ -1796,59 +1823,14 @@ namespace {
         bool NotPreformattedOrIsPre(const boost::xpressive::ssub_match& sub) const
         { return !m_preformatted || sub.str() == Font::PRE_TAG; }
 
-        const std::string* m_text = nullptr;
-        const TagHandlerT& m_tag_handler;
-        bool m_ignore_tags = false;
-        bool m_preformatted = false;
+        const std::string*  m_text = nullptr;
 
         // The combined regular expression.
-        xpr::sregex m_EVERYTHING;
-    };
+        xpr::sregex         m_EVERYTHING;
 
-    /** TagHandler stores a set of all known tags and provides pre-compiled regexs for those tags.
-
-     Known tags are tags that will be parsed into TextElement OPEN_TAG or CLOSE_TAG. */
-    class TagHandler {
-    public:
-        TagHandler() :
-            m_regex_w_tags(*this)
-        {}
-
-        /** Add a tag to the set of known tags.*/
-        void Insert(std::vector<std::string_view> tags)
-        {
-            std::copy_if(tags.begin(), tags.end(), std::back_inserter(m_custom_tags),
-                         [this](const auto tag) { return !IsKnown(tag); });
-        }
-
-        bool IsKnown(std::string_view tag) const
-        {
-            const auto matches_tag = [tag](const auto sv) noexcept{ return sv == tag; };
-            return std::any_of(m_default_tags.begin(), m_default_tags.end(), matches_tag)
-                || std::any_of(m_custom_tags.begin(), m_custom_tags.end(), matches_tag);
-        }
-
-        // Return a regex bound to \p text using the currently known
-        // tags.  If required \p ignore_tags and/or \p strip_unpaired_tags.
-        xpr::sregex& Regex(const std::string& text, bool ignore_tags)
-        { return m_regex_w_tags.BindRegexToText(text, ignore_tags); }
-
-    private:
-        // set of tags known to the handler
-        static constexpr std::array<std::string_view, 11> m_default_tags{
-            {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG, Font::SUBSCRIPT_TAG,
-             Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG, Font::RESET_TAG}};
-
-        std::vector<std::string_view> m_custom_tags;
-
-        CompiledRegex<TagHandler> m_regex_w_tags;
-    };
-
-    TagHandler& GetTagHandler()
-    { 
-        static TagHandler tag_handler{};
-        return tag_handler;
-    }
+        bool                m_ignore_tags = false;
+        bool                m_preformatted = false;
+    } regex_with_tags;
 }
 
 
@@ -2074,7 +2056,7 @@ public:
     /** Add an open tag iff it exists as a recognized tag.*/
     void AddOpenTag(std::string_view tag)
     {
-        if (!GetTagHandler().IsKnown(tag))
+        if (!tag_handler.IsKnown(tag))
             return;
 
         // Create open tag like "<tag>" with no parameters
@@ -2091,7 +2073,7 @@ public:
     /** Add an open tag iff it exists as a recognized tag.*/
     void AddOpenTag(std::string_view tag, const std::vector<std::string>& params)
     {
-        if (!GetTagHandler().IsKnown(tag))
+        if (!tag_handler.IsKnown(tag))
             return;
 
         const auto tag_begin = m_text.size();
@@ -2121,7 +2103,7 @@ public:
     /** Add a close tag iff it exists as a recognized tag.*/
     void AddCloseTag(std::string_view tag)
     {
-        if (!GetTagHandler().IsKnown(tag))
+        if (!tag_handler.IsKnown(tag))
             return;
 
         // Create a close tag that looks like "</tag>"
@@ -2619,8 +2601,9 @@ void Font::ProcessTags(const LineVec& line_data, RenderState& render_state)
 std::string Font::StripTags(std::string_view text)
 {
     using namespace boost::xpressive;
-    std::string text_str{text}; // temporary until GetTagHandler().Regex returns a cregex
-    auto& regex = GetTagHandler().Regex(text_str, false);
+    std::string text_str{text};
+
+    auto& regex = regex_with_tags.BindRegexToText(text_str, false);
 
     std::string retval;
     retval.reserve(text.size());
@@ -2656,7 +2639,7 @@ Pt Font::TextExtent(const LineVec& line_data) const noexcept
 }
 
 void Font::RegisterKnownTags(std::vector<std::string_view> tags)
-{ GetTagHandler().Insert(std::move(tags)); }
+{ tag_handler.Insert(std::move(tags)); }
 
 void Font::ThrowBadGlyph(const std::string& format_str, uint32_t c)
 {
@@ -2766,7 +2749,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     const bool ignore_tags = format & FORMAT_IGNORETAGS;
 
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
-    const sregex& regex = GetTagHandler().Regex(text, ignore_tags);
+    const sregex& regex = regex_with_tags.BindRegexToText(text, ignore_tags);
     std::cout << " ... got regex id: " << regex.regex_id() << std::endl;
 
     sregex_iterator it(text.begin(), text.end(), regex);
