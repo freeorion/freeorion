@@ -768,9 +768,6 @@ void DropDownList::SizeMove(Pt ul, Pt lr)
         RequirePreRender();
 }
 
-void DropDownList::SetColor(Clr c)
-{ LB()->SetColor(c); }
-
 DropDownList::iterator DropDownList::Insert(std::shared_ptr<Row> row, iterator it)
 {
     row->SetDragDropDataType("");

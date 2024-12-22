@@ -129,7 +129,7 @@ public:
     void RenderRectangle(const GG::Pt ul, const GG::Pt lr);
 
     /** Changes the color used to draw the scanlines. Set color before calling StartUsing()*/
-    void SetColor(GG::Clr clr);
+    void SetColor(GG::Clr clr) noexcept;
 
     /** Start using ScanlineRenderer to draw arbitrary shapes with the scanline
         shader program.*/

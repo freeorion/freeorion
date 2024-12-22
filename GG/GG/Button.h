@@ -74,15 +74,15 @@ public:
     void SizeMove(Pt ul, Pt lr) override;
 
     /** Sets the control's color; does not affect the text color. */
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override { Control::SetColor(c); }
 
     /** Sets button state programmatically \see ButtonState */
     void SetState(ButtonState state) noexcept { m_state = state; }
 
-    void SetText(std::string text);             ///< Sets the text to be used as the button label
-    void SetUnpressedGraphic(SubTexture st);    ///< Sets the SubTexture to be used as the image of the button when unpressed
-    void SetPressedGraphic(SubTexture st);      ///< Sets the SubTexture to be used as the image of the button when pressed
-    void SetRolloverGraphic(SubTexture st);     ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    void SetText(std::string text);                   ///< Sets the text to be used as the button label
+    void SetUnpressedGraphic(SubTexture st) noexcept; ///< Sets the SubTexture to be used as the image of the button when unpressed
+    void SetPressedGraphic(SubTexture st) noexcept;   ///< Sets the SubTexture to be used as the image of the button when pressed
+    void SetRolloverGraphic(SubTexture st) noexcept;  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
 
 protected:
     void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;

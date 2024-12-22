@@ -560,7 +560,7 @@ public:
         GL2DVertexBuffer underline_vertices;
         GLRGBAColorBuffer underline_colors;
 
-        void clear() {
+        void clear() noexcept {
             vertices.clear();
             coordinates.clear();
             colors.clear();

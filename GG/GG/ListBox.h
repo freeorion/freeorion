@@ -299,7 +299,7 @@ public:
     void Show() override;
 
     void Disable(bool b = true) override;
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override;
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it; returns insertion point.  This Row

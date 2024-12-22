@@ -181,24 +181,21 @@ void Scroll::Disable(bool b)
 {
     Control::Disable(b);
     m_tab->Disable(b);
-    if(m_incr)
+    if (m_incr)
         m_incr->Disable(b);
-    if(m_decr)
+    if (m_decr)
         m_decr->Disable(b);
 }
 
-void Scroll::SetColor(Clr c)
+void Scroll::SetColor(Clr c) noexcept
 {
     Control::SetColor(c);
     m_tab->SetColor(c);
-    if(m_incr)
+    if (m_incr)
         m_incr->SetColor(c);
-    if(m_decr)
+    if (m_decr)
         m_decr->SetColor(c);
 }
-
-void Scroll::SetInteriorColor(Clr c)
-{ m_int_color = c; }
 
 void Scroll::SizeScroll(int min, int max, unsigned int line, unsigned int page)
 {

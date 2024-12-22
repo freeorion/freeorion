@@ -37,7 +37,7 @@ public:
     Clr Color() const noexcept { return m_color; }
     bool Disabled() const noexcept { return m_disabled; }
 
-    virtual void SetColor(Clr c) { m_color = c; } // TODO: noexcept?
+    virtual void SetColor(Clr c) noexcept { m_color = c; }
     virtual void Disable(bool b = true) { m_disabled = b; }
 
 protected:
