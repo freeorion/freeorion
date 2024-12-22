@@ -102,15 +102,6 @@ void Edit::Render()
     EndScissorClipping();
 }
 
-void Edit::SetColor(Clr c)
-{ Control::SetColor(c); }
-
-void Edit::SetInteriorColor(Clr c)
-{ m_int_color = c; }
-
-void Edit::SetHiliteColor(Clr c)
-{ m_hilite_color = c; }
-
 void Edit::SelectAll()
 {
     m_cursor_pos.first = Length();

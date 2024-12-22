@@ -82,11 +82,11 @@ public:
     void SizeMove(Pt ul, Pt lr) override;
 
     void Disable(bool b = true) override;
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override;
 
     virtual void DoLayout();
 
-    void SetInteriorColor(Clr c); ///< sets the color painted into the client area of the control
+    void SetInteriorColor(Clr c) noexcept { m_int_color = c; }; ///< sets the color painted into the client area of the control
     void SizeScroll(int min, int max, unsigned int line, unsigned int page); ///< sets the logical ranges of the control, and the logical increment values
     void SetMax(int max);         ///< sets the maximum value of the scroll
     void SetMin(int min);         ///< sets the minimum value of the scroll

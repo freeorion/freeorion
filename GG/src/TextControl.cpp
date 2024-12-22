@@ -299,7 +299,7 @@ void TextControl::SetTextColor(Clr color)
     m_render_cache.clear();
 }
 
-void TextControl::SetColor(Clr c)
+void TextControl::SetColor(Clr c) noexcept
 {
     Control::SetColor(c);
     m_text_color = c;

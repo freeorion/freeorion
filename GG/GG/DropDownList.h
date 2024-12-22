@@ -127,7 +127,7 @@ public:
     /** Resizes the control, ensuring the proper height is maintained based on
         the list's row height. */
     void SizeMove(Pt ul, Pt lr) override;
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override { LB()->SetColor(c); }
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
         list before \a it; returns index of insertion point.  This Row becomes

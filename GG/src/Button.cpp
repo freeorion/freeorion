@@ -88,22 +88,19 @@ void Button::SizeMove(Pt ul, Pt lr)
     m_label_shadow->Resize(new_sz);
 }
 
-void Button::SetColor(Clr c)
-{ Control::SetColor(c); }
-
 void Button::SetText(std::string text)
 {
     m_label->SetText(text);
     m_label_shadow->SetText(std::move(text));
 }
 
-void Button::SetUnpressedGraphic(SubTexture st)
+void Button::SetUnpressedGraphic(SubTexture st) noexcept
 { m_unpressed_graphic = std::move(st); }
 
-void Button::SetPressedGraphic(SubTexture st)
+void Button::SetPressedGraphic(SubTexture st) noexcept
 { m_pressed_graphic = std::move(st); }
 
-void Button::SetRolloverGraphic(SubTexture st)
+void Button::SetRolloverGraphic(SubTexture st) noexcept
 { m_rollover_graphic = std::move(st); }
 
 void Button::LButtonDown(Pt pt, Flags<ModKey> mod_keys)

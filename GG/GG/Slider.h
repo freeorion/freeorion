@@ -76,7 +76,7 @@ public:
     void Render() override;
     void SizeMove(Pt ul, Pt lr) override;
     void Disable(bool b = true) override;
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override;
 
     void SizeSlider(T min, T max); ///< sets the logical range of the control; \a min must not equal \a max
     void SetMax(T max);            ///< sets the maximum value of the control
@@ -112,16 +112,16 @@ private:
         std::string m_name;
     };
 
-    T                         m_posn;
-    T                         m_range_min;
-    T                         m_range_max;
-    T                         m_page_sz;
-    Orientation               m_orientation;
-    unsigned int              m_line_width;
-    unsigned int              m_tab_width;
-    int                       m_tab_drag_offset;
+    T                         m_posn{};
+    T                         m_range_min{};
+    T                         m_range_max{};
+    T                         m_page_sz = INVALID_PAGE_SIZE;
+    Orientation               m_orientation = Orientation::VERTICAL;
+    unsigned int              m_line_width = 1;
+    unsigned int              m_tab_width = 1;
+    int                       m_tab_drag_offset = -1;
     std::shared_ptr<Button>   m_tab;
-    bool                      m_dragging_tab;
+    bool                      m_dragging_tab = false;
 };
 
 template <typename T>
@@ -132,15 +132,12 @@ Slider<T>::Slider(T min, T max, Orientation orientation,
     m_posn(min),
     m_range_min(min),
     m_range_max(max),
-    m_page_sz(INVALID_PAGE_SIZE),
     m_orientation(orientation),
     m_line_width(line_width),
     m_tab_width(tab_width),
-    m_tab_drag_offset(-1),
     m_tab(m_orientation == Orientation::VERTICAL ?
           GetStyleFactory().NewVSliderTabButton(color) :
-          GetStyleFactory().NewHSliderTabButton(color)),
-    m_dragging_tab(false)
+          GetStyleFactory().NewHSliderTabButton(color))
 {
     Control::SetColor(color);
 }
@@ -232,7 +229,7 @@ void Slider<T>::Disable(bool b)
 }
 
 template <typename T>
-void Slider<T>::SetColor(Clr c)
+void Slider<T>::SetColor(Clr c) noexcept
 {
     Control::SetColor(c);
     m_tab->SetColor(c);

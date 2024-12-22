@@ -85,13 +85,13 @@ public:
 
     void Render() override;
 
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override { Control::SetColor(c); }
 
     /** Sets the interior color of the control. */
-    void SetInteriorColor(Clr c);
+    void SetInteriorColor(Clr c) noexcept { m_int_color = c; }
 
     /** Sets the color used to render hiliting around selected text. */
-    void SetHiliteColor(Clr c);
+    void SetHiliteColor(Clr c) noexcept { m_hilite_color = c; }
 
     /** Selects all text in the given range.  When \a from == \a to, this
         function just places the caret at \a from.  Note that it is legal to

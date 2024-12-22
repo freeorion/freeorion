@@ -892,7 +892,7 @@ void ListBox::Disable(bool b)
         m_hscroll->Disable(b);
 }
 
-void ListBox::SetColor(Clr c)
+void ListBox::SetColor(Clr c) noexcept
 {
     Control::SetColor(c);
     if (m_vscroll)

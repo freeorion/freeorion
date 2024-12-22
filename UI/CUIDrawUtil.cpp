@@ -508,12 +508,9 @@ public:
         m_scanline_shader->Bind("line_color", m_color.r * (1.f / 255.f), m_color.g * (1.f / 255.f), m_color.b * (1.f / 255.f), m_color.a * (1.f / 255.f));
     }
 
-    void SetColor(GG::Clr clr) {
-        m_color = clr;
-    }
+    void SetColor(GG::Clr clr) noexcept { m_color = clr; }
 
-    void StopUsing()
-    { m_scanline_shader->stopUse(); }
+    void StopUsing() { m_scanline_shader->stopUse(); }
 
     void RenderCircle(const GG::Pt ul, const GG::Pt lr) {
         StartUsing();
@@ -549,7 +546,7 @@ void ScanlineRenderer::RenderRectangle(const GG::Pt ul, const GG::Pt lr)
 void ScanlineRenderer::StartUsing()
 { m_impl->StartUsing(); }
 
-void ScanlineRenderer::SetColor(GG::Clr clr)
+void ScanlineRenderer::SetColor(GG::Clr clr) noexcept
 { m_impl->SetColor(clr); }
 
 void ScanlineRenderer::StopUsing()

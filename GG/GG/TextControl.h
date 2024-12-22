@@ -185,7 +185,7 @@ public:
 
     /** Just like Control::SetColor(), except that this one also adjusts the
         text color. */
-    void SetColor(Clr c) override;
+    void SetColor(Clr c) noexcept override;
 
     /** Sets the text displayed in this control to \a str.  May resize the
         window.  If the control was constructed with FORMAT_NOWRAP, calls
