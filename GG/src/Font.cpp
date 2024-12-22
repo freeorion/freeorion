@@ -1844,7 +1844,11 @@ namespace {
         CompiledRegex<TagHandler> m_regex_w_tags;
     };
 
-    TagHandler tag_handler{};
+    TagHandler& GetTagHandler()
+    { 
+        static TagHandler tag_handler{};
+        return tag_handler;
+    }
 }
 
 
@@ -2070,7 +2074,7 @@ public:
     /** Add an open tag iff it exists as a recognized tag.*/
     void AddOpenTag(std::string_view tag)
     {
-        if (!tag_handler.IsKnown(tag))
+        if (!GetTagHandler().IsKnown(tag))
             return;
 
         // Create open tag like "<tag>" with no parameters
@@ -2087,7 +2091,7 @@ public:
     /** Add an open tag iff it exists as a recognized tag.*/
     void AddOpenTag(std::string_view tag, const std::vector<std::string>& params)
     {
-        if (!tag_handler.IsKnown(tag))
+        if (!GetTagHandler().IsKnown(tag))
             return;
 
         const auto tag_begin = m_text.size();
@@ -2117,7 +2121,7 @@ public:
     /** Add a close tag iff it exists as a recognized tag.*/
     void AddCloseTag(std::string_view tag)
     {
-        if (!tag_handler.IsKnown(tag))
+        if (!GetTagHandler().IsKnown(tag))
             return;
 
         // Create a close tag that looks like "</tag>"
@@ -2615,8 +2619,8 @@ void Font::ProcessTags(const LineVec& line_data, RenderState& render_state)
 std::string Font::StripTags(std::string_view text)
 {
     using namespace boost::xpressive;
-    std::string text_str{text}; // temporary until tag_handler.Regex returns a cregex
-    auto& regex = tag_handler.Regex(text_str, false);
+    std::string text_str{text}; // temporary until GetTagHandler().Regex returns a cregex
+    auto& regex = GetTagHandler().Regex(text_str, false);
 
     std::string retval;
     retval.reserve(text.size());
@@ -2652,7 +2656,7 @@ Pt Font::TextExtent(const LineVec& line_data) const noexcept
 }
 
 void Font::RegisterKnownTags(std::vector<std::string_view> tags)
-{ tag_handler.Insert(std::move(tags)); }
+{ GetTagHandler().Insert(std::move(tags)); }
 
 void Font::ThrowBadGlyph(const std::string& format_str, uint32_t c)
 {
@@ -2754,7 +2758,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     const bool ignore_tags = format & FORMAT_IGNORETAGS;
 
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
-    const sregex& regex = tag_handler.Regex(text, ignore_tags);
+    const sregex& regex = GetTagHandler().Regex(text, ignore_tags);
     sregex_iterator it(text.begin(), text.end(), regex);
 
     const sregex_iterator end_it;
