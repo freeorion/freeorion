@@ -2742,6 +2742,12 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 {
     std::vector<TextElement> text_elements;
 
+    std::cout << "In Font::ExpensiveParseFromTextToTextElements" << std::flush;
+    std::cout << " text: " << text << std::flush;
+    std::cout << " format: " << format << std::flush;
+    std::cout << " glyphs sz: " << glyphs.size() << std::flush;
+    std::cout << " space width: " << static_cast<int>(space_width) << std::endl;
+
     using namespace boost::xpressive;
 #if defined(__cpp_using_enum)
     using enum TextElement::TextElementType;
@@ -2755,13 +2761,20 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     if (text.empty())
         return text_elements;
 
+    std::cout << " ... text not empty" << std::endl;
+
     const bool ignore_tags = format & FORMAT_IGNORETAGS;
 
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
     const sregex& regex = GetTagHandler().Regex(text, ignore_tags);
+    std::cout << " ... got regex id: " << regex.regex_id() << std::endl;
+
     sregex_iterator it(text.begin(), text.end(), regex);
+    std::cout << " ... got regex iterator " << std::endl;
 
     const sregex_iterator end_it;
+    std::cout << " ... it == end_it ?: " << std::flush << (it == end_it) << std::endl;
+
     while (it != end_it)
     {
         // Consolidate adjacent blocks of text.
