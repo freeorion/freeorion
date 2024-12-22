@@ -2764,7 +2764,7 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
         // If adjacent found substrings are all text, merge them into a single Substring.
         bool need_increment = true;
         Substring combined_text;
-        sub_match<std::string::const_iterator> const* text_match;
+        sub_match<std::string::const_iterator> const* text_match = nullptr;
         while (it != end_it &&
                (text_match = &(*it)[text_tag_idx]) &&
                text_match->matched)
