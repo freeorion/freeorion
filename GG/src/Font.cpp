@@ -1723,6 +1723,9 @@ namespace {
     Known tags are tags that will be parsed into TextElement OPEN_TAG or CLOSE_TAG. */
     class TagHandler {
     public:
+        TagHandler()
+        { std::cout << "TagHandler Init" << std::endl; }
+
         /** Add a tag to the set of known tags.*/
         void Insert(std::vector<std::string_view> tags)
         {
@@ -1755,6 +1758,8 @@ namespace {
     public:
         CompiledRegex()
         {
+            std::cout << "CompiledRegex Init" << std::endl;
+
             // Synonyms for s1 thru s5 sub matches
             xpr::mark_tag tag_name_tag(tag_name_tag_idx);
             xpr::mark_tag open_bracket_tag(open_bracket_tag_idx);
