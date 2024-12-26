@@ -95,6 +95,9 @@ void CUI_PinButton::Toggle(bool pinned) {
     SetRolloverGraphic (GetButtonSubTexture(pinned ? "pinned_mouseover.png" : "pin_mouseover.png"));
 }
 
+
+#include <boost/xpressive/xpressive.hpp>
+
 ////////////////////////////////////////////////
 // CUIWnd
 ////////////////////////////////////////////////
@@ -135,6 +138,33 @@ namespace {
         }
     }
 
+    void TestRegexIteratorStuff(const std::string text) {
+        std::cout << "Testing Regex Iterator Stuff for text: " << text << std::endl;
+
+        namespace xpr = boost::xpressive;
+
+        static const xpr::sregex WHITESPACE =
+            (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
+
+        static const xpr::sregex TEXT =
+            ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
+
+        constexpr std::size_t whitespace_tag_idx = 10;
+        constexpr std::size_t text_tag_idx = 20;
+
+        xpr::mark_tag whitespace_tag(whitespace_tag_idx);
+        xpr::mark_tag text_tag(text_tag_idx);
+        xpr::sregex test_regex = 
+            (whitespace_tag = WHITESPACE) |
+            (text_tag = TEXT);
+
+        xpr::sregex_iterator it(text.begin(), text.end(), test_regex);
+        std::cout << " ... got regex iterator " << std::endl;
+
+        const xpr::sregex_iterator end_it;
+        std::cout << " ... it == end_it ?: " << std::flush << (it == end_it) << std::endl;
+    }
+
     void TestParse(std::string text, const GG::Font& font) {
         auto parse_results1 = font.ExpensiveParseFromTextToTextElements(text, GG::FORMAT_LEFT);
         std::cout << "text: \"" << text << "\"\n . parsed as:  " << std::flush << [&]() {
@@ -149,9 +179,16 @@ namespace {
     }
 
     bool TestFontParseLogResults() {
+        std::cout << "Testing Regex Testing" << std::endl;
+        TestRegexIteratorStuff("");
+        TestRegexIteratorStuff("some simple text");
+
+        std::cout << "Testing Font Text Parsing" << std::endl;
+
         const auto font = ClientUI::GetFont();
-        TestParse("some simple text", *font);
+
         TestParse("", *font);
+        TestParse("some simple text", *font);
         TestParse("line1\nline2\n\nline4\n", *font);
         TestParse("plain<i>ital</i><u>", *font);
 
