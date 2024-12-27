@@ -37,7 +37,7 @@ jobs:
       - name: Build
         run: |
           cd msvc2022
-          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v142 /property:Configuration=Release /verbosity:minimal
+          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v143 /property:Configuration=Release /verbosity:minimal
       - name: Cache NSIS
         uses: actions/cache@v3
         with:
