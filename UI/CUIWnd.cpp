@@ -95,7 +95,7 @@ void CUI_PinButton::Toggle(bool pinned) {
     SetRolloverGraphic (GetButtonSubTexture(pinned ? "pinned_mouseover.png" : "pin_mouseover.png"));
 }
 
-
+#include <boost/xpressive/regex_actions.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
 ////////////////////////////////////////////////
@@ -165,6 +165,78 @@ namespace {
         std::cout << " ... it == end_it ?: " << std::flush << (it == end_it) << std::endl;
     }
 
+    void TestFullFontRegex(std::string text) {
+        namespace xpr = boost::xpressive;
+
+        constexpr std::size_t full_regex_tag_idx = 0;
+        constexpr std::size_t tag_name_tag_idx = 1;
+        constexpr std::size_t open_bracket_tag_idx = 2;
+        constexpr std::size_t close_bracket_tag_idx = 3;
+        constexpr std::size_t whitespace_tag_idx = 4;
+        constexpr std::size_t text_tag_idx = 5;
+
+        xpr::mark_tag tag_name_tag(tag_name_tag_idx);
+        xpr::mark_tag open_bracket_tag(open_bracket_tag_idx);
+        xpr::mark_tag close_bracket_tag(close_bracket_tag_idx);
+        xpr::mark_tag whitespace_tag(whitespace_tag_idx);
+        xpr::mark_tag text_tag(text_tag_idx);
+
+        // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
+        static const xpr::sregex TAG_PARAM =
+            -+~xpr::set[xpr::_s | '<'];
+
+        //+_w one or more greedy word chars,  () group no capture,  [] semantic operation
+        const xpr::sregex TAG_NAME =
+            (+xpr::_w)[xpr::check([](auto) { return true; })];
+
+        // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
+        // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
+        static const xpr::sregex WHITESPACE =
+            (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
+
+        // < followed by not space or <   or one or more not space or <
+        static const xpr::sregex TEXT =
+            ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
+
+        xpr::sregex regex =
+            ('<'                                                                    // < open tag
+                >> (tag_name_tag = TAG_NAME)                                           // TAG_NAME 
+                >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)                         // repeat 0 to 9 times: blank followed by TAG_PARAM
+                >> (open_bracket_tag.proto_base() = '>')                               // > close tag
+                ) |
+
+            ("</"                                                                           // </ open tag with slash
+                >> (tag_name_tag = TAG_NAME)                                                   // TAG_NAME
+                >> (close_bracket_tag.proto_base() = '>')                                      // > close tag
+                ) |
+
+            (whitespace_tag = WHITESPACE) |
+
+            (text_tag = TEXT);
+
+        std::cout << "text: " << text << std::endl;;
+
+        std::string retval;
+        retval.reserve(text.size());
+
+        // scan through matched markup and text, saving only the non-tag-text
+        xpr::sregex_iterator it(text.begin(), text.end(), regex);
+        const xpr::sregex_iterator end_it;
+        for (; it != end_it; ++it) {
+            auto& text_match = (*it)[text_tag_idx];
+            if (text_match.matched) {
+                retval.append(text_match.first, text_match.second);
+
+            } else {
+                auto& whitespace_match = (*it)[whitespace_tag_idx];
+                if (whitespace_match.matched)
+                    retval.append(whitespace_match.first, whitespace_match.second);
+            }
+        }
+
+        std::cout << "stripped text: " << retval << std::endl;
+    }
+
     void TestParse(std::string text, const GG::Font& font) {
         auto parse_results1 = font.ExpensiveParseFromTextToTextElements(text, GG::FORMAT_LEFT);
         std::cout << "text: \"" << text << "\"\n . parsed as:  " << std::flush << [&]() {
@@ -175,13 +247,17 @@ namespace {
                 retval += ": \"" + std::string(res.text) + "\"  ";
             }
             return retval;
-            }() << "\n\n";
+        }() << "\n\n";
     }
 
     bool TestFontParseLogResults() {
-        std::cout << "Testing Regex Testing" << std::endl;
+        std::cout << "Testing Regex Iterator Stuff" << std::endl;
         TestRegexIteratorStuff("");
         TestRegexIteratorStuff("some simple text");
+
+        std::cout << "Testing Tag Stripping" << std::endl;
+        TestFullFontRegex("");
+        TestFullFontRegex("blah <tag>hmm</tag>");
 
         std::cout << "Testing Font Text Parsing" << std::endl;
 
