@@ -203,10 +203,10 @@ endif()
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS
-        # Set minimum Windows target version to WindowsXP or Vista depending on toolset
+        # Set minimum Windows target version to Windows10
         # https://msdn.microsoft.com/en-us/library/aa383745.aspx
         # Use numeric to correctly compare it in <boost\log\detail\config.hpp>
-        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=$<IF:$<STREQUAL:${_VS_PLATFORM_TOOLSET_TARGET},_xp>,0x0501,0x0600>>
+        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0A00>
         # Default to unicode variants when using Win32 API
         # https://msdn.microsoft.com/en-us/library/dybsewaf.aspx
         $<$<PLATFORM_ID:Windows>:_UNICODE>
