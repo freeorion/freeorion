@@ -419,8 +419,8 @@ namespace {
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, species_name).append(" ");
 
-                // TODO: stealthy worlds should be hidden on the server side and not show up as clear text here, only when the empire has sufficient detection strength
-                // homeworld
+                // TODO: stealthy worlds should be hidden on the server side and not show up
+                // as clear text here, only when the empire has sufficient detection strength homeworld
                 if (!homeworlds.contains(species_name) || homeworlds.at(species_name).empty()) {
                     continue;
                 } else {
@@ -1416,9 +1416,9 @@ namespace {
         }
 
         // search for article in custom pedia entries.
-        for (const auto& entry : GetEncyclopedia().Articles()) {
+        for (const auto& articles : GetEncyclopedia().Articles() | range_values) {
             bool done = false;
-            for (const EncyclopediaArticle& article : entry.second) {
+            for (const EncyclopediaArticle& article : articles) {
                 if (article.name != item_name)
                     continue;
 
@@ -4118,34 +4118,33 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     std::sort(partial_match_report.begin(), partial_match_report.end());
     std::sort(article_match_report.begin(), article_match_report.end());
 
+    static constexpr auto not_empty = [](const auto& m) noexcept { return !m.empty(); };
 
     timer.EnterSection("assemble report");
     // compile list of articles into some dynamically generated search report text
     std::string match_report;
     if (!exact_match_report.empty()) {
         match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
-        for (auto&& match : exact_match_report) {
-            if (!match.second.empty())
-                match_report += match.second;
-        }
+        for (auto& match : exact_match_report | range_values | range_filter(not_empty))
+            match_report += match;
     }
 
     if (!word_match_report.empty()) {
         match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
-        for (auto&& match : word_match_report)
-            match_report += match.second;
+        for (auto& match : word_match_report | range_values)
+            match_report += match;
     }
 
     if (!partial_match_report.empty()) {
         match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
-        for (auto&& match : partial_match_report)
-            match_report += match.second;
+        for (auto& match : partial_match_report | range_values)
+            match_report += match;
     }
 
     if (!article_match_report.empty()) {
         match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
-        for (auto&& match : article_match_report)
-            match_report += match.second;
+        for (auto& match : article_match_report | range_values)
+            match_report += match;
     }
 
     if (match_report.empty())
