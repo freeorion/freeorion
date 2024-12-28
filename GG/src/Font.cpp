@@ -2743,31 +2743,15 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
     const sregex& regex = regex_with_tags.BindRegexToText(text, ignore_tags);
     sregex_iterator it(text.begin(), text.end(), regex);
-
     const sregex_iterator end_it;
-    while (it != end_it)
-    {
-        // Consolidate adjacent blocks of text.
-        // If adjacent found substrings are all text, merge them into a single Substring.
-        bool need_increment = true;
-        Substring combined_text;
-        sub_match<std::string::const_iterator> const* text_match = nullptr;
-        while (it != end_it &&
-               (text_match = &(*it)[text_tag_idx]) &&
-               text_match->matched)
-        {
-            need_increment = false;
-            if (combined_text.empty())
-                combined_text = Substring(text, *text_match);
-            else
-                combined_text += *text_match;
-            ++it;
-        }
 
+    for (; it != end_it; ++it) {
         const auto& it_elem = *it;
 
-        if (!combined_text.empty()) {
-            text_elements.emplace_back(combined_text); // Basic text element.
+        if (it_elem[text_tag_idx].matched) {
+            auto matched_text = Substring(text, it_elem[text_tag_idx]);
+            if (!matched_text.empty())
+                text_elements.emplace_back(matched_text); // Basic text element.
 
         } else if (it_elem[open_bracket_tag_idx].matched) {
             // Open XML tag.
@@ -2807,9 +2791,6 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
             if (last_char == '\n' || last_char == '\f' || last_char == '\r')
                 text_elements.emplace_back(NEWLINE);
         }
-
-        if (need_increment)
-            ++it;
     }
 
     // fill in the widths of code points in each TextElement
