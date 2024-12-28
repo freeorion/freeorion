@@ -273,7 +273,6 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     } else {
         ar  & BOOST_SERIALIZATION_NVP(m_last_turn_received);
     }
-
 }
 
 BOOST_CLASS_VERSION(Empire, 13)
@@ -363,8 +362,9 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
         for (const auto e1_id : em.m_empire_map | range_keys) {
             const auto e1_id_lower = [e1_id](auto e2_id) { return e1_id < e2_id; };
             for (const auto e2_id : em.m_empire_map | range_keys | range_filter(e1_id_lower)) {
+                auto dk = DiploKey(e1_id, e2_id);
                 const auto inserted_missing_status = em.m_empire_diplomatic_statuses.try_emplace(
-                    DiploKey(e1_id, e2_id), DiplomaticStatus::DIPLO_WAR).second;
+                    dk, DiplomaticStatus::DIPLO_WAR).second;
                 if (inserted_missing_status)
                     ErrorLogger() << "Added missing diplomatic status (default WAR) between empires "
                                   << e1_id << " and " << e2_id;
