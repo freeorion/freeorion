@@ -142,6 +142,7 @@ int Meter::SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars)
 #endif
 
     static_assert(DEFAULT_INT == FromFloat(DEFAULT_VALUE));
+    static_assert(LARGE_INT == FromFloat(LARGE_VALUE));
 }
 
 template <>
