@@ -682,15 +682,15 @@ private:
     std::shared_ptr<GG::DynamicGraphic>     m_planet_graphic;               ///< image of the planet (can be a frameset); this is now used only for asteroids;
     std::shared_ptr<GG::StaticGraphic>      m_planet_status_graphic;        ///< gives information about the planet status, like supply disconnection
     std::shared_ptr<RotatingPlanetControl>  m_rotating_planet_graphic;      ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
-    GG::Clr                                 m_empire_colour = GG::CLR_ZERO; ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     std::shared_ptr<GG::DropDownList>       m_focus_drop;                   ///< displays and allows selection of planetary focus;
     std::shared_ptr<PopulationPanel>        m_population_panel;             ///< contains info about population and health
     std::shared_ptr<ResourcePanel>          m_resource_panel;               ///< contains info about resources production and focus selection UI
     std::shared_ptr<MilitaryPanel>          m_military_panel;               ///< contains icons representing military-related meters
     std::shared_ptr<BuildingsPanel>         m_buildings_panel;              ///< contains icons representing buildings
     std::shared_ptr<SpecialsPanel>          m_specials_panel;               ///< contains icons representing specials
-    StarType                                m_star_type = StarType::INVALID_STAR_TYPE;
     boost::signals2::scoped_connection      m_planet_connection;
+    GG::Clr                                 m_empire_colour = GG::CLR_ZERO; ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
+    StarType                                m_star_type = StarType::INVALID_STAR_TYPE;
     bool                                    m_selected = false;             ///< is this planet panel selected
     bool                                    m_order_issuing_enabled = true; ///< can orders be issues via this planet panel?
 };
