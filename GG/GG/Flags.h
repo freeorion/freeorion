@@ -287,9 +287,6 @@ private:
 template <typename FlagType>
 class Flags
 {
-private:
-    struct ConvertibleToBoolDummy {int _;};
-
 public:
     // If you have received an error message directing you to the line below,
     // it means you probably have tried to use this class with a FlagsType
@@ -324,8 +321,7 @@ public:
     /** Conversion to bool, so that a Flags object can be used as a boolean
       * test. Converts to true when it contains one or more flags and converts
       * to false otherwise. */
-    constexpr operator int ConvertibleToBoolDummy::* () const
-    { return m_flags ? &ConvertibleToBoolDummy::_ : 0; }
+    [[nodiscard]] constexpr operator bool() const noexcept { return m_flags; }
 
 #if defined(__cpp_impl_three_way_comparison)
     [[nodiscard]] constexpr auto operator<=>(const Flags<FlagType>&) const noexcept = default;
@@ -352,7 +348,7 @@ public:
         return *this;
     }
 
-    constexpr operator InternalType() const noexcept { return m_flags; }
+    [[nodiscard]] constexpr operator InternalType() const noexcept { return m_flags; }
 
 private:
     InternalType m_flags = 0;
