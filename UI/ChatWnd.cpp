@@ -527,13 +527,12 @@ namespace {
         std::string::size_type space_pos = text.find_first_of(' ');
         if (space_pos == std::string::npos)
             return Networking::INVALID_PLAYER_ID;
-        std::string player_name = boost::trim_copy(text.substr(0, space_pos));
-        const std::map<int, PlayerInfo>& players = app->Players();
+        const std::string player_name = boost::trim_copy(text.substr(0, space_pos));
+        const auto& players = app->Players();
 
-        for (auto& player : players) {
-            if (boost::iequals(player.second.name, player_name)) {
-                return player.first;
-            }
+        for (auto& [player_id, player_info] : players) {
+            if (boost::iequals(player_info.name, player_name))
+                return player_id;
         }
 
         return Networking::INVALID_PLAYER_ID;

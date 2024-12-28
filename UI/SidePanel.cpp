@@ -589,9 +589,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const auto& id_and_order : app->Orders()) {
-            if (auto order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
-                retval[order->PlanetID()].insert(id_and_order.first);
+        for (const auto& [order_id, base_order] : app->Orders()) {
+            if (auto order = std::dynamic_pointer_cast<const BombardOrder>(base_order)) {
+                retval[order->PlanetID()].insert(order_id);
             }
         }
         return retval;
@@ -1025,13 +1025,12 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     bool capital = false;
 
     // need to check all empires for capitals
-    for (const auto& entry : context.Empires()) {
-        const auto& empire = entry.second;
-        if (!empire) {
-            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << entry.first;
+    for (const auto& [loop_empire_id, loop_empire] : context.Empires()) {
+        if (!loop_empire) {
+            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << loop_empire_id;
             continue;
         }
-        if (empire->CapitalID() == m_planet_id) {
+        if (loop_empire->CapitalID() == m_planet_id) {
             capital = true;
             break;
         }
@@ -1306,11 +1305,11 @@ namespace {
         std::vector<std::string_view> retval;
         if (!ship)
             return retval;
-        auto tags{ship->Tags(context)};
         if (ship->HasTag(TAG_BOMBARD_ALWAYS, context)) {
             retval.push_back(TAG_BOMBARD_ALWAYS);
             return retval;
         }
+        auto tags{ship->Tags(context)};
 
         retval.reserve(tags.size());
         std::copy_if(tags.first.begin(), tags.first.end(), std::back_inserter(retval),
@@ -2880,11 +2879,11 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
     }
 
     // create new panels and connect their signals
-    for (auto& orbit_planet : orbits_planets) {
+    for (auto orbit_planet : orbits_planets | range_values) {
         auto planet_panel = GG::Wnd::Create<PlanetPanel>(Width() - m_vscroll->Width(),
-                                                         orbit_planet.second, star_type);
+                                                         orbit_planet, star_type);
         AttachChild(planet_panel);
-        m_planet_panels.emplace_back(std::move(planet_panel));
+        m_planet_panels.push_back(std::move(planet_panel));
         m_planet_panels.back()->LeftClickedSignal.connect(
             PlanetClickedSignal);
         m_planet_panels.back()->LeftDoubleClickedSignal.connect(
@@ -3459,8 +3458,8 @@ void SidePanel::RefreshInPreRender(ScriptingContext& context) {
         con.disconnect();
     s_system_connections.clear();
 
-    for (auto& entry : s_fleet_state_change_signals)
-        entry.second.disconnect();
+    for (auto& scs : s_fleet_state_change_signals | range_values)
+        scs.disconnect();
     s_fleet_state_change_signals.clear();
 
     // clear any previous colony projections
