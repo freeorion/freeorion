@@ -324,7 +324,8 @@ public:
         // will not prevent more that a smart pointer control block worth of
         // memory from being released.
         std::shared_ptr<T> wnd(new T(std::forward<Args>(args)...));
-        wnd->CompleteConstruction();
+        if (wnd)
+            wnd->CompleteConstruction();
         return wnd;
     }
 
