@@ -89,9 +89,9 @@ public:
 
     int SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars);
 
-    static constexpr float DEFAULT_VALUE = 0.0f;                        ///< value assigned to current or initial when resetting or when no value is specified in a constructor
-    static constexpr float LARGE_VALUE = static_cast<float>(2 << 15);   ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
-    static constexpr float INVALID_VALUE = -LARGE_VALUE;                ///< sentinel value to indicate no valid value for this meter
+    static constexpr float DEFAULT_VALUE = 0.0f;        ///< value assigned to current or initial when resetting or when no value is specified in a constructor
+    static constexpr float LARGE_VALUE = 99999.0f;      ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
+    static constexpr float INVALID_VALUE = -LARGE_VALUE;///< sentinel value to indicate no valid value for this meter
 
 private:
     // Value must be rounded, otherwise a calculated increase of 0.99999997 will be truncated to 0.999.
@@ -102,10 +102,12 @@ private:
     static constexpr float FromInt(int32_t i) noexcept(from_int_noexcept)
     { return i / FLOAT_INT_SCALE; }
 
-    static constexpr auto DEFAULT_INT = 0; // should be equal to Meter::FromFloat(DEFAULT_VALUE);
+    static constexpr int32_t DEFAULT_INT = 0; // should be equal to Meter::FromFloat(DEFAULT_VALUE);
 
     int32_t cur = DEFAULT_INT;
     int32_t init = DEFAULT_INT;
+
+    static constexpr int32_t LARGE_INT = 99999000; // should be equal to Meter::FromFloat(LARGE_VALUE);
 
     friend class boost::serialization::access;
     template <typename Archive>
