@@ -415,12 +415,9 @@ std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
 
 namespace {
     const auto& RequiredCharsets() {
-        static
-#if defined(__cpp_lib_constexpr_vector)
-               constinit
-#endif
-                         std::vector<GG::UnicodeCharset> retval;
-        if (retval.empty()) {
+        static const auto retval = []() {
+            std::vector<GG::UnicodeCharset> retval;
+
             // Basic Latin, Latin-1 Supplement, and Latin Extended-A
             // (character sets needed to display the credits page)
             const std::string_view CREDITS_STR = "AöŁ";
@@ -469,9 +466,12 @@ namespace {
                 message_text.append(cs.m_script_name).append(", ");
 
             DebugLogger() << message_text;
-        }
+
+            return retval;
+        }();
         return retval;
     }
+
 
     // command-line options
     void AddOptions(OptionsDB& db) {
