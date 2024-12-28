@@ -136,8 +136,9 @@ int Meter::SetFromChars(std::string_view chars) noexcept(have_noexcept_to_chars)
 
     static_assert(noexcept(result.ptr - chars.data()));
 #else
+    const std::string null_terminated_chars{chars};
     int chars_consumed = 0;
-    std::sscanf(chars.data(), "%d %d%n", &cur, &init, &chars_consumed);
+    std::sscanf(null_terminated_chars.data(), "%d %d%n", &cur, &init, &chars_consumed);
     return chars_consumed;
 #endif
 
