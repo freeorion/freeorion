@@ -595,25 +595,30 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
         };
 
     AddRow(DecorateLinkText(UserString("COMBAT_INITIAL_FORCES")));
-    const auto initial_forces =
-        SegregateForces(log->empire_ids, log->object_ids, {IsShip, HasPopulation, invisible_to_client_empire_planet},
-                        OrderByNameAndId(client_empire_id));
-    for (const auto& empire_forces : initial_forces)
-        AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
-            GG::X0, *this, client_empire_id, empire_forces.first, empire_forces.second));
+    {
+        auto initial_forces =
+            SegregateForces(log->empire_ids, log->object_ids,
+                            {IsShip, HasPopulation, invisible_to_client_empire_planet},
+                            OrderByNameAndId(client_empire_id));
+        for (auto& [forces_empire_id, empire_forces] : initial_forces)
+            AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
+                GG::X0, *this, client_empire_id, forces_empire_id, std::move(empire_forces)));
+    }
 
     AddRow(DecorateLinkText("\n" + UserString("COMBAT_SUMMARY_DESTROYED")));
-    const auto destroyed_forces =
-        SegregateForces(log->empire_ids, log->destroyed_object_ids, {IsShip, HasPopulation},
-                        OrderByNameAndId(client_empire_id));
-    for (const auto& empire_forces : destroyed_forces)
-        AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
-            GG::X0, *this, client_empire_id, empire_forces.first, empire_forces.second));
+    {
+        auto destroyed_forces =
+            SegregateForces(log->empire_ids, log->destroyed_object_ids, {IsShip, HasPopulation},
+                            OrderByNameAndId(client_empire_id));
+        for (auto& [forces_empire_id, empire_forces] : destroyed_forces)
+            AddRow(GG::Wnd::Create<EmpireForcesAccordionPanel>(
+                GG::X0, *this, client_empire_id, forces_empire_id, std::move(empire_forces)));
+    }
 
     // Write Logs
     for (CombatEventPtr event : log->combat_events) {
         DebugLogger(combat_log) << "event debug info: " << event->DebugString(context);
-        for (auto&& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
+        for (auto& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
             AddRow(std::move(wnd));
     }
 

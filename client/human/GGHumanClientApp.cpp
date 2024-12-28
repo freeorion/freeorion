@@ -1288,10 +1288,10 @@ namespace {
                 return; // don't need to delete anything.
 
             int num_deleted = 0;
-            for (auto& entry : files_by_write_time) {
+            for (auto& delete_file_path : files_by_write_time | range_values) {
                 if (num_deleted >= num_to_delete)
                     break;
-                remove(entry.second);
+                remove(delete_file_path);
                 ++num_deleted;
             }
         } catch (...) {

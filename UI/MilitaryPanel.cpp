@@ -123,8 +123,8 @@ void MilitaryPanel::Update() {
 }
 
 void MilitaryPanel::Refresh() {
-    for (auto& meter_stat : m_meter_stats)
-        meter_stat.second->RequirePreRender();
+    for (auto& stat : m_meter_stats | range_values)
+        stat->RequirePreRender();
 
     RequirePreRender();
 }
@@ -141,9 +141,8 @@ void MilitaryPanel::ExpandCollapseButtonPressed()
 void MilitaryPanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    for (auto& meter_stat : m_meter_stats) {
-        DetachChild(meter_stat.second);
-    }
+    for (auto& stat : m_meter_stats | range_values)
+        DetachChild(stat);
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -153,11 +152,9 @@ void MilitaryPanel::DoLayout() {
     if (!s_expanded_map[m_planet_id]) {
         // position and reattach icons to be shown
         int n = 0;
-        GG::X stride = MeterIconSize().x * 7/2;
-        for (auto& meter_stat : m_meter_stats) {
+        const GG::X stride = MeterIconSize().x * 7/2;
+        for (auto& icon : m_meter_stats | range_values) {
             GG::X x = n * stride;
-
-            auto& icon = meter_stat.second;
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);
