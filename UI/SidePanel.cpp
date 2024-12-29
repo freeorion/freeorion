@@ -1,4 +1,4 @@
-#include "SidePanel.h"
+﻿#include "SidePanel.h"
 
 #include <cmath>
 #include <numeric>
@@ -3528,8 +3528,24 @@ void SidePanel::RefreshSystemNames() {
             for (auto* system : Objects().allRaw<const System>() | range_filter(has_name_or_is_s_system))
                 sorted_systems.emplace_back(system->Name(), system->ID());
 
-            if (!sorted_systems.empty()) // sort by name
-                std::stable_sort(sorted_systems.begin(), sorted_systems.end());
+            if (!sorted_systems.empty()) {
+                static constexpr auto sys_name_cmp = [](const auto& lhs_sv_int, const auto& rhs_sv_int) {
+                    const std::string_view& lhs = lhs_sv_int.first;
+                    const std::string_view& rhs = rhs_sv_int.first;
+
+#if defined(FREEORION_MACOSX)
+                    // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
+                    return lhs < rhs;
+#else
+                    using collate_t = std::collate<std::string_view::value_type>;
+                    const auto& collate = std::use_facet<collate_t>(GetLocale());
+                    return collate.compare(lhs.data(), lhs.data() + lhs.size(), rhs.data(), rhs.data() + rhs.size()) < 0;
+#endif
+                };
+
+                // sort by name
+                std::stable_sort(sorted_systems.begin(), sorted_systems.end(), sys_name_cmp);
+            }
 
             std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
             rows.reserve(sorted_systems.size());
