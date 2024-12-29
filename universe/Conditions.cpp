@@ -209,10 +209,9 @@ namespace Condition {
                                             /* check next member */             \
                                         } else if (!m_ptr || !rhs_.m_ptr) {     \
                                             return false;                       \
-                                        } else {                                \
-                                            if (*m_ptr != *(rhs_.m_ptr))        \
-                                                return false;                   \
-                                        }   }
+                                        } else if (*m_ptr != *(rhs_.m_ptr)) {   \
+                                            return false;                       \
+                                        }    }
 
 ///////////////////////////////////////////////////////////
 // Condition                                             //
