@@ -117,7 +117,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
 
     // Sort nodes within each layer
     for (auto& layer : tree_layers)
-        std::sort(layer.begin(), layer.end(), [](Node* l, Node* r) -> bool { return *l < *r; });
+        std::sort(layer.begin(), layer.end(), [](Node* l, Node* r) -> bool { return l && r && (*l < *r); });
 
     //4. do layout
     std::vector<Column> row_index = std::vector<Column>(tree_layers.size());
