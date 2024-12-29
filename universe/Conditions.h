@@ -73,6 +73,30 @@ enum class ContentType : uint8_t {
     const ScriptingContext& source_context,
     const UniverseObject* candidate);
 
+constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
+    if constexpr (requires { *operands; operands->TargetInvariant(); }) {
+        return {!operands || operands->RootCandidateInvariant(),
+                !operands || operands->TargetInvariant(),
+                !operands || operands->SourceInvariant()};
+
+    } else if constexpr (requires { operands.TargetInvariant(); }) {
+        return {operands.RootCandidateInvariant(), operands.TargetInvariant(), operands.SourceInvariant()};
+
+    } else if constexpr (requires { operands.begin(); (*operands.begin()).TargetInvariant(); }) {
+        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.RootCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.TargetInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.SourceInvariant(); })};
+
+    } else if constexpr (requires { operands.begin(); (*operands.begin())->TargetInvariant(); }) {
+        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
+
+    } else {
+        throw "unrecognized type?";
+    }
+}
+
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
@@ -425,12 +449,15 @@ private:
     const bool m_type_local_invariant;
 };
 
-/** Matches all Building objects that are one of the building types specified
-  * in \a names. */
+/** Matches all Building objects that are one of the building types specified in \a names. */
 struct FO_COMMON_API Building final : public Condition {
     explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    explicit Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit Building(std::string name);
 
-    bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Building& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
