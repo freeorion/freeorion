@@ -1682,9 +1682,7 @@ Homeworld::Homeworld() :
 {}
 
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
+    Condition(CondsRTSI(names)),
     m_names(std::move(names)),
     m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
                                         [](const auto& e) { return e->LocalCandidateInvariant(); }))
@@ -1940,9 +1938,7 @@ std::unique_ptr<Condition> Capital::Clone() const
 // CapitalWithID                                         //
 ///////////////////////////////////////////////////////////
 CapitalWithID::CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) noexcept:
-    Condition(!empire_id || empire_id->RootCandidateInvariant(),
-              !empire_id || empire_id->TargetInvariant(),
-              !empire_id || empire_id->SourceInvariant()),
+    Condition(CondsRTSI(empire_id)),
     m_empire_id(std::move(empire_id))
 {}
 
@@ -2175,9 +2171,7 @@ std::unique_ptr<Condition> Armed::Clone() const
 // Type                                                  //
 ///////////////////////////////////////////////////////////
 Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
-    Condition(!type || type->RootCandidateInvariant(),
-              !type || type->TargetInvariant(),
-              !type || type->SourceInvariant(),
+    Condition(CondsRTSI(type),
               type && (
                   type->ConstantExpr() || (
                       type->LocalCandidateInvariant() &&
@@ -2532,9 +2526,7 @@ std::unique_ptr<Condition> Building::Clone() const
 // Field                                                 //
 ///////////////////////////////////////////////////////////
 Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
+    Condition(CondsRTSI(names)),
     m_names(std::move(names))
 {}
 
@@ -2954,9 +2946,7 @@ HasTag::HasTag(std::string name) :
 {}
 
 HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(!name || name->RootCandidateInvariant(),
-              !name || name->TargetInvariant(),
-              !name || name->SourceInvariant()),
+    Condition(CondsRTSI(name)),
     m_name(std::move(name))
 {}
 
@@ -3206,9 +3196,7 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Contains::Contains(std::unique_ptr<Condition>&& condition) :
-    Condition(condition->RootCandidateInvariant(),
-              condition->TargetInvariant(),
-              condition->SourceInvariant()),
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition))
 {}
 
@@ -3380,9 +3368,7 @@ std::unique_ptr<Condition> Contains::Clone() const
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
-    Condition(condition->RootCandidateInvariant(),
-              condition->TargetInvariant(),
-              condition->SourceInvariant()),
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition))
 {}
 
@@ -10424,9 +10410,7 @@ std::unique_ptr<Condition> CanProduceShips::Clone() const
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
-    Condition(!by_object_condition || by_object_condition->RootCandidateInvariant(),
-              !by_object_condition || by_object_condition->TargetInvariant(),
-              !by_object_condition || by_object_condition->SourceInvariant()),
+    Condition(CondsRTSI(by_object_condition)),
     m_by_object_condition(std::move(by_object_condition))
 {}
 
@@ -11704,9 +11688,7 @@ namespace {
 }
 
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
+    Condition(CondsRTSI(operands)),
               // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
     m_operands(DenestOps<And>(operands))
 {}
@@ -11935,9 +11917,7 @@ std::unique_ptr<Condition> And::Clone() const
 // Or                                                    //
 ///////////////////////////////////////////////////////////
 Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
+    Condition(CondsRTSI(operands)),
     // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
     m_operands(DenestOps<Or>(operands))
 {}
@@ -12141,9 +12121,7 @@ std::unique_ptr<Condition> Or::Clone() const
 // Not                                                   //
 ///////////////////////////////////////////////////////////
 Not::Not(std::unique_ptr<Condition>&& operand) :
-    Condition(!operand || operand->RootCandidateInvariant(),
-              !operand || operand->TargetInvariant(),
-              !operand || operand->SourceInvariant()),
+    Condition(CondsRTSI(operand)),
     // have no prepared sets of things that eg. aren't ships, and conditions have no
     // InitialNonCandidates function, so there is no way to get a useful starting set
     // candidates that will be guaranteed to NOT match the subcondition...
@@ -12235,21 +12213,20 @@ namespace {
         to_set.insert(to_set.end(), from_set.begin(), from_set.end());
         from_set.clear();
     }
+
+    auto ExcludeNulls(auto&& in) {
+        std::vector<std::decay_t<decltype(in.front())>> retval;
+        retval.reserve(in.size());
+        for (auto& op : in)
+            if (op)
+                retval.push_back(std::move(op));
+        return retval;
+    }
 }
 
 OrderedAlternativesOf::OrderedAlternativesOf(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-              std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })),
-        m_operands([&operands]() {
-                    std::vector<std::unique_ptr<Condition>> retval;
-                    retval.reserve(operands.size());
-                    for (auto& op : operands) {
-                        if (op)
-                            retval.push_back(std::move(op));
-                    }
-                    return retval;
-               }())
+    Condition(CondsRTSI(operands)),
+    m_operands(ExcludeNulls(std::move(operands)))
 {}
 
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
@@ -12443,9 +12420,7 @@ std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
 // Described                                             //
 ///////////////////////////////////////////////////////////
 Described::Described(std::unique_ptr<Condition>&& condition, std::string desc_stringtable_key) :
-    Condition(!condition || condition->RootCandidateInvariant(),
-              !condition || condition->TargetInvariant(),
-              !condition || condition->SourceInvariant()),
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition)),
     m_desc_stringtable_key(std::move(desc_stringtable_key))
 {}
