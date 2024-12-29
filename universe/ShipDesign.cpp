@@ -689,7 +689,7 @@ void ShipDesign::BuildStatCaches() {
     }
 
     // collect unique tags
-    std::sort(tags.begin(), tags.end());
+    std::stable_sort(tags.begin(), tags.end());
     auto last = std::unique(tags.begin(), tags.end());
 
     // compile concatenated tags into contiguous storage
@@ -1035,8 +1035,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
             ship_manifest_inconsistent = true;
             names_and_missing_uuids.emplace_back(design_and_filename.first->Name(), uuid);
         }
-        std::sort(names_and_missing_uuids.begin(), names_and_missing_uuids.end(),
-                  [](const auto& lhs, const auto& rhs) noexcept { return lhs.first < rhs.first; });
+        std::stable_sort(names_and_missing_uuids.begin(), names_and_missing_uuids.end());
 
         for (auto& [name, uuid] : names_and_missing_uuids) {
             WarnLogger() << "Missing ship design " << uuid << " called " << name << " added to the manifest.";

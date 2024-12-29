@@ -56,7 +56,7 @@ void CombatSummary::AddUnit(int unit_id, const CombatParticipantState& state) {
 void CombatSummary::Sort() {
     // First by max health, then by current health.
     // This will group similar ships, then order them by current health
-    std::sort(unit_summaries.begin(), unit_summaries.end(), [](const auto& one, const auto& two) {
+    std::stable_sort(unit_summaries.begin(), unit_summaries.end(), [](const auto& one, const auto& two) {
         if (one->max_health > two->max_health)
             return true;
         else if (two->max_health > one->max_health)

@@ -2657,8 +2657,8 @@ namespace {
         retval.reserve(std::max(sender_researched_techs.size(), recepient_researchable.size()));
 
         // find intersection of two lists
-        std::sort(sender_researched_techs.begin(), sender_researched_techs.end());
-        std::sort(recepient_researchable.begin(), recepient_researchable.end());
+        std::stable_sort(sender_researched_techs.begin(), sender_researched_techs.end());
+        std::stable_sort(recepient_researchable.begin(), recepient_researchable.end());
         std::set_intersection(sender_researched_techs.begin(), sender_researched_techs.end(),
                               recepient_researchable.begin(), recepient_researchable.end(),
                               std::back_inserter(retval));
