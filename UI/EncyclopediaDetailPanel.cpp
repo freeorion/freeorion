@@ -787,14 +787,14 @@ namespace {
 
     std::string PediaDirText(const std::string& dir_name) {
         // get sorted list of entries for requested directory
-        auto sorted_entries = GetSortedPediaDirEntires(dir_name, true);
+        const auto sorted_entries = GetSortedPediaDirEntires(dir_name, true);
 
         std::string retval;
         retval.reserve(sorted_entries.size() * 256);   // rough guesstimate
 
         // add sorted entries linktext representation to page text
-        for (const auto& entry : sorted_entries)
-            retval += entry.second.first;
+        for (const auto& entry : sorted_entries | range_values | range_keys)
+            retval += entry;
 
         return retval;
     }
