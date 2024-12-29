@@ -1864,26 +1864,6 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-Capital::Capital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
-    Condition(!empire_id || empire_id->RootCandidateInvariant(),
-              !empire_id || empire_id->TargetInvariant(),
-              !empire_id || empire_id->SourceInvariant()),
-    m_empire_id(std::move(empire_id))
-{}
-
-bool Capital::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Capital& rhs_ = static_cast<const Capital&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_empire_id)
-
-    return true;
-}
-
 namespace {
     bool FlexibleContains(const auto& container, const auto num) {
         if constexpr (requires { container.contains(num); })
@@ -1901,6 +1881,78 @@ namespace {
 
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
+{
+    const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
+    if (sz == 1) {
+        // in testing, this was faster for a single candidate than setting up the loop stuff
+        const bool test_val = search_domain == SearchDomain::MATCHES;
+        auto& from = test_val ? matches : non_matches;
+        auto& to = test_val ? non_matches : matches;
+        const auto* obj = from.front();
+        const bool is_capital = obj && FlexibleContains(parent_context.Empires().CapitalIDs(), obj->ID());
+        if (is_capital != test_val) {
+            to.push_back(obj);
+            from.clear();
+        }
+
+    } else {
+        // check if candidates are capitals of any empire
+        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+        { return FlexibleContains(capitals, obj->ID()); };
+        EvalImpl(matches, non_matches, search_domain, is_capital);
+    }
+}
+
+bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+    // check if candidates are capitals of any empire
+    const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+    { return FlexibleContains(capitals, obj->ID()); };
+    return std::any_of(candidates.begin(), candidates.end(), is_capital);
+}
+
+std::string Capital::Description(bool negated) const
+{ return (!negated) ? UserString("DESC_CAPITAL") : UserString("DESC_CAPITAL_NOT"); }
+
+std::string Capital::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "Capital\n"; }
+
+bool Capital::Match(const ScriptingContext& local_context) const {
+    const auto* candidate = local_context.condition_local_candidate;
+    return candidate && FlexibleContains(local_context.Empires().CapitalIDs(), candidate->ID());
+}
+
+ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
+{ return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
+
+std::unique_ptr<Condition> Capital::Clone() const
+{ return std::make_unique<Capital>(); }
+
+
+///////////////////////////////////////////////////////////
+// CapitalWithID                                         //
+///////////////////////////////////////////////////////////
+CapitalWithID::CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) noexcept:
+    Condition(!empire_id || empire_id->RootCandidateInvariant(),
+              !empire_id || empire_id->TargetInvariant(),
+              !empire_id || empire_id->SourceInvariant()),
+    m_empire_id(std::move(empire_id))
+{}
+
+bool CapitalWithID::operator==(const Condition& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const CapitalWithID& rhs_ = static_cast<const CapitalWithID&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+
+    return true;
+}
+
+void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                         ObjectSet& non_matches, SearchDomain search_domain) const
 {
     if (m_empire_id) {
         const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
@@ -1956,7 +2008,7 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 }
 
-bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool CapitalWithID::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
     if (m_empire_id) {
         const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
             (m_empire_id->LocalCandidateInvariant() &&
@@ -1988,16 +2040,13 @@ bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& c
     }
 }
 
-std::string Capital::Description(bool negated) const {
-    return (!negated)
-        ? UserString("DESC_CAPITAL")
-        : UserString("DESC_CAPITAL_NOT");
-}
+std::string CapitalWithID::Description(bool negated) const
+{ return (!negated) ? UserString("DESC_CAPITAL") : UserString("DESC_CAPITAL_NOT"); }
 
-std::string Capital::Dump(uint8_t ntabs) const
-{ return DumpIndent(ntabs) + "Capital\n"; }
+std::string CapitalWithID::Dump(uint8_t ntabs) const
+{ return DumpIndent(ntabs) + "Capital" + (m_empire_id ? (" empire_id = " + m_empire_id->Dump(ntabs+1)) : "") + "\n"; }
 
-bool Capital::Match(const ScriptingContext& local_context) const {
+bool CapitalWithID::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate)
         return false;
@@ -2009,24 +2058,21 @@ bool Capital::Match(const ScriptingContext& local_context) const {
     }
 }
 
-ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
+ObjectSet CapitalWithID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
 { return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
 
-uint32_t Capital::GetCheckSum() const {
+uint32_t CapitalWithID::GetCheckSum() const {
     uint32_t retval{0};
 
-    CheckSums::CheckSumCombine(retval, "Condition::Capital");
+    CheckSums::CheckSumCombine(retval, "Condition::CapitalWithID");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
 
-    TraceLogger(conditions) << "GetCheckSum(Capital): retval: " << retval;
+    TraceLogger(conditions) << "GetCheckSum(CapitalWithID): retval: " << retval;
     return retval;
 }
 
-std::unique_ptr<Condition> Capital::Clone() const {
-    if (m_empire_id)
-        return std::make_unique<Capital>(m_empire_id->Clone());
-    else
-        return std::make_unique<Capital>();
-}
+std::unique_ptr<Condition> CapitalWithID::Clone() const
+{ return std::make_unique<CapitalWithID>(m_empire_id ? m_empire_id->Clone() : nullptr); }
 
 ///////////////////////////////////////////////////////////
 // Monster                                               //
