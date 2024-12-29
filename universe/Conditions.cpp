@@ -3179,12 +3179,9 @@ namespace {
                 // for each candidate.
                 std::vector<int> m;
                 m.reserve(subcondition_matches.size());
-                // gather the ids
-                for (auto* obj : subcondition_matches) {
-                    if (obj)
-                        m.push_back(obj->ID());
-                }
-                // sort them
+                // gather the ids and sort them
+                for (auto* obj : subcondition_matches | range_filter([](const auto* obj) -> bool { return obj; }))
+                    m.push_back(obj->ID());
                 std::sort(m.begin(), m.end());
                 return m;
             }())
