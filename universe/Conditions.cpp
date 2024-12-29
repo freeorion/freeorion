@@ -139,6 +139,14 @@ namespace {
         }
         return retval;
     }
+
+    auto Enveculate(auto&& thing) {
+        // direct pass to vector constructor doesn not work... eg:
+        //return std::vector<std::decay_t<decltype(thing)>>(1u, std::forward<decltype(thing)>(thing));
+        std::vector<std::decay_t<decltype(thing)>> retval;
+        retval.push_back(std::forward<decltype(thing)>(thing));
+        return retval;
+    }
 }
 
 namespace Condition {
@@ -2331,22 +2339,30 @@ std::unique_ptr<Condition> Type::Clone() const
 // Building                                              //
 ///////////////////////////////////////////////////////////
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(std::all_of(names.begin(), names.end(), [](auto& e){ return e->RootCandidateInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->TargetInvariant(); }),
-              std::all_of(names.begin(), names.end(), [](auto& e){ return e->SourceInvariant(); })),
+    Condition(CondsRTSI(names)),
     m_names(std::move(names)),
     m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
                                         [](const auto& e) { return e->LocalCandidateInvariant(); }))
 {}
 
+Building::Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Building(Enveculate(std::move(name)))
+{}
+
+Building::Building(std::string name) :
+    Building(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
+{}
+
 bool Building::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Building& rhs_ = static_cast<const Building&>(rhs);
-
+bool Building::operator==(const Building& rhs_) const {
+    if (this == &rhs_)
+        return true;
     if (m_names.size() != rhs_.m_names.size())
         return false;
     for (std::size_t i = 0; i < m_names.size(); ++i) {
@@ -2436,23 +2452,22 @@ void Building::Eval(const ScriptingContext& parent_context,
 }
 
 std::string Building::Description(bool negated) const {
+    const auto names_sz = m_names.size();
     std::string values_str;
-    for (std::size_t i = 0; i < m_names.size(); ++i) {
-        values_str += m_names[i]->ConstantExpr() ?
-                        UserString(m_names[i]->Eval()) :
-                        m_names[i]->Description();
-        if (2 <= m_names.size() && i < m_names.size() - 2) {
+    values_str.reserve(names_sz*50); // guesstimate
+    for (std::size_t i = 0u; i < names_sz; ++i) {
+        auto& n{m_names[i]};
+        values_str += UserString(n->ConstantExpr() ? n->Eval() : n->Description());
+        if (2u <= names_sz && i < names_sz - 2u) {
             values_str += ", ";
-        } else if (i == m_names.size() - 2) {
-            values_str += m_names.size() < 3 ? " " : ", ";
+        } else if (i == names_sz - 2u) {
+            values_str += (names_sz < 3u ? " " : ", ");
             values_str += UserString("OR");
             values_str += " ";
         }
     }
-    return str(FlexibleFormat((!negated)
-           ? UserString("DESC_BUILDING")
-           : UserString("DESC_BUILDING_NOT"))
-           % values_str);
+    return str(FlexibleFormat((!negated) ? UserString("DESC_BUILDING") : UserString("DESC_BUILDING_NOT"))
+               % values_str);
 }
 
 std::string Building::Dump(uint8_t ntabs) const {
