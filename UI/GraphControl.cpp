@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../util/i18n.h"
+#include "../util/ranges.h"
 
 #include <GG/ClrConstants.h>
 
@@ -75,21 +76,17 @@ void GraphControl::AutoSetRange() {
         return;
 
     // large default values that are expected to be overwritten by the first seen value
-    double x_min = 99999999.9;
-    double y_min = 99999999.9;
-    double x_max = -99999999.9;
-    double y_max = -99999999.9;
+    double x_min = std::numeric_limits<double>::infinity();
+    double y_min = std::numeric_limits<double>::infinity();
+    double x_max = -std::numeric_limits<double>::infinity();
+    double y_max = -std::numeric_limits<double>::infinity();
 
-    for (const std::pair<std::vector<std::pair<double, double>>, GG::Clr>& curve : m_data) {
-        for (const std::pair<double, double>& curve_pt : curve.first) {
-            if (curve_pt.first < x_min)
-                x_min = curve_pt.first;
-            if (curve_pt.first > x_max)
-                x_max = curve_pt.first;
-            if (curve_pt.second < y_min)
-                y_min = curve_pt.second;
-            if (curve_pt.second > y_max)
-                y_max = curve_pt.second;
+    for (const auto& curve : m_data | range_keys) { // wanted to do this with ranges join and minmax_element, but boost ranges doesn't have an implementation of that and not all target platforms support C++20 ranges yet
+        for (const auto& [x, y] : curve) {
+            x_min = std::min(x, x_min);
+            x_max = std::max(x, x_max);
+            y_min = std::min(y, y_min);
+            y_max = std::max(y, y_max);
         }
     }
 
@@ -97,37 +94,27 @@ void GraphControl::AutoSetRange() {
 }
 
 void GraphControl::ShowPoints(bool show) {
-    bool old_show_points = m_show_points;
-    m_show_points = show;
-    if (show != old_show_points)
+    if (std::exchange(m_show_points, show) != show)
         DoLayout();
 }
 
 void GraphControl::ShowLines(bool show) {
-    bool old_show_lines = m_show_lines;
-    m_show_lines = show;
-    if (show != old_show_lines)
+    if (std::exchange(m_show_lines, show) != show)
         DoLayout();
 }
 
 void GraphControl::ShowScale(bool show) {
-    bool old_show_scale = m_show_scale;
-    m_show_scale = show;
-    if (show != old_show_scale)
+    if (std::exchange(m_show_scale, show) != show)
         DoLayout();
 }
 
 void GraphControl::UseLogScale(bool log) {
-    bool old_log_scale = m_log_scale;
-    m_log_scale = log;
-    if (log != old_log_scale)
+    if (std::exchange(m_log_scale, log) != log)
         DoLayout();
 }
 
 void GraphControl::ScaleToZero(bool zero) {
-    bool old_zero = m_zero_in_range;
-    m_zero_in_range = zero;
-    if (zero != old_zero)
+    if (std::exchange(m_zero_in_range, zero) != zero)
         DoLayout();
 }
 
