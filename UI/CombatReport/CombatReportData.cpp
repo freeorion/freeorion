@@ -35,16 +35,15 @@ std::string CombatSummary::SideName() const {
 }
 
 unsigned int CombatSummary::DestroyedUnits() const {
-    unsigned count = 0;
-    for (const ParticipantSummaryPtr& summary : unit_summaries) {
-        if (summary->current_health <= 0.0f && summary->max_health > 0.0f)
-            ++count;
-    }
-    return count;
+    static constexpr auto is_destroyed = [](const auto& summary)
+    { return summary && summary->current_health <= 0.0f && summary->max_health > 0.0f; };
+
+    return std::count_if(unit_summaries.begin(), unit_summaries.end(), is_destroyed);
 }
 
 void CombatSummary::AddUnit(int unit_id, const CombatParticipantState& state) {
-    unit_summaries.push_back(std::make_shared<ParticipantSummary>(unit_id, empire ? empire->EmpireID() : ALL_EMPIRES, state));
+    unit_summaries.push_back(std::make_shared<ParticipantSummary>(
+        unit_id, empire ? empire->EmpireID() : ALL_EMPIRES, state));
 
     total_current_health += std::max(unit_summaries.back()->current_health, 0.0f);
     total_max_health += std::max(unit_summaries.back()->max_health, 0.0f);
@@ -56,8 +55,10 @@ void CombatSummary::AddUnit(int unit_id, const CombatParticipantState& state) {
 void CombatSummary::Sort() {
     // First by max health, then by current health.
     // This will group similar ships, then order them by current health
-    std::stable_sort(unit_summaries.begin(), unit_summaries.end(), [](const auto& one, const auto& two) {
-        if (one->max_health > two->max_health)
+    static constexpr auto greater_by_health = [](const auto& one, const auto& two) {
+        if (!one || !two)
+            return false;
+        else if (one->max_health > two->max_health)
             return true;
         else if (two->max_health > one->max_health)
             return false;
@@ -65,5 +66,7 @@ void CombatSummary::Sort() {
             return true;
         else
             return false;
-    });
+    };
+
+    std::stable_sort(unit_summaries.begin(), unit_summaries.end(), greater_by_health);
 }
