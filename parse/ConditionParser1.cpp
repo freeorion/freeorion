@@ -85,7 +85,7 @@ namespace parse { namespace detail {
 
         capital1
             =   (tok.Capital_ >> label(tok.empire_)) > int_rules.expr
-            [ _val = construct_movable_(new_<Condition::Capital>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::CapitalWithID>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         capital2

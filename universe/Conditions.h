@@ -311,18 +311,45 @@ private:
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
     constexpr Capital() noexcept : Condition(true, true, true, true) {}
-    explicit Capital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
-    bool operator==(const Condition& rhs) const override;
 
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Capital&) const noexcept
+    { return true; }
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    bool EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const override;
+    [[nodiscard]] bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override; // no noexcept due to logging
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
+
+    [[nodiscard]] uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
+    { return CheckSums::GetCheckSum("Condition::Capital"); }
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+
+private:
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+};
+
+struct FO_COMMON_API CapitalWithID final : public Condition {
+    explicit CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) noexcept;
+    CapitalWithID() = delete; // use Capital with no parameter
+    CapitalWithID(CapitalWithID&&) noexcept = default;
+
+    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+    [[nodiscard]] bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const override; // no noexcept due to logging
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
+    [[nodiscard]] std::string Description(bool negated = false) const override;
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
+    void SetTopLevelContent(const std::string&) noexcept override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
