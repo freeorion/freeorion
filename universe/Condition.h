@@ -1,7 +1,7 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
-
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
@@ -27,6 +27,8 @@ enum class SearchDomain : bool {
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition {
+    constexpr Condition(const Condition&) noexcept = default;
+    constexpr Condition(Condition&&) noexcept = default;
     constexpr virtual ~Condition() = default;
 
     virtual bool operator==(const Condition& rhs) const;
@@ -129,11 +131,14 @@ protected:
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant)
     {}
-    //! Copies invariants from other Condition
-    constexpr Condition(const Condition& rhs) = default;
-    Condition(Condition&& rhs) = delete;
-    Condition& operator=(const Condition& rhs) = delete;
-    Condition& operator=(Condition&& rhs) = delete;
+    constexpr Condition(std::array<bool, 3> rts_invariants) noexcept :
+        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2])
+    {}
+    constexpr Condition(std::array<bool, 3> rts_invariants, bool init_all_match) noexcept :
+        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2], init_all_match)
+    {}
+    Condition& operator=(const Condition&) = delete;
+    Condition& operator=(Condition&&) = delete;
 
     bool m_root_candidate_invariant = false; // TODO: make these const once all derived classes initialize them in their constructors
     bool m_target_invariant = false;
