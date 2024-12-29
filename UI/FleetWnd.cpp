@@ -2040,11 +2040,10 @@ public:
         bool fleets_seen = false;
         bool ships_seen = false;
 
-        for (auto& drop_wnd_acceptable : drop_wnds_acceptable) {
-            if (!drop_wnd_acceptable.second)
+        for (const auto& [dropped_wnd, is_acceptable] : drop_wnds_acceptable) {
+            if (!is_acceptable)
                 return; // a row was an invalid drop. abort without highlighting drop target.
 
-            const auto dropped_wnd = drop_wnd_acceptable.first;
             if (dropped_wnd->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 fleets_seen = true;
                 if (ships_seen)
@@ -3149,7 +3148,7 @@ void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& contex
     // Use fleets that are at the determined location
     const auto flt_at_loc = fleet_locations_ids.equal_range(location);
     for (auto it = flt_at_loc.first; it != flt_at_loc.second; ++it)
-        m_fleet_ids.emplace(it->second);
+        m_fleet_ids.insert(it->second);
 
     m_system_id = location.first;
 
