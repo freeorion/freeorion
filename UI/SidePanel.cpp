@@ -3513,34 +3513,35 @@ void SidePanel::RefreshSystemNames() {
 
     m_system_name->Clear();
 
-    //Sort the names
+    {
+        const auto system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
+        const GG::Y system_name_height(system_name_font->Lineskip() + 4);
 
-    // The system names are manually sorted here and not automatically in
-    // the vectorized insert because the ListBox is currently never
-    // resorted, inserted or deleted so this was faster when profiled.  If
-    // the performance of the std::stable_sort used in ListBox improves to
-    // N logN when switching to C++11 then this should simply insert the
-    // entire vector into the ListBox.  If the approach switches to
-    // maintaing the list by incrementally inserting/deleting system
-    // names, then this approach should also be dropped.
-    std::set<std::pair<std::string, int>> sorted_systems;
-    for (auto& system : Objects().all<System>()) {
-        // Skip rows for systems that aren't known to this client, except the selected system
-        if (!system->Name().empty() || system->ID() == s_system_id)
-            sorted_systems.emplace(system->Name(), system->ID());
+        // Make a vector of sorted rows and insert them in a single operation.
+        auto sorted_system_rows = [system_name_height]() {
+            std::vector<std::pair<std::string_view, int>> sorted_systems;
+            sorted_systems.reserve(Objects().size<System>());
+
+            static constexpr auto has_name_or_is_s_system = [](const System* sys)
+            { return sys && (!sys->Name().empty() || sys->ID() == s_system_id); };
+
+            for (auto* system : Objects().allRaw<const System>() | range_filter(has_name_or_is_s_system))
+                sorted_systems.emplace_back(system->Name(), system->ID());
+
+            if (!sorted_systems.empty()) // sort by name
+                std::stable_sort(sorted_systems.begin(), sorted_systems.end());
+
+            std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
+            rows.reserve(sorted_systems.size());
+
+            for (auto sys_id : sorted_systems | range_values)
+                rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
+
+            return rows;
+        }();
+
+        m_system_name->Insert(std::move(sorted_system_rows));
     }
-
-    auto system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
-    GG::Y system_name_height(system_name_font->Lineskip() + 4);
-
-    // Make a vector of sorted rows and insert them in a single operation.
-    std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
-    rows.reserve(sorted_systems.size());
-    for (const auto& entry : sorted_systems) {
-        int sys_id = entry.second;
-        rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
-    }
-    m_system_name->Insert(rows);
 
     // Select in the ListBox the currently-selected system.
     for (auto it = m_system_name->begin(); it != m_system_name->end(); ++it) {
