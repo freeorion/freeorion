@@ -358,10 +358,10 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, Pt pos, int curr_ticks)
             m_curr_wnd_under_cursor = curr_wnd_under_cursor;
             std::map<std::shared_ptr<Wnd>, Pt> drag_drop_wnds;
             drag_drop_wnds[dragged_wnd] = m_wnd_drag_offset;
-            const auto&& prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
+            const auto prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
             if (curr_wnd_under_cursor && prev_wnd_under_cursor == curr_wnd_under_cursor) {
                 // Wnd under cursor has remained the same for the last two updates
-                const auto&& curr_drag_drop_here_wnd = LockAndResetIfExpired(m_curr_drag_drop_here_wnd);
+                const auto curr_drag_drop_here_wnd = LockAndResetIfExpired(m_curr_drag_drop_here_wnd);
                 if (curr_drag_drop_here_wnd == curr_wnd_under_cursor) {
                     // Wnd being dragged over is still being dragged over...
                     WndEvent event(WndEvent::EventType::DragDropHere, pos, m_drag_drop_wnds, m_mod_keys);
@@ -386,7 +386,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, Pt pos, int curr_ticks)
         // send appropriate resize message to window, depending on the position
         // of the cursor within / at the edge of the Wnd being dragged over
         Pt offset_pos = pos + m_wnd_resize_offset;
-        if (auto&& parent = dragged_wnd->Parent())
+        if (auto parent = dragged_wnd->Parent())
             offset_pos -= parent->ClientUpperLeft();
         const GG::Pt rel_lr = dragged_wnd->RelativeLowerRight();
         const GG::Pt rel_ul = dragged_wnd->RelativeUpperLeft();
