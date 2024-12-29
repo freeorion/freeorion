@@ -3629,22 +3629,16 @@ void InOrIsSystem::Eval(const ScriptingContext& parent_context,
 }
 
 std::string InOrIsSystem::Description(bool negated) const {
-    std::string system_str;
-    int system_id = m_system_id && m_system_id->ConstantExpr() ? m_system_id->Eval() : INVALID_OBJECT_ID;
-    if (auto system = IApp::GetApp()->GetContext().ContextObjects().getRaw<System>(system_id))
-        system_str = system->Name();
-    else if (m_system_id)
-        system_str = m_system_id->Description();
+    const auto& objects = IApp::GetApp()->GetContext().ContextObjects();
 
-    std::string description_str;
-    if (!system_str.empty())
-        description_str = (!negated)
-            ? UserString("DESC_IN_SYSTEM")
-            : UserString("DESC_IN_SYSTEM_NOT");
-    else
-        description_str = (!negated)
-            ? UserString("DESC_IN_SYSTEM_SIMPLE")
-            : UserString("DESC_IN_SYSTEM_SIMPLE_NOT");
+    const int system_id = (m_system_id && m_system_id->ConstantExpr()) ? m_system_id->Eval() : INVALID_OBJECT_ID;
+    const auto system = objects.getRaw<System>(system_id);
+    const auto system_str = system ? system->Name() :
+        m_system_id ? m_system_id->Description() : std::string{};
+
+    const auto& description_str = !system_str.empty() ?
+        (!negated) ? UserString("DESC_IN_SYSTEM") : UserString("DESC_IN_SYSTEM_NOT") :
+        (!negated) ? UserString("DESC_IN_SYSTEM_SIMPLE") : UserString("DESC_IN_SYSTEM_SIMPLE_NOT");
 
     return str(FlexibleFormat(description_str) % system_str);
 }
