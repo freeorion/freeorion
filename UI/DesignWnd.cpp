@@ -1620,10 +1620,10 @@ void PartsListBox::Populate() {
 
     // if showing parts for a particular empire, cull redundant parts (if enabled)
     if (empire) {
-        for (auto& part_group : part_groups) {
-            ShipPartClass part_class = part_group.first.first;
+        for (auto& [part_class_slot, parts] : part_groups) {
+            ShipPartClass part_class = part_class_slot.first;
             if (!m_show_superfluous_parts)
-                CullSuperfluousParts(part_group.second, part_class, empire_id, loc_id);
+                CullSuperfluousParts(parts, part_class, empire_id, loc_id);
         }
     }
 
@@ -1631,9 +1631,9 @@ void PartsListBox::Populate() {
     // sorting in a multimap also, if a part was in multiple groups due to being
     // compatible with multiple slot types, ensure it is only displayed once
     std::set<const ShipPart*> already_added;
-    for (auto& part_group : part_groups) {
+    for (const auto& parts : part_groups | range_values) {
         std::multimap<double, const ShipPart*> sorted_group;
-        for (const ShipPart* part : part_group.second) {
+        for (const ShipPart* part : parts) {
             if (already_added.contains(part))
                 continue;
             already_added.insert(part);
@@ -1641,8 +1641,7 @@ void PartsListBox::Populate() {
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
-        for (auto& group : sorted_group) {
-            const ShipPart* part = group.second;
+        for (const auto* part : sorted_group | range_values) {
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
                 if (cur_row)
@@ -1660,8 +1659,7 @@ void PartsListBox::Populate() {
             control->DoubleClickedSignal.connect(PartsListBox::ShipPartDoubleClickedSignal);
             control->RightClickedSignal.connect(PartsListBox::ShipPartRightClickedSignal);
 
-            auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name());
-            if (shown)
+            if (auto shown = m_availabilities_state.DisplayedPartAvailability(part->Name()))
                 control->SetAvailability(*shown);
 
             cur_row->push_back(std::move(control));
