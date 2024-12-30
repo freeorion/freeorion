@@ -1180,9 +1180,6 @@ void All::Eval(const ScriptingContext& parent_context,
     // match this condition, so should remain in matches set
 }
 
-bool All::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string All::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ALL")
@@ -1561,9 +1558,6 @@ std::unique_ptr<Condition> EmpireAffiliation::Clone() const {
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
-bool Source::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Source::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_SOURCE")
@@ -1573,25 +1567,10 @@ std::string Source::Description(bool negated) const {
 std::string Source::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Source\n"; }
 
-bool Source::Match(const ScriptingContext& local_context) const noexcept {
-    if (!local_context.source)
-        return false;
-    return local_context.source == local_context.condition_local_candidate;
-}
-
 ObjectSet Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (parent_context.source)
         return {parent_context.source};
     return {};
-}
-
-uint32_t Source::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Source");
-
-    TraceLogger(conditions) << "GetCheckSum(Source): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Source::Clone() const
@@ -1600,9 +1579,6 @@ std::unique_ptr<Condition> Source::Clone() const
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
-bool RootCandidate::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string RootCandidate::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_ROOT_CANDIDATE")
@@ -1612,24 +1588,10 @@ std::string RootCandidate::Description(bool negated) const {
 std::string RootCandidate::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "RootCandidate\n"; }
 
-bool RootCandidate::Match(const ScriptingContext& local_context) const noexcept {
-    return local_context.condition_root_candidate &&
-        local_context.condition_root_candidate == local_context.condition_local_candidate;
-}
-
 ObjectSet RootCandidate::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (parent_context.condition_root_candidate)
         return {parent_context.condition_root_candidate};
     return {};
-}
-
-uint32_t RootCandidate::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::RootCandidate");
-
-    TraceLogger(conditions) << "GetCheckSum(RootCandidate): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> RootCandidate::Clone() const
@@ -1638,9 +1600,6 @@ std::unique_ptr<Condition> RootCandidate::Clone() const
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
-bool Target::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Target::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_TARGET")
@@ -1650,25 +1609,10 @@ std::string Target::Description(bool negated) const {
 std::string Target::Dump(uint8_t ntabs) const
 { return DumpIndent(ntabs) + "Target\n"; }
 
-bool Target::Match(const ScriptingContext& local_context) const noexcept {
-    if (!local_context.effect_target)
-        return false;
-    return local_context.effect_target == local_context.condition_local_candidate;
-}
-
 ObjectSet Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (parent_context.effect_target)
         return {parent_context.effect_target};
     return {};
-}
-
-uint32_t Target::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Target");
-
-    TraceLogger(conditions) << "GetCheckSum(Target): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Target::Clone() const

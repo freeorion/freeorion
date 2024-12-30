@@ -9,6 +9,7 @@
 #include "ConditionSource.h"
 #include "Condition.h"
 #include "EnumsFwd.h"
+#include "ValueRefs.h"
 #include "../Empire/ProductionQueue.h"
 #include "../util/CheckSums.h"
 #include "../util/Export.h"
@@ -267,22 +268,30 @@ private:
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
     constexpr RootCandidate() noexcept : Condition(false, true, true) {}
-    bool operator==(const Condition& rhs) const override;
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const RootCandidate&) const noexcept { return true; }
+
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const noexcept override {
-        return candidate &&
-            (!parent_context.condition_root_candidate || parent_context.condition_root_candidate == candidate);
+        // if parent_context has no root candidate, then the local candidate is the root candidate for this condition
+        return candidate && (!parent_context.condition_root_candidate || parent_context.condition_root_candidate == candidate);
     }
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
+    { return CheckSums::GetCheckSum("Condition::RootCandidate"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override {
+        return local_context.condition_root_candidate &&
+            local_context.condition_root_candidate == local_context.condition_local_candidate;
+    }
 };
 
 /** There is no LocalCandidate condition. To match any local candidate object,
@@ -291,19 +300,28 @@ private:
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
     constexpr Target() noexcept : Condition(true, false, true) {}
-    bool operator==(const Condition& rhs) const override;
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const Target&) const noexcept { return true; }
+
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const noexcept override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
+    { return CheckSums::GetCheckSum("Condition::Target"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const noexcept override {
+        return local_context.effect_target &&
+            local_context.effect_target == local_context.condition_local_candidate;
+    }
 };
 
 /** Matches planets that are a homeworld for any of the species specified in

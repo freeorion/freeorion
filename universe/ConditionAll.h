@@ -14,7 +14,9 @@ namespace Condition {
 struct FO_COMMON_API All final : public Condition {
     constexpr All() noexcept : Condition(true, true, true) {};
 
-    bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override
+    { return dynamic_cast<const All*>(&rhs); }
+    [[nodiscard]] constexpr bool operator==(const All&) const noexcept { return true; }
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&, const ObjectSet& candidates) const noexcept override { return !candidates.empty(); }
