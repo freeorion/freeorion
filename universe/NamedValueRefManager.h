@@ -29,25 +29,25 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
                       << m_value_ref_name << "  is_lookup_only: " << m_is_lookup_only;
     }
 
-    bool RootCandidateInvariant() const override
+    [[nodiscard]] bool RootCandidateInvariant() const override
     { return NamedRefInitInvariants() ? m_root_candidate_invariant_local : false; }
 
-    bool LocalCandidateInvariant() const override
+    [[nodiscard]] bool LocalCandidateInvariant() const override
     { return NamedRefInitInvariants() ? m_local_candidate_invariant_local : false; }
 
-    bool TargetInvariant() const override
+    [[nodiscard]] bool TargetInvariant() const override
     { return NamedRefInitInvariants() ? m_target_invariant_local : false; }
 
-    bool SourceInvariant() const override
+    [[nodiscard]] bool SourceInvariant() const override
     { return NamedRefInitInvariants() ? m_source_invariant_local : false; }
 
-    bool SimpleIncrement() const override
+    [[nodiscard]] bool SimpleIncrement() const override
     { return NamedRefInitInvariants() ? GetValueRef()->SimpleIncrement() : false; }
 
-    bool ConstantExpr() const override
+    [[nodiscard]] bool ConstantExpr() const override
     { return NamedRefInitInvariants() ? GetValueRef()->ConstantExpr() : false; }
 
-    bool operator==(const ValueRef<T>& rhs) const override {
+    [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override {
         if (&rhs == this)
             return true;
         if (typeid(rhs) != typeid(*this))
@@ -56,7 +56,7 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
         return (m_value_ref_name == rhs_.m_value_ref_name);
     }
 
-    T Eval(const ScriptingContext& context) const override {
+    [[nodiscard]] T Eval(const ScriptingContext& context) const override {
         TraceLogger() << "NamedRef<" << typeid(T).name() << ">::Eval()";
         auto ref = GetValueRef();
         if (!ref) {
@@ -69,7 +69,7 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
         return retval;
     }
 
-    std::string Description() const override {
+    [[nodiscard]] std::string Description() const override {
         auto ref = GetValueRef();
         return ref ? ref->Description() : UserString("NAMED_REF_UNKNOWN");
     }

@@ -513,7 +513,7 @@ private:
         int slot_in_category = INVALID_SLOT_INDEX;
         std::string category;
 
-        bool operator==(const PolicyAdoptionInfo&) const noexcept = default;
+        [[nodiscard]] bool operator==(const PolicyAdoptionInfo&) const noexcept = default;
 
         friend class boost::serialization::access;
         template <typename Archive>

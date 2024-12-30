@@ -43,8 +43,8 @@ struct FO_COMMON_API UnlockableItem {
     [[nodiscard]] auto operator<=>(const UnlockableItem&) const noexcept = default;
 #  endif
 #else
-    bool operator==(const UnlockableItem&) const noexcept { return type == rhs.type && name == rhs.name; }
-    bool operator<(const UnlockableItem& rhs) const noexcept { return type < rhs.type || (type == rhs.type && name < rhs.name); }
+    [[nodiscard]] bool operator==(const UnlockableItem&) const noexcept { return type == rhs.type && name == rhs.name; }
+    [[nodiscard]] bool operator<(const UnlockableItem& rhs) const noexcept { return type < rhs.type || (type == rhs.type && name < rhs.name); }
 #endif
 
     //! Returns a data file format representation of this object

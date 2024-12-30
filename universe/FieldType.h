@@ -24,7 +24,7 @@ public:
               std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
               std::string&& graphic);
 
-    bool operator==(const FieldType& rhs) const;
+    [[nodiscard]] bool operator==(const FieldType& rhs) const;
 
     //! Returns the unique name for this type of field
     const auto& Name() const noexcept { return m_name; }

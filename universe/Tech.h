@@ -67,7 +67,7 @@ public:
          std::vector<UnlockableItem>&& unlocked_items,
          std::string&& graphic);
 
-    bool operator==(const Tech& rhs) const;
+    [[nodiscard]] bool operator==(const Tech& rhs) const;
     Tech(const Tech&) = delete;
     Tech(Tech&&) = default;
     Tech& operator=(const Tech&) = delete;

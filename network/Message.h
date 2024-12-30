@@ -145,11 +145,11 @@ public:
         m_message_text(std::move(text))
     {}
 
-    MessageType Type() const noexcept { return m_type; };
-    std::size_t Size() const noexcept { return m_message_size; }
-    auto&       Text() const noexcept { return m_message_text; }
-    auto        Data() const noexcept { return m_message_text.data(); }
-    auto        Data() noexcept       { return m_message_text.data(); }
+    [[nodiscard]] MessageType Type() const noexcept { return m_type; };
+    [[nodiscard]] std::size_t Size() const noexcept { return m_message_size; }
+    [[nodiscard]] auto&       Text() const noexcept { return m_message_text; }
+    [[nodiscard]] auto        Data() const noexcept { return m_message_text.data(); }
+    [[nodiscard]] auto        Data() noexcept       { return m_message_text.data(); }
 
     void Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
     void Swap(Message& rhs) noexcept;
@@ -170,7 +170,7 @@ FO_COMMON_API void BufferToHeader(const Message::HeaderBuffer& buffer, Message& 
 FO_COMMON_API void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer);
 
 // ignores m_message_size
-FO_COMMON_API bool operator==(const Message& lhs, const Message& rhs) noexcept;
+[[nodiscard]] FO_COMMON_API bool operator==(const Message& lhs, const Message& rhs) noexcept;
 
 FO_COMMON_API void swap(Message& lhs, Message& rhs) noexcept;
 

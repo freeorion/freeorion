@@ -46,7 +46,7 @@ public:
         SetMeter(meter, std::move(value), std::string{accounting_label})
     {}
 
-    bool operator==(const Effect& rhs) const override;
+    [[nodiscard]] bool operator==(const Effect& rhs) const override;
 
     void Execute(ScriptingContext& context) const override;
 
@@ -90,7 +90,7 @@ public:
                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& part_name,
                      std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    bool operator==(const Effect& rhs) const override;
+    [[nodiscard]] bool operator==(const Effect& rhs) const override;
 
     void Execute(ScriptingContext& context) const override;
     void Execute(ScriptingContext& context, const TargetSet& targets) const override;
@@ -128,7 +128,7 @@ public:
     SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id, std::string& meter,
                    std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    bool operator==(const Effect& rhs) const override;
+    [[nodiscard]] bool operator==(const Effect& rhs) const override;
 
     void Execute(ScriptingContext& context) const override;
     void Execute(ScriptingContext& context, const TargetSet& targets) const override;
@@ -165,7 +165,7 @@ public:
                        ResourceType stockpile,
                        std::unique_ptr<ValueRef::ValueRef<double>>&& value);
 
-    bool operator==(const Effect& rhs) const override;
+    [[nodiscard]] bool operator==(const Effect& rhs) const override;
 
     void Execute(ScriptingContext& context) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -188,7 +188,7 @@ public:
     SetEmpireCapital();
     explicit SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
-    bool operator==(const Effect& rhs) const override;
+    [[nodiscard]] bool operator==(const Effect& rhs) const override;
 
     void        Execute(ScriptingContext& context) const override;
     std::string Dump(uint8_t ntabs = 0) const override;

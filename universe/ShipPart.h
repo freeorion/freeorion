@@ -50,7 +50,7 @@ public:
 
     ~ShipPart();
 
-    bool operator==(const ShipPart& rhs) const;
+    [[nodiscard]] bool operator==(const ShipPart& rhs) const;
 
     [[nodiscard]] auto& Name() const noexcept { return m_name; }
     [[nodiscard]] auto& Description() const noexcept { return m_description; }
