@@ -10703,13 +10703,9 @@ ValueTest::ValueTest(const ValueTest& rhs) :
     m_no_refs12_comparable(rhs.m_no_refs12_comparable)
 {}
 
-bool ValueTest::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool ValueTest::operator==(const ValueTest& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const ValueTest& rhs_ = static_cast<const ValueTest&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_value_ref1)
     CHECK_COND_VREF_MEMBER(m_value_ref2)

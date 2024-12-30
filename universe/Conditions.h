@@ -1828,9 +1828,16 @@ struct FO_COMMON_API ValueTest final : public Condition {
               std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref2,
               ComparisonType comp2 = ComparisonType::INVALID_COMPARISON,
               std::unique_ptr<ValueRef::ValueRef<int>>&& value_ref3 = nullptr);
-    explicit ValueTest(const ValueTest& rhs);
+    ValueTest(const ValueTest& rhs);
+    ValueTest(ValueTest&& rhs) = default;
 
-    bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const ValueTest& rhs) const;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
