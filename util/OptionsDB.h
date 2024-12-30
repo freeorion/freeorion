@@ -123,8 +123,8 @@ public:
         Option& operator=(const Option& rhs) = delete;
 
         // non-defaulted comparisons to only consider names
-        bool operator<(const Option& rhs) const noexcept { return name < rhs.name; };
-        bool operator==(const Option& rhs) const noexcept { return name == rhs.name; };
+        [[nodiscard]] bool operator<(const Option& rhs) const noexcept { return name < rhs.name; };
+        [[nodiscard]] bool operator==(const Option& rhs) const noexcept { return name == rhs.name; };
 
         // SetFromValue returns true if this->value is successfully changed
         template <typename T>

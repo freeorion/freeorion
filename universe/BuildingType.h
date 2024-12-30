@@ -48,55 +48,55 @@ public:
                  std::string&& icon);
     ~BuildingType(); // needed due to forward-declared Condition held in unique_ptr
 
-    bool operator==(const BuildingType& rhs) const;
+    [[nodiscard]] bool operator==(const BuildingType& rhs) const;
 
     //! Returns the unique name for this type of building
-    auto& Name() const noexcept { return m_name; }
+    [[nodiscard]] auto& Name() const noexcept { return m_name; }
 
     //! Returns a text description of this type of building
-    auto& Description() const noexcept { return m_description; }
+    [[nodiscard]] auto& Description() const noexcept { return m_description; }
 
     //! Returns a data file format representation of this object
-    auto Dump(uint8_t ntabs = 0) const -> std::string;
+    [[nodiscard]] auto Dump(uint8_t ntabs = 0) const -> std::string;
 
     //! Returns true if the production cost and time are invariant (does not
     //! depend on) the location
-    auto ProductionCostTimeLocationInvariant() const -> bool;
+    [[nodiscard]] auto ProductionCostTimeLocationInvariant() const -> bool;
 
     //! Returns the number of production points required to build this building
     //! at this location by this empire
-    auto ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
+    [[nodiscard]] auto ProductionCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
 
     //! Returns the maximum number of production points per turn that can be
     //! spend on this building
-    auto PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
+    [[nodiscard]] auto PerTurnCost(int empire_id, int location_id, const ScriptingContext& context) const -> float;
 
     //! Returns the number of turns required to build this building at this
     //! location by this empire
-    auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const -> int;
+    [[nodiscard]] auto ProductionTime(int empire_id, int location_id, const ScriptingContext& context) const -> int;
 
     //! Returns the ValueRef that determines ProductionCost()
-    const auto* Cost() const noexcept { return m_production_cost.get(); }
+    [[nodiscard]] const auto* Cost() const noexcept { return m_production_cost.get(); }
 
     //! Returns the ValueRef that determines ProductionTime()
-    const auto* Time() const noexcept { return m_production_time.get(); }
+    [[nodiscard]] const auto* Time() const noexcept { return m_production_time.get(); }
 
     //! Returns whether this building type is producible by players and appears
     //! on the production screen
-    auto Producible() const noexcept { return m_producible; }
+    [[nodiscard]] auto Producible() const noexcept { return m_producible; }
 
-    auto& ProductionMeterConsumption() const noexcept { return m_production_meter_consumption; }
+    [[nodiscard]] auto& ProductionMeterConsumption() const noexcept { return m_production_meter_consumption; }
 
-    auto& ProductionSpecialConsumption() const noexcept { return m_production_special_consumption; }
+    [[nodiscard]] auto& ProductionSpecialConsumption() const noexcept { return m_production_special_consumption; }
 
-    auto& Tags() const noexcept { return m_tags; }
+    [[nodiscard]] auto& Tags() const noexcept { return m_tags; }
 
-    auto HasTag(std::string_view tag) const -> bool
+    [[nodiscard]] auto HasTag(std::string_view tag) const -> bool
     { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) noexcept { return t == tag; }); }
 
     //! Returns the condition that determines the locations where this building
     //! can be produced
-    const auto* Location() const noexcept { return m_location.get(); }
+    [[nodiscard]] const auto* Location() const noexcept { return m_location.get(); }
 
     //! Returns a condition that can be used by the UI to further filter (beyond
     //! the Location() requirement) where this building will be presented for
@@ -104,28 +104,28 @@ public:
     //! BuildDesignatorWnd. Example usage: Buildings that are already enqueued
     //! at a production location are hidden so they don't appear in the list of
     //! available items that can be enqueued/produced (again) at that location.
-    const auto* EnqueueLocation() const noexcept { return m_enqueue_location.get(); }
+    [[nodiscard]] const auto* EnqueueLocation() const noexcept { return m_enqueue_location.get(); }
 
     //! Returns the EffectsGroups that encapsulate the effects that buildings of
     //! this type have when operational.
-    auto& Effects() const noexcept { return m_effects; }
+    [[nodiscard]] auto& Effects() const noexcept { return m_effects; }
 
     //! Returns the name of the grapic file for this building type
-    auto& Icon() const noexcept { return m_icon; }
+    [[nodiscard]] auto& Icon() const noexcept { return m_icon; }
 
     //! Returns true iff the empire with ID empire_id can produce this building
     //! at the location with location_id
-    auto ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
+    [[nodiscard]] auto ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
 
     //! Returns true iff the empire with ID empire_id meets the requirements of
     //! the EnqueueLocation() UI filter method for this building at the
     //! location with location_id
-    auto EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
+    [[nodiscard]] auto EnqueueLocation(int empire_id, int location_id, const ScriptingContext& context) const -> bool;
 
     //! Returns CaptureResult for an empire capturing a planet with this building
     //! on it or that is the location of a Production Queue BuildItem for a building
     //! of this type
-    auto GetCaptureResult(int, int, int, bool) const noexcept { return m_capture_result; }
+    [[nodiscard]] auto GetCaptureResult(int, int, int, bool) const noexcept { return m_capture_result; }
 
     //! Returns a number, calculated from the contained data, which should be
     //! different for different contained data, and must be the same for
@@ -133,7 +133,7 @@ public:
     //! and executions of the program and the function. Useful to verify that
     //! the parsed content is consistent without sending it all between
     //! clients and server.
-    auto GetCheckSum() const -> uint32_t;
+    [[nodiscard]] auto GetCheckSum() const -> uint32_t;
 
 private:
     const std::string                                 m_name;

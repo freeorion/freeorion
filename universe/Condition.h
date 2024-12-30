@@ -31,7 +31,7 @@ struct FO_COMMON_API Condition {
     constexpr Condition(Condition&&) noexcept = default;
     constexpr virtual ~Condition() = default;
 
-    virtual bool operator==(const Condition& rhs) const;
+    [[nodiscard]] virtual bool operator==(const Condition& rhs) const;
 
     /** Moves object pointers from \a matches or \a non_matches (from whichever
      * is specified in \a search_domain) to the other, if each belongs in the
@@ -79,7 +79,7 @@ struct FO_COMMON_API Condition {
 
     /** Initializes \a condition_non_targets with a set of objects that could
       * match this condition, without checking if they all actually do. */
-    virtual ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const;
+    [[nodiscard]] virtual ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const;
 
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this

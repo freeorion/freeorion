@@ -34,7 +34,7 @@ public:
             type(slot_type), x(x_), y(y_)
         {}
 
-        bool operator==(const Slot& rhs) const noexcept
+        [[nodiscard]] bool operator==(const Slot& rhs) const noexcept
         { return type == rhs.type && x == rhs.x && y == rhs.y; }
 
         ShipSlotType type = ShipSlotType::INVALID_SHIP_SLOT_TYPE;
@@ -53,7 +53,7 @@ public:
 
     ~ShipHull();
 
-    bool operator==(const ShipHull& rhs) const;
+    [[nodiscard]] bool operator==(const ShipHull& rhs) const;
 
     //! Returns name of hull
     [[nodiscard]] const auto& Name() const noexcept { return m_name; }

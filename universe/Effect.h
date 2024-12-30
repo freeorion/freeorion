@@ -129,7 +129,7 @@ namespace Effect {
                              bool include_empire_meter_effects = false,
                              bool only_generate_sitrep_effects = false) const;
 
-        virtual bool operator==(const Effect& rhs) const;
+        [[nodiscard]] virtual bool operator==(const Effect& rhs) const;
 
         [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const = 0;
 
@@ -181,7 +181,7 @@ namespace Effect {
             running_meter_total(running_meter_total_)
         {}
 
-        bool operator==(const AccountingInfo& rhs) const noexcept;
+        [[nodiscard]] bool operator==(const AccountingInfo& rhs) const noexcept;
 
         int     source_id = INVALID_OBJECT_ID;  ///< source object of effect
         float   meter_change = 0.0f;            ///< net change on meter due to this effect, as best known by client's empire
@@ -212,7 +212,7 @@ namespace Effect {
 
         EffectsGroup(EffectsGroup&& rhs) = default;
 
-        bool operator==(const EffectsGroup& rhs) const;
+        [[nodiscard]] bool operator==(const EffectsGroup& rhs) const;
 
         /** execute all effects in group */
         void Execute(ScriptingContext& source_context,
