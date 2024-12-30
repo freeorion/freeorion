@@ -59,7 +59,7 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         db.Add("resource.effects.description.shown", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"), false);
-        db.Add("ui.pedia.search.articles.enabled", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"), true);
+        db.Add("ui.pedia.search.articles.enabled", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"), false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
