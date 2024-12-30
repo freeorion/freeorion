@@ -138,17 +138,33 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return "\"" + Description() + "\""; }
 
-    void SetTopLevelContent(const std::string& content_name) override {
+    void CONSTEXPR_STRING SetTopLevelContent(const std::string& content_name) override {
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
         if (m_value == current_content && content_name == no_current_content) {
-            ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal.  Trying to set "
-                << no_current_content << " for "
-                << current_content << " (maybe you tried to use "
-                << current_content << " in named_values.focs.txt)";
+            [&content_name]() {
+                if (!std::is_constant_evaluated()) {
+                    ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Scripted Content illegal.  Trying to set "
+                                  << no_current_content << " for "
+                                  << current_content << " (maybe you tried to use "
+                                  << current_content << " in named_values.focs.txt)";
+                } else {
+                    throw std::invalid_argument("Constant<std::string>::SetTopLevelContent() passed " + content_name);
+                }
+            }();
         }
-        if (!m_top_level_content.empty() && m_top_level_content != no_current_content)
-            ErrorLogger() << "Constant<std::string>::SetTopLevelContent()  Tried to overwrite top level content from '" << m_top_level_content << "' to '" << content_name << "'";
-        else
+#endif
+        if (!m_top_level_content.empty() && m_top_level_content != no_current_content) {
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+            [this, &content_name]() {
+                if (!std::is_constant_evaluated())
+                    ErrorLogger() << "Constant<std::string>::SetTopLevelContent() tried to overwrite top level content from '" << m_top_level_content << "' to '" << content_name << "'";
+                else
+                    throw std::runtime_error("Constant<std::string>::SetTopLevelContent() tried to overwrite already-set top level content");
+            }();
+#endif
+        } else {
             m_top_level_content = content_name;
+        }
     }
 
     [[nodiscard]] const auto& Value() const noexcept { return m_value; };
