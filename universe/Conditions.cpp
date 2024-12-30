@@ -3567,17 +3567,11 @@ std::unique_ptr<Condition> ContainedBy::Clone() const
 // InOrIsSystem                                          //
 ///////////////////////////////////////////////////////////
 InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id) :
+    Condition(CondsRTSI(system_id),
+              system_id && (system_id->ConstantExpr() ||
+                            (system_id->LocalCandidateInvariant() && system_id->RootCandidateInvariant()))),
     m_system_id(std::move(system_id))
-{
-    m_root_candidate_invariant = !m_system_id || m_system_id->RootCandidateInvariant();
-    m_target_invariant = !m_system_id || m_system_id->TargetInvariant();
-    m_source_invariant = !m_system_id || m_system_id->SourceInvariant();
-    m_initial_candidates_all_match = 
-        m_system_id && (
-            m_system_id->ConstantExpr() || (
-                m_system_id->LocalCandidateInvariant() &&
-                RootCandidateInvariant()));
-}
+{}
 
 bool InOrIsSystem::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3707,17 +3701,11 @@ std::unique_ptr<Condition> InOrIsSystem::Clone() const
 // OnPlanet                                              //
 ///////////////////////////////////////////////////////////
 OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
+    Condition(CondsRTSI(planet_id),
+              planet_id && (planet_id->ConstantExpr() ||
+                            (planet_id->LocalCandidateInvariant() && planet_id->RootCandidateInvariant()))),
     m_planet_id(std::move(planet_id))
-{
-    m_root_candidate_invariant = !m_planet_id || m_planet_id->RootCandidateInvariant();
-    m_target_invariant = !m_planet_id || m_planet_id->TargetInvariant();
-    m_source_invariant = !m_planet_id || m_planet_id->SourceInvariant();
-    m_initial_candidates_all_match =
-        m_planet_id && (
-            m_planet_id->ConstantExpr() || (
-                m_planet_id->LocalCandidateInvariant() &&
-                RootCandidateInvariant()));
-}
+{}
 
 bool OnPlanet::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3853,16 +3841,11 @@ std::unique_ptr<Condition> OnPlanet::Clone() const
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
 ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
+    Condition(CondsRTSI(object_id),
+              object_id && (object_id->ConstantExpr() ||
+                            (object_id->LocalCandidateInvariant() && object_id->RootCandidateInvariant()))),
     m_object_id(std::move(object_id))
-{
-    m_root_candidate_invariant = !m_object_id || m_object_id->RootCandidateInvariant();
-    m_target_invariant = !m_object_id || m_object_id->TargetInvariant();
-    m_source_invariant = !m_object_id || m_object_id->SourceInvariant();
-    m_initial_candidates_all_match =
-        m_object_id->ConstantExpr() || (
-            m_object_id->LocalCandidateInvariant() &&
-            RootCandidateInvariant());
-}
+{}
 
 bool ObjectID::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -3979,12 +3962,9 @@ std::unique_ptr<Condition> ObjectID::Clone() const
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
 PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types) :
+    Condition(CondsRTSI(types)),
     m_types(std::move(types))
-{
-    m_root_candidate_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 bool PlanetType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4158,12 +4138,9 @@ std::unique_ptr<Condition> PlanetType::Clone() const
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
 PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
+    Condition(CondsRTSI(sizes)),
     m_sizes(std::move(sizes))
-{
-    m_root_candidate_invariant = std::all_of(m_sizes.begin(), m_sizes.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_sizes.begin(), m_sizes.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_sizes.begin(), m_sizes.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 bool PlanetSize::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -4534,12 +4511,9 @@ std::unique_ptr<Condition> PlanetEnvironment::Clone() const {
 // Species                                               //
 ///////////////////////////////////////////////////////////
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+    Condition(CondsRTSI(names)),
     m_names(std::move(names))
-{
-    m_root_candidate_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 Species::Species() :
     Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
@@ -5415,12 +5389,9 @@ std::unique_ptr<Condition> Enqueued::Clone() const
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
 FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+    Condition(CondsRTSI(names)),
     m_names(std::move(names))
-{
-    m_root_candidate_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_names.begin(), m_names.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 bool FocusType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5590,12 +5561,9 @@ std::unique_ptr<Condition> FocusType::Clone() const
 // StarType                                              //
 ///////////////////////////////////////////////////////////
 StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
+    Condition(CondsRTSI(types)),
     m_types(std::move(types))
-{
-    m_root_candidate_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->RootCandidateInvariant(); });
-    m_target_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->TargetInvariant(); });
-    m_source_invariant = std::all_of(m_types.begin(), m_types.end(), [](auto& e){ return e->SourceInvariant(); });
-}
+{}
 
 bool StarType::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -5754,12 +5722,9 @@ std::unique_ptr<Condition> StarType::Clone() const
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
 DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(CondsRTSI(name)),
     m_name(std::move(name))
-{
-    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
-    m_target_invariant = !m_name || m_name->TargetInvariant();
-    m_source_invariant = !m_name || m_name->SourceInvariant();
-}
+{}
 
 bool DesignHasHull::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6252,12 +6217,9 @@ std::unique_ptr<Condition> DesignHasPartClass::Clone() const {
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
 PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(CondsRTSI(name)),
     m_name(std::move(name))
-{
-    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
-    m_target_invariant = !m_name || m_name->TargetInvariant();
-    m_source_invariant = !m_name || m_name->SourceInvariant();
-}
+{}
 
 bool PredefinedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6393,12 +6355,9 @@ std::unique_ptr<Condition> PredefinedShipDesign::Clone() const
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
 NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id) :
+    Condition(CondsRTSI(design_id)),
     m_design_id(std::move(design_id))
-{
-    m_root_candidate_invariant = !m_design_id || m_design_id->RootCandidateInvariant();
-    m_target_invariant = !m_design_id || m_design_id->TargetInvariant();
-    m_source_invariant = !m_design_id || m_design_id->SourceInvariant();
-}
+{}
 
 bool NumberedShipDesign::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6499,12 +6458,9 @@ std::unique_ptr<Condition> NumberedShipDesign::Clone() const
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
 ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+    Condition(CondsRTSI(empire_id)),
     m_empire_id(std::move(empire_id))
-{
-    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
-    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
-    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
-}
+{}
 
 bool ProducedByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -6607,12 +6563,9 @@ std::unique_ptr<Condition> ProducedByEmpire::Clone() const
 // Chance                                                //
 ///////////////////////////////////////////////////////////
 Chance::Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance) :
+    Condition(CondsRTSI(chance)),
     m_chance(std::move(chance))
-{
-    m_root_candidate_invariant = !m_chance || m_chance->RootCandidateInvariant();
-    m_target_invariant = !m_chance || m_chance->TargetInvariant();
-    m_source_invariant = !m_chance || m_chance->SourceInvariant();
-}
+{}
 
 bool Chance::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -7796,8 +7749,8 @@ namespace {
 }
 
 void EmpireHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
-                                         ObjectSet& matches, ObjectSet& non_matches,
-                                         SearchDomain search_domain) const
+                                          ObjectSet& matches, ObjectSet& non_matches,
+                                          SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -7940,8 +7893,8 @@ namespace {
 }
 
 void EmpireHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
-                                       ObjectSet& matches, ObjectSet& non_matches,
-                                       SearchDomain search_domain) const
+                                        ObjectSet& matches, ObjectSet& non_matches,
+                                        SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -8084,8 +8037,8 @@ namespace {
 }
 
 void EmpireHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
-                                     ObjectSet& matches, ObjectSet& non_matches,
-                                     SearchDomain search_domain) const
+                                      ObjectSet& matches, ObjectSet& non_matches,
+                                      SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not local candidate invariant
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -8702,12 +8655,9 @@ std::unique_ptr<Condition> WithinStarlaneJumps::Clone() const {
 // HasStarlaneTo                                         //
 ///////////////////////////////////////////////////////////
 HasStarlaneTo::HasStarlaneTo(std::unique_ptr<Condition>&& condition) :
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition))
-{
-    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
-    m_target_invariant = !m_condition || m_condition->TargetInvariant();
-    m_source_invariant = !m_condition || m_condition->SourceInvariant();
-}
+{}
 
 bool HasStarlaneTo::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -8811,12 +8761,9 @@ std::unique_ptr<Condition> HasStarlaneTo::Clone() const
 // StarlaneToWouldCrossExistingStarlane                  //
 ///////////////////////////////////////////////////////////
 StarlaneToWouldCrossExistingStarlane::StarlaneToWouldCrossExistingStarlane(std::unique_ptr<Condition>&& condition) :
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition))
-{
-    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
-    m_target_invariant = !m_condition || m_condition->TargetInvariant();
-    m_source_invariant = !m_condition || m_condition->SourceInvariant();
-}
+{}
 
 bool StarlaneToWouldCrossExistingStarlane::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9182,13 +9129,10 @@ std::unique_ptr<Condition> StarlaneToWouldCrossExistingStarlane::Clone() const
 ///////////////////////////////////////////////////////////
 StarlaneToWouldBeAngularlyCloseToExistingStarlane::StarlaneToWouldBeAngularlyCloseToExistingStarlane(
     std::unique_ptr<Condition>&& condition, double max_dotprod) :
+    Condition(CondsRTSI(condition)),
     m_condition(std::move(condition)),
     m_max_dotprod(max_dotprod)
-{
-    m_root_candidate_invariant = !m_condition || m_condition->RootCandidateInvariant();
-    m_target_invariant = !m_condition || m_condition->TargetInvariant();
-    m_source_invariant = !m_condition || m_condition->SourceInvariant();
-}
+{}
 
 bool StarlaneToWouldBeAngularlyCloseToExistingStarlane::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9745,12 +9689,9 @@ std::unique_ptr<Condition> StarlaneToWouldBeCloseToObject::Clone() const {
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
 ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+    Condition(CondsRTSI(empire_id)),
     m_empire_id(std::move(empire_id))
-{
-    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
-    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
-    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
-}
+{}
 
 bool ExploredByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -9969,12 +9910,9 @@ std::unique_ptr<Condition> Aggressive::Clone() const
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
 FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id) :
+    Condition(CondsRTSI(empire_id)),
     m_empire_id(std::move(empire_id))
-{
-    m_root_candidate_invariant = !m_empire_id || m_empire_id->RootCandidateInvariant();
-    m_target_invariant = !m_empire_id || m_empire_id->TargetInvariant();
-    m_source_invariant = !m_empire_id || m_empire_id->SourceInvariant();
-}
+{}
 
 bool FleetSupplyableByEmpire::operator==(const Condition& rhs) const {
     if (this == &rhs)
@@ -11498,13 +11436,10 @@ namespace {
 
 CombatTarget::CombatTarget(ContentType content_type,
                            std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Condition(CondsRTSI(name)),
     m_name(std::move(name)),
     m_content_type(content_type)
-{
-    m_root_candidate_invariant = !m_name || m_name->RootCandidateInvariant();
-    m_target_invariant = !m_name|| m_name->TargetInvariant();
-    m_source_invariant = !m_name || m_name->SourceInvariant();
-}
+{}
 
 bool CombatTarget::operator==(const Condition& rhs) const {
     if (this == &rhs)
