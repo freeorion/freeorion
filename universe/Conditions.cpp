@@ -3850,14 +3850,17 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
 bool ObjectID::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const ObjectID& rhs_ = static_cast<const ObjectID&>(rhs);
+bool ObjectID::operator==(const ObjectID& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_object_id)
 
-    return true;
+        return true;
 }
 
 namespace {
@@ -4312,13 +4315,9 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
         std::all_of(m_environments.begin(), m_environments.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-bool PlanetEnvironment::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool PlanetEnvironment::operator==(const PlanetEnvironment& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const PlanetEnvironment& rhs_ = static_cast<const PlanetEnvironment&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_species_name)
 
@@ -4522,10 +4521,13 @@ Species::Species() :
 bool Species::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Species& rhs_ = static_cast<const Species&>(rhs);
+bool Species::operator==(const Species& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -5118,21 +5120,23 @@ Enqueued::Enqueued(const Enqueued& rhs) :
 bool Enqueued::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Enqueued& rhs_ = static_cast<const Enqueued&>(rhs);
-
+bool Enqueued::operator==(const Enqueued& rhs_) const {
+    if (this == &rhs_)
+        return true;
     if (m_build_type != rhs_.m_build_type)
         return false;
 
     CHECK_COND_VREF_MEMBER(m_name)
-    CHECK_COND_VREF_MEMBER(m_design_id)
-    CHECK_COND_VREF_MEMBER(m_empire_id)
-    CHECK_COND_VREF_MEMBER(m_low)
-    CHECK_COND_VREF_MEMBER(m_high)
+        CHECK_COND_VREF_MEMBER(m_design_id)
+        CHECK_COND_VREF_MEMBER(m_empire_id)
+        CHECK_COND_VREF_MEMBER(m_low)
+        CHECK_COND_VREF_MEMBER(m_high)
 
-    return true;
+        return true;
 }
 
 namespace {
@@ -5396,10 +5400,13 @@ FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>
 bool FocusType::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const FocusType& rhs_ = static_cast<const FocusType&>(rhs);
+bool FocusType::operator==(const FocusType& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_names.size() != rhs_.m_names.size())
         return false;
