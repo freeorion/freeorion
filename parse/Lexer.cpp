@@ -119,5 +119,3 @@ lexer::lexer() :
         |    end_of_line_comment
         ;
 }
-
-const lexer lexer::tok{};

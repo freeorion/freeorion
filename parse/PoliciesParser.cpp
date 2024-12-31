@@ -227,7 +227,7 @@ namespace parse {
         ScopedTimer timer("Policies Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, policies_);
+            detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, policies_);
 
         return policies_;
     }

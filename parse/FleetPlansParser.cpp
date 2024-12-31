@@ -84,7 +84,7 @@ namespace parse {
     start_rule_payload fleet_plans(const boost::filesystem::path& path) {
         start_rule_payload fleet_plans_;
         fleet_plans_.reserve(32);   // guesstimate of enough space
-        detail::parse_file<grammar, start_rule_payload>(lexer::tok, path, fleet_plans_);
+        detail::parse_file<grammar, start_rule_payload>(GetLexer(), path, fleet_plans_);
         return fleet_plans_;
     }
 }
