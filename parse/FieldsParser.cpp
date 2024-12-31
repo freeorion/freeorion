@@ -117,7 +117,7 @@ namespace parse {
         ScopedTimer timer("Fields Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, field_types);
+            detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, field_types);
 
         return field_types;
     }

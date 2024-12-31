@@ -251,7 +251,7 @@ namespace parse {
         ScopedTimer timer("Buildings Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, building_types);
+            detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, building_types);
 
         py_grammar p = py_grammar(parser, building_types);
         for (const auto& file : ListDir(path, IsFOCPyScript))
