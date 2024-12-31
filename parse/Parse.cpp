@@ -486,6 +486,7 @@ namespace parse {
                            std::string& filename, std::string& file_contents,
                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
     {
+        std::cout << "parse_file_common reading file: " << path.string() << "\n";
         filename = path.string();
 
         bool read_success = ReadFile(path, file_contents);
@@ -497,12 +498,17 @@ namespace parse {
         // add newline at end to avoid errors when one is left out, but is expected by parsers
         file_contents += "\n";
 
+        std::cout << "parse_file_common doing file substitution\n";
         file_substitution(file_contents, path.parent_path(), filename);
+
+        std::cout << "parse_file_common doing macro substitution\n";
         macro_substitution(file_contents, path);
 
+        std::cout << "parse_file_common begin / end\n";
         first = file_contents.begin();
         last = file_contents.end();
 
+        std::cout << "parse_file_common lexer.begin(...)\n";
         it = lexer.begin(first, last);
     }
 
