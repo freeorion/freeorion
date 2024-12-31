@@ -79,7 +79,7 @@ private:
 
 /** Returns the Special object used to represent specials of type \a name.
   * If no such Special exists, 0 is returned instead. */
-[[nodiscard]]FO_COMMON_API const Special* GetSpecial(std::string_view name);
+[[nodiscard]] FO_COMMON_API const Special* GetSpecial(std::string_view name);
 
 /** Returns names of all specials. */
 [[nodiscard]] FO_COMMON_API std::vector<std::string_view> SpecialNames();
