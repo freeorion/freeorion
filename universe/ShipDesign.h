@@ -161,8 +161,6 @@ public:
       * clients and server. */
     [[nodiscard]] uint32_t GetCheckSum() const;
 
-    friend FO_COMMON_API bool operator==(const ShipDesign& first, const ShipDesign& second);
-
     [[nodiscard]] bool ProductionLocation(int empire_id, int location_id, const ScriptingContext& context) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
     void SetID(int id);                                                  ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
@@ -240,7 +238,10 @@ private:
 };
 
 ///< Returns true if the two designs have the same hull and parts.
-FO_COMMON_API bool operator==(const ShipDesign& first, const ShipDesign& second);
+[[nodiscard]] inline bool operator==(const ShipDesign& first, const ShipDesign& second) {
+    return first.Hull() == second.Hull() &&
+        first.ShipPartCount() == second.ShipPartCount();
+}
 
 
 class FO_COMMON_API PredefinedShipDesignManager {

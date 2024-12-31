@@ -751,23 +751,6 @@ uint32_t ShipDesign::GetCheckSum() const {
     return retval;
 }
 
-bool operator ==(const ShipDesign& first, const ShipDesign& second) {
-    if (first.Hull() != second.Hull())
-        return false;
-
-    std::map<std::string, int> first_parts;
-    std::map<std::string, int> second_parts;
-
-    // don't care if order is different, as long as the types and numbers of parts is the same
-    for (const std::string& part_name : first.Parts())
-        ++first_parts[part_name];
-
-    for (const std::string& part_name : second.Parts())
-        ++second_parts[part_name];
-
-    return first_parts == second_parts;
-}
-
 
 /////////////////////////////////////
 // PredefinedShipDesignManager     //
