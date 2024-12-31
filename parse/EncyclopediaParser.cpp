@@ -90,7 +90,7 @@ namespace parse {
         ScopedTimer timer("Encyclopedia Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, ArticleMap>(lexer::tok, file, articles);
+            detail::parse_file<grammar, ArticleMap>(GetLexer(), file, articles);
 
         return articles;
     }

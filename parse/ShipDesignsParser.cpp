@@ -227,6 +227,8 @@ namespace parse {
 
         ScopedTimer timer("Ship Designs Parsing");
 
+        const auto& tok = GetLexer();
+
         for (auto& file : ListDir(path, IsFOCScript)) {
             TraceLogger() << "Parse ship design file " << file.filename();
             if (file.filename() == "ShipDesignOrdering.focs.txt" ) {
@@ -237,7 +239,7 @@ namespace parse {
             try {
                 boost::optional<std::unique_ptr<ParsedShipDesign>> maybe_design;
                 auto partial_result = detail::parse_file<grammar, boost::optional<std::unique_ptr<ParsedShipDesign>>>(
-                    lexer::tok, file, maybe_design);
+                    tok, file, maybe_design);
 
                 if (!partial_result || !maybe_design)
                     continue;
@@ -252,7 +254,7 @@ namespace parse {
         if (!manifest_file.empty()) {
             try {
                 detail::parse_file<manifest_grammar, std::vector<boost::uuids::uuid>>(
-                    lexer::tok, manifest_file, ordering);
+                    tok, manifest_file, ordering);
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file

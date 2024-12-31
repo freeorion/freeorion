@@ -133,7 +133,7 @@ namespace parse {
         ScopedTimer timer("Named ValueRef Parsing");
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, named_value_refs);
+            detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, named_value_refs);
 
         for (auto& k_v : named_value_refs)
             ErrorLogger() << "Should have not returned anything: named_value_refs : " << k_v.first;

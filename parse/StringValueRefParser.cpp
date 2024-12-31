@@ -203,12 +203,14 @@ namespace parse {
     bool string_free_variable(std::string& text) {
         boost::spirit::qi::in_state_type in_state;
 
+        const auto& tok = GetLexer();
+
         text_iterator first = text.begin();
         text_iterator last = text.end();
-        token_iterator it = lexer::tok.begin(first, last);
+        token_iterator it = tok.begin(first, last);
 
         bool success = boost::spirit::qi::phrase_parse(
-            it, lexer::tok.end(), lexer::tok.GalaxySeed_, in_state("WS")[lexer::tok.self]);
+            it, tok.end(), tok.GalaxySeed_, in_state("WS")[tok.self]);
 
         return success;
     }
