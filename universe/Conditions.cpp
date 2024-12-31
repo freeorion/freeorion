@@ -7503,13 +7503,9 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& na
     OwnerHasTech(nullptr, std::move(name))
 {}
 
-bool OwnerHasTech::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool OwnerHasTech::operator==(const OwnerHasTech& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const OwnerHasTech& rhs_ = static_cast<const OwnerHasTech&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_name)
@@ -8080,13 +8076,9 @@ VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empi
     m_source_invariant = std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); });
 }
 
-bool VisibleToEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool VisibleToEmpire::operator==(const VisibleToEmpire& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const VisibleToEmpire& rhs_ = static_cast<const VisibleToEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_since_turn)
@@ -9748,9 +9740,6 @@ std::unique_ptr<Condition> ExploredByEmpire::Clone() const
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
-bool Stationary::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Stationary::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_STATIONARY")
@@ -9806,9 +9795,6 @@ std::unique_ptr<Condition> Stationary::Clone() const
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
 ///////////////////////////////////////////////////////////
-bool Aggressive::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Aggressive::Description(bool negated) const {
     if (m_aggressive)
         return (!negated)
@@ -9865,13 +9851,9 @@ FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::Value
     m_empire_id(std::move(empire_id))
 {}
 
-bool FleetSupplyableByEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool FleetSupplyableByEmpire::operator==(const FleetSupplyableByEmpire& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const FleetSupplyableByEmpire& rhs_ = static_cast<const FleetSupplyableByEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
 
@@ -9988,13 +9970,9 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
         (!m_condition || m_condition->SourceInvariant());
 }
 
-bool ResourceSupplyConnectedByEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+bool ResourceSupplyConnectedByEmpire::operator==(const ResourceSupplyConnectedByEmpire& rhs_) const {
+    if (this == &rhs_)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const ResourceSupplyConnectedByEmpire& rhs_ = static_cast<const ResourceSupplyConnectedByEmpire&>(rhs);
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
 
@@ -10164,9 +10142,6 @@ std::unique_ptr<Condition> ResourceSupplyConnectedByEmpire::Clone() const {
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
-bool CanColonize::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string CanColonize::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_COLONIZE")
@@ -10228,9 +10203,6 @@ std::unique_ptr<Condition> CanColonize::Clone() const
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
-bool CanProduceShips::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string CanProduceShips::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_CAN_PRODUCE_SHIPS")
@@ -10407,9 +10379,6 @@ std::unique_ptr<Condition> OrderedBombarded::Clone() const
 ///////////////////////////////////////////////////////////
 // OrderedAnnexed                                        //
 ///////////////////////////////////////////////////////////
-bool OrderedAnnexed::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string OrderedAnnexed::Description(bool negated) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_ORDERED_ANNEXED")
