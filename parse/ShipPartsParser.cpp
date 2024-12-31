@@ -183,7 +183,7 @@ namespace parse {
         start_rule_payload parts;
 
         for (const auto& file : ListDir(path, IsFOCScript))
-            detail::parse_file<grammar, start_rule_payload>(lexer::tok, file, parts);
+            detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, parts);
 
         return parts;
     }

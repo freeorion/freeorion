@@ -188,15 +188,17 @@ parse::double_parser_rules::double_parser_rules(
 
 namespace parse {
     bool double_free_variable(std::string& text) {
+        const auto& tok = GetLexer();
+
         boost::spirit::qi::in_state_type in_state;
-        parse::detail::simple_double_parser_rules simple_double_rules(lexer::tok);
+        parse::detail::simple_double_parser_rules simple_double_rules(tok);
 
         text_iterator first = text.begin();
         text_iterator last = text.end();
-        token_iterator it = lexer::tok.begin(first, last);
+        token_iterator it = tok.begin(first, last);
 
         bool success = boost::spirit::qi::phrase_parse(
-            it, lexer::tok.end(), simple_double_rules.free_variable_name, in_state("WS")[lexer::tok.self]);
+            it, tok.end(), simple_double_rules.free_variable_name, in_state("WS")[tok.self]);
 
         return success;
     }

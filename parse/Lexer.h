@@ -80,8 +80,12 @@ struct lexer : boost::spirit::lex::lexer<spirit_lexer_base_type> {
     static inline const std::string int_regex{"\\d+"};
     static inline const std::string double_regex{"\\d+\\.\\d*|\\d*\\.\\d+"};
     static inline const std::string string_regex{"\\\"[^\\\"]*\\\""};
-    static const lexer tok;
 };
+
+inline const lexer& GetLexer() {
+    static const lexer tok;
+    return tok;
+}
 
 /** The type of iterator passed to the script file parser by the script file
     lexer. */
