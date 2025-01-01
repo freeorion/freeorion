@@ -486,7 +486,7 @@ namespace parse {
                            std::string& filename, std::string& file_contents,
                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
     {
-        std::cout << "parse_file_common reading file: " << path.string() << "\n";
+        std::cout << "parse_file_common reading file: " << path.string() << std::flush;
         filename = path.string();
 
         bool read_success = ReadFile(path, file_contents);
@@ -494,6 +494,7 @@ namespace parse {
             ErrorLogger() << "Unable to open data file " << filename;
             return;
         }
+        std::cout << "  ... got size: " << file_contents.size() << std::endl;
 
         // add newline at end to avoid errors when one is left out, but is expected by parsers
         file_contents += "\n";
@@ -510,6 +511,8 @@ namespace parse {
 
         std::cout << "parse_file_common lexer.begin(...)\n";
         it = lexer.begin(first, last);
+
+        std::cout << "parse_file_common done\n";
     }
 
 

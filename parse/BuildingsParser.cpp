@@ -250,10 +250,13 @@ namespace parse {
 
         ScopedTimer timer("Buildings Parsing");
 
+        std::cout << "parsing FOSC buildings\n";
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, building_types);
 
+        std::cout << "set up py_grammar for buildings\n";
         py_grammar p = py_grammar(parser, building_types);
+        std::cout << "parsing Python buildings\n";
         for (const auto& file : ListDir(path, IsFOCPyScript))
             py_parse::detail::parse_file<py_grammar>(parser, file, p);
 
