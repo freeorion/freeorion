@@ -12,43 +12,60 @@ adopt-info: freeorion
 architectures:
   - build-on: amd64
 
-# Build OK but release fails? Check https://dashboard.snapcraft.io/snaps/freeorion/collaboration/
+# Build OK but release fails? Check Snap Store collaborations
 apps:
   freeorion:
     command: usr/bin/freeorion -S $SNAP_USER_COMMON/save
     extensions: [gnome]
-    plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
+    plugs:
+      - home
+      - pulseaudio
+      - opengl
+      - network
+      - screen-inhibit-control
+      - browser-support
+      - x11
     desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
       LD_LIBRARY_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion:$SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}
       LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/dri
       # PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
+
   freeorion-godot:
-    # LD_LIBRARY_PATH=$SNAP/usr/lib/x86_64-linux-gnu/freeorion:$SNAP/usr/lib/x86_64-linux-gnu/:$SNAP/usr/lib/x86_64-linux-gnu/pulseaudio LIBGL_DRIVERS_PATH=$SNAP/usr/lib/x86_64-linux-gnu/dri godot3-runner   --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
-    command: usr/bin/godot3-runner --main-pack $SNAP/usr/share/freeorion/freeorion.pck --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
+    # Example usage from comment:
+    # command: ...
+    command: usr/bin/godot3-runner --main-pack $SNAP/usr/share/freeorion/freeorion.pck \
+      --resource.path $SNAP/usr/share/freeorion/default/ -S $SNAP_USER_COMMON/save
     extensions: [gnome]
-    plugs: [home, pulseaudio, opengl, network, screen-inhibit-control, browser-support, x11]
+    plugs:
+      - home
+      - pulseaudio
+      - opengl
+      - network
+      - screen-inhibit-control
+      - browser-support
+      - x11
     desktop: usr/share/applications/org.freeorion.FreeOrion.desktop
     environment:
       LD_LIBRARY_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion:$SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}
       LIBGL_DRIVERS_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/dri
-      #PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
+      # PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
+
   freeoriond:
     command: usr/bin/freeoriond
     plugs: [home, network, network-bind]
     environment:
       LD_LIBRARY_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion:$SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}:$SNAP_DESKTOP_RUNTIME/usr/lib/${CRAFT_ARCH_TRIPLET}
-      #PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
+      # PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
+
   freeoriond-dedicated:
     command: usr/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max 0 --network.server.conn-human-empire-players.min 0
     plugs: [home, network, network-bind]
     environment:
       LD_LIBRARY_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion:$SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}:$SNAP_DESKTOP_RUNTIME/usr/lib/${CRAFT_ARCH_TRIPLET}
-      #PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
+      # PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
 
 layout:
-  # the path to the freeorion libs has to be known when snapcraft exports the godot client
-  # $SNAP depends on the release number so it is unknown/wrong/different in the build step
   /usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion:
     symlink: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion
 
@@ -56,38 +73,53 @@ parts:
   freeorion:
     source: .
     override-build: |
-      # Icon paths in the desktop file will be rewritten to use ${SNAP}/<file> if specified as desktop file in snapcraft.yaml
+      # Update desktop file icons
       sed -i.bak -e "s|Icon=freeorion$|Icon=meta/gui/icon.png|g" ../src/packaging/org.freeorion.FreeOrion.desktop
       sed -i.bak -e 's|="res://bin/linux.*/libfreeoriongodot.so"|="/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion/libfreeoriongodot.so"|g' ../src/godot/freeoriongodot.gdnlib
       craftctl default
-      # godot-headless wants a writable homedir, simulate it
+
+      # Simulate writable HOME for headless godot
       mkdir -p home/
       mkdir -p "${CRAFT_PART_INSTALL}/usr/share/freeorion/"
-      # Note: we use godot3-headless really
-      HOME=$(pwd)/home godot3-server --path ../src/godot --export-pack "Linux/X11" "${CRAFT_PART_INSTALL}/usr/share/freeorion/freeorion.pck"
+
+      HOME=$(pwd)/home godot3-server --path ../src/godot --export-pack "Linux/X11" \
+        "${CRAFT_PART_INSTALL}/usr/share/freeorion/freeorion.pck"
     plugin: cmake
     cmake-parameters:
-      - -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_CLIENT_GODOT=ON
-    #cmake-parameters: [-DBUILD_TESTING=ON]
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DBUILD_CLIENT_GODOT=ON
+
     override-pull: |
       craftctl default
       branchn="$(git rev-parse --abbrev-ref HEAD)"
-      daterev="$(git log -n1 --date=short --format='%cd.%h' $branchn)"
+      daterev="$(git log -n1 --date=short --format='%cd.%h' "$branchn")"
       longtagn="$(git describe --tags || echo none)"
+
       case $longtagn in
         v*) version=${longtagn} ;;
-        *) case $daterev in
-          v*) version=$(echo $daterev | tail -c +2) ;;
-          *)  version=$(echo $daterev | head -c 32) ;;
-        esac ;;
+        *)  case $daterev in
+              v*) version=$(echo "$daterev" | tail -c +2) ;;
+              *)  version=$(echo "$daterev" | head -c 32) ;;
+            esac
+            ;;
       esac
-      [ -n "$(echo $version | grep '^[0-9]+-')" ] && grade=devel || grade=stable
+
+      # Determine grade based on version pattern
+      if echo "$version" | grep -q '^[0-9]\+-'; then
+        grade=devel
+      else
+        grade=stable
+      fi
+
       craftctl set version="$version"
       craftctl set grade="$grade"
+
     override-prime: |
       craftctl default
       mkdir -p ${CRAFT_PRIME}/meta/gui
-      cp ${CRAFT_PART_SRC}/default/data/art/icons/FO_Icon_256x256.png ${CRAFT_PRIME}/meta/gui/icon.png
+      cp ${CRAFT_PART_SRC}/default/data/art/icons/FO_Icon_256x256.png \
+         ${CRAFT_PRIME}/meta/gui/icon.png
+
     build-packages:
       - cmake
       - debhelper
@@ -96,7 +128,7 @@ parts:
       - libalut-dev
       - libboost1.74-all-dev
       - libfreetype6-dev
-#      - libgl1-mesa-dev
+      # - libgl1-mesa-dev   # commented to reduce duplicates
       - libglew-dev
       - libjpeg-dev
       - libogg-dev
@@ -107,7 +139,8 @@ parts:
       - libvorbis-dev
       - pkg-config
       - godot3-server
-      # - python
+      # - python (commented if not needed)
+
     stage-packages:
       - mesa-utils
       - libgl1-mesa-dri
@@ -125,7 +158,7 @@ parts:
       - libboost-thread1.74.0
       - libboost-test1.74.0
       - libglew2.2
-#      - libglu1-mesa
+      # - libglu1-mesa  # removed to reduce duplicates
       - libopenal1
       - libsdl2-2.0-0
       - libvorbis0a
@@ -134,14 +167,18 @@ parts:
       - libfreetype6
       - godot3-runner
       - libenet7
-  # Find files provided by the base and platform snap and ensure they aren't
-  # duplicated in this snap; boilerplate inspired by gnome-calculator snapcraft.yaml
+
   cleanup:
     after: [freeorion]
     plugin: nil
-    build-snaps: [core22, gtk-common-themes, gnome-42-2204]
+    build-snaps:
+      - core22
+      - gtk-common-themes
+      - gnome-42-2204
     override-prime: |
       set -eux
       for snap in "core22" "gtk-common-themes" "gnome-42-2204"; do
-        cd "/snap/$snap/current" && find . -type f,l -name *.so.* -exec rm -f "$CRAFT_PRIME/{}" \;
+        cd "/snap/$snap/current" \
+          && find . -type f,l -name "*.so.*" \
+          -exec rm -f "$CRAFT_PRIME/{}" \;
       done
