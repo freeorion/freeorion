@@ -1283,45 +1283,40 @@ bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
         // check next member
     } else if (!m_int_ref1 || !rhs_.m_int_ref1) {
         return false;
-    } else {
-        if (*m_int_ref1 != *(rhs_.m_int_ref1))
-            return false;
+    } else if (*m_int_ref1 != *(rhs_.m_int_ref1)) {
+        return false;
     }
 
     if (m_int_ref2 == rhs_.m_int_ref2) {
         // check next member
     } else if (!m_int_ref2 || !rhs_.m_int_ref2) {
         return false;
-    } else {
-        if (*m_int_ref2 != *(rhs_.m_int_ref2))
-            return false;
+    } else if (*m_int_ref2 != *(rhs_.m_int_ref2)) {
+        return false;
     }
 
     if (m_int_ref3 == rhs_.m_int_ref3) {
         // check next member
     } else if (!m_int_ref3 || !rhs_.m_int_ref3) {
         return false;
-    } else {
-        if (*m_int_ref3 != *(rhs_.m_int_ref3))
-            return false;
+    } else if (*m_int_ref3 != *(rhs_.m_int_ref3)) {
+        return false;
     }
 
     if (m_string_ref1 == rhs_.m_string_ref1) {
         // check next member
     } else if (!m_string_ref1 || !rhs_.m_string_ref1) {
         return false;
-    } else {
-        if (*m_string_ref1 != *(rhs_.m_string_ref1))
-            return false;
+    } else if (*m_string_ref1 != *(rhs_.m_string_ref1)) {
+        return false;
     }
 
     if (m_string_ref2 == rhs_.m_string_ref2) {
         // check next member
     } else if (!m_string_ref2 || !rhs_.m_string_ref2) {
         return false;
-    } else {
-        if (*m_string_ref2 != *(rhs_.m_string_ref2))
-            return false;
+    } else if (*m_string_ref2 != *(rhs_.m_string_ref2)) {
+        return false;
     }
 
     return true;
