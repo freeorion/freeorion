@@ -276,6 +276,7 @@ set(Boost_PYTHON_SUFFIX "${Python3_VERSION_MAJOR}${Python3_VERSION_MINOR}")
 message(STATUS "Boost python version ${Boost_PYTHON_SUFFIX}")
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
+        container
         filesystem
         graph
         iostreams
@@ -829,6 +830,8 @@ if(APPLE AND BUILD_CLIENT_GG)
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_ATOMIC_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_CHRONO_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "${Boost_CONTAINER_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_DATE_TIME_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
