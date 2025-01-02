@@ -17,7 +17,7 @@ struct FO_COMMON_API Source final : public Condition {
     constexpr Source() noexcept : Condition(true, true, false) {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-{ return dynamic_cast<decltype(this)>(&rhs); }
+    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Source&) const noexcept { return true; }
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;

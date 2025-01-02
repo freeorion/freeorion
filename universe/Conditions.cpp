@@ -341,14 +341,14 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
 bool Number::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    try {
-        if (typeid(*this) != typeid(rhs))
-            return false;
-    } catch (...) {
-        return false;
-    }
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
 
-    const Number& rhs_ = static_cast<const Number&>(rhs);
+    return rhs_p && *this == *rhs_p;
+}
+
+bool Number::operator==(const Number& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
@@ -485,10 +485,13 @@ Turn::Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
 bool Turn::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Turn& rhs_ = static_cast<const Turn&>(rhs);
+bool Turn::operator==(const Turn& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
@@ -1216,9 +1219,6 @@ void None::Eval(const ScriptingContext& parent_context,
     // if search domain is non_matches, no need to do anything since none of them match None.
 }
 
-bool None::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string None::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_NONE")
@@ -1260,27 +1260,6 @@ bool NoOp::EvalOne(const ScriptingContext& parent_context, const UniverseObject*
     DebugLogger(conditions) << "NoOp::EvalOne(" << candidate << ")";
     return candidate;
 }
-
-bool NoOp::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
-std::string NoOp::Description(bool negated) const
-{ return UserString("DESC_NOOP"); }
-
-std::string NoOp::Dump(uint8_t ntabs) const
-{ return DumpIndent(ntabs) + "NoOp\n"; }
-
-uint32_t NoOp::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::NoOp");
-
-    TraceLogger(conditions) << "GetCheckSum(NoOp): retval: " << retval;
-    return retval;
-}
-
-std::unique_ptr<Condition> NoOp::Clone() const
-{ return std::make_unique<NoOp>(); }
 
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
@@ -1889,10 +1868,13 @@ CapitalWithID::CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_i
 bool CapitalWithID::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const CapitalWithID& rhs_ = static_cast<const CapitalWithID&>(rhs);
+bool CapitalWithID::operator==(const CapitalWithID& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
 
@@ -2025,9 +2007,6 @@ std::unique_ptr<Condition> CapitalWithID::Clone() const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-bool Monster::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
 std::string Monster::Description(bool negated) const {
     return (!negated)
         ? UserString("DESC_MONSTER")
@@ -2071,18 +2050,6 @@ std::unique_ptr<Condition> Monster::Clone() const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-bool Armed::operator==(const Condition& rhs) const
-{ return Condition::operator==(rhs); }
-
-std::string Armed::Description(bool negated) const {
-    return (!negated)
-        ? UserString("DESC_ARMED")
-        : UserString("DESC_ARMED_NOT");
-}
-
-std::string Armed::Dump(uint8_t ntabs) const
-{ return DumpIndent(ntabs) + "Armed\n"; }
-
 bool Armed::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate) {
@@ -3791,20 +3758,13 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
     m_object_id(std::move(object_id))
 {}
 
-bool ObjectID::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    return rhs_p && *this == *rhs_p;
-}
-
 bool ObjectID::operator==(const ObjectID& rhs_) const {
     if (this == &rhs_)
         return true;
 
     CHECK_COND_VREF_MEMBER(m_object_id)
 
-        return true;
+    return true;
 }
 
 namespace {
