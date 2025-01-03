@@ -9,7 +9,6 @@
 #include "../util/Logger.h"
 #include "../util/GameRules.h"
 #include "../util/MultiplayerCommon.h"
-#include "../util/GameRules.h"
 #include "../util/GameRuleRanks.h"
 #include "../util/CheckSums.h"
 #include "../util/ScopedTimer.h"
@@ -243,8 +242,6 @@ uint32_t PolicyManager::GetCheckSum() const {
     for (auto const& policy : m_policies)
         CheckSums::CheckSumCombine(retval, policy);
     CheckSums::CheckSumCombine(retval, m_policies.size());
-
-    DebugLogger() << "PolicyManager checksum: " << retval;
     return retval;
 }
 
