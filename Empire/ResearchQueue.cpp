@@ -180,13 +180,13 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     // "Dynamic Programming" version of research queue simulator -- copy the queue simulator containers
     // perform dynamic programming calculation of completion times, then after regular simulation is done compare results (if both enabled)
 
-    //record original order & progress
+    // record original order & progress
     // will take advantage of fact that sets (& map keys) are by default kept in sorted order lowest to highest
     std::map<std::string, float> dp_prog = research_progress;
-    std::map<std::string, int> orig_queue_order;
-    std::map<int, float> dpsim_research_progress;
-    for (unsigned int i = 0; i < m_queue.size(); ++i) {
-        std::string tname = m_queue[i].name;
+    std::map<std::string, std::size_t> orig_queue_order;
+    std::map<std::size_t, float> dpsim_research_progress;
+    for (std::size_t i = 0; i < m_queue.size(); ++i) {
+        const auto& tname = m_queue[i].name;
         orig_queue_order[tname] = i;
         dpsim_research_progress[i] = dp_prog[tname];
     }
@@ -197,10 +197,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
     std::vector<int> dpsimulation_results(m_queue.size(), -1);
 
-    constexpr int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
+    constexpr std::size_t DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
 
     std::map<std::string, std::set<std::string>> waiting_for_prereqs;
-    std::set<int> dp_researchable_techs;
+    std::set<std::size_t> dp_researchable_techs;
 
     boost::container::flat_map<int, std::pair<float, int>> tech_cost_time;
     tech_cost_time.reserve(m_queue.size());
@@ -210,7 +210,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         return t_it != dpsim_tech_status_map.end() && t_it->second != TechStatus::TS_COMPLETE;
     };
 
-    for (unsigned int i = 0; i < m_queue.size(); ++i) {
+    for (std::size_t i = 0; i < m_queue.size(); ++i) {
         const auto& elem = m_queue[i];
         if (elem.paused)
             continue;
@@ -249,19 +249,20 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         }
     }
 
-    int dp_turns = 0;
+    std::size_t dp_turns = 0;
     //pp_still_available[turn-1] gives the RP still available in this resource pool at turn "turn"
     std::vector<float> rp_still_available(DP_TURNS, RPs);  // initialize to the  full RP allocation for every turn
 
 
     while ((dp_turns < DP_TURNS) && !(dp_researchable_techs.empty())) {// if we haven't used up our turns and still have techs to process
         ++dp_turns;
-        std::map<int, bool> already_processed;
-        for (int tech_id : dp_researchable_techs)
+        std::map<std::size_t, bool> already_processed;
+        for (auto tech_id : dp_researchable_techs)
             already_processed.emplace(tech_id, false);
 
+        auto& cur_turn_rp_available = rp_still_available[dp_turns-1u];
         auto cur_tech_it = dp_researchable_techs.begin();
-        while (rp_still_available[dp_turns-1] > EPSILON) { // try to use up this turn's RP
+        while (cur_turn_rp_available > EPSILON) { // try to use up this turn's RP
             if (cur_tech_it == dp_researchable_techs.end())
                 break; // will be wasting some RP this turn
 
@@ -280,10 +281,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             const float RPs_needed = tech_cost * (1.0f - std::min(progress, 1.0f));
             const float RPs_per_turn_limit = tech_cost / tech_min_turns;
 
-            const float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), rp_still_available[dp_turns-1]);
+            const float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), cur_turn_rp_available);
             progress += RPs_to_spend / std::max(EPSILON, tech_cost);
             dpsim_research_progress[cur_tech] = progress;
-            rp_still_available[dp_turns-1] -= RPs_to_spend;
+            cur_turn_rp_available -= RPs_to_spend;
 
             auto next_res_tech_it = cur_tech_it;
             int next_res_tech_idx = 0;
@@ -300,9 +301,9 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             }
 
             dpsim_tech_status_map[tech_name] = TechStatus::TS_COMPLETE;
-            dpsimulation_results[cur_tech] = dp_turns;
+            dpsimulation_results[cur_tech] = static_cast<int>(dp_turns);
 
-            m_queue[cur_tech].turns_left = dp_turns;
+            m_queue[cur_tech].turns_left = static_cast<int>(dp_turns);
             dp_researchable_techs.erase(cur_tech_it);
 
             if (!tech)
@@ -325,7 +326,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                     continue;
 
                 // tech now fully unlocked
-                const int this_tech_idx = orig_queue_order[u_tech_name];
+                const auto this_tech_idx = orig_queue_order[u_tech_name];
                 dp_researchable_techs.insert(this_tech_idx);
                 waiting_for_prereqs.erase(prereq_tech_it);
                 already_processed[this_tech_idx] = true; // doesn't get any allocation on current turn
