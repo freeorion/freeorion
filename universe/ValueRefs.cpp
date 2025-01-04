@@ -2200,11 +2200,9 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
         else {
             for (auto& [cat_name, policy_names_turns] : empire->CategoriesSlotsPoliciesAdopted()) {
-                if (cat_name == policy_category_name) { // TODO: could further rangify this...
-                    for (const auto policy_name : policy_names_turns | range_values) {
-                        if (!policy_name.empty())
-                            ++count;
-                    }
+                if (cat_name == policy_category_name) {
+                    const auto not_empty = [](auto& pnt) { return !pnt.second.empty(); };
+                    count += std::count_if(policy_names_turns.begin(), policy_names_turns.end(), not_empty);
                 }
             }
             return count;
