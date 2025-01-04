@@ -261,7 +261,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             already_processed.emplace(tech_id, false);
 
         auto cur_tech_it = dp_researchable_techs.begin();
-        while ((rp_still_available[dp_turns-1] > EPSILON)) { // try to use up this turns RPs
+        while (rp_still_available[dp_turns-1] > EPSILON) { // try to use up this turn's RP
             if (cur_tech_it == dp_researchable_techs.end())
                 break; // will be wasting some RP this turn
 
@@ -294,38 +294,45 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
             const bool tech_completed = (tech_cost - EPSILON <= progress * tech_cost);
 
-
-            if (tech_completed) {
-                dpsim_tech_status_map[tech_name] = TechStatus::TS_COMPLETE;
-                dpsimulation_results[cur_tech] = dp_turns;
-
-                m_queue[cur_tech].turns_left = dp_turns;
-                dp_researchable_techs.erase(cur_tech_it);
-
-                if (tech) {
-                    for (const auto& u_tech_name : tech->UnlockedTechs()) {
-                        const auto prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
-                        if (prereq_tech_it != waiting_for_prereqs.end() ){
-                            auto& these_prereqs = prereq_tech_it->second;
-                            const auto just_finished_it = these_prereqs.find(tech_name);
-                            if (just_finished_it != these_prereqs.end() ) { // should always find it
-                                these_prereqs.erase(just_finished_it);
-                                if (these_prereqs.empty()) { // tech now fully unlocked
-                                    const int this_tech_idx = orig_queue_order[u_tech_name];
-                                    dp_researchable_techs.insert(this_tech_idx);
-                                    waiting_for_prereqs.erase(prereq_tech_it);
-                                    already_processed[this_tech_idx] = true; // doesn't get any allocation on current turn
-                                    if (this_tech_idx < next_res_tech_idx )
-                                        next_res_tech_idx = this_tech_idx;
-                                }
-
-                            } else { //couldnt find tech_name in prereqs list
-                                DebugLogger() << "ResearchQueue::Update tech unlocking problem:"<< tech_name << "thought it was a prereq for " << u_tech_name << "but the latter disagreed";
-                            }
-                        }
-                    }
-                }
+            if (!tech_completed) {
+                cur_tech_it = dp_researchable_techs.find(next_res_tech_idx);
+                continue;
             }
+
+            dpsim_tech_status_map[tech_name] = TechStatus::TS_COMPLETE;
+            dpsimulation_results[cur_tech] = dp_turns;
+
+            m_queue[cur_tech].turns_left = dp_turns;
+            dp_researchable_techs.erase(cur_tech_it);
+
+            if (!tech)
+                continue;
+
+            for (const auto& u_tech_name : tech->UnlockedTechs()) {
+                const auto prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
+                if (prereq_tech_it == waiting_for_prereqs.end())
+                    continue;
+
+                auto& these_prereqs = prereq_tech_it->second;
+                if (these_prereqs.erase(tech_name) == 0) {
+                    DebugLogger() << "ResearchQueue::Update tech unlocking problem: " << tech_name
+                                    << " thought it was a prereq for " << u_tech_name
+                                    << " but the latter disagreed";
+                    continue;
+                }
+
+                if (!these_prereqs.empty())
+                    continue;
+
+                // tech now fully unlocked
+                const int this_tech_idx = orig_queue_order[u_tech_name];
+                dp_researchable_techs.insert(this_tech_idx);
+                waiting_for_prereqs.erase(prereq_tech_it);
+                already_processed[this_tech_idx] = true; // doesn't get any allocation on current turn
+                if (this_tech_idx < next_res_tech_idx )
+                    next_res_tech_idx = this_tech_idx;
+            }
+
             cur_tech_it = dp_researchable_techs.find(next_res_tech_idx);
         }
     }
