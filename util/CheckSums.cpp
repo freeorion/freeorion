@@ -1,13 +1,9 @@
 ﻿#include "CheckSums.h"
 
-#include <algorithm>
-#include <array>
 #if __has_include(<bit>)
 #  include <bit>
 #endif
-#include <cmath>
 #include <float.h>
-#include <limits>
 
 namespace CheckSums {
     static_assert(!abs(false));
