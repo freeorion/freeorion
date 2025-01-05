@@ -287,7 +287,6 @@ void Sound::Impl::Disable() {
     m_temporary_disable_count = 0;
 
     m_initialized = false;
-    DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
 }
 
 void Sound::Impl::InitOpenAL() {
