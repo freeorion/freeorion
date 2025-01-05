@@ -294,7 +294,12 @@ namespace CheckSums {
     constexpr void CheckSumCombine(uint32_t& sum, const auto& v)
         requires(!std::is_integral_v<std::decay_t<decltype(v)>> &&
                  !std::is_floating_point_v<std::decay_t<decltype(v)>> &&
-                 !std::is_enum_v<std::decay_t<decltype(v)>>)
+                 !std::is_enum_v<std::decay_t<decltype(v)>> && (
+                    requires { *v; bool(v); } ||
+                    requires { v.first; v.second; } ||
+                    requires { v.begin(); v.end(); v.size(); } ||
+                    requires { v.GetCheckSum(); }
+                ))
     {
         if constexpr (requires { *v; bool(v); }) {
             if (v)
@@ -312,7 +317,6 @@ namespace CheckSums {
 
         } else if constexpr (requires { v.GetCheckSum(); }) {
             CheckSumCombine(sum, v.GetCheckSum());
-
         }
     }
 
