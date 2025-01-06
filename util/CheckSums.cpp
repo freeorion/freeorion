@@ -193,11 +193,7 @@ namespace CheckSums {
     constexpr auto char24csc = csc(char24);
     static_assert(char24csc == 32u);
     static_assert(long_chars_sv.size() == 34);
-    constexpr auto long_chars_csc = []() {
-        uint32_t sum = 0;
-        CheckSumCombine(sum, long_chars_sv);
-        return sum;
-    }();
+    constexpr auto long_chars_csc = GetCheckSum(long_chars_sv);
     static_assert(long_chars_csc == 5816);
 
     static_assert(CHECKSUM_MODULUS < std::numeric_limits<uint32_t>::max());
@@ -205,4 +201,13 @@ namespace CheckSums {
 
     static_assert(noexcept(99253 + static_cast<unsigned int>(43.0)));
     static_assert(noexcept(73423 % CHECKSUM_MODULUS));
+
+    template <typename T>
+    constexpr bool can_combine = requires(uint32_t& i, const T& t) { CheckSumCombine(i, t); };
+
+    struct DummyPair { int first, second; };
+    static_assert(can_combine<DummyPair>);
+
+    struct DummyEmpty {};
+    static_assert(!can_combine<DummyEmpty>);
 }
