@@ -29,7 +29,12 @@ enum class SearchDomain : bool {
 struct FO_COMMON_API Condition {
     constexpr Condition(const Condition&) noexcept = default;
     constexpr Condition(Condition&&) noexcept = default;
-    constexpr virtual ~Condition() = default;
+    constexpr virtual ~Condition()
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#else
+        = default;
+#endif
 
     [[nodiscard]] virtual bool operator==(const Condition& rhs) const;
 

@@ -11452,6 +11452,21 @@ std::unique_ptr<Condition> CombatTarget::Clone() const {
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
+namespace StaticTests {
+    constexpr auto none_cx = None{};
+    constexpr auto noop_cx = NoOp{};
+    constexpr auto rootcandidate_cx = RootCandidate{};
+    constexpr auto target_cx = Target();
+    constexpr auto capital_cx = Capital{};
+    constexpr auto monster_cx = Monster{};
+    constexpr auto armed_cx_cx = Armed{};
+    constexpr auto stationary_cx = Stationary{};
+    constexpr auto aggr_cx = Aggressive{true};
+    constexpr auto cancolonize_cx = CanColonize{};
+    constexpr auto canproduceships_cx = CanProduceShips{};
+    constexpr auto orderedannexed_cx = OrderedAnnexed{};
+}
+
 namespace {
     namespace {
         template <class Cond>
