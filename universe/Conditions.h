@@ -259,8 +259,12 @@ struct FO_COMMON_API EmpireAffiliation final : public Condition {
                       EmpireAffiliationType affiliation);
     explicit EmpireAffiliation(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
     explicit EmpireAffiliation(EmpireAffiliationType affiliation);
+    EmpireAffiliation(EmpireAffiliation&&) noexcept = default;
+    EmpireAffiliation(const EmpireAffiliation&) noexcept = delete;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const EmpireAffiliation& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -347,8 +351,11 @@ private:
   * \a names.  If \a names is empty, matches any planet that is a homeworld for
   * any species in the current game Universe. */
 struct FO_COMMON_API Homeworld final : public Condition {
-    Homeworld();
-    explicit Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
+    explicit Homeworld(string_vref_ptr_vec&& names);
+    explicit Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    Homeworld() noexcept(noexcept(string_vref_ptr_vec{}));
+
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Homeworld& rhs) const;
 
@@ -367,8 +374,8 @@ struct FO_COMMON_API Homeworld final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
-    const bool m_names_local_invariant;
+    string_vref_ptr_vec m_names;
+    const bool          m_names_local_invariant;
 };
 
 /** Matches planets that are an empire's capital. */
@@ -533,8 +540,7 @@ private:
     const bool m_names_local_invariant;
 };
 
-/** Matches all Field objects that are one of the field types specified
-  * in \a names. */
+/** Matches all Field objects that are one of the field types specified in \a names. */
 struct FO_COMMON_API Field final : public Condition {
     explicit Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
 
@@ -990,9 +996,13 @@ private:
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API StarType final : public Condition {
-    StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types);
+    explicit StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types);
+    explicit StarType(std::unique_ptr<ValueRef::ValueRef<::StarType>>&& type);
+    explicit StarType(::StarType type);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const StarType& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -1905,8 +1915,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 };
 
-/** Matches all objects if the comparisons between values of ValueRefs meet the
-  * specified comparison types. */
+/** Matches all objects if the comparisons between values of ValueRefs meet the specified comparison types. */
 struct FO_COMMON_API ValueTest final : public Condition {
     ValueTest(std::unique_ptr<ValueRef::ValueRef<double>>&& value_ref1,
               ComparisonType comp1,
@@ -1980,8 +1989,7 @@ private:
     const bool m_no_refs12_comparable;
 };
 
-/** Matches objects that match the location condition of the specified
-  * content.  */
+/** Matches objects that match the location condition of the specified content.  */
 struct FO_COMMON_API Location final : public Condition {
 public:
     Location(ContentType content_type,
@@ -2009,14 +2017,14 @@ private:
     const ContentType                                m_content_type;
 };
 
-/** Matches objects that match the combat targeting condition of the specified
-  * content.  */
+/** Matches objects that match the combat targeting condition of the specified content.  */
 struct FO_COMMON_API CombatTarget final : public Condition {
 public:
     CombatTarget(ContentType content_type,
                  std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
-    bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
