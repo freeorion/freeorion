@@ -70,6 +70,7 @@ namespace {
     static_assert(std::is_unsigned_v<std::underlying_type_t<Condition::SearchDomain>>);
 
     CONSTEXPR_STRING const std::string EMPTY_STRING;
+    CONSTEXPR_VEC std::vector<std::string> EMPTY_STRING_VEC;
     constexpr const UniverseObject* no_object = nullptr;
 
     DeclareThreadSafeLogger(conditions);
@@ -1276,10 +1277,13 @@ EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
 bool EmpireAffiliation::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const EmpireAffiliation& rhs_ = static_cast<const EmpireAffiliation&>(rhs);
+bool EmpireAffiliation::operator==(const EmpireAffiliation& rhs_) const {
+    if (this == &rhs_)
+        return true;
 
     if (m_affiliation != rhs_.m_affiliation)
         return false;
@@ -1591,15 +1595,28 @@ std::unique_ptr<Condition> Target::Clone() const
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Homeworld::Homeworld() :
-    Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
-{}
+namespace {
+    auto Enveculate(auto&& thing) {
+        std::vector<std::decay_t<decltype(thing)>> retval;
+        retval.push_back(std::forward<decltype(thing)>(thing));
+        return retval;
+    }
+}
 
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
     m_names(std::move(names)),
     m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
                                         [](const auto& e) { return e->LocalCandidateInvariant(); }))
+{}
+
+Homeworld::Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Homeworld(Enveculate(std::move(name)))
+{}
+
+Homeworld::Homeworld() noexcept(noexcept(string_vref_ptr_vec{})) :
+    Condition(true, true, true),
+    m_names_local_invariant(true)
 {}
 
 bool Homeworld::operator==(const Condition& rhs) const {
@@ -1637,6 +1654,12 @@ namespace {
     }
 
     struct HomeworldSimpleMatch {
+        HomeworldSimpleMatch(const ObjectMap& objects,
+                             const SpeciesManager& species) noexcept :
+            m_objects(objects),
+            m_species_homeworlds(species.GetSpeciesHomeworldsMap())
+        {}
+
         HomeworldSimpleMatch(const std::vector<std::string>& names,
                              const ObjectMap& objects,
                              const SpeciesManager& species) :
@@ -1674,7 +1697,7 @@ namespace {
         }
 
         using homeworlds_t = std::decay_t<decltype(std::declval<const SpeciesManager>().GetSpeciesHomeworldsMap())>;
-        const std::vector<std::string>& m_names;
+        const std::vector<std::string>& m_names = EMPTY_STRING_VEC;
         const ObjectMap&                m_objects;
         const homeworlds_t&             m_species_homeworlds;
     };
@@ -1687,14 +1710,21 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     const bool simple_eval_safe = m_names_local_invariant &&
         (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
-        // evaluate names once, and use to check all candidate objects
-        std::vector<std::string> names;
-        names.reserve(m_names.size());
-        // get all names from valuerefs
-        std::transform(m_names.begin(), m_names.end(), std::back_inserter(names),
-                       [&parent_context](const auto& ref) { return ref->Eval(parent_context); });
-        HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
-        EvalImpl(matches, non_matches, search_domain, hsm);
+        if (!m_names.empty()) {
+            // evaluate names once, and use to check all candidate objects
+            std::vector<std::string> names;
+            names.reserve(m_names.size());
+            // get all names from valuerefs
+            std::transform(m_names.begin(), m_names.end(), std::back_inserter(names),
+                           [&parent_context](const auto& ref) { return ref->Eval(parent_context); });
+            const HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
+            EvalImpl(matches, non_matches, search_domain, hsm);
+
+        } else {
+            const HomeworldSimpleMatch hsm{parent_context.ContextObjects(), parent_context.species};
+            EvalImpl(matches, non_matches, search_domain, hsm);
+        }
+
     } else {
         // re-evaluate allowed names for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -5453,13 +5483,22 @@ StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>
     m_types(std::move(types))
 {}
 
+StarType::StarType(std::unique_ptr<ValueRef::ValueRef<::StarType>>&& type) :
+    StarType(Enveculate(std::move(type)))
+{}
+
+StarType::StarType(::StarType type) :
+    StarType(std::make_unique<ValueRef::Constant<::StarType>>(type))
+{}
+
 bool StarType::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const StarType& rhs_ = static_cast<const StarType&>(rhs);
+bool StarType::operator==(const StarType& rhs_) const {
 
     if (m_types.size() != rhs_.m_types.size())
         return false;
