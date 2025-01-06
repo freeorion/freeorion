@@ -207,6 +207,9 @@ private:
   * of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None final : public Condition {
     constexpr None() noexcept : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~None() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -229,6 +232,9 @@ struct FO_COMMON_API None final : public Condition {
 /** Does not modify the input ObjectSets. */
 struct FO_COMMON_API NoOp final : public Condition {
     constexpr NoOp() noexcept : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~NoOp() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -290,6 +296,9 @@ private:
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate final : public Condition {
     constexpr RootCandidate() noexcept : Condition(false, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~RootCandidate() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -323,6 +332,9 @@ private:
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target final : public Condition {
     constexpr Target() noexcept : Condition(true, false, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Target() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -381,6 +393,9 @@ private:
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital final : public Condition {
     constexpr Capital() noexcept : Condition(true, true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Capital() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -435,6 +450,9 @@ private:
 /** Matches space monsters. */
 struct FO_COMMON_API Monster final : public Condition {
     constexpr Monster() noexcept : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Monster() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -459,9 +477,14 @@ private:
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed final : public Condition {
     constexpr Armed() noexcept : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Armed() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
+
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Armed&) const noexcept { return true; }
+
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
 
@@ -602,11 +625,10 @@ private:
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag final : public Condition {
-    constexpr HasTag() noexcept :
-        Condition(true, true, true)
-    {}
+    constexpr HasTag() noexcept : Condition(true, true, true) {}
     explicit HasTag(std::string name);
     explicit HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    // no constexpr destructor GCC workaround as ~unique_ptr is not constexpr before C++23 anyway...
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const HasTag& rhs) const;
@@ -732,7 +754,7 @@ private:
   * all objects on any planet */
 struct FO_COMMON_API OnPlanet final : public Condition {
     OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
-    OnPlanet() noexcept : Condition(true, true, true, false) {}
+    constexpr OnPlanet() noexcept : Condition(true, true, true, false) {}
     OnPlanet(OnPlanet&&) noexcept = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
@@ -1708,6 +1730,9 @@ private:
   * current system. That is, the fleet. */
 struct FO_COMMON_API Stationary final : public Condition {
     constexpr Stationary() noexcept : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Stationary() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -1735,6 +1760,9 @@ struct FO_COMMON_API Aggressive final : public Condition {
         Condition(true, true, true),
         m_aggressive(aggressive)
     {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Aggressive() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -1826,6 +1854,9 @@ private:
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
     constexpr CanColonize() : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~CanColonize() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -1849,6 +1880,9 @@ private:
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
     constexpr CanProduceShips() noexcept : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~CanProduceShips() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
@@ -1896,6 +1930,9 @@ private:
 /** Matches the objects that have been ordered annexed by an empire. */
 struct FO_COMMON_API OrderedAnnexed final : public Condition {
     constexpr OrderedAnnexed() : Condition(true, true, true) {}
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~OrderedAnnexed() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
     { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
