@@ -92,26 +92,6 @@ namespace {
             return objs;
     }
 
-
-    /** Used by 4-parameter Condition::Eval function, and some of its overrides,
-      * to scan through \a matches or \a non_matches set and apply \a pred to
-      * each object, to test if it should remain in its current set or be
-      * transferred from the \a search_domain specified set into the other. */
-    inline void EvalImpl(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
-                         Condition::SearchDomain search_domain, const auto& pred)
-    {
-        const bool domain_matches = search_domain == Condition::SearchDomain::MATCHES;
-        auto& from_set = domain_matches ? matches : non_matches;
-        auto& to_set = domain_matches ? non_matches : matches;
-
-        // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
-
-        const auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
-            [&pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
-        to_set.insert(to_set.end(), part_it, from_set.end());
-        from_set.erase(part_it, from_set.end());
-    }
-
     /** Description text for input conditions, and true/false whether
       * \a candidate_object is matched by each condition */
     [[nodiscard]] auto ConditionDescriptionAndTest(
@@ -151,6 +131,21 @@ namespace {
 }
 
 namespace Condition {
+void AddAllPlanetsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Planet>(objects, in_out); }
+
+void AddAllBuildingsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Building>(objects, in_out); }
+
+void AddAllShipsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Ship>(objects, in_out); }
+
+void AddAllFleetsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Fleet>(objects, in_out); }
+
+void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::System>(objects, in_out); }
+
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                                      const ScriptingContext& source_context,
                                                      const UniverseObject* candidate_object)
@@ -3115,179 +3110,6 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
                                            ValueRef::CloneUnique(m_high));
 }
 
-///////////////////////////////////////////////////////////
-// Contains                                              //
-///////////////////////////////////////////////////////////
-Contains::Contains(std::unique_ptr<Condition>&& condition) :
-    Condition(CondsRTSI(condition)),
-    m_condition(std::move(condition))
-{}
-
-bool Contains::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Contains& rhs_ = static_cast<const Contains&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_condition)
-
-    return true;
-}
-
-namespace {
-    struct ContainsSimpleMatch {
-        ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
-            m_subcondition_matches_ids([&subcondition_matches]() {
-                // We need a sorted container for efficiently intersecting
-                // subcondition_matches with the set of objects contained in some
-                // candidate object.
-                // We only need ids, not objects, so we can do that conversion
-                // here as well, simplifying later code.
-                // Note that this constructor is called only once per
-                // Contains::Eval(), its work cannot help performance when executed
-                // for each candidate.
-                std::vector<int> m;
-                m.reserve(subcondition_matches.size());
-                // gather the ids and sort them
-                for (auto* obj : subcondition_matches | range_filter([](const auto* obj) -> bool { return obj; }))
-                    m.push_back(obj->ID());
-                std::sort(m.begin(), m.end());
-                return m;
-            }())
-        {}
-
-        bool operator()(const UniverseObject* candidate) const {
-            if (!candidate)
-                return false;
-
-            bool match = false;
-            const auto& candidate_elements = candidate->ContainedObjectIDs(); // guaranteed O(1)
-
-            // We need to test whether candidate_elements and m_subcondition_matches_ids have a common element.
-            // We choose the strategy that is more efficient by comparing the sizes of both sets.
-            if (candidate_elements.size() < m_subcondition_matches_ids.size()) {
-                // candidate_elements is smaller, so we iterate it and look up each candidate element in m_subcondition_matches_ids
-                for (int id : candidate_elements) {
-                    // std::lower_bound requires m_subcondition_matches_ids to be sorted
-                    auto matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
-
-                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
-                        match = true;
-                        break;
-                    }
-                }
-            } else {
-                // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's elements
-                for (int id : m_subcondition_matches_ids) {
-                    // candidate->Contains() may have a faster implementation than candidate_elements->find()
-                    if (candidate->Contains(id)) {
-                        match = true;
-                        break;
-                    }
-                }
-            }
-
-            return match;
-        }
-
-        const std::vector<int> m_subcondition_matches_ids;
-    };
-}
-
-void Contains::Eval(const ScriptingContext& parent_context,
-                    ObjectSet& matches, ObjectSet& non_matches,
-                    SearchDomain search_domain) const
-{
-    const auto search_domain_size = (search_domain == SearchDomain::MATCHES ?
-                                     matches.size() : non_matches.size());
-    const bool simple_eval_safe = parent_context.condition_root_candidate ||
-                                  RootCandidateInvariant() || search_domain_size < 2;
-    if (!simple_eval_safe) [[unlikely]] {
-        // re-evaluate contained objects for each candidate object
-        Condition::Eval(parent_context, matches, non_matches, search_domain);
-        return;
-
-    } else if (search_domain_size == 1u) [[likely]] {
-        const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
-        const bool contained_match_exists = EvalOne(parent_context, candidate); // faster than m_condition->EvalAny(local_context, contained_objects) in my tests
-
-        // move single local candidate as appropriate...
-        if (search_domain == SearchDomain::MATCHES && !contained_match_exists) {
-            // move to non_matches
-            matches.clear();
-            non_matches.push_back(candidate);
-        } else if (search_domain == SearchDomain::NON_MATCHES && contained_match_exists) {
-            // move to matches
-            non_matches.clear();
-            matches.push_back(candidate);
-        }
-
-    } else if (search_domain_size > 1u) {
-        // evaluate contained objects once using default initial candidates
-        // of subcondition to find all subcondition matches in the Universe
-        const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
-        const ObjectSet subcondition_matches = m_condition->Eval(local_context);
-
-        // check all candidates to see if they contain any subcondition matches
-        EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
-    }
-}
-
-std::string Contains::Description(bool negated) const {
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_CONTAINS")
-        : UserString("DESC_CONTAINS_NOT"))
-        % m_condition->Description());
-}
-
-std::string Contains::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "Contains condition =\n";
-    retval += m_condition->Dump(ntabs+1);
-    return retval;
-}
-
-ObjectSet Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    // objects that can contain other objects: systems, fleets, planets
-    ObjectSet retval;
-    retval.reserve(parent_context.ContextObjects().size<System>() +
-                   parent_context.ContextObjects().size<Fleet>() +
-                   parent_context.ContextObjects().size<Planet>());
-    AddAllObjectsSet<System>(parent_context.ContextObjects(), retval);
-    AddAllObjectsSet<Fleet>(parent_context.ContextObjects(), retval);
-    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), retval);
-    return retval;
-}
-
-bool Contains::Match(const ScriptingContext& local_context) const {
-    const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate) [[unlikely]]
-        return false;
-    const auto matches_condition = [this, &local_context](const UniverseObject* contained_object)
-    { return m_condition->EvalOne(local_context, contained_object); };
-    return local_context.ContextObjects().check_if_any(matches_condition, candidate->ContainedObjectIDs());
-}
-
-void Contains::SetTopLevelContent(const std::string& content_name) {
-    if (m_condition)
-        m_condition->SetTopLevelContent(content_name);
-}
-
-uint32_t Contains::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Contains");
-    CheckSums::CheckSumCombine(retval, m_condition);
-
-    TraceLogger(conditions) << "GetCheckSum(Contains): retval: " << retval;
-    return retval;
-}
-
-std::unique_ptr<Condition> Contains::Clone() const
-{ return std::make_unique<Contains>(ValueRef::CloneUnique(m_condition)); }
-
-///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
@@ -3887,11 +3709,11 @@ PlanetType::PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetT
 bool PlanetType::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const PlanetType& rhs_ = static_cast<const PlanetType&>(rhs);
-
+bool PlanetType::operator==(const PlanetType& rhs_) const {
     if (m_types.size() != rhs_.m_types.size())
         return false;
     for (std::size_t i = 0; i < m_types.size(); ++i) {
@@ -11469,6 +11291,12 @@ namespace StaticTests {
     constexpr auto cancolonize_cx = CanColonize{};
     constexpr auto canproduceships_cx = CanProduceShips{};
     constexpr auto orderedannexed_cx = OrderedAnnexed{};
+
+    constexpr auto contains_target_cx = Contains{Target{}};
+    constexpr auto contains_capital_cx = Contains<Capital>{};
+    constexpr auto contains_aggressive_cx1 = Contains<Aggressive>{};
+    constexpr auto contains_aggressive_cx2 = Contains{Aggressive{true}};
+    constexpr auto contains_aggressive_cx3 = Contains<Aggressive>{true};
 }
 
 namespace {
