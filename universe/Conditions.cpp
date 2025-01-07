@@ -2445,17 +2445,29 @@ std::unique_ptr<Condition> Building::Clone() const
 ///////////////////////////////////////////////////////////
 Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
-    m_names(std::move(names))
+    m_names(std::move(names)),
+    m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
+                                        [](const auto& e) { return e->LocalCandidateInvariant(); }))
+{}
+
+Field::Field(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Field(Enveculate(std::move(name)))
+{}
+
+Field::Field(std::string name) :
+    Field(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
 {}
 
 bool Field::operator==(const Condition& rhs) const {
     if (this == &rhs)
         return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
+    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+    return rhs_p && *this == *rhs_p;
+}
 
-    const Field& rhs_ = static_cast<const Field&>(rhs);
-
+bool Field::operator==(const Field& rhs_) const {
+    if (this == &rhs_)
+        return true;
     if (m_names.size() != rhs_.m_names.size())
         return false;
     for (std::size_t i = 0; i < m_names.size(); ++i) {
@@ -2496,16 +2508,8 @@ void Field::Eval(const ScriptingContext& parent_context,
                  ObjectSet& matches, ObjectSet& non_matches,
                  SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& name : m_names) {
-            if (!name->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
+    bool simple_eval_safe = m_names_local_invariant &&
+        (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;

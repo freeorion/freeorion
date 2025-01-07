@@ -537,7 +537,8 @@ private:
 
 /** Matches all Building objects that are one of the building types specified in \a names. */
 struct FO_COMMON_API Building final : public Condition {
-    explicit Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
+    explicit Building(string_vref_ptr_vec&& names);
     explicit Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
     explicit Building(std::string name);
 
@@ -559,15 +560,20 @@ struct FO_COMMON_API Building final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    string_vref_ptr_vec m_names;
     const bool m_names_local_invariant;
 };
 
 /** Matches all Field objects that are one of the field types specified in \a names. */
 struct FO_COMMON_API Field final : public Condition {
-    explicit Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
+    explicit Field(string_vref_ptr_vec&& names);
+    explicit Field(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit Field(std::string name);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Field& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
@@ -583,7 +589,8 @@ struct FO_COMMON_API Field final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    string_vref_ptr_vec m_names;
+    const bool m_names_local_invariant;
 };
 
 /** Matches all objects that have an attached Special named \a name. */
