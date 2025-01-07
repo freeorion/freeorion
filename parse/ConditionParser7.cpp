@@ -53,7 +53,7 @@ namespace parse { namespace detail {
         contains
             =    tok.Contains_
             >   -label(tok.condition_) > condition_parser
-            [ _val = construct_movable_(new_<Condition::Contains>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::Contains<>>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         contained_by

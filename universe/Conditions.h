@@ -20,9 +20,8 @@ namespace ValueRef {
     struct ValueRef;
 }
 
-/** this namespace holds Condition and its subclasses; these classes
-  * represent predicates about UniverseObjects used by, for instance, the
-  * Effect system. */
+/** this namespace holds Condition and its subclasses; these classes represent
+  * predicates about UniverseObjects used by, for instance, the Effect system. */
 namespace Condition {
 
 enum class SortingMethod : uint8_t {
@@ -97,6 +96,31 @@ constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
         throw "unrecognized type?";
     }
 }
+
+/** Used by 4-parameter Condition::Eval function, and some of its overrides,
+  * to scan through \a matches or \a non_matches set and apply \a pred to
+  * each object, to test if it should remain in its current set or be
+  * transferred from the \a search_domain specified set into the other. */
+inline void EvalImpl(::Condition::ObjectSet& matches, ::Condition::ObjectSet& non_matches,
+                     ::Condition::SearchDomain search_domain, const auto& pred)
+{
+    const bool domain_matches = search_domain == ::Condition::SearchDomain::MATCHES;
+    auto& from_set = domain_matches ? matches : non_matches;
+    auto& to_set = domain_matches ? non_matches : matches;
+
+    // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
+
+    const auto part_it = std::stable_partition(from_set.begin(), from_set.end(),
+                                               [&pred, domain_matches](const auto* o) { return pred(o) == domain_matches; });
+    to_set.insert(to_set.end(), part_it, from_set.end());
+    from_set.erase(part_it, from_set.end());
+}
+
+FO_COMMON_API void AddAllPlanetsSet(const ObjectMap& objects, ObjectSet& in_out);
+FO_COMMON_API void AddAllBuildingsSet(const ObjectMap& objects, ObjectSet& in_out);
+FO_COMMON_API void AddAllShipsSet(const ObjectMap& objects, ObjectSet& in_out);
+FO_COMMON_API void AddAllFleetsSet(const ObjectMap& objects, ObjectSet& in_out);
+FO_COMMON_API void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out);
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
@@ -683,29 +707,237 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
 };
 
-/** Matches all objects that contain an object that matches Condition
-  * \a condition.  Container objects are Systems, Planets (which contain
-  * Buildings), and Fleets (which contain Ships). */
+/** Matches all objects that contain an object that matches Condition \a condition.
+  * Container objects are Systems, Planets (which contain Buildings),
+  * and Fleets (which contain Ships). */
+template <class ConditionT = std::unique_ptr<Condition>>
+    requires ((std::is_base_of_v<Condition, ConditionT> &&
+               !std::is_same_v<Condition, std::decay_t<ConditionT>>) ||
+              std::is_same_v<std::unique_ptr<Condition>, ConditionT>)
 struct FO_COMMON_API Contains final : public Condition {
-    Contains(std::unique_ptr<Condition>&& condition);
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+private:
+    static constexpr bool cond_is_ptr = requires(const ConditionT c) { c.get(); };
+    static constexpr bool cond_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
+    static constexpr bool cond_deref_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
+    static constexpr const UniverseObject* no_object = nullptr;
+
+public:
+    template <typename... Args>
+#if !defined(__GNUC__) || (__GNUC__ > 13) || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3)
+        requires requires { ConditionT(std::forward<Args>(std::declval<Args>())...); }
+#endif
+    constexpr explicit Contains(Args&&... args) :
+        Contains(ConditionT(std::forward<Args>(args)...))
+    {}
+
+    constexpr explicit Contains(ConditionT&& operand) noexcept :
+        Condition(CondsRTSI(operand)),
+        m_condition(std::move(operand))
+    {}
+
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~Contains() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
+
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const Contains& rhs) const noexcept(cond_equals_noexcept && cond_deref_equals_noexcept) {
+        if (this == &rhs || m_condition == rhs.m_condition)
+            return true;
+        if constexpr (cond_is_ptr)
+            return m_condition && (*m_condition == *rhs.m_condition);
+        else
+            return false;
+    }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
+    {
+        const auto search_domain_size = (search_domain == SearchDomain::MATCHES ?
+                                         matches.size() : non_matches.size());
+        const bool simple_eval_safe = parent_context.condition_root_candidate ||
+                                      RootCandidateInvariant() || search_domain_size < 2;
+        if (!simple_eval_safe) [[unlikely]] {
+            // re-evaluate contained objects for each candidate object
+            Condition::Eval(parent_context, matches, non_matches, search_domain);
+            return;
+
+        } else if (search_domain_size == 1u) [[likely]] {
+            const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
+            const bool contained_match_exists = EvalOne(parent_context, candidate); // faster than m_condition->EvalAny(local_context, contained_objects) in my tests
+
+            // move single local candidate as appropriate...
+            if (search_domain == SearchDomain::MATCHES && !contained_match_exists) {
+                // move to non_matches
+                matches.clear();
+                non_matches.push_back(candidate);
+            } else if (search_domain == SearchDomain::NON_MATCHES && contained_match_exists) {
+                // move to matches
+                non_matches.clear();
+                matches.push_back(candidate);
+            }
+
+        } else if (search_domain_size > 1u) {
+            // evaluate contained objects once using default initial candidates
+            // of subcondition to find all subcondition matches in the Universe
+            const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
+            const ObjectSet subcondition_matches = [this, &local_context]() {
+                if constexpr (cond_is_ptr)
+                    return m_condition->Eval(local_context);
+                else
+                    return static_cast<const Condition&>(m_condition).Eval(local_context);
+            }();
+
+            // check all candidates to see if they contain any subcondition matches
+            EvalImpl(matches, non_matches, search_domain, ContainsSimpleMatch(subcondition_matches));
+        }
+    }
+
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
-    [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
-    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override {
+        // objects that can contain other objects: systems, fleets, planets
+        ObjectSet retval;
+        retval.reserve(parent_context.ContextObjects().size<System>() +
+                       parent_context.ContextObjects().size<Fleet>() +
+                       parent_context.ContextObjects().size<Planet>());
+        AddAllSystemsSet(parent_context.ContextObjects(), retval);
+        AddAllFleetsSet(parent_context.ContextObjects(), retval);
+        AddAllPlanetsSet(parent_context.ContextObjects(), retval);
+        return retval;
+    }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override {
+        auto fmt = FlexibleFormat((!negated) ? UserString("DESC_CONTAINS") : UserString("DESC_CONTAINS_NOT"));
+        if constexpr (cond_is_ptr)
+            return str(fmt % m_condition->Description());
+        else
+            return str(fmt % m_condition.Description());
+    }
+
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
+        std::string retval = DumpIndent(ntabs) + "Contains condition =\n";
+        if constexpr (cond_is_ptr)
+            return retval + m_condition->Dump(ntabs+1);
+        else
+            return retval + m_condition.Dump(ntabs+1);
+    }
+
+    void SetTopLevelContent(const std::string& content_name) override {
+        if constexpr (cond_is_ptr) {
+            if (m_condition)
+                m_condition->SetTopLevelContent(content_name);
+        } else {
+            m_condition.SetTopLevelContent(content_name);
+        }
+    }
+
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const
+#if !defined(__GNUC__) || (__GNUC__ > 13)
+        noexcept(noexcept(CheckSums::GetCheckSum("")) &&
+                 noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), std::declval<ConditionT>())))
+#endif
+        override
+    {
+        uint32_t retval = CheckSums::GetCheckSum("Condition::Contains");
+        CheckSums::CheckSumCombine(retval, m_condition);
+        return retval;
+    }
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
+        using this_t = std::decay_t<decltype(*this)>;
+        if constexpr (cond_is_ptr) {
+            return std::make_unique<this_t>(m_condition->Clone());
+        } else {
+            auto operand_clone = m_condition.Clone();
+            return std::make_unique<this_t>(std::move(dynamic_cast<ConditionT&>(*operand_clone))); // throws if .Clone() doesn't return a pointer to a valid ConditionT
+        }
+    }
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override {
+        const auto* candidate = local_context.condition_local_candidate;
+        if (!candidate) [[unlikely]]
+            return false;
+        const auto subcondition_candidates = local_context.ContextObjects().findRaw(candidate->ContainedObjectIDs());
+        if constexpr (cond_is_ptr)
+            return m_condition->EvalAny(local_context, subcondition_candidates); // TODO: add EvalAny overload taking object ids, as getting the objects isn't really necessary just to check if something contains their ID
+        else
+            return m_condition.EvalAny(local_context, subcondition_candidates);
+    }
 
-    std::unique_ptr<Condition> m_condition;
+    struct ContainsSimpleMatch {
+        CONSTEXPR_VEC ContainsSimpleMatch(std::vector<int> subcondition_matches_ids) :
+            m_subcondition_matches_ids([&subcondition_matches_ids]() {
+                // We need a sorted container for efficiently intersecting
+                // subcondition_matches with the set of objects contained in some
+                // candidate object.
+                if (!subcondition_matches_ids.empty())
+                    CheckSums::InPlaceSort(subcondition_matches_ids);
+                return subcondition_matches_ids;
+            }())
+        {}
+
+        ContainsSimpleMatch(const ObjectSet& subcondition_matches) :
+            ContainsSimpleMatch([&subcondition_matches]() {
+                // We only need ids, not objects.
+                std::vector<int> m;
+                m.reserve(subcondition_matches.size());
+                // gather the ids and sort them
+                for (auto* obj : subcondition_matches)
+                    if (obj)
+                        m.push_back(obj->ID());
+                return m;
+            }())
+        {}
+
+        bool operator()(const UniverseObject* candidate) const {
+            if (!candidate)
+                return false;
+
+            bool match = false;
+            const auto& candidate_elements = candidate->ContainedObjectIDs(); // guaranteed O(1)
+
+            // We need to test whether candidate_elements and m_subcondition_matches_ids have a common element.
+            // We choose the strategy that is more efficient by comparing the sizes of both sets.
+            if (candidate_elements.size() < m_subcondition_matches_ids.size()) {
+                // candidate_elements is smaller, so we iterate it and look up each candidate element in m_subcondition_matches_ids
+                for (int id : candidate_elements) {
+                    // std::lower_bound requires m_subcondition_matches_ids to be sorted
+                    auto matching_it = std::lower_bound(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end(), id);
+
+                    if (matching_it != m_subcondition_matches_ids.end() && *matching_it == id) {
+                        match = true;
+                        break;
+                    }
+                }
+            } else {
+                // m_subcondition_matches_ids is smaller, so we iterate it and look up each subcondition match in the set of candidate's elements
+                for (int id : m_subcondition_matches_ids) {
+                    // candidate->Contains() may have a faster implementation than candidate_elements->find()
+                    if (candidate->Contains(id)) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+
+            return match;
+        }
+
+        const std::vector<int> m_subcondition_matches_ids;
+    };
+
+    ConditionT m_condition;
 };
+
+template <typename T>
+Contains(T) -> Contains<std::decay_t<T>>;
 
 /** Matches all objects that are contained by an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
@@ -822,6 +1054,8 @@ struct FO_COMMON_API PlanetType final : public Condition {
     PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const PlanetType& rhs) const;
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
