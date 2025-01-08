@@ -4080,7 +4080,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
             thread_pool, [
                 article_key{article_key_directory.first},
                 article_dir{article_key_directory.second},
-                article_name_link,
+                article_name_link{article_name_link},
                 &emr, &wmr, &pmr, &amr,
                 &search_text,
                 &words_in_search_text,
