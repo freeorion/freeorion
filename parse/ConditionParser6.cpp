@@ -111,7 +111,7 @@ namespace parse { namespace detail {
                  >>  label(tok.type_)
                 )
             >   one_or_more_planet_types
-            [ _val = construct_movable_(new_<Condition::PlanetType>(deconstruct_movable_vector_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::PlanetType<>>(deconstruct_movable_vector_(_1, _pass))) ]
             ;
 
         planet_size

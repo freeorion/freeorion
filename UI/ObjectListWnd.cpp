@@ -514,7 +514,7 @@ namespace {
             return CREATEDONTURN_CONDITION;
         else if (dynamic_cast<const Condition::PlanetSize* const>(condition))
             return PLANETSIZE_CONDITION;
-        else if (dynamic_cast<const Condition::PlanetType* const>(condition))
+        else if (dynamic_cast<const Condition::PlanetTypeBase* const>(condition))
             return PLANETTYPE_CONDITION;
         else if (dynamic_cast<const Condition::FocusType* const>(condition))
             return FOCUSTYPE_CONDITION;
@@ -755,17 +755,13 @@ public:
             std::vector<std::unique_ptr<Condition::Condition>> operands1;
             operands1.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_PLANET)));
             if (GetString() == UserString("CONDITION_ANY")) {
-                std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> copytype;
-                copytype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_ASTEROIDS));
-                operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
+                operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType<::PlanetType, 1>>(PlanetType::PT_ASTEROIDS)));
             } else {
-                operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
+                operands1.emplace_back(std::make_unique<Condition::PlanetType<::PlanetType, 1>>(GetEnum< ::PlanetType>()));
             }
             std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_SYSTEM)));
-            std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> maintype;
-            maintype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_ASTEROIDS));
-            operands2.emplace_back(std::make_unique<Condition::Contains<Condition::PlanetType>>(Condition::PlanetType(std::move(maintype))));
+            operands2.emplace_back(std::make_unique<Condition::Contains<Condition::PlanetType<::PlanetType, 1>>>(PlanetType::PT_ASTEROIDS));
             operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
             std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
@@ -774,17 +770,13 @@ public:
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PlanetType::PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
             std::vector<std::unique_ptr<Condition::Condition>> operands1;
             if (GetString() == UserString("CONDITION_ANY")) {
-                std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> copytype;
-                    copytype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_GASGIANT));
-                    operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType>(std::move(copytype))));
+                operands1.emplace_back(std::make_unique<Condition::Not>(std::make_unique<Condition::PlanetType<::PlanetType, 1>>(PlanetType::PT_GASGIANT)));
             } else {
-                operands1.emplace_back(std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>()));
+                operands1.emplace_back(std::make_unique<Condition::PlanetType<::PlanetType, 1>>(GetEnum< ::PlanetType>()));
             }
             std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_SYSTEM)));
-            std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> maintype;
-            maintype.emplace_back(std::make_unique<ValueRef::Constant<PlanetType>>(PlanetType::PT_GASGIANT));
-            operands2.emplace_back(std::make_unique<Condition::Contains<Condition::PlanetType>>(Condition::PlanetType(std::move(maintype))));
+            operands2.emplace_back(std::make_unique<Condition::Contains<Condition::PlanetType<::PlanetType, 1>>>(PlanetType::PT_GASGIANT));
             operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
             std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
@@ -812,7 +804,7 @@ public:
             return std::make_unique<Condition::PlanetSize>(GetEnumValueRefVec< ::PlanetSize>());
 
         } else if (condition_key == PLANETTYPE_CONDITION) {
-            return std::make_unique<Condition::PlanetType>(GetEnumValueRefVec< ::PlanetType>());
+            return std::make_unique<Condition::PlanetType<::PlanetType, 1>>(GetEnum< ::PlanetType>());
 
         } else if (condition_key == FOCUSTYPE_CONDITION) {
             return std::make_unique<Condition::FocusType>(GetStringValueRefVec());

@@ -5,10 +5,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "Building.h"
 #include "ConditionAll.h"
 #include "ConditionSource.h"
 #include "Condition.h"
 #include "EnumsFwd.h"
+#include "Planet.h"
 #include "ValueRefs.h"
 #include "../Empire/ProductionQueue.h"
 #include "../util/CheckSums.h"
@@ -121,6 +123,35 @@ FO_COMMON_API void AddAllBuildingsSet(const ObjectMap& objects, ObjectSet& in_ou
 FO_COMMON_API void AddAllShipsSet(const ObjectMap& objects, ObjectSet& in_out);
 FO_COMMON_API void AddAllFleetsSet(const ObjectMap& objects, ObjectSet& in_out);
 FO_COMMON_API void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out);
+
+
+// gets a planet from \a obj considering obj as a planet or a building on a planet
+constexpr const Planet* PlanetFromObject(const ::Planet* obj, const auto&) noexcept
+{ return obj; }
+
+constexpr const Planet* PlanetFromObject(const ::Planet* obj) noexcept
+{ return obj; }
+
+constexpr const Planet* PlanetFromObject(const ::Building* obj, const auto get_planet)
+    requires requires { {get_planet(obj->PlanetID())} -> std::same_as<const Planet*>; }
+{ return obj ? get_planet(obj->PlanetID()) : nullptr; }
+
+inline const Planet* PlanetFromObject(const ::Building* obj, const ObjectMap& objects)
+{ return obj ? objects.getRaw<Planet>(obj->PlanetID()) : nullptr; }
+
+constexpr const Planet* PlanetFromObject(const UniverseObject* obj, const auto& objects) {
+    if (!obj)
+        return nullptr;
+    switch (obj->ObjectType()) {
+    case UniverseObjectType::OBJ_PLANET: return static_cast<const ::Planet*>(obj); break;
+    case UniverseObjectType::OBJ_BUILDING: return PlanetFromObject(static_cast<const ::Building*>(obj), objects); break;
+    default: return nullptr;
+    }
+}
+
+constexpr const Planet* PlanetFromObject(const auto*, const auto&)
+{ return nullptr; }
+
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
@@ -739,13 +770,13 @@ public:
     constexpr ~Contains() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
 #endif
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
-    [[nodiscard]] bool operator==(const Contains& rhs) const noexcept(cond_equals_noexcept && cond_deref_equals_noexcept) {
+    [[nodiscard]] constexpr bool operator==(const Contains& rhs) const noexcept(cond_equals_noexcept && cond_deref_equals_noexcept) {
         if (this == &rhs || m_condition == rhs.m_condition)
             return true;
         if constexpr (cond_is_ptr)
@@ -1050,29 +1081,280 @@ private:
 /** Matches all Planet objects that have one of the PlanetTypes in \a types.
   * Note that all Building objects which are on matching planets are also
   * matched. */
-struct FO_COMMON_API PlanetType final : public Condition {
-    PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>&& types);
+struct FO_COMMON_API PlanetTypeBase : public Condition {
+    constexpr PlanetTypeBase(std::array<bool, 3> rtsi) noexcept : Condition(rtsi) {}
+    constexpr PlanetTypeBase(bool r, bool t, bool s) noexcept : Condition(r, t, s) {}
+};
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
-    [[nodiscard]] bool operator==(const PlanetType& rhs) const;
+template <typename PT_t = std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>, std::size_t N = 0>
+    requires(
+        std::is_same_v<PT_t, ::PlanetType> ||                                    // store 1 or more PlanetType by value
+        std::is_same_v<PT_t, std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>> // store ValueRefs. maybe fixed-sized array or runtime-determined vector
+    )
+struct FO_COMMON_API PlanetType final : public PlanetTypeBase {
+private:
+    static constexpr bool have_pt_values = std::is_same_v<PT_t, ::PlanetType>;
+    static constexpr bool have_fixed_count = (N >= 1);
 
-    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
-    { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
-    [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+public:
+    using pt_ref_up = std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>;
 
-    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+    using PTs_t = std::conditional_t<have_fixed_count,
+        std::conditional_t<N == 1, PT_t, std::array<PT_t, N>>,
+        std::vector<PT_t>>;
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    PTs_t       m_types;
+    const bool  m_types_local_invariant = have_pt_values;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetType>>> m_types;
+public:
+    explicit PlanetType(std::vector<pt_ref_up>&& types) requires ((N == 0) && !have_pt_values) :
+        PlanetTypeBase(CondsRTSI(types)),
+        m_types(std::move(types)), // TODO: remove any nullptr types? throw if then empty?
+        m_types_local_invariant(std::all_of(m_types.begin(), m_types.end(),
+                                            [](const auto& e) { return e->LocalCandidateInvariant(); }))
+    {}
+    explicit PlanetType(std::array<pt_ref_up, N>&& types) requires ((N > 0) && !have_pt_values) :
+        PlanetTypeBase(CondsRTSI(types)),
+        m_types(std::move(types)),  // TODO: check / throw if any are nullptr types?
+        m_types_local_invariant(std::all_of(m_types.begin(), m_types.end(),
+                                            [](const auto& e) { return e->LocalCandidateInvariant(); }))
+    {}
+    constexpr explicit PlanetType(::PlanetType type) requires ((N == 1) && have_pt_values) :
+        PlanetTypeBase(true, true, true),
+        m_types(type)
+    {}
+    CONSTEXPR_VEC explicit PlanetType(std::vector<::PlanetType> types) requires ((N == 0) && have_pt_values) :
+        PlanetTypeBase(true, true, true),
+        m_types(std::move(types))
+    {}
+
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~PlanetType() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] constexpr bool operator==(const PlanetType& rhs_) const {
+        if constexpr (requires { m_types.size() == rhs_.m_types.size(); }) {
+            if (m_types.size() != rhs_.m_types.size())
+                return false;
+        }
+        if constexpr (have_pt_values && requires { m_types == rhs_.m_types; }) {
+            if (m_types != rhs_.m_types)
+                return false;
+        }
+        if constexpr (have_pt_values && requires { m_types.size(); m_types.at(1) != rhs_.m_types.at(1); }) {
+            for (std::size_t idx = 0u; idx < m_types.size(); ++idx)
+                if (m_types.at(idx) != rhs_.m_types.at(idx))
+                    return false;
+        }
+        if constexpr (!have_pt_values && requires { m_types.size(); bool(m_types.at(1)); *m_types.at(1) != *rhs_.m_types.at(1); }) {
+            for (std::size_t idx = 0u; idx < m_types.size(); ++idx)
+                if (m_types.at(idx) && rhs_.m_types.at(idx) && (*m_types.at(idx) != *rhs_.m_types.at(idx)))
+                    return false;
+        } else if constexpr (!have_pt_values && requires { *m_types != *rhs_.m_types; }) {
+            if (m_types && rhs_.m_types && (*m_types != *rhs_.m_types))
+                return false;
+        }
+
+        return true;
+    }
+
+    template <std::size_t SN>
+    struct PlanetTypeSimpleMatch {
+        using SMPT_t = std::conditional_t<SN == 1, ::PlanetType, std::span<const ::PlanetType, SN>>;
+
+        PlanetTypeSimpleMatch(SMPT_t types, const ObjectMap& objects) noexcept :
+            m_types(types),
+            m_objects(objects)
+        {}
+
+        bool operator()(const Planet* candidate) const noexcept(SN == 1) {
+            if (!candidate)
+                return false;
+            const auto pt = candidate->Type();
+            if constexpr (SN == 1)
+                return pt == m_types;
+            else
+                return std::any_of(m_types.begin(), m_types.end(),
+                                   [pt](const auto t) noexcept { return t == pt; });
+        }
+
+        bool operator()(const auto* candidate) const
+        { return operator()(PlanetFromObject(candidate, m_objects)); }
+
+        const SMPT_t m_types;
+        const ObjectMap& m_objects;
+    };
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
+    {
+        if constexpr (have_pt_values) {
+            static constexpr std::size_t SM_size = (N == 0 ? std::dynamic_extent : N);
+            EvalImpl(matches, non_matches, search_domain,
+                     PlanetTypeSimpleMatch<SM_size>(m_types, parent_context.ContextObjects()));
+        } else {
+            const bool simple_eval_safe = m_types_local_invariant &&
+                (parent_context.condition_root_candidate || RootCandidateInvariant());
+            if (!simple_eval_safe) {
+                // re-evaluate contained objects for each candidate object
+                Condition::Eval(parent_context, matches, non_matches, search_domain);
+
+            } else if constexpr (requires { m_types.begin(); m_types.end(); }) {
+                // evaluate refs
+                std::vector< ::PlanetType> types; // TODO: array if m_types is array?
+                types.reserve(m_types.size());
+                // get all types from valuerefs
+                for (auto& type : m_types)
+                    types.push_back(type->Eval(parent_context));
+                EvalImpl(matches, non_matches, search_domain,
+                         PlanetTypeSimpleMatch<std::dynamic_extent>(types, parent_context.ContextObjects()));
+
+            } else {
+                const auto cur_pt = m_types->Eval(parent_context);
+                EvalImpl(matches, non_matches, search_domain,
+                         PlanetTypeSimpleMatch<1u>(cur_pt, parent_context.ContextObjects()));
+            }
+        }
+    }
+
+    [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const override
+    { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
+
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override {
+        // objects that are or are on planets: Building, Planet
+        ObjectSet retval;
+        retval.reserve(parent_context.ContextObjects().size<Planet>() +
+                       parent_context.ContextObjects().size<::Building>());
+        AddAllPlanetsSet(parent_context.ContextObjects(), retval);
+        AddAllBuildingsSet(parent_context.ContextObjects(), retval);
+        return retval;
+    }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override {
+        std::string values_str;
+
+        if constexpr (requires { m_types.size(); m_types[1]; }) {
+            for (std::size_t i = 0; i < m_types.size(); ++i) {
+                if constexpr (have_pt_values) {
+                    values_str += UserString(to_string(m_types[i]));
+                } else {
+                    values_str += m_types[i]->ConstantExpr() ?
+                        UserString(to_string(m_types[i]->Eval())) :
+                        m_types[i]->Description();
+                }
+                if (2 <= m_types.size() && i < m_types.size() - 2) {
+                    values_str += ", ";
+                } else if (i == m_types.size() - 2) {
+                    values_str += m_types.size() < 3 ? " " : ", ";
+                    values_str += UserString("OR");
+                    values_str += " ";
+                }
+            }
+        } else {
+            if constexpr (have_pt_values) {
+                values_str = UserString(to_string(m_types));
+            } else {
+                values_str += m_types->ConstantExpr() ?
+                    UserString(to_string(m_types->Eval())) :
+                    m_types->Description();
+            }
+        }
+        return str(FlexibleFormat((!negated)
+                                  ? UserString("DESC_PLANET_TYPE")
+                                  : UserString("DESC_PLANET_TYPE_NOT"))
+                   % values_str);
+    }
+
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
+        const auto dump1 = [=](const auto& pt) -> decltype(auto) {
+            if constexpr (requires { to_string(pt); })
+                return UserString(to_string(pt));
+            else if constexpr (requires { bool(pt); pt->Dump(); })
+                return pt ? pt->Dump(ntabs) : std::string{};
+            else
+                return "???";
+        };
+        const auto dumpN = [=](const auto& pts) -> decltype(auto) {
+            if constexpr (requires { *pts.begin(); pts.end(); pts.size(); }) {
+                if (pts.size() == 1)
+                    return std::string{dump1(*pts.begin())};
+                std::string retval = "[ ";
+                for (const auto& pt : pts)
+                    retval.append(dump1(pt) + " ");
+                retval.append("]\n");
+                return retval;
+            } else {
+                return dump1(pts);
+            }
+        };
+
+        return DumpIndent(ntabs) + "Planet type = " + dumpN(m_types);
+    }
+
+    void SetTopLevelContent(const std::string& content_name) override {
+        if constexpr (!have_pt_values) {
+            if constexpr (requires { m_types.begin(); m_types.end(); }) {
+                for (auto& type : m_types) {
+                    if (type)
+                        type->SetTopLevelContent(content_name);
+                }
+            } else {
+                if (m_types)
+                    m_types->SetTopLevelContext(content_name);
+            }
+        }
+    }
+
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override {
+        uint32_t retval = CheckSums::GetCheckSum("Condition::PlanetType");
+        CheckSums::CheckSumCombine(retval, m_types);
+        return retval;
+    }
+
+    std::unique_ptr<Condition> Clone() const {
+        if constexpr (have_pt_values)
+            return std::make_unique<std::decay_t<decltype(*this)>>(m_types);
+            //return std::make_unique<PlanetType<PT_t, N>>(m_types);
+        else
+            return std::make_unique<std::decay_t<decltype(*this)>>(ValueRef::CloneUnique(m_types));
+    }
+
+private:
+    bool Match(const ScriptingContext& local_context) const {
+        const auto* planet = PlanetFromObject(local_context.condition_local_candidate, local_context.ContextObjects());
+        if (!planet)
+            return false;
+        const auto planet_type = planet->Type();
+
+        if constexpr (requires { m_types.begin(); m_types.end(); }) {
+            if constexpr (have_pt_values)
+                return std::any_of(m_types.begin(), m_types.end(),
+                                   [planet_type](auto pt) noexcept { return pt == planet_type; });
+            else
+                return std::any_of(m_types.begin(), m_types.end(),
+                                   [planet_type, &local_context](const auto& pt_ref)
+                                   { return pt_ref && pt_ref->Eval(local_context) == planet_type; });
+        } else {
+            if constexpr (have_pt_values)
+                return m_types == planet_type;
+            else
+                return m_types && (m_types->Eval(local_context) == planet_type);
+        }
+    }
 };
+
+PlanetType(::PlanetType) -> PlanetType<::PlanetType, 1>;
+PlanetType(std::vector<::PlanetType>) -> PlanetType<::PlanetType, 0>;
+PlanetType(std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>) -> PlanetType<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>, 1>;
+PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>) -> PlanetType<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>, 0>;
+
 
 /** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
   * Note that all Building objects which are on matching planets are also
