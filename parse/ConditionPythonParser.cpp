@@ -200,16 +200,26 @@ namespace {
     condition_wrapper insert_planet_(const boost::python::tuple& args, const boost::python::dict& kw) {
         if (kw.has_key("type")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>> types;
+            std::vector<::PlanetType> type_vals;
+
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["type"]), it_end;
+            bool have_refs = false;
             for (auto it = it_begin; it != it_end; ++it) {
                 auto type_arg = boost::python::extract<value_ref_wrapper< ::PlanetType>>(*it);
                 if (type_arg.check()) {
                     types.push_back(ValueRef::CloneUnique(type_arg().value_ref));
+                    have_refs = true;
                 } else {
-                    types.push_back(std::make_unique<ValueRef::Constant< ::PlanetType>>(boost::python::extract<enum_wrapper< ::PlanetType>>(*it)().value));
+                    auto val = boost::python::extract<enum_wrapper< ::PlanetType>>(*it)().value;
+                    types.push_back(std::make_unique<ValueRef::Constant< ::PlanetType>>(val));
+                    type_vals.push_back(val);
                 }
             }
-            return condition_wrapper(std::make_shared<Condition::PlanetType>(std::move(types)));
+            if (have_refs) {
+                return condition_wrapper(std::make_shared<Condition::PlanetType<>>(std::move(types)));
+            } else { // have only constants
+                return condition_wrapper(std::make_shared<Condition::PlanetType<::PlanetType>>(std::move(type_vals)));
+            }
         } else if (kw.has_key("size")) {
             std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>> sizes;
             boost::python::stl_input_iterator<boost::python::object> it_begin(kw["size"]), it_end;
