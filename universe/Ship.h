@@ -123,6 +123,7 @@ public:
     Ship(int empire_id, int design_id, std::string species_name, const Universe& universe,
          const SpeciesManager& species, int produced_by_empire_id, int current_turn);
     Ship() : UniverseObject(UniverseObjectType::OBJ_SHIP) { AddMeters(ship_meter_types); }
+    Ship(Ship&&) = default;
 
 private:
     friend class Universe;

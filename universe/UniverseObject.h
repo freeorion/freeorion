@@ -311,6 +311,7 @@ public:
     static constexpr int    SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
     virtual ~UniverseObject() = default;
+    UniverseObject(UniverseObject&&) = default;
 
     /** returns new copy of this UniverseObject, limited to only copy data that
       * is visible to the empire with the specified \a empire_id as determined
