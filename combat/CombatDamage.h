@@ -31,7 +31,7 @@ namespace Combat {
 
     [[nodiscard]] FO_COMMON_API std::vector<float> WeaponDamageImpl(
         const ScriptingContext& context,
-        std::shared_ptr<const Ship> ship, float target_shields,
+        const Ship& ship, float target_shields,
         bool use_max_meters, bool launch_fighters, bool target_ships = true);
 }
 
