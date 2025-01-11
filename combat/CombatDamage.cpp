@@ -16,14 +16,12 @@
 
 namespace {
     std::vector<float> WeaponDamageCalcImpl(
-        const std::shared_ptr<const Ship>& ship, bool max, bool include_fighters,
+        const Ship& ship, bool max, bool include_fighters,
         bool target_ships, const ScriptingContext& context)
     {
         std::vector<float> retval;
-        if (!ship)
-            return retval;
 
-        const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID());
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship.DesignID());
         if (!design)
             return retval;
 
@@ -52,12 +50,12 @@ namespace {
             // get the attack power for each weapon part.
             if (part_class == ShipPartClass::PC_DIRECT_WEAPON) {
                 if (target_ships)
-                    retval.push_back(ship->WeaponPartShipDamage(part, context));
+                    retval.push_back(ship.WeaponPartShipDamage(part, context));
                 else
-                    retval.push_back(ship->WeaponPartFighterDamage(part, context));
+                    retval.push_back(ship.WeaponPartFighterDamage(part, context));
             } else if (part_class == ShipPartClass::PC_FIGHTER_BAY && include_fighters) {
                 // launch capacity determined by capacity of bay
-                fighter_launch_capacity += static_cast<int>(ship->CurrentPartMeterValue(METER, part_name));
+                fighter_launch_capacity += static_cast<int>(ship.CurrentPartMeterValue(METER, part_name));
 
             } else if (part_class == ShipPartClass::PC_FIGHTER_HANGAR && include_fighters) {
                 // attack strength of a ship's fighters per bout determined by the hangar...
@@ -73,9 +71,9 @@ namespace {
                 } else if (part->CombatTargets() && context.effect_target &&
                            part->CombatTargets()->EvalOne(context, context.effect_target))
                 {
-                    fighter_damage = ship->CurrentPartMeterValue(SECONDARY_METER, part_name);
+                    fighter_damage = ship.CurrentPartMeterValue(SECONDARY_METER, part_name);
                     available_fighters = std::max(0, static_cast<int>(
-                        ship->CurrentPartMeterValue(METER, part_name)));  // stacked meter
+                        ship.CurrentPartMeterValue(METER, part_name)));  // stacked meter
                 } else {
                     // target is not of the right type; no damage; stop checking hangars/launch bays
                     fighter_damage = 0.0f;
@@ -110,92 +108,71 @@ namespace {
         return retval;
     }
 
-    std::shared_ptr<Ship> TempShipForDamageCalcs(const std::shared_ptr<const Ship>& template_ship,
-                                                 const ScriptingContext& context)
-    {
+    Ship TempShipForDamageCalcs(const Ship& template_ship, const ScriptingContext& context) {
         // create temporary ship to test targetting condition on...
         static constexpr float shields = 0.0f;
         static constexpr float structure = 100.0f;
 
-        if (!template_ship) {
-            ErrorLogger() << "TempShipForDamageCalcs passed null template ship";
-            return nullptr;
-        } else if (template_ship->DesignID() == INVALID_DESIGN_ID) {
-            DebugLogger() << "TempShipForDamageCalcs passed template ship with no known design ID";
-            return nullptr;
-        }
+        if (template_ship.DesignID() == INVALID_DESIGN_ID)
+            ErrorLogger() << "TempShipForDamageCalcs passed template ship with no known design ID";
 
         // use the given design and species as default enemy.
-        std::shared_ptr<Ship> target;
-        try {
-            target = std::make_shared<Ship>(ALL_EMPIRES, template_ship->DesignID(),
-                                            template_ship->SpeciesName(), context.ContextUniverse(),
-                                            context.species, ALL_EMPIRES, context.current_turn);
-        } catch (...) {
-            ErrorLogger() << "Couldn't create temporary ship from template ship: " << template_ship->Dump();
-            return nullptr;
-        }
+        Ship target{ALL_EMPIRES, template_ship.DesignID(), template_ship.SpeciesName(),
+                    context.ContextUniverse(), context.species, ALL_EMPIRES, context.current_turn};
+
         // target needs to have an ID != -1 to be visible, stealth should be low enough
         // structure must be higher than zero to be valid target
-        target->SetID(TEMPORARY_OBJECT_ID); // also see InsertTemp function usage
-        target->GetMeter(MeterType::METER_STRUCTURE)->Set(structure, structure);
-        target->GetMeter(MeterType::METER_MAX_STRUCTURE)->Set(structure, structure);
+        target.SetID(TEMPORARY_OBJECT_ID); // also see InsertTemp function usage
+        target.GetMeter(MeterType::METER_STRUCTURE)->Set(structure, structure);
+        target.GetMeter(MeterType::METER_MAX_STRUCTURE)->Set(structure, structure);
         // Shield value is used for structural damage estimation
-        target->GetMeter(MeterType::METER_SHIELD)->Set(shields, shields);
+        target.GetMeter(MeterType::METER_SHIELD)->Set(shields, shields);
 
         return target;
     }
 
-    auto TempFighterForDamageCalcs(const std::shared_ptr<const Ship>& template_ship,
-                                   const ScriptingContext& context)
-    {
+    Fighter TempFighterForDamageCalcs(const Ship& template_ship, const ScriptingContext& context) {
         static constexpr auto combat_targets = nullptr;
-        auto target = std::make_shared<Fighter>(ALL_EMPIRES, template_ship->ID(),
-                                                template_ship->SpeciesName(), 1.0f, combat_targets);
-        target->SetID(TEMPORARY_OBJECT_ID);
+        Fighter target{ALL_EMPIRES, template_ship.ID(), template_ship.SpeciesName(), 1.0f, combat_targets};
+        target.SetID(TEMPORARY_OBJECT_ID);
         return target;
     }
 }
 
 std::vector<float> Combat::WeaponDamageImpl(
-    const ScriptingContext& context, std::shared_ptr<const Ship> source, float shields,
+    const ScriptingContext& context, const Ship& source, float shields,
     bool max, bool launch_fighters, bool target_ships)
 {
-    if (!source) {
-        ErrorLogger() << "Combat::WeaponDamageImpl passed null source ship";
-        return {};
-    } else if (source->DesignID() == INVALID_DESIGN_ID) {
-        if (source->ID() == TEMPORARY_OBJECT_ID) {
-            ErrorLogger() << "Combat::WeaponDamageImpl passed TEMPORARY source ship without a valid design ID: " << source->Dump();
+    if (source.DesignID() == INVALID_DESIGN_ID) {
+        if (source.ID() == TEMPORARY_OBJECT_ID) {
+            ErrorLogger() << "Combat::WeaponDamageImpl passed TEMPORARY source ship without a valid design ID: " << source.Dump();
         } else {
-            ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source->Dump();
+            ErrorLogger() << "Combat::WeaponDamageImpl passed source ship without a valid design ID: " << source.Dump();
         }
         return {};
     }
 
     const Universe::EmpireObjectVisibilityMap empire_object_vis{
-        {source->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
+        {source.Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
     const Universe::EmpireObjectVisibilityTurnMap empire_object_visibility_turns{
-        {source->Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
+        {source.Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
 
     if (target_ships) {
         auto temp_ship = TempShipForDamageCalcs(source, context);
-        ScriptingContext temp_ship_context{context, empire_object_vis, empire_object_visibility_turns,
-                                           ScriptingContext::Source{}, source.get(),
-                                           ScriptingContext::Target{}, temp_ship.get()};
+        const ScriptingContext temp_ship_context{context, empire_object_vis, empire_object_visibility_turns,
+                                                 ScriptingContext::Source{}, &source,
+                                                 ScriptingContext::Target{}, &temp_ship};
 
-        return WeaponDamageCalcImpl(source, max, launch_fighters,
-                                    target_ships, temp_ship_context);
+        return WeaponDamageCalcImpl(source, max, launch_fighters, target_ships, temp_ship_context);
 
     } else {
         // create temporary fighter to test targetting condition on...
         auto temp_fighter = TempFighterForDamageCalcs(source, context);
-        ScriptingContext temp_fighter_context{context, empire_object_vis, empire_object_visibility_turns,
-                                              ScriptingContext::Source{}, source.get(),
-                                              ScriptingContext::Target{}, temp_fighter.get()};
+        const ScriptingContext temp_fighter_context{context, empire_object_vis, empire_object_visibility_turns,
+                                                    ScriptingContext::Source{}, &source,
+                                                    ScriptingContext::Target{}, &temp_fighter};
 
-        return WeaponDamageCalcImpl(source, max, launch_fighters,
-                                    target_ships, temp_fighter_context);
+        return WeaponDamageCalcImpl(source, max, launch_fighters, target_ships, temp_fighter_context);
     }
 }
 
@@ -207,6 +184,8 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
     int current_docked, float fighter_damage, int limit_to_bout)
 {
     std::map<int, FighterBoutInfo> retval;
+    if (!ship)
+        return retval;
     const int NUM_BOUTS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
     int target_bout = limit_to_bout < 1 ? NUM_BOUTS : limit_to_bout;
 
@@ -214,10 +193,10 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
         {ship->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
     Universe::EmpireObjectVisibilityTurnMap empire_object_visibility_turns{
         {ship->Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
-    auto temp_ship = TempShipForDamageCalcs(ship, context);
+    auto temp_ship = TempShipForDamageCalcs(*ship, context);
     ScriptingContext ship_target_context{context, empire_object_vis, empire_object_visibility_turns,
                                          ScriptingContext::Source{}, ship.get(),
-                                         ScriptingContext::Target{}, temp_ship.get()};
+                                         ScriptingContext::Target{}, &temp_ship};
 
     for (int bout = 1; bout <= target_bout; ++bout) {
         ship_target_context.combat_bout = bout;
