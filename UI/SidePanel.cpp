@@ -719,7 +719,8 @@ public:
     void SetPlanets(const std::vector<int>& planet_ids, StarType star_type, 
                     ScriptingContext& context);
     void SelectPlanet(int planet_id); //!< programatically selects a planet with id \a planet_id
-    void SetValidSelectionPredicate(const std::shared_ptr<UniverseObjectVisitor> &visitor);
+    void SetValidSelectionPredicate(std::function<bool(const UniverseObject*)> pred);
+    void ClearValidSelectionPedicate();
     void ScrollTo(int pos);
 
     /** Updates data displayed in info panels and redoes layout
@@ -762,7 +763,7 @@ private:
     std::vector<std::shared_ptr<PlanetPanel>>   m_planet_panels;
     int                                         m_selected_planet_id = INVALID_OBJECT_ID;
     std::set<int>                               m_candidate_ids;
-    std::shared_ptr<UniverseObjectVisitor>      m_valid_selection_predicate;
+    std::function<bool(const UniverseObject*)>  m_valid_selection_predicate;
     std::shared_ptr<GG::Scroll>                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes);
     bool                                        m_ignore_recursive_resize = false;
 };
@@ -3031,13 +3032,18 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id) {
     }
 }
 
-void SidePanel::PlanetPanelContainer::SetValidSelectionPredicate(const std::shared_ptr<UniverseObjectVisitor>& visitor)
-{ m_valid_selection_predicate = visitor; }
+void SidePanel::PlanetPanelContainer::SetValidSelectionPredicate(std::function<bool(const UniverseObject*)> pred)
+{ m_valid_selection_predicate = std::move(pred); }
+
+void SidePanel::PlanetPanelContainer::ClearValidSelectionPedicate()
+{ m_valid_selection_predicate = nullptr; }
 
 void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     //std::cout << "SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates" << std::endl;
     m_candidate_ids.clear();
     std::set<std::shared_ptr<PlanetPanel>> disabled_panels;
+
+    const ObjectMap& objects = GGHumanClientApp::GetApp()->GetContext().ContextObjects();
 
     if (m_valid_selection_predicate) {
         // if there is a selection predicate, which determines which planet panels
@@ -3046,9 +3052,9 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // find selectables
         for (auto& panel : m_planet_panels) {
             int planet_id = panel->PlanetID();
-            auto planet = Objects().get<Planet>(planet_id);
+            const auto* planet = objects.getRaw<Planet>(planet_id);
 
-            if (planet && planet->Accept(*m_valid_selection_predicate)) {
+            if (planet && m_valid_selection_predicate(planet)) {
                 m_candidate_ids.insert(planet_id);
                 //std::cout << " ... planet " << planet->ID() << " is a selection candidate" << std::endl;
             } else {
@@ -3611,13 +3617,16 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
 
 
     // configure selection of planet panels in panel container
-    std::shared_ptr<UniverseObjectVisitor> vistor;
-    if (m_selection_enabled) {
-        int empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        if (empire_id != ALL_EMPIRES)
-            vistor = std::make_shared<OwnedVisitor>(empire_id);
-    }
-    m_planet_panel_container->SetValidSelectionPredicate(vistor);
+    static constexpr auto owned_by_client_empire = [](const UniverseObject* obj) {
+        if (!obj)
+            return false;
+        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        return (empire_id == ALL_EMPIRES) ? false : obj->OwnedBy(empire_id);
+    };
+    if (m_selection_enabled)
+        m_planet_panel_container->SetValidSelectionPredicate(std::function(owned_by_client_empire));
+    else
+        m_planet_panel_container->ClearValidSelectionPedicate();
 
 
     // update planet panel container contents (applying just-set selection predicate)
