@@ -38,7 +38,6 @@
 #include "../universe/Ship.h"
 #include "../universe/Species.h"
 #include "../universe/System.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../universe/ValueRef.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
