@@ -82,12 +82,12 @@ public:
     [[nodiscard]] auto&         Starlanes() const noexcept { return m_starlanes; }
     [[nodiscard]] IDSet         VisibleStarlanes(int empire_id, const Universe& universe) const;
 
-    [[nodiscard]] int                     LastTurnBattleHere() const noexcept { return m_last_turn_battle_here; }
+    [[nodiscard]] int           LastTurnBattleHere() const noexcept { return m_last_turn_battle_here; }
 
-    [[nodiscard]] const std::string&      OverlayTexture() const noexcept     { return m_overlay_texture; }
-    [[nodiscard]] double                  OverlaySize() const noexcept        { return m_overlay_size; }  ///< size in universe units
+    [[nodiscard]] const auto&   OverlayTexture() const noexcept     { return m_overlay_texture; }
+    [[nodiscard]] double        OverlaySize() const noexcept        { return m_overlay_size; }  ///< size in universe units
 
-    [[nodiscard]] std::size_t             SizeInMemory() const override;
+    [[nodiscard]] std::size_t   SizeInMemory() const override;
 
 
     /** fleets are inserted into system */
