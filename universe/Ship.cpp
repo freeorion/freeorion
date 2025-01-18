@@ -52,7 +52,7 @@ Ship::Ship(int empire_id, int design_id, std::string species_name,
     for (const std::string& part_name : design->Parts()) {
         if (!part_name.empty()) {
             const ShipPart* part = GetShipPart(part_name);
-            if (!part) {
+            if (!part) [[unlikely]] {
                 ErrorLogger() << "Ship::Ship couldn't get part with name " << part_name;
                 continue;
             }
@@ -599,8 +599,7 @@ void Ship::Resupply(int turn) {
 
     Meter* fuel_meter = UniverseObject::GetMeter(MeterType::METER_FUEL);
     const Meter* max_fuel_meter = UniverseObject::GetMeter(MeterType::METER_MAX_FUEL);
-    if (!fuel_meter || !max_fuel_meter) {
-        [[unlikely]]
+    if (!fuel_meter || !max_fuel_meter) [[unlikely]] {
         ErrorLogger() << "Ship::Resupply couldn't get fuel meters!";
     } else {
         fuel_meter->SetCurrent(max_fuel_meter->Current());
@@ -626,7 +625,7 @@ void Ship::Resupply(int turn) {
 }
 
 void Ship::SetSpecies(std::string species_name, const SpeciesManager& sm) {
-    if (!sm.GetSpecies(species_name))
+    if (!sm.GetSpecies(species_name)) [[unlikely]] 
         ErrorLogger() << "Ship::SetSpecies couldn't get species with name " << species_name;
     m_species_name = std::move(species_name);
 }
