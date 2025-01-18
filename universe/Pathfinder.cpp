@@ -305,10 +305,8 @@ namespace SystemPathing {
       * just that system in it, and the path lenth is 0.  If there is no path
       * between the two vertices, then the list is empty and the path length
       * is -1.0 */
-    template <typename Graph>
     std::pair<std::vector<int>, double> ShortestPathImpl(
-        const Graph& graph, int system1_id, int system2_id,
-        const boost::container::flat_map<int, std::size_t>& id_to_graph_index)
+        const auto& graph, int system1_id, int system2_id, const auto& id_to_graph_index)
     {
         // convert system IDs to graph indices.  try/catch for invalid input system ids.
         std::size_t system1_index, system2_index;
@@ -330,12 +328,14 @@ namespace SystemPathing {
            Default initialization of the vector may be 0 or undefined which could lead
            to out of bounds errors, or endless loops if a system's default predecessor
            is 0 (debug mode), and 0's predecessor is that system */
-        std::vector<int> predecessors(boost::num_vertices(graph));
-        std::vector<double> distances(boost::num_vertices(graph));
-        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
-            predecessors[i] = i;
-            distances[i] = -1.0;
-        }
+        const std::size_t num_verts = boost::num_vertices(graph);
+
+        std::vector<int> predecessors;
+        predecessors.reserve(num_verts);
+        for (std::size_t i = 0; i < num_verts; ++i)
+            predecessors.push_back(static_cast<int>(i));
+
+        std::vector<double> distances(num_verts, -1.0);
 
 
         // do the actual path finding using verbose boost magic...
@@ -497,7 +497,7 @@ namespace {
                 m_graph(graph)
             {
                 if (!m_graph)
-                    ErrorLogger() << "EdgeVisibilityFilter passed null graph pointer";
+                    throw std::invalid_argument("EdgeVisibilityFilter passed null system graph");
 
                 // collect all edges
                 decltype(edges)::sequence_type edges_vec;
@@ -516,14 +516,16 @@ namespace {
             template <typename EdgeDescriptor>
             bool operator()(const EdgeDescriptor& edge) const
             {
-                if (!m_graph)
+                if (!m_graph) {
+                    ErrorLogger() << "EdgeVisibilityFilter has null graph?";
                     return false;
-
+                }
+                const auto& graph = *m_graph;
                 // get system ids from graph indices
-                const auto& sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph); // for reverse-lookup System universe ID from graph index
-                int sys_graph_index_1 = boost::source(edge, *m_graph);
+                const auto& sys_id_property_map = boost::get(vertex_system_id_t(), graph); // for reverse-lookup System universe ID from graph index
+                int sys_graph_index_1 = boost::source(edge, graph);
                 int sys_id_1 = sys_id_property_map[sys_graph_index_1];
-                int sys_graph_index_2 = boost::target(edge, *m_graph);
+                int sys_graph_index_2 = boost::target(edge, graph);
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
@@ -535,29 +537,8 @@ namespace {
             boost::container::flat_set<std::pair<int, int>> edges;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
-        typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
+        typedef std::map<int, EmpireViewSystemGraph> EmpireViewSystemGraphMap;
 
-
-        void AddSystemPredicate(const Pathfinder::SystemExclusionPredicateType& pred,
-                                const EmpireManager& empires, const ObjectMap& objects)
-        {
-            for (const auto empire_id : empires | range_keys) {
-                SystemPredicateFilter sys_pred_filter(&system_graph, &objects, pred);
-                auto sys_pred_filtered_graph_ptr = std::make_shared<SystemPredicateGraph>(
-                    system_graph, sys_pred_filter);
-
-                auto pred_it = system_pred_graph_views.find(pred);
-                if (pred_it == system_pred_graph_views.end()) {
-                    EmpireSystemPredicateMap empire_graph_map;
-                    empire_graph_map.emplace(empire_id, std::move(sys_pred_filtered_graph_ptr));
-                    system_pred_graph_views.emplace(pred, std::move(empire_graph_map));
-                } else if (pred_it->second.contains(empire_id)) {
-                    pred_it->second.at(empire_id) = std::move(sys_pred_filtered_graph_ptr);
-                } else {
-                    pred_it->second.emplace(empire_id, std::move(sys_pred_filtered_graph_ptr));
-                }
-            }
-        }
 
         struct SystemPredicateFilter {
             SystemPredicateFilter() = default;
@@ -604,7 +585,7 @@ namespace {
                 }
 
                 // Discard edge if it finds a contained object or matches either system for visitor
-                for (const auto& object : m_objects->find(*m_pred.get())) {
+                for (const auto& object : m_objects->find(m_pred)) {
                     if (!object)
                         continue;
                     // object is destination system
@@ -626,8 +607,6 @@ namespace {
         };
 
         using SystemPredicateGraph = boost::filtered_graph<SystemGraph, SystemPredicateFilter>;
-        using EmpireSystemPredicateMap = std::map<int, std::shared_ptr<SystemPredicateGraph>>;
-        using SystemPredicateGraphMap = std::map<Pathfinder::SystemExclusionPredicateType, EmpireSystemPredicateMap>;
 
         // declare property map types for properties declared above
         using ConstSystemIDPropertyMap = boost::property_map<SystemGraph, vertex_system_id_t>::const_type;
@@ -637,9 +616,16 @@ namespace {
         using ConstEdgeWeightPropertyMap = boost::property_map<SystemGraph, boost::edge_weight_t>::const_type;
         using EdgeWeightPropertyMap = boost::property_map<SystemGraph, boost::edge_weight_t>::type;
 
-        SystemGraph              system_graph;              ///< a graph in which the systems are vertices and the starlanes are edges
-        EmpireViewSystemGraphMap empire_system_graph_views; ///< a map of empire IDs to the views of the system graph by those empires
-        SystemPredicateGraphMap  system_pred_graph_views;   ///< Empire system graphs indexed by object predicate
+        void Reset() {
+            empire_system_graph_views.clear();
+            if (system_graph) [[likely]]
+                system_graph->clear();
+            else
+                system_graph = std::make_unique<SystemGraph>();
+        }
+
+        std::unique_ptr<SystemGraph> system_graph = std::make_unique<SystemGraph>();///< a graph in which the systems are vertices and the starlanes are edges
+        EmpireViewSystemGraphMap     empire_system_graph_views;                     ///< a map of empire IDs to the views of the system graph by those empires
     };
 }
 
@@ -655,8 +641,8 @@ public:
     std::pair<std::vector<int>, double> ShortestPath(
         int system1_id, int system2_id, const ObjectMap& objects, int empire_id = ALL_EMPIRES) const;
     std::pair<std::vector<int>, double> ShortestPath(
-        int system1_id, int system2_id, int empire_id, const ObjectMap& objects,
-        const EmpireManager& empires, const Pathfinder::SystemExclusionPredicateType& sys_pred) const;
+        int system1_id, int system2_id, const ObjectMap& objects,
+        const Pathfinder::SystemExclusionPredicateType& sys_pred) const;
 
     double ShortestPathDistance(int object1_id, int object2_id, const ObjectMap& objects) const;
 
@@ -698,7 +684,7 @@ public:
 
     void InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires);
 
-    void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects);
+    void UpdateCommonFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects);
     void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires,
                                                     const Universe::EmpireObjectMap& empire_object_maps);
 
@@ -708,7 +694,7 @@ public:
 
 
     mutable distance_matrix_storage<int16_t>     m_system_jumps; ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    std::shared_ptr<GraphImpl>                   m_graph_impl = std::make_shared<GraphImpl>(); ///< a graph in which the systems are vertices and the starlanes are edges
+    GraphImpl                                    m_graph_impl{}; ///< a graph in which the systems are vertices and the starlanes are edges
     boost::container::flat_map<int, std::size_t> m_system_id_to_graph_index;
 };
 
@@ -748,7 +734,11 @@ void Pathfinder::PathfinderImpl::HandleCacheMiss(
     DistancePropertyMap distance_property_map(row.begin());
     boost::distance_recorder<DistancePropertyMap, boost::on_tree_edge> distance_recorder(distance_property_map);
 
-    boost::breadth_first_search(m_graph_impl->system_graph, ii,
+    if (!m_graph_impl.system_graph) [[unlikely]] {
+        ErrorLogger() << "No system graph in PathfinderImpl::HandleCacheMiss";
+        return;
+    }
+    boost::breadth_first_search(*m_graph_impl.system_graph, ii,
                                 boost::visitor(boost::make_bfs_visitor(distance_recorder)));
 }
 
@@ -759,12 +749,12 @@ double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id
                                                   const ObjectMap& objects) const
 {
     const auto system1 = objects.getRaw<System>(system1_id);
-    if (!system1) {
+    if (!system1) [[unlikely]] {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
     const auto system2 = objects.getRaw<System>(system2_id);
-    if (!system2) {
+    if (!system2) [[unlikely]] {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
     }
@@ -970,27 +960,33 @@ std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
 std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     int system1_id, int system2_id, const ObjectMap& objects, int empire_id) const
 {
-    if (empire_id == ALL_EMPIRES) {
-        // find path on full / complete system graph
-        try {
-            return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id,
-                                    m_system_id_to_graph_index);
-        } catch (const std::out_of_range&) {
-            ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
-                          << system1_id << " & " << system2_id;
-            throw;
-        }
-    }
+    const auto get_path = [system1_id, system2_id, this](const auto& graph)
+    { return ShortestPathImpl(graph, system1_id, system2_id, m_system_id_to_graph_index); };
 
-    // find path on single empire's view of system graph
-    auto graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
-    if (graph_it == m_graph_impl->empire_system_graph_views.end()) {
-        ErrorLogger() << "PathfinderImpl::ShortestPath passed unknown empire id: " << empire_id;
-        throw std::out_of_range("PathfinderImpl::ShortestPath passed unknown empire id");
-    }
     try {
-        return ShortestPathImpl(*graph_it->second, system1_id, system2_id,
-                                m_system_id_to_graph_index);
+        if (empire_id == ALL_EMPIRES) {
+            if (!m_graph_impl.system_graph) [[unlikely]] {
+                ErrorLogger() << "No system graph in PathfinderImpl::ShortestPath";
+                return {{}, -1.0};
+            }
+            // find path on full / complete system graph
+            return get_path(*m_graph_impl.system_graph);
+        }
+
+        const auto& graph_views = m_graph_impl.empire_system_graph_views;
+
+        // check if a filtered view to use for all empires is present
+        auto graph_it = graph_views.find(ALL_EMPIRES);
+        // if not, then check for a filtered view for specific empire
+        if (graph_it == graph_views.end())
+            graph_it = graph_views.find(empire_id);
+        if (graph_it == graph_views.end()) {
+            ErrorLogger() << "PathfinderImpl::ShortestPath passed unknown empire id: " << empire_id;
+            throw std::out_of_range("PathfinderImpl::ShortestPath passed unknown empire id");
+        }
+
+        return get_path(graph_it->second);
+
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
@@ -999,40 +995,26 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
 }
 
 std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
-    int system1_id, int system2_id, int empire_id,
-    const SystemExclusionPredicateType& system_predicate,
-    const EmpireManager& empires, const ObjectMap& objects) const
-{ return pimpl->ShortestPath(system1_id, system2_id, empire_id, objects, empires, system_predicate); }
+    int system1_id, int system2_id, const SystemExclusionPredicateType& system_predicate,
+    const ObjectMap& objects) const
+{ return pimpl->ShortestPath(system1_id, system2_id, objects, system_predicate); }
 
 std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
-    int system1_id, int system2_id, int empire_id, const ObjectMap& objects,
-    const EmpireManager& empires, const Pathfinder::SystemExclusionPredicateType& sys_pred) const
+    int system1_id, int system2_id, const ObjectMap& objects,
+    const Pathfinder::SystemExclusionPredicateType& sys_pred) const
 {
-    if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "Invalid empire " << empire_id;
-        throw std::out_of_range("PathfinderImpl::ShortestPath passed invalid empire id");
+    if (!m_graph_impl.system_graph) [[unlikely]] {
+        ErrorLogger() << "No system graph in ShortestPath";
+        throw std::runtime_error("No system graph in ShortestPath");
     }
-
-    auto func_it = m_graph_impl->system_pred_graph_views.find(sys_pred);
-    if (func_it == m_graph_impl->system_pred_graph_views.end()) {
-        m_graph_impl->AddSystemPredicate(sys_pred, empires, objects);
-        func_it = m_graph_impl->system_pred_graph_views.find(sys_pred);
-        if (func_it == m_graph_impl->system_pred_graph_views.end()) {
-            ErrorLogger() << "No graph views found for predicate";
-            throw std::out_of_range("PathfinderImpl::ShortestPath No graph views found for predicate");
-        }
-    }
-    auto graph_it = func_it->second.find(empire_id);
-    if (graph_it == func_it->second.end()) {
-        ErrorLogger() << "No graph view found for empire " << empire_id;
-        throw std::out_of_range("PathfinderImpl::ShortestPath No graph view for empire");
-    }
-
+    const GraphImpl::SystemPredicateGraph sys_pred_graph(
+        *m_graph_impl.system_graph,
+        GraphImpl::SystemPredicateFilter{m_graph_impl.system_graph.get(), &objects, sys_pred});
+    
     try {
-        return ShortestPathImpl(*graph_it->second, system1_id, system2_id,
-                                m_system_id_to_graph_index);
+        return ShortestPathImpl(sys_pred_graph, system1_id, system2_id, m_system_id_to_graph_index);
     } catch (const std::out_of_range&) {
-        ErrorLogger() << "Invalid system id(s): " << system1_id << ", " << system2_id;
+        ErrorLogger() << "ShortestPath: Invalid system id(s): " << system1_id << ", " << system2_id;
         throw;
     }
 }
@@ -1106,26 +1088,29 @@ std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
     int system1_id, int system2_id, int empire_id, int max_jumps) const
 {
     if (empire_id == ALL_EMPIRES) {
+        if (!m_graph_impl.system_graph) [[unlikely]] {
+            ErrorLogger() << "No system graph in PathfinderImpl::LeastJumpsPath";
+            throw std::runtime_error("No system graph in PathfinderImpl::LeastJumpsPath");
+        }
         // find path on full / complete system graph
         try {
-            return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id,
+            return LeastJumpsPathImpl(*m_graph_impl.system_graph, system1_id, system2_id,
                                       m_system_id_to_graph_index, max_jumps);
         } catch (const std::out_of_range&) {
             ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed invalid system id(s): "
-                                   << system1_id << " & " << system2_id;
+                          << system1_id << " & " << system2_id;
             throw;
         }
     }
 
     // find path on single empire's view of system graph
-    auto graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
-    if (graph_it == m_graph_impl->empire_system_graph_views.end()) {
+    auto graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
+    if (graph_it == m_graph_impl.empire_system_graph_views.end()) {
         ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed unknown empire id: " << empire_id;
         throw std::out_of_range("PathfinderImpl::LeastJumpsPath passed unknown empire id");
     }
     try {
-        return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id,
-                                  m_system_id_to_graph_index, max_jumps);
+        return LeastJumpsPathImpl(graph_it->second, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
@@ -1162,13 +1147,16 @@ std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbo
     int system_id, int empire_id) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id,
+        if (!m_graph_impl.system_graph) [[unlikely]] {
+            ErrorLogger() << "No system graph in PathfinderImpl::ImmediateNeighbors";
+            return {};
+        }
+        return ImmediateNeighborsImpl(*m_graph_impl.system_graph, system_id,
                                       m_system_id_to_graph_index);
     } else {
-        auto graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return ImmediateNeighborsImpl(*graph_it->second, system_id,
-                                          m_system_id_to_graph_index);
+        auto graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
+        if (graph_it != m_graph_impl.empire_system_graph_views.end())
+            return ImmediateNeighborsImpl(graph_it->second, system_id, m_system_id_to_graph_index);
     }
     return {};
 }
@@ -1444,10 +1432,14 @@ void Pathfinder::InitializeSystemGraph(const ObjectMap& objects, const EmpireMan
 { return pimpl->InitializeSystemGraph(objects, empires); }
 
 void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires) {
-    auto new_graph_impl = std::make_shared<GraphImpl>();
+    if (!m_graph_impl.system_graph) [[unlikely]]
+        DebugLogger() << "GraphImpl had null system graph in InitializeSystemGraph...?";
 
-    const auto& sys_id_property_map = boost::get(vertex_system_id_t(), new_graph_impl->system_graph);
-    const auto& edge_weight_map = boost::get(boost::edge_weight, new_graph_impl->system_graph);
+    m_graph_impl.Reset();
+    auto& system_graph = *m_graph_impl.system_graph;
+
+    const auto& sys_id_property_map = boost::get(vertex_system_id_t(), system_graph);
+    const auto& edge_weight_map = boost::get(boost::edge_weight, system_graph);
 
     // add vertices to graph for all systems
     std::vector<int> system_ids;
@@ -1459,10 +1451,10 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
 
     for (std::size_t system_index = 0; system_index < system_ids.size(); ++system_index) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
-        boost::add_vertex(new_graph_impl->system_graph);
+        boost::add_vertex(system_graph);
         int system_id = system_ids[system_index];
         sys_id_property_map[system_index] = system_id;
-        // add record of index in new_graph_impl->system_graph of this system
+        // add record of index in system_graph of this system
         system_id_to_graph_idx_vec.emplace_back(system_id, system_index);
     }
     std::sort(system_id_to_graph_idx_vec.begin(), system_id_to_graph_idx_vec.end());
@@ -1472,25 +1464,24 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
     // add edges for all starlanes
     for (std::size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
-        auto system1 = objects.get<System>(system1_id);
+        auto system1 = objects.getRaw<System>(system1_id);
 
         // add edges and edge weights
         for (auto const lane_dest_id : system1->Starlanes()) {
-
             // skip null lanes and only add edges in one direction, to avoid
             // duplicating edges ( since this is an undirected graph, A->B
             // duplicates B->A )
             if (lane_dest_id >= system1_id)
                 continue;
 
-            // get new_graph_impl->system_graph index for this system
+            // get system_graph index for this system
             auto reverse_lookup_map_it = m_system_id_to_graph_index.find(lane_dest_id);
             if (reverse_lookup_map_it == m_system_id_to_graph_index.end())
                 continue;   // couldn't find destination system id in vertex lookup map; don't add to graph
             std::size_t lane_dest_graph_index = reverse_lookup_map_it->second;
 
             auto [edge_descriptor, add_success] =
-                boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
+                boost::add_edge(system1_index, lane_dest_graph_index, system_graph);
             //DebugLogger() << "Adding graph edge from " << system1_id << " to " << lane_dest_id;
 
             if (add_success) // if this is a non-duplicate starlane or wormhole
@@ -1498,54 +1489,58 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects,
         }
     }
 
-    new_graph_impl.swap(m_graph_impl);
     // clear jumps distance cache
     // NOTE: re-filling the cache is O(#vertices * (#vertices + #edges)) in the worst case!
     m_system_jumps.resize(system_ids.size());
 }
 
-void Pathfinder::UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects)
-{ pimpl->UpdateEmpireVisibilityFilteredSystemGraphs(empires, objects); }
+void Pathfinder::UpdateCommonFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects)
+{ pimpl->UpdateCommonFilteredSystemGraphs(empires, objects); }
 
 void Pathfinder::UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires,
                                                             const std::map<int, ObjectMap>& empire_object_maps)
 { pimpl->UpdateEmpireVisibilityFilteredSystemGraphs(empires, empire_object_maps); }
 
-void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
+
+void Pathfinder::PathfinderImpl::UpdateCommonFilteredSystemGraphs(
     const EmpireManager& empires, const ObjectMap& objects)
 {
-    m_graph_impl->empire_system_graph_views.clear();
-    m_graph_impl->system_pred_graph_views.clear();
+    // empires all use the same filtered graph, stored at index ALL_EMPIRES
+    m_graph_impl.empire_system_graph_views.clear();
 
-    // empires all use the same filtered graph
-    GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, objects);
-    auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(
-        m_graph_impl->system_graph, filter);
-
-    for (auto const& empire : empires) {
-        int empire_id = empire.first;
-        m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
+    if (!m_graph_impl.system_graph) [[unlikely]] {
+        ErrorLogger() << "No system graph in UpdateCommonFilteredSystemGraphs";
+        return;
     }
+
+    const auto [eit, success] = m_graph_impl.empire_system_graph_views.emplace(
+        std::piecewise_construct,
+        std::forward_as_tuple(ALL_EMPIRES),
+        std::forward_as_tuple(*m_graph_impl.system_graph, 
+                              GraphImpl::EdgeVisibilityFilter{m_graph_impl.system_graph.get(), objects}));
 }
 
 void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
     const EmpireManager& empires, const Universe::EmpireObjectMap& empire_object_maps)
 {
-    m_graph_impl->empire_system_graph_views.clear();
-    m_graph_impl->system_pred_graph_views.clear();
+    m_graph_impl.empire_system_graph_views.clear();
+    const auto* system_graph = m_graph_impl.system_graph.get();
+    if (!system_graph) [[unlikely]] {
+        ErrorLogger() << "UpdateEmpireVisibilityFilteredSystemGraphs have null system graph...";
+        return;
+    }
 
     // each empire has its own filtered graph
-    for (auto& empire_entry : empires) {
-        int empire_id = empire_entry.first;
+    for (const auto& empire_id : empires.EmpireIDs()) {
         auto map_it = empire_object_maps.find(empire_id);
         if (map_it == empire_object_maps.end()) {
             ErrorLogger() << "UpdateEmpireVisibilityFilteredSystemGraphs can't find object map for empire with id " << empire_id;
             continue;
         }
-        const auto& empire_objects = map_it->second;
-        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_objects);
-        auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(
-            m_graph_impl->system_graph, filter);
-        m_graph_impl->empire_system_graph_views[empire_id] = std::move(filtered_graph_ptr);
+        const auto& emp_objs = map_it->second;
+        m_graph_impl.empire_system_graph_views.emplace(
+            std::piecewise_construct,
+            std::make_tuple(empire_id),
+            std::make_tuple(*system_graph, GraphImpl::EdgeVisibilityFilter{system_graph, emp_objs}));
     }
 }

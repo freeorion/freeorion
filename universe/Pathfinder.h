@@ -19,7 +19,7 @@ namespace Condition {
   * around the Universe. */
 class FO_COMMON_API Pathfinder final {
 public:
-    typedef std::shared_ptr<UniverseObjectVisitor> SystemExclusionPredicateType;
+    using SystemExclusionPredicateType = std::function<bool(const UniverseObject*)>;
 
     Pathfinder();
     ~Pathfinder();
@@ -51,21 +51,23 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id,
-                                                     int empire_id, const ObjectMap& objects) const;
+    std::pair<std::vector<int>, double> ShortestPath(
+        int system1_id, int system2_id, int empire_id, const ObjectMap& objects) const;
+    auto ShortestPath(int system1_id, int system2_id, const ObjectMap& objects) const
+    { return ShortestPath(system1_id, system2_id, ALL_EMPIRES, objects); }
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.
      * @param system1_id source System id
      * @param system2_id destination System id
      * @param empire_id ID of viewing Empire
-     * @param system_predicate UniverseObjectVisitor, A System is excluded as a potential node in any route
+     * @param system_predicate A System is excluded as a potential node in any route
      *                         if it is or contains a matched object
      * 
      * @returns list of System ids, distance between systems */
-    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id,
+    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id,
                                                      const SystemExclusionPredicateType& system_predicate,
-                                                     const EmpireManager& empires, const ObjectMap& objects) const;
+                                                     const ObjectMap& objects) const;
 
     /** Returns the shortest starlane path distance between any two objects, accounting
       * for cases where one or the other are fleets / ships on starlanes between
@@ -136,7 +138,7 @@ public:
     /** Regenerates per-empire system view graphs by filtering the complete
       * system graph based on empire visibilities. Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
-    void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects);
+    void UpdateCommonFilteredSystemGraphs(const EmpireManager& empires, const ObjectMap& objects);
     void UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager& empires,
                                                     const std::map<int, ObjectMap>& empire_object_maps);
 

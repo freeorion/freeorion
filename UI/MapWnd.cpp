@@ -51,7 +51,6 @@
 #include "../universe/Ship.h"
 #include "../universe/Species.h"
 #include "../universe/System.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Universe.h"
 #include "../util/GameRules.h"
@@ -3024,7 +3023,7 @@ void MapWnd::MidTurnUpdate() {
     ScriptingContext& context = app->GetContext();
 
     context.ContextUniverse().InitializeSystemGraph(context.Empires(), context.ContextObjects());
-    context.ContextUniverse().UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(context.Empires());
+    context.ContextUniverse().UpdateCommonFilteredSystemGraphsWithMainObjectMap(context.Empires());
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
@@ -5569,8 +5568,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        auto route = universe.GetPathfinder().ShortestPath(
-            start_system, system_id, empire_id, objects).first;
+        auto route = universe.GetPathfinder().ShortestPath(start_system, system_id, objects).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
             auto old_route(fleet->TravelRoute());
@@ -5581,11 +5579,11 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && route.front() != route.back()) {
             int begin_id = route.front();
-            auto begin_sys = objects.get<System>(begin_id);
+            auto begin_sys = objects.getRaw<System>(begin_id);
             int end_id = route.back();
-            auto end_sys = objects.get<System>(end_id);
+            auto end_sys = objects.getRaw<System>(end_id);
 
-            if (!begin_sys->HasStarlaneTo(end_id) && !end_sys->HasStarlaneTo(begin_id))
+            if (!begin_sys || !end_sys || (!begin_sys->HasStarlaneTo(end_id) && !end_sys->HasStarlaneTo(begin_id)))
                 continue;
         }
 

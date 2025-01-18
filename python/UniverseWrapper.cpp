@@ -25,7 +25,6 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/UniverseObjectVisitors.h"
 #include "../util/AppInterface.h"
 #include "../util/GameRules.h"
 #include "../util/Logger.h"
@@ -112,10 +111,12 @@ namespace {
 
     auto ShortestNonHostilePath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        const auto& empires{IApp::GetApp()->Empires()};
-        auto fleet_pred = std::make_shared<HostileVisitor>(empire_id, empires);
+        const auto& empires = IApp::GetApp()->Empires();
+        const auto is_hostile = [empire_id, &empires](const UniverseObject* obj)
+        { return !obj || obj->HostileToEmpire(empire_id, empires); };
+
         auto path = universe.GetPathfinder().ShortestPath(
-            start_sys, end_sys, empire_id, fleet_pred, empires, universe.EmpireKnownObjects(empire_id)).first;
+            start_sys, end_sys, is_hostile, universe.EmpireKnownObjects(empire_id)).first;
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
     }

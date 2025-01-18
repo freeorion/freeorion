@@ -3331,8 +3331,8 @@ void Universe::InitializeSystemGraph(const EmpireManager& empires, const ObjectM
 void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const EmpireManager& empires)
 { m_pathfinder.UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_empire_latest_known_objects); }
 
-void Universe::UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires)
-{ m_pathfinder.UpdateEmpireVisibilityFilteredSystemGraphs(empires, m_objects); }
+void Universe::UpdateCommonFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires)
+{ m_pathfinder.UpdateCommonFilteredSystemGraphs(empires, m_objects); }
 
 void Universe::UpdateStatRecords(const ScriptingContext& context) {
     CheckContextVsThisUniverse(*this, context);
