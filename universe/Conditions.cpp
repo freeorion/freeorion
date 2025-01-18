@@ -11132,6 +11132,13 @@ namespace StaticTests {
     constexpr auto ct_pt_cx1_cs = contains_pt_cx1.GetCheckSum();
     static_assert(ct_pt_cx1_cs == 4021u);
     static_assert(contains_pt_cx0 == contains_pt_cx1);
+
+    constexpr auto dummy_planet_getter = [](int) noexcept -> const Planet* { return nullptr; };
+    constexpr const Planet* plt_pcx = dummy_planet_getter(42);
+    constexpr const Ship* ship_pcx = nullptr;
+    static_assert(PlanetFromObject(plt_pcx) == plt_pcx);
+    static_assert(PlanetFromObject(plt_pcx, dummy_planet_getter) == plt_pcx);
+    static_assert(PlanetFromObject(ship_pcx, dummy_planet_getter) == plt_pcx);
 }
 
 namespace {
