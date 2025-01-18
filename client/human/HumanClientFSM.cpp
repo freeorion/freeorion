@@ -953,7 +953,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
 
             unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires,
                                                           unpacked_data->universe.Objects());
-            unpacked_data->universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(
+            unpacked_data->universe.UpdateCommonFilteredSystemGraphsWithMainObjectMap(
                 unpacked_data->empires);
 
             // TODO: meter updates? applying orders?
@@ -1085,7 +1085,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
                 new TurnDataUnpackedNotification(unpacked_data), true};
 
             unpacked_data->universe.InitializeSystemGraph(unpacked_data->empires, unpacked_data->universe.Objects());
-            unpacked_data->universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(unpacked_data->empires);
+            unpacked_data->universe.UpdateCommonFilteredSystemGraphsWithMainObjectMap(unpacked_data->empires);
 
             // TODO: meter updates? applying orders?
 

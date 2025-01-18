@@ -261,7 +261,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
         m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
-        m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);
+        m_universe.UpdateCommonFilteredSystemGraphsWithMainObjectMap(m_empires);
 
         GetGameRules().SetFromStrings(m_galaxy_setup_data.GetGameRules());
 
@@ -294,7 +294,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         m_context.current_turn = m_current_turn;
         //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
         m_universe.InitializeSystemGraph(m_empires, m_universe.Objects());
-        m_universe.UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(m_empires);
+        m_universe.UpdateCommonFilteredSystemGraphsWithMainObjectMap(m_empires);
         m_AI->GenerateOrders();
         //DebugLogger() << "AIClientApp::HandleMessage : done handling turn update message";
         break;

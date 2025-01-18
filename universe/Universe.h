@@ -325,7 +325,7 @@ public:
       * system graph based on empire visibility.  Does not regenerate the base
       * graph to account for actual system-starlane connectivity changes. */
     void UpdateEmpireVisibilityFilteredSystemGraphsWithOwnObjectMaps(const EmpireManager& empires);
-    void UpdateEmpireVisibilityFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires);
+    void UpdateCommonFilteredSystemGraphsWithMainObjectMap(const EmpireManager& empires);
 
     /** Adds the object ID \a object_id to the set of object ids for the empire
       * with id \a empire_id that the empire knows have been destroyed. */
