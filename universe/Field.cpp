@@ -3,7 +3,6 @@
 #include "Enums.h"
 #include "FieldType.h"
 #include "Meter.h"
-#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../util/AppInterface.h"
 #include "../util/i18n.h"
@@ -86,9 +85,6 @@ const std::string& Field::PublicName(int empire_id, const Universe&) const {
     // always just return name since fields (as of this writing) don't have owners
     return UserString(m_type_name);
 }
-
-std::shared_ptr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<Field>(std::static_pointer_cast<const Field>(shared_from_this()))); }
 
 bool Field::ContainedBy(int object_id) const noexcept
 { return object_id != INVALID_OBJECT_ID && object_id == this->SystemID(); }

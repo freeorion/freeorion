@@ -35,8 +35,6 @@ public:
 
     [[nodiscard]] std::size_t           SizeInMemory() const override;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Field& copied_field, const Universe& universe, int empire_id = ALL_EMPIRES);
 

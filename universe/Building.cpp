@@ -1,7 +1,6 @@
 #include "Building.h"
 
 #include "BuildingType.h"
-#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
@@ -105,9 +104,6 @@ std::string Building::Dump(uint8_t ntabs) const {
        << " produced by empire id: " << m_produced_by_empire_id;
     return os.str();
 }
-
-std::shared_ptr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<Building>(std::static_pointer_cast<const Building>(shared_from_this()))); }
 
 void Building::SetPlanetID(int planet_id) {
     if (planet_id != m_planet_id) {

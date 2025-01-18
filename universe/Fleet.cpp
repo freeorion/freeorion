@@ -4,7 +4,6 @@
 #include "ShipDesign.h"
 #include "Ship.h"
 #include "System.h"
-#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
@@ -692,9 +691,6 @@ std::size_t Fleet::SizeInMemory() const {
 
     return retval;
 }
-
-std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 
 void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
     if (route.empty()) {

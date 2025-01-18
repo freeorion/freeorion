@@ -21,8 +21,6 @@ public:
     [[nodiscard]] bool               HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
     void Copy(const Fighter& copied_fighter, const Universe& universe, int empire_id = ALL_EMPIRES);
 

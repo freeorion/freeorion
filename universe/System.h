@@ -11,9 +11,6 @@
 class Fleet;
 class ObjectMap;
 
-struct UniverseObjectVisitor;
-
-
 //! Types of stars
 FO_ENUM(
     (StarType),
@@ -51,8 +48,6 @@ public:
     [[nodiscard]] bool Contains(int object_id) const override;
 
     [[nodiscard]] bool ContainedBy(int object_id) const noexcept override { return false; }
-
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** returns the name to display for players for this system.  While all
       * systems may have a proper name assigned, if they contain no planets or

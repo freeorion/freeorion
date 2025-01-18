@@ -7,7 +7,6 @@
 #include "Ship.h"
 #include "Species.h"
 #include "System.h"
-#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "ValueRef.h"
 #include "../Empire/EmpireManager.h"
@@ -479,9 +478,6 @@ PlanetSize Planet::NextSmallerPlanetSize() const noexcept
 
 float Planet::OrbitalPositionOnTurn(int turn) const noexcept
 { return m_initial_orbital_position + OrbitalPeriod() * 2.0 * 3.1415926 / 4 * turn; }
-
-std::shared_ptr<UniverseObject> Planet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<Planet>(std::static_pointer_cast<const Planet>(UniverseObject::shared_from_this()))); }
 
 std::string Planet::CardinalSuffix(const ObjectMap& objects) const {
     std::string retval;
