@@ -9,7 +9,6 @@
 #include "ValueRef.h"
 #include "Special.h"
 #include "System.h"
-#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
@@ -216,9 +215,6 @@ Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectID
 
 Visibility UniverseObject::GetVisibility(int empire_id, const Universe& u) const
 { return GetVisibility(empire_id, u.GetEmpireObjectVisibility()); }
-
-std::shared_ptr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<UniverseObject>(shared_from_this())); }
 
 void UniverseObject::SetID(int id) {
     m_id = id;

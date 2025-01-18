@@ -251,9 +251,6 @@ bool System::Contains(int object_id) const {
     return m_objects.contains(object_id);
 }
 
-std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
-
 std::size_t System::SizeInMemory() const {
     std::size_t retval = UniverseObject::SizeInMemory();
     retval += sizeof(System) - sizeof(UniverseObject);

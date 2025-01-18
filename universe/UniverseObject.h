@@ -25,7 +25,6 @@ class EmpireManager;
 class ObjectMap;
 class Universe;
 struct ScriptingContext;
-struct UniverseObjectVisitor;
 
 // The ID number assigned to temporary universe objects
 inline constexpr int TEMPORARY_OBJECT_ID = -2;
@@ -243,9 +242,6 @@ public:
 
     /** Returns the name of this objectas it appears to empire \a empire_id .*/
     [[nodiscard]] virtual const std::string&  PublicName(int empire_id, const Universe& universe) const { return m_name; };
-
-    /** Accepts a visitor object \see UniverseObjectVisitor */
-    virtual std::shared_ptr<UniverseObject>   Accept(const UniverseObjectVisitor& visitor) const;
 
     [[nodiscard]] int                         CreationTurn() const noexcept { return m_created_on_turn; }; ///< returns game turn on which object was created
     [[nodiscard]] int                         AgeInTurns(int current_turn) const noexcept; ///< returns elapsed number of turns between turn object was created and current game turn

@@ -20,8 +20,6 @@ public:
     [[nodiscard]] int         ContainerObjectID() const noexcept override { return m_planet_id; }
     [[nodiscard]] bool        ContainedBy(int object_id) const noexcept override;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
     [[nodiscard]] const auto& BuildingTypeName() const noexcept   { return m_building_type; };
     [[nodiscard]] int         PlanetID() const noexcept           { return m_planet_id; }             ///< returns the ID number of the planet this building is on
     [[nodiscard]] int         ProducedByEmpireID() const noexcept { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building

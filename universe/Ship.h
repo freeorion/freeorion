@@ -35,8 +35,6 @@ public:
     [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
     [[nodiscard]] const std::string& PublicName(int empire_id) const;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() noexcept override;
 

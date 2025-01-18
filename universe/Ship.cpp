@@ -9,7 +9,6 @@
 #include "ShipHull.h"
 #include "ShipPart.h"
 #include "Species.h"
-#include "UniverseObjectVisitor.h"
 #include "Universe.h"
 #include "ValueRef.h"
 #include "../combat/CombatDamage.h"
@@ -376,9 +375,6 @@ const std::string& Ship::PublicName(int empire_id) const {
     else
         return UserString("OBJ_SHIP");
 }
-
-std::shared_ptr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<Ship>(std::static_pointer_cast<const Ship>(shared_from_this()))); }
 
 const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) const {
     const Meter* retval = nullptr;

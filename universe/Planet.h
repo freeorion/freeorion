@@ -57,8 +57,6 @@ public:
     [[nodiscard]] bool         Contains(int object_id) const override;
     [[nodiscard]] bool         ContainedBy(int object_id) const noexcept override;
 
-    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
-
     [[nodiscard]] const auto&                   Focus() const noexcept { return m_focus; }
     [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const noexcept;
     [[nodiscard]] std::vector<std::string_view> AvailableFoci(const ScriptingContext& context) const;

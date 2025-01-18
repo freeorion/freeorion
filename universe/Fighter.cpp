@@ -1,6 +1,5 @@
 #include "Fighter.h"
 
-#include "UniverseObjectVisitor.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
@@ -30,9 +29,6 @@ std::string Fighter::Dump(uint8_t ntabs) const {
         retval.append("  (DESTROYED)");
     return retval;
 }
-
-std::shared_ptr<UniverseObject> Fighter::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(std::const_pointer_cast<Fighter>(std::static_pointer_cast<const Fighter>(shared_from_this()))); }
 
 std::shared_ptr<UniverseObject> Fighter::Clone(const Universe& universe, int empire_id) const {
     auto retval = std::make_shared<Fighter>();
