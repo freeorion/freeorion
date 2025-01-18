@@ -2262,7 +2262,7 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
         const float deltaX = x2 - x1;
         const float deltaY = y2 - y1;
         const float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-        if (!isnormal(length)) // safety check
+        if (!std::isnormal(length)) // safety check
             continue;
         const float uVecX = deltaX / length;
         const float uVecY = deltaY / length;
