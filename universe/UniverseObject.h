@@ -163,7 +163,7 @@ constexpr MeterType AssociatedMeterType(MeterType meter_type) {
   * This means that all mutators on UniverseObject and its subclasses
   * need to emit this signal.  This is how the UI becomes aware that an object
   * that is being displayed has changed.*/
-class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this<UniverseObject> {
+class FO_COMMON_API UniverseObject {
 public:
     using MeterMap = boost::container::flat_map<MeterType, Meter>;
     static_assert(std::is_same_v<boost::container::flat_map<MeterType, Meter, std::less<MeterType>>, MeterMap>);
