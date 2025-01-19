@@ -335,27 +335,20 @@ UniverseObject::MeterMap UniverseObject::CensoredMeters(Visibility vis) const {
 }
 
 void UniverseObject::ResetTargetMaxUnpairedMeters() {
-    if constexpr (noexcept(m_meters.find(MeterType::METER_STEALTH))) {
-        const auto it = m_meters.find(MeterType::METER_STEALTH);
-        if (it != m_meters.end())
-            it->second.ResetCurrent();
-    } else {
-        const auto end_it = m_meters.end();
-        for (auto it = m_meters.begin(); it != end_it; ++it)
-            if (it->first == MeterType::METER_STEALTH)
-                return it->second.ResetCurrent();
-    }
+    const auto it = m_meters.find(MeterType::METER_STEALTH);
+    if (it != m_meters.end())
+        it->second.ResetCurrent();
 }
 
 void UniverseObject::ResetPairedActiveMeters() {
     // iterate over paired active meters (those that have an associated max or
     // target meter.  if another paired meter type is added to Enums.h, it
     // should be added here as well.
-    for (auto& m : m_meters) {
-        if (m.first > MeterType::METER_TROOPS)
+    for (auto& [type, m] : m_meters) {
+        if (type > MeterType::METER_TROOPS)
             break;
-        if (m.first >= MeterType::METER_POPULATION)
-            m.second.SetCurrent(m.second.Initial());
+        if (type >= MeterType::METER_POPULATION)
+            m.SetCurrent(m.Initial());
     }
 }
 
