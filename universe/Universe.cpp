@@ -875,7 +875,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
 
     if (do_accounting) {
         for (auto& obj : object_ptrs) {
-            auto& meters = obj->Meters();
+            const auto meters = obj->Meters();
             auto& account_map = accounting_map[obj->ID()];
             account_map.clear();    // remove any old accounting info. this should be redundant here.
             account_map.reserve(meters.size());
