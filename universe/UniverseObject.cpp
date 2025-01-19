@@ -22,19 +22,13 @@ namespace ValueRef {
 
 UniverseObject::UniverseObject(UniverseObjectType type, std::string name,
                                double x, double y, int owner_id, int creation_turn) :
-    m_name(std::move(name)),
-    m_owner_empire_id(owner_id),
-    m_created_on_turn(creation_turn),
-    m_x(x),
-    m_y(y),
-    m_type(type)
+    UniverseObjectCXBase(type, owner_id, creation_turn, x, y),
+    m_name(std::move(name))
 {}
 
 UniverseObject::UniverseObject(UniverseObjectType type, std::string name, int owner_id, int creation_turn) :
-    m_name(std::move(name)),
-    m_owner_empire_id(owner_id),
-    m_created_on_turn(creation_turn),
-    m_type(type)
+    UniverseObjectCXBase(type, owner_id, creation_turn),
+    m_name(std::move(name))
 {}
 
 assignable_blocking_combiner::assignable_blocking_combiner(const Universe& universe) :
@@ -97,14 +91,6 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
                 this->m_name =          copied_object.m_name;
         }
     }
-}
-
-int UniverseObject::AgeInTurns(int current_turn) const noexcept {
-    if (m_created_on_turn == BEFORE_FIRST_TURN)
-        return SINCE_BEFORE_TIME_AGE;
-    if ((m_created_on_turn == INVALID_GAME_TURN) || (current_turn == INVALID_GAME_TURN))
-        return INVALID_OBJECT_AGE;
-    return current_turn - m_created_on_turn;
 }
 
 bool UniverseObject::HasSpecial(std::string_view name) const {
@@ -191,20 +177,6 @@ UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(int empire_id, c
     return retval;
 }
 
-const Meter* UniverseObject::GetMeter(MeterType type) const noexcept {
-    if constexpr (noexcept(m_meters.find(type))) {
-        const auto it = m_meters.find(type);
-        if (it != m_meters.end())
-            return &(it->second);
-    } else {
-        const auto end_it = m_meters.end();
-        for (auto it = m_meters.begin(); it != end_it; ++it)
-            if (it->first == type)
-                return &it->second;
-    }
-    return nullptr;
-}
-
 Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const {
     auto empire_it = v.find(empire_id);
     if (empire_it == v.end())
@@ -229,30 +201,6 @@ void UniverseObject::Rename(std::string name) {
 void UniverseObject::Move(double x, double y)
 { MoveTo(m_x + x, m_y + y); }
 
-void UniverseObject::MoveTo(const std::shared_ptr<const UniverseObject>& object) {
-    if (!object) {
-        ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
-        return;
-    }
-    MoveTo(object->X(), object->Y());
-}
-
-void UniverseObject::MoveTo(const std::shared_ptr<UniverseObject>& object) {
-    if (!object) {
-        ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
-        return;
-    }
-    MoveTo(object->X(), object->Y());
-}
-
-void UniverseObject::MoveTo(const UniverseObject* object) {
-    if (!object) {
-        ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
-        return;
-    }
-    MoveTo(object->X(), object->Y());
-}
-
 void UniverseObject::MoveTo(double x, double y) {
     if (m_x == x && m_y == y)
         return;
@@ -263,23 +211,9 @@ void UniverseObject::MoveTo(double x, double y) {
     StateChangedSignal();
 }
 
-Meter* UniverseObject::GetMeter(MeterType type) noexcept {
-    if constexpr (noexcept(m_meters.find(type))) {
-        const auto it = m_meters.find(type);
-        if (it != m_meters.end())
-            return &(it->second);
-    } else {
-        const auto end_it = m_meters.end();
-        for (auto it = m_meters.begin(); it != end_it; ++it)
-            if (it->first == type)
-                return &it->second;
-    }
-    return nullptr;
-}
-
 void UniverseObject::BackPropagateMeters() noexcept {
-    for (auto& m : m_meters)
-        m.second.BackPropagate();
+    for (auto& m : m_meters | range_values)
+        m.BackPropagate();
 }
 
 void UniverseObject::SetOwner(int id) {
@@ -316,7 +250,7 @@ void UniverseObject::SetSpecialCapacity(std::string name, float capacity, int tu
 std::size_t UniverseObject::SizeInMemory() const {
     std::size_t retval = 0;
     retval += sizeof(UniverseObject);
-    retval += sizeof(MeterMap::value_type)*m_meters.capacity();
+    retval += sizeof(std::decay_t<decltype(m_meters)>::value_type)*m_meters.capacity();
     retval += sizeof(SpecialMap::value_type)*m_specials.capacity();
     for (const auto& name : m_specials | range_keys)
         retval += sizeof(std::decay_t<decltype(name)>::value_type)*name.capacity();

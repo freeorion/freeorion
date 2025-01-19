@@ -241,9 +241,8 @@ namespace {
         return retval;
     }
 
-    template <typename T>
-    std::vector<T> ToVec(const boost::container::flat_set<T>& in)
-    { return std::vector<T>(in.begin(), in.end()); }
+    auto ToVec(const auto& in)
+    { return std::vector(in.begin(), in.end()); }
 }
 
 namespace FreeOrionPython {
