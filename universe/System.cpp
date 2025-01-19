@@ -245,12 +245,6 @@ StarType System::NextYoungerStarType() const noexcept {
 bool System::HasStarlaneTo(int id) const
 { return m_starlanes.contains(id); }
 
-bool System::Contains(int object_id) const {
-    if (object_id == INVALID_OBJECT_ID)
-        return false;
-    return m_objects.contains(object_id);
-}
-
 std::size_t System::SizeInMemory() const {
     std::size_t retval = UniverseObject::SizeInMemory();
     retval += sizeof(System) - sizeof(UniverseObject);
