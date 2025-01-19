@@ -81,11 +81,10 @@ public:
 
     [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
-    using UniverseObject::IDSet;
-    [[nodiscard]] int          ContainerObjectID() const noexcept override { return this->SystemID(); }
-    [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_buildings; }
-    [[nodiscard]] bool         Contains(int object_id) const override;
-    [[nodiscard]] bool         ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] int                  ContainerObjectID() const noexcept override { return this->SystemID(); }
+    [[nodiscard]] std::span<const int> ContainedObjectIDs() const override { return ToSpan(m_buildings); }
+    [[nodiscard]] bool                 Contains(int object_id) const override;
+    [[nodiscard]] bool                 ContainedBy(int object_id) const noexcept override;
 
     [[nodiscard]] const auto&                   Focus() const noexcept { return m_focus; }
     [[nodiscard]] int                           TurnsSinceFocusChange(int current_turn) const noexcept;
