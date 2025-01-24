@@ -3777,7 +3777,7 @@ MAP_BTN_OBJECTS_DESC
 ''''''
 
 MAP_BTN_SITREP
-SitRep
+Situation Report
 
 MAP_BTN_SITREP_DESC
 ''''''
@@ -3795,7 +3795,7 @@ MAP_BTN_PRODUCTION_DESC
 ''''''
 
 MAP_BTN_DESIGN
-Design
+Ship Design
 
 MAP_BTN_DESIGN_DESC
 ''''''
