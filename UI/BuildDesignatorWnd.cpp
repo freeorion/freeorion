@@ -1320,7 +1320,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
         if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
-            if (auto map = ClientUI::GetClientUI()->GetMapWnd()) {
+            if (auto map = ClientUI::GetClientUI()->GetMapWnd(false)) {
                 map->CenterOnObject(system_id);
                 if (open) {
                     map->SelectSystem(system_id);

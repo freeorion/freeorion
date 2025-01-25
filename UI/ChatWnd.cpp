@@ -504,8 +504,8 @@ void MessageWnd::OpenForInput() {
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
-void MessageWnd::SetChatText(const std::string& chat_text)
-{ m_display->SetText(chat_text); }
+void MessageWnd::SetChatText(std::string chat_text)
+{ m_display->SetText(std::move(chat_text)); }
 
 namespace {
     void SendChatMessage(const std::string& text, std::set<int> recipients, bool pm) {

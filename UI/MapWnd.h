@@ -208,7 +208,7 @@ public:
 
     void SetFleetExploring(const int fleet_id);
     void StopFleetExploring(const int fleet_id, ObjectMap& objects);
-    bool IsFleetExploring(const int fleet_id);
+    bool IsFleetExploring(const int fleet_id) const;
     void DispatchFleetsExploring();              //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
 
 

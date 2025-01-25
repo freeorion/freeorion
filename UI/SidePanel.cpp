@@ -2328,11 +2328,13 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         }
     }
 
-
-    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    if (ClientPlayerIsModerator() && map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction) {
-        RightClickedSignal(planet->ID());  // response handled in MapWnd
-        return;
+    if (ClientPlayerIsModerator()) {
+        if (const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst()) {
+            if (map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction) {
+                RightClickedSignal(planet->ID());  // response handled in MapWnd
+                return;
+            }
+        }
     }
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);

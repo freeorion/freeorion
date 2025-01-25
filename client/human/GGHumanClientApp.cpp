@@ -1103,9 +1103,9 @@ void GGHumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
 
 void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     if (ClientUI* ui = ClientUI::GetClientUI()) {
-        if (auto&& map_wnd = ui->GetMapWnd())
+        if (auto map_wnd = ui->GetMapWnd(false))
             map_wnd->DoLayout();
-        if (auto&& intro_screen = ui->GetIntroScreen())
+        if (auto intro_screen = ui->GetIntroScreen())
             intro_screen->Resize(GG::Pt(w, h));
     }
 
@@ -1187,7 +1187,7 @@ bool GGHumanClientApp::ToggleFullscreen() {
 void GGHumanClientApp::StartGame(bool is_new_game) {
     m_game_started = true;
 
-    if (auto&& map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd(false))
         map_wnd->ResetEmpireShown();
 
     ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID(), is_new_game);
@@ -1445,7 +1445,8 @@ void GGHumanClientApp::ResetClientData(bool save_connection) {
         m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     }
     SetEmpireID(ALL_EMPIRES);
-    m_ui->GetMapWnd()->Sanitize();
+    if (auto map_wnd = m_ui->GetMapWnd(false))
+        map_wnd->Sanitize();
 
     m_universe.Clear();
     m_empires.Clear();
@@ -1563,7 +1564,7 @@ bool GGHumanClientApp::HaveWindowFocus() const
 
 int GGHumanClientApp::SelectedSystemID() const {
     if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWnd())
+        if (auto mapwnd = m_ui->GetMapWndConst())
             return mapwnd->SelectedSystemID();
     }
     return INVALID_OBJECT_ID;
@@ -1571,7 +1572,7 @@ int GGHumanClientApp::SelectedSystemID() const {
 
 int GGHumanClientApp::SelectedPlanetID() const {
     if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWnd())
+        if (auto mapwnd = m_ui->GetMapWndConst())
             return mapwnd->SelectedPlanetID();
     }
     return INVALID_OBJECT_ID;
@@ -1579,7 +1580,7 @@ int GGHumanClientApp::SelectedPlanetID() const {
 
 int GGHumanClientApp::SelectedFleetID() const {
     if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWnd())
+        if (auto mapwnd = m_ui->GetMapWndConst())
             return mapwnd->SelectedFleetID();
     }
     return INVALID_OBJECT_ID;
@@ -1587,7 +1588,7 @@ int GGHumanClientApp::SelectedFleetID() const {
 
 int GGHumanClientApp::SelectedShipID() const {
     if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWnd())
+        if (auto mapwnd = m_ui->GetMapWndConst())
             return mapwnd->SelectedShipID();
     }
     return INVALID_OBJECT_ID;

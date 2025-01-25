@@ -36,8 +36,9 @@ public:
     ClientUI();
     ~ClientUI();
 
-    std::shared_ptr<MapWnd>                 GetMapWnd();                //!< Returns the main map window.
-    MapWnd const*                           GetMapWndConst() const;     //!< Returns the main map window.
+    MapWnd*                                 GetMapWnd(bool construct);  //!< Returns the main map window. if \a is true, creates a MapWnd if one doesn't already exist. if \a is false, may return nullptr
+    const MapWnd*                           GetMapWndConst() const noexcept { return m_map_wnd.get(); }
+    std::shared_ptr<MapWnd>                 GetMapWndShared();          //!< Returns the main map window, constructing one if not already available
     std::shared_ptr<MessageWnd>             GetMessageWnd();            //!< Returns the chat / message window.
     std::shared_ptr<PlayerListWnd>          GetPlayerListWnd();         //!< Returns the players list window.
     std::shared_ptr<IntroScreen>            GetIntroScreen();           //!< Returns the intro screen / splash window.
@@ -45,7 +46,7 @@ public:
     std::shared_ptr<PasswordEnterWnd>       GetPasswordEnterWnd();      //!< Returns the authentication window.
     std::shared_ptr<SaveFileDialog>         GetSaveFileDialog();        //!< Returns a perhaps nullptr to any existing SaveFileDialog
     ShipDesignManager*                      GetShipDesignManager() { return m_ship_designs.get(); };
-    void                                    GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    void                                    GetSaveGameUIData(SaveGameUIData& data); //!< populates the relevant UI state that should be restored after a save-and-load cycle
 
     /** Return the IntroScreen. Hides the MapWnd, MessageWnd and
       * PlayerListWnd if visible, but doesn't create them just to hide them. **/

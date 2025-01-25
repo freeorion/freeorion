@@ -144,7 +144,9 @@ void FleetButton::Refresh(SizeType size_type) {
 
     // determine direction button should be rotated to orient along a starlane
     GLfloat pointing_angle = 0.0f;
-    const auto map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+    if (!map_wnd)
+        return;
 
     const Fleet* first_fleet = fleets.empty() ? nullptr : fleets.front();
 
@@ -289,7 +291,7 @@ bool FleetButton::InWindow(GG::Pt pt) const noexcept {
 }
 
 void FleetButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
         if (State() != ButtonState::BN_ROLLOVER)
             PlayFleetButtonRolloverSound();

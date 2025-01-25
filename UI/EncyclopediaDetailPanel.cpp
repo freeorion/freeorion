@@ -1811,9 +1811,11 @@ namespace {
             return;
         }
         int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
 
-        int this_location_id = ClientUI::GetClientUI()->GetMapWnd()->SelectedPlanetID();
+        int this_location_id = INVALID_OBJECT_ID;
+        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())
+            this_location_id = map_wnd->SelectedPlanetID();
         if (this_location_id == INVALID_OBJECT_ID && !only_description)
             this_location_id = DefaultLocationForEmpire(client_empire_id, context);
 
@@ -2753,10 +2755,11 @@ namespace {
 
         // TODO: can this be a vector of string_view ?
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
-        const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
-            if (!planet->SpeciesName().empty())
-                additional_species.insert(planet->SpeciesName());
+        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst()) {
+            if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
+                if (!planet->SpeciesName().empty())
+                    additional_species.insert(planet->SpeciesName());
+            }
         }
 
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
@@ -2905,10 +2908,11 @@ namespace {
         std::set<float> enemy_shots{typical_shot};
 
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
-        const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (const auto* planet = objects.getRaw<Planet>(map_wnd->SelectedPlanetID())) {
-            if (!planet->SpeciesName().empty())
-                additional_species.insert(planet->SpeciesName());
+        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst()) {
+            if (const auto* planet = objects.getRaw<Planet>(map_wnd->SelectedPlanetID())) {
+                if (!planet->SpeciesName().empty())
+                    additional_species.insert(planet->SpeciesName());
+            }
         }
 
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();

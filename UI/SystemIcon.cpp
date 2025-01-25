@@ -337,11 +337,11 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 
 
     // get fleetbutton radius to use for layout
-    FleetButton::SizeType fb_size_type = ClientUI::GetClientUI()->GetMapWnd()->FleetButtonSizeType();
+    auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+    FleetButton::SizeType fb_size_type = map_wnd ? map_wnd->FleetButtonSizeType() : FleetButton::SizeType::LARGE;
     GG::Pt button_size = GG::Pt();
     double FB_RADIUS = 0.0;
-    const std::shared_ptr<GG::Texture>& icon = FleetSizeIcon(1u, fb_size_type);
-    if (icon) {
+    if (const auto& icon = FleetSizeIcon(1u, fb_size_type)) {
         button_size = GG::Pt(icon->DefaultWidth(), icon->DefaultHeight());
         FB_RADIUS = static_cast<double>(Value(button_size.x) + Value(button_size.y))/4.0;   // average half of two side lengths to get radius
     }
@@ -599,7 +599,7 @@ void SystemIcon::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_showing_name) {
         // get font size
         int name_pts = ClientUI::Pts();
-        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())
             name_pts = map_wnd->SystemNamePts();
         auto it = m_colored_names.find(name_pts);
         if (it != m_colored_names.end())
@@ -653,7 +653,7 @@ void SystemIcon::Refresh() {
 
     // get font size
     int name_pts = ClientUI::Pts();
-    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())
         name_pts = map_wnd->SystemNamePts();
 
     // remove existing system name control
@@ -690,7 +690,7 @@ void SystemIcon::ShowName() {
 
     // get font size
     int name_pts = ClientUI::Pts();
-    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd())
+    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd(true))
         name_pts = map_wnd->SystemNamePts();
 
     auto it = m_colored_names.find(name_pts);

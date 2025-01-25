@@ -95,7 +95,9 @@ namespace {
         if (!fleet)
             return retval;
 
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+        const bool fleet_is_exploring = map_wnd && map_wnd->IsFleetExploring(fleet_id);
 
         const auto dest_sys = context.ContextObjects().get<System>(fleet->FinalDestinationID());
         const auto cur_sys = context.ContextObjects().get<System>(fleet->SystemID());
@@ -130,7 +132,7 @@ namespace {
             else
                 final_eta_text = std::to_string(eta_final);
 
-            if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
+            if (fleet_is_exploring)
                 retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_TO")) %
                                         dest_name % final_eta_text % next_eta_text);
             else {
@@ -149,7 +151,7 @@ namespace {
                 cur_system_name = cur_system_name + " (" + std::to_string(cur_sys->ID()) + ")";
             }
 
-            if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())) {
+            if (fleet_is_exploring) {
                 if (fleet->Fuel(context.ContextObjects()) == fleet->MaxFuel(context.ContextObjects()))
                     retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_WAITING")));
                 else
@@ -2627,9 +2629,10 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         return;
     auto fleet = objects.get<Fleet>(m_fleet_id);
 
-    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto map_wnd = ClientUI::GetClientUI()->GetMapWnd(false);
+
     if (ClientPlayerIsModerator() &&
-        map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
+        map_wnd && map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
     {
         ShipRightClickedSignal(ship->ID());  // response handled in MapWnd
         return;
@@ -2734,9 +2737,9 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     }
 
     // Allow dismissal of stale visibility information
-    if (!ship->OwnedBy(client_empire_id) && fleet) {
-        auto forget_ship_action = [ship]()
-        { ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(ship->ID()); };
+    if (map_wnd && !ship->OwnedBy(client_empire_id) && fleet) {
+        const auto ship_id = ship->ID();
+        auto forget_ship_action = [ship_id, map_wnd]() { map_wnd->ForgetObject(ship_id); };
 
         const auto& visibility_turn_map{context.ContextUniverse().GetObjectVisibilityTurnMapByEmpire(
             ship->ID(), client_empire_id)};
@@ -2916,7 +2919,7 @@ FleetWnd::~FleetWnd() {
     // FleetWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
-        if (auto mapwnd = client->GetMapWnd())
+        if (auto mapwnd = client->GetMapWnd(false))
             mapwnd->ClearProjectedFleetMovementLines();
     ClosingSignal(this);
 }
@@ -3523,24 +3526,27 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
+    const auto mapwnd = ClientUI::GetClientUI()->GetMapWnd(false);
+
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system
-        && !ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())
+        && mapwnd && !mapwnd->IsFleetExploring(fleet->ID())
         && !ClientPlayerIsModerator()
         && fleet->OwnedBy(client_empire_id))
     {
-        auto explore_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->SetFleetExploring(fleet->ID()); };
+        auto explore_action = [fleet, mapwnd]() { mapwnd->SetFleetExploring(fleet->ID()); };
 
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),
                                         false, false, std::move(explore_action)));
         popup->AddMenuItem(GG::MenuItem(true));
     }
     else if (system
+             && mapwnd
              && !ClientPlayerIsModerator()
              && fleet->OwnedBy(client_empire_id))
     {
-        auto stop_explore_action = [fleet]()
-        { ClientUI::GetClientUI()->GetMapWnd()->StopFleetExploring(fleet->ID(), IApp::GetApp()->GetContext().ContextObjects()); };
+        auto stop_explore_action = [fleet_id{fleet->ID()}, mapwnd]()
+        { mapwnd->StopFleetExploring(fleet_id, IApp::GetApp()->GetContext().ContextObjects()); };
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false,
                                         std::move(stop_explore_action)));
         popup->AddMenuItem(GG::MenuItem(true));
@@ -3772,9 +3778,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
 
 
     // Allow dismissal of stale visibility information
-    if (!fleet->OwnedBy(client_empire_id)) {
-        auto forget_fleet_action = [fleet]() { ClientUI::GetClientUI()->GetMapWnd()->ForgetObject(fleet->ID()); };
-        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet->ID(), client_empire_id);
+    if (mapwnd && !fleet->OwnedBy(client_empire_id)) {
+        const auto fleet_id = fleet->ID();
+        auto forget_fleet_action = [fleet_id, mapwnd]() { mapwnd->ForgetObject(fleet_id); };
+        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet_id, client_empire_id);
         auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
         if (last_turn_visible_it != visibility_turn_map.end()
             && last_turn_visible_it->second < IApp::GetApp()->CurrentTurn())

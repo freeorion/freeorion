@@ -859,7 +859,7 @@ void MapWndPopup::CompleteConstruction() {
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
-        if (auto mapwnd = client->GetMapWnd())
+        if (auto mapwnd = client->GetMapWnd(false))
             mapwnd->RegisterPopup(std::static_pointer_cast<MapWndPopup>(shared_from_this()));
 }
 
@@ -879,7 +879,7 @@ MapWndPopup::~MapWndPopup() {
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
     if (auto client = ClientUI::GetClientUI())
-        if (auto mapwnd = client->GetMapWnd())
+        if (auto mapwnd = client->GetMapWnd(false))
             mapwnd->RemovePopup(this);
 }
 
@@ -1619,7 +1619,7 @@ std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen
 int MapWnd::SelectedSystemID() const
 { return SidePanel::SystemID(); }
 
-int MapWnd::SelectedPlanetID() const
+int MapWnd::SelectedPlanetID() const // TODO: noexcept ?
 { return m_production_wnd->SelectedPlanetID(); }
 
 int MapWnd::SelectedFleetID() const {
@@ -7381,8 +7381,8 @@ void MapWnd::StopFleetExploring(const int fleet_id, ObjectMap& objects) {
         fleet->StateChangedSignal();
 }
 
-bool MapWnd::IsFleetExploring(const int fleet_id)
-{ return std::count(m_fleets_exploring.begin(), m_fleets_exploring.end(), fleet_id); }
+bool MapWnd::IsFleetExploring(const int fleet_id) const
+{ return m_fleets_exploring.contains(fleet_id); }
 
 namespace {
     typedef std::vector<int> RouteListType;

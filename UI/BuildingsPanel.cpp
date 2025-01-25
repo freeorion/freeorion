@@ -380,9 +380,9 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!building)
         return;
 
-    const auto& map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
     if (ClientPlayerIsModerator() &&
-        map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
+        map_wnd && map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
     {
         RightClickedSignal(m_building_id);  // response handled in MapWnd
         return;
