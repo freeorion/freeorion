@@ -4032,6 +4032,9 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     SectionedScopedTimer timer("HandleSearchTextEntered");
     timer.EnterSection("Find words in search text");
 
+    // force MapWnd construction before possible parallel accesses below...
+    ClientUI::GetClientUI()->GetMapWnd(true);
+
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     boost::asio::thread_pool thread_pool(num_threads);
 
