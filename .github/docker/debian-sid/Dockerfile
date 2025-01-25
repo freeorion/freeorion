@@ -50,7 +50,6 @@ RUN apt-get install --assume-yes \
         libpng-dev \
 	libboost-all-dev \
 	godot3-server \
-	libboost-all-dev \
 	libjpeg-dev \
 	libtiff-dev \
     && rm -rf \
