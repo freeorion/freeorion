@@ -43,7 +43,7 @@ struct [[nodiscard]] ScriptingContext final {
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   LocalCandidate, const UniverseObject* condition_local_candidate_) noexcept :
+                                   LocalCandidate, const UniverseObjectCXBase* condition_local_candidate_) noexcept :
         source(                   parent_context.source),
         effect_target(            parent_context.effect_target),
         condition_root_candidate( parent_context.condition_root_candidate ?
@@ -72,7 +72,7 @@ struct [[nodiscard]] ScriptingContext final {
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    const Universe::EmpireObjectVisibilityMap& vis,
                                    const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
-                                   Source, const UniverseObject* source_,
+                                   Source, const UniverseObjectCXBase* source_,
                                    Target, UniverseObject* target_) noexcept :
         source(                   source_),
         effect_target(            target_),
@@ -100,7 +100,7 @@ struct [[nodiscard]] ScriptingContext final {
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    const Universe::EmpireObjectVisibilityMap& vis,
                                    const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
-                                   Source, const UniverseObject* source_) noexcept :
+                                   Source, const UniverseObjectCXBase* source_) noexcept :
         ScriptingContext(parent_context, vis, vis_turns, Source{}, source_,
                          Target{}, parent_context.effect_target)
     {}
@@ -112,7 +112,7 @@ struct [[nodiscard]] ScriptingContext final {
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   Source, const UniverseObject* source_) noexcept :
+                                   Source, const UniverseObjectCXBase* source_) noexcept :
         ScriptingContext(parent_context, parent_context.empire_object_vis,
                          parent_context.empire_object_vis_turns, Source{}, source_)
     {}
@@ -150,7 +150,7 @@ struct [[nodiscard]] ScriptingContext final {
     ScriptingContext(const ScriptingContext&, T) = delete;
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   Source, const UniverseObject* source_,
+                                   Source, const UniverseObjectCXBase* source_,
                                    Target, UniverseObject* target_,
                                    int in_design_id_, int production_block_size_) noexcept :
         source(                   source_),
@@ -177,7 +177,7 @@ struct [[nodiscard]] ScriptingContext final {
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   Source, const UniverseObject* source_,
+                                   Source, const UniverseObjectCXBase* source_,
                                    Target, UniverseObject* target_) noexcept :
         ScriptingContext(parent_context, Source{}, source_, Target{}, target_,
                          parent_context.in_design_id, parent_context.production_block_size)
@@ -186,7 +186,7 @@ struct [[nodiscard]] ScriptingContext final {
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    Target, UniverseObject* target_,
                                    const CurrentValueVariant& current_value_,
-                                   Source, const UniverseObject* source_) noexcept :
+                                   Source, const UniverseObjectCXBase* source_) noexcept :
         source(                   source_),
         effect_target(            target_),
         condition_root_candidate( parent_context.condition_root_candidate),
@@ -221,14 +221,14 @@ struct [[nodiscard]] ScriptingContext final {
     template <typename T>
     ScriptingContext(const ScriptingContext&, Target, UniverseObject*, T) = delete;
     template <typename T>
-    ScriptingContext(const ScriptingContext&, Target, UniverseObject*, T, Source, const UniverseObject*) = delete;
+    ScriptingContext(const ScriptingContext&, Target, UniverseObject*, T, Source, const UniverseObjectCXBase*) = delete;
     template <typename T>
-    ScriptingContext(ScriptingContext&&, Target, UniverseObject*, T, Source, const UniverseObject*) = delete;
+    ScriptingContext(ScriptingContext&&, Target, UniverseObject*, T, Source, const UniverseObjectCXBase*) = delete;
     template <typename T>
     ScriptingContext(ScriptingContext&&, Target, UniverseObject*, T) = delete;
 
     [[nodiscard]] explicit ScriptingContext(CombatInfo& info, // in CombatSystem.cpp
-                                            Attacker = Attacker{}, UniverseObject* attacker_as_source = nullptr) noexcept;
+                                            Attacker = Attacker{}, UniverseObjectCXBase* attacker_as_source = nullptr) noexcept;
 
     // helper functions for accessing state in this context
 
@@ -305,11 +305,11 @@ struct [[nodiscard]] ScriptingContext final {
     { return const_empires.EmpireIDs(); }
 
     // script evaluation local state, some of which may vary during evaluation of an expression
-    const UniverseObject*      source = nullptr;
-    UniverseObject*            effect_target = nullptr;
-    const UniverseObject*      condition_root_candidate = nullptr;
-    const UniverseObject*      condition_local_candidate = nullptr;
-    const CurrentValueVariant& current_value = DEFAULT_CURRENT_VALUE;
+    const UniverseObjectCXBase* source = nullptr;
+    UniverseObject*             effect_target = nullptr;
+    const UniverseObjectCXBase* condition_root_candidate = nullptr;
+    const UniverseObjectCXBase* condition_local_candidate = nullptr;
+    const CurrentValueVariant&  current_value = DEFAULT_CURRENT_VALUE;
 
     // general gamestate info
     int                                            combat_bout = 0; // first round of battle is combat_bout == 1

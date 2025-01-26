@@ -128,7 +128,9 @@ namespace {
         return {};
     }
 
-    [[nodiscard]] const UniverseObject* GetRefObject(ValueRef::ReferenceType ref_type, const ScriptingContext& context) {
+    [[nodiscard]] const UniverseObjectCXBase* GetRefObject(ValueRef::ReferenceType ref_type,
+                                                           const ScriptingContext& context)
+    {
         switch (ref_type) {
         case SOURCE_REFERENCE:                   return context.source;                      break;
         case EFFECT_TARGET_REFERENCE:            return context.effect_target;               break;
@@ -137,15 +139,15 @@ namespace {
         }
     }
 
-    const UniverseObject* FollowReference(ValueRef::ContainerType container_type, ValueRef::ReferenceType ref_type,
-                                          const ScriptingContext& context)
+    const UniverseObjectCXBase* FollowReference(ValueRef::ContainerType container_type, ValueRef::ReferenceType ref_type,
+                                                const ScriptingContext& context)
     {
         if (ref_type == NON_OBJECT_REFERENCE)
             return context.condition_local_candidate;
 
-        const UniverseObject* const obj = GetRefObject(ref_type, context);
+        const auto* const obj = GetRefObject(ref_type, context);
         if (!obj) {
-            static constexpr auto name_or_0 = [](const UniverseObject* obj) noexcept -> std::string_view
+            static constexpr auto name_or_0 = [](const auto* obj) noexcept -> std::string_view
             { return obj ? std::string_view{obj->Name()} : std::string_view{"0"}; };
 
             ErrorLogger() << "FollowReference : top level object (" << to_string(ref_type)
@@ -207,8 +209,8 @@ namespace {
     std::string TraceReference(std::string_view property_name, ValueRef::ContainerType container_type,
                                ValueRef::ReferenceType ref_type, const ScriptingContext& context)
     {
-        const UniverseObject* obj = nullptr;
-        const UniverseObject* initial_obj = nullptr;
+        const UniverseObjectCXBase* obj = nullptr;
+        const UniverseObjectCXBase* initial_obj = nullptr;
         std::string retval = ReconstructName(property_name, container_type, ref_type, false) + " : ";
         switch (ref_type) {
         case NON_OBJECT_REFERENCE:

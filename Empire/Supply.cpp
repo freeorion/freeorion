@@ -242,7 +242,7 @@ namespace {
         if (empire_id == ALL_EMPIRES)
             return 0.0f;
 
-        auto is_owned = [empire_id](const UniverseObject* obj) noexcept { return obj->OwnedBy(empire_id); };
+        auto is_owned = [empire_id](const auto* obj) noexcept { return obj->OwnedBy(empire_id); };
 
         float accumulator_current = 0.0f;
         for (auto* obj : objects.findRaw<Planet>(is_owned)) { // TODO: handle ships if they can have supply meters

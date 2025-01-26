@@ -413,9 +413,8 @@ void Effect::Execute(ScriptingContext& context, const TargetSet& targets) const 
         return;
 
     // execute effects on targets
-    ScriptingContext local_context{context};
     for (auto* target : targets) {
-        local_context.effect_target = target;
+        ScriptingContext local_context{context, ScriptingContext::Target{}, target, context.current_value};
         Execute(local_context);
     }
 }
@@ -797,7 +796,8 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             for (auto* target : targets) {
                 if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
-                const auto part_name = m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE});
+                const auto part_name = m_part_name->Eval(
+                    ScriptingContext{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE});
                 if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name))
                     meter->SetCurrent(new_val);
             }
@@ -813,7 +813,8 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             for (auto* target : targets) {
                 if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                     continue;
-                const auto part_name = m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE});
+                const auto part_name = m_part_name->Eval(
+                    ScriptingContext{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE});
                 if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
                     auto new_val = OperateData(op_type, static_cast<double>(meter->Current()), rhs);
                     meter->SetCurrent(static_cast<float>(new_val));
@@ -824,7 +825,8 @@ void SetShipPartMeter::Execute(ScriptingContext& context, const TargetSet& targe
             auto* target = targets.front();
             if (!target || target->ObjectType() != UniverseObjectType::OBJ_SHIP)
                 return;
-            const auto part_name = m_part_name->Eval(ScriptingContext{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE});
+            const auto part_name = m_part_name->Eval(
+                ScriptingContext{context, ScriptingContext::Target{}, target, EMPTY_STRING_CURRENT_VALUE});
             if (Meter* meter = static_cast<Ship*>(target)->GetPartMeter(m_meter, part_name)) {
                 const ScriptingContext::CurrentValueVariant cvv{static_cast<double>(meter->Current())};
                 const ScriptingContext target_meter_context(context, ScriptingContext::Target{}, target, cvv);
@@ -2644,9 +2646,11 @@ void RemoveSpecial::Execute(ScriptingContext& context) const {
         ErrorLogger(effects) << "RemoveSpecial::Execute passed no target object";
         return;
     }
-
-    std::string name = (m_name ? m_name->Eval(context) : "");
-    context.effect_target->RemoveSpecial(name);
+    
+    if (auto obj = dynamic_cast<UniverseObject*>(context.effect_target)) {
+        std::string name = (m_name ? m_name->Eval(context) : "");
+        obj->RemoveSpecial(name);
+    }
 }
 
 std::string RemoveSpecial::Dump(uint8_t ntabs) const {
@@ -2778,7 +2782,7 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
     std::vector<int> endpoint_system_ids;
     endpoint_system_ids.reserve(endpoint_objects.size());
     std::transform(endpoint_objects.begin(), endpoint_objects.end(), std::back_inserter(endpoint_system_ids),
-                   [](const UniverseObject* obj) { return obj ? obj->SystemID() : INVALID_OBJECT_ID; });
+                   [](const auto* obj) { return obj ? obj->SystemID() : INVALID_OBJECT_ID; });
     // uniquify
     std::sort(endpoint_system_ids.begin(), endpoint_system_ids.end());
     auto unique_it = std::unique(endpoint_system_ids.begin(), endpoint_system_ids.end());
