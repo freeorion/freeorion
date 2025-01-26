@@ -1314,7 +1314,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        const UniverseObject* location = context.ContextObjects().getRaw(empire->CapitalID());
+        const auto* location = context.ContextObjects().getRaw(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
@@ -1919,7 +1919,7 @@ namespace {
 
 
         // objects that have special
-        std::vector<const UniverseObject*> objects_with_special;
+        std::vector<const UniverseObjectCXBase*> objects_with_special;
         objects_with_special.reserve(objects.size());
         for (const auto* obj : objects.allRaw())
             if (obj->HasSpecial(item_name))
@@ -1928,10 +1928,12 @@ namespace {
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
             bool first = true;
-            for (auto& obj : objects_with_special) {
-                if (first) first = false;
-                else detailed_description.append(", ");
-                auto TEXT_TAG = [&obj]() -> std::string_view {
+            for (auto* obj : objects_with_special) {
+                if (first)
+                    first = false;
+                else
+                    detailed_description.append(", ");
+                auto TEXT_TAG = [obj]() -> std::string_view {
                     switch (obj->ObjectType()) {
                     case UniverseObjectType::OBJ_SHIP:      return VarText::SHIP_ID_TAG;    break;
                     case UniverseObjectType::OBJ_FLEET:     return VarText::FLEET_ID_TAG;   break;

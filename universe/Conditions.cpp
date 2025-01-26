@@ -237,22 +237,12 @@ bool Condition::operator==(const Condition& rhs) const {
     }
 }
 
-void Condition::Eval(const ScriptingContext& parent_context,
-                     ObjectSet& matches, ObjectSet& non_matches,
-                     SearchDomain search_domain) const
+bool Condition::EvalAny(const ScriptingContext& parent_context,
+                        std::span<const UniverseObjectCXBase*> candidates) const
 {
-    EvalImpl(matches, non_matches, search_domain,
-             [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
-    {
-        const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
-        return cond->Match(candidate_context); // this requies a derived Condition class to override either this Eval or Match
-    });
-}
-
-bool Condition::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
     try {
         return std::any_of(candidates.begin(), candidates.end(),
-                           [cond{this}, &parent_context](const UniverseObject* candidate) -> bool
+                           [cond{this}, &parent_context](const auto* candidate) -> bool
         {
             const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
             return cond->Match(candidate_context); // this requies a derived Condition class to override either this EvalAny or Match
@@ -267,11 +257,16 @@ bool Condition::EvalAny(const ScriptingContext& parent_context, const ObjectSet&
         }
 
         // don't assume that derived-class Match will be overridden -> fall back to Eval
-        ObjectSet matches{candidates}, non_matches;
+        ObjectSet matches(candidates.begin(), candidates.end()), non_matches;
         non_matches.reserve(candidates.size());
         this->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
         return !matches.empty();
     }
+}
+
+namespace {
+    constexpr auto to_obj_ptr = [](const UniverseObjectCXBase* obj)
+    { return const_cast<UniverseObject*>(static_cast<const UniverseObject*>(obj)); };
 }
 
 void Condition::Eval(ScriptingContext& parent_context,
@@ -285,10 +280,10 @@ void Condition::Eval(ScriptingContext& parent_context,
 
     this->Eval(parent_context, matches_as_objectset, non_matches_as_objectset, search_domain);
 
-    std::transform(matches_as_objectset.begin(), matches_as_objectset.end(), std::back_inserter(matches),
-                   [](auto&& o) { return const_cast<UniverseObject*>(o); });
-    std::transform(non_matches_as_objectset.begin(), non_matches_as_objectset.end(), std::back_inserter(non_matches),
-                   [](auto&& o) { return const_cast<UniverseObject*>(o); });
+    std::transform(matches_as_objectset.begin(), matches_as_objectset.end(),
+                   std::back_inserter(matches), to_obj_ptr);
+    std::transform(non_matches_as_objectset.begin(), non_matches_as_objectset.end(),
+                   std::back_inserter(non_matches), to_obj_ptr);
 }
 
 ObjectSet Condition::Eval(const ScriptingContext& parent_context) const {
@@ -299,7 +294,7 @@ ObjectSet Condition::Eval(const ScriptingContext& parent_context) const {
 
     ObjectSet non_matches;
     non_matches.reserve(matches.size());
-    Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
+    this->Eval(parent_context, matches, non_matches, SearchDomain::MATCHES);
     return matches;
 }
 
@@ -308,13 +303,12 @@ Effect::TargetSet Condition::Eval(ScriptingContext& parent_context) const {
     Effect::TargetSet retval;
     retval.reserve(matches_as_objectset.size());
     std::transform(matches_as_objectset.begin(), matches_as_objectset.end(),
-                   std::back_inserter(retval),
-                   [](auto&& o) { return const_cast<UniverseObject*>(o); });
+                   std::back_inserter(retval), to_obj_ptr);
     return retval;
 }
 
 ObjectSet Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return AllObjectsSet(parent_context.ContextObjects()); }
+{ return AllObjectsSet<UniverseObject, true>(parent_context.ContextObjects()); }
 
 ///////////////////////////////////////////////////////////
 // Number                                                //
@@ -717,11 +711,11 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::vector<std::pair<SortKeyType, const UniverseObject*>> sort_key_objects;
+        std::vector<std::pair<SortKeyType, const UniverseObjectCXBase*>> sort_key_objects;
         using sort_key_pair_t = typename decltype(sort_key_objects)::value_type;
         sort_key_objects.reserve(from_set.size());
         std::transform(from_set.begin(), from_set.end(), std::back_inserter(sort_key_objects),
-                       [&context, sort_key](const UniverseObject* obj) -> sort_key_pair_t {
+                       [&context, sort_key](const auto* obj) -> sort_key_pair_t {
                            const ScriptingContext source_context{context, ScriptingContext::LocalCandidate{}, obj};
                            return {sort_key->Eval(source_context), obj};
                        });
@@ -1004,7 +998,8 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context,
+                             std::span<const UniverseObjectCXBase*> candidates) const {
     if (!m_condition || !m_number || candidates.empty())
         return false;
 
@@ -1142,7 +1137,7 @@ std::unique_ptr<Condition> SortedNumberOf::Clone() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
-void All::Eval(const ScriptingContext& parent_context,
+void All::Eval(const ScriptingContext&,
                ObjectSet& matches, ObjectSet& non_matches,
                SearchDomain search_domain) const
 {
@@ -1214,12 +1209,12 @@ void NoOp::Eval(const ScriptingContext& parent_context,
     DebugLogger(conditions) << "NoOp::Eval(" << matches.size() << " input matches, " << non_matches.size() << " input non-matches)";
 }
 
-bool NoOp::EvalAny(const ScriptingContext&, const ObjectSet& candidates) const {
+bool NoOp::EvalAny(const ScriptingContext&, std::span<const UniverseObjectCXBase*> candidates) const {
     DebugLogger(conditions) << "NoOp::EvalAny(" << candidates.size() << " candidates";
     return !candidates.empty();
 }
 
-bool NoOp::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+bool NoOp::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const {
     DebugLogger(conditions) << "NoOp::EvalOne(" << candidate << ")";
     return candidate;
 }
@@ -1293,7 +1288,7 @@ namespace {
             }
         }
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -1609,7 +1604,7 @@ bool Homeworld::operator==(const Homeworld& rhs_) const {
 
 namespace {
     // gets a planet ID from \a obj considering obj as a planet or a building on a planet
-    int PlanetIDFromObject(const UniverseObject* obj) noexcept {
+    int PlanetIDFromObject(const auto* obj) noexcept {
         if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             return obj->ID();
 
@@ -1636,7 +1631,7 @@ namespace {
             m_species_homeworlds(species.GetSpeciesHomeworldsMap())
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -1794,7 +1789,7 @@ namespace {
         else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
             return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val; });
         else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val->ID(); });
+            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return val && num == val->ID(); });
         else
             return false;
     }
@@ -1818,15 +1813,17 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
 
     } else {
         // check if candidates are capitals of any empire
-        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
         { return FlexibleContains(capitals, obj->ID()); };
         EvalImpl(matches, non_matches, search_domain, is_capital);
     }
 }
 
-bool Capital::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool Capital::EvalAny(const ScriptingContext& parent_context,
+                      std::span<const UniverseObjectCXBase*> candidates) const
+{
     // check if candidates are capitals of any empire
-    const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+    const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
     { return FlexibleContains(capitals, obj->ID()); };
     return std::any_of(candidates.begin(), candidates.end(), is_capital);
 }
@@ -1842,8 +1839,10 @@ bool Capital::Match(const ScriptingContext& local_context) const {
     return candidate && FlexibleContains(local_context.Empires().CapitalIDs(), candidate->ID());
 }
 
-ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
+ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
+    auto retval = parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs());
+    return {retval.begin(), retval.end()};
+}
 
 std::unique_ptr<Condition> Capital::Clone() const
 { return std::make_unique<Capital>(); }
@@ -1909,7 +1908,7 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
 
     } else {
         // check if candidates are capitals of any empire
-        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
+        const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
         { return FlexibleContains(capitals, obj->ID()); };
 
         const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
@@ -1930,37 +1929,68 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
     }
 }
 
-bool CapitalWithID::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
-    if (m_empire_id) {
-        const bool simple_eval_safe = m_empire_id->ConstantExpr() ||
-            (m_empire_id->LocalCandidateInvariant() &&
-             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+namespace {
+    bool EvalAnyCapitalWithID(const ScriptingContext& parent_context,
+                              const auto candidates,
+                              const ValueRef::ValueRef<int>* empire_id,
+                              bool root_candidate_invariant)
+    {
+        using CandidatesT = std::decay_t<decltype(candidates)>;
+        static_assert(std::is_same_v<CandidatesT, std::span<const int>> ||
+                      std::is_same_v<CandidatesT, std::span<const UniverseObjectCXBase*>>);
+        using CandidatesValueT = std::decay_t<decltype(*candidates.begin())>;
 
-        if (simple_eval_safe) {
-            // match object with ID of the specified empire's capital
-            const auto* empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context)).get();
-            return empire && FlexibleContains(candidates, empire->CapitalID());
+        if (!empire_id) {
+            // check if candidates / candidate IDs are capitals of any empire
+            auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto obj)
+            { return FlexibleContains(capitals, obj); };
+            return std::any_of(candidates.begin(), candidates.end(), is_capital);
 
         } else {
-            // ID of empire can be different for each candidate object, so need to
-            // get empire ID (and thus its capital ID) separately for each object
-            auto is_specific_capital = [this, &parent_context](const auto* candidate) {
-                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
-                const auto* empire = local_context.GetEmpire(m_empire_id->Eval(local_context)).get();
-                return empire && empire->CapitalID() == candidate->ID();
-            };
+            const bool simple_eval_safe = empire_id->ConstantExpr() ||
+                (empire_id->LocalCandidateInvariant() &&
+                 (parent_context.condition_root_candidate || root_candidate_invariant));
 
-            return std::any_of(candidates.begin(), candidates.end(), is_specific_capital);
+            if (simple_eval_safe) {
+                // match object with ID of the specified empire's capital
+                const auto* empire = parent_context.GetEmpire(empire_id->Eval(parent_context)).get();
+                return empire && FlexibleContains(candidates, empire->CapitalID());
+
+            } else {
+                // ID of empire can be different for each candidate object, so need to
+                // get empire ID (and thus its capital ID) separately for each object
+                const auto is_specific_empire_capital =
+                    [empire_id, &parent_context](const UniverseObjectCXBase* candidate)
+                {
+                    const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
+                    const auto* empire = local_context.GetEmpire(empire_id->Eval(local_context)).get();
+                    return empire && empire->CapitalID() == candidate->ID();
+                };
+                
+                if constexpr (std::is_same_v<CandidatesValueT, const UniverseObjectCXBase*>) {
+                    return std::any_of(candidates.begin(), candidates.end(), is_specific_empire_capital);
+
+                } else {
+                    const auto id_is_specific_empire_capital =
+                        [&parent_context, is_specific_empire_capital](const int id)
+                    {
+                        const auto* obj = parent_context.ContextObjects().getRaw(id);
+                        return obj && is_specific_empire_capital(obj);
+                    };
+
+                    return std::any_of(candidates.begin(), candidates.end(), id_is_specific_empire_capital);
+                }
+            }
         }
-
-    } else {
-        // check if candidates are capitals of any empire
-        auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const UniverseObject* obj)
-        { return FlexibleContains(capitals, obj->ID()); };
-
-        return std::any_of(candidates.begin(), candidates.end(), is_capital);
     }
 }
+
+bool CapitalWithID::EvalAny(const ScriptingContext& parent_context,
+                            std::span<const UniverseObjectCXBase*> candidates) const
+{ return EvalAnyCapitalWithID(parent_context, candidates, m_empire_id.get(), RootCandidateInvariant()); }
+
+bool CapitalWithID::EvalAny(const ScriptingContext& parent_context, std::span<const int> candidates) const
+{ return EvalAnyCapitalWithID(parent_context, candidates, m_empire_id.get(), RootCandidateInvariant()); }
 
 std::string CapitalWithID::Description(bool negated) const
 { return (!negated) ? UserString("DESC_CAPITAL") : UserString("DESC_CAPITAL_NOT"); }
@@ -1980,8 +2010,10 @@ bool CapitalWithID::Match(const ScriptingContext& local_context) const {
     }
 }
 
-ObjectSet CapitalWithID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const
-{ return parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs()); }
+ObjectSet CapitalWithID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
+    auto retval = parent_context.ContextObjects().findExistingRaw(parent_context.Empires().CapitalIDs());
+    return {retval.begin(), retval.end()};
+}
 
 uint32_t CapitalWithID::GetCheckSum() const {
     uint32_t retval{0};
@@ -2090,7 +2122,7 @@ namespace {
             m_type(type)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept
+        bool operator()(const auto* candidate) const noexcept
         { return candidate && candidate->ObjectType() == m_type; }
 
         const UniverseObjectType m_type;
@@ -2112,18 +2144,20 @@ void Type::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Obje
     }
 }
 
-bool Type::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool Type::EvalAny(const ScriptingContext& parent_context,
+                   std::span<const UniverseObjectCXBase*> candidates) const
+{
     const bool simple_eval_safe = m_type_const || (m_type_local_invariant &&
                                                    (this->m_root_candidate_invariant ||
                                                     parent_context.condition_root_candidate));
     if (simple_eval_safe) {
         const UniverseObjectType type = m_type->Eval(parent_context);
         return std::any_of(candidates.begin(), candidates.end(),
-                           [type](const UniverseObject* obj) { return obj->ObjectType() == type; });
+                           [type](const auto* obj) { return obj->ObjectType() == type; });
     } else {
         // re-evaluate allowed turn range for each candidate object
         return std::any_of(candidates.begin(), candidates.end(),
-                           [this, &parent_context](const UniverseObject* obj) {
+                           [this, &parent_context](const auto* obj) {
                                const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, obj};
                                return obj->ObjectType() == m_type->Eval(candidate_context);
                            });
@@ -2262,7 +2296,7 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             if (!candidate)
                 return false;
 
@@ -2284,7 +2318,7 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -2451,7 +2485,7 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -2655,7 +2689,7 @@ namespace {
             m_high_turn(high_turn)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -2852,7 +2886,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -2970,7 +3004,7 @@ namespace {
             m_high(high)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             if (!candidate)
                 return false;
             const int turn = candidate->CreationTurn();
@@ -3062,6 +3096,125 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
                                            ValueRef::CloneUnique(m_high));
 }
 
+///////////////////////////////////////////////////////////
+// Contains                                              //
+///////////////////////////////////////////////////////////
+namespace StaticTests {
+#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || _MSC_VER >= 1942) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
+    struct ContainerTestObj : public UniverseObjectCXBase {
+        constexpr explicit ContainerTestObj(std::vector<int> contained_ids_ = {}, int this_id = 2) :
+            UniverseObjectCXBase(UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE),
+            contained_ids(contained_ids_)
+        { this->SetID(this_id); }
+
+        constexpr std::span<const int> ContainedObjectIDs() const override;
+        std::vector<int> contained_ids;
+    };
+    constexpr std::span<const int> ContainerTestObj::ContainedObjectIDs() const { return contained_ids; }
+
+    static_assert([](){ return ContainerTestObj{}.ID(); }() == 2);
+    static_assert([](){ return ContainerTestObj{std::vector{1, 2, 3}, 5}.Contains(3); }());
+    static_assert([](){ return !ContainerTestObj{std::vector{1, 2, 3}, 6}.Contains(4); }());
+
+    static_assert([]() {
+        const ContainerTestObj obj_that_contains_2(std::vector{2}, 999);
+        return ContainsSimpleMatch(std::vector{2})(std::addressof(obj_that_contains_2));
+    }());
+
+    static_assert([]() {
+        const Ship* null_ship = nullptr;
+        const ContainerTestObj* null_container = nullptr;
+        ContainerTestObj empty_obj{std::vector<int>{}, 5555};
+        ContainerTestObj container_obj(std::vector{0, 1, 5, 6, 7, 8}, 4444);
+
+        const ContainsSimpleMatch csm0{ObjectSet{}};
+        bool test_null = csm0(null_ship) || csm0(null_container);
+        bool test0e = csm0(&empty_obj);
+        bool test0 = csm0(&container_obj);
+
+        return !test0e && !test0 && !test_null;
+    }());
+
+    static_assert([]() {
+        const ContainerTestObj empty_obj{std::vector<int>{}, 5555};
+
+        bool test1_ = ContainsSimpleMatch(std::vector<int>{})(&empty_obj);
+        bool test1e = ContainsSimpleMatch(std::vector{1})(&empty_obj);
+        bool test2e = ContainsSimpleMatch(std::vector{2})(&empty_obj);
+        bool test8e = ContainsSimpleMatch(std::vector{0, 1, 5, 6, 7, 8, 7, 8})(&empty_obj);
+
+        return !test1_ && !test1e && !test2e && !test8e;
+    }());
+
+    static_assert([]() {
+        const ContainerTestObj* const null_container = nullptr;
+        const ContainerTestObj empty_obj{std::vector<int>{}, 5555};
+        const ContainerTestObj container_obj(std::vector{0, 1, 5, 6, 7, 8}, 4444);
+
+        bool testobj = ContainsSimpleMatch(ObjectSet{&empty_obj})(&container_obj);
+        bool testnullobj = ContainsSimpleMatch(ObjectSet{null_container})(&container_obj);
+
+        return !testobj && !testnullobj;
+    }());
+    
+    static_assert([]() {
+        const ContainerTestObj container_obj(std::vector{0, 1, 5, 6, 7, 8}, 4444);
+
+        bool test1 = ContainsSimpleMatch(std::vector{1})(&container_obj);
+        bool test2 = ContainsSimpleMatch(std::vector{2})(&container_obj);
+        bool test5 = ContainsSimpleMatch(std::vector{2, 3, 4, 9, 10})(&container_obj);
+        bool test4 = ContainsSimpleMatch(std::vector{0, 1, 7, 8})(&container_obj);
+
+        return test1 && !test2 && !test5 && test4;
+    }());
+    
+    static_assert([]() {
+        const ContainerTestObj obj_with_id_99{std::vector<int>{}, 99};
+        const ContainerTestObj container_of_99(std::vector{99}, 7);
+
+        bool test_contains_obj_99 = ContainsSimpleMatch(ObjectSet{&obj_with_id_99})(&container_of_99);
+        bool test_contains_id_99 = ContainsSimpleMatch(std::vector{99})(&container_of_99);
+
+        return test_contains_obj_99 && test_contains_id_99;
+    }());
+        
+    static_assert([]() {
+        const ContainerTestObj obj_that_contains_nothing{std::vector<int>{}, 0};
+        const ContainerTestObj obj_that_contains_2{std::vector{2}, 1};
+        const ContainerTestObj obj_that_contiains_3456{std::vector{3, 4, 5, 6}, 2};
+
+        const UniverseObjectCXBase* const obj0 = std::addressof(obj_that_contains_nothing);
+        const UniverseObjectCXBase* const obj1 = std::addressof(obj_that_contains_2);
+        const UniverseObjectCXBase* const obj2 = std::addressof(obj_that_contiains_3456);
+
+        return ContainsSimpleMatch(std::vector{obj2})(obj1) &&
+               ContainsSimpleMatch(std::vector{4})(obj2) &&
+               !ContainsSimpleMatch(std::vector{obj2})(obj0);
+     }()); 
+
+    static_assert([]() {
+        const ContainerTestObj obj_that_contains_nothing{std::vector<int>{}, 0};
+        const ContainerTestObj obj_that_contains_2{std::vector{2}, 1};
+        const ContainerTestObj obj_that_contiains_3456{std::vector{3, 4, 5, 6}, 2};
+
+        const UniverseObjectCXBase* const obj0 = std::addressof(obj_that_contains_nothing);
+        const UniverseObjectCXBase* const obj1 = std::addressof(obj_that_contains_2);
+        const UniverseObjectCXBase* const obj2 = std::addressof(obj_that_contiains_3456);
+
+        const ContainsSimpleMatch csm2{std::vector{2}};
+
+        ObjectSet candidates{obj0, obj1, obj2};
+        EvalImpl(candidates, csm2);
+
+        ObjectSet matches{obj0, obj1, obj2}, non_matches;
+        EvalImpl(matches, non_matches, SearchDomain::MATCHES, csm2);
+
+        return candidates.size() == 1 && matches.size() == 1 && non_matches.size() == 2;
+     }());
+#endif
+}
+
+///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
@@ -3107,7 +3260,7 @@ namespace {
             }()}
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate) [[unlikely]]
                 return false;
 
@@ -3157,30 +3310,28 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 
         // initialize subcondition candidates from local candidate's containers
         const ObjectMap& objects = parent_context.ContextObjects();
-        ObjectSet subcondition_matches = [&objects, candidate{local_context.condition_local_candidate}]() {
+        auto containers = [&objects, candidate{local_context.condition_local_candidate}]() {
             const auto sys_id = candidate->SystemID();
             const auto con_id = candidate->ContainerObjectID();
             const bool sys_val = sys_id != INVALID_OBJECT_ID;
             const bool con_val = con_id != INVALID_OBJECT_ID;
             return sys_val ?
-                con_val ? objects.findRaw(std::array{sys_id, con_id}) : objects.findRaw(std::array{sys_id}) :
-                con_val ? objects.findRaw(std::array{con_id}) : ObjectSet{};
-            static_assert(std::is_same_v<ObjectSet, std::decay_t<decltype(objects.findRaw(std::array{sys_id}))>>);
+                con_val ? objects.findRaw<UniverseObjectCXBase>(std::array{sys_id, con_id}) :
+                          objects.findRaw<UniverseObjectCXBase>(std::array{sys_id}) :
+                con_val ? objects.findRaw<UniverseObjectCXBase>(std::array{con_id}) :
+                          ObjectSet{};
         }();
 
         // apply subcondition to candidates
-        if (!subcondition_matches.empty()) {
-            ObjectSet dummy;
-            dummy.reserve(subcondition_matches.size());
-            m_condition->Eval(local_context, subcondition_matches, dummy, SearchDomain::MATCHES);
-        }
+        const bool condition_matches_a_container =
+            !containers.empty() && m_condition->EvalAny(parent_context, containers);
 
         // move single local candidate as appropriate...
-        if (search_domain == SearchDomain::MATCHES && subcondition_matches.empty()) {
+        if (search_domain == SearchDomain::MATCHES && !condition_matches_a_container) {
             // move to non_matches
             matches.clear();
             non_matches.push_back(local_context.condition_local_candidate);
-        } else if (search_domain == SearchDomain::NON_MATCHES && !subcondition_matches.empty()) {
+        } else if (search_domain == SearchDomain::NON_MATCHES && condition_matches_a_container) {
             // move to matches
             non_matches.clear();
             matches.push_back(local_context.condition_local_candidate);
@@ -3238,7 +3389,7 @@ bool ContainedBy::Match(const ScriptingContext& local_context) const {
         containers.push_back(candidate->ContainerObjectID());
 
     // do any containers match the subcondition?
-    const ObjectSet container_objects = local_context.ContextObjects().findRaw<const UniverseObject>(containers);
+    auto container_objects = local_context.ContextObjects().findRaw<UniverseObjectCXBase>(containers);
     return m_condition->EvalAny(local_context, container_objects);
 }
 
@@ -3289,7 +3440,7 @@ namespace {
             m_system_id(system_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (m_system_id == INVALID_OBJECT_ID)
@@ -3345,7 +3496,7 @@ std::string InOrIsSystem::Dump(uint8_t ntabs) const {
 ObjectSet InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
     if (!m_system_id) {
         // can match objects in any system, or any system
-        return AllObjectsSet(parent_context.ContextObjects());
+        return AllObjectsSet<UniverseObjectCXBase>(parent_context.ContextObjects());
     }
 
     const bool simple_eval_safe = m_system_id->ConstantExpr() ||
@@ -3353,7 +3504,7 @@ ObjectSet InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext
          (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (!simple_eval_safe) {
         // almost anything can be in a system, and can also match the system itself
-        return AllObjectsSet(parent_context.ContextObjects());
+        return AllObjectsSet<UniverseObjectCXBase>(parent_context.ContextObjects());
     }
 
     // simple case of a single specified system id; can add just objects in that system
@@ -3365,7 +3516,7 @@ ObjectSet InOrIsSystem::GetDefaultInitialCandidateObjects(const ScriptingContext
     // could assign directly to condition_non_targets but don't want to assume it will be initially empty
     auto sys_objs = parent_context.ContextObjects().findRaw(system->ObjectIDs());  // excludes system itself
     sys_objs.push_back(system);
-    return sys_objs;
+    return {sys_objs.begin(), sys_objs.end()};
 }
 
 bool InOrIsSystem::Match(const ScriptingContext& local_context) const {
@@ -3422,7 +3573,7 @@ namespace {
             m_planet_id(planet_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (candidate->ObjectType() != UniverseObjectType::OBJ_BUILDING)
@@ -3504,7 +3655,8 @@ ObjectSet OnPlanet::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
     const auto planet = parent_context.ContextObjects().getRaw<Planet>(planet_id);
     if (!planet)
         return {};
-    return parent_context.ContextObjects().findRaw(planet->BuildingIDs());
+    auto retval = parent_context.ContextObjects().findRaw(planet->BuildingIDs());
+    return {retval.begin(), retval.end()};
 }
 
 bool OnPlanet::Match(const ScriptingContext& local_context) const {
@@ -3558,7 +3710,7 @@ namespace {
             m_object_id(object_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             return candidate &&
                 m_object_id != INVALID_OBJECT_ID &&
                 candidate->ID() == m_object_id;
@@ -3612,7 +3764,7 @@ ObjectSet ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
         (m_object_id->LocalCandidateInvariant() &&
          (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (!simple_eval_safe)
-        return AllObjectsSet(parent_context.ContextObjects());
+        return AllObjectsSet<UniverseObjectCXBase>(parent_context.ContextObjects());
 
     // simple case of a single specified id; can add just that object
     const int object_id = m_object_id->Eval(parent_context);
@@ -3687,7 +3839,7 @@ namespace {
                                             [sz{candidate->Size()}](auto size) { return size == sz; });
         }
 
-        bool operator()(const UniverseObject* candidate) const
+        bool operator()(const auto* candidate) const
         { return operator()(PlanetFromObject(candidate, m_objects)); }
 
         const std::span< ::PlanetSize> m_sizes;
@@ -3860,7 +4012,7 @@ namespace {
                                [planet_env](const auto env) { return env == planet_env; });
         }
 
-        bool operator()(const UniverseObject* candidate) const
+        bool operator()(const auto* candidate) const
         { return operator()(PlanetFromObject(candidate, m_context.ContextObjects())); }
 
         const std::span< ::PlanetEnvironment> m_environments;
@@ -4043,7 +4195,7 @@ bool Species::operator==(const Species& rhs_) const {
 }
 
 namespace {
-    const std::string& GetCandidateSpecies(const UniverseObject* candidate,
+    const std::string& GetCandidateSpecies(const auto* candidate,
                                            const ObjectMap& objects)
     {
         // is it a population centre?
@@ -4071,7 +4223,7 @@ namespace {
             m_objects(objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -4231,7 +4383,7 @@ bool SpeciesOpinion::operator==(const Condition& rhs) const {
 }
 
 namespace {
-    const std::string& SpeciesForObject(const UniverseObject* obj, const ScriptingContext& context) {
+    const std::string& SpeciesForObject(const auto* obj, const ScriptingContext& context) {
         if (!obj)
             return EMPTY_STRING;
 
@@ -4427,7 +4579,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
 
 
         if (!m_species) {
-            auto get_species_for_object = [&parent_context](const UniverseObject* obj) -> const std::string&
+            auto get_species_for_object = [&parent_context](const auto* obj) -> const std::string&
             { return SpeciesForObject(obj, parent_context); };
 
             // get species for each object
@@ -4439,7 +4591,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             process_objects_with_different_species(std::move(species_for_objects), m_content->Eval(parent_context));
 
         } else if (!m_species->LocalCandidateInvariant()) {
-            auto eval_object_species = [&parent_context, this](const UniverseObject* obj) -> std::string {
+            auto eval_object_species = [&parent_context, this](const auto* obj) -> std::string {
                 // get species from reference with object as local candidate
                 const ScriptingContext obj_context{parent_context, ScriptingContext::LocalCandidate{}, obj};
                 return m_species->Eval(obj_context);
@@ -4677,7 +4829,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -4908,7 +5060,7 @@ bool FocusType::operator==(const FocusType& rhs_) const {
 }
 
 namespace {
-    const std::string& GetCandidateFocus(const UniverseObject* candidate,
+    const std::string& GetCandidateFocus(const auto* candidate,
                                          const ObjectMap& objects)
     {
         // is it a population centre?
@@ -4932,7 +5084,7 @@ namespace {
             m_objects(objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -5095,7 +5247,7 @@ namespace {
             m_objects(objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate || m_types.empty())
                 return false;
 
@@ -5252,7 +5404,7 @@ namespace {
             m_universe(universe)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -5383,7 +5535,7 @@ namespace {
             m_universe(universe)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -5574,7 +5726,7 @@ namespace {
             m_universe(universe)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -5746,7 +5898,7 @@ namespace {
             m_u(u)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (candidate->ObjectType() != UniverseObjectType::OBJ_SHIP)
                 return false;
             auto* ship = static_cast<const Ship*>(candidate);
@@ -5876,7 +6028,7 @@ namespace {
             m_design_id(design_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (m_design_id == INVALID_DESIGN_ID)
@@ -5979,7 +6131,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(const UniverseObject* candidate) const noexcept {
+        bool operator()(const auto* candidate) const noexcept {
             if (!candidate)
                 return false;
             if (candidate->ObjectType() == UniverseObjectType::OBJ_SHIP)
@@ -6084,7 +6236,7 @@ namespace {
             m_chance(chance)
         {}
 
-        bool operator()(const UniverseObject*) const
+        bool operator()(const auto*) const
         { return RandZeroToOne() <= m_chance; }
 
         const float m_chance;
@@ -6184,7 +6336,7 @@ namespace {
             m_meter_type(meter_type)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -6382,7 +6534,7 @@ namespace {
             m_meter(meter)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
             if (candidate->ObjectType() != UniverseObjectType::OBJ_SHIP)
@@ -7038,7 +7190,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -7184,7 +7336,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -7324,7 +7476,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -7464,7 +7616,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -7598,7 +7750,7 @@ namespace {
             m_context{context}
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
             if (m_vis == Visibility::VIS_NO_VISIBILITY)
@@ -7795,7 +7947,7 @@ namespace {
             m_distance2(distance*distance)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -7841,7 +7993,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
     } else {
         // re-evaluate subcondition matches and distance for each candidate object
         EvalImpl(matches, non_matches, search_domain,
-                 [this, &parent_context](const UniverseObject* candidate) -> bool
+                 [this, &parent_context](const auto* candidate) -> bool
         {
             if (!candidate)
                 return false;
@@ -7856,7 +8008,9 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
     }
 }
 
-bool WithinDistance::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool WithinDistance::EvalAny(const ScriptingContext& parent_context,
+                             std::span<const UniverseObjectCXBase*> candidates) const
+{
     const bool simple_eval_safe = m_distance->LocalCandidateInvariant() &&
         (parent_context.condition_root_candidate || RootCandidateInvariant());
 
@@ -7879,7 +8033,7 @@ bool WithinDistance::EvalAny(const ScriptingContext& parent_context, const Objec
     } else {
         // re-evaluate distance and contained objects for each candidate object
         return std::any_of(candidates.begin(), candidates.end(),
-                           [this, &parent_context](const UniverseObject* candidate) -> bool
+                           [this, &parent_context](const auto* candidate) -> bool
         {
             if (!candidate)
                 return false;
@@ -8009,7 +8163,7 @@ std::string WithinStarlaneJumps::Dump(uint8_t ntabs) const {
 }
 
 namespace {
-    const System* ObjectToSystem(const UniverseObject* obj, const ObjectMap& objs) {
+    const System* ObjectToSystem(const auto* obj, const ObjectMap& objs) {
         if (!obj)
             return nullptr;
         if (obj->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
@@ -8113,7 +8267,7 @@ namespace {
                             { return obj && candidate_sys->HasStarlaneTo(obj->SystemID()); });
         }
 
-        bool operator()(const UniverseObject* candidate) const
+        bool operator()(const auto* candidate) const
         { return operator()(ObjectToSystem(candidate, m_objects)); }
 
         const ObjectSet& m_to_objects;
@@ -8226,7 +8380,7 @@ namespace {
 
     struct vec2 {
         [[nodiscard]] constexpr vec2(double x_, double y_) noexcept : x(x_), y(y_) {}
-        [[nodiscard]] vec2(const UniverseObject& obj) noexcept : x(obj.X()), y(obj.Y()) {}
+        [[nodiscard]] vec2(const UniverseObjectCXBase& obj) noexcept : x(obj.X()), y(obj.Y()) {}
         double x = 0.0, y = 0.0;
         [[nodiscard]] constexpr auto operator-() const noexcept { return vec2{-x, -y}; };
         [[nodiscard]] constexpr auto operator-(const vec2& rhs) const noexcept { return vec2{x - rhs.x, y - rhs.y}; }
@@ -8407,8 +8561,8 @@ namespace {
         static_assert( SegmentsCross(seg5, seg6));
     }
 
-    bool LanesCross(const UniverseObject* lane1_end_sys1, const UniverseObject* lane1_end_sys2,
-                    const UniverseObject* lane2_end_sys1, const UniverseObject* lane2_end_sys2) noexcept
+    bool LanesCross(const auto* lane1_end_sys1, const auto* lane1_end_sys2,
+                    const auto* lane2_end_sys1, const auto* lane2_end_sys2) noexcept
     {
         // are all endpoints valid systems?
         if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
@@ -8431,7 +8585,7 @@ namespace {
     }
 
     // would a lane between \a lane_obj1 and \a lane_obj2 cross any lanes connected to \a system?
-    bool LaneCrossesSystemLane(const UniverseObject* lane_obj1, const UniverseObject* lane_obj2,
+    bool LaneCrossesSystemLane(const auto* lane_obj1, const auto* lane_obj2,
                                const System* sys, const ObjectMap& objects)
     {
         if (!sys) return false;
@@ -8448,7 +8602,7 @@ namespace {
     }
 
     // would a lane between \a lane_obj1 and \a lane_obj2 cross any other lanes between systems?
-    bool LaneCrossesAnyExistingLane(const UniverseObject* lane_obj1, const UniverseObject* lane_obj2,
+    bool LaneCrossesAnyExistingLane(const auto* lane_obj1, const auto* lane_obj2,
                                     const ObjectMap& objects)
     {
         if (!lane_obj1 || !lane_obj2 || lane_obj1 == lane_obj2)
@@ -8470,7 +8624,7 @@ namespace {
             m_objects(objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -8574,8 +8728,8 @@ bool StarlaneToWouldBeAngularlyCloseToExistingStarlane::operator==(const Conditi
 }
 
 namespace {
-    auto LanesClose(const UniverseObject* common_pos, const UniverseObject* end_pos1,
-                    const UniverseObject* end_pos2, const double max_dotprod) noexcept
+    auto LanesClose(const auto* common_pos, const auto* end_pos1,
+                    const auto* end_pos2, const double max_dotprod) noexcept
     {
         static constexpr auto nan = std::numeric_limits<decltype(vec2::x)>::quiet_NaN();
 
@@ -8606,7 +8760,7 @@ namespace {
 
     // returns true if \a system has a starlane to a system, which is close in
     // angle to the vector from \a system to \a pos1
-    bool SystemHasLaneCloseTo(const System* system, const UniverseObject* pos1,
+    bool SystemHasLaneCloseTo(const System* system, const auto* pos1,
                               const ObjectMap& objects, const double max_dotprod)
     {
         if (!system || !pos1)
@@ -8627,7 +8781,7 @@ namespace {
         return std::any_of(sys_rng.begin(), sys_rng.end(), lanes_close);
     }
 
-    bool LaneWouldBeCloseToExistingSystemLane(const UniverseObject* obj1, const UniverseObject* obj2,
+    bool LaneWouldBeCloseToExistingSystemLane(const auto* obj1, const auto* obj2,
                                               const ObjectMap& objects, const double max_dotprod)
     {
         if (!obj1 || !obj2)
@@ -8655,12 +8809,12 @@ namespace {
             m_max_dotprod(max_dotprod)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
             // check if lane between candidate and system is close to any lanes on either side
-            const auto has_angularly_close_lane = [this, candidate](const UniverseObject* o)
+            const auto has_angularly_close_lane = [this, candidate](const auto* o)
             { return LaneWouldBeCloseToExistingSystemLane(candidate, o, m_objects, m_max_dotprod); };
 
             // check if lanes from candidate to any subcondition object are
@@ -8963,14 +9117,14 @@ namespace {
         static_assert( LineSegmentIsCloseToPoint(seg6, seg5.e, 1.0));
     }
 
-    bool LaneWouldBeCloseToOtherObject(const UniverseObject* obj1, const UniverseObject* obj2,
+    bool LaneWouldBeCloseToOtherObject(const auto* obj1, const auto* obj2,
                                        const ObjectSet& close_objects, const double max_distance)
     {
         if (!obj1 || !obj2 || close_objects.empty())
             return false;
 
         const auto lane_would_be_close_to_object =
-            [obj1, pt1{vec2{*obj1}}, obj2, pt2{vec2{*obj2}}, max_distance](const UniverseObject* close_obj)
+            [obj1, pt1{vec2{*obj1}}, obj2, pt2{vec2{*obj2}}, max_distance](const auto* close_obj)
         {
             if (obj1 == close_obj || obj2 == close_obj)
                 return false; // don't check if lane is close to object(s) it is connected to
@@ -8997,13 +9151,13 @@ namespace {
             m_max_distance(max_distance)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
             // check if lane between candidate and other object is close to any
             // object in m_close_objects
-            const auto lane_to_close_to_other_object = [this, candidate](const UniverseObject* o)
+            const auto lane_to_close_to_other_object = [this, candidate](const auto* o)
             { return LaneWouldBeCloseToOtherObject(candidate, o, m_close_objects, m_max_distance); };
 
             // check if lanes from candidate to any subcondition object are
@@ -9135,7 +9289,7 @@ namespace {
             m_context(context)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -9346,7 +9500,7 @@ namespace {
             m_supply(supply)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
 
@@ -9461,7 +9615,7 @@ namespace {
             m_supply(supply)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
             if (m_from_objects.empty())
@@ -9758,7 +9912,7 @@ namespace {
             m_by_objects(by_objects)
         {}
 
-        bool operator()(const UniverseObject* candidate) const {
+        bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
             if (m_by_objects.empty())
@@ -10312,7 +10466,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         std::vector<ScriptingContext> contexts;
         contexts.reserve(from_set.size());
         std::transform(from_set.begin(), from_set.end(), std::back_inserter(contexts),
-                       [&context](const UniverseObject* o)
+                       [&context](const auto* o)
                        { return ScriptingContext{context, ScriptingContext::LocalCandidate{}, o}; });
 
         // get values for ref1 and ref2
@@ -11130,7 +11284,9 @@ void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     */
 }
 
-bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool And::EvalAny(const ScriptingContext& parent_context,
+                  std::span<const UniverseObjectCXBase*> candidates) const
+{
     if (m_operands.empty() || candidates.empty())
         return false;
     if (candidates.size() == 1 && !candidates.front())
@@ -11148,7 +11304,7 @@ bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candi
         }
     }
 
-    ObjectSet matches{candidates};
+    ObjectSet matches(candidates.begin(), candidates.end());
     ObjectSet non_matches;
     non_matches.reserve(candidates.size());
     // check candidates against all operands and return true if any candidate is matched by all operands
@@ -11160,7 +11316,7 @@ bool And::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candi
     return true;
 }
 
-bool And::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+bool And::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const {
     return candidate &&
         std::all_of(m_operands.begin(), m_operands.end(),
                     [candidate, &parent_context](const auto& op)
@@ -11311,7 +11467,9 @@ void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
 }
 
-bool Or::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool Or::EvalAny(const ScriptingContext& parent_context,
+                 std::span<const UniverseObjectCXBase*> candidates) const
+{
     if (m_operands.empty())
         return false;
 
@@ -11333,7 +11491,7 @@ bool Or::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candid
     */
 }
 
-bool Or::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const {
+bool Or::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const {
     return candidate &&
         std::any_of(m_operands.begin(), m_operands.end(),
                     [candidate, &parent_context](const auto& op)
@@ -11393,7 +11551,7 @@ ObjectSet Or::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
 
             auto retval = m_operands[1]->GetDefaultInitialCandidateObjects(parent_context);
             if (std::none_of(retval.begin(), retval.end(),
-                             [src{parent_context.source}](const UniverseObject* obj) { return obj == src; }))
+                             [src{parent_context.source}](const auto* obj) { return obj == src; }))
             { retval.push_back(parent_context.source); }
             return retval;
         }
@@ -11483,7 +11641,9 @@ void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Objec
     }
 }
 
-bool Not::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const {
+bool Not::EvalAny(const ScriptingContext& parent_context,
+                  std::span<const UniverseObjectCXBase*> candidates) const
+{
     // need to determine if (anything does not match the subcondition). that's not the same
     // as (nothing matches the subcondition).
     //
@@ -11500,7 +11660,7 @@ bool Not::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candi
     //return !non_matches.empty(); // if non_matches is not empty, than something initially in potential_matches was not matched by m_operand
 }
 
-bool Not::EvalOne(const ScriptingContext& parent_context, const UniverseObject* candidate) const
+bool Not::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const
 { return !m_operand->EvalOne(parent_context, candidate); }
 
 std::string Not::Description(bool negated) const
@@ -11662,7 +11822,7 @@ void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
 }
 
 bool OrderedAlternativesOf::EvalAny(const ScriptingContext& parent_context,
-                                    const ObjectSet& candidates) const
+                                    std::span<const UniverseObjectCXBase*> candidates) const
 {
     if (m_operands.empty())
         return false;
@@ -11775,7 +11935,8 @@ void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         m_condition->Eval(parent_context, matches, non_matches, search_domain);
 }
 
-bool Described::EvalAny(const ScriptingContext& parent_context, const ObjectSet& candidates) const
+bool Described::EvalAny(const ScriptingContext& parent_context,
+                        std::span<const UniverseObjectCXBase*> candidates) const
 { return m_condition && m_condition->EvalAny(parent_context, candidates); }
 
 std::string Described::Description(bool negated) const {

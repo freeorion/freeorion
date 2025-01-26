@@ -183,7 +183,7 @@ void CombatInfo::InitializeObjectVisibility() {
 }
 
 
-ScriptingContext::ScriptingContext(CombatInfo& info, Attacker, UniverseObject* attacker_as_source) noexcept :
+ScriptingContext::ScriptingContext(CombatInfo& info, Attacker, UniverseObjectCXBase* attacker_as_source) noexcept :
     source(                 attacker_as_source),
     current_turn(           info.turn),
     combat_bout(            info.bout),
