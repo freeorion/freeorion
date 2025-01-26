@@ -11,7 +11,7 @@
 class ObjectMap;
 class EmpireManager;
 namespace Condition {
-    using ObjectSet = std::vector<const UniverseObject*>;
+    using ObjectSet = std::vector<const UniverseObjectCXBase*>;
 }
 
 /** The Pathfinder  class contains the locations of systems, the

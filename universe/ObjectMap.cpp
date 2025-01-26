@@ -160,10 +160,12 @@ int ObjectMap::HighestObjectID() const {
 template <typename Function>
 void ObjectMap::ApplyToExistingMaps(Function func, bool include_nonspecialized)
 {
-    static_assert(requires (Function func) { func(m_existing_objects); });
+    static_assert(requires (Function func) { func(m_existing_objects); func(m_existing_cx_objects); });
 
-    if (include_nonspecialized)
+    if (include_nonspecialized) {
         func(m_existing_objects);
+        func(m_existing_cx_objects);
+    }
     func(m_existing_ships);
     func(m_existing_fleets);
     func(m_existing_planets);
@@ -176,6 +178,7 @@ template <typename Function>
 void ObjectMap::ApplyToCoreMaps(Function func, bool include_nonspecialized)
 {
     static_assert(requires (Function func) { func(m_objects); });
+    static_assert(requires (Function func) { func(m_cx_objects); });
     static_assert(requires (Function func) { func(m_ships); });
     static_assert(requires (Function func) { func(m_fleets); });
     static_assert(requires (Function func) { func(m_planets); });
@@ -183,8 +186,10 @@ void ObjectMap::ApplyToCoreMaps(Function func, bool include_nonspecialized)
     static_assert(requires (Function func) { func(m_buildings); });
     static_assert(requires (Function func) { func(m_fields); });
 
-    if (include_nonspecialized)
+    if (include_nonspecialized) {
+        func(m_cx_objects);
         func(m_objects);
+    }
     func(m_ships);
     func(m_fleets);
     func(m_planets);
@@ -198,8 +203,10 @@ void ObjectMap::ApplyToExistingVecs(Function func, bool include_nonspecialized)
 {
     static_assert(requires (Function func) { func(m_existing_object_vec); });
 
-    if (include_nonspecialized)
+    if (include_nonspecialized) {
+        func(m_existing_cx_object_vec);
         func(m_existing_object_vec);
+    }
     func(m_existing_ship_vec);
     func(m_existing_fleet_vec);
     func(m_existing_planet_vec);
@@ -211,12 +218,12 @@ void ObjectMap::ApplyToExistingVecs(Function func, bool include_nonspecialized)
 namespace {
     // wraps static_pointer_cast
     template <typename ObjectType>
-    auto SCast(auto&& obj)
+    decltype(auto) SCast(auto&& obj)
     { return std::static_pointer_cast<ObjectType>(std::forward<decltype(obj)>(obj)); };
 }
 
 template <typename ObjectType>
-void ObjectMap::TypedInsertExisting(auto ID, std::shared_ptr<ObjectType> obj) {
+void ObjectMap::TypedInsertExisting(int ID, std::shared_ptr<ObjectType> obj) {
     using OT = std::decay_t<ObjectType>;
 
     auto& evec = ExistingVec<OT>();
@@ -231,7 +238,7 @@ void ObjectMap::TypedInsertExisting(auto ID, std::shared_ptr<ObjectType> obj) {
     emap.insert_or_assign(ID, std::move(obj));
 }
 
-void ObjectMap::AutoTypedInsertExisting(auto ID, auto&& obj) {
+void ObjectMap::AutoTypedInsertExisting(int ID, auto&& obj) {
     if (!obj)
         return;
     switch (obj->ObjectType()) {
@@ -247,7 +254,7 @@ void ObjectMap::AutoTypedInsertExisting(auto ID, auto&& obj) {
 }
 
 template <typename ObjectType>
-void ObjectMap::TypedInsert(auto ID, auto destroyed, std::shared_ptr<ObjectType> obj) {
+void ObjectMap::TypedInsert(int ID, bool destroyed, std::shared_ptr<ObjectType> obj) {
     if (!obj) {
         //std::cout << "null -> " << ID << " as " << typeid(ObjectType).name() << std::endl;
         return;
@@ -260,7 +267,7 @@ void ObjectMap::TypedInsert(auto ID, auto destroyed, std::shared_ptr<ObjectType>
     Map<std::decay_t<ObjectType>>().insert_or_assign(ID, std::move(obj));
 }
 
-void ObjectMap::AutoTypedInsert(auto ID, auto destroyed, auto&& obj) {
+void ObjectMap::AutoTypedInsert(int ID, bool destroyed, auto&& obj) {
     if (!obj)
         return;
     switch (obj->ObjectType()) {
@@ -280,7 +287,8 @@ void ObjectMap::insertCore(std::shared_ptr<UniverseObject> obj, bool destroyed) 
         return;
     const auto ID = obj->ID();
 
-    TypedInsert(ID, destroyed, obj);
+    TypedInsert<UniverseObject>(ID, destroyed, obj);
+    TypedInsert<UniverseObjectCXBase>(ID, destroyed, obj);
     AutoTypedInsert(ID, destroyed, std::move(obj));
 }
 
@@ -300,16 +308,21 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
             vec.erase(it);
     };
     ApplyToExistingVecs(erase_from_vec);
-    ApplyToExistingMaps([id](auto& map) { map.erase(id); });
-    ApplyToCoreMaps([id](auto& map) { map.erase(id); });
+    auto erase_from_map = [id](auto& map) { map.erase(id); };
+    ApplyToExistingMaps(erase_from_map);
+    ApplyToCoreMaps(erase_from_map);
 
     return result;
 }
 
+namespace {
+    constexpr auto clear_container = [](auto& c) { c.clear(); };
+}
+
 void ObjectMap::clear() {
-    ApplyToExistingVecs([](auto& vec) { vec.clear(); });
-    ApplyToExistingMaps([](auto& map) { map.clear(); });
-    ApplyToCoreMaps([](auto& map) { map.clear(); });
+    ApplyToExistingVecs(clear_container);
+    ApplyToExistingMaps(clear_container);
+    ApplyToCoreMaps(clear_container);
 }
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
@@ -318,11 +331,12 @@ std::vector<int> ObjectMap::FindExistingObjectIDs() const {
 }
 
 void ObjectMap::UpdateCurrentDestroyedObjects(const std::unordered_set<int>& destroyed_object_ids) {
-    ApplyToExistingVecs([](auto& vec) { vec.clear(); });
-    ApplyToExistingMaps([](auto& map) { map.clear(); });
+    ApplyToExistingVecs(clear_container);
+    ApplyToExistingMaps(clear_container);
 
     for (const auto& [ID, obj] : m_objects) {
         if (!destroyed_object_ids.contains(ID)) {
+            TypedInsertExisting<UniverseObjectCXBase>(ID, obj);
             TypedInsertExisting<UniverseObject>(ID, obj);
             AutoTypedInsertExisting(ID, obj);
         }
@@ -387,7 +401,7 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
         if (TYPE == UniverseObjectType::OBJ_SYSTEM) {
             auto sys = static_cast<System*>(obj);
             sys->m_objects =   to_flat_set(contained_objs[ID]);
-            sys->m_planets =   to_flat_set( contained_planets[ID]);
+            sys->m_planets =   to_flat_set(contained_planets[ID]);
             sys->m_buildings = to_flat_set(contained_buildings[ID]);
             sys->m_fleets =    to_flat_set(contained_fleets[ID]);
             sys->m_ships =     to_flat_set(contained_ships[ID]);
@@ -406,11 +420,14 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
 
 void ObjectMap::CopyObjectsToSpecializedMaps() {
     //std::cout << "starting existing map/vec clears" << std::endl;
-    ApplyToExistingMaps([](auto& map) { map.clear(); }, false);
+    ApplyToExistingMaps(clear_container, false);
+    m_existing_cx_objects.clear();
     //std::cout << "starting auto typed inserts" << std::endl;
-    static constexpr bool treat_as_destroyed = true;
-    for (const auto& [ID, obj] : Map<UniverseObject>())
+    static constexpr bool treat_as_destroyed = true; // don't copy into "existing objects" maps
+    for (const auto& [ID, obj] : Map<UniverseObject>()) {
         AutoTypedInsert(ID, treat_as_destroyed, obj);
+        TypedInsert<UniverseObjectCXBase>(ID, treat_as_destroyed, obj);
+    }
 
     //std::cout << "copied to maps/vecs" << std::endl;
     //ApplyToExistingMaps([](auto& map) { std::cout << "map " << typeid(map).name() << " sz: " << map.size() << std::endl; }, true);
