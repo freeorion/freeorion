@@ -2,8 +2,10 @@ name: "Windows MS VS"
 
 on:
   workflow_call:
-    secrets:
-      DEPLOY_SSH_PASSWORD:
+    inputs:
+      weekly-deploy:
+        type: boolean
+        default: false
 jobs:
   windows-2022:
     name: MSVS 2022 on Windows
@@ -11,14 +13,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Decrypt deploy SSH key
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
-      - name: Validate upload target
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 CMakeLists.txt o01eg@frs.sourceforge.net:/dev/null'
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
@@ -44,7 +38,6 @@ jobs:
           key: scoop-cache
           path: scoop_cache
       - name: Install NSIS
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         env:
           SCOOP_CACHE: scoop_cache
         run: |
@@ -62,10 +55,14 @@ jobs:
         run: |
           unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
       - name: Generate installer
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         run: |
           makensis packaging/windows_installer.nsi
           mv ../FreeOrion_*_Test_Win32_Setup.exe .
-      - name: Upload weekly-test installer
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_Win32_Setup.exe o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+      - name: Upload binaries artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ inputs.weekly-deploy }}
+        with:
+          name: weekly-artifacts-windows-msvs-${{ github.run_number }}
+          path: FreeOrion_*_Test_Win32_Setup.exe
+          if-no-files-found: error
+          retention-days: 1

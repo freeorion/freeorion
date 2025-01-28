@@ -8,9 +8,6 @@ on:
       weekly-deploy:
         type: boolean
         default: false
-    secrets:
-      DEPLOY_SSH_PASSWORD:
-        required: False
 jobs:
   macos:
     name: ${{ inputs.os }}
@@ -22,14 +19,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Decrypt deploy SSH key
-        if: ${{ inputs.weekly-deploy }}
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
-      - name: Validate upload target
-        if: ${{ inputs.weekly-deploy }}
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 CMakeLists.txt o01eg@frs.sourceforge.net:/dev/null'
       - name: Clean up Mono
         run: sudo ./.github/workflows/mono-uninstall.sh
       - name: Prepare ccache timestamp
@@ -75,14 +64,25 @@ jobs:
           export DYLD_LIBRARY_PATH="$(pwd)/dep/lib:$(pwd)/Release:$DYLD_LIBRARY_PATH"
           cmake --build . --config Release --target unittest --verbose
       - name: Generate binaries
-        if: ${{ inputs.weekly-deploy }}
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
           cd build
-          cmake --build . --config Release --target package -- -parallelizeTargets
+          max_tries=10
+          i=0
+          until cmake --build . --config Release --target package -- -parallelizeTargets; do
+            if [ $i -eq $max_tries ]; then
+              echo "Error: failed after ${max_tries} tries."
+              exit 1
+            fi
+          done
           ccache --cleanup
           ccache --show-stats || true
       - name: Upload binaries only
+        uses: actions/upload-artifact@v4
         if: ${{ inputs.weekly-deploy }}
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 build/FreeOrion_*_Test_MacOSX_*.dmg o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
+        with:
+          name: weekly-artifacts-macos-${{ github.run_number }}
+          path: build/FreeOrion_*_Test_MacOSX_*.dmg
+          if-no-files-found: error
+          retention-days: 1

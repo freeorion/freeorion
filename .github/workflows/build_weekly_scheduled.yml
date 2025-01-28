@@ -1,0 +1,94 @@
+name: "Weekly Scheduled"
+on:
+  schedule:
+    - cron: '*/20 15-18 * * 2'
+jobs:
+  check-run:
+    name: Check If Weekly Test Build should be built
+    if: ${{ vars.ENABLED_WEEKLY == 1 }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Get previous builds info
+        shell: bash
+        run: |
+          echo ${{ github.token }} | gh auth login --with-token
+          WORKFLOW_ID=$(gh api -X GET "/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" --jq='.workflow_id')
+
+          TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=in_progress&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
+          echo "Runs in progress count: ${TOTAL_COUNT}"
+
+          if (( $TOTAL_COUNT == 0 )); then
+            DATE_YESTERDAY=$(date -u --date=yesterday "+%F")
+
+            TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=in_progress&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
+            echo "Runs in progress from yesterday count: ${TOTAL_COUNT}"
+
+            if (( $TOTAL_COUNT == 0 )); then
+              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
+              echo "Runs success count: ${TOTAL_COUNT}"
+            fi
+
+            if (( $TOTAL_COUNT == 0 )); then
+              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
+              echo "Runs success from yesterday count: ${TOTAL_COUNT}"
+            fi
+          fi
+
+          if (( "${TOTAL_COUNT}" != 0 )); then
+            gh run -R "${{ github.repository }}" cancel ${{ github.run_id }}
+            exit 1
+          fi
+  macos:
+    needs: check-run
+    uses: ./.github/workflows/_build-macos.yml
+    with:
+      os: 'macos-13'
+      weekly-deploy: true
+  windows:
+    needs: check-run
+    uses: ./.github/workflows/_build-windows.yml
+    with:
+      weekly-deploy: true
+  windows-msvs:
+    needs: check-run
+    uses: ./.github/workflows/_build-windows-msvs.yml
+    with:
+      weekly-deploy: true
+  merge-binaries-to-sf:
+    name: Merge binaries
+    runs-on: ubuntu-latest
+    needs: [macos, windows, windows-msvs]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
+      - name: Decrypt deploy SSH key
+        run: bash .github/pre-deploy.sh
+        env:
+          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+      - name: Validate upload target
+        run: scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 .github/workflows/build_weekly_scheduled.yml o01eg@frs.sourceforge.net:/dev/null
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: weekly-artifacts-*
+          merge-multiple: true
+      - name: Check artifacts
+        run: ls -l .
+      - name: Upload artifacts
+        run: scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_MacOSX_*.dmg FreeOrion_*_Test_Win32_Setup.exe FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/
+      - name: Get version
+        id: get-version
+        run: TZ=UTC0 git show ${{ github.sha }} --format="short-version=%cd.%h" --quiet --date='format-local:%Y-%m-%d' --abbrev=7 >> "$GITHUB_OUTPUT"
+      - name: Toot
+        run: >-
+          curl -X POST
+          -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
+          -H "Idempotency-Key: ${{ steps.get-version.outputs.short-version }}"
+          --data-raw 'status=New test builds available for Windows and macOS (build ${{ steps.get-version.outputs.short-version }}):%0Ahttps://sourceforge.net/projects/freeorion/files/FreeOrion/Test/'
+          -d 'visibility=public'
+          -d 'language=en'
+          https://fosstodon.org/api/v1/statuses
