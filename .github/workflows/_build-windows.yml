@@ -2,8 +2,10 @@ name: "Windows"
 
 on:
   workflow_call:
-    secrets:
-      DEPLOY_SSH_PASSWORD:
+    inputs:
+      weekly-deploy:
+        type: boolean
+        default: false
 jobs:
   windows-2022-cmake:
     name: MSVS 2022 on Windows CMake
@@ -11,14 +13,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Decrypt deploy SSH key
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
-      - name: Validate upload target
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 CMakeLists.txt o01eg@frs.sourceforge.net:/dev/null'
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
@@ -76,12 +70,11 @@ jobs:
         run: |
           pushd build
           cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D "CPACK_COMPONENTS_ALL=binaries;binaries-test"
-      - name: Upload weekly-test binaries only
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 build/FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/'
-      - name: Upload binaries artefacts
+      - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4
+        if: ${{ inputs.weekly-deploy }}
         with:
-          name: freeorion-binaries-win32-build-${{ github.run_number }}
+          name: weekly-artifacts-windows-${{ github.run_number }}
           path: build/FreeOrion_*.zip
-          retention-days: 7
+          if-no-files-found: error
+          retention-days: 1
