@@ -22,6 +22,12 @@ REGULAR_HULL_DETECTION
         effects = SetDetection value = Value + 25
 '''
 
+GOOD_HULL_DETECTION
+'''EffectsGroup
+        scope = Source
+        effects = SetDetection value = Value + 50
+'''
+
 WEAK_VISION
 '''EffectsGroup
         scope = Source

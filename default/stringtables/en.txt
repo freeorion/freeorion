@@ -13827,6 +13827,13 @@ SHP_TRANSSPACE_DRIVE_DESC
 
 Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion.'''
 
+SHP_TRANSSPACE_HULL
+Trans-Spatial Hull
+
+SHP_TRANSSPACE_HULL_DESC
+'''The [[shiphull SH_TRANSSPATIAL]] is a by-product of the effort to develop the [[tech SHP_TRANSSPACE_DRIVE]].
+When experimenting with bending space-time or other cutting edge technology, having a cheap expandable vessel ready to iterate on prototypes is a necessity.'''
+
 SHP_MIDCOMB_LOG
 Mid-Combat Logistics
 
@@ -15194,7 +15201,7 @@ BLD_SHIPYARD_CON_ADV_ENGINE
 Advanced Engineering Bay
 
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of [[shiphull SH_TRANSSPATIAL]] and [[shippart FU_TRANSPATIAL_DRIVE]], and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
+'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of [[shippart FU_TRANSPATIAL_DRIVE]] and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
 
 An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive.'''
 
@@ -16745,11 +16752,11 @@ SH_TRANSSPATIAL
 Trans-Spatial Hull
 
 SH_TRANSSPATIAL_DESC
-'''This experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max [[metertype METER_STRUCTURE]] is extremely low. It was designed alongside the [[shippart FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
+'''This cheap experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max [[metertype METER_STRUCTURE]] is extremely low. It was designed to facilitate the development of the [[shippart FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
 
-[[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
+[[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is average.
 
-Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].'''
+Can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].'''
 
 SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
