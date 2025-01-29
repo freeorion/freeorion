@@ -37,9 +37,7 @@ Hull
     icon = "icons/ship_hulls/trans_spatial_hull_small.png"
     graphic = "hulls_design/trans_spatial_hull.png"
 
-#include "robotic.macros"
-
-#include "../ship_hulls.macros"
+#include "ship_hulls.macros"
 
 #include "/scripting/macros/upkeep.macros"
 
