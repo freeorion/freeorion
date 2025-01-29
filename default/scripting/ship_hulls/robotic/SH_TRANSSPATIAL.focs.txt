@@ -17,10 +17,6 @@ Hull
         Planet
         OwnedBy empire = Source.Owner
         Contains And [
-            Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
-            OwnedBy empire = Source.Owner
-        ]
-        Contains And [
             Building name = "BLD_SHIPYARD_BASE"
             OwnedBy empire = Source.Owner
         ]
@@ -33,7 +29,7 @@ Hull
         [[GOOD_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
-        [[REGULAR_HULL_DETECTION]]
+        [[GOOD_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
         [[UNOWNED_MOVE]]
