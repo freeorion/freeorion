@@ -10,5 +10,6 @@ Tech(
     researchturns=4,
     tags=["PEDIA_PRODUCTION_CATEGORY", "THEORY"],
     prerequisites=["PRO_ROBOTIC_PROD"],
+    unlock=Item(type=UnlockShipPart, name="SR_GRAV_PULSE"),
     graphic="icons/tech/nanotech_production.png",
 )
