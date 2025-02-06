@@ -74,7 +74,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: weekly-artifacts-*
+          pattern: weekly-artifacts-sf-*
           merge-multiple: true
       - name: Check artifacts
         run: ls -l .
