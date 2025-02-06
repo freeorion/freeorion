@@ -329,6 +329,29 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::HasStarlaneTo>(std::move(from)));
     }
 
+    condition_wrapper insert_starlane_to_would_cross_existing_starlane_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
+
+        return condition_wrapper(std::make_shared<Condition::StarlaneToWouldCrossExistingStarlane>(std::move(from)));
+    }
+
+    condition_wrapper insert_starlane_to_would_be_angularly_close_to_existing_starlane_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
+        double maxdotprod = boost::python::extract<double>(kw["maxdotprod"])();
+
+        return condition_wrapper(std::make_shared<Condition::StarlaneToWouldBeAngularlyCloseToExistingStarlane>(std::move(from), maxdotprod));
+    }
+
+    condition_wrapper insert_starlane_to_would_be_close_to_object_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
+        std::unique_ptr<Condition::Condition> closeto = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["closeto"])().condition);
+        double distance = boost::python::extract<double>(kw["distance"])();
+
+        return condition_wrapper(std::make_shared<Condition::StarlaneToWouldBeCloseToObject>(std::move(from),
+                                std::move(closeto),
+                                distance));
+    }
+
     condition_wrapper insert_focus_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> types;
         boost::python::stl_input_iterator<boost::python::object> it_begin(kw["type"]), it_end;
@@ -879,6 +902,9 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
 
     globals["HasTag"] = boost::python::raw_function(insert_has_tag_);
     globals["HasStarlane"] = boost::python::raw_function(insert_has_starlane_);
+    globals["StarlaneToWouldCrossExistingStarlane"] = boost::python::raw_function(insert_starlane_to_would_cross_existing_starlane_);
+    globals["StarlaneToWouldBeAngularlyCloseToExistingStarlane"] = boost::python::raw_function(insert_starlane_to_would_be_angularly_close_to_existing_starlane_);
+    globals["StarlaneToWouldBeCloseToObject"] = boost::python::raw_function(insert_starlane_to_would_be_close_to_object_);
     globals["Planet"] = boost::python::raw_function(insert_planet_);
     globals["Homeworld"] = boost::python::raw_function(insert_homeworld_);
     globals["HasSpecial"] = boost::python::raw_function(insert_has_special_);
