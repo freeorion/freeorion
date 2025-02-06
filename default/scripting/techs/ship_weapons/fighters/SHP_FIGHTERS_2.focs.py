@@ -4,7 +4,6 @@ from focs._effects import (
     OwnedBy,
     PartsInShipDesign,
     SetMaxCapacity,
-    SetMaxSecondaryStat,
     Ship,
     Source,
     Target,
@@ -12,7 +11,7 @@ from focs._effects import (
 )
 from focs._tech import *
 from macros.base_prod import TECH_COST_MULTIPLIER
-from macros.misc import FIGHTER_DAMAGE_FACTOR
+from techs.ship_weapons.ship_weapons import HANGAR_UPGRADE_SECONDARY_STAT_EFFECT
 
 Tech(
     name="SHP_FIGHTERS_2",
@@ -40,9 +39,9 @@ Tech(
                 SetMaxCapacity(
                     partname="FT_HANGAR_1", value=Value + PartsInShipDesign(name="FT_HANGAR_1", design=Target.DesignID)
                 ),
-                SetMaxSecondaryStat(partname="FT_HANGAR_2", value=Value + 2 * FIGHTER_DAMAGE_FACTOR),
-                SetMaxSecondaryStat(partname="FT_HANGAR_3", value=Value + 3 * FIGHTER_DAMAGE_FACTOR),
-                SetMaxSecondaryStat(partname="FT_HANGAR_4", value=Value + 6 * FIGHTER_DAMAGE_FACTOR),
+                HANGAR_UPGRADE_SECONDARY_STAT_EFFECT("SHP_FIGHTERS_2", "FT_HANGAR_2", 2),
+                HANGAR_UPGRADE_SECONDARY_STAT_EFFECT("SHP_FIGHTERS_2", "FT_HANGAR_3", 3),
+                HANGAR_UPGRADE_SECONDARY_STAT_EFFECT("SHP_FIGHTERS_2", "FT_HANGAR_4", 6),
             ],
         )
     ],
