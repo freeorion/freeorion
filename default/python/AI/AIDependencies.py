@@ -502,9 +502,9 @@ PILOT_FIGHTERDAMAGE_UNSCALED_MODIFIER_DICT = {
     # Note: FT_HANGAR_1 fighters are not able to attack ships so pilot damage modifier does not apply
     "NO": {},
     "BAD": {"FT_HANGAR_1": 0, "FT_HANGAR_2": -1, "FT_HANGAR_3": -1, "FT_HANGAR_4": -1},
-    "GOOD": {"FT_HANGAR_1": 0, "FT_HANGAR_2": 1, "FT_HANGAR_3": 1, "FT_HANGAR_4": 1},
-    "GREAT": {"FT_HANGAR_1": 0, "FT_HANGAR_2": 2, "FT_HANGAR_3": 2, "FT_HANGAR_4": 2},
-    "ULTIMATE": {"FT_HANGAR_1": 0, "FT_HANGAR_2": 3, "FT_HANGAR_3": 3, "FT_HANGAR_4": 3},
+    "GOOD": {"FT_HANGAR_1": 0, "FT_HANGAR_2": 1.5, "FT_HANGAR_3": 1.5, "FT_HANGAR_4": 1.5},
+    "GREAT": {"FT_HANGAR_1": 0, "FT_HANGAR_2": 3, "FT_HANGAR_3": 3, "FT_HANGAR_4": 3},
+    "ULTIMATE": {"FT_HANGAR_1": 0, "FT_HANGAR_2": 4.5, "FT_HANGAR_3": 4.5, "FT_HANGAR_4": 4.5},
 }
 
 PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
