@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ inputs.weekly-deploy }}
         with:
-          name: weekly-artifacts-windows-msvs-${{ github.run_number }}
+          name: weekly-artifacts-sf-windows-msvs-${{ github.run_number }}
           path: FreeOrion_*_Test_Win32_Setup.exe
           if-no-files-found: error
           retention-days: 1

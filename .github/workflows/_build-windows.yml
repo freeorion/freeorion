@@ -74,7 +74,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ inputs.weekly-deploy }}
         with:
-          name: weekly-artifacts-windows-${{ github.run_number }}
+          name: weekly-artifacts-sf-windows-${{ github.run_number }}
           path: build/FreeOrion_*.zip
           if-no-files-found: error
           retention-days: 1
