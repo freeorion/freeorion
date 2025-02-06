@@ -23,7 +23,10 @@ from focs._effects import (
     TurnTechResearched,
     Value,
 )
-from macros.misc import SHIP_WEAPON_DAMAGE_FACTOR
+from macros.misc import (
+    FIGHTER_DAMAGE_FACTOR,
+    SHIP_WEAPON_DAMAGE_FACTOR,
+)
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
 from techs.techs import (
     ARBITRARY_BIG_NUMBER_FOR_METER_TOPUP,
@@ -157,3 +160,10 @@ def WEAPON_UPGRADE_SECONDARY_STAT_EFFECTS(tech_name: str, part_name: str, extra_
             ),
         ),
     ]
+
+# Tech Upgrade SetMaxSecondaryStat effect for hangar part damage
+# @1@ tech name
+# @2@ part name
+# @3@ base_damage_bonus scaled by figher damage gets added to max secondary stat
+def HANGAR_UPGRADE_SECONDARY_STAT_EFFECT(tech_name: str, part_name: str, base_damage_bonus: int):
+    return SetMaxSecondaryStat(partname=part_name, value=Value + NamedReal(name=tech_name + "_" + part_name + "_DAMAGE_BONUS", value=base_damage_bonus * FIGHTER_DAMAGE_FACTOR))
