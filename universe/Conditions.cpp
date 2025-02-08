@@ -1009,10 +1009,22 @@ bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context,
     // if anything is matched by the sub-condition
     if (m_number->Eval(local_context) < 1)
         return false;
-    if (!m_condition->EvalAny(local_context, candidates))
+
+    return m_condition->EvalAny(local_context, candidates);
+}
+
+bool SortedNumberOf::EvalAny(const ScriptingContext& parent_context, std::span<const int> candidates_ids) const {
+    if (!m_condition || !m_number || candidates_ids.empty())
         return false;
 
-    return true;
+    const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
+
+    // just need to check if at least one object was requested and
+    // if anything is matched by the sub-condition
+    if (m_number->Eval(local_context) < 1)
+        return false;
+
+    return m_condition->EvalAny(local_context, candidates_ids);
 }
 
 std::string SortedNumberOf::Description(bool negated) const {
