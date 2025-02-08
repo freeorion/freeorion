@@ -1349,26 +1349,36 @@ public:
     }
 
 private:
+    static constexpr bool Match(::PlanetType planet_type, ::PlanetType target_pt) noexcept
+    { return planet_type == target_pt; }
+
+    static constexpr bool Match(::PlanetType planet_type, std::span<const ::PlanetType> pts)
+    {
+        return std::any_of(pts.begin(), pts.end(),
+                           [planet_type](const auto pt) noexcept { return Match(planet_type, pt); });
+    }
+
+    static bool Match(::PlanetType planet_type, const auto& pt_ref, const ScriptingContext& context)
+        requires requires { pt_ref->Eval(context); }
+    { return pt_ref && Match(pt_ref->Eval(context), planet_type); }
+
+    static bool Match(::PlanetType planet_type, const auto& pt_refs, const ScriptingContext& context)
+        requires requires { Match(planet_type, *pt_refs.begin(), context); }
+    {
+        return std::any_of(pt_refs.begin(), pt_refs.end(),
+                           [planet_type, &context](const auto& ref) { return Match(planet_type, ref, context); });
+    }
+
+    bool Match(::PlanetType planet_type, const ScriptingContext& context) const {
+        if constexpr (have_pt_values)
+            return Match(planet_type, m_types);
+        else
+            return Match(planet_type, m_types, context);
+    }
+
     bool Match(const ScriptingContext& local_context) const {
         const auto* planet = PlanetFromObject(local_context.condition_local_candidate, local_context.ContextObjects());
-        if (!planet)
-            return false;
-        const auto planet_type = planet->Type();
-
-        if constexpr (requires { m_types.begin(); m_types.end(); }) {
-            if constexpr (have_pt_values)
-                return std::any_of(m_types.begin(), m_types.end(),
-                                   [planet_type](auto pt) noexcept { return pt == planet_type; });
-            else
-                return std::any_of(m_types.begin(), m_types.end(),
-                                   [planet_type, &local_context](const auto& pt_ref)
-                                   { return pt_ref && pt_ref->Eval(local_context) == planet_type; });
-        } else {
-            if constexpr (have_pt_values)
-                return m_types == planet_type;
-            else
-                return m_types && (m_types->Eval(local_context) == planet_type);
-        }
+        return planet && Match(planet->Type(), local_context);
     }
 };
 
