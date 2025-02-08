@@ -149,10 +149,6 @@ constexpr const Planet* PlanetFromObject(const UniverseObject* obj, const auto& 
     }
 }
 
-constexpr const Planet* PlanetFromObject(const auto*, const auto&)
-{ return nullptr; }
-
-
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
