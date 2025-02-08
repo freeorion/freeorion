@@ -247,8 +247,10 @@ struct FO_COMMON_API SortedNumberOf final : public Condition {
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
-    [[nodiscard]] bool EvalAny(const ScriptingContext&,
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
                                std::span<const UniverseObjectCXBase*> candidates) const override;
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
+                               std::span<const int> candidates_ids) const override;
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -887,10 +889,12 @@ public:
         } else if (search_domain_size > 1u) {
             // evaluate contained objects once using default initial candidates
             // of subcondition to find all subcondition matches in the Universe
-            const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
-            const ObjectSet subcondition_matches = [this, &local_context]() {
+            const ObjectSet subcondition_matches = [this, &parent_context]() {
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
                 if constexpr (cond_is_ptr)
                     return m_condition->Eval(local_context);
+                else if constexpr (requires { m_condition.Eval(local_context); })
+                    return m_condition.Eval(local_context); // use derived Condition type's custom Eval
                 else
                     return static_cast<const Condition&>(m_condition).Eval(local_context);
             }();
@@ -904,6 +908,8 @@ public:
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override {
+        // TODO: if constexpr for better cases like Source, Target, RootCandidate, LocalCandidate
+        //       that can be used to get a single object to greatly constrain this conditions candidates
         // objects that can contain other objects: systems, fleets, planets
         ObjectSet retval;
         retval.reserve(parent_context.ContextObjects().size<System>() +
