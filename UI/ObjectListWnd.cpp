@@ -2109,6 +2109,19 @@ public:
         }
     }
 
+    void SetVisAndConFilters(auto&& vis, std::unique_ptr<Condition::Condition>&& condition) {
+        if constexpr (requires { vis != m_visibilities; }) {
+            if (vis != m_visibilities) 
+                m_visibilities = std::forward<decltype(vis)>(vis);
+        } else {
+            m_visibilities.clear();
+            for (auto& [uot, vis_set] : vis)
+                m_visibilities[uot].insert(vis_set.begin(), vis_set.end());
+        }
+
+        SetFilterCondition(std::move(condition)); // always does Refresh
+    }
+
     void ClearContents() {
         Clear();
         m_object_change_connections.clear(); // should disconnect scoped connections
@@ -2126,9 +2139,6 @@ public:
         if (!obj)
             return false;
 
-        if (m_filter_condition && !m_filter_condition->EvalOne(context, obj))
-            return false;
-
         const auto it = m_visibilities.find(obj->ObjectType());
         if (it == m_visibilities.end())
             return false;
@@ -2138,6 +2148,9 @@ public:
 
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
             return it->second.contains(VIS_DISPLAY::SHOW_DESTROYED);
+
+        if (m_filter_condition && !m_filter_condition->EvalOne(context, obj))
+            return false;
 
         if (assume_visible_without_checking ||
             client_empire_id == ALL_EMPIRES ||
@@ -2908,10 +2921,8 @@ void ObjectListWnd::FilterClicked() {
                                              m_list_box->FilterCondition());
     dlg->Run();
 
-    if (dlg->ChangesAccepted()) {
-        m_list_box->SetVisibilityFilters(dlg->GetVisibilityFilters());
-        m_list_box->SetFilterCondition(dlg->GetConditionFilter());
-    }
+    if (dlg->ChangesAccepted())
+        m_list_box->SetVisAndConFilters(dlg->GetVisibilityFilters(), dlg->GetConditionFilter());
 }
 
 void ObjectListWnd::CollapseExpandClicked() {
