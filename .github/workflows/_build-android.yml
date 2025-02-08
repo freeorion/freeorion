@@ -32,7 +32,7 @@ jobs:
         arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Dowload Godot API
         uses: actions/download-artifact@v4
         with:
@@ -68,3 +68,55 @@ jobs:
           path: godot/bin/
           if-no-files-found: error
           retention-days: 1
+  merge-binaries:
+    name: Merge binaries
+    runs-on: ubuntu-latest
+    needs: android
+    steps:
+      - name: Merge binaries
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: android-binaries
+          pattern: android-binaries-*
+          delete-merged: true
+          retention-days: 1
+  export-android:
+    name: Export Android
+    runs-on: ubuntu-22.04
+    needs: merge-binaries
+    container:
+      image: ghcr.io/bend-n/godot:3.5.2
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: bend-n/godot-actions/.github/actions/setup-godot@main
+        env:
+          GODOT_VERSION: 3.5.2
+      - name: Download python library
+        id: download-python-lib
+        uses: suisei-cn/actions-download-file@v1.3.0
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v14/python39.zip
+          target: ../
+      - name: Place resources
+        run: |
+          mkdir -p godot/default/python/lib/
+          cp ../${{ steps.download-python-lib.outputs.filename }} godot/default/python/lib/python39.zip
+          unzip -t godot/default/python/lib/python39.zip
+          mv default/data/art godot/assets/
+          mv default/data/fonts godot/assets/
+          mv default/data/sound godot/assets/
+          mv default/scripting godot/default/
+          mv default/stringtables godot/default/
+      - name: Dowload binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: android-binaries
+          path: godot/bin/
+      - name: Build
+        uses: bend-n/godot-actions/.github/actions/export-android@main
+        env:
+          GODOT_VERSION: 3.5.2
+          NAME: freeorion
+          PROJECT_PATH: godot
