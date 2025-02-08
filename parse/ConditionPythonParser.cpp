@@ -776,6 +776,15 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::ObjectID>(std::move(id)));
     }
 
+    condition_wrapper insert_described_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto description = boost::python::extract<std::string>(kw["description"])();
+        auto condition = boost::python::extract<condition_wrapper>(kw["condition"])();
+
+        return condition_wrapper(std::make_shared<Condition::Described>(
+                                    ValueRef::CloneUnique(condition.condition),
+                                    std::move(description)));
+    }
+
     condition_wrapper insert_species_opinion_(const boost::python::tuple& args, const boost::python::dict& kw, Condition::ComparisonType cmp) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> species;
         if (kw.has_key("species")) {
@@ -920,6 +929,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["WithinStarlaneJumps"] = boost::python::raw_function(insert_within_starlane_jumps_);
     globals["WithinDistance"] = boost::python::raw_function(insert_within_distance_);
     globals["Object"] = boost::python::raw_function(insert_object_id_);
+    globals["Described"] = boost::python::raw_function(insert_described_);
     const auto f_insert_species_likes = [](const auto& args, const auto& kw) { return insert_species_opinion_(args, kw, Condition::ComparisonType::GREATER_THAN); };
     globals["SpeciesLikes"] = boost::python::raw_function(f_insert_species_likes);
     const auto f_insert_species_dislikes = [](const auto& args, const auto& kw) { return insert_species_opinion_(args, kw, Condition::ComparisonType::LESS_THAN); };
