@@ -94,10 +94,32 @@ constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
                 std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
                 std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
 
+    } else if constexpr (std::is_same_v<std::decay_t<decltype(operands)>, std::nullptr_t>) {
+        return {true, true, true};
+
     } else {
         throw "unrecognized type?";
     }
 }
+
+constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2,
+                                        const auto& operands3, const auto& operands4)
+{
+    const auto res1 = CondsRTSI(operands1);
+    const auto res2 = CondsRTSI(operands2);
+    const auto res3 = CondsRTSI(operands3);
+    const auto res4 = CondsRTSI(operands4);
+    return {res1[0] && res2[0] && res3[0] && res4[0],
+            res1[1] && res2[1] && res3[1] && res4[1],
+            res1[2] && res2[2] && res3[2] && res4[2]};
+}
+
+constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2, const auto& operands3)
+{ return CondsRTSI(operands1, operands2, operands3, nullptr); }
+
+constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2)
+{ return CondsRTSI(operands1, operands2, nullptr, nullptr); }
+
 
 /** Used by 4-parameter Condition::Eval function, and some of its overrides,
   * to scan through \a matches or \a non_matches set and apply \a pred to
