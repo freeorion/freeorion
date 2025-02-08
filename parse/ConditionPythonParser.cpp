@@ -918,12 +918,12 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
             {"MaximumNumberOf", Condition::SortingMethod::SORT_MAX},
             {"MinimumNumberOf", Condition::SortingMethod::SORT_MIN},
             {"ModeNumberOf",    Condition::SortingMethod::SORT_MODE},
-            {"UniqueNumberOf",  Condition::SortingMethod::SORT_UNIQUE}})
+            {"UniqueNumberOf",  Condition::SortingMethod::SORT_UNIQUE},
+            {"NumberOf",        Condition::SortingMethod::SORT_RANDOM}})
     {
         globals[name] = boost::python::raw_function([sm=sm](const auto& args, const auto& kw)
                                                     { return insert_sorted_number_of_(args, kw, sm); });
     }
-    globals["NumberOf"] = boost::python::raw_function([](const auto& args, const auto& kw) { return insert_sorted_number_of_(args, kw, Condition::SortingMethod::SORT_RANDOM); });
 
     globals["HasSpecies"] = boost::python::raw_function(insert_has_species_);
     globals["IsField"] = boost::python::raw_function(insert_is_field_);
