@@ -2624,6 +2624,7 @@ struct FO_COMMON_API And final : public Condition {
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
+    [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
