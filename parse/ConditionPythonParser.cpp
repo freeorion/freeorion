@@ -863,7 +863,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["ProducedByEmpire"] = boost::python::raw_function(insert_produced_by_empire_);
 
     // non_ship_part_meter_enum_grammar
-    for (const auto& meter : std::initializer_list<std::pair<const char*, MeterType>>{
+    for (const auto& [name, mt] : std::initializer_list<std::pair<const char*, MeterType>>{
             {"TargetConstruction", MeterType::METER_TARGET_CONSTRUCTION},
             {"TargetIndustry",     MeterType::METER_TARGET_INDUSTRY},
             {"TargetPopulation",   MeterType::METER_TARGET_POPULATION},
@@ -900,30 +900,28 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
 
             {"Size",               MeterType::METER_SIZE}})
     {
-        const auto m = meter.second;
-        const auto f_insert_meter_value = [m](const auto& args, const auto& kw) { return insert_meter_value_(args, kw, m); };
-        globals[meter.first] = boost::python::raw_function(f_insert_meter_value);
+        const auto f_insert_meter_value = [mt=mt](const auto& args, const auto& kw)
+        { return insert_meter_value_(args, kw, mt); };
+        globals[name] = boost::python::raw_function(f_insert_meter_value);
     }
 
-    for (const auto& op : std::initializer_list<std::pair<const char*, Condition::ContentType>>{
+    for (const auto& [name, ct] : std::initializer_list<std::pair<const char*, Condition::ContentType>>{
             {"ContentBuilding", Condition::ContentType::CONTENT_BUILDING},
             {"ContentSpecies",  Condition::ContentType::CONTENT_SPECIES},
             {"ContentHull",     Condition::ContentType::CONTENT_SHIP_HULL},
             {"ContentPart",     Condition::ContentType::CONTENT_SHIP_PART},
             {"ContentSpecial",  Condition::ContentType::CONTENT_SPECIAL},
             {"ContentFocus",    Condition::ContentType::CONTENT_FOCUS}})
-    {
-        globals[op.first] = enum_wrapper<Condition::ContentType>(op.second);
-    }
+    { globals[name] = enum_wrapper<Condition::ContentType>(ct); }
 
-    for (const auto& op : std::initializer_list<std::pair<const char*, Condition::SortingMethod>>{
+    for (const auto& [name, sm] : std::initializer_list<std::pair<const char*, Condition::SortingMethod>>{
             {"MaximumNumberOf", Condition::SortingMethod::SORT_MAX},
             {"MinimumNumberOf", Condition::SortingMethod::SORT_MIN},
             {"ModeNumberOf",    Condition::SortingMethod::SORT_MODE},
             {"UniqueNumberOf",  Condition::SortingMethod::SORT_UNIQUE}})
     {
-        const auto sm = op.second;
-        globals[op.first] = boost::python::raw_function([sm](const auto& args, const auto& kw) { return insert_sorted_number_of_(args, kw, sm); });
+        globals[name] = boost::python::raw_function([sm=sm](const auto& args, const auto& kw)
+                                                    { return insert_sorted_number_of_(args, kw, sm); });
     }
     globals["NumberOf"] = boost::python::raw_function([](const auto& args, const auto& kw) { return insert_sorted_number_of_(args, kw, Condition::SortingMethod::SORT_RANDOM); });
 
