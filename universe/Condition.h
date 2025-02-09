@@ -145,10 +145,10 @@ protected:
     Condition& operator=(const Condition&) = delete;
     Condition& operator=(Condition&&) = delete;
 
-    bool m_root_candidate_invariant = false; // TODO: make these const once all derived classes initialize them in their constructors
-    bool m_target_invariant = false;
-    bool m_source_invariant = false;
-    bool m_initial_candidates_all_match = false;
+    const bool m_root_candidate_invariant = false;
+    const bool m_target_invariant = false;
+    const bool m_source_invariant = false;
+    const bool m_initial_candidates_all_match = false;
 
 private:
     virtual bool Match(const ScriptingContext& local_context) const { throw std::runtime_error("default Condition::Match called... Override missing?"); }
