@@ -656,5 +656,34 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK_EQUAL(test_building.GetCheckSum(), building->GetCheckSum());
 }
 
+BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
+    PythonParser parser(m_python, m_test_scripting_dir);
+
+    auto empire_statistics_p = Pending::StartAsyncParsing(parse::statistics, m_test_scripting_dir / "empire_statistics");
+    const auto empire_statistics = *Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
+    BOOST_REQUIRE_EQUAL(1, empire_statistics.size());
+
+    const auto statistic_it = empire_statistics.find("ARMED_MONSTER_COUNT");
+
+    BOOST_REQUIRE(statistic_it != empire_statistics.end());
+
+    BOOST_REQUIRE_EQUAL("ARMED_MONSTER_COUNT", statistic_it->first);
+
+    const auto* statistic = dynamic_cast<const ValueRef::Statistic<double>*>(statistic_it->second.get());
+
+    BOOST_REQUIRE(statistic != nullptr);
+
+    BOOST_REQUIRE_EQUAL(ValueRef::StatisticType::COUNT, statistic->GetStatisticType());
+
+    const auto* condition = dynamic_cast<const Condition::And*>(statistic->GetSamplingCondition());
+
+    BOOST_REQUIRE(condition != nullptr);
+    BOOST_REQUIRE_EQUAL(4, condition->OperandsRaw().size());
+    BOOST_CHECK_EQUAL(3265, condition->OperandsRaw()[0]->GetCheckSum());
+    BOOST_CHECK_EQUAL(1813, condition->OperandsRaw()[1]->GetCheckSum());
+    BOOST_CHECK_EQUAL(1556, condition->OperandsRaw()[2]->GetCheckSum());
+    BOOST_CHECK_EQUAL(2830, condition->OperandsRaw()[3]->GetCheckSum());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
