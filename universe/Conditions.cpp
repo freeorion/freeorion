@@ -11231,7 +11231,7 @@ std::vector<const Condition*> And::OperandsRaw() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
     std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
-                   [](auto& xx) {return xx.get();});
+                   [](const auto& xx) noexcept(noexcept(xx.get())) { return xx.get(); });
     return retval;
 }
 
