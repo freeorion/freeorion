@@ -346,6 +346,18 @@ namespace {
             std::move(condition)));
     }
 
+    effect_wrapper insert_add_starlanes_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<Condition::Condition> endpoint = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["endpoint"])().condition);
+
+        return effect_wrapper(std::make_shared<Effect::AddStarlanes>(std::move(endpoint)));
+    }
+
+    effect_wrapper insert_remove_starlanes_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<Condition::Condition> endpoint = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["endpoint"])().condition);
+
+        return effect_wrapper(std::make_shared<Effect::RemoveStarlanes>(std::move(endpoint)));
+    }
+
     effect_wrapper insert_give_empire_item_(UnlockableItemType item, const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         if (kw.has_key("empire")) {
@@ -749,6 +761,8 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["SetPlanetSize"] = py::raw_function(insert_set_planet_size_);
     globals["SetPlanetType"] = py::raw_function(insert_set_planet_type_);
     globals["SetVisibility"] = py::raw_function(insert_set_visibility_);
+    globals["AddStarlanes"] = py::raw_function(insert_add_starlanes_);
+    globals["RemoveStarlanes"] = py::raw_function(insert_remove_starlanes_);
 
     // give_empire_unlockable_item_enum_grammar
     for (const auto& uit : std::initializer_list<std::pair<const char*, UnlockableItemType>>{
