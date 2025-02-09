@@ -18,7 +18,7 @@ jobs:
           - debian-sid
           - debian-sid-i386
           - manjaro
-          - fedora-rawhide
+          # - fedora-rawhide
           - void-musl
     env:
       CACHE_NAME: linux

@@ -1,4 +1,14 @@
-from focs._effects import Armed, DesignHasPart, EffectsGroup, IsSource, SetMaxDamage, SetMaxSecondaryStat, Ship, Value
+from focs._effects import (
+    Armed,
+    DesignHasPart,
+    EffectsGroup,
+    IsSource,
+    NamedReal,
+    SetMaxDamage,
+    SetMaxSecondaryStat,
+    Ship,
+    Value,
+)
 from macros.misc import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR
 
 
@@ -33,7 +43,11 @@ def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tie
             ),
             # TODO leave a comment why value multiplier are the same, but weaporns have different
             effects=[
-                SetMaxSecondaryStat(partname="FT_HANGAR_2", value=Value + NamedReal(name=tag + "_PILOT_FIGHTER_DAMAGE_BONUS", value=FIGHTER_DAMAGE_FACTOR * hangar)),
+                SetMaxSecondaryStat(
+                    partname="FT_HANGAR_2",
+                    value=Value
+                    + NamedReal(name=tag + "_PILOT_FIGHTER_DAMAGE_BONUS", value=FIGHTER_DAMAGE_FACTOR * hangar),
+                ),
                 SetMaxSecondaryStat(partname="FT_HANGAR_3", value=Value + FIGHTER_DAMAGE_FACTOR * hangar),
                 SetMaxSecondaryStat(partname="FT_HANGAR_4", value=Value + FIGHTER_DAMAGE_FACTOR * hangar),
             ],
