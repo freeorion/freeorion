@@ -785,6 +785,30 @@ namespace {
                                     std::move(description)));
     }
 
+    condition_wrapper insert_design_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        if (kw.has_key("name") && !kw.has_key("design")) {
+            std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+            auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+            if (name_args.check()) {
+                name = ValueRef::CloneUnique(name_args().value_ref);
+            } else {
+                name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+            }
+            return condition_wrapper(std::make_shared<Condition::PredefinedShipDesign>(std::move(name)));           
+        } else if (kw.has_key("design") && !kw.has_key("name")) {
+            std::unique_ptr<ValueRef::ValueRef<int>> design;
+            auto design_args = boost::python::extract<value_ref_wrapper<int>>(kw["design"]);
+            if (design_args.check()) {
+                design = ValueRef::CloneUnique(design_args().value_ref);
+            } else {
+                design = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["design"])());
+            }
+            return condition_wrapper(std::make_shared<Condition::NumberedShipDesign>(std::move(design)));
+        }
+
+        throw std::runtime_error("Design requires only name or design keyword");
+    }
+
     condition_wrapper insert_species_opinion_(const boost::python::tuple& args, const boost::python::dict& kw, Condition::ComparisonType cmp) {
         std::unique_ptr<ValueRef::ValueRef<std::string>> species;
         if (kw.has_key("species")) {
@@ -930,6 +954,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["WithinDistance"] = boost::python::raw_function(insert_within_distance_);
     globals["Object"] = boost::python::raw_function(insert_object_id_);
     globals["Described"] = boost::python::raw_function(insert_described_);
+    globals["Design"] = boost::python::raw_function(insert_design_);
     const auto f_insert_species_likes = [](const auto& args, const auto& kw) { return insert_species_opinion_(args, kw, Condition::ComparisonType::GREATER_THAN); };
     globals["SpeciesLikes"] = boost::python::raw_function(f_insert_species_likes);
     const auto f_insert_species_dislikes = [](const auto& args, const auto& kw) { return insert_species_opinion_(args, kw, Condition::ComparisonType::LESS_THAN); };
