@@ -471,6 +471,7 @@ struct FO_COMMON_API Capital final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&,
                                std::span<const UniverseObjectCXBase*> candidates) const override; // no noexcept due to logging
+    [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context, std::span<const int> candidate_ids) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;

@@ -1793,7 +1793,7 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 // Capital                                               //
 ///////////////////////////////////////////////////////////
 namespace {
-    bool FlexibleContains(const auto& container, const auto num) {
+    constexpr bool FlexibleContains(const auto& container, const auto num) {
         if constexpr (requires { container.contains(num); })
             return container.contains(num);
         else if constexpr (requires { container.find(num); container.end(); })
@@ -1838,6 +1838,13 @@ bool Capital::EvalAny(const ScriptingContext& parent_context,
     const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
     { return FlexibleContains(capitals, obj->ID()); };
     return std::any_of(candidates.begin(), candidates.end(), is_capital);
+}
+
+bool Capital::EvalAny(const ScriptingContext& parent_context, std::span<const int> candidate_ids) const {
+    // check if candidate ids are capitals of any empire
+    const auto is_capital_id = [capitals{parent_context.Empires().CapitalIDs()}](const auto id)
+    { return FlexibleContains(capitals, id); };
+    return std::any_of(candidate_ids.begin(), candidate_ids.end(), is_capital_id);
 }
 
 std::string Capital::Description(bool negated) const
@@ -1978,7 +1985,7 @@ namespace {
                     const auto* empire = local_context.GetEmpire(empire_id->Eval(local_context)).get();
                     return empire && empire->CapitalID() == candidate->ID();
                 };
-                
+
                 if constexpr (std::is_same_v<CandidatesValueT, const UniverseObjectCXBase*>) {
                     return std::any_of(candidates.begin(), candidates.end(), is_specific_empire_capital);
 
