@@ -4,7 +4,7 @@ Changelog
 Notable changes to the FreeOrion project will be documented in this file.
 
 
-[v0.5.1] - 2024-12-04
+[v0.5.1] - 2025-02-02
 ---------------
 
 ### Key Changes
