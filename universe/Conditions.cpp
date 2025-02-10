@@ -3168,7 +3168,7 @@ namespace StaticTests {
 
         return !testobj && !testnullobj;
     }());
-    
+
     static_assert([]() {
         const ContainerTestObj container_obj(std::vector{0, 1, 5, 6, 7, 8}, 4444);
 
@@ -3179,7 +3179,7 @@ namespace StaticTests {
 
         return test1 && !test2 && !test5 && test4;
     }());
-    
+
     static_assert([]() {
         const ContainerTestObj obj_with_id_99{std::vector<int>{}, 99};
         const ContainerTestObj container_of_99(std::vector{99}, 7);
@@ -3189,7 +3189,7 @@ namespace StaticTests {
 
         return test_contains_obj_99 && test_contains_id_99;
     }());
-        
+
     static_assert([]() {
         const ContainerTestObj obj_that_contains_nothing{std::vector<int>{}, 0};
         const ContainerTestObj obj_that_contains_2{std::vector{2}, 1};
@@ -3202,7 +3202,7 @@ namespace StaticTests {
         return ContainsSimpleMatch(std::vector{obj2})(obj1) &&
                ContainsSimpleMatch(std::vector{4})(obj2) &&
                !ContainsSimpleMatch(std::vector{obj2})(obj0);
-     }()); 
+     }());
 
     static_assert([]() {
         const ContainerTestObj obj_that_contains_nothing{std::vector<int>{}, 0};
