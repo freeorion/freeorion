@@ -3124,9 +3124,9 @@ namespace StaticTests {
     };
     constexpr std::span<const int> ContainerTestObj::ContainedObjectIDs() const { return contained_ids; }
 
-    static_assert([](){ return ContainerTestObj{}.ID(); }() == 2);
-    static_assert([](){ return ContainerTestObj{std::vector{1, 2, 3}, 5}.Contains(3); }());
-    static_assert([](){ return !ContainerTestObj{std::vector{1, 2, 3}, 6}.Contains(4); }());
+    static_assert(ContainerTestObj{}.ID() == 2);
+    static_assert(ContainerTestObj{std::vector{1, 2, 3}, 5}.Contains(3));
+    static_assert(!ContainerTestObj{std::vector{1, 2, 3}, 6}.Contains(4));
 
     static_assert([]() {
         const ContainerTestObj obj_that_contains_2(std::vector{2}, 999);
