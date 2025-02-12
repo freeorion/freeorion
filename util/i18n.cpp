@@ -420,7 +420,7 @@ bool UserStringExists(const char* str) {
            GetDevDefaultStringTable(stringtable_lock).StringExists(str);
 }
 
-boost::format FlexibleFormat(const std::string &string_to_format) {
+boost::format FlexibleFormat(const std::string& string_to_format) {
     try {
         boost::format retval(string_to_format);
         retval.exceptions(boost::io::no_error_bits);
