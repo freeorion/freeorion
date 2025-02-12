@@ -42,6 +42,8 @@ jobs:
           pushd build
           $env:Path += ";$($pwd.Path)\\Release"
           cmake --build . --config "Release" --target unittest
+          $env:FO_CHECKSUM_SPECIES_NAME = "SP_CELESTEPHYTE"
+          fo_unittest_parse.exe --run_test=TestDefaultPythonParser/parse_species_full --log_level=message
       - name: Download Godot
         id: download-godot
         uses: suisei-cn/actions-download-file@v1.4.0
