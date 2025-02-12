@@ -12,7 +12,7 @@ Hull
         ]
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_HULL_COST_MULTIPLIER]]
     buildtime = 3
-    tags = [ "PEDIA_HULL_LINE_ROBOTIC" "GOOD_FUEL_EFFICIENCY" ]
+    tags = [ "ROBOTIC_HULL" "PEDIA_HULL_LINE_ROBOTIC" "GOOD_FUEL_EFFICIENCY" ]
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -30,6 +30,8 @@ Hull
         ]
     ]
     effectsgroups = [
+        [[ROBOTIC_REPAIR]]
+
         [[GOOD_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]
