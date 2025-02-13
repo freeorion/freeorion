@@ -59,7 +59,7 @@ namespace parse { namespace detail {
         contained_by
             =    tok.ContainedBy_
             >   -label(tok.condition_) > condition_parser
-            [ _val = construct_movable_(new_<Condition::ContainedBy>(deconstruct_movable_(_1, _pass))) ]
+            [ _val = construct_movable_(new_<Condition::ContainedBy<>>(deconstruct_movable_(_1, _pass))) ]
             ;
 
         star_type

@@ -3236,70 +3236,7 @@ namespace StaticTests {
 ///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
-ContainedBy::ContainedBy(std::unique_ptr<Condition>&& condition) :
-    Condition(CondsRTSI(condition)),
-    m_condition(std::move(condition))
-{}
-
-bool ContainedBy::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const ContainedBy& rhs_ = static_cast<const ContainedBy&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_condition)
-
-    return true;
-}
-
-namespace {
-    struct ContainedBySimpleMatch {
-        ContainedBySimpleMatch(const ObjectSet& subcondition_matches) :
-            m_subcondition_matches_ids{[&subcondition_matches]() {
-                // We need a sorted container for efficiently intersecting
-                // subcondition_matches with the set of objects containing some
-                // candidate object.
-                // We only need ids, not objects, so we can do that conversion
-                // here as well, simplifying later code.
-                // Note that this constructor is called only once per
-                // ContainedBy::Eval(), its work cannot help performance when
-                // executed for each candidate.
-                std::vector<int> m;
-                m.reserve(subcondition_matches.size());
-                // gather the ids
-                for (auto* obj : subcondition_matches) {
-                    if (obj)
-                        m.push_back(obj->ID());
-                }
-                // sort them
-                std::sort(m.begin(), m.end());
-                return m;
-            }()}
-        {}
-
-        bool operator()(const auto* candidate) const {
-            if (!candidate) [[unlikely]]
-                return false;
-
-            const int candidate_id = candidate->ID();
-            const int    system_id = candidate->SystemID();
-            const int container_id = candidate->ContainerObjectID();
-            const bool sys_ok = system_id != INVALID_OBJECT_ID && system_id != candidate_id;
-            const bool con_ok = container_id != INVALID_OBJECT_ID && container_id != system_id;
-
-            // this tested faster than binary_search or scanning over each object and
-            // checking if it contained the candidate
-            const auto& scm = m_subcondition_matches_ids;
-            return (sys_ok && std::find(scm.begin(), scm.end(), system_id) != scm.end()) ||
-                   (con_ok && std::find(scm.begin(), scm.end(), container_id) != scm.end());
-        }
-
-        const std::vector<int> m_subcondition_matches_ids;
-    };
-}
-
+/*
 void ContainedBy::Eval(const ScriptingContext& parent_context,
                        ObjectSet& matches, ObjectSet& non_matches,
                        SearchDomain search_domain) const
@@ -3367,68 +3304,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     }
 }
 
-std::string ContainedBy::Description(bool negated) const {
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_CONTAINED_BY")
-        : UserString("DESC_CONTAINED_BY_NOT"))
-        % m_condition->Description());
-}
-
-std::string ContainedBy::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "ContainedBy condition =\n";
-    retval += m_condition->Dump(ntabs+1);
-    return retval;
-}
-
-ObjectSet ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    // objects that can be contained by other objects: fleets, planets, ships, buildings
-    ObjectSet retval;
-    retval.reserve(parent_context.ContextObjects().size<Fleet>() +
-                   parent_context.ContextObjects().size<Planet>() +
-                   parent_context.ContextObjects().size<Ship>() +
-                   parent_context.ContextObjects().size<::Building>());
-    AddAllObjectsSet<Fleet>(parent_context.ContextObjects(), retval);
-    AddAllObjectsSet<Planet>(parent_context.ContextObjects(), retval);
-    AddAllObjectsSet<Ship>(parent_context.ContextObjects(), retval);
-    AddAllObjectsSet<::Building>(parent_context.ContextObjects(), retval);
-    return retval;
-}
-
-bool ContainedBy::Match(const ScriptingContext& local_context) const {
-    const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate)
-        return false;
-
-    // get containing objects
-    std::vector<int> containers;
-    containers.reserve(2);
-    if (candidate->SystemID() != INVALID_OBJECT_ID)
-        containers.push_back(candidate->SystemID());
-    if (candidate->ContainerObjectID() != INVALID_OBJECT_ID && candidate->ContainerObjectID() != candidate->SystemID())
-        containers.push_back(candidate->ContainerObjectID());
-
-    // do any containers match the subcondition?
-    auto container_objects = local_context.ContextObjects().findRaw<UniverseObjectCXBase>(containers);
-    return m_condition->EvalAny(local_context, container_objects);
-}
-
-void ContainedBy::SetTopLevelContent(const std::string& content_name) {
-    if (m_condition)
-        m_condition->SetTopLevelContent(content_name);
-}
-
-uint32_t ContainedBy::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::ContainedBy");
-    CheckSums::CheckSumCombine(retval, m_condition);
-
-    TraceLogger(conditions) << "GetCheckSum(ContainedBy): retval: " << retval;
-    return retval;
-}
-
-std::unique_ptr<Condition> ContainedBy::Clone() const
-{ return std::make_unique<ContainedBy>(ValueRef::CloneUnique(m_condition)); }
+*/
 
 ///////////////////////////////////////////////////////////
 // InOrIsSystem                                          //
@@ -11199,23 +11075,6 @@ And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& ope
                   std::move(operand4), std::move(operand5), std::move(operand6),
                   std::move(operand7), std::move(operand8)))
 {}
-
-bool And::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const And& rhs_ = static_cast<const And&>(rhs);
-
-    if (m_operands.size() != rhs_.m_operands.size())
-        return false;
-    for (std::size_t i = 0; i < m_operands.size(); ++i) {
-        CHECK_COND_VREF_MEMBER(m_operands.at(i))
-    }
-
-    return true;
-}
 
 void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                ObjectSet& non_matches, SearchDomain search_domain) const
