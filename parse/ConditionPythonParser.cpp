@@ -121,7 +121,7 @@ namespace {
     }
 
     condition_wrapper insert_contained_by_(const condition_wrapper& cond) {
-        return condition_wrapper(std::make_shared<Condition::ContainedBy>(ValueRef::CloneUnique(cond.condition)));
+        return condition_wrapper(std::make_shared<Condition::ContainedBy<>>(ValueRef::CloneUnique(cond.condition)));
     }
 
     condition_wrapper insert_contains_(const condition_wrapper& cond) {
