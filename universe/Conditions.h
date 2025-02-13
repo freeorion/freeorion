@@ -121,7 +121,7 @@ constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& opera
 { return CondsRTSI(operands1, operands2, nullptr, nullptr); }
 
 
-constexpr decltype(auto) EvalImpl(auto&& candidates, const auto& pred) 
+constexpr decltype(auto) EvalImpl(auto&& candidates, const auto& pred)
     requires requires { candidates.erase(DoPartition(candidates, pred), candidates.end()); }
 {
     const auto part_it = DoPartition(candidates, pred);
@@ -159,6 +159,101 @@ constexpr const Planet* PlanetFromObject(const UniverseObjectCXBase* obj, const 
     default: return nullptr;
     }
 }
+
+
+namespace Impl {
+    static constexpr const UniverseObject* no_object = nullptr;
+
+    template <class ConditionT = std::unique_ptr<Condition>>
+        requires ((std::is_base_of_v<Condition, ConditionT> &&
+                   !std::is_same_v<Condition, std::decay_t<ConditionT>>) ||
+                  std::is_same_v<std::unique_ptr<Condition>, ConditionT>)
+    struct NestedCondition : public Condition {
+    protected:
+        static constexpr bool cond_is_ptr = requires(const ConditionT c) { c.get(); };
+        static constexpr bool cond_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
+        static constexpr bool cond_deref_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
+
+        template <typename... Args>
+#if !defined(__GNUC__) || (__GNUC__ > 13) || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3)
+            requires requires { ConditionT(std::forward<Args>(std::declval<Args>())...); }
+#endif
+        constexpr explicit NestedCondition(Args&&... args) :
+            NestedCondition(ConditionT(std::forward<Args>(args)...))
+        {}
+
+        constexpr explicit NestedCondition(ConditionT&& operand) noexcept :
+            Condition(CondsRTSI(operand)),
+            m_condition(std::move(operand))
+        {}
+
+#if defined(__GNUC__) && (__GNUC__ < 13)
+        constexpr ~NestedCondition() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
+
+        static constexpr bool opeq_noexcept = cond_equals_noexcept && cond_deref_equals_noexcept;
+        [[nodiscard]] constexpr bool operator==(const NestedCondition& rhs) const noexcept(opeq_noexcept) {
+            if (this == &rhs || m_condition == rhs.m_condition)
+                return true;
+            if constexpr (cond_is_ptr)
+                return m_condition && (*m_condition == *rhs.m_condition);
+            else
+                return false;
+        }
+
+        [[nodiscard]] std::string DescriptionImpl(const std::string& desc) const {
+            auto fmt = FlexibleFormat(desc);
+            if constexpr (cond_is_ptr)
+                return str(fmt % m_condition->Description());
+            else
+                return str(fmt % m_condition.Description());
+        }
+
+        [[nodiscard]] std::string DumpImpl(uint8_t ntabs, std::string_view desc) const {
+            if constexpr (cond_is_ptr)
+                return DumpIndent(ntabs).append(desc).append(m_condition->Dump(ntabs+1));
+            else
+                return DumpIndent(ntabs).append(desc).append(m_condition.Dump(ntabs+1));
+        }
+
+        void SetTopLevelContent(const std::string& content_name) override {
+            if constexpr (cond_is_ptr) {
+                if (m_condition)
+                    m_condition->SetTopLevelContent(content_name);
+            } else {
+                m_condition.SetTopLevelContent(content_name);
+            }
+        }
+
+        static constexpr bool checksumimpl_noexcept =
+#if !defined(__GNUC__) || (__GNUC__ > 13)
+            noexcept(CheckSums::GetCheckSum(std::string_view("checksumimpl_noexcept"))) &&
+            noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), std::declval<ConditionT>()));
+#else
+            false;
+#endif
+        [[nodiscard]] constexpr uint32_t GetCheckSumImpl(std::string_view this_name) const noexcept(checksumimpl_noexcept) {
+            uint32_t retval = CheckSums::GetCheckSum(this_name);
+            CheckSums::CheckSumCombine(retval, m_condition);
+            return retval;
+        }
+
+        template <typename AsT>
+        [[nodiscard]] std::unique_ptr<Condition> CloneImpl(const AsT&) const
+        {
+            using OutT = std::decay_t<AsT>;
+            if constexpr (cond_is_ptr) {
+                return std::make_unique<OutT>(m_condition->Clone());
+            } else {
+                auto operand_clone = m_condition.Clone();
+                return std::make_unique<OutT>(std::move(dynamic_cast<ConditionT&>(*operand_clone))); // throws if .Clone() doesn't return a pointer to a valid ConditionT
+            }
+        }
+
+        ConditionT m_condition;
+    };
+}
+
 
 /** Matches all objects if the number of objects that match Condition
   * \a condition is is >= \a low and < \a high.  Matched objects may
@@ -283,6 +378,7 @@ struct FO_COMMON_API None final : public Condition {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const UniverseObjectCXBase*>) const noexcept override { return false; }
+    [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const int>) const noexcept override { return false; }
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override
     { return {}; /* efficient rejection of everything. */ }
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -815,35 +911,19 @@ struct ContainsSimpleMatch {
     const std::vector<int> m_subcondition_matches_ids;
 };
 
-
 template <class ConditionT = std::unique_ptr<Condition>>
-    requires ((std::is_base_of_v<Condition, ConditionT> &&
-               !std::is_same_v<Condition, std::decay_t<ConditionT>>) ||
-              std::is_same_v<std::unique_ptr<Condition>, ConditionT>)
-struct FO_COMMON_API Contains final : public Condition {
-private:
-    static constexpr bool cond_is_ptr = requires(const ConditionT c) { c.get(); };
-    static constexpr bool cond_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
-    static constexpr bool cond_deref_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
-    static constexpr const UniverseObject* no_object = nullptr;
-
-public:
-    template <typename... Args>
-#if !defined(__GNUC__) || (__GNUC__ > 13) || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3)
-        requires requires { ConditionT(std::forward<Args>(std::declval<Args>())...); }
-#endif
-    constexpr explicit Contains(Args&&... args) :
-        Contains(ConditionT(std::forward<Args>(args)...))
-    {}
-
-    constexpr explicit Contains(ConditionT&& operand) noexcept :
-        Condition(CondsRTSI(operand)),
-        m_condition(std::move(operand))
-    {}
-
+struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
 #if defined(__GNUC__) && (__GNUC__ < 13)
     constexpr ~Contains() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
 #endif
+
+    using NC = Impl::NestedCondition<ConditionT>;
+    using NC::m_condition;
+
+    template <typename... Args>
+    constexpr Contains(Args&&... args) :
+        NC(std::forward<Args>(args)...)
+    {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
@@ -851,14 +931,8 @@ public:
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
-    [[nodiscard]] constexpr bool operator==(const Contains& rhs) const noexcept(cond_equals_noexcept && cond_deref_equals_noexcept) {
-        if (this == &rhs || m_condition == rhs.m_condition)
-            return true;
-        if constexpr (cond_is_ptr)
-            return m_condition && (*m_condition == *rhs.m_condition);
-        else
-            return false;
-    }
+    [[nodiscard]] constexpr bool operator==(const Contains& rhs) const noexcept(NC::opeq_noexcept)
+    { return NC::operator==(rhs); }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
@@ -866,7 +940,8 @@ public:
         const auto search_domain_size = (search_domain == SearchDomain::MATCHES ?
                                          matches.size() : non_matches.size());
         const bool simple_eval_safe = parent_context.condition_root_candidate ||
-                                      RootCandidateInvariant() || search_domain_size < 2;
+                                      this->RootCandidateInvariant() || search_domain_size < 2;
+
         if (!simple_eval_safe) [[unlikely]] {
             // re-evaluate contained objects for each candidate object
             Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -890,14 +965,14 @@ public:
         } else if (search_domain_size > 1u) {
             // evaluate contained objects once using default initial candidates
             // of subcondition to find all subcondition matches in the Universe
-            const ObjectSet subcondition_matches = [this, &parent_context]() {
-                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, no_object};
-                if constexpr (cond_is_ptr)
-                    return m_condition->Eval(local_context);
-                else if constexpr (requires { m_condition.Eval(local_context); })
-                    return m_condition.Eval(local_context); // use derived Condition type's custom Eval
+            const ObjectSet subcondition_matches = [&cond{this->m_condition}, &parent_context]() {
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, Impl::no_object};
+                if constexpr (NC::cond_is_ptr)
+                    return cond->Eval(local_context);
+                else if constexpr (requires { cond.Eval(local_context); })
+                    return cond.Eval(local_context); // use derived Condition type's custom Eval
                 else
-                    return static_cast<const Condition&>(m_condition).Eval(local_context);
+                    return static_cast<const Condition&>(cond).Eval(local_context);
             }();
 
             // check all candidates to see if they contain any subcondition matches
@@ -922,59 +997,26 @@ public:
         return retval;
     }
 
-    [[nodiscard]] std::string Description(bool negated = false) const override {
-        auto fmt = FlexibleFormat((!negated) ? UserString("DESC_CONTAINS") : UserString("DESC_CONTAINS_NOT"));
-        if constexpr (cond_is_ptr)
-            return str(fmt % m_condition->Description());
-        else
-            return str(fmt % m_condition.Description());
-    }
+    [[nodiscard]] std::string Description(bool negated = false) const override
+    { return NC::DescriptionImpl((!negated) ? UserString("DESC_CONTAINS") : UserString("DESC_CONTAINS_NOT")); }
 
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
-        std::string retval = DumpIndent(ntabs) + "Contains condition =\n";
-        if constexpr (cond_is_ptr)
-            return retval + m_condition->Dump(ntabs+1);
-        else
-            return retval + m_condition.Dump(ntabs+1);
-    }
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
+    { return NC::DumpImpl(ntabs, "Contains condition =\n"); }
 
-    void SetTopLevelContent(const std::string& content_name) override {
-        if constexpr (cond_is_ptr) {
-            if (m_condition)
-                m_condition->SetTopLevelContent(content_name);
-        } else {
-            m_condition.SetTopLevelContent(content_name);
-        }
-    }
+    using NC::SetTopLevelContent;
 
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const
-#if !defined(__GNUC__) || (__GNUC__ > 13)
-        noexcept(noexcept(CheckSums::GetCheckSum("")) &&
-                 noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), std::declval<ConditionT>())))
-#endif
-        override
-    {
-        uint32_t retval = CheckSums::GetCheckSum("Condition::Contains");
-        CheckSums::CheckSumCombine(retval, m_condition);
-        return retval;
-    }
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(NC::checksumimpl_noexcept)
+    { return NC::GetCheckSumImpl("Condition::Contains"); }
 
-    [[nodiscard]] std::unique_ptr<Condition> Clone() const override {
-        using this_t = std::decay_t<decltype(*this)>;
-        if constexpr (cond_is_ptr) {
-            return std::make_unique<this_t>(m_condition->Clone());
-        } else {
-            auto operand_clone = m_condition.Clone();
-            return std::make_unique<this_t>(std::move(dynamic_cast<ConditionT&>(*operand_clone))); // throws if .Clone() doesn't return a pointer to a valid ConditionT
-        }
-    }
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override
+    { return NC::CloneImpl(*this); }
 
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override {
         const auto* candidate = local_context.condition_local_candidate;
         if (!candidate) [[unlikely]]
             return false;
-        if constexpr (cond_is_ptr) {
+        if constexpr (NC::cond_is_ptr) {
             return m_condition->EvalAny(local_context, candidate->ContainedObjectIDs());
         } else if constexpr (requires { m_condition.EvalAny(local_context, candidate->ContainedObjectIDs()); }) {
             // use derived Condition type's custom EvalAny
@@ -984,8 +1026,6 @@ private:
             return cond_base.EvalAny(local_context, candidate->ContainedObjectIDs());
         }
     }
-
-    ConditionT m_condition;
 };
 
 template <typename T>
@@ -994,26 +1034,209 @@ Contains(T) -> Contains<std::decay_t<T>>;
 /** Matches all objects that are contained by an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
-struct FO_COMMON_API ContainedBy final : public Condition {
-    ContainedBy(std::unique_ptr<Condition>&& condition);
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+struct ContainedBySimpleMatch {
+    CONSTEXPR_VEC ContainedBySimpleMatch(std::vector<int> subcondition_matches_ids) :
+        m_subcondition_matches_ids([&subcondition_matches_ids]() {
+            // We need a sorted container for efficiently intersecting
+            // subcondition_matches with the set of objects contained in some
+            // candidate object.
+            if (!subcondition_matches_ids.empty())
+                CheckSums::InPlaceSort(subcondition_matches_ids);
+            return subcondition_matches_ids;
+        }())
+    {}
+
+    CONSTEXPR_VEC ContainedBySimpleMatch(const ObjectSet& subcondition_matches) :
+        ContainedBySimpleMatch([&subcondition_matches]() {
+            // We only need ids, not objects.
+            std::vector<int> m;
+            m.reserve(subcondition_matches.size());
+            // gather the ids and sort them
+            for (auto* obj : subcondition_matches)
+                if (obj)
+                    m.push_back(obj->ID());
+            return m;
+        }())
+    {}
+
+    CONSTEXPR_VEC bool operator()(const auto* candidate) const {
+        if (!candidate)
+            return false;
+
+        const int candidate_id = candidate->ID();
+        const int    system_id = candidate->SystemID();
+        const int container_id = candidate->ContainerObjectID();
+        const bool sys_ok = system_id != INVALID_OBJECT_ID && system_id != candidate_id;
+        const bool con_ok = container_id != INVALID_OBJECT_ID && container_id != system_id;
+
+        // this tested faster than binary_search or scanning over each object and
+        // checking if it contained the candidate
+        const auto& scm = m_subcondition_matches_ids;
+        return (sys_ok && std::find(scm.begin(), scm.end(), system_id) != scm.end()) ||
+               (con_ok && std::find(scm.begin(), scm.end(), container_id) != scm.end());
+    }
+
+    const std::vector<int> m_subcondition_matches_ids;
+};
+
+template <class ConditionT = std::unique_ptr<Condition>>
+struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT> {
+#if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr ~ContainedBy() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#endif
+
+    using NC = Impl::NestedCondition<ConditionT>;
+    using NC::m_condition;
+
+    template <typename... Args>
+    constexpr ContainedBy(Args&&... args) :
+        NC(std::forward<Args>(args)...)
+    {}
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] constexpr bool operator==(const ContainedBy& rhs) const noexcept(NC::opeq_noexcept)
+    { return NC::operator==(rhs); }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
+              ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
+    {
+        const auto search_domain_size = (search_domain == SearchDomain::MATCHES ?
+                                         matches.size() : non_matches.size());
+        const bool simple_eval_safe = parent_context.condition_root_candidate ||
+                                      this->RootCandidateInvariant() || search_domain_size < 2;
+
+        if (!simple_eval_safe) {
+            // re-evaluate container objects for each candidate object
+            Condition::Eval(parent_context, matches, non_matches, search_domain);
+            return;
+        } else if (((search_domain == SearchDomain::MATCHES) && matches.empty()) ||
+                   ((search_domain == SearchDomain::NON_MATCHES) && non_matches.empty())) [[unlikely]]
+        { return; } // don't need to evaluate anything...
+
+        if (search_domain_size == 1) {
+            // evaluate subcondition on objects that contain the candidate
+            const auto* candidate = search_domain == SearchDomain::MATCHES ? matches.front() : non_matches.front();
+            const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
+
+            // initialize subcondition candidates from local candidate's containers
+            std::array container_ids{candidate->SystemID(), candidate->ContainerObjectID()};
+            const auto end_it = std::unique(container_ids.begin(), container_ids.end());
+            const auto end_it2 = std::remove(container_ids.begin(), end_it, INVALID_OBJECT_ID);
+            const std::span ids_span{container_ids.begin(), end_it2};
+
+            // apply subcondition to candidates
+            const bool condition_matches_a_container = !ids_span.empty() &&
+                [ids_span, &local_context, this]() {
+                    if constexpr (NC::cond_is_ptr) {
+                        return m_condition->EvalAny(local_context, ids_span);
+                    } else if constexpr (requires { m_condition.EvalAny(local_context, ids_span); }) {
+                        // use derived Condition type's custom EvalAny
+                        return m_condition.EvalAny(local_context, ids_span);
+                    } else { // use base class pointer EvalAny
+                        const Condition& cond_base{m_condition};
+                        return cond_base.EvalAny(local_context, ids_span);
+                    }
+                }();
+
+            // move single local candidate as appropriate...
+            if (search_domain == SearchDomain::MATCHES && !condition_matches_a_container) {
+                // move to non_matches
+                matches.clear();
+                non_matches.push_back(candidate);
+            } else if (search_domain == SearchDomain::NON_MATCHES && condition_matches_a_container) {
+                // move to matches
+                non_matches.clear();
+                matches.push_back(candidate);
+            }
+
+        } else {
+            // evaluate container objects once using default initial candidates
+            // of subcondition to find all subcondition matches in the Universe
+            ObjectSet subcondition_matches = [this, &parent_context]() {
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, Impl::no_object};
+                if constexpr (NC::cond_is_ptr) {
+                    return m_condition->Eval(local_context);
+                } else if constexpr (requires { m_condition.EvalAny(local_context); }) {
+                    // use derived Condition type's custom Eval
+                    return m_condition.Eval(local_context);
+                } else { // use base class pointer Eval
+                    const Condition& cond_base{m_condition};
+                    return cond_base.Eval(local_context);
+                }
+            }();
+
+            // check all candidates to see if they contain any subcondition matches
+            EvalImpl(matches, non_matches, search_domain, ContainedBySimpleMatch(subcondition_matches));
+        }
+    }
+
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
-    [[nodiscard]] std::string Description(bool negated = false) const override;
-    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
-    [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override {
+        // objects that can be contained by other objects: fleets, planets, ships, buildings
+        // TODO: if constexpr for better cases like Source, Target, RootCandidate, LocalCandidate
+        //       that can be used to get a single object to greatly constrain this conditions candidates
+        // TODO: also if the subcondition restricts the object type explicitly, can use that..
+        ObjectSet retval;
+        retval.reserve(parent_context.ContextObjects().size<Fleet>() +
+                       parent_context.ContextObjects().size<Planet>() +
+                       parent_context.ContextObjects().size<Ship>() +
+                       parent_context.ContextObjects().size<::Building>());
+        AddAllFleetsSet(parent_context.ContextObjects(), retval);
+        AddAllPlanetsSet(parent_context.ContextObjects(), retval);
+        AddAllShipsSet(parent_context.ContextObjects(), retval);
+        AddAllBuildingsSet(parent_context.ContextObjects(), retval);
+        return retval;
+    }
+
+    [[nodiscard]] std::string Description(bool negated = false) const override
+    { return NC::DescriptionImpl((!negated) ? UserString("DESC_CONTAINED_BY") : UserString("DESC_CONTAINED_BY_NOT")); }
+
+    [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
+    { return NC::DumpImpl(ntabs, "ContainedBy condition =\n"); }
+
+    using NC::SetTopLevelContent;
+
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(NC::checksumimpl_noexcept)
+    { return NC::GetCheckSumImpl("Condition::ContainedBy"); }
+
+    [[nodiscard]] std::unique_ptr<Condition> Clone() const override
+    { return NC::CloneImpl(*this); }
 
 private:
-    [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
+    [[nodiscard]] constexpr bool Match(const ScriptingContext& local_context) const {
+        const auto* candidate = local_context.condition_local_candidate;
+        if (!candidate) [[unlikely]]
+            return false;
 
-    std::unique_ptr<Condition> m_condition;
+        std::array container_ids{candidate->SystemID(), candidate->ContainerObjectID()};
+        const auto end_it = std::unique(container_ids.begin(), container_ids.end());
+        const auto end_it2 = std::remove(container_ids.begin(), end_it, INVALID_OBJECT_ID);
+        const std::span ids_span{container_ids.begin(), end_it2};
+
+        if (ids_span.empty()) [[unlikely]]
+            return false;
+
+        if constexpr (NC::cond_is_ptr) {
+            return m_condition->EvalAny(local_context, ids_span);
+        } else if constexpr (requires { m_condition.EvalAny(local_context, ids_span); }) {
+            // use derived Condition type's custom EvalAny
+            return m_condition.EvalAny(local_context, ids_span);
+        } else { // use base class pointer EvalAny
+            const Condition& cond_base{m_condition};
+            return cond_base.EvalAny(local_context, ids_span);
+        }
+    }
 };
+
+template <typename T>
+ContainedBy(T) -> ContainedBy<std::decay_t<T>>;
 
 /** Matches all objects that are in the system with the indicated \a system_id
   * or that are that system. If \a system_id is INVALID_OBJECT_ID then matches
@@ -2650,7 +2873,33 @@ struct FO_COMMON_API And final : public Condition {
         std::unique_ptr<Condition>&& operand7 = nullptr,
         std::unique_ptr<Condition>&& operand8 = nullptr);
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] constexpr bool operator==(const And& rhs) const {
+        if (this == &rhs)
+            return true;
+
+        if (m_operands.size() != rhs.m_operands.size())
+            return false;
+
+        for (std::size_t idx = 0u; idx < m_operands.size(); ++idx) {
+            const auto& m_op = m_operands.at(idx);
+            const auto& rhs_op = rhs.m_operands.at(idx);
+            if (!m_op && !rhs_op)
+                continue;
+            if (!m_op || !rhs_op)
+                return false;
+            if (*m_op != *rhs_op)
+                return false;
+        }
+
+        return true;
+    }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
