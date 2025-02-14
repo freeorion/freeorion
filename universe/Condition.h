@@ -63,6 +63,38 @@ constexpr void EvalImpl(auto& matches, auto& non_matches,
     from_set.erase(part_it, from_set.end());
 }
 
+namespace Impl {
+    // flags for indicating possible objects or object types of initial candidates of conditions
+    namespace MatchesType {
+        constexpr uint16_t NOTHING =       0u;
+        constexpr uint16_t SOURCE =        1u << 0u;
+        constexpr uint16_t TARGET =        1u << 1u;
+        constexpr uint16_t ROOTCANDIDATE = 1u << 2u;
+        constexpr uint16_t PLANETS  =      1u << 3u;
+        constexpr uint16_t BUILDINGS =     1u << 4u;
+        constexpr uint16_t FLEETS =        1u << 5u;
+        constexpr uint16_t SHIPS =         1u << 6u;
+        constexpr uint16_t SYSTEMS =       1u << 7u;
+        constexpr uint16_t FIELDS =        1u << 8u;
+
+        constexpr uint16_t SINGLEOBJECT = SOURCE | TARGET | ROOTCANDIDATE;
+
+        constexpr uint16_t PLANETS_BUILDINGS = PLANETS | BUILDINGS;
+        constexpr uint16_t PLANETS_FLEETS =    PLANETS | FLEETS;
+        constexpr uint16_t PLANETS_SHIPS =     PLANETS | SHIPS;
+        constexpr uint16_t PLANETS_SYSTEMS =   PLANETS | SYSTEMS;
+        constexpr uint16_t BUILDINGS_SHIPS =   BUILDINGS | SHIPS;
+        constexpr uint16_t FLEETS_SHIPS =      FLEETS | SHIPS;
+        constexpr uint16_t FLEETS_SYSTEMS =    FLEETS | SYSTEMS;
+
+        constexpr uint16_t PLANETS_FLEETS_SYSTEMS =                PLANETS | FLEETS | SYSTEMS;
+        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS =        PLANETS | BUILDINGS | FLEETS | SHIPS;
+        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS = PLANETS | BUILDINGS | FLEETS | SHIPS | FIELDS;
+
+        constexpr uint16_t ANYOBJECTTYPE = PLANETS | BUILDINGS | FLEETS | SHIPS | SYSTEMS | FIELDS;
+    }
+}
+
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition {
     constexpr Condition(const Condition&) noexcept = default;
@@ -139,6 +171,9 @@ struct FO_COMMON_API Condition {
     /** Initializes \a condition_non_targets with a set of objects that could
       * match this condition, without checking if they all actually do. */
     [[nodiscard]] virtual ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const;
+
+    [[nodiscard]] constexpr virtual uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept { return Impl::MatchesType::ANYOBJECTTYPE; }
+
 
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this
