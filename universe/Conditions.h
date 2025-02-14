@@ -160,15 +160,21 @@ constexpr const Planet* PlanetFromObject(const UniverseObjectCXBase* obj, const 
     }
 }
 
+struct Source;
+struct Target;
+struct RootCandidate;
 
 namespace Impl {
     static constexpr const UniverseObject* no_object = nullptr;
 
-    template <class ConditionT = std::unique_ptr<Condition>>
-        requires ((std::is_base_of_v<Condition, ConditionT> &&
-                   !std::is_same_v<Condition, std::decay_t<ConditionT>>) ||
-                  std::is_same_v<std::unique_ptr<Condition>, ConditionT>)
-    struct NestedCondition : public Condition {
+    template <class ConditionT>
+    concept is_condition_or_upcondition =
+        (std::is_base_of_v<Condition, ConditionT> && !std::is_same_v<Condition, std::decay_t<ConditionT>>) ||
+        std::is_same_v<std::unique_ptr<Condition>, ConditionT>;
+
+    template <is_condition_or_upcondition ConditionT = std::unique_ptr<Condition>>
+    struct NestedCondition : public Condition
+    {
     protected:
         static constexpr bool cond_is_ptr = requires(const ConditionT c) { c.get(); };
         static constexpr bool cond_equals_noexcept = noexcept(std::declval<ConditionT>() == std::declval<ConditionT>());
@@ -184,7 +190,14 @@ namespace Impl {
 
         constexpr explicit NestedCondition(ConditionT&& operand) noexcept :
             Condition(CondsRTSI(operand)),
-            m_condition(std::move(operand))
+            m_condition(std::move(operand)),
+            m_condition_matches_only_planets(MatchesOnly<::Planet>(m_condition)),
+            m_condition_matches_only_buildings(MatchesOnly<::Building>(m_condition)),
+            m_condition_matches_only_fleets(MatchesOnly<::Fleet>(m_condition)),
+            m_condition_matches_only_ships(MatchesOnly<::Ship>(m_condition)),
+            m_condition_matches_only_source(MatchesOnly<::Condition::Source>(m_condition)),
+            m_condition_matches_only_target(MatchesOnly<::Condition::Target>(m_condition)),
+            m_condition_matches_only_root_candidate(MatchesOnly<::Condition::RootCandidate>(m_condition))
         {}
 
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -250,7 +263,20 @@ namespace Impl {
             }
         }
 
+
         ConditionT m_condition;
+
+        template <typename T>
+        constexpr bool MatchesOnly(const auto& cond);
+
+        // flags for constraining initial candidates of outer condition based on what the inner matches
+        const bool m_condition_matches_only_planets = false;
+        const bool m_condition_matches_only_buildings = false;
+        const bool m_condition_matches_only_fleets = false;
+        const bool m_condition_matches_only_ships = false;
+        const bool m_condition_matches_only_source = false;
+        const bool m_condition_matches_only_target = false;
+        const bool m_condition_matches_only_root_candidate = false;
     };
 }
 
@@ -678,6 +704,15 @@ struct FO_COMMON_API Type final : public Condition {
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Type& rhs) const;
+
+    [[nodiscard]] UniverseObjectType FixedObjectType() const noexcept {
+        if (!m_type || !m_type->ConstantExpr())
+            return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
+        else if (const auto* fixed_type = dynamic_cast<const ValueRef::Constant<UniverseObjectType>*>(m_type.get()))
+            return fixed_type->Value();
+        else
+            return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
+    }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -3016,6 +3051,45 @@ private:
     std::unique_ptr<Condition> m_condition;
     std::string m_desc_stringtable_key;
 };
+
+namespace Impl {
+    template <is_condition_or_upcondition ConditionT>
+    template <typename T>
+    constexpr bool NestedCondition<ConditionT>::MatchesOnly(const auto& cond)
+    {
+        static_assert(std::is_same_v<T, ::Planet>            || std::is_same_v<T, ::Building> ||
+                      std::is_same_v<T, ::Fleet>             || std::is_same_v<T, ::Ship> ||
+                      std::is_same_v<T, ::Condition::Source> || std::is_same_v<T, ::Condition::Target> ||
+                      std::is_same_v<T, ::Condition::RootCandidate>);
+
+        if constexpr (requires { *cond; }) {
+            return MatchesOnly<T>(*cond);
+
+        } else if (auto* and_cond = dynamic_cast<const ::Condition::And*>(&cond)) {
+            const auto& ops = and_cond->Operands();
+            return std::any_of(ops.begin(), ops.end(),
+                                [this](const auto& op) { return op && MatchesOnly<T>(*op); });
+
+        } else if constexpr (std::is_same_v<T, ::Condition::Source>) {
+            return dynamic_cast<const ::Condition::Source*>(&cond);
+        } else if constexpr (std::is_same_v<T, ::Condition::Target>) {
+            return dynamic_cast<const ::Condition::Target*>(&cond);
+        } else if constexpr (std::is_same_v<T, ::Condition::RootCandidate>) {
+            return dynamic_cast<const ::Condition::RootCandidate*>(&cond);
+
+        } else if (auto* type_cond = dynamic_cast<const ::Condition::Type*>(&cond)) {
+            if constexpr (std::is_same_v<T, ::Planet>)
+                return type_cond->FixedObjectType() == UniverseObjectType::OBJ_PLANET;
+            else if constexpr (std::is_same_v<T, ::Building>)
+                return type_cond->FixedObjectType() == UniverseObjectType::OBJ_BUILDING;
+            else if constexpr (std::is_same_v<T, ::Fleet>)
+                return type_cond->FixedObjectType() == UniverseObjectType::OBJ_FLEET;
+            else if constexpr (std::is_same_v<T, ::Ship>)
+                return type_cond->FixedObjectType() == UniverseObjectType::OBJ_SHIP;
+        }
+        return false;
+    }
+}
 }
 
 
