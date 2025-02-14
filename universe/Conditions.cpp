@@ -149,8 +149,21 @@ void AddAllShipsSet(const ObjectMap& objects, ObjectSet& in_out)
 void AddAllFleetsSet(const ObjectMap& objects, ObjectSet& in_out)
 { AddAllObjectsSet<::Fleet>(objects, in_out); }
 
+void AddAllFieldsSet(const ObjectMap& objects, ObjectSet& in_out)
+{ AddAllObjectsSet<::Field>(objects, in_out); }
+
 void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out)
 { AddAllObjectsSet<::System>(objects, in_out); }
+
+// add containers of single objects, avoiding re-adding any objects already in the set
+void AddNonduplicatesFromIDs(const ObjectMap& objects, ObjectSet& in_out, std::span<const int> ids) {
+    if (ids.empty())
+        return;
+    auto single_object_container_objects = objects.findRaw(ids);
+    for (auto* obj : single_object_container_objects)
+        if (obj && range_find(in_out, obj) == in_out.end())
+            in_out.push_back(obj);
+}
 
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                                      const ScriptingContext& source_context,
