@@ -456,9 +456,12 @@ ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id, c
                     matches.push_back(location_obj);
 
                 // determine how much to take from each matched object
-                for (auto* object : matches) {
-                    location_target_context.effect_target = const_cast<UniverseObject*>(object); // call to ValueRef cannot modify the pointed-to object
-                    retval[special_name][object->ID()] += static_cast<float>(amount->Eval(location_target_context));
+                for (const auto* object : matches) {
+                    if (auto target = dynamic_cast<const UniverseObject*>(object)) {
+                        // call to ValueRef cannot modify the pointed-to object
+                        location_target_context.effect_target = const_cast<UniverseObject*>(target);
+                        retval[special_name][object->ID()] += static_cast<float>(amount->Eval(location_target_context));
+                    }
                 }
             }
         }

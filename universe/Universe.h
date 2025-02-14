@@ -37,7 +37,7 @@ struct ScriptingContext;
 
 namespace Condition {
     struct Condition;
-    using ObjectSet = std::vector<const UniverseObject*>;
+    using ObjectSet = std::vector<const UniverseObjectCXBase*>;
 }
 
 namespace Effect {
