@@ -142,5 +142,39 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
     }
 }
 
+/**
+ * Checks count of empire statistics in real scripts
+ * FO_CHECKSUM_EMPIRE_STATISTIC_NAME determines building name to be check for FO_CHECKSUM_EMPIRE_STATISTIC_VALUE checksum
+ */
+
+BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
+    PythonParser parser(m_python, m_default_scripting_dir);
+
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+
+    auto empire_statistics_p = Pending::StartAsyncParsing(parse::statistics, m_default_scripting_dir / "empire_statistics");
+
+    const auto empire_statistics = *Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
+
+    BOOST_CHECK(!empire_statistics.empty());
+
+    BOOST_REQUIRE_EQUAL(22, empire_statistics.size());
+
+    if (const char *empire_statistic_name = std::getenv("FO_CHECKSUM_EMPIRE_STATISTIC_NAME")) {
+        const auto empire_statistic_it = empire_statistics.find(empire_statistic_name);
+        BOOST_REQUIRE(empire_statistics.end() != empire_statistic_it);
+
+        BOOST_TEST_MESSAGE("Dump " << empire_statistic_name << ":");
+        BOOST_TEST_MESSAGE(empire_statistic_it->second->Dump(0));
+
+        if (const char *empire_statistic_checksum_str = std::getenv("FO_CHECKSUM_EMPIRE_STATISTIC_VALUE")) {
+            uint32_t empire_statistic_checksum = boost::lexical_cast<uint32_t>(empire_statistic_checksum_str);
+            uint32_t value{0};
+            CheckSums::CheckSumCombine(value, empire_statistic_it->second);
+            BOOST_REQUIRE_EQUAL(empire_statistic_checksum, value);
+        }
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
