@@ -659,7 +659,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
 BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
     PythonParser parser(m_python, m_test_scripting_dir);
 
-    auto empire_statistics_p = Pending::StartAsyncParsing(parse::statistics, m_test_scripting_dir / "empire_statistics");
+    auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_test_scripting_dir / "empire_statistics");
     const auto empire_statistics = *Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
     BOOST_REQUIRE_EQUAL(1, empire_statistics.size());
 
