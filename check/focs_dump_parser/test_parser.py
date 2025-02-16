@@ -15,7 +15,8 @@ BuildingType
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
     description = "BLD_ART_BLACK_HOLE_DESC"
-00:00:34.029042 {0x00002980} [trace] parsing : BuildingsParser.cpp:261 : End parsing FOCS for BuildingTypes108
+00:35:48.229253 {0x000031f0} [debug] ai : i18n.cpp:100 : Detected locale language: en
+00:35:48.336232 {0x000031f0} [trace] parsing : BuildingsParser.cpp:263 : End parsing FOCS for BuildingTypes96
 """.strip()
 )
 

@@ -1,3 +1,4 @@
+import re
 from logging import error
 from typing import IO
 
@@ -7,6 +8,13 @@ def _get_name_from_line(line):
         return None
     body = line.rsplit(" : ", 2)[1]
     return body.removeprefix("BuildingType ")
+
+
+_log_like = re.compile(r"\d{2}:\d{2}:\d{2}\.\d{4}.*")
+
+
+def _is_regular_log(line):
+    return _log_like.match(line)
 
 
 def get_lines_with_dump(f: IO):
@@ -31,6 +39,8 @@ def parse_buildings(f: IO):
                 _result.append((_current[0], "".join(_current[1])))
             _current = [next_section, []]
         else:
+            if _is_regular_log(line):
+                continue
             if _current:
                 _current[1].append(line)
 
