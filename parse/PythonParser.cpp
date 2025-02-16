@@ -40,6 +40,15 @@ namespace {
     void translate(import_error const& e) {
         PyErr_SetString(PyExc_ImportError, e.what());
     }
+
+    void compile_eval(const char* content, const char* filename, PyObject* globals) {
+        PyObject *code = Py_CompileString(content, filename, Py_file_input);
+        if (!code) py::throw_error_already_set();
+        py::object o_code{py::handle<>(code)};
+        PyObject *result = PyEval_EvalCode(o_code.ptr(), globals, globals);
+        if (!result) py::throw_error_already_set();
+        py::object o_result{py::handle<>(result)};
+    }
 }
 
 struct module_spec {
@@ -357,7 +366,7 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
     }
 
     try {
-        py::exec(file_contents.c_str(), globals);
+        compile_eval(file_contents.c_str(), filename.c_str(), globals.ptr());
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
         ErrorLogger() << "Unable to parse data file " << filename;
@@ -444,7 +453,7 @@ py::object PythonParser::exec_module(py::object& module) {
                 RegisterGlobalsSources(m_dict);
                 RegisterGlobalsEnums(m_dict);
 
-                py::exec(file_contents.c_str(), m_dict, m_dict);
+                compile_eval(file_contents.c_str(), module_path.c_str(), m_dict.ptr());
             } catch (const boost::python::error_already_set&) {
                 m_python.HandleErrorAlreadySet();
                 ErrorLogger() << "Unable to parse module file " << module_path.string();
