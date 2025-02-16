@@ -56,10 +56,15 @@ jobs:
     uses: ./.github/workflows/_build-windows-msvs.yml
     with:
       weekly-deploy: true
+  linux-snap:
+    needs: check-run
+    uses: ./.github/workflows/_build_snapcraft.yml
+    with:
+      weekly-deploy: true
   merge-binaries-to-sf:
-    name: Merge binaries
+    name: Merge binaries and publish to SourceForge
     runs-on: ubuntu-latest
-    needs: [macos, windows, windows-msvs]
+    needs: [macos, windows, windows-msvs, linux-snap]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -80,6 +85,28 @@ jobs:
         run: ls -l .
       - name: Upload artifacts
         run: scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_MacOSX_*.dmg FreeOrion_*_Test_Win32_Setup.exe FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/
+  to-snap:
+    name: Publish snap
+    needs: [macos, windows, windows-msvs, linux-snap] 
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: weekly-artifacts-snap-*
+      - name: Check artifacts
+        run: ls -l .
+      - name: Upload artifacts
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
+        with:
+          snap: "*.snap"
+          release: edge
+  publish-post:
+    name: Publish post about weekly test build
+    runs-on: ubuntu-latest
+    needs: [merge-binaries-to-sf, to-snap]
+    steps:
       - name: Get version
         id: get-version
         run: TZ=UTC0 git show ${{ github.sha }} --format="short-version=%cd.%h" --quiet --date='format-local:%Y-%m-%d' --abbrev=7 >> "$GITHUB_OUTPUT"
@@ -88,7 +115,7 @@ jobs:
           curl -X POST
           -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
           -H "Idempotency-Key: ${{ steps.get-version.outputs.short-version }}"
-          --data-raw 'status=New test builds available for Windows and macOS (build ${{ steps.get-version.outputs.short-version }}):%0Ahttps://sourceforge.net/projects/freeorion/files/FreeOrion/Test/'
+          --data-raw 'status=New test builds available (build ${{ steps.get-version.outputs.short-version }}):%0AFor Windows and macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap: https://snapcraft.io/freeorion'
           -d 'visibility=public'
           -d 'language=en'
           https://fosstodon.org/api/v1/statuses
