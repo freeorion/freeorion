@@ -2,6 +2,10 @@ name: "Snapcraft"
 
 on:
   workflow_call:
+    inputs:
+      weekly-deploy:
+        type: boolean
+        default: false
 
 jobs:
   snapcraft:
@@ -24,4 +28,12 @@ jobs:
       uses: coactions/setup-xvfb@v1
       with:
         run: /bin/bash .github/snap-xvfb-launch.sh
+    - name: Upload binaries artifacts
+      uses: actions/upload-artifact@v4
+      if: ${{ inputs.weekly-deploy }}
+      with:
+        name: weekly-artifacts-snap-${{ github.run_number }}
+        path: ${{ steps.snapcraft.outputs.snap }}
+        if-no-files-found: error
+        retention-days: 1
 
