@@ -14446,7 +14446,7 @@ SHP_FIGHTERS_1_DESC
 
 Une <encyclopedia PC_FIGHTER_BAY>Rampe de Lancement</encyclopedia> peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat. Ces chasseurs deviennent des cibles valides et peuvent attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Toutefois, un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier. Contrairement aux [[encyclopedia DAMAGE_TITLE]] qu'infligent les armements traditionnels, les dommages résultant d'un tir de chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs faisant feu une fois à l'intérieur de la zone de protection d'un bouclier).
 
-L'attribut "Pilotes" affecte les chasseurs issus d'un [[shippart FT_HANGAR_2]], d'un [[shippart FT_HANGAR_3]], ou d'un [[shippart FT_HANGAR_4]]: "Mauvais Pilotes" réduit les dommages de 6 par chasseur; "Bons Pilotes" augmente les dommages de 6, "Excellents Pilotes" de 12, et "Parfaits Pilotes" de 18 par tir de chasseur.
+L'attribut "Pilotes" affecte les chasseurs issus d'un [[shippart FT_HANGAR_2]], d'un [[shippart FT_HANGAR_3]], ou d'un [[shippart FT_HANGAR_4]]: "Mauvais Pilotes" réduit les dommages de [[value BAD_PILOT_FIGHTER_DAMAGE_BONUS]] par chasseur; "Bons Pilotes" augmente les dommages de [[value GOOD_PILOT_FIGHTER_DAMAGE_BONUS]], "Excellents Pilotes" de [[value GREAT_PILOT_FIGHTER_DAMAGE_BONUS]], et "Parfaits Pilotes" de [[value ULTIMATE_PILOT_FIGHTER_DAMAGE_BONUS]] par tir de chasseur.
 L'attribut "Pilotes" n'affecte pas les chasseurs provenant d'un [[shippart FT_HANGAR_1]].
 
 Au terme d'un combat, les astronefs transporteurs récupèreront automatiquement les chasseurs non-détruits. Si un transporteur est stationnaire dans une zone d'[[metertype METER_SUPPLY]], ses hangars seront rééquipés à leur capacité maximale.'''
@@ -14455,19 +14455,19 @@ SHP_FIGHTERS_2
 Chasseurs et Rampes de Lancement 2
 
 SHP_FIGHTERS_2_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de [[value SHP_FIGHTERS_2_FT_HANGAR_2_DAMAGE_BONUS]], augmentent de [[value SHP_FIGHTERS_2_FT_HANGAR_3_DAMAGE_BONUS]] pour un [[shippart FT_HANGAR_3]] et de [[value SHP_FIGHTERS_2_FT_HANGAR_4_DAMAGE_BONUS]] pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
 
 SHP_FIGHTERS_3
 Chasseurs et Rampes de Lancement 3
 
 SHP_FIGHTERS_3_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de [[value SHP_FIGHTERS_3_FT_HANGAR_2_DAMAGE_BONUS]], augmentent de [[value SHP_FIGHTERS_3_FT_HANGAR_3_DAMAGE_BONUS]] pour un [[shippart FT_HANGAR_3]] et de [[value SHP_FIGHTERS_3_FT_HANGAR_4_DAMAGE_BONUS]] pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
 
 SHP_FIGHTERS_4
 Chasseurs et Rampes de Lancement 4
 
 SHP_FIGHTERS_4_DESC
-Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de 12, augmentent de 18 pour un [[shippart FT_HANGAR_3]] et de 36 pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_2]] augmentent de [[value SHP_FIGHTERS_4_FT_HANGAR_2_DAMAGE_BONUS]], augmentent de [[value SHP_FIGHTERS_4_FT_HANGAR_3_DAMAGE_BONUS]] pour un [[shippart FT_HANGAR_3]] et de [[value SHP_FIGHTERS_4_FT_HANGAR_4_DAMAGE_BONUS]] pour un [[shippart FT_HANGAR_4]]. Pour les chasseurs d'un [[shippart FT_HANGAR_1]], la capacité augmente de 1, et la cadence de lancement de la [[shippart FT_BAY_1]] augmente de 1.
 
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
