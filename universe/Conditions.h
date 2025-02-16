@@ -1275,9 +1275,9 @@ public:
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
         const auto dump1 = [=](const auto& pt) -> decltype(auto) {
             if constexpr (requires { to_string(pt); })
-                return UserString(to_string(pt));
+                return UserString(to_string(pt)) + " /* UserString{" + typeid(pt).name() + "} */";
             else if constexpr (requires { bool(pt); pt->Dump(); })
-                return pt ? pt->Dump(ntabs) : std::string{};
+                return pt ? pt->Dump(ntabs) + " /* Dump{" + typeid(pt).name() + "} */" : std::string{"/* Empty */"};
             else
                 return "???";
         };
@@ -1288,7 +1288,7 @@ public:
                 std::string retval = "[ ";
                 for (const auto& pt : pts)
                     retval.append(dump1(pt) + " ");
-                retval.append("]\n");
+                retval.append("] // size:").append(std::to_string(pts.size())).append("\n");
                 return retval;
             } else {
                 return dump1(pts);
