@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
 
-    auto empire_statistics_p = Pending::StartAsyncParsing(parse::statistics, m_default_scripting_dir / "empire_statistics");
+    auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_default_scripting_dir / "empire_statistics");
 
     const auto empire_statistics = *Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
 

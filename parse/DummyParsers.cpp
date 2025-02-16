@@ -61,7 +61,7 @@ namespace parse {
     std::vector<std::unique_ptr<MonsterFleetPlan>> monster_fleet_plans(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const boost::filesystem::path& path)
+    std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const PythonParser& parser, const boost::filesystem::path& path)
     { return {}; }
 
     std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const boost::filesystem::path& path)
