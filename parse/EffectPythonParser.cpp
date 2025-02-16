@@ -287,6 +287,26 @@ namespace {
             auto target = py::extract<condition_wrapper>(kw["target"])();
             return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed),
                 ValueRef::CloneUnique(target.condition)));
+        } else if (kw.has_key("x") && kw.has_key("y")) {
+            std::unique_ptr<ValueRef::ValueRef<double>> x;
+            auto x_args = boost::python::extract<value_ref_wrapper<double>>(kw["x"]);
+            if (x_args.check()) {
+                x = ValueRef::CloneUnique(x_args().value_ref);
+            } else {
+                x = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["x"])());
+            }
+
+            std::unique_ptr<ValueRef::ValueRef<double>> y;
+            auto y_args = boost::python::extract<value_ref_wrapper<double>>(kw["y"]);
+            if (y_args.check()) {
+                y = ValueRef::CloneUnique(y_args().value_ref);
+            } else {
+                y = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["y"])());
+            }
+
+            return effect_wrapper(std::make_shared<Effect::MoveTowards>(std::move(speed),
+                std::move(x),
+                std::move(y)));
         }
 
         throw std::runtime_error(std::string("Not implemented in ") + __func__);
