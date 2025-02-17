@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include <boost/python/extract.hpp>
+
 #include "../universe/ValueRefs.h"
 #include "../universe/Conditions.h"
 
@@ -70,6 +72,15 @@ struct value_ref_wrapper {
 
     const std::shared_ptr<const ValueRef::ValueRef<T>> value_ref;
 };
+
+template<typename T>
+std::unique_ptr<ValueRef::ValueRef<T>> pyobject_to_vref(const boost::python::object& obj) {
+    auto arg = boost::python::extract<value_ref_wrapper<T>>(obj);
+    if (arg.check()) {
+        return ValueRef::CloneUnique(arg().value_ref);
+    }
+    return std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(obj)());
+}
 
 value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs);
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs);
