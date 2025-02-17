@@ -56,7 +56,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
                 Planet()
                 & Focus(type=["FOCUS_INDUSTRY"])
                 & OwnedBy(empire=Source.Owner)
-                & Happiness(low=NamedReal(name="BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY", value=20))
+                & Happiness(low=NamedRealLookup(name="BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY"))
                 & ResourceSupplyConnected(empire=Source.Owner, condition=IsSource)
             ),
             activation=Star(type=[BlackHole]),
