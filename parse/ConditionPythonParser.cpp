@@ -356,12 +356,7 @@ namespace {
         std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> types;
         boost::python::stl_input_iterator<boost::python::object> it_begin(kw["type"]), it_end;
         for (auto it = it_begin; it != it_end; ++it) {
-            auto type_arg = boost::python::extract<value_ref_wrapper<std::string>>(*it);
-            if (type_arg.check()) {
-                types.push_back(ValueRef::CloneUnique(type_arg().value_ref));
-            } else {
-                types.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(*it)()));
-            }
+            types.push_back(pyobject_to_vref<std::string>(*it));
         }
         return condition_wrapper(std::make_shared<Condition::FocusType>(std::move(types)));
     }
