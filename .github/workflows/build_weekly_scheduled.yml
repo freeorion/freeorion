@@ -1,7 +1,7 @@
 name: "Weekly Scheduled"
 on:
   schedule:
-    - cron: '*/20 15-18 * * 2'
+    - cron: '*/20 15-23 * * 2'
 jobs:
   check-run:
     name: Check If Weekly Test Build should be built
@@ -94,6 +94,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: weekly-artifacts-snap-*
+          merge-multiple: true
       - name: Check artifacts
         run: ls -l .
       - name: Upload artifacts
