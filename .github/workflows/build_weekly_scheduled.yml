@@ -87,6 +87,7 @@ jobs:
         run: scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_MacOSX_*.dmg FreeOrion_*_Test_Win32_Setup.exe FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/
   to-snap:
     name: Publish snap
+    runs-on: ubuntu-lastest
     needs: [macos, windows, windows-msvs, linux-snap] 
     steps:
       - name: Download artifacts
