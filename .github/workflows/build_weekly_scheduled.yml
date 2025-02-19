@@ -1,7 +1,7 @@
 name: "Weekly Scheduled"
 on:
   schedule:
-    - cron: '*/20 15-23 * * 2'
+    - cron: '*/20 1-23 * * 2,3'
 jobs:
   check-run:
     name: Check If Weekly Test Build should be built
@@ -102,7 +102,7 @@ jobs:
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_CREDENTIALS }}
         with:
-          snap: "*.snap"
+          snap: ${{ needs.linux-snap.outputs.snap }}
           release: edge
   publish-post:
     name: Publish post about weekly test build

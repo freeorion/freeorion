@@ -6,11 +6,17 @@ on:
       weekly-deploy:
         type: boolean
         default: false
+    outputs:
+      snap:
+        description: "Snap file"
+        value: ${{ jobs.snapcraft.outputs.snap }}
 
 jobs:
   snapcraft:
     runs-on: ubuntu-latest
     timeout-minutes: 55
+    outputs:
+      snap: ${{ steps.snapcraft.outputs.snap }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
