@@ -197,7 +197,7 @@ void PopupMenu::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 
         // get the correct submenu
         const MenuItem* menu_ptr = &m_menu_data;
-        for (std::size_t j = 0; j < i; ++j)
+        for (std::size_t j = 0; std::cmp_less(j, i); ++j)
             menu_ptr = &menu_ptr->next_level[m_caret[j]];
         if (!menu_ptr)
             break;
