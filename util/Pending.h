@@ -135,7 +135,10 @@ namespace Pending {
         bool success = true;
         auto result = parser(arg1, path, success);
         auto promise = std::promise<decltype(parser(arg1, path, std::declval<bool&>()))>();
-        promise.set_value(std::move(result));
+        if (success)
+            promise.set_value(std::move(result));
+        else
+            promise.set_exception(std::make_exception_ptr(std::runtime_error(path.string())));
         return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), path.filename().string());
     }
 
@@ -148,8 +151,13 @@ namespace Pending {
         bool success = true;
         auto result = parser(arg1, path, success);
         auto promise = std::promise<decltype(parser(arg1, path, std::declval<bool&>()))>();
-        promise.set_value(std::move(result));
-        barrier.set_value();
+        if (success) {
+            promise.set_value(std::move(result));
+            barrier.set_value();
+        } else {
+            promise.set_exception(std::make_exception_ptr(std::runtime_error(path.string())));
+            barrier.set_exception(std::make_exception_ptr(std::runtime_error(path.string())));
+        }
         return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), path.filename().string());
     }
 
