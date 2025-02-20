@@ -185,6 +185,13 @@ private:
     std::string m_top_level_content; // if m_value is "CurrentContent", return this instead
 };
 
+std::string DumpEnum(PlanetSize value);
+std::string DumpEnum(PlanetType value);
+std::string DumpEnum(PlanetEnvironment value);
+std::string DumpEnum(UniverseObjectType value);
+std::string DumpEnum(StarType value);
+std::string DumpEnum(Visibility value);
+
 enum class ValueToReturn : bool { Initial = false, Immediate = true };
 
 /** The variable value ValueRef class.  The value returned by this node is
