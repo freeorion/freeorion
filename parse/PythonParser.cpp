@@ -78,6 +78,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         type_float = py::import("builtins").attr("float");
         type_bool = py::import("builtins").attr("bool");
         type_str = py::import("builtins").attr("str");
+        py::import("builtins").attr("parser_context") = true;
 
         py::register_exception_translator<import_error>(&translate);
 
