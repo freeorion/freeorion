@@ -13,6 +13,7 @@ def BuildingType(
     location: _Condition,
     effectsgroups: list[_EffectGroup],
     icon: str,
-    captureresult=_DestroyAction,
+    captureresult=_DestroyAction(),
     enqueuelocation=_Condition(),
+    tags: list[str] | None = None,
 ): ...
