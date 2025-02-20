@@ -245,7 +245,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload buildings(const PythonParser& parser, const boost::filesystem::path& path) {
+    start_rule_payload buildings(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
         start_rule_payload building_types;
 
         ScopedTimer timer("Buildings Parsing");
@@ -253,15 +253,17 @@ namespace parse {
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, building_types);
 
+        bool file_success = true;
         py_grammar p = py_grammar(parser, building_types);
         for (const auto& file : ListDir(path, IsFOCPyScript))
-            py_parse::detail::parse_file<py_grammar>(parser, file, p);
+            file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
 
         TraceLogger(parsing) << "Start parsing FOCS for BuildingTypes: " << building_types.size();
         for (auto& [building_name, bt] : building_types)
             TraceLogger(parsing) << "BuildingType " << building_name << " : " << bt->GetCheckSum() << "\n" << bt->Dump();
         TraceLogger(parsing) << "End parsing FOCS for BuildingTypes" << building_types.size();
 
+        success = file_success;
         return building_types;
     }
 }

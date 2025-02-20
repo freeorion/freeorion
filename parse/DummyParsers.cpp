@@ -17,8 +17,10 @@
 #include "PythonParser.h"
 
 namespace parse {
-    std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const boost::filesystem::path& path)
-    { return {}; }
+    std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+        success = true;
+        return {};
+    }
 
     std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const boost::filesystem::path& path)
     { return {}; }
@@ -33,12 +35,16 @@ namespace parse {
     std::vector<Policy> policies(const boost::filesystem::path& path)
     { return {}; }
 
-    species_type species(const PythonParser& parser, const boost::filesystem::path& path)
-    { return {}; }
+    species_type species(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+        success = true;
+        return {};
+    }
 
     template <>
-    TechManager::TechParseTuple techs(const PythonParser& parser, const boost::filesystem::path& path)
-    { return TechManager::TechParseTuple{}; }
+    TechManager::TechParseTuple techs(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+        success = true;
+        return TechManager::TechParseTuple{};
+    }
 
     std::vector<UnlockableItem> items(const boost::filesystem::path& path)
     { return {}; }
@@ -61,14 +67,18 @@ namespace parse {
     std::vector<std::unique_ptr<MonsterFleetPlan>> monster_fleet_plans(const boost::filesystem::path& path)
     { return {}; }
 
-    std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const PythonParser& parser, const boost::filesystem::path& path)
-    { return {}; }
+    std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+        success = true;
+        return {};
+    }
 
     std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const boost::filesystem::path& path)
     { return {}; }
 
-    GameRulesTypeMap game_rules(const PythonParser& parser, const boost::filesystem::path& path)
-    { return {}; }
+    GameRulesTypeMap game_rules(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+        success = true;
+        return {};
+    }
 
     void file_substitution(std::string& text, const boost::filesystem::path& file_search_path, const std::string& filename)
     {}
