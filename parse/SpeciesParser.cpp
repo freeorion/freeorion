@@ -192,7 +192,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload species(const PythonParser& parser, const boost::filesystem::path& path) {
+    start_rule_payload species(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
         start_rule_payload retval;
         auto& [species_, ordering] = retval;
 
@@ -200,6 +200,7 @@ namespace parse {
 
         ScopedTimer timer("Species Parsing");
 
+        bool file_success = true;
         py_grammar p = py_grammar(parser, species_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.py" ) {
@@ -207,7 +208,7 @@ namespace parse {
                 continue;
             }
 
-            py_parse::detail::parse_file<py_grammar>(parser, file, p);
+            file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
         }
 
         TraceLogger(parsing) << "Start parsing FOCS for Species: " << species_.size();
@@ -217,8 +218,8 @@ namespace parse {
 
         if (!manifest_file.empty()) {
             try {
-                py_parse::detail::parse_file<py_manifest_grammar, start_rule_payload::second_type>(
-                    parser, manifest_file, py_manifest_grammar(), ordering);
+                file_success = py_parse::detail::parse_file<py_manifest_grammar, start_rule_payload::second_type>(
+                    parser, manifest_file, py_manifest_grammar(), ordering) && file_success;
 
             } catch (const std::runtime_error& e) {
                 ErrorLogger() << "Failed to species census manifest in " << manifest_file << " from " << path
@@ -226,6 +227,7 @@ namespace parse {
             }
         }
 
+        success = file_success;
         return retval;
     }
 }

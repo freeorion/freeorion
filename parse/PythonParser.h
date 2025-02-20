@@ -25,7 +25,10 @@ public:
 
     PythonParser& operator=(PythonParser&&) = delete;
 
-    bool ParseFileCommon(const boost::filesystem::path& path,
+    /** Parses content file \a path using predefined \a globals,
+      * puts file name from path to \a filename and file content to \a file_contents,
+      * return true if parsing was successfull. */
+    [[nodiscard]] bool ParseFileCommon(const boost::filesystem::path& path,
                          const boost::python::dict& globals,
                          std::string& filename, std::string& file_contents) const;
 

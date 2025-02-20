@@ -130,25 +130,27 @@ namespace Pending {
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     template <typename Func, typename Arg1>
     [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path)
-        -> Pending<decltype(parser(arg1, path))>
+        -> Pending<decltype(parser(arg1, path, std::declval<bool&>()))>
     {
-        auto result = parser(arg1, path);
-        auto promise = std::promise<decltype(parser(arg1, path))>();
+        bool success = true;
+        auto result = parser(arg1, path, success);
+        auto promise = std::promise<decltype(parser(arg1, path, std::declval<bool&>()))>();
         promise.set_value(std::move(result));
-        return Pending<decltype(parser(arg1, path))>(promise.get_future(), path.filename().string());
+        return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), path.filename().string());
     }
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     template <typename Func, typename Arg1>
     [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path,
                             std::promise<void>&& barrier)
-        -> Pending<decltype(parser(arg1, path))>
+        -> Pending<decltype(parser(arg1, path, std::declval<bool&>()))>
     {
-        auto result = parser(arg1, path);
-        auto promise = std::promise<decltype(parser(arg1, path))>();
+        bool success = true;
+        auto result = parser(arg1, path, success);
+        auto promise = std::promise<decltype(parser(arg1, path, std::declval<bool&>()))>();
         promise.set_value(std::move(result));
         barrier.set_value();
-        return Pending<decltype(parser(arg1, path))>(promise.get_future(), path.filename().string());
+        return Pending<decltype(parser(arg1, path, std::declval<bool&>()))>(promise.get_future(), path.filename().string());
     }
 
     /** Helper struct for use with std::async. operator() evaluates \a _parser

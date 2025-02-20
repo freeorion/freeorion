@@ -41,7 +41,7 @@ namespace ValueRef {
 }
 
 namespace parse {
-    FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
     FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>> named_value_refs(const boost::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<Special>, std::less<>> specials(const boost::filesystem::path& path);
@@ -58,12 +58,12 @@ namespace parse {
         std::map<std::string, Species>, // species_by_name,
         std::vector<std::string> // ordering
     >;
-    FO_PARSE_API species_type species(const PythonParser& parser, const boost::filesystem::path& path);
+    FO_PARSE_API species_type species(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
 
     /* T in techs<T> can only be TechManager::TechParseTuple.  This decouples
        Parse.h from Tech.h so that all parsers are not recompiled when Tech.h changes.*/
     template <typename T>
-    FO_PARSE_API T techs(const PythonParser& parser, const boost::filesystem::path& path);
+    FO_PARSE_API T techs(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
 
     FO_PARSE_API std::vector<UnlockableItem> items(const boost::filesystem::path& path);
     FO_PARSE_API std::vector<UnlockableItem> starting_buildings(const boost::filesystem::path& path);
@@ -81,9 +81,9 @@ namespace parse {
 
     FO_PARSE_API std::vector<std::unique_ptr<FleetPlan>> fleet_plans(const boost::filesystem::path& path);
     FO_PARSE_API std::vector<std::unique_ptr<MonsterFleetPlan>> monster_fleet_plans(const boost::filesystem::path& path);
-    FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const PythonParser& parser, const boost::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
     FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const boost::filesystem::path& path);
-    FO_PARSE_API std::unordered_map<std::string, GameRule> game_rules(const PythonParser& parser, const boost::filesystem::path& path);
+    FO_PARSE_API std::unordered_map<std::string, GameRule> game_rules(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
 
     FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path, const std::string& filename);
     FO_PARSE_API void process_include_substitutions(std::string& text,
