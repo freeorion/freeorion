@@ -11,9 +11,9 @@ RUN dnf install -y cmake \
 	zlib-devel \
 	SDL2-devel \
 	freetype-devel \
-	openal-devel \
+	openal-soft-devel \
 	libogg-devel \
 	libvorbis-devel \
-	glew-devel \
-	godot3-headless
+	glew-devel
+	# godot3-headless # wait for update godot3-headless at https://packages.fedoraproject.org/pkgs/godot3/godot3-headless/fedora-rawhide.html since 2025-01-30
 
