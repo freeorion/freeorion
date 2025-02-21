@@ -630,92 +630,27 @@ std::string Constant<double>::Description() const
 
 template <>
 std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const
-{
-    switch (m_value) {
-    case PlanetSize::SZ_TINY:      return "Tiny";
-    case PlanetSize::SZ_SMALL:     return "Small";
-    case PlanetSize::SZ_MEDIUM:    return "Medium";
-    case PlanetSize::SZ_LARGE:     return "Large";
-    case PlanetSize::SZ_HUGE:      return "Huge";
-    case PlanetSize::SZ_ASTEROIDS: return "Asteroids";
-    case PlanetSize::SZ_GASGIANT:  return "GasGiant";
-    default:                       return "?";
-    }
-}
+{ return std::string{DumpEnum(m_value)}; }
 
 template <>
 std::string Constant<PlanetType>::Dump(uint8_t ntabs) const
-{
-    switch (m_value) {
-    case PlanetType::PT_SWAMP:      return "Swamp";
-    case PlanetType::PT_TOXIC:      return "Toxic";
-    case PlanetType::PT_INFERNO:    return "Inferno";
-    case PlanetType::PT_RADIATED:   return "Radiated";
-    case PlanetType::PT_BARREN:     return "Barren";
-    case PlanetType::PT_TUNDRA:     return "Tundra";
-    case PlanetType::PT_DESERT:     return "Desert";
-    case PlanetType::PT_TERRAN:     return "Terran";
-    case PlanetType::PT_OCEAN:      return "Ocean";
-    case PlanetType::PT_ASTEROIDS:  return "Asteroids";
-    case PlanetType::PT_GASGIANT:   return "GasGiant";
-    default:            return "?";
-    }
-}
+{ return std::string{DumpEnum(m_value)}; }
 
 template <>
 std::string Constant<PlanetEnvironment>::Dump(uint8_t ntabs) const
-{
-    switch (m_value) {
-    case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
-    case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
-    case PlanetEnvironment::PE_POOR:          return "Poor";
-    case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
-    case PlanetEnvironment::PE_GOOD:          return "Good";
-    default:                                  return "?";
-    }
-}
+{ return std::string{DumpEnum(m_value)}; }
 
 template <>
 std::string Constant<UniverseObjectType>::Dump(uint8_t ntabs) const
-{
-    switch (m_value) {
-    case UniverseObjectType::OBJ_BUILDING:    return "Building";
-    case UniverseObjectType::OBJ_SHIP:        return "Ship";
-    case UniverseObjectType::OBJ_FLEET:       return "Fleet"; 
-    case UniverseObjectType::OBJ_PLANET:      return "Planet";
-    case UniverseObjectType::OBJ_SYSTEM:      return "System";
-    case UniverseObjectType::OBJ_FIELD:       return "Field";
-    default:                                  return "?";
-    }
-}
+{ return std::string{DumpEnum(m_value)}; }
 
 template <>
 std::string Constant<StarType>::Dump(uint8_t ntabs) const
-{
-    switch (m_value) {
-    case StarType::STAR_BLUE:    return "Blue";
-    case StarType::STAR_WHITE:   return "White";
-    case StarType::STAR_YELLOW:  return "Yellow";
-    case StarType::STAR_ORANGE:  return "Orange";
-    case StarType::STAR_RED:     return "Red";
-    case StarType::STAR_NEUTRON: return "Neutron";
-    case StarType::STAR_BLACK:   return "BlackHole";
-    case StarType::STAR_NONE:    return "NoStar";
-    default:                     return "Unknown";
-    }
-}
+{ return std::string{DumpEnum(m_value)}; }
 
 template <>
 std::string Constant<Visibility>::Dump(uint8_t ntabs) const
-{
-    switch (m_value) {
-    case Visibility::VIS_NO_VISIBILITY:      return "Invisible";
-    case Visibility::VIS_BASIC_VISIBILITY:   return "Basic";
-    case Visibility::VIS_PARTIAL_VISIBILITY: return "Partial";
-    case Visibility::VIS_FULL_VISIBILITY:    return "Full";
-    default:                                 return "Unknown";
-    }
-}
+{ return std::string{DumpEnum(m_value)}; }
 
 template <>
 std::string Constant<int>::Dump(uint8_t ntabs) const

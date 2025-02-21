@@ -1274,10 +1274,12 @@ public:
 
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override {
         const auto dump1 = [=](const auto& pt) -> decltype(auto) {
-            if constexpr (requires { to_string(pt); })
-                return UserString(to_string(pt));
+            if constexpr (requires { DumpEnum(pt); })
+                return std::string{DumpEnum(pt)};
             else if constexpr (requires { bool(pt); pt->Dump(); })
                 return pt ? pt->Dump(ntabs) : std::string{};
+            else if constexpr (requires { to_string(pt); })
+                return std::string{to_string(pt)};
             else
                 return "???";
         };
