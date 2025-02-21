@@ -15,14 +15,15 @@ jobs:
           - fedora-33
           - debian-oldstable
           - debian-stable
-          # - debian-sid # g++-15 ICE https://gcc.gnu.org/bugzilla/show_bug.cgi?id=118464
+          - debian-sid
           - debian-sid-i386
-          # - fedora-rawhide # wait for update godot3-server at https://packages.fedoraproject.org/pkgs/godot3/godot3-server/fedora-rawhide.html since 2025-01-30
         godot3: [true]
         include:
           - image: manjaro
             godot3: false
           - image: void-musl
+            godot3: false
+          - image: fedora-rawhide # wait for update godot3-headless at https://packages.fedoraproject.org/pkgs/godot3/godot3-headless/fedora-rawhide.html since 2025-01-30
             godot3: false
     env:
       CACHE_NAME: linux
