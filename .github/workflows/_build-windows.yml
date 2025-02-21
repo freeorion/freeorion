@@ -2,10 +2,6 @@ name: "Windows"
 
 on:
   workflow_call:
-    inputs:
-      weekly-deploy:
-        type: boolean
-        default: false
 jobs:
   windows-2022-cmake:
     name: MSVS 2022 on Windows CMake
@@ -74,7 +70,6 @@ jobs:
           cpack -V -C Release -G ZIP -D CPACK_ARCHIVE_COMPONENT_INSTALL=ON -D CPACK_MONOLITHIC_INSTALL=OFF -D "CPACK_COMPONENTS_ALL=binaries;binaries-test"
       - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4
-        if: ${{ inputs.weekly-deploy }}
         with:
           name: weekly-artifacts-sf-windows-${{ github.run_number }}
           path: build/FreeOrion_*.zip

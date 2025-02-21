@@ -49,8 +49,6 @@ jobs:
   windows:
     needs: check-run
     uses: ./.github/workflows/_build-windows.yml
-    with:
-      weekly-deploy: true
   windows-msvs:
     needs: check-run
     uses: ./.github/workflows/_build-windows-msvs.yml
