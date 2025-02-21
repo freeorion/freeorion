@@ -57,6 +57,28 @@ FO_ENUM(
     ((NUM_VISIBILITIES))
 )
 
+[[nodiscard]] constexpr std::string_view DumpEnum(UniverseObjectType value) noexcept {
+    switch (value) {
+    case UniverseObjectType::OBJ_BUILDING:    return "Building";
+    case UniverseObjectType::OBJ_SHIP:        return "Ship";
+    case UniverseObjectType::OBJ_FLEET:       return "Fleet";
+    case UniverseObjectType::OBJ_PLANET:      return "Planet";
+    case UniverseObjectType::OBJ_SYSTEM:      return "System";
+    case UniverseObjectType::OBJ_FIELD:       return "Field";
+    default:                                  return "?";
+    }
+}
+
+[[nodiscard]] constexpr std::string_view DumpEnum(Visibility value) noexcept {
+    switch (value) {
+    case Visibility::VIS_NO_VISIBILITY:      return "Invisible";
+    case Visibility::VIS_BASIC_VISIBILITY:   return "Basic";
+    case Visibility::VIS_PARTIAL_VISIBILITY: return "Partial";
+    case Visibility::VIS_FULL_VISIBILITY:    return "Full";
+    default:                                 return "Unknown";
+    }
+}
+
 
 /** Types for Meters
 * Only active paired meters should lie between MeterType::METER_POPULATION and MeterType::METER_TROOPS

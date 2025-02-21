@@ -42,6 +42,36 @@ FO_ENUM(
     ((NUM_PLANET_SIZES))
 )
 
+[[nodiscard]] constexpr std::string_view DumpEnum(PlanetSize value) noexcept {
+    switch (value) {
+    case PlanetSize::SZ_TINY:      return "Tiny";
+    case PlanetSize::SZ_SMALL:     return "Small";
+    case PlanetSize::SZ_MEDIUM:    return "Medium";
+    case PlanetSize::SZ_LARGE:     return "Large";
+    case PlanetSize::SZ_HUGE:      return "Huge";
+    case PlanetSize::SZ_ASTEROIDS: return "Asteroids";
+    case PlanetSize::SZ_GASGIANT:  return "GasGiant";
+    default:                       return "?";
+    }
+}
+
+[[nodiscard]] constexpr std::string_view DumpEnum(PlanetType value) noexcept {
+    switch (value) {
+    case PlanetType::PT_SWAMP:      return "Swamp";
+    case PlanetType::PT_TOXIC:      return "Toxic";
+    case PlanetType::PT_INFERNO:    return "Inferno";
+    case PlanetType::PT_RADIATED:   return "Radiated";
+    case PlanetType::PT_BARREN:     return "Barren";
+    case PlanetType::PT_TUNDRA:     return "Tundra";
+    case PlanetType::PT_DESERT:     return "Desert";
+    case PlanetType::PT_TERRAN:     return "Terran";
+    case PlanetType::PT_OCEAN:      return "Ocean";
+    case PlanetType::PT_ASTEROIDS:  return "Asteroids";
+    case PlanetType::PT_GASGIANT:   return "GasGiant";
+    default:            return "?";
+    }
+}
+
 
 /** a class representing a FreeOrion planet. */
 class FO_COMMON_API Planet final : public UniverseObject {

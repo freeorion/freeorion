@@ -44,6 +44,17 @@ FO_ENUM(
     ((NUM_PLANET_ENVIRONMENTS))
 )
 
+[[nodiscard]] constexpr std::string_view DumpEnum(PlanetEnvironment value) noexcept {
+    switch (value) {
+    case PlanetEnvironment::PE_UNINHABITABLE: return "Uninhabitable";
+    case PlanetEnvironment::PE_HOSTILE:       return "Hostile";
+    case PlanetEnvironment::PE_POOR:          return "Poor";
+    case PlanetEnvironment::PE_ADEQUATE:      return "Adequate";
+    case PlanetEnvironment::PE_GOOD:          return "Good";
+    default:                                  return "?";
+    }
+}
+
 
 /** A setting that a Planet can be assigned to influence what it
   * produces.  Doesn't directly affect the Planet, but effectsgroups

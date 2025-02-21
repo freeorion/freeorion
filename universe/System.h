@@ -26,6 +26,20 @@ FO_ENUM(
     ((NUM_STAR_TYPES))
 )
 
+[[nodiscard]] constexpr std::string_view DumpEnum(StarType value) noexcept {
+    switch (value) {
+    case StarType::STAR_BLUE:    return "Blue";
+    case StarType::STAR_WHITE:   return "White";
+    case StarType::STAR_YELLOW:  return "Yellow";
+    case StarType::STAR_ORANGE:  return "Orange";
+    case StarType::STAR_RED:     return "Red";
+    case StarType::STAR_NEUTRON: return "Neutron";
+    case StarType::STAR_BLACK:   return "BlackHole";
+    case StarType::STAR_NONE:    return "NoStar";
+    default:                     return "Unknown";
+    }
+}
+
 
 /** contains UniverseObjects and connections to other systems (starlanes and
    wormholes).  All systems are UniversObjects contained within the universe,
