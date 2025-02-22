@@ -133,7 +133,9 @@ FO_COMMON_API void AddAllPlanetsSet(const ObjectMap& objects, ObjectSet& in_out)
 FO_COMMON_API void AddAllBuildingsSet(const ObjectMap& objects, ObjectSet& in_out);
 FO_COMMON_API void AddAllShipsSet(const ObjectMap& objects, ObjectSet& in_out);
 FO_COMMON_API void AddAllFleetsSet(const ObjectMap& objects, ObjectSet& in_out);
+FO_COMMON_API void AddAllFieldsSet(const ObjectMap& objects, ObjectSet& in_out);
 FO_COMMON_API void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out);
+FO_COMMON_API void AddNonduplicatesFromIDs(const ObjectMap& objects, ObjectSet& in_out, std::span<const int> ids);
 
 
 // gets a planet from \a obj considering obj as a planet or a building on a planet
@@ -179,19 +181,19 @@ namespace Impl {
         constexpr uint16_t SYSTEMS =       1u << 7u;
         constexpr uint16_t FIELDS =        1u << 8u;
 
-        constexpr uint16_t UNDETERMINED =  1u << 15u;
-
         constexpr uint16_t PLANETS_BUILDINGS = PLANETS | BUILDINGS;
         constexpr uint16_t PLANETS_FLEETS =    PLANETS | FLEETS;
         constexpr uint16_t PLANETS_SHIPS =     PLANETS | SHIPS;
         constexpr uint16_t PLANETS_SYSTEMS =   PLANETS | SYSTEMS;
         constexpr uint16_t BUILDINGS_SHIPS =   BUILDINGS | SHIPS;
+        constexpr uint16_t FLEETS_SHIPS =      FLEETS | SHIPS;
         constexpr uint16_t FLEETS_SYSTEMS =    FLEETS | SYSTEMS;
 
-        constexpr uint16_t PLANETS_FLEETS_SYSTEMS =         PLANETS | FLEETS | SYSTEMS;
-        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS = PLANETS | BUILDINGS | FLEETS | SHIPS;
+        constexpr uint16_t PLANETS_FLEETS_SYSTEMS =                PLANETS | FLEETS | SYSTEMS;
+        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS =        PLANETS | BUILDINGS | FLEETS | SHIPS;
+        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS = PLANETS | BUILDINGS | FLEETS | SHIPS | FIELDS;
 
-        constexpr uint16_t ANYOBJECT =                      PLANETS | BUILDINGS | FLEETS | SHIPS | SYSTEMS | FIELDS;
+        constexpr uint16_t ANYOBJECTTYPE = PLANETS | BUILDINGS | FLEETS | SHIPS | SYSTEMS | FIELDS;
     }
 
     std::string MatchesToString(auto mt) {
@@ -208,8 +210,6 @@ namespace Impl {
         if (mt & SYSTEMS) retval += "SYSTEMS ";
         if (mt & FIELDS) retval += "FIELDS ";
 
-        if (mt & UNDETERMINED) retval += "UNDETERMINED ";
-
         return retval.empty() ? "NOTHING" : retval;
     }
 
@@ -222,48 +222,52 @@ namespace Impl {
         case MatchesType::BUILDINGS:                return MatchesType::PLANETS_SYSTEMS;        break;
         case MatchesType::FLEETS:                   return MatchesType::SYSTEMS;                break;
         case MatchesType::SHIPS:                    return MatchesType::FLEETS_SYSTEMS;         break;
-        case MatchesType::FIELDS:                   return MatchesType::NOTHING;                break;
+        case MatchesType::FIELDS:                   return MatchesType::SYSTEMS;                break;
 
-        case MatchesType::ANYOBJECT:                return MatchesType::PLANETS_FLEETS_SYSTEMS; break;
+        case MatchesType::ANYOBJECTTYPE:            return MatchesType::PLANETS_FLEETS_SYSTEMS; break;
 
         case MatchesType::PLANETS_BUILDINGS:        return MatchesType::PLANETS_SYSTEMS;        break;
         case MatchesType::PLANETS_FLEETS:           return MatchesType::SYSTEMS;                break;
         case MatchesType::PLANETS_SHIPS:            return MatchesType::FLEETS_SYSTEMS;         break;
         case MatchesType::PLANETS_SYSTEMS:          return MatchesType::SYSTEMS;                break;
         case MatchesType::BUILDINGS_SHIPS:          return MatchesType::PLANETS_FLEETS_SYSTEMS; break;
+        case MatchesType::FLEETS_SHIPS:             return MatchesType::FLEETS_SYSTEMS;         break;
         case MatchesType::FLEETS_SYSTEMS:           return MatchesType::SYSTEMS;                break;
 
-        case MatchesType::PLANETS_FLEETS_SYSTEMS:         return MatchesType::SYSTEMS;          break;
-        case MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS: return MatchesType::SYSTEMS;          break;
+        case MatchesType::PLANETS_FLEETS_SYSTEMS:                return MatchesType::SYSTEMS;   break;
+        case MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS:        return MatchesType::SYSTEMS;   break;
+        case MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS: return MatchesType::SYSTEMS;   break;
 
-        default:                                    return MatchesType::UNDETERMINED;           break;
+        default:                                    return MatchesType::PLANETS_FLEETS_SYSTEMS; break;
         }
     }
 
     [[nodiscard]] constexpr auto ContainedTypesOf(auto in) noexcept {
         switch (in) {
-        case MatchesType::NOTHING:                  return MatchesType::NOTHING;                        break;
+        case MatchesType::NOTHING:                  return MatchesType::NOTHING;                               break;
 
-        case MatchesType::SYSTEMS:                  return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS; break;
-        case MatchesType::PLANETS:                  return MatchesType::BUILDINGS;                      break;
-        case MatchesType::BUILDINGS:                return MatchesType::NOTHING;                        break;
-        case MatchesType::FLEETS:                   return MatchesType::SHIPS;                          break;
-        case MatchesType::SHIPS:                    return MatchesType::NOTHING;                        break;
-        case MatchesType::FIELDS:                   return MatchesType::NOTHING;                        break;
+        case MatchesType::SYSTEMS:                  return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS; break;
+        case MatchesType::PLANETS:                  return MatchesType::BUILDINGS;                             break;
+        case MatchesType::BUILDINGS:                return MatchesType::NOTHING;                               break;
+        case MatchesType::FLEETS:                   return MatchesType::SHIPS;                                 break;
+        case MatchesType::SHIPS:                    return MatchesType::NOTHING;                               break;
+        case MatchesType::FIELDS:                   return MatchesType::NOTHING;                               break;
 
-        case MatchesType::ANYOBJECT:                return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS; break;
+        case MatchesType::ANYOBJECTTYPE:            return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS; break;
 
-        case MatchesType::PLANETS_BUILDINGS:        return MatchesType::BUILDINGS;                      break;
-        case MatchesType::PLANETS_FLEETS:           return MatchesType::BUILDINGS_SHIPS;                break;
-        case MatchesType::PLANETS_SHIPS:            return MatchesType::BUILDINGS;                      break;
-        case MatchesType::PLANETS_SYSTEMS:          return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS; break;
-        case MatchesType::BUILDINGS_SHIPS:          return MatchesType::NOTHING;                        break;
-        case MatchesType::FLEETS_SYSTEMS:           return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS; break;
+        case MatchesType::PLANETS_BUILDINGS:        return MatchesType::BUILDINGS;                             break;
+        case MatchesType::PLANETS_FLEETS:           return MatchesType::BUILDINGS_SHIPS;                       break;
+        case MatchesType::PLANETS_SHIPS:            return MatchesType::BUILDINGS;                             break;
+        case MatchesType::PLANETS_SYSTEMS:          return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS; break;
+        case MatchesType::BUILDINGS_SHIPS:          return MatchesType::NOTHING;                               break;
+        case MatchesType::FLEETS_SHIPS:             return MatchesType::SHIPS;                                 break;
+        case MatchesType::FLEETS_SYSTEMS:           return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS; break;
 
-        case MatchesType::PLANETS_FLEETS_SYSTEMS:         return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS; break;
-        case MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS: return MatchesType::BUILDINGS_SHIPS;                break;
+        case MatchesType::PLANETS_FLEETS_SYSTEMS:                return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS; break;
+        case MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS:        return MatchesType::BUILDINGS_SHIPS;                       break;
+        case MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS: return MatchesType::BUILDINGS_SHIPS;                       break;
 
-        default:                                    return MatchesType::UNDETERMINED;           break;
+        default:                                    return MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS; break;
         }
     }
 
@@ -292,7 +296,7 @@ namespace Impl {
         constexpr explicit NestedCondition(ConditionT&& operand) noexcept :
             Condition(CondsRTSI(operand)),
             m_condition(std::move(operand)),
-            m_matches_only(MatchesOnly(m_condition))
+            m_nested_cond_matches_types(MatchesOnly(m_condition))
         {}
 
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -370,7 +374,7 @@ namespace Impl {
 
         constexpr uint16_t MatchesOnly(const auto& cond) const;
 
-        const uint16_t m_matches_only = MatchesType::ANYOBJECT;
+        const uint16_t m_nested_cond_matches_types = MatchesType::ANYOBJECTTYPE;
     };
 }
 
@@ -1113,66 +1117,58 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override {
-        const auto& objects = context.ContextObjects();
-        ObjectSet retval;
+        // possible matched objects for Contains are objects that can contain other objects.
+        // if the subcondition matches planets and/or fleets, just systems are candidates for Contains.
+        // if the subcondition matches buildings, planets, ships, fleets, and/or fields, then system are also candidates for Contains
+        // if the subcondition matches single objects (source, target, rootcandidate), then the containers of those objects are candidates for Contains
 
-        static constexpr auto get_containers_of = [](const auto* obj, const ObjectMap& objects, ObjectSet& out) {
-            if (!obj)
-                return;
-
-            const auto sys_id = obj->SystemID();
-            if (sys_id != INVALID_OBJECT_ID)
-                if (const auto* sys = objects.getRaw(sys_id))
-                    out.push_back(sys);
-
-            const auto container_id = obj->ContainerObjectID();
-            if (sys_id != container_id && container_id != INVALID_OBJECT_ID)
-                if (const auto* container = objects.getRaw(container_id))
-                    out.push_back(container);
+        static constexpr auto add_container_ids_of = [](const auto* obj, std::vector<int>& out) {
+            if (obj) {
+                out.push_back(obj->SystemID());
+                out.push_back(obj->ContainerObjectID());
+            }
         };
 
-        switch (NC::m_matches_only) {
-        case Impl::MatchesType::SOURCE: {
-            get_containers_of(context.source, objects, retval);
-            break;
-        }
-        case Impl::MatchesType::TARGET: {
-            get_containers_of(context.effect_target, objects, retval);
-            break;
-        }
-        case Impl::MatchesType::ROOTCANDIDATE: {
-            get_containers_of(context.condition_root_candidate, objects, retval);
-            break;
+        const auto mt = NC::m_nested_cond_matches_types;
+
+        // get IDs of anything that contains single context objects
+        std::vector<int> container_ids;
+        container_ids.reserve(6u);
+
+        if (mt & Impl::MatchesType::SOURCE)
+            add_container_ids_of(context.source, container_ids);
+        if (mt & Impl::MatchesType::TARGET)
+            add_container_ids_of(context.effect_target, container_ids);
+        if (mt & Impl::MatchesType::ROOTCANDIDATE)
+            add_container_ids_of(context.condition_root_candidate, container_ids);
+        if (container_ids.size() > 1u) {
+            // ensure no duplicate or invalid IDs
+            auto no_invalid_it = std::remove(container_ids.begin(), container_ids.end(), INVALID_OBJECT_ID);
+            std::sort(container_ids.begin(), no_invalid_it);
+            auto unique_it = std::unique(container_ids.begin(), no_invalid_it);
+            container_ids.erase(unique_it, container_ids.end());
         }
 
-        case Impl::MatchesType::FLEETS:
-        case Impl::MatchesType::PLANETS: {
-            AddAllSystemsSet(objects, retval);
-            break;
-        }
-        case Impl::MatchesType::BUILDINGS: {
-            retval.reserve(objects.size<System>() + objects.size<Planet>());
-            AddAllSystemsSet(objects, retval);
-            AddAllPlanetsSet(objects, retval);
-            break;
-        }
-        case Impl::MatchesType::SHIPS: {
-            retval.reserve(objects.size<System>() + objects.size<Fleet>());
-            AddAllSystemsSet(objects, retval);
-            AddAllFleetsSet(objects, retval);
-            break;
-        }
-        default: {
-            // objects that can contain other objects: systems, fleets, planets
-            retval.reserve(objects.size<System>() + objects.size<Fleet>() + objects.size<Planet>());
-            AddAllSystemsSet(objects, retval);
-            AddAllFleetsSet(objects, retval);
-            AddAllPlanetsSet(objects, retval);
-        }
-        }
+        const auto& objects = context.ContextObjects();
+        ObjectSet retval;
+        retval.reserve(((mt & Impl::MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS) ? objects.size<::System>() : 0u) +
+                       ((mt & Impl::MatchesType::BUILDINGS) ? objects.size<::Planet>() : 0u) +
+                       ((mt & Impl::MatchesType::SHIPS) ? objects.size<::Fleet>() : 0u) +
+                       container_ids.size());
 
-        std::cout << "\n\n" << static_cast<int>(NC::m_matches_only) << " : "
-                  << retval.size() << " : " << Dump() << std::endl;
+        // add systems, planets, and fleets if the subcondition could match objects that they could contain
+        if (mt & Impl::MatchesType::PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS)
+            AddAllSystemsSet(objects, retval);
+        if (mt & Impl::MatchesType::BUILDINGS)
+            AddAllPlanetsSet(objects, retval);
+        if (mt & Impl::MatchesType::SHIPS)
+            AddAllFleetsSet(objects, retval);
+
+        AddNonduplicatesFromIDs(objects, retval, container_ids);
+
+
+        std::cout << "\n\n" << retval.size() << " : " << Impl::MatchesToString(NC::m_nested_cond_matches_types)
+                  << " : " << Dump() << std::endl;
         return retval;
     }
 
@@ -1359,16 +1355,64 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override {
-        // objects that can be contained by other objects: fleets, planets, ships, buildings
+        // possible matched objects for ContainedBy are objects that can be contained.
+        // if the subcondition matches planets, just buildings are candidates for ContainedBy
+        // if the subcondition matches fleets, just ships are candidates for ContainedBy
+        // if the subcondition matches systems, buildings, planets, ships, fleets, and fields are candidates for ContainedBy
+        // if the subcondition matches single objects (source, target, rootcandidate), then the containers of those objects are candidates for Contains
+
+        static constexpr auto add_contents_ids_of = [](const auto* obj, std::vector<int>& out) {
+            if (obj) {
+                const auto& ids = obj->ContainedObjectIDs();
+                out.insert(out.end(), ids.begin(), ids.end());
+            }
+        };
+
+        const auto mt = NC::m_nested_cond_matches_types;
+
+        // get IDs of anything contained within single context objects
+        std::vector<int> contents_ids;
+        if (mt & Impl::MatchesType::SOURCE)
+            add_contents_ids_of(context.source, contents_ids);
+        if (mt & Impl::MatchesType::TARGET)
+            add_contents_ids_of(context.effect_target, contents_ids);
+        if (mt & Impl::MatchesType::ROOTCANDIDATE)
+            add_contents_ids_of(context.condition_root_candidate, contents_ids);
+        if (contents_ids.size() > 1u) {
+            // ensure no duplicate or invalid IDs
+            auto no_invalid_it = std::remove(contents_ids.begin(), contents_ids.end(), INVALID_OBJECT_ID);
+            std::sort(contents_ids.begin(), no_invalid_it);
+            auto unique_it = std::unique(contents_ids.begin(), no_invalid_it);
+            contents_ids.erase(unique_it, contents_ids.end());
+        }
+
         const auto& objects = context.ContextObjects();
         ObjectSet retval;
-        retval.reserve(objects.size<Fleet>() + objects.size<Planet>() +
-                       objects.size<Ship>() + objects.size<::Building>());
-        AddAllFleetsSet(objects, retval);
-        AddAllPlanetsSet(objects, retval);
-        AddAllShipsSet(objects, retval);
-        AddAllBuildingsSet(objects, retval);
-        std::cout << retval.size() << " : " << Dump() << std::endl;
+
+        if (mt & Impl::MatchesType::SYSTEMS) { // add anything that could be contained within a system
+            retval.reserve(objects.size<::Fleet>() + objects.size<::Ship>() +
+                           objects.size<::Planet>() + objects.size<::Building>() +
+                           objects.size<::Field>() + contents_ids.size());
+            AddAllFleetsSet(objects, retval);
+            AddAllShipsSet(objects, retval);
+            AddAllPlanetsSet(objects, retval);
+            AddAllBuildingsSet(objects, retval);
+            AddAllFieldsSet(objects, retval);
+
+        } else { // add anything that could be contained within a fleet or planet
+            retval.reserve(((mt & Impl::MatchesType::FLEETS) ? objects.size<::Ship>() : 0u) +
+                           ((mt & Impl::MatchesType::PLANETS) ? objects.size<::Planet>() : 0u) +
+                           contents_ids.size());
+            if (mt & Impl::MatchesType::FLEETS)
+                AddAllShipsSet(objects, retval);
+            if (mt & Impl::MatchesType::PLANETS)
+                AddAllBuildingsSet(objects, retval);
+        }
+
+        AddNonduplicatesFromIDs(objects, retval, contents_ids);
+
+        std::cout << "\n\n" << retval.size() << " : " << Impl::MatchesToString(NC::m_nested_cond_matches_types)
+                  << " : " << Dump() << std::endl;
         return retval;
     }
 
@@ -3201,9 +3245,9 @@ namespace Impl {
     constexpr uint16_t NestedCondition<ConditionT>::MatchesOnly(const auto& cond) const
     {
         const auto cond_to_matchestype = [this](const auto& op) {
-            if constexpr (requires { *op; })
-                return op ? MatchesOnly(*op) : MatchesType::ANYOBJECT;
-            else
+            /*if constexpr (requires { *op; })
+                return op ? MatchesOnly(*op) : MatchesType::NOTHING;
+            else*/
                 return MatchesOnly(op);
         };
 
@@ -3219,12 +3263,12 @@ namespace Impl {
         constexpr auto matches_only_target = [](auto mt) noexcept -> bool { return mt == MatchesType::TARGET; };
         constexpr auto matches_only_rootcand = [](auto mt) noexcept -> bool { return mt == MatchesType::ROOTCANDIDATE; };
         constexpr auto matches_any_context_object = [](auto mt) noexcept -> bool { return mt & MatchesType::SINGLEOBJECT; }; // could match multiple context objects, eg. source and target
-        constexpr auto matches_undetermined = [](auto mt) noexcept -> bool { return mt & MatchesType::UNDETERMINED; };
-        constexpr auto matches_any_object_type = [](auto mt) noexcept -> bool { return mt & MatchesType::ANYOBJECT; };
+        constexpr auto matches_any_object_type = [](auto mt) noexcept -> bool { return mt & MatchesType::ANYOBJECTTYPE; };
+        constexpr auto matches_nothing = [](auto mt) noexcept -> bool { return mt == MatchesType::NOTHING; };
+        constexpr auto bit_and = [](auto lhs, auto rhs) noexcept { return lhs & rhs; };
 
 
-
-        if constexpr (requires { *cond; }) {
+        if constexpr (requires { *cond; }) { // put here so casts below in else ... don't get compiled when they shouldn't
             return MatchesOnly(*cond);
 
         } else if (auto* and_cond = dynamic_cast<const ::Condition::And*>(&cond)) {
@@ -3255,31 +3299,51 @@ namespace Impl {
                 const auto unique_it = std::unique(ops_matched_types.begin(), ops_matched_types.end());
                 ops_matched_types.erase(unique_it, ops_matched_types.end());
 
+                uint16_t result = MatchesType::ANYOBJECTTYPE;
 
-                uint16_t result = MatchesType::ANYOBJECT;
-
+                if (std::any_of(ops_matched_types.begin(), ops_matched_types.end(), matches_nothing)) {
+                    result = MatchesType::NOTHING;
 
                 // do any of the subconditions match only a single object like source, target, or root candidate?
-                if (std::any_of(ops_matched_types.begin(), ops_matched_types.end(), matches_only_source)) {
+                // if so, only that object need be considered as any match must be that context object
+                // (although a match could be another context object also, that does not matter)
+                } else if (std::any_of(ops_matched_types.begin(), ops_matched_types.end(), matches_only_source)) {
                     result = MatchesType::SOURCE;
                 } else if (std::any_of(ops_matched_types.begin(), ops_matched_types.end(), matches_only_target)) {
                     result = MatchesType::TARGET;
                 } else if (std::any_of(ops_matched_types.begin(), ops_matched_types.end(), matches_only_rootcand)) {
                     result = MatchesType::ROOTCANDIDATE;
 
-                } else if (std::all_of(ops_matched_types.begin(), ops_matched_types.end(), matches_undetermined)) {
-                    result = MatchesType::ANYOBJECT; // not sure what's going on, so be safe
-
-                } else if (std::any_of(ops_matched_types.begin(), ops_matched_types.end(), matches_any_context_object)) {
-                    result = MatchesType::ANYOBJECT; // don't handle combinations of multiple context objects and maybe also types
-
+                // if there are no type restrictions, then can match context objects that matched by all subconditions
+                // including if the subconditions all match multiple context objects
                 } else if (std::none_of(ops_matched_types.begin(), ops_matched_types.end(), matches_any_object_type)) {
-                    result = MatchesType::ANYOBJECT; // not sure what's going on, so be safe
+                    result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(),
+                                         MatchesType::SINGLEOBJECT, bit_and);
 
+                // if there are no context object restrictions, then can match objects whose
+                // type is matched by all subconditions
+                } else if (std::none_of(ops_matched_types.begin(), ops_matched_types.end(), matches_any_context_object)) {
+                    result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(),
+                                         MatchesType::ANYOBJECTTYPE, bit_and);
+
+                // have some combation of mixed multiple context objects, mixed context object and type, 
+                // eg. (Source OR SHIP) & (FLEET) & (Target OR SHIP)
+                // -> if Source and Target are the same Fleet object, that object is a possible match
+                //    but 1. bitwise & of the matched types of these is NOTHING
+                //        2. none matches just a single context object
+                //        3. some match a context object
+                // so need another case...
                 } else {
-                    // have some object type restrictions. find types matched by all operands
-                    result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), MatchesType::ANYOBJECT,
-                                         [](auto lhs, auto rhs) noexcept { return lhs & rhs; });
+                    // could probably do something fancy now to ensure optimal / minimal and correct
+                    // results, but I don't want to work through all possibilities...
+                    // 
+                    // so, disregard any subcondition that matches any context objects.
+                    // remainder should match only object types eg. just FLEET in the above example
+                    //
+                    // bit_and of these object type restrictions should be correct (though not necessarily optimial)
+                    auto removed_it = std::remove_if(ops_matched_types.begin(), ops_matched_types.end(), matches_any_context_object);
+                    // if no matched types remain after this, then this should fall back to ANYOBJECTTYPE
+                    result = std::reduce(ops_matched_types.begin(), removed_it, MatchesType::ANYOBJECTTYPE, bit_and);
                 }
 
                 std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
@@ -3310,30 +3374,11 @@ namespace Impl {
                 }
                 // TEST OUTPUT
 
-
-
                 // or together all possible outputs...
-                uint16_t result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), MatchesType::NOTHING,
-                                              [](auto lhs, auto rhs) noexcept { return lhs | rhs; });
+                auto result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), MatchesType::NOTHING,
+                                          [](auto lhs, auto rhs) noexcept { return lhs | rhs; });
 
-
-                if (result == MatchesType::NOTHING)
-                    return MatchesType::NOTHING;
-
-                else if (matches_undetermined(result))
-                    return MatchesType::UNDETERMINED;
-
-                else if (matches_only_source(result))
-                    return MatchesType::SOURCE;
-                else if (matches_only_target(result))
-                    return MatchesType::TARGET;
-                else if (matches_only_rootcand(result))
-                    return MatchesType::ROOTCANDIDATE;
-
-                else if (matches_any_context_object(result))
-                    return MatchesType::ANYOBJECT;
-
-                // otherwise, result should be a set of possible output types to consider...
+                // result should be a set of possible output types to consider...
                 std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
                 return result;
             }
@@ -3375,7 +3420,7 @@ namespace Impl {
             return MatchesType::BUILDINGS;
 
         }
-        return MatchesType::ANYOBJECT;
+        return MatchesType::ANYOBJECTTYPE;
     }
 }
 }
