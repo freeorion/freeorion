@@ -14,6 +14,13 @@
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>
 
+#include <utility>
+#if !defined(__cpp_lib_integer_comparison_functions)
+namespace std {
+    constexpr auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+}
+#endif
+
 
 using namespace GG;
 
