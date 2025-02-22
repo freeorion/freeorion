@@ -17,7 +17,7 @@
 #include <utility>
 #if !defined(__cpp_lib_integer_comparison_functions)
 namespace std {
-    constexpr auto cmp_less(auto&& lhs, auto&& rhs) { return lhs < rhs; }
+    constexpr bool cmp_less(std::size_t lhs, int rhs) noexcept { return (rhs > 0) && (lhs < static_cast<std::size_t>(rhs)); }
 }
 #endif
 
