@@ -1930,11 +1930,12 @@ namespace {
             return val;
         } else {
             const auto trunc_val = static_cast<std::decay_t<T>>(static_cast<int64_t>(val));
-            return (trunc_val == val) ? trunc_val : (val >= 0) ? trunc_val : trunc_val - 1;
+            return (trunc_val == val) ? trunc_val : (val >= 0) ? trunc_val : trunc_val - 1; // round towards -inf not zero
         }
 #endif
     }
 
+    // binary operation returning bool
     constexpr bool ValCompareOp(const auto& lhs, OpType op_type, const auto& rhs) noexcept {
         switch (op_type) {
         case OpType::COMPARE_EQUAL:                 return lhs == rhs;  break;
@@ -1943,7 +1944,7 @@ namespace {
         case OpType::COMPARE_LESS_THAN:             return lhs < rhs;   break;
         case OpType::COMPARE_LESS_THAN_OR_EQUAL:    return lhs <= rhs;  break;
         case OpType::COMPARE_NOT_EQUAL:             return lhs != rhs;  break;
-        default:                                      return false;       break;
+        default:                                    return false;       break;
         }
     }
 
@@ -1961,6 +1962,7 @@ namespace {
     }
 }
 
+// apply unary operation to operand: math operations or NoOp
 template <typename T>
     requires std::is_enum_v<std::decay_t<T>> || std::is_arithmetic_v<std::decay_t<T>> ||
              std::is_same_v<std::decay_t<T>, std::string>
@@ -1992,6 +1994,7 @@ constexpr auto OperateData(OpType op_type, T&& val)
     throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for one operand.");
 }
 
+// apply binary math or logical comparison operation to two operands
 template <typename T>
 constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs)
 {
@@ -2105,6 +2108,7 @@ constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs)
     throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for two operands.");
 }
 
+// apply operation to two operands, supporting discrete randomized results
 template <typename T>
 constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int)
     requires requires { {rand_int(0, 1)} -> std::same_as<int>; }
@@ -2127,6 +2131,7 @@ constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int)
     return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs));
 }
 
+// apply operation to two operands, supporting discrete randomized results and floating-point uniform random results
 template <typename T>
 constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int, auto rand_double)
     requires requires { {rand_int(0, 1)} -> std::same_as<int>; {rand_double(0.1, 1.0)} -> std::same_as<double>; }
@@ -2140,6 +2145,8 @@ constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int, auto
     return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs), rand_int);
 }
 
+// apply accumulation or min/max operation to values in a container
+// contained values can be a string, but the container itself should not be a string
 template <typename D>
     requires (requires(D d) { d.begin(); d.end(); d.front(); } && !std::is_same_v<std::decay_t<D>, std::string>)
 constexpr auto OperateData(OpType op_type, D&& data)
@@ -2188,6 +2195,8 @@ constexpr auto OperateData(OpType op_type, D&& data)
     throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for data array.");
 }
 
+// apply operation to values in a container (which can contain but should not be a string)
+// supporting discrete random picking results
 template <typename D>
     requires (requires(D d) { d.size(); d[std::size_t{0}]; d.begin(); d.end(); d.front(); } &&
               !std::is_same_v<std::decay_t<D>, std::string>)
