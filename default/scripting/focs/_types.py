@@ -9,8 +9,6 @@
 try:
     from typing import TypeVar, Union
 
-    from typing_extensions import Self
-
     class _MeterType:
         ...
 
@@ -61,13 +59,13 @@ try:
         which return int type, that breaks linter logic.
         """
 
-        def __and__(self, other) -> Self:
+        def __and__(self, other) -> "_Condition":
             ...
 
-        def __or__(self, other) -> Self:
+        def __or__(self, other) -> "_Condition":
             ...
 
-        def __invert__(self) -> Self:
+        def __invert__(self) -> "_Condition":
             ...
 
     class _ConditionalComposition:
