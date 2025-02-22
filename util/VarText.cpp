@@ -259,7 +259,7 @@ namespace {
     }};
 
     // .first = result  .second = was there a substitution matching \a tag
-    std::tuple<boost::optional<std::string>, bool> EvalContextSub(
+    std::pair<boost::optional<std::string>, bool> EvalContextSub(
         std::string_view tag, std::string_view value, const ScriptingContext& context)
     {
         const auto it = std::find_if(context_substitution_map.begin(), context_substitution_map.end(),
@@ -272,7 +272,7 @@ namespace {
     }
 
     // .first = result  .second = was there a substitution matching \a tag
-    std::tuple<boost::optional<std::string>, bool> EvalNoContextSub(
+    std::pair<boost::optional<std::string>, bool> EvalNoContextSub(
         std::string_view tag, std::string_view value)
     {
         const auto it = std::find_if(no_context_substitution_map.begin(), no_context_substitution_map.end(),
@@ -337,7 +337,7 @@ namespace {
         const auto [sub_opt, sub_found] = [context](std::string_view tag, std::string_view variable_value) {
             if (context) {
                 auto retval = EvalContextSub(tag, variable_value, *context);
-                if (std::get<1>(retval))
+                if (retval.second)
                     return retval;
             }
             return EvalNoContextSub(tag, variable_value);
