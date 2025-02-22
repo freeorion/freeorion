@@ -13,8 +13,8 @@
 
 void RegisterGlobalsEnums(boost::python::dict& globals) {
     for (const auto& op : std::initializer_list<std::pair<const char*, ResourceType>>{
-        {"Influence", ResourceType::RE_INFLUENCE},
-        {"Industry",  ResourceType::RE_INDUSTRY}})
+        {"ResourceInfluence", ResourceType::RE_INFLUENCE},
+        {"ResourceIndustry",  ResourceType::RE_INDUSTRY}})
     {
         globals[op.first] = enum_wrapper<ResourceType>(op.second);
     }
