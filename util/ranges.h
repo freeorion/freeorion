@@ -17,6 +17,7 @@ inline constexpr auto& range_filter = std::views::filter;
 //inline constexpr auto& range_join = std::views::join; // no equivalent in boost ranges
 inline constexpr auto& range_reverse = std::views::reverse;
 inline constexpr auto& range_find_if = std::ranges::find_if;
+inline constexpr auto& range_find = std::ranges::find;
 inline constexpr auto& range_any_of = std::ranges::any_of;
 inline constexpr auto& range_all_of = std::ranges::all_of;
 inline constexpr auto& range_copy = std::ranges::copy;
@@ -45,6 +46,8 @@ inline const auto& range_reverse = boost::adaptors::reversed;
 
 template <typename... Args>
 inline auto range_find_if(Args... args) { return boost::range::find_if(std::forward<Args>(args)...); }
+template <typename... Args>
+inline auto range_find(Args... args) { return boost::range::find(std::forward<Args>(args)...); }
 
 template <typename... Args>
 inline const auto range_any_of(Args... args) { return boost::algorithm::any_of(std::forward<Args>(args)...); }
