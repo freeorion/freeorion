@@ -13,7 +13,6 @@ from focs._effects import (
     HasSpecies,
     Homeworld,
     Hostile,
-    Influence,
     IsHuman,
     IsSource,
     LocalCandidate,
@@ -25,6 +24,7 @@ from focs._effects import (
     PartCapacity,
     Planet,
     Poor,
+    ResourceInfluence,
     SetCapacity,
     SetMaxTroops,
     SetRebelTroops,
@@ -58,24 +58,30 @@ _UNSTABLE_REBEL_TROOPS = [
     ),
     EffectsGroup(
         scope=IsSource,
-        activation=Planet() & ~Unowned & ~HasEmpireStockpile(empire=Source.Owner, resource=Influence, low=0) & ~Capital
+        activation=Planet()
+        & ~Unowned
+        & ~HasEmpireStockpile(empire=Source.Owner, resource=ResourceInfluence, low=0)
+        & ~Capital
         # TODO: some species trait?
         ,
         accountinglabel="PARTISANS_REBELLION",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=SetTargetHappiness(
-            value=Value - 0.5 * Abs(float, EmpireStockpile(empire=Source.Owner, resource=Influence)) ** 0.5
+            value=Value - 0.5 * Abs(float, EmpireStockpile(empire=Source.Owner, resource=ResourceInfluence)) ** 0.5
         ),
     ),
     EffectsGroup(
         scope=IsSource,
-        activation=Planet() & ~Unowned & ~HasEmpireStockpile(empire=Source.Owner, resource=Influence, low=0) & ~Capital,
+        activation=Planet()
+        & ~Unowned
+        & ~HasEmpireStockpile(empire=Source.Owner, resource=ResourceInfluence, low=0)
+        & ~Capital,
         accountinglabel="INFLUENCE_DEBT_DECAY",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=SetTargetInfluence(
             value=Value
             + 0.5
-            * Abs(float, EmpireStockpile(empire=Source.Owner, resource=Influence)) ** 0.5
+            * Abs(float, EmpireStockpile(empire=Source.Owner, resource=ResourceInfluence)) ** 0.5
             / MaxOf(float, 1.0, StatisticCount(float, condition=Planet() & HasSpecies() & OwnedBy(empire=Source.Owner)))
         ),
     ),

@@ -4,7 +4,6 @@ from focs._effects import (
     EmpireHasAdoptedPolicy,
     HasEmpireStockpile,
     HasSpecies,
-    Influence,
     IsSource,
     IsTarget,
     MaxOf,
@@ -13,6 +12,7 @@ from focs._effects import (
     OwnedBy,
     Planet,
     Population,
+    ResourceInfluence,
     SetConstruction,
     SetEmpireStockpile,
     SetHappiness,
@@ -75,10 +75,10 @@ Tech(
         # Reset influence to 0 if no policies adopted. Not really relevant to Outposts, but I need somewhere to put this...
         EffectsGroup(
             scope=IsSource,
-            activation=HasEmpireStockpile(empire=Source.Owner, resource=Influence, high=0)
+            activation=HasEmpireStockpile(empire=Source.Owner, resource=ResourceInfluence, high=0)
             & (NumPoliciesAdopted(empire=Source.Owner) == 0),
             priority=METER_OVERRIDE_PRIORITY,
-            effects=SetEmpireStockpile(resource=Influence, value=0.0),
+            effects=SetEmpireStockpile(resource=ResourceInfluence, value=0.0),
         ),
     ],
 )
