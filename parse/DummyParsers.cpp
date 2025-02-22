@@ -93,7 +93,7 @@ namespace parse {
     bool string_free_variable(std::string& text) { return false; }
 }
 
-template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path);
+template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
 
 template FO_PARSE_API std::vector<Policy> parse::policies<std::vector<Policy>>(const boost::filesystem::path& path);
 
