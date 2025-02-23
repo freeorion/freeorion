@@ -23,7 +23,6 @@ struct FO_COMMON_API Source final : public Condition {
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return Impl::MatchesType::SOURCE; }
 
-
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
