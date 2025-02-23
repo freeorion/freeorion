@@ -81,13 +81,6 @@ namespace {
 
     DeclareThreadSafeLogger(conditions);
 
-    template <typename T = UniverseObject>
-    void AddAllObjectsSet(const ObjectMap& objects, Condition::ObjectSet& in_out) {
-        const auto& all_t = objects.allExistingRaw<T>();
-        //condition_non_targets.reserve(condition_non_targets.size() + all_t.size()); // should be redundant with insert
-        in_out.insert(in_out.end(), all_t.begin(), all_t.end());
-    }
-
     template <typename T = UniverseObject, bool cast = false>
     decltype(auto) AllObjectsSet(const ObjectMap& objects) noexcept
     {
@@ -137,34 +130,6 @@ namespace {
 }
 
 namespace Condition {
-void AddAllPlanetsSet(const ObjectMap& objects, ObjectSet& in_out)
-{ AddAllObjectsSet<::Planet>(objects, in_out); }
-
-void AddAllBuildingsSet(const ObjectMap& objects, ObjectSet& in_out)
-{ AddAllObjectsSet<::Building>(objects, in_out); }
-
-void AddAllShipsSet(const ObjectMap& objects, ObjectSet& in_out)
-{ AddAllObjectsSet<::Ship>(objects, in_out); }
-
-void AddAllFleetsSet(const ObjectMap& objects, ObjectSet& in_out)
-{ AddAllObjectsSet<::Fleet>(objects, in_out); }
-
-void AddAllFieldsSet(const ObjectMap& objects, ObjectSet& in_out)
-{ AddAllObjectsSet<::Field>(objects, in_out); }
-
-void AddAllSystemsSet(const ObjectMap& objects, ObjectSet& in_out)
-{ AddAllObjectsSet<::System>(objects, in_out); }
-
-// add containers of single objects, avoiding re-adding any objects already in the set
-void AddNonduplicatesFromIDs(const ObjectMap& objects, ObjectSet& in_out, std::span<const int> ids) {
-    if (ids.empty())
-        return;
-    auto single_object_container_objects = objects.findRaw(ids);
-    for (auto* obj : single_object_container_objects)
-        if (obj && range_find(in_out, obj) == in_out.end())
-            in_out.push_back(obj);
-}
-
 [[nodiscard]] std::string ConditionFailedDescription(const std::vector<const Condition*>& conditions,
                                                      const ScriptingContext& source_context,
                                                      const UniverseObject* candidate_object)
@@ -11079,7 +11044,8 @@ namespace {
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(CondsRTSI(operands)),
               // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<And>(operands))
+    m_operands(DenestOps<And>(operands)),
+    m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
 {}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
@@ -11253,12 +11219,6 @@ std::string And::Dump(uint8_t ntabs) const {
         retval += operand->Dump(ntabs+1);
     retval += DumpIndent(ntabs) + "]\n";
     return retval;
-}
-
-ObjectSet And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    if (m_operands.empty()) [[unlikely]]
-        return {};
-    return m_operands.front()->GetDefaultInitialCandidateObjects(parent_context);
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
