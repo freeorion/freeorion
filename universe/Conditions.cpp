@@ -11079,7 +11079,8 @@ namespace {
 And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(CondsRTSI(operands)),
               // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<And>(operands))
+    m_operands(DenestOps<And>(operands)),
+    m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
 {}
 
 And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
@@ -11253,12 +11254,6 @@ std::string And::Dump(uint8_t ntabs) const {
         retval += operand->Dump(ntabs+1);
     retval += DumpIndent(ntabs) + "]\n";
     return retval;
-}
-
-ObjectSet And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    if (m_operands.empty()) [[unlikely]]
-        return {};
-    return m_operands.front()->GetDefaultInitialCandidateObjects(parent_context);
 }
 
 void And::SetTopLevelContent(const std::string& content_name) {
