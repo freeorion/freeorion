@@ -98,7 +98,7 @@ constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
         return {true, true, true};
 
     } else {
-        throw "unrecognized type?";
+        throw std::invalid_argument("unrecognized type?");
     }
 }
 
@@ -164,37 +164,6 @@ constexpr const Planet* PlanetFromObject(const UniverseObjectCXBase* obj, const 
 
 namespace Impl {
     static constexpr const UniverseObject* no_object = nullptr;
-
-    // flags for constraining initial candidates of outer condition based on what the inner matches
-    namespace MatchesType {
-        constexpr uint16_t NOTHING =       0u;
-        constexpr uint16_t SOURCE =        1u << 0u;
-        constexpr uint16_t TARGET =        1u << 1u;
-        constexpr uint16_t ROOTCANDIDATE = 1u << 2u;
-
-        constexpr uint16_t SINGLEOBJECT = SOURCE | TARGET | ROOTCANDIDATE;
-
-        constexpr uint16_t PLANETS  =      1u << 3u;
-        constexpr uint16_t BUILDINGS =     1u << 4u;
-        constexpr uint16_t FLEETS =        1u << 5u;
-        constexpr uint16_t SHIPS =         1u << 6u;
-        constexpr uint16_t SYSTEMS =       1u << 7u;
-        constexpr uint16_t FIELDS =        1u << 8u;
-
-        constexpr uint16_t PLANETS_BUILDINGS = PLANETS | BUILDINGS;
-        constexpr uint16_t PLANETS_FLEETS =    PLANETS | FLEETS;
-        constexpr uint16_t PLANETS_SHIPS =     PLANETS | SHIPS;
-        constexpr uint16_t PLANETS_SYSTEMS =   PLANETS | SYSTEMS;
-        constexpr uint16_t BUILDINGS_SHIPS =   BUILDINGS | SHIPS;
-        constexpr uint16_t FLEETS_SHIPS =      FLEETS | SHIPS;
-        constexpr uint16_t FLEETS_SYSTEMS =    FLEETS | SYSTEMS;
-
-        constexpr uint16_t PLANETS_FLEETS_SYSTEMS =                PLANETS | FLEETS | SYSTEMS;
-        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS =        PLANETS | BUILDINGS | FLEETS | SHIPS;
-        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS = PLANETS | BUILDINGS | FLEETS | SHIPS | FIELDS;
-
-        constexpr uint16_t ANYOBJECTTYPE = PLANETS | BUILDINGS | FLEETS | SHIPS | SYSTEMS | FIELDS;
-    }
 
     std::string MatchesToString(auto mt) {
         using namespace MatchesType;
@@ -271,11 +240,28 @@ namespace Impl {
         }
     }
 
+    [[nodiscard]] constexpr auto GetDefaultInitialCandidateObjectTypes(const auto& cond) noexcept {
+        static_assert(!std::is_same_v<std::nullptr_t, std::decay_t<decltype(cond)>>);
+        constexpr bool is_ptr = requires { cond->GetDefaultInitialCandidateObjectTypes(); };
+        constexpr bool has_override = requires { cond.GetDefaultInitialCandidateObjectTypes(); };
+        constexpr bool is_derived_from_condition = std::is_base_of_v<Condition, std::decay_t<decltype(cond)>>;
+        static_assert(is_ptr || has_override | is_derived_from_condition);
 
+        if constexpr (is_ptr)
+            return cond->GetDefaultInitialCandidateObjectTypes();
+        else if constexpr (has_override)
+            return cond.GetDefaultInitialCandidateObjectTypes();
+        else if constexpr (is_derived_from_condition)
+            return static_cast<const Condition&>(cond).GetDefaultInitialCandidateObjectTypes();
+    }
+
+
+    // type derived from Condition or a pointer to Condition
     template <class ConditionT>
     concept is_condition_or_upcondition =
         (std::is_base_of_v<Condition, ConditionT> && !std::is_same_v<Condition, std::decay_t<ConditionT>>) ||
         std::is_same_v<std::unique_ptr<Condition>, ConditionT>;
+
 
     template <is_condition_or_upcondition ConditionT = std::unique_ptr<Condition>>
     struct NestedCondition : public Condition
@@ -296,7 +282,7 @@ namespace Impl {
         constexpr explicit NestedCondition(ConditionT&& operand) noexcept :
             Condition(CondsRTSI(operand)),
             m_condition(std::move(operand)),
-            m_nested_cond_matches_types(MatchesOnly(m_condition))
+            m_nested_cond_matches_types(Impl::GetDefaultInitialCandidateObjectTypes(m_condition))
         {}
 
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -313,7 +299,7 @@ namespace Impl {
                 return false;
         }
 
-        [[nodiscard]] constexpr const Condition* SubCondition() const noexcept {
+        [[nodiscard]] constexpr const auto* SubCondition() const noexcept {
             if constexpr (cond_is_ptr)
                 return m_condition.get();
             else
@@ -371,8 +357,6 @@ namespace Impl {
 
 
         ConditionT m_condition;
-
-        constexpr uint16_t MatchesOnly(const auto& cond) const;
 
         const uint16_t m_nested_cond_matches_types = MatchesType::ANYOBJECTTYPE;
     };
@@ -1052,10 +1036,12 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
 
     using NC = Impl::NestedCondition<ConditionT>;
     using NC::m_condition;
+    using NC::m_nested_cond_matches_types;
 
     template <typename... Args>
     constexpr Contains(Args&&... args) :
-        NC(std::forward<Args>(args)...)
+        NC(std::forward<Args>(args)...),
+        m_matches_types(Impl::ContainerTypesOf(m_nested_cond_matches_types))
     {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
@@ -1129,7 +1115,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
             }
         };
 
-        const auto mt = NC::m_nested_cond_matches_types;
+        const auto mt = m_nested_cond_matches_types;
 
         // get IDs of anything that contains single context objects
         std::vector<int> container_ids;
@@ -1172,6 +1158,9 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         return retval;
     }
 
+    [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override
+    { return Impl::ContainerTypesOf(m_nested_cond_matches_types); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override
     { return NC::DescriptionImpl((!negated) ? UserString("DESC_CONTAINS") : UserString("DESC_CONTAINS_NOT")); }
 
@@ -1202,6 +1191,8 @@ private:
             return cond_base.EvalAny(local_context, candidate->ContainedObjectIDs());
         }
     }
+
+    uint16_t m_matches_types = Impl::MatchesType::ANYOBJECTTYPE;
 };
 
 template <typename T>
@@ -1263,10 +1254,12 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
 
     using NC = Impl::NestedCondition<ConditionT>;
     using NC::m_condition;
+    using NC::m_nested_cond_matches_types;
 
     template <typename... Args>
     constexpr ContainedBy(Args&&... args) :
-        NC(std::forward<Args>(args)...)
+        NC(std::forward<Args>(args)...),
+        m_matches_types(Impl::ContainedTypesOf(m_nested_cond_matches_types))
     {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
@@ -1368,7 +1361,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
             }
         };
 
-        const auto mt = NC::m_nested_cond_matches_types;
+        const auto mt = m_nested_cond_matches_types;
 
         // get IDs of anything contained within single context objects
         std::vector<int> contents_ids;
@@ -1416,6 +1409,9 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
         return retval;
     }
 
+    [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override
+    { return Impl::ContainedTypesOf(m_nested_cond_matches_types); }
+
     [[nodiscard]] std::string Description(bool negated = false) const override
     { return NC::DescriptionImpl((!negated) ? UserString("DESC_CONTAINED_BY") : UserString("DESC_CONTAINED_BY_NOT")); }
 
@@ -1455,6 +1451,8 @@ private:
             return cond_base.EvalAny(local_context, ids_span);
         }
     }
+
+    uint16_t m_matches_types = Impl::MatchesType::ANYOBJECTTYPE;
 };
 
 template <typename T>
@@ -3243,18 +3241,13 @@ private:
 };
 
 namespace Impl {
-    template <is_condition_or_upcondition ConditionT>
-    constexpr uint16_t NestedCondition<ConditionT>::MatchesOnly(const auto& cond) const
-    {
-        const auto cond_to_matchestype = [this](const auto& op) { return MatchesOnly(op); };
+    /*
+    constexpr auto cond_to_matchestype = [](const auto& op) { return MatchesOnly(op); };
 
-        constexpr auto shortened_name = [](std::string in) {
-            auto nl_pos = in.find_first_of('\n');
-            in = in.substr(0u, nl_pos);
-            in.resize(9u, ' ');
-            auto space_pos = in.find_first_of(' ');
-            return in.substr(0u, space_pos);
-        };
+    // implemented at end of file so all the other condition types can be defined above
+    [[nodiscard]] constexpr uint16_t MatchesOnly(const is_condition_or_upcondition auto& cond) {
+        using ConditionT = std::decay_t<decltype(cond)>;
+        constexpr bool cond_is_pointer = requires { *cond; };
 
         constexpr auto matches_only_source = [](auto mt) noexcept -> bool { return mt == MatchesType::SOURCE; };
         constexpr auto matches_only_target = [](auto mt) noexcept -> bool { return mt == MatchesType::TARGET; };
@@ -3264,9 +3257,14 @@ namespace Impl {
         constexpr auto matches_nothing = [](auto mt) noexcept -> bool { return mt == MatchesType::NOTHING; };
         constexpr auto bit_and = [](auto lhs, auto rhs) noexcept { return lhs & rhs; };
 
+        constexpr auto shorten_name = [](auto in) {
+            auto nl_pos = in.find_first_of('\n');
+            in = in.substr(0u, nl_pos);
+            in.resize(9u, ' ');
+            auto space_pos = in.find_first_of(' ');
+            return in.substr(0u, space_pos);
+        };
 
-        if constexpr (requires { *cond; }) { // put here so casts below in else ... don't get compiled when they shouldn't
-            return MatchesOnly(*cond);
 
         } else if (auto* and_cond = dynamic_cast<const ::Condition::And*>(&cond)) {
             const auto& ops = and_cond->Operands();
@@ -3287,7 +3285,7 @@ namespace Impl {
                 //std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
                 //    + "\n . <And> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
                 //for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
-                //    logout += "\n . . " + shortened_name(ops[idx]->Dump())
+                //    logout += "\n . . " + shorten_name(ops[idx]->Dump())
                 //        + " " + MatchesToString(ops_matched_types[idx]);
                 //}
                 //// TEST OUTPUT
@@ -3366,7 +3364,7 @@ namespace Impl {
                 //std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
                 //    + "\n . <Or> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
                 //for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
-                //    logout += "\n . . " + shortened_name(ops[idx]->Dump())
+                //    logout += "\n . . " + shorten_name(ops[idx]->Dump())
                 //        + " " + MatchesToString(ops_matched_types[idx]);
                 //}
                 //// TEST OUTPUT
@@ -3419,6 +3417,7 @@ namespace Impl {
         }
         return MatchesType::ANYOBJECTTYPE;
     }
+    */
 }
 }
 
