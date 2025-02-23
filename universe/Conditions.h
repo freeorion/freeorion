@@ -3246,12 +3246,7 @@ namespace Impl {
     template <is_condition_or_upcondition ConditionT>
     constexpr uint16_t NestedCondition<ConditionT>::MatchesOnly(const auto& cond) const
     {
-        const auto cond_to_matchestype = [this](const auto& op) {
-            /*if constexpr (requires { *op; })
-                return op ? MatchesOnly(*op) : MatchesType::NOTHING;
-            else*/
-                return MatchesOnly(op);
-        };
+        const auto cond_to_matchestype = [this](const auto& op) { return MatchesOnly(op); };
 
         constexpr auto shortened_name = [](std::string in) {
             auto nl_pos = in.find_first_of('\n');
@@ -3288,14 +3283,14 @@ namespace Impl {
                 ops_matched_types.reserve(ops.size());
                 std::transform(ops.begin(), ops.end(), std::back_inserter(ops_matched_types), cond_to_matchestype);
 
-                // TEST OUTPUT
-                std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
-                    + "\n . <And> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
-                for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
-                    logout += "\n . . " + shortened_name(ops[idx]->Dump())
-                        + " " + MatchesToString(ops_matched_types[idx]);
-                }
-                // TEST OUTPUT
+                //// TEST OUTPUT
+                //std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
+                //    + "\n . <And> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
+                //for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
+                //    logout += "\n . . " + shortened_name(ops[idx]->Dump())
+                //        + " " + MatchesToString(ops_matched_types[idx]);
+                //}
+                //// TEST OUTPUT
 
                 std::sort(ops_matched_types.begin(), ops_matched_types.end());
                 const auto unique_it = std::unique(ops_matched_types.begin(), ops_matched_types.end());
@@ -3348,7 +3343,7 @@ namespace Impl {
                     result = std::reduce(ops_matched_types.begin(), removed_it, MatchesType::ANYOBJECTTYPE, bit_and);
                 }
 
-                std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
+                //std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
                 return result;
             }
 
@@ -3367,21 +3362,21 @@ namespace Impl {
                 ops_matched_types.reserve(ops.size());
                 std::transform(ops.begin(), ops.end(), std::back_inserter(ops_matched_types), cond_to_matchestype);
 
-                // TEST OUTPUT
-                std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
-                    + "\n . <Or> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
-                for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
-                    logout += "\n . . " + shortened_name(ops[idx]->Dump())
-                        + " " + MatchesToString(ops_matched_types[idx]);
-                }
-                // TEST OUTPUT
+                //// TEST OUTPUT
+                //std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
+                //    + "\n . <Or> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
+                //for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
+                //    logout += "\n . . " + shortened_name(ops[idx]->Dump())
+                //        + " " + MatchesToString(ops_matched_types[idx]);
+                //}
+                //// TEST OUTPUT
 
                 // or together all possible outputs...
                 auto result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), MatchesType::NOTHING,
                                           [](auto lhs, auto rhs) noexcept { return lhs | rhs; });
 
                 // result should be a set of possible output types to consider...
-                std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
+                //std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
                 return result;
             }
 
@@ -3389,15 +3384,15 @@ namespace Impl {
         } else if (auto* contains_cond = dynamic_cast<const ::Condition::Contains<>*>(&cond)) {
             auto contained_mt = cond_to_matchestype(contains_cond->SubCondition());
             auto result = ContainerTypesOf(contained_mt);
-            std::cout << "\n\n\n\nMatchesOnly for : " << cond.Dump() << std::endl
-                      << " = " << MatchesToString(result) << std::endl;
+            //std::cout << "\n\n\n\nMatchesOnly for : " << cond.Dump() << std::endl
+            //          << " = " << MatchesToString(result) << std::endl;
             return result;
 
         } else if (auto* containedby_cond = dynamic_cast<const ::Condition::ContainedBy<>*>(&cond)) {
             auto containers_mt = cond_to_matchestype(containedby_cond->SubCondition());
             auto result = ContainedTypesOf(containers_mt);
-            std::cout << "\n\n\n\nMatchesOnly for : " << cond.Dump() << std::endl
-                      << " = " << MatchesToString(result) << std::endl;
+            //std::cout << "\n\n\n\nMatchesOnly for : " << cond.Dump() << std::endl
+            //          << " = " << MatchesToString(result) << std::endl;
             return result;
 
         } else if (dynamic_cast<const ::Condition::Source*>(&cond)) {
