@@ -102,7 +102,7 @@ else()
 endif()
 
 if(APPLE)
-    set(FreeOrionSDK_VERSION 18)
+    set(FreeOrionSDK_VERSION 19)
     set(FreeOrionSDK_FILE "FreeOrionSDK_${FreeOrionSDK_VERSION}_Clang-MacOSX-10.15-x86_64.tar.bz2")
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}")
     file(DOWNLOAD
