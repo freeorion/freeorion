@@ -580,6 +580,8 @@ struct FO_COMMON_API RootCandidate final : public Condition {
     }
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
+    [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return Impl::MatchesType::ROOTCANDIDATE; }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -612,7 +614,10 @@ struct FO_COMMON_API Target final : public Condition {
 
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const noexcept override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
+
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
+    [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return Impl::MatchesType::TARGET; }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
@@ -803,7 +808,21 @@ struct FO_COMMON_API Type final : public Condition {
 
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
                                std::span<const UniverseObjectCXBase*> candidates) const override;
+
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
+    [[nodiscard]] uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override {
+        using namespace Impl::MatchesType;
+        switch (FixedObjectType()) {
+        case UniverseObjectType::OBJ_PLANET:   return PLANETS;       break;
+        case UniverseObjectType::OBJ_BUILDING: return BUILDINGS;     break;
+        case UniverseObjectType::OBJ_FLEET:    return FLEETS;        break;
+        case UniverseObjectType::OBJ_SHIP:     return SHIPS;         break;
+        case UniverseObjectType::OBJ_SYSTEM:   return SYSTEMS;       break;
+        case UniverseObjectType::OBJ_FIELD:    return FIELDS;        break;
+        default:                               return ANYOBJECTTYPE;
+        }
+    }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -834,7 +853,10 @@ struct FO_COMMON_API Building final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
     { return Match(ScriptingContext{parent_context, ScriptingContext::LocalCandidate{}, candidate}); }
+
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
+    [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return Impl::MatchesType::BUILDINGS; }
+
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
@@ -1548,6 +1570,9 @@ private:
 struct FO_COMMON_API PlanetTypeBase : public Condition {
     constexpr PlanetTypeBase(std::array<bool, 3> rtsi) noexcept : Condition(rtsi) {}
     constexpr PlanetTypeBase(bool r, bool t, bool s) noexcept : Condition(r, t, s) {}
+
+    [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override final
+    { return Impl::MatchesType::PLANETS_BUILDINGS; }
 };
 
 template <typename PT_t = std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>, std::size_t N = 0>
@@ -3378,44 +3403,6 @@ namespace Impl {
                 return result;
             }
 
-
-        } else if (auto* contains_cond = dynamic_cast<const ::Condition::Contains<>*>(&cond)) {
-            auto contained_mt = cond_to_matchestype(contains_cond->SubCondition());
-            auto result = ContainerTypesOf(contained_mt);
-            //std::cout << "\n\n\n\nMatchesOnly for : " << cond.Dump() << std::endl
-            //          << " = " << MatchesToString(result) << std::endl;
-            return result;
-
-        } else if (auto* containedby_cond = dynamic_cast<const ::Condition::ContainedBy<>*>(&cond)) {
-            auto containers_mt = cond_to_matchestype(containedby_cond->SubCondition());
-            auto result = ContainedTypesOf(containers_mt);
-            //std::cout << "\n\n\n\nMatchesOnly for : " << cond.Dump() << std::endl
-            //          << " = " << MatchesToString(result) << std::endl;
-            return result;
-
-        } else if (dynamic_cast<const ::Condition::Source*>(&cond)) {
-            return MatchesType::SOURCE;
-        } else if (dynamic_cast<const ::Condition::Target*>(&cond)) {
-            return MatchesType::TARGET;
-        } else if (dynamic_cast<const ::Condition::RootCandidate*>(&cond)) {
-            return MatchesType::ROOTCANDIDATE;
-
-        } else if (auto* type_cond = dynamic_cast<const ::Condition::Type*>(&cond)) {
-            switch (type_cond->FixedObjectType()) {
-            case UniverseObjectType::OBJ_PLANET:   return MatchesType::PLANETS;   break;
-            case UniverseObjectType::OBJ_BUILDING: return MatchesType::BUILDINGS; break;
-            case UniverseObjectType::OBJ_FLEET:    return MatchesType::FLEETS;    break;
-            case UniverseObjectType::OBJ_SHIP:     return MatchesType::SHIPS;     break;
-            case UniverseObjectType::OBJ_SYSTEM:   return MatchesType::SYSTEMS;   break;
-            case UniverseObjectType::OBJ_FIELD:    return MatchesType::FIELDS;    break;
-            default: break;
-            }
-
-        } else if (dynamic_cast<const ::Condition::Building*>(&cond)) {
-            return MatchesType::BUILDINGS;
-
-        }
-        return MatchesType::ANYOBJECTTYPE;
     }
     */
 }
