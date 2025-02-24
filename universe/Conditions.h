@@ -280,6 +280,56 @@ namespace Impl {
     constexpr auto to_mt = [](const auto& op) { return GetDefaultInitialCandidateObjectTypes(op); };
 
 
+    inline ObjectSet GetTypedObjects(const ScriptingContext& context, uint16_t matches_types) {
+        using namespace Impl::MatchesType;
+        ObjectSet retval;
+        const auto& objects = context.ContextObjects();
+
+        if ((matches_types & ANYOBJECTTYPE) && (matches_types & SINGLEOBJECT)) [[unlikely]] {
+            // don't want to handle complicated combinations of single objects and types
+            AddAllObjectsSet(objects, retval);
+
+        } else if (matches_types & ANYOBJECTTYPE) {
+            const std::size_t sz =
+                ((matches_types & PLANETS) ? objects.size<::Planet>() : 0u) +
+                ((matches_types & BUILDINGS) ? objects.size<::Building>() : 0u) +
+                ((matches_types & FLEETS) ? objects.size<::Fleet>() : 0u) +
+                ((matches_types & SHIPS) ? objects.size<::Ship>() : 0u) +
+                ((matches_types & SYSTEMS) ? objects.size<::System>() : 0u) +
+                ((matches_types & FIELDS) ? objects.size<::Field>() : 0u);
+            retval.reserve(sz);
+
+            if (matches_types & PLANETS)
+                AddAllPlanetsSet(objects, retval);
+            if (matches_types & BUILDINGS)
+                AddAllBuildingsSet(objects, retval);
+            if (matches_types & FLEETS)
+                AddAllFleetsSet(objects, retval);
+            if (matches_types & SHIPS)
+                AddAllShipsSet(objects, retval);
+            if (matches_types & SYSTEMS)
+                AddAllSystemsSet(objects, retval);
+            if (matches_types & FIELDS)
+                AddAllFieldsSet(objects, retval);
+
+        } else if (matches_types & SINGLEOBJECT) {
+            retval.reserve(3);
+            if (context.source && (matches_types & SOURCE))
+                retval.push_back(context.source);
+            if (context.condition_root_candidate && (matches_types & ROOTCANDIDATE))
+                retval.push_back(context.condition_root_candidate);
+            if (context.effect_target && (matches_types & TARGET))
+                retval.push_back(context.effect_target);
+            if (!retval.empty()) {
+                std::sort(retval.begin(), retval.end());
+                auto unique_it = std::unique(retval.begin(), retval.end());
+                retval.erase(unique_it, retval.end());
+            }
+        }
+
+        return retval;
+    }
+
     constexpr auto matches_only_source = [](auto mt) noexcept -> bool { return mt == MatchesType::SOURCE; };
     constexpr auto matches_only_target = [](auto mt) noexcept -> bool { return mt == MatchesType::TARGET; };
     constexpr auto matches_only_rootcand = [](auto mt) noexcept -> bool { return mt == MatchesType::ROOTCANDIDATE; };
@@ -287,6 +337,7 @@ namespace Impl {
     constexpr auto matches_any_object_type = [](auto mt) noexcept -> bool { return mt & MatchesType::ANYOBJECTTYPE; };
     constexpr auto matches_nothing = [](auto mt) noexcept -> bool { return mt == MatchesType::NOTHING; };
     constexpr auto bit_and = [](auto lhs, auto rhs) noexcept { return lhs & rhs; };
+    constexpr auto bit_or = [](auto lhs, auto rhs) noexcept { return lhs | rhs; };
 
 
     // type derived from Condition or a pointer to Condition
@@ -1101,14 +1152,14 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         //if (!std::is_constant_evaluated()) {
         //    // TEST OUTPUT
         //    using Impl::MatchesToString;
-
+        //
         //    auto subcond_dump = [this]() {
         //        if constexpr (NC::cond_is_ptr)
         //            return m_condition->Dump();
         //        else
         //            return m_condition.Dump();
         //    }();
-
+        //
         //    constexpr auto shorten_name = [](auto in) {
         //        auto nl_pos = in.find_first_of('\n');
         //        in = in.substr(0u, nl_pos);
@@ -1116,7 +1167,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         //        auto space_pos = in.find_first_of(' ');
         //        return in.substr(0u, space_pos);
         //    };
-
+        //
         //    std::string logout = "\n\n<Contains> conditon = " + shorten_name(subcond_dump) + " : " + MatchesToString(m_nested_cond_matches_types);
         //    logout += "\n = " + MatchesToString(m_matches_types) + "\n";
         //    std::cout << logout;
@@ -3231,57 +3282,9 @@ struct FO_COMMON_API And final : public Condition {
                                std::span<const UniverseObjectCXBase*> candidates) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override;
 
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override {
-        using namespace Impl::MatchesType;
-        ObjectSet retval;
-        const auto& objects = context.ContextObjects();
-
-        if ((m_matches_types & ANYOBJECTTYPE) && (m_matches_types & SINGLEOBJECT)) [[unlikely]] {
-            // this case should be removed during init, but in case it's here,
-            // don't want to handle complicated combinations of single objects and types
-            AddAllObjectsSet(objects, retval);
-
-        } else if (m_matches_types & ANYOBJECTTYPE) {
-            const std::size_t sz =
-                ((m_matches_types & PLANETS) ? objects.size<::Planet>() : 0u) +
-                ((m_matches_types & BUILDINGS) ? objects.size<::Building>() : 0u) +
-                ((m_matches_types & FLEETS) ? objects.size<::Fleet>() : 0u) +
-                ((m_matches_types & SHIPS) ? objects.size<::Ship>() : 0u) +
-                ((m_matches_types & SYSTEMS) ? objects.size<::System>() : 0u) +
-                ((m_matches_types & FIELDS) ? objects.size<::Field>() : 0u);
-            retval.reserve(sz);
-
-            if (m_matches_types & PLANETS)
-                AddAllPlanetsSet(objects, retval);
-            if (m_matches_types & BUILDINGS)
-                AddAllBuildingsSet(objects, retval);
-            if (m_matches_types & FLEETS)
-                AddAllFleetsSet(objects, retval);
-            if (m_matches_types & SHIPS)
-                AddAllShipsSet(objects, retval);
-            if (m_matches_types & SYSTEMS)
-                AddAllSystemsSet(objects, retval);
-            if (m_matches_types & FIELDS)
-                AddAllFieldsSet(objects, retval);
-
-        } else if (m_matches_types & SINGLEOBJECT) {
-            retval.reserve(3);
-            if (context.source && (m_matches_types & SOURCE))
-                retval.push_back(context.source);
-            if (context.condition_root_candidate && (m_matches_types & ROOTCANDIDATE))
-                retval.push_back(context.condition_root_candidate);
-            if (context.effect_target && (m_matches_types & TARGET))
-                retval.push_back(context.effect_target);
-            if (!retval.empty()) {
-                std::sort(retval.begin(), retval.end());
-                auto unique_it = std::unique(retval.begin(), retval.end());
-                retval.erase(unique_it, retval.end());
-            }
-        }
-
-        return retval;
-    }
-
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override
+    { return Impl::GetTypedObjects(context, m_matches_types); }
+    
     [[nodiscard]] uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return m_matches_types; }
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -3305,9 +3308,9 @@ private:
         if (std::any_of(ops_matched_types.begin(), unique_it, matches_nothing)) {
             return NOTHING;
 
-            // do any of the subconditions match only a single object like source, target, or root candidate?
-            // if so, only that object need be considered as any match must be that context object
-            // (although a match could be another context object also, that does not matter)
+        // do any of the subconditions match only a single object like source, target, or root candidate?
+        // if so, only that object need be considered as any match must be that context object
+        // (although a match could be another context object also, that does not matter)
         } else if (std::any_of(ops_matched_types.begin(), unique_it, matches_only_source)) {
             return SOURCE;
         } else if (std::any_of(ops_matched_types.begin(), unique_it, matches_only_target)) {
@@ -3315,23 +3318,23 @@ private:
         } else if (std::any_of(ops_matched_types.begin(), unique_it, matches_only_rootcand)) {
             return ROOTCANDIDATE;
 
-            // if there are no type restrictions, then can match context objects that matched by all subconditions
-            // including if the subconditions all match multiple context objects
+        // if there are no type restrictions, then can match context objects that matched by all subconditions
+        // including if the subconditions all match multiple context objects
         } else if (std::none_of(ops_matched_types.begin(), unique_it, matches_any_object_type)) {
             return std::reduce(ops_matched_types.begin(), unique_it, SINGLEOBJECT, bit_and);
 
-            // if there are no context object restrictions, then can match objects whose
-            // type is matched by all subconditions
+        // if there are no context object restrictions, then can match objects whose
+        // type is matched by all subconditions
         } else if (std::none_of(ops_matched_types.begin(), unique_it, matches_any_context_object)) {
             return std::reduce(ops_matched_types.begin(), unique_it, ANYOBJECTTYPE, bit_and);
 
-            // have some combation of mixed multiple context objects, mixed context object and type, 
-            // eg. (Source OR SHIP) & (FLEET) & (Target OR SHIP)
-            // -> if Source and Target are the same Fleet object, that object is a possible match
-            //    but 1. bitwise & of the matched types of these is NOTHING
-            //        2. none matches just a single context object
-            //        3. some match a context object
-            // so need another case...
+        // have some combation of mixed multiple context objects, mixed context object and type, 
+        // eg. (Source OR SHIP) & (FLEET) & (Target OR SHIP)
+        // -> if Source and Target are the same Fleet object, that object is a possible match
+        //    but 1. bitwise & of the matched types of these is NOTHING
+        //        2. none matches just a single context object
+        //        3. some match a context object
+        // so need another case...
         } else {
             // could probably do something fancy now to ensure optimal / minimal and correct
             // results, but I don't want to work through all possibilities...
@@ -3374,9 +3377,9 @@ private:
             //    auto space_pos = in.find_first_of(' ');
             //    return in.substr(0u, space_pos);
             //};
-
+            //
             //using Impl::MatchesToString;
-
+            //
             //std::string logout = "\n\n<And> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
             //for (std::size_t idx = 0u; idx < ops_matched_types.size(); ++idx)
             //    logout += "\n . . " + shorten_name(operands.at(idx)->Dump()) + " : " + MatchesToString(ops_matched_types[idx]);
@@ -3413,7 +3416,10 @@ struct FO_COMMON_API Or final : public Condition {
                                std::span<const UniverseObjectCXBase*> candidates) const override;
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override;
 
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override
+    { return Impl::GetTypedObjects(context, m_matches_types); }
+
+    [[nodiscard]] uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return m_matches_types; }
 
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
@@ -3427,7 +3433,57 @@ struct FO_COMMON_API Or final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
+    static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
+        using namespace Impl::MatchesType;
+        using namespace Impl;
+
+        if constexpr (requires { operands.empty(); })
+            if (operands.empty())
+                return NOTHING;
+
+        if constexpr (requires { operands.size(); })
+            if (operands.size() == 1)
+                return to_mt(operands.front());
+
+        if constexpr (requires { operands.GetDefaultInitialCandidateObjectTypes(); }) {
+            return operands.GetDefaultInitialCandidateObjectTypes();
+
+        } else {
+            // get matched types for all operand conditions...
+            std::vector<uint16_t> ops_matched_types;
+            ops_matched_types.reserve(operands.size());
+            std::transform(operands.begin(), operands.end(), std::back_inserter(ops_matched_types), to_mt);
+
+            //// TEST OUTPUT
+            //static constexpr auto shorten_name = [](auto in) {
+            //    auto nl_pos = in.find_first_of('\n');
+            //    in = in.substr(0u, nl_pos);
+            //    in.resize(10u, ' ');
+            //    auto space_pos = in.find_first_of(' ');
+            //    return in.substr(0u, space_pos);
+            //};
+            //
+            //using Impl::MatchesToString;
+            //
+            //std::string logout = "\n\n<Or> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
+            //for (std::size_t idx = 0u; idx < ops_matched_types.size(); ++idx)
+            //    logout += "\n . . " + shorten_name(operands.at(idx)->Dump()) + " : " + MatchesToString(ops_matched_types[idx]);
+            //// TEST...
+
+            auto result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), NOTHING, bit_or);
+
+            //// TEST
+            //logout += "\n = " + MatchesToString(result) + "\n";
+            //std::cout << logout;
+            //// TEST OUTPUT
+
+            return result;
+        }
+    }
+
+
     std::vector<std::unique_ptr<Condition>> m_operands;
+    const uint16_t m_matches_types = Impl::MatchesType::ANYOBJECTTYPE;
 };
 
 /** Matches all objects that do not match the Condition \a operand. */
