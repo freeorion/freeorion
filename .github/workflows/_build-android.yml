@@ -42,7 +42,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/o01eg/freeorion-sdk/releases/download/v19/FreeOrionSDK_19_Android-${{ matrix.arch }}.zip
+          url: https://github.com/o01eg/freeorion-sdk/releases/download/v20/FreeOrionSDK_20_Android-${{ matrix.arch }}.zip
           target: ../
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
@@ -97,7 +97,7 @@ jobs:
         id: download-python-lib
         uses: suisei-cn/actions-download-file@v1.3.0
         with:
-          url: https://github.com/o01eg/freeorion-sdk/releases/download/v19/python310.zip
+          url: https://github.com/o01eg/freeorion-sdk/releases/download/v20/python310.zip
           target: ../
       - name: Place resources
         run: |
