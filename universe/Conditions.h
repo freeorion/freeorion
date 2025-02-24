@@ -337,6 +337,7 @@ namespace Impl {
     constexpr auto matches_any_object_type = [](auto mt) noexcept -> bool { return mt & MatchesType::ANYOBJECTTYPE; };
     constexpr auto matches_nothing = [](auto mt) noexcept -> bool { return mt == MatchesType::NOTHING; };
     constexpr auto bit_and = [](auto lhs, auto rhs) noexcept { return lhs & rhs; };
+    constexpr auto bit_or = [](auto lhs, auto rhs) noexcept { return lhs | rhs; };
 
 
     // type derived from Condition or a pointer to Condition
@@ -1151,14 +1152,14 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         //if (!std::is_constant_evaluated()) {
         //    // TEST OUTPUT
         //    using Impl::MatchesToString;
-
+        //
         //    auto subcond_dump = [this]() {
         //        if constexpr (NC::cond_is_ptr)
         //            return m_condition->Dump();
         //        else
         //            return m_condition.Dump();
         //    }();
-
+        //
         //    constexpr auto shorten_name = [](auto in) {
         //        auto nl_pos = in.find_first_of('\n');
         //        in = in.substr(0u, nl_pos);
@@ -1166,7 +1167,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
         //        auto space_pos = in.find_first_of(' ');
         //        return in.substr(0u, space_pos);
         //    };
-
+        //
         //    std::string logout = "\n\n<Contains> conditon = " + shorten_name(subcond_dump) + " : " + MatchesToString(m_nested_cond_matches_types);
         //    logout += "\n = " + MatchesToString(m_matches_types) + "\n";
         //    std::cout << logout;
@@ -3307,9 +3308,9 @@ private:
         if (std::any_of(ops_matched_types.begin(), unique_it, matches_nothing)) {
             return NOTHING;
 
-            // do any of the subconditions match only a single object like source, target, or root candidate?
-            // if so, only that object need be considered as any match must be that context object
-            // (although a match could be another context object also, that does not matter)
+        // do any of the subconditions match only a single object like source, target, or root candidate?
+        // if so, only that object need be considered as any match must be that context object
+        // (although a match could be another context object also, that does not matter)
         } else if (std::any_of(ops_matched_types.begin(), unique_it, matches_only_source)) {
             return SOURCE;
         } else if (std::any_of(ops_matched_types.begin(), unique_it, matches_only_target)) {
@@ -3317,23 +3318,23 @@ private:
         } else if (std::any_of(ops_matched_types.begin(), unique_it, matches_only_rootcand)) {
             return ROOTCANDIDATE;
 
-            // if there are no type restrictions, then can match context objects that matched by all subconditions
-            // including if the subconditions all match multiple context objects
+        // if there are no type restrictions, then can match context objects that matched by all subconditions
+        // including if the subconditions all match multiple context objects
         } else if (std::none_of(ops_matched_types.begin(), unique_it, matches_any_object_type)) {
             return std::reduce(ops_matched_types.begin(), unique_it, SINGLEOBJECT, bit_and);
 
-            // if there are no context object restrictions, then can match objects whose
-            // type is matched by all subconditions
+        // if there are no context object restrictions, then can match objects whose
+        // type is matched by all subconditions
         } else if (std::none_of(ops_matched_types.begin(), unique_it, matches_any_context_object)) {
             return std::reduce(ops_matched_types.begin(), unique_it, ANYOBJECTTYPE, bit_and);
 
-            // have some combation of mixed multiple context objects, mixed context object and type, 
-            // eg. (Source OR SHIP) & (FLEET) & (Target OR SHIP)
-            // -> if Source and Target are the same Fleet object, that object is a possible match
-            //    but 1. bitwise & of the matched types of these is NOTHING
-            //        2. none matches just a single context object
-            //        3. some match a context object
-            // so need another case...
+        // have some combation of mixed multiple context objects, mixed context object and type, 
+        // eg. (Source OR SHIP) & (FLEET) & (Target OR SHIP)
+        // -> if Source and Target are the same Fleet object, that object is a possible match
+        //    but 1. bitwise & of the matched types of these is NOTHING
+        //        2. none matches just a single context object
+        //        3. some match a context object
+        // so need another case...
         } else {
             // could probably do something fancy now to ensure optimal / minimal and correct
             // results, but I don't want to work through all possibilities...
@@ -3376,9 +3377,9 @@ private:
             //    auto space_pos = in.find_first_of(' ');
             //    return in.substr(0u, space_pos);
             //};
-
+            //
             //using Impl::MatchesToString;
-
+            //
             //std::string logout = "\n\n<And> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
             //for (std::size_t idx = 0u; idx < ops_matched_types.size(); ++idx)
             //    logout += "\n . . " + shorten_name(operands.at(idx)->Dump()) + " : " + MatchesToString(ops_matched_types[idx]);
@@ -3433,11 +3434,12 @@ struct FO_COMMON_API Or final : public Condition {
 
 private:
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
-        using Impl::to_mt;
+        using namespace Impl::MatchesType;
+        using namespace Impl;
 
         if constexpr (requires { operands.empty(); })
             if (operands.empty())
-                return Impl::MatchesType::NOTHING;
+                return NOTHING;
 
         if constexpr (requires { operands.size(); })
             if (operands.size() == 1)
@@ -3460,16 +3462,15 @@ private:
             //    auto space_pos = in.find_first_of(' ');
             //    return in.substr(0u, space_pos);
             //};
-
+            //
             //using Impl::MatchesToString;
-
+            //
             //std::string logout = "\n\n<Or> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
             //for (std::size_t idx = 0u; idx < ops_matched_types.size(); ++idx)
             //    logout += "\n . . " + shorten_name(operands.at(idx)->Dump()) + " : " + MatchesToString(ops_matched_types[idx]);
             //// TEST...
 
-            auto result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), MatchesType::NOTHING,
-                                      [](auto lhs, auto rhs) noexcept { return lhs | rhs; });
+            auto result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), NOTHING, bit_or);
 
             //// TEST
             //logout += "\n = " + MatchesToString(result) + "\n";
