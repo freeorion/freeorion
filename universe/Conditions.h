@@ -187,8 +187,6 @@ constexpr const Planet* PlanetFromObject(const UniverseObjectCXBase* obj, const 
 }
 
 namespace Impl {
-    static constexpr const UniverseObject* no_object = nullptr;
-
     std::string MatchesToString(auto mt) {
         using namespace MatchesType;
         std::string retval = std::to_string(mt) + ": ";
@@ -1167,7 +1165,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
             // evaluate contained objects once using default initial candidates
             // of subcondition to find all subcondition matches in the Universe
             const ObjectSet subcondition_matches = [&cond{m_condition}, &parent_context]() {
-                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, Impl::no_object};
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, nullptr};
                 if constexpr (NC::cond_is_ptr)
                     return cond->Eval(local_context);
                 else if constexpr (requires { cond.Eval(local_context); })
@@ -1434,7 +1432,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
             // evaluate container objects once using default initial candidates
             // of subcondition to find all subcondition matches in the Universe
             ObjectSet subcondition_matches = [this, &parent_context]() {
-                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, Impl::no_object};
+                const ScriptingContext local_context{parent_context, ScriptingContext::LocalCandidate{}, nullptr};
                 if constexpr (NC::cond_is_ptr) {
                     return m_condition->Eval(local_context);
                 } else if constexpr (requires { m_condition.EvalAny(local_context); }) {
