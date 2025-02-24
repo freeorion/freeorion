@@ -233,6 +233,9 @@ private:
         };
 #if defined(__cpp_lib_constexpr_algorithms)
         std::sort(retval.begin(), retval.end());
+#else
+        for (auto it = retval.begin(); it != retval.end(); ++it)
+            std::swap(*it, *std::min_element(it, retval.end()));
 #endif
         return retval;
     }();
