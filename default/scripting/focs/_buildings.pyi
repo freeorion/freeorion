@@ -1,8 +1,9 @@
 from focs._types import _Condition, _EffectGroup
 
-class _DestroyAction: ...
+class _CaptureResult: ...
 
-DestroyOnCapture = _DestroyAction()
+DefaultCaptureResult = _CaptureResult()  # TODO get a better name
+DestroyOnCapture = _CaptureResult()
 
 def BuildingType(
     *,
@@ -13,6 +14,7 @@ def BuildingType(
     location: _Condition,
     effectsgroups: list[_EffectGroup],
     icon: str,
-    captureresult=_DestroyAction,
+    captureresult=DefaultCaptureResult,
     enqueuelocation=_Condition(),
+    tags: list[str] | None = None,
 ): ...
