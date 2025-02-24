@@ -1079,13 +1079,6 @@ std::string SortedNumberOf::Dump(uint8_t ntabs) const {
     return retval;
 }
 
-ObjectSet SortedNumberOf::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
-    if (m_condition)
-        return m_condition->GetDefaultInitialCandidateObjects(parent_context);
-    else
-        return Condition::GetDefaultInitialCandidateObjects(parent_context);
-}
-
 void SortedNumberOf::SetTopLevelContent(const std::string& content_name) {
     if (m_number)
         m_number->SetTopLevelContent(content_name);
@@ -11253,7 +11246,8 @@ std::unique_ptr<Condition> And::Clone() const
 Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(CondsRTSI(operands)),
     // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<Or>(operands))
+    m_operands(DenestOps<Or>(operands)),
+    m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
 {}
 
 Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
