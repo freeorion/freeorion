@@ -280,7 +280,7 @@ namespace Impl {
     constexpr auto to_mt = [](const auto& op) { return GetDefaultInitialCandidateObjectTypes(op); };
 
 
-    inline ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context, uint16_t matches_types) {
+    inline ObjectSet GetTypedObjects(const ScriptingContext& context, uint16_t matches_types) {
         using namespace Impl::MatchesType;
         ObjectSet retval;
         const auto& objects = context.ContextObjects();
@@ -3283,7 +3283,7 @@ struct FO_COMMON_API And final : public Condition {
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override;
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override
-    { return Impl::GetDefaultInitialCandidateObjects(context, m_matches_types); }
+    { return Impl::GetTypedObjects(context, m_matches_types); }
     
     [[nodiscard]] uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return m_matches_types; }
 
@@ -3417,7 +3417,7 @@ struct FO_COMMON_API Or final : public Condition {
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override;
 
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context) const override
-    { return Impl::GetDefaultInitialCandidateObjects(context, m_matches_types); }
+    { return Impl::GetTypedObjects(context, m_matches_types); }
 
     [[nodiscard]] uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override { return m_matches_types; }
 
