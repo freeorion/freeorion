@@ -280,7 +280,7 @@ namespace Impl {
     constexpr auto to_mt = [](const auto& op) { return GetDefaultInitialCandidateObjectTypes(op); };
 
 
-    ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context, uint16_t matches_types) {
+    inline ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& context, uint16_t matches_types) {
         using namespace Impl::MatchesType;
         ObjectSet retval;
         const auto& objects = context.ContextObjects();
