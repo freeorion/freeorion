@@ -949,7 +949,7 @@ void RegisterGlobalsConditions(boost::python::dict& globals) {
     globals["WithinDistance"] = boost::python::raw_function(insert_within_distance_);
     globals["Object"] = boost::python::raw_function(insert_object_id_);
     globals["Described"] = boost::python::raw_function(insert_described_);
-    globals["Design"] = boost::python::raw_function(insert_design_);
+    globals["HasDesign"] = boost::python::raw_function(insert_design_);
     const auto f_insert_species_likes = [](const auto& args, const auto& kw) { return insert_species_opinion_(args, kw, Condition::ComparisonType::GREATER_THAN); };
     globals["SpeciesLikes"] = boost::python::raw_function(f_insert_species_likes);
     const auto f_insert_species_dislikes = [](const auto& args, const auto& kw) { return insert_species_opinion_(args, kw, Condition::ComparisonType::LESS_THAN); };
