@@ -438,6 +438,15 @@ value_ref_wrapper<int> operator<(const value_ref_wrapper<int>& lhs, int rhs) {
     );
 }
 
+value_ref_wrapper<int> operator<=(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(
+            ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs))
+    );
+}
+
 value_ref_wrapper<int> operator>(const value_ref_wrapper<int>& lhs, int rhs) {
     return value_ref_wrapper<int>(
         std::make_shared<ValueRef::Operation<int>>(
