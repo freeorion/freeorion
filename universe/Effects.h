@@ -8,7 +8,7 @@
 
 
 namespace Condition {
-    using ObjectSet = std::vector<const UniverseObject*>;
+    using ObjectSet = std::vector<const UniverseObjectCXBase*>;
 }
 
 namespace ValueRef {

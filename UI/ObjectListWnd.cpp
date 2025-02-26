@@ -504,7 +504,7 @@ namespace {
             return PRODUCEDBYEMPIRE_CONDITION;
         else if (dynamic_cast<const Condition::ExploredByEmpire* const>(condition))
             return EXPLOREDBYEMPIRE_CONDITION;
-        else if (dynamic_cast<const Condition::ContainedBy* const>(condition))
+        else if (dynamic_cast<const Condition::ContainedBy<>* const>(condition))
             return CONTAINEDBY_CONDITION;
         else if (dynamic_cast<const Condition::InOrIsSystem* const>(condition))
             return INSYSTEM_CONDITION;
@@ -762,7 +762,7 @@ public:
             std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_SYSTEM)));
             operands2.emplace_back(std::make_unique<Condition::Contains<Condition::PlanetType<::PlanetType, 1>>>(PlanetType::PT_ASTEROIDS));
-            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
+            operands1.emplace_back(std::make_unique<Condition::ContainedBy<Condition::And>>(std::move(operands2)));
             std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
@@ -777,7 +777,7 @@ public:
             std::vector<std::unique_ptr<Condition::Condition>> operands2;
             operands2.emplace_back(std::make_unique<Condition::Type>(std::make_unique<ValueRef::Constant<UniverseObjectType>>(UniverseObjectType::OBJ_SYSTEM)));
             operands2.emplace_back(std::make_unique<Condition::Contains<Condition::PlanetType<::PlanetType, 1>>>(PlanetType::PT_GASGIANT));
-            operands1.emplace_back(std::make_unique<Condition::ContainedBy>(std::make_unique<Condition::And>(std::move(operands2))));
+            operands1.emplace_back(std::make_unique<Condition::ContainedBy<Condition::And>>(std::move(operands2)));
             std::unique_ptr<Condition::Condition> this_cond = std::make_unique<Condition::And>(std::move(operands1));
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
             return this_cond;
@@ -2109,6 +2109,19 @@ public:
         }
     }
 
+    void SetVisAndConFilters(auto&& vis, std::unique_ptr<Condition::Condition>&& condition) {
+        if constexpr (requires { vis != m_visibilities; }) {
+            if (vis != m_visibilities) 
+                m_visibilities = std::forward<decltype(vis)>(vis);
+        } else {
+            m_visibilities.clear();
+            for (auto& [uot, vis_set] : vis)
+                m_visibilities[uot].insert(vis_set.begin(), vis_set.end());
+        }
+
+        SetFilterCondition(std::move(condition)); // always does Refresh
+    }
+
     void ClearContents() {
         Clear();
         m_object_change_connections.clear(); // should disconnect scoped connections
@@ -2126,9 +2139,6 @@ public:
         if (!obj)
             return false;
 
-        if (m_filter_condition && !m_filter_condition->EvalOne(context, obj))
-            return false;
-
         const auto it = m_visibilities.find(obj->ObjectType());
         if (it == m_visibilities.end())
             return false;
@@ -2138,6 +2148,9 @@ public:
 
         if (context.ContextUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id).contains(object_id))
             return it->second.contains(VIS_DISPLAY::SHOW_DESTROYED);
+
+        if (m_filter_condition && !m_filter_condition->EvalOne(context, obj))
+            return false;
 
         if (assume_visible_without_checking ||
             client_empire_id == ALL_EMPIRES ||
@@ -2908,10 +2921,8 @@ void ObjectListWnd::FilterClicked() {
                                              m_list_box->FilterCondition());
     dlg->Run();
 
-    if (dlg->ChangesAccepted()) {
-        m_list_box->SetVisibilityFilters(dlg->GetVisibilityFilters());
-        m_list_box->SetFilterCondition(dlg->GetConditionFilter());
-    }
+    if (dlg->ChangesAccepted())
+        m_list_box->SetVisAndConFilters(dlg->GetVisibilityFilters(), dlg->GetConditionFilter());
 }
 
 void ObjectListWnd::CollapseExpandClicked() {

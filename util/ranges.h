@@ -17,7 +17,9 @@ inline constexpr auto& range_filter = std::views::filter;
 //inline constexpr auto& range_join = std::views::join; // no equivalent in boost ranges
 inline constexpr auto& range_reverse = std::views::reverse;
 inline constexpr auto& range_find_if = std::ranges::find_if;
+inline constexpr auto& range_find = std::ranges::find;
 inline constexpr auto& range_any_of = std::ranges::any_of;
+inline constexpr auto& range_all_of = std::ranges::all_of;
 inline constexpr auto& range_copy = std::ranges::copy;
 inline constexpr auto& range_copy_if = std::ranges::copy_if;
 inline constexpr auto& range_max_element = std::ranges::max_element;
@@ -25,23 +27,39 @@ inline constexpr auto& range_min_element = std::ranges::min_element;
 inline constexpr auto& range_equal = std::ranges::equal_range;
 inline constexpr auto& range_end = std::ranges::end;
 #else
+# include <span>
 # include <boost/range/adaptor/map.hpp>
 # include <boost/range/adaptor/filtered.hpp>
 # include <boost/range/adaptor/transformed.hpp>
 # include <boost/range/adaptor/reversed.hpp>
 # include <boost/range/algorithm.hpp>
+# include <boost/range/begin.hpp>
 # include <boost/range/end.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
+# include <boost/algorithm/cxx11/all_of.hpp>
 # include <boost/algorithm/cxx11/copy_if.hpp>
 inline const auto& range_keys = boost::adaptors::map_keys;
 inline const auto& range_values = boost::adaptors::map_values;
 inline const auto& range_filter = boost::adaptors::filtered;
 inline const auto& range_transform = boost::adaptors::transformed;
 inline const auto& range_reverse = boost::adaptors::reversed;
+
 template <typename... Args>
 inline auto range_find_if(Args... args) { return boost::range::find_if(std::forward<Args>(args)...); }
 template <typename... Args>
+inline auto range_find(Args... args) { return boost::range::find(std::forward<Args>(args)...); }
+
+template <typename... Args>
 inline const auto range_any_of(Args... args) { return boost::algorithm::any_of(std::forward<Args>(args)...); }
+
+#if defined(__GNUC__)
+template <typename T, std::size_t E, typename... Args>
+inline const auto range_any_of(std::span<T, E> s, Args... args)
+{ return boost::algorithm::any_of(s.begin(), s.end(), std::forward<Args>(args)...); }
+#endif
+
+template <typename... Args>
+inline const auto range_all_of(Args... args) { return boost::algorithm::all_of(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_copy(Args... args) { return boost::range::copy(std::forward<Args>(args)...); }
 template <typename... Args>
