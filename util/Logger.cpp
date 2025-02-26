@@ -92,7 +92,7 @@ namespace {
 
     using LoggerFileSinkFrontEndConfigurer = std::function<void(LoggerTextFileSinkFrontend& sink_frontend)>;
 
-    boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type>& FileSinkBackend() noexcept {
+    auto& FileSinkBackend() noexcept {
         // Create the sink backend as a function local static variable to avoid the static
         // initilization fiasco.
         static boost::shared_ptr<LoggerTextFileSinkFrontend::sink_backend_type> m_sink_backend;
@@ -227,9 +227,20 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, "ThreadID", boost::log::attributes::current_thread_id::value_type);
 
 namespace {
-    std::mutex severity_filter_mutex; /// guards severity_filter
+    std::mutex severity_filter_mutex; /// guards severity_filter and severity_filters
+
     expr::channel_severity_filter_actor<std::string, LogLevel> severity_filter =
         expr::channel_severity_filter(log_channel, log_severity);
+
+    std::vector<std::pair<std::string, LogLevel>> severity_filters{};
+
+    LogLevel GetSourceThreshold(std::string_view source) {
+        std::scoped_lock lock(severity_filter_mutex);
+
+        auto it = std::find_if(severity_filters.begin(), severity_filters.end(),
+                               [source](const auto& src_severity) { return src_severity.first == source; });
+        return (it == severity_filters.end()) ? LogLevel::error : it->second;
+    }
 
     void SetLoggerThresholdCore(const std::string& source, LogLevel threshold) {
         std::scoped_lock lock(severity_filter_mutex);
@@ -237,6 +248,13 @@ namespace {
         auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
         severity_filter[source] = used_threshold;
         logging::core::get()->set_filter(severity_filter);
+
+        auto it = std::find_if(severity_filters.begin(), severity_filters.end(),
+                               [&source](auto& src_severity) { return src_severity.first == source; });
+        if (it == severity_filters.end())
+            severity_filters.emplace_back(std::move(source), threshold);
+        else
+            it->second = threshold;
     }
 
     void ConfigureFileSinkFrontEnd(LoggerTextFileSinkFrontend& sink_frontend,
@@ -263,7 +281,11 @@ void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
     InfoLogger(log) << "Setting \"" << source << "\" logger threshold to \"" << threshold << "\".";
 }
 
+bool LoggerThresholdEnabled(LogLevel threshold, std::string_view source)
+{ return GetSourceThreshold(source) <= threshold; }
+
 void InitLoggingSystem(const std::string& log_file, std::string_view _unnamed_logger_identifier) {
+    // set local nunnamed logger to lower-case version of input name
     auto& unnamed_logger_identifier = LocalUnnamedLoggerIdentifier();
     unnamed_logger_identifier = _unnamed_logger_identifier;
     std::transform(unnamed_logger_identifier.begin(), unnamed_logger_identifier.end(),

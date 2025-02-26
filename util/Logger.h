@@ -308,6 +308,7 @@ DeclareThreadSafeLogger();
 
 /** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
 FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
+FO_COMMON_API bool LoggerThresholdEnabled(LogLevel threshold, std::string_view source = "");
 
 
 #endif
