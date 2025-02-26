@@ -1,7 +1,12 @@
 from focs._effects import (
+    ContainedBy,
+    Contains,
     EffectsGroup,
+    HasStarlane,
     InSystem,
     IsBuilding,
+    IsRootCandidate,
+    IsSource,
     MaxOf,
     NamedReal,
     NamedRealLookup,
@@ -13,7 +18,11 @@ from focs._effects import (
     Source,
     SpeciesDislikes,
     SpeciesLikes,
+    StarlaneToWouldBeAngularlyCloseToExistingStarlane,
+    StarlaneToWouldBeCloseToObject,
+    StarlaneToWouldCrossExistingStarlane,
     StatisticCount,
+    System,
     Target,
     ThisBuilding,
     Value,
@@ -22,14 +31,11 @@ from macros.opinion import POLICY_DISLIKE_SCALING
 
 STABILITY_PER_LIKED_BUILDING_ON_PLANET = 4.0
 
-
 STABILITY_PER_LIKED_BUILDING_IN_SYSTEM = 1.0
-
 
 STABILITY_PER_DISLIKED_BUILDING_ON_PLANET = 4.0 * POLICY_DISLIKE_SCALING
 
 STABILITY_PER_DISLIKED_BUILDING_IN_SYSTEM = 1.0 * POLICY_DISLIKE_SCALING
-
 
 SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS = [
     # species like building on the same planet
@@ -132,3 +138,29 @@ SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS = [
         ],
     ),
 ]
+
+
+CAN_ADD_STARLANE_TO_SOURCE = (
+    System
+    & ~Contains(IsSource)
+    & ~HasStarlane(from_=Object(id=Source.SystemID))
+    # specify the system, not the source object. the condition will consider multiple lanes
+    # connecting to a system as not crossing,
+    # but if the object is not itself a system but is in a system,
+    # then the system may be considered as crossing a lane from the object's location
+    & ~StarlaneToWouldCrossExistingStarlane(from_=Object(id=Source.SystemID))
+    & ~StarlaneToWouldBeAngularlyCloseToExistingStarlane(from_=Object(id=Source.SystemID), maxdotprod=0.87)
+    & ~StarlaneToWouldBeCloseToObject(
+        distance=20.0,
+        from_=Object(id=Source.SystemID),
+        closeto=(
+            System  # don't go near other systems
+            & ~IsSource  # source is probably a building or planet, exclude any planet or system at the location of the source, but don't assume that the source is in a system or is on a planet when doing so
+            & ~Contains(IsSource)
+            & ~ContainedBy(Contains(IsSource))
+            & ~IsRootCandidate
+            & ~Contains(IsRootCandidate)
+            & ~ContainedBy(Contains(IsRootCandidate))
+        ),
+    )
+)
