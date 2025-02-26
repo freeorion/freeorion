@@ -279,10 +279,18 @@ namespace Impl {
 
     constexpr auto to_mt = [](const auto& op) { return GetDefaultInitialCandidateObjectTypes(op); };
 
+    constexpr void PushBackIfNotAlreadyIn(auto& out, const auto* o) {
+        if (o && std::none_of(out.begin(), out.end(), [o](const auto* r) noexcept { return o == r; }))
+            out.push_back(o);
+    }
 
+
+    // Returns an ObjectSet containing at least the union of types and context objects in \a matches_types
+    // but possibly more objects, without any duplicates.
     inline ObjectSet GetTypedObjects(const ScriptingContext& context, uint16_t matches_types) {
         using namespace Impl::MatchesType;
         ObjectSet retval;
+
         const auto& objects = context.ContextObjects();
 
         if ((matches_types & ANYOBJECTTYPE) && (matches_types & SINGLEOBJECT)) [[unlikely]] {
@@ -314,17 +322,12 @@ namespace Impl {
 
         } else if (matches_types & SINGLEOBJECT) {
             retval.reserve(3);
-            if (context.source && (matches_types & SOURCE))
+            if ((matches_types & SOURCE) && context.source)
                 retval.push_back(context.source);
-            if (context.condition_root_candidate && (matches_types & ROOTCANDIDATE))
-                retval.push_back(context.condition_root_candidate);
-            if (context.effect_target && (matches_types & TARGET))
-                retval.push_back(context.effect_target);
-            if (!retval.empty()) {
-                std::sort(retval.begin(), retval.end());
-                auto unique_it = std::unique(retval.begin(), retval.end());
-                retval.erase(unique_it, retval.end());
-            }
+            if (matches_types & ROOTCANDIDATE)
+                PushBackIfNotAlreadyIn(retval, context.condition_root_candidate);
+            if (matches_types & TARGET)
+                PushBackIfNotAlreadyIn(retval, context.effect_target);
         }
 
         return retval;
@@ -3298,6 +3301,8 @@ struct FO_COMMON_API And final : public Condition {
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
+    // takes a list of sets of context objects and types of objects that separate conditions can match, and 
+    // finds a set of types / context objects that the And of those separate conditions can match
     static constexpr uint16_t ReduceDefaultInitialCandidateObjectTypes(std::span<uint16_t> ops_matched_types) {
         using namespace Impl::MatchesType;
         using namespace Impl;
@@ -3557,43 +3562,7 @@ private:
     std::string m_desc_stringtable_key;
 };
 
-namespace Impl {
-    /*
-    if (auto* or_cond = dynamic_cast<const ::Condition::Or*>(&cond)) {
-        const auto& ops = or_cond->Operands();
 
-        if (ops.empty()) {
-            return MatchesType::NOTHING;
-
-        } else if (ops.size() == 1) {
-            return cond_to_matchestype(ops.front().get());
-
-        } else {
-            // get matched types for all operand conditions...
-            std::vector<std::decay_t<decltype(MatchesType::FIELDS)>> ops_matched_types;
-            ops_matched_types.reserve(ops.size());
-            std::transform(ops.begin(), ops.end(), std::back_inserter(ops_matched_types), cond_to_matchestype);
-
-            //// TEST OUTPUT
-            //std::string logout = "\n\n\n\nMatchesOnly for : " + cond.Dump()
-            //    + "\n . <Or> operand matched types (" + std::to_string(ops_matched_types.size()) + "):";
-            //for (std::size_t idx = 0u; idx < ops.size(); ++idx) {
-            //    logout += "\n . . " + shorten_name(ops[idx]->Dump())
-            //        + " " + MatchesToString(ops_matched_types[idx]);
-            //}
-            //// TEST OUTPUT
-
-            // or together all possible outputs...
-            auto result = std::reduce(ops_matched_types.begin(), ops_matched_types.end(), MatchesType::NOTHING,
-                                        [](auto lhs, auto rhs) noexcept { return lhs | rhs; });
-
-            // result should be a set of possible output types to consider...
-            //std::cout << logout << "\n = " << MatchesToString(result) << std::endl;
-            return result;
-        }
-    }
-    */
-}
 }
 
 
