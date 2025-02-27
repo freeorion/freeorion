@@ -523,8 +523,11 @@ void SetMeter::Execute(ScriptingContext& context,
     if (targets.empty())
         return;
 
-    TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
-    TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);
+    const bool trace_log = LoggerThresholdEnabled(LogLevel::trace, "effects");
+    if (trace_log) {
+        TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
+        TraceLogger(effects) << "SetMeter execute " << targets.size() << " before:" << TargetsDump(targets);\
+    }
 
     const int source_id{context.source ? context.source->ID() : INVALID_OBJECT_ID};
     const auto& accounting_label{m_accounting_label.empty() ? effect_cause.custom_label : m_accounting_label};
@@ -604,7 +607,8 @@ void SetMeter::Execute(ScriptingContext& context,
             update_meter(new_val, target_id, meter);
     }
 
-    TraceLogger(effects) << "SetMeter execute " << targets.size() << " after:" << TargetsDump(targets);
+    if (trace_log)
+        TraceLogger(effects) << "SetMeter execute " << targets.size() << " after:" << TargetsDump(targets);
 }
 
 void SetMeter::Execute(ScriptingContext& context, const TargetSet& targets) const {
