@@ -3213,7 +3213,7 @@ std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Co
         if (auto* op_and = dynamic_cast<ContainingCondition*>(op.get())) {
             auto sub_ops = DenestOps<ContainingCondition>(op_and->Operands());
             retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
-                            std::make_move_iterator(sub_ops.end()));
+                          std::make_move_iterator(sub_ops.end()));
         } else {
             retval.push_back(std::move(op));
         }
@@ -3453,16 +3453,20 @@ public:
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
     [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override { return ValueRef::CalculateCheckSum("Condition::Or", m_operands); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested) :
-        Condition(CondsRTSI(operands)),
+    Or(uint16_t matches_types, std::array<bool, 3> rtsi, std::vector<std::unique_ptr<Condition>>& operands) :
+        Condition(rtsi),
         // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
         m_operands(std::move(operands)),
-        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+        m_matches_types(matches_types)
+    {}
+
+    Or(std::vector<std::unique_ptr<Condition>> operands, OperandsAreAlreadyDenested) :
+        Or(DetermineDefaultInitialCandidateObjectTypes(operands), CondsRTSI(operands), operands)
     {}
 
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
