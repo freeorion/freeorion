@@ -3418,6 +3418,8 @@ struct FO_COMMON_API Or final : public Condition {
         if (this == &rhs)
             return true;
 
+        if (GetCheckSum() != rhs.GetCheckSum())
+            return false;
         if (m_operands.size() != rhs.m_operands.size())
             return false;
 
@@ -3453,11 +3455,12 @@ struct FO_COMMON_API Or final : public Condition {
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
     [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
+    struct OperandsAreAlreadyDenested {};
+    Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested);
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
         using namespace Impl::MatchesType;
         using namespace Impl;
