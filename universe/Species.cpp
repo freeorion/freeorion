@@ -110,11 +110,13 @@ namespace {
     auto ConcatenateAsVector(auto&& stringset1, auto&& stringset2, auto&& stringset3) {
         std::vector<std::string::value_type> retval;
         retval.reserve((stringset1.size() + stringset2.size() + stringset3.size())*30); // guesstimate
-        for (const auto& s : {stringset1, stringset2, stringset3})
+        for (const auto& s : {stringset1, stringset2, stringset3}) {
             for (const auto& t : s) {
                 const auto upperized_t = boost::to_upper_copy<std::string>(t);
                 retval.insert(retval.end(), upperized_t.begin(), upperized_t.end());
             }
+        }
+        retval.push_back(std::string::value_type{0});
         return retval;
     }
 
