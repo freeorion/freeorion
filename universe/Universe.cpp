@@ -1097,6 +1097,9 @@ namespace {
         int& n,
         bool effects_trace_log)
     {
+        if (effects_groups.empty())
+            return;
+
         std::vector<std::pair<Condition::Condition*, int>> already_evaluated_activation_condition_idx;
         already_evaluated_activation_condition_idx.reserve(effects_groups.size());
 
