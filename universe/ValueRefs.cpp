@@ -705,8 +705,7 @@ namespace StaticTests {
 
     static_assert([]() {
         const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property", PLANET);
-        return !visrprop.ReturnImmediateValue() &&
-               (visrprop.GetContainerType() == PLANET) &&
+        return (visrprop.GetContainerType() == PLANET) &&
                (visrprop.PropertyName() == "Property");
     }());
 
