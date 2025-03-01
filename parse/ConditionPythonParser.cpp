@@ -699,7 +699,12 @@ namespace {
             if (low_args.check()) {
                 low = ValueRef::CloneUnique(low_args().value_ref);
             } else {
-                low = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["low"])());
+                auto low_args_double = boost::python::extract<value_ref_wrapper<double>>(kw["low"]);
+                if (low_args_double.check()) {
+                    low = std::make_unique<ValueRef::StaticCast<double, int>>(ValueRef::CloneUnique(low_args_double().value_ref));
+                } else {
+                    low = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["low"])());
+                }
             }
         }
 
@@ -709,7 +714,12 @@ namespace {
             if (high_args.check()) {
                 high = ValueRef::CloneUnique(high_args().value_ref);
             } else {
-                high = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["high"])());
+                auto high_args_double = boost::python::extract<value_ref_wrapper<double>>(kw["high"]);
+                if (high_args_double.check()) {
+                    high = std::make_unique<ValueRef::StaticCast<double, int>>(ValueRef::CloneUnique(high_args_double().value_ref));
+                } else {
+                    high = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["high"])());
+                }
             }
         }
 
