@@ -99,7 +99,7 @@ struct FO_COMMON_API ValueRefBase {
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
 
-    [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
+    [[nodiscard]] constexpr virtual uint32_t GetCheckSum() const { return m_checksum_cache; }
 
     constexpr virtual ~ValueRefBase() noexcept
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -110,25 +110,26 @@ struct FO_COMMON_API ValueRefBase {
 
 protected:
     constexpr ValueRefBase() noexcept = default;
-    constexpr ValueRefBase(bool constant_expr, ReferenceType ref_type) noexcept :
+    constexpr ValueRefBase(bool constant_expr, ReferenceType ref_type, uint32_t checksum = 0u) noexcept :
         m_ref_type(ref_type),
-        m_constant_expr(constant_expr)
+        m_constant_expr(constant_expr),
+        m_checksum_cache(checksum)
     {}
-    constexpr explicit ValueRefBase(ReferenceType ref_type) noexcept :
-        m_ref_type(ref_type)
+    constexpr explicit ValueRefBase(ReferenceType ref_type, uint32_t checksum = 0u) noexcept :
+        m_ref_type(ref_type),
+        m_checksum_cache(checksum)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                           ReferenceType ref_type, ContainerType container) noexcept :
-        m_ref_type(ref_type),
-        m_container_type(container),
+                           uint32_t checksum) noexcept :
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
-        m_constant_expr(constant_expr)
+        m_constant_expr(constant_expr),
+        m_checksum_cache(checksum)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                           bool return_immediate_value, ReferenceType ref_type, ContainerType container) noexcept :
+                           ReferenceType ref_type, ContainerType container, uint32_t checksum = 0u) noexcept :
         m_ref_type(ref_type),
         m_container_type(container),
         m_root_candidate_invariant(root_inv),
@@ -136,26 +137,41 @@ protected:
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
         m_constant_expr(constant_expr),
-        m_return_immediate_value(return_immediate_value)
+        m_checksum_cache(checksum)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                           bool simple_increment, OpType op_type) noexcept :
+                           bool return_immediate_value, ReferenceType ref_type, ContainerType container,
+                           uint32_t checksum = 0u) noexcept :
+        m_ref_type(ref_type),
+        m_container_type(container),
+        m_root_candidate_invariant(root_inv),
+        m_local_candidate_invariant(local_inv),
+        m_target_invariant(target_inv),
+        m_source_invariant(source_inv),
+        m_constant_expr(constant_expr),
+        m_return_immediate_value(return_immediate_value),
+        m_checksum_cache(checksum)
+    {}
+    constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                           bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
         m_op_type(op_type),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
         m_constant_expr(constant_expr),
-        m_simple_increment(simple_increment)
+        m_simple_increment(simple_increment),
+        m_checksum_cache(checksum)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                           StatisticType stat_type) noexcept :
+                           StatisticType stat_type, uint32_t checksum = 0u) noexcept :
         m_stat_type(stat_type),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
-        m_constant_expr(constant_expr)
+        m_constant_expr(constant_expr),
+        m_checksum_cache(checksum)
     {}
 
     [[nodiscard]] constexpr bool operator==(const ValueRefBase& rhs) const = default;
@@ -165,13 +181,23 @@ protected:
     const OpType m_op_type = OpType::INVALID_OP_TYPE;
     const StatisticType m_stat_type = StatisticType::INVALID_STATISTIC_TYPE;
 
-    uint8_t m_root_candidate_invariant : 1 = false; // does the value of this depend on the Condition root candidate object?
-    uint8_t m_local_candidate_invariant : 1 = false;// does the value of this depend on the Condition local candidate object?
-    uint8_t m_target_invariant : 1 = false;         // does the value of this depend on the Effect target object?
-    uint8_t m_source_invariant : 1 = false;         // does the value of this depend on the Source object?
-    uint8_t m_constant_expr : 1 = false;            // is this a constant expression, which can be evaluated without a ScriptingContext?
-    uint8_t m_simple_increment : 1 = false;         // is this an expression that is 
-    uint8_t m_return_immediate_value : 1 = false;
+    uint32_t m_root_candidate_invariant : 1 = false; // does the value of this depend on the Condition root candidate object?
+    uint32_t m_local_candidate_invariant : 1 = false;// does the value of this depend on the Condition local candidate object?
+    uint32_t m_target_invariant : 1 = false;         // does the value of this depend on the Effect target object?
+    uint32_t m_source_invariant : 1 = false;         // does the value of this depend on the Source object?
+    uint32_t m_constant_expr : 1 = false;            // is this a constant expression, which can be evaluated without a ScriptingContext?
+    // is this an expression that is a fixed modification of something that is being set in by effect,
+    // eg. adding a constant to a meter, where the "Value" to set is calculated using a simple expressing like "Value + 5" 
+    uint32_t m_simple_increment : 1 = false;
+    // is the value of this expression the immediate value or the initial value of what's referenced?
+    // eg. if the expression is "Target.Population", if m_return_immediate_value == false, then the
+    // returned value is the initial population before the current effects are applied.
+    // or if m_return_immediate_value == true, then as various effects are applied that modify the
+    // target's populated, the value of this expression will change as each effect is applied, depending
+    // on the order of application
+    uint32_t m_return_immediate_value : 1 = false;
+
+    const uint32_t m_checksum_cache : 24 = 0u;    // derived classes may use this to store their checksum value
 };
 
 template<typename T>
@@ -247,25 +273,29 @@ struct FO_COMMON_API ValueRef : public ValueRefBase
 
 protected:
     constexpr ValueRef() noexcept = default;
-    constexpr explicit ValueRef(ReferenceType ref_type) noexcept :
-        ValueRefBase(ref_type)
+    constexpr explicit ValueRef(ReferenceType ref_type, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(ref_type, checksum)
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                       ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE) noexcept :
-        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, ref_type, ContainerType::NONE)
+                       uint32_t checksum) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, checksum)
+    {}
+    constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, ref_type, ContainerType::NONE, checksum)
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        bool return_immediate_value, ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE,
-                       ContainerType container = ContainerType::NONE) noexcept :
-        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type, container)
+                       ContainerType container = ContainerType::NONE, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type, container, checksum)
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                       bool simple_increment, OpType op_type) noexcept :
-        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, simple_increment, op_type)
+                       bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, simple_increment, op_type, checksum)
     {}
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
-                       StatisticType stat_type) noexcept :
-        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, stat_type)
+                       StatisticType stat_type, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
     {}
 };
 

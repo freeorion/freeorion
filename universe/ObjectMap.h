@@ -396,6 +396,11 @@ public:
         }
     }
 
+    const auto& GetCapitalObjects() const noexcept { return m_capitals; }
+    void RefreshCapitals(const auto& ids)
+    { m_capitals = findExistingRaw<const UniverseObjectCXBase>(ids); }
+
+
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
       * Each object in \a copied_map has information transferred to this map.
       * If there already is a version of an object in \a copied_map in this map
@@ -683,6 +688,8 @@ private:
     std::vector<const System*>               m_existing_system_vec;
     std::vector<const Building*>             m_existing_building_vec;
     std::vector<const Field*>                m_existing_field_vec;
+
+    std::vector<const UniverseObjectCXBase*> m_capitals;
 
     template <typename Archive>
     friend void serialize(Archive&, ObjectMap&, unsigned int const);
