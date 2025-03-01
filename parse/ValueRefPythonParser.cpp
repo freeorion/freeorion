@@ -584,8 +584,13 @@ namespace {
                 auto arg = boost::python::extract<value_ref_wrapper<double>>(args[i]);
                 if (arg.check())
                     operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else
-                    operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
+                else {
+                    auto arg_int = boost::python::extract<value_ref_wrapper<int>>(args[i]);
+                    if (arg_int.check())
+                        operands.push_back(std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(arg_int().value_ref)));
+                    else
+                        operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
+                }
             }
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operands))));
         } else if (args[0] == parser.type_str) {
