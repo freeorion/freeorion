@@ -342,10 +342,64 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(false, effect->IsSitrepEffect());
         BOOST_REQUIRE_EQUAL(false, effect->IsConditionalEffect());
 
+        BOOST_REQUIRE_EQUAL(831, CheckSums::GetCheckSum(species.Name()));
+        BOOST_REQUIRE_EQUAL(1218, CheckSums::GetCheckSum(species.Description()));
+        BOOST_REQUIRE_EQUAL(53880, CheckSums::GetCheckSum(species.GameplayDescription()));
+        BOOST_REQUIRE_EQUAL(325509, CheckSums::GetCheckSum(species.Foci()));
+        BOOST_REQUIRE_EQUAL(1135, CheckSums::GetCheckSum(species.DefaultFocus()));
+        BOOST_REQUIRE_EQUAL(16966, CheckSums::GetCheckSum(species.Likes()));
+        BOOST_REQUIRE_EQUAL(16450, CheckSums::GetCheckSum(species.Dislikes()));
+        BOOST_REQUIRE_EQUAL(328, CheckSums::GetCheckSum(species.PlanetEnvironments()));
+        BOOST_REQUIRE_EQUAL(0, CheckSums::GetCheckSum(species.CombatTargets()));
+        BOOST_REQUIRE_EQUAL(4056455, CheckSums::GetCheckSum(species.AnnexationCondition()));
+
+        const auto* annex_cost_op = dynamic_cast<const ValueRef::Operation<double>*>(species.AnnexationCost());
+        BOOST_REQUIRE_EQUAL(static_cast<int16_t>(annex_cost_op->GetOpType()),
+                            static_cast<int16_t>(ValueRef::OpType::MAXIMUM));
+        BOOST_REQUIRE_EQUAL(static_cast<int16_t>(annex_cost_op->GetReferenceType()),
+                            static_cast<int16_t>(ValueRef::ReferenceType::INVALID_REFERENCE_TYPE));
+        const auto& operands = annex_cost_op->Operands();
+        BOOST_REQUIRE_EQUAL(2, operands.size());
+
+        const auto* op0 = dynamic_cast<const ValueRef::ComplexVariable<double>*>(operands.at(0));
+        BOOST_REQUIRE_EQUAL(static_cast<int16_t>(op0->GetContainerType()),
+                            static_cast<int16_t>(ValueRef::ContainerType::NONE));
+        BOOST_REQUIRE_EQUAL(static_cast<int16_t>(op0->GetReferenceType()),
+                            static_cast<int16_t>(ValueRef::ReferenceType::INVALID_REFERENCE_TYPE));
+        BOOST_REQUIRE_EQUAL(op0->PropertyName(), "GameRule");
+        BOOST_REQUIRE_EQUAL(op0->IntRef1(), nullptr);
+        BOOST_REQUIRE_EQUAL(op0->IntRef2(), nullptr);
+        BOOST_REQUIRE_EQUAL(op0->IntRef3(), nullptr);
+        BOOST_REQUIRE_EQUAL(op0->StringRef2(), nullptr);
+
+        const auto* op0str1 = dynamic_cast<const ValueRef::Constant<std::string>*>(op0->StringRef1());
+        BOOST_REQUIRE_EQUAL(op0str1->Value(), "RULE_ANNEX_COST_MINIMUM");
+        BOOST_REQUIRE_EQUAL(op0str1->GetCheckSum(), 4414);
+
+        BOOST_REQUIRE_EQUAL(7677, ValueRef::CalculateCheckSum("ValueRef::ComplexVariable", "GameRule", false,
+                                                              nullptr, nullptr, nullptr, op0str1, nullptr));
+        BOOST_REQUIRE_EQUAL(7677, op0->GetCheckSum());
+
+        const auto* op1 = dynamic_cast<const ValueRef::Operation<double>*>(operands.at(1));
+        BOOST_REQUIRE_EQUAL(104225, op1->GetCheckSum());
+
+        BOOST_REQUIRE_EQUAL(113801, CheckSums::GetCheckSum(species.AnnexationCost()));
+
+        BOOST_REQUIRE_EQUAL(8239655, CheckSums::GetCheckSum(species.Effects()));
+        BOOST_REQUIRE_EQUAL(14018, CheckSums::GetCheckSum(species.Location()));
+        BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.Playable()));
+        BOOST_REQUIRE_EQUAL(0, CheckSums::GetCheckSum(species.Native()));
+        BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.CanColonize()));
+        BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.CanProduceShips()));
+        BOOST_REQUIRE_EQUAL(4000000, CheckSums::GetCheckSum(species.SpawnRate()));
+        BOOST_REQUIRE_EQUAL(9999, CheckSums::GetCheckSum(species.SpawnLimit()));
+        BOOST_REQUIRE_EQUAL(6705, CheckSums::GetCheckSum(species.Tags()));
+        BOOST_REQUIRE_EQUAL(2917, CheckSums::GetCheckSum(species.Graphic()));
+
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6764239, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6807904, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",

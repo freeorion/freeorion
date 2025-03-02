@@ -337,18 +337,20 @@ private:
 template <typename T>
 struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
-    explicit ComplexVariable(std::string variable_name,
+    explicit ComplexVariable(const std::string& variable_name,
                              std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
-                        std::move(variable_name), return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
+        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
+                                          int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
+                        variable_name, // no move because it breaks what's passed to checksum calc
+                        return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
                         std::move(int_ref1), std::move(int_ref2), std::move(int_ref3),
                         std::move(string_ref1), std::move(string_ref2))
-    {} // TODO: include variable_name and val_to_return in CalcuateCheckSum -> will change expected checksums for tests
+    {}
 
     explicit ComplexVariable(const ComplexVariable<T>& rhs) :
         Variable<T>(rhs),
@@ -402,8 +404,19 @@ protected:
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
-    template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
-    explicit StaticCast(T&& value_ref);
+    explicit StaticCast(std::unique_ptr<Variable<FromType>>&& value_ref) :
+        Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+        m_value_ref(std::move(value_ref))
+    {
+        this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
+        this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
+        this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
+        this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
+        this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
+        // this->m_simple_increment should always be false
+    }
+
+
 
     template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
                                     !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
@@ -1388,20 +1401,6 @@ FO_COMMON_API std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) cons
 ///////////////////////////////////////////////////////////
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
-template <typename FromType, typename ToType>
-template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
-StaticCast<FromType, ToType>::StaticCast(T&& value_ref) :
-    Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(std::move(value_ref))
-{
-    this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
-    this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
-    this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
-    this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
-    this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
-    // this->m_simple_increment should always be false
-}
-
 template <typename FromType, typename ToType>
 template <typename T> requires(std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
                                !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)

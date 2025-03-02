@@ -293,6 +293,10 @@ namespace CheckSums {
     constexpr void CheckSumCombine(uint32_t& sum, EnumT t) noexcept
     { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
+    // nullptr
+    constexpr void CheckSumCombine(uint32_t& sum, std::nullptr_t) noexcept {}
+
+    // misc
     constexpr void CheckSumCombine(uint32_t& sum, const auto& v)
         requires(!std::is_integral_v<std::decay_t<decltype(v)>> &&
                  !std::is_floating_point_v<std::decay_t<decltype(v)>> &&
