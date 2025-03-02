@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "ClientAppFixture.h"
+#include "client/ClientNetworking.h"
 #include "Empire/Empire.h"
 #include "universe/Planet.h"
 #include "universe/Ship.h"
@@ -64,7 +65,7 @@ BOOST_AUTO_TEST_CASE(host_server) {
     args.push_back("/proc/self/fd/1");
 #endif
 
-    Process server = Process(SERVER_CLIENT_EXE, args);
+    Process server = Process(m_networking->IoContext(), SERVER_CLIENT_EXE, args);
 
     BOOST_REQUIRE(ConnectToLocalHostServer());
 

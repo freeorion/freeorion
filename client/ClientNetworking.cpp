@@ -210,6 +210,8 @@ public:
 
     Networking::AuthRoles& AuthorizationRoles() noexcept { return m_roles; }
 
+    boost::asio::io_context& IoContext() noexcept { return m_io_context; }
+
 private:
     void HandleException(const boost::system::system_error& error);
 
@@ -800,8 +802,11 @@ void ClientNetworking::SetPlayerID(int player_id)
 void ClientNetworking::SetHostPlayerID(int host_player_id) noexcept
 { return m_impl->SetHostPlayerID(host_player_id); }
 
-Networking::AuthRoles& ClientNetworking::AuthorizationRoles()
+Networking::AuthRoles& ClientNetworking::AuthorizationRoles() noexcept
 { return m_impl->AuthorizationRoles(); }
+
+boost::asio::io_context& ClientNetworking::IoContext() noexcept
+{ return m_impl->IoContext(); }
 
 void ClientNetworking::SendMessage(Message message)
 { m_impl->SendMessage(std::move(message)); }

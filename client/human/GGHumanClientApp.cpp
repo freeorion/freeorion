@@ -491,7 +491,7 @@ void GGHumanClientApp::StartServer() {
     DebugLogger() << "Launching server process with args: ";
     for (const auto& arg : args)
         DebugLogger() << arg;
-    m_server_process = Process(SERVER_CLIENT_EXE, args);
+    m_server_process = Process(Networking().IoContext(), SERVER_CLIENT_EXE, args);
     DebugLogger() << "... finished launching server process.";
 }
 

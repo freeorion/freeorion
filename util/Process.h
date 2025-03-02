@@ -1,13 +1,18 @@
 #ifndef _Process_h_
 #define _Process_h_
 
-
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "Export.h"
 
+
+namespace boost {
+    namespace asio {
+        class io_context;
+    }
+}
 
 /** Encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the
    data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as
@@ -43,7 +48,7 @@ public:
             created.
 
         Process returns immediately. */
-    Process(const std::string& cmd, const std::vector<std::string>& argv);
+    Process(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv);
 
     ~Process() noexcept;
     Process(Process&&) noexcept;
