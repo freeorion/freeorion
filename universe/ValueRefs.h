@@ -344,11 +344,12 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
+        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
+                                          int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
                         std::move(variable_name), return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
                         std::move(int_ref1), std::move(int_ref2), std::move(int_ref3),
                         std::move(string_ref1), std::move(string_ref2))
-    {} // TODO: include variable_name and val_to_return in CalcuateCheckSum -> will change expected checksums for tests
+    {}
 
     explicit ComplexVariable(const ComplexVariable<T>& rhs) :
         Variable<T>(rhs),
