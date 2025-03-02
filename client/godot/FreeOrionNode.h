@@ -61,6 +61,8 @@ private:
 
     void options_set(godot::String option, godot::Variant value); ///< Sets options DB value
 
+    godot::String get_user_data_dir() const; ///< Returns user data dir 
+
     std::unique_ptr<GodotClientApp> m_app;
     godot::Ref<godot::Thread> m_network_thread;
 

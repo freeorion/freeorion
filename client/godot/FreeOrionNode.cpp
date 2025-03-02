@@ -83,6 +83,7 @@ void FreeOrionNode::_register_methods() {
     register_method("send_chat_message", &FreeOrionNode::send_chat_message);
     register_method("options_commit", &FreeOrionNode::options_commit);
     register_method("options_set", &FreeOrionNode::options_set);
+    register_method("get_user_data_dir", &FreeOrionNode::get_user_data_dir);
 
     godot::register_signal<FreeOrionNode>("ping", "message", GODOT_VARIANT_TYPE_STRING);
     godot::register_signal<FreeOrionNode>("error", "problem", GODOT_VARIANT_TYPE_STRING, "fatal", GODOT_VARIANT_TYPE_BOOL);
@@ -432,5 +433,9 @@ void FreeOrionNode::options_set(godot::String option, godot::Variant value) {
     default:
         ErrorLogger() << "Unsupported option " << option8 << " type " << value.get_type();
     }
+}
+
+godot::String FreeOrionNode::get_user_data_dir() const {
+    return godot::String(GetUserDataDir().native().c_str());
 }
 
