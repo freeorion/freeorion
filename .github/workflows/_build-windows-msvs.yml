@@ -17,7 +17,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v15/FreeOrionSDK_15_MSVC-v143-x64.zip
+          url: https://github.com/o01eg/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-x64.zip
           target: ../
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.3.1
@@ -60,9 +60,8 @@ jobs:
           mv ../FreeOrion_*_Test_Win32_Setup.exe .
       - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4
-        if: ${{ inputs.weekly-deploy }}
         with:
           name: weekly-artifacts-sf-windows-msvs-${{ github.run_number }}
           path: FreeOrion_*_Test_Win32_Setup.exe
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 14
