@@ -526,8 +526,6 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
     [[nodiscard]] const std::vector<const ValueRef<T>*> Operands() const; // all operands
 
-    [[nodiscard]] uint32_t GetCheckSum() const override;
-
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Operation<T>>(*this); }
 
@@ -2353,20 +2351,6 @@ T Operation<T>::Eval(const ScriptingContext& context) const
 }
 
 template <typename T>
-uint32_t Operation<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
-    CheckSums::CheckSumCombine(retval, this->m_op_type);
-    CheckSums::CheckSumCombine(retval, m_operands);
-    // derived member values should not be part of checksums
-    // e.g. the invariants and m_cached_const_value
-    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
-
-template <typename T>
 Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
     ValueRef<T>(op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
                 std::all_of(operands.begin(), operands.end(),
@@ -2384,8 +2368,8 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
                 std::all_of(operands.begin(), operands.end(),
                             [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
                 IsSimpleIncrement(op_type, operands),
-                op_type
-               ),
+                op_type,
+                CalculateCheckSum("ValueRef::Operation", op_type, operands)),
     m_operands(std::move(operands)),
     m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
 {
