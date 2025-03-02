@@ -112,66 +112,66 @@ protected:
     constexpr ValueRefBase() noexcept = default;
     constexpr ValueRefBase(bool constant_expr, ReferenceType ref_type, uint32_t checksum = 0u) noexcept :
         m_ref_type(ref_type),
-        m_constant_expr(constant_expr),
-        m_checksum_cache(checksum)
+        m_checksum_cache(checksum & 0xffffff),
+        m_constant_expr(constant_expr)
     {}
     constexpr explicit ValueRefBase(ReferenceType ref_type, uint32_t checksum = 0u) noexcept :
         m_ref_type(ref_type),
-        m_checksum_cache(checksum)
+        m_checksum_cache(checksum & 0xffffff)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                            uint32_t checksum) noexcept :
+        m_checksum_cache(checksum & 0xffffff),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
-        m_constant_expr(constant_expr),
-        m_checksum_cache(checksum)
+        m_constant_expr(constant_expr)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                            ReferenceType ref_type, ContainerType container, uint32_t checksum = 0u) noexcept :
         m_ref_type(ref_type),
         m_container_type(container),
+        m_checksum_cache(checksum & 0xffffff),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
-        m_constant_expr(constant_expr),
-        m_checksum_cache(checksum)
+        m_constant_expr(constant_expr)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                            bool return_immediate_value, ReferenceType ref_type, ContainerType container,
                            uint32_t checksum = 0u) noexcept :
         m_ref_type(ref_type),
         m_container_type(container),
+        m_checksum_cache(checksum & 0xffffff),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
         m_constant_expr(constant_expr),
-        m_return_immediate_value(return_immediate_value),
-        m_checksum_cache(checksum)
+        m_return_immediate_value(return_immediate_value)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                            bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
         m_op_type(op_type),
+        m_checksum_cache(checksum & 0xffffff),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
         m_constant_expr(constant_expr),
-        m_simple_increment(simple_increment),
-        m_checksum_cache(checksum)
+        m_simple_increment(simple_increment)
     {}
     constexpr ValueRefBase(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                            StatisticType stat_type, uint32_t checksum = 0u) noexcept :
         m_stat_type(stat_type),
+        m_checksum_cache(checksum & 0xffffff),
         m_root_candidate_invariant(root_inv),
         m_local_candidate_invariant(local_inv),
         m_target_invariant(target_inv),
         m_source_invariant(source_inv),
-        m_constant_expr(constant_expr),
-        m_checksum_cache(checksum)
+        m_constant_expr(constant_expr)
     {}
 
     [[nodiscard]] constexpr bool operator==(const ValueRefBase& rhs) const = default;
@@ -180,6 +180,8 @@ protected:
     const ContainerType m_container_type = ContainerType::NONE;
     const OpType m_op_type = OpType::INVALID_OP_TYPE;
     const StatisticType m_stat_type = StatisticType::INVALID_STATISTIC_TYPE;
+
+    const uint32_t m_checksum_cache : 24 = 0u;    // derived classes may use this to store their checksum value
 
     uint32_t m_root_candidate_invariant : 1 = false; // does the value of this depend on the Condition root candidate object?
     uint32_t m_local_candidate_invariant : 1 = false;// does the value of this depend on the Condition local candidate object?
@@ -196,8 +198,6 @@ protected:
     // target's populated, the value of this expression will change as each effect is applied, depending
     // on the order of application
     uint32_t m_return_immediate_value : 1 = false;
-
-    const uint32_t m_checksum_cache : 24 = 0u;    // derived classes may use this to store their checksum value
 };
 
 template<typename T>
