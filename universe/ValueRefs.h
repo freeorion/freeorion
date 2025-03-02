@@ -31,12 +31,22 @@
 class UniverseObject;
 
 namespace ValueRef {
+[[nodiscard]] constexpr uint32_t CalculateCheckSum(const auto& value, std::string_view cond_tag)
+    noexcept(noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), cond_tag)) &&
+             noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), value)))
+{
+    uint32_t checksum = 0u;
+    CheckSums::CheckSumCombine(checksum, cond_tag);
+    CheckSums::CheckSumCombine(checksum, value);
+    return checksum;
+}
+
 /** the constant value leaf ValueRef class. */
 template <typename T> requires(std::is_nothrow_move_constructible_v<T>)
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     [[nodiscard]] constexpr explicit Constant(T value) noexcept(noexcept(std::string{})) :
-        ValueRef<T>(true, true, true, true, true, CalculateCheckSum(value)),
+        ValueRef<T>(true, true, true, true, true, CalculateCheckSum(value, "ValueRef::Constant")),
         m_value(std::move(value))
     {}
 
@@ -85,30 +95,17 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     { return std::make_unique<Constant>(m_value); }
 
 private:
-    [[nodiscard]] static constexpr uint32_t CalculateCheckSum(const T& value)
-        noexcept(noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), "ValueRef::Constant")) &&
-                 noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), value)))
-    {
-        uint32_t checksum = 0u;
-        CheckSums::CheckSumCombine(checksum, "ValueRef::Constant");
-        CheckSums::CheckSumCombine(checksum, value);
-        return checksum;
-    }
-
     const T m_value{};
 };
 
 template <>
 struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 {
-    template <typename S> requires (std::is_convertible_v<S, std::string>)
-    constexpr explicit Constant(S&& value)
-        noexcept(noexcept(std::string{}) && noexcept(std::string{std::declval<S>()})) :
-        ValueRef<std::string>(true, true, true, true, true),
-        m_value(std::forward<S>(value))
-    {
-        static_assert(std::is_nothrow_move_constructible_v<std::string>);
-    }
+    CONSTEXPR_STRING explicit Constant(std::string value)
+        noexcept(std::is_nothrow_move_constructible_v<std::string>) :
+        ValueRef<std::string>(true, true, true, true, true, CalculateCheckSum(value, "ValueRef::Constant<string>")),
+        m_value(std::move(value))
+    {}
 
 #if defined(__GNUC__) && (__GNUC__ == 12)
     // must be __GNUC__ > 11 for ~basic_string to be constexpr (and thus also ~Constant<string>
@@ -170,20 +167,6 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     }
 
     [[nodiscard]] CONSTEXPR_STRING const auto& Value() const noexcept { return m_value; };
-    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override {
-        uint32_t retval{0};
-
-        CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
-        CheckSums::CheckSumCombine(retval, m_value);
-#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
-        if (!std::is_constant_evaluated())
-            [type_id_name{typeid(*this).name()}, this, retval]() {
-                TraceLogger() << "GetCheckSum(Constant<std::string>): " << type_id_name
-                              << " value: " << Description() << " retval: " << retval;
-            }();
-#endif
-        return retval;
-    }
 
     [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override {
         auto retval = std::make_unique<Constant>(m_value);
