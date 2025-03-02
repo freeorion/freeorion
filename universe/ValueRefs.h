@@ -250,8 +250,9 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     }
 
 protected:
-    constexpr Variable(bool root_inv, bool local_inv, bool target_inv, bool source_inv, StatisticType stat_type) :
-        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type)
+    constexpr Variable(bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       StatisticType stat_type, uint32_t checksum) :
+        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
     {}
 
     const std::string m_property_name;
@@ -281,8 +282,6 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     [[nodiscard]] const auto* GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
     [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
-
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
@@ -707,7 +706,8 @@ Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticTy
                     (!value_ref || value_ref->TargetInvariant()),
                 (!sampling_condition || sampling_condition->SourceInvariant()) &&
                     (!value_ref || value_ref->SourceInvariant()),
-                stat_type),
+                stat_type,
+                CalculateCheckSum("ValueRef::Statistic", stat_type, sampling_condition, value_ref)),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
 {
@@ -1202,19 +1202,6 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
 
     // evaluate property for each condition-matched object
     return ReduceData<T>(this->m_stat_type, GetObjectPropertyValues(context, condition_matches));
-}
-
-template <typename T, typename V>
-uint32_t Statistic<T, V>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
-    CheckSums::CheckSumCombine(retval, this->m_stat_type);
-    CheckSums::CheckSumCombine(retval, m_sampling_condition);
-    CheckSums::CheckSumCombine(retval, m_value_ref);
-    TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
 }
 
 template <>
