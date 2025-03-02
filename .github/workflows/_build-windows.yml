@@ -64,6 +64,14 @@ jobs:
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
           .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test-logs-${{ github.run_number }}
+          path: C:\Users\runneradmin\AppData\Roaming\FreeOrion\*.log
+          if-no-files-found: error
+          retention-days: 1
       - name: Generate binaries only
         run: |
           pushd build
