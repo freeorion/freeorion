@@ -90,6 +90,10 @@ bool PythonCommon::Initialize() {
         return false;
     }
 
+    return true;
+}
+
+bool PythonCommon::InitErrorHandler() {
     try {
         m_system_exit = py::import("builtins").attr("SystemExit");
         m_traceback_format_exception = py::import("traceback").attr("format_exception");
@@ -122,7 +126,6 @@ void PythonCommon::HandleErrorAlreadySet() {
         return;
     }
 
-#if PY_VERSION_HEX < 0x030c0000
     PyObject *extype, *value, *traceback;
     PyErr_Fetch(&extype, &value, &traceback);
     PyErr_NormalizeException(&extype, &value, &traceback);
@@ -141,9 +144,6 @@ void PythonCommon::HandleErrorAlreadySet() {
         boost::algorithm::trim_right(line);
         ErrorLogger() << line;
     }
-#else
-    PyErr_Print();
-#endif
     return;
 }
 
@@ -167,6 +167,8 @@ void PythonCommon::Finalize() {
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception when cleaning up FreeOrion Python interface: " << e.what();
             return;
+        } catch (...) {
+            ErrorLogger() << "Caught unknown exception when cleaning up FreeOrion Python interface";
         }
     }
 }

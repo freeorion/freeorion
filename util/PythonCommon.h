@@ -29,6 +29,8 @@ public:
 
     bool Initialize();        // initializes and runs the Python interpreter, prepares the Python environment
 
+    bool InitErrorHandler();  // initializes error handler
+
     virtual bool InitCommonImports(); // initializes Python imports
 
     void Finalize();          // stops Python interpreter and releases its resources

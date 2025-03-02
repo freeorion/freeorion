@@ -35,6 +35,11 @@ bool PythonBase::Initialize() {
         return false;
     }
 
+    if (!InitErrorHandler()) {
+        ErrorLogger() << "Python error handler isn't initialized!";
+        return false;
+    }
+
     DebugLogger() << "Initializing C++ interfaces for Python";
 
     try {
