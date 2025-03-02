@@ -146,7 +146,7 @@ void GodotClientApp::StartServer() {
     DebugLogger() << "Launching server process with args: ";
     for (auto arg : args)
         DebugLogger() << arg;
-    m_server_process = Process(SERVER_CLIENT_EXE, args);
+    m_server_process = Process(m_networking->IoContext(), SERVER_CLIENT_EXE, args);
     DebugLogger() << "... finished launching server process.";
 }
 

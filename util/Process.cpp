@@ -44,7 +44,7 @@ Process::Process() :
     m_empty(true)
 {}
 
-Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
+Process::Process(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
     m_impl(std::make_unique<Impl>(cmd, argv)),
     m_empty(false)
 {}

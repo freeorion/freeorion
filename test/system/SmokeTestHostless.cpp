@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "ClientAppFixture.h"
+#include "client/ClientNetworking.h"
 #include "Empire/Empire.h"
 #include "universe/Planet.h"
 #include "util/Directories.h"
@@ -120,7 +121,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
         args.push_back("/proc/self/fd/1");
 #endif
 
-        server = Process(SERVER_CLIENT_EXE, args);
+        server = Process(m_networking->IoContext(), SERVER_CLIENT_EXE, args);
 
         BOOST_TEST_MESSAGE("Server started.");
     }

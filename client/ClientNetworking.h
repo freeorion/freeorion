@@ -10,6 +10,12 @@
 
 #include <memory>
 
+namespace boost {
+    namespace asio {
+        class io_context;
+    }
+}
+
 class Message;
 
 namespace Networking {
@@ -109,7 +115,9 @@ public:
     void SetHostPlayerID(int host_player_id) noexcept;
 
     /** Access to client's authorization roles */
-    [[nodiscard]] Networking::AuthRoles& AuthorizationRoles();
+    [[nodiscard]] Networking::AuthRoles& AuthorizationRoles() noexcept;
+
+    [[nodiscard]] boost::asio::io_context& IoContext() noexcept;
 
 private:
     friend class ClientApp;

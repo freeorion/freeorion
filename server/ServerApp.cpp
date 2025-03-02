@@ -317,7 +317,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         }
 
         args[player_pos] = player_name;
-        m_ai_client_processes.insert_or_assign(player_name, Process(AI_CLIENT_EXE, args));
+        m_ai_client_processes.insert_or_assign(player_name, Process(m_io_context, AI_CLIENT_EXE, args));
 
         DebugLogger() << "done starting AI " << player_name;
     }
