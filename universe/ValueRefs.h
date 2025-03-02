@@ -255,6 +255,12 @@ protected:
         ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
     {}
 
+    CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate, uint32_t checksum) :
+        ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
+                    ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
+        m_property_name(std::move(property_name))
+    {}
+
     const std::string m_property_name;
 };
 
@@ -331,16 +337,15 @@ private:
 template <typename T>
 struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
-    template<typename S> requires requires(S s) { std::vector<std::string>{s}; }
-    explicit ComplexVariable(S&& variable_name,
+    explicit ComplexVariable(std::string variable_name,
                              std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, std::forward<S>(variable_name), ContainerType::NONE,
-                    return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial),
+        Variable<T>(std::move(variable_name), return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
+                    CalculateCheckSum("ValueRef::ComplexVariable", int_ref1, int_ref2, int_ref3, string_ref1, string_ref2)),
         m_int_ref1(std::move(int_ref1)),
         m_int_ref2(std::move(int_ref2)),
         m_int_ref3(std::move(int_ref3)),
@@ -369,7 +374,6 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     [[nodiscard]] const auto* IntRef3() const noexcept { return m_int_ref3.get(); }
     [[nodiscard]] const auto* StringRef1() const noexcept { return m_string_ref1.get(); }
     [[nodiscard]] const auto* StringRef2() const noexcept { return m_string_ref2.get(); }
-    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<ComplexVariable<T>>(*this); }
@@ -1324,21 +1328,6 @@ void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
         m_string_ref1->SetTopLevelContent(content_name);
     if (m_string_ref2)
         m_string_ref2->SetTopLevelContent(content_name);
-}
-
-template <typename T>
-uint32_t ComplexVariable<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::ComplexVariable");
-    CheckSums::CheckSumCombine(retval, m_int_ref1);
-    CheckSums::CheckSumCombine(retval, m_int_ref2);
-    CheckSums::CheckSumCombine(retval, m_int_ref3);
-    CheckSums::CheckSumCombine(retval, m_string_ref1);
-    CheckSums::CheckSumCombine(retval, m_string_ref2);
-    TraceLogger() << "GetCheckSum(ComplexVariable<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
 }
 
 template <>
