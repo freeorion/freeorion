@@ -23,6 +23,11 @@ func test_quickstart():
 	assert_not_null(FreeOrionNode.get_version())
 	assert_typeof(FreeOrionNode.get_version(), TYPE_STRING)
 
+	assert_not_null(FreeOrionNode.get_user_data_dir())
+	assert_typeof(FreeOrionNode.get_user_data_dir(), TYPE_STRING)
+
+	gut.p(FreeOrionNode.get_user_data_dir())
+
 	FreeOrionNode.connect("start_game", self, "_on_freeorion_start_game")
 
 	FreeOrionNode.new_single_player_game()
