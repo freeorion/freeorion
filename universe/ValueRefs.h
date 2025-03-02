@@ -31,13 +31,12 @@
 class UniverseObject;
 
 namespace ValueRef {
-[[nodiscard]] constexpr uint32_t CalculateCheckSum(const auto& value, std::string_view cond_tag)
-    noexcept(noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), cond_tag)) &&
-             noexcept(CheckSums::CheckSumCombine(std::declval<uint32_t&>(), value)))
+template <typename... Args>
+[[nodiscard]] constexpr uint32_t CalculateCheckSum(const Args&... args)
+    noexcept(noexcept((CheckSums::CheckSumCombine(std::declval<uint32_t&>(), args), ...)))
 {
     uint32_t checksum = 0u;
-    CheckSums::CheckSumCombine(checksum, cond_tag);
-    CheckSums::CheckSumCombine(checksum, value);
+    (CheckSums::CheckSumCombine(checksum, args), ...);
     return checksum;
 }
 
@@ -46,7 +45,7 @@ template <typename T> requires(std::is_nothrow_move_constructible_v<T>)
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     [[nodiscard]] constexpr explicit Constant(T value) noexcept(noexcept(std::string{})) :
-        ValueRef<T>(true, true, true, true, true, CalculateCheckSum(value, "ValueRef::Constant")),
+        ValueRef<T>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant", value)),
         m_value(std::move(value))
     {}
 
@@ -103,7 +102,7 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 {
     CONSTEXPR_STRING explicit Constant(std::string value)
         noexcept(std::is_nothrow_move_constructible_v<std::string>) :
-        ValueRef<std::string>(true, true, true, true, true, CalculateCheckSum(value, "ValueRef::Constant<string>")),
+        ValueRef<std::string>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant<string>", value)),
         m_value(std::move(value))
     {}
 
