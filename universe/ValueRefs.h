@@ -344,14 +344,11 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        Variable<T>(std::move(variable_name), return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
-                    CalculateCheckSum("ValueRef::ComplexVariable", int_ref1, int_ref2, int_ref3, string_ref1, string_ref2)),
-        m_int_ref1(std::move(int_ref1)),
-        m_int_ref2(std::move(int_ref2)),
-        m_int_ref3(std::move(int_ref3)),
-        m_string_ref1(std::move(string_ref1)),
-        m_string_ref2(std::move(string_ref2))
-    { InitInvariants(); } // TODO: remove InitInvariants, determine in Variable<T> constructor call
+        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
+                        std::move(variable_name), return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
+                        std::move(int_ref1), std::move(int_ref2), std::move(int_ref3),
+                        std::move(string_ref1), std::move(string_ref2))
+    {} // TODO: include variable_name and val_to_return in CalcuateCheckSum -> will change expected checksums for tests
 
     explicit ComplexVariable(const ComplexVariable<T>& rhs) :
         Variable<T>(rhs),
@@ -379,6 +376,18 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     { return std::make_unique<ComplexVariable<T>>(*this); }
 
 protected:
+    ComplexVariable(uint32_t checksum, std::string variable_name, ValueToReturn val_to_return,
+                    std::unique_ptr<ValueRef<int>>&& int_ref1, std::unique_ptr<ValueRef<int>>&& int_ref2,
+                    std::unique_ptr<ValueRef<int>>&& int_ref3, std::unique_ptr<ValueRef<std::string>>&& string_ref1,
+                    std::unique_ptr<ValueRef<std::string>>&& string_ref2) :
+        Variable<T>(std::move(variable_name), val_to_return, checksum),
+        m_int_ref1(std::move(int_ref1)),
+        m_int_ref2(std::move(int_ref2)),
+        m_int_ref3(std::move(int_ref3)),
+        m_string_ref1(std::move(string_ref1)),
+        m_string_ref2(std::move(string_ref2))
+    { InitInvariants(); } // TODO: remove InitInvariants, determine in Variable<T> constructor call
+
     void InitInvariants();
 
     const std::unique_ptr<ValueRef<int>> m_int_ref1;
