@@ -60,6 +60,7 @@ max-complexity = 10
 "default/scripting/focs/*" = ["F405"]
 "default/scripting/game_rules.focs.py"=["F821"]
 "test-scripting/game_rules.focs.py"=["F821"]
+"test-scripting/game_rules_failed.focs.py"=["F821"]
 "test-scripting/*"=["F405", "F403"]
 
 [tool.ruff.lint.isort]

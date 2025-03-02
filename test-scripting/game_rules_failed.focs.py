@@ -1,0 +1,10 @@
+GameRuleFailed(
+    name="RULE_SHIP_HULL_COST_FACTOR",
+    description="RULE_SHIP_HULL_COST_FACTOR_DESC",
+    category="BALANCE",
+    type=float,
+    default=1.0,
+    min=0.1,
+    max=10.0,
+    rank=20,
+)

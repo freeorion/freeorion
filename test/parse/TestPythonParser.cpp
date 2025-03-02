@@ -50,10 +50,24 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
     PythonParser parser(m_python, m_test_scripting_dir);
 
     auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_test_scripting_dir / "game_rules.focs.py");
-    auto game_rules = *Pending::WaitForPendingUnlocked(std::move(game_rules_p));
+    auto game_rules_opt = Pending::WaitForPendingUnlocked(std::move(game_rules_p));
+
+    BOOST_REQUIRE(game_rules_opt);
+
+    const auto game_rules = *std::move(game_rules_opt);
+
     BOOST_REQUIRE(!game_rules.empty());
     BOOST_REQUIRE(game_rules.contains("RULE_HABITABLE_SIZE_MEDIUM"));
     BOOST_REQUIRE(GameRule::Type::TOGGLE == game_rules.at("RULE_ENABLE_ALLIED_REPAIR").type);
+}
+
+BOOST_AUTO_TEST_CASE(parse_game_rules_failed) {
+    PythonParser parser(m_python, m_test_scripting_dir);
+
+    auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_test_scripting_dir / "game_rules_failed.focs.py");
+    auto game_rules_opt = Pending::WaitForPendingUnlocked(std::move(game_rules_p));
+
+    BOOST_REQUIRE(!game_rules_opt);
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
