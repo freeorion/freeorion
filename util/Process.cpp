@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/process.hpp>
 
 #include <stdexcept>
 
@@ -22,7 +23,7 @@
 
 class Process::Impl {
 public:
-    Impl(const std::string& cmd, const std::vector<std::string>& argv);
+    Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv);
     ~Impl();
 
     bool SetLowPriority(bool low);
@@ -35,8 +36,10 @@ private:
 #if defined(FREEORION_WIN32)
     STARTUPINFOW        m_startup_info;
     PROCESS_INFORMATION m_process_info;
-#elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
+#elif defined(FREEORION_MACOSX)
     pid_t               m_process_id;
+#elif defined(FREEORION_LINUX)
+    boost::process::child m_child;
 #endif
 };
 
@@ -45,7 +48,7 @@ Process::Process() :
 {}
 
 Process::Process(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
-    m_impl(std::make_unique<Impl>(cmd, argv)),
+    m_impl(std::make_unique<Impl>(io_context, cmd, argv)),
     m_empty(false)
 {}
 
@@ -128,7 +131,7 @@ std::wstring ToWString(const std::string& utf8_string) {
     return utf16_string;
 }
 
-Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
+Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) {
     // convert UTF8 command and arguments to UTF16
     std::wstring wargs;
     for (std::size_t i = 0u; i < argv.size(); ++i) {
@@ -217,7 +220,7 @@ void Process::Impl::Kill() {
     m_process_info.hThread = 0;
 }
 
-#elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
+#elif defined(FREEORION_MACOSX)
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -228,7 +231,7 @@ void Process::Impl::Kill() {
 #include <sys/wait.h>
 
 
-Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv) {
+Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) {
     std::vector<char*> args;
     for (unsigned int i = 0; i < argv.size(); ++i)
         args.push_back(const_cast<char*>(&(const_cast<std::string&>(argv[i])[0])));
@@ -289,6 +292,66 @@ void Process::Impl::Kill() {
     kill(m_process_id, SIGKILL);
     DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
     waitpid(m_process_id, &status, 0);
+    DebugLogger() << "Process::Impl::Kill done";
+}
+
+#elif defined(FREEORION_LINUX)
+
+#include <sys/resource.h>
+
+Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
+    m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
+{
+    std::error_code ec;
+    if (!m_child.running(ec)) {
+        std::string error_message = "Process::Process : Failed to run a new process: ";
+        error_message += ec.message();
+        ErrorLogger() << error_message;
+        throw std::runtime_error(error_message);
+    }
+}
+
+Process::Impl::~Impl()
+{ if (!m_free) Kill(); }
+
+bool Process::Impl::SetLowPriority(bool low) {
+    if (low)
+        return (setpriority(PRIO_PROCESS, m_child.id(), 10) == 0);
+    else
+        return (setpriority(PRIO_PROCESS, m_child.id(), 0) == 0);
+}
+
+bool Process::Impl::Terminate() {
+    if (m_free) {
+        DebugLogger() << "Process::Impl::Terminate called but m_free is true so returning with no action";
+        return true;
+    }
+    DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
+    std::error_code term_ec;
+    m_child.terminate(term_ec);
+    DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
+    std::error_code wait_ec;
+    m_child.wait(wait_ec);
+    int status = m_child.exit_code();
+    DebugLogger() << "Process::Impl::Terminate done";
+    if (status != 0) {
+        WarnLogger() << "Process::Impl::Terminate got failure status " << status << ", termination error code " << term_ec.message() << ", waiting error code " << wait_ec.message();
+        return false;
+    }
+    return true;
+}
+
+void Process::Impl::Kill() {
+    if (m_free) {
+        DebugLogger() << "Process::Impl::Kill called but m_free is true so returning with no action";
+        return;
+    }
+    DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
+    std::error_code term_ec;
+    m_child.terminate(term_ec);
+    DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
+    std::error_code wait_ec;
+    m_child.wait(wait_ec);
     DebugLogger() << "Process::Impl::Kill done";
 }
 
