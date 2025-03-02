@@ -33,12 +33,9 @@ public:
 
 private:
     bool                m_free = false;
-#if defined(FREEORION_WIN32)
-    STARTUPINFOW        m_startup_info;
-    PROCESS_INFORMATION m_process_info;
-#elif defined(FREEORION_MACOSX)
+#if defined(FREEORION_MACOSX)
     pid_t               m_process_id;
-#elif defined(FREEORION_LINUX)
+#elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
     boost::process::child m_child;
 #endif
 };
@@ -117,110 +114,9 @@ void Process::Free() {
 }
 
 
-#if defined(FREEORION_WIN32)
 
-std::wstring ToWString(const std::string& utf8_string) {
-    // convert UTF-8 string to UTF-16
-    int utf16_sz = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-                                       utf8_string.data(), utf8_string.length(), NULL, 0);
-    std::wstring utf16_string(utf16_sz, 0);
-    if (utf16_sz > 0)
-        MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
-                            utf8_string.data(), utf8_string.size(),
-                            utf16_string.data(), utf16_sz);
-    return utf16_string;
-}
 
-Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) {
-    // convert UTF8 command and arguments to UTF16
-    std::wstring wargs;
-    for (std::size_t i = 0u; i < argv.size(); ++i) {
-        wargs += ToWString(argv[i]);
-        if (i + 1 < argv.size())
-            wargs += ' ';
-    }
-
-    ZeroMemory(&m_startup_info, sizeof(STARTUPINFOW));
-    m_startup_info.cb = sizeof(STARTUPINFOW);
-    ZeroMemory(&m_process_info, sizeof(PROCESS_INFORMATION));
-
-    const std::wstring wcmd = ToWString(cmd);
-
-    if (!CreateProcessW(wcmd.c_str(), const_cast<LPWSTR>(wargs.c_str()), 0, 0,
-                        false, CREATE_NO_WINDOW, 0, 0, &m_startup_info, &m_process_info))
-    {
-        std::string err_str;
-        DWORD err = GetLastError();
-        static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-        LPSTR buf = {};
-        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
-            err_str += buf;
-            LocalFree(buf);
-        }
-        throw std::runtime_error("Process::Process : Failed to create child process.  Windows error was: \"" + err_str + "\"");
-    }
-    WaitForInputIdle(m_process_info.hProcess, 1000); // wait for process to finish setting up, or for 1 sec, which ever comes first
-}
-
-Process::Impl::~Impl()
-{ if (!m_free) Kill(); }
-
-bool Process::Impl::SetLowPriority(bool low) {
-    const DWORD priority = low ? BELOW_NORMAL_PRIORITY_CLASS : NORMAL_PRIORITY_CLASS;
-    return SetPriorityClass(m_process_info.hProcess, priority);
-}
-
-bool Process::Impl::Terminate() {
-    // ToDo: Use actual WinAPI termination.
-    Kill();
-    return true;
-}
-
-void Process::Impl::Kill() {
-    if (m_process_info.hProcess && !TerminateProcess(m_process_info.hProcess, 0)) {
-        std::string err_str;
-        DWORD err = GetLastError();
-        static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-        LPSTR buf = {};
-        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
-            err_str += buf;
-            LocalFree(buf);
-        }
-        boost::algorithm::trim(err_str);
-        ErrorLogger() << "Process::Impl::Kill : Error terminating process: " << err_str;
-    }
-
-    if (m_process_info.hProcess && !CloseHandle(m_process_info.hProcess)) {
-        std::string err_str;
-        DWORD err = GetLastError();
-        DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-        LPSTR buf;
-        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
-            err_str += buf;
-            LocalFree(buf);
-        }
-        boost::algorithm::trim(err_str);
-        ErrorLogger() << "Process::Impl::Kill : Error closing process handle: " << err_str;
-    }
-
-    if (m_process_info.hThread && !CloseHandle(m_process_info.hThread)) {
-        std::string err_str;
-        DWORD err = GetLastError();
-        static constexpr DWORD flags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM;
-        LPSTR buf = {};
-        if (FormatMessageA(flags, 0, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&buf, 0, 0)) {
-            err_str += buf;
-            LocalFree(buf);
-        }
-        boost::algorithm::trim(err_str);
-        ErrorLogger() << "Process::Impl::Kill : Error closing thread handle: " << err_str;
-    }
-
-    m_process_info.hProcess = 0;
-    m_process_info.hThread = 0;
-}
-
-#elif defined(FREEORION_MACOSX)
+#if defined(FREEORION_MACOSX)
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -295,9 +191,7 @@ void Process::Impl::Kill() {
     DebugLogger() << "Process::Impl::Kill done";
 }
 
-#elif defined(FREEORION_LINUX)
-
-#include <sys/resource.h>
+#elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
 
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
     m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
@@ -314,12 +208,21 @@ Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd,
 Process::Impl::~Impl()
 { if (!m_free) Kill(); }
 
+#if defined(FREEORION_LINUX)
+#include <sys/resource.h>
+
 bool Process::Impl::SetLowPriority(bool low) {
     if (low)
         return (setpriority(PRIO_PROCESS, m_child.id(), 10) == 0);
     else
         return (setpriority(PRIO_PROCESS, m_child.id(), 0) == 0);
 }
+#elif defined(FREEORION_WIN32)
+bool Process::Impl::SetLowPriority(bool low) {
+    const DWORD priority = low ? BELOW_NORMAL_PRIORITY_CLASS : NORMAL_PRIORITY_CLASS;
+    return SetPriorityClass(m_child.native_handle(), priority);
+}
+#endif
 
 bool Process::Impl::Terminate() {
     if (m_free) {
