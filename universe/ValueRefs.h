@@ -44,19 +44,23 @@ template <typename... Args>
 template <typename T> requires(std::is_nothrow_move_constructible_v<T>)
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
-    [[nodiscard]] constexpr explicit Constant(T value) noexcept(noexcept(std::string{})) :
+    [[nodiscard]] constexpr explicit Constant(T value)
+        noexcept(noexcept(std::string{}) &&
+                 noexcept(CalculateCheckSum("ValueRef::Constant", value))) :
         ValueRef<T>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant", value)),
         m_value(std::move(value))
     {}
 
     template <typename TT> requires (std::is_convertible_v<TT, T>)
     [[nodiscard]] constexpr explicit Constant(TT&& value)
-        noexcept(noexcept(std::string{}) && noexcept(T{std::forward<TT>(value)})) :
-        Constant(T{std::forward<TT>(value)})
+        noexcept(noexcept(std::string{}) &&
+                 noexcept(T(std::forward<TT>(value))) &&
+                 noexcept(CalculateCheckSum("ValueRef::Constant", std::declval<T>()))) :
+        Constant(T(std::forward<TT>(value)))
     {}
 
     [[nodiscard]] constexpr explicit Constant(const Constant& rhs)
-        noexcept(noexcept(std::string{}) && noexcept(T{std::declval<const T>()})) :
+        noexcept(noexcept(std::string{}) && noexcept(T(rhs.m_value))) :
         ValueRef<T>(rhs),
         m_value(rhs.m_value)
     {}
@@ -195,7 +199,9 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     ref_type != ReferenceType::SOURCE_REFERENCE,
                     static_cast<bool>(retval_type),
                     ref_type,
-                    container_type),
+                    container_type,
+                    CalculateCheckSum("ValueRef::Variable", property_name, ref_type,
+                                      container_type, static_cast<bool>(retval_type))),
         m_property_name(std::move(property_name))
     {}
 
@@ -206,7 +212,10 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE, // not all effect target values are properties of the target object, eg. empire meters, but most are
                     ref_type != ReferenceType::SOURCE_REFERENCE,
                     static_cast<bool>(retval_type),
-                    ref_type)
+                    ref_type,
+                    ContainerType::NONE,
+                    CalculateCheckSum("ValueRef::Variable", std::string_view{}, ref_type,
+                                      ContainerType::NONE, static_cast<bool>(retval_type)))
     {}
 
 #if defined(__GNUC__) && (__GNUC__ == 12)
@@ -226,7 +235,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
             return true;
         if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
-        return this->m_container_type == rhs.m_container_type && m_property_name == rhs.m_property_name;
+        return m_property_name == rhs.m_property_name;
     }
 
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
@@ -234,8 +243,6 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] constexpr auto& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
-
-    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, this->m_container_type,
@@ -655,21 +662,6 @@ std::string Variable<T>::Description() const
 template <typename T>
 std::string Variable<T>::Dump(uint8_t ntabs) const
 { return ReconstructName(m_property_name, this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
-
-template <typename T>
-CONSTEXPR_STRING uint32_t Variable<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
-    CheckSums::CheckSumCombine(retval, m_property_name);
-    CheckSums::CheckSumCombine(retval, this->m_ref_type);
-    CheckSums::CheckSumCombine(retval, this->m_container_type);
-    CheckSums::CheckSumCombine(retval, this->m_return_immediate_value);
-    //if (!std::is_constant_evaluated())
-    //    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
 
 template <>
 FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
