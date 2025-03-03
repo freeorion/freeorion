@@ -19,8 +19,8 @@ jobs:
           - debian-sid-i386
         godot3: [true]
         include:
-          - image: manjaro
-            godot3: false
+          #- image: manjaro # wait until :latest will be updated from 54c97c27450e at https://hub.docker.com/r/manjarolinux/base/tags
+          #  godot3: false
           - image: void-musl
             godot3: false
           - image: fedora-rawhide # wait for update godot3-headless at https://packages.fedoraproject.org/pkgs/godot3/godot3-headless/fedora-rawhide.html since 2025-01-30
