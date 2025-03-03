@@ -808,15 +808,16 @@ namespace {
     typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
 
     /** Return the location of \p obj.*/
-    GeneralizedLocationType GeneralizedLocation(const UniverseObject* obj,
-                                                const ObjectMap& objects)
+    GeneralizedLocationType GeneralizedLocation(const UniverseObject* obj, const ObjectMap& objects, bool trace_log)
     {
         if (!obj)
             return nullptr;
 
         if (objects.getRaw<System>(obj->SystemID())) {
-            TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << obj->ID()
-                          << ") is system id: " << obj->SystemID();
+            if (trace_log) {
+                TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << obj->ID()
+                              << ") is system id: " << obj->SystemID();
+            }
             return obj->SystemID();
         }
 
@@ -827,8 +828,10 @@ namespace {
                               << ") is between " << fleet_sys_pair.first << " and " << fleet_sys_pair.second;
                 return nullptr;
             }
-            TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << obj->ID()
-                          << ") is between " << fleet_sys_pair.first << " and " << fleet_sys_pair.second;
+            if (trace_log) {
+                TraceLogger() << "GeneralizedLocation of " << obj->Name() << " (" << obj->ID()
+                              << ") is between " << fleet_sys_pair.first << " and " << fleet_sys_pair.second;
+            }
             return fleet_sys_pair;
         }
 
@@ -844,8 +847,8 @@ namespace {
     }
 
     /** Return the location of the object with id \p object_id.*/
-    GeneralizedLocationType GeneralizedLocation(int object_id, const ObjectMap& objects)
-    { return GeneralizedLocation(objects.getRaw(object_id), objects); }
+    GeneralizedLocationType GeneralizedLocation(int object_id, const ObjectMap& objects, bool trace_log)
+    { return GeneralizedLocation(objects.getRaw(object_id), objects, trace_log); }
 }
 
 /** JumpDistanceSys1Visitor and JumpDistanceSys2Visitor are variant visitors
@@ -947,8 +950,9 @@ int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id, const
 int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id,
                                                            const ObjectMap& objects) const
 {
-    GeneralizedLocationType obj1 = GeneralizedLocation(object1_id, objects);
-    GeneralizedLocationType obj2 = GeneralizedLocation(object2_id, objects);
+    const bool trace_log = LoggerThresholdEnabled(LogLevel::trace);
+    GeneralizedLocationType obj1 = GeneralizedLocation(object1_id, objects, trace_log);
+    GeneralizedLocationType obj2 = GeneralizedLocation(object2_id, objects, trace_log);
     JumpDistanceSys1Visitor visitor(*this, obj2);
     return boost::apply_visitor(visitor, obj1);
 }
@@ -1326,12 +1330,13 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     const Condition::ObjectSet& others,
     std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const
 {
+    const bool trace_log = LoggerThresholdEnabled(LogLevel::trace);
     // Check if any of the others are within jumps of candidate, by looping
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
     answer = false;
     for (const auto& other : others) {
         WithinJumpsOfOthersOtherVisitor check_if_location_is_within_jumps(*this, jumps, row);
-        GeneralizedLocationType location = GeneralizedLocation(other, objects);
+        GeneralizedLocationType location = GeneralizedLocation(other, objects, trace_log);
         if (boost::apply_visitor(check_if_location_is_within_jumps, location)) {
             answer = true;
             return;
@@ -1358,13 +1363,15 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     // others into near and the rest into far.
     WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, objects, stationary);
 
+    const bool trace_log = LoggerThresholdEnabled(LogLevel::trace);
+
     std::pair<Condition::ObjectSet, Condition::ObjectSet> retval;
     auto& [near, far] = retval;
     near.reserve(candidates.size());
     far.reserve(candidates.size());
 
     for (const auto* candidate : candidates) {
-        GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate, objects);
+        GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate, objects, trace_log);
         bool is_near = boost::apply_visitor(visitor, candidate_systems);
 
         if (is_near)
