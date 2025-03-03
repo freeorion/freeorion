@@ -710,7 +710,7 @@ Pathfinder::~Pathfinder() = default;
 Pathfinder& Pathfinder::operator=(Pathfinder&&) noexcept = default;
 
 namespace {
-    const Fleet* FleetFromObject(const UniverseObject* obj, const ObjectMap& objects) {
+    const Fleet* FleetFromObject(const auto* obj, const ObjectMap& objects) {
         if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET)
             return static_cast<const Fleet*>(obj);
         if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP)
@@ -808,9 +808,7 @@ namespace {
     typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
 
     /** Return the location of \p obj.*/
-    GeneralizedLocationType GeneralizedLocation(const UniverseObject* obj,
-                                                const ObjectMap& objects)
-    {
+    GeneralizedLocationType GeneralizedLocation(const UniverseObjectCXBase* obj, const ObjectMap& objects) {
         if (!obj)
             return nullptr;
 
@@ -845,7 +843,7 @@ namespace {
 
     /** Return the location of the object with id \p object_id.*/
     GeneralizedLocationType GeneralizedLocation(int object_id, const ObjectMap& objects)
-    { return GeneralizedLocation(objects.getRaw(object_id), objects); }
+    { return GeneralizedLocation(objects.getRaw<UniverseObject>(object_id), objects); }
 }
 
 /** JumpDistanceSys1Visitor and JumpDistanceSys2Visitor are variant visitors

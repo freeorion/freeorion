@@ -31,22 +31,38 @@
 class UniverseObject;
 
 namespace ValueRef {
+template <typename... Args>
+[[nodiscard]] constexpr uint32_t CalculateCheckSum(const Args&... args)
+    noexcept(noexcept((CheckSums::CheckSumCombine(std::declval<uint32_t&>(), args), ...)))
+{
+    uint32_t checksum = 0u;
+    (CheckSums::CheckSumCombine(checksum, args), ...);
+    return checksum;
+}
+
 /** the constant value leaf ValueRef class. */
-template <typename T>
+template <typename T> requires(std::is_nothrow_move_constructible_v<T>)
 struct FO_COMMON_API Constant final : public ValueRef<T>
 {
-    template <typename TT> requires (std::is_convertible_v<TT, T>)
-    [[nodiscard]] constexpr explicit Constant(TT&& value) noexcept(noexcept(std::string{}) && noexcept(T{std::declval<TT>()})) :
-        ValueRef<T>(true, true, true, true, true),
-        m_value(std::forward<TT>(value))
-    {
-        static_assert(std::is_nothrow_move_constructible_v<T>);
-    }
+    [[nodiscard]] constexpr explicit Constant(T value)
+        noexcept(noexcept(std::string{}) &&
+                 noexcept(CalculateCheckSum("ValueRef::Constant", value))) :
+        ValueRef<T>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant", value)),
+        m_value(std::move(value))
+    {}
 
-    [[nodiscard]] constexpr explicit Constant(const Constant& value)
-        noexcept(noexcept(std::string{}) && noexcept(T{std::declval<const T>()})) :
-        ValueRef<T>(value),
-        m_value(value.m_value)
+    template <typename TT> requires (std::is_convertible_v<TT, T>)
+    [[nodiscard]] constexpr explicit Constant(TT&& value)
+        noexcept(noexcept(std::string{}) &&
+                 noexcept(T(std::forward<TT>(value))) &&
+                 noexcept(CalculateCheckSum("ValueRef::Constant", std::declval<T>()))) :
+        Constant(T(std::forward<TT>(value)))
+    {}
+
+    [[nodiscard]] constexpr explicit Constant(const Constant& rhs)
+        noexcept(noexcept(std::string{}) && noexcept(T(rhs.m_value))) :
+        ValueRef<T>(rhs),
+        m_value(rhs.m_value)
     {}
 
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -78,8 +94,6 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 
     [[nodiscard]] constexpr T Value() const noexcept(noexcept(T{std::declval<const T>()})) { return m_value; };
 
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept override;
-
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Constant>(m_value); }
 
@@ -90,14 +104,11 @@ private:
 template <>
 struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 {
-    template <typename S> requires (std::is_convertible_v<S, std::string>)
-    constexpr explicit Constant(S&& value)
-        noexcept(noexcept(std::string{}) && noexcept(std::string{std::declval<S>()})) :
-        ValueRef<std::string>(true, true, true, true, true),
-        m_value(std::forward<S>(value))
-    {
-        static_assert(std::is_nothrow_move_constructible_v<std::string>);
-    }
+    CONSTEXPR_STRING explicit Constant(std::string value)
+        noexcept(std::is_nothrow_move_constructible_v<std::string>) :
+        ValueRef<std::string>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant<string>", value)),
+        m_value(std::move(value))
+    {}
 
 #if defined(__GNUC__) && (__GNUC__ == 12)
     // must be __GNUC__ > 11 for ~basic_string to be constexpr (and thus also ~Constant<string>
@@ -159,20 +170,6 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
     }
 
     [[nodiscard]] CONSTEXPR_STRING const auto& Value() const noexcept { return m_value; };
-    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override {
-        uint32_t retval{0};
-
-        CheckSums::CheckSumCombine(retval, "ValueRef::Constant<string>");
-        CheckSums::CheckSumCombine(retval, m_value);
-#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
-        if (!std::is_constant_evaluated())
-            [type_id_name{typeid(*this).name()}, this, retval]() {
-                TraceLogger() << "GetCheckSum(Constant<std::string>): " << type_id_name
-                              << " value: " << Description() << " retval: " << retval;
-            }();
-#endif
-        return retval;
-    }
 
     [[nodiscard]] std::unique_ptr<ValueRef<std::string>> Clone() const override {
         auto retval = std::make_unique<Constant>(m_value);
@@ -202,7 +199,9 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     ref_type != ReferenceType::SOURCE_REFERENCE,
                     static_cast<bool>(retval_type),
                     ref_type,
-                    container_type),
+                    container_type,
+                    CalculateCheckSum("ValueRef::Variable", property_name, ref_type,
+                                      container_type, static_cast<bool>(retval_type))),
         m_property_name(std::move(property_name))
     {}
 
@@ -213,7 +212,10 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE, // not all effect target values are properties of the target object, eg. empire meters, but most are
                     ref_type != ReferenceType::SOURCE_REFERENCE,
                     static_cast<bool>(retval_type),
-                    ref_type)
+                    ref_type,
+                    ContainerType::NONE,
+                    CalculateCheckSum("ValueRef::Variable", std::string_view{}, ref_type,
+                                      ContainerType::NONE, static_cast<bool>(retval_type)))
     {}
 
 #if defined(__GNUC__) && (__GNUC__ == 12)
@@ -233,7 +235,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
             return true;
         if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
-        return this->m_container_type == rhs.m_container_type && m_property_name == rhs.m_property_name;
+        return m_property_name == rhs.m_property_name;
     }
 
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
@@ -241,9 +243,6 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] constexpr auto& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
-    [[nodiscard]] constexpr bool ReturnImmediateValue() const noexcept { return this->m_return_immediate_value; }
-
-    [[nodiscard]] CONSTEXPR_STRING uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, this->m_container_type,
@@ -251,8 +250,15 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     }
 
 protected:
-    constexpr Variable(bool root_inv, bool local_inv, bool target_inv, bool source_inv, StatisticType stat_type) :
-        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type)
+    constexpr Variable(bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+                       StatisticType stat_type, uint32_t checksum) :
+        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
+    {}
+
+    CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate, uint32_t checksum) :
+        ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
+                    ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
+        m_property_name(std::move(property_name))
     {}
 
     const std::string m_property_name;
@@ -282,8 +288,6 @@ struct FO_COMMON_API Statistic final : public Variable<T>
     [[nodiscard]] const auto* GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
     [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
-
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
         return std::make_unique<Statistic<T, V>>(CloneUnique(m_value_ref),
@@ -333,22 +337,19 @@ private:
 template <typename T>
 struct FO_COMMON_API ComplexVariable final : public Variable<T>
 {
-    template<typename S> requires requires(S s) { std::vector<std::string>{s}; }
-    explicit ComplexVariable(S&& variable_name,
+    explicit ComplexVariable(std::string variable_name,
                              std::unique_ptr<ValueRef<int>>&& int_ref1 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref2 = nullptr,
                              std::unique_ptr<ValueRef<int>>&& int_ref3 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        Variable<T>(ReferenceType::NON_OBJECT_REFERENCE, std::forward<S>(variable_name), ContainerType::NONE,
-                    return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial),
-        m_int_ref1(std::move(int_ref1)),
-        m_int_ref2(std::move(int_ref2)),
-        m_int_ref3(std::move(int_ref3)),
-        m_string_ref1(std::move(string_ref1)),
-        m_string_ref2(std::move(string_ref2))
-    { InitInvariants(); } // TODO: remove InitInvariants, determine in Variable<T> constructor call
+        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
+                                          int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
+                        std::move(variable_name), return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
+                        std::move(int_ref1), std::move(int_ref2), std::move(int_ref3),
+                        std::move(string_ref1), std::move(string_ref2))
+    {}
 
     explicit ComplexVariable(const ComplexVariable<T>& rhs) :
         Variable<T>(rhs),
@@ -371,12 +372,23 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     [[nodiscard]] const auto* IntRef3() const noexcept { return m_int_ref3.get(); }
     [[nodiscard]] const auto* StringRef1() const noexcept { return m_string_ref1.get(); }
     [[nodiscard]] const auto* StringRef2() const noexcept { return m_string_ref2.get(); }
-    [[nodiscard]] uint32_t    GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<ComplexVariable<T>>(*this); }
 
 protected:
+    ComplexVariable(uint32_t checksum, std::string variable_name, ValueToReturn val_to_return,
+                    std::unique_ptr<ValueRef<int>>&& int_ref1, std::unique_ptr<ValueRef<int>>&& int_ref2,
+                    std::unique_ptr<ValueRef<int>>&& int_ref3, std::unique_ptr<ValueRef<std::string>>&& string_ref1,
+                    std::unique_ptr<ValueRef<std::string>>&& string_ref2) :
+        Variable<T>(std::move(variable_name), val_to_return, checksum),
+        m_int_ref1(std::move(int_ref1)),
+        m_int_ref2(std::move(int_ref2)),
+        m_int_ref3(std::move(int_ref3)),
+        m_string_ref1(std::move(string_ref1)),
+        m_string_ref2(std::move(string_ref2))
+    { InitInvariants(); } // TODO: remove InitInvariants, determine in Variable<T> constructor call
+
     void InitInvariants();
 
     const std::unique_ptr<ValueRef<int>> m_int_ref1;
@@ -528,8 +540,6 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
     [[nodiscard]] const std::vector<const ValueRef<T>*> Operands() const; // all operands
 
-    [[nodiscard]] uint32_t GetCheckSum() const override;
-
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
     { return std::make_unique<Operation<T>>(*this); }
 
@@ -650,21 +660,6 @@ FO_COMMON_API std::string Constant<double>::Dump(uint8_t ntabs) const;
 template <>
 FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
 
-template <typename T>
-constexpr uint32_t Constant<T>::GetCheckSum() const noexcept {
-    uint32_t retval{0};
-    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
-    CheckSums::CheckSumCombine(retval, m_value);
-#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
-    if (!std::is_constant_evaluated())
-        [type_id_name{typeid(*this).name()}, this, retval]() {
-        TraceLogger() << "GetCheckSum(Constant<T>): " << type_id_name
-            << " value: " << Description() << " retval: " << retval;
-    }();
-#endif
-    return retval;
-}
-
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
@@ -678,21 +673,6 @@ std::string Variable<T>::Description() const
 template <typename T>
 std::string Variable<T>::Dump(uint8_t ntabs) const
 { return ReconstructName(m_property_name, this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
-
-template <typename T>
-CONSTEXPR_STRING uint32_t Variable<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
-    CheckSums::CheckSumCombine(retval, m_property_name);
-    CheckSums::CheckSumCombine(retval, this->m_ref_type);
-    CheckSums::CheckSumCombine(retval, this->m_container_type);
-    CheckSums::CheckSumCombine(retval, this->m_return_immediate_value);
-    //if (!std::is_constant_evaluated())
-    //    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
 
 template <>
 FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
@@ -738,7 +718,8 @@ Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticTy
                     (!value_ref || value_ref->TargetInvariant()),
                 (!sampling_condition || sampling_condition->SourceInvariant()) &&
                     (!value_ref || value_ref->SourceInvariant()),
-                stat_type),
+                stat_type,
+                CalculateCheckSum("ValueRef::Statistic", stat_type, sampling_condition, value_ref)),
     m_sampling_condition(std::move(sampling_condition)),
     m_value_ref(std::move(value_ref))
 {
@@ -1235,19 +1216,6 @@ T Statistic<T, V>::Eval(const ScriptingContext& context) const
     return ReduceData<T>(this->m_stat_type, GetObjectPropertyValues(context, condition_matches));
 }
 
-template <typename T, typename V>
-uint32_t Statistic<T, V>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Statistic");
-    CheckSums::CheckSumCombine(retval, this->m_stat_type);
-    CheckSums::CheckSumCombine(retval, m_sampling_condition);
-    CheckSums::CheckSumCombine(retval, m_value_ref);
-    TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
-
 template <>
 FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& context) const;
 
@@ -1370,21 +1338,6 @@ void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
         m_string_ref1->SetTopLevelContent(content_name);
     if (m_string_ref2)
         m_string_ref2->SetTopLevelContent(content_name);
-}
-
-template <typename T>
-uint32_t ComplexVariable<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::ComplexVariable");
-    CheckSums::CheckSumCombine(retval, m_int_ref1);
-    CheckSums::CheckSumCombine(retval, m_int_ref2);
-    CheckSums::CheckSumCombine(retval, m_int_ref3);
-    CheckSums::CheckSumCombine(retval, m_string_ref1);
-    CheckSums::CheckSumCombine(retval, m_string_ref2);
-    TraceLogger() << "GetCheckSum(ComplexVariable<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
 }
 
 template <>
@@ -1930,11 +1883,12 @@ namespace {
             return val;
         } else {
             const auto trunc_val = static_cast<std::decay_t<T>>(static_cast<int64_t>(val));
-            return (trunc_val == val) ? trunc_val : (val >= 0) ? trunc_val : trunc_val - 1;
+            return (trunc_val == val) ? trunc_val : (val >= 0) ? trunc_val : trunc_val - 1; // round towards -inf not zero
         }
 #endif
     }
 
+    // binary operation returning bool
     constexpr bool ValCompareOp(const auto& lhs, OpType op_type, const auto& rhs) noexcept {
         switch (op_type) {
         case OpType::COMPARE_EQUAL:                 return lhs == rhs;  break;
@@ -1943,7 +1897,7 @@ namespace {
         case OpType::COMPARE_LESS_THAN:             return lhs < rhs;   break;
         case OpType::COMPARE_LESS_THAN_OR_EQUAL:    return lhs <= rhs;  break;
         case OpType::COMPARE_NOT_EQUAL:             return lhs != rhs;  break;
-        default:                                      return false;       break;
+        default:                                    return false;       break;
         }
     }
 
@@ -1961,6 +1915,7 @@ namespace {
     }
 }
 
+// apply unary operation to operand: math operations or NoOp
 template <typename T>
     requires std::is_enum_v<std::decay_t<T>> || std::is_arithmetic_v<std::decay_t<T>> ||
              std::is_same_v<std::decay_t<T>, std::string>
@@ -1992,6 +1947,7 @@ constexpr auto OperateData(OpType op_type, T&& val)
     throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for one operand.");
 }
 
+// apply binary math or logical comparison operation to two operands
 template <typename T>
 constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs)
 {
@@ -2105,6 +2061,7 @@ constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs)
     throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for two operands.");
 }
 
+// apply operation to two operands, supporting discrete randomized results
 template <typename T>
 constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int)
     requires requires { {rand_int(0, 1)} -> std::same_as<int>; }
@@ -2127,6 +2084,7 @@ constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int)
     return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs));
 }
 
+// apply operation to two operands, supporting discrete randomized results and floating-point uniform random results
 template <typename T>
 constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int, auto rand_double)
     requires requires { {rand_int(0, 1)} -> std::same_as<int>; {rand_double(0.1, 1.0)} -> std::same_as<double>; }
@@ -2140,6 +2098,8 @@ constexpr auto OperateData(OpType op_type, T&& lhs, T&& rhs, auto rand_int, auto
     return OperateData(op_type, std::forward<T>(lhs), std::forward<T>(rhs), rand_int);
 }
 
+// apply accumulation or min/max operation to values in a container
+// contained values can be a string, but the container itself should not be a string
 template <typename D>
     requires (requires(D d) { d.begin(); d.end(); d.front(); } && !std::is_same_v<std::decay_t<D>, std::string>)
 constexpr auto OperateData(OpType op_type, D&& data)
@@ -2188,6 +2148,8 @@ constexpr auto OperateData(OpType op_type, D&& data)
     throw std::runtime_error("OperateData evaluated with an unknown or invalid OpType for data array.");
 }
 
+// apply operation to values in a container (which can contain but should not be a string)
+// supporting discrete random picking results
 template <typename D>
     requires (requires(D d) { d.size(); d[std::size_t{0}]; d.begin(); d.end(); d.front(); } &&
               !std::is_same_v<std::decay_t<D>, std::string>)
@@ -2388,20 +2350,6 @@ T Operation<T>::Eval(const ScriptingContext& context) const
 }
 
 template <typename T>
-uint32_t Operation<T>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::Operation");
-    CheckSums::CheckSumCombine(retval, this->m_op_type);
-    CheckSums::CheckSumCombine(retval, m_operands);
-    // derived member values should not be part of checksums
-    // e.g. the invariants and m_cached_const_value
-    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
-}
-
-template <typename T>
 Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
     ValueRef<T>(op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
                 std::all_of(operands.begin(), operands.end(),
@@ -2419,8 +2367,8 @@ Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>
                 std::all_of(operands.begin(), operands.end(),
                             [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
                 IsSimpleIncrement(op_type, operands),
-                op_type
-               ),
+                op_type,
+                CalculateCheckSum("ValueRef::Operation", op_type, operands)),
     m_operands(std::move(operands)),
     m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
 {

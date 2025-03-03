@@ -56,10 +56,10 @@ class FO_COMMON_API System final : public UniverseObject {
 public:
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
 
-    using UniverseObject::IDSet;
-    [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_objects; }
+    [[nodiscard]] std::span<const int> ContainedObjectIDs() const override { return ToSpan(m_objects); }
 
-    [[nodiscard]] bool Contains(int object_id) const override;
+    [[nodiscard]] bool Contains(int object_id) const override
+    { return object_id != INVALID_OBJECT_ID && m_objects.contains(object_id); }
 
     [[nodiscard]] bool ContainedBy(int object_id) const noexcept override { return false; }
 

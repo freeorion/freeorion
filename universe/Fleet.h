@@ -63,11 +63,10 @@ public:
 
     [[nodiscard]] std::string  Dump(uint8_t ntabs = 0) const override;
 
-    using UniverseObject::IDSet;
-    [[nodiscard]] int          ContainerObjectID() const noexcept override { return this->SystemID(); }
-    [[nodiscard]] const IDSet& ContainedObjectIDs() const noexcept override { return m_ships; }
-    [[nodiscard]] bool         Contains(int object_id) const override;
-    [[nodiscard]] bool         ContainedBy(int object_id) const noexcept override;
+    [[nodiscard]] int                  ContainerObjectID() const noexcept override { return this->SystemID(); }
+    [[nodiscard]] std::span<const int> ContainedObjectIDs() const override { return ToSpan(m_ships); }
+    [[nodiscard]] bool                 Contains(int object_id) const override;
+    [[nodiscard]] bool                 ContainedBy(int object_id) const noexcept override;
 
     [[nodiscard]] const std::string& PublicName(int empire_id, const Universe& universe) const override;
 

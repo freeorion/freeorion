@@ -331,7 +331,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6764239, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6807904, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -606,7 +606,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
 
     const Condition::And* location_cond = dynamic_cast<const Condition::And*>(building->Location());
     BOOST_REQUIRE(location_cond != nullptr);
-    std::vector<const Condition::Condition*> location_conds = location_cond->OperandsRaw();
+    const auto location_conds = location_cond->OperandsRaw();
     BOOST_REQUIRE_EQUAL(4, location_conds.size());
     BOOST_CHECK(dynamic_cast<const Condition::Type*>(location_conds[0]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(location_conds[1]) != nullptr);
@@ -620,7 +620,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
 
     const Condition::And* test_location_cond = dynamic_cast<const Condition::And*>(test_building.Location());
     BOOST_REQUIRE(test_location_cond != nullptr);
-    std::vector<const Condition::Condition*> test_location_conds = test_location_cond->OperandsRaw();
+    const auto test_location_conds = test_location_cond->OperandsRaw();
     BOOST_REQUIRE_EQUAL(4, test_location_conds.size());
     BOOST_CHECK(dynamic_cast<const Condition::Type*>(test_location_conds[0]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(test_location_conds[1]) != nullptr);

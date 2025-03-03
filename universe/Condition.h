@@ -6,11 +6,11 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include "ScriptingContext.h"
 #include "../util/Export.h"
 
 
 class UniverseObject;
-struct ScriptingContext;
 
 namespace Effect {
     using TargetSet = std::vector<UniverseObject*>;
@@ -18,12 +18,82 @@ namespace Effect {
 
 namespace Condition {
 
-using ObjectSet = std::vector<const UniverseObject*>;
+using ObjectSet = std::vector<const UniverseObjectCXBase*>;
 
 enum class SearchDomain : bool {
     NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
     MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
 };
+
+constexpr auto DoPartition(auto& candidates, const auto& pred)
+    requires requires { pred(*candidates.begin()); candidates.end(); }
+{
+    if (!std::is_constant_evaluated()) {
+        return std::stable_partition(candidates.begin(), candidates.end(), pred);
+    } else {
+#if defined(__cpp_lib_constexpr_algorithms)
+#  if (__cpp_lib_constexpr_algorithms >= 202306L)
+        return std::stable_partition(candidates.begin(), candidates.end(), pred);
+#  elif (__cpp_lib_constexpr_algorithms >= 201806L)
+        return std::partition(candidates.begin(), candidates.end(), pred);
+#  endif
+#else
+        throw std::runtime_error("no constexpr EvalImpl possible");
+#endif
+    }
+}
+
+/** Used by 4-parameter Condition::Eval function, and some of its overrides,
+  * to scan through \a matches or \a non_matches set and apply \a pred to
+  * each object, to test if it should remain in its current set or be
+  * transferred from the \a search_domain specified set into the other. */
+constexpr void EvalImpl(auto& matches, auto& non_matches,
+                        ::Condition::SearchDomain search_domain, const auto& pred)
+    requires requires { non_matches.insert(non_matches.end(), DoPartition(matches, pred), matches.end()); }
+{
+    const bool domain_matches = search_domain == ::Condition::SearchDomain::MATCHES;
+    auto& from_set = domain_matches ? matches : non_matches;
+    auto& to_set = domain_matches ? non_matches : matches;
+
+    // checking for from_set.size() == 1 and/or to_set.empty() and early exiting didn't seem to speed up evaluation in general case
+    const auto pred_for_search_domain = [&pred, domain_matches](const auto* o) { return pred(o) == domain_matches; };
+
+    const auto part_it = DoPartition(from_set, pred_for_search_domain);
+    to_set.insert(to_set.end(), part_it, from_set.end());
+    from_set.erase(part_it, from_set.end());
+}
+
+namespace Impl {
+    // flags for indicating possible objects or object types of initial candidates of conditions
+    namespace MatchesType {
+        constexpr uint16_t NOTHING =       0u;
+        constexpr uint16_t SOURCE =        1u << 0u;
+        constexpr uint16_t TARGET =        1u << 1u;
+        constexpr uint16_t ROOTCANDIDATE = 1u << 2u;
+        constexpr uint16_t PLANETS  =      1u << 3u;
+        constexpr uint16_t BUILDINGS =     1u << 4u;
+        constexpr uint16_t FLEETS =        1u << 5u;
+        constexpr uint16_t SHIPS =         1u << 6u;
+        constexpr uint16_t SYSTEMS =       1u << 7u;
+        constexpr uint16_t FIELDS =        1u << 8u;
+
+        constexpr uint16_t SINGLEOBJECT = SOURCE | TARGET | ROOTCANDIDATE;
+
+        constexpr uint16_t PLANETS_BUILDINGS = PLANETS | BUILDINGS;
+        constexpr uint16_t PLANETS_FLEETS =    PLANETS | FLEETS;
+        constexpr uint16_t PLANETS_SHIPS =     PLANETS | SHIPS;
+        constexpr uint16_t PLANETS_SYSTEMS =   PLANETS | SYSTEMS;
+        constexpr uint16_t BUILDINGS_SHIPS =   BUILDINGS | SHIPS;
+        constexpr uint16_t FLEETS_SHIPS =      FLEETS | SHIPS;
+        constexpr uint16_t FLEETS_SYSTEMS =    FLEETS | SYSTEMS;
+
+        constexpr uint16_t PLANETS_FLEETS_SYSTEMS =                PLANETS | FLEETS | SYSTEMS;
+        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS =        PLANETS | BUILDINGS | FLEETS | SHIPS;
+        constexpr uint16_t PLANETS_BUILDINGS_FLEETS_SHIPS_FIELDS = PLANETS | BUILDINGS | FLEETS | SHIPS | FIELDS;
+
+        constexpr uint16_t ANYOBJECTTYPE = PLANETS | BUILDINGS | FLEETS | SHIPS | SYSTEMS | FIELDS;
+    }
+}
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API Condition {
@@ -47,12 +117,28 @@ struct FO_COMMON_API Condition {
      * not-searched container. */
     virtual void Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
+                      SearchDomain search_domain = SearchDomain::NON_MATCHES) const
+    {
+        const auto match_one_candidate = [cond{this}, &parent_context](const auto* candidate) -> bool {
+            static constexpr ScriptingContext::LocalCandidate lc;
+            const ScriptingContext candidate_context{parent_context, lc, candidate};
+            return cond->Match(candidate_context); // this requies a derived Condition class to override either this Eval or Match
+        };
+
+        EvalImpl(matches, non_matches, search_domain, match_one_candidate);
+    }
 
     /** Returns true iff at least one object in \a candidates matches this condition.
       * Returns false for an empty candiates list. */
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
-                                       const ObjectSet& candidates) const;
+                                       std::span<const UniverseObjectCXBase*> candidates) const;
+    [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
+                                       std::span<const int> candidate_ids) const
+    {
+        auto objs = parent_context.ContextObjects().findRaw<UniverseObjectCXBase>(candidate_ids);
+        return EvalAny(parent_context, objs);
+    }
+
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context) const {
         ObjectSet candidates = GetDefaultInitialCandidateObjects(parent_context);
 
@@ -73,7 +159,7 @@ struct FO_COMMON_API Condition {
 
     /** Tests single candidate object, returning true iff it matches condition. */
     [[nodiscard]] virtual bool EvalOne(const ScriptingContext& parent_context,
-                                       const UniverseObject* candidate) const
+                                       const UniverseObjectCXBase* candidate) const
     {
         if (!candidate)
             return false;
@@ -85,6 +171,9 @@ struct FO_COMMON_API Condition {
     /** Initializes \a condition_non_targets with a set of objects that could
       * match this condition, without checking if they all actually do. */
     [[nodiscard]] virtual ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const;
+
+    [[nodiscard]] constexpr virtual uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept { return Impl::MatchesType::ANYOBJECTTYPE; }
+
 
     /** Derived Condition classes can override this to true if all objects returned
       * by GetDefaultInitialCandidateObject() are guaranteed to also match this
@@ -145,13 +234,15 @@ protected:
     Condition& operator=(const Condition&) = delete;
     Condition& operator=(Condition&&) = delete;
 
-    bool m_root_candidate_invariant = false; // TODO: make these const once all derived classes initialize them in their constructors
-    bool m_target_invariant = false;
-    bool m_source_invariant = false;
-    bool m_initial_candidates_all_match = false;
+    const bool m_root_candidate_invariant = false;
+    const bool m_target_invariant = false;
+    const bool m_source_invariant = false;
+    const bool m_initial_candidates_all_match = false;
 
 private:
     virtual bool Match(const ScriptingContext& local_context) const { throw std::runtime_error("default Condition::Match called... Override missing?"); }
+
+
 };
 
 }
