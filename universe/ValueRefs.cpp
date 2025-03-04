@@ -4,6 +4,7 @@
 #if __has_include(<charconv>)
   #include <charconv>
 #endif
+#include <chrono>
 #include <functional>
 #include <iomanip>
 #include <iterator>
