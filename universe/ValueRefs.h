@@ -565,13 +565,42 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     {}
 
     /* N-ary operation ctor. */
-    Operation(OpType op_type, std::vector<uptrref_t>&& operands);
+    Operation(OpType op_type, std::vector<uptrref_t>&& operands) :
+        ValueRef<T>(op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                    std::all_of(operands.begin(), operands.end(),
+                                [](const auto& operand) noexcept { return operand && operand->ConstantExpr(); }),
+                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                    std::all_of(operands.begin(), operands.end(),
+                                [](const auto& operand) noexcept { return operand && operand->RootCandidateInvariant(); }),
+                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                    std::all_of(operands.begin(), operands.end(),
+                                [](const auto& operand) noexcept { return operand && operand->LocalCandidateInvariant(); }),
+                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                    std::all_of(operands.begin(), operands.end(),
+                                [](const auto& operand) noexcept { return operand && operand->TargetInvariant(); }),
+                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
+                    std::all_of(operands.begin(), operands.end(),
+                                [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
+                    IsSimpleIncrement(op_type, operands),
+                    op_type,
+                    CalculateCheckSum("ValueRef::Operation", op_type, operands)),
+        m_operands(std::move(operands)),
+        m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
+    {
+        if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) noexcept -> bool { return !op; }))
+            throw std::invalid_argument("Operation passed null operand");
+        if (this->m_op_type == OpType::INVALID_OP_TYPE)
+            throw std::invalid_argument("Operation has invalid operation type");
+    }
 
-    explicit Operation(const Operation<T>& rhs);
+    explicit Operation(const Operation<T>& rhs) :
+        ValueRef<T>(rhs),
+        m_operands(CloneUnique(rhs.m_operands)),
+        m_cached_const_value(rhs.m_cached_const_value)
+    {}
 
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
-    [[nodiscard]] T           Eval() const override
-    { return this->m_constant_expr ? m_cached_const_value : Eval(IApp::GetApp()->GetContext()); };
+    [[nodiscard]] T           Eval() const override { return this->m_constant_expr ? m_cached_const_value : Eval(IApp::GetApp()->GetContext()); };
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
@@ -1719,13 +1748,6 @@ uint32_t UserStringLookup<FromType>::GetCheckSum() const
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 template <typename T>
-Operation<T>::Operation(const Operation<T>& rhs) :
-    ValueRef<T>::ValueRef(rhs),
-    m_operands(CloneUnique(rhs.m_operands)),
-    m_cached_const_value(rhs.m_cached_const_value)
-{}
-
-template <typename T>
 bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 {
     if (&rhs == this)
@@ -2356,35 +2378,6 @@ T Operation<T>::Eval(const ScriptingContext& context) const
     } else {
         return OperateValueRefs<T>(this->m_op_type, m_operands, context, vr_rand_int, vr_rand_double);
     }
-}
-
-template <typename T>
-Operation<T>::Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands) :
-    ValueRef<T>(op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                std::all_of(operands.begin(), operands.end(),
-                            [](const auto& operand) noexcept { return operand && operand->ConstantExpr(); }),
-                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                std::all_of(operands.begin(), operands.end(),
-                            [](const auto& operand) noexcept { return operand && operand->RootCandidateInvariant(); }),
-                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                std::all_of(operands.begin(), operands.end(),
-                            [](const auto& operand) noexcept { return operand && operand->LocalCandidateInvariant(); }),
-                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                std::all_of(operands.begin(), operands.end(),
-                            [](const auto& operand) noexcept { return operand && operand->TargetInvariant(); }),
-                op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                std::all_of(operands.begin(), operands.end(),
-                            [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
-                IsSimpleIncrement(op_type, operands),
-                op_type,
-                CalculateCheckSum("ValueRef::Operation", op_type, operands)),
-    m_operands(std::move(operands)),
-    m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
-{
-    if (std::any_of(m_operands.begin(), m_operands.end(), [](const auto& op) noexcept -> bool { return !op; }))
-        throw std::invalid_argument("Operation passed null operand");
-    if (this->m_op_type == OpType::INVALID_OP_TYPE)
-        throw std::invalid_argument("Operation has invalid operation type");
 }
 
 template <typename T>
