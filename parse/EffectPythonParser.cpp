@@ -56,7 +56,10 @@ namespace {
             }
         }
 
-        EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_SELF;
+        EmpireAffiliationType affiliation = EmpireAffiliationType::AFFIL_ANY;
+        if (kw.has_key("empire")) {
+            affiliation = EmpireAffiliationType::AFFIL_SELF;
+        }
         if (kw.has_key("affiliation")) {
             affiliation = py::extract<enum_wrapper<EmpireAffiliationType>>(kw["affiliation"])().value;
         }
