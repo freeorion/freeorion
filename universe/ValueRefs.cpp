@@ -459,7 +459,7 @@ std::string ReconstructName(std::string_view property_name, ContainerType contai
     case EFFECT_TARGET_VALUE_REFERENCE:       retval += "Value";           break;
     case CONDITION_LOCAL_CANDIDATE_REFERENCE: retval += "LocalCandidate";  break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:  retval += "RootCandidate";   break;
-    case NON_OBJECT_REFERENCE:                retval += "";                break;
+    case NON_OBJECT_REFERENCE:                retval += property_name;     break;
     default:                                  retval += "?????";           break;
     }
 
