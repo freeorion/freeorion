@@ -40,6 +40,33 @@ template <typename... Args>
     return checksum;
 }
 
+#if defined(FREEORION_ANDROID)
+template <class From, class To>
+concept convertible_to = 
+    std::is_convertible<From, To>::value &&
+    requires { static_cast<To>(std::declval<From>()); };
+#else
+using std::convertible_to;
+#endif
+
+template <typename out_t, convertible_to<out_t> ...Args>
+[[nodiscard]] CONSTEXPR_VEC auto Vectorize(Args&&... args) {
+    std::vector<out_t> out;
+    out.reserve(sizeof...(args));
+
+    const auto push = [&out](auto&& arg) {
+        if constexpr (requires { arg == nullptr; }) {
+            if (arg == nullptr)
+                return;
+        }
+        out.push_back(std::forward<decltype(arg)>(arg));
+    };
+
+    (push(std::forward<Args>(args)), ...);
+
+    return out;
+}
+
 /** the constant value leaf ValueRef class. */
 template <typename T> requires(std::is_nothrow_move_constructible_v<T>)
 struct FO_COMMON_API Constant final : public ValueRef<T>
@@ -530,13 +557,15 @@ private:
 template <typename T>
 struct FO_COMMON_API Operation final : public ValueRef<T>
 {
-    /** N-ary operation ctor. */
-    Operation(OpType op_type, std::unique_ptr<ValueRef<T>>&& operand1,
-              std::unique_ptr<ValueRef<T>>&& operand2 = nullptr,
-              std::unique_ptr<ValueRef<T>>&& operand3 = nullptr);
+    using uptrref_t = std::unique_ptr<ValueRef<T>>;
+
+    template <convertible_to<uptrref_t> ...Args>
+    explicit Operation(OpType op_type, Args&&... operands) :
+        Operation(op_type, Vectorize<uptrref_t>(std::forward<Args>(operands)...))
+    {}
 
     /* N-ary operation ctor. */
-    Operation(OpType op_type, std::vector<std::unique_ptr<ValueRef<T>>>&& operands);
+    Operation(OpType op_type, std::vector<uptrref_t>&& operands);
 
     explicit Operation(const Operation<T>& rhs);
 
@@ -552,7 +581,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
     [[nodiscard]] const auto* RHS() const { return m_operands.size() < 2 ? nullptr : m_operands[1].get(); } // 2nd operand (or nullptr if no 2nd operand exists)
     [[nodiscard]] const std::vector<const ValueRef<T>*> Operands() const; // all operands
 
-    [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
+    [[nodiscard]] uptrref_t Clone() const override
     { return std::make_unique<Operation<T>>(*this); }
 
     void SetTopLevelContent(const std::string& content_name) override;
@@ -584,8 +613,8 @@ private:
         return lhs && rhs && lhs->GetReferenceType() == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE && rhs->TargetInvariant();
     }
 
-    const std::vector<std::unique_ptr<ValueRef<T>>> m_operands;
-    const T                                         m_cached_const_value = T();
+    const std::vector<uptrref_t> m_operands;
+    const T                      m_cached_const_value = T();
 };
 
 /* Convert between names and MeterType. Names are scripting token, like Population
@@ -1689,24 +1718,6 @@ uint32_t UserStringLookup<FromType>::GetCheckSum() const
 ///////////////////////////////////////////////////////////
 // Operation                                             //
 ///////////////////////////////////////////////////////////
-template <typename T>
-Operation<T>::Operation(OpType op_type,
-                        std::unique_ptr<ValueRef<T>>&& operand1,
-                        std::unique_ptr<ValueRef<T>>&& operand2,
-                        std::unique_ptr<ValueRef<T>>&& operand3) :
-    Operation(op_type, [&operand1, &operand2, &operand3]() {
-                std::remove_const_t<decltype(m_operands)> retval{};
-                retval.reserve((operand1 ? 1u : 0u) + (operand2 ? 1u : 0u) + (operand3 ? 1u : 0u));
-                if (operand1)
-                    retval.push_back(std::move(operand1));
-                if (operand2)
-                    retval.push_back(std::move(operand2));
-                if (operand3)
-                    retval.push_back(std::move(operand3));
-                return retval;
-              }())
-{}
-
 template <typename T>
 Operation<T>::Operation(const Operation<T>& rhs) :
     ValueRef<T>::ValueRef(rhs),
