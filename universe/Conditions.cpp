@@ -10989,74 +10989,6 @@ namespace StaticTests {
     static_assert(PlanetFromObject(ship_pcx, dummy_planet_getter) == plt_pcx);
 }
 
-namespace {
-    namespace {
-        template <class Cond>
-        concept and_or_or_condition = std::is_same_v<Cond, And> || std::is_same_v<Cond, Or>;
-    }
-
-    // flattens nested conditions by extracting contained operands, and
-    // also removes any null operands
-    template <and_or_or_condition ContainingCondition>
-    std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>& in) {
-        std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(in.size());
-
-        for (auto& op : in) {
-            if (!op)
-                continue;
-            if (auto* op_and = dynamic_cast<ContainingCondition*>(op.get())) {
-                auto sub_ops = DenestOps<ContainingCondition>(op_and->Operands());
-                retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
-                              std::make_move_iterator(sub_ops.end()));
-            } else {
-                retval.push_back(std::move(op));
-            }
-        };
-        return retval;
-    }
-
-    auto Vectorize(std::unique_ptr<Condition>&& op1, std::unique_ptr<Condition>&& op2,
-                   std::unique_ptr<Condition>&& op3, std::unique_ptr<Condition>&& op4,
-                   std::unique_ptr<Condition>&& op5 = nullptr,
-                   std::unique_ptr<Condition>&& op6 = nullptr,
-                   std::unique_ptr<Condition>&& op7 = nullptr,
-                   std::unique_ptr<Condition>&& op8 = nullptr)
-    {
-        static constexpr auto isnt0 = [](const auto& o) noexcept -> std::size_t { return o ? 1u : 0u; };
-
-        std::vector<std::unique_ptr<Condition>> retval;
-        retval.reserve(isnt0(op1) + isnt0(op2) + isnt0(op3) + isnt0(op4) +
-                       isnt0(op5) + isnt0(op6) + isnt0(op7) + isnt0(op8));
-        const auto push = [&retval](auto&& op) { if (op) retval.push_back(std::move(op)); };
-        push(op1);
-        push(op2);
-        push(op3);
-        push(op4);
-        push(op5);
-        push(op6);
-        push(op7);
-        push(op8);
-        return retval;
-    }
-}
-
-And::And(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(CondsRTSI(operands)),
-              // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<And>(operands)),
-    m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
-{}
-
-And::And(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-         std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4,
-         std::unique_ptr<Condition>&& operand5, std::unique_ptr<Condition>&& operand6,
-         std::unique_ptr<Condition>&& operand7, std::unique_ptr<Condition>&& operand8) :
-    And(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3),
-                  std::move(operand4), std::move(operand5), std::move(operand6),
-                  std::move(operand7), std::move(operand8)))
-{}
-
 void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                ObjectSet& non_matches, SearchDomain search_domain) const
 {
@@ -11250,35 +11182,6 @@ std::unique_ptr<Condition> And::Clone() const
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
-Or::Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-    Condition(CondsRTSI(operands)),
-    // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-    m_operands(DenestOps<Or>(operands)),
-    m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
-{}
-
-Or::Or(std::unique_ptr<Condition>&& operand1, std::unique_ptr<Condition>&& operand2,
-       std::unique_ptr<Condition>&& operand3, std::unique_ptr<Condition>&& operand4) :
-    Or(Vectorize(std::move(operand1), std::move(operand2), std::move(operand3), std::move(operand4)))
-{}
-
-bool Or::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Or& rhs_ = static_cast<const Or&>(rhs);
-
-    if (m_operands.size() != rhs_.m_operands.size())
-        return false;
-    for (std::size_t i = 0; i < m_operands.size(); ++i) {
-        CHECK_COND_VREF_MEMBER(m_operands.at(i))
-    }
-
-    return true;
-}
-
 void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain) const
 {
