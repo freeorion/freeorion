@@ -1,6 +1,7 @@
 if (BUILD_PARSERS)
     add_subdirectory(parse)
 endif ()
+add_subdirectory(dump)
 add_subdirectory(util)
 if (BUILD_AI AND BUILD_SERVER)
     add_subdirectory(system)
