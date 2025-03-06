@@ -3240,17 +3240,50 @@ private:
     const ContentType                                m_content_type;
 };
 
+
+struct And;
+struct Or;
+template <class Cond>
+concept and_or_or_condition = std::is_same_v<Cond, And> || std::is_same_v<Cond, Or>;
+
+// flattens nested conditions by extracting contained operands, and
+// also removes any null operands
+template <and_or_or_condition ContainingCondition>
+std::vector<std::unique_ptr<Condition>> DenestOps(std::vector<std::unique_ptr<Condition>>& in) {
+    std::vector<std::unique_ptr<Condition>> retval;
+    retval.reserve(in.size());
+
+    for (auto& op : in) {
+        if (!op)
+            continue;
+        if (auto* op_and = dynamic_cast<ContainingCondition*>(op.get())) {
+            auto sub_ops = DenestOps<ContainingCondition>(op_and->Operands());
+            retval.insert(retval.end(), std::make_move_iterator(sub_ops.begin()),
+                            std::make_move_iterator(sub_ops.end()));
+        } else {
+            retval.push_back(std::move(op));
+        }
+    };
+    return retval;
+}
+
+using ValueRef::convertible_to;
+using ValueRef::Vectorize;
+
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API And final : public Condition {
-    explicit And(std::vector<std::unique_ptr<Condition>>&& operands);
-    And(std::unique_ptr<Condition>&& operand1,
-        std::unique_ptr<Condition>&& operand2,
-        std::unique_ptr<Condition>&& operand3 = nullptr,
-        std::unique_ptr<Condition>&& operand4 = nullptr,
-        std::unique_ptr<Condition>&& operand5 = nullptr,
-        std::unique_ptr<Condition>&& operand6 = nullptr,
-        std::unique_ptr<Condition>&& operand7 = nullptr,
-        std::unique_ptr<Condition>&& operand8 = nullptr);
+    explicit And(std::vector<std::unique_ptr<Condition>>&& operands) :
+        Condition(CondsRTSI(operands)),
+        // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
+        m_operands(DenestOps<And>(operands)),
+        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+    {}
+
+    template <convertible_to<std::unique_ptr<Condition>> ...Args>
+        requires (sizeof...(Args) > 1)
+    explicit And(Args&&... operands) :
+        And(Vectorize<std::unique_ptr<Condition>>(std::forward<Args>(operands)...))
+    {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
@@ -3408,13 +3441,46 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public Condition {
-    explicit Or(std::vector<std::unique_ptr<Condition>>&& operands);
-    Or(std::unique_ptr<Condition>&& operand1,
-       std::unique_ptr<Condition>&& operand2,
-       std::unique_ptr<Condition>&& operand3 = nullptr,
-       std::unique_ptr<Condition>&& operand4 = nullptr);
+    explicit Or(std::vector<std::unique_ptr<Condition>>&& operands) :
+        Condition(CondsRTSI(operands)),
+        // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
+        m_operands(DenestOps<Or>(operands)),
+        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+    {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    template <convertible_to<std::unique_ptr<Condition>> ...Args>
+        requires (sizeof...(Args) > 1)
+    explicit Or(Args&&... operands) :
+        Or(Vectorize<std::unique_ptr<Condition>>(std::forward<Args>(operands)...))
+    {}
+
+    [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] constexpr bool operator==(const Or& rhs) const {
+        if (this == &rhs)
+            return true;
+
+        if (m_operands.size() != rhs.m_operands.size())
+            return false;
+
+        for (std::size_t idx = 0u; idx < m_operands.size(); ++idx) {
+            const auto& m_op = m_operands.at(idx);
+            const auto& rhs_op = rhs.m_operands.at(idx);
+            if (!m_op && !rhs_op)
+                continue;
+            if (!m_op || !rhs_op)
+                return false;
+            if (*m_op != *rhs_op)
+                return false;
+        }
+
+        return true;
+    }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
