@@ -106,24 +106,15 @@ constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
     }
 }
 
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2,
-                                        const auto& operands3, const auto& operands4)
-{
-    const auto res1 = CondsRTSI(operands1);
-    const auto res2 = CondsRTSI(operands2);
-    const auto res3 = CondsRTSI(operands3);
-    const auto res4 = CondsRTSI(operands4);
-    return {res1[0] && res2[0] && res3[0] && res4[0],
-            res1[1] && res2[1] && res3[1] && res4[1],
-            res1[2] && res2[2] && res3[2] && res4[2]};
+constexpr std::array<bool, 3> CondsRTSI(const auto&... operands) requires (sizeof...(operands) > 1) {
+    std::array<bool, 3> retval{true, true, true};
+    const auto get_and_rtsi = [&retval](const auto& op) {
+        const auto op_rtsi = CondsRTSI(op);
+        retval = {retval[0] && op_rtsi[0], retval[1] && op_rtsi[1], retval[2] && op_rtsi[2]};
+    };
+    (get_and_rtsi(operands), ...);
+    return retval;
 }
-
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2, const auto& operands3)
-{ return CondsRTSI(operands1, operands2, operands3, nullptr); }
-
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2)
-{ return CondsRTSI(operands1, operands2, nullptr, nullptr); }
-
 
 constexpr decltype(auto) EvalImpl(auto&& candidates, const auto& pred)
     requires requires { candidates.erase(DoPartition(candidates, pred), candidates.end()); }
