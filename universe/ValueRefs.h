@@ -329,15 +329,27 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     }
 
 protected:
-    constexpr Variable(bool root_inv, bool target_inv, bool source_inv,
-                       StatisticType stat_type, uint32_t checksum) :
+    CONSTEXPR_STRING Variable(bool root_inv, bool target_inv, bool source_inv,
+                              StatisticType stat_type, uint32_t checksum) noexcept(noexcept(std::string{})) :
         ValueRef<T>(false, root_inv, true, target_inv, source_inv, stat_type, checksum)
     {}
-    constexpr Variable(std::array<bool, 3> rtsi, StatisticType stat_type, uint32_t checksum) :
+    CONSTEXPR_STRING Variable(std::array<bool, 3> rtsi, StatisticType stat_type,
+                              uint32_t checksum) noexcept(noexcept(std::string{})) :
         Variable(rtsi[0], rtsi[1], rtsi[2], stat_type, checksum)
     {}
 
-    CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate, uint32_t checksum) :
+    CONSTEXPR_STRING Variable(bool root_inv, bool target_inv, bool source_inv, bool local_inv,
+                              ReferenceType ref_type, uint32_t checksum) noexcept(noexcept(std::string{})) :
+        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, ref_type, checksum)
+    {}
+    CONSTEXPR_STRING Variable(std::array<bool, 4> rtsli, ReferenceType ref_type,
+                              uint32_t checksum) noexcept(noexcept(std::string{})) :
+        Variable(rtsli[0], rtsli[1], rtsli[2], rtsli[3], ref_type, checksum)
+    {}
+
+
+    CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate,
+                              uint32_t checksum) noexcept(noexcept(std::string(std::move(property_name)))) :
         ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
                     ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
         m_property_name(std::move(property_name))
@@ -414,8 +426,14 @@ private:
   * in which the given \a sampling_condition matches. */
 struct FO_COMMON_API TotalFighterShots final : public Variable<int>
 {
-    TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
-                      std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr);
+    explicit TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
+                               std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr) :
+        Variable<int>(CalcRTSLI(carrier_id, sampling_condition),
+                      ReferenceType::NON_OBJECT_REFERENCE,
+                      CalculateCheckSum("ValueRef::TotalFighterShots", m_carrier_id, m_sampling_condition)),
+        m_carrier_id(std::move(carrier_id)),
+        m_sampling_condition(std::move(sampling_condition))
+    {}
 
     bool                        operator==(const ValueRef<int>& rhs) const override;
     [[nodiscard]] int           Eval(const ScriptingContext& context) const override;
@@ -425,12 +443,19 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
 
     [[nodiscard]] const auto*   GetSamplingCondition() const noexcept { return m_sampling_condition.get(); }
 
-    [[nodiscard]] uint32_t GetCheckSum() const override;
-
     [[nodiscard]] std::unique_ptr<ValueRef<int>> Clone() const override
     { return std::make_unique<TotalFighterShots>(CloneUnique(m_carrier_id), CloneUnique(m_sampling_condition)); }
 
 private:
+    static constexpr std::array<bool, 4> CalcRTSLI(const std::unique_ptr<ValueRef<int>>& value_ref,
+                                                   const std::unique_ptr<Condition::Condition>& condition)
+    {
+        const auto ref_rtslice = RefsRTSLICE(value_ref);
+        const auto cond_rtsi = Condition::CondsRTSI(condition);
+        return {cond_rtsi[0] && ref_rtslice[0], cond_rtsi[1] && ref_rtslice[1],
+                cond_rtsi[2] && ref_rtslice[2], ref_rtslice[3]};
+    }
+
     const std::unique_ptr<ValueRef<int>>        m_carrier_id;
     const std::unique_ptr<Condition::Condition> m_sampling_condition;
 };
