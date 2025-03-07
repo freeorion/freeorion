@@ -1565,25 +1565,6 @@ namespace StaticTests {
 ///////////////////////////////////////////////////////////
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
-TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
-                                     std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<int>(ReferenceType::NON_OBJECT_REFERENCE),
-    m_carrier_id(std::move(carrier_id)),
-    m_sampling_condition(std::move(sampling_condition))
-{
-    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant())
-                                       && (!m_carrier_id || m_carrier_id->RootCandidateInvariant()) ;
-
-    // no condition can explicitly reference the parent context's local candidate.
-    // so local candidate invariance does not depend on the sampling condition
-    this->m_local_candidate_invariant = (!m_carrier_id || m_carrier_id->LocalCandidateInvariant()) ;
-
-    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant())
-                               && (!m_carrier_id || m_carrier_id->TargetInvariant()) ;
-
-    this->m_source_invariant = true;
-}
-
 bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const {
     if (&rhs == this)
         return true;
@@ -1624,17 +1605,6 @@ std::string TotalFighterShots::Dump(uint8_t ntabs) const {
 void TotalFighterShots::SetTopLevelContent(const std::string& content_name) {
     if (m_sampling_condition)
         m_sampling_condition->SetTopLevelContent(content_name);
-}
-
-uint32_t TotalFighterShots::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::TotalFighterShots");
-    CheckSums::CheckSumCombine(retval, m_carrier_id);
-    CheckSums::CheckSumCombine(retval, m_sampling_condition);
-    TraceLogger() << "GetCheckSum(TotalFighterShots):  retval: " << retval;
-    return retval;
 }
 
 int TotalFighterShots::Eval(const ScriptingContext& context) const {
