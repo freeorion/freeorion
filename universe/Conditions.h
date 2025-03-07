@@ -79,43 +79,6 @@ enum class ContentType : uint8_t {
     const ScriptingContext& source_context,
     const UniverseObject* candidate);
 
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
-    if constexpr (requires { *operands; operands->TargetInvariant(); }) {
-        return {!operands || operands->RootCandidateInvariant(),
-                !operands || operands->TargetInvariant(),
-                !operands || operands->SourceInvariant()};
-
-    } else if constexpr (requires { operands.TargetInvariant(); }) {
-        return {operands.RootCandidateInvariant(), operands.TargetInvariant(), operands.SourceInvariant()};
-
-    } else if constexpr (requires { operands.begin(); (*operands.begin()).TargetInvariant(); }) {
-        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.RootCandidateInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.TargetInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.SourceInvariant(); })};
-
-    } else if constexpr (requires { operands.begin(); (*operands.begin())->TargetInvariant(); }) {
-        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
-
-    } else if constexpr (std::is_same_v<std::decay_t<decltype(operands)>, std::nullptr_t>) {
-        return {true, true, true};
-
-    } else {
-        throw std::invalid_argument("unrecognized type?");
-    }
-}
-
-constexpr std::array<bool, 3> CondsRTSI(const auto&... operands) requires (sizeof...(operands) > 1) {
-    std::array<bool, 3> retval{true, true, true};
-    const auto get_and_rtsi = [&retval](const auto& op) {
-        const auto op_rtsi = CondsRTSI(op);
-        retval = {retval[0] && op_rtsi[0], retval[1] && op_rtsi[1], retval[2] && op_rtsi[2]};
-    };
-    (get_and_rtsi(operands), ...);
-    return retval;
-}
-
 constexpr decltype(auto) EvalImpl(auto&& candidates, const auto& pred)
     requires requires { candidates.erase(DoPartition(candidates, pred), candidates.end()); }
 {
