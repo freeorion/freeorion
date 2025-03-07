@@ -49,6 +49,7 @@ concept convertible_to =
 using std::convertible_to;
 #endif
 
+// puts arguments into a vector
 template <typename out_t, convertible_to<out_t> ...Args>
 [[nodiscard]] CONSTEXPR_VEC auto Vectorize(Args&&... args) {
     std::vector<out_t> out;
@@ -66,6 +67,57 @@ template <typename out_t, convertible_to<out_t> ...Args>
 
     return out;
 }
+
+// determines if the argument(s) is / are all constant expressions, root candidate invariant, local candidate invarient,
+// target invariant, and source invariant, and packs that into an array
+constexpr std::array<bool, 5> RefsRTSLICE(const auto& operands) {
+    if constexpr (requires { *operands; operands->TargetInvariant(); }) {
+        return {!operands || operands->RootCandidateInvariant(),
+                !operands || operands->TargetInvariant(),
+                !operands || operands->SourceInvariant(),
+                !operands || operands->LocalCandidateInvariant(),
+                !operands || operands->ConstantExpr(),};
+
+    } else if constexpr (requires { operands.TargetInvariant(); }) {
+        return {operands.RootCandidateInvariant(), operands.TargetInvariant(), operands.SourceInvariant(),
+                operands.LocalCandidateInvairant(), operands.ConstantExpr(), };
+
+    } else if constexpr (requires { operands.begin(); (*operands.begin()).TargetInvariant(); }) {
+        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.RootCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.TargetInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.SourceInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.LocalCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.ConstantExpr(); })
+        };
+
+    } else if constexpr (requires { operands.begin(); (*operands.begin())->TargetInvariant(); }) {
+        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->LocalCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->ConstantExpr(); })
+        };
+
+    } else if constexpr (std::is_same_v<std::decay_t<decltype(operands)>, std::nullptr_t>) {
+        return {true, true, true, true, true};
+
+    } else {
+        throw "unrecognized type?";
+    }
+}
+
+// ands together invariance properties of multiple operand arguments
+constexpr std::array<bool, 5> RefsRTSLICE(const auto&... operands) requires (sizeof...(operands) > 1) {
+    std::array<bool, 5> retval{true, true, true, true, true};
+    const auto get_and_cerlts = [&retval](const auto& op) {
+        const auto op_cerltsi = RefsRTSLICE(op);
+        retval = {retval[0] && op_cerltsi[0], retval[1] && op_cerltsi[1], retval[2] && op_cerltsi[2],
+                  retval[3] && op_cerltsi[3], retval[4] && op_cerltsi[4]};
+        };
+    (get_and_cerlts(operands), ...);
+    return retval;
+}
+
 
 /** the constant value leaf ValueRef class. */
 template <typename T> requires(std::is_nothrow_move_constructible_v<T>)
@@ -277,9 +329,12 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     }
 
 protected:
-    constexpr Variable(bool root_inv, bool local_inv, bool target_inv, bool source_inv,
+    constexpr Variable(bool root_inv, bool target_inv, bool source_inv,
                        StatisticType stat_type, uint32_t checksum) :
-        ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
+        ValueRef<T>(false, root_inv, true, target_inv, source_inv, stat_type, checksum)
+    {}
+    constexpr Variable(std::array<bool, 3> rtsi, StatisticType stat_type, uint32_t checksum) :
+        Variable(rtsi[0], rtsi[1], rtsi[2], stat_type, checksum)
     {}
 
     CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate, uint32_t checksum) :
@@ -301,7 +356,13 @@ struct FO_COMMON_API Statistic final : public Variable<T>
 {
     Statistic(std::unique_ptr<ValueRef<V>>&& value_ref,
               StatisticType stat_type,
-              std::unique_ptr<Condition::Condition>&& sampling_condition);
+              std::unique_ptr<Condition::Condition>&& sampling_condition) :
+        Variable<T>(CalcRTSI(value_ref, sampling_condition), stat_type,
+                    CalculateCheckSum("ValueRef::Statistic", stat_type, sampling_condition, value_ref)),
+        m_sampling_condition(std::move(sampling_condition)),
+        m_value_ref(std::move(value_ref))
+    {}
+
 
     [[nodiscard]] bool        operator==(const ValueRef<T>& rhs) const override;
     [[nodiscard]] T           Eval(const ScriptingContext& context) const override;
@@ -328,6 +389,21 @@ protected:
                                            const Condition::ObjectSet& objects) const;
 
 private:
+    static constexpr std::array<bool, 3> CalcRTSI(const std::unique_ptr<ValueRef<V>>& value_ref,
+                                                  const std::unique_ptr<Condition::Condition>& condition)
+    {
+        const auto ref_rtslice = RefsRTSLICE(value_ref);
+        const auto cond_rtsi = ::Condition::CondsRTSI(condition);
+        return {cond_rtsi[0] && ref_rtslice[0], cond_rtsi[1] && ref_rtslice[1], cond_rtsi[2] && ref_rtslice[2]};
+
+        // don't need to check if sampling condition is LocalCandidateInvariant, as
+        // all conditions aren't, but that refers to their own local candidate.
+        // no condition is explicitly dependent on the parent context's local candidate.
+        // also don't need to check if sub-value-ref is local candidate invariant,
+        // as it is applied to the subcondition matches, not the local candidate of
+        // any containing condition
+    }
+
     const std::unique_ptr<Condition::Condition> m_sampling_condition;
     const std::unique_ptr<ValueRef<V>>          m_value_ref;
 };
@@ -778,29 +854,6 @@ FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
-template <typename T, typename V>
-Statistic<T, V>::Statistic(std::unique_ptr<ValueRef<V>>&& value_ref, StatisticType stat_type,
-                           std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<T>((!sampling_condition || sampling_condition->RootCandidateInvariant()) &&
-                    (!value_ref || value_ref->RootCandidateInvariant()),
-                true,
-                (!sampling_condition || sampling_condition->TargetInvariant()) &&
-                    (!value_ref || value_ref->TargetInvariant()),
-                (!sampling_condition || sampling_condition->SourceInvariant()) &&
-                    (!value_ref || value_ref->SourceInvariant()),
-                stat_type,
-                CalculateCheckSum("ValueRef::Statistic", stat_type, sampling_condition, value_ref)),
-    m_sampling_condition(std::move(sampling_condition)),
-    m_value_ref(std::move(value_ref))
-{
-    // don't need to check if sampling condition is LocalCandidateInvariant, as
-    // all conditions aren't, but that refers to their own local candidate.
-    // no condition is explicitly dependent on the parent context's local candidate.
-    // also don't need to check if sub-value-ref is local candidate invariant,
-    // as it is applied to the subcondition matches, not the local candidate of
-    // any containing condition
-}
-
 template <typename T, typename V>
 bool Statistic<T, V>::operator==(const ValueRef<T>& rhs) const
 {
