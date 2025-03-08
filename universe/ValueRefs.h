@@ -667,21 +667,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
 
     /* N-ary operation ctor. */
     Operation(OpType op_type, std::vector<uptrref_t>&& operands) :
-        ValueRef<T>(op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                    std::all_of(operands.begin(), operands.end(),
-                                [](const auto& operand) noexcept { return operand && operand->ConstantExpr(); }),
-                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                    std::all_of(operands.begin(), operands.end(),
-                                [](const auto& operand) noexcept { return operand && operand->RootCandidateInvariant(); }),
-                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                    std::all_of(operands.begin(), operands.end(),
-                                [](const auto& operand) noexcept { return operand && operand->LocalCandidateInvariant(); }),
-                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                    std::all_of(operands.begin(), operands.end(),
-                                [](const auto& operand) noexcept { return operand && operand->TargetInvariant(); }),
-                    op_type != OpType::RANDOM_UNIFORM && op_type != OpType::RANDOM_PICK && op_type != OpType::NOOP &&
-                    std::all_of(operands.begin(), operands.end(),
-                                [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
+        ValueRef<T>(CalcRTSLICE(op_type, operands),
                     IsSimpleIncrement(op_type, operands),
                     op_type,
                     CalculateCheckSum("ValueRef::Operation", op_type, operands)),
@@ -723,7 +709,26 @@ private:
 
     [[nodiscard]] T EvalConstantExpr() const;
 
-    [[nodiscard]] static bool IsSimpleIncrement(OpType op_type, const std::vector<std::unique_ptr<ValueRef<T>>>& operands) {
+    // determine if OpType and operands would make an Operantion
+    // root / target / source / local invariant or constant
+    [[nodiscard]] static std::array<bool, 5> CalcRTSLICE(OpType op_type, const std::vector<uptrref_t>& operands) {
+        if (op_type == OpType::RANDOM_UNIFORM || op_type == OpType::RANDOM_PICK || op_type == OpType::NOOP)
+            return {false, false, false, false, false};
+        return {
+            std::all_of(operands.begin(), operands.end(),
+                        [](const auto& operand) noexcept { return operand && operand->RootCandidateInvariant(); }),
+            std::all_of(operands.begin(), operands.end(),
+                        [](const auto& operand) noexcept { return operand && operand->TargetInvariant(); }),
+            std::all_of(operands.begin(), operands.end(),
+                        [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
+            std::all_of(operands.begin(), operands.end(),
+                        [](const auto& operand) noexcept { return operand && operand->LocalCandidateInvariant(); }),
+            std::all_of(operands.begin(), operands.end(),
+                        [](const auto& operand) noexcept { return operand && operand->ConstantExpr(); })
+        };
+    }
+
+    [[nodiscard]] static bool IsSimpleIncrement(OpType op_type, const std::vector<uptrref_t>& operands) {
         if (op_type == OpType::RANDOM_UNIFORM || op_type == OpType::RANDOM_PICK || op_type == OpType::NOOP)
             return false;
 
