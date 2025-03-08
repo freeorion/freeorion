@@ -289,10 +289,15 @@ protected:
                        ContainerType container = ContainerType::NONE, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type, container, checksum)
     {}
+
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, simple_increment, op_type, checksum)
     {}
+    constexpr ValueRef(std::array<bool, 5> rtslice, bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2], simple_increment, op_type, checksum)
+    {}              // constant,       root,      local,     target,     source
+
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        StatisticType stat_type, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
