@@ -68,8 +68,8 @@ template <typename out_t, convertible_to<out_t> ...Args>
     return out;
 }
 
-// determines if the argument(s) is / are all constant expressions, root candidate invariant, local candidate invarient,
-// target invariant, and source invariant, and packs that into an array
+// determines if the argument(s) is / are all root candidate invariant, local candidate invarient,
+// target invariant, source invariant, and constant expressions, and packs that into an array
 constexpr std::array<bool, 5> RefsRTSLICE(const auto& operands) {
     if constexpr (requires { *operands; operands->TargetInvariant(); }) {
         return {!operands || operands->RootCandidateInvariant(),
@@ -347,11 +347,17 @@ protected:
         Variable(rtsli[0], rtsli[1], rtsli[2], rtsli[3], ref_type, checksum)
     {}
 
-
     CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate,
                               uint32_t checksum) noexcept(noexcept(std::string(std::move(property_name)))) :
         ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
                     ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
+        m_property_name(std::move(property_name))
+    {}
+
+    CONSTEXPR_STRING Variable(std::array<bool, 4> rtsli, std::string property_name, ValueToReturn return_immediate,
+                              ReferenceType ref_type, uint32_t checksum) noexcept(noexcept(std::string(std::move(property_name)))) :
+        ValueRef<T>(false, rtsli[0], rtsli[3], rtsli[1], rtsli[2], static_cast<bool>(return_immediate),
+                    ref_type, ContainerType::NONE, checksum),
         m_property_name(std::move(property_name))
     {}
 
@@ -472,12 +478,17 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                              std::unique_ptr<ValueRef<std::string>>&& string_ref1 = nullptr,
                              std::unique_ptr<ValueRef<std::string>>&& string_ref2 = nullptr,
                              bool return_immediate_value = false) :
-        ComplexVariable(CalculateCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
-                                          int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
-                        variable_name, // no move because it breaks what's passed to checksum calc
-                        return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
-                        std::move(int_ref1), std::move(int_ref2), std::move(int_ref3),
-                        std::move(string_ref1), std::move(string_ref2))
+        Variable<T>(CalcRTSLI(int_ref1, int_ref2, int_ref3, string_ref1, string_ref2),
+                    variable_name, // no move because is passed to checksum calc below
+                    return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
+                    ReferenceType::INVALID_REFERENCE_TYPE,
+                    CalculateCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
+                                      int_ref1, int_ref2, int_ref3, string_ref1, string_ref2)),
+        m_int_ref1(std::move(int_ref1)),
+        m_int_ref2(std::move(int_ref2)),
+        m_int_ref3(std::move(int_ref3)),
+        m_string_ref1(std::move(string_ref1)),
+        m_string_ref2(std::move(string_ref2))
     {}
 
     explicit ComplexVariable(const ComplexVariable<T>& rhs) :
@@ -506,19 +517,10 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
     { return std::make_unique<ComplexVariable<T>>(*this); }
 
 protected:
-    ComplexVariable(uint32_t checksum, std::string variable_name, ValueToReturn val_to_return,
-                    std::unique_ptr<ValueRef<int>>&& int_ref1, std::unique_ptr<ValueRef<int>>&& int_ref2,
-                    std::unique_ptr<ValueRef<int>>&& int_ref3, std::unique_ptr<ValueRef<std::string>>&& string_ref1,
-                    std::unique_ptr<ValueRef<std::string>>&& string_ref2) :
-        Variable<T>(std::move(variable_name), val_to_return, checksum),
-        m_int_ref1(std::move(int_ref1)),
-        m_int_ref2(std::move(int_ref2)),
-        m_int_ref3(std::move(int_ref3)),
-        m_string_ref1(std::move(string_ref1)),
-        m_string_ref2(std::move(string_ref2))
-    { InitInvariants(); } // TODO: remove InitInvariants, determine in Variable<T> constructor call
-
-    void InitInvariants();
+    [[nodiscard]] static std::array<bool, 4> CalcRTSLI(const auto& ...ops) {
+        const auto rtslice = RefsRTSLICE(ops...);
+        return {rtslice[0], rtslice[1], rtslice[2], rtslice[3]};
+    }
 
     const std::unique_ptr<ValueRef<int>> m_int_ref1;
     const std::unique_ptr<ValueRef<int>> m_int_ref2;
@@ -707,6 +709,7 @@ private:
     Operation& operator=(const Operation<T>& rhs) = delete;
     Operation& operator=(Operation<T>&& rhs) = delete;
 
+    // checks that this->m_constant_expr == true and then evaluates the operands/optype
     [[nodiscard]] T EvalConstantExpr() const;
 
     // determine if OpType and operands would make an Operantion
@@ -714,18 +717,7 @@ private:
     [[nodiscard]] static std::array<bool, 5> CalcRTSLICE(OpType op_type, const std::vector<uptrref_t>& operands) {
         if (op_type == OpType::RANDOM_UNIFORM || op_type == OpType::RANDOM_PICK || op_type == OpType::NOOP)
             return {false, false, false, false, false};
-        return {
-            std::all_of(operands.begin(), operands.end(),
-                        [](const auto& operand) noexcept { return operand && operand->RootCandidateInvariant(); }),
-            std::all_of(operands.begin(), operands.end(),
-                        [](const auto& operand) noexcept { return operand && operand->TargetInvariant(); }),
-            std::all_of(operands.begin(), operands.end(),
-                        [](const auto& operand) noexcept { return operand && operand->SourceInvariant(); }),
-            std::all_of(operands.begin(), operands.end(),
-                        [](const auto& operand) noexcept { return operand && operand->LocalCandidateInvariant(); }),
-            std::all_of(operands.begin(), operands.end(),
-                        [](const auto& operand) noexcept { return operand && operand->ConstantExpr(); })
-        };
+        return RefsRTSLICE(operands);
     }
 
     [[nodiscard]] static bool IsSimpleIncrement(OpType op_type, const std::vector<uptrref_t>& operands) {
@@ -1381,18 +1373,6 @@ FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const Script
 ///////////////////////////////////////////////////////////
 // ComplexVariable                                       //
 ///////////////////////////////////////////////////////////
-template <typename T>
-void ComplexVariable<T>::InitInvariants()
-{
-    std::initializer_list<const ValueRefBase*> refs =
-        { m_int_ref1.get(), m_int_ref2.get(), m_int_ref3.get(), m_string_ref1.get(), m_string_ref2.get() };
-    this->m_root_candidate_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->RootCandidateInvariant(); });
-    this->m_local_candidate_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->LocalCandidateInvariant(); });
-    this->m_target_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->TargetInvariant(); });
-    this->m_source_invariant = std::all_of(refs.begin(), refs.end(), [](const auto& e) { return !e || e->SourceInvariant(); });
-    // this->m_constant_expr and this->m_simple_increment should always be false
-}
-
 template <typename T>
 bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 {
