@@ -3395,11 +3395,11 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public Condition {
+private:
+    struct OperandsAreAlreadyDenested {};
+public:
     explicit Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-        Condition(CondsRTSI(operands)),
-        // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-        m_operands(DenestOps<Or>(operands)),
-        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+        Or(DenestOps<Or>(operands), OperandsAreAlreadyDenested{})
     {}
 
     template <convertible_to<std::unique_ptr<Condition>> ...Args>
@@ -3458,9 +3458,14 @@ struct FO_COMMON_API Or final : public Condition {
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
-private:
-    struct OperandsAreAlreadyDenested {};
-    Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested);
+private:   
+    Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested) :
+        Condition(CondsRTSI(operands), ValueRef::CalculateCheckSum("Condition::Or", operands)),
+        // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
+        m_operands(std::move(operands)),
+        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+    {}
+
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
         using namespace Impl::MatchesType;
         using namespace Impl;
@@ -3508,7 +3513,6 @@ private:
             return result;
         }
     }
-
 
     std::vector<std::unique_ptr<Condition>> m_operands;
     const uint16_t m_matches_types = Impl::MatchesType::ANYOBJECTTYPE;
