@@ -19,6 +19,25 @@
 #  define NOMINMAX
 #endif
 #include <windows.h>
+
+std::wstring ToWString(const std::string& utf8_string) {
+    // convert UTF-8 string to UTF-16
+    int utf16_sz = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                                       utf8_string.data(), utf8_string.length(), NULL, 0);
+    std::wstring utf16_string(utf16_sz, 0);
+    if (utf16_sz > 0)
+        MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
+                            utf8_string.data(), utf8_string.size(),
+                            utf16_string.data(), utf16_sz);
+    return utf16_string;
+}
+
+template<typename InputIt>
+std::vector<std::wstring> ToWStringArray(InputIt first, InputIt last) {
+    std::vector<std::wstring> result;
+    std::transform(first, last, std::back_inserter(result), ToWString);
+    return result;
+}
 #endif
 
 class Process::Impl {
@@ -194,7 +213,11 @@ void Process::Impl::Kill() {
 #elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
 
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
+#if defined(FREEORION_LINUX)
     m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
+#elif defined(FREEORION_WIN32)
+    m_child(ToWString(cmd), boost::process::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
+#endif
 {
     std::error_code ec;
     if (!m_child.running(ec)) {
