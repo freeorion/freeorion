@@ -9,8 +9,8 @@
 
 namespace ValueRef {
 enum class ReferenceType : int8_t {
-    INVALID_REFERENCE_TYPE = -1,
-    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
+    INVALID_REFERENCE_TYPE = -1,        // ValueRef::Variable doesn't evaluate a object or global gamestate value. Might be a Complex ref that takes additional parameters
+    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evaluated on any specific object. Might be a non-object variable like the current game turn
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
     EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
     EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the value being set by an effect while it is being executed, eg. adding 5 to the current value of a meter
