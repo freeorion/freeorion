@@ -91,7 +91,11 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
+
+    // does this ValueRef return the value of something that is being modified by an effect. eg. in an effect that sets a meter, does this ref return the value of that meter?
     [[nodiscard]] constexpr bool      IsEffectModifiedValueReference() const noexcept { return m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE; }
+    // does this ValueRef return the immediate or initial values of whatever it returns. ie. is the value it is immediately when this is evaluated, including any previous modifications, or is it the value that was set at the start of the current turn?
+    [[nodiscard]] constexpr bool      ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
 
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
     [[nodiscard]] virtual std::string EvalAsString() const = 0;             //! Returns a textual representation of the evaluation result  with an empty/default context
