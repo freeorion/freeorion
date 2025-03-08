@@ -130,7 +130,7 @@ namespace {
     }
 
     [[nodiscard]] const UniverseObjectCXBase* GetRefObject(ValueRef::ReferenceType ref_type,
-                                                           const ScriptingContext& context)
+                                                           const ScriptingContext& context) noexcept
     {
         switch (ref_type) {
         case SOURCE_REFERENCE:                   return context.source;                      break;
