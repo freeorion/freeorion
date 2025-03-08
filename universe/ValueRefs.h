@@ -361,6 +361,13 @@ protected:
         m_property_name(std::move(property_name))
     {}
 
+    CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, std::string property_name, ValueToReturn return_immediate,
+                              ReferenceType ref_type, uint32_t checksum) noexcept(noexcept(std::string(std::move(property_name)))) :
+        ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2], static_cast<bool>(return_immediate),
+                    ref_type, ContainerType::NONE, checksum),
+        m_property_name(std::move(property_name))
+    {}
+
     const std::string m_property_name;
 };
 
@@ -534,23 +541,12 @@ protected:
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
-    explicit StaticCast(std::unique_ptr<Variable<FromType>>&& value_ref) :
-        Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+    explicit StaticCast(auto&& value_ref) requires requires { std::unique_ptr<ValueRef<FromType>>(std::move(value_ref)); } :
+        Variable<ToType>(RefsRTSLICE(value_ref), GetProperty(value_ref),
+                         value_ref->ReturnImmediateValue() ? ValueToReturn::Immediate : ValueToReturn::Initial,
+                         value_ref->GetReferenceType(), CalculateCheckSum("ValueRef::StaticCast", value_ref)),
         m_value_ref(std::move(value_ref))
-    {
-        this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
-        this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
-        this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
-        this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
-        this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
-        // this->m_simple_increment should always be false
-    }
-
-
-
-    template <typename T> requires (std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
-                                    !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
-    explicit StaticCast(T&& value_ref);
+    {}
 
     [[nodiscard]]             bool operator==(const ValueRef<ToType>& rhs) const override;
     [[nodiscard]] ToType      Eval(const ScriptingContext& context) const override;
@@ -561,12 +557,20 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
 
     [[nodiscard]] const auto* GetValueRef() const noexcept { return m_value_ref.get(); }
 
-    [[nodiscard]] uint32_t GetCheckSum() const override;
-
     [[nodiscard]] std::unique_ptr<ValueRef<ToType>> Clone() const override
     { return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref)); }
 
 private:
+    [[nodiscard]] static CONSTEXPR_STRING std::string GetProperty(const auto& ref) {
+        if constexpr (requires { ref->PropertyName(); }) {
+            if (ref)
+                return ref->PropertyName();
+        } else if constexpr (requires { ref.PropertyName(); }) {
+            return ref.PropertyName();
+        }
+        return {};
+    }
+
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
 };
 
@@ -1523,21 +1527,6 @@ FO_COMMON_API std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) cons
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
 template <typename FromType, typename ToType>
-template <typename T> requires(std::is_convertible_v<T, std::unique_ptr<ValueRef<FromType>>> &&
-                               !std::is_convertible_v<T, std::unique_ptr<Variable<FromType>>>)
-StaticCast<FromType, ToType>::StaticCast(T&& value_ref) :
-    Variable<ToType>(ReferenceType::NON_OBJECT_REFERENCE),
-    m_value_ref(std::move(value_ref))
-{
-    this->m_root_candidate_invariant = !m_value_ref || m_value_ref->RootCandidateInvariant();
-    this->m_local_candidate_invariant = !m_value_ref || m_value_ref->LocalCandidateInvariant();
-    this->m_target_invariant = !m_value_ref || m_value_ref->TargetInvariant();
-    this->m_source_invariant = !m_value_ref || m_value_ref->SourceInvariant();
-    this->m_constant_expr = !m_value_ref || m_value_ref->ConstantExpr();
-    // this->m_simple_increment should always be false
-}
-
-template <typename FromType, typename ToType>
 bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 {
     if (&rhs == this)
@@ -1576,17 +1565,6 @@ void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content
 {
     if (m_value_ref)
         m_value_ref->SetTopLevelContent(content_name);
-}
-
-template <typename FromType, typename ToType>
-uint32_t StaticCast<FromType, ToType>::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::StaticCast");
-    CheckSums::CheckSumCombine(retval, m_value_ref);
-    TraceLogger() << "GetCheckSum(StaticCast<FromType, ToType>): " << typeid(*this).name() << " retval: " << retval;
-    return retval;
 }
 
 
