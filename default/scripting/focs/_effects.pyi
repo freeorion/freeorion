@@ -158,6 +158,7 @@ class LocalCandidate:
     Happiness: float
     TargetHappiness: float
     PlanetID: _PlanetId
+    CreationTurn: int
 
 class RootCandidate:
     ID: _ID
