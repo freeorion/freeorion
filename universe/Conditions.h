@@ -79,52 +79,6 @@ enum class ContentType : uint8_t {
     const ScriptingContext& source_context,
     const UniverseObject* candidate);
 
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
-    if constexpr (requires { *operands; operands->TargetInvariant(); }) {
-        return {!operands || operands->RootCandidateInvariant(),
-                !operands || operands->TargetInvariant(),
-                !operands || operands->SourceInvariant()};
-
-    } else if constexpr (requires { operands.TargetInvariant(); }) {
-        return {operands.RootCandidateInvariant(), operands.TargetInvariant(), operands.SourceInvariant()};
-
-    } else if constexpr (requires { operands.begin(); (*operands.begin()).TargetInvariant(); }) {
-        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.RootCandidateInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.TargetInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.SourceInvariant(); })};
-
-    } else if constexpr (requires { operands.begin(); (*operands.begin())->TargetInvariant(); }) {
-        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
-                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
-
-    } else if constexpr (std::is_same_v<std::decay_t<decltype(operands)>, std::nullptr_t>) {
-        return {true, true, true};
-
-    } else {
-        throw std::invalid_argument("unrecognized type?");
-    }
-}
-
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2,
-                                        const auto& operands3, const auto& operands4)
-{
-    const auto res1 = CondsRTSI(operands1);
-    const auto res2 = CondsRTSI(operands2);
-    const auto res3 = CondsRTSI(operands3);
-    const auto res4 = CondsRTSI(operands4);
-    return {res1[0] && res2[0] && res3[0] && res4[0],
-            res1[1] && res2[1] && res3[1] && res4[1],
-            res1[2] && res2[2] && res3[2] && res4[2]};
-}
-
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2, const auto& operands3)
-{ return CondsRTSI(operands1, operands2, operands3, nullptr); }
-
-constexpr std::array<bool, 3> CondsRTSI(const auto& operands1, const auto& operands2)
-{ return CondsRTSI(operands1, operands2, nullptr, nullptr); }
-
-
 constexpr decltype(auto) EvalImpl(auto&& candidates, const auto& pred)
     requires requires { candidates.erase(DoPartition(candidates, pred), candidates.end()); }
 {
@@ -3441,11 +3395,11 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Or final : public Condition {
+private:
+    struct OperandsAreAlreadyDenested {};
+public:
     explicit Or(std::vector<std::unique_ptr<Condition>>&& operands) :
-        Condition(CondsRTSI(operands)),
-        // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
-        m_operands(DenestOps<Or>(operands)),
-        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+        Or(DenestOps<Or>(operands), OperandsAreAlreadyDenested{})
     {}
 
     template <convertible_to<std::unique_ptr<Condition>> ...Args>
@@ -3464,6 +3418,8 @@ struct FO_COMMON_API Or final : public Condition {
         if (this == &rhs)
             return true;
 
+        if (GetCheckSum() != rhs.GetCheckSum())
+            return false;
         if (m_operands.size() != rhs.m_operands.size())
             return false;
 
@@ -3499,11 +3455,17 @@ struct FO_COMMON_API Or final : public Condition {
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
     [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
-private:
+private:   
+    Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested) :
+        Condition(CondsRTSI(operands), ValueRef::CalculateCheckSum("Condition::Or", operands)),
+        // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
+        m_operands(std::move(operands)),
+        m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
+    {}
+
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
         using namespace Impl::MatchesType;
         using namespace Impl;
@@ -3551,7 +3513,6 @@ private:
             return result;
         }
     }
-
 
     std::vector<std::unique_ptr<Condition>> m_operands;
     const uint16_t m_matches_types = Impl::MatchesType::ANYOBJECTTYPE;
