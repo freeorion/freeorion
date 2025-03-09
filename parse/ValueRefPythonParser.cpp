@@ -847,6 +847,20 @@ namespace {
         ));
     }
 
+    value_ref_wrapper<double> insert_shortest_path_(boost::python::object arg1, boost::python::object arg2) {
+        auto id1 = pyobject_to_vref<int>(arg1);
+        auto id2 = pyobject_to_vref<int>(arg2);
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            "ShortestPath",
+            std::move(id1),
+            std::move(id2),
+            nullptr,
+            nullptr,
+            nullptr
+        ));
+    }
+
     value_ref_wrapper<int> insert_jumps_between_(boost::python::object arg1, boost::python::object arg2) {
         std::unique_ptr<ValueRef::ValueRef<int>> id1;
         auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
@@ -1123,6 +1137,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["Statistic"] = boost::python::raw_function(f_insert_statistic, 2);
 
     globals["DirectDistanceBetween"] = insert_direct_distance_between_;
+    globals["ShortestPath"] = insert_shortest_path_;
     globals["JumpsBetween"] = insert_jumps_between_;
     globals["UserString"] = insert_user_string;
     globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
