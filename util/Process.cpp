@@ -66,11 +66,7 @@ public:
 
 private:
     bool        m_free = false;
-#if defined(FREEORION_MACOSX)
-    pid_t       m_process_id;
-#elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
     bpv1::child m_child;
-#endif
 };
 
 Process::Process() :
@@ -147,87 +143,8 @@ void Process::Free() {
 }
 
 
-
-
-#if defined(FREEORION_MACOSX)
-
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <unistd.h>
-#include <signal.h>
-#include <cstdio>
-#include <sys/wait.h>
-
-
-Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) {
-    std::vector<char*> args;
-    for (unsigned int i = 0; i < argv.size(); ++i)
-        args.push_back(const_cast<char*>(&(const_cast<std::string&>(argv[i])[0])));
-    args.push_back(nullptr);
-
-    switch (m_process_id = fork()) {
-    case -1: { // error
-        throw std::runtime_error("Process::Process : Failed to fork a new process.");
-        break;
-    }
-
-    case 0: { // child process side of fork
-        execv(cmd.c_str(), &args[0]);
-        perror(("execv failed: " + cmd).c_str());
-        break;
-    }
-
-    default:
-        break;
-    }
-}
-
-Process::Impl::~Impl()
-{ if (!m_free) Kill(); }
-
-bool Process::Impl::SetLowPriority(bool low) {
-    if (low)
-        return (setpriority(PRIO_PROCESS, m_process_id, 10) == 0);
-    else
-        return (setpriority(PRIO_PROCESS, m_process_id, 0) == 0);
-}
-
-bool Process::Impl::Terminate() {
-    if (m_free) {
-        DebugLogger() << "Process::Impl::Terminate called but m_free is true so returning with no action";
-        return true;
-    }
-    int status = -1;
-    DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
-    kill(m_process_id, SIGINT);
-    DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
-    waitpid(m_process_id, &status, 0);
-    DebugLogger() << "Process::Impl::Terminate done";
-    if (status != 0) {
-        WarnLogger() << "Process::Impl::Terminate got failure status " << status;
-        return false;
-    }
-    return true;
-}
-
-void Process::Impl::Kill() {
-    if (m_free) {
-        DebugLogger() << "Process::Impl::Kill called but m_free is true so returning with no action";
-        return;
-    }
-    int status;
-    DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
-    kill(m_process_id, SIGKILL);
-    DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
-    waitpid(m_process_id, &status, 0);
-    DebugLogger() << "Process::Impl::Kill done";
-}
-
-#elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
-
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
-#if defined(FREEORION_LINUX)
+#if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
     m_child(cmd, bpv1::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
 #elif defined(FREEORION_WIN32)
     m_child(ToWString(cmd), bpv1::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
@@ -245,7 +162,7 @@ Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd,
 Process::Impl::~Impl()
 { if (!m_free) Kill(); }
 
-#if defined(FREEORION_LINUX)
+#if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
 #include <sys/resource.h>
 
 bool Process::Impl::SetLowPriority(bool low) {
@@ -294,8 +211,6 @@ void Process::Impl::Kill() {
     m_child.wait(wait_ec);
     DebugLogger() << "Process::Impl::Kill done";
 }
-
-#endif
 
 void Process::Impl::Free()
 { m_free = true; }
