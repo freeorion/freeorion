@@ -83,4 +83,4 @@ jobs:
           name: weekly-artifacts-sf-${{ inputs.os }}-${{ github.run_number }}
           path: build/FreeOrion_*_Test_MacOSX_*.dmg
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 14
