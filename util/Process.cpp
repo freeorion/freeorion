@@ -3,13 +3,12 @@
 #include "Logger.h"
 
 #include <boost/algorithm/string/trim.hpp>
-#if BOOST_VERSION >= 108800
-# include <boost/asio.hpp>
-# include <boost/process/v1/args.hpp>
-# include <boost/process/v1/async.hpp>
-# include <boost/process/v1/child.hpp>
+#if BOOST_VERSION >= 108000
+#  include <boost/process/v2/process.hpp>
+#  define PROCESS_ERROR_CODE boost::system::error_code
 #else
-# include <boost/process.hpp>
+#  include <boost/process.hpp>
+#  define PROCESS_ERROR_CODE std::error_code
 #endif
 
 #include <stdexcept>
@@ -47,13 +46,6 @@ std::vector<std::wstring> ToWStringArray(InputIt first, InputIt last) {
 }
 #endif
 
-#if BOOST_VERSION >= 108800
-    namespace bpv1 = boost::process::v1;
-#else
-    namespace bpv1 = boost::process;
-#endif
-
-
 class Process::Impl {
 public:
     Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv);
@@ -65,8 +57,12 @@ public:
     void Free();
 
 private:
-    bool        m_free = false;
-    bpv1::child m_child;
+    bool                  m_free = false;
+#if BOOST_VERSION >= 108000
+    boost::process::v2::process m_child;
+#else
+    boost::process::child m_child;
+#endif 
 };
 
 Process::Process() :
@@ -144,13 +140,21 @@ void Process::Free() {
 
 
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
-#if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
-    m_child(cmd, bpv1::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
-#elif defined(FREEORION_WIN32)
-    m_child(ToWString(cmd), bpv1::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
+#if BOOST_VERSION >= 108000
+#  if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
+    m_child(io_context, cmd, std::vector(argv.cbegin() + 1, argv.cend()))
+#  elif defined(FREEORION_WIN32)
+    m_child(io_context, ToWString(cmd), ToWStringArray(argv.cbegin() + 1, argv.cend()))
+#  endif
+#else
+#  if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
+    m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
+#  elif defined(FREEORION_WIN32)
+    m_child(ToWString(cmd), boost::process::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
+#  endif
 #endif
 {
-    std::error_code ec;
+    PROCESS_ERROR_CODE ec;
     if (!m_child.running(ec)) {
         std::string error_message = "Process::Process : Failed to run a new process: ";
         error_message += ec.message();
@@ -184,10 +188,10 @@ bool Process::Impl::Terminate() {
         return true;
     }
     DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
-    std::error_code term_ec;
+    PROCESS_ERROR_CODE term_ec;
     m_child.terminate(term_ec);
     DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
-    std::error_code wait_ec;
+    PROCESS_ERROR_CODE wait_ec;
     m_child.wait(wait_ec);
     int status = m_child.exit_code();
     DebugLogger() << "Process::Impl::Terminate done";
@@ -204,10 +208,10 @@ void Process::Impl::Kill() {
         return;
     }
     DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
-    std::error_code term_ec;
+    PROCESS_ERROR_CODE term_ec;
     m_child.terminate(term_ec);
     DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
-    std::error_code wait_ec;
+    PROCESS_ERROR_CODE wait_ec;
     m_child.wait(wait_ec);
     DebugLogger() << "Process::Impl::Kill done";
 }
