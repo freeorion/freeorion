@@ -310,6 +310,10 @@ if(BUILD_TESTING)
     find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 endif()
 
+if(WIN32 OR APPLE)
+    find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS process REQUIRED)
+endif()
+
 find_package(ZLIB REQUIRED)
 if(BUILD_CLIENT_GG)
     set(SDL_NO_MAIN true)
@@ -458,6 +462,7 @@ target_link_libraries(freeorioncommon
         Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
+        $<$<OR:$<PLATFORM_ID:Windows>,$<PLATFORM_ID:Windows>>:Boost::process>
         ${Python3_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
@@ -468,7 +473,7 @@ target_link_libraries(freeorioncommon
     PRIVATE
         # boost::uuid requires the bcrypt Windows API on Windows since boost 1.67
         # see https://github.com/boostorg/uuid/issues/68
-        $<$<AND:$<PLATFORM_ID:Windows>,$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.66>>:bcrypt>
+        $<$<AND:$<PLATFORM_ID:Windows>,$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.66>>:bcrypt> 
         ${CORE_FOUNDATION_LIBRARY}
 )
 
