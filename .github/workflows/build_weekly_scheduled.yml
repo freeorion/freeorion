@@ -34,6 +34,16 @@ jobs:
               TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
               echo "Runs success from yesterday count: ${TOTAL_COUNT}"
             fi
+
+            if (( $TOTAL_COUNT == 0 )); then
+              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=queued&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
+              echo "Runs queued count: ${TOTAL_COUNT}"
+            fi
+
+            if (( $TOTAL_COUNT == 0 )); then
+              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=queued&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
+              echo "Runs queued from yesterday count: ${TOTAL_COUNT}"
+            fi
           fi
 
           if (( "${TOTAL_COUNT}" != 0 )); then
@@ -119,7 +129,7 @@ jobs:
           curl -X POST
           -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
           -H "Idempotency-Key: ${{ steps.get-version.outputs.short-version }}"
-          --data-raw 'status=New test builds available (build ${{ steps.get-version.outputs.short-version }}):%0AFor Windows and macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap: https://snapcraft.io/freeorion'
+          --data-raw 'status=New test builds available (build ${{ steps.get-version.outputs.short-version }}):%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap: https://snapcraft.io/freeorion'
           -d 'visibility=public'
           -d 'language=en'
           https://fosstodon.org/api/v1/statuses
