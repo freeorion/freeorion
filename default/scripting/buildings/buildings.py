@@ -1,15 +1,20 @@
 from focs._effects import (
+    AddStarlanes,
     ContainedBy,
     Contains,
+    DirectDistanceBetween,
     EffectsGroup,
     HasStarlane,
     InSystem,
     IsBuilding,
     IsRootCandidate,
     IsSource,
+    LocalCandidate,
     MaxOf,
+    MinimumNumberOf,
     NamedReal,
     NamedRealLookup,
+    Number,
     Object,
     OwnedBy,
     Planet,
@@ -164,3 +169,13 @@ CAN_ADD_STARLANE_TO_SOURCE = (
         ),
     )
 )
+
+
+DO_STARLANE_BORE = AddStarlanes(
+    endpoint=MinimumNumberOf(
+        number=1, sortkey=DirectDistanceBetween(Source.ID, LocalCandidate.ID), condition=CAN_ADD_STARLANE_TO_SOURCE
+    )
+)
+
+
+BORE_POSSIBLE = Number(low=1, condition=CAN_ADD_STARLANE_TO_SOURCE)
