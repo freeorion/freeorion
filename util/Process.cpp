@@ -3,7 +3,13 @@
 #include "Logger.h"
 
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/process.hpp>
+#if BOOST_VERSION >= 108000
+#  include <boost/process/v2/process.hpp>
+#  define PROCESS_ERROR_CODE boost::system::error_code
+#else
+#  include <boost/process.hpp>
+#  define PROCESS_ERROR_CODE std::error_code
+#endif
 
 #include <stdexcept>
 
@@ -51,12 +57,12 @@ public:
     void Free();
 
 private:
-    bool                m_free = false;
-#if defined(FREEORION_MACOSX)
-    pid_t               m_process_id;
-#elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
+    bool                  m_free = false;
+#if BOOST_VERSION >= 108000
+    boost::process::v2::process m_child;
+#else
     boost::process::child m_child;
-#endif
+#endif 
 };
 
 Process::Process() :
@@ -133,93 +139,22 @@ void Process::Free() {
 }
 
 
-
-
-#if defined(FREEORION_MACOSX)
-
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#include <unistd.h>
-#include <signal.h>
-#include <cstdio>
-#include <sys/wait.h>
-
-
-Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) {
-    std::vector<char*> args;
-    for (unsigned int i = 0; i < argv.size(); ++i)
-        args.push_back(const_cast<char*>(&(const_cast<std::string&>(argv[i])[0])));
-    args.push_back(nullptr);
-
-    switch (m_process_id = fork()) {
-    case -1: { // error
-        throw std::runtime_error("Process::Process : Failed to fork a new process.");
-        break;
-    }
-
-    case 0: { // child process side of fork
-        execv(cmd.c_str(), &args[0]);
-        perror(("execv failed: " + cmd).c_str());
-        break;
-    }
-
-    default:
-        break;
-    }
-}
-
-Process::Impl::~Impl()
-{ if (!m_free) Kill(); }
-
-bool Process::Impl::SetLowPriority(bool low) {
-    if (low)
-        return (setpriority(PRIO_PROCESS, m_process_id, 10) == 0);
-    else
-        return (setpriority(PRIO_PROCESS, m_process_id, 0) == 0);
-}
-
-bool Process::Impl::Terminate() {
-    if (m_free) {
-        DebugLogger() << "Process::Impl::Terminate called but m_free is true so returning with no action";
-        return true;
-    }
-    int status = -1;
-    DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
-    kill(m_process_id, SIGINT);
-    DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
-    waitpid(m_process_id, &status, 0);
-    DebugLogger() << "Process::Impl::Terminate done";
-    if (status != 0) {
-        WarnLogger() << "Process::Impl::Terminate got failure status " << status;
-        return false;
-    }
-    return true;
-}
-
-void Process::Impl::Kill() {
-    if (m_free) {
-        DebugLogger() << "Process::Impl::Kill called but m_free is true so returning with no action";
-        return;
-    }
-    int status;
-    DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
-    kill(m_process_id, SIGKILL);
-    DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
-    waitpid(m_process_id, &status, 0);
-    DebugLogger() << "Process::Impl::Kill done";
-}
-
-#elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
-
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
-#if defined(FREEORION_LINUX)
+#if BOOST_VERSION >= 108000
+#  if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
+    m_child(io_context, cmd, std::vector(argv.cbegin() + 1, argv.cend()))
+#  elif defined(FREEORION_WIN32)
+    m_child(io_context, ToWString(cmd), ToWStringArray(argv.cbegin() + 1, argv.cend()))
+#  endif
+#else
+#  if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
     m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
-#elif defined(FREEORION_WIN32)
+#  elif defined(FREEORION_WIN32)
     m_child(ToWString(cmd), boost::process::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
+#  endif
 #endif
 {
-    std::error_code ec;
+    PROCESS_ERROR_CODE ec;
     if (!m_child.running(ec)) {
         std::string error_message = "Process::Process : Failed to run a new process: ";
         error_message += ec.message();
@@ -231,7 +166,7 @@ Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd,
 Process::Impl::~Impl()
 { if (!m_free) Kill(); }
 
-#if defined(FREEORION_LINUX)
+#if defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
 #include <sys/resource.h>
 
 bool Process::Impl::SetLowPriority(bool low) {
@@ -253,10 +188,10 @@ bool Process::Impl::Terminate() {
         return true;
     }
     DebugLogger() << "Process::Impl::Terminate calling kill(m_process_id, SIGINT)";
-    std::error_code term_ec;
+    PROCESS_ERROR_CODE term_ec;
     m_child.terminate(term_ec);
     DebugLogger() << "Process::Impl::Terminate calling waitpid(m_process_id, &status, 0)";
-    std::error_code wait_ec;
+    PROCESS_ERROR_CODE wait_ec;
     m_child.wait(wait_ec);
     int status = m_child.exit_code();
     DebugLogger() << "Process::Impl::Terminate done";
@@ -273,15 +208,13 @@ void Process::Impl::Kill() {
         return;
     }
     DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
-    std::error_code term_ec;
+    PROCESS_ERROR_CODE term_ec;
     m_child.terminate(term_ec);
     DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
-    std::error_code wait_ec;
+    PROCESS_ERROR_CODE wait_ec;
     m_child.wait(wait_ec);
     DebugLogger() << "Process::Impl::Kill done";
 }
-
-#endif
 
 void Process::Impl::Free()
 { m_free = true; }
