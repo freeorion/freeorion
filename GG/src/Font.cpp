@@ -15,6 +15,8 @@
 #include <iterator>
 #include <numeric>
 #include <sstream>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/xpressive/regex_actions.hpp>
 #include <boost/xpressive/xpressive.hpp>
@@ -2245,16 +2247,39 @@ namespace {
     Font::RenderCache shared_cache{};
 }
 
-Font::Font(std::string font_filename, unsigned int pts) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts)
+void Font::Init()
 {
     if (!m_font_filename.empty()) {
         detail::FTFaceWrapper wrapper;
         FT_Error error = GetFace(wrapper.m_face);
+#ifdef WIN32
+        if (error == FT_Err_Cannot_Open_Resource) {
+            // try loading file data ourselves to use FT_New_Memory_Face,
+            // speculating something might have gone wrong with utf8 path in FT_New_Face
+            if (wrapper.m_face) {
+                FT_Done_Face(wrapper.m_face);
+            }
+            std::wstring wide_path;
+            utf8::utf8to16(m_font_filename.cbegin(), m_font_filename.cend(), std::back_inserter(wide_path));
+            boost::filesystem::path path(std::move(wide_path));
+            boost::filesystem::ifstream file(path, std::ios::binary);
+            if (file.is_open()) {
+                wrapper.file_contents.resize(boost::filesystem::file_size(path));
+                file.read(reinterpret_cast<char*>(wrapper.file_contents.data()), wrapper.file_contents.size());
+                error = GetFace(wrapper.file_contents, wrapper.m_face);
+            }
+        }
+#endif
         CheckFace(wrapper.m_face, error);
         Init(wrapper.m_face);
     }
+}
+
+Font::Font(std::string font_filename, unsigned int pts) :
+    m_font_filename(std::move(font_filename)),
+    m_pt_sz(pts)
+{
+    Init();
 }
 
 Font::Font(std::string font_filename, unsigned int pts,
