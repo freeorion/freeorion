@@ -7,8 +7,16 @@
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
+#include "PythonParserImpl.h"
+#include "ValueRefPythonParser.h"
+#include "ConditionPythonParser.h"
+#include "EnumPythonParser.h"
+#include "SourcePythonParser.h"
+
 #include <boost/phoenix.hpp>
 
+#include <boost/python/import.hpp>
+#include <boost/python/raw_function.hpp>
 
 #define DEBUG_PARSERS 0
 #if DEBUG_PARSERS
@@ -90,6 +98,40 @@ namespace {
         stat_rule   stat;
         start_rule  start;
     };
+
+    boost::python::object py_insert_empire_statistics_(start_rule_payload& stats_, const boost::python::tuple& args,
+                                                       const boost::python::dict& kw)
+    {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+
+        auto value = pyobject_to_vref<double>(kw["value"]);
+
+        stats_.emplace(std::move(name), std::move(value));
+
+        return boost::python::object();
+    }
+
+    struct py_grammar {
+        boost::python::dict globals;
+
+        py_grammar(const PythonParser& parser, start_rule_payload& stats_) :
+            globals(boost::python::import("builtins").attr("__dict__"))
+        {
+#if PY_VERSION_HEX < 0x03080000
+            globals["__builtins__"] = boost::python::import("builtins");
+#endif
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsValueRefs(globals, parser);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+
+            globals["EmpireStatistic"] = boost::python::raw_function(
+                [&stats_](const boost::python::tuple& args, const boost::python::dict& kw)
+                { return py_insert_empire_statistics_(stats_, args, kw); });
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
 }
 
 namespace parse {
@@ -109,7 +151,24 @@ namespace parse {
             }
         }
 
-        success = true;
+        bool file_success = true;
+        for (const auto& file : ListDir(path, IsFOCPyScript)) {
+            start_rule_payload stats_;
+            py_grammar p = py_grammar(parser, stats_);
+            if (py_parse::detail::parse_file<py_grammar>(parser, file, p)) {
+                for (auto& stat : stats_) {
+                    auto maybe_inserted = all_stats.emplace(stat.first, std::move(stat.second));
+                    if (!maybe_inserted.second) {
+                        WarnLogger() << "Addition of second statistic with name " << maybe_inserted.first->first
+                                     << " failed.  Keeping first statistic found.";
+                    }
+                }
+            } else {
+                file_success = false;
+            }
+        }
+
+        success = file_success;
         return all_stats;
     }
 }
