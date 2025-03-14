@@ -372,7 +372,7 @@ namespace {
 
             // empire name
             std::string empire_name;
-            const std::map<int, PlayerInfo>& players = app->Players();
+            const auto& players = app->Players();
 
             auto player_it = players.find(m_player_id);
             if (player_it != players.end()) {
@@ -430,13 +430,20 @@ namespace {
                     }
                 }
 
-                for (auto* planet : objects.allRaw<Planet>()) {
-                    if (planet->Owner() == empire->EmpireID()) {
-                        empires_planet_count      += 1;
-                        empires_production_points += planet->GetMeter(MeterType::METER_INDUSTRY)->Initial();
-                        empires_research_points   += planet->GetMeter(MeterType::METER_RESEARCH)->Initial();
-                        empires_influence_points  += planet->GetMeter(MeterType::METER_INFLUENCE)->Initial();
-                    }
+                const auto owned_by_empire = [emp_id{empire->EmpireID()}](const UniverseObject& obj)
+                { return !obj.Unowned() && obj.OwnedBy(emp_id); };
+
+                empires_planet_count += objects.count<Planet>(owned_by_empire);
+
+                static constexpr auto initial_or_zero = [](const UniverseObject* obj, MeterType mt) {
+                    const auto* meter = obj->GetMeter(mt);
+                    return meter ? meter->Initial() : 0.0;
+                };
+
+                for (auto* obj : objects.findRaw(owned_by_empire)) {
+                    empires_production_points += initial_or_zero(obj, MeterType::METER_INDUSTRY);
+                    empires_research_points   += initial_or_zero(obj, MeterType::METER_RESEARCH);
+                    empires_influence_points  += initial_or_zero(obj, MeterType::METER_INFLUENCE);
                 }
             }
 
