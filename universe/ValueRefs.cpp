@@ -94,6 +94,7 @@ namespace {
     using enum ValueRef::ReferenceType;
     using enum ValueRef::ContainerType;
 #else
+    static constexpr auto INVALID_REFERENCE_TYPE = ReferenceType::INVALID_REFERENCE_TYPE;
     static constexpr auto NON_OBJECT_REFERENCE = ReferenceType::NON_OBJECT_REFERENCE;
     static constexpr auto SOURCE_REFERENCE = ReferenceType::SOURCE_REFERENCE;
     static constexpr auto EFFECT_TARGET_REFERENCE = ReferenceType::EFFECT_TARGET_REFERENCE;
@@ -485,8 +486,14 @@ std::string ReconstructName(std::string_view property_name, ContainerType contai
 std::string FormatedDescriptionPropertyNames(ReferenceType ref_type, std::string_view property_name,
                                              ContainerType container_type, bool return_immediate_value)
 {
-    const std::string& format_string = (container_type == ContainerType::NONE) ?
-        UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0") : UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1");
+    const std::size_t bits_count = (container_type != ContainerType::NONE ? 1u : 0u) +
+        ((ref_type != NON_OBJECT_REFERENCE && ref_type != INVALID_REFERENCE_TYPE) ? 1u : 0u);
+
+    const auto& format_string =
+        (bits_count == 0u) ? UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0") :
+        (bits_count == 1u) ? UserString("DESC_VALUE_REF_MULTIPART_VARIABLE1") :
+                             UserString("DESC_VALUE_REF_MULTIPART_VARIABLE2");
+
     boost::format formatter = FlexibleFormat(format_string);
 
     switch (ref_type) {
@@ -495,8 +502,8 @@ std::string FormatedDescriptionPropertyNames(ReferenceType ref_type, std::string
     case EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
     case CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    case NON_OBJECT_REFERENCE:                                                                    break;
-    default:                                  formatter % "???";                                  break;
+    case NON_OBJECT_REFERENCE:
+    default:                                                                                      break;
     }
 
     switch (container_type) {
