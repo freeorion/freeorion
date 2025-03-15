@@ -3458,11 +3458,11 @@ public:
 
 private:
     Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested) :
-        Condition(CondsRTSI(operands), ValueRef::CalculateCheckSum("Condition::Or", operands)),
+        Condition(CondsRTSI(operands)),
         // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
         m_operands(std::move(operands)),
         m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
-    {}
+    { this->m_checksum_cache = ValueRef::CalculateCheckSum("Condition::Or", m_operands); }
 
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
         using namespace Impl::MatchesType;

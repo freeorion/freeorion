@@ -235,7 +235,7 @@ protected:
     Condition& operator=(const Condition&) = delete;
     Condition& operator=(Condition&&) = delete;
 
-    const uint32_t m_checksum_cache = 0u;
+    uint32_t m_checksum_cache = 0u;
 
     const bool m_root_candidate_invariant = false;
     const bool m_target_invariant = false;
