@@ -171,6 +171,9 @@ BOOST_AUTO_TEST_CASE(host_server) {
             }
             BOOST_REQUIRE(home_planet != nullptr);
 
+            auto neighbours{m_universe.GetPathfinder().ImmediateNeighbors(home_planet->ID(), home_planet->Owner())};
+            BOOST_REQUIRE_GT(neighbours.size(), 0);
+
             // enqueue Troop Ship
             static const boost::uuids::uuid troop_ship_uuid =
                 boost::uuids::string_generator{}("08a58b080929496d84fcfaa91424ca02");
