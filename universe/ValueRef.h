@@ -9,8 +9,8 @@
 
 namespace ValueRef {
 enum class ReferenceType : int8_t {
-    INVALID_REFERENCE_TYPE = -1,
-    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
+    INVALID_REFERENCE_TYPE = -1,        // ValueRef::Variable doesn't evaluate a object or global gamestate value. Might be a Complex ref that takes additional parameters
+    NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evaluated on any specific object. Might be a non-object variable like the current game turn
     SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
     EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
     EFFECT_TARGET_VALUE_REFERENCE,      // ValueRef::Variable is evaluated on the value being set by an effect while it is being executed, eg. adding 5 to the current value of a meter
@@ -91,7 +91,11 @@ struct FO_COMMON_API ValueRefBase {
     [[nodiscard]] constexpr virtual bool ConstantExpr() const            { return m_constant_expr; }
 
     [[nodiscard]] std::string         InvariancePattern() const;
+
+    // does this ValueRef return the value of something that is being modified by an effect. eg. in an effect that sets a meter, does this ref return the value of that meter?
     [[nodiscard]] constexpr bool      IsEffectModifiedValueReference() const noexcept { return m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE; }
+    // does this ValueRef return the immediate or initial values of whatever it returns. ie. is the value it is immediately when this is evaluated, including any previous modifications, or is it the value that was set at the start of the current turn?
+    [[nodiscard]] constexpr bool      ReturnImmediateValue() const noexcept { return m_return_immediate_value; }
 
     [[nodiscard]] virtual std::string Description() const = 0;              //! Returns a user-readable text description of this ValueRef
     [[nodiscard]] virtual std::string EvalAsString() const = 0;             //! Returns a textual representation of the evaluation result  with an empty/default context
@@ -289,10 +293,15 @@ protected:
                        ContainerType container = ContainerType::NONE, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, return_immediate_value, ref_type, container, checksum)
     {}
+
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, simple_increment, op_type, checksum)
     {}
+    constexpr ValueRef(std::array<bool, 5> rtslice, bool simple_increment, OpType op_type, uint32_t checksum = 0u) noexcept :
+        ValueRefBase(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2], simple_increment, op_type, checksum)
+    {}              // constant,       root,      local,     target,     source
+
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        StatisticType stat_type, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, stat_type, checksum)
