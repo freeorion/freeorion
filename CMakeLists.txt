@@ -348,12 +348,6 @@ set_property(DIRECTORY APPEND
         # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp
         $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=zlib.lib>
 
-        # with boost 1.61 some boost::optional internals were changed. However
-        # boost::spirit relies on some API the old implementation provided.
-        # This define enables the usage of the old boost::optional
-        # implementation.  Boost upstream tracks this bug as #12349
-        $<$<AND:$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.60>,$<VERSION_LESS:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.67>>:BOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL>
-
         # We don't need localized output of Boost date_time and not setting
         # the define causes the inclusion of code, which contains std::tolower.
         # This however causes a macro substitutions caused by the libpython
