@@ -38,7 +38,7 @@ jobs:
         run: |
           $env:Path += ";$($pwd.Path)\\Release"
           cmake --build . --config "Release" --target unittest
-      - name: Test
+      - name: Test dumping species
         shell: pwsh
         working-directory: build
         run: |
