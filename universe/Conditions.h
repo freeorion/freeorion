@@ -3453,13 +3453,12 @@ public:
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
     [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
     Or(std::vector<std::unique_ptr<Condition>>&& operands, OperandsAreAlreadyDenested) :
-        Condition(CondsRTSI(operands)),
+        Condition(CondsRTSI(operands), ValueRef::CalculateCheckSum("Condition::Or", operands)),
         // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
         m_operands(std::move(operands)),
         m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))

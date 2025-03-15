@@ -11300,9 +11300,6 @@ void Or::SetTopLevelContent(const std::string& content_name) {
         operand->SetTopLevelContent(content_name);
 }
 
-uint32_t Or::GetCheckSum() const
-{ return ValueRef::CalculateCheckSum("Condition::Or", m_operands); }
-
 std::vector<const Condition*> Or::OperandsRaw() const {
     std::vector<const Condition*> retval;
     retval.reserve(m_operands.size());
