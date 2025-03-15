@@ -1903,7 +1903,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
 
     for (auto obj_id : context.ContextUniverse().m_marked_destroyed | range_keys) {
         // do actual recursive destruction.
-        if (const auto* obj = m_objects.getRaw(obj_id))
+        if (m_objects.getRaw(obj_id))
             RecursiveDestroy(obj_id, empire_ids);
     }
 }
