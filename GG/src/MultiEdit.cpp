@@ -866,7 +866,7 @@ void MultiEdit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_key
                 //std::cout << "put cursor end at " << m_cursor_end.first
                 //          << " : " << Value(m_cursor_end.second) << std::endl;
                 
-                if (auto res = LineEndsWithEndlineCharacter(line, Text())) {
+                if (LineEndsWithEndlineCharacter(line, Text())) {
                     --m_cursor_end.second;
                     //std::cout << "last char is newline so moved to " << m_cursor_end.first
                     //          << " : " << Value(m_cursor_end.second) << std::endl;
