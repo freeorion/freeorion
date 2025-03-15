@@ -1520,7 +1520,7 @@ void Pathfinder::PathfinderImpl::UpdateCommonFilteredSystemGraphs(
         return;
     }
 
-    const auto [eit, success] = m_graph_impl.empire_system_graph_views.emplace(
+    m_graph_impl.empire_system_graph_views.emplace(
         std::piecewise_construct,
         std::forward_as_tuple(ALL_EMPIRES),
         std::forward_as_tuple(*m_graph_impl.system_graph, 
