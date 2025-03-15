@@ -417,7 +417,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     const std::string& building_type = building->BuildingTypeName();
-    if (const BuildingType* bt = GetBuildingType(building_type)) {
+    if (GetBuildingType(building_type)) {
         auto pedia_lookup_building_type_action = [building_type]()
         { ClientUI::GetClientUI()->ZoomToBuildingType(building_type); };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
