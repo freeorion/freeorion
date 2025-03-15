@@ -287,7 +287,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
             cur_turn_rp_available -= RPs_to_spend;
 
             auto next_res_tech_it = cur_tech_it;
-            int next_res_tech_idx = 0;
+            std::size_t next_res_tech_idx = 0;
             if (++next_res_tech_it == dp_researchable_techs.end())
                 next_res_tech_idx = m_queue.size() + 1;
             else
