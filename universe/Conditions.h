@@ -3453,6 +3453,7 @@ public:
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
     [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
+    [[nodiscard]] uint32_t GetCheckSum() const override { return ValueRef::CalculateCheckSum("Condition::Or", m_operands); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
