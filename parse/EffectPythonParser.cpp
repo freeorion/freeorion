@@ -261,6 +261,15 @@ namespace {
         return effect_wrapper(std::make_shared<Effect::SetOwner>(std::move(empire)));
     }
 
+    effect_wrapper insert_set_empire_capital(const boost::python::tuple& args, const boost::python::dict& kw) {
+        if (kw.has_key("empire")) {
+            auto empire = pyobject_to_vref<int>(kw["empire"]);
+            return effect_wrapper(std::make_shared<Effect::SetEmpireCapital>(std::move(empire)));
+        }
+
+        return effect_wrapper(std::make_shared<Effect::SetEmpireCapital>());
+    }
+
     effect_wrapper insert_set_star_type_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef< ::StarType>> star_type;
         auto star_type_arg = py::extract<value_ref_wrapper< ::StarType>>(kw["type"]);
@@ -777,6 +786,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     }
 
     globals["SetEmpireStockpile"] = py::raw_function(insert_set_empire_stockpile);
+    globals["SetEmpireCapital"] = py::raw_function(insert_set_empire_capital);
     globals["SetOwner"] = py::raw_function(insert_set_owner_);
     globals["SetStarType"] = py::raw_function(insert_set_star_type_);
     globals["MoveTo"] = py::raw_function(insert_move_to_);
