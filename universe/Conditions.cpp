@@ -3482,7 +3482,7 @@ void OnPlanet::Eval(const ScriptingContext& parent_context,
 
 std::string OnPlanet::Description(bool negated) const {
     std::string planet_str;
-    int planet_id = m_planet_id && m_planet_id->ConstantExpr() ? planet_id = m_planet_id->Eval() : INVALID_OBJECT_ID;
+    int planet_id = (m_planet_id && m_planet_id->ConstantExpr()) ? m_planet_id->Eval() : INVALID_OBJECT_ID;
     if (auto planet = IApp::GetApp()->GetContext().ContextObjects().getRaw<Planet>(planet_id))
         planet_str = planet->Name();
     else if (m_planet_id)
