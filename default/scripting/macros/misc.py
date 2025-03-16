@@ -6,14 +6,22 @@ from focs._effects import (
     GameRule,
     IsSource,
     IsTarget,
+    LocalCandidate,
     NamedIntegerLookup,
     NoEffect,
+    Object,
     OwnedBy,
+    OwnerHasTech,
     Planet,
+    SetPopulation,
+    SetSpecies,
+    Source,
     StatisticIf,
     System,
+    Turn,
     WithinStarlaneJumps,
 )
+from macros.priorities import POPULATION_DEFAULT_PRIORITY
 
 MIN_RECOLONIZING_SIZE = 3
 
@@ -60,3 +68,22 @@ GROWTH_RATE_FACTOR = (
         1 + 0.5 * StatisticIf(float, condition=IsTarget & EmpireHasAdoptedPolicy(name="PLC_POPULATION"))
     )  # +50% growth with population policy
 )
+
+
+def LIFECYCLE_MANIP_POPULATION_EFFECTS(species: str):
+    return [
+        EffectsGroup(
+            scope=Object(id=Source.PlanetID) & Planet(),
+            activation=~OwnerHasTech(name="GRO_LIFECYCLE_MAN")
+            & Turn(low=LocalCandidate.CreationTurn + 1, high=LocalCandidate.CreationTurn + 1),
+            priority=POPULATION_DEFAULT_PRIORITY,
+            effects=[SetSpecies(name=species), SetPopulation(value=1)],
+        ),
+        EffectsGroup(
+            scope=Object(id=Source.PlanetID) & Planet(),
+            activation=OwnerHasTech(name="GRO_LIFECYCLE_MAN")
+            & Turn(low=LocalCandidate.CreationTurn + 1, high=LocalCandidate.CreationTurn + 1),
+            priority=POPULATION_DEFAULT_PRIORITY,
+            effects=[SetSpecies(name=species), SetPopulation(value=MIN_RECOLONIZING_SIZE)],
+        ),
+    ]
