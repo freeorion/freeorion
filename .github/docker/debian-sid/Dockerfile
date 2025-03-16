@@ -30,9 +30,8 @@ RUN echo "deb http://deb.debian.org/debian experimental main\n\
 
 RUN apt-get update --assume-yes
 # install experimental g++ to test issue https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1074967
-# g++-15 ICE https://gcc.gnu.org/bugzilla/show_bug.cgi?id=118464
-#RUN apt-get -t=experimental install --assume-yes g++ binutils # broken binutils dependency
-RUN apt-get install --assume-yes g++ binutils
+RUN apt-get -t=experimental install --assume-yes g++ binutils # broken binutils dependency
+#RUN apt-get install --assume-yes g++ binutils
 RUN apt-get install --assume-yes \
         git \
         make \
