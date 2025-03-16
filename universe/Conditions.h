@@ -3466,6 +3466,10 @@ private:
     {
         uint32_t checksum = 0u;
         CheckSums::CheckSumCombine(checksum, "Condition::Or");
+        //for (const auto& t : v)
+        //    CheckSumCombine(sum, t);
+        CheckSums::CheckSumCombine(checksum, m_operands.size());
+        //CheckSums::CheckSumCombine(checksum, m_operands);
         this->m_checksum_cache = checksum;
     }
 
