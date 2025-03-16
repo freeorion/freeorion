@@ -3463,7 +3463,11 @@ private:
         // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
         m_operands(std::move(operands)),
         m_matches_types(DetermineDefaultInitialCandidateObjectTypes(m_operands))
-    { this->m_checksum_cache = ValueRef::CalculateCheckSum("Condition::Or", m_operands); }
+    {
+        uint32_t checksum = 0u;
+        CheckSums::CheckSumCombine(checksum, "Condition::Or");
+        this->m_checksum_cache = checksum;
+    }
 
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
         using namespace Impl::MatchesType;
