@@ -330,6 +330,10 @@ namespace SystemPathing {
            is 0 (debug mode), and 0's predecessor is that system */
         const std::size_t num_verts = boost::num_vertices(graph);
 
+        if (num_verts > id_to_graph_index.size()) {
+            WarnLogger() << "ShortestPathImpl graph has " << num_verts << " indicies while there only are " << id_to_graph_index.size() << " systems";
+        }
+
         std::vector<int> predecessors;
         predecessors.reserve(num_verts);
         for (std::size_t i = 0; i < num_verts; ++i)
