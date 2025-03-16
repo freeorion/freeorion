@@ -55,7 +55,8 @@ jobs:
           string(TIMESTAMP current_date "%Y-%m-%d-%H;%M;%S" UTC)
           file(APPEND "$ENV{GITHUB_OUTPUT}" "timestamp=${current_date}")
       - name: Cache files with ccache
-        uses: actions/cache@v3
+        id: build-docker-ccache-restore
+        uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/ccache
           key: build-${{ matrix.image }}-docker-ccache-${{ steps.build-docker-ccache-timestamp.outputs.timestamp }}
@@ -93,8 +94,17 @@ jobs:
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_CLIENT_GODOT=ON -DGODOT_CUSTOM_API_FILE=/freeorion/build/godot-api.json -DBUILD_TESTING=ON ..
       - name: Build freeorion
+        id: build-docker-build
+        timeout-minutes: 50
         run: |
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e GIT_SSL_NO_VERIFY=true -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 2
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e GIT_SSL_NO_VERIFY=true -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 3
+          echo "exit-code=$?" >> $GITHUB_OUTPUT
+      - name: Always save ccache
+        if: ${{ always() && (steps.build-docker-build.conclusion == 'success' || steps.build-docker-build.outputs.exit-code == 0 ) }}
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/ccache
+          key: build-${{ matrix.image }}-docker-ccache-${{ steps.build-docker-ccache-timestamp.outputs.timestamp }}
       - name: Test freeorion
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e FO_TEST_HOSTLESS_GAMES=1 -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . --target unittest
