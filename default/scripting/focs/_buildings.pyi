@@ -10,11 +10,11 @@ def BuildingType(
     name: str,
     description: str,
     buildcost: int | float,
-    buildtime: int,
+    buildtime: float,
     location: _Condition,
     effectsgroups: list[_EffectGroup],
     icon: str,
-    captureresult=DefaultCaptureResult,
+    captureresult: _CaptureResult = DefaultCaptureResult,
     enqueuelocation=_Condition(),
     tags: list[str] | None = None,
 ): ...
