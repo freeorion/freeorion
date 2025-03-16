@@ -50,6 +50,11 @@ try:
         ...
 
     _T = TypeVar("_T", str, int, float)
+    # For some generic functions like Statistic
+    # we need to specify type of processed argument
+    # and type of output separately
+    _T_IN = TypeVar("_T_IN", str, int, float)
+    _T_OUT = TypeVar("_T_OUT", str, int, float)
 
     class _Condition(bool):  # type: ignore
         """

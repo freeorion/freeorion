@@ -69,7 +69,7 @@ def LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(building_name: str):
         LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED("BLD_SHIPYARD_BASE")
     """
     return (
-        Contains(IsBuilding(name=[building_name]) and OwnedBy(empire=Source.Owner))
+        Contains(IsBuilding(name=[building_name]) & OwnedBy(empire=Source.Owner))
         |
         # Allows enqueue if this is not enqueued but prerequisite @1@ is
         Enqueued(type=BuildBuilding, name=building_name) & ~Enqueued(type=BuildBuilding, name=CurrentContent)
