@@ -308,8 +308,7 @@ namespace CheckSums {
                 ))
     {
         if constexpr (requires { *v; bool(v); }) {
-            if (v)
-                CheckSumCombine(sum, *v);
+            if (v) { CheckSumCombine(sum, *v); }
 
         } else if constexpr (requires { v.first; v.second; }) {
             CheckSumCombine(sum, v.first);
