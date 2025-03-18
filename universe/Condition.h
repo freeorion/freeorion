@@ -205,7 +205,7 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const { return ""; }
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
-    [[nodiscard]] virtual uint32_t GetCheckSum() const { return m_checksum_cache; }
+    [[nodiscard]] constexpr virtual uint32_t GetCheckSum() const { return m_checksum_cache; }
 
     //! Makes a clone of this Condition in a new owning pointer. Required for
     //! Boost.Python, which doesn't support move semantics for returned values.
