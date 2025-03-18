@@ -9286,15 +9286,6 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     return true;
 }
 
-uint32_t Stationary::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Stationary");
-
-    TraceLogger(conditions) << "GetCheckSum(Stationary): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> Stationary::Clone() const
 { return std::make_unique<Stationary>(); }
 
@@ -9334,16 +9325,6 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     }
 
     return fleet && (m_aggressive == fleet->Aggressive());
-}
-
-uint32_t Aggressive::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Aggressive");
-    CheckSums::CheckSumCombine(retval, m_aggressive);
-
-    TraceLogger(conditions) << "GetCheckSum(Aggressive): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Aggressive::Clone() const
@@ -9685,15 +9666,6 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     return species->CanColonize();
 }
 
-uint32_t CanColonize::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::CanColonize");
-
-    TraceLogger(conditions) << "GetCheckSum(CanColonize): retval: " << retval;
-    return retval;
-}
-
 std::unique_ptr<Condition> CanColonize::Clone() const
 { return std::make_unique<CanColonize>(); }
 
@@ -9744,15 +9716,6 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         return false;
     }
     return species->CanProduceShips();
-}
-
-uint32_t CanProduceShips::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::CanProduceShips");
-
-    TraceLogger(conditions) << "GetCheckSum(CanProduceShips): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> CanProduceShips::Clone() const
@@ -9907,15 +9870,6 @@ bool OrderedAnnexed::Match(const ScriptingContext& local_context) const {
         return planet->OrderedAnnexedByEmpire() != ALL_EMPIRES;
     }
     return false;
-}
-
-uint32_t OrderedAnnexed::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::OrderedAnnexed");
-
-    TraceLogger(conditions) << "GetCheckSum(OrderedAnnexed): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> OrderedAnnexed::Clone() const
@@ -10955,12 +10909,86 @@ namespace StaticTests {
     constexpr auto target_cx = Target();
     constexpr auto capital_cx = Capital{};
     constexpr auto monster_cx = Monster{};
-    constexpr auto armed_cx_cx = Armed{};
+    constexpr auto armed_cx = Armed{};
+
     constexpr auto stationary_cx = Stationary{};
+    constexpr auto stationary_expected_checksum = CheckSums::GetCheckSum("Condition::Stationary");
+    static_assert(stationary_expected_checksum == 2142u);
+    constexpr auto stationary_checksum = stationary_cx.GetCheckSum();
+    static_assert(stationary_checksum == 2142u);
+    constexpr auto stationary_via_cond_ptr_checksum = static_cast<const Condition*>(&stationary_cx)->GetCheckSum();
+    static_assert(stationary_via_cond_ptr_checksum == 2142u);
+    constexpr const Condition& stationary_cond_ref = stationary_cx;
+    static_assert(stationary_cond_ref.GetCheckSum() == 2142u);
+    constexpr auto stationary_via_address_getchecksum = CheckSums::GetCheckSum(&stationary_cx);
+    static_assert(stationary_via_address_getchecksum == 2142u);
+    constexpr auto stationary_via_ptr_as_cond_getchecksum = CheckSums::GetCheckSum(static_cast<const Condition*>(&stationary_cx));
+    static_assert(stationary_via_ptr_as_cond_getchecksum == 2142u);
+    constexpr auto stationary_combined_checksum = []() {
+        uint32_t sum = 0;
+        CheckSums::CheckSumCombine(sum, stationary_cx);
+        return sum;
+    }();
+    static_assert(stationary_combined_checksum == 2142u);
+    constexpr auto stationary_combined_address_checksum = []() {
+        uint32_t sum = 0;
+        CheckSums::CheckSumCombine(sum, &stationary_cx);
+        return sum;
+    }();
+    static_assert(stationary_combined_address_checksum == 2142u);
+    constexpr auto stationary_combined_with_number = ValueRef::CalculateCheckSum(858u, &stationary_cx);
+    static_assert(stationary_combined_with_number == 3000u);
+
+    constexpr std::array<const Condition*, 2> null_and_stationary_cx{{nullptr, &stationary_cx}};
+    constexpr auto null_and_stationary_checksum = CheckSums::GetCheckSum(null_and_stationary_cx);
+    static_assert(null_and_stationary_checksum == (2142u + 2u));
+
+    constexpr std::array<const Condition*, 2> none_and_stationary_cx{{&none_cx, &stationary_cx}};
+    constexpr auto none_and_stationary_checksum = CheckSums::GetCheckSum(none_and_stationary_cx);
+    static_assert(none_and_stationary_checksum == (CheckSums::GetCheckSum(none_cx) + 2142u + 2u));
+
+    constexpr std::array<const Condition*, 4> cond_ptrs_cx0{{&capital_cx, &monster_cx, &armed_cx, &stationary_cx}};
+    constexpr auto cond_ptrx_checksums0 = []() {
+        std::array<uint32_t, 4> sums{};
+        for (std::size_t idx = 0; idx < cond_ptrs_cx0.size(); ++idx)
+            sums[idx] = CheckSums::GetCheckSum(cond_ptrs_cx0[idx]);
+        return sums;
+    }();
+    static_assert(cond_ptrx_checksums0[0] == 1771u);
+    static_assert(cond_ptrx_checksums0[1] == 1813u);
+    static_assert(cond_ptrx_checksums0[2] == 1556u);
+    static_assert(cond_ptrx_checksums0[3] == 2142u);
+
+    constexpr auto cond_ptrx_checksum0 = []() {
+        uint32_t sum = 0u;
+        for (const auto* c : cond_ptrs_cx0)
+            sum += CheckSums::GetCheckSum(c);
+        sum += cond_ptrs_cx0.size();
+        return sum;
+    }();
+    static_assert(cond_ptrx_checksum0 == (1771u + 1813u + 1556u + 2142u + 4u));     
+    constexpr auto cond_ptrx_checksum0a = CheckSums::GetCheckSum(cond_ptrs_cx0);
+    static_assert(cond_ptrx_checksum0a == cond_ptrx_checksum0);
+
+    constexpr std::array<const Condition*, 4> cond_ptrs_cx1{{&none_cx, &noop_cx, &rootcandidate_cx, &target_cx}};
+    constexpr auto cond_ptrx_checksum1 = ValueRef::CalculateCheckSum("Combining Text and Conditions", cond_ptrs_cx1);
+    static_assert(cond_ptrx_checksum1 == 9808u);
+
+
     constexpr auto aggr_cx = Aggressive{true};
     constexpr auto cancolonize_cx = CanColonize{};
     constexpr auto canproduceships_cx = CanProduceShips{};
     constexpr auto orderedannexed_cx = OrderedAnnexed{};
+
+    constexpr auto aggr_checksum = CheckSums::GetCheckSum(aggr_cx);
+    static_assert(aggr_checksum == 2113u);
+    constexpr auto cancol_checksum = CheckSums::GetCheckSum(cancolonize_cx);
+    static_assert(cancol_checksum == 2182u);
+    constexpr auto conprod_checksum = CheckSums::GetCheckSum(canproduceships_cx);
+    static_assert(conprod_checksum == 2592u);
+    constexpr auto annexed_checksum = CheckSums::GetCheckSum(orderedannexed_cx);
+    static_assert(annexed_checksum == 2492u);
+
 
     constexpr auto contains_target_cx = Contains{Target{}};
     constexpr auto contains_capital_cx = Contains<Capital>{};
@@ -10987,6 +11015,12 @@ namespace StaticTests {
     static_assert(PlanetFromObject(plt_pcx) == plt_pcx);
     static_assert(PlanetFromObject(plt_pcx, dummy_planet_getter) == plt_pcx);
     static_assert(PlanetFromObject(ship_pcx, dummy_planet_getter) == plt_pcx);
+
+    constexpr std::string_view test_long_checksum_text = "some text that is rather long !!!!";
+    constexpr auto null_terminated_checksum = CheckSums::GetCheckSum("some text that is rather long !!!!");
+    static_assert(null_terminated_checksum == 2978u);
+    static_assert(ValueRef::CalculateCheckSum(test_long_checksum_text) == 2978u);
+    static_assert(CheckSums::GetCheckSum(test_long_checksum_text) == 2978u);
 }
 
 void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
