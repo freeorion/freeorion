@@ -17,8 +17,8 @@ Part
         ]
         [[COMBAT_TARGETS_VISIBLE_ENEMY]]
     ]
-    mountableSlotTypes = [ Internal External ]
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    mountableSlotTypes = [ Core ]
+    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = And [
