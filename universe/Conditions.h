@@ -2842,7 +2842,9 @@ private:
   * fleet of a ship, has a next system that is a system and is not its
   * current system. That is, the fleet. */
 struct FO_COMMON_API Stationary final : public Condition {
-    constexpr Stationary() noexcept : Condition(true, true, true) {}
+    constexpr Stationary() noexcept :
+        Condition(true, true, true, false, CheckSums::GetCheckSum("Condition::Stationary"))
+    { static_assert(CheckSums::GetCheckSum("Condition::Stationary") == 2142u); }
 #if defined(__GNUC__) && (__GNUC__ < 13)
     constexpr ~Stationary() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
 #endif
@@ -2858,7 +2860,6 @@ struct FO_COMMON_API Stationary final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -2889,7 +2890,8 @@ struct FO_COMMON_API Aggressive final : public Condition {
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] bool GetAggressive() const noexcept { return m_aggressive; }
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
+    { return ValueRef::CalculateCheckSum("Condition::Aggressive", m_aggressive); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -2982,7 +2984,8 @@ struct FO_COMMON_API CanColonize final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
+    { return CheckSums::GetCheckSum("Condition::CanColonize"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -3008,7 +3011,8 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
+    { return CheckSums::GetCheckSum("Condition::CanProduceShips"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -3057,7 +3061,8 @@ struct FO_COMMON_API OrderedAnnexed final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
+    { return CheckSums::GetCheckSum("Condition::OrderedAnnexed"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
