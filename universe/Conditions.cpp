@@ -9725,7 +9725,8 @@ std::unique_ptr<Condition> CanProduceShips::Clone() const
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
-    Condition(CondsRTSI(by_object_condition)),
+    Condition(CondsRTSI(by_object_condition),
+              ValueRef::CalculateCheckSum("Condition::OrderedBombarded", by_object_condition)),
     m_by_object_condition(std::move(by_object_condition))
 {}
 
@@ -9821,16 +9822,6 @@ bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
 void OrderedBombarded::SetTopLevelContent(const std::string& content_name) {
     if (m_by_object_condition)
         m_by_object_condition->SetTopLevelContent(content_name);
-}
-
-uint32_t OrderedBombarded::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::OrderedBombarded");
-    CheckSums::CheckSumCombine(retval, m_by_object_condition);
-
-    TraceLogger(conditions) << "GetCheckSum(OrderedBombarded): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> OrderedBombarded::Clone() const
