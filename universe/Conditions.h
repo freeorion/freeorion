@@ -3462,10 +3462,12 @@ private:
         uint32_t checksum = 0u;
         CheckSums::CheckSumCombine(checksum, "Condition::Or");
         for (const auto& t : m_operands) {
-            const Condition* op = t.get();
-            if (!op) continue;
-            const auto opcs = op->GetCheckSum();
-            CheckSums::CheckSumCombine(checksum, opcs);
+            try {
+                const Condition* op = t.get();
+                if (!op) continue;
+                const auto opcs = op->GetCheckSum();
+                CheckSums::CheckSumCombine(checksum, opcs);
+            } catch (...) {}
         }
         CheckSums::CheckSumCombine(checksum, m_operands.size());
         //CheckSums::CheckSumCombine(checksum, m_operands);
