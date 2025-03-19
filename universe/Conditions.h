@@ -1656,8 +1656,8 @@ private:
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetTypeBase : public Condition {
-    constexpr PlanetTypeBase(std::array<bool, 3> rtsi) noexcept : Condition(rtsi) {}
-    constexpr PlanetTypeBase(bool r, bool t, bool s) noexcept : Condition(r, t, s) {}
+    constexpr PlanetTypeBase(std::array<bool, 3> rtsi, uint32_t checksum) noexcept : Condition(rtsi, checksum) {}
+    constexpr PlanetTypeBase(bool r, bool t, bool s, uint32_t checksum) noexcept : Condition(r, t, s, false, checksum) {}
 
     [[nodiscard]] constexpr uint16_t GetDefaultInitialCandidateObjectTypes() const noexcept override final
     { return Impl::MatchesType::PLANETS_BUILDINGS; }
@@ -1686,23 +1686,23 @@ private:
 
 public:
     explicit PlanetType(std::vector<pt_ref_up>&& types) requires ((N == 0) && !have_pt_values) :
-        PlanetTypeBase(CondsRTSI(types)),
+        PlanetTypeBase(CondsRTSI(types), ValueRef::CalculateCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types)), // TODO: remove any nullptr types? throw if then empty?
         m_types_local_invariant(std::all_of(m_types.begin(), m_types.end(),
                                             [](const auto& e) { return e->LocalCandidateInvariant(); }))
     {}
     explicit PlanetType(std::array<pt_ref_up, N>&& types) requires ((N > 0) && !have_pt_values) :
-        PlanetTypeBase(CondsRTSI(types)),
+        PlanetTypeBase(CondsRTSI(types), ValueRef::CalculateCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types)),  // TODO: check / throw if any are nullptr types?
         m_types_local_invariant(std::all_of(m_types.begin(), m_types.end(),
                                             [](const auto& e) { return e->LocalCandidateInvariant(); }))
     {}
     constexpr explicit PlanetType(::PlanetType type) requires ((N == 1) && have_pt_values) :
-        PlanetTypeBase(true, true, true),
+        PlanetTypeBase(true, true, true, ValueRef::CalculateCheckSum("Condition::PlanetType", type)),
         m_types(type)
     {}
     CONSTEXPR_VEC explicit PlanetType(std::vector<::PlanetType> types) requires ((N == 0) && have_pt_values) :
-        PlanetTypeBase(true, true, true),
+        PlanetTypeBase(true, true, true, ValueRef::CalculateCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types))
     {}
 
@@ -1889,12 +1889,6 @@ public:
                     m_types->SetTopLevelContext(content_name);
             }
         }
-    }
-
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const override {
-        uint32_t retval = CheckSums::GetCheckSum("Condition::PlanetType");
-        CheckSums::CheckSumCombine(retval, m_types);
-        return retval;
     }
 
     std::unique_ptr<Condition> Clone() const {
