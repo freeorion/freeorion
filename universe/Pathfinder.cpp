@@ -470,7 +470,6 @@ namespace SystemPathing {
                                 std::decay_t<decltype(sys_id_property_map[boost::target(*first_edge, graph)])>>;
         std::vector<val_t> retval; // probably vector<pair<double, int>>
         retval.reserve(std::distance(first_edge, last_edge));
-
         std::transform(first_edge, last_edge, std::back_inserter(retval), [&](const auto& e) -> val_t
                        { return {edge_weight_map[e], sys_id_property_map[boost::target(e, graph)]}; });
         return retval;
@@ -1154,19 +1153,23 @@ std::vector<std::pair<double, int>> Pathfinder::ImmediateNeighbors(int system_id
 std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbors(
     int system_id, int empire_id) const
 {
-    if (empire_id == ALL_EMPIRES) {
-        if (!m_graph_impl.system_graph) [[unlikely]] {
-            ErrorLogger() << "No system graph in PathfinderImpl::ImmediateNeighbors";
+    if (m_system_id_to_graph_index.size() == 0) [[unlikely]] {
+        ErrorLogger() << "Mapping is missing. m_system_id_to_graph_index is empty in PathfinderImpl::ImmediateNeighbors";
+        return {};
+    }
+    // immediate neighbors for a system do not depend on the empire knowledge; use the generic system graph
+    if (!m_graph_impl.system_graph) [[unlikely]] {
+        ErrorLogger() << "No system graph in PathfinderImpl::ImmediateNeighbors";
+        auto graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
+        if (graph_it != m_graph_impl.empire_system_graph_views.end() && m_system_id_to_graph_index.size() > 0) {
+            return ImmediateNeighborsImpl(graph_it->second, system_id, m_system_id_to_graph_index);
+        } else {
+            ErrorLogger() << "Also no fallback empire system graph in PathfinderImpl::ImmediateNeighbors";
             return {};
         }
-        return ImmediateNeighborsImpl(*m_graph_impl.system_graph, system_id,
-                                      m_system_id_to_graph_index);
-    } else {
-        auto graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl.empire_system_graph_views.end())
-            return ImmediateNeighborsImpl(graph_it->second, system_id, m_system_id_to_graph_index);
     }
-    return {};
+    return ImmediateNeighborsImpl(*m_graph_impl.system_graph, system_id,
+                                  m_system_id_to_graph_index);
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
