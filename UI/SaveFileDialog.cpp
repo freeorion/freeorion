@@ -802,7 +802,11 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "current dir PathString: " << PathToString(current_dir) << " valid utf-8: " << utf8::is_valid(PathToString(current_dir).begin(), PathToString(current_dir).end());
 
     fs::path chosen_full_path = current_dir / choice_path;
-    DebugLogger() << "chosen_full_path PathString: " << PathToString(chosen_full_path) << " valid utf-8: " << utf8::is_valid(PathToString(chosen_full_path).begin(), PathToString(chosen_full_path).end());
+    DebugLogger() << [&]() {
+        const auto cfpstr = PathToString(chosen_full_path);
+        return "chosen_full_path PathString: " + cfpstr +
+            (utf8::is_valid(cfpstr.begin(), cfpstr.end()) ? "is valid UTF8" : "is NOT valid UTF8");
+    }();
     DebugLogger() << "chosen_full_path is directory? : " << fs::is_directory(chosen_full_path);
 
     if (fs::is_directory(chosen_full_path)) {
