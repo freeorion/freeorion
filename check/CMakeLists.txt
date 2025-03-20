@@ -1,17 +1,18 @@
-find_package(CPPCheck)
+if(ENABLE_CPPCHECK)
+    find_package(CPPCheck REQUIRED)
 
-if(TARGET Cppcheck::cppcheck)
-    add_custom_target(check-cpp
-        COMMAND
-            "$<TARGET_FILE:Cppcheck::cppcheck>"
-            --quiet
-            --template=gcc
-            --std=c++14
-            ${PROJECT_SOURCE_DIR}
-        COMMENT "Check C++ for problematic code"
-    )
+    if(TARGET Cppcheck::cppcheck)
+        add_custom_target(check-cpp
+            COMMAND
+                "$<TARGET_FILE:Cppcheck::cppcheck>"
+                --quiet
+                --template=gcc
+                --std=c++14
+                ${PROJECT_SOURCE_DIR}
+            COMMENT "Check C++ for problematic code"
+        )
+    endif()
 endif()
-
 
 if(NOT TARGET check)
     add_custom_target(check
@@ -19,7 +20,7 @@ if(NOT TARGET check)
     )
 endif()
 
-if(TARGET check-cpp)
+if(ENABLE_CPPCHECK AND TARGET check-cpp)
     add_dependencies(check check-cpp)
 endif()
 
