@@ -9726,7 +9726,7 @@ std::unique_ptr<Condition> CanProduceShips::Clone() const
 ///////////////////////////////////////////////////////////
 OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condition) :
     Condition(CondsRTSI(by_object_condition),
-              ValueRef::CalculateCheckSum("Condition::OrderedBombarded", by_object_condition)),
+              CheckSums::GetCheckSum("Condition::OrderedBombarded", by_object_condition)),
     m_by_object_condition(std::move(by_object_condition))
 {}
 
@@ -10927,7 +10927,7 @@ namespace StaticTests {
         return sum;
     }();
     static_assert(stationary_combined_address_checksum == 2142u);
-    constexpr auto stationary_combined_with_number = ValueRef::CalculateCheckSum(858u, &stationary_cx);
+    constexpr auto stationary_combined_with_number = CheckSums::GetCheckSum(858u, &stationary_cx);
     static_assert(stationary_combined_with_number == 3000u);
 
     constexpr std::array<const Condition*, 2> null_and_stationary_cx{{nullptr, &stationary_cx}};
@@ -10962,7 +10962,7 @@ namespace StaticTests {
     static_assert(cond_ptrx_checksum0a == cond_ptrx_checksum0);
 
     constexpr std::array<const Condition*, 4> cond_ptrs_cx1{{&none_cx, &noop_cx, &rootcandidate_cx, &target_cx}};
-    constexpr auto cond_ptrx_checksum1 = ValueRef::CalculateCheckSum("Combining Text and Conditions", cond_ptrs_cx1);
+    constexpr auto cond_ptrx_checksum1 = CheckSums::GetCheckSum("Combining Text and Conditions", cond_ptrs_cx1);
     static_assert(cond_ptrx_checksum1 == 9808u);
 
 
@@ -11010,7 +11010,6 @@ namespace StaticTests {
     constexpr std::string_view test_long_checksum_text = "some text that is rather long !!!!";
     constexpr auto null_terminated_checksum = CheckSums::GetCheckSum("some text that is rather long !!!!");
     static_assert(null_terminated_checksum == 2978u);
-    static_assert(ValueRef::CalculateCheckSum(test_long_checksum_text) == 2978u);
     static_assert(CheckSums::GetCheckSum(test_long_checksum_text) == 2978u);
 }
 

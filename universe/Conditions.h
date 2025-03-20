@@ -1597,7 +1597,7 @@ private:
   * or that are that planet. If \a planet_id is INVALID_OBJECT_ID then matches
   * all objects on any planet */
 struct FO_COMMON_API OnPlanet final : public Condition {
-    OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
+    explicit OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id);
     constexpr OnPlanet() noexcept : Condition(true, true, true, false) {}
     OnPlanet(OnPlanet&&) noexcept = default;
 
@@ -1624,7 +1624,7 @@ private:
 
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API ObjectID final : public Condition {
-    ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id);
+    explicit ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const noexcept override {
         if (this == &rhs)
@@ -1686,23 +1686,23 @@ private:
 
 public:
     explicit PlanetType(std::vector<pt_ref_up>&& types) requires ((N == 0) && !have_pt_values) :
-        PlanetTypeBase(CondsRTSI(types), ValueRef::CalculateCheckSum("Condition::PlanetType", types)),
+        PlanetTypeBase(CondsRTSI(types), CheckSums::GetCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types)), // TODO: remove any nullptr types? throw if then empty?
         m_types_local_invariant(std::all_of(m_types.begin(), m_types.end(),
                                             [](const auto& e) { return e->LocalCandidateInvariant(); }))
     {}
     explicit PlanetType(std::array<pt_ref_up, N>&& types) requires ((N > 0) && !have_pt_values) :
-        PlanetTypeBase(CondsRTSI(types), ValueRef::CalculateCheckSum("Condition::PlanetType", types)),
+        PlanetTypeBase(CondsRTSI(types), CheckSums::GetCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types)),  // TODO: check / throw if any are nullptr types?
         m_types_local_invariant(std::all_of(m_types.begin(), m_types.end(),
                                             [](const auto& e) { return e->LocalCandidateInvariant(); }))
     {}
     constexpr explicit PlanetType(::PlanetType type) requires ((N == 1) && have_pt_values) :
-        PlanetTypeBase(true, true, true, ValueRef::CalculateCheckSum("Condition::PlanetType", type)),
+        PlanetTypeBase(true, true, true, CheckSums::GetCheckSum("Condition::PlanetType", type)),
         m_types(type)
     {}
     CONSTEXPR_VEC explicit PlanetType(std::vector<::PlanetType> types) requires ((N == 0) && have_pt_values) :
-        PlanetTypeBase(true, true, true, ValueRef::CalculateCheckSum("Condition::PlanetType", types)),
+        PlanetTypeBase(true, true, true, CheckSums::GetCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types))
     {}
 
@@ -1943,7 +1943,7 @@ PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>) -> P
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetSize final : public Condition {
-    PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes);
+    explicit PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -1968,8 +1968,8 @@ private:
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
 struct FO_COMMON_API PlanetEnvironment final : public Condition {
-    PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
-                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref = nullptr);
+    explicit PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
+                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref = nullptr);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
@@ -2097,7 +2097,7 @@ private:
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API FocusType final : public Condition {
-    FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    explicit FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const FocusType& rhs) const;
@@ -2863,9 +2863,8 @@ private:
 
 /** Matches objects that are aggressive fleets or are in aggressive fleets. */
 struct FO_COMMON_API Aggressive final : public Condition {
-    constexpr Aggressive() noexcept = default;
-    constexpr explicit Aggressive(bool aggressive) noexcept :
-        Condition(true, true, true),
+    constexpr explicit Aggressive(bool aggressive = true) noexcept :
+        Condition(true, true, true, false, CheckSums::GetCheckSum("Condition::Aggressive", aggressive)),
         m_aggressive(aggressive)
     {}
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -2885,7 +2884,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
     [[nodiscard]] bool GetAggressive() const noexcept { return m_aggressive; }
     [[nodiscard]] constexpr uint32_t GetCheckSum() const override
-    { return ValueRef::CalculateCheckSum("Condition::Aggressive", m_aggressive); }
+    { return CheckSums::GetCheckSum("Condition::Aggressive", m_aggressive); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -3451,7 +3450,7 @@ public:
     [[nodiscard]] std::vector<const Condition*> OperandsRaw() const;
     [[nodiscard]] const auto& Operands() const noexcept { return m_operands; }
     [[nodiscard]] auto& Operands() noexcept { return m_operands; }
-    [[nodiscard]] uint32_t GetCheckSum() const override { return ValueRef::CalculateCheckSum("Condition::Or", m_operands); }
+    [[nodiscard]] uint32_t GetCheckSum() const override { return CheckSums::GetCheckSum("Condition::Or", m_operands); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 

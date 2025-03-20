@@ -376,8 +376,8 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(op0str1->Value(), "RULE_ANNEX_COST_MINIMUM");
         BOOST_REQUIRE_EQUAL(op0str1->GetCheckSum(), 4414);
 
-        BOOST_REQUIRE_EQUAL(7677, ValueRef::CalculateCheckSum("ValueRef::ComplexVariable", "GameRule", false,
-                                                              nullptr, nullptr, nullptr, op0str1, nullptr));
+        BOOST_REQUIRE_EQUAL(7677, CheckSums::GetCheckSum("ValueRef::ComplexVariable", "GameRule", false,
+                                                         nullptr, nullptr, nullptr, op0str1, nullptr));
         BOOST_REQUIRE_EQUAL(7677, op0->GetCheckSum());
 
         const auto* op1 = dynamic_cast<const ValueRef::Operation<double>*>(operands.at(1));
