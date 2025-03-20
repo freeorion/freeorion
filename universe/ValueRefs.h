@@ -31,15 +31,6 @@
 class UniverseObject;
 
 namespace ValueRef {
-template <typename... Args>
-[[nodiscard]] constexpr uint32_t CalculateCheckSum(const Args&... args)
-    noexcept(noexcept((CheckSums::CheckSumCombine(std::declval<uint32_t&>(), args), ...)))
-{
-    uint32_t checksum = 0u;
-    (CheckSums::CheckSumCombine(checksum, args), ...);
-    return checksum;
-}
-
 #if defined(FREEORION_ANDROID)
 template <class From, class To>
 concept convertible_to = 
@@ -125,8 +116,8 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 {
     [[nodiscard]] constexpr explicit Constant(T value)
         noexcept(noexcept(std::string{}) &&
-                 noexcept(CalculateCheckSum("ValueRef::Constant", value))) :
-        ValueRef<T>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant", value)),
+                 noexcept(CheckSums::GetCheckSum("ValueRef::Constant", value))) :
+        ValueRef<T>(true, true, true, true, true, CheckSums::GetCheckSum("ValueRef::Constant", value)),
         m_value(std::move(value))
     {}
 
@@ -134,7 +125,7 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
     [[nodiscard]] constexpr explicit Constant(TT&& value)
         noexcept(noexcept(std::string{}) &&
                  noexcept(T(std::forward<TT>(value))) &&
-                 noexcept(CalculateCheckSum("ValueRef::Constant", std::declval<T>()))) :
+                 noexcept(CheckSums::GetCheckSum("ValueRef::Constant", std::declval<T>()))) :
         Constant(T(std::forward<TT>(value)))
     {}
 
@@ -185,7 +176,7 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 {
     CONSTEXPR_STRING explicit Constant(std::string value)
         noexcept(std::is_nothrow_move_constructible_v<std::string>) :
-        ValueRef<std::string>(true, true, true, true, true, CalculateCheckSum("ValueRef::Constant<string>", value)),
+        ValueRef<std::string>(true, true, true, true, true, CheckSums::GetCheckSum("ValueRef::Constant<string>", value)),
         m_value(std::move(value))
     {}
 
@@ -279,8 +270,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     static_cast<bool>(retval_type),
                     ref_type,
                     container_type,
-                    CalculateCheckSum("ValueRef::Variable", property_name, ref_type,
-                                      container_type, static_cast<bool>(retval_type))),
+                    CheckSums::GetCheckSum("ValueRef::Variable", property_name, ref_type,
+                                           container_type, static_cast<bool>(retval_type))),
         m_property_name(std::move(property_name))
     {}
 
@@ -293,8 +284,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     static_cast<bool>(retval_type),
                     ref_type,
                     ContainerType::NONE,
-                    CalculateCheckSum("ValueRef::Variable", std::string_view{}, ref_type,
-                                      ContainerType::NONE, static_cast<bool>(retval_type)))
+                    CheckSums::GetCheckSum("ValueRef::Variable", std::string_view{}, ref_type,
+                                           ContainerType::NONE, static_cast<bool>(retval_type)))
     {}
 
 #if defined(__GNUC__) && (__GNUC__ == 12)
@@ -383,7 +374,7 @@ struct FO_COMMON_API Statistic final : public Variable<T>
               StatisticType stat_type,
               std::unique_ptr<Condition::Condition>&& sampling_condition) :
         Variable<T>(CalcRTSI(value_ref, sampling_condition), stat_type,
-                    CalculateCheckSum("ValueRef::Statistic", stat_type, sampling_condition, value_ref)),
+                    CheckSums::GetCheckSum("ValueRef::Statistic", stat_type, sampling_condition, value_ref)),
         m_sampling_condition(std::move(sampling_condition)),
         m_value_ref(std::move(value_ref))
     {}
@@ -443,7 +434,7 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
                                std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr) :
         Variable<int>(CalcRTSLI(carrier_id, sampling_condition),
                       ReferenceType::NON_OBJECT_REFERENCE,
-                      CalculateCheckSum("ValueRef::TotalFighterShots", m_carrier_id, m_sampling_condition)),
+                      CheckSums::GetCheckSum("ValueRef::TotalFighterShots", m_carrier_id, m_sampling_condition)),
         m_carrier_id(std::move(carrier_id)),
         m_sampling_condition(std::move(sampling_condition))
     {}
@@ -489,8 +480,8 @@ struct FO_COMMON_API ComplexVariable final : public Variable<T>
                     variable_name, // no move because is passed to checksum calc below
                     return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial,
                     ReferenceType::INVALID_REFERENCE_TYPE,
-                    CalculateCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
-                                      int_ref1, int_ref2, int_ref3, string_ref1, string_ref2)),
+                    CheckSums::GetCheckSum("ValueRef::ComplexVariable", variable_name, return_immediate_value,
+                                           int_ref1, int_ref2, int_ref3, string_ref1, string_ref2)),
         m_int_ref1(std::move(int_ref1)),
         m_int_ref2(std::move(int_ref2)),
         m_int_ref3(std::move(int_ref3)),
@@ -544,7 +535,7 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
     explicit StaticCast(auto&& value_ref) requires requires { std::unique_ptr<ValueRef<FromType>>(std::move(value_ref)); } :
         Variable<ToType>(RefsRTSLICE(value_ref), GetProperty(value_ref),
                          value_ref->ReturnImmediateValue() ? ValueToReturn::Immediate : ValueToReturn::Initial,
-                         value_ref->GetReferenceType(), CalculateCheckSum("ValueRef::StaticCast", value_ref)),
+                         value_ref->GetReferenceType(), CheckSums::GetCheckSum("ValueRef::StaticCast", value_ref)),
         m_value_ref(std::move(value_ref))
     {}
 
@@ -676,7 +667,7 @@ struct FO_COMMON_API Operation final : public ValueRef<T>
         ValueRef<T>(CalcRTSLICE(op_type, operands),
                     IsSimpleIncrement(op_type, operands),
                     op_type,
-                    CalculateCheckSum("ValueRef::Operation", op_type, operands)),
+                    CheckSums::GetCheckSum("ValueRef::Operation", op_type, operands)),
         m_operands(std::move(operands)),
         m_cached_const_value(this->m_constant_expr ? this->EvalConstantExpr() : T())
     {
