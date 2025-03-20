@@ -11338,27 +11338,6 @@ std::unique_ptr<Condition> Or::Clone() const
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
-Not::Not(std::unique_ptr<Condition>&& operand) :
-    Condition(CondsRTSI(operand)),
-    // have no prepared sets of things that eg. aren't ships, and conditions have no
-    // InitialNonCandidates function, so there is no way to get a useful starting set
-    // candidates that will be guaranteed to NOT match the subcondition...
-    m_operand(std::move(operand))
-{}
-
-bool Not::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    if (typeid(*this) != typeid(rhs))
-        return false;
-
-    const Not& rhs_ = static_cast<const Not&>(rhs);
-
-    CHECK_COND_VREF_MEMBER(m_operand)
-
-    return true;
-}
-
 void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                SearchDomain search_domain) const
 {
@@ -11410,16 +11389,6 @@ std::string Not::Dump(uint8_t ntabs) const {
 void Not::SetTopLevelContent(const std::string& content_name) {
     if (m_operand)
         m_operand->SetTopLevelContent(content_name);
-}
-
-uint32_t Not::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Not");
-    CheckSums::CheckSumCombine(retval, m_operand);
-
-    TraceLogger(conditions) << "GetCheckSum(Not): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Not::Clone() const

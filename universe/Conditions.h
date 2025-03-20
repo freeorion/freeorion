@@ -3520,9 +3520,25 @@ private:
 
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not final : public Condition {
-    explicit Not(std::unique_ptr<Condition>&& operand);
+    explicit Not(std::unique_ptr<Condition>&& operand) :
+        Condition(CondsRTSI(operand)),
+        // have no prepared sets of things that eg. aren't ships, and conditions have no
+        // InitialNonCandidates function, so there is no way to get a useful starting set
+        // candidates that will be guaranteed to NOT match the subcondition...
+        m_operand(std::move(operand))
+    {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const Not& rhs) const {
+        return (!m_operand && !rhs.m_operand) ||
+            (m_operand && rhs.m_operand && *m_operand == *rhs.m_operand);
+    }
+
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context,
@@ -3532,7 +3548,8 @@ struct FO_COMMON_API Not final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
+    [[nodiscard]] uint32_t GetCheckSum() const override
+    { return CheckSums::GetCheckSum("Condition::Not", m_operand); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
