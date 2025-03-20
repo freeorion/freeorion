@@ -799,7 +799,11 @@ void SaveFileDialog::Confirm() {
     DebugLogger() << "choice: " << choice << " valid utf-8: " << utf8::is_valid(choice.begin(), choice.end());
 
     fs::path current_dir = FilenameToPath(GetDirPath());
-    DebugLogger() << "current dir PathString: " << PathToString(current_dir) << " valid utf-8: " << utf8::is_valid(PathToString(current_dir).begin(), PathToString(current_dir).end());
+    DebugLogger() << [&]() {
+        const auto cdpstr = PathToString(current_dir);
+        return "current dir PathString: " + PathToString(current_dir) +
+            (utf8::is_valid(cdpstr.begin(), cdpstr.end()) ? "is valid UTF8" : "is NOT valid UTF8");
+    }();
 
     fs::path chosen_full_path = current_dir / choice_path;
     DebugLogger() << [&]() {
