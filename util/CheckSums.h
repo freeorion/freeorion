@@ -343,9 +343,7 @@ namespace CheckSums {
     template <typename T>
     concept Combinable = requires(const T t, uint32_t& i) { CheckSumCombine(i, t); };
 
-    [[nodiscard]] constexpr uint32_t GetCheckSum(const Combinable auto&... cs)
-        noexcept(noexcept(CheckSumCombine(std::declval<uint32_t&>(), cs), ...))
-    {
+    [[nodiscard]] constexpr uint32_t GetCheckSum(const Combinable auto&... cs) {
         uint32_t retval{0};
         (CheckSumCombine(retval, cs), ...);
         return retval;
