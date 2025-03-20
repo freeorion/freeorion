@@ -69,6 +69,7 @@ option(BUILD_CLIENT_GODOT "Build Godot client (experimental)" OFF)
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_AI "Build AI" ON)
 option(BUILD_PARSERS "Build parsers" ON)
+option(ENABLE_CPPCHECK "Enable cppcheck check"  OFF)
 
 set(GODOT_CPP_ROOT "" CACHE PATH "Path to Godot CPP libraries (empty to build internally)")
 
