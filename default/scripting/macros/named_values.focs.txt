@@ -42,6 +42,9 @@ SPATIAL_FLUX_STEALTH_HULL_BASE
 SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS
 '''10'''
 
+// Black hole and hyper dam
+NamedReal name = "BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY" value = 20
+
 NamedReal name = "PLC_LIBERTY_DISLIKE_FACTOR" value = 2.0
 
 NamedReal name = "PLC_CONFORMANCE_DISLIKE_FACTOR" value = 0.5
