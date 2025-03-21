@@ -3519,7 +3519,7 @@ private:
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Not final : public Condition {
     explicit Not(std::unique_ptr<Condition>&& operand) :
-        Condition(CondsRTSI(operand), CheckSums::GetCheckSum("Condition::Not", operand)),
+        Condition(CondsRTSI(operand)/*, CheckSums::GetCheckSum("Condition::Not", operand)*/),
         // have no prepared sets of things that eg. aren't ships, and conditions have no
         // InitialNonCandidates function, so there is no way to get a useful starting set
         // candidates that will be guaranteed to NOT match the subcondition...
@@ -3546,6 +3546,8 @@ struct FO_COMMON_API Not final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
+    [[nodiscard]] uint32_t GetCheckSum() const override
+    { return CheckSums::GetCheckSum("Condition::Not", m_operand); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
