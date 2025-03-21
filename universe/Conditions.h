@@ -3453,41 +3453,15 @@ public:
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
-    Or(uint16_t matches_types, /*uint32_t checksum, */std::array<bool, 3> rtsi,
-       std::vector<std::unique_ptr<Condition>>& operands) :
-        Condition(rtsi/*, checksum*/),
+    Or(uint16_t matches_types, std::array<bool, 3> rtsi, std::vector<std::unique_ptr<Condition>>& operands) :
+        Condition(rtsi),
         // assuming more than one operand exists, and thus m_initial_candidates_all_match = false
         m_operands(std::move(operands)),
         m_matches_types(matches_types)
-    {
-        uint32_t checksum = 0u;
-        CheckSums::CheckSumCombine(checksum, "Condition::Or");
-        if (!m_operands.empty()) {
-            if (const auto& upcond0 = m_operands.front()) {
-                const auto& cond0 = *upcond0;
-                std::cout << "cond0: " << cond0.Dump();
-            }
-        }
-        CheckSums::CheckSumCombine(checksum, m_operands.size());
-        this->m_checksum_cache = checksum;
-        //for (const auto& t : m_operands) {
-        //    try {
-        //        const Condition* op = t.get();
-        //        if (!op) continue;
-        //        const auto opcs = op->GetCheckSum();
-        //        CheckSums::CheckSumCombine(checksum, opcs);
-        //    } catch (...) {}
-        //}
-        //CheckSums::CheckSumCombine(checksum, m_operands.size());
-        ////CheckSums::CheckSumCombine(checksum, m_operands);
-        //this->m_checksum_cache = checksum;
-    }
+    {}
 
     Or(std::vector<std::unique_ptr<Condition>> operands, OperandsAreAlreadyDenested) :
-        Or(DetermineDefaultInitialCandidateObjectTypes(operands),
-           //CheckSums::GetCheckSum("Condition::Or", operands),
-           CondsRTSI(operands),
-           operands)
+        Or(DetermineDefaultInitialCandidateObjectTypes(operands), CondsRTSI(operands), operands)
     {}
 
     static uint16_t DetermineDefaultInitialCandidateObjectTypes(const auto& operands) {
