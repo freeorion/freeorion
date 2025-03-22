@@ -1023,6 +1023,20 @@ namespace {
             nullptr
         ));
     }
+
+    value_ref_wrapper<int> insert_planet_type_difference_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto from = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<PlanetType>>(kw["from_"])().value_ref);
+        auto to = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<PlanetType>>(kw["to"])().value_ref);
+
+        return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+            "PlanetTypeDifference",
+            std::make_unique<ValueRef::StaticCast<::PlanetType, int>>(std::move(from)),
+            std::make_unique<ValueRef::StaticCast<::PlanetType, int>>(std::move(to)),
+            nullptr,
+            nullptr,
+            nullptr
+        ));       
+    }
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
@@ -1154,6 +1168,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["ShipPartMeter"] = boost::python::raw_function(insert_ship_part_meter_);
     globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
+    globals["PlanetTypeDifference"] = boost::python::raw_function(insert_planet_type_difference_);
 
 }
 
