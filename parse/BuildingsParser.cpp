@@ -155,7 +155,12 @@ namespace {
         if (production_time_arg.check()) {
             production_time = ValueRef::CloneUnique(production_time_arg().value_ref);
         } else {
-            production_time = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["buildtime"])());
+            auto production_time_arg_double = boost::python::extract<value_ref_wrapper<double>>(kw["buildtime"]);
+            if (production_time_arg_double.check()) {
+                production_time = std::make_unique<ValueRef::StaticCast<double, int>>(ValueRef::CloneUnique(production_time_arg_double().value_ref));
+            } else {
+                production_time = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["buildtime"])());
+            }
         }
 
         bool producible = true;
