@@ -1094,7 +1094,14 @@ std::pair<std::vector<int>, int> Pathfinder::LeastJumpsPath(
 std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
     int system1_id, int system2_id, int empire_id, int max_jumps) const
 {
-    if (empire_id == ALL_EMPIRES) {
+    bool use_system_graph = false;
+    auto empire_view_graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
+    if (empire_id == ALL_EMPIRES || empire_view_graph_it == m_graph_impl.empire_system_graph_views.end()) {
+        // was called either for neutral/monster
+        // or by a client process
+        use_system_graph = true;
+    }
+    if (use_system_graph) {
         if (!m_graph_impl.system_graph) [[unlikely]] {
             ErrorLogger() << "No system graph in PathfinderImpl::LeastJumpsPath";
             throw std::runtime_error("No system graph in PathfinderImpl::LeastJumpsPath");
@@ -1110,14 +1117,9 @@ std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
         }
     }
 
-    // find path on single empire's view of system graph
-    auto graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
-    if (graph_it == m_graph_impl.empire_system_graph_views.end()) {
-        ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed unknown empire id: " << empire_id;
-        throw std::out_of_range("PathfinderImpl::LeastJumpsPath passed unknown empire id");
-    }
+    // find path on single empire's view of system graph (server process)
     try {
-        return LeastJumpsPathImpl(graph_it->second, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
+        return LeastJumpsPathImpl(empire_view_graph_it->second, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
     } catch (const std::out_of_range&) {
         ErrorLogger() << "PathfinderImpl::LeastJumpsPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
