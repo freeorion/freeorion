@@ -130,7 +130,7 @@ namespace {
     }
 
     [[nodiscard]] const UniverseObjectCXBase* GetRefObject(ValueRef::ReferenceType ref_type,
-                                                           const ScriptingContext& context)
+                                                           const ScriptingContext& context) noexcept
     {
         switch (ref_type) {
         case SOURCE_REFERENCE:                   return context.source;                      break;
@@ -1565,25 +1565,6 @@ namespace StaticTests {
 ///////////////////////////////////////////////////////////
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
-TotalFighterShots::TotalFighterShots(std::unique_ptr<ValueRef<int>>&& carrier_id,
-                                     std::unique_ptr<Condition::Condition>&& sampling_condition) :
-    Variable<int>(ReferenceType::NON_OBJECT_REFERENCE),
-    m_carrier_id(std::move(carrier_id)),
-    m_sampling_condition(std::move(sampling_condition))
-{
-    this->m_root_candidate_invariant = (!m_sampling_condition || m_sampling_condition->RootCandidateInvariant())
-                                       && (!m_carrier_id || m_carrier_id->RootCandidateInvariant()) ;
-
-    // no condition can explicitly reference the parent context's local candidate.
-    // so local candidate invariance does not depend on the sampling condition
-    this->m_local_candidate_invariant = (!m_carrier_id || m_carrier_id->LocalCandidateInvariant()) ;
-
-    this->m_target_invariant = (!m_sampling_condition || m_sampling_condition->TargetInvariant())
-                               && (!m_carrier_id || m_carrier_id->TargetInvariant()) ;
-
-    this->m_source_invariant = true;
-}
-
 bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const {
     if (&rhs == this)
         return true;
@@ -1624,17 +1605,6 @@ std::string TotalFighterShots::Dump(uint8_t ntabs) const {
 void TotalFighterShots::SetTopLevelContent(const std::string& content_name) {
     if (m_sampling_condition)
         m_sampling_condition->SetTopLevelContent(content_name);
-}
-
-uint32_t TotalFighterShots::GetCheckSum() const
-{
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "ValueRef::TotalFighterShots");
-    CheckSums::CheckSumCombine(retval, m_carrier_id);
-    CheckSums::CheckSumCombine(retval, m_sampling_condition);
-    TraceLogger() << "GetCheckSum(TotalFighterShots):  retval: " << retval;
-    return retval;
 }
 
 int TotalFighterShots::Eval(const ScriptingContext& context) const {
@@ -3361,24 +3331,24 @@ namespace StaticTests {
     constexpr auto test_checksum_sv_long = CheckSums::GetCheckSum("longer text that should not be within string sso");
     static_assert(test_checksum_sv_short != test_checksum_sv_long);
 
-    constexpr auto test_checksum_variadic3 = CalculateCheckSum("longer text that should not be within string sso", 5, nullptr);
+    constexpr auto test_checksum_variadic3 = CheckSums::GetCheckSum("longer text that should not be within string sso", 5, nullptr);
     static_assert(test_checksum_variadic3 == 4696);
 
     constexpr ::ValueRef::Constant<int> const_ref_8{8};
     static_assert(const_ref_8.Eval() == 8);
-    static_assert(const_ref_8.GetCheckSum() == CalculateCheckSum("ValueRef::Constant", 8));
+    static_assert(const_ref_8.GetCheckSum() == CheckSums::GetCheckSum("ValueRef::Constant", 8));
 
-    constexpr auto test_checksum_variadic4 = CalculateCheckSum("text", false, &const_ref_8, nullptr);
+    constexpr auto test_checksum_variadic4 = CheckSums::GetCheckSum("text", false, &const_ref_8, nullptr);
     static_assert(test_checksum_variadic4 == 2235);
 
-    constexpr auto test_checksum_like_constant_string = CalculateCheckSum("ValueRef::Constant<string>", "RULE_ANNEX_COST_MINIMUM");
+    constexpr auto test_checksum_like_constant_string = CheckSums::GetCheckSum("ValueRef::Constant<string>", "RULE_ANNEX_COST_MINIMUM");
     static_assert(test_checksum_like_constant_string == 4414);
 
-    constexpr auto test_checksum_like_complex1 = CalculateCheckSum("ValueRef::ComplexVariable", "GameRule", false,
-                                                                   nullptr, nullptr, nullptr, 
-                                                                   test_checksum_like_constant_string, nullptr);
-    constexpr auto test_checksum_like_complex2 = CalculateCheckSum("ValueRef::ComplexVariable", "GameRule",
-                                                                   "ValueRef::Constant<string>", "RULE_ANNEX_COST_MINIMUM");
+    constexpr auto test_checksum_like_complex1 = CheckSums::GetCheckSum("ValueRef::ComplexVariable", "GameRule", false,
+                                                                        nullptr, nullptr, nullptr, 
+                                                                        test_checksum_like_constant_string, nullptr);
+    constexpr auto test_checksum_like_complex2 = CheckSums::GetCheckSum("ValueRef::ComplexVariable", "GameRule",
+                                                                        "ValueRef::Constant<string>", "RULE_ANNEX_COST_MINIMUM");
     static_assert(test_checksum_like_complex1 == 7677);
     static_assert(test_checksum_like_complex2 == 7677);
 
@@ -3392,8 +3362,8 @@ namespace StaticTests {
 
     constexpr auto test_checksum_combo_with_string_ref = []() {
         const Constant<std::string> const_string_ref_annex_min{"RULE_ANNEX_COST_MINIMUM"};
-        return CalculateCheckSum("ValueRef::ComplexVariable", "GameRule", false,
-                                 nullptr, nullptr, nullptr, &const_string_ref_annex_min, nullptr);
+        return CheckSums::GetCheckSum("ValueRef::ComplexVariable", "GameRule", false,
+                                      nullptr, nullptr, nullptr, &const_string_ref_annex_min, nullptr);
     }();
     static_assert(test_checksum_combo_with_string_ref == 7677);
 #endif

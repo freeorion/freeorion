@@ -202,12 +202,14 @@ namespace CheckSums {
     static_assert(noexcept(99253 + static_cast<unsigned int>(43.0)));
     static_assert(noexcept(73423 % CHECKSUM_MODULUS));
 
-    template <typename T>
-    constexpr bool can_combine = requires(uint32_t& i, const T& t) { CheckSumCombine(i, t); };
-
     struct DummyPair { int first, second; };
-    static_assert(can_combine<DummyPair>);
+    static_assert(Combinable<DummyPair>);
 
     struct DummyEmpty {};
-    static_assert(!can_combine<DummyEmpty>);
+    static_assert(!Combinable<DummyEmpty>);
+
+    static_assert(Combinable<decltype("some text")>);
+    static_assert(Combinable<bool>);
+
+    static_assert(GetCheckSum(DummyPair{}, "some text", false) != 0u);
 }

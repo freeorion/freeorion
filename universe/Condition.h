@@ -205,7 +205,7 @@ struct FO_COMMON_API Condition {
     [[nodiscard]] virtual std::string Dump(uint8_t ntabs = 0) const { return ""; }
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
-    [[nodiscard]] virtual uint32_t GetCheckSum() const { return 0; }
+    [[nodiscard]] constexpr virtual uint32_t GetCheckSum() const { return m_checksum_cache; }
 
     //! Makes a clone of this Condition in a new owning pointer. Required for
     //! Boost.Python, which doesn't support move semantics for returned values.
@@ -213,8 +213,9 @@ struct FO_COMMON_API Condition {
 
 protected:
     constexpr Condition() = default;
-    constexpr Condition(bool root_invariant, bool target_invariant,
-                        bool source_invariant, bool init_all_match) noexcept :
+    constexpr Condition(bool root_invariant, bool target_invariant, bool source_invariant, bool init_all_match,
+                        uint32_t checksum = 0u) noexcept :
+        m_checksum_cache(checksum),
         m_root_candidate_invariant(root_invariant),
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant),
@@ -225,14 +226,16 @@ protected:
         m_target_invariant(target_invariant),
         m_source_invariant(source_invariant)
     {}
-    constexpr Condition(std::array<bool, 3> rts_invariants) noexcept :
-        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2])
+    constexpr Condition(std::array<bool, 3> rts_invariants, uint32_t checksum = 0u) noexcept :
+        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2], false, checksum)
     {}
-    constexpr Condition(std::array<bool, 3> rts_invariants, bool init_all_match) noexcept :
-        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2], init_all_match)
+    constexpr Condition(std::array<bool, 3> rts_invariants, bool init_all_match, uint32_t checksum = 0u) noexcept :
+        Condition(rts_invariants[0], rts_invariants[1], rts_invariants[2], init_all_match, checksum)
     {}
     Condition& operator=(const Condition&) = delete;
     Condition& operator=(Condition&&) = delete;
+
+    uint32_t m_checksum_cache = 0u;
 
     const bool m_root_candidate_invariant = false;
     const bool m_target_invariant = false;
@@ -244,6 +247,43 @@ private:
 
 
 };
+
+constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
+    if constexpr (requires { *operands; operands->TargetInvariant(); }) {
+        return {!operands || operands->RootCandidateInvariant(),
+                !operands || operands->TargetInvariant(),
+                !operands || operands->SourceInvariant()};
+
+    } else if constexpr (requires { operands.TargetInvariant(); }) {
+        return {operands.RootCandidateInvariant(), operands.TargetInvariant(), operands.SourceInvariant()};
+
+    } else if constexpr (requires { operands.begin(); (*operands.begin()).TargetInvariant(); }) {
+        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.RootCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.TargetInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return e.SourceInvariant(); })};
+
+    } else if constexpr (requires { operands.begin(); (*operands.begin())->TargetInvariant(); }) {
+        return {std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->RootCandidateInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->TargetInvariant(); }),
+                std::all_of(operands.begin(), operands.end(), [](auto& e){ return !e || e->SourceInvariant(); })};
+
+    } else if constexpr (std::is_same_v<std::decay_t<decltype(operands)>, std::nullptr_t>) {
+        return {true, true, true};
+
+    } else {
+        throw std::invalid_argument("unrecognized type?");
+    }
+}
+
+constexpr std::array<bool, 3> CondsRTSI(const auto&... operands) requires (sizeof...(operands) > 1) {
+    std::array<bool, 3> retval{true, true, true};
+    const auto get_and_rtsi = [&retval](const auto& op) {
+        const auto op_rtsi = CondsRTSI(op);
+        retval = {retval[0] && op_rtsi[0], retval[1] && op_rtsi[1], retval[2] && op_rtsi[2]};
+        };
+    (get_and_rtsi(operands), ...);
+    return retval;
+}
 
 }
 
