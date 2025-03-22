@@ -182,6 +182,16 @@ value_ref_wrapper<double> operator+(const value_ref_wrapper<double>& lhs, double
     );
 }
 
+value_ref_wrapper<double> operator+(double lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::PLUS,
+            std::make_unique<ValueRef::Constant<double>>(lhs),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator+(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
