@@ -34,10 +34,15 @@ jobs:
           cmake --build . --config "Release" -- /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /verbosity:minimal
       - name: Test
         shell: pwsh
+        working-directory: build
         run: |
-          pushd build
           $env:Path += ";$($pwd.Path)\\Release"
           cmake --build . --config "Release" --target unittest
+      - name: Test dumping species
+        shell: pwsh
+        working-directory: build
+        run: |
+          $env:Path += ";$($pwd.Path)\\Release"
           $env:FO_CHECKSUM_SPECIES_NAME = "SP_CELESTEPHYTE"
           fo_unittest_parse.exe --run_test=TestDefaultPythonParser/parse_species_full --log_level=message
       - name: Download Godot
