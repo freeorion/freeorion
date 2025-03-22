@@ -1,0 +1,65 @@
+BuildingType
+    name = "BLD_MEGALITH"
+    description = "BLD_MEGALITH_DESC"
+    buildcost = 250 * [[BUILDING_COST_MULTIPLIER]]
+    buildtime = 10
+    location = And [
+        Planet
+        Contains Building name = "BLD_IMPERIAL_PALACE"
+        Not Contains Building name = "BLD_MEGALITH"
+        OwnedBy empire = Source.Owner
+        TargetPopulation low = 1
+    ]
+    enqueuelocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        [[SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS]]
+
+        EffectsGroup    // One effect for target meter in the capital
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            stackinggroup = "BLD_MEGALITH_CAPITAL_INFRA_EFFECTS"
+            priority = [[TARGET_LAST_BEFORE_OVERRIDE_PRIORITY]]
+            effects = [
+                SetTargetConstruction value = Value + 30
+                SetEmpireCapital
+            ]
+
+        EffectsGroup    // Another effect for current meters in the capital
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            stackinggroup = "BLD_MEGALITH_CURRENT_METERS_EFFECTS"
+            priority = [[LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY]]
+            effects = [
+                SetIndustry value = Target.TargetIndustry
+                SetInfluence value = Target.TargetInfluence
+                SetResearch value = Target.TargetResearch
+            ]
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                TargetPopulation low = 1
+            ]
+            stackinggroup = "BLD_MEGALITH_SUPPLY_EFFECT"
+            effects = SetMaxSupply value = Value + 1
+
+        EffectsGroup
+            scope = And [
+                Planet
+                WithinStarlaneJumps jumps = 2 condition = Source
+                OwnedBy empire = Source.Owner
+            ]
+            priority = [[TARGET_AFTER_SCALING_PRIORITY]]
+            effects = SetMaxTroops value = Value + 10 accountinglabel = "MEGALITH_LABEL"
+    ]
+    icon = "icons/building/megalith.png"
+
+#include "/scripting/macros/enqueue.macros"
+#include "/scripting/macros/priorities.macros"
+#include "/scripting/macros/base_prod.macros"
+#include "/scripting/buildings/buildings.macros"

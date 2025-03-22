@@ -60,17 +60,3 @@ def reduce(function, expressions):
     for expr in expressions[1:]:
         result = function(result, expr)
     return result
-
-
-def LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(building_name: str):
-    """
-    Allows the current building to be enqueued if the given prerequisite is built or enqueued.
-    Takes the prerequisite name as parameter; Usage:
-        LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED("BLD_SHIPYARD_BASE")
-    """
-    return (
-        Contains(IsBuilding(name=[building_name]) and OwnedBy(empire=Source.Owner))
-        |
-        # Allows enqueue if this is not enqueued but prerequisite @1@ is
-        Enqueued(type=BuildBuilding, name=building_name) & ~Enqueued(type=BuildBuilding, name=CurrentContent)
-    )
