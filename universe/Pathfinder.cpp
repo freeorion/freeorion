@@ -1554,7 +1554,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
         const auto& emp_objs = map_it->second;
         m_graph_impl.empire_system_graph_views.emplace(
             std::piecewise_construct,
-            std::make_tuple(empire_id),
-            std::make_tuple(*system_graph, GraphImpl::EdgeVisibilityFilter{system_graph, emp_objs}));
+            std::forward_as_tuple(empire_id),
+            std::forward_as_tuple(*system_graph, GraphImpl::EdgeVisibilityFilter{system_graph, emp_objs}));
     }
 }
