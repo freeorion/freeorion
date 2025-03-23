@@ -60,6 +60,7 @@ git checkout -b release-vX.Y.Z master
 * [ ] *On release branch HEAD* - Update version number in `CMakeLists.txt` and
       `cmake/make_versioncpp.py` to `vX.Y.Z`, remove trailing `+` if needed.
 * [ ] *On release branch HEAD* - Disable `Super Testers` species by default.
+* [ ] *On release branch HEAD* - Change branch of CI badge in `README.md` to `release-vX.Y.Z`
 * [ ] *On master branch HEAD* - Update version number in `CMakeLists.txt` and
       `cmake/make_versioncpp.py` to `vX.Y.Z+`.
 * [ ] Push updated release and master branch to GitHub.
@@ -103,6 +104,7 @@ git tag --annotate --message="X.Y.Z Stable Release"  vX.Y.Z
 * [ ] Update `Main` page of FreeOrion Wiki.
 * [ ] Update `Download` page of FreeOrion Wiki.
 * [ ] Announce release on Twitter as @FreeOrion
+* [ ] Announce release on Mastodon as @freeorion@fosstodon.org
 * [ ] Announce release on YouTube.
 
 
