@@ -253,7 +253,8 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 #endif
 
     // binary / executable to run for AI clients
-    const std::string AI_CLIENT_EXE = AIClientExe();
+    auto force_ai_executable = GetOptionsDB().Get<std::string>("ai-executable");
+    const std::string AI_CLIENT_EXE = force_ai_executable.empty() ? AIClientExe() : force_ai_executable;
 
 
     // TODO: add other command line args to AI client invocation as needed
