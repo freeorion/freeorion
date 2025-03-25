@@ -1797,6 +1797,9 @@ Server option to choose pre-opened file descriptor to accept connections. Works 
 OPTIONS_DB_PYTHON_ASYNCIO_INTERVAL
 Interval in seconds to call python asyncio event loop or -1 to disable it. By default asyncio calls disabled.
 
+OPTIONS_DB_AI_EXECUTABLE
+Path to the AI executable. By default use 'freeorion' ('freeorion.exe' on Windows) from the same folder as the server executable.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 

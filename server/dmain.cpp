@@ -91,6 +91,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().Add<int>("network.server.listen.fd",                             UserStringNop("OPTIONS_DB_LISTEN_FD"),                  -1);
 #endif
         GetOptionsDB().Add<int>("network.server.python.asyncio-interval",               UserStringNop("OPTIONS_DB_PYTHON_ASYNCIO_INTERVAL"),    -1);
+        GetOptionsDB().Add<std::string>("ai-executable",                                UserStringNop("OPTIONS_DB_AI_EXECUTABLE"),              "");
 
         // if config.xml and persistent_config.xml are present, read and set options entries
         GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
