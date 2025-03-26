@@ -4,6 +4,8 @@ Utility script to generate consistent colony building definitions for each speci
 This script is not utilized by the game.
 
 When executed, definition files will be generated in the current working directory.
+
+Run black and ruff to fix formatting.
 """
 
 import os
@@ -77,150 +79,155 @@ species_time_factor = {"SP_HAPPY": "1.2", "SP_PHINNERT": "0.75"}
 
 # Main template
 t_main = string.Template(
-    """// For long term changes - Do not modify this definition directly
-//                     Instead modify and execute col_bld_gen.py and use the result.
-BuildingType
-    name = "BLD_COL_${name}"
-    description = "BLD_COL_${name}_DESC"
-    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]] * [[BUILDING_COST_MULTIPLIER]] * [[COLONIZATION_POLICY_MULTIPLIER]]
-    buildtime = ${time}
-    tags = [ ${tags} ]
-    location = And [
-        Planet
-        OwnedBy empire = Source.Owner
-        Population high = 0
-        Not Planet environment = Uninhabitable species = "${id}"
+    """# For long term changes - Do not modify this definition directly
+#                     Instead modify and execute col_bld_gen.py and use the result.
+
+from macros.base_prod import BUILDING_COST_MULTIPLIER
+from macros.upkeep import COLONY_UPKEEP_MULTIPLICATOR, COLONIZATION_POLICY_MULTIPLIER
+from macros.misc import MIN_RECOLONIZING_SIZE, LIFECYCLE_MANIP_POPULATION_EFFECTS
+
+try:
+    from focs._buildings import *
+except ModuleNotFoundError:
+    pass
+
+BuildingType( # type: ignore[reportUnboundVariable]
+    name="BLD_COL_${name}",
+    description="BLD_COL_${name}_DESC",
+    buildcost=${cost} * COLONY_UPKEEP_MULTIPLICATOR * BUILDING_COST_MULTIPLIER * COLONIZATION_POLICY_MULTIPLIER,
+    buildtime=${time},
+    tags=[ ${tags} ],
+    location =
+        Planet() &
+        OwnedBy( empire = Source.Owner)&
+        Population (high = 0)&
+        ~Planet (environment = [Uninhabitable], species = "${id}")
         ${species_condition}
-    ]
-    enqueuelocation = And [
-        Planet
-        OwnedBy empire = Source.Owner
-        Population high = 0
-        Not Planet environment = Uninhabitable species = "${id}"
+    ,
+    enqueuelocation =
+        Planet() &
+        OwnedBy( empire = Source.Owner)&
+        Population (high = 0)&
+        ~Planet (environment = [Uninhabitable], species = "${id}")
         ${exclude_parallel_colonies}
         ${species_condition}
-    ]
+    ,
     effectsgroups = [
-        [[LIFECYCLE_MANIP_POPULATION_EFFECTS("${id}")]]
+        *LIFECYCLE_MANIP_POPULATION_EFFECTS("${id}"),
 
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-            ]
-            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        EffectsGroup(
+            scope =
+                Object (id = Source.PlanetID)&
+                Planet(),
+
+            activation = Turn (low = Source.CreationTurn + 1, high = Source.CreationTurn + 1),
             effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_NEW_COLONY_ESTABLISHED"
-                    label = "SITREP_NEW_COLONY_ESTABLISHED_LABEL"
-                    icon = "${graphic}"
-                    parameters = [
-                        tag = "species" data = "${id}"
-                        tag = "planet" data = Target.ID
-                    ]
-                    empire = Source.Owner
-            ]
+                GenerateSitRepMessage(
+                    message = "SITREP_NEW_COLONY_ESTABLISHED",
+                    label = "SITREP_NEW_COLONY_ESTABLISHED_LABEL",
+                    icon = "${graphic}",
+                    parameters = {
+                        "species": "${id}",
+                        "planet": Target.ID,
+                    },
+                    empire = Source.Owner)
+            ]),
 
-        EffectsGroup
-            scope = Source
-            activation = Turn low = Source.CreationTurn + 2
-            effects = Destroy
-    ]
-    icon = "${graphic}"
-
-#include "/scripting/macros/misc.macros"
-#include "/scripting/macros/upkeep.macros"
-#include "/scripting/macros/priorities.macros"
-#include "/scripting/macros/base_prod.macros"
-#include "/scripting/macros/misc.macros"
+        EffectsGroup(
+            scope = IsSource,
+            activation = Turn (low = Source.CreationTurn + 2),
+            effects = [Destroy]),
+    ],
+    icon = "${graphic}",
+)
 """
 )
 
 # Location and Enqueued condition template
 t_species_cond = string.Template(
-    """ResourceSupplyConnected empire = Source.Owner condition = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Species name = "${id}"
-            Population low = [[MIN_RECOLONIZING_SIZE]]
-            Happiness low = 5
-        ]"""
+    """&ResourceSupplyConnected( empire = Source.Owner, condition =
+            Planet()&
+            OwnedBy( empire = Source.Owner)&
+            HasSpecies( name = "${id}")&
+            Population (low = MIN_RECOLONIZING_SIZE)&
+            Happiness (low = 5))
+        """
 )
 
 # Location and Enqueued condition template for extinct species
 t_species_cond_extinct = string.Template(
-    """ResourceSupplyConnected empire = Source.Owner condition = And [
-            Planet
-            OwnedBy empire = Source.Owner
-            Or [
-                And [
-                    Species name = "${id}"
-                    Population low = [[MIN_RECOLONIZING_SIZE]]
-                    Happiness low = 5
-                ]
-                And [
-                    OwnerHasTech name = "${tech_name}"
-                    HasSpecial name = "EXTINCT_${name}_SPECIAL"
-                    Contains Building name = "BLD_XENORESURRECTION_LAB"
-                ]
-            ]
-        ]"""
+    """&ResourceSupplyConnected (empire = Source.Owner, condition =
+            Planet()&
+            OwnedBy( empire = Source.Owner)&
+            (
+                (
+                    HasSpecies( name = "${id}")&
+                    Population( low = MIN_RECOLONIZING_SIZE)&
+                    Happiness( low = 5)
+                )&
+                (
+                    OwnerHasTech( name = "${tech_name}")&
+                    HasSpecial (name = "EXTINCT_${name}_SPECIAL")&
+                    Contains( IsBuilding( name = "BLD_XENORESURRECTION_LAB"))
+                )
+            ))
+        """
 )
 
 # buildtime statistic condition template
 t_buildtime_stat_cond = string.Template(
-    """condition = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Species name = "${id}"
-                Population low = [[MIN_RECOLONIZING_SIZE]]
-                Happiness low = 5
-                ResourceSupplyConnected empire = Source.Owner condition = Target
-            ]"""
+    """condition =
+                Planet() &
+                OwnedBy ( empire = Source.Owner) &
+                HasSpecies ( name = "${id}")&
+                Population (low = MIN_RECOLONIZING_SIZE)&
+                Happiness (low = 5) &
+                ResourceSupplyConnected (empire = Source.Owner, condition = IsTarget)
+            """
 )
 
 # buildtime statistic condition template for extinct species
 t_buildtime_stat_cond_extinct = string.Template(
-    """condition = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Or [
-                   And [
-                       Species name = "${id}"
-                       Population low = [[MIN_RECOLONIZING_SIZE]]
-                       Happiness low = 5
-                    ]
-                    And [
-                        HasSpecial name = "EXTINCT_${name}_SPECIAL"
-                        Contains Building name = "BLD_XENORESURRECTION_LAB"
-                    ]
-                ]
-                ResourceSupplyConnected empire = Source.Owner condition = Target
-            ]"""
+    """condition =
+                Planet() &
+                OwnedBy ( empire = Source.Owner) &
+                (
+                   (
+                       HasSpecies( name = "${id}")&
+                       Population (low = MIN_RECOLONIZING_SIZE)&
+                       Happiness (low = 5)
+                    ) |
+                    (
+                        HasSpecial (name = "EXTINCT_${name}_SPECIAL") &
+                        Contains( IsBuilding( name = "BLD_XENORESURRECTION_LAB"))
+                    )
+                ) &
+                ResourceSupplyConnected (empire = Source.Owner, condition = IsTarget)
+            """
 )
 
 # buildtime template
 t_buildtime = string.Template(
-    """${t_factor} * max(5.0, 1.0 +
-        (Statistic Min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
+    """${t_factor} * MaxOf(float, 5.0, 1.0 +
+        (Statistic(float, Min, value = ShortestPath( Target.SystemID, LocalCandidate.SystemID),
             ${stat_condition}
-        ) / (60
-             + 20 * (Statistic If condition = Or [
-                 And [ Source OwnerHasTech name = "SHP_MIL_ROBO_CONT" ]
-                 And [ Source OwnerHasTech name = "SHP_SPACE_FLUX_BUBBLE" ]
-                 And [ Source OwnerHasTech name = "SHP_ORG_HULL" ]
-                 And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ]
-             ])
-             + 20 * (Statistic If condition = Or [
-                 And [ Source OwnerHasTech name = "SHP_ORG_HULL" ]
-                 And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ]
-             ])
-             + 20 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_QUANT_ENRG_MAG" ])
-             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS" ])
-             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX" ])
-             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE" ])
-             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_TRANSSPACE_DRIVE" ])
-             + 10 * (Statistic If condition = And [ Source OwnerHasTech name = "SHP_INTSTEL_LOG" ])
+        )) / (60
+             + 20 * (StatisticIf(int, condition =
+                 ( IsSource & OwnerHasTech (name = "SHP_MIL_ROBO_CONT")) |
+                 ( IsSource & OwnerHasTech (name = "SHP_SPACE_FLUX_BUBBLE")) |
+                 ( IsSource & OwnerHasTech (name = "SHP_ORG_HULL")) |
+                 ( IsSource & OwnerHasTech (name = "SHP_QUANT_ENRG_MAG"))
+             ))
+             + 20 * (StatisticIf(int, condition =
+                 ( IsSource & OwnerHasTech( name = "SHP_ORG_HULL" )) |
+                 ( IsSource & OwnerHasTech( name = "SHP_QUANT_ENRG_MAG"))
+             ))
+             + 20 * (StatisticIf(int, condition = IsSource & OwnerHasTech( name = "SHP_QUANT_ENRG_MAG")))
+             + 10 * (StatisticIf(int, condition = IsSource & OwnerHasTech( name = "SHP_IMPROVED_ENGINE_COUPLINGS")))
+             + 10 * (StatisticIf(int, condition = IsSource & OwnerHasTech( name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")))
+             + 10 * (StatisticIf(int, condition = IsSource & OwnerHasTech( name = "SHP_SINGULARITY_ENGINE_CORE")))
+             + 10 * (StatisticIf(int, condition = IsSource & OwnerHasTech( name = "SHP_TRANSSPACE_DRIVE")))
+             + 10 * (StatisticIf(int, condition = IsSource & OwnerHasTech( name = "SHP_INTSTEL_LOG")))
         )
     )"""
 )
@@ -229,8 +236,8 @@ exclude_parallel_colonies = ""
 for species in chain((x[0] for x in species_list), species_extinct_techs.keys()):
     name = species[3:]
     exclude_parallel_colonies += f"""\
-        Not Contains And [ Building name = "BLD_COL_{name}" OwnedBy empire = Source.Owner ]
-        Not Enqueued type = Building name = "BLD_COL_{name}"
+        &~Contains( IsBuilding (name = "BLD_COL_{name}") & OwnedBy (empire = Source.Owner))
+        &~ Enqueued (type = BuildBuilding, name = "BLD_COL_{name}")
 """
 # remove indent from first line and newline at the end to match format expected by the template
 exclude_parallel_colonies = exclude_parallel_colonies[8:-1]
@@ -241,7 +248,7 @@ print("Output folder: %s" % outpath)
 for sp_id, sp_graphic in species_list:
     sp_name = sp_id.split("_", 1)[1]
     sp_tags = '"' + sp_id + '"'
-    sp_filename = sp_id + ".focs.txt"
+    sp_filename = sp_id + ".focs.py"
     sp_gamerule = species_colony_gamerules.get(sp_id, colony_gamerule_default)
     extinct_tech = species_extinct_techs.get(sp_id, "")
 
@@ -257,12 +264,12 @@ for sp_id, sp_graphic in species_list:
     }
 
     if sp_id == "SP_EXOBOT":
-        data["tags"] += ' "CTRL_ALWAYS_REPORT"'
+        data["tags"] += ', "CTRL_ALWAYS_REPORT"'
         data["time"] = 5
-        data["species_condition"] = r"// no existing Exobot colony required!"
+        data["species_condition"] = r"# no existing Exobot colony required!"
     else:
         if extinct_tech != "":
-            data["tags"] += ' "CTRL_EXTINCT"'
+            data["tags"] += ', "CTRL_EXTINCT"'
             data["time"] = t_buildtime.substitute(
                 t_factor=species_time_factor.get(sp_id, buildtime_factor_default),
                 stat_condition=t_buildtime_stat_cond_extinct.substitute(id=sp_id, name=sp_name),
@@ -278,7 +285,7 @@ for sp_id, sp_graphic in species_list:
             data["species_condition"] = t_species_cond.substitute(id=sp_id)
 
     if sp_gamerule:
-        data["species_condition"] += '\n        ((GameRule name = "%s") > 0)' % sp_gamerule
+        data["species_condition"] += '\n        &(GameRule(type=int, name = "%s") > 0)' % sp_gamerule
 
     with open(os.path.join(outpath, sp_filename), "w") as f:
         f.write(t_main.substitute(**data))
