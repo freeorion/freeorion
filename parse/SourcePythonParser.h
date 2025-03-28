@@ -10,9 +10,11 @@ struct variable_wrapper {
         m_container(container)
     {}
 
-    value_ref_wrapper<int> get_int_property(std::string property) const;
-    value_ref_wrapper<double> get_double_property(std::string property) const;
-    value_ref_wrapper<std::string> get_string_property(std::string property) const;
+    template<typename T>
+    value_ref_wrapper<T> get_property(std::string property) const {
+        return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(
+            m_reference_type, std::move(property), m_container, ValueRef::ValueToReturn::Initial));
+    }
     variable_wrapper get_variable_property(std::string_view container) const;
 
     static ValueRef::ContainerType ToContainer(std::string_view s) noexcept;

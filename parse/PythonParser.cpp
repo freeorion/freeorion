@@ -167,6 +167,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::self + std::string())
             .def(std::string() + py::self_ns::self);
         py::class_<value_ref_wrapper<Visibility>>("ValueRefVisibility", py::no_init);
+        py::class_<value_ref_wrapper<PlanetType>>("ValueRefPlanetType", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
@@ -239,7 +240,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                                           "LastColonizedByEmpire"})
         {
             py_variable_wrapper.add_property(property.data(), py::make_function(
-                [property] (const variable_wrapper& w) { return w.get_int_property(std::string{property}); },
+                [property] (const variable_wrapper& w) { return w.get_property<int>(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<int>, const variable_wrapper&>()));
         }
@@ -285,7 +286,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                                           "PropagatedSupplyRange"})
         {
             py_variable_wrapper.add_property(property.data(), py::make_function(
-                [property](const variable_wrapper& w) { return w.get_double_property(std::string{property}); },
+                [property](const variable_wrapper& w) { return w.get_property<double>(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<double>, const variable_wrapper&>()));
         }
@@ -299,9 +300,23 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                                           "Hull"})
         {
             py_variable_wrapper.add_property(property.data(), py::make_function(
-                [property](const variable_wrapper& w) { return w.get_string_property(std::string{property}); },
+                [property](const variable_wrapper& w) { return w.get_property<std::string>(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<std::string>, const variable_wrapper&>()));
+        }
+
+        for (std::string_view property : {"PlanetType",
+                                          "OriginalType",
+                                          "NextCloserToOriginalPlanetType",
+                                          "NextBestPlanetType",
+                                          "NextBetterPlanetType",
+                                          "ClockwiseNextPlanetType",
+                                          "CounterClockwiseNextPlanetType"})
+        {
+            py_variable_wrapper.add_property(property.data(), py::make_function(
+                [property](const variable_wrapper& w) { return w.get_property<PlanetType>(std::string{property}); },
+                py::default_call_policies(),
+                boost::mpl::vector<value_ref_wrapper<PlanetType>, const variable_wrapper&>()));
         }
 
         for (std::string_view container : {"Planet",
