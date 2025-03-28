@@ -2882,7 +2882,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) noexcept override {}
-    [[nodiscard]] bool GetAggressive() const noexcept { return m_aggressive; }
+    [[nodiscard]] constexpr bool GetAggressive() const noexcept { return m_aggressive; }
     [[nodiscard]] constexpr uint32_t GetCheckSum() const override
     { return CheckSums::GetCheckSum("Condition::Aggressive", m_aggressive); }
 
@@ -2961,7 +2961,9 @@ private:
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize final : public Condition {
-    constexpr CanColonize() : Condition(true, true, true) {}
+    constexpr CanColonize() :
+        Condition(true, true, true, false, CheckSums::GetCheckSum("Condition::CanColonize"))
+    {}
 #if defined(__GNUC__) && (__GNUC__ < 13)
     constexpr ~CanColonize() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
 #endif
@@ -2977,8 +2979,6 @@ struct FO_COMMON_API CanColonize final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
-    { return CheckSums::GetCheckSum("Condition::CanColonize"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -2988,7 +2988,9 @@ private:
 
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips final : public Condition {
-    constexpr CanProduceShips() noexcept : Condition(true, true, true) {}
+    constexpr CanProduceShips() noexcept :
+        Condition(true, true, true, false, CheckSums::GetCheckSum("Condition::CanProduceShips"))
+    {}
 #if defined(__GNUC__) && (__GNUC__ < 13)
     constexpr ~CanProduceShips() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
 #endif
@@ -3004,8 +3006,6 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string&) noexcept override {}
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
-    { return CheckSums::GetCheckSum("Condition::CanProduceShips"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -3038,7 +3038,9 @@ private:
 
 /** Matches the objects that have been ordered annexed by an empire. */
 struct FO_COMMON_API OrderedAnnexed final : public Condition {
-    constexpr OrderedAnnexed() : Condition(true, true, true) {}
+    constexpr OrderedAnnexed() :
+        Condition(true, true, true, false, CheckSums::GetCheckSum("Condition::OrderedAnnexed"))
+    {}
 #if defined(__GNUC__) && (__GNUC__ < 13)
     constexpr ~OrderedAnnexed() noexcept override {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
 #endif
@@ -3053,8 +3055,6 @@ struct FO_COMMON_API OrderedAnnexed final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const override
-    { return CheckSums::GetCheckSum("Condition::OrderedAnnexed"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
