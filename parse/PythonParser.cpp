@@ -168,6 +168,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(std::string() + py::self_ns::self);
         py::class_<value_ref_wrapper<Visibility>>("ValueRefVisibility", py::no_init);
         py::class_<value_ref_wrapper<PlanetType>>("ValueRefPlanetType", py::no_init);
+        py::class_<value_ref_wrapper< ::PlanetEnvironment>>("ValueRefPlanetEnvironment", py::no_init);
+        py::class_<value_ref_wrapper<PlanetType>>("ValueRefPlanetSize", py::no_init);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())
@@ -317,6 +319,23 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
                 [property](const variable_wrapper& w) { return w.get_property<PlanetType>(std::string{property}); },
                 py::default_call_policies(),
                 boost::mpl::vector<value_ref_wrapper<PlanetType>, const variable_wrapper&>()));
+        }
+
+        for (std::string_view property : {"PlanetEnvironment"}) {
+            py_variable_wrapper.add_property(property.data(), py::make_function(
+                [property](const variable_wrapper& w) { return w.get_property< ::PlanetEnvironment>(std::string{property}); },
+                py::default_call_policies(),
+                boost::mpl::vector<value_ref_wrapper< ::PlanetEnvironment>, const variable_wrapper&>()));
+        }
+
+        for (std::string_view property : {"planetsize",
+                                          "NextLargerPlanetSize",
+                                          "NextSmallerPlanetSize"})
+        {
+            py_variable_wrapper.add_property(property.data(), py::make_function(
+                [property](const variable_wrapper& w) { return w.get_property<PlanetSize>(std::string{property}); },
+                py::default_call_policies(),
+                boost::mpl::vector<value_ref_wrapper<PlanetSize>, const variable_wrapper&>()));
         }
 
         for (std::string_view container : {"Planet",
