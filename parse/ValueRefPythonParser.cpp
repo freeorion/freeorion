@@ -1025,8 +1025,21 @@ namespace {
     }
 
     value_ref_wrapper<int> insert_planet_type_difference_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        auto from = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<PlanetType>>(kw["from_"])().value_ref);
-        auto to = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<PlanetType>>(kw["to"])().value_ref);
+        std::unique_ptr<ValueRef::ValueRef<PlanetType>> from;
+        auto from_args = boost::python::extract<value_ref_wrapper<PlanetType>>(kw["from_"]);
+        if (from_args.check()) {
+            from = ValueRef::CloneUnique(from_args().value_ref);
+        } else {
+            from = std::make_unique<ValueRef::Constant<PlanetType>>(boost::python::extract<enum_wrapper<PlanetType>>(kw["from_"])().value);
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<PlanetType>> to;
+        auto to_args = boost::python::extract<value_ref_wrapper<PlanetType>>(kw["to"]);
+        if (to_args.check()) {
+            to = ValueRef::CloneUnique(to_args().value_ref);
+        } else {
+            to = std::make_unique<ValueRef::Constant<PlanetType>>(boost::python::extract<enum_wrapper<PlanetType>>(kw["to"])().value);
+        }
 
         return value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
             "PlanetTypeDifference",
