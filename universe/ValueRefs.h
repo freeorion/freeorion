@@ -711,7 +711,7 @@ private:
     // not a constant expression if an object ID is provided, since the name of that
     // object is gamestate and is not known at initialization time and can vary with time.
     // never a simple increment
-    static constexpr std::array<bool, 5> CalcRTSLICE(const std::unique_ptr<ValueRef<int>>& value_ref) {
+    static constexpr std::array<bool, 5> CalcRTSLICE(const auto& value_ref) {
         auto rtslice = RefsRTSLICE(value_ref);
         return {rtslice[0], rtslice[1], rtslice[2], rtslice[3], !value_ref};
     }
