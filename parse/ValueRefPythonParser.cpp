@@ -675,11 +675,37 @@ namespace {
         return boost::python::object();
     }
 
+    template<typename T>
+    boost::python::object insert_statictic_value_return_typed(const PythonParser& parser,
+                                                              const boost::python::object& return_type,
+                                                              std::unique_ptr<ValueRef::ValueRef<T>>&& value,
+                                                              ValueRef::StatisticType type,
+                                                              std::unique_ptr<Condition::Condition>&& condition) 
+    {
+        if (return_type == parser.type_int) {
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Statistic<int, T>>(std::move(value), type, std::move(condition))));
+        } else if (return_type == parser.type_float) {
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double, T>>(std::move(value), type, std::move(condition))));
+        } else if constexpr (std::is_same<T, std::string>::value) {
+            if (return_type == parser.type_str) {
+                return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Statistic<std::string, T>>(std::move(value), type, std::move(condition))));
+            }
+        }
+
+        ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(return_type))();
+        throw std::runtime_error(std::string("Not implemented ") + __func__);
+
+    }
+
     boost::python::object insert_statistic_value_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
-        const auto type = boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[1])().value;
         const auto condition = boost::python::extract<condition_wrapper>(kw["condition"])().condition;
 
-        if (args[0] == parser.type_int) {
+        const auto return_type = args[0];
+        const auto args1 = boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[1]);
+        const auto value_type = args1.check() ? return_type : args[1];
+        const auto type = args1.check() ? args1().value : boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[1])().value;
+
+        if (value_type == parser.type_int) {
             const auto value_arg = boost::python::extract<value_ref_wrapper<int>>(kw["value"]);
             std::unique_ptr<ValueRef::ValueRef<int>> value;
             if (value_arg.check()) {
@@ -687,8 +713,8 @@ namespace {
             } else {
                 value = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["value"])());
             }
-            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Statistic<int, int>>(std::move(value), type, ValueRef::CloneUnique(condition))));
-        } else if (args[0] == parser.type_float) {
+            return insert_statictic_value_return_typed(parser, return_type, std::move(value), type, ValueRef::CloneUnique(condition));
+        } else if (value_type == parser.type_float) {
             const auto value_arg = boost::python::extract<value_ref_wrapper<double>>(kw["value"]);
             std::unique_ptr<ValueRef::ValueRef<double>> value;
             if (value_arg.check()) {
@@ -701,8 +727,8 @@ namespace {
                     value = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["value"])());
                }
             }
-            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Statistic<double, double>>(std::move(value), type, ValueRef::CloneUnique(condition))));
-        } else if (args[0] == parser.type_str) {
+            return insert_statictic_value_return_typed(parser, return_type, std::move(value), type, ValueRef::CloneUnique(condition));
+        } else if (value_type == parser.type_str) {
             const auto value_arg = boost::python::extract<value_ref_wrapper<std::string>>(kw["value"]);
             std::unique_ptr<ValueRef::ValueRef<std::string>> value;
             if (value_arg.check()) {
@@ -710,14 +736,11 @@ namespace {
             } else {
                 value = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["value"])());
             }
-            return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Statistic<std::string, std::string>>(std::move(value), type, ValueRef::CloneUnique(condition))));
-        } else {
-            ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
-
-            throw std::runtime_error(std::string("Not implemented ") + __func__);
+            return insert_statictic_value_return_typed(parser, return_type, std::move(value), type, ValueRef::CloneUnique(condition));
         }
-
-        return boost::python::object();
+        
+        ErrorLogger() << "Unsupported type for statistic : " << boost::python::extract<std::string>(boost::python::str(return_type))() << ", " << boost::python::extract<std::string>(boost::python::str(value_type))();
+        throw std::runtime_error(std::string("Not implemented ") + __func__);
     }
 
     boost::python::object insert_game_rule_(const PythonParser& parser, const boost::python::tuple& args, const boost::python::dict& kw) {
