@@ -1927,7 +1927,7 @@ private:
             return Match(planet_type, m_types, context);
     }
 
-    bool Match(const ScriptingContext& local_context) const {
+    bool Match(const ScriptingContext& local_context) const override {
         const auto* planet = PlanetFromObject(local_context.condition_local_candidate, local_context.ContextObjects());
         return planet && Match(planet->Type(), local_context);
     }
