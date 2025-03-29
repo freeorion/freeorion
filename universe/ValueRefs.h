@@ -1958,7 +1958,7 @@ namespace {
     inline constexpr auto vr_rand_double = [](double low, double high)
     { return std::is_constant_evaluated() ? std::max(low, std::min(high, 42.6)) : RandDouble(low, high); };
 
-    auto DoFormat(const std::string& lhs, const std::string& rhs) { // TODO: remove this?
+    [[maybe_unused]] auto DoFormat(const std::string& lhs, const std::string& rhs) {
         // insert string into other string in place of %1% or similar placeholder
         boost::format formatter = FlexibleFormat(lhs);
         formatter % rhs;
