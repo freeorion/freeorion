@@ -103,7 +103,7 @@ struct FO_COMMON_API ValueRefBase {
 
     virtual void SetTopLevelContent(const std::string& content_name) {}
 
-    [[nodiscard]] constexpr virtual uint32_t GetCheckSum() const { return m_checksum_cache; }
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept { return m_checksum_cache; }
 
     constexpr virtual ~ValueRefBase() noexcept
 #if defined(__GNUC__) && (__GNUC__ < 13)
@@ -284,10 +284,16 @@ protected:
                        uint32_t checksum) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, checksum)
     {}
+
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE, uint32_t checksum = 0u) noexcept :
         ValueRefBase(constant_expr, root_inv, local_inv, target_inv, source_inv, ref_type, ContainerType::NONE, checksum)
     {}
+    constexpr ValueRef(std::array<bool, 5> rtslice, ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE,
+                       uint32_t checksum = 0u) noexcept :
+        ValueRef(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2], ref_type, checksum)
+    {}          // constant,       root,      local,     target,     source
+
     constexpr ValueRef(bool constant_expr, bool root_inv, bool local_inv, bool target_inv, bool source_inv,
                        bool return_immediate_value, ReferenceType ref_type = ReferenceType::INVALID_REFERENCE_TYPE,
                        ContainerType container = ContainerType::NONE, uint32_t checksum = 0u) noexcept :

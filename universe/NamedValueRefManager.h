@@ -22,6 +22,8 @@ template <typename T>
 struct FO_COMMON_API NamedRef final : public ValueRef<T>
 {
     explicit NamedRef(std::string value_ref_name, bool is_only_lookup = false) :
+        ValueRef<T>(ReferenceType::INVALID_REFERENCE_TYPE,
+                    CheckSums::GetCheckSum("ValueRef::NamedRef", value_ref_name)),
         m_value_ref_name(std::move(value_ref_name)),
         m_is_lookup_only(is_only_lookup)
     {
@@ -98,14 +100,6 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
     [[nodiscard]] const ValueRef<T>* GetValueRef() const {
         TraceLogger() << "NamedRef<T>::GetValueRef() look for registered valueref for \"" << m_value_ref_name << '"';
         return ::GetValueRef<T>(m_value_ref_name, m_is_lookup_only);
-    }
-
-    [[nodiscard]] uint32_t GetCheckSum() const override {
-        uint32_t retval{0};
-        CheckSums::CheckSumCombine(retval, "ValueRef::NamedRef");
-        CheckSums::CheckSumCombine(retval, m_value_ref_name);
-        TraceLogger() << "GetCheckSum(NamedRef<T>): " << typeid(*this).name() << " retval: " << retval;
-        return retval;
     }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override
