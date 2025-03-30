@@ -3297,6 +3297,7 @@ namespace StaticTests {
 #endif
 
     constexpr auto test_checksum_nullptr = CheckSums::GetCheckSum(nullptr);
+    static_assert(test_checksum_nullptr == 0);
 
     constexpr auto test_checksum_sv_short = CheckSums::GetCheckSum("short text");
     constexpr auto test_checksum_sv_long = CheckSums::GetCheckSum("longer text that should not be within string sso");
