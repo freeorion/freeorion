@@ -65,11 +65,15 @@ namespace {
     };
     auto SpeciesTags(const Species& species, SpeciesInfo what_info) -> std::vector<std::string>
     {
-        auto& tags =
-            what_info == SpeciesInfo::TAGS ? species.Tags() :
-            what_info == SpeciesInfo::LIKES ? species.Likes() :
-            what_info == SpeciesInfo::DISLIKES ? species.Dislikes() :
-            std::vector<std::string_view>{};
+        const auto& tags = [what_info, &species]() -> const auto& {
+            static CONSTEXPR_VEC const std::vector<std::string_view> EMPTY_VEC_STRING_VEC;
+            switch (what_info) {
+            case SpeciesInfo::TAGS:     return species.Tags();
+            case SpeciesInfo::LIKES:    return species.Likes();
+            case SpeciesInfo::DISLIKES: return species.Dislikes();
+            default:                    return EMPTY_VEC_STRING_VEC;
+            }
+        }();
 
         std::vector<std::string> result;
         result.reserve(tags.size());
