@@ -64,12 +64,6 @@ std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
 namespace {
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
-    constexpr const std::string EMPTY_STRING;
-#else
-    const std::string EMPTY_STRING;
-#endif
-
     void LogStackTrace(const std::string_view what) {
         // only output stack trace some times per minute, as this was very slow on windows
         static std::atomic<uint32_t> trace_count = 0;
