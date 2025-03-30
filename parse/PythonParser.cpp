@@ -106,6 +106,7 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         // Use wrappers to not collide with types in server and AI
         py::class_<value_ref_wrapper<int>>("ValueRefInt", py::no_init)
             .def(int() * py::self_ns::self)
+            .def(py::self_ns::self * py::self_ns::self)
             .def(double() * py::self_ns::self)
             .def(py::self_ns::self / int())
             .def(py::self_ns::self - int())
