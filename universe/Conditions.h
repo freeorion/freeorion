@@ -1538,7 +1538,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
     { return NC::CloneImpl(*this); }
 
 private:
-    [[nodiscard]] constexpr bool Match(const ScriptingContext& local_context) const {
+    [[nodiscard]] constexpr bool Match(const ScriptingContext& local_context) const override {
         const auto* candidate = local_context.condition_local_candidate;
         if (!candidate) [[unlikely]]
             return false;
