@@ -1258,7 +1258,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
     using NC::SubCondition;
     using NC::SetTopLevelContent;
 
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(NC::checksumimpl_noexcept)
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(NC::checksumimpl_noexcept) override
     { return NC::GetCheckSumImpl("Condition::Contains"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override
@@ -1531,7 +1531,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
     using NC::SubCondition;
     using NC::SetTopLevelContent;
 
-    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(NC::checksumimpl_noexcept)
+    [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(NC::checksumimpl_noexcept) override
     { return NC::GetCheckSumImpl("Condition::ContainedBy"); }
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override
@@ -1891,7 +1891,7 @@ public:
         }
     }
 
-    std::unique_ptr<Condition> Clone() const {
+    std::unique_ptr<Condition> Clone() const override {
         if constexpr (have_pt_values)
             return std::make_unique<std::decay_t<decltype(*this)>>(m_types);
             //return std::make_unique<PlanetType<PT_t, N>>(m_types);
