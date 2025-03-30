@@ -165,20 +165,34 @@ namespace {
         }
 
         std::unique_ptr<ValueRef::ValueRef<double>> sortkey;
+        std::unique_ptr<ValueRef::ValueRef<std::string>> sortkey_str;
         if (kw.has_key("sortkey")) {
             auto sortkey_args = boost::python::extract<value_ref_wrapper<double>>(kw["sortkey"]);
             if (sortkey_args.check()) {
                 sortkey = ValueRef::CloneUnique(sortkey_args().value_ref);
             } else {
-                sortkey = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["sortkey"])());
+                auto sortkey_str_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["sortkey"]);
+                if (sortkey_str_args.check()) {
+                    sortkey_str = ValueRef::CloneUnique(sortkey_str_args().value_ref);
+                } else {
+                    sortkey = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(kw["sortkey"])());
+                }
             }
         }
 
         auto condition = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["condition"])().condition);
-        return condition_wrapper(std::make_shared<Condition::SortedNumberOf>(std::move(number),
-                                                                             std::move(sortkey),
-                                                                             method,
-                                                                             std::move(condition)));
+        if (sortkey_str) {
+            return condition_wrapper(std::make_shared<Condition::SortedNumberOf>(std::move(number),
+                                                                                 std::move(sortkey_str),
+                                                                                 method,
+                                                                                 std::move(condition)));
+
+        } else {
+            return condition_wrapper(std::make_shared<Condition::SortedNumberOf>(std::move(number),
+                                                                                 std::move(sortkey),
+                                                                                 method,
+                                                                                 std::move(condition)));
+        }
     }
 
     condition_wrapper insert_visible_to_empire_(const boost::python::tuple& args, const boost::python::dict& kw) {
