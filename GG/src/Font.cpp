@@ -1345,7 +1345,7 @@ namespace {
     }
 
 
-    CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexAndLengthOfLineAndGlyphInLines(
+    [[maybe_unused]] CONSTEXPR_FONT std::pair<StrSize, StrSize> StringIndexAndLengthOfLineAndGlyphInLines(
         std::size_t line_idx, CPSize glyph_index, const Font::LineVec& line_data)
     {
         if (line_data.empty())
