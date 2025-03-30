@@ -7072,7 +7072,7 @@ namespace {
     auto IDsSortedByName(const ObjectMap& objects, P&& pred = P{}) {
         constexpr auto to_id_name = [](const auto* obj) -> std::pair<int, std::string_view> { return {obj->ID(), obj->Name()}; };
 
-        const auto objs = [pred, &objects]() -> decltype(auto) {
+        const auto objs = [&]() -> decltype(auto) {
             if constexpr (std::is_same_v<std::decay_t<decltype(pred)>, AllTrue>)
                 return objects.allExistingRaw<const T>();
             else
