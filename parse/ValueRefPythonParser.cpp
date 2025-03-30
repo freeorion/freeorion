@@ -400,6 +400,16 @@ value_ref_wrapper<int> operator*(int lhs, const value_ref_wrapper<int>& rhs) {
     );
 }
 
+value_ref_wrapper<int> operator*(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(
+            ValueRef::OpType::TIMES,
+            ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
 value_ref_wrapper<int> operator/(const value_ref_wrapper<int>& lhs, int rhs) {
     return value_ref_wrapper<int>(
         std::make_shared<ValueRef::Operation<int>>(
@@ -703,7 +713,7 @@ namespace {
         const auto return_type = args[0];
         const auto args1 = boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[1]);
         const auto value_type = args1.check() ? return_type : args[1];
-        const auto type = args1.check() ? args1().value : boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[1])().value;
+        const auto type = args1.check() ? args1().value : boost::python::extract<enum_wrapper<ValueRef::StatisticType>>(args[2])().value;
 
         if (value_type == parser.type_int) {
             const auto value_arg = boost::python::extract<value_ref_wrapper<int>>(kw["value"]);
