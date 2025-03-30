@@ -4,7 +4,7 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
-from check.focs_dump_parser._tools import get_base_dump_folder, get_branch
+from check.focs_dump_parser._tools import get_base_dump_folder, get_branch, get_main_folder
 
 _negative_number = re.compile(r"\(-\(?\d+\.?\d*\)\)")
 
@@ -54,18 +54,21 @@ def report_diff():
         a = [prettify_dump(x) for x in content_a]
         b = [prettify_dump(x) for x in content_b]
 
+        a_relative_name = (path_a / (name + ".txt")).relative_to(get_main_folder()).as_posix()
+        b_relative_name = (path_b / (name + ".txt")).relative_to(get_main_folder()).as_posix()
+
         if a == b == []:
             stats["both empty"].append(name)
         if a == b:
             stats["same"].append(name)
         elif content_a == []:
-            stats["file mismatch"].append(f"{name}.{a_branch} is missed")
+            stats["no pair for the file"].append(f"{name} is missed in branch {a_branch}")
         elif content_b == []:
-            stats["file mismatch"].append(f"{name}.{b_branch} is missed")
+            stats["no pair for for file"].append(f"{name} is missed in branch {b_branch}")
 
         else:
             stats["diff"].append(name)
-            for line in difflib.unified_diff(a, b, f"{name}.{a_branch}", f"{name}.{b_branch}"):
+            for line in difflib.unified_diff(a, b, a_relative_name, b_relative_name):
                 print(line, end="")
 
     print(clean_species)
