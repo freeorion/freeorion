@@ -153,11 +153,15 @@ namespace {
 
     condition_wrapper insert_sorted_number_of_(const boost::python::tuple& args, const boost::python::dict& kw, Condition::SortingMethod method) {
         std::unique_ptr<ValueRef::ValueRef<int>> number;
-        auto number_args = boost::python::extract<value_ref_wrapper<int>>(kw["number"]);
-        if (number_args.check()) {
-            number = ValueRef::CloneUnique(number_args().value_ref);
+        if (kw.has_key("number")) {
+            auto number_args = boost::python::extract<value_ref_wrapper<int>>(kw["number"]);
+            if (number_args.check()) {
+                number = ValueRef::CloneUnique(number_args().value_ref);
+            } else {
+                number = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["number"])());
+            }
         } else {
-            number = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["number"])());
+            number = std::make_unique<ValueRef::Constant<int>>(std::numeric_limits<int>::max());
         }
 
         std::unique_ptr<ValueRef::ValueRef<double>> sortkey;
