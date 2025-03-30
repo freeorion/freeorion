@@ -504,7 +504,7 @@ void ClientNetworking::Impl::HandleConnection(const boost::system::error_code& e
                 }
 
                 TraceLogger(network) << "ClientNetworking::Impl::m_reconnect_timer::async_wait - Scheduling another connection attempt";
-                const auto handle_connection = [this, endpoint_it, end_of_endpoints_it](const auto& error)
+                const auto handle_connection = [=](const auto& error)
                 { HandleConnection(error, endpoint_it, end_of_endpoints_it); };
 
                 m_socket.async_connect(*endpoint_it, handle_connection);
