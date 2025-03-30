@@ -60,21 +60,17 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
     ));
 }
 
-condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs) {
-    return lhs & rhs.operator condition_wrapper();
-}
+condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs)
+{ return lhs & rhs.operator condition_wrapper(); }
 
-condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs) {
-    return lhs & rhs.operator condition_wrapper();
-}
+condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs & rhs.operator condition_wrapper(); }
 
-condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs) {
-    return lhs.operator condition_wrapper() & rhs.operator condition_wrapper();
-}
+condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs)
+{ return lhs.operator condition_wrapper() & rhs.operator condition_wrapper(); }
 
-condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const condition_wrapper& rhs) {
-    return lhs.operator condition_wrapper() & rhs;
-}
+condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const condition_wrapper& rhs)
+{ return lhs.operator condition_wrapper() & rhs; }
 
 
 condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs) {
@@ -84,19 +80,14 @@ condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrappe
     ));
 }
 
-condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs) {
-    return lhs | rhs.operator condition_wrapper();
-}
+condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs | rhs.operator condition_wrapper(); }
 
-condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
-    return lhs.operator condition_wrapper() | rhs.operator condition_wrapper();
-}
+condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs.operator condition_wrapper() | rhs.operator condition_wrapper(); }
 
-condition_wrapper operator~(const condition_wrapper& lhs) {
-    return condition_wrapper(std::make_shared<Condition::Not>(
-        lhs.condition->Clone()
-    ));
-}
+condition_wrapper operator~(const condition_wrapper& lhs)
+{ return condition_wrapper(std::make_shared<Condition::Not>(lhs.condition->Clone())); }
 
 
 namespace {
@@ -120,13 +111,11 @@ namespace {
         return condition_wrapper(std::make_shared<Condition::EmpireAffiliation>(std::move(empire), affiliation));
     }
 
-    condition_wrapper insert_contained_by_(const condition_wrapper& cond) {
-        return condition_wrapper(std::make_shared<Condition::ContainedBy<>>(ValueRef::CloneUnique(cond.condition)));
-    }
+    condition_wrapper insert_contained_by_(const condition_wrapper& cond)
+    { return condition_wrapper(std::make_shared<Condition::ContainedBy<>>(ValueRef::CloneUnique(cond.condition))); }
 
-    condition_wrapper insert_contains_(const condition_wrapper& cond) {
-        return condition_wrapper(std::make_shared<Condition::Contains<>>(ValueRef::CloneUnique(cond.condition)));
-    }
+    condition_wrapper insert_contains_(const condition_wrapper& cond)
+    { return condition_wrapper(std::make_shared<Condition::Contains<>>(ValueRef::CloneUnique(cond.condition))); }
 
     condition_wrapper insert_meter_value_(const boost::python::tuple& args, const boost::python::dict& kw, MeterType m) {
         std::unique_ptr<ValueRef::ValueRef<double>> low;
@@ -348,21 +337,21 @@ namespace {
     }
 
     condition_wrapper insert_starlane_to_would_cross_existing_starlane_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
+        auto from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
 
         return condition_wrapper(std::make_shared<Condition::StarlaneToWouldCrossExistingStarlane>(std::move(from)));
     }
 
     condition_wrapper insert_starlane_to_would_be_angularly_close_to_existing_starlane_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
+        auto from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
         double maxdotprod = boost::python::extract<double>(kw["maxdotprod"])();
 
         return condition_wrapper(std::make_shared<Condition::StarlaneToWouldBeAngularlyCloseToExistingStarlane>(std::move(from), maxdotprod));
     }
 
     condition_wrapper insert_starlane_to_would_be_close_to_object_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<Condition::Condition> from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
-        std::unique_ptr<Condition::Condition> closeto = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["closeto"])().condition);
+        auto from = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["from_"])().condition);
+        auto closeto = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["closeto"])().condition);
         double distance = boost::python::extract<double>(kw["distance"])();
 
         return condition_wrapper(std::make_shared<Condition::StarlaneToWouldBeCloseToObject>(std::move(from),
