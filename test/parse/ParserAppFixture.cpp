@@ -11,7 +11,9 @@ ParserAppFixture::ParserAppFixture() :
     BOOST_TEST_MESSAGE("Init parse tests " << boost::unit_test::framework::master_test_suite().argv[0]);
     InitDirs(boost::unit_test::framework::master_test_suite().argv[0], true);
 
-    BOOST_REQUIRE(m_python.Initialize());
+    if (!m_python.IsPythonRunning()) {
+        BOOST_REQUIRE(m_python.Initialize());
+    }
 
 #if defined(FREEORION_MACOSX)
     m_test_scripting_dir = GetRootDataDir() / "test-scripting";
