@@ -10986,6 +10986,9 @@ namespace StaticTests {
     constexpr auto contains_aggressive_cx1 = Contains<Aggressive>{};
     constexpr auto contains_aggressive_cx2 = Contains{Aggressive{true}};
     constexpr auto contains_aggressive_cx3 = Contains<Aggressive>{true};
+    static_assert(static_cast<const Condition&>(contains_target_cx) != contains_capital_cx);
+    static_assert(static_cast<const Condition&>(contains_capital_cx) != contains_aggressive_cx1);
+    static_assert(contains_aggressive_cx1 == contains_aggressive_cx2);
     static_assert(contains_aggressive_cx2 == contains_aggressive_cx3);
 
     constexpr auto pt_cx = PlanetType{::PlanetType::PT_INFERNO};
