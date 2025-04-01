@@ -271,7 +271,7 @@ public:
     };
 
     /** The type of the iterator parameters passed to DropsAcceptable(). */
-    typedef std::map<const Wnd*, bool>::iterator DropsAcceptableIter;
+    using DropsAcceptableIter = std::map<const Wnd*, bool>::iterator;
 
     /** The modes of child clipping. */
     enum class ChildClippingMode : uint8_t {

@@ -354,7 +354,7 @@ namespace {
                                     const std::map<int, std::shared_ptr<const System>>& systems)
     {
         // 2 component vector and vect + magnitude typedefs
-        typedef std::pair<std::pair<double, double>, double> VectAndMagTypeQQ;
+        using VectAndMagTypeQQ = std::pair<std::pair<double, double>, double>;
 
         std::set<std::pair<int, int>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
 

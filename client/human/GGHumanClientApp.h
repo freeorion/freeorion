@@ -23,8 +23,8 @@ class GGHumanClientApp final :
     public SDLGUI
 {
 public:
-    typedef boost::signals2::signal<void (bool)> FullscreenSwitchSignalType;
-    typedef boost::signals2::signal<void ()>     RepositionWindowsSignalType;
+    using FullscreenSwitchSignalType = boost::signals2::signal<void (bool)>;
+    using RepositionWindowsSignalType = boost::signals2::signal<void ()>;
 
     GGHumanClientApp() = delete;
 

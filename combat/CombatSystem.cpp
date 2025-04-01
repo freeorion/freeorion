@@ -1272,7 +1272,7 @@ namespace {
         }
 
     private:
-        typedef std::set<int>::const_iterator const_id_iterator;
+        using const_id_iterator = std::set<int>::const_iterator;
 
         // Populate lists of things that can attack. List attackers also by empire.
         void PopulateAttackers() {

@@ -195,7 +195,7 @@ namespace {
 
     struct SetPreformattedIfPREP
     {
-        typedef void result_type;
+        using result_type = void ;
 
         void operator()(const std::string* str, const Font::Substring::IterPair& tag_match_iter_pair,
                         bool& is_preformatted, bool set_to_value) const
