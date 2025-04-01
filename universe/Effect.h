@@ -105,7 +105,7 @@ namespace Effect {
       * same effectsgroup.  This is useful when a Ship has multiple copies
       * of the same effects group due to having multiple copies of the same
       * ship part in its design. */
-    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> SourcesEffectsTargetsAndCausesVec;
+    using SourcesEffectsTargetsAndCausesVec = std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>>;
 
     /** The base class for all Effects.  When an Effect is executed, the source
     * object (the object to which the Effect or its containing EffectGroup is

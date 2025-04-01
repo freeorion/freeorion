@@ -35,8 +35,8 @@ namespace {
      */
     template <typename T>
     struct distance_matrix_storage {
-        typedef T value_type;  ///< An integral type for number of hops.
-        typedef std::vector<T>& row_ref;  ///< A reference to row type
+        using value_type = T ;  ///< An integral type for number of hops.
+        using row_ref = std::vector<T>&;  ///< A reference to row type
 
         distance_matrix_storage() = default;
         distance_matrix_storage(const distance_matrix_storage<T>& src)
@@ -99,10 +99,10 @@ namespace {
         // the function so that the function still has the required signature.
 
         /// Cache miss handler
-        typedef std::function<void (std::size_t&, Row)> cache_miss_handler;
+        using cache_miss_handler = std::function<void (std::size_t&, Row)>;
 
         /// A function to examine an entire row cache hit
-        typedef std::function<void (std::size_t &/*ii*/, const Row /*row*/)> cache_hit_handler;
+        using cache_hit_handler = std::function<void (std::size_t &/*ii*/, const Row /*row*/)>;
 
         /** Retrieve a single element at (\p ii, \p jj).
           * On cache miss call the \p fill_row which must fill the row
@@ -216,7 +216,7 @@ namespace SystemPathing {
       * destination system. */
     struct PathFindingShortCircuitingVisitor : public boost::base_visitor<PathFindingShortCircuitingVisitor>
     {
-        typedef boost::on_finish_vertex event_filter;
+        using event_filter = boost::on_finish_vertex;
 
         struct FoundDestination {}; // exception type thrown when destination is found
 
@@ -297,7 +297,7 @@ namespace SystemPathing {
     ////////////////////////////////////////////////////////////////
     // templated implementations of Universe graph search methods //
     ////////////////////////////////////////////////////////////////
-    struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
+    struct vertex_system_id_t {using kind = boost::vertex_property_tag;}; ///< a system graph property map type
 
     /** Returns the path between vertices \a system1_id and \a system2_id of
       * \a graph that travels the shorest distance on starlanes, and the path
@@ -482,16 +482,16 @@ namespace {
     // struct GraphImpl
     /////////////////////////////////////////////
     struct GraphImpl {
-        typedef boost::property<vertex_system_id_t, int,
-                                boost::property<boost::vertex_index_t, int>> vertex_property_t; ///< a system graph property map type
-        typedef boost::property<boost::edge_weight_t, double>                edge_property_t;   ///< a system graph property map type
+        using vertex_property_t = boost::property<vertex_system_id_t, int,
+                                                  boost::property<boost::vertex_index_t, int>>;
+        using edge_property_t = boost::property<boost::edge_weight_t, double>;
 
         // declare main graph types, including properties declared above.
         // could add boost::disallow_parallel_edge_tag GraphProperty but it doesn't
         // work for vecS vector-based lists and parallel edges can be avoided while
         // creating the graph by filtering the edges to be added
-        typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-                                      vertex_property_t, edge_property_t> SystemGraph;
+        using SystemGraph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
+                                                  vertex_property_t, edge_property_t> ;
 
         struct EdgeVisibilityFilter {
             EdgeVisibilityFilter() = default;
@@ -539,8 +539,8 @@ namespace {
             const SystemGraph* m_graph = nullptr;
             boost::container::flat_set<std::pair<int, int>> edges;
         };
-        typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
-        typedef std::map<int, EmpireViewSystemGraph> EmpireViewSystemGraphMap;
+        using EmpireViewSystemGraph = boost::filtered_graph<SystemGraph, EdgeVisibilityFilter>;
+        using EmpireViewSystemGraphMap = std::map<int, EmpireViewSystemGraph>;
 
 
         struct SystemPredicateFilter {
@@ -808,10 +808,11 @@ namespace {
        pair of System ids  -- in transit
     */
 
-    typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
+    using GeneralizedLocationType = boost::variant<std::nullptr_t, int, std::pair<int, int>>;
 
     /** Return the location of \p obj.*/
-    GeneralizedLocationType GeneralizedLocation(const UniverseObjectCXBase* obj, const ObjectMap& objects, bool trace_log)
+    GeneralizedLocationType GeneralizedLocation(const UniverseObjectCXBase* obj,
+                                                const ObjectMap& objects, bool trace_log)
     {
         if (!obj)
             return nullptr;
