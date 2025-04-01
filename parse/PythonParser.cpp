@@ -171,7 +171,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::class_<value_ref_wrapper<Visibility>>("ValueRefVisibility", py::no_init);
         py::class_<value_ref_wrapper<PlanetType>>("ValueRefPlanetType", py::no_init);
         py::class_<value_ref_wrapper< ::PlanetEnvironment>>("ValueRefPlanetEnvironment", py::no_init);
-        py::class_<value_ref_wrapper<PlanetType>>("ValueRefPlanetSize", py::no_init);
+        py::class_<value_ref_wrapper<PlanetType>>("ValueRefPlanetSize", py::no_init)
+            .def(py::self_ns::self != py::self_ns::self);
         py::class_<condition_wrapper>("Condition", py::no_init)
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self & py::other<value_ref_wrapper<double>>())

@@ -570,6 +570,13 @@ value_ref_wrapper<std::string> operator+(const std::string& lhs, const value_ref
     );
 }
 
+condition_wrapper operator!=(const value_ref_wrapper<PlanetType>& lhs, const value_ref_wrapper<PlanetType>& rhs) {
+    return condition_wrapper(std::make_shared<Condition::ValueTest>(
+        std::make_unique<ValueRef::StaticCast<PlanetType, int>>(ValueRef::CloneUnique(lhs.value_ref)),
+        Condition::ComparisonType::NOT_EQUAL,
+        std::make_unique<ValueRef::StaticCast<PlanetType, int>>(ValueRef::CloneUnique(rhs.value_ref))));
+}
+
 namespace {
     template<typename T>
     value_ref_wrapper<T> insert_named_lookup_(const boost::python::tuple& args, const boost::python::dict& kw) {
