@@ -2250,7 +2250,7 @@ std::unique_ptr<Condition> Type::Clone() const
 // Building                                              //
 ///////////////////////////////////////////////////////////
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
-    Condition(CondsRTSI(names)),
+    Condition(CondsRTSI(names), CheckSums::GetCheckSum("Condition::Building", names)),
     m_names(std::move(names)),
     m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
                                         [](const auto& e) { return e->LocalCandidateInvariant(); }))
@@ -2424,16 +2424,6 @@ void Building::SetTopLevelContent(const std::string& content_name) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
-}
-
-uint32_t Building::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Building");
-    CheckSums::CheckSumCombine(retval, m_names);
-
-    TraceLogger(conditions) << "GetCheckSum(Building): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Building::Clone() const
