@@ -81,14 +81,14 @@ template<typename HeaderContainer, typename ListContainer>
     const std::string& empty_header_template,
     const std::string& dual_header_template)
 {
-    const std::string& header_template{[&, sz{words.size()}]() {
+    auto& header_template = [&, sz{words.size()}]() -> auto& {
         switch (sz) {
         case 0: return empty_header_template; break;
         case 1: return single_header_template; break;
         case 2: return dual_header_template; break;
         default: return plural_header_template; break;
         }
-    }()};
+    }();
     boost::format header_fmt = FlexibleFormat(header_template) % std::to_string(words.size());
     for (const auto& word : header_words)
         header_fmt % word;
