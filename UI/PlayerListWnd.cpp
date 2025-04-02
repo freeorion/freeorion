@@ -369,10 +369,14 @@ namespace {
                 ErrorLogger() << "PlayerDataPanel::Update couldn't get client app!";
                 return;
             }
+            const auto& universe = app->GetContext().ContextUniverse();
+            const auto& empires = app->GetContext().Empires();
+            const ObjectMap& objects = app->GetContext().ContextObjects();
+            const auto app_empire_id = app->EmpireID();
+            const auto& players = app->Players();
 
             // empire name
             std::string empire_name;
-            const auto& players = app->Players();
 
             auto player_it = players.find(m_player_id);
             if (player_it != players.end()) {
@@ -388,15 +392,15 @@ namespace {
 
             // if player has an empire, get its name and colour.  (Some player types might not have empires...)
             GG::Clr empire_color = ClientUI::TextColor();
-            const Empire* empire = GetEmpire(m_empire_id);
+            const auto empire = empires.GetEmpire(m_empire_id);
             if (empire) {
                 empire_color = empire->Color();
                 // ignore player name
                 empire_name = empire->Name();
-                if (m_empire_id == ALL_EMPIRES || m_empire_id == app->EmpireID())
+                if (m_empire_id == ALL_EMPIRES || m_empire_id == app_empire_id)
                     m_diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
                 else
-                    m_diplo_status = Empires().GetDiplomaticStatus(m_empire_id, app->EmpireID());
+                    m_diplo_status = empires.GetDiplomaticStatus(m_empire_id, app_empire_id);
                 if (empire->Won())
                     m_win_status = WON; // even if you later get eliminated, you still won
                 else if (empire->Eliminated())
@@ -411,15 +415,14 @@ namespace {
             m_empire_name_text->SetTextColor(empire_color);
             m_empire_name_text->SetText(std::move(empire_name));
 
-            const ObjectMap& objects = Objects();
             double empires_ship_count = 0.0;
             double empires_planet_count = 0.0;
             double empires_production_points = 0.0;
             double empires_research_points = 0.0;
             double empires_influence_points = 0.0;
 
-            const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
-            const auto& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+            const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(app_empire_id);
+            const auto& this_client_stale_object_info       = universe.EmpireStaleKnowledgeObjectIDs(app_empire_id);
             const auto is_destroyed_or_stale = [&](int id) {
                 return this_client_known_destroyed_objects.contains(id) ||
                        this_client_stale_object_info.contains(id);
