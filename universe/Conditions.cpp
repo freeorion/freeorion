@@ -291,19 +291,6 @@ ObjectSet Condition::GetDefaultInitialCandidateObjects(const ScriptingContext& p
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
-Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-               std::unique_ptr<ValueRef::ValueRef<int>>&& high,
-               std::unique_ptr<Condition>&& condition) :
-    Condition(CondsRTSI(low, high, condition)),
-    m_low(std::move(low)),
-    m_high(std::move(high)),
-    m_condition(std::move(condition)),
-    m_high_low_local_invariant((!m_low || m_low->LocalCandidateInvariant()) &&
-                               (!m_high || m_high->LocalCandidateInvariant())),
-    m_high_low_root_invariant((!m_low || m_low->RootCandidateInvariant()) &&
-                              (!m_high || m_high->RootCandidateInvariant()))
-{}
-
 std::string Number::Description(bool negated) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
