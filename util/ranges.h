@@ -26,6 +26,7 @@ inline constexpr auto& range_max_element = std::ranges::max_element;
 inline constexpr auto& range_min_element = std::ranges::min_element;
 inline constexpr auto& range_equal = std::ranges::equal_range;
 inline constexpr auto& range_end = std::ranges::end;
+inline constexpr auto& range_count_if = std::ranges::count_if;
 #else
 # include <span>
 # include <boost/range/adaptor/map.hpp>
@@ -72,6 +73,8 @@ template <typename... Args>
 inline auto range_equal(Args... args) { return boost::range::equal_range(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_end(Args... args) { return boost::end(std::forward<Args>(args)...); }
+template <typename... Args>
+inline auto range_count_if(Args... args) { return boost::count_if(std::forward<Args>(args)...); }
 
 #endif
 
