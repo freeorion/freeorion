@@ -7,7 +7,9 @@
 
 #include <boost/locale.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+
 #include <atomic>
+#include <shared_mutex>
 
 // define needed on Windows due to conflict with windows.h and std::min and std::max
 #ifndef NOMINMAX
@@ -438,20 +440,23 @@ const std::string& Language() {
     return GetStringTable(stringtable_lock).Language();
 }
 
-std::string RomanNumber(unsigned int n) {
+std::string RomanNumber(uint16_t n) {
     //letter pattern (N) and the associated values (V)
     static constexpr std::array N = {  "M",  "CM",  "D",  "CD",  "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
     static constexpr std::array V = { 1000u, 900u, 500u,  400u, 100u,  90u, 50u,  40u, 10u,   9u,  5u,   4u,  1u };
-    if (n == 0) return ""; // the romans didn't know there is a zero, read a book about history of the zero if you want to know more
-                           // Roman numbers are written using patterns, you chosse the highest pattern lower that the number
-                           // write it down, and substract it's value until you reach zero.
+    if (n == 0) return ""; // the romans didn't know there is a zero, read a book about
+                           // history of the zero if you want to know more. Roman numbers
+                           // are written using patterns, you chosse the highest pattern
+                           // lower than the number, write it down, and substract its
+                           // value until you reach zero.
 
-    // safety check to avoid very long loops
-    if (n > 10000)
+    // safety check to avoid very long loops and unrepresentable numbers
+    if (n >= 4000)
         return "!";
 
     // start with the highest pattern and reduce the size every time it doesn't fit
     std::string retval;
+    retval.reserve(15); // space for "MMMDCCCLXXXVIII", should fit in SSO
     unsigned int remainder = n; // remainder of the number to be written
     int i = 0;                  // pattern index
     while (remainder > 0) {

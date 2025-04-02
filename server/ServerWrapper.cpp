@@ -1361,7 +1361,7 @@ namespace FreeOrionPython {
                 +[](const std::string& key) -> bool { return UserStringExists(key); });
         //py::def("userStringList",               &GetUserStringList); // could be copied from AIWrapper
 
-        py::def("roman_number",                     RomanNumber);
+        py::def("roman_number",                     +[](unsigned int n) { return RomanNumber(n); });
         py::def("get_resource_dir",                 +[]() -> py::object { return py::object(PathToString(GetResourceDir())); });
 
         py::def("all_empires",                      +[]() -> int { return ALL_EMPIRES; });
