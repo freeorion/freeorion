@@ -841,12 +841,31 @@ private:
 
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Type final : public Condition {
-    explicit Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type);
-    explicit Type(UniverseObjectType type);
+    explicit Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
+        Condition(CondsRTSI(type),
+                  CalcInitAllMatch(type),
+                  CheckSums::GetCheckSum("Condition::Type", type)),
+        m_type(std::move(type)),
+        m_type_const(m_type && m_type->ConstantExpr()),
+        m_type_local_invariant(m_type && m_type->LocalCandidateInvariant())
+    {}
+    explicit Type(UniverseObjectType type) :
+        Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
+    {}
+
     Type(Type&&) noexcept = default;
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
-    [[nodiscard]] bool operator==(const Type& rhs) const;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const Type& rhs) const {
+        if (this == &rhs)
+            return true;
+        return Impl::ptr_eq(m_type, rhs.m_type);
+    }
 
     [[nodiscard]] UniverseObjectType FixedObjectType() const noexcept {
         if (!m_type || !m_type->ConstantExpr())
@@ -882,11 +901,15 @@ struct FO_COMMON_API Type final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
 private:
+    static bool CalcInitAllMatch(const std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>& type) {
+        return type &&
+            (type->ConstantExpr() || (type->LocalCandidateInvariant() && type->RootCandidateInvariant()));
+    }
+
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>> m_type;

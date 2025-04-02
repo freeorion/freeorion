@@ -2065,35 +2065,6 @@ std::unique_ptr<Condition> Armed::Clone() const
 ///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
-Type::Type(std::unique_ptr<ValueRef::ValueRef<UniverseObjectType>>&& type) :
-    Condition(CondsRTSI(type),
-              type && (
-                  type->ConstantExpr() || (
-                      type->LocalCandidateInvariant() &&
-                      type->RootCandidateInvariant()))),
-    m_type(std::move(type)),
-    m_type_const(m_type && m_type->ConstantExpr()),
-    m_type_local_invariant(m_type && m_type->LocalCandidateInvariant())
-{}
-
-Type::Type(UniverseObjectType type) :
-    Type(std::make_unique<ValueRef::Constant<UniverseObjectType>>(type))
-{}
-
-bool Type::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    return rhs_p && *this == *rhs_p;
-}
-
-bool Type::operator==(const Type& rhs_) const {
-    if (this == &rhs_)
-        return true;
-    CHECK_COND_VREF_MEMBER(m_type)
-    return true;
-}
-
 namespace {
     struct TypeSimpleMatch {
         constexpr explicit TypeSimpleMatch(UniverseObjectType type) noexcept :
@@ -2212,16 +2183,6 @@ ObjectSet Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent
 void Type::SetTopLevelContent(const std::string& content_name) {
     if (m_type)
         m_type->SetTopLevelContent(content_name);
-}
-
-uint32_t Type::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Type");
-    CheckSums::CheckSumCombine(retval, m_type);
-
-    TraceLogger(conditions) << "GetCheckSum(Type): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Type::Clone() const
