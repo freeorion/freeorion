@@ -877,7 +877,7 @@ int SpeciesManager::NumPlayableSpecies() const
 { return std::distance(playable_begin(), playable_end()); }
 
 int SpeciesManager::NumNativeSpecies() const
-{ return std::distance(native_begin(), native_end()); }
+{ return static_cast<int>(std::distance(native_begin(), native_end())); }
 
 namespace {
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
