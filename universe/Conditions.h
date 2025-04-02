@@ -296,6 +296,11 @@ namespace Impl {
     constexpr auto bit_and = [](auto lhs, auto rhs) noexcept { return lhs & rhs; };
     constexpr auto bit_or = [](auto lhs, auto rhs) noexcept { return lhs | rhs; };
 
+    template <typename ptr>
+        requires requires(const ptr& p, const ptr& q) { !p; bool(p); *p == *q; }
+    constexpr bool ptr_eq(const ptr& lhs, const ptr& rhs)
+        noexcept(noexcept((!lhs && !rhs) || (lhs && rhs && *lhs == *rhs)))
+    { return (!lhs && !rhs) || (lhs && rhs && *lhs == *rhs); };
 
     // type derived from Condition or a pointer to Condition
     template <class ConditionT>
@@ -412,8 +417,18 @@ struct FO_COMMON_API Number final : public Condition {
            std::unique_ptr<ValueRef::ValueRef<int>>&& high,
            std::unique_ptr<Condition>&& condition);
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
-    [[nodiscard]] bool operator==(const Number& rhs) const;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const Number& rhs) const {
+        if (this == &rhs)
+            return true;
+        return Impl::ptr_eq(m_low, rhs.m_low) && Impl::ptr_eq(m_high, rhs.m_high) &&
+               Impl::ptr_eq(m_condition, rhs.m_condition);
+    }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;

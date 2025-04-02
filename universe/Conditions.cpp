@@ -304,25 +304,6 @@ Number::Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
                               (!m_high || m_high->RootCandidateInvariant()))
 {}
 
-bool Number::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-
-    return rhs_p && *this == *rhs_p;
-}
-
-bool Number::operator==(const Number& rhs_) const {
-    if (this == &rhs_)
-        return true;
-
-    CHECK_COND_VREF_MEMBER(m_low)
-    CHECK_COND_VREF_MEMBER(m_high)
-    CHECK_COND_VREF_MEMBER(m_condition)
-
-    return true;
-}
-
 std::string Number::Description(bool negated) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
