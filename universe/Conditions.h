@@ -1017,13 +1017,29 @@ private:
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag final : public Condition {
-    constexpr HasTag() noexcept : Condition(true, true, true) {}
-    explicit HasTag(std::string name);
-    explicit HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    constexpr HasTag() noexcept :
+        Condition(std::array<bool, 3>{{true, true, true}}, CheckSums::GetCheckSum("Condition::HasTag"))
+    {}
+    explicit HasTag(std::string name) :
+        HasTag(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
+    {}
+    explicit HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+        Condition(CondsRTSI(name), CheckSums::GetCheckSum("Condition::HasTag", name)),
+        m_name(std::move(name))
+    {}
     // no constexpr destructor GCC workaround as ~unique_ptr is not constexpr before C++23 anyway...
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
-    [[nodiscard]] bool operator==(const HasTag& rhs) const;
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+    [[nodiscard]] bool operator==(const HasTag& rhs) const {
+        if (this == &rhs)
+            return true;
+        return Impl::ptr_eq(m_name, rhs.m_name);
+    }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -1033,7 +1049,6 @@ struct FO_COMMON_API HasTag final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 

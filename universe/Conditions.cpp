@@ -2778,29 +2778,6 @@ std::unique_ptr<Condition> HasSpecial::Clone() const
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
-HasTag::HasTag(std::string name) :
-    HasTag(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
-{}
-
-HasTag::HasTag(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(CondsRTSI(name)),
-    m_name(std::move(name))
-{}
-
-bool HasTag::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    return rhs_p && *this == *rhs_p;
-}
-
-bool HasTag::operator==(const HasTag& rhs) const {
-    if (this == &rhs)
-        return true;
-    return (this == &rhs) || (m_name == rhs.m_name) ||
-        (m_name && rhs.m_name && *m_name == *(rhs.m_name));
-}
-
 namespace {
     struct HasTagSimpleMatch {
         HasTagSimpleMatch(const ScriptingContext& context) noexcept:
@@ -2887,16 +2864,6 @@ bool HasTag::Match(const ScriptingContext& local_context) const {
 void HasTag::SetTopLevelContent(const std::string& content_name) {
     if (m_name)
         m_name->SetTopLevelContent(content_name);
-}
-
-uint32_t HasTag::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::HasTag");
-    CheckSums::CheckSumCombine(retval, m_name);
-
-    TraceLogger(conditions) << "GetCheckSum(HasTag): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> HasTag::Clone() const
