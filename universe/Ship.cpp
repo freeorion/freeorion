@@ -768,9 +768,13 @@ std::string NewMonsterName() {
         monster_names.push_back(UserString("MONSTER"));
 
     // select name randomly from list
-    int monster_name_index = RandInt(0, static_cast<int>(monster_names.size()) - 1);
-    std::string result = monster_names[monster_name_index];
-    if (monster_names_used[result]++)
-        result += " " + RomanNumber(monster_names_used[result]);
+    std::size_t monster_name_index = static_cast<std::size_t>(
+        RandInt(0, static_cast<int>(monster_names.size()) - 1));
+    auto result{monster_names[monster_name_index]};
+    auto& count = monster_names_used[result];
+    if (count++)
+        result += " " + RomanNumber(count);
     return result;
 }
+
+static_assert([]() { uint8_t i = 0; return i++; }() == 0);
