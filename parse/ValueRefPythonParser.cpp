@@ -2,9 +2,11 @@
 
 #include <stdexcept>
 
+#include <boost/mpl/vector.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/python/str.hpp>
 #include <boost/python/raw_function.hpp>
+#include <boost/python/make_function.hpp>
 
 #include "../universe/ValueRefs.h"
 #include "../universe/NamedValueRefManager.h"
@@ -1100,6 +1102,23 @@ namespace {
             nullptr
         ));       
     }
+
+    boost::python::object insert_const_(const PythonParser& parser, const boost::python::object& type, const boost::python::object& value) {
+         if (type == parser.type_int) {
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Constant<int>>(
+                boost::python::extract<int>(value)
+            )));
+        } else if (type == parser.type_float) {
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Constant<double>>(
+                boost::python::extract<double>(value)
+            )));
+        } else {
+            ErrorLogger() << "Unsupported type for const: "
+                          << boost::python::extract<std::string>(boost::python::str(type))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+    }
 }
 
 void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& parser) {
@@ -1232,6 +1251,9 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
     globals["PlanetTypeDifference"] = boost::python::raw_function(insert_planet_type_difference_);
+    globals["Const"] = boost::python::make_function([&parser](const boost::python::object& type, const boost::python::object& value) { return insert_const_(parser, type, value); },
+        boost::python::default_call_policies(),
+        boost::mpl::vector<boost::python::object, boost::python::object, boost::python::object>());
 
 }
 
