@@ -418,30 +418,6 @@ std::unique_ptr<Condition> Number::Clone() const {
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
-Turn::Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-           std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
-    Condition(CondsRTSI(low, high)),
-    m_low(std::move(low)),
-    m_high(std::move(high))
-{}
-
-bool Turn::operator==(const Condition& rhs) const {
-    if (this == &rhs)
-        return true;
-    const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
-    return rhs_p && *this == *rhs_p;
-}
-
-bool Turn::operator==(const Turn& rhs_) const {
-    if (this == &rhs_)
-        return true;
-
-    CHECK_COND_VREF_MEMBER(m_low)
-    CHECK_COND_VREF_MEMBER(m_high)
-
-    return true;
-}
-
 void Turn::Eval(const ScriptingContext& parent_context,
                 ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain) const
@@ -545,17 +521,6 @@ void Turn::SetTopLevelContent(const std::string& content_name) {
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
-}
-
-uint32_t Turn::GetCheckSum() const {
-    uint32_t retval{0};
-
-    CheckSums::CheckSumCombine(retval, "Condition::Turn");
-    CheckSums::CheckSumCombine(retval, m_low);
-    CheckSums::CheckSumCombine(retval, m_high);
-
-    TraceLogger(conditions) << "GetCheckSum(Turn): retval: " << retval;
-    return retval;
 }
 
 std::unique_ptr<Condition> Turn::Clone() const {
