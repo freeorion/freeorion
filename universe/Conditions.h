@@ -455,10 +455,24 @@ private:
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Turn final : public Condition {
     explicit Turn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
-                  std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
+                  std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr) :
+        Condition(CondsRTSI(low, high), CheckSums::GetCheckSum("Condition::Turn", low, high)),
+        m_low(std::move(low)),
+        m_high(std::move(high))
+    {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const override;
-    [[nodiscard]] bool operator==(const Turn& rhs) const;
+    [[nodiscard]] bool operator==(const Condition& rhs) const {
+        if (this == &rhs)
+            return true;
+        const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
+        return rhs_p && *this == *rhs_p;
+    }
+
+    [[nodiscard]] bool operator==(const Turn& rhs) const {
+        if (this == &rhs)
+            return true;
+        return Impl::ptr_eq(m_low, rhs.m_low) && Impl::ptr_eq(m_high, rhs.m_high);
+    }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
@@ -468,7 +482,6 @@ struct FO_COMMON_API Turn final : public Condition {
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     void SetTopLevelContent(const std::string& content_name) override;
-    [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
