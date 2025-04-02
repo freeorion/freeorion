@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <shared_mutex>
 
 #include <boost/format.hpp>
 #include <boost/unordered_map.hpp>
@@ -49,9 +48,14 @@ FO_COMMON_API void FlushLoadedStringTables();
 /** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
 [[nodiscard]] FO_COMMON_API boost::format FlexibleFormat(const std::string& string_to_format);
 
-/** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
-    symbol for 5000. */
-[[nodiscard]] FO_COMMON_API std::string RomanNumber(unsigned int n);
+/** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999,
+  * as we can't display the symbol for 5000. */
+[[nodiscard]] FO_COMMON_API std::string RomanNumber(uint16_t n);
+[[nodiscard]] inline std::string RomanNumber(auto n) {
+    if constexpr (std::is_signed_v<decltype(n)>)
+        n = (n >= 0 ? n : -n);
+    return RomanNumber(static_cast<uint16_t>(n));
+}
 
 /** Converts double to string with \a digits digits.  Represents large numbers
   * with SI prefixes. */
