@@ -415,7 +415,16 @@ namespace Impl {
 struct FO_COMMON_API Number final : public Condition {
     Number(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
            std::unique_ptr<ValueRef::ValueRef<int>>&& high,
-           std::unique_ptr<Condition>&& condition);
+           std::unique_ptr<Condition>&& condition) :
+        Condition(CondsRTSI(low, high, condition)),
+        m_low(std::move(low)),
+        m_high(std::move(high)),
+        m_condition(std::move(condition)),
+        m_high_low_local_invariant((!m_low || m_low->LocalCandidateInvariant()) &&
+                                   (!m_high || m_high->LocalCandidateInvariant())),
+        m_high_low_root_invariant((!m_low || m_low->RootCandidateInvariant()) &&
+                                  (!m_high || m_high->RootCandidateInvariant()))
+    {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
