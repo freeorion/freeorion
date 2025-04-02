@@ -2066,7 +2066,7 @@ std::string Empire::NewShipName() {
         return ship_names[ship_name_idx];
     }();
 
-    const int times_name_used = ++m_ship_names_used[retval];
+    const auto times_name_used = ++m_ship_names_used[retval];
     return (times_name_used > 1) ? (retval + " " + RomanNumber(times_name_used)) : retval;
 }
 
