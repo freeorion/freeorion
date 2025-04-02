@@ -279,8 +279,8 @@ float ShipHull::Structure() const
 { return m_structure * (m_default_structure_effects ? GetGameRules().Get<double>("RULE_SHIP_STRUCTURE_FACTOR") : 1.0f); }
 
 uint32_t ShipHull::NumSlots(ShipSlotType slot_type) const noexcept {
-    return std::count_if(m_slots.begin(), m_slots.end(),
-                         [slot_type](const auto& slot) { return slot.type == slot_type; });
+    const auto is_slot_type = [slot_type](const auto& slot) noexcept { return slot.type == slot_type; };
+    return static_cast<int>(range_count_if(m_slots, is_slot_type));
 }
 
 // ShipHull:: and ShipPart::ProductionCost and ProductionTime are almost identical.
