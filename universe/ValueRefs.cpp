@@ -1942,9 +1942,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         if (ship_part_name.empty())
             return design->PartCount();
+        const auto is_part = [&ship_part_name](const auto& part) { return part == ship_part_name; };
 
         const auto& parts = design->Parts();
-        return std::count_if(parts.begin(), parts.end(), [&ship_part_name](const auto& part) { return part == ship_part_name; });
+        return static_cast<int>(range_count_if(parts, is_part));
     }
     else if (m_property_name == "PartOfClassInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
@@ -1972,7 +1973,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             const auto* part = GetShipPart(name);
             return part && part->Class() == part_class;
         };
-        return std::count_if(design->Parts().begin(), design->Parts().end(), part_of_class);
+        return static_cast<int>(range_count_if(design->Parts(), part_of_class));
     }
     else if (m_property_name == "JumpsBetween") {
         int object1_id = INVALID_OBJECT_ID;
@@ -2021,7 +2022,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         else {
             return 0;
         }
-        return ship_hull->Slots().size();
+        return static_cast<int>(ship_hull->Slots().size());
     }
     else if (m_property_name == "SlotsInShipDesign") {
         int design_id = INVALID_DESIGN_ID;
@@ -2041,7 +2042,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         const ShipHull* ship_hull = GetShipHull(design->Hull());
         if (!ship_hull)
             return 0;
-        return ship_hull->Slots().size();
+        return static_cast<int>(ship_hull->Slots().size());
     }
     else if (m_property_name == "SpecialAddedOnTurn") {
         int object_id = INVALID_OBJECT_ID;
