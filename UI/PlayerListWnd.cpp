@@ -420,6 +420,13 @@ namespace {
 
             const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
             const auto& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
+            const auto is_destroyed_or_stale = [&](int id) {
+                return this_client_known_destroyed_objects.contains(id) ||
+                       this_client_stale_object_info.contains(id);
+            };
+            const auto owned_by_empire = [this, is_destroyed_or_stale](const UniverseObject& obj)
+            { return !obj.Unowned() && obj.OwnedBy(m_empire_id) && !is_destroyed_or_stale(obj.ID()); };
+
 
             if (empire) {
                 for (auto* ship : objects.allRaw<Ship>()) {
@@ -429,9 +436,6 @@ namespace {
                             empires_ship_count += 1;
                     }
                 }
-
-                const auto owned_by_empire = [emp_id{empire->EmpireID()}](const UniverseObject& obj)
-                { return !obj.Unowned() && obj.OwnedBy(emp_id); };
 
                 empires_planet_count += objects.count<Planet>(owned_by_empire);
 
