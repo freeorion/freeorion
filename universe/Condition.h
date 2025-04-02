@@ -244,8 +244,6 @@ protected:
 
 private:
     virtual bool Match(const ScriptingContext& local_context) const { throw std::runtime_error("default Condition::Match called... Override missing?"); }
-
-
 };
 
 constexpr std::array<bool, 3> CondsRTSI(const auto& operands) {
@@ -280,7 +278,7 @@ constexpr std::array<bool, 3> CondsRTSI(const auto&... operands) requires (sizeo
     const auto get_and_rtsi = [&retval](const auto& op) {
         const auto op_rtsi = CondsRTSI(op);
         retval = {retval[0] && op_rtsi[0], retval[1] && op_rtsi[1], retval[2] && op_rtsi[2]};
-        };
+    };
     (get_and_rtsi(operands), ...);
     return retval;
 }
