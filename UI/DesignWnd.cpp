@@ -2604,21 +2604,24 @@ void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
     DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
 
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const Universe& universe = GetUniverse();
+    const auto availability = AvailabilityState();
+    const bool showing_available = availability.GetAvailability(Availability::Available);
     const GG::Pt row_size = ListRowSize();
 
-    if (const auto empire = GetEmpire(EmpireID())) {
+    const auto app = IApp::GetApp();
+    if (!app) return;
+    const auto& universe = app->GetContext().ContextUniverse();
+
+    if (const auto empire = app->GetEmpire(this->EmpireID())) {
         // add rows for designs this empire is keeping
         const auto& manager = GetDisplayedDesignsManager();
         for (int design_id : manager.AllOrderedIDs()) {
             try {
-                const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+                const ShipDesign* design = universe.GetShipDesign(design_id);
                 if (!design)
                     continue;
 
-                auto shown = AvailabilityState().DisplayedDesignAvailability(*design);
-                if (shown) {
+                if (auto shown = availability.DisplayedDesignAvailability(*design)) {
                     auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, *design);
                     row->SetAvailability(*shown);
                     Insert(row);
@@ -2632,7 +2635,7 @@ void CompletedDesignsListBox::PopulateCore() {
     } else if (showing_available) {
         // add all known / existing designs
         for (const auto& design : universe.ShipDesigns() | range_values
-             | range_filter([](const auto& d) { return d.Producible(); }))
+             | range_filter([](const auto& d) noexcept { return d.Producible(); }))
         {
             auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
             Insert(row);
@@ -2663,12 +2666,14 @@ void SavedDesignsListBox::PopulateCore() {
 void MonstersListBox::PopulateCore() {
     ScopedTimer scoped_timer("Monsters::PopulateCore");
 
-    const Universe& universe = GetUniverse();
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+    const Universe& universe = app->GetContext().ContextUniverse();
 
     const GG::Pt row_size = ListRowSize();
 
     for (const auto& design : universe.ShipDesigns() | range_values
-         | range_filter([](const auto& d) { return d.IsMonster(); }))
+         | range_filter([](const auto& d) noexcept { return d.IsMonster(); }))
     {
         auto row = GG::Wnd::Create<CompletedDesignListBoxRow>(row_size.x, row_size.y, design);
         Insert(row);
@@ -2679,7 +2684,10 @@ void MonstersListBox::PopulateCore() {
 void AllDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("All::PopulateCore");
 
-    const Universe& universe = GetUniverse();
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+    const Universe& universe = app->GetContext().ContextUniverse();
+
     const auto row_size = ListRowSize();
 
     for (const auto& design : universe.ShipDesigns() | range_values) {
@@ -2732,7 +2740,12 @@ std::shared_ptr<BasesListBox::Row> CompletedDesignsListBox::ChildrenDraggedAwayC
         return nullptr;
 
     int design_id = design_row->DesignID();
-    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+
+    const auto* app = IApp::GetApp();
+    if (!app) return nullptr;
+    const Universe& universe = app->GetContext().ContextUniverse();
+
+    const ShipDesign* design = universe.GetShipDesign(design_id);
     if (!design) {
         ErrorLogger() << "Missing design with id " << design_id;
         return nullptr;
@@ -2773,8 +2786,11 @@ std::shared_ptr<BasesListBox::Row> MonstersListBox::ChildrenDraggedAwayCore(cons
     if (!design_row)
         return nullptr;
 
-    int design_id = design_row->DesignID();
-    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+    const int design_id = design_row->DesignID();
+
+    const auto* app = IApp::GetApp();
+    if (!app) return nullptr;
+    const ShipDesign* design = app->GetContext().ContextUniverse().GetShipDesign(design_id);
     if (!design) {
         ErrorLogger() << "Missing design with id " << design_id;
         return nullptr;
@@ -2792,7 +2808,11 @@ std::shared_ptr<BasesListBox::Row> AllDesignsListBox::ChildrenDraggedAwayCore(co
         return nullptr;
 
     int design_id = design_row->DesignID();
-    const ShipDesign* design = GetUniverse().GetShipDesign(design_id);
+    const auto* app = IApp::GetApp();
+    if (!app) return nullptr;
+    const Universe& universe = app->GetContext().ContextUniverse();
+
+    const ShipDesign* design = universe.GetShipDesign(design_id);
     if (!design) {
         ErrorLogger() << "Missing design with id " << design_id;
         return nullptr;
@@ -2868,7 +2888,7 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
         return;
     const std::string& hull_name = hull_parts_row->Hull();
     const ShipHull* ship_hull = GetShipHull(hull_name);
-    const std::vector<std::string>& parts = hull_parts_row->Parts();
+    const auto& parts = hull_parts_row->Parts();
 
     if (modkeys & GG::MOD_KEY_CTRL) {
         // Toggle hull obsolete
@@ -2887,9 +2907,11 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt p
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
-    int id = design_row->DesignID();
+    const int id = design_row->DesignID();
 
-    const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+    const ScriptingContext& context = app->GetContext();
     const ShipDesign* design = context.ContextUniverse().GetShipDesign(id);
     if (!design)
         return;
