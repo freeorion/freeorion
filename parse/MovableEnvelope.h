@@ -198,7 +198,7 @@ namespace parse::detail {
     {
         std::vector<std::unique_ptr<T>> retval;
         retval.reserve(envelopes.size());
-        for (auto&& envelope : envelopes)
+        for (auto& envelope : envelopes)
             retval.emplace_back(envelope.OpenEnvelope(pass));
         return retval;
     }

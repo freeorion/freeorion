@@ -484,7 +484,7 @@ GG::Y CUIWnd::TopBorder() const
 
 void CUIWnd::CloseClicked() {
     m_modal_done.store(true);
-    if (auto&& parent = Parent())
+    if (auto parent = Parent())
         parent->DetachChild(this);
     else
         GG::GUI::GetGUI()->Remove(shared_from_this());

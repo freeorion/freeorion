@@ -1161,7 +1161,7 @@ void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptable
     if (std::distance(first, last) != 1)
         return;
 
-    const auto&& parent = first->first->Parent();
+    const auto parent = first->first->Parent();
     if (first->first->DragDropDataType() == POLICY_CONTROL_DROP_TYPE_STRING
         && parent
         && dynamic_cast<const PolicySlotControl*>(parent.get()))

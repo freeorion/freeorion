@@ -495,7 +495,7 @@ void TechTreeWnd::TechTreeControls::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::
         new_lr.y = Bottom();    // ignore y-resizes
 
         // constrain to within parent
-        if (auto&& parent = Parent()) {
+        if (auto parent = Parent()) {
             GG::Pt max_lr = parent->ClientLowerRight();
             new_lr.x = std::min(new_lr.x, max_lr.x);
         }
@@ -504,7 +504,7 @@ void TechTreeWnd::TechTreeControls::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::
     } else {    // normal-dragging
         GG::Pt final_move = move;
 
-        if (auto&& parent = Parent()) {
+        if (auto parent = Parent()) {
             GG::Pt ul = UpperLeft();
             GG::Pt new_ul = ul + move;
             //GG::Pt new_lr = lr + move;
