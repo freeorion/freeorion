@@ -37,9 +37,12 @@ void ResourcePanel::CompleteConstruction() {
 
     SetName("ResourcePanel");
 
-    auto obj = Objects().get<Planet>(m_rescenter_id);
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+
+    auto obj = app->GetContext().ContextObjects().get(m_rescenter_id);
     if (!obj) {
-        ErrorLogger() << "ResourcePanel constructed with invalid resource center id " << m_rescenter_id;
+        ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id  " << m_rescenter_id;
         return;
     }
 
@@ -48,6 +51,7 @@ void ResourcePanel::CompleteConstruction() {
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
+    meters.reserve(5);
 
     // small meter indicators - for use when panel is collapsed
     for (MeterType meter : {MeterType::METER_INDUSTRY, MeterType::METER_RESEARCH,
@@ -90,22 +94,20 @@ void ResourcePanel::CompleteConstruction() {
     }
 
     // attach and show meter bars and large resource indicators
-    m_multi_meter_status_bar =      GG::Wnd::Create<MultiMeterStatusBar>(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
-    m_multi_icon_value_indicator =  GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
+    m_multi_meter_status_bar =
+        GG::Wnd::Create<MultiMeterStatusBar>(Width() - 2*EDGE_PAD, m_rescenter_id, meters);
+    m_multi_icon_value_indicator =
+        GG::Wnd::Create<MultiIconValueIndicator>(Width() - 2*EDGE_PAD, m_rescenter_id, std::move(meters));
 
-    // determine if this panel has been created yet.
-    auto it = s_expanded_map.find(m_rescenter_id);
-    if (it == s_expanded_map.end())
-        s_expanded_map[m_rescenter_id] = false; // if not, default to collapsed state
+    // if this panel has been created yet, default to collapsed state
+    s_expanded_map.try_emplace(m_rescenter_id, false);
 
     Refresh();
 }
 
 void ResourcePanel::ExpandCollapse(bool expanded) {
-    if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
-    s_expanded_map[m_rescenter_id] = expanded;
-
-    RequirePreRender();
+    if (expanded != std::exchange(s_expanded_map[m_rescenter_id], expanded))
+        RequirePreRender();
 }
 
 
@@ -114,6 +116,7 @@ namespace {
     bool SortByMeterValue(std::pair<MeterType, std::shared_ptr<StatisticIcon>> left,
                           std::pair<MeterType, std::shared_ptr<StatisticIcon>> right)
     {
+        // TODO: pass by ref and avoid repeated ->GetValue()
         if (std::abs(left.second->GetValue()) == std::abs(right.second->GetValue())) {
             if (left.first == MeterType::METER_INFLUENCE && right.first == MeterType::METER_CONSTRUCTION) {
                 // swap order of MeterType::METER_INFLUENCE and MeterType::METER_CONSTRUCTION in relation to
@@ -130,12 +133,15 @@ namespace {
 
 void ResourcePanel::Update() {
     // remove any old browse wnds
-    for (auto& meter_stat : m_meter_stats) {
-        meter_stat.second->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
+    for (auto& [meter_type, stat_icon] : m_meter_stats) {
+        stat_icon->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(meter_type);
     }
 
-    auto obj = Objects().get(m_rescenter_id);
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+
+    auto obj = app->GetContext().ContextObjects().get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
