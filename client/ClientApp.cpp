@@ -71,12 +71,10 @@ void ClientApp::SendPartialOrders() {
 }
 
 std::string ClientApp::GetVisibleObjectName(const UniverseObject& object) {
-    if (object.ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
-        auto& system = static_cast<const System&>(object);
-        return system.ApparentName(m_empire_id, m_universe);
-    } else {
+    if (object.ObjectType() == UniverseObjectType::OBJ_SYSTEM)
+        return static_cast<const System&>(object).ApparentName(m_empire_id, m_universe);
+    else
         return object.PublicName(m_empire_id, m_universe);
-    }
 }
 
 bool ClientApp::VerifyCheckSum(const Message& msg) {
