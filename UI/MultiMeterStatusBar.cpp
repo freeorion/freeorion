@@ -193,13 +193,16 @@ void MultiMeterStatusBar::Update() {
     m_projected_values.clear(); // projected current value of .first MeterTypes for the start of next turn
     m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
 
-    auto obj = Objects().get(m_object_id);
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+
+    auto obj = app->GetContext().ContextObjects().get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
+        ErrorLogger() << "MultiMeterStatusBar::Update couldn't get object with id  " << m_object_id;
         return;
     }
 
-    int num_bars = 0;   // count number of valid bars' data added
+    uint8_t num_bars = 0; // count number of valid bars' data added
 
     for (auto& [actual_meter_type, target_max_meter_type] : m_meter_types) {
         const Meter* actual_meter = obj->GetMeter(actual_meter_type);
