@@ -8,14 +8,14 @@
 #include <tuple>
 
 class UniverseObject;
+struct ScriptingContext;
 
 /** Gives details about what effects contribute to a meter's maximum value
   * (Effect Accounting) and shows the current turn's current meter value and the
   * predicted current meter value for next turn. */
 class MeterBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    MeterBrowseWnd(int object_id, MeterType primary_meter_type,
-                   MeterType secondary_meter_type);
+    MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type);
     MeterBrowseWnd(int object_id, MeterType primary_meter_type);
 
     bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
@@ -25,7 +25,7 @@ protected:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
     void Initialize();
     void UpdateSummary();
-    void UpdateEffectLabelsAndValues(GG::Y& top);
+    void UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context);
 
     MeterType                   m_primary_meter_type;
     MeterType                   m_secondary_meter_type;
@@ -58,7 +58,7 @@ private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
     void Initialize();
     void UpdateSummary();
-    void UpdateEffectLabelsAndValues(GG::Y& top);
+    void UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context);
 
 };
 
@@ -70,7 +70,7 @@ private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
     void Initialize();
     void UpdateSummary();
-    void UpdateEffectLabelsAndValues(GG::Y& top);
+    void UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context);
 
     std::shared_ptr<GG::ListBox>    m_bay_list;
     std::shared_ptr<GG::ListBox>    m_hangar_list;

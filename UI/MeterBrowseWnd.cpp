@@ -129,8 +129,9 @@ void MeterBrowseWnd::Initialize() {
 
     const auto* app = IApp::GetApp();
     if (!app) return;
+    const auto& context = app->GetContext();
 
-    auto obj = app->GetContext().ContextObjects().get(m_object_id);
+    auto obj = context.ContextObjects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "MeterBrowseWnd::Initialize couldn't get object with id  " << m_object_id;
         return;
@@ -215,7 +216,7 @@ void MeterBrowseWnd::Initialize() {
 
     UpdateSummary();
 
-    UpdateEffectLabelsAndValues(top);
+    UpdateEffectLabelsAndValues(top, context);
 
     Resize(GG::Pt(MeterBrowseLabelWidth() + MeterBrowseValueWidth(), top));
 
@@ -305,11 +306,11 @@ void MeterBrowseWnd::UpdateSummary() {
                                               DoubleToString(breakdown_total, 3, false)));
 }
 
-void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
+void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context) {
     // clear existing labels
-    for (const auto& effect_label : m_effect_labels_and_values) {
-        DetachChild(effect_label.first);
-        DetachChild(effect_label.second);
+    for (const auto& [label, value] : m_effect_labels_and_values) {
+        DetachChild(label);
+        DetachChild(value);
     }
     m_effect_labels_and_values.clear();
 
@@ -335,7 +336,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // add label-value pairs for each alteration recorded for this meter
     for (auto it = maybe_info_vec->begin(); it != maybe_info_vec->end(); ++it) {
         auto info = *it;
-        auto source = Objects().get(info.source_id);
+        auto source = context.ContextObjects().get(info.source_id);
 
         std::string text;
         std::string name;
@@ -358,7 +359,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         case EffectsCauseType::ECT_BUILDING: {
             name.clear();
             if (const auto& building = std::dynamic_pointer_cast<const Building>(source))
-                if (const auto& planet = Objects().get<Planet>(building->PlanetID()))
+                if (const auto& planet = context.ContextObjects().get<Planet>(building->PlanetID()))
                     name = planet->Name();
             // Some effects are triggered by every building in the own empire.
             // To avoid excessive effect lists, we combine identical effects.
@@ -381,14 +382,13 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             {
                 // Combined with next, if next exists, is also a building,
                 // meter change and building type (specific_cause) are the same.
-                combined_names.emplace_back(std::move(name));
+                combined_names.push_back(std::move(name));
                 continue;
             }
-            if (!combined_names.empty())
-            {
+            if (!combined_names.empty()) {
                 // This is the last of a list of identical effects. Replace name
                 // by number of planets and multiply meter_change with the number.
-                combined_names.emplace_back(std::move(name));
+                combined_names.push_back(std::move(name));
                 name = std::to_string(combined_names.size()) + " x";
                 info.meter_change *= combined_names.size();
                 // TBD: add way to unfold the number to see the list of planets
@@ -498,8 +498,13 @@ void ShipDamageBrowseWnd::Initialize() {
     m_row_height = MeterBrowseRowHeight();
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
+    const auto* app = IApp::GetApp();
+    if (!app)
+        return;
+    const auto& context = app->GetContext();
+
     // get objects and meters to verify that they exist
-    auto ship = Objects().get<Ship>(m_object_id);
+    auto ship = context.ContextObjects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
         return;
@@ -520,7 +525,7 @@ void ShipDamageBrowseWnd::Initialize() {
 
     UpdateSummary();
 
-    UpdateEffectLabelsAndValues(top);
+    UpdateEffectLabelsAndValues(top, context);
 
     Resize(GG::Pt(MeterBrowseLabelWidth() + MeterBrowseValueWidth(), top));
 
@@ -555,9 +560,7 @@ void ShipDamageBrowseWnd::UpdateSummary() {
                                               static_cast<int>(total_fighters_destroyed)));
 }
 
-void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
-    const ScriptingContext& context = ClientApp::GetApp()->GetContext();
-
+void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context) {
     // clear existing labels
     for (const auto& [label, value] : m_effect_labels_and_values) {
         DetachChild(label);
@@ -678,8 +681,13 @@ void ShipFightersBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = ROW_WIDTH * 2 + EDGE_PAD;
     const GG::Clr BG_COLOR = ClientUI::WndColor();
 
+    const auto* app = IApp::GetApp();
+    if (!app)
+        return;
+    const auto& context = app->GetContext();
+
     // get objects and meters to verify that they exist
-    auto ship = Objects().get<Ship>(m_object_id);
+    auto ship = context.ContextObjects().get<Ship>(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
@@ -721,7 +729,7 @@ void ShipFightersBrowseWnd::Initialize() {
 
     UpdateSummary();
 
-    UpdateEffectLabelsAndValues(top);
+    UpdateEffectLabelsAndValues(top, context);
 
     Resize(GG::Pt(TOTAL_WIDTH + (EDGE_PAD * 2), top + EDGE_PAD));
 
@@ -750,7 +758,7 @@ void ShipFightersBrowseWnd::UpdateSummary() {
                                               DoubleToString(breakdown_total, 3, false)));
 }
 
-void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
+void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context) {
     // clear existing labels
     for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
         DetachChild(m_effect_labels_and_values[i].first);
@@ -760,7 +768,6 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_bay_list->DetachChildren();
     m_hangar_list->DetachChildren();
 
-    const ScriptingContext& context = ClientApp::GetApp()->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 
