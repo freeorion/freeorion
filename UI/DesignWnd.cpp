@@ -899,8 +899,8 @@ namespace {
             }
             m_ordered_design_ids.push_back(id);
             m_id_to_obsolete_and_loc.emplace(std::piecewise_construct,
-                                             std::make_tuple(id),
-                                             std::make_tuple(obsolete, --m_ordered_design_ids.end()));
+                                             std::forward_as_tuple(id),
+                                             std::forward_as_tuple(obsolete, --m_ordered_design_ids.end()));
         }
 
         // Clear and load the ship hulls
@@ -918,8 +918,8 @@ namespace {
                               << m_obsolete_ui_event_count;
             m_ordered_hulls.push_back(name);
             m_hull_to_obsolete_and_loc.emplace(std::piecewise_construct,
-                                               std::make_tuple(name),
-                                               std::make_tuple(obsolete, --m_ordered_hulls.end()));
+                                               std::forward_as_tuple(name),
+                                               std::forward_as_tuple(obsolete, --m_ordered_hulls.end()));
         }
 
         // Clear and load the ship parts
