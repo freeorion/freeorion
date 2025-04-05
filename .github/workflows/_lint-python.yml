@@ -12,7 +12,7 @@ jobs:
       - name: Install development dependencies
         run: pip install -r default/python/requirements-dev.txt
       - name: Lint all python code with Ruff
-        run: ruff .
+        run: ruff check .
       - name: Lint with black
         run: |
           black . --check --no-color --diff -q

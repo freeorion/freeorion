@@ -80,13 +80,18 @@ select = [
 ignore = [
     "E501",
     # Annotation won't fix
-    "ANN101", "ANN202", "ANN204", "ANN102",
+    "ANN202", "ANN204",
 
     # Annotation nice to fix
     "ANN0",
     "ANN201",
     "ANN205",
     "ANN401",
+
+    # TODO fix
+    "UP031",
+    "UP032",
+
 ]
 
 [tool.ruff]
