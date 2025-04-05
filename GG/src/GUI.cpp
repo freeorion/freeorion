@@ -284,7 +284,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, Pt pos, int curr
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Top() - pos.y;
         else
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Bottom() - pos.y;
-        auto&& drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
+        auto drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
         GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : curr_wnd_under_cursor);
         curr_wnd_under_cursor->HandleEvent(WndEvent(
             ButtonEvent(WndEvent::EventType::LButtonDown, mouse_button), pos, m_mod_keys));

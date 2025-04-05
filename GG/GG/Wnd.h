@@ -794,7 +794,7 @@ protected:
         \note If this Wnd was created with the REPEAT_BUTTON_DOWN flag, this
         method may be called multiple times during a single button
         press-release cycle.  \see GG::GUI */
-    virtual void LButtonDown(Pt, Flags<ModKey> mod_keys);
+    virtual void LButtonDown(Pt, Flags<ModKey> mod_keys) { if (!Interactive()) ForwardEventToParent(); }
 
     /** Respond to left button drag msg (even if this Wnd is not dragable).
         Drag messages are only sent to the window over which the button was
@@ -808,13 +808,14 @@ protected:
         originally depressed over this Wnd.  A Wnd will receive an LButtonUp()
         message whenever a drag that started over its area ends, even if the
         cursor is not currently over the window when this happens. */
-    virtual void LButtonUp(Pt pt, Flags<ModKey> mod_keys);
+    virtual void LButtonUp(Pt pt, Flags<ModKey> mod_keys){ if (!Interactive()) ForwardEventToParent(); }
 
     /** Respond to release of left mouse button over this Wnd, if it was also
         originally depressed over this Wnd.  A Wnd will receive an LButtonUp()
         message whenever a drag that started over its area ends over its area
         as well. */
-    virtual void LClick(Pt pt, Flags<ModKey> mod_keys);
+    virtual void LClick(Pt pt, Flags<ModKey> mod_keys) { if (!Interactive()) ForwardEventToParent(); }
+
 
     /** Respond to second left click in window within the time limit.  A
         window will receive an LDoubleClick() message instead of an
@@ -823,7 +824,7 @@ protected:
         interval.  Note that this means a double click is always preceded by a
         click.  For a double click to occur, no other window may have received
         a *Click() or *ButtonDown() message in during the interval. */
-    virtual void LDoubleClick(Pt, Flags<ModKey> mod_keys);
+    virtual void LDoubleClick(Pt pt, Flags<ModKey> mod_keys) { LClick(pt, mod_keys); }
 
     /** Respond to middle button down msg.  \see LButtonDown() */
     virtual void MButtonDown(Pt, Flags<ModKey> mod_keys);

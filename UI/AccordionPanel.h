@@ -18,7 +18,7 @@ public:
     GG::Pt ClientLowerRight() const noexcept override;
 
     void Render() override;
-    void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseWheel(GG::Pt, int, GG::Flags<GG::ModKey>) override { ForwardEventToParent(); }
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
     /** Sets the interior color of the box. */
