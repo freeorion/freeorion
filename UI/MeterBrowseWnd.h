@@ -23,8 +23,8 @@ public:
 
 protected:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
-    void Initialize();
-    void UpdateSummary();
+    void Initialize(const ScriptingContext& context);
+    void UpdateSummary(const ScriptingContext& context);
     void UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context);
 
     MeterType                   m_primary_meter_type;
@@ -57,9 +57,8 @@ public:
 private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
     void Initialize();
-    void UpdateSummary();
+    void UpdateSummary(const ScriptingContext& context);
     void UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context);
-
 };
 
 class ShipFightersBrowseWnd : public MeterBrowseWnd {
@@ -69,7 +68,7 @@ public:
 private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
     void Initialize();
-    void UpdateSummary();
+    void UpdateSummary(const ScriptingContext& context);
     void UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingContext& context);
 
     std::shared_ptr<GG::ListBox>    m_bay_list;
