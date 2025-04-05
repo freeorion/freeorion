@@ -21,14 +21,12 @@ namespace phoenix = boost::phoenix;
 namespace parse { namespace detail {
     /** Open parsed envelopes of consumption pairs. Return a map of unique_ptr. */
     template <typename T>
-    ConsumptionMap<T> OpenConsumptionEnvelopes(
-        const common_params_rules::ConsumptionMapPackaged<T>& in, bool& pass)
+    auto OpenConsumptionEnvelopes(const common_params_rules::ConsumptionMapPackaged<T>& in, bool& pass)
     {
         ConsumptionMap<T> retval;
-        for (auto&& name_and_values : in)
-            retval[name_and_values.first] = {
-                name_and_values.second.first.OpenEnvelope(pass),
-                (name_and_values.second.second ? name_and_values.second.second->OpenEnvelope(pass) : nullptr)};
+        for (auto& [name, values] : in)
+            retval[name] = {values.first.OpenEnvelope(pass),
+                            (values.second ? values.second->OpenEnvelope(pass) : nullptr)};
         return retval;
     }
 
