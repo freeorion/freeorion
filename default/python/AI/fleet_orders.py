@@ -103,7 +103,7 @@ class AIFleetOrder:
         return f"[{self.ORDER_NAME}] of {self.fleet.get_object()} to {self.target.get_object()} {execute_status}"
 
     def __eq__(self, other):
-        return type(self) == type(other) and self.fleet == other.fleet and self.target == other.target
+        return type(self) is type(other) and self.fleet == other.fleet and self.target == other.target
 
     def __hash__(self):
         return hash(self.fleet)

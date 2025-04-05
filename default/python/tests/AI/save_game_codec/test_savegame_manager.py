@@ -88,7 +88,7 @@ def test_class_with_protected_attribute(trusted_scope):
     assert isinstance(retval, str)
 
     restored_obj = savegame_codec.decode(retval)
-    assert type(restored_obj) == type(foo)
+    assert type(restored_obj) is type(foo)
     assert restored_obj == foo
 
 
@@ -98,7 +98,7 @@ def check_encoding(obj):
     assert isinstance(retval, str)
 
     restored_obj = savegame_codec.decode(retval)
-    assert type(restored_obj) == type(obj)
+    assert type(restored_obj) is type(obj)
     assert restored_obj == obj
 
 
@@ -138,7 +138,7 @@ def test_class_encoding(trusted_scope):
 
     loaded_obj = savegame_codec.decode(retval)
     assert isinstance(loaded_obj, DummyTestClass)
-    assert type(loaded_obj) == type(obj)
+    assert type(loaded_obj) is type(obj)
 
     original_dict = loaded_obj.__dict__
     loaded_dict = loaded_obj.__dict__
