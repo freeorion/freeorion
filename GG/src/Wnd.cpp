@@ -219,7 +219,7 @@ Pt Wnd::UpperLeft() const noexcept
 Pt Wnd::LowerRight() const noexcept
 {
     Pt retval = m_lowerright;
-    if (auto&& parent = Parent())
+    if (auto parent = Parent())
         retval += parent->ClientUpperLeft();
     return retval;
 }
@@ -238,7 +238,7 @@ bool Wnd::IsAncestorOf(const std::shared_ptr<Wnd>& wnd) const noexcept
     // Is this Wnd one of wnd's (direct or indirect) parents?
     if (!wnd)
         return false;
-    auto&& parent_of_wnd = wnd->Parent();
+    auto parent_of_wnd = wnd->Parent();
     while (parent_of_wnd) {
         if (parent_of_wnd.get() == this)
             return true;
@@ -381,7 +381,7 @@ void Wnd::SizeMove(Pt ul_, Pt lr_)
         if (layout && size_changed)
             layout->Resize(ClientSize());
         if (size_changed && !dynamic_cast<Layout*>(this))
-            if (const auto&& containing_layout = LockAndResetIfExpired(m_containing_layout))
+            if (const auto containing_layout = LockAndResetIfExpired(m_containing_layout))
                 containing_layout->ChildSizeOrMinSizeChanged();
     }
 }
@@ -397,7 +397,7 @@ void Wnd::SetMinSize(Pt sz)
         Resize(Pt(std::max(Width(), m_min_size.x), std::max(Height(), m_min_size.y)));
     // The previous Resize() will call ChildSizeOrMinSizeChanged() itself if needed
     } else if (min_size_changed && !dynamic_cast<Layout*>(this)) {
-        if (auto&& containing_layout = LockAndResetIfExpired(m_containing_layout))
+        if (auto containing_layout = LockAndResetIfExpired(m_containing_layout))
             containing_layout->ChildSizeOrMinSizeChanged();
     }
 }
@@ -419,7 +419,7 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         auto my_shared = shared_from_this();
 
         // Remove from previous parent.
-        if (auto&& parent = wnd->Parent())
+        if (auto parent = wnd->Parent())
             parent->DetachChild(wnd.get());
 
         auto this_as_layout = std::dynamic_pointer_cast<Layout>(my_shared);
@@ -499,7 +499,7 @@ void Wnd::DetachChildCore(Wnd* wnd)
     wnd->m_parent.reset();
     wnd->m_containing_layout.reset();
 
-    auto&& layout = GetLayout();
+    const auto layout = GetLayout();
     if (layout && wnd == layout.get())
         m_layout.reset();
 }
@@ -712,7 +712,7 @@ void Wnd::GridLayout()
 
 void Wnd::SetLayout(const std::shared_ptr<Layout>& layout)
 {
-    auto&& mm_layout = GetLayout();
+    auto mm_layout = GetLayout();
     if (layout == mm_layout || layout == LockAndResetIfExpired(m_containing_layout))
         throw BadLayout("Wnd::SetLayout() : Attempted to set a Wnd's layout to be its current layout or the layout that contains the Wnd");
     RemoveLayout();
@@ -750,7 +750,7 @@ void Wnd::SetLayout(std::shared_ptr<Layout>&& layout)
 
 void Wnd::RemoveLayout()
 {
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     m_layout.reset();
     if (!layout)
         return;
@@ -1049,7 +1049,7 @@ void Wnd::HandleEvent(const WndEvent& event)
             break;
         }
     } catch (const ForwardToParentException&) {
-        if (auto&& p = Parent())
+        if (auto p = Parent())
             p->HandleEvent(event);
     }
 }

@@ -3781,12 +3781,15 @@ void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIte
     if (std::distance(first, last) != 1)
         return;
 
-    const auto&& parent = first->first->Parent();
-    if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING
-        && parent
-        && dynamic_cast<const SlotControl*>(parent.get()))
+    if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING)
     {
-        first->second = true;
+        if (const auto parent = first->first->Parent())
+        {
+            if (dynamic_cast<const SlotControl*>(parent.get()))
+            {
+                first->second = true;
+            }
+        }
     }
 }
 

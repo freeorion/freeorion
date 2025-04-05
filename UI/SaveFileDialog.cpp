@@ -395,7 +395,7 @@ public:
     { return m_filename; }
 
     GG::X DirectoryNameSize() {
-        auto&& layout = GetLayout();
+        auto layout = GetLayout();
         if (!layout)
             return ClientUI::GetFont()->SpaceWidth() * 10;
 

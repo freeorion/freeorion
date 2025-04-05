@@ -310,7 +310,7 @@ void ListBox::Row::SetRowAlignment(Alignment align)
 
     m_row_alignment = align;
 
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     for (std::size_t ii = 0; ii < m_cells.size(); ++ii) {
         if (m_cells[ii])
             layout->Add(m_cells[ii], 0, ii,
@@ -372,7 +372,7 @@ void ListBox::Row::ClearColAlignments()
         return;
 
     m_col_alignments.clear();
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     for (auto& control : m_cells) {
         if (control)
             layout->SetChildAlignment(control.get(), m_row_alignment);
@@ -1291,10 +1291,8 @@ void ListBox::SetColStretch(std::size_t n, double x)
 
     m_col_stretches[n] = x;
     for (auto& row : m_rows) {
-        auto&& layout = row->GetLayout();
-        if (!layout)
-            return;
-        layout->SetColumnStretch(n, x);
+        if (auto layout = row->GetLayout())
+            layout->SetColumnStretch(n, x);
     }
 }
 
@@ -1707,14 +1705,13 @@ void ListBox::DefineColAlignments(const Row& row)
 
 void ListBox::DefineColStretches(const Row& row)
 {
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     if (!layout)
         return;
 
     m_col_stretches.resize(row.size());
-    for (std::size_t i = 0; i < row.size(); ++i) {
+    for (std::size_t i = 0; i < row.size(); ++i)
         m_col_stretches[i] = layout->ColumnStretch (i);
-    }
 }
 
 ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dropped)

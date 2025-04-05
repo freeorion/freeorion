@@ -105,7 +105,7 @@ void QueueListBox::Render() {
     ListBox::Render();
     // render drop point line
     if (m_show_drop_point && m_order_issuing_enabled) {
-        auto&& row = m_drop_point == end() ? (--end())->get() : m_drop_point->get();
+        auto row = m_drop_point == end() ? (--end())->get() : m_drop_point->get();
         if (!row)
             return;
         GG::Pt ul = row->UpperLeft(), lr = row->LowerRight();
