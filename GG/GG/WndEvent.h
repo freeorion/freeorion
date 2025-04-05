@@ -133,9 +133,9 @@ public:
         m_mod_keys(mod_keys)
     {
         // initialize storage for acceptable Wnds
-        for (const auto& drag_drop_wnd : drag_drop_wnds) {
-            m_drag_drop_wnds[drag_drop_wnd.first.get()] = drag_drop_wnd.second;
-            m_acceptable_drop_wnds[drag_drop_wnd.first.get()] = false;
+        for (const auto& [wnd, pt] : drag_drop_wnds) {
+            m_drag_drop_wnds.insert_or_assign(wnd.get(), pt);
+            m_acceptable_drop_wnds.insert_or_assign(wnd.get(), false);
         }
     }
 
