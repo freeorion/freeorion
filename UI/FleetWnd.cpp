@@ -913,6 +913,7 @@ namespace {
         const ScriptingContext& context = app->GetContext();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
+        const auto& species = context.species;
 
         // ship name text.  blank if no ship.
         auto ship = objects.get<const Ship>(m_ship_id);
@@ -947,7 +948,7 @@ namespace {
             meters_icons.emplace_back(MeterType::METER_SECONDARY_STAT, FightersIcon());
         if (ship->HasTroops(universe))
             meters_icons.emplace_back(MeterType::METER_TROOPS,         TroopIcon());
-        if (ship->CanColonize(universe, GetSpeciesManager()))
+        if (ship->CanColonize(universe, species))
             meters_icons.emplace_back(MeterType::METER_POPULATION,     ColonyIcon());
         if (ship->GetMeter(MeterType::METER_INDUSTRY)->Initial() != 0.0f)
             meters_icons.emplace_back(MeterType::METER_INDUSTRY,       IndustryIcon());
