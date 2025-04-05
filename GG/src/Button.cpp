@@ -644,7 +644,7 @@ void RadioButtonGroup::RemoveButton(StateButton* button)
     assert(index < m_button_slots.size());
 
     const int CELLS_PER_BUTTON = m_expand_buttons ? 1 : 2;
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     layout->Remove(m_button_slots[index].button.get());
     for (std::size_t i = index + 1; i < m_button_slots.size(); ++i) {
         layout->Remove(m_button_slots[i].button.get());

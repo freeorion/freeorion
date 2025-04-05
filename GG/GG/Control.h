@@ -46,9 +46,9 @@ protected:
         Wnd(x, y, w, h, flags)
     {}
 
-    void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void KeyRelease(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void MouseWheel(Pt, int, Flags<ModKey>) override { ForwardEventToParent(); }
+    void KeyPress(Key, uint32_t, Flags<ModKey>) override { ForwardEventToParent(); }
+    void KeyRelease(Key, uint32_t, Flags<ModKey>) override { ForwardEventToParent(); }
 
     Clr  m_color;               ///< the color of the control
     bool m_disabled = false;    ///< whether or not this control is disabled

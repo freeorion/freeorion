@@ -750,7 +750,7 @@ void Wnd::SetLayout(std::shared_ptr<Layout>&& layout)
 
 void Wnd::RemoveLayout()
 {
-    auto&& layout = GetLayout();
+    auto layout = GetLayout();
     m_layout.reset();
     if (!layout)
         return;
@@ -846,9 +846,6 @@ Wnd::DragDropRenderingState Wnd::GetDragDropRenderingState() const
     return retval;
 }
 
-void Wnd::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
-{ if (!Interactive()) ForwardEventToParent(); }
-
 void Wnd::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
 {
     if (Dragable())
@@ -856,15 +853,6 @@ void Wnd::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     else if (!Interactive())
         ForwardEventToParent();
 }
-
-void Wnd::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
-{ if (!Interactive()) ForwardEventToParent(); }
-
-void Wnd::LClick(Pt pt, Flags<ModKey> mod_keys)
-{ if (!Interactive()) ForwardEventToParent(); }
-
-void Wnd::LDoubleClick(Pt pt, Flags<ModKey> mod_keys)
-{ LClick(pt, mod_keys); }
 
 void Wnd::MButtonDown(Pt pt, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
