@@ -630,31 +630,31 @@ CPSize GG::NextWordEdgeFrom(std::string_view text, CPSize from_position, bool se
 
         // start with the leftmost word, traverse words to the right
         // until past the reference point
-        for (const auto& word_range : words) {
-            if (word_range.first > from_position) {
+        for (const auto& [rng_from, rng_to] : words) {
+            if (rng_from > from_position) {
                 // found word is after of the position. can stop
                 // searching and use whatever the last found word's position was
                 break;
 
-            } else if (word_range.first < from_position && word_range.second >= from_position) {
+            } else if (rng_from < from_position && rng_to >= from_position) {
                 // found word starting before and ending at/after the position. can
                 // stop searching and use the start of the found word.
-                retval = word_range.first;
+                retval = rng_from;
                 break;
 
-            } else if (word_range.second < from_position) {
+            } else if (rng_to < from_position) {
                 // found word ending before the position. can use the start
                 // or end of the found word...
-                if (word_range.second < from_position - CP1) {
+                if (rng_to < from_position - CP1) {
                     // there is a gap between the end of the word and the search
                     // reference position. use one past the end of the word
-                    retval = word_range.second + CP1;
+                    retval = rng_to + CP1;
                     // don't break, as there might be later words that are closer to
                     // the search reference position
                 } else {
                     // the end of the word is immediately before the search
                     // reference position. use the start of the word.
-                    retval = word_range.first;
+                    retval = rng_from;
                     // can stop searching since the word is right next to the
                     // search reference position
                     break;
@@ -671,28 +671,29 @@ CPSize GG::NextWordEdgeFrom(std::string_view text, CPSize from_position, bool se
         // start and the rightmost end, traverse the words leftwards
         // until past the reference point
         for (auto rit = words.rbegin(); rit != words.rend(); ++rit) {
-            if (rit->second < from_position) {
+            auto [word_from, word_to] = *rit;
+            if (word_to < from_position) {
                 // found word is before the position. can stop
                 // searching and use whatever the last found word's position was
                 break;
 
-            } else if (rit->first <= from_position && rit->second > from_position) {
+            } else if (word_from <= from_position && word_to > from_position) {
                 // found word starting before/at and ending after the position. can
                 // stop searching and use the end of the found word.
-                retval = rit->second;
+                retval = word_to;
                 break;
 
-            } else if (rit->first > from_position) {
+            } else if (word_from > from_position) {
                 // found word starting after the position. can use the start
                 // or end of the found word...
-                if (rit->first > from_position + CP1) {
+                if (word_from > from_position + CP1) {
                     // there is a gap between the end of the word and the search
                     // reference position. use one before the start of the word
-                    retval = rit->first - CP1;
+                    retval = word_from - CP1;
                 } else {
                     // the start of the word is immediately after the search
                     // reference position. use the end of the word.
-                    retval = rit->second;
+                    retval = word_to;
                     // can stop searching since the word is right next to the
                     // search reference position
                     break;
