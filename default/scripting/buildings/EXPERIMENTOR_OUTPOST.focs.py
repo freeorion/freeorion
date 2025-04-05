@@ -1,4 +1,4 @@
-from buildings.buildings import CAN_ADD_STARLANE_TO_SOURCE
+from buildings.buildings_macros import CAN_ADD_STARLANE_TO_SOURCE
 from focs._effects import (
     AddStarlanes,
     AnyEmpire,

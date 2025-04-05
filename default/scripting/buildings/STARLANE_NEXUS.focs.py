@@ -1,4 +1,8 @@
-from buildings.buildings import BORE_POSSIBLE, DO_STARLANE_BORE, SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from buildings.buildings_macros import (
+    BORE_POSSIBLE,
+    DO_STARLANE_BORE,
+    SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS,
+)
 from focs._effects import (
     Destroy,
     EffectsGroup,

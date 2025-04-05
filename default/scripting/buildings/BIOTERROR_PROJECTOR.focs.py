@@ -1,4 +1,4 @@
-from buildings.buildings import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
+from buildings.buildings_macros import SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS
 from focs._effects import (
     Contains,
     HasSpecial,
