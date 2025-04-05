@@ -123,13 +123,9 @@ namespace {
     { return UserString(to_string(meter_type)); }
 }
 
-void MeterBrowseWnd::Initialize() {
+void MeterBrowseWnd::Initialize(const ScriptingContext& context) {
     m_row_height = MeterBrowseRowHeight();
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
-
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-    const auto& context = app->GetContext();
 
     auto obj = context.ContextObjects().get(m_object_id);
     if (!obj) {
@@ -214,7 +210,7 @@ void MeterBrowseWnd::Initialize() {
         top += m_row_height;
     }
 
-    UpdateSummary();
+    UpdateSummary(context);
 
     UpdateEffectLabelsAndValues(top, context);
 
@@ -230,8 +226,10 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
     // MeterBrowseWnd, and it can be just reshown.without being altered. To
     // refresh a MeterBrowseWnd, recreate it by assigning a new one as the
     // moused-over object's BrowseWnd in this Wnd's place
-    if (!m_initialized)
-        Initialize();
+    if (!m_initialized) {
+        if (const auto* app = IApp::GetApp())
+            Initialize(app->GetContext());
+    }
 }
 
 namespace {
@@ -263,8 +261,8 @@ namespace {
     }
 }
 
-void MeterBrowseWnd::UpdateSummary() {
-    auto obj = Objects().get(m_object_id);
+void MeterBrowseWnd::UpdateSummary(const ScriptingContext& context) {
+    auto obj = context.ContextObjects().get(m_object_id);
     if (!obj)
         return;
 
@@ -523,7 +521,7 @@ void ShipDamageBrowseWnd::Initialize() {
     AttachChild(m_meter_title);
     top += m_row_height;
 
-    UpdateSummary();
+    UpdateSummary(context);
 
     UpdateEffectLabelsAndValues(top, context);
 
@@ -541,12 +539,10 @@ void ShipDamageBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
         Initialize();
 }
 
-void ShipDamageBrowseWnd::UpdateSummary() {
-    auto ship = Objects().get<Ship>(m_object_id);
+void ShipDamageBrowseWnd::UpdateSummary(const ScriptingContext& context) {
+    auto ship = context.ContextObjects().get<Ship>(m_object_id);
     if (!ship)
         return;
-
-    const ScriptingContext& context = ClientApp::GetApp()->GetContext();
 
     // unpaired meter total for breakdown summary
     float total_structure_damage = ship->TotalWeaponsShipDamage(context, 0.0f, false);
@@ -727,7 +723,7 @@ void ShipFightersBrowseWnd::Initialize() {
     m_hangar_list->MoveTo(GG::Pt(ROW_WIDTH + (EDGE_PAD * 2), top));
     AttachChild(m_hangar_list);
 
-    UpdateSummary();
+    UpdateSummary(context);
 
     UpdateEffectLabelsAndValues(top, context);
 
@@ -741,8 +737,8 @@ void ShipFightersBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
         Initialize();
 }
 
-void ShipFightersBrowseWnd::UpdateSummary() {
-    auto ship = Objects().get<Ship>(m_object_id);
+void ShipFightersBrowseWnd::UpdateSummary(const ScriptingContext& context) {
+    auto ship = context.ContextObjects().get<Ship>(m_object_id);
     if (!ship)
         return;
 
