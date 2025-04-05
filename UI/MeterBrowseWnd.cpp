@@ -127,12 +127,15 @@ void MeterBrowseWnd::Initialize() {
     m_row_height = MeterBrowseRowHeight();
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
-    // get objects and meters to verify that they exist
-    auto obj = Objects().get(m_object_id);
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+
+    auto obj = app->GetContext().ContextObjects().get(m_object_id);
     if (!obj) {
-        ErrorLogger() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
+        ErrorLogger() << "MeterBrowseWnd::Initialize couldn't get object with id  " << m_object_id;
         return;
     }
+
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
     const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
@@ -147,8 +150,8 @@ void MeterBrowseWnd::Initialize() {
         std::string summary_title_text;
         if (m_primary_meter_type == MeterType::METER_POPULATION) {
             std::string human_readable_species_name;
-            if (auto pop = std::dynamic_pointer_cast<const Planet>(obj)) {
-                const std::string& species_name = pop->SpeciesName();
+            if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                const auto& species_name = static_cast<const Planet*>(obj.get())->SpeciesName();
                 if (!species_name.empty())
                     human_readable_species_name = UserString(species_name);
             }
