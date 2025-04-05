@@ -193,8 +193,8 @@ namespace parse::detail {
 
     /** Free functions converting containers of MovableEnvelope to unique_ptrs. */
     template <typename T>
-    std::vector<std::unique_ptr<T>> OpenEnvelopes(const std::vector<MovableEnvelope<T>>& envelopes,
-                                                  bool& pass)
+    std::vector<std::unique_ptr<T>> OpenEnvelopes(
+        const std::vector<MovableEnvelope<T>>& envelopes, bool& pass)
     {
         std::vector<std::unique_ptr<T>> retval;
         retval.reserve(envelopes.size());
@@ -209,18 +209,18 @@ namespace parse::detail {
     {
         std::vector<std::pair<std::string, std::unique_ptr<T>>> retval;
         retval.reserve(in.size());
-        for (auto&& name_and_value : in)
-            retval.emplace_back(name_and_value.first, name_and_value.second.OpenEnvelope(pass));
+        for (auto& [name, value] : in)
+            retval.emplace_back(name, value.OpenEnvelope(pass));
         return retval;
     }
 
     template <typename K, typename V>
-    std::map<K, std::unique_ptr<V>> OpenEnvelopes(const std::map<K, MovableEnvelope<V>>& in,
-                                                  bool& pass)
+    std::map<K, std::unique_ptr<V>> OpenEnvelopes(
+        const std::map<K, MovableEnvelope<V>>& in, bool& pass)
     {
         std::map<K, std::unique_ptr<V>> retval;
-        for (auto&& name_and_value : in)
-            retval.emplace(name_and_value.first, name_and_value.second.OpenEnvelope(pass));
+        for (auto& [name, value] : in)
+            retval.emplace(name, value.OpenEnvelope(pass));
         return retval;
     }
 
