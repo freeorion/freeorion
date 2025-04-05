@@ -328,7 +328,7 @@ void IDAllocator::SerializeForEmpire(Archive& ar, const unsigned int version, in
             std::unordered_map<int, ID_t> temp_empire_id_to_object_id{};
             auto temp_offset_to_empire_id = std::vector<int>(m_offset_to_empire_id.size(), m_server_id);
 
-            auto&& it = m_empire_id_to_next_assigned_object_id.find(empire_id);
+            auto it = m_empire_id_to_next_assigned_object_id.find(empire_id);
             if (it == m_empire_id_to_next_assigned_object_id.end()) {
                 ErrorLogger() << "Attempt to serialize allocator for an empire_id "
                               << empire_id << " not in id manager table.";

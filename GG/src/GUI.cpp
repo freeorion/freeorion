@@ -284,7 +284,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, Pt pos, int curr
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Top() - pos.y;
         else
             m_wnd_resize_offset.y = curr_wnd_under_cursor->Bottom() - pos.y;
-        auto&& drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
+        auto drag_wnds_root_parent = curr_wnd_under_cursor->RootParent();
         GUI::s_gui->MoveUp(drag_wnds_root_parent ? drag_wnds_root_parent : curr_wnd_under_cursor);
         curr_wnd_under_cursor->HandleEvent(WndEvent(
             ButtonEvent(WndEvent::EventType::LButtonDown, mouse_button), pos, m_mod_keys));
@@ -317,7 +317,7 @@ void GUIImpl::HandleMouseDrag(unsigned int mouse_button, Pt pos, int curr_ticks)
                 dragged_wnd->DragDropDataType() != "" &&// Wnd must have a defined drag-drop data type to be drag-dropped
                 mouse_button == 0)                      // left mouse button drag-drop only
             {
-                auto&& parent = dragged_wnd->Parent();
+                auto parent = dragged_wnd->Parent();
                 Pt offset = m_prev_mouse_button_press_pos - dragged_wnd->UpperLeft();
                 // start drag
                 GUI::s_gui->RegisterDragDropWnd(dragged_wnd, offset, parent);
@@ -500,7 +500,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, Pt pos, int cu
                     m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
                     // prep / handle end of drag-drop
-                    auto&& drag_drop_originating_wnd = click_drag_wnd->Parent();
+                    auto drag_drop_originating_wnd = click_drag_wnd->Parent();
                     m_drag_drop_originating_wnd = drag_drop_originating_wnd;
                     curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::EventType::DragDropLeave));
                     m_curr_drag_drop_here_wnd.reset();
@@ -537,7 +537,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, Pt pos, int cu
                 m_drag_drop_wnds_acceptable = event.GetAcceptableDropWnds();
 
                 // prep / handle end of drag-drop
-                auto&& drag_drop_originating_wnd = click_drag_wnd->Parent();
+                auto drag_drop_originating_wnd = click_drag_wnd->Parent();
                 m_drag_drop_originating_wnd = drag_drop_originating_wnd;
                 curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::EventType::DragDropLeave));
                 m_curr_drag_drop_here_wnd.reset();
@@ -662,7 +662,7 @@ void GUIImpl::HandleKeyRelease(Key key, uint32_t key_code_point,
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
-    auto&& focus_wnd = FocusWnd();
+    auto focus_wnd = FocusWnd();
     if (focus_wnd)
         focus_wnd->HandleEvent(WndEvent(
             WndEvent::EventType::KeyRelease, key, key_code_point, mod_keys));
@@ -672,8 +672,7 @@ void GUIImpl::HandleTextInput(std::string text) {
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
-    auto&& focus_wnd = FocusWnd();
-    if (focus_wnd)
+    if (auto focus_wnd = FocusWnd())
         focus_wnd->HandleEvent(WndEvent(WndEvent::EventType::TextInput, std::move(text)));
 }
 
@@ -682,7 +681,7 @@ void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, Pt pos, Pt rel,
 {
     auto curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, m_mod_keys);
     m_curr_wnd_under_cursor = curr_wnd_under_cursor;
-    const auto&& prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
+    const auto prev_wnd_under_cursor = LockAndResetIfExpired(m_prev_wnd_under_cursor);
 
     m_mouse_pos = pos; // record mouse position
     m_mouse_rel = rel; // record mouse movement
@@ -738,7 +737,7 @@ std::shared_ptr<Wnd> GUIImpl::FocusWnd() const
 
 void GUIImpl::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
 {
-    auto&& focus_wnd = FocusWnd();
+    auto focus_wnd = FocusWnd();
     if (focus_wnd == wnd)
         return;
 
@@ -747,15 +746,12 @@ void GUIImpl::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
         focus_wnd->HandleEvent(WndEvent(WndEvent::EventType::LosingFocus));
 
     if (m_modal_wnds.empty())
-        m_focus_wnd = wnd;
+        m_focus_wnd = std::move(wnd);
     else
-        // m_modal_wnds stores the window that is modal and the child that has
-        // focus separately.
-        m_modal_wnds.back().second = wnd;
+        m_modal_wnds.back().second = std::move(wnd); // m_modal_wnds stores the window that is modal and the child that has focus separately.
 
     // inform new focus wnd that it is gaining focus
-    auto&& new_focus_wnd = FocusWnd();
-    if (new_focus_wnd)
+    if (auto new_focus_wnd = FocusWnd())
         new_focus_wnd->HandleEvent(WndEvent(WndEvent::EventType::GainingFocus));
 }
 
@@ -853,10 +849,10 @@ std::shared_ptr<Wnd> GUI::FocusWnd() const
 
 bool GUI::FocusWndAcceptsTypingInput() const
 {
-    const auto&& focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (auto focus_wnd = FocusWnd())
+        return dynamic_cast<const Edit*>(focus_wnd.get()); // currently only Edit controls accept text input, so far as I'm aware. Could add a ->AcceptsTypingInput() function to Wnd if needed
+    else
         return false;
-    return dynamic_cast<const Edit*>(focus_wnd.get());    // currently only Edit controls accept text input, so far as I'm aware. Could add a ->AcceptsTypingInput() function to Wnd if needed
 }
 
 std::shared_ptr<Wnd> GUI::PrevFocusInteractiveWnd() const
@@ -1244,16 +1240,14 @@ void GUI::SetFocusWnd(const std::shared_ptr<Wnd>& wnd)
 
 bool GUI::SetPrevFocusWndInCycle()
 {
-    auto&& prev_wnd = PrevFocusInteractiveWnd();
-    if (prev_wnd)
+    if (auto prev_wnd = PrevFocusInteractiveWnd())
         SetFocusWnd(prev_wnd);
     return true;
 }
 
 bool GUI::SetNextFocusWndInCycle()
 {
-    auto&& next_wnd = NextFocusInteractiveWnd();
-    if (next_wnd)
+    if (auto next_wnd = NextFocusInteractiveWnd())
         SetFocusWnd(next_wnd);
     return true;
 }
@@ -1270,7 +1264,7 @@ void GUI::Register(std::shared_ptr<Wnd> wnd)
         return;
 
     // Make top level by removing from parent
-    if (auto&& parent = wnd->Parent())
+    if (auto parent = wnd->Parent())
         parent->DetachChild(wnd);
 
     m_impl->m_zlist.Add(std::move(wnd));
@@ -1353,7 +1347,7 @@ void GUI::RegisterDragDropWnd(std::shared_ptr<Wnd> wnd, Pt offset,
     assert(wnd);
 
     // Throw if all dragged wnds are not from the same original wnd.
-    const auto&& drag_drop_originating_wnd = LockAndResetIfExpired(m_impl->m_drag_drop_originating_wnd);
+    const auto drag_drop_originating_wnd = LockAndResetIfExpired(m_impl->m_drag_drop_originating_wnd);
     if (!m_impl->m_drag_drop_wnds.empty() && originating_wnd != drag_drop_originating_wnd) {
         std::string m_impl_orig_wnd_name("NULL");
         std::string orig_wnd_name("NULL");
@@ -1496,10 +1490,10 @@ bool GUI::SetClipboardText(std::string text)
 
 bool GUI::CopyFocusWndText()
 {
-    const auto&& focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (const auto focus_wnd = FocusWnd())
+        return CopyWndText(focus_wnd.get());
+    else
         return false;
-    return CopyWndText(focus_wnd.get());
 }
 
 bool GUI::CopyWndText(const Wnd* wnd)
@@ -1525,10 +1519,10 @@ bool GUI::CopyWndText(const Wnd* wnd)
 
 bool GUI::PasteFocusWndText(const std::string& text)
 {
-    auto&& focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (auto focus_wnd = FocusWnd())
+        return PasteWndText(focus_wnd.get(), text);
+    else
         return false;
-    return PasteWndText(focus_wnd.get(), text);
 }
 
 bool GUI::PasteWndText(Wnd* wnd, const std::string& text)
@@ -1542,22 +1536,18 @@ bool GUI::PasteWndText(Wnd* wnd, const std::string& text)
 }
 
 bool GUI::PasteFocusWndClipboardText()
-{
-    return PasteFocusWndText(ClipboardText());
-}
+{ return PasteFocusWndText(ClipboardText()); }
 
 bool GUI::CutFocusWndText()
 {
-    auto&& focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (auto focus_wnd = FocusWnd())
+        return CutWndText(focus_wnd.get());
+    else
         return false;
-    return CutWndText(focus_wnd.get());
 }
 
 bool GUI::CutWndText(Wnd* wnd)
-{
-    return CopyWndText(wnd) && PasteWndText(wnd, "");
-}
+{ return CopyWndText(wnd) && PasteWndText(wnd, ""); }
 
 bool GUI::WndSelectAll(Wnd* wnd)
 {
@@ -1589,18 +1579,18 @@ bool GUI::WndDeselect(Wnd* wnd)
 
 bool GUI::FocusWndSelectAll()
 {
-    auto&& focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (auto focus_wnd = FocusWnd())
+        return WndSelectAll(focus_wnd.get());
+    else
         return false;
-    return WndSelectAll(focus_wnd.get());
 }
 
 bool GUI::FocusWndDeselect()
 {
-    auto&& focus_wnd = FocusWnd();
-    if (!focus_wnd)
+    if (auto focus_wnd = FocusWnd())
+        return WndDeselect(focus_wnd.get());
+    else
         return false;
-    return WndDeselect(focus_wnd.get());
 }
 
 GUI* GUI::GetGUI() noexcept
@@ -1752,13 +1742,13 @@ void GUI::RenderDragDropWnds()
 
 void GUI::ProcessBrowseInfo()
 {
-    auto&& wnd = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+    auto wnd = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
     assert(wnd);
 
     if (!m_impl->m_mouse_button_state[0] && !m_impl->m_mouse_button_state[1] && !m_impl->m_mouse_button_state[2] &&
         (m_impl->m_modal_wnds.empty() || wnd->RootParent() == m_impl->m_modal_wnds.back().first))
     {
-        auto&& parent = wnd->Parent();
+        auto parent = wnd->Parent();
         while (!ProcessBrowseInfoImpl(wnd.get())
                && parent
                && (dynamic_cast<Control*>(wnd.get()) || dynamic_cast<Layout*>(wnd.get())))
@@ -1885,13 +1875,13 @@ std::shared_ptr<Wnd> GUI::CheckedGetWindowUnder(Pt pt, Flags<ModKey> mod_keys)
     bool unregistered_drag_drop = dragged_wnd && !dragged_wnd->DragDropDataType().empty();
     bool registered_drag_drop = !m_impl->m_drag_drop_wnds.empty();
 
-    const auto&& curr_drag_drop_here_wnd = LockAndResetIfExpired(m_impl->m_curr_drag_drop_here_wnd);
+    const auto curr_drag_drop_here_wnd = LockAndResetIfExpired(m_impl->m_curr_drag_drop_here_wnd);
     if (curr_drag_drop_here_wnd && !unregistered_drag_drop && !registered_drag_drop) {
         curr_drag_drop_here_wnd->HandleEvent(WndEvent(WndEvent::EventType::DragDropLeave));
         m_impl->m_curr_drag_drop_here_wnd.reset();
     }
 
-    const auto&& curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
+    const auto curr_wnd_under_cursor = LockAndResetIfExpired(m_impl->m_curr_wnd_under_cursor);
     if (wnd_under_pt == curr_wnd_under_cursor)
         return wnd_under_pt;   // same Wnd is under cursor as before; nothing to do
 

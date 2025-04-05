@@ -236,7 +236,7 @@ void BuildingsPanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_planet_id]);
 
     if (old_size != Size())
-        if (auto&& parent = Parent())
+        if (auto parent = Parent())
             parent->RequirePreRender();
 }
 

@@ -534,11 +534,11 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
                     continue;
 
                 auto count = std::to_string(index_and_event.second);
-                const auto&& attacker_link = FighterOrPublicNameLink(
+                const auto attacker_link = FighterOrPublicNameLink(
                     viewing_empire_id, INVALID_OBJECT_ID, attacker_empire, context);
-                const auto&& target_link = FighterOrPublicNameLink(
+                const auto target_link = FighterOrPublicNameLink(
                     viewing_empire_id, INVALID_OBJECT_ID, target_empire, context);
-                const std::string& template_str = UserString("ENC_COMBAT_ATTACK_REPEATED_STR");
+                const auto& template_str = UserString("ENC_COMBAT_ATTACK_REPEATED_STR");
 
                 ss << str(FlexibleFormat(template_str) % count % attacker_link % target_link);
                 if (--num_events_remaining > 0)
