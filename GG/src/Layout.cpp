@@ -312,7 +312,7 @@ void Layout::DoLayout(Pt ul, Pt lr)
         size_or_min_size_changed = true;
 
     // if this is the layout object for some Wnd, propogate the minimum size up to the owning Wnd
-    if (auto&& parent = Parent()) {
+    if (auto parent = Parent()) {
         if (parent->GetLayout().get() == this) {
             const auto new_parent_min_size = MinSize() + parent->Size() - parent->ClientSize();
             ScopedAssign<bool> assignment(m_stop_resize_recursion, true);

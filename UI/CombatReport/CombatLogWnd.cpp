@@ -547,7 +547,7 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
 
 
 void CombatLogWnd::Impl::AddRow(std::shared_ptr<GG::Wnd> wnd) {
-    if (auto&& layout = m_wnd.GetLayout())
+    if (auto layout = m_wnd.GetLayout())
         layout->Add(std::move(wnd), layout->Rows(), 0);
 }
 
