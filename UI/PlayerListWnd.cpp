@@ -263,8 +263,13 @@ namespace {
             AttachChild(m_peace_indicator);
             AttachChild(m_allied_indicator);
 
-            DoLayout();
-            Update();
+            const auto* app = GGHumanClientApp::GetApp();
+            if (app) {
+                DoLayout(app->GetContext().Empires());
+                Update(*app);
+            } else {
+                DoLayout(0);
+            }    
         }
 
         /** Excludes border from the client area. */
@@ -319,12 +324,12 @@ namespace {
 
             // render incoming diplomatic message icon, if there is one
             const DiplomaticMessage& incoming_message_to_client =
-                Empires().GetDiplomaticMessage(m_empire_id, app->EmpireID());
+                app->Empires().GetDiplomaticMessage(m_empire_id, app->EmpireID());
             if (incoming_message_to_client.GetType() != DiplomaticMessage::Type::INVALID)
                 MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
 
             // render player status icon
-            if (const auto *empire = GetEmpire(m_empire_id))
+            if (const auto empire = app->GetContext().GetEmpire(m_empire_id))
                 (empire->Ready() ? WaitingIcon() : PlayingIcon())->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE);
 
             // render player type icon
@@ -353,26 +358,28 @@ namespace {
             }
         }
 
-        void Select(bool b)
+        void Select(bool b) noexcept
         { m_selected = b; }
 
         void SizeMove(GG::Pt ul, GG::Pt lr) override {
             const auto old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
-                DoLayout();
+                if (const auto* app = ClientApp::GetApp())
+                    DoLayout(app->GetContext().Empires());
         }
 
-        void Update() {
-            const ClientApp* app = ClientApp::GetApp();
-            if (!app) {
-                ErrorLogger() << "PlayerDataPanel::Update couldn't get client app!";
-                return;
-            }
+        void Update(const ClientApp& app) { Update(app.GetContext(), app.Players(), app.EmpireID()); }
+
+        void Update(const ScriptingContext& context, const auto& players, int app_empire_id) {
+            const auto& objects = context.ContextObjects();
+            const auto& universe = context.ContextUniverse();
+            const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(app_empire_id);
+            const auto& this_client_stale_object_info       = universe.EmpireStaleKnowledgeObjectIDs(app_empire_id);
+            const auto empire = context.GetEmpire(m_empire_id);
 
             // empire name
             std::string empire_name;
-            const std::map<int, PlayerInfo>& players = app->Players();
 
             auto player_it = players.find(m_player_id);
             if (player_it != players.end()) {
@@ -388,15 +395,14 @@ namespace {
 
             // if player has an empire, get its name and colour.  (Some player types might not have empires...)
             GG::Clr empire_color = ClientUI::TextColor();
-            const Empire* empire = GetEmpire(m_empire_id);
             if (empire) {
                 empire_color = empire->Color();
                 // ignore player name
                 empire_name = empire->Name();
-                if (m_empire_id == ALL_EMPIRES || m_empire_id == app->EmpireID())
+                if (m_empire_id == ALL_EMPIRES || m_empire_id == app_empire_id)
                     m_diplo_status = DiplomaticStatus::INVALID_DIPLOMATIC_STATUS;
                 else
-                    m_diplo_status = Empires().GetDiplomaticStatus(m_empire_id, app->EmpireID());
+                    m_diplo_status = context.ContextDiploStatus(m_empire_id, app_empire_id);
                 if (empire->Won())
                     m_win_status = WON; // even if you later get eliminated, you still won
                 else if (empire->Eliminated())
@@ -411,15 +417,11 @@ namespace {
             m_empire_name_text->SetTextColor(empire_color);
             m_empire_name_text->SetText(std::move(empire_name));
 
-            const ObjectMap& objects = Objects();
             double empires_ship_count = 0.0;
             double empires_planet_count = 0.0;
             double empires_production_points = 0.0;
             double empires_research_points = 0.0;
             double empires_influence_points = 0.0;
-
-            const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
-            const auto& this_client_stale_object_info       = GetUniverse().EmpireStaleKnowledgeObjectIDs(GGHumanClientApp::GetApp()->EmpireID());
 
             if (empire) {
                 for (auto* ship : objects.allRaw<Ship>()) {
@@ -471,10 +473,14 @@ namespace {
             m_peace_indicator->Update();
             m_allied_indicator->Update();
         }
-    private:
-        int IconSize() const { return Value(Height()) - 2; }
 
-        void DoLayout() {
+    private:
+        int IconSize() const noexcept(noexcept(Value(Height()))) { return Value(Height()) - 2; }
+
+        void DoLayout(const EmpireManager& empires)
+        { DoLayout(empires.NumEmpires() - empires.NumEliminatedEmpires()); }
+
+        void DoLayout(int active_empire_count) {
             const GG::X pts{ClientUI::Pts()};
             //const GG::X PLAYER_NAME_WIDTH(pts       * 10); // uses below commented out
             const GG::X EMPIRE_NAME_WIDTH(pts       * 10);
@@ -490,13 +496,14 @@ namespace {
             GG::Y bottom{ClientHeight()};
             static constexpr GG::X PAD{3};
 
-            int diplo_status_width = (Empires().NumEmpires() - Empires().NumEliminatedEmpires() + 1) * (IconSize() + Value(PAD));
+            const auto ICON_SIZE = IconSize();
+            const int diplo_status_width = (active_empire_count + 1) * (ICON_SIZE + Value(PAD));
 
             m_diplo_status_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_diplo_msg_ul = GG::Pt(left, top);
-            left += IconSize();
+            left += ICON_SIZE;
 
             //m_player_name_text->SizeMove(GG::Pt(left, top), GG::Pt(left + PLAYER_NAME_WIDTH, bottom));
             //left += PLAYER_NAME_WIDTH;
@@ -505,52 +512,52 @@ namespace {
             left += EMPIRE_NAME_WIDTH;
 
             m_ship_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_empire_ship_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_SHIP_WIDTH, bottom));
             left += EMPIRE_SHIP_WIDTH;
 
             m_planet_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_empire_planet_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_PLANET_WIDTH, bottom));
             left += EMPIRE_PLANET_WIDTH;
 
             m_production_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_empire_production_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_PRODUCTION_WIDTH, bottom));
             left += EMPIRE_PRODUCTION_WIDTH;
 
             m_research_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_empire_research_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_RESEARCH_WIDTH, bottom));
             left += EMPIRE_RESEARCH_WIDTH;
 
             m_influence_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_empire_influence_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_INFLUENCE_WIDTH, bottom));
             left += EMPIRE_INFLUENCE_WIDTH;
 
             m_detection_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_empire_detection_text->SizeMove(GG::Pt(left, top), GG::Pt(left + EMPIRE_DETECTION_WIDTH, bottom));
             left += EMPIRE_DETECTION_WIDTH;
 
             m_player_status_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_player_type_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_host_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_win_status_icon_ul = GG::Pt(left, top);
-            left += IconSize() + PAD;
+            left += ICON_SIZE + PAD;
 
             m_war_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
             left += diplo_status_width;
@@ -560,7 +567,6 @@ namespace {
 
             m_allied_indicator->SizeMove(GG::Pt(left, top), GG::Pt(GG::X(left + diplo_status_width), bottom));
             left += diplo_status_width;
-
         }
 
         const int                                   m_player_id;
@@ -622,23 +628,17 @@ namespace {
         }
 
         void CompleteConstruction() override {
-
             GG::ListBox::Row::CompleteConstruction();
             m_panel = GG::Wnd::Create<PlayerDataPanel>(Width(), Height(), m_player_id, m_empire_id);
             push_back(m_panel);
         }
 
-        int     PlayerID() const {
-            return m_player_id;
-        }
+        auto PlayerID() const noexcept { return m_player_id; }
+        auto EmpireID() const noexcept { return m_empire_id; }
 
-        int     EmpireID() const {
-            return m_empire_id;
-        }
-
-        void    Update() {
+        void Update(const ClientApp& app) {
             if (m_panel)
-                m_panel->Update();
+                m_panel->Update(app);
         }
 
         /** This function overridden because otherwise, rows don't expand
@@ -716,13 +716,22 @@ void PlayerListWnd::CompleteConstruction() {
         boost::bind(&PlayerListWnd::PlayerRightClicked, this, ph::_1, ph::_2, ph::_3));
     AttachChild(m_player_list);
 
-    Empires().DiplomaticStatusChangedSignal.connect(
-        boost::bind(&PlayerListWnd::Update, this));
-    Empires().DiplomaticMessageChangedSignal.connect(
-        boost::bind(&PlayerListWnd::PlayerListWnd::HandleDiplomaticMessageChange, this, ph::_1, ph::_2));
+    const auto* app = ClientApp::GetApp();
+    if (app) {
+        const auto& empires = app->GetContext().Empires();
+
+        m_diplo_message_connection = empires.DiplomaticStatusChangedSignal.connect(
+            [this](auto, auto) { if (const auto* app = ClientApp::GetApp()) Update(*app); });
+        m_diplo_status_connection = empires.DiplomaticMessageChangedSignal.connect(
+            [this](auto id1, auto id2) {
+                if (const auto* app = ClientApp::GetApp()) HandleDiplomaticMessageChange(id1, id2, *app);
+            });
+    }
+
     DoLayout();
 
-    Refresh();
+    if (app)
+        Refresh(*app);
 }
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
@@ -738,19 +747,15 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
     return retval;
 }
 
-void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
-    Update();
+void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id, const ClientApp& app) {
+    Update(app);
 
-    const ClientApp* app = ClientApp::GetApp();
-    if (!app) {
-        ErrorLogger() << "PlayerListWnd::HandleDiplomaticMessageChange couldn't get client app!";
-        return;
-    }
-    int client_empire_id = app->EmpireID();
+    const int client_empire_id = app.EmpireID();
     if (client_empire_id == ALL_EMPIRES)
         return;
 
-    DiplomaticMessage message = Empires().GetDiplomaticMessage(empire1_id, empire2_id);
+    const auto& empires = app.GetContext().Empires();
+    DiplomaticMessage message = empires.GetDiplomaticMessage(empire1_id, empire2_id);
     bool active_message = message.GetType() != DiplomaticMessage::Type::INVALID;
 
     // only show PlayerListWnd if there is a new diplomatic offer for the client empire
@@ -761,8 +766,8 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
 
     // if there is no more pending messages, stop flashing
     active_message = false;
-    for (const auto& empire : Empires()) {
-        message = Empires().GetDiplomaticMessage(empire.first, client_empire_id);
+    for (const auto empire_id : empires.EmpireIDs()) {
+        message = empires.GetDiplomaticMessage(empire_id, client_empire_id);
         if (message.GetType() != DiplomaticMessage::Type::INVALID) {
             active_message = true;
             break;
@@ -773,40 +778,35 @@ void PlayerListWnd::HandleDiplomaticMessageChange(int empire1_id, int empire2_id
         StopFlash();
 }
 
-void PlayerListWnd::Update() {
+void PlayerListWnd::Update(const ClientApp& app) {
+    if (!m_player_list)
+        return;
     for (auto& row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row.get()))
-            player_row->Update();
+            player_row->Update(app);
     }
 }
 
-void PlayerListWnd::Refresh() {
-    std::set<int> initially_selected_players = this->SelectedPlayerIDs();
+void PlayerListWnd::Refresh(const ClientApp& app) {
+    const auto initially_selected_players = this->SelectedPlayerIDs();
 
     m_player_list->Clear();
-
-    const ClientApp* app = ClientApp::GetApp();
-    if (!app) {
-        ErrorLogger() << "PlayerListWnd::Refresh couldn't get client app!";
-        return;
-    }
 
     const GG::Pt row_size = m_player_list->ListRowSize();
 
     // first fill empires
-    for (const auto& empire : Empires()) {
-        int player_id = app->EmpirePlayerID(empire.first);
-        auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, empire.first);
+    for (const auto empire_id : app.GetContext().EmpireIDs()) {
+        int player_id = app.EmpirePlayerID(empire_id);
+        auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, empire_id);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }
 
     // second fill players without empires
-    const std::map<int, PlayerInfo>& players = app->Players();
+    const auto& players = app.Players();
 
-    for (const auto& player : players) {
-        if (player.second.empire_id == ALL_EMPIRES) {
-            int player_id = player.first;
+    for (const auto& [player_id, player] : players) {
+        if (player.empire_id == ALL_EMPIRES) {
             auto player_row = GG::Wnd::Create<PlayerRow>(row_size.x, row_size.y, player_id, ALL_EMPIRES);
             m_player_list->Insert(player_row);
             player_row->Resize(row_size);
