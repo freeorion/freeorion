@@ -2,6 +2,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUI
 
 add_executable(fo_unittest_util
     main.cpp
+    $<TARGET_OBJECTS:freeorionparseobj>
 )
 
 target_include_directories(fo_unittest_util
