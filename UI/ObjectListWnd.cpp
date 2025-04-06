@@ -2025,8 +2025,10 @@ public:
         m_header_row = GG::Wnd::Create<ObjectHeaderRow>(GG::X1, ListRowHeight());
         SetColHeaders(m_header_row); // Gives ownership
 
-        m_header_row->ColumnsChangedSignal.connect(
-            boost::bind(&ObjectListBox::Refresh, this));
+        m_header_row->ColumnsChangedSignal.connect([this]() {
+            if (const auto* app = IApp::GetApp())
+                Refresh(app->GetContext());
+        });
         m_header_row->ColumnHeaderLeftClickSignal.connect(
             boost::bind(&ObjectListBox::SortingClicked, this, boost::placeholders::_1));
         m_obj_deleted_connection = GetUniverse().UniverseObjectDeleteSignal.connect(
@@ -2069,7 +2071,8 @@ public:
         } else {
             m_collapsed_objects.insert(object_id);
         }
-        Refresh();
+        if (const auto* app = IApp::GetApp())
+            Refresh(app->GetContext());
     }
 
     void ExpandObject(int object_id = INVALID_OBJECT_ID) {
@@ -2077,7 +2080,8 @@ public:
             m_collapsed_objects.clear();
         else
             m_collapsed_objects.erase(object_id);
-        Refresh();
+        if (const auto* app = IApp::GetApp())
+            Refresh(app->GetContext());
     }
 
     bool ObjectCollapsed(int object_id) const
@@ -2088,14 +2092,16 @@ public:
 
     void SetFilterCondition(std::unique_ptr<Condition::Condition>&& condition) {
         m_filter_condition = std::move(condition);
-        Refresh();
+        if (const auto* app = IApp::GetApp())
+            Refresh(app->GetContext());
     }
 
     void SetVisibilityFilters(auto&& vis) {
         if constexpr (requires { vis != m_visibilities; }) {
             if (vis != m_visibilities) {
                 m_visibilities = std::forward<decltype(vis)>(vis);
-                Refresh();
+                if (const auto* app = IApp::GetApp())
+                    Refresh(app->GetContext());
             }
         } else {
             decltype(m_visibilities) new_vis;
@@ -2104,7 +2110,8 @@ public:
 
             if (new_vis != m_visibilities) {
                 m_visibilities = std::move(new_vis);
-                Refresh();
+                if (const auto* app = IApp::GetApp())
+                    Refresh(app->GetContext());
             }
         }
     }
@@ -2160,7 +2167,7 @@ public:
         return it->second.contains(VIS_DISPLAY::SHOW_PREVIOUSLY_VISIBLE);
     }
 
-    void Refresh() {
+    void Refresh(const ScriptingContext& context) {
         SectionedScopedTimer timer("ObjectListBox::Refresh");
         const std::size_t first_visible_queue_row = std::distance(this->begin(), this->FirstRowShown());
         ClearContents();
@@ -2177,7 +2184,6 @@ public:
         std::map<int, std::vector<std::shared_ptr<const Building>>> planet_buildings;
         std::map<int, std::vector<std::shared_ptr<const Field>>>    system_fields;
 
-        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
         const ObjectMap& objects{context.ContextObjects()};
 
         // TODO: set up predicate for ObjectShown and pass to objects.find instead of objects.all
@@ -2403,7 +2409,8 @@ public:
 
             // Sorting and nesting don't really work well together. The user may have turned sorting off
             // to get nesting to work. So let's rebuild the world to make sure nesting works again.
-            Refresh();
+            if (const auto* app = IApp::GetApp())
+                Refresh(app->GetContext());
             //std::cout << "col -1 : set style to no sort" << std::endl;
 
         } else if (!GetColumnName(clicked_column).empty()) { // empty columns are not sort-worthy
@@ -2525,8 +2532,11 @@ private:
     void ObjectStateChanged(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        auto obj = Objects().get(object_id);
-        DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
+        const auto* app = IApp::GetApp();
+        if (!app)
+            return;
+        const auto& context = app->GetContext();
+        auto obj = context.ContextObjects().get(object_id);
         if (!obj)
             return;
 
@@ -2534,7 +2544,7 @@ private:
         if (type == UniverseObjectType::OBJ_SHIP || type == UniverseObjectType::OBJ_BUILDING)
             UpdateObjectPanel(object_id);
         else if (type == UniverseObjectType::OBJ_FLEET || type == UniverseObjectType::OBJ_PLANET || type == UniverseObjectType::OBJ_SYSTEM)
-            Refresh();
+            Refresh(context);
     }
 
     void UniverseObjectDeleted(const std::shared_ptr<const UniverseObject>& obj)
@@ -2616,8 +2626,8 @@ void ObjectListWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
         DoLayout();
 }
 
-void ObjectListWnd::Refresh()
-{ m_list_box->Refresh(); }
+void ObjectListWnd::Refresh(const ScriptingContext& context)
+{ m_list_box->Refresh(context); }
 
 void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     // mark as selected all ObjectPanel that are in \a rows and mark as not
@@ -2700,7 +2710,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     // Refresh and clean up common to focus and production changes.
     auto focus_ship_building_common_action = [this]() {
         auto sel_ids = SelectedObjectIDs();
-        Refresh();
+        if (const auto* app = IApp::GetApp())
+            Refresh(app->GetContext());
         SetSelectedObjects(sel_ids);
         ObjectSelectionChanged(m_list_box->Selections());
     };

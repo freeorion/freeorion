@@ -7,15 +7,16 @@
 #include <GG/ListBox.h>
 
 class ObjectListBox;
+struct ScriptingContext;
 
 
 class ObjectListWnd : public CUIWnd {
 public:
-    ObjectListWnd(std::string_view config_name = "");
+    explicit ObjectListWnd(std::string_view config_name = "");
     void CompleteConstruction() override;
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void Refresh();
+    void Refresh(const ScriptingContext& context);
 
     mutable boost::signals2::signal<void ()>    SelectedObjectsChangedSignal;
     mutable boost::signals2::signal<void (int)> ObjectDoubleClickedSignal;
