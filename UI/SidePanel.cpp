@@ -3171,7 +3171,10 @@ namespace {
             }
             m_labels_and_amounts.clear();
 
-            auto system = Objects().get<System>(m_system_id);
+            const auto* app = IApp::GetApp();
+            if (!app) return;
+            const auto& objects = app->GetContext().ContextObjects();
+            const auto system = objects.get<System>(m_system_id);
             if (!system)
                 return;
 
@@ -3186,10 +3189,10 @@ namespace {
 
             GG::Y top = row_height;
             // add label-value pair for each resource-producing object in system to indicate amount of resource produced
-            auto objects = Objects().find<const Planet>(system->ContainedObjectIDs());
-            for (const auto& planet : objects) {
+            const auto contained_objects = objects.findRaw<const Planet>(system->ContainedObjectIDs());
+            for (const auto* planet : contained_objects) {
                 // Ignore empty planets
-                if (planet->Unowned() && planet->SpeciesName().empty())
+                if (!planet || (planet->Unowned() && planet->SpeciesName().empty()))
                     continue;
 
                 auto label = GG::Wnd::Create<CUILabel>(planet->Name(), GG::FORMAT_RIGHT);
@@ -3222,6 +3225,7 @@ namespace {
 
             Resize(GG::Pt(LabelWidth() + ValueWidth(), top));
         }
+
     private:
         MeterType m_meter_type;
         int m_system_id;
