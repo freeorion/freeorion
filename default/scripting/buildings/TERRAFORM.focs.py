@@ -52,18 +52,56 @@ def AGGREGATED_STEPS_FROM_TO(from_, to):
     return (1 + PlanetTypeDifference(from_=from_, to=to)) * (PlanetTypeDifference(from_=from_, to=to) / 2)
 
 
-def TARGET_TERRAFORMING(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8):
-    """
-    // @1@ clockwise previous type
-    // @2@ target type
-    // @3@ clockwise next type
-    // @4-8@ cw-2 - cw+2 in upper case
-    :return:
-    """
+_terraforming_order = [
+    Desert,
+    Terran,
+    Ocean,
+    Swamp,
+    Toxic,
+    Inferno,
+    Radiated,
+    Barren,
+    Tundra,
+]
+
+_mapping = {
+    Desert: "DESERT",
+    Terran: "TERRAN",
+    Ocean: "OCEAN",
+    Swamp: "SWAMP",
+    Toxic: "TOXIC",
+    Inferno: "INFERNO",
+    Radiated: "RADIATED",
+    Barren: "BARREN",
+    Tundra: "TUNDRA",
+}
+
+
+def get_related(current, step: int):
+    curren_index = _terraforming_order.index(current)
+    # keep ne index as list index.
+    # To support negative steps add full length and divide for full length by module
+    # l = 10, start = 0
+    # step = 1:  0 + 1 + 10 => 11;  11 % 10 = 1  # second element in the list
+    # step = -1:  0 - 1 + 10 => 9;  9 % 10 = 9  # last element in the list
+    new_index = (curren_index + step + len(_terraforming_order)) % len(_terraforming_order)
+    return _terraforming_order[new_index]
+
+
+def _get_name(planet_type):
+    return f"BLD_TERRAFORM_{_mapping[planet_type]}"
+
+
+def TARGET_TERRAFORMING(*, current_type):
+    before_source = get_related(current_type, -1)
+    target_type = get_related(current_type, +1)
+
+    pre_before_source = get_related(current_type, -2)
+    post_target = get_related(current_type, +2)
 
     BuildingType(  # type: ignore[reportUnboundVariable]
-        name=f"BLD_TERRAFORM_{arg6}",
-        description=f"BLD_TERRAFORM_{arg6}_DESC",
+        name=_get_name(current_type),
+        description=f"{_get_name(current_type)}_DESC",
         buildcost=(
             100
             * (
@@ -75,7 +113,7 @@ def TARGET_TERRAFORMING(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8):
             )
             * (
                 Target.HabitableSize
-                * MaxOf(int, 1, PlanetTypeDifference(from_=Target.OriginalType, to=arg2))
+                * MaxOf(int, 1, PlanetTypeDifference(from_=Target.OriginalType, to=current_type))
                 * BUILDING_COST_MULTIPLIER
                 * (
                     1
@@ -99,15 +137,15 @@ def TARGET_TERRAFORMING(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8):
             & OwnedBy(empire=Source.Owner)
             & ~Planet(type=[AsteroidsType, GasGiantType])
             & (
-                Planet(type=[arg1])
-                | Planet(type=[arg3])
-                | LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED("BLD_TERRAFORM_" + arg5)
-                | LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED("BLD_TERRAFORM_" + arg7)
+                Planet(type=[before_source])
+                | Planet(type=[target_type])
+                | LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(_get_name(before_source))
+                | LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(_get_name(target_type))
             )
         ),
         enqueuelocation=(
             ENQUEUE_BUILD_ONE_PER_PLANET
-            & ~Planet(type=[arg2])
+            & ~Planet(type=[current_type])
             & ~Contains(IsBuilding(name=["BLD_GAIA_TRANS"]))
             & ~Enqueued(type=BuildBuilding, name="BLD_GAIA_TRANS")
             & ~HasSpecial(name="GAIA_SPECIAL")
@@ -118,17 +156,17 @@ def TARGET_TERRAFORMING(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8):
             # We can however not simply exclude Desert when Ocean is enqueued, since someone
             # may want to convert Swamp to Desert.
             & ~(
-                Planet(type=[arg1])
+                Planet(type=[before_source])
                 & (
-                    Contains(IsBuilding(name=[f"BLD_TERRAFORM_{arg4}"]))
-                    | Enqueued(type=BuildBuilding, name=f"BLD_TERRAFORM_{arg4}")
+                    Contains(IsBuilding(name=[_get_name(pre_before_source)]))
+                    | Enqueued(type=BuildBuilding, name=_get_name(pre_before_source))
                 )
             )
             & ~(
-                Planet(type=[arg3])
+                Planet(type=[target_type])
                 & (
-                    Contains(IsBuilding(name=[f"BLD_TERRAFORM_{arg8}"]))
-                    | Enqueued(type=BuildBuilding, name=f"BLD_TERRAFORM_{arg8}")
+                    Contains(IsBuilding(name=[_get_name(post_target)]))
+                    | Enqueued(type=BuildBuilding, name=_get_name(post_target))
                 )
             )
         ),
@@ -136,14 +174,14 @@ def TARGET_TERRAFORMING(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8):
             EffectsGroup(
                 scope=Object(id=Source.PlanetID) & Planet(),
                 effects=[
-                    SetPlanetType(type=arg2),
+                    SetPlanetType(type=current_type),
                     GenerateSitRepMessage(
                         message="EFFECT_TERRAFORM",
                         label="EFFECT_TERRAFORM_LABEL",
                         icon="icons/building/terraform.png",
                         parameters={
                             "planet": Target.ID,
-                            "planettype": f"PT_{arg6}",
+                            "planettype": f"PT_{_mapping[current_type]}",
                             "environment": Target.ID,
                         },
                         empire=Source.Owner,
@@ -156,15 +194,10 @@ def TARGET_TERRAFORMING(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8):
     )
 
 
-TARGET_TERRAFORMING(Desert, Terran, Ocean, "TUNDRA", "DESERT", "TERRAN", "OCEAN", "SWAMP")
-TARGET_TERRAFORMING(Terran, Ocean, Swamp, "DESERT", "TERRAN", "OCEAN", "SWAMP", "TOXIC")
-TARGET_TERRAFORMING(Ocean, Swamp, Toxic, "TERRAN", "OCEAN", "SWAMP", "TOXIC", "INFERNO")
-TARGET_TERRAFORMING(Swamp, Toxic, Inferno, "OCEAN", "SWAMP", "TOXIC", "INFERNO", "RADIATED")
-TARGET_TERRAFORMING(Toxic, Inferno, Radiated, "SWAMP", "TOXIC", "INFERNO", "RADIATED", "BARREN")
-TARGET_TERRAFORMING(Inferno, Radiated, Barren, "TOXIC", "INFERNO", "RADIATED", "BARREN", "TUNDRA")
-TARGET_TERRAFORMING(Radiated, Barren, Tundra, "INFERNO", "RADIATED", "BARREN", "TUNDRA", "DESERT")
-TARGET_TERRAFORMING(Barren, Tundra, Desert, "RADIATED", "BARREN", "TUNDRA", "DESERT", "TERRAN")
-TARGET_TERRAFORMING(Tundra, Desert, Terran, "BARREN", "TUNDRA", "DESERT", "TERRAN", "OCEAN")
+# Generate all terraform buildings for plant types
+for planet_type in _terraforming_order:
+    TARGET_TERRAFORMING(current_type=planet_type)
+
 
 _build_cost = (
     100
