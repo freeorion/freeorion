@@ -1018,8 +1018,8 @@ void MapWnd::CompleteConstruction() {
 
     const ScriptingContext& context = IApp::GetApp()->GetContext();
 
-    m_obj_delete_connection =  context.ContextUniverse().UniverseObjectDeleteSignal.connect(
-        [this](std::shared_ptr<const UniverseObject> obj) { UniverseObjectDeleted(obj); });
+    m_obj_delete_connection = context.ContextUniverse().UniverseObjectDeleteSignal.connect(
+        [this](auto&& obj) { UniverseObjectDeleted(obj); });
 
     // toolbar
     m_toolbar = GG::Wnd::Create<CUIToolBar>();
