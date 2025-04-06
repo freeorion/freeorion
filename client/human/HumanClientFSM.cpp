@@ -902,7 +902,7 @@ boost::statechart::result PlayingGame::react(const PlayerInfoMsg& msg) {
     DebugLogger(FSM) << "(PlayerFSM) PlayingGame::PlayerInfoMsg message received: " << msg.m_message.Text();
     try {
         ExtractPlayerInfoMessageData(msg.m_message, Client().Players());
-        Client().GetClientUI().GetPlayerListWnd()->Refresh();
+        Client().GetClientUI().GetPlayerListWnd()->Refresh(Client());
     } catch (...) {}
     return discard_event();
 }
@@ -1026,7 +1026,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStartDataUnpacked
 
         TraceLogger(FSM) << "UI data from save data restored";
 
-        Client().GetClientUI().GetPlayerListWnd()->Refresh();
+        Client().GetClientUI().GetPlayerListWnd()->Refresh(Client());
         if (auto mapwnd = Client().GetClientUI().GetMapWnd(true))
             mapwnd->ResetTimeoutClock(0);
 
@@ -1181,7 +1181,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 
     Client().UpdateCombatLogManager();
 
-    Client().GetClientUI().GetPlayerListWnd()->Refresh();
+    Client().GetClientUI().GetPlayerListWnd()->Refresh(Client());
 
     ScriptingContext& context = Client().GetContext();
 
@@ -1198,17 +1198,17 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % context.current_turn) + "\n");
 
-    if (mapwnd && Client().GetApp()->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (mapwnd && Client().GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         mapwnd->EnableOrderIssuing(true);
 
-    if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers can't do anything but wait for the next update, and need to
         // be back in WaitingForTurnData, so posting TurnEnded here has the effect
         // of keeping observers in the WaitingForTurnData state so they can receive
         // updates from the server.
         post_event(TurnEnded());
 
-    } else if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+    } else if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
         if (mapwnd && mapwnd->AutoEndTurnEnabled()) {
             // if in-game-GUI auto turn advance enabled, set auto turn counter to 1
             Client().InitAutoTurns(1);
@@ -1246,7 +1246,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     Client().SaveGameCompleted();
 
     // auto quit save has completed, close the app
-    if (Client().GetApp()->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
+    if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
         && Client().AutoTurnsLeft() <= 0
         && GetOptionsDB().Get<bool>("auto-quit"))
     {
