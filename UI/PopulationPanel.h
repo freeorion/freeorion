@@ -17,7 +17,7 @@ public:
     PopulationPanel(GG::X w, int object_id);
     void CompleteConstruction() override;
 
-    int PopCenterID() const { return m_popcenter_id; }
+    auto PopCenterID() const noexcept { return m_popcenter_id; }
 
     void PreRender() override;
 
@@ -25,7 +25,7 @@ public:
     void ExpandCollapse(bool expanded);
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
-    void Update();
+    void Update(const ObjectMap& objects);
     /** updates, redoes layout, resizes indicator */
     void Refresh();
 

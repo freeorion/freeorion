@@ -11,6 +11,7 @@
 class MultiIconValueIndicator;
 class MultiMeterStatusBar;
 class StatisticIcon;
+class ObjectMap;
 
 /** Shows resource meters with meter-bars */
 class ResourcePanel : public AccordionPanel {
@@ -18,7 +19,7 @@ public:
     ResourcePanel(GG::X w, int object_id);
     void CompleteConstruction() override;
 
-    int ResourceCenterID() const { return m_rescenter_id; }
+    auto ResourceCenterID() const noexcept { return m_rescenter_id; }
 
     void PreRender() override;
 
@@ -26,7 +27,7 @@ public:
     void ExpandCollapse(bool expanded);
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
-    void Update();
+    void Update(const ObjectMap& objects);
     /** updates, redoes layout, resizes indicator */
     void Refresh();
 

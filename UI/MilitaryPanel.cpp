@@ -92,18 +92,15 @@ void MilitaryPanel::ExpandCollapse(bool expanded) {
         DoLayout();
 }
 
-void MilitaryPanel::Update() {
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-
-    auto obj = app->GetContext().ContextObjects().get(m_planet_id);
+void MilitaryPanel::Update(const ObjectMap& objects) {
+    auto obj = objects.get(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel::Update couldn't get object with id  " << m_planet_id;
         return;
     }
 
     // meter bar displays military stats
-    m_multi_meter_status_bar->Update();
+    m_multi_meter_status_bar->Update(objects);
     m_multi_icon_value_indicator->Update();
 
     // tooltips
@@ -132,7 +129,8 @@ void MilitaryPanel::Refresh() {
 
 void MilitaryPanel::PreRender() {
     AccordionPanel::PreRender();
-    Update();
+    if (const auto* app = IApp::GetApp())
+        Update(app->GetContext().ContextObjects());
     DoLayout();
 }
 

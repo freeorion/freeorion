@@ -17,7 +17,7 @@ public:
     MultiIconValueIndicator(GG::X w);
     MultiIconValueIndicator(GG::X w, int object_id,
                             std::vector<std::pair<MeterType, MeterType>> meter_types);
-    MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids,
+    MultiIconValueIndicator(GG::X w, std::vector<int> object_ids,
                             std::vector<std::pair<MeterType, MeterType>> meter_types);
 
     void CompleteConstruction() override;
