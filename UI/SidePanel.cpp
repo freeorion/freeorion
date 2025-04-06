@@ -3295,28 +3295,27 @@ void SidePanel::CompleteConstruction() {
 
     using boost::placeholders::_1;
 
-    m_connections.reserve(9);
-    m_connections.emplace_back(m_system_name->DropDownOpenedSignal.connect(
-        [this](auto b) { SystemNameDropListOpenedSlot(b); }));
-    m_connections.emplace_back(m_system_name->SelChangedSignal.connect(
-        [this](auto it) { SystemSelectionChangedSlot(it); }));
-    m_connections.emplace_back(m_system_name->SelChangedWhileDroppedSignal.connect(
-        [this](auto it) { SystemSelectionChangedSlot(it); }));
-    m_connections.emplace_back(m_button_prev->LeftClickedSignal.connect(
-        [this]() { PrevButtonClicked(); }));
-    m_connections.emplace_back(m_button_next->LeftClickedSignal.connect(
-        [this]() { NextButtonClicked(); }));
-    m_connections.emplace_back(m_planet_panel_container->PlanetClickedSignal.connect(
+    m_connections[0] = m_system_name->DropDownOpenedSignal.connect(
+        [this](auto b) { SystemNameDropListOpenedSlot(b); });
+    m_connections[1] = m_system_name->SelChangedSignal.connect(
+        [this](auto it) { SystemSelectionChangedSlot(it); });
+    m_connections[2] = m_system_name->SelChangedWhileDroppedSignal.connect(
+        [this](auto it) { SystemSelectionChangedSlot(it); });
+    m_connections[3] = m_button_prev->LeftClickedSignal.connect(
+        [this]() { PrevButtonClicked(); });
+    m_connections[4] = m_button_next->LeftClickedSignal.connect(
+        [this]() { NextButtonClicked(); });
+    m_connections[5] = m_planet_panel_container->PlanetClickedSignal.connect(
         [this](auto id) {
             const ScriptingContext& context = IApp::GetApp()->GetContext();
             PlanetClickedSlot(id, context.ContextObjects());
-        }));
-    m_connections.emplace_back(m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(
-        PlanetDoubleClickedSignal));
-    m_connections.emplace_back(m_planet_panel_container->PlanetRightClickedSignal.connect(
-        PlanetRightClickedSignal));
-    m_connections.emplace_back(m_planet_panel_container->BuildingRightClickedSignal.connect(
-        BuildingRightClickedSignal));
+        });
+    m_connections[6] = m_planet_panel_container->PlanetLeftDoubleClickedSignal.connect(
+        PlanetDoubleClickedSignal);
+    m_connections[7] = m_planet_panel_container->PlanetRightClickedSignal.connect(
+        PlanetRightClickedSignal);
+    m_connections[8] = m_planet_panel_container->BuildingRightClickedSignal.connect(
+        BuildingRightClickedSignal);
 
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));
@@ -3524,11 +3523,42 @@ void SidePanel::RefreshInPreRender(ScriptingContext& context) {
     s_system_connections.insert(system->FleetsRemovedSignal.connect(&SidePanel::FleetsRemoved));
 }
 
-void SidePanel::RefreshSystemNames() {
-    //auto system = Objects().get<System>(s_system_id);
-    //if (!system)
-    //    return;
+namespace {
+    constexpr auto sys_name_cmp = [](const auto& lhs_sv_int, const auto& rhs_sv_int) {
+        const std::string_view& lhs = lhs_sv_int.first;
+        const std::string_view& rhs = rhs_sv_int.first;
 
+#if defined(FREEORION_MACOSX)
+        // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
+        return lhs < rhs;
+#else
+        using collate_t = std::collate<std::string_view::value_type>;
+        const auto& collate = std::use_facet<collate_t>(GetLocale());
+        return collate.compare(lhs.data(), lhs.data() + lhs.size(), rhs.data(), rhs.data() + rhs.size()) < 0;
+#endif
+    };
+
+    auto GetSortedRows(GG::Y system_name_height, const ObjectMap& objects, const auto& is_sys) {
+        std::vector<std::pair<std::string_view, int>> sorted_systems;
+        sorted_systems.reserve(objects.size<System>());
+
+        for (auto* system : objects.allRaw<const System>() | range_filter(is_sys))
+            sorted_systems.emplace_back(system->Name(), system->ID());
+
+        if (!sorted_systems.empty()) // sort by name
+            std::stable_sort(sorted_systems.begin(), sorted_systems.end(), sys_name_cmp);
+
+        std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
+        rows.reserve(sorted_systems.size());
+
+        for (auto sys_id : sorted_systems | range_values)
+            rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
+
+        return rows;
+    };
+}
+
+void SidePanel::RefreshSystemNames(const ObjectMap& objects) {
     // Repopulate the system with all of the names of known systems, if it is closed.
     // If it is open do not change the system names because it runs in a seperate modal
     // from the main UI.
@@ -3541,46 +3571,11 @@ void SidePanel::RefreshSystemNames() {
         const auto system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
         const GG::Y system_name_height(system_name_font->Lineskip() + 4);
 
+        static constexpr auto has_name_or_is_s_system = [](const System* sys)
+        { return sys && (!sys->Name().empty() || sys->ID() == s_system_id); };
+
         // Make a vector of sorted rows and insert them in a single operation.
-        auto sorted_system_rows = [system_name_height]() {
-            std::vector<std::pair<std::string_view, int>> sorted_systems;
-            sorted_systems.reserve(Objects().size<System>());
-
-            static constexpr auto has_name_or_is_s_system = [](const System* sys)
-            { return sys && (!sys->Name().empty() || sys->ID() == s_system_id); };
-
-            for (auto* system : Objects().allRaw<const System>() | range_filter(has_name_or_is_s_system))
-                sorted_systems.emplace_back(system->Name(), system->ID());
-
-            if (!sorted_systems.empty()) {
-                static constexpr auto sys_name_cmp = [](const auto& lhs_sv_int, const auto& rhs_sv_int) {
-                    const std::string_view& lhs = lhs_sv_int.first;
-                    const std::string_view& rhs = rhs_sv_int.first;
-
-#if defined(FREEORION_MACOSX)
-                    // Collate on OSX seemingly ignores greek characters, resulting in sort order: X α I, X β I, X α II
-                    return lhs < rhs;
-#else
-                    using collate_t = std::collate<std::string_view::value_type>;
-                    const auto& collate = std::use_facet<collate_t>(GetLocale());
-                    return collate.compare(lhs.data(), lhs.data() + lhs.size(), rhs.data(), rhs.data() + rhs.size()) < 0;
-#endif
-                };
-
-                // sort by name
-                std::stable_sort(sorted_systems.begin(), sorted_systems.end(), sys_name_cmp);
-            }
-
-            std::vector<std::shared_ptr<GG::DropDownList::Row>> rows;
-            rows.reserve(sorted_systems.size());
-
-            for (auto sys_id : sorted_systems | range_values)
-                rows.push_back(GG::Wnd::Create<SystemRow>(sys_id, system_name_height));
-
-            return rows;
-        }();
-
-        m_system_name->Insert(std::move(sorted_system_rows));
+        m_system_name->Insert(GetSortedRows(system_name_height, objects, has_name_or_is_s_system));
     }
 
     // Select in the ListBox the currently-selected system.
@@ -3605,7 +3600,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
     DetachChildAndReset(m_system_resource_summary);
 
 
-    RefreshSystemNames();
+    RefreshSystemNames(context.ContextObjects());
 
     auto system = context.ContextObjects().get<System>(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
@@ -3809,7 +3804,8 @@ void SidePanel::SystemNameDropListOpenedSlot(bool is_open) {
     // Refresh the system names when the drop list closes.
     if (is_open)
         return;
-    RefreshSystemNames();
+    if (const auto* app = IApp::GetApp())
+        RefreshSystemNames(app->GetContext().ContextObjects());
 }
 
 void SidePanel::SystemSelectionChangedSlot(GG::DropDownList::iterator it) {

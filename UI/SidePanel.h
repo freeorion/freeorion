@@ -19,7 +19,7 @@ class SidePanel : public CUIWnd {
 public:
     class PlanetPanel;
 
-    SidePanel(std::string_view config_name);
+    explicit SidePanel(std::string_view config_name);
     void CompleteConstruction() override;
     ~SidePanel();
 
@@ -109,7 +109,7 @@ private:
     void RefreshImpl(ScriptingContext& context); ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
 
     /**  Insert all known systems into the SystemName drop down list.*/
-    void RefreshSystemNames();
+    void RefreshSystemNames(const ObjectMap& objects);
     /**  Refresh the system name list when it closes, in case the known systems changed while it was open. */
     void SystemNameDropListOpenedSlot(bool is_open);
     /**  Handle the user selecting a system in the droplist while the list is closed, using keys.
@@ -134,12 +134,12 @@ private:
     std::shared_ptr<GG::Button>                 m_button_next;
     std::shared_ptr<GG::DynamicGraphic>         m_star_graphic;
 
-    std::vector<GG::SubTexture> m_fleet_icons;
+    std::vector<GG::SubTexture>                 m_fleet_icons;
 
     std::shared_ptr<PlanetPanelContainer>       m_planet_panel_container;
     std::shared_ptr<MultiIconValueIndicator>    m_system_resource_summary;
 
-    std::vector<boost::signals2::scoped_connection> m_connections;
+    std::array<boost::signals2::scoped_connection, 9> m_connections;
 
     bool        m_selection_enabled = false;
 
