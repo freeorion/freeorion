@@ -2900,7 +2900,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     m_combat_report_wnd->Hide();
 
     if (m_object_list_wnd->Visible())
-        m_object_list_wnd->Refresh();
+        m_object_list_wnd->Refresh(context);
 
     m_moderator_wnd->Refresh();
     m_pedia_panel->Refresh();
@@ -6294,7 +6294,8 @@ void MapWnd::ShowObjects() {
     RestoreSidePanel();
 
     // update objects window
-    m_object_list_wnd->Refresh();
+    if (const auto* app = IApp::GetApp())
+        m_object_list_wnd->Refresh(app->GetContext());
 
     // show the objects window
     m_object_list_wnd->Show();
