@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(CyrPath) {
     GetOptionsDB().GetXML(doc);
     auto textual_path = doc.root_node.Child("test").Child("cyr").Child("path").Text();
     BOOST_CHECK_EQUAL(
-#ifdef WIN32
+#if defined(FREEORION_WIN32)
                       "&#208;&#186;&#208;&#184;&#209;&#8364;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#8224;&#208;&#176;"
 #else
                       "&#208;&#186;&#208;&#184;&#209;&#128;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#134;&#208;&#176;"
