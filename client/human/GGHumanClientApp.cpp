@@ -524,7 +524,7 @@ void GGHumanClientApp::StartServer() {
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource.path");
-    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
+    args.push_back("\"" + PathToString(GetOptionsDB().Get<boost::filesystem::path>("resource.path")) + "\"");
 
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {

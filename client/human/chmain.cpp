@@ -199,7 +199,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
-            GetOptionsDB().Set<std::string>("resource.path", "");
+            GetOptionsDB().Set<boost::filesystem::path>("resource.path", {});
 
             // double-check that resetting actually fixed things...
             if (!boost::filesystem::exists(GetResourceDir()) ||
