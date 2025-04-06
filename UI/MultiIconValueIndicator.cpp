@@ -31,12 +31,11 @@ MultiIconValueIndicator::MultiIconValueIndicator(
     MultiIconValueIndicator(w, std::vector<int>{object_id}, std::move(meter_types))
 {}
 
-MultiIconValueIndicator::MultiIconValueIndicator(
-    GG::X w, const std::vector<int>& object_ids,
-    std::vector<std::pair<MeterType, MeterType>> meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, std::vector<int> object_ids,
+                                                 std::vector<std::pair<MeterType, MeterType>> meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_meter_types(std::move(meter_types)),
-    m_object_ids(object_ids)
+    m_object_ids(std::move(object_ids))
 {}
 
 void MultiIconValueIndicator::CompleteConstruction() {
@@ -50,18 +49,20 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
     GG::X x{EDGE_PAD};
     for (const auto primary_meter_type : m_meter_types | range_keys) {
-        // get icon texture.
-        auto texture = ClientUI::MeterIcon(primary_meter_type);
+        {
+            // get icon texture.
+            auto texture = ClientUI::MeterIcon(primary_meter_type);
 
-        // special case for population meter for an indicator showing only a
-        // single popcenter: icon is species icon, rather than generic pop icon
-        if (primary_meter_type == MeterType::METER_POPULATION && m_object_ids.size() == 1) {
-            if (auto pc = objects.get<Planet>(m_object_ids.front()))
-                texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+            // special case for population meter for an indicator showing only a
+            // single popcenter: icon is species icon, rather than generic pop icon
+            if (primary_meter_type == MeterType::METER_POPULATION && m_object_ids.size() == 1) {
+                if (auto pc = objects.get<Planet>(m_object_ids.front()))
+                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+            }
+
+            m_icons.push_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
+                                                             IconWidth(), IconHeight()));
         }
-
-        m_icons.push_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
-                                                         IconWidth(), IconHeight()));
         const GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         const GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
         m_icons.back()->SizeMove(icon_ul, icon_lr);
@@ -76,7 +77,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
             if (primary_meter_type == MeterType::METER_POPULATION && this->m_object_ids.size() == 1) {
                 if (auto planet = objects.get<Planet>(this->m_object_ids.front())) {
-                    auto species_name = planet->SpeciesName();  // intentionally making a copy for use in lambda
+                    auto species_name{planet->SpeciesName()}; // intentional copy for use in lambda
                     if (species_name.empty()) {
                         std::string species_label =
                             boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
@@ -156,7 +157,9 @@ void MultiIconValueIndicator::Update() {
     }
 }
 
-void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd) {
+void MultiIconValueIndicator::SetToolTip(MeterType meter_type,
+                                         const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd)
+{
     for (unsigned int i = 0; i < m_icons.size(); ++i)
         if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);

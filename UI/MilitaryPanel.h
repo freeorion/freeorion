@@ -9,6 +9,7 @@ class MultiIconValueIndicator;
 class MultiMeterStatusBar;
 class Planet;
 class StatisticIcon;
+class ObjectMap;
 
 /** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
 class MilitaryPanel : public AccordionPanel {
@@ -16,14 +17,14 @@ public:
     MilitaryPanel(GG::X w, int planet_id);
     void CompleteConstruction() override;
 
-    int PlanetID() const { return m_planet_id; }
+    auto PlanetID() const noexcept { return m_planet_id; }
 
     void PreRender() override;
     /** expands or collapses panel to show details or just summary info */
     void ExpandCollapse(bool expanded);
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
-    void Update();
+    void Update(const ObjectMap& objects);
     /** updates, redoes layout, resizes indicator */
     void Refresh();
 
@@ -36,7 +37,7 @@ private:
     void ExpandCollapseButtonPressed();
 
     /** object id for the Planet that this panel displays */
-    int m_planet_id;
+    const int m_planet_id;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, std::shared_ptr<StatisticIcon>>> m_meter_stats;

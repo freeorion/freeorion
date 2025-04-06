@@ -71,14 +71,16 @@ namespace {
     constexpr double MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT = 100.0;
 }
 
-MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
+MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id,
+                                         std::vector<std::pair<MeterType, MeterType>> meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
-    m_meter_types(meter_types),
+    m_meter_types(std::move(meter_types)),
     m_object_id(object_id)
 {
     SetName("MultiMeterStatusBar");
-    Update();
+    if (const auto* app = IApp::GetApp())
+        Update(app->GetContext().ContextObjects());
 }
 
 void MultiMeterStatusBar::Render() {
@@ -188,15 +190,12 @@ void MultiMeterStatusBar::Render() {
 void MultiMeterStatusBar::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void MultiMeterStatusBar::Update() {
+void MultiMeterStatusBar::Update(const ObjectMap& objects) {
     m_initial_values.clear();   // initial value of .first MeterTypes at the start of this turn
     m_projected_values.clear(); // projected current value of .first MeterTypes for the start of next turn
     m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-
-    auto obj = app->GetContext().ContextObjects().get(m_object_id);
+    auto obj = objects.get(m_object_id);
     if (!obj) {
         ErrorLogger() << "MultiMeterStatusBar::Update couldn't get object with id  " << m_object_id;
         return;
@@ -204,7 +203,7 @@ void MultiMeterStatusBar::Update() {
 
     uint8_t num_bars = 0; // count number of valid bars' data added
 
-    for (auto& [actual_meter_type, target_max_meter_type] : m_meter_types) {
+    for (const auto& [actual_meter_type, target_max_meter_type] : m_meter_types) {
         const Meter* actual_meter = obj->GetMeter(actual_meter_type);
         const Meter* target_max_meter = obj->GetMeter(target_max_meter_type);
 

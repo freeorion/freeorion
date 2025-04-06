@@ -6,18 +6,19 @@
 
 #include "../universe/EnumsFwd.h"
 
+class ObjectMap;
 
 /** Graphically represets current value and projected changes to single meters
   * or pairs of meters, using horizontal indicators. */
 class MultiMeterStatusBar : public GG::Wnd {
 public:
-    MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType>>& meter_types);
+    MultiMeterStatusBar(GG::X w, int object_id, std::vector<std::pair<MeterType, MeterType>> meter_types);
 
     void Render() override;
 
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void Update();
+    void Update(const ObjectMap& objects);
 
 private:
     std::shared_ptr<GG::Texture> m_bar_shading_texture;

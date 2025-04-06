@@ -131,24 +131,21 @@ namespace {
     }
 }
 
-void ResourcePanel::Update() {
+void ResourcePanel::Update(const ObjectMap& objects) {
     // remove any old browse wnds
     for (auto& [meter_type, stat_icon] : m_meter_stats) {
         stat_icon->ClearBrowseInfoWnd();
         m_multi_icon_value_indicator->ClearToolTip(meter_type);
     }
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-
-    auto obj = app->GetContext().ContextObjects().get(m_rescenter_id);
+    auto obj = objects.get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
     }
 
     // meter bar displays resource stats
-    m_multi_meter_status_bar->Update();
+    m_multi_meter_status_bar->Update(objects);
     m_multi_icon_value_indicator->Update();
 
     // tooltips
@@ -169,15 +166,16 @@ void ResourcePanel::Update() {
 }
 
 void ResourcePanel::Refresh() {
-    for (auto& meter_stat : m_meter_stats)
-        meter_stat.second->RequirePreRender();
+    for (auto& stat_icon: m_meter_stats | range_values)
+        stat_icon->RequirePreRender();
 
     RequirePreRender();
 }
 
 void ResourcePanel::PreRender() {
     AccordionPanel::PreRender();
-    Update();
+    if (const auto* app = IApp::GetApp())
+        Update(app->GetContext().ContextObjects());
     DoLayout();
 }
 
