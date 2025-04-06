@@ -235,17 +235,17 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 namespace {
     /** Return the vector of accounting information from \p obj_id of \p meter_type.*/
     boost::optional<const std::vector<Effect::AccountingInfo>&> GetAccountingInfo(
-        int obj_id, const MeterType& meter_type)
+        int obj_id, const MeterType& meter_type, const ScriptingContext& context)
     {
         // get object and meter, aborting if not valid
-        auto obj = Objects().get(obj_id);
+        auto obj = context.ContextObjects().get(obj_id);
         if (!obj) {
             ErrorLogger() << "Couldn't get object with id " << obj_id;
             return boost::none;
         }
 
         // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
-        const Universe& universe = GetUniverse();
+        const Universe& universe = context.ContextUniverse();
         const auto& effect_accounting_map = universe.GetEffectAccountingMap();
         auto map_it = effect_accounting_map.find(obj_id);
         if (map_it == effect_accounting_map.end())
@@ -325,7 +325,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top, const ScriptingCont
     if (accounting_displayed_for_meter == MeterType::INVALID_METER_TYPE)
         return; // nothing to display
 
-    auto maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
+    auto maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter, context);
     if (!maybe_info_vec)
         return;
 
