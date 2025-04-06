@@ -10,10 +10,8 @@ target_include_directories(fo_unittest_util
 )
 
 target_link_libraries(fo_unittest_util
-    Threads::Threads
-    Boost::boost
-    Boost::disable_autolinking
-    Boost::dynamic_linking
+    freeorioncommon
+    freeorionparse
     Boost::unit_test_framework
 )
 
@@ -24,6 +22,7 @@ add_dependencies(unittest
 )
 
 set(FO_TEST_UTIL
+    TestPathOptions
 )
 
 foreach(_TEST ${FO_TEST_UTIL})
