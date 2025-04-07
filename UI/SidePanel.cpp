@@ -705,9 +705,11 @@ public:
 
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    int                     SelectedPlanetID() const    {return m_selected_planet_id;}
-    const std::set<int>&    SelectionCandidates() const {return m_candidate_ids;}
-    int                     ScrollPosition() const;
+    int         SelectedPlanetID() const noexcept { return m_selected_planet_id; }
+    const auto& SelectionCandidates() const noexcept { return m_candidate_ids; }
+    int         ScrollPosition() const;
+
+    auto        NumPanels() const noexcept { return m_planet_panels.size(); }
 
     void LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) override;
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
@@ -730,8 +732,8 @@ public:
                                 int excluded_planet_id = INVALID_OBJECT_ID,
                                 bool require_prerender = false);
 
-    virtual void    ShowScrollbar();
-    virtual void    HideScrollbar();
+    virtual void ShowScrollbar();
+    virtual void HideScrollbar();
 
     /** Enables, or disables if \a enable is false, issuing orders via the
       * PlanetPanels in this PlanetPanelContainer. */
@@ -3775,13 +3777,10 @@ void SidePanel::DoLayout() {
     GG::GUI::PreRenderWindow(m_planet_panel_container);
 
     // hide scrollbar if there is no planets in the system
-    auto system = Objects().get<System>(s_system_id);
-    if (system) {
-        if (system->PlanetIDs().empty())
-            m_planet_panel_container->HideScrollbar();
-        else
-            m_planet_panel_container->ShowScrollbar();
-    }
+    if (m_planet_panel_container->NumPanels() > 0)
+        m_planet_panel_container->HideScrollbar();
+    else
+        m_planet_panel_container->ShowScrollbar();
 
     // resize system resource summary
     if (m_system_resource_summary) {
