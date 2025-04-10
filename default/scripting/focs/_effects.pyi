@@ -345,6 +345,7 @@ IsRootCandidate = _Condition()
 IsTarget = _Condition()
 CanColonize = _Condition()
 IsAnyObject = _Condition()
+CanProduceShips = _Condition()
 
 def InSystem(*, id: _SystemID = _SystemID()) -> _Condition: ...
 

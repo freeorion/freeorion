@@ -74,3 +74,15 @@ def LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED(building_name: str):
         # Allows enqueue if this is not enqueued but prerequisite @1@ is
         Enqueued(type=BuildBuilding, name=building_name) & ~Enqueued(type=BuildBuilding, name=CurrentContent)
     )
+
+
+def LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(previous_building_name: str):
+    """Allows the current building to be build if the given prerequisite is built or enqueued.
+    Takes the prerequisite name as parameter;
+    Usage:
+         LOCATION_ALLOW_BUILD_IF_PREREQ_ENQUEUED(BLD_SHIPYARD_ORBITAL_DRYDOCK)
+    """
+
+    return Contains(IsBuilding(name=[previous_building_name]) & OwnedBy(empire=Source.Owner)) | Enqueued(
+        type=BuildBuilding, name=previous_building_name
+    )
