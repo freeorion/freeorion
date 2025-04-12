@@ -148,7 +148,7 @@ t_species_cond = string.Template(
     """&ResourceSupplyConnected( empire = Source.Owner, condition =
             Planet()&
             OwnedBy( empire = Source.Owner)&
-            HasSpecies( name = "${id}")&
+            HasSpecies( name = ["${id}"])&
             Population (low = MIN_RECOLONIZING_SIZE)&
             Happiness (low = 5))
         """
@@ -161,14 +161,14 @@ t_species_cond_extinct = string.Template(
             OwnedBy( empire = Source.Owner)&
             (
                 (
-                    HasSpecies( name = "${id}")&
+                    HasSpecies( name = ["${id}"])&
                     Population( low = MIN_RECOLONIZING_SIZE)&
                     Happiness( low = 5)
                 )&
                 (
                     OwnerHasTech( name = "${tech_name}")&
                     HasSpecial (name = "EXTINCT_${name}_SPECIAL")&
-                    Contains( IsBuilding( name = "BLD_XENORESURRECTION_LAB"))
+                    Contains( IsBuilding( name = ["BLD_XENORESURRECTION_LAB"]))
                 )
             ))
         """
@@ -179,7 +179,7 @@ t_buildtime_stat_cond = string.Template(
     """condition =
                 Planet() &
                 OwnedBy ( empire = Source.Owner) &
-                HasSpecies ( name = "${id}")&
+                HasSpecies ( name = ["${id}"])&
                 Population (low = MIN_RECOLONIZING_SIZE)&
                 Happiness (low = 5) &
                 ResourceSupplyConnected (empire = Source.Owner, condition = IsTarget)
@@ -193,13 +193,13 @@ t_buildtime_stat_cond_extinct = string.Template(
                 OwnedBy ( empire = Source.Owner) &
                 (
                    (
-                       HasSpecies( name = "${id}")&
+                       HasSpecies( name = ["${id}"])&
                        Population (low = MIN_RECOLONIZING_SIZE)&
                        Happiness (low = 5)
                     ) |
                     (
                         HasSpecial (name = "EXTINCT_${name}_SPECIAL") &
-                        Contains( IsBuilding( name = "BLD_XENORESURRECTION_LAB"))
+                        Contains( IsBuilding( name = ["BLD_XENORESURRECTION_LAB"]))
                     )
                 ) &
                 ResourceSupplyConnected (empire = Source.Owner, condition = IsTarget)
@@ -236,7 +236,7 @@ exclude_parallel_colonies = ""
 for species in chain((x[0] for x in species_list), species_extinct_techs.keys()):
     name = species[3:]
     exclude_parallel_colonies += f"""\
-        &~Contains( IsBuilding (name = "BLD_COL_{name}") & OwnedBy (empire = Source.Owner))
+        &~Contains( IsBuilding (name = ["BLD_COL_{name}"]) & OwnedBy (empire = Source.Owner))
         &~ Enqueued (type = BuildBuilding, name = "BLD_COL_{name}")
 """
 # remove indent from first line and newline at the end to match format expected by the template
