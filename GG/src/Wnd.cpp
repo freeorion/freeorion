@@ -56,36 +56,40 @@ namespace mi = boost::multi_index;
 
 struct GridLayoutWnd
 {
-    GridLayoutWnd() {}
+    GridLayoutWnd() = default;
 
-    GridLayoutWnd(std::shared_ptr<Wnd>& wnd_, Pt ul_, Pt lr_) : wnd(wnd_), ul(ul_), lr(lr_) {}
+    GridLayoutWnd(std::shared_ptr<Wnd> wnd_, Pt ul_, Pt lr_) :
+        wnd(std::move(wnd_)),
+        ul(ul_),
+        lr(lr_)
+    {}
     std::shared_ptr<Wnd> wnd;
     Pt ul;
     Pt lr;
 };
 struct IsLeft
 {
-    bool operator()(Pt lhs, Pt rhs) const {return lhs.x < rhs.x;}
-    bool operator()(X x, Pt pt) const     {return x < pt.x;}
-    bool operator()(Pt pt, X x) const     {return pt.x < x;}
+    bool operator()(Pt lhs, Pt rhs) const noexcept { return lhs.x < rhs.x; }
+    bool operator()(X x, Pt pt) const noexcept     { return x < pt.x; }
+    bool operator()(Pt pt, X x) const noexcept     { return pt.x < x; }
 };
 struct IsTop
 {
-    bool operator()(Pt lhs, Pt rhs) const {return lhs.y < rhs.y;}
-    bool operator()(Y y, Pt pt) const     {return y < pt.y;}
-    bool operator()(Pt pt, Y y) const     {return pt.y < y;}
+    bool operator()(Pt lhs, Pt rhs) const noexcept { return lhs.y < rhs.y; }
+    bool operator()(Y y, Pt pt) const noexcept     { return y < pt.y; }
+    bool operator()(Pt pt, Y y) const noexcept     { return pt.y < y; }
 };
 struct IsRight
 {
-    bool operator()(Pt lhs, Pt rhs) const {return rhs.x < lhs.x;}
-    bool operator()(X x, Pt pt) const     {return pt.x < x;}
-    bool operator()(Pt pt, X x) const     {return x < pt.x;}
+    bool operator()(Pt lhs, Pt rhs) const noexcept { return rhs.x < lhs.x; }
+    bool operator()(X x, Pt pt) const noexcept     { return pt.x < x; }
+    bool operator()(Pt pt, X x) const noexcept     { return x < pt.x; }
 };
 struct IsBottom
 {
-    bool operator()(Pt lhs, Pt rhs) const {return rhs.y < lhs.y;}
-    bool operator()(Y y, Pt pt) const     {return pt.y < y;}
-    bool operator()(Pt pt, Y y) const     {return y < pt.y;}
+    bool operator()(Pt lhs, Pt rhs) const noexcept { return rhs.y < lhs.y; }
+    bool operator()(Y y, Pt pt) const noexcept     { return pt.y < y; }
+    bool operator()(Pt pt, Y y) const noexcept     { return y < pt.y; }
 };
 struct Pointer {};
 struct LayoutLeft {};
@@ -428,14 +432,14 @@ void Wnd::AttachChild(std::shared_ptr<Wnd> wnd)
         wnd->SetParent(std::move(my_shared));
 
         if (this_as_layout)
-            wnd->m_containing_layout = this_as_layout;
+            wnd->m_containing_layout = std::move(this_as_layout);
 
         m_children.push_back(std::move(wnd));
 
     } catch (const std::bad_weak_ptr&) {
         std::cerr << "\nWnd::AttachChild called either during the constructor "
                   << "or after the destructor has run. Not attaching child.\n"
-                  << " parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
+                  << "parent = " << m_name << " child = " << (wnd ? wnd->m_name : "???");
         // Soft failure:
         // Intentionally do nothing, to create minimal disruption to non-dev
         // players if a dev accidentally puts an AttachChild in its own constructor.
@@ -450,7 +454,7 @@ void Wnd::MoveChildUp(Wnd* wnd)
     if (!wnd || m_children.empty() || m_children.back().get() == wnd)
         return;
     const auto found_it = std::find_if(m_children.begin(), m_children.end(),
-                                      [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+                                      [wnd](const auto& x) noexcept { return x.get() == wnd; });
     if (found_it == m_children.end())
         return;
 
@@ -467,7 +471,7 @@ void Wnd::MoveChildDown(Wnd* wnd)
     if (!wnd)
         return;
     auto found_it = std::find_if(m_children.begin(), m_children.end(),
-                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+                                 [wnd](const auto& x) noexcept { return x.get() == wnd; });
     if (found_it == m_children.end())
         return;
 
@@ -482,7 +486,7 @@ void Wnd::DetachChild(const std::shared_ptr<Wnd>& wnd)
 void Wnd::DetachChild(Wnd* wnd)
 {
     const auto it = std::find_if(m_children.begin(), m_children.end(),
-                                 [&wnd](const std::shared_ptr<Wnd>& x){ return x.get() == wnd; });
+                                 [wnd](const auto& x) noexcept { return x.get() == wnd; });
     if (it == m_children.end())
         return;
 
@@ -529,7 +533,7 @@ void Wnd::RemoveEventFilter(const std::shared_ptr<Wnd>& wnd)
     if (!wnd)
         return;
     const auto it = std::find_if(m_filters.begin(), m_filters.end(),
-                                 [&wnd](const std::weak_ptr<Wnd>& x){ return x.lock() == wnd; });
+                                 [&wnd](const auto& x) noexcept { return x.lock() == wnd; });
     if (it != m_filters.end())
         m_filters.erase(it);
     wnd->m_filtering.erase(shared_from_this());
@@ -542,8 +546,10 @@ void Wnd::HorizontalLayout()
     std::vector<std::shared_ptr<Wnd>> wnds;
     wnds.reserve(m_children.size());
     Pt client_sz = ClientSize();
-    for (auto& child : m_children) {
-        Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
+    for (const auto& child : m_children) {
+        if (!child) continue;
+        const auto wnd_ul = child->RelativeUpperLeft();
+        const auto wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
         wnds.push_back(child);
@@ -558,7 +564,7 @@ void Wnd::HorizontalLayout()
 
     int i = 0;
     for (auto& wnd : wnds)
-        layout->Add(wnd, 0, i++);
+        layout->Add(std::move(wnd), 0, i++);
 }
 
 void Wnd::VerticalLayout()
@@ -568,7 +574,8 @@ void Wnd::VerticalLayout()
     std::vector<std::shared_ptr<Wnd>> wnds;
     wnds.reserve(m_children.size());
     Pt client_sz = ClientSize();
-    for (auto& child : m_children) {
+    for (const auto& child : m_children) {
+        if (!child) continue;
         Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < X0 || wnd_ul.y < Y0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
@@ -584,7 +591,7 @@ void Wnd::VerticalLayout()
 
     int i = 0;
     for (auto& wnd : wnds)
-        layout->Add(wnd, i++, 0);
+        layout->Add(std::move(wnd), i++, 0);
 }
 
 void Wnd::GridLayout()
