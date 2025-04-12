@@ -93,6 +93,11 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/SourcePythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefPythonParser.h
     )
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        target_compile_options(freeorionparseobj PRIVATE -Wno-comma-subscript -Wno-maybe-uninitialized)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(freeorionparseobj PRIVATE -Wno-deprecated-comma-subscript -Wno-uninitialized)
+    endif()
 else()
     target_sources(freeorionparseobj
         PUBLIC
