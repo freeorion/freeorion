@@ -2466,7 +2466,7 @@ void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, GG::Pt pt, GG:
 class EmptyHullsListBox : public BasesListBox {
 public:
     EmptyHullsListBox(const AvailabilityManager& availabilities_state,
-                      const boost::optional<std::string_view>& drop_type = boost::none) :
+                      boost::optional<std::string_view> drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ALL_AVAILABILITY_FILTERS_BLOCKING_PROMPT"))
     {}
 
@@ -2486,7 +2486,7 @@ protected:
 class CompletedDesignsListBox : public BasesListBox {
 public:
     CompletedDesignsListBox(const AvailabilityManager& availabilities_state,
-                            const boost::optional<std::string_view>& drop_type = boost::none) :
+                            boost::optional<std::string_view> drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
@@ -2504,7 +2504,7 @@ protected:
 class SavedDesignsListBox : public BasesListBox {
 public:
     SavedDesignsListBox(const AvailabilityManager& availabilities_state,
-                        const boost::optional<std::string_view>& drop_type = boost::none) :
+                        boost::optional<std::string_view> drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_SAVED_DESIGN_QUEUE_PROMPT"))
     {};
 
@@ -2536,7 +2536,7 @@ protected:
 class MonstersListBox : public BasesListBox {
 public:
     MonstersListBox(const AvailabilityManager& availabilities_state,
-                    const boost::optional<std::string_view>& drop_type = boost::none) :
+                    boost::optional<std::string_view> drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {}
 
@@ -2553,7 +2553,7 @@ protected:
 class AllDesignsListBox : public BasesListBox {
 public:
     AllDesignsListBox(const AvailabilityManager& availabilities_state,
-                      const boost::optional<std::string_view>& drop_type = boost::none) :
+                      boost::optional<std::string_view> drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {}
 
