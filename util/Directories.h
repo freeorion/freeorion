@@ -45,7 +45,7 @@ FO_ENUM(
 //! Returns a string representation of PathType
 FO_COMMON_API auto PathTypeToString(PathType path_type) -> std::string_view;
 
-constexpr auto NUM_PATH_TYPES = std::size_t(PathType::PATH_INVALID);
+inline constexpr auto NUM_PATH_TYPES = std::size_t(PathType::PATH_INVALID);
 
 //! Returns an array of valid PathTypes
 FO_COMMON_API auto PathTypes() -> std::array<PathType, NUM_PATH_TYPES>;
