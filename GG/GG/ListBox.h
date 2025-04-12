@@ -515,7 +515,7 @@ private:
         This is a private function that is a component of AdjustScrolls. */
     std::pair<boost::optional<X>, boost::optional<Y>>
         CheckIfScrollsRequired(std::pair<bool, bool> force_scrolls = {false, false},
-                               const boost::optional<Pt>& maybe_client_size = boost::none) const;
+                               boost::optional<Pt> maybe_client_size = boost::none) const;
 
     /** Add vscroll and/or hscroll if \p required_total_extents the x andor y dimension exists. The
         value of \p required_total_extents is the full x and y dimensions of the underlying ListBox
@@ -524,8 +524,8 @@ private:
         contain a precalculated client size as calculated in ClientSizeExcludingScrolls.
 
         This is a private function that is a component of AdjustScrolls. */
-    std::pair<bool, bool> AddOrRemoveScrolls(const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents,
-                                             const boost::optional<Pt>& maybe_client_size = boost::none);
+    std::pair<bool, bool> AddOrRemoveScrolls(std::pair<boost::optional<X>, boost::optional<Y>> required_total_extents,
+                                             boost::optional<Pt> maybe_client_size = boost::none);
 
     /// m_rows is mutable to enable returning end() from const functions in constant time.
     mutable std::list<std::shared_ptr<Row>> m_rows;             ///< line item data
