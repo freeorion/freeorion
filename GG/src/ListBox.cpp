@@ -1966,7 +1966,7 @@ Pt ListBox::ClientSizeExcludingScrolls() const
 }
 
 std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequired(
-    std::pair<bool, bool> force_hv, const boost::optional<Pt>& maybe_client_size) const
+    std::pair<bool, bool> force_hv, boost::optional<Pt> maybe_client_size) const
 {
     // Use the precalculated client size if possible.
     auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
@@ -2010,8 +2010,8 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
 }
 
 std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
-    const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents,
-    const boost::optional<Pt>& maybe_client_size)
+    std::pair<boost::optional<X>, boost::optional<Y>> required_total_extents,
+    boost::optional<Pt> maybe_client_size)
 {
     // Use the precalculated client size if possible.
     auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
