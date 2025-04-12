@@ -4929,7 +4929,7 @@ void DesignWnd::MainPanel::ReplaceDesign() {
         const auto existing_design = CurrentDesignIsRegistered();
         auto* app = GGHumanClientApp::GetApp();
 
-        if (current_maybe_design || existing_design && app) {
+        if ((current_maybe_design || existing_design) && app) {
             auto& manager = GetDisplayedDesignsManager();
             const int replaced_id = (*(current_maybe_design ? current_maybe_design : existing_design))->ID();
 
