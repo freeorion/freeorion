@@ -280,8 +280,7 @@ namespace parse::detail {
             return obj.OpenEnvelope(pass);
         }
 
-        // Unwrap ::optional<MovablelEnvelope<T>> to return
-        // unique_ptr(nullptr) for none
+        // Unwrap ::optional<MovablelEnvelope<T>> to return unique_ptr(nullptr) for none
         template <typename T>
         result_t<const deconstruct_movable(const MovableEnvelope<T>&, bool&)>
         operator()(const boost::optional<MovableEnvelope<T>>& obj, bool& pass) const
