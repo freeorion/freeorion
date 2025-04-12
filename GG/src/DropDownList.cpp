@@ -303,11 +303,11 @@ Pt ModalListPicker::DetermineListHeight(Pt drop_down_size) {
 
     // Determine the expected height
     auto border_thick = 2 * GG::Y(ListBox::BORDER_THICK);
-    auto num_rows = std::min<int>(m_num_shown_rows, lb->NumRows());
+    auto num_rows = std::min<std::size_t>(m_num_shown_rows, lb->NumRows());
 
     const auto first_shown_row_it = lb->FirstRowShown();
     auto row_height = (*first_shown_row_it)->Height();
-    auto expected_height = num_rows * row_height + border_thick;
+    auto expected_height = static_cast<int>(num_rows) * row_height + border_thick;
 
     const auto* const gui = GUI::GetGUI();
 
@@ -477,11 +477,11 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
         return boost::none;
 
     if (move > 0) {
-        int dist_to_last = std::distance(cur_it, LB()->end()) - 1; // end is one past last valid item
+        auto dist_to_last = std::distance(cur_it, LB()->end()) - 1; // end is one past last valid item
         if (move > dist_to_last)
             move = dist_to_last;
     } else {
-        int dist_from_first = std::distance(LB()->begin(), cur_it);// begin is the first valid item
+        auto dist_from_first = std::distance(LB()->begin(), cur_it);// begin is the first valid item
         if (-move > dist_from_first)
             move = -dist_from_first;
     }
