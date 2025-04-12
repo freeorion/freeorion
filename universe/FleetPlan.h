@@ -41,11 +41,11 @@ protected:
 //! Spawning instruction for Monster Fleets during universe generation.
 class FO_COMMON_API MonsterFleetPlan final : public FleetPlan {
 public:
-    MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+    MonsterFleetPlan(std::string fleet_name, std::vector<std::string> ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999,
                      std::unique_ptr<Condition::Condition>&& location = nullptr,
                      bool lookup_name_userstring = false) :
-        FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
+        FleetPlan(std::move(fleet_name), std::move(ship_design_names), lookup_name_userstring),
         m_spawn_rate(spawn_rate),
         m_spawn_limit(spawn_limit),
         m_location(std::move(location))
