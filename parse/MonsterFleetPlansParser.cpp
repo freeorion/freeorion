@@ -22,15 +22,15 @@ namespace std {
 namespace {
     void insert_monster_fleet_plan(
         std::vector<std::unique_ptr<MonsterFleetPlan>>& plans,
-        const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-        const boost::optional<double>& spawn_rate,
-        const boost::optional<int>& spawn_limit,
-        const boost::optional<parse::detail::condition_payload>& location,
+        std::string fleet_name, std::vector<std::string> ship_design_names,
+        boost::optional<double> spawn_rate,
+        boost::optional<int> spawn_limit,
+        boost::optional<parse::detail::condition_payload> location,
         bool& pass)
     {
         plans.push_back(
             std::make_unique<MonsterFleetPlan>(
-                fleet_name, ship_design_names,
+                std::move(fleet_name), std::move(ship_design_names),
                 (spawn_rate ? *spawn_rate : 1.0),
                 (spawn_limit ? *spawn_limit : 9999),
                 (location ? location->OpenEnvelope(pass) : nullptr)
