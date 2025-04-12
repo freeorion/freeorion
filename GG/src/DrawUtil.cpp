@@ -297,78 +297,6 @@ void XMark(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glEnable(GL_TEXTURE_2D);
 }
 
-void BubbleArc(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, double theta1, double theta2)
-{
-    const GLfloat wd = Value(lr.x - ul.x);
-    const GLfloat ht = Value(lr.y - ul.y);
-    glDisable(GL_TEXTURE_2D);
-
-    // adjust angles to range [0, 2pi)
-    if (theta1 < 0)
-        theta1 += (int(-theta1 / twoPI) + 1) * twoPI;
-    else if (theta1 >= twoPI)
-        theta1 -= int(theta1 / twoPI) * twoPI;
-    if (theta2 < 0)
-        theta2 += (int(-theta2 / twoPI) + 1) * twoPI;
-    else if (theta2 >= twoPI)
-        theta2 -= int(theta2 / twoPI) * twoPI;
-
-    const int    SLICES = static_cast<int>(std::min(3.0 + std::max(wd, ht), 50.0)); // this is a guess at how much to tesselate the circle coordinates
-    const double HORZ_THETA = twoPI / SLICES;
-
-    auto& unit_vertices = unit_circle_coords[SLICES];
-    auto& colors = color_arrays[SLICES];
-    if (unit_vertices.size() == 0) {    // only calculate once, when empty
-        unit_vertices.resize(2 * (SLICES + 1), 0.0);
-        double theta = 0.0f;
-        for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
-            // calculate x,y values for each point on a unit circle divided into SLICES arcs
-            unit_vertices[j*2] = cos(-theta);
-            unit_vertices[j*2+1] = sin(-theta);
-        }
-        colors.resize(SLICES + 1, Clr()); // create but don't initialize (this is essentially just scratch space, since the colors are different call-to-call)
-    }
-    const int first_slice_idx = int(theta1 / HORZ_THETA + 1);
-    int last_slice_idx = int(theta2 / HORZ_THETA - 1);
-    if (theta1 >= theta2)
-        last_slice_idx += SLICES;
-    for (int j = first_slice_idx; j <= last_slice_idx; ++j) { // calculate the color value for each needed point
-        int X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1;
-        double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
-        colors[j] = BlendClr(color2, color3, color_scale_factor);
-    }
-
-    glPushMatrix();
-    glTranslatef(Value(ul.x) + wd/2.0f, Value(ul.y) + ht/2.0f, 0.0f); // move origin to the center of the rectangle
-    glScalef(wd/2.0f, ht/2.0f, 1.0);                                  // map the range [-1,1] to the rectangle in both (x- and y-) directions
-
-    glColor(color1);
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(0, 0);
-    // point on circle at angle theta1
-    double x = cos(-theta1);
-    double y = sin(-theta1);
-    double color_scale_factor = (SQRT2OVER2 * (x + y) + 1) / 2;
-    Clr clr = BlendClr(color2, color3, color_scale_factor);
-    glColor4ub(clr.r, clr.g, clr.b, clr.a);
-    glVertex2f(x, y);
-    // angles in between theta1 and theta2, if any
-    for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
-        int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
-        glColor(colors[i]);
-        glVertex2f(unit_vertices[X], unit_vertices[Y]);
-    }
-    // theta2
-    x = cos(-theta2);
-    y = sin(-theta2);
-    color_scale_factor = (SQRT2OVER2 * (x + y) + 1) / 2;
-    clr = BlendClr(color2, color3, color_scale_factor);
-    glColor4ub(clr.r, clr.g, clr.b, clr.a);
-    glVertex2f(x, y);
-    glEnd();
-    glPopMatrix();
-    glEnable(GL_TEXTURE_2D);
-}
 
 void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
                unsigned int bevel_thick, double theta1, double theta2)
@@ -546,93 +474,7 @@ void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_col
     glEnable(GL_TEXTURE_2D);
 }
 
-void BubbleRectangle(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3, unsigned int corner_radius)
-{
-    const int circle_diameter = corner_radius * 2;
-    BubbleArc(Pt(lr.x - circle_diameter, ul.y), Pt(lr.x, ul.y + circle_diameter), color1, color3, color2, 0, 0.5 * PI);  // ur corner
-    BubbleArc(Pt(ul.x, ul.y), Pt(ul.x + circle_diameter, ul.y + circle_diameter), color1, color3, color2, 0.5 * PI, PI); // ul corner
-    BubbleArc(Pt(ul.x, lr.y - circle_diameter), Pt(ul.x + circle_diameter, lr.y), color1, color3, color2, PI, 1.5 * PI); // ll corner
-    BubbleArc(Pt(lr.x - circle_diameter, lr.y - circle_diameter), Pt(lr.x, lr.y), color1, color3, color2, 1.5 * PI, 0);  // lr corner
-
-    const int rad = static_cast<int>(corner_radius);
-
-    // top
-    static constexpr float color_scale_factor1 = (SQRT2OVER2 * (0 + 1) + 1) / 2;
-    Clr scaled_color = BlendClr(color2, color3, color_scale_factor1);
-
-    GL2DVertexBuffer verts;
-    verts.reserve(20);
-    GLRGBAColorBuffer colours;
-    colours.reserve(20);
-
-    colours.store(scaled_color);
-    colours.store(scaled_color);
-    verts.store(lr.x - rad, ul.y);
-    verts.store(ul.x + rad, ul.y);
-    colours.store(color1);
-    colours.store(color1);
-    verts.store(ul.x + rad, ul.y + rad);
-    verts.store(lr.x - rad, ul.y + rad);
-
-    // left (uses color scale factor (SQRT2OVER2 * (1 + 0) + 1) / 2, which equals that of top
-    colours.store(scaled_color);
-    colours.store(scaled_color);
-    verts.store(ul.x, ul.y + rad);
-    verts.store(ul.x, lr.y - rad);
-    colours.store(color1);
-    colours.store(color1);
-    verts.store(ul.x + rad, lr.y - rad);
-    verts.store(ul.x + rad, ul.y + rad);
-
-    // right
-    static constexpr float color_scale_factor2 = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
-    scaled_color = BlendClr(color2, color3, color_scale_factor2);
-    colours.store(color1);
-    colours.store(color1);
-    verts.store(lr.x - rad, ul.y + rad);
-    verts.store(lr.x - rad, lr.y - rad);
-    colours.store(scaled_color);
-    colours.store(scaled_color);
-    verts.store(lr.x, lr.y - rad);
-    verts.store(lr.x, ul.y + rad);
-
-    // bottom (uses color scale factor (SQRT2OVER2 * (0 + -1) + 1) / 2, which equals that of left
-    colours.store(color1);
-    colours.store(color1);
-    verts.store(lr.x - rad, lr.y - rad);
-    verts.store(ul.x + rad, lr.y - rad);
-    colours.store(scaled_color);
-    colours.store(scaled_color);
-    verts.store(ul.x + rad, lr.y);
-    verts.store(lr.x - rad, lr.y);
-
-    // middle
-    colours.store(color1);
-    colours.store(color1);
-    verts.store(lr.x - rad, ul.y + rad);
-    verts.store(ul.x + rad, ul.y + rad);
-    colours.store(color1);
-    colours.store(color1);
-    verts.store(ul.x + rad, lr.y - rad);
-    verts.store(lr.x - rad, lr.y - rad);
-
-
-    glDisable(GL_TEXTURE_2D);
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    verts.activate();
-    colours.activate();
-    glDrawArrays(GL_QUADS, 0, verts.size());
-
-    glPopClientAttrib();
-    glEnable(GL_TEXTURE_2D);
 }
-
-}
-
 
 void glColor(Clr clr)
 { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
@@ -884,13 +726,13 @@ void GG::BeveledCheck(Pt ul, Pt lr, Clr color)
 void GG::FlatX(Pt ul, Pt lr, Clr color)
 { XMark(ul, lr, color, color, color); }
 
-void GG::Bubble(Pt ul, Pt lr, Clr color, bool up)
-{
-    BubbleArc(ul, lr, color,
-              (up ? DarkenClr(color) : LightenClr(color)),
-              (up ? LightenClr(color) : DarkenClr(color)),
-              0, 0);
-}
+//void GG::Bubble(Pt ul, Pt lr, Clr color, bool up)
+//{
+//    BubbleArc(ul, lr, color,
+//              (up ? DarkenClr(color) : LightenClr(color)),
+//              (up ? LightenClr(color) : DarkenClr(color)),
+//              0, 0);
+//}
 
 void GG::FlatCircle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int thick)
 { CircleArc(ul, lr, color, border_color, border_color, thick, 0, 0); }
@@ -901,12 +743,4 @@ void GG::BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up, unsig
               (up ? DarkenClr(border_color) : LightenClr(border_color)),
               (up ? LightenClr(border_color) : DarkenClr(border_color)),
               bevel_thick, 0, 0);
-}
-
-void GG::BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius)
-{
-    ::BubbleRectangle(ul, lr, color,
-                      (up ? LightenClr(color) : DarkenClr(color)),
-                      (up ? DarkenClr(color) : LightenClr(color)),
-                      corner_radius);
 }
