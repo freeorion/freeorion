@@ -287,14 +287,14 @@ namespace Impl {
         return retval;
     }
 
-    constexpr auto matches_only_source = [](auto mt) noexcept -> bool { return mt == MatchesType::SOURCE; };
-    constexpr auto matches_only_target = [](auto mt) noexcept -> bool { return mt == MatchesType::TARGET; };
-    constexpr auto matches_only_rootcand = [](auto mt) noexcept -> bool { return mt == MatchesType::ROOTCANDIDATE; };
-    constexpr auto matches_any_context_object = [](auto mt) noexcept -> bool { return mt & MatchesType::SINGLEOBJECT; }; // could match multiple context objects, eg. source and target
-    constexpr auto matches_any_object_type = [](auto mt) noexcept -> bool { return mt & MatchesType::ANYOBJECTTYPE; };
-    constexpr auto matches_nothing = [](auto mt) noexcept -> bool { return mt == MatchesType::NOTHING; };
-    constexpr auto bit_and = [](auto lhs, auto rhs) noexcept { return lhs & rhs; };
-    constexpr auto bit_or = [](auto lhs, auto rhs) noexcept { return lhs | rhs; };
+    constexpr auto matches_only_source = [](uint16_t mt) noexcept -> bool { return mt == MatchesType::SOURCE; };
+    constexpr auto matches_only_target = [](uint16_t mt) noexcept -> bool { return mt == MatchesType::TARGET; };
+    constexpr auto matches_only_rootcand = [](uint16_t mt) noexcept -> bool { return mt == MatchesType::ROOTCANDIDATE; };
+    constexpr auto matches_any_context_object = [](uint16_t mt) noexcept -> bool { return mt & MatchesType::SINGLEOBJECT; }; // could match multiple context objects, eg. source and target
+    constexpr auto matches_any_object_type = [](uint16_t mt) noexcept -> bool { return mt & MatchesType::ANYOBJECTTYPE; };
+    constexpr auto matches_nothing = [](uint16_t mt) noexcept -> bool { return mt == MatchesType::NOTHING; };
+    constexpr auto bit_and = [](uint16_t lhs, uint16_t rhs) noexcept -> uint16_t { return lhs & rhs; };
+    constexpr auto bit_or = [](uint16_t lhs, uint16_t rhs) noexcept -> uint16_t  { return lhs | rhs; };
 
     template <typename ptr>
         requires requires(const ptr& p, const ptr& q) { !p; bool(p); *p == *q; }
