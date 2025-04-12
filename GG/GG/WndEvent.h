@@ -133,8 +133,8 @@ public:
         m_mod_keys(mod_keys)
     {
         // initialize storage for acceptable Wnds
-        for (const auto& [wnd, pt] : drag_drop_wnds) {
-            m_drag_drop_wnds.insert_or_assign(wnd.get(), pt);
+        for (const auto& [wnd, drop_pt] : drag_drop_wnds) {
+            m_drag_drop_wnds.insert_or_assign(wnd.get(), drop_pt);
             m_acceptable_drop_wnds.insert_or_assign(wnd.get(), false);
         }
     }
