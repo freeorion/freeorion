@@ -251,39 +251,14 @@ protected:
 };
 
 
-/** \brief Builtin representation of a check box state button. */
-class GG_API BeveledCheckBoxRepresenter: public StateButtonRepresenter
-{
-public:
-    explicit BeveledCheckBoxRepresenter(Clr int_color = CLR_ZERO);
-
-    void Render(const StateButton& button) const override;
-
-private:
-    Clr m_int_color;
-};
-
-
-/** \brief Builtin representation of a radio state button. */
-class GG_API BeveledRadioRepresenter: public StateButtonRepresenter
-{
-public:
-    explicit BeveledRadioRepresenter(Clr int_color = CLR_ZERO);
-
-    void Render(const StateButton& button) const override;
-
-private:
-    Clr m_int_color;
-};
-
-
 /** \brief Builtin representation of a tab state button (part of the TabWnd). */
 class GG_API BeveledTabRepresenter: public StateButtonRepresenter
 {
 public:
     void Render(const StateButton& button) const override;
 
-    Pt MinUsableSize(const StateButton& button) const override;
+    Pt MinUsableSize(const StateButton& button) const override
+    { return button.GetLabel()->MinUsableSize(); }
 };
 
 

@@ -110,10 +110,6 @@ GG_API void BeveledCheck(Pt ul, Pt lr, Clr color);
 /** Draws an X-mark used to draw state buttons. */
 GG_API void FlatX(Pt ul, Pt lr, Clr color);
 
-/** Draws a disk that appears to be a portion of a lit sphere.  The
-    portion may appear raised or depressed. */
-GG_API void Bubble(Pt ul, Pt lr, Clr color, bool up = true);
-
 /** Draws a circle of thick pixels thickness in the color specified. */
 GG_API void FlatCircle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned thick = 2);
 
@@ -132,10 +128,6 @@ GG_API void FlatRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, unsi
 /** Like the FlatRoundedRectangle() function, but beveled (raised or
     depressed). */
 GG_API void BeveledRoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color, bool up, unsigned int corner_radius = 5, unsigned int bevel_thick = 2);
-
-/** Using the same techniques as in Bubble(), creates a rounded, bubbly
-    rectangle. */
-GG_API void BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius = 5);
 
 }
 
