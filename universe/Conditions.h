@@ -344,6 +344,7 @@ namespace Impl {
             else
                 return false;
         }
+        using Condition::operator==;
 
         [[nodiscard]] constexpr const auto* SubCondition() const noexcept {
             if constexpr (cond_is_ptr)
