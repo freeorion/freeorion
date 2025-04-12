@@ -1170,23 +1170,24 @@ template <typename T, typename Pred, bool only_existing>
 bool ObjectMap::check_if_any(Pred pred) const
 {
     static constexpr auto invoke_flags = CheckTypes<T, Pred>();
-    static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
-    static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
-    static constexpr bool invokable_on_const_entry = invoke_flags[4];
-    static constexpr bool invokable_on_const_reference = invoke_flags[6];
-    static constexpr bool invokable_on_int = invoke_flags[11];
-    // static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
     static constexpr bool is_int_range = invoke_flags[10];
-
     using DecayT = std::decay_t<T>;
-    auto& map{Map<DecayT, only_existing>()};
-    using ContainerT = std::decay_t<decltype(map)>;
-    using EntryT = typename ContainerT::value_type;
+    const auto& map{Map<DecayT, only_existing>()};
 
     if constexpr (is_int_range) {
         return range_any_of(pred, [&map](int id) { return map.contains(id); });
 
     } else {
+        using ContainerT = std::decay_t<decltype(map)>;
+        using EntryT = typename ContainerT::value_type;
+
+        static constexpr bool invokable_on_raw_const_object = invoke_flags[0];
+        static constexpr bool invokable_on_shared_const_object = invoke_flags[2];
+        static constexpr bool invokable_on_const_entry = invoke_flags[4];
+        static constexpr bool invokable_on_const_reference = invoke_flags[6];
+        static constexpr bool invokable_on_int = invoke_flags[11];
+        // static constexpr bool is_visitor = invoke_flags[9]; // legacy cruft
+
         const auto test_pred = [&pred](const EntryT& obj) {
             if constexpr (invokable_on_raw_const_object)
                 return pred(obj.second.get());
