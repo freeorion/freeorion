@@ -471,7 +471,7 @@ struct FO_COMMON_API Turn final : public Condition {
         m_high(std::move(high))
     {}
 
-    [[nodiscard]] bool operator==(const Condition& rhs) const {
+    [[nodiscard]] bool operator==(const Condition& rhs) const override {
         if (this == &rhs)
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
