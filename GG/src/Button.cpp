@@ -54,18 +54,12 @@ void Button::CompleteConstruction()
     AttachChild(m_label);
 }
 
-Pt Button::MinUsableSize() const
-{ return m_label->MinUsableSize(); }
-
 void Button::Show()
 {
     Wnd::Show();
     m_label->Hide();
     m_label_shadow->Hide();
 }
-
-const std::string& Button::Text() const
-{ return m_label->Text(); }
 
 void Button::Render()
 {
@@ -93,15 +87,6 @@ void Button::SetText(std::string text)
     m_label->SetText(text);
     m_label_shadow->SetText(std::move(text));
 }
-
-void Button::SetUnpressedGraphic(SubTexture st) noexcept
-{ m_unpressed_graphic = std::move(st); }
-
-void Button::SetPressedGraphic(SubTexture st) noexcept
-{ m_pressed_graphic = std::move(st); }
-
-void Button::SetRolloverGraphic(SubTexture st) noexcept
-{ m_rollover_graphic = std::move(st); }
 
 void Button::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 {

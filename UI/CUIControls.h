@@ -385,7 +385,7 @@ public:
     void CompleteConstruction() override;
 
     double GetValue(std::size_t index = 0) const;
-    GG::Pt MinUsableSize() const override;
+    GG::Pt MinUsableSize() const noexcept override;
 
     void PreRender() override;
     void Render() override {}

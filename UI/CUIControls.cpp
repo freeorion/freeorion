@@ -1452,7 +1452,7 @@ void StatisticIcon::DoLayout() {
     m_text->SizeMove(text_ul, {Width(), Height()});
 }
 
-GG::Pt StatisticIcon::MinUsableSize() const {
+GG::Pt StatisticIcon::MinUsableSize() const noexcept {
     if (!m_icon)
         return GG::Pt(GG::X1, GG::Y1);
 

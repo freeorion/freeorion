@@ -50,15 +50,15 @@ public:
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 
-    Pt MinUsableSize() const override;
+    Pt MinUsableSize() const noexcept override { return m_label->MinUsableSize(); }
 
     /** Returns button state \see ButtonState */
     ButtonState State() const noexcept { return m_state; }
 
-    const std::string& Text() const;             ///< Returns the label to be used as the button label
-    const auto& UnpressedGraphic() const { return m_unpressed_graphic; }
-    const auto& PressedGraphic() const { return m_pressed_graphic; }
-    const SubTexture& RolloverGraphic() const { return m_rollover_graphic; }
+    const std::string& Text() const noexcept { return m_label->Text(); }
+    const auto& UnpressedGraphic() const noexcept { return m_unpressed_graphic; }
+    const auto& PressedGraphic() const noexcept { return m_pressed_graphic; }
+    const SubTexture& RolloverGraphic() const noexcept { return m_rollover_graphic; }
 
     /** The left clicked signal object for this Button */
     mutable ClickedSignalType LeftClickedSignal;
@@ -80,9 +80,12 @@ public:
     void SetState(ButtonState state) noexcept { m_state = state; }
 
     void SetText(std::string text);                   ///< Sets the text to be used as the button label
-    void SetUnpressedGraphic(SubTexture st) noexcept; ///< Sets the SubTexture to be used as the image of the button when unpressed
-    void SetPressedGraphic(SubTexture st) noexcept;   ///< Sets the SubTexture to be used as the image of the button when pressed
-    void SetRolloverGraphic(SubTexture st) noexcept;  ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    void SetUnpressedGraphic(SubTexture st) noexcept  ///< Sets the SubTexture to be used as the image of the button when unpressed
+    { m_unpressed_graphic = std::move(st); }
+    void SetPressedGraphic(SubTexture st) noexcept    ///< Sets the SubTexture to be used as the image of the button when pressed
+    { m_pressed_graphic = std::move(st); }
+    void SetRolloverGraphic(SubTexture st) noexcept   ///< Sets the SubTexture to be used as the image of the button when it contains the cursor, but is not pressed
+    { m_rollover_graphic = std::move(st); }
 
 protected:
     void LButtonDown(Pt pt, Flags<ModKey> mod_keys) override;
