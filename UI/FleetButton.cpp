@@ -75,16 +75,6 @@ namespace {
 ///////////////////////////
 // FleetButton           //
 ///////////////////////////
-FleetButton::FleetButton(int fleet_id, SizeType size_type) :
-    FleetButton(std::vector<int>{fleet_id}, size_type)
-{}
-
-FleetButton::FleetButton(std::vector<int> fleet_IDs, SizeType size_type) :
-    GG::Button("", nullptr, GG::CLR_ZERO),
-    m_fleets(std::move(fleet_IDs)),
-    m_size(size_type)
-{}
-
 void FleetButton::CompleteConstruction() {
     Button::CompleteConstruction();
 
