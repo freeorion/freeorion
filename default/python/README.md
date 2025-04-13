@@ -64,21 +64,21 @@ pip install -r default\python\requirements-dev.txt
 ### Manual code style check
 You don't need to run this script manually, pre-commit hooks and CI will do it fo you.
 
-We use [ruff](https://github.com/charliermarsh/ruff) for code style checks.
+We use [ruff](https://github.com/charliermarsh/ruff) for code style checks and formatting.
 Settings for ruff are located in the `pyproject.toml`.
 
 You could run ruff in any directory, and it will check the files in that directory only.
 It's recommended to run in from the root.
+
+
+Code checks:
 ```sh
-ruff .
+ruff check .
 ```
 
-We use [black](https://pypi.org/project/black/) for code formatting.
-Settings for black are located in `pyproject.toml`.
-
-Black can be run on the top level directory:
+Formatting
 ```sh
-black .
+ruff format .
 ```
 
 ## Running test
