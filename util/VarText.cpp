@@ -1,4 +1,4 @@
-#include "VarText.h"
+﻿#include "VarText.h"
 
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/ValueRefs.h"
@@ -67,6 +67,7 @@ namespace {
     static_assert(ToIntCX("2147483647") == 2147483647);
     static_assert(ToIntCX("-104") == -104);
     static_assert(ToIntCX("banana", -10) == -10);
+    static_assert(ToIntCX("🍌", -10) == -10);
     static_assert(ToIntCX("-banana") == -1);
     static_assert(ToIntCX("-0banana", -20) == -20);
     static_assert(ToIntCX("") == -1);
