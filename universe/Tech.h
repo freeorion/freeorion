@@ -29,12 +29,12 @@ public:
     /** Helper struct for parsing tech definitions */
     struct TechInfo {
         TechInfo() = default;
-        TechInfo(std::string& name_, std::string& description_,
-                 std::string& short_description_, std::string& category_,
+        TechInfo(std::string name_, std::string description_,
+                 std::string short_description_, std::string category_,
                  std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
                  std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
                  bool researchable_,
-                 std::set<std::string>& tags_);
+                 std::set<std::string> tags_);
         ~TechInfo();
 
         std::string             name;
