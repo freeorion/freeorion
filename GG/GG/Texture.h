@@ -228,13 +228,13 @@ public:
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
         delete \a texture; \a texture becomes the property of the manager,
         which will eventually delete it. */
-    std::shared_ptr<Texture> StoreTexture(Texture* texture, std::string texture_name);
+    void StoreTexture(Texture* texture, std::string texture_name);
 
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
         delete \a texture; \a texture becomes the property of the manager,
         which will eventually delete it. */
-    std::shared_ptr<Texture> StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name);
+    void StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name);
 
     /** Returns a shared_ptr to the texture created from image file \a path.
         If the texture is not present in the manager's pool, it will be loaded
