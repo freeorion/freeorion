@@ -320,11 +320,10 @@ public:
     /** Adds an already-constructed texture to the managed pool \warning
         calling code <b>must not</b> delete \a texture; the texture pool will
         do that. */
-    std::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
+    void StoreTexture(Texture* texture, std::string texture_name);
 
     /** Adds an already-constructed texture to the managed pool. */
-    std::shared_ptr<Texture> StoreTexture(const std::shared_ptr<Texture>& texture,
-                                          const std::string& texture_name);
+    void StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name);
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true. */
@@ -381,10 +380,10 @@ public:
      boost::signals2::signal<void (bool)>   FocusChangedSignal;
 
     /** Emitted whenever the window manager requests the window close. */
-    boost::signals2::signal<void ()>    WindowClosingSignal;
+    boost::signals2::signal<void ()>        WindowClosingSignal;
 
     /** Emitted whenever the app is requested to close. */
-    boost::signals2::signal<void ()>    AppQuittingSignal;
+    boost::signals2::signal<void ()>        AppQuittingSignal;
 
     /** The base class for GUI exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

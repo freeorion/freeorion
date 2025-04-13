@@ -1458,11 +1458,11 @@ std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned i
 void GUI::FreeFont(std::string_view font_filename, unsigned int pts)
 { GetFontManager().FreeFont(font_filename, pts); }
 
-std::shared_ptr<Texture> GUI::StoreTexture(Texture* texture, const std::string& texture_name)
-{ return GetTextureManager().StoreTexture(texture, texture_name); }
+void GUI::StoreTexture(Texture* texture, std::string texture_name)
+{ GetTextureManager().StoreTexture(texture, std::move(texture_name)); }
 
-std::shared_ptr<Texture> GUI::StoreTexture(const std::shared_ptr<Texture>& texture, const std::string& texture_name)
-{ return GetTextureManager().StoreTexture(texture, texture_name); }
+void GUI::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
+{ GetTextureManager().StoreTexture(std::move(texture), std::move(texture_name)); }
 
 std::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap)
 { return GetTextureManager().GetTexture(path, mipmap); }
