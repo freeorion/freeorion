@@ -100,7 +100,7 @@ public:
     */
     TextControl& operator=(const TextControl& that);
 
-    Pt MinUsableSize() const noexcept override;
+    Pt MinUsableSize() const noexcept override { return m_text_lr - m_text_ul; }
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
     virtual Pt MinUsableSize(X width) const;

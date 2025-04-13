@@ -99,9 +99,6 @@ TextControl& TextControl::operator=(const TextControl& that)
     return *this;
 }
 
-Pt TextControl::MinUsableSize() const noexcept
-{ return m_text_lr - m_text_ul; }
-
 Pt TextControl::MinUsableSize(X width) const
 {
     // If the requested width is within one space width of the cached width
