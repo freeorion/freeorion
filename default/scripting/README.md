@@ -257,8 +257,8 @@ pre-commit run --all-files
 
 Also, you could just run each tools that are used in pre-commit hooks manually.
 ```shell
-ruff .  # will remove unused imports, sort import and fix/report code warnings
-black .  # reformat code
+ruff check .  # will remove unused imports, sort import and fix/report code warnings
+ruff format .  # reformat code
 mypy .  # report typing errors
 pyright  # report typing errors, similar to mypy, but have some missed and extra checks.
 ```
