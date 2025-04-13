@@ -8,9 +8,7 @@ getEmpire() -> empire :
 
 getEmpire( (int)arg1) -> empire :
     Returns A
-""".strip(
-        "\n"
-    )
+""".strip("\n")
 
     docs = Docs(text, indent=0, is_class=False)
     assert list(docs.get_argument_strings()) == ["", "number: int"]
@@ -21,9 +19,7 @@ def test_single_declaration_with_docstrings():
     text = """
 empirePlayerID( (int)arg1) -> int :
     Returns ...
-    """.strip(
-        "\n"
-    )
+    """.strip("\n")
     docs = Docs(text, indent=0, is_class=False)
     assert list(docs.get_argument_strings()) == ["number: int"]
     assert docs.get_doc_string() == '"""\nReturns ...\n"""'

@@ -19,9 +19,8 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     location=Planet()
     & OwnedBy(empire=Source.Owner)
     & Population(high=0)
-    & ~Planet(environment=[Uninhabitable], species="SP_EXOBOT")
+    & ~Planet(environment=[Uninhabitable], species="SP_EXOBOT"),
     # no existing Exobot colony required!
-    ,
     enqueuelocation=Planet()
     & OwnedBy(empire=Source.Owner)
     & Population(high=0)
@@ -95,9 +94,8 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     & ~Contains(IsBuilding(name=["BLD_COL_KILANDOW"]) & OwnedBy(empire=Source.Owner))
     & ~Enqueued(type=BuildBuilding, name="BLD_COL_KILANDOW")
     & ~Contains(IsBuilding(name=["BLD_COL_MISIORLA"]) & OwnedBy(empire=Source.Owner))
-    & ~Enqueued(type=BuildBuilding, name="BLD_COL_MISIORLA")
+    & ~Enqueued(type=BuildBuilding, name="BLD_COL_MISIORLA"),
     # no existing Exobot colony required!
-    ,
     effectsgroups=[
         *LIFECYCLE_MANIP_POPULATION_EFFECTS("SP_EXOBOT"),
         EffectsGroup(

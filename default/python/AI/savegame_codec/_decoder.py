@@ -11,6 +11,7 @@ When classes are loaded, their __setstate__ method will be invoked if available 
 the __dict__ content will be set directly. It is the responsiblity of the trusted classes
 to provide a __setstate__ method to verify and possibly sanitize the content of the passed state.
 """
+
 import binascii
 import json
 from typing import Union

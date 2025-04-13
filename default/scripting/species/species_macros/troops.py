@@ -61,9 +61,8 @@ _UNSTABLE_REBEL_TROOPS = [
         activation=Planet()
         & ~Unowned
         & ~HasEmpireStockpile(empire=Source.Owner, resource=ResourceInfluence, low=0)
-        & ~Capital
+        & ~Capital,
         # TODO: some species trait?
-        ,
         accountinglabel="PARTISANS_REBELLION",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=SetTargetHappiness(

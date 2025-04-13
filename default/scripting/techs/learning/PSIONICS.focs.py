@@ -21,7 +21,9 @@ Tech(
         * StatisticIf(
             float,
             # no Source condition here. Empire needs to have a ship or planet with a telepathic species, but it need not be the capital / source object
-            condition=(Planet() | Ship) & OwnedBy(empire=Source.Owner) &
+            condition=(Planet() | Ship)
+            & OwnedBy(empire=Source.Owner)
+            &
             # @content_tag{TELEPATHIC} Decreases research cost of this tech for empires that own any object with this tag
             HasTag(name="TELEPATHIC"),
         )

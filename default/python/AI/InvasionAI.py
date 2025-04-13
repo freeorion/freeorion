@@ -471,7 +471,7 @@ def evaluate_invasion_planet(planet_id):  # noqa: C901
     max_troops += AIDependencies.TROOPS_PER_POP * (target_pop - pop)
     system_secured = secure_system(system_id, False)
     debug(
-        "Invasion eval of %s\n" " - maxShields: %.1f\n" " - sysFleetThreat: %.1f\n" " - sysMonsterThreat: %.1f",
+        "Invasion eval of %s\n - maxShields: %.1f\n - sysFleetThreat: %.1f\n - sysMonsterThreat: %.1f",
         planet,
         planet.currentMeterValue(fo.meterType.maxShield),
         system_fleet_treat,

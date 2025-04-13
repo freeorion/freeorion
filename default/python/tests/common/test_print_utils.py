@@ -7,6 +7,7 @@
 
 Process finished with exit code 0
 """
+
 from common.print_utils import Number, Sequence, Table, Text, as_columns, dict_to_table
 
 EXPECTED_ITEMS_MULTIPLE_COLUMNS = """a   c

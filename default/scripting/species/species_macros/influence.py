@@ -178,8 +178,7 @@ _BASIC_INFLUENCE = [
         accountinglabel="FOCUS_INFLUENCE_LABEL",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
         effects=SetTargetInfluence(
-            value=Value
-            + (Target.Population**0.5) * NamedReal(name="FOCUS_INFLUENCE_INFLUENCE_PER_SQRT_POP", value=1.0)
+            value=Value + (Target.Population**0.5) * NamedReal(name="FOCUS_INFLUENCE_INFLUENCE_PER_SQRT_POP", value=1.0)
         ),
     ),
     *_BASE_INFLUENCE_COSTS,

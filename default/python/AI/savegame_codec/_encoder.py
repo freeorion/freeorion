@@ -16,6 +16,7 @@ If not defined, its __dict__ will be encoded instead.
 
 If an object could not be encoded, raise a CanNotSaveGameException.
 """
+
 import base64
 import collections
 import json

@@ -148,9 +148,11 @@ effectsgroups = [
         ),
     ),
     EffectsGroup(
-        scope=System &
+        scope=System
+        &
         # The following assets need protection
-        Contains((Planet() | Ship) & OwnedBy(empire=Source.Owner)) &
+        Contains((Planet() | Ship) & OwnedBy(empire=Source.Owner))
+        &
         # Don't warn about system where there are already enemies this turn
         ~Contains(
             Ship & (OwnedBy(affiliation=EnemyOf, empire=Source.Owner) | Unowned) & VisibleToEmpire(empire=Source.Owner)
@@ -304,6 +306,6 @@ effectsgroups = [
             },
             empire=Source.Owner,
         ),
-    )
+    ),
     # Note, the "]" on the following line is functional and important; it must be present and all EffectsGroups must be above it.
 ]

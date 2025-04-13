@@ -225,7 +225,7 @@ class DebugChatHandler(ChatHandlerBase):
         for player_id in self._provider.get_player_ids():
             if not self._provider.is_host(player_id):
                 help_message.append(self._get_empire_string(player_id))
-        self._formatter.white("  " + self._formatter.underline(self._formatter.blue("stop")) + ": stop debug"),
+        (self._formatter.white("  " + self._formatter.underline(self._formatter.blue("stop")) + ": stop debug"),)
         self.send_notification(chat_message="\n".join(help_message))
 
     def _get_empire_string(self, player_id):

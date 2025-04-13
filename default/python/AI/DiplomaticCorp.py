@@ -1,4 +1,5 @@
 """Handle diplomatic messages and response determination."""
+
 import freeOrionAIInterface as fo
 import random
 from logging import debug

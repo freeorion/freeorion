@@ -843,7 +843,7 @@ class AIFleetMission:
                     for planet_id in system.planetIDs:
                         planet = universe.getPlanet(planet_id)
                         if planet and not planet.ownedBy(empire_id) and not planet.unowned:
-                            debug("Currently no neighboring threats. " "Staying for bombardment of planet %s", planet)
+                            debug("Currently no neighboring threats. Staying for bombardment of planet %s", planet)
                             return current_system_id
 
                 # TODO consider attacking neighboring, non-military fleets

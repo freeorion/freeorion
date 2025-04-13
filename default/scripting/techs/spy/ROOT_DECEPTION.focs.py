@@ -68,7 +68,7 @@ Tech(
                     )
                     ** 0.5,
                 )
-            )
+            ),
             # large fleets only start affecting stealth when there are more than the threshold of ships in a single system
         ),
     ],

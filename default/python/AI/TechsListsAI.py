@@ -3,6 +3,7 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
+
 import freeOrionAIInterface as fo
 from collections.abc import Iterator
 from itertools import zip_longest

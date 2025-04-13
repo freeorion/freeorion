@@ -1005,7 +1005,7 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                     continue
                 sys_id = max(systems, key=lambda x: system_score(fid, x))
 
-                debug("Assigning leftover %s to system %d " "- nothing better to do.", fleet, sys_id)
+                debug("Assigning leftover %s to system %d - nothing better to do.", fleet, sys_id)
 
                 fleet_mission = aistate.get_fleet_mission(fid)
                 fleet_mission.clear_fleet_orders()

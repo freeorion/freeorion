@@ -47,5 +47,4 @@ class Field(ABC):
         return ""
 
     @abstractmethod
-    def convert_value_to_string(self, val: Any) -> str:
-        ...
+    def convert_value_to_string(self, val: Any) -> str: ...
