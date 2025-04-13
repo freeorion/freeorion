@@ -19,5 +19,27 @@ Special
     ]
     graphic = "icons/building/planetary_stardrive.png"
 
+PLANETARY_DRIVE_ACTIVATION
+'''
+    And [
+        Planet
+        Focus type = "FOCUS_PLANET_DRIVE"
+        WithinStarlaneJumps jumps = 1 condition = And [
+            System
+            Contains And [
+                Or [
+                    Building name = "BLD_PLANET_BEACON"
+                    And [
+                        Ship
+                        DesignHasPart low = 1 high = 999 name = "SP_PLANET_BEACON"
+                        Turn low = LocalCandidate.ArrivedOnTurn + 1
+                    ]
+                ]
+                OwnedBy empire = Source.Owner
+            ]
+            Not Contains Source
+        ]
+    ]
+'''
+
 #include "/scripting/macros/priorities.macros"
-#include "/scripting/macros/advanced_focus.macros"
