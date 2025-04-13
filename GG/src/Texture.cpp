@@ -492,15 +492,6 @@ void SubTexture::Clear()
 ///////////////////////////////////////
 // class GG::TextureManager
 ///////////////////////////////////////
-TextureManager::TextureManager()
-{}
-
-std::map<std::string_view, std::shared_ptr<const Texture>> TextureManager::Textures() const
-{
-    std::scoped_lock lock(m_texture_access_guard);
-    return {m_textures.begin(), m_textures.end()};
-}
-
 std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, std::string texture_name)
 { return StoreTexture(std::shared_ptr<Texture>(texture), std::move(texture_name)); }
 
@@ -539,7 +530,7 @@ std::shared_ptr<Texture> TextureManager::LoadTexture(const boost::filesystem::pa
     // only called from other TextureManager functions that should already have locked m_texture_access_guard
     auto temp = std::make_shared<Texture>();
     temp->Load(path, mipmap);
-    m_textures[path.generic_string()] = temp;
+    m_textures.insert_or_assign(path.generic_string(), temp);
     return temp;
 }
 

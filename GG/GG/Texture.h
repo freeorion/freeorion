@@ -222,7 +222,7 @@ private:
 class GG_API TextureManager
 {
 public:
-    std::map<std::string_view, std::shared_ptr<const Texture>> Textures() const;
+    const auto& Textures() const noexcept { return m_textures; }
 
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
@@ -252,7 +252,7 @@ public:
     void                     FreeTexture(const std::string& name);
 
 private:
-    TextureManager();
+    TextureManager() = default;
     std::shared_ptr<Texture> LoadTexture(const boost::filesystem::path& path, bool mipmap);
 
     /** Indexed by string, not path, because some textures may be stored by a
