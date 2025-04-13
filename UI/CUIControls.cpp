@@ -124,7 +124,7 @@ void CUIButton::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
          PlayButtonRolloverSound();
 }
 
-GG::Pt CUIButton::MinUsableSize() const {
+GG::Pt CUIButton::MinUsableSize() const noexcept {
     GG::Pt result = GG::Button::MinUsableSize();
     static constexpr int CUIBUTTON_HPADDING = 10;
     static constexpr int CUIBUTTON_VPADDING = 3;
