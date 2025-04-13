@@ -26,14 +26,14 @@ repos:
         files: 'default/stringtables/[a-z]{2}\.txt'
         types: [ text ]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.8.0'
+    rev: 'v1.15.0'
     hooks:
       - id: mypy
         name: focs.py type checks with mypy
         files: "(default/scripting/.*.py)|(check/check_file_changed/.*.py)"
         exclude: "^default/scripting/focs/.*.py"
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.350
+    rev: v1.1.399
     hooks:
       - id: pyright
         name: focs.py type checks with pyright
