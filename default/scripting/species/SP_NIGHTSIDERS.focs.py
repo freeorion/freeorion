@@ -135,7 +135,7 @@ Species(
             scope=IsSource,
             activation=Turn(high=0) & ~Star(type=[NoStar]),
             effects=[AddSpecial(name="TIDAL_LOCK_SPECIAL")],
-        )
+        ),
         # TODO: ... or a starless planet but then tidal_lock makes little sense,
     ],
     environments=INFERNO_NARROW_EP,

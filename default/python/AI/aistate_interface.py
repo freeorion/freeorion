@@ -13,6 +13,7 @@ Example usage:
     get_aistate().get_all_fleet_missions()
 
 """
+
 _aistate = None
 
 

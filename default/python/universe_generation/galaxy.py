@@ -348,11 +348,11 @@ def enforce_max_distance(positions, adjacency_grid):
     if len(clusterer) == 1:
         print("All systems positioned in a single connected cluster")
     else:
-        print(f"{len(clusterer)} clusters separated by more than the MAX_STARLANE_LENGTH." "  Starting to fill gaps.")
+        print(f"{len(clusterer)} clusters separated by more than the MAX_STARLANE_LENGTH.  Starting to fill gaps.")
 
     while len(clusterer) > 1:
         smallest_cluster = clusterer.smallest_isolated_cluster()
-        print("Searching for nearest neighbor position to a cluster " f"with {len(smallest_cluster)} positions.")
+        print(f"Searching for nearest neighbor position to a cluster with {len(smallest_cluster)} positions.")
         for pos in smallest_cluster:
             adjacency_grid.remove_pos(pos)
         # Find nearest neighbour
@@ -381,7 +381,7 @@ def enforce_max_distance(positions, adjacency_grid):
         if len(clusterer) == 1:
             print("All systems now positioned in a single connected cluster")
         else:
-            print(f"{len(clusterer)} clusters separated by more the MAX_STARLANE_LENGTH.  " "Continuing to fill gaps.")
+            print(f"{len(clusterer)} clusters separated by more the MAX_STARLANE_LENGTH.  Continuing to fill gaps.")
 
 
 def calc_universe_width(shape, size):

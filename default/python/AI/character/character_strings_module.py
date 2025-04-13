@@ -21,6 +21,7 @@ on character suitable for the UI.
 For example:
 possible_capitals(Character([Aggression(0)])) returns ['Royal', 'Imperial'].
 """
+
 import freeOrionAIInterface as fo
 from logging import debug
 

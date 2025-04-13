@@ -1,5 +1,6 @@
 """The FreeOrionAI module contains the methods which can be made by the C game client;
 these methods in turn activate other portions of the python AI code."""
+
 from functools import wraps
 from logging import debug, error, fatal, info
 

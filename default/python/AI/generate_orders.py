@@ -1,6 +1,7 @@
 """
 Various actions for the order generation.
 """
+
 import freeOrionAIInterface as fo
 import random
 from functools import wraps

@@ -7,6 +7,7 @@ and finally the targeted ratio of research/production. Each decision on a planet
 transfers the planet from the raw list to the baked list, until all planets
 have their future focus decided.
 """
+
 from __future__ import annotations
 
 import freeOrionAIInterface as fo

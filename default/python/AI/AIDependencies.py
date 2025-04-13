@@ -19,6 +19,7 @@ Example usage:
     import AIDependencies
     my_industry = AIDependencies.INDUSTRY_PER_POP * my_population
 """
+
 import freeOrionAIInterface as fo
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
@@ -375,7 +376,7 @@ FUEL_UPGRADE_TECHS = frozenset(
 # TODO (Morlic): Consider using only 1 dict with (capacity, secondaryStat) tuple as entries
 WEAPON_UPGRADE_DICT = {
     part_name: tuple(
-        {tech_name: damage * SHIP_WEAPON_DAMAGE_FACTOR for tech_name, damage, in techs_damage.items()}.items()
+        {tech_name: damage * SHIP_WEAPON_DAMAGE_FACTOR for tech_name, damage in techs_damage.items()}.items()
     )
     for part_name, techs_damage in {
         # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
@@ -405,7 +406,7 @@ WEAPON_ROF_UPGRADE_DICT = {
 }
 
 FIGHTER_DAMAGE_UPGRADE_DICT = {
-    part_name: tuple({tech_name: damage * FIGHTER_DAMAGE_FACTOR for tech_name, damage, in techs_damage.items()}.items())
+    part_name: tuple({tech_name: damage * FIGHTER_DAMAGE_FACTOR for tech_name, damage in techs_damage.items()}.items())
     for part_name, techs_damage in {
         # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
         #  Input "PARTNAME": {tech_name: dmg_upgrade, tech_name2: dmg_upgrade2, ...}

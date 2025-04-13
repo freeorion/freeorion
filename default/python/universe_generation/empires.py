@@ -212,7 +212,7 @@ class HomeSystemFinder:
 
             # If we have a better candidate, set the new lower bound and try for a better candidate.
             if merit > current_merit_lower_bound:
-                print(f"Home system set merit lower bound improved from {current_merit_lower_bound} to " f"{merit}")
+                print(f"Home system set merit lower bound improved from {current_merit_lower_bound} to {merit}")
                 current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
 

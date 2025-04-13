@@ -155,9 +155,8 @@ _COMMON_HAPPINESS_EFFECTS = [
         & ~IsSource
         & HasSpecies()
         & ~HasSpecies(name=[Source.Species])
-        & HasTag(name="ARTISTIC")
+        & HasTag(name="ARTISTIC"),
         # (SpeciesSpeciesOpinion species = LocalCandidate.Species species = Source.Species > 0) # TODO: implement within an Or condition, once species-species opinions are working...
-        ,
         activation=Planet() & HasSpecies() & HasTag(name="ARTISTIC"),
         accountinglabel="ARTISAN_APPRECIATION",
         effects=SetTargetHappiness(value=Value + 1.0),

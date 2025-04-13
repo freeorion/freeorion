@@ -27,7 +27,7 @@ arguments.add_argument(
     "--tag",
     nargs=2,
     default=["@content_tag{", "}"],
-    help="Set of opening and closing" " strings which surround a tag name and precede the tag documentation.",
+    help="Set of opening and closing strings which surround a tag name and precede the tag documentation.",
 )
 arguments.add_argument("-o", "--output", default="output.txt", help="Full path to an output file.")
 arguments.add_argument(
@@ -42,7 +42,7 @@ arguments.add_argument(
     " Link result will be: http://a.it/c/xyz.txt?4",
 )
 arguments.add_argument(
-    "--dry_run", action="store_true", help="Does not write to OUTPUT, instead printing info" " to stdout."
+    "--dry_run", action="store_true", help="Does not write to OUTPUT, instead printing info to stdout."
 )
 
 args = vars(arguments.parse_args())

@@ -5,6 +5,7 @@ Log entry samples.
 ##EmpireColors:0, 255, 0, 255
 ##CapitalID:str:927 Name: Imperial Arbol I Species: SP_REPLICON
 """
+
 from typing import Optional
 
 from common.statistic_interface import LOG_PREFIX, StatKey

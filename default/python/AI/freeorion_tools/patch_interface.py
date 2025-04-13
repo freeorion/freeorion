@@ -38,6 +38,7 @@ wrap any fo function or method to logger to get more info about it.
 don't commit logger wrapped function to repo.
 
 """
+
 import freeOrionAIInterface as fo
 import inspect
 import os

@@ -248,9 +248,7 @@ def _calculate_exploration_priority():
     # need_cap_B is to help regulate investment into scouting while the empire is small.
     # These caps could perhaps instead be tied more directly to military priority and
     # total empire production.
-    desired_number_of_scouts = int(
-        min(4 + mil_ships / 5, 4 + fo.currentTurn() / 50.0, 2 + num_unexplored_systems**0.5)
-    )
+    desired_number_of_scouts = int(min(4 + mil_ships / 5, 4 + fo.currentTurn() / 50.0, 2 + num_unexplored_systems**0.5))
     scouts_needed = max(0, desired_number_of_scouts - (num_scouts + queued_scout_ships))
     exploration_priority = int(40 * scouts_needed)
 
