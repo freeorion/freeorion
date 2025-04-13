@@ -1,39 +1,33 @@
-[tool.black]
-# do not include pyi files, since they are generated
-include = '\.py?$'
-# Add non python directories to extended ignore
-# This speedups black run
---extend-exclude = """
-^/(
-client
-| cmake
-| combat
-| doc
-| default/data
-| default/shaders
-| default/stringtables
-| documentation
-| Empire
-| GG
-| godot
-| msvc2017
-| msvc2019
-| msvc2022
-| network
-| packaging
-| parse
-| python
-| server
-| snap
-| test
-| tmp
-| UI
-| universe
-| util
-)/
-"""
-target-version = ["py39"]
-line-length=120
+[tool.ruff.format]
+
+exclude = [
+    "*_venv/",
+    "venv_*/",
+    "venv/",
+    "client",
+    "cmake",
+    "combat",
+    "doc",
+    "default/data",
+    "default/shaders",
+    "default/stringtables",
+    "documentation",
+    "Empire",
+    "GG",
+    "godot",
+    "msvc2022",
+    "network",
+    "packaging",
+    "parse",
+    "python",
+    "server",
+    "snap",
+    "test",
+    "tmp",
+    "UI",
+    "universe",
+    "util",
+]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
@@ -97,7 +91,6 @@ ignore = [
 
 [tool.ruff]
 
-
 src = [
     "default/python",
     "default/python/AI",
@@ -111,11 +104,9 @@ src = [
 
 target-version = "py39"
 line-length=120
-exclude = [
-    "*_venv/",
-    "venv_*/",
-    "venv/",
-]
+
+
+
 
 
 builtins = []
