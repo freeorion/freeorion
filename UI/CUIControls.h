@@ -59,7 +59,7 @@ public:
 
     CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover);
 
-    GG::Pt MinUsableSize() const override;
+    GG::Pt MinUsableSize() const noexcept override;
 
     bool InWindow(GG::Pt pt) const override;
 
