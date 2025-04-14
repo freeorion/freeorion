@@ -1400,6 +1400,36 @@ Empire::LaneSet Empire::VisibleStarlanes(const Universe& universe) const {
     return Empire::LaneSet{boost::container::ordered_unique_range, scratch.begin(), unique_it};
 }
 
+LaneSet Empire::VisibleStarlanes(const Universe& universe) const {
+    // existing implementation
+}
+
+LaneSet Empire::KnownStarlanes(const Universe& universe) const {
+    // existing implementation
+}
+
+std::set<std::pair<int, int>> Empire::TraversableStarlanes(const Universe& universe) const {
+    // Get visible starlanes - basic information about what starlanes exist
+    LaneSet visible_lanes = VisibleStarlanes(universe);
+    
+    // Get unobstructed systems - where we can freely move
+    const auto& unobstructed = m_supply_unobstructed_systems;
+    
+    // Filter to only include lanes where both endpoints are unobstructed
+    std::set<std::pair<int, int>> traversable_lanes;
+    for (const auto& lane : visible_lanes) {
+        if (unobstructed.contains(lane.first) && unobstructed.contains(lane.second)) {
+            traversable_lanes.insert(lane);
+        }
+    }
+    
+    return traversable_lanes;
+}
+
+bool Empire::CanTraverseLane(int system1_id, int system2_id, const SupplyManager& supply) const {
+    return supply.IsLaneTraversable(m_id, system1_id, system2_id);
+}
+
 float Empire::ProductionPoints() const
 { return ResourceOutput(ResourceType::RE_INDUSTRY); }
 
