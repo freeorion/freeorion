@@ -144,6 +144,13 @@ public:
 
     class PathfinderImpl;
 private:
+    /**
+    * Get empire-specific graph, with consistent fallback behavior.
+    * @param empire_id The ID of the empire (-1 for ALL_EMPIRES)
+    * @return Pointer to the appropriate graph
+    */
+    [[nodiscard]] GraphImpl::SystemGraph* GetEmpireGraph(int empire_id) const;
+
     std::unique_ptr<PathfinderImpl> pimpl;
 };
 
