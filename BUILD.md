@@ -239,6 +239,12 @@ To get logs run:
 adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log
 ```
 
+Footnotes:
+
+For Windows 10:
+- VCPKG manager is recommended.
+- Boost's libffi package within boost requires installation directory to contain no spaces when compiling with x64-windows, or with x64-mingw-dynamic cobalt requires it. Use an `mklink "C:/[file_destination]" "C:/[file destination]"` upon installation of vcpkg through git if this is a problem for you. Set all environment variables in relation to vcpkg with the mklink created folder.
+
 [Visual Studio]: https://visualstudio.microsoft.com/vs/
 [Xcode]: https://itunes.apple.com/de/app/xcode/id497799835?mt=12
 [CMake]: https://cmake.org/download/
