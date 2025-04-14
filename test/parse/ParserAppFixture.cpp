@@ -31,9 +31,9 @@ ParserAppFixture::ParserAppFixture() :
     boost::filesystem::path resource_dir = GetBinDir() / "default";
 #endif
 
-    GetOptionsDB().Set<std::string>("resource.path", PathToString(resource_dir));
-
     m_default_scripting_dir = resource_dir / "scripting";
+
+    GetOptionsDB().Set<boost::filesystem::path>("resource.path", std::move(resource_dir));
 
     BOOST_TEST_MESSAGE("Default scripting directory: " << m_default_scripting_dir);
     BOOST_REQUIRE(m_default_scripting_dir.is_absolute());

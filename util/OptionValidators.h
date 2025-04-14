@@ -3,6 +3,7 @@
 
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem/path.hpp>
 
 #include <cmath>
 #include <memory>
@@ -34,6 +35,11 @@ FO_COMMON_API std::vector<std::string> StringToList(std::string_view input_strin
 FO_COMMON_API std::vector<std::string> StringToList(const char* input_string);
 FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_string);
 
+FO_COMMON_API std::string PathToXMLText(boost::filesystem::path path);
+FO_COMMON_API boost::filesystem::path XMLTextToPath(std::string_view input_string);
+FO_COMMON_API boost::filesystem::path XMLTextToPath(const char* input_string);
+FO_COMMON_API boost::filesystem::path XMLTextToPath(const std::string& input_string);
+
 /** determines if a string is a valid value for an OptionsDB option */
 template <typename T>
 struct Validator : public ValidatorBase
@@ -43,6 +49,8 @@ struct Validator : public ValidatorBase
             return boost::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
             return boost::any(std::string{str});
+        else if constexpr (std::is_same_v<T, boost::filesystem::path>)
+            return boost::any(XMLTextToPath(str));
         else
             return boost::any(boost::lexical_cast<T>(str));
     }
@@ -52,6 +60,8 @@ struct Validator : public ValidatorBase
             return boost::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
             return boost::any(std::string{str});
+        else if constexpr (std::is_same_v<T, boost::filesystem::path>)
+            return boost::any(XMLTextToPath(str));
         else
             return boost::any(boost::lexical_cast<T>(str));
     }
@@ -76,6 +86,10 @@ struct Validator : public ValidatorBase
         } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
             if (value.type() == typeid(T))
                 return ListToString(boost::any_cast<std::vector<std::string>>(value));
+
+        } else if constexpr (std::is_same_v<T, boost::filesystem::path>) {
+            if (value.type() == typeid(T))
+                return PathToXMLText(boost::any_cast<boost::filesystem::path>(value));
 
         } else {
             if (value.type() == typeid(T))
