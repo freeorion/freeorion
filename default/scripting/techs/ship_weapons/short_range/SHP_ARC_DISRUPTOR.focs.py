@@ -8,6 +8,7 @@ from techs.ship_weapons.ship_weapons import (
 AD_2_upgrade = 2
 AD_3_upgrade = 3
 AD_2_plus_3_upgrade = AD_2_upgrade + AD_3_upgrade
+w_upgrade_c_e = WEAPON_UPGRADE_CAPACITY_EFFECTS
 
 # In absense of shields this weapon can get almost as good as Plasma. Against shields its pretty useless
 Tech(
@@ -19,8 +20,11 @@ Tech(
     researchturns=4,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_ROOT_AGGRESSION"],
-    unlock=Item(type=UnlockShipPart, name="SR_ARC_DISRUPTOR"),
-    effectsgroups=WEAPON_BASE_EFFECTS("SR_ARC_DISRUPTOR"),
+    unlock=[Item(type=UnlockShipPart, name="SR_ARC_DISRUPTOR"), Item(type=UnlockShipPart, name="SR_ARC_SYPHON")],
+    effectsgroups=[
+        *WEAPON_BASE_EFFECTS("SR_ARC_DISRUPTOR"),
+        *WEAPON_BASE_EFFECTS("SR_ARC_SYPHON"),
+    ],
     graphic="icons/ship_parts/pulse-laser-1.png",
 )
 
@@ -33,7 +37,10 @@ Tech(
     researchturns=8,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_1"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", AD_2_upgrade),
+    effectsgroups=[
+        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_DISRUPTOR", AD_2_upgrade),
+        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_2", "SR_ARC_SYPHON", 2*AD_2_upgrade, stringtable_prefix = "SHP_WEAPON_ARC_DISRUPTOR_2_SYPHON"),
+    ],
     graphic="icons/ship_parts/pulse-laser-2.png",
 )
 
@@ -47,8 +54,9 @@ Tech(
     researchturns=12,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
-    effectsgroups=WEAPON_UPGRADE_CAPACITY_EFFECTS(
-        "SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade
-    ),
+    effectsgroups=[
+        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade),
+        *w_upgrade_c_e("SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_SYPHON", 2*AD_3_upgrade, upgraded_damage_override=2*AD_2_plus_3_upgrade, stringtable_prefix = "SHP_WEAPON_ARC_DISRUPTOR_3_SYPHON"),
+    ],
     graphic="icons/ship_parts/pulse-laser-3.png",
 )
