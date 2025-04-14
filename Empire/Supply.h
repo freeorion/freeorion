@@ -23,6 +23,24 @@ public:
     [[nodiscard]] auto& SupplyStarlaneTraversals() const noexcept { return m_supply_starlane_traversals; }
     [[nodiscard]] const std::set<std::pair<int, int>>& SupplyStarlaneTraversals(int empire_id) const;
 
+    /**
+     * Gets traversable starlanes for the specified empire, with consistent fallback
+     * behavior regardless of client/server context.
+     * @param empire_id The ID of the empire to get lanes for (-1 for ALL_EMPIRES)
+     * @return Set of traversable starlane endpoints
+     */
+    [[nodiscard]] std::set<std::pair<int, int>> GetEmpireTraversableLanes(int empire_id) const;
+
+    /**
+     * Checks if a starlane between two systems is traversable by a given empire.
+     * Uses consistent fallback to system graph when no empire-specific graph is available.
+     * @param empire_id The empire ID (-1 for ALL_EMPIRES)
+     * @param system1_id First system ID
+     * @param system2_id Second system ID
+     * @return True if the lane is traversable, false otherwise
+     */
+    [[nodiscard]] bool IsLaneTraversable(int empire_id, int system1_id, int system2_id) const;
+
     /** Returns set of directed starlane traversals along which supply could
       * flow for this empire, but which can't due to some obstruction in one
       * of the systems. */
