@@ -131,6 +131,12 @@ public:
       * (\a x, \a y) location on the map, by direct-line distance. */
     int NearestSystemTo(double x, double y, const ObjectMap& objects) const;
 
+    /** Get empire-specific graph, with consistent fallback behavior.
+    * @param empire_id The ID of the empire (-1 for ALL_EMPIRES)
+    * @return Pointer to the appropriate graph or nullptr if no graph available
+    */
+    [[nodiscard]] GraphImpl::SystemGraph* GetEmpireGraph(int empire_id) const;
+
     /** Fills pathfinding data structure and determines least jumps distances
       * between systems. */
     void InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires);
@@ -144,13 +150,6 @@ public:
 
     class PathfinderImpl;
 private:
-    /**
-    * Get empire-specific graph, with consistent fallback behavior.
-    * @param empire_id The ID of the empire (-1 for ALL_EMPIRES)
-    * @return Pointer to the appropriate graph
-    */
-    [[nodiscard]] GraphImpl::SystemGraph* GetEmpireGraph(int empire_id) const;
-
     std::unique_ptr<PathfinderImpl> pimpl;
 };
 
