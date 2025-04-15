@@ -728,7 +728,11 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
     PythonParser parser(m_python, m_test_scripting_dir);
 
     auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_test_scripting_dir / "empire_statistics");
-    const auto empire_statistics = *Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
+    auto empire_statistics_opt = Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
+
+    BOOST_REQUIRE(empire_statistics_opt);
+
+    const auto empire_statistics = *std::move(empire_statistics_opt);
     BOOST_REQUIRE_EQUAL(1, empire_statistics.size());
 
     const auto statistic_it = empire_statistics.find("ARMED_MONSTER_COUNT");
