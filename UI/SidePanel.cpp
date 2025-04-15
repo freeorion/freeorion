@@ -2365,7 +2365,10 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
     }
 
-    auto pedia_to_planet_action = [this]() { ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id); };
+    auto pedia_to_planet_action = [this]() {
+        if (const auto* app = IApp::GetApp())
+            ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id, app->GetContext().ContextObjects());
+    };
 
     popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
 
@@ -3908,11 +3911,11 @@ void SidePanel::SelectPlanet(int planet_id, const ObjectMap& objects) {
     PlanetSelectedSignal(s_planet_id);
 }
 
-void SidePanel::SetSystem(int system_id) {
+void SidePanel::SetSystem(int system_id, const ObjectMap& objects) {
     if (s_system_id == system_id)
         return;
 
-    auto system = Objects().getRaw<const System>(system_id);
+    auto system = objects.getRaw<const System>(system_id);
     if (!system) {
         s_system_id = INVALID_OBJECT_ID;
         return;
@@ -3920,8 +3923,7 @@ void SidePanel::SetSystem(int system_id) {
 
     s_system_id = system_id;
 
-    if (Objects().getRaw<const System>(s_system_id))
-        PlaySidePanelOpenSound();
+    PlaySidePanelOpenSound();
 
     // refresh sidepanels
     Refresh();

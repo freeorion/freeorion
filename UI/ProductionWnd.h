@@ -60,7 +60,7 @@ public:
 
     //! Programatically sets this Wnd's selected system.
     //! Does not emit a SystemSelectedSignal.
-    void SelectSystem(int system_id);
+    void SelectSystem(int system_id, ScriptingContext& context);
 
     //! Programatically sets this Wnd's selected planet.
     //! Does not emit a PlanetSelectedSignal.
