@@ -1142,106 +1142,127 @@ void EncyclopediaDetailPanel::InitBuffers() {
 }
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
-    if (link_type == VarText::PLANET_ID_TAG) {
-        auto id = ToInt(data, INVALID_OBJECT_ID);
-        ClientUI::GetClientUI()->ZoomToPlanet(id);
-        this->SetPlanet(id);
+    auto* app = GGHumanClientApp::GetApp();
+    if (!app) return;
+    auto& context = app->GetContext();
+    auto& objects = context.ContextObjects();
+    auto& universe = context.ContextUniverse();
+    auto client_empire_id = app->EmpireID();
+    auto* ui = ClientUI::GetClientUI();
 
-    } else if (link_type == VarText::SYSTEM_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToSystem(ToInt(data, INVALID_OBJECT_ID));
-    } else if (link_type == VarText::FLEET_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToFleet(ToInt(data, INVALID_OBJECT_ID));
-    } else if (link_type == VarText::SHIP_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToShip(ToInt(data, INVALID_OBJECT_ID));
-    } else if (link_type == VarText::BUILDING_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToBuilding(ToInt(data, INVALID_OBJECT_ID));
-    } else if (link_type == VarText::FIELD_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToField(ToInt(data, INVALID_OBJECT_ID));
+    try {
+        if (link_type == VarText::PLANET_ID_TAG) {
+            const auto id = ToInt(data, INVALID_OBJECT_ID);
+            ui->ZoomToPlanet(id, context);
+            this->SetPlanet(id);
 
-    } else if (link_type == VarText::COMBAT_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToCombatLog(ToInt(data, CombatLogManager::INVALID_COMBAT_LOG_ID));
+        } else if (link_type == VarText::SYSTEM_ID_TAG) {
+            ui->ZoomToSystem(ToInt(data, INVALID_OBJECT_ID), context);
+        } else if (link_type == VarText::FLEET_ID_TAG) {
+            ui->ZoomToFleet(ToInt(data, INVALID_OBJECT_ID), context, client_empire_id);
+        } else if (link_type == VarText::SHIP_ID_TAG) {
+            ui->ZoomToShip(ToInt(data, INVALID_OBJECT_ID), context, client_empire_id);
+        } else if (link_type == VarText::BUILDING_ID_TAG) {
+            ui->ZoomToBuilding(ToInt(data, INVALID_OBJECT_ID), context);
+        } else if (link_type == VarText::FIELD_ID_TAG) {
+            ui->ZoomToField(ToInt(data, INVALID_OBJECT_ID), objects);
 
-    } else if (link_type == VarText::EMPIRE_ID_TAG) {
-        this->SetEmpire(ToInt(data, ALL_EMPIRES));
-    } else if (link_type == VarText::DESIGN_ID_TAG) {
-        this->SetDesign(ToInt(data, INVALID_DESIGN_ID));
-    } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-        if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
-            this->SetDesign(design->ID());
+        } else if (link_type == VarText::COMBAT_ID_TAG) {
+            ui->ZoomToCombatLog(ToInt(data, CombatLogManager::INVALID_COMBAT_LOG_ID));
 
-    } else if (link_type == VarText::TECH_TAG) {
-        this->SetTech(data);
-    } else if (link_type == VarText::POLICY_TAG) {
-        this->SetPolicy(data);
-    } else if (link_type == VarText::BUILDING_TYPE_TAG) {
-        this->SetBuildingType(data);
-    } else if (link_type == VarText::FIELD_TYPE_TAG) {
-        this->SetFieldType(data);
-    } else if (link_type == VarText::METER_TYPE_TAG) {
-        this->SetMeterType(data);
-    } else if (link_type == VarText::SPECIAL_TAG) {
-        this->SetSpecial(data);
-    } else if (link_type == VarText::SHIP_HULL_TAG) {
-        this->SetShipHull(data);
-    } else if (link_type == VarText::SHIP_PART_TAG) {
-        this->SetShipPart(data);
-    } else if (link_type == VarText::SPECIES_TAG) {
-        this->SetSpecies(data);
-    } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
-        this->SetText(data, false);
-    } else if (link_type == TextLinker::GRAPH_TAG) {
-        this->SetGraph(data);
-    } else if (link_type == TextLinker::URL_TAG) {
-        GGHumanClientApp::GetApp()->OpenURL(data);
-    } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-        GGHumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
+        } else if (link_type == VarText::EMPIRE_ID_TAG) {
+            this->SetEmpire(ToInt(data, ALL_EMPIRES));
+        } else if (link_type == VarText::DESIGN_ID_TAG) {
+            this->SetDesign(ToInt(data, INVALID_DESIGN_ID));
+        } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
+            if (const ShipDesign* design = universe.GetGenericShipDesign(data))
+                this->SetDesign(design->ID());
+
+        } else if (link_type == VarText::TECH_TAG) {
+            this->SetTech(data);
+        } else if (link_type == VarText::POLICY_TAG) {
+            this->SetPolicy(data);
+        } else if (link_type == VarText::BUILDING_TYPE_TAG) {
+            this->SetBuildingType(data);
+        } else if (link_type == VarText::FIELD_TYPE_TAG) {
+            this->SetFieldType(data);
+        } else if (link_type == VarText::METER_TYPE_TAG) {
+            this->SetMeterType(data);
+        } else if (link_type == VarText::SPECIAL_TAG) {
+            this->SetSpecial(data);
+        } else if (link_type == VarText::SHIP_HULL_TAG) {
+            this->SetShipHull(data);
+        } else if (link_type == VarText::SHIP_PART_TAG) {
+            this->SetShipPart(data);
+        } else if (link_type == VarText::SPECIES_TAG) {
+            this->SetSpecies(data);
+        } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
+            this->SetText(data, false);
+        } else if (link_type == TextLinker::GRAPH_TAG) {
+            this->SetGraph(data);
+        } else if (link_type == TextLinker::URL_TAG) {
+            app->OpenURL(data);
+        } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
+            app->BrowsePath(FilenameToPath(data));
+        }
+    } catch (const std::exception& e) {
+        ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkClick caught exception for link type: "
+                      << link_type << " and data: " << data << ": " << e.what();
     }
 }
 
 void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type, const std::string& data) {
-    using boost::lexical_cast;
+    auto* app = GGHumanClientApp::GetApp();
+    if (!app) return;
+    auto& context = app->GetContext();
+    auto& universe = context.ContextUniverse();
+    auto client_empire_id = app->EmpireID();
+    auto* ui = ClientUI::GetClientUI();
+    const auto data_int = [&data](const int invalid_result = INVALID_OBJECT_ID) { return ToInt(data, invalid_result); };
+
     try {
         if (link_type == VarText::PLANET_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(data));
+            ui->ZoomToPlanet(data_int(), context);
         } else if (link_type == VarText::SYSTEM_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(data));
+            ui->ZoomToSystem(data_int(), context);
         } else if (link_type == VarText::FLEET_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(data));
+            ui->ZoomToFleet(data_int(), context, client_empire_id);
         } else if (link_type == VarText::SHIP_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(data));
+            ui->ZoomToShip(data_int(), context, client_empire_id);
         } else if (link_type == VarText::BUILDING_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(data));
+            ui->ZoomToBuilding(data_int(), context);
 
         } else if (link_type == VarText::EMPIRE_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(data));
+            ui->ZoomToEmpire(data_int(ALL_EMPIRES));
         } else if (link_type == VarText::DESIGN_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
+            ui->ZoomToShipDesign(data_int(INVALID_DESIGN_ID));
         } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
-            if (const ShipDesign* design = GetUniverse().GetGenericShipDesign(data))
-                ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
+            if (const ShipDesign* design = universe.GetGenericShipDesign(data))
+                ui->ZoomToShipDesign(design->ID());
 
         } else if (link_type == VarText::TECH_TAG) {
-            ClientUI::GetClientUI()->ZoomToTech(data);
+            ui->ZoomToTech(data);
         } else if (link_type == VarText::POLICY_TAG) {
-            ClientUI::GetClientUI()->ZoomToPolicy(data);
+            ui->ZoomToPolicy(data);
         } else if (link_type == VarText::BUILDING_TYPE_TAG) {
-            ClientUI::GetClientUI()->ZoomToBuildingType(data);
+            ui->ZoomToBuildingType(data);
         } else if (link_type == VarText::SPECIAL_TAG) {
-            ClientUI::GetClientUI()->ZoomToSpecial(data);
+            ui->ZoomToSpecial(data);
         } else if (link_type == VarText::SHIP_HULL_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipHull(data);
+            ui->ZoomToShipHull(data);
         } else if (link_type == VarText::SHIP_PART_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipPart(data);
+            ui->ZoomToShipPart(data);
         } else if (link_type == VarText::SPECIES_TAG) {
-            ClientUI::GetClientUI()->ZoomToSpecies(data);
+            ui->ZoomToSpecies(data);
 
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
             this->SetText(data, false);
         } else if (link_type == TextLinker::GRAPH_TAG) {
             this->SetGraph(data);
         }
-    } catch (const boost::bad_lexical_cast&) {
-        ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+    } catch (const std::exception& e) {
+        ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught exception for link type: "
+                      << link_type << " and data: " << data << ": " << e.what();
     }
 }
 
@@ -1810,8 +1831,10 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
+        auto* app = IApp::GetApp();
+        if (!app) return;
+        const int client_empire_id = app->EmpireID();
+        const ScriptingContext& context = app->GetContext();
 
         int this_location_id = INVALID_OBJECT_ID;
         if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())

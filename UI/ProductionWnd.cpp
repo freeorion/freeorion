@@ -1059,9 +1059,8 @@ void ProductionWnd::SelectPlanet(int planet_id, const ScriptingContext& context)
 void ProductionWnd::SelectDefaultPlanet(const ObjectMap& objects)
 { m_build_designator_wnd->SelectDefaultPlanet(objects); }
 
-void ProductionWnd::SelectSystem(int system_id) {
+void ProductionWnd::SelectSystem(int system_id, ScriptingContext& context) {
     if (system_id != SidePanel::SystemID()) {
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
         m_build_designator_wnd->SelectSystem(system_id, context.ContextObjects());
         // refresh so as to correctly highlight builds for selected system
         Update(context);
@@ -1074,10 +1073,10 @@ void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator row_it,
     if (!m_order_issuing_enabled)
         return;
     auto* app = GGHumanClientApp::GetApp();
+    if (!app) return;
     ScriptingContext& context = app->GetContext();
     const auto empire = context.GetEmpire(m_empire_shown_id);
-    if (!empire)
-        return;
+    if (!empire) return;
 
     // This precorrects the position for a factor in Empire::MoveProductionWithinQueue
     const int new_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(row_it);
@@ -1099,7 +1098,9 @@ void ProductionWnd::Sanitize(const ObjectMap& objects)
 { m_build_designator_wnd->Clear(objects); }
 
 void ProductionWnd::ProductionQueueChangedSlot() {
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto* app = GGHumanClientApp::GetApp();
+    if (!app) return;
+    const ScriptingContext& context = app->GetContext();
     UpdateInfoPanel(context);
     UpdateQueue(context);
     m_build_designator_wnd->Update();

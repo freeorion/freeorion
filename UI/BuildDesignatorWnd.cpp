@@ -1304,11 +1304,11 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     SetBuild(queue_idx);
 
     auto* app = GGHumanClientApp::GetApp();
-    const ScriptingContext& context = app->GetContext();
+    ScriptingContext& context = app->GetContext();
     const ObjectMap& objects = context.ContextObjects();
     int empire_id = app->EmpireID();
 
-    auto empire = context.GetEmpire(empire_id);
+    auto empire = std::as_const(context).GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
         return;
@@ -1321,9 +1321,9 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
             if (auto map = ClientUI::GetClientUI()->GetMapWnd(false)) {
-                map->CenterOnObject(system_id);
+                map->CenterOnObject(system_id, objects);
                 if (open) {
-                    map->SelectSystem(system_id);
+                    map->SelectSystem(system_id, context);
                     SelectPlanet(location_id, objects);
                 }
             }
@@ -1369,7 +1369,7 @@ void BuildDesignatorWnd::SelectSystem(int system_id, const ObjectMap& objects) {
 
     if (system_id != INVALID_OBJECT_ID) {
         // set sidepanel's system and autoselect a suitable planet
-        SidePanel::SetSystem(system_id);
+        SidePanel::SetSystem(system_id, objects);
         SelectDefaultPlanet(objects);
     }
 }
@@ -1422,7 +1422,7 @@ void BuildDesignatorWnd::Reset(const ObjectMap& objects) {
 }
 
 void BuildDesignatorWnd::Clear(const ObjectMap& objects) {
-    SidePanel::SetSystem(INVALID_OBJECT_ID);
+    SidePanel::SetSystem(INVALID_OBJECT_ID, objects);
     Reset(objects);
     m_system_default_planets.clear();
 }
