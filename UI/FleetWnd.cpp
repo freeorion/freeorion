@@ -430,10 +430,8 @@ std::set<int> FleetUIManager::SelectedShipIDs() const {
 }
 
 std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(
-    const std::vector<int>& fleet_ids,
-    double allowed_bounding_box_leeway,
-    int selected_fleet_id,
-    GG::Flags<GG::WndFlag> flags)
+    const std::vector<int>& fleet_ids, double allowed_bounding_box_leeway,
+    int selected_fleet_id, GG::Flags<GG::WndFlag> flags)
 {
     std::string config_name;
     if (!GetOptionsDB().Get<bool>("ui.fleet.multiple.enabled")) {
@@ -1372,7 +1370,9 @@ void FleetDataPanel::Refresh() {
         DetachChildAndReset(overlay);
     m_fleet_icon_overlays.clear();
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+    const ScriptingContext& context = app->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const EmpireManager& e = context.Empires();
@@ -2439,6 +2439,9 @@ private:
     int                                m_fleet_id = INVALID_OBJECT_ID;
     bool                               m_order_issuing_enabled = false;
     boost::signals2::scoped_connection m_fleet_connection;
+    boost::signals2::scoped_connection m_deleted_object_connection;
+    boost::signals2::scoped_connection m_ship_row_click_connection;
+    boost::signals2::scoped_connection m_ship_row_rclick_connection;
     std::shared_ptr<ShipsListBox>      m_ships_lb;
 };
 
@@ -2462,14 +2465,14 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         m_ships_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
     }
 
-    namespace ph = boost::placeholders;
-
-    m_ships_lb->SelRowsChangedSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, ph::_1));
-    m_ships_lb->RightClickedRowSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipRightClicked, this, ph::_1, ph::_2, ph::_3));
-    GGHumanClientApp::GetApp()->GetContext().ContextUniverse().UniverseObjectDeleteSignal.connect(
-        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, ph::_1));
+    m_ship_row_click_connection =  m_ships_lb->SelRowsChangedSignal.connect(
+        [this](const auto& rows) { ShipSelectionChanged(rows); });
+    m_ship_row_rclick_connection = m_ships_lb->RightClickedRowSignal.connect(
+        [this](auto it, auto pt, auto modkeys) { ShipRightClicked(it, pt, modkeys); });
+    if (const auto* app = IApp::GetApp()) {
+        m_deleted_object_connection = app->GetContext().ContextUniverse().UniverseObjectDeleteSignal.connect(
+            [this](const auto& obj) { UniverseObjectDeleted(obj); });
+    }
 }
 
 void FleetDetailPanel::CompleteConstruction() {
@@ -2485,31 +2488,27 @@ int FleetDetailPanel::GetShipIDOfListRow(GG::ListBox::iterator it) const {
 }
 
 void FleetDetailPanel::SetFleet(int fleet_id) {
-    // save old fleet id and set to new id
-    int old_fleet_id = m_fleet_id;
-    m_fleet_id = fleet_id;
-
-    // if set fleet changed, or if current fleet is no fleet, disconnect any
-    // signals related to that fleet
-    if (m_fleet_id != old_fleet_id || m_fleet_id == INVALID_OBJECT_ID)
-        m_fleet_connection.disconnect();
-
-    // if set fleet unchanged, refresh ships list.  if set fleet changed, update ships list for new fleet
-    if (m_fleet_id == old_fleet_id)
+    const int old_fleet_id = std::exchange(m_fleet_id, fleet_id);
+    if (old_fleet_id == fleet_id) {
+        // fleet is unchanged, so just refresh ships list
         m_ships_lb->Refresh();
-    else
-        m_ships_lb->SetFleet(m_fleet_id);
-
-    // if set fleet changed, and new fleet exists, update state change signal connection
-    if (m_fleet_id != old_fleet_id && m_fleet_id != INVALID_OBJECT_ID) {
-        auto fleet = GGHumanClientApp::GetApp()->GetContext().ContextObjects().get<const Fleet>(m_fleet_id);
-        if (fleet && !fleet->Empty()) {
-            m_fleet_connection = fleet->StateChangedSignal.connect(
-                boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
-        } else {
-            ErrorLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
-        }
+        return;
     }
+
+    // set new fleet and signal connection
+    m_fleet_connection.disconnect();
+    m_ships_lb->SetFleet(m_fleet_id);
+    if (m_fleet_id == INVALID_OBJECT_ID)
+        return;
+
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+
+    auto fleet = app->GetContext().ContextObjects().get<const Fleet>(m_fleet_id);
+    if (fleet && !fleet->Empty())
+        m_fleet_connection = fleet->StateChangedSignal.connect([this]() { Refresh(); }, boost::signals2::at_front);
+    else
+        ErrorLogger() << "FleetDetailPanel::SetFleet set to missing or empty fleet id: " << fleet_id;
 }
 
 void FleetDetailPanel::SelectShips(const std::set<int>& ship_ids) {
@@ -3300,7 +3299,9 @@ void FleetWnd::DoLayout() {
 }
 
 void FleetWnd::AddFleet(int fleet_id) {
-    auto fleet = GGHumanClientApp::GetApp()->GetContext().ContextObjects().getRaw<const Fleet>(fleet_id);
+    const auto* app = IApp::GetApp();
+    if (!app) return;
+    auto fleet = app->GetContext().ContextObjects().getRaw<const Fleet>(fleet_id);
     if (!fleet /*|| fleet->Empty()*/)
         return;
 
@@ -3316,8 +3317,8 @@ void FleetWnd::DeselectAllFleets() {
     FleetSelectionChanged(m_fleets_lb->Selections());
 }
 
-void FleetWnd::SelectFleet(int fleet_id) {
-    if (fleet_id == INVALID_OBJECT_ID || !(GGHumanClientApp::GetApp()->GetContext().ContextObjects().getRaw<Fleet>(fleet_id))) {
+void FleetWnd::SelectFleet(int fleet_id, const ObjectMap& objects) {
+    if (fleet_id == INVALID_OBJECT_ID || !(objects.getRaw<Fleet>(fleet_id))) {
         ErrorLogger() << "FleetWnd::SelectFleet invalid id " << fleet_id;
         DeselectAllFleets();
         return;
@@ -3471,9 +3472,10 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 }
 
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
-    const auto* app = GGHumanClientApp::GetApp();
+    auto* app = IApp::GetApp();
+    if (!app) return;
     const int client_empire_id = app->EmpireID();
-    const ScriptingContext& context = app->GetContext();
+    ScriptingContext& context = app->GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
 
@@ -3530,24 +3532,24 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
     const auto mapwnd = ClientUI::GetClientUI()->GetMapWnd(false);
 
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
-    if (system
-        && mapwnd && !mapwnd->IsFleetExploring(fleet->ID())
+    if (system && mapwnd
+        && !mapwnd->IsFleetExploring(fleet->ID())
         && !ClientPlayerIsModerator()
         && fleet->OwnedBy(client_empire_id))
     {
-        auto explore_action = [fleet, mapwnd]() { mapwnd->SetFleetExploring(fleet->ID()); };
+        auto explore_action = [id{fleet->ID()}, mapwnd]()
+        { if (auto* app = IApp::GetApp()) mapwnd->SetFleetExploring(id, app->GetContext(), app->EmpireID()); };
 
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_FLEET_EXPLORE"),
                                         false, false, std::move(explore_action)));
         popup->AddMenuItem(GG::MenuItem(true));
     }
-    else if (system
-             && mapwnd
+    else if (system && mapwnd
              && !ClientPlayerIsModerator()
              && fleet->OwnedBy(client_empire_id))
     {
         auto stop_explore_action = [fleet_id{fleet->ID()}, mapwnd]()
-        { mapwnd->StopFleetExploring(fleet_id, IApp::GetApp()->GetContext().ContextObjects()); };
+        { if (auto* app = IApp::GetApp()) mapwnd->StopFleetExploring(fleet_id, app->GetContext(), app->EmpireID()); };
         popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_FLEET_EXPLORE"), false, false,
                                         std::move(stop_explore_action)));
         popup->AddMenuItem(GG::MenuItem(true));
@@ -3559,7 +3561,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator()
        )
     {
-        auto merge_action = [id{fleet->ID()}]() { MergeFleetsIntoFleet(id, IApp::GetApp()->GetContext()); };
+        auto merge_action = [id{fleet->ID()}]()
+        { if (auto* app = IApp::GetApp()) MergeFleetsIntoFleet(id, app->GetContext()); };
         popup->AddMenuItem(GG::MenuItem(UserString("FW_MERGE_SYSTEM_FLEETS"), false, false,
                                         std::move(merge_action)));
         popup->AddMenuItem(GG::MenuItem(true));
@@ -3589,8 +3592,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
         && !ClientPlayerIsModerator()
        )
     {
-        auto split_unfueled_action = [nfa{fleet->Aggression()}, unfueled_ship_ids, client_empire_id]()
-        { CreateNewFleetFromShips(unfueled_ship_ids, nfa, IApp::GetApp()->GetContext(), client_empire_id); };
+        auto split_unfueled_action = [nfa{fleet->Aggression()}, unfueled_ship_ids]() {
+            if (auto* app = IApp::GetApp())
+                CreateNewFleetFromShips(unfueled_ship_ids, nfa, app->GetContext(), app->EmpireID());
+        };
 
         popup->AddMenuItem(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"), false, false,
                                         std::move(split_unfueled_action)));

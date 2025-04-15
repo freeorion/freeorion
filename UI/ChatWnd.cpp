@@ -567,7 +567,13 @@ void MessageWnd::HandleTextCommand(const std::string& text) {
 
     // execute command matching understood syntax
     if (boost::iequals(command, "zoom") && !params.empty()) {
-        client_ui->ZoomToObject(params) || client_ui->ZoomToContent(params, true);   // params came from chat, so will be localized, so should be reverse looked up to find internal name from human-readable name for zooming to content
+        // params came from chat, so will be localized, so should be reverse looked up
+        // to find internal name from human-readable name for zooming to content
+        if (auto* app = IApp::GetApp()) {
+            if (client_ui->ZoomToObject(params, app->GetContext(), app->EmpireID()))
+                return;
+        }
+        client_ui->ZoomToContent(params, true);
     }
     else if (boost::iequals(command, "pedia")) {
         if (params.empty())

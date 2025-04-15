@@ -145,9 +145,8 @@ public:
     mutable boost::signals2::signal<void (double)> ZoomedSignal;
 
     void CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
-    void CenterOnObject(int id);                                 //!< centers the map on object with id \a id
-    void CenterOnObject(const auto& obj)
-    { if (obj) CenterOnMapCoord(obj->X(), obj->Y()); }
+    void CenterOnObject(int id, const ObjectMap& objects);       //!< centers the map on object with id \a id
+    void CenterOnObject(const UniverseObjectCXBase& obj) { CenterOnMapCoord(obj.X(), obj.Y()); }
 
     void ShowPlanet(int planet_id);                       //!< brings up encyclopedia panel and displays info about the planet
     void ShowCombatLog(int log_id);                       //!< brings up encyclopedia panel and displays info about the combat
@@ -172,15 +171,14 @@ public:
     void ShowMeterTypeArticle(MeterType meter_type);     //!< brings up encyclopedia panel and displays info about the MeterType @a meter_type
     void ShowEncyclopediaEntry(std::string str);         //!< brings up encyclopedia panel and displays info about the specified string \a str
 
-    void SelectSystem(int systemID); //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
-    void ReselectLastSystem();       //!< re-selects the most recently selected system, if a valid one exists
+    void SelectSystem(int systemID, ScriptingContext& context);         //!< selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
+    void SelectSystem(const System* system, ScriptingContext& context); //!< selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
+    void ReselectLastSystem(ScriptingContext& context);         //!< re-selects the most recently selected system, if a valid one exists
     void SelectPlanet(int planetID, const ScriptingContext& context); //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
-    void SelectPlanet(int planetID); //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
-    void SelectFleet(int fleetID);   //!< programatically selects fleets by ID
 
     /** Programatically selects fleets. */
-    void SelectFleet(const std::shared_ptr<Fleet>& fleet);
-    void ReselectLastFleet();                   //!< re-selects the most recent selected fleet, if a valid one exists
+    void SelectFleet(int fleetID, const ScriptingContext& context, int client_empire_id);   //!< programatically selects fleets by ID
+    //void ReselectLastFleet();                   //!< re-selects the most recent selected fleet, if a valid one exists
 
     void RemoveFleet(int fleet_id);             //!< removes specified fleet.
     void SetFleetMovementLine(int fleet_id);    //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
@@ -206,10 +204,10 @@ public:
     void Sanitize();                             //!< sanitizes the MapWnd after a game
     void ResetTimeoutClock(int timeout);         //!< start count down \a timeout seconds
 
-    void SetFleetExploring(const int fleet_id);
-    void StopFleetExploring(const int fleet_id, ObjectMap& objects);
+    void SetFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id);
+    void StopFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id);
     bool IsFleetExploring(const int fleet_id) const;
-    void DispatchFleetsExploring();              //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
+    void DispatchFleetsExploring(ScriptingContext& context, int empire_id); //!< called at each turn begin and when a fleet start/stop exploring to redispatch everyone.
 
 
 private:
@@ -317,7 +315,7 @@ private:
     void RefreshSliders();               //!< shows or hides sliders on map
 
     void InitTurnRendering();            //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
-    void InitSystemRenderingBuffers();   //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
+    void InitSystemRenderingBuffers(const ObjectMap& objects);   //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
     void ClearSystemRenderingBuffers();
     void InitStarlaneRenderingBuffers(); //!< initializes or refreshes buffers for rendering of starlanes
     void ClearStarlaneRenderingBuffers();
@@ -598,8 +596,9 @@ private:
     std::shared_ptr<MapScaleLine>       m_scale_line;   //!< indicates the on-screen distance that reprensents an in-universe distance
     std::shared_ptr<GG::Slider<double>> m_zoom_slider;  //!< allows user to set zoom level;
 
-    boost::signals2::scoped_connection  m_slider_show_connection;
-    boost::signals2::scoped_connection  m_obj_delete_connection;
+    std::vector<boost::signals2::scoped_connection> m_signal_connections;
+    std::vector<boost::signals2::scoped_connection> m_sys_icon_connections;
+    std::vector<boost::signals2::scoped_connection> m_field_icon_connections;
 
     std::set<int>                   m_fleets_exploring;
 

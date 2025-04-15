@@ -59,7 +59,7 @@ public:
     static void SelectPlanet(int planet_id, const ObjectMap& objects);
 
     /** Sets the system currently being viewed in all side panels */
-    static void SetSystem(int system_id);
+    static void SetSystem(int system_id, const ObjectMap& objects);
 
     /** Enables, or disables if \a enable is false, selection of planet panels
       * within this SidePanel.  Panels that can be selected are those which

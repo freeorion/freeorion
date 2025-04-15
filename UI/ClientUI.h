@@ -26,6 +26,8 @@ class PasswordEnterWnd;
 struct SaveGameUIData;
 class System;
 class ShipDesignManager;
+struct ScriptingContext;
+class ObjectMap;
 
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.
@@ -45,7 +47,8 @@ public:
     std::shared_ptr<MultiPlayerLobbyWnd>    GetMultiPlayerLobbyWnd();   //!< Returns the multiplayer lobby window.
     std::shared_ptr<PasswordEnterWnd>       GetPasswordEnterWnd();      //!< Returns the authentication window.
     std::shared_ptr<SaveFileDialog>         GetSaveFileDialog();        //!< Returns a perhaps nullptr to any existing SaveFileDialog
-    ShipDesignManager*                      GetShipDesignManager() { return m_ship_designs.get(); };
+    ShipDesignManager*                      GetShipDesignManager() noexcept { return m_ship_designs.get(); };
+    const ShipDesignManager*                GetShipDesignManager() const noexcept { return m_ship_designs.get(); };
     void                                    GetSaveGameUIData(SaveGameUIData& data); //!< populates the relevant UI state that should be restored after a save-and-load cycle
 
     /** Return the IntroScreen. Hides the MapWnd, MessageWnd and
@@ -61,19 +64,17 @@ public:
 
     void RestoreFromSaveData(const SaveGameUIData& elem);   //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 
-    bool ZoomToObject(const std::string& name);
-    bool ZoomToObject(int id);
-    bool ZoomToPlanet(int id);      //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it, or if production screen is open selects it
-    bool ZoomToPlanetPedia(int id); //!< Opens the encyclodedia window and presents the entry for the given planet
-    bool ZoomToSystem(int id);      //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
-    bool ZoomToFleet(int id);       //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-    bool ZoomToShip(int id);        //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
-    bool ZoomToBuilding(int id);    //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
-    bool ZoomToField(int id);       //!< Zooms to a particular field on the map
-    bool ZoomToCombatLog(int id);   //!< Opens combat log for indicated combat
-
-    void ZoomToSystem(std::shared_ptr<const System> system);//!< Zooms to a system on the galaxy map
-    void ZoomToFleet(std::shared_ptr<const Fleet> fleet);   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool ZoomToObject(const std::string& name, ScriptingContext& context, int client_empire_id);
+    bool ZoomToObject(int id, ScriptingContext& context, int client_empire_id);
+    bool ZoomToPlanet(int id, ScriptingContext& context);    //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it, or if production screen is open selects it
+    bool ZoomToPlanetPedia(int id, const ObjectMap& objects);//!< Opens the encyclodedia window and presents the entry for the given planet
+    bool ZoomToSystem(int id, ScriptingContext& context);    //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
+    bool ZoomToSystem(const System& system, ScriptingContext& context); //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
+    bool ZoomToFleet(int id, const ScriptingContext& context, int client_empire_id); //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool ZoomToShip(int id, const ScriptingContext& context, int client_empire_id); //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    bool ZoomToBuilding(int id, ScriptingContext& context);  //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
+    bool ZoomToField(int id, const ObjectMap& objects);      //!< Zooms to a particular field on the map
+    bool ZoomToCombatLog(int id);                            //!< Opens combat log for indicated combat
 
     bool ZoomToContent(const std::string& name, bool reverse_lookup = false);
     bool ZoomToTech(std::string tech_name);                  //!< Opens the technology screen and presents a description of the given technology

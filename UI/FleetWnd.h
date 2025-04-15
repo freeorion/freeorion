@@ -112,12 +112,12 @@ public:
 
     /** Deselect all fleets. */
     void DeselectAllFleets();
-    void SelectFleet(int fleet_id);                     ///< deselects any selected fleets, and selects the indicated fleet, bringing it into the fleet detail window
-    void SelectFleets(const std::set<int>& fleet_ids);  ///< deselects any selected fleets, and selects the fleets with the indicated ids
-    void SelectShips(const std::set<int>& ship_ids);    ///< deselected any selected ships, and selects the ships with the indicated ids if they are in the selected fleet.
+    void SelectFleet(int fleet_id, const ObjectMap& objects); ///< deselects any selected fleets, and selects the indicated fleet, bringing it into the fleet detail window
+    void SelectFleets(const std::set<int>& fleet_ids);        ///< deselects any selected fleets, and selects the fleets with the indicated ids
+    void SelectShips(const std::set<int>& ship_ids);          ///< deselected any selected ships, and selects the ships with the indicated ids if they are in the selected fleet.
 
     /** Enables, or disables if \a enable is false, issuing orders via this FleetWnd. */
-    void                    EnableOrderIssuing(bool enable = true);
+    void EnableOrderIssuing(bool enable = true);
 
     mutable boost::signals2::signal<void ()>    SelectedFleetsChangedSignal;
     mutable boost::signals2::signal<void ()>    SelectedShipsChangedSignal;
