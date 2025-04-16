@@ -249,26 +249,30 @@ namespace {
                   std::unordered_map<std::string, int>& obsolete_parts);
 
     private:
-        std::list<int>          m_ordered_design_ids;
-        std::list<std::string>  m_ordered_hulls;
+        std::vector<int>          m_ordered_design_ids;
+        std::vector<std::string>  m_ordered_hulls;
 
         // A counter to track the number of times a player has (un)obsoleted a part,
         // hull or design.  This allows the ui to determine if a design was obsoleted
         // before/after its hull/parts.
         int m_obsolete_ui_event_count = 1;
 
-        // An index from the id to the obsolescence state and the location in the
-        // m_ordered_design_ids list.
-        // For the state information ((false, ui_event), (true, ui_event), none)
-        // correspond to (not obsolete, obsolete and defer to parts and hull obsolescence)
-        boost::unordered_map<int,
-                             std::pair<boost::optional<std::pair<bool, int>>,
-                                       std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
-
-        // An index from the hull name to the obsolescence state and the location in m_ordered_hull_ids list.
-        boost::unordered_map<std::string,
-                             std::pair<std::pair<bool, int>,
-                                       std::list<std::string>::const_iterator>> m_hull_to_obsolete_and_loc;
+        // Replace complex map with clear struct definition
+        struct DesignInfo {
+            std::optional<std::pair<bool, int>> obsolete_info = std::nullopt; // whether design is obsolete and when it became obsolete
+            size_t position = 0;  // index in the ordered vector
+        };
+        
+        std::unordered_map<int, DesignInfo> m_id_to_design_info;
+        
+        // Similar struct for hull information
+        struct HullInfo {
+            bool is_obsolete = false;
+            int obsolete_event_id = 0;
+            size_t position = 0;  // position in the ordered vector
+        };
+        
+        std::unordered_map<std::string, HullInfo> m_hull_to_info;
 
         // A map from obsolete part name to the UI event count that changed it.
         std::unordered_map<std::string, int> m_obsolete_parts;
@@ -310,7 +314,7 @@ namespace {
         mutable boost::optional<std::future<PredefinedShipDesignManager::ParsedShipDesignsType>>
             m_pending_designs = boost::none;
 
-        mutable std::list<boost::uuids::uuid> m_ordered_uuids;
+        mutable std::vector<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
         mutable std::unordered_map<boost::uuids::uuid,
                                    std::pair<std::unique_ptr<ShipDesign>,
@@ -597,30 +601,42 @@ namespace {
     bool SavedDesignsManager::MoveBefore(boost::uuids::uuid moved_uuid, boost::uuids::uuid next_uuid) {
         if (moved_uuid == next_uuid)
             return false;
-
+    
         CheckPendingDesigns();
         if (!m_saved_designs.contains(moved_uuid)) {
             ErrorLogger() << "Unable to move saved design because moved design is missing.";
             return false;
         }
-
+    
         if (!next_uuid.is_nil() && !m_saved_designs.contains(next_uuid)) {
             ErrorLogger() << "Unable to move saved design because target design is missing.";
             return false;
         }
-
-        const auto moved_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), moved_uuid);
+    
+        // Find current position of the moved item
+        auto moved_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), moved_uuid);
         if (moved_it == m_ordered_uuids.end()) {
             ErrorLogger() << "Unable to move saved design because moved design is missing.";
             return false;
         }
-
-        m_ordered_uuids.erase(moved_it);
-
-        const auto next_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), next_uuid);
-
-        // Insert in the list.
-        m_ordered_uuids.insert(next_it, moved_uuid);
+    
+        // Find target position
+        auto next_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), next_uuid);
+        
+        // For vectors, erasing and then inserting is inefficient
+        // Instead, use rotation operations for better performance
+        
+        if (next_it == m_ordered_uuids.end()) {
+            // Moving to the end - rotate the element to the end
+            std::rotate(moved_it, moved_it + 1, m_ordered_uuids.end());
+        } else if (moved_it < next_it) {
+            // Moving forward - rotate the range [moved_it, next_it)
+            std::rotate(moved_it, moved_it + 1, next_it);
+        } else {
+            // Moving backward - rotate the range [next_it, moved_it + 1)
+            std::rotate(next_it, moved_it, moved_it + 1);
+        }
+        
         SaveManifest();
         return true;
     }
@@ -653,11 +669,10 @@ namespace {
     // CurrentShipDesignsManager implementations
     //////////////////////////////////////////////////
     std::vector<int> DisplayedShipDesignManager::OrderedIDs() const {
-        // Make sure that saved designs are included.
-        // Only OrderedIDs is part of the Designs base class and
-        // accessible outside this file.
+        // We're already using a vector, so we can efficiently filter and return
         std::vector<int> retval;
-        GetSavedDesignsManager().CheckPendingDesigns();
+        retval.reserve(m_ordered_design_ids.size());
+        
         if (const auto* app = GGHumanClientApp::GetApp()) {
             // Remove all obsolete ids from the list
             const auto& universe = app->GetContext().ContextUniverse();
@@ -688,48 +703,84 @@ namespace {
             ErrorLogger() << "Ship design is invalid";
             return;
         }
-
+    
         if (id == next_id) {
             ErrorLogger() << "Ship design " << id << " is the same as next_id";
             return;
         }
-
-        // if id already exists so this is a move.  Remove the old location
+    
+        // if id already exists, this is a move - remove the old location
         if (IsKnown(id)) {
             WarnLogger() << "DisplayedShipDesignManager::InsertBefore id = " << id
-                         << " already inserted.  Removing and reinserting at new location";
+                        << " already inserted. Removing and reinserting at new location";
             Remove(id);
         }
-
-        // Insert in the list, either before next_id or at the end of the list.
-        const auto next_it = m_id_to_obsolete_and_loc.find(next_id);
-        bool is_valid_next_id = (next_id != INVALID_DESIGN_ID
-                                 && next_it != m_id_to_obsolete_and_loc.end());
-        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
-        const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, id);
-
-        m_id_to_obsolete_and_loc[id] = std::pair(boost::none, inserted_it);
+    
+        // Find the position to insert at
+        size_t insert_pos = m_ordered_design_ids.size(); // Default to end
+        if (next_id != INVALID_DESIGN_ID) {
+            auto next_it = m_id_to_design_info.find(next_id);
+            if (next_it != m_id_to_design_info.end()) {
+                insert_pos = next_it->second.position;
+            }
+        }
+    
+        // Insert the design ID
+        m_ordered_design_ids.insert(m_ordered_design_ids.begin() + insert_pos, id);
+        
+        // Update the positions of all elements after the insertion point
+        for (auto& [design_id, info] : m_id_to_design_info) {
+            if (info.position >= insert_pos) {
+                ++info.position;
+            }
+        }
+        
+        // Add the new design to the map
+        DesignInfo info;
+        info.position = insert_pos;
+        m_id_to_design_info[id] = std::move(info);
     }
 
     bool DisplayedShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
         if (moved_id == next_id)
             return false;
-
+    
         auto existing_it = m_id_to_obsolete_and_loc.find(moved_id);
         if (existing_it == m_id_to_obsolete_and_loc.end()) {
             ErrorLogger() << "Unable to move design because moved design is missing.";
             return false;
         }
-
-        m_ordered_design_ids.erase(existing_it->second.second);
-
+    
+        // Find the iterator in the vector
+        auto moved_vec_it = existing_it->second.second;
+        auto moved_idx = std::distance(m_ordered_design_ids.begin(), moved_vec_it);
+        
+        // Find the iterator for the next ID
         const auto next_it = m_id_to_obsolete_and_loc.find(next_id);
-        bool is_valid_next_id = (next_id != INVALID_DESIGN_ID
-                                 && next_it != m_id_to_obsolete_and_loc.end());
-        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
-        const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, moved_id);
-
-        existing_it->second.second = inserted_it;
+        bool is_valid_next_id = (next_id != INVALID_DESIGN_ID && next_it != m_id_to_obsolete_and_loc.end());
+        
+        if (!is_valid_next_id) {
+            // If moving to the end, use std::rotate to move the element to the end
+            std::rotate(moved_vec_it, moved_vec_it + 1, m_ordered_design_ids.end());
+            // Update the iterator in the map
+            existing_it->second.second = m_ordered_design_ids.end() - 1;
+        } else {
+            auto next_vec_it = next_it->second.second;
+            auto next_idx = std::distance(m_ordered_design_ids.begin(), next_vec_it);
+            
+            if (moved_idx < next_idx) {
+                // Moving forward - rotate the range [moved_vec_it, next_vec_it)
+                std::rotate(moved_vec_it, moved_vec_it + 1, next_vec_it);
+                // Update the iterator in the map
+                existing_it->second.second = next_vec_it - 1;
+            } else {
+                // Moving backward - rotate the range [next_vec_it, moved_vec_it + 1)
+                std::rotate(next_vec_it, moved_vec_it, moved_vec_it + 1);
+                // Update the iterator in the map
+                existing_it->second.second = next_vec_it;
+            }
+        }
+        
         return true;
     }
 
@@ -1213,6 +1264,8 @@ public:
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)> RightClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*)> DoubleClickedSignal;
+    
+    bool UpdatePart(const ShipPart* new_part);
 
 private:
     std::shared_ptr<GG::StaticGraphic> m_icon;
@@ -1271,6 +1324,35 @@ void PartControl::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 
 void PartControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { RightClickedSignal(m_part, pt); }
+
+bool PartControl::UpdatePart(const ShipPart* new_part) {
+    if (!new_part) 
+        return false;
+        
+    // Update the part reference
+    m_part = new_part;
+    
+    // Update the icon if needed
+    if (m_icon) {
+        m_icon->SetTexture(ClientUI::PartIcon(new_part->Name()));
+        m_icon->Show();
+    }
+    
+    // Update the background if needed
+    if (m_background) {
+        m_background->SetTexture(PartBackgroundTexture(new_part));
+        m_background->Show();
+    }
+    
+    // Update tooltip information
+    SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
+        ClientUI::PartIcon(new_part->Name()),
+        UserString(new_part->Name()),
+        UserString(new_part->Description()) + "\n" + new_part->CapacityDescription()
+    ));
+    
+    return true;
+}
 
 void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type) {
     auto disabled = std::get<Availability::Obsolete>(type);
@@ -3734,26 +3816,31 @@ void SlotControl::SetPart(const std::string& part_name)
 { SetPart(GetShipPart(part_name)); }
 
 void SlotControl::SetPart(const ShipPart* part) {
-    // remove existing part control, if any
-    DetachChildAndReset(m_part_control);
-
-    if (!part)
+    if (!part) {
+        // Just detach the part control without recreating it
+        DetachChildAndReset(m_part_control);
         return;
-
-    // create new part control for passed in part
+    }
+    
+    // If we already have a part control, try to update it instead of recreating
+    if (m_part_control) {
+        // Check if the control can be reused by updating its part
+        if (m_part_control->UpdatePart(part)) {
+            return; // Successfully updated existing control
+        }
+        // If we couldn't update it, detach the old one before creating a new one
+        DetachChildAndReset(m_part_control);
+    }
+    
+    // Create new part control for passed in part
     m_part_control = GG::Wnd::Create<PartControl>(part);
     AttachChild(m_part_control);
-    m_part_control->InstallEventFilter(shared_from_this());
-
-    // single click shows encyclopedia data
     m_part_control->ClickedSignal.connect(ShipPartClickedSignal);
-
-    // double click clears slot
     m_part_control->DoubleClickedSignal.connect(
         [this](const ShipPart*){ this->SlotContentsAlteredSignal(nullptr, false); });
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    // set part occupying slot's tool tip to say slot type
+    // Set part occupying slot's tool tip to say slot type
     std::string title_text;
     if (m_slot_type == ShipSlotType::SL_EXTERNAL)
         title_text = UserString("SL_EXTERNAL");
@@ -3866,7 +3953,9 @@ public:
 
     //! Sets the part in @p slot to @p part and emits and signal if requested.
     //! Changes all similar parts if @p change_all_similar_parts.
-    void SetPart(const ShipPart* part, unsigned int slot, bool emit_signal = false, bool change_all_similar_parts = false);
+    void SetPart(const ShipPart* part, unsigned int slot, 
+             EmitSignal emit = EmitSignal::No, 
+             ChangeAllSimilar change_all = ChangeAllSimilar::No);
 
     //! Puts specified parts in slots.  Attempts to put each part into the slot
     //! corresponding to its place in the passed vector.  If a part cannot be
@@ -4191,9 +4280,9 @@ void DesignWnd::MainPanel::Sanitize() {
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
 { SetPart(GetShipPart(part_name), slot); }
 
-void DesignWnd::MainPanel::SetPart(const ShipPart* part, unsigned int slot,
-                                   bool emit_signal,
-                                   bool change_all_similar_parts)
+void DesignWnd::MainPanel::SetPart(const ShipPart* part, unsigned int slot, 
+                                   EmitSignal emit_signal, 
+                                   ChangeAllSimilar change_all_similar_parts) 
 {
     //DebugLogger() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot > m_slots.size()) {
@@ -4201,30 +4290,28 @@ void DesignWnd::MainPanel::SetPart(const ShipPart* part, unsigned int slot,
         return;
     }
 
-    if (!change_all_similar_parts) {
+    if (change_all_similar_parts == ChangeAllSimilar::No) {
         m_slots[slot]->SetPart(part);
 
     } else {
         const auto original_part = m_slots[slot]->GetPart();
         std::string original_part_name = original_part ? original_part->Name() : "";
 
-        if (change_all_similar_parts) {
-            for (auto& slot_control : m_slots) {
-                // skip incompatible slots
-                if (!part->CanMountInSlotType(slot_control->SlotType()))
-                    continue;
+        for (auto& slot_control : m_slots) {
+            // skip incompatible slots
+            if (!part->CanMountInSlotType(slot_control->SlotType()))
+                continue;
 
-                // skip different type parts
-                const auto replaced_part = slot_control->GetPart();
-                if (replaced_part && (replaced_part->Name() != original_part_name))
-                    continue;
+            // skip different type parts
+            const auto replaced_part = slot_control->GetPart();
+            if (replaced_part && (replaced_part->Name() != original_part_name))
+                continue;
 
-                slot_control->SetPart(part);
-            }
+            slot_control->SetPart(part);
         }
     }
 
-    if (emit_signal)  // to avoid unnecessary signal repetition.
+    if (emit_signal == EmitSignal::Yes)  // to avoid unnecessary signal repetition.
         DesignChangedSignal();
 }
 
@@ -4306,12 +4393,14 @@ void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const ShipPart* part) {
     // result.first = swap_slot, result.second = empty_slot
-    // if any of the pair == -1, no swap!
+    // If result.first is -1 and result.second >= 0, then the part can be directly added to result.second
+    // If both are >=0, then the part at result.first should be moved to result.second to make room
+    // If both are -1, then the part cannot be added
 
     if (!part)
         return {-1, -1};
 
-    // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
+    // Check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
     if (part->Class() == ShipPartClass::PC_FIGHTER_HANGAR) {
         for (const auto& slot : m_slots) {
             const ShipPart* existing_part = slot->GetPart();
@@ -4322,32 +4411,47 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Ship
         }
     }
 
-    // first search for an empty compatible slot for the new part
-    for (const auto& slot : m_slots) {
+    // First pass: collect information about empty slots by slot type
+    std::vector<int> empty_slots;
+    std::unordered_map<ShipSlotType, std::vector<int>> empty_slots_by_type;
+    
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+        auto slot = m_slots[i];
+        if (!slot->GetPart()) {
+            empty_slots.push_back(i);
+            empty_slots_by_type[slot->SlotType()].push_back(i);
+        }
+    }
+
+    // First search for an empty compatible slot for the new part
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+        auto slot = m_slots[i];
         if (!part->CanMountInSlotType(slot->SlotType()))
             continue;   // skip incompatible slots
 
         if (!slot->GetPart())
-            return {-1, -1};  // empty slot that can hold part. no swapping needed.
+            return {-1, static_cast<int>(i)};  // empty slot that can hold part, no swapping needed
     }
 
-
-    // second, scan for a slot containing a part that can be moved to another
+    // Second, scan for a slot containing a part that can be moved to another
     // slot to make room for the new part
     for (unsigned int i = 0; i < m_slots.size(); ++i) {
-        if (!part->CanMountInSlotType(m_slots[i]->SlotType()))
+        auto slot = m_slots[i];
+        if (!part->CanMountInSlotType(slot->SlotType()))
             continue;   // skip incompatible slots
 
-        // can now assume m_slots[i] has a part, as if it didn't, it would have
-        // been found in the first loop
+        // Skip empty slots - we already checked those
+        const ShipPart* existing_part = slot->GetPart();
+        if (!existing_part)
+            continue;
 
-        // see if we can move the part in the candidate slot to an empty slot elsewhere
-        for (unsigned int j = 0; j < m_slots.size(); ++j) {
-            if (m_slots[j]->GetPart())
-                continue;   // only consider moving into empty slots
-
-            if (m_slots[i]->GetPart()->CanMountInSlotType(m_slots[j]->SlotType()))
-                return {i, j};    // other slot can hold current part to make room for new part
+        // Check if we can move this part to any of the empty slots
+        for (const auto& slot_type : existing_part->MountableSlotTypes()) {
+            auto it = empty_slots_by_type.find(slot_type);
+            if (it != empty_slots_by_type.end() && !it->second.empty()) {
+                int empty_slot_idx = it->second.front();
+                return {static_cast<int>(i), empty_slot_idx};
+            }
         }
     }
 
@@ -4758,10 +4862,19 @@ void DesignWnd::MainPanel::DesignNameChanged() {
 }
 
 std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_design) {
-    std::string retval = "ShipDesign\n";
+    // Estimate size needed for efficiency
+    const auto& parts = ship_design->Parts();
+    size_t size_estimate = 20 + ship_design->Name().size() + ship_design->Hull().size();
+    for (const auto& part : parts)
+        size_estimate += part.size() + 3; // "part"\n
+    
+    std::string retval;
+    retval.reserve(size_estimate);
+    
+    retval = "ShipDesign\n";
     retval += ship_design->Name() + "\"\n";
     retval += ship_design->Hull() + "\"\n";
-    for (const std::string& part_name : ship_design->Parts()) {
+    for (const std::string& part_name : parts) {
         retval += "\"" + part_name + "\"\n";
     }
     return retval;
@@ -4770,11 +4883,12 @@ std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_desi
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     auto [name, description] = ValidatedNameAndDescription();
 
+    // Check if an existing design already exists and is identical
     if (const ShipDesign* design = m_incomplete_design.get()) {
-        if (design->Hull() ==             Hull() &&
-            design->Name(false) ==        name.StoredString() &&
+        if (design->Hull() == Hull() &&
+            design->Name(false) == name.StoredString() &&
             design->Description(false) == description.StoredString() &&
-            design->Parts() ==            Parts())
+            design->Parts() == Parts())
         {
             // nothing has changed, so don't need to update
             return;
@@ -4783,24 +4897,37 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     // assemble and check info for new design
     const std::string& hull = Hull();
-    const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
-
-    auto uuid = boost::uuids::random_generator()();
-
-    // update stored design
-    m_incomplete_design.reset();
-    if (hull.empty())
+    if (hull.empty()) {
+        m_incomplete_design.reset();
         return;
+    }
+    
+    const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
+    
+    // Reuse UUID if possible, only generate a new one if needed
+    boost::uuids::uuid uuid;
+    if (m_incomplete_design) {
+        uuid = m_incomplete_design->UUID();
+    } else {
+        uuid = boost::uuids::random_generator()();
+    }
+
+    // Create the new design without resetting first to avoid unnecessary allocation
     try {
-        m_incomplete_design = std::make_shared<ShipDesign>(
+        auto new_design = std::make_shared<ShipDesign>(
             std::invalid_argument(""),
             name.StoredString(), description.StoredString(),
             ClientApp::GetApp()->CurrentTurn(), ClientApp::GetApp()->EmpireID(),
             hull, Parts(), icon, "", name.IsInStringtable(),
-            false, std::move(uuid));
-        m_incomplete_design->SetID(INCOMPLETE_DESIGN_ID);
+            false, uuid);
+        new_design->SetID(INCOMPLETE_DESIGN_ID);
+        
+        // Only replace the old design after successfully creating the new one
+        m_incomplete_design = std::move(new_design);
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
+        // Only reset on error
+        m_incomplete_design.reset();
     }
 }
 
