@@ -3,6 +3,14 @@
 
 #include <GG/Wnd.h>
 #include <boost/uuid/uuid.hpp>
+#include <optional>
+#include <vector>
+#include <string_view>
+#include <unordered_map>
+
+// Add type-safe enums for common boolean parameters
+enum class EmitSignal { No, Yes };
+enum class ChangeAllSimilar { No, Yes };
 
 class EncyclopediaDetailPanel;
 struct SaveGameUIData;
