@@ -74,9 +74,9 @@ std::shared_ptr<GG::Slider<int>> CUIStyle::NewIntSlider(int min, int max, GG::Or
 { return GG::Wnd::Create<CUISlider<int>>(min, max, orientation); }
 
 
-std::shared_ptr<GG::TabBar> CUIStyle::NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
+std::shared_ptr<GG::TabBar> CUIStyle::NewTabBar(std::shared_ptr<GG::Font> font, GG::Clr color,
                                                 GG::Clr text_color) const
-{ return GG::Wnd::Create<CUITabBar>(font, color, text_color); }
+{ return GG::Wnd::Create<CUITabBar>(std::move(font), color, text_color); }
 
 std::shared_ptr<GG::Button> CUIStyle::NewScrollUpButton(GG::Clr color) const
 { return nullptr; }

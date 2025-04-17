@@ -106,7 +106,7 @@ public:
                                                       Clr color, int tab_width, int line_width = 5) const;
 
     /** Returns a new GG TabBar. */
-    virtual std::shared_ptr<TabBar> NewTabBar(const std::shared_ptr<Font>& font, Clr color,
+    virtual std::shared_ptr<TabBar> NewTabBar(std::shared_ptr<Font> font, Clr color,
                                               Clr text_color = CLR_BLACK) const;
 
     /** Returns a new GG TextControl. */

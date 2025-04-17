@@ -91,25 +91,24 @@ public:
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
 
-    TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font,
-           Clr color, Clr text_color = CLR_BLACK);
+    TabWnd(X x, Y y, X w, Y h, std::shared_ptr<Font> font, Clr color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
-    bool            Empty() const;
+    bool            Empty() const noexcept;
 
     /** Returns the number of tabs currently in this TabWnd. */
-    std::size_t     NumWnds() const;
+    std::size_t     NumWnds() const noexcept;
 
     /** Returns the Wnd currently visible in the TabWnd, or 0 if there is none. */
-    Wnd*            CurrentWnd() const;
+    Wnd*            CurrentWnd() const noexcept;
 
     /** Returns the index into the sequence of Wnds in this TabWnd of the Wnd
         currently shown.  NO_WND is returned if there is no Wnd currently
         visible. */
-    std::size_t     CurrentWndIndex() const;
+    std::size_t     CurrentWndIndex() const noexcept;
 
     /** Adds \a wnd to the sequence of Wnds in this TabWnd, with name \a name.
         \a name can be used later to remove the Wnd (\a name is not checked
@@ -164,7 +163,7 @@ public:
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
 
-    TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
+    TabBar(std::shared_ptr<Font> font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 public:
@@ -172,22 +171,22 @@ public:
     Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
-    bool Empty() const;
+    bool Empty() const noexcept;
 
     /** Returns the number of tabs currently in this TabWnd. */
-    std::size_t NumTabs() const;
+    std::size_t NumTabs() const noexcept;
 
     /** Returns the index into the sequence of tabs in this TabBar of the tab
         currently selected.  NO_TAB is returned if there is no tab currently
         selected. */
-    std::size_t CurrentTabIndex() const;
+    std::size_t CurrentTabIndex() const noexcept;
 
     /** Returns the color used to render the text in this TabBar. */
-    Clr TextColor() const;
+    Clr TextColor() const noexcept { return m_text_color; }
 
     void MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys) override;
     void SizeMove(Pt ul, Pt lr) override;
-    void Render() override;
+    void Render() noexcept override {};
 
     virtual void DoLayout();
 
