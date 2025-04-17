@@ -219,7 +219,6 @@ std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& serve
 
 GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
                                    int x, int y, bool fullscreen, bool fake_mode_change) :
-    ClientApp(),
     SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change),
     m_fsm(*this)
 {
@@ -305,7 +304,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
         inform_user_sound_failed = true;
     }
 
-    m_ui = std::make_unique<ClientUI>();
+    Hotkey::ReadFromOptions(GetOptionsDB());
 
     EnableFPS();
     UpdateFPSLimit();
@@ -314,6 +313,9 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
     GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
         boost::bind(&GGHumanClientApp::UpdateFPSLimit, this));
 
+
+    m_ui.InitializeWindows();
+
     auto default_browse_info_wnd{
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
             GG::X(400), ClientUI::GetFont(),
@@ -321,7 +323,7 @@ GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, st
             GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1)};
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
-    auto cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
+    auto cursor_texture = m_ui.GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
     SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture),
                                                   GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
@@ -748,12 +750,13 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
         }
     } else {
         try {
-            filename = ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
+            filename = m_ui.GetFilenameWithSaveFileDialog(
                 SaveFileDialog::Purpose::Load,
                 SaveFileDialog::SaveType::SinglePlayer);
 
             // Update intro screen Load & Continue buttons if all savegames are deleted.
-            m_ui->GetIntroScreen()->RequirePreRender();
+            if (auto is = m_ui.GetIntroScreen())
+                is->RequirePreRender();
 
         } catch (const std::exception& e) {
             ClientUI::MessageBox(e.what(), true);
@@ -1187,10 +1190,11 @@ bool GGHumanClientApp::ToggleFullscreen() {
 void GGHumanClientApp::StartGame(bool is_new_game) {
     m_game_started = true;
 
-    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd(false))
+    if (auto map_wnd = m_ui.GetMapWnd(false))
         map_wnd->ResetEmpireShown();
 
-    ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID(), is_new_game);
+    if (auto* sdm = m_ui.GetShipDesignManager())
+        sdm->StartGame(EmpireID(), is_new_game);
 }
 
 void GGHumanClientApp::UpdateCombatLogManager() {
@@ -1434,7 +1438,7 @@ bool GGHumanClientApp::IsLoadGameAvailable() const
 { return bool(NewestSinglePlayerSavegame()); }
 
 std::string GGHumanClientApp::SelectLoadFile() {
-    return ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
+    return m_ui.GetFilenameWithSaveFileDialog(
         SaveFileDialog::Purpose::Load,
         SaveFileDialog::SaveType::MultiPlayer);
 }
@@ -1445,7 +1449,7 @@ void GGHumanClientApp::ResetClientData(bool save_connection) {
         m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     }
     SetEmpireID(ALL_EMPIRES);
-    if (auto map_wnd = m_ui->GetMapWnd(false))
+    if (auto map_wnd = m_ui.GetMapWnd(false))
         map_wnd->Sanitize();
 
     m_universe.Clear();
@@ -1490,7 +1494,7 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
             GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
         {
             auto font = ClientUI::GetFont();
-            auto prompt = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
+            auto prompt = GetStyleFactory().NewThreeButtonDlg(
                 GG::X(275), GG::Y(75), UserString("GAME_MENU_CONFIRM_NOT_READY"), font,
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
                 2, UserString("YES"), UserString("CANCEL"));
@@ -1509,7 +1513,7 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
         if (!m_game_saves_in_progress.empty()) {
             DebugLogger() << "save game in progress. Checking with player.";
             // Ask the player if they want to wait for the save game to complete
-            auto dlg = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
+            auto dlg = GetStyleFactory().NewThreeButtonDlg(
                 GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
                 ClientUI::GetFont(ClientUI::Pts()+2),
                 ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
@@ -1563,34 +1567,26 @@ bool GGHumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
 int GGHumanClientApp::SelectedSystemID() const {
-    if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWndConst())
-            return mapwnd->SelectedSystemID();
-    }
+    if (auto mapwnd = m_ui.GetMapWndConst())
+        return mapwnd->SelectedSystemID();
     return INVALID_OBJECT_ID;
 }
 
 int GGHumanClientApp::SelectedPlanetID() const {
-    if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWndConst())
-            return mapwnd->SelectedPlanetID();
-    }
+    if (auto mapwnd = m_ui.GetMapWndConst())
+        return mapwnd->SelectedPlanetID();
     return INVALID_OBJECT_ID;
 }
 
 int GGHumanClientApp::SelectedFleetID() const {
-    if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWndConst())
-            return mapwnd->SelectedFleetID();
-    }
+    if (auto mapwnd = m_ui.GetMapWndConst())
+        return mapwnd->SelectedFleetID();
     return INVALID_OBJECT_ID;
 }
 
 int GGHumanClientApp::SelectedShipID() const {
-    if (m_ui) {
-        if (auto mapwnd = m_ui->GetMapWndConst())
-            return mapwnd->SelectedShipID();
-    }
+    if (auto mapwnd = m_ui.GetMapWndConst())
+        return mapwnd->SelectedShipID();
     return INVALID_OBJECT_ID;
 }
 
