@@ -134,10 +134,9 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 ////////////////////////////////////////////////
 // GG::TabWnd
 ////////////////////////////////////////////////
-TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
-               Clr text_color) :
+TabWnd::TabWnd(X x, Y y, X w, Y h, std::shared_ptr<Font> font, Clr color, Clr text_color) :
     Wnd(x, y, w, h, INTERACTIVE),
-    m_tab_bar(GetStyleFactory().NewTabBar(font, color, text_color)),
+    m_tab_bar(GetStyleFactory().NewTabBar(std::move(font), color, text_color)),
     m_overlay(Wnd::Create<OverlayWnd>(X0, Y0, X1, Y1))
 {}
 
@@ -164,17 +163,17 @@ Pt TabWnd::MinUsableSize() const
     return retval;
 }
 
-bool TabWnd::Empty() const
-{ return m_tab_bar->Empty(); }
+bool TabWnd::Empty() const noexcept
+{ return m_tab_bar && m_tab_bar->Empty(); }
 
-std::size_t TabWnd::NumWnds() const
-{ return m_tab_bar->NumTabs(); }
+std::size_t TabWnd::NumWnds() const noexcept
+{ return m_tab_bar ? m_tab_bar->NumTabs() : 0u; }
 
-Wnd* TabWnd::CurrentWnd() const
-{ return m_overlay->CurrentWnd().get(); }
+Wnd* TabWnd::CurrentWnd() const noexcept
+{ return m_overlay ? m_overlay->CurrentWnd().get() : nullptr; }
 
-std::size_t TabWnd::CurrentWndIndex() const
-{ return m_tab_bar->CurrentTabIndex(); }
+std::size_t TabWnd::CurrentWndIndex() const noexcept
+{ return m_tab_bar ? m_tab_bar->CurrentTabIndex() : 0u; }
 
 std::size_t TabWnd::AddWnd(std::shared_ptr<Wnd> wnd, std::string name)
 {
@@ -230,11 +229,10 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 ////////////////////////////////////////////////
 // GG::TabBar
 ////////////////////////////////////////////////
-TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color,
-               Flags<WndFlag> flags) :
+TabBar::TabBar(std::shared_ptr<Font> font, Clr color, Clr text_color, Flags<WndFlag> flags) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
-    m_font(font),
-    m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
+    m_font(std::move(font)),
+    m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(m_font), 1, 3)),
     m_text_color(text_color)
 {
     SetColor(color);
@@ -288,17 +286,14 @@ Pt TabBar::MinUsableSize() const
     return Pt(4 * ButtonWidth(), y);
 }
 
-bool TabBar::Empty() const
-{ return m_tabs->Empty(); }
+bool TabBar::Empty() const noexcept
+{ return m_tabs && m_tabs->Empty(); }
 
-std::size_t TabBar::NumTabs() const
-{ return m_tabs->NumButtons(); }
+std::size_t TabBar::NumTabs() const noexcept
+{ return m_tabs ? m_tabs->NumButtons() : 0u; }
 
-std::size_t TabBar::CurrentTabIndex() const
-{ return m_tabs->CheckedButton(); }
-
-Clr TabBar::TextColor() const
-{ return m_text_color; }
+std::size_t TabBar::CurrentTabIndex() const noexcept
+{ return m_tabs ? m_tabs->CheckedButton() : 0u; }
 
 void TabBar::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
 {
@@ -326,9 +321,6 @@ void TabBar::DoLayout()
     m_left_right_button_layout->SizeMove(Pt(), LowerRight() - UpperLeft());
     RecalcLeftRightButton();
 }
-
-void TabBar::Render()
-{}
 
 std::size_t TabBar::AddTab(std::string name)
 {

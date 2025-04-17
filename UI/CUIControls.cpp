@@ -607,8 +607,8 @@ void CUISpin<double>::SetEditTextFromValue()
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color) :
-    GG::TabBar(font, color, text_color)
+CUITabBar::CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color) :
+    GG::TabBar(std::move(font), color, text_color)
 { SetName("CUITabBar"); }
 
 void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {
