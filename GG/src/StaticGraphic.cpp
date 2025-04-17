@@ -44,23 +44,21 @@ bool dummy = RegisterGraphicStyles();
 ////////////////////////////////////////////////
 // GG::StaticGraphic
 ////////////////////////////////////////////////
-StaticGraphic::StaticGraphic(std::shared_ptr<Texture> texture,
-                             Flags<GraphicStyle> style,
-                             Flags<WndFlag> flags) :
+StaticGraphic::StaticGraphic(std::shared_ptr<Texture> texture, Flags<GraphicStyle> style, Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_style(style)
 {
-    auto w = texture->DefaultWidth();
-    auto h = texture->DefaultHeight();
-    m_graphic = SubTexture(std::move(texture), X0, Y0, w, h);
+    if (texture) {
+        auto w = texture->DefaultWidth();
+        auto h = texture->DefaultHeight();
+        m_graphic = SubTexture(std::move(texture), X0, Y0, w, h);
+    }
 
     ValidateStyle();  // correct any disagreements in the style flags
     SetColor(CLR_WHITE);
 }
 
-StaticGraphic::StaticGraphic(SubTexture subtexture,
-                             Flags<GraphicStyle> style,
-                             Flags<WndFlag> flags) :
+StaticGraphic::StaticGraphic(SubTexture subtexture, Flags<GraphicStyle> style, Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_graphic(std::move(subtexture)),
     m_style(style)
