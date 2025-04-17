@@ -36,7 +36,6 @@ class ObjectMap;
 class ClientUI {
 public:
     ClientUI();
-    ~ClientUI();
 
     MapWnd*                                 GetMapWnd(bool construct);  //!< Returns the main map window. if \a is true, creates a MapWnd if one doesn't already exist. if \a is false, may return nullptr
     const MapWnd*                           GetMapWndConst() const noexcept { return m_map_wnd.get(); }
@@ -234,8 +233,6 @@ private:
                                             m_prefixed_textures;
 
     std::unique_ptr<ShipDesignManager>      m_ship_designs;         //!< ship designs the client knows about, and their ordering in the UI
-
-    static constinit ClientUI*              s_the_UI;               //!< the singleton ClientUI object
 };
 
 namespace GG {
