@@ -189,8 +189,7 @@ public:
 /** Tab bar with buttons for selecting tabbed windows. */
 class CUITabBar final : public GG::TabBar {
 public:
-    CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
-              GG::Clr text_color);
+    CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color);
 
 private:
     void DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) override;

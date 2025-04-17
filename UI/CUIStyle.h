@@ -25,7 +25,7 @@ public:
     std::shared_ptr<GG::Slider<int>> NewIntSlider(int min, int max, GG::Orientation orientation,
                                                   GG::Clr color, int tab_width, int line_width = 5) const override;
 
-    std::shared_ptr<GG::TabBar> NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
+    std::shared_ptr<GG::TabBar> NewTabBar(std::shared_ptr<GG::Font> font, GG::Clr color,
                                           GG::Clr text_color = GG::CLR_BLACK) const override;
 
     std::shared_ptr<GG::Button> NewScrollUpButton(GG::Clr color) const override;
