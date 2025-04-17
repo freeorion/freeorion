@@ -407,8 +407,6 @@ std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) noexcept
 std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) noexcept
 { return HaloPrefix(star_type); }
 
-constinit ClientUI* ClientUI::s_the_UI = nullptr;
-
 std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
     os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
     return os;
@@ -589,14 +587,9 @@ namespace {
 ClientUI::ClientUI() :
     m_ship_designs(std::make_unique<ShipDesignManager>())
 {
-    s_the_UI = this;
-    Hotkey::ReadFromOptions(GetOptionsDB());
-
     // Remove all window properties if asked to
     if (GetOptionsDB().Get<bool>("window-reset"))
         CUIWnd::InvalidateUnusedOptions();
-
-    InitializeWindows();
 
     GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
@@ -628,9 +621,6 @@ ClientUI::ClientUI() :
     // Set the root path for image tags in rich text.
     GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
 }
-
-ClientUI::~ClientUI()
-{ s_the_UI = nullptr; }
 
 MapWnd* ClientUI::GetMapWnd(bool construct) {
     if (!m_map_wnd && construct)
@@ -1084,8 +1074,11 @@ void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
     m_ship_designs->Load(ui_data);
 }
 
-ClientUI* ClientUI::GetClientUI()
-{ return s_the_UI; }
+ClientUI* ClientUI::GetClientUI() {
+    if (auto* app = GGHumanClientApp::GetApp())
+        return &app->GetClientUI();
+    return nullptr;
+}
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
     auto dlg = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(

@@ -93,7 +93,8 @@ public:
     void DecAutoTurns(int n = 1);       ///< Decrease auto turn counter
     void EliminateSelf();               ///< Resign from the game
 
-    [[nodiscard]] ClientUI& GetClientUI() { return *m_ui.get(); }
+    [[nodiscard]] ClientUI& GetClientUI() noexcept { return m_ui; }
+    [[nodiscard]] const ClientUI& GetClientUI() const noexcept { return m_ui; }
 
     void Reinitialize();
     [[nodiscard]] float GLVersion() const;
@@ -181,9 +182,7 @@ private:
 
     HumanClientFSM m_fsm;
     Process        m_server_process;   ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-
-    /** The only instance of the ClientUI. */
-    std::unique_ptr<ClientUI> m_ui;
+    ClientUI       m_ui;
 
     bool m_single_player_game = true;   ///< true when this game is a single-player game
     bool m_game_started = false;        ///< true when a game is currently in progress
