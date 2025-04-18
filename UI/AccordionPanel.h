@@ -33,7 +33,7 @@ public:
 
 protected:
     void            SetCollapsed(bool collapsed);
-    bool            IsCollapsed() const;
+    bool            IsCollapsed() const noexcept { return m_collapsed; }
     virtual void    DoLayout();
     virtual void    InitBuffer();
 
