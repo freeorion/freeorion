@@ -129,10 +129,8 @@ void Hotkey::SetFromString(const std::string& str) {
 }
 
 void Hotkey::AddOptions(OptionsDB& db) {
-    for (const auto& entry : hotkeys) {
-        const Hotkey& hotkey = entry.second;
+    for (const auto& hotkey : hotkeys | range_values)
         db.Add(hotkey.m_name + ".hotkey", hotkey.GetDescription(), hotkey.ToString());
-    }
 }
 
 static void ReplaceInString(std::string& str, const std::string& what,
@@ -145,7 +143,7 @@ static void ReplaceInString(std::string& str, const std::string& what,
         return;                 // Nothing to do
     do {
         auto t = str.find(what, lst);
-        if(t == std::string::npos)
+        if (t == std::string::npos)
             return;
         str.replace(t, l1, replacement);
         t += l2;
