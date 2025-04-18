@@ -84,7 +84,7 @@ public:
 
     static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
 
-    static  GG::Pt  GetDefaultResolutionStatic(int display_id);
+    static GG::Pt   GetDefaultResolutionStatic(int display_id);
     static int      NumVideoDisplaysStatic();
     bool            FramebuffersAvailable() const;
 
