@@ -50,7 +50,7 @@
 
             // Call functions that might also transition.
             Client().ResetToIntro();
-            ClientUI::MessageBox("Some message", true);
+            Client().GetClientUI().MessageBox("Some message", true);
 
             // Return the state chart result from the only transition in this reaction.
             return retval;
@@ -208,7 +208,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
     // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro(true);
-    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().GetClientUI().MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
 
@@ -225,13 +225,13 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     ErrorLogger(FSM) << "WaitingForSPHostAck::react(const Error& msg) error: " << problem_key;
 
     //Note: transit<> frees this pointer so Client() must be called before.
-    GGHumanClientApp& client = Client();
+    auto& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         client.ResetToIntro(true);
-        ClientUI::MessageBox(UserString(problem_key), true);
+        client.GetClientUI().MessageBox(UserString(problem_key), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
     }
     return retval;
@@ -250,7 +250,7 @@ boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
     bool result = Client().VerifyCheckSum(e.m_message);
     if (!result)
-        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+        Client().GetClientUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -290,7 +290,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
     // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro(true);
-    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().GetClientUI().MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
 
@@ -307,14 +307,13 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     ErrorLogger(FSM) << "WaitingForMPHostAck::react(const Error& msg) error: " << problem_key;
 
     //Note: transit<> frees this pointer so Client() must be called before.
-    GGHumanClientApp& client = Client();
 
     // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
-        client.ResetToIntro(true);
-        ClientUI::MessageBox(UserString(problem_key), true);
-        client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
+        Client().ResetToIntro(true);
+        Client().GetClientUI().MessageBox(UserString(problem_key), true);
+        Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
     }
     return retval;
 }
@@ -332,7 +331,7 @@ boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
     bool result = Client().VerifyCheckSum(e.m_message);
     if (!result)
-        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+        Client().GetClientUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -404,7 +403,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro(true);
-    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().GetClientUI().MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
 
@@ -427,7 +426,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     auto retval = discard_event();
     if (fatal) {
         client.ResetToIntro(true);
-        ClientUI::MessageBox(UserString(problem_key), true);
+        Client().GetClientUI().MessageBox(UserString(problem_key), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO"));
     }
 
@@ -474,7 +473,7 @@ boost::statechart::result MPLobby::react(const Disconnection& d) {
     // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro(true);
-    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().GetClientUI().MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
 
@@ -584,7 +583,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     auto retval = discard_event();
     if (fatal) {
         client.ResetToIntro(true);
-        ClientUI::MessageBox(UserString(problem_key), true);
+        Client().GetClientUI().MessageBox(UserString(problem_key), true);
     }
 
     return retval;
@@ -603,7 +602,7 @@ boost::statechart::result MPLobby::react(const CheckSum& e) {
     TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
     bool result = Client().VerifyCheckSum(e.m_message);
     if (!result)
-        ClientUI::MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+        Client().GetClientUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
     return discard_event();
 }
 
@@ -734,7 +733,7 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
     // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro(true);
-    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().GetClientUI().MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
 
@@ -801,7 +800,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro(true);
-    ClientUI::MessageBox(reason_message, error);
+    Client().GetClientUI().MessageBox(reason_message, error);
     return retval;
 }
 
@@ -842,7 +841,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     if (fatal)
         client.ResetToIntro(true);
 
-    ClientUI::MessageBox(UserString(problem_key), fatal);
+    Client().GetClientUI().MessageBox(UserString(problem_key), fatal);
 
     return retval;
 }
