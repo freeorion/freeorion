@@ -252,15 +252,6 @@ int mainSetupAndRun() {
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     try {
 #endif
-        RegisterOptions(&GGHumanClientApp::AddWindowSizeOptionsAfterMainStart);
-
-        bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
-        bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
-
-        auto width_height = GGHumanClientApp::GetWindowWidthHeight();
-        int width(width_height.first), height(width_height.second);
-        auto left_top = GGHumanClientApp::GetWindowLeftTop();
-        int left(left_top.first), top(left_top.second);
 
 #ifdef FREEORION_WIN32
 #  ifdef IDI_ICON1
@@ -273,8 +264,7 @@ int mainSetupAndRun() {
 #  endif
 #endif
 
-        GGHumanClientApp app(width, height, true, "FreeOrion " + FreeOrionVersionString(),
-                             left, top, fullscreen, fake_mode_change);
+        GGHumanClientApp app("FreeOrion " + FreeOrionVersionString());
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and

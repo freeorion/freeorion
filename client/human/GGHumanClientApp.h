@@ -28,8 +28,9 @@ public:
 
     GGHumanClientApp() = delete;
 
-    GGHumanClientApp(int width, int height, bool calculate_FPS,
-                     std::string name, int x, int y,
+    explicit GGHumanClientApp(std::string name);
+
+    GGHumanClientApp(GG::X width, GG::Y height, std::string name, GG::X x, GG::Y y,
                      bool fullscreen, bool fake_mode_change);
 
     GGHumanClientApp(const GGHumanClientApp&) = delete;
@@ -113,9 +114,6 @@ public:
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
     mutable RepositionWindowsSignalType RepositionWindowsSignal;
 
-    [[nodiscard]] static std::pair<int, int> GetWindowWidthHeight();
-    [[nodiscard]] static std::pair<int, int> GetWindowLeftTop();
-
     [[nodiscard]] static GGHumanClientApp* GetApp() noexcept { return static_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
 
     /** Adds window dimension options to OptionsDB after the start of main, but before GGHumanClientApp constructor.
@@ -135,6 +133,17 @@ protected:
     void Initialize() noexcept override {};
 
 private:
+    struct AppParams {
+        GG::X width;
+        GG::Y height;
+        GG::X left;
+        GG::Y top;
+        bool fullscreen;
+        bool fake_mode_change;
+    };
+    static AppParams DefaultAppParams();
+    GGHumanClientApp(std::string name, AppParams params);
+
     /** Starts a server process on localhost.
 
         Throws a runtime_error if the server process can't be started.
@@ -197,5 +206,6 @@ private:
     boost::signals2::signal<void ()>    SaveGamesCompletedSignal;
 };
 
+[[nodiscard]] inline GGHumanClientApp* GetApp() noexcept { return GGHumanClientApp::GetApp(); }
 
 #endif

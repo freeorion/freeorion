@@ -217,9 +217,73 @@ std::string GGHumanClientApp::EncodeServerAddressOption(const std::string& serve
     return "network.known-servers._" + server_encoded;
 }
 
-GGHumanClientApp::GGHumanClientApp(int width, int height, bool calculate_fps, std::string name,
-                                   int x, int y, bool fullscreen, bool fake_mode_change) :
-    SDLGUI(width, height, calculate_fps, std::move(name), x, y, fullscreen, fake_mode_change),
+namespace {
+    [[nodiscard]] GG::Pt GetWindowLeftTop() {
+        int left = GetOptionsDB().Get<int>("video.windowed.left");
+        int top = GetOptionsDB().Get<int>("video.windowed.top");
+
+        // clamp to edges to avoid weird bug with maximizing windows setting their
+        // left and top to -9 which lead to weird issues when attmepting to recreate
+        // the window at those positions next execution
+        if (std::abs(left) < 10)
+            left = 0;
+        if (std::abs(top) < 10)
+            top = 0;
+
+        return {GG::X{left}, GG::Y{top}};
+    }
+
+    [[nodiscard]] GG::Pt GetWindowWidthHeight() {
+        int width(800), height(600);
+
+        bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+        if (!fullscreen) {
+            width = GetOptionsDB().Get<int>("video.windowed.width");
+            height = GetOptionsDB().Get<int>("video.windowed.height");
+            return {GG::X{width}, GG::Y{height}};
+        }
+
+        bool reset_fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.reset");
+        if (!reset_fullscreen) {
+            width = GetOptionsDB().Get<int>("video.fullscreen.width");
+            height = GetOptionsDB().Get<int>("video.fullscreen.height");
+            return {GG::X{width}, GG::Y{height}};
+        }
+
+        GetOptionsDB().Set<bool>("video.fullscreen.reset", false);
+        GG::Pt default_resolution =
+            SDLGUI::GetDefaultResolutionStatic(GetOptionsDB().Get<int>("video.monitor.id"));
+        GetOptionsDB().Set("video.fullscreen.width", Value(default_resolution.x));
+        GetOptionsDB().Set("video.fullscreen.height", Value(default_resolution.y));
+        GetOptionsDB().Commit();
+        return default_resolution;
+    }
+}
+
+GGHumanClientApp::AppParams GGHumanClientApp::DefaultAppParams() {
+    static const bool run_once = RegisterOptions(&GGHumanClientApp::AddWindowSizeOptionsAfterMainStart);
+
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
+    auto [width, height] = GetWindowWidthHeight();
+    auto [left, top] = GetWindowLeftTop();
+
+    return AppParams{width, height, left, top, fullscreen, fake_mode_change};
+}
+
+GGHumanClientApp::GGHumanClientApp(std::string name, AppParams params) :
+    GGHumanClientApp(params.width, params.height, std::move(name),
+                     params.left, params.top, params.fullscreen, params.fake_mode_change)
+{}
+
+GGHumanClientApp::GGHumanClientApp(std::string name) :
+    GGHumanClientApp(std::move(name), DefaultAppParams())
+{}
+
+GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, GG::X x, GG::Y y,
+                                   bool fullscreen, bool fake_mode_change) :
+    SDLGUI(Value(width), Value(height), true, std::move(name),
+           Value(x), Value(y), fullscreen, fake_mode_change),
     m_fsm(*this)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
@@ -828,11 +892,11 @@ void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory
         try {
             StartServer();
         } catch (const LocalServerAlreadyRunningException&) {
-            ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+            m_ui.MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
             ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
-            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+            m_ui.MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
 
@@ -840,7 +904,7 @@ void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory
         m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
             ResetToIntro(true);
-            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+            m_ui.MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             return;
         }
 
@@ -852,52 +916,10 @@ void GGHumanClientApp::RequestSavePreviews(const std::string& relative_directory
     m_networking->SendMessage(RequestSavePreviewsMessage(std::move(generic_directory)));
 }
 
-std::pair<int, int> GGHumanClientApp::GetWindowLeftTop() {
-    int left = GetOptionsDB().Get<int>("video.windowed.left");
-    int top = GetOptionsDB().Get<int>("video.windowed.top");
-
-    // clamp to edges to avoid weird bug with maximizing windows setting their
-    // left and top to -9 which lead to weird issues when attmepting to recreate
-    // the window at those positions next execution
-    if (std::abs(left) < 10)
-        left = 0;
-    if (std::abs(top) < 10)
-        top = 0;
-
-    return {left, top};
-}
-
-std::pair<int, int> GGHumanClientApp::GetWindowWidthHeight() {
-    int width(800), height(600);
-
-    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
-    if (!fullscreen) {
-        width = GetOptionsDB().Get<int>("video.windowed.width");
-        height = GetOptionsDB().Get<int>("video.windowed.height");
-        return {width, height};
-    }
-
-    bool reset_fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.reset");
-    if (!reset_fullscreen) {
-        width = GetOptionsDB().Get<int>("video.fullscreen.width");
-        height = GetOptionsDB().Get<int>("video.fullscreen.height");
-        return {width, height};
-    }
-
-    GetOptionsDB().Set<bool>("video.fullscreen.reset", false);
-    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("video.monitor.id"));
-    GetOptionsDB().Set("video.fullscreen.width", Value(default_resolution.x));
-    GetOptionsDB().Set("video.fullscreen.height", Value(default_resolution.y));
-    GetOptionsDB().Commit();
-    return {Value(default_resolution.x), Value(default_resolution.y)};
-}
-
 void GGHumanClientApp::Reinitialize() {
     const bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     const bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
-    const auto size = GetWindowWidthHeight();
-    const GG::X width{size.first};
-    const GG::Y height{size.second};
+    const auto [width, height] = GetWindowWidthHeight();
 
     const bool fullscreen_transition = Fullscreen() != fullscreen;
     const GG::X old_width = AppWidth();
