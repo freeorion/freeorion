@@ -1442,7 +1442,7 @@ std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int 
                                    const std::vector<uint8_t>& file_contents)
 { return GetFontManager().GetFont(font_filename, pts, file_contents); }
 
-std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned int pts)
+std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned int pts) const
 {
     std::shared_ptr<Font> retval;
     if (font->FontName() == StyleFactory::DefaultFontName()) {
