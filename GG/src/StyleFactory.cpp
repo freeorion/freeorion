@@ -86,9 +86,8 @@ std::shared_ptr<TextControl> StyleFactory::NewTextControl(
     Clr color, Flags<TextFormat> format) const
 { return Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font, color, format, NO_WND_FLAGS); }
 
-std::shared_ptr<TabBar> StyleFactory::NewTabBar(const std::shared_ptr<Font>& font, Clr color,
-                                                Clr text_color) const
-{ return Wnd::Create<TabBar>(font, color, text_color, INTERACTIVE); }
+std::shared_ptr<TabBar> StyleFactory::NewTabBar(std::shared_ptr<Font> font, Clr color, Clr text_color) const
+{ return Wnd::Create<TabBar>(std::move(font), color, text_color, INTERACTIVE); }
 
 std::shared_ptr<ListBox> StyleFactory::NewDropDownListListBox(Clr color, Clr interior) const
 {

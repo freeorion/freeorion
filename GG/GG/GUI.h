@@ -299,32 +299,31 @@ public:
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last). */
     template <typename CharSetIter>
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
-                                  CharSetIter first, CharSetIter last);
+    static std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
+                                         CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last), from the
         in-memory contents \a file_contents. */
     template <typename CharSetIter>
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
-                                  const std::vector<uint8_t>& file_contents,
-                                  CharSetIter first, CharSetIter last);
+    static std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
+                                         const std::vector<uint8_t>& file_contents,
+                                         CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to existing font \a font in a new size, \a pts. */
-    std::shared_ptr<Font> GetFont(const std::shared_ptr<Font>& font, unsigned int pts);
+    std::shared_ptr<Font> GetFont(const std::shared_ptr<Font>& font, unsigned int pts) const;
 
     /** Removes the desired font from the managed pool; since shared_ptr's are
         used, the font may be deleted much later. */
-    void FreeFont(std::string_view font_filename, unsigned int pts);
+    static void FreeFont(std::string_view font_filename, unsigned int pts);
 
     /** Adds an already-constructed texture to the managed pool \warning
         calling code <b>must not</b> delete \a texture; the texture pool will
         do that. */
-    std::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
+    void StoreTexture(Texture* texture, std::string texture_name);
 
     /** Adds an already-constructed texture to the managed pool. */
-    std::shared_ptr<Texture> StoreTexture(const std::shared_ptr<Texture>& texture,
-                                          const std::string& texture_name);
+    void StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name);
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true. */
@@ -381,10 +380,10 @@ public:
      boost::signals2::signal<void (bool)>   FocusChangedSignal;
 
     /** Emitted whenever the window manager requests the window close. */
-    boost::signals2::signal<void ()>    WindowClosingSignal;
+    boost::signals2::signal<void ()>        WindowClosingSignal;
 
     /** Emitted whenever the app is requested to close. */
-    boost::signals2::signal<void ()>    AppQuittingSignal;
+    boost::signals2::signal<void ()>        AppQuittingSignal;
 
     /** The base class for GUI exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

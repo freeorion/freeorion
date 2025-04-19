@@ -59,7 +59,7 @@ public:
 
     CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover);
 
-    GG::Pt MinUsableSize() const override;
+    GG::Pt MinUsableSize() const noexcept override;
 
     bool InWindow(GG::Pt pt) const override;
 
@@ -189,8 +189,7 @@ public:
 /** Tab bar with buttons for selecting tabbed windows. */
 class CUITabBar final : public GG::TabBar {
 public:
-    CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
-              GG::Clr text_color);
+    CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color);
 
 private:
     void DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) override;
@@ -385,7 +384,7 @@ public:
     void CompleteConstruction() override;
 
     double GetValue(std::size_t index = 0) const;
-    GG::Pt MinUsableSize() const override;
+    GG::Pt MinUsableSize() const noexcept override;
 
     void PreRender() override;
     void Render() override {}

@@ -89,12 +89,12 @@ namespace CheckSums {
 ///////////////////////////////////////////////////////////
 // Tech Info                                             //
 ///////////////////////////////////////////////////////////
-Tech::TechInfo::TechInfo(std::string& name_, std::string& description_,
-                         std::string& short_description_, std::string& category_,
+Tech::TechInfo::TechInfo(std::string name_, std::string description_,
+                         std::string short_description_, std::string category_,
                          std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
                          std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
                          bool researchable_,
-                         std::set<std::string>& tags_) :
+                         std::set<std::string> tags_) :
     name(std::move(name_)),
     description(std::move(description_)),
     short_description(std::move(short_description_)),

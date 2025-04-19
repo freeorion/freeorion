@@ -20,6 +20,7 @@
 #include "../util/OptionsDB.h"
 #include "../universe/Building.h"
 #include "../universe/BuildingType.h"
+#include "../universe/Field.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -406,8 +407,6 @@ std::string_view ClientUI::StarTypeFilePrefix(StarType star_type) noexcept
 std::string_view ClientUI::HaloStarTypeFilePrefix(StarType star_type) noexcept
 { return HaloPrefix(star_type); }
 
-constinit ClientUI* ClientUI::s_the_UI = nullptr;
-
 std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
     os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
     return os;
@@ -588,14 +587,9 @@ namespace {
 ClientUI::ClientUI() :
     m_ship_designs(std::make_unique<ShipDesignManager>())
 {
-    s_the_UI = this;
-    Hotkey::ReadFromOptions(GetOptionsDB());
-
     // Remove all window properties if asked to
     if (GetOptionsDB().Get<bool>("window-reset"))
         CUIWnd::InvalidateUnusedOptions();
-
-    InitializeWindows();
 
     GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
@@ -627,9 +621,6 @@ ClientUI::ClientUI() :
     // Set the root path for image tags in rich text.
     GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
 }
-
-ClientUI::~ClientUI()
-{ s_the_UI = nullptr; }
 
 MapWnd* ClientUI::GetMapWnd(bool construct) {
     if (!m_map_wnd && construct)
@@ -759,12 +750,11 @@ std::string ClientUI::FormatTimestamp(boost::posix_time::ptime timestamp) {
     return "";
 }
 
-bool ClientUI::ZoomToObject(const std::string& name) {
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+bool ClientUI::ZoomToObject(const std::string& name, ScriptingContext& context, int client_empire_id) {
     // try first by finding the object by name TODO: use getRaw or find or somesuch
     for (auto obj : context.ContextObjects().allRaw<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
-            return ZoomToObject(obj->ID());
+            return ZoomToObject(obj->ID(), context, client_empire_id);
 
     // try again by converting string to an ID
     try {
@@ -774,71 +764,90 @@ bool ClientUI::ZoomToObject(const std::string& name) {
 #else
         int id = boost::lexical_cast<int>(name);
 #endif
-        return ZoomToObject(id);
+        return ZoomToObject(id, context, client_empire_id);
     } catch (...) {
     }
 
     return false;
 }
 
-bool ClientUI::ZoomToObject(int id) {
-    return ZoomToSystem(id)     || ZoomToPlanet(id) || ZoomToBuilding(id)   ||
-           ZoomToFleet(id)      || ZoomToShip(id)   || ZoomToField(id);
+bool ClientUI::ZoomToObject(int id, ScriptingContext& context, int client_empire_id) {
+    return ZoomToSystem(id, context) ||
+           ZoomToPlanet(id, context) ||
+           ZoomToBuilding(id, context) ||
+           ZoomToFleet(id, context, client_empire_id) ||
+           ZoomToShip(id, context, client_empire_id) ||
+           ZoomToField(id, context.ContextObjects());
 }
 
-bool ClientUI::ZoomToPlanet(int id) {
-    if (auto planet = ClientApp::GetApp()->GetContext().ContextObjects().get<Planet>(id)) {
-        if (auto mapwnd = GetMapWnd(false)) {
-            mapwnd->CenterOnObject(planet->SystemID());
-            mapwnd->SelectSystem(planet->SystemID());
-            mapwnd->SelectPlanet(id);
+bool ClientUI::ZoomToPlanet(int id, ScriptingContext& context) {
+    if (auto mapwnd = GetMapWnd(false)) {
+        if (auto planet = std::as_const(context).ContextObjects().getRaw<Planet>(id)) {
+            mapwnd->CenterOnMapCoord(planet->X(), planet->Y());
+            mapwnd->SelectSystem(planet->SystemID(), context);
+            mapwnd->SelectPlanet(id, context);
+            return true;
         }
-        return true;
     }
     return false;
 }
 
-bool ClientUI::ZoomToPlanetPedia(int id) {
-    if (ClientApp::GetApp()->GetContext().ContextObjects().get<Planet>(id))
-        if (auto mapwnd = GetMapWnd(false))
+bool ClientUI::ZoomToPlanetPedia(int id, const ObjectMap& objects) {
+    if (objects.get<Planet>(id)) {
+        if (auto mapwnd = GetMapWnd(false)) {
             mapwnd->ShowPlanet(id);
-    return false;
-}
-
-bool ClientUI::ZoomToSystem(int id) {
-    if (auto system = ClientApp::GetApp()->GetContext().ContextObjects().get<System>(id)) {
-        ZoomToSystem(system);
-        return true;
+            return true;
+        }
     }
     return false;
 }
 
-bool ClientUI::ZoomToFleet(int id) {
-    if (auto fleet = ClientApp::GetApp()->GetContext().ContextObjects().get<Fleet>(id)) {
-        ZoomToFleet(fleet);
+bool ClientUI::ZoomToSystem(int id, ScriptingContext& context) {
+    const auto* system = std::as_const(context).ContextObjects().getRaw<System>(id);
+    return system && ZoomToSystem(*system, context);
+}
+
+bool ClientUI::ZoomToSystem(const System& system, ScriptingContext& context) {
+    if (auto mapwnd = GetMapWnd(false)) {
+        mapwnd->CenterOnMapCoord(system.X(), system.Y());
+        mapwnd->SelectSystem(&system, context);
         return true;
     }
+
     return false;
 }
 
-bool ClientUI::ZoomToShip(int id) {
-    if (auto ship = ClientApp::GetApp()->GetContext().ContextObjects().get<Ship>(id))
-        return ZoomToFleet(ship->FleetID());
+bool ClientUI::ZoomToFleet(int id, const ScriptingContext& context, int client_empire_id) {
+    auto fleet = context.ContextObjects().get<Fleet>(id);
+    if (!fleet) return false;
+
+    if (auto mapwnd = GetMapWnd(false)) {
+        mapwnd->CenterOnObject(*fleet);
+        mapwnd->SelectFleet(id, context, client_empire_id);
+    }
+    if (const auto fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleetID(id))
+        fleet_wnd->SelectFleet(id, context.ContextObjects());
+    return true;
+}
+
+bool ClientUI::ZoomToShip(int id, const ScriptingContext& context, int client_empire_id) {
+    if (auto ship = context.ContextObjects().get<Ship>(id))
+        return ZoomToFleet(ship->FleetID(), context, client_empire_id);
     return false;
 }
 
-bool ClientUI::ZoomToBuilding(int id) {
-    if (auto building = ClientApp::GetApp()->GetContext().ContextObjects().get<Building>(id)) {
+bool ClientUI::ZoomToBuilding(int id, ScriptingContext& context) {
+    if (auto building = std::as_const(context).ContextObjects().get<Building>(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
-        return ZoomToPlanet(building->PlanetID());
+        return ZoomToPlanet(building->PlanetID(), context);
     }
     return false;
 }
 
-bool ClientUI::ZoomToField(int id) {
-    if (auto field = ClientApp::GetApp()->GetContext().ContextObjects().get<Field>(id))
+bool ClientUI::ZoomToField(int id, const ObjectMap& objects) {
+    if (auto field = objects.get<Field>(id))
         if (auto mapwnd = GetMapWnd(false))
-            mapwnd->CenterOnObject(id);
+            mapwnd->CenterOnObject(*field);
     return false;
 }
 
@@ -850,26 +859,6 @@ bool ClientUI::ZoomToCombatLog(int id) {
     }
     ErrorLogger() << "Unable to find combat log with id " << id;
     return false;
-}
-
-void ClientUI::ZoomToSystem(std::shared_ptr<const System> system) {
-    if (!system)
-        return;
-    if (auto mapwnd = GetMapWnd(false)) {
-        mapwnd->CenterOnObject(system->ID());
-        mapwnd->SelectSystem(system->ID());
-    }
-}
-
-void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
-    if (!fleet)
-        return;
-    if (auto mapwnd = GetMapWnd(false)) {
-        mapwnd->CenterOnObject(fleet->ID());
-        mapwnd->SelectFleet(fleet->ID());
-    }
-    if (const auto& fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleetID(fleet->ID()))
-        fleet_wnd->SelectFleet(fleet->ID());
 }
 
 bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
@@ -1085,8 +1074,11 @@ void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
     m_ship_designs->Load(ui_data);
 }
 
-ClientUI* ClientUI::GetClientUI()
-{ return s_the_UI; }
+ClientUI* ClientUI::GetClientUI() {
+    if (auto* app = GGHumanClientApp::GetApp())
+        return &app->GetClientUI();
+    return nullptr;
+}
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
     auto dlg = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(

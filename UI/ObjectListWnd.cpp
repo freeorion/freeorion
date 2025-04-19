@@ -2664,7 +2664,9 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
         ObjectDoubleClickedSignal(object_id);
-    ClientUI::GetClientUI()->ZoomToObject(object_id);
+
+    if (auto* app = IApp::GetApp())
+        ClientUI::GetClientUI()->ZoomToObject(object_id, app->GetContext(), app->EmpireID());
 }
 
 std::set<int> ObjectListWnd::SelectedObjectIDs() const {
@@ -2705,7 +2707,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     m_list_box->SelectRow(it, true);
 
     auto dump_action = [this, object_id]() { ObjectDumpSignal(object_id); };
-    auto suitability_action = [object_id]() { ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id); };
+    auto suitability_action = [object_id]() {
+        if (const auto* app = IApp::GetApp())
+            ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id, app->GetContext().ContextObjects());
+    };
 
     // Refresh and clean up common to focus and production changes.
     auto focus_ship_building_common_action = [this]() {

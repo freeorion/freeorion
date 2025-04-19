@@ -124,7 +124,7 @@ void CUIButton::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
          PlayButtonRolloverSound();
 }
 
-GG::Pt CUIButton::MinUsableSize() const {
+GG::Pt CUIButton::MinUsableSize() const noexcept {
     GG::Pt result = GG::Button::MinUsableSize();
     static constexpr int CUIBUTTON_HPADDING = 10;
     static constexpr int CUIBUTTON_VPADDING = 3;
@@ -607,8 +607,8 @@ void CUISpin<double>::SetEditTextFromValue()
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color) :
-    GG::TabBar(font, color, text_color)
+CUITabBar::CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color) :
+    GG::TabBar(std::move(font), color, text_color)
 { SetName("CUITabBar"); }
 
 void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {
@@ -1452,7 +1452,7 @@ void StatisticIcon::DoLayout() {
     m_text->SizeMove(text_ul, {Width(), Height()});
 }
 
-GG::Pt StatisticIcon::MinUsableSize() const {
+GG::Pt StatisticIcon::MinUsableSize() const noexcept {
     if (!m_icon)
         return GG::Pt(GG::X1, GG::Y1);
 

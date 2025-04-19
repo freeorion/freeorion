@@ -28,8 +28,9 @@ public:
 
     GGHumanClientApp() = delete;
 
-    GGHumanClientApp(int width, int height, bool calculate_FPS,
-                     std::string name, int x, int y,
+    explicit GGHumanClientApp(std::string name);
+
+    GGHumanClientApp(GG::X width, GG::Y height, std::string name, GG::X x, GG::Y y,
                      bool fullscreen, bool fake_mode_change);
 
     GGHumanClientApp(const GGHumanClientApp&) = delete;
@@ -93,7 +94,8 @@ public:
     void DecAutoTurns(int n = 1);       ///< Decrease auto turn counter
     void EliminateSelf();               ///< Resign from the game
 
-    [[nodiscard]] ClientUI& GetClientUI() { return *m_ui.get(); }
+    [[nodiscard]] ClientUI& GetClientUI() noexcept { return m_ui; }
+    [[nodiscard]] const ClientUI& GetClientUI() const noexcept { return m_ui; }
 
     void Reinitialize();
     [[nodiscard]] float GLVersion() const;
@@ -111,9 +113,6 @@ public:
 
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
     mutable RepositionWindowsSignalType RepositionWindowsSignal;
-
-    [[nodiscard]] static std::pair<int, int> GetWindowWidthHeight();
-    [[nodiscard]] static std::pair<int, int> GetWindowLeftTop();
 
     [[nodiscard]] static GGHumanClientApp* GetApp() noexcept { return static_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
 
@@ -134,6 +133,17 @@ protected:
     void Initialize() noexcept override {};
 
 private:
+    struct AppParams {
+        GG::X width;
+        GG::Y height;
+        GG::X left;
+        GG::Y top;
+        bool fullscreen;
+        bool fake_mode_change;
+    };
+    static AppParams DefaultAppParams();
+    GGHumanClientApp(std::string name, AppParams params);
+
     /** Starts a server process on localhost.
 
         Throws a runtime_error if the server process can't be started.
@@ -181,9 +191,7 @@ private:
 
     HumanClientFSM m_fsm;
     Process        m_server_process;   ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-
-    /** The only instance of the ClientUI. */
-    std::unique_ptr<ClientUI> m_ui;
+    ClientUI       m_ui;
 
     bool m_single_player_game = true;   ///< true when this game is a single-player game
     bool m_game_started = false;        ///< true when a game is currently in progress
@@ -198,5 +206,6 @@ private:
     boost::signals2::signal<void ()>    SaveGamesCompletedSignal;
 };
 
+[[nodiscard]] inline GGHumanClientApp* GetApp() noexcept { return GGHumanClientApp::GetApp(); }
 
 #endif
