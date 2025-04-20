@@ -47,9 +47,6 @@
     <ClInclude Include="..\..\client\ClientApp.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\client\ClientFSMEvents.h">
-      <Filter>Header Files\client</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\client\ClientNetworking.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
@@ -210,9 +207,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp">
-      <Filter>Source Files\client</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
     <ClCompile Include="..\..\client\ClientNetworking.cpp">

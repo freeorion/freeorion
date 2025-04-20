@@ -1,7 +1,7 @@
 #ifndef _ClientFSMEvents_h_
 #define _ClientFSMEvents_h_
 
-#include "../network/Message.h"
+#include "../../network/Message.h"
 
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/statechart/event.hpp>
