@@ -4,9 +4,11 @@ target_sources(freeorion
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/chmain.h
         ${CMAKE_CURRENT_LIST_DIR}/HumanClientFSM.h
+        ${CMAKE_CURRENT_LIST_DIR}/ClientFSMEvents.h
         ${CMAKE_CURRENT_LIST_DIR}/chmain.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GGHumanClientApp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HumanClientFSM.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ClientFSMEvents.cpp
         # Add icon resource file to freeorion.exe
         $<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_LIST_DIR}/FreeOrion.rc>
         $<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico>
