@@ -46,13 +46,9 @@ public:
     virtual Universe& GetUniverse() noexcept = 0;
 
     /** Launches asynchronous parsing of game content, then starts
-      * additional content parsing in the calling thread. \a barrier is
-      * unblocked when the asynchronous parsing of named value refs is
-      * completed, but the synchronous parsing of in the calling thread
-      * or the other asynchronous parsing may still be ongoing
-      * at that time.
+      * additional content parsing in the calling thread.
       * Requires \a python to be initialized. */
-    virtual void StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier);
+    virtual void StartBackgroundParsing(const PythonParser& python);
 
     [[nodiscard]] virtual ScriptingContext& GetContext() noexcept = 0;
     [[nodiscard]] virtual const ScriptingContext& GetContext() const noexcept = 0;
