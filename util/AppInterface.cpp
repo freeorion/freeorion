@@ -48,13 +48,12 @@ int IApp::MAX_AI_PLAYERS() noexcept {
     return max_number_AIs;
 }
 
-void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier) {
+void IApp::StartBackgroundParsing(const PythonParser& python) {
     namespace fs = boost::filesystem;
 
     const auto& rdir = GetResourceDir();
     if (!IsExistingDir(rdir)) {
         ErrorLogger() << "Background parse given non-existant resources directory: " << rdir.string() ;
-        barrier.set_exception(std::make_exception_ptr(std::runtime_error("non-existant resources directory")));
         return;
     }
 
@@ -122,10 +121,9 @@ void IApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/game_rules.focs.py").string();
 
     if (IsExistingDir(rdir / "scripting/techs"))
-        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, python, rdir / "scripting/techs", std::move(barrier)));
+        GetTechManager().SetTechs(Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, python, rdir / "scripting/techs"));
     else {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/techs").string();
-        barrier.set_value();
     }
 
     if (IsExistingFile(rdir / "scripting/empire_colors.xml"))

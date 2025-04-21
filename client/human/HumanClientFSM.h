@@ -112,7 +112,8 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM> {
         boost::statechart::custom_reaction<JoinMPGameRequested>,
         boost::statechart::custom_reaction<StartQuittingGame>,
         boost::statechart::custom_reaction<Disconnection>,
-        boost::statechart::custom_reaction<EndGame>
+        boost::statechart::custom_reaction<EndGame>,
+        boost::statechart::custom_reaction<ParserCompleted>
     > reactions;
 
     IntroMenu(my_context ctx);
@@ -124,6 +125,7 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM> {
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const EndGame&);
     boost::statechart::result react(const Disconnection&);
+    boost::statechart::result react(const ParserCompleted&);
 
     CLIENT_ACCESSOR
 };

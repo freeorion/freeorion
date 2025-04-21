@@ -9,7 +9,7 @@
 
 // Non-Message events
 struct Disconnection : boost::statechart::event<Disconnection> {};
-
+struct ParserCompleted : boost::statechart::event<ParserCompleted> {};
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */

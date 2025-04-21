@@ -128,8 +128,6 @@ IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx)
 {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu";
-    Client().GetClientUI().ShowIntroScreen();
-    GetGameRules().ResetToDefaults();
 }
 
 IntroMenu::~IntroMenu()
@@ -166,6 +164,13 @@ boost::statechart::result IntroMenu::react(const EndGame&) {
 
 boost::statechart::result IntroMenu::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu ignoring disconnection.";
+    return discard_event();
+}
+
+boost::statechart::result IntroMenu::react(const ParserCompleted&) {
+    TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.ParserCompleted";
+    Client().GetClientUI().ShowIntroScreen();
+    GetGameRules().ResetToDefaults();
     return discard_event();
 }
 

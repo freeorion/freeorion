@@ -71,22 +71,16 @@ GodotClientApp::GodotClientApp() {
     LogDependencyVersions();
 
     SetStringtableDependentOptionDefaults();
-
-    // Start parsing content
-    std::promise<void> barrier;
-    std::future<void> barrier_future = barrier.get_future();
-    std::thread background([this] (auto b) {
-        DebugLogger() << "Started background parser thread";
-        PythonCommon python;
-        python.Initialize();
-        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
-    }, std::move(barrier));
-    background.detach();
-    barrier_future.wait();
 }
 
 GodotClientApp::~GodotClientApp() {
 
+}
+
+void GodotClientApp::StartParsingContent() {
+    PythonCommon python;
+    python.Initialize();
+    StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
 }
 
 int GodotClientApp::EffectsProcessingThreads() const
