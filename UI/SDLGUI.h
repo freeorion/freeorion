@@ -56,6 +56,8 @@ public:
 
     GG::X AppWidth() const noexcept override { return m_app_width; }
     GG::Y AppHeight() const noexcept override { return m_app_height; }
+    GG::Pt AppSize() const noexcept { return {m_app_width, m_app_height}; }
+
     unsigned int Ticks() const override;
     std::string ClipboardText() const override;
     std::vector<std::string> GetSupportedResolutions() const override;
@@ -86,7 +88,7 @@ public:
 
     static GG::Pt   GetDefaultResolutionStatic(int display_id);
     static int      NumVideoDisplaysStatic();
-    bool            FramebuffersAvailable() const;
+    static bool     FramebuffersAvailable() noexcept;
 
     /** Returns the largest possible width if all displays are aligned horizontally.
         Ideally it reports actual desktop width using all displays.*/

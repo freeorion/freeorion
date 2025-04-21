@@ -648,5 +648,5 @@ void SDLGUI::Exit2DMode() {
     glPopAttrib();
 }
 
-bool SDLGUI::FramebuffersAvailable() const
+bool SDLGUI::FramebuffersAvailable() noexcept
 { return GLEW_EXT_framebuffer_object && GLEW_EXT_packed_depth_stencil; }
