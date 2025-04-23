@@ -280,7 +280,7 @@ namespace {
             }
 
 
-            m_hscroll =  GG::Wnd::Create<CUIScroll>(GG::Orientation::HORIZONTAL);
+            m_hscroll = GG::Wnd::Create<CUIScroll>(GG::Orientation::HORIZONTAL);
             AttachChild(m_hscroll);
 
             namespace ph = boost::placeholders;
@@ -806,10 +806,9 @@ void OptionsWnd::CompleteConstruction() {
         GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE"),
                                        UserString("OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
     all_config_button->LeftClickedSignal.connect([]() {
-        if (GetOptionsDB().Commit(false, false))
-            ClientUI::MessageBox(UserString("OPTIONS_CREATE_ALL_CONFIG_SUCCESS"));
-        else
-            ClientUI::MessageBox(UserString("OPTIONS_CREATE_ALL_CONFIG_FAILURE"));
+        ClientUI::MessageBox(UserString(GetOptionsDB().Commit(false, false) ?
+                                        UserStringNop("OPTIONS_CREATE_ALL_CONFIG_SUCCESS") :
+                                        UserStringNop("OPTIONS_CREATE_ALL_CONFIG_FAILURE")));
     });
     current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
                                                          all_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
@@ -822,10 +821,9 @@ void OptionsWnd::CompleteConstruction() {
         GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE"),
                                        UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
     persistent_config_button->LeftClickedSignal.connect([]() {
-        if (GetOptionsDB().CommitPersistent())
-            ClientUI::MessageBox(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS"));
-        else
-            ClientUI::MessageBox(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE"));
+        ClientUI::MessageBox(UserString(GetOptionsDB().CommitPersistent() ?
+                                        UserStringNop("OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS") :
+                                        UserStringNop("OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE")));
     });
     current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
                                                          persistent_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
@@ -853,7 +851,8 @@ void OptionsWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void OptionsWnd::DoLayout() {
     static constexpr GG::X BUTTON_WIDTH{75};
-    const GG::Y BUTTON_HEIGHT(ClientUI::GetFont()->Lineskip() + 6);
+    const auto font = ClientUI::GetFont();
+    const GG::Y BUTTON_HEIGHT((font ? font->Lineskip() : GG::Y1) + 6);
 
     GG::Pt done_button_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN));
     GG::Pt done_button_ul = done_button_lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -865,10 +864,9 @@ void OptionsWnd::DoLayout() {
 }
 
 GG::Rect OptionsWnd::CalculatePosition() const {
-    GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
-              (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2);
-    GG::Pt wh(PAGE_WIDTH + 20, PAGE_HEIGHT + 70);
-    return GG::Rect(ul, ul + wh);
+    static constexpr GG::Pt PG_SZ{PAGE_WIDTH + 20, PAGE_HEIGHT + 70};
+    GG::Pt ul = (GGHumanClientApp::GetApp()->AppSize() - PG_SZ) / 2;
+    return GG::Rect(ul, ul + PG_SZ);
 }
 
 GG::ListBox* OptionsWnd::CreatePage(std::string name) {
@@ -1406,12 +1404,13 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             const auto& drop_list_row = *it;
             if (!drop_list_row)
                 return;
-            int w, h;
-            namespace phx = boost::phoenix;
+            const auto& row_name = drop_list_row->Name();
+            int w = 0, h = 0;
+            using boost::phoenix::ref;
             namespace qi = boost::spirit::qi;
             qi::parse(
-                drop_list_row->Name().begin(), drop_list_row->Name().end(),
-                (qi::int_[phx::ref(w) = qi::_1] >> " x " >> qi::int_[phx::ref(h) = qi::_1])
+                row_name.begin(), row_name.end(),
+                (qi::int_[ref(w) = qi::_1] >> " x " >> qi::int_[ref(h) = qi::_1])
             );
             GetOptionsDB().Set("video.fullscreen.width", w);
             GetOptionsDB().Set("video.fullscreen.height", h);
