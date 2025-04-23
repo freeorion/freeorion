@@ -165,10 +165,11 @@ void CUIWnd::Init() {
     InitButtons();
     SetChildClippingMode(ChildClippingMode::ClipToClientAndWindowSeparately);
 
+    auto* app = GGHumanClientApp::GetApp();
+
     if (!m_config_name.empty()) {
         LoadOptions();
-        GGHumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
-            boost::bind(&CUIWnd::LoadOptions, this));
+        app->FullscreenSwitchSignal.connect(boost::bind(&CUIWnd::LoadOptions, this));
     }
 
     m_title = GG::Wnd::Create<CUILabel>(Name(), GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
@@ -179,11 +180,9 @@ void CUIWnd::Init() {
     // Non-user-dragable windows are given the chance to position themselves on
     // every resize event.
     if (Dragable() || m_resizable)
-        GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
-            boost::bind(&CUIWnd::ResetDefaultPosition, this));
+        app->RepositionWindowsSignal.connect(boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
-        GGHumanClientApp::GetApp()->WindowResizedSignal.connect(
-            boost::bind(&CUIWnd::ResetDefaultPosition, this));
+        app->WindowResizedSignal.connect(boost::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
 void CUIWnd::InitSizeMove(GG::Pt ul, GG::Pt lr) {
@@ -243,12 +242,12 @@ void CUIWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
     if (m_config_save) {    // can write position/size to OptionsDB
 
         GG::Pt available_size;
-        if (const auto&& parent = Parent()) {
+        if (const auto parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
         } else if (const auto* app = GGHumanClientApp::GetApp()) {
             // Keep this CUIWnd entirely inside the application window.
-            available_size = GG::Pt(app->AppWidth(), app->AppHeight());
+            available_size = app->AppSize();
         } else {
             available_size = GG::Pt(GG::X(GGHumanClientApp::MaximumPossibleWidth()),
                                     GG::Y(GGHumanClientApp::MaximumPossibleHeight()));
@@ -267,7 +266,7 @@ void CUIWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 
         Wnd::SizeMove(new_ul, new_ul + new_size);
 
-    } else {    // don't write position/size to OptionsDB
+    } else { // don't write position/size to OptionsDB
         Wnd::SizeMove(ul, lr);
     }
 
@@ -366,13 +365,9 @@ void CUIWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
         // pt: position of cursor relative to upper-left of screen
         GG::Pt requested_lr = pt - m_drag_offset;
 
-        GG::Pt max_lr;
-        if (const auto&& parent = Parent()) {
-            max_lr = parent->ClientLowerRight();
-        } else {
-            max_lr.x = GG::GUI::GetGUI()->AppWidth();
-            max_lr.y = GG::GUI::GetGUI()->AppHeight();
-        }
+        const auto parent = Parent();
+        const GG::Pt max_lr = parent ?
+            parent->ClientLowerRight() : GGHumanClientApp::GetApp()->AppSize();
 
         GG::X new_x = std::min(max_lr.x, requested_lr.x);
         GG::Y new_y = std::min(max_lr.y, requested_lr.y);
