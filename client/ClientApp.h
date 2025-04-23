@@ -177,6 +177,7 @@ public:
      *      not yet known to this client a nullptr is returned.
      */
     [[nodiscard]] Empire* GetEmpire(int empire_id) override;
+    [[nodiscard]] const Empire* GetEmpire(int empire_id) const;
 
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
     [[nodiscard]] const SpeciesManager& GetSpeciesManager() const noexcept { return m_species_manager; }
