@@ -61,7 +61,7 @@ namespace detail {
         std::string file_name = GetOptionsDB().Get<std::string>("ui.button.press.sound.path");
         Sound::GetSound().PlaySound(file_name, true);
     }
-    inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
+    inline void PlayValueChangedSound::operator()(int) const { operator()(0.0); }
 }
 
 
