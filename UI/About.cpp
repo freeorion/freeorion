@@ -59,9 +59,7 @@ void About::CompleteConstruction() {
     m_vision->LeftClickedSignal.connect([this]() { ShowVision(); });
 }
 
-void About::KeyPress(GG::Key key, uint32_t key_code_point,
-                     GG::Flags<GG::ModKey> mod_keys)
-{
+void About::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if ((key == GG::Key::GGK_RETURN) || (key == GG::Key::GGK_ESCAPE))
         EndRun();
 }
@@ -77,8 +75,12 @@ void About::DoLayout() {
     static constexpr GG::Y CONTENT_GROUPS_VERTICAL_SPACING{5};
     static constexpr GG::Pt BORDERS_SIZE{ GG::X{5}, GG::Y{5} };
     const GG::Pt BUTTON_SIZE {
-        std::max({ m_vision->MinUsableSize().x, m_license->MinUsableSize().x, m_done->MinUsableSize().x }),
-        std::max({ m_vision->MinUsableSize().y, m_license->MinUsableSize().y, m_done->MinUsableSize().y }),
+        std::max({ m_vision ? m_vision->MinUsableSize().x : GG::X0,
+                   m_license ? m_license->MinUsableSize().x : GG::X0,
+                   m_done ? m_done->MinUsableSize().x : GG::X0}),
+        std::max({ m_vision ? m_vision->MinUsableSize().y : GG::Y0,
+                   m_license ? m_license->MinUsableSize().y : GG::Y0,
+                   m_done ? m_done->MinUsableSize().y : GG::Y0}),
     };
 
     auto const window_lr = ScreenToClient(ClientLowerRight());
@@ -89,8 +91,8 @@ void About::DoLayout() {
 
     for (auto& button : { m_done, m_vision, m_license }) {
         GG::Pt button_ul = draw_point - BUTTON_SIZE;
-        button->SizeMove(button_ul, draw_point);
-
+        if (button)
+            button->SizeMove(button_ul, draw_point);
         draw_point.x -= BUTTON_SIZE.x + BUTTONS_HORIZONTAL_SPACING;
     }
 
