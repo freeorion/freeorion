@@ -95,17 +95,19 @@ namespace {
     constexpr int CUIBUTTON_ANGLE_OFFSET = 5;
 }
 
-CUIButton::CUIButton(std::string str) :
-    Button(std::move(str), ClientUI::GetFont(), ClientUI::CtrlColor(),
-           ClientUI::TextColor(), GG::INTERACTIVE)
+CUIButton::CUIButton(std::string str, std::shared_ptr<GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr) :
+    Button(std::move(str), std::move(font), ctrl_clr, text_clr, GG::INTERACTIVE)
 {
     SetName("CUIButton " + this->m_label->Text());
     LeftClickedSignal.connect(-1, &PlayButtonClickSound);
 }
 
-CUIButton::CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed,
-                     GG::SubTexture rollover) :
-    Button("", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE)
+CUIButton::CUIButton(std::string str) :
+    CUIButton(std::move(str), ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor())
+{}
+
+CUIButton::CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover) :
+    Button("", nullptr, GG::CLR_WHITE, GG::CLR_ZERO, GG::INTERACTIVE)
 {
     SetName("CUIButton SubTextures");
     SetColor(GG::CLR_WHITE);

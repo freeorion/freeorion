@@ -55,8 +55,8 @@ public:
 /** a FreeOrion Button control */
 class CUIButton : public GG::Button {
 public:
-    CUIButton(std::string str);
-
+    CUIButton(std::string str, std::shared_ptr<GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr);
+    explicit CUIButton(std::string str);
     CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover);
 
     GG::Pt MinUsableSize() const noexcept override;

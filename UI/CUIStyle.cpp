@@ -52,7 +52,7 @@ std::string CUIStyle::Translate(const std::string& text) const
 std::shared_ptr<GG::Button> CUIStyle::NewButton(std::string str, const std::shared_ptr<GG::Font>& font,
                                                 GG::Clr color, GG::Clr text_color,
                                                 GG::Flags<GG::WndFlag> flags) const
-{ return GG::Wnd::Create<CUIButton>(std::move(str)); }
+{ return GG::Wnd::Create<CUIButton>(std::move(str), font, color, text_color); }
 
 
 std::shared_ptr<GG::DropDownList> CUIStyle::NewDropDownList(std::size_t num_shown_elements, GG::Clr color) const
