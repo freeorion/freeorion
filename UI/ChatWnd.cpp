@@ -133,7 +133,7 @@ void MessageWndEdit::FindGameWords() {
     const ScriptingContext& context = IApp::GetApp()->GetContext();
 
      // add player and empire names
-    for (const auto& empire : Empires() | range_values) {
+    for (const auto& empire : context.Empires() | range_values) {
         m_game_words.insert(empire->Name());
         m_game_words.insert(empire->PlayerName());
     }
@@ -505,7 +505,7 @@ void MessageWnd::OpenForInput() {
 }
 
 void MessageWnd::SetChatText(std::string chat_text)
-{ m_display->SetText(std::move(chat_text)); }
+{ if (m_display) m_display->SetText(std::move(chat_text)); }
 
 namespace {
     void SendChatMessage(const std::string& text, std::set<int> recipients, bool pm) {
@@ -604,15 +604,15 @@ void MessageWnd::MessageEntered() {
     if (trimmed_text.empty())
         return;
 
-    m_display_show_time = GG::GUI::GetGUI()->Ticks();
-    bool pm = false;
+    m_display_show_time = static_cast<int>(GG::GUI::GetGUI()->Ticks());
+
 
     // update history
     if (m_history.size() == 1 || m_history[1] != trimmed_text) {
-        m_history[0] = trimmed_text;
-        m_history.push_front("");
+        m_history.front() = trimmed_text;
+        m_history.emplace_front();
     } else {
-        m_history[0].clear();
+        m_history.front().clear();
     }
     while (12 < static_cast<int>(m_history.size()) + 1)
         m_history.pop_back();
@@ -621,14 +621,16 @@ void MessageWnd::MessageEntered() {
     // if message starts with / treat it as a command
     if (trimmed_text[0] == '/') {
         HandleTextCommand(trimmed_text);
+
     } else {
         // otherwise, treat message as chat and send to recipients
+        bool pm = false;
         std::set<int> recipients;
-        if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd().get()) {
+        if (auto* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd().get()) {
             recipients = player_list_wnd->SelectedPlayerIDs();
             pm = !(player_list_wnd->SelectedPlayerIDs().empty());
         }
-        SendChatMessage(trimmed_text, recipients, pm);
+        SendChatMessage(trimmed_text, std::move(recipients), pm);
     }
 
     m_edit->Clear();
