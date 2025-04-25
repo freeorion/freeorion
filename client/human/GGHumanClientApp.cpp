@@ -261,7 +261,7 @@ namespace {
 }
 
 GGHumanClientApp::AppParams GGHumanClientApp::DefaultAppParams() {
-    static const bool run_once = RegisterOptions(&GGHumanClientApp::AddWindowSizeOptionsAfterMainStart);
+    [[maybe_unused]] static const bool run_once = RegisterOptions(&GGHumanClientApp::AddWindowSizeOptionsAfterMainStart);
 
     bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");

@@ -7168,7 +7168,6 @@ namespace {
     bool ZoomToPrevOrNextSystem(SearchDir dir, MapWnd& mw) {
         auto* app = IApp::GetApp();
         if (!app) return false;
-        const auto empire_id = app->EmpireID();
         auto& context = app->GetContext();
         auto& objs = context.ContextObjects();
 

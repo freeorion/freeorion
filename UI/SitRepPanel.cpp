@@ -52,7 +52,6 @@ namespace {
         auto* app = GGHumanClientApp::GetApp();
         if (!app) return;
         auto& context = app->GetContext();
-        auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
         auto client_empire_id = app->EmpireID();
         auto* ui = ClientUI::GetClientUI();
