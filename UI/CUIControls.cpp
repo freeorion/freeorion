@@ -1775,7 +1775,6 @@ ResourceInfoPanel::ResourceInfoPanel(std::string title, std::string point_units_
            config_name, false),
     m_units_str(std::move(point_units_str)),
     m_title_str(std::move(title)),
-    m_empire_id(ALL_EMPIRES),
     m_empire_column_label(GG::Wnd::Create<CUILabel>(UserString("EMPIRE"), GG::FORMAT_LEFT)),
     m_local_column_label(GG::Wnd::Create<CUILabel>("", GG::FORMAT_LEFT)),
     m_total_points_label(GG::Wnd::Create<CUILabel>(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT)),
