@@ -38,14 +38,23 @@ About::About():
 void About::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
-    m_done = Wnd::Create<CUIButton>(UserString("DONE"));
-    m_license = Wnd::Create<CUIButton>(UserString("LICENSE"));
-    m_vision = Wnd::Create<CUIButton>(UserString("VISION"));
-    m_info = GG::Wnd::Create<CUIMultiEdit>(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
-    AttachChild(m_info);
-    AttachChild(m_vision);
-    AttachChild(m_license);
-    AttachChild(m_done);
+    if (m_done = Wnd::Create<CUIButton>(UserString("DONE"))) {
+        AttachChild(m_done);
+        m_done->LeftClickedSignal.connect([this]() { EndRun(); });
+    }
+
+    if (m_license = Wnd::Create<CUIButton>(UserString("LICENSE"))) {
+        AttachChild(m_license);
+        m_license->LeftClickedSignal.connect([this]() { ShowLicense(); });
+    }
+
+    if (m_vision = Wnd::Create<CUIButton>(UserString("VISION"))) {
+        AttachChild(m_vision);
+        m_vision->LeftClickedSignal.connect([this]() { ShowVision(); });
+    }
+
+    if (m_info = GG::Wnd::Create<CUIMultiEdit>(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY))
+        AttachChild(m_info);
 
     DoLayout();
 
@@ -53,10 +62,6 @@ void About::CompleteConstruction() {
     // this is not GetResourceDir() / "COPYING" because if a mod or scenario is loaded
     // that changes the settings directory, the copyright notice should be unchanged
     m_license_str = ReadFile(GetRootDataDir() / "default" / "COPYING").value_or("");
-
-    m_done->LeftClickedSignal.connect([this]() { EndRun(); });
-    m_license->LeftClickedSignal.connect([this]() { ShowLicense(); });
-    m_vision->LeftClickedSignal.connect([this]() { ShowVision(); });
 }
 
 void About::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
