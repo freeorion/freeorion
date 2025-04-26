@@ -53,9 +53,11 @@ void SpecialsPanel::Update() {
         DetachChild(icon);
     m_icons.clear();
 
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
 
     // get specials to display
-    auto obj = Objects().get(m_object_id);
+    auto obj = std::as_const(app).GetContext().ContextObjects().get(m_object_id);
     if (!obj) {
         ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
@@ -71,10 +73,10 @@ void SpecialsPanel::Update() {
             continue;
         std::shared_ptr<StatisticIcon> graphic;
         if (special_capacity > 0.0f)
-            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special_name), special_capacity, 2, false,
+            graphic = GG::Wnd::Create<StatisticIcon>(ui.SpecialIcon(special_name), special_capacity, 2, false,
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
         else
-            graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special_name),
+            graphic = GG::Wnd::Create<StatisticIcon>(ui.SpecialIcon(special_name),
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
 
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
@@ -93,7 +95,7 @@ void SpecialsPanel::Update() {
             desc += "\n" + Dump(special->Effects());
 
         graphic->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
-            ClientUI::SpecialIcon(special_name), UserString(special_name), desc));
+            ui.SpecialIcon(special_name), UserString(special_name), desc));
         m_icons.push_back(graphic);
 
         graphic->RightClickedSignal.connect([name{special_name}](GG::Pt pt) {
@@ -101,7 +103,7 @@ void SpecialsPanel::Update() {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(name));
 
-            auto zoom_action = [name]() { ClientUI::GetClientUI()->ZoomToSpecial(name); };
+            auto zoom_action = [name]() { GetApp().GetUI().ZoomToSpecial(name); };
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_action));
 
             popup->Run();

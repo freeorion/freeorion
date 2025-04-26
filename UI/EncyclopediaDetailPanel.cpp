@@ -266,9 +266,9 @@ namespace {
         std::vector<std::pair<std::string, std::pair<std::string, std::string>>> retval;
 
         const Encyclopedia& encyclopedia = GetEncyclopedia();
-        const auto* app = GGHumanClientApp::GetApp();
-        int client_empire_id = app->EmpireID();
-        const ScriptingContext& context = app->GetContext();
+        const auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
+        const ScriptingContext& context = app.GetContext();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
         const EmpireManager& empires = context.Empires();
@@ -698,7 +698,7 @@ namespace {
             std::vector<std::pair<std::string_view, std::pair<std::string_view, std::string_view>>> dir_entries;
             dir_entries.reserve(GetShipPartManager().size() + GetShipHullManager().size() +
                                 GetTechManager().size() + GetBuildingTypeManager().NumBuildingTypes() +
-                                GGHumanClientApp::GetApp()->GetSpeciesManager().NumSpecies() +
+                                GetApp().GetSpeciesManager().NumSpecies() +
                                 GetFieldTypeManager().size());
 
             // part types
@@ -731,7 +731,7 @@ namespace {
                                              std::forward_as_tuple(VarText::BUILDING_TYPE_TAG, building_name));
 
             // species
-            for (auto& [species_name, species] : GGHumanClientApp::GetApp()->GetSpeciesManager().AllSpecies())
+            for (auto& [species_name, species] : GetApp().GetSpeciesManager().AllSpecies())
                 if (dir_name == "ALL_SPECIES" ||
                    (dir_name == "NATIVE_SPECIES" && species.Native()) ||
                    (dir_name == "PLAYABLE_SPECIES" && species.Playable()) ||
@@ -844,29 +844,31 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     static constexpr GG::Y CONTROL_HEIGHT{74};
     const GG::Pt PALETTE_MIN_SIZE{GG::X{CONTROL_WIDTH + 70}, GG::Y{CONTROL_HEIGHT + 70}};
 
-    m_name_text =    GG::Wnd::Create<CUILabel>("");
-    m_cost_text =    GG::Wnd::Create<CUILabel>("");
-    m_summary_text = GG::Wnd::Create<CUILabel>("");
+    auto& ui = GetApp().GetUI();
 
-    m_name_text->SetFont(ClientUI::GetBoldFont(NAME_PTS));
-    m_summary_text->SetFont(ClientUI::GetFont(SUMMARY_PTS));
+    m_name_text =    GG::Wnd::Create<CUILabel>("", ui);
+    m_cost_text =    GG::Wnd::Create<CUILabel>("", ui);
+    m_summary_text = GG::Wnd::Create<CUILabel>("", ui);
+
+    m_name_text->SetFont(ui.GetBoldFont(NAME_PTS));
+    m_summary_text->SetFont(ui.GetFont(SUMMARY_PTS));
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     m_index_button = Wnd::Create<CUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrownormal.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrowclicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "uparrowmouseover.png")));
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrownormal.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrowclicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrowmouseover.png")));
 
     m_back_button = Wnd::Create<CUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrownormal.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowclicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "leftarrowmouseover.png")));
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "leftarrownormal.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "leftarrowclicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "leftarrowmouseover.png")));
 
     m_next_button = Wnd::Create<CUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrownormal.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowclicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "rightarrowmouseover.png")));
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "rightarrownormal.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "rightarrowclicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "rightarrowmouseover.png")));
 
     m_back_button->Disable();
     m_next_button->Disable();
@@ -877,7 +879,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     m_description_rich_text = GG::Wnd::Create<GG::RichText>(
         GG::X0, GG::Y0, ClientWidth(), ClientHeight(), "",
-        ClientUI::GetFont(), ClientUI::TextColor(),
+        ui.GetFont(), ClientUI::TextColor(),
         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
         GG::INTERACTIVE);
     m_scroll_panel = GG::Wnd::Create<GG::ScrollPanel>(GG::X0, GG::Y0, ClientWidth(),
@@ -1036,7 +1038,7 @@ void EncyclopediaDetailPanel::KeyPress(GG::Key key, uint32_t key_code_point,
                                        GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) {
-        GG::GUI::GetGUI()->SetFocusWnd(m_search_edit);
+        GetApp().SetFocusWnd(m_search_edit);
     } else if (key == GG::Key::GGK_BACKSPACE) {
         this->OnBack();
     } else {
@@ -1143,33 +1145,32 @@ void EncyclopediaDetailPanel::InitBuffers() {
 }
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
-    auto* app = GGHumanClientApp::GetApp();
-    if (!app) return;
-    auto& context = app->GetContext();
+    auto& app = GetApp();
+    auto& context = app.GetContext();
     auto& objects = context.ContextObjects();
     auto& universe = context.ContextUniverse();
-    auto client_empire_id = app->EmpireID();
-    auto* ui = ClientUI::GetClientUI();
+    const auto client_empire_id = app.EmpireID();
+    auto& ui = app.GetUI();
 
     try {
         if (link_type == VarText::PLANET_ID_TAG) {
             const auto id = ToInt(data, INVALID_OBJECT_ID);
-            ui->ZoomToPlanet(id, context);
+            ui.ZoomToPlanet(id, context);
             this->SetPlanet(id);
 
         } else if (link_type == VarText::SYSTEM_ID_TAG) {
-            ui->ZoomToSystem(ToInt(data, INVALID_OBJECT_ID), context);
+            ui.ZoomToSystem(ToInt(data, INVALID_OBJECT_ID), context);
         } else if (link_type == VarText::FLEET_ID_TAG) {
-            ui->ZoomToFleet(ToInt(data, INVALID_OBJECT_ID), context, client_empire_id);
+            ui.ZoomToFleet(ToInt(data, INVALID_OBJECT_ID), context, client_empire_id);
         } else if (link_type == VarText::SHIP_ID_TAG) {
-            ui->ZoomToShip(ToInt(data, INVALID_OBJECT_ID), context, client_empire_id);
+            ui.ZoomToShip(ToInt(data, INVALID_OBJECT_ID), context, client_empire_id);
         } else if (link_type == VarText::BUILDING_ID_TAG) {
-            ui->ZoomToBuilding(ToInt(data, INVALID_OBJECT_ID), context);
+            ui.ZoomToBuilding(ToInt(data, INVALID_OBJECT_ID), context);
         } else if (link_type == VarText::FIELD_ID_TAG) {
-            ui->ZoomToField(ToInt(data, INVALID_OBJECT_ID), objects);
+            ui.ZoomToField(ToInt(data, INVALID_OBJECT_ID), objects);
 
         } else if (link_type == VarText::COMBAT_ID_TAG) {
-            ui->ZoomToCombatLog(ToInt(data, CombatLogManager::INVALID_COMBAT_LOG_ID));
+            ui.ZoomToCombatLog(ToInt(data, CombatLogManager::INVALID_COMBAT_LOG_ID));
 
         } else if (link_type == VarText::EMPIRE_ID_TAG) {
             this->SetEmpire(ToInt(data, ALL_EMPIRES));
@@ -1202,9 +1203,9 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         } else if (link_type == TextLinker::GRAPH_TAG) {
             this->SetGraph(data);
         } else if (link_type == TextLinker::URL_TAG) {
-            app->OpenURL(data);
+            app.OpenURL(data);
         } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-            app->BrowsePath(FilenameToPath(data));
+            app.BrowsePath(FilenameToPath(data));
         }
     } catch (const std::exception& e) {
         ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkClick caught exception for link type: "
@@ -1213,48 +1214,47 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
 }
 
 void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type, const std::string& data) {
-    auto* app = GGHumanClientApp::GetApp();
-    if (!app) return;
-    auto& context = app->GetContext();
+    auto& app = GetApp();
+    auto& context = app.GetContext();
     auto& universe = context.ContextUniverse();
-    auto client_empire_id = app->EmpireID();
-    auto* ui = ClientUI::GetClientUI();
+    const auto client_empire_id = app.EmpireID();
+    auto& ui = app.GetUI();
     const auto data_int = [&data](const int invalid_result = INVALID_OBJECT_ID) { return ToInt(data, invalid_result); };
 
     try {
         if (link_type == VarText::PLANET_ID_TAG) {
-            ui->ZoomToPlanet(data_int(), context);
+            ui.ZoomToPlanet(data_int(), context);
         } else if (link_type == VarText::SYSTEM_ID_TAG) {
-            ui->ZoomToSystem(data_int(), context);
+            ui.ZoomToSystem(data_int(), context);
         } else if (link_type == VarText::FLEET_ID_TAG) {
-            ui->ZoomToFleet(data_int(), context, client_empire_id);
+            ui.ZoomToFleet(data_int(), context, client_empire_id);
         } else if (link_type == VarText::SHIP_ID_TAG) {
-            ui->ZoomToShip(data_int(), context, client_empire_id);
+            ui.ZoomToShip(data_int(), context, client_empire_id);
         } else if (link_type == VarText::BUILDING_ID_TAG) {
-            ui->ZoomToBuilding(data_int(), context);
+            ui.ZoomToBuilding(data_int(), context);
 
         } else if (link_type == VarText::EMPIRE_ID_TAG) {
-            ui->ZoomToEmpire(data_int(ALL_EMPIRES));
+            ui.ZoomToEmpire(data_int(ALL_EMPIRES));
         } else if (link_type == VarText::DESIGN_ID_TAG) {
-            ui->ZoomToShipDesign(data_int(INVALID_DESIGN_ID));
+            ui.ZoomToShipDesign(data_int(INVALID_DESIGN_ID));
         } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
             if (const ShipDesign* design = universe.GetGenericShipDesign(data))
-                ui->ZoomToShipDesign(design->ID());
+                ui.ZoomToShipDesign(design->ID());
 
         } else if (link_type == VarText::TECH_TAG) {
-            ui->ZoomToTech(data);
+            ui.ZoomToTech(data);
         } else if (link_type == VarText::POLICY_TAG) {
-            ui->ZoomToPolicy(data);
+            ui.ZoomToPolicy(data);
         } else if (link_type == VarText::BUILDING_TYPE_TAG) {
-            ui->ZoomToBuildingType(data);
+            ui.ZoomToBuildingType(data);
         } else if (link_type == VarText::SPECIAL_TAG) {
-            ui->ZoomToSpecial(data);
+            ui.ZoomToSpecial(data);
         } else if (link_type == VarText::SHIP_HULL_TAG) {
-            ui->ZoomToShipHull(data);
+            ui.ZoomToShipHull(data);
         } else if (link_type == VarText::SHIP_PART_TAG) {
-            ui->ZoomToShipPart(data);
+            ui.ZoomToShipPart(data);
         } else if (link_type == VarText::SPECIES_TAG) {
-            ui->ZoomToSpecies(data);
+            ui.ZoomToSpecies(data);
 
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
             this->SetText(data, false);
@@ -1412,7 +1412,7 @@ namespace {
 
         // special case for galaxy setup data: display info
         if (item_name == "ENC_GALAXY_SETUP") {
-            const GalaxySetupData& gsd = ClientApp::GetApp()->GetGalaxySetupData();
+            const GalaxySetupData& gsd = GetApp().GetGalaxySetupData();
 
             detailed_description += str(FlexibleFormat(UserString("ENC_GALAXY_SETUP_SETTINGS"))
                 % gsd.seed
@@ -1462,7 +1462,7 @@ namespace {
                 if (!article_brief.empty())
                     specific_type = UserString(article_brief);
 
-                texture = ClientUI::GetTexture(ClientUI::ArtDir() / article.icon, true);
+                texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / article.icon, true);
 
                 done = true;
                 break;
@@ -1497,14 +1497,14 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
+        const auto& context = app.GetContext();
 
         // Ship Parts
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::PartIcon(item_name);
+            texture = app.GetUI().PartIcon(item_name);
             int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = part->ProductionTime(client_empire_id, default_location_id, context);
             cost = part->ProductionCost(client_empire_id, default_location_id, context);
@@ -1577,14 +1577,14 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
+        const auto& context = app.GetContext();
 
         // Ship Hulls
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::HullTexture(item_name);
+            texture = app.GetUI().HullTexture(item_name);
             int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = hull->ProductionTime(client_empire_id, default_location_id, context);
             cost = hull->ProductionCost(client_empire_id, default_location_id, context);
@@ -1665,17 +1665,19 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+
+        auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
+        auto& ui = app.GetUI();
 
         // Technologies
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::TechIcon(item_name);
-            other_texture = ClientUI::CategoryIcon(tech->Category());
+            texture = ui.TechIcon(item_name);
+            other_texture = ui.CategoryIcon(tech->Category());
             color = ClientUI::CategoryColor(tech->Category());
-            const ScriptingContext& context = IApp::GetApp()->GetContext();
-            turns = tech->ResearchTime(client_empire_id, context);
-            cost = tech->ResearchCost(client_empire_id, context);
+            turns = tech->ResearchTime(client_empire_id, app.GetContext());
+            cost = tech->ResearchCost(client_empire_id, app.GetContext());
             cost_units = UserString("ENC_RP");
             general_type = UserString(tech->ShortDescription());
             specific_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR")) % UserString(tech->Category()));
@@ -1747,14 +1749,15 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find policy with name " << item_name;
             return;
         }
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+
+        auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
 
         // Policies
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::PolicyIcon(item_name);
-            const ScriptingContext& context = IApp::GetApp()->GetContext();
-            cost = policy->AdoptionCost(client_empire_id, context);
+            texture = app.GetUI().PolicyIcon(item_name);
+            cost = policy->AdoptionCost(client_empire_id, app.GetContext());
             cost_units = UserString("ENC_IP");
             general_type = UserString(policy->ShortDescription());
             specific_type = str(FlexibleFormat(UserString("ENC_POLICY_DETAIL_TYPE_STR")) % UserString(policy->Category()));
@@ -1809,7 +1812,7 @@ namespace {
         }
 
         // species that like / dislike policy
-        const auto& sm = GGHumanClientApp::GetApp()->GetSpeciesManager();
+        const auto& sm = GetApp().GetSpeciesManager();
         auto species_that_like = sm.SpeciesThatLike(item_name);
         auto species_that_dislike = sm.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
@@ -1840,13 +1843,13 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << item_name;
             return;
         }
-        auto* app = IApp::GetApp();
-        if (!app) return;
-        const int client_empire_id = app->EmpireID();
-        const ScriptingContext& context = app->GetContext();
+        auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
+        const ScriptingContext& context = app.GetContext();
+        auto& ui = app.GetUI();
 
         int this_location_id = INVALID_OBJECT_ID;
-        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())
+        if (auto map_wnd = ui.GetMapWndConst())
             this_location_id = map_wnd->SelectedPlanetID();
         if (this_location_id == INVALID_OBJECT_ID && !only_description)
             this_location_id = DefaultLocationForEmpire(client_empire_id, context);
@@ -1854,7 +1857,7 @@ namespace {
         // Building types
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::BuildingIcon(item_name);
+            texture = ui.BuildingIcon(item_name);
             turns = building_type->ProductionTime(client_empire_id, this_location_id, context);
             cost = building_type->ProductionCost(client_empire_id, this_location_id, context);
             cost_units = UserString("ENC_PP");
@@ -1935,16 +1938,16 @@ namespace {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << item_name;
             return;
         }
-        const auto* app = GGHumanClientApp::GetApp();
-        int client_empire_id = app->EmpireID();
-        const Universe& u = app->GetContext().ContextUniverse();
-        const ObjectMap& objects = app->GetContext().ContextObjects();
+        auto& app = GetApp();
+        const int client_empire_id = app.EmpireID();
+        const Universe& u = app.GetContext().ContextUniverse();
+        const ObjectMap& objects = app.GetContext().ContextObjects();
 
 
         // Specials
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::SpecialIcon(item_name);
+            texture = app.GetUI().SpecialIcon(item_name);
             detailed_description = special->Description();
             general_type = UserString("ENC_SPECIAL");
         }
@@ -1988,7 +1991,7 @@ namespace {
 
 
         // species that like / dislike special
-        const auto& sm = app->GetSpeciesManager();
+        const auto& sm = app.GetSpeciesManager();
         auto species_that_like = sm.SpeciesThatLike(item_name);
         auto species_that_dislike = sm.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
@@ -2018,15 +2021,15 @@ namespace {
                                             GG::Clr& color, bool only_description = false)
     {
         const int empire_id = ToInt(item_name, ALL_EMPIRES);
-        const auto* app = GGHumanClientApp::GetApp();
-        const ScriptingContext& context = app->GetContext();
+        const auto& app = GetApp();
+        const auto& context = app.GetContext();
         const auto empire = context.GetEmpire(empire_id);
         if (!empire) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
         }
 
-        const int client_empire_id = app->EmpireID();
+        const int client_empire_id = app.EmpireID();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
 
@@ -2172,9 +2175,9 @@ namespace {
         }
 
         // Issued orders this turn
-        if (empire_id == GGHumanClientApp::GetApp()->EmpireID())
+        if (empire_id == GetApp().EmpireID())
             detailed_description.append("\n\n").append(UserString("ISSUED_ORDERS"))
-                                .append("\n").append(GGHumanClientApp::GetApp()->Orders().Dump());
+                                .append("\n").append(GetApp().Orders().Dump());
 
 
         // Techs
@@ -2408,25 +2411,24 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color, bool only_description = false)
     {
-        const auto* app = GGHumanClientApp::GetApp();
-
-        const SpeciesManager& sm = app->GetSpeciesManager();
+        auto& app = GetApp();
+        const SpeciesManager& sm = app.GetSpeciesManager();
         const Species* species = sm.GetSpecies(item_name);
         if (!species) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << item_name;
             return;
         }
 
-        const ScriptingContext& context = app->GetContext();
+        const ScriptingContext& context = app.GetContext();
         const Universe& universe = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
         const EmpireManager& empires = context.Empires();
-        const int client_empire_id = app->EmpireID();
+        const int client_empire_id = app.EmpireID();
 
 
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::SpeciesIcon(item_name);
+            texture = app.GetUI().SpeciesIcon(item_name);
             general_type = UserString("ENC_SPECIES");
         }
 
@@ -2611,19 +2613,20 @@ namespace {
             return;
         }
 
+        auto& app = GetApp();
+
         // Field types
         if (!only_description) {
             name = UserString(item_name);
-            texture = ClientUI::FieldTexture(item_name);
+            texture = app.GetUI().FieldTexture(item_name);
             general_type = UserString("ENC_FIELD_TYPE");
         }
 
         detailed_description += UserString(field_type->Description());
 
-        const auto* app = GGHumanClientApp::GetApp();
 
         // species that like / dislike field
-        const auto& sm = app->GetSpeciesManager();
+        const auto& sm = app.GetSpeciesManager();
         auto species_that_like = sm.SpeciesThatLike(item_name);
         auto species_that_dislike = sm.SpeciesThatDislike(item_name);
         if (!species_that_like.empty()) {
@@ -2642,7 +2645,7 @@ namespace {
         }
 
         // get current fields from map
-        const ScriptingContext& context = app->GetContext();
+        const ScriptingContext& context = app.GetContext();
         const Universe& u = context.ContextUniverse();
         const ObjectMap& objects = context.ContextObjects();
         const auto current_fields = objects.findRaw<Field>(
@@ -2650,7 +2653,7 @@ namespace {
 
         detailed_description.append("\n\n").append(UserString("KNOWN_FIELDS_OF_THIS_TYPE")).append("\n");
         if (!current_fields.empty()) {
-            const int client_empire_id = app->EmpireID();
+            const int client_empire_id = app.EmpireID();
             for (auto* obj : current_fields) {
                 auto TEXT_TAG = VarText::FIELD_ID_TAG;
                 detailed_description.append(
@@ -2687,7 +2690,7 @@ namespace {
         std::string meter_name_value_desc{std::string{meter_name}.append("_VALUE_DESC")};
 
         if (!only_description) {
-            texture = ClientUI::MeterIcon(meter_type);
+            texture = GetApp().GetUI().MeterIcon(meter_type);
             general_type = UserString("ENC_METER_TYPE");
             name = meter_value_label;
         }
@@ -2737,7 +2740,7 @@ namespace {
         // use the current meter values here, not initial, as this is used
         // within a loop that sets the species, updates meter, then checks
         // meter values for display
-        const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
+        const ScriptingContext& context = GetApp().GetContext();
         const Universe& universe = context.ContextUniverse();
 
         auto& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
@@ -2779,9 +2782,9 @@ namespace {
                                             GG::Clr& color, bool only_description = false)
     {
         int design_id = ToInt(item_name, INVALID_DESIGN_ID);
-        auto* app = GGHumanClientApp::GetApp();
-        int client_empire_id = app->EmpireID();
-        ScriptingContext& context = app->GetContext();
+        auto& app = GetApp();
+        int client_empire_id = app.EmpireID();
+        ScriptingContext& context = app.GetContext();
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
@@ -2799,7 +2802,7 @@ namespace {
         // Ship Designs
         if (!only_description) {
             name = design.Name();
-            texture = ClientUI::ShipDesignIcon(design_id);
+            texture = app.GetUI().ShipDesignIcon(design_id);
             int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = design.ProductionTime(client_empire_id, default_location_id, context);
             cost = design.ProductionCost(client_empire_id, default_location_id, context);
@@ -2820,7 +2823,7 @@ namespace {
 
         // TODO: can this be a vector of string_view ?
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
-        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst()) {
+        if (auto map_wnd = app.GetUI().GetMapWndConst()) {
             if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
                 if (!planet->SpeciesName().empty())
                     additional_species.insert(planet->SpeciesName());
@@ -2925,7 +2928,7 @@ namespace {
                                             GG::Clr& color, std::weak_ptr<const ShipDesign>& inc_design,
                                             bool only_description = false)
     {
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GetApp().EmpireID();
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
 
         auto incomplete_design = inc_design.lock();
@@ -2937,7 +2940,8 @@ namespace {
             return;
         }
 
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto& context = GetApp().GetContext();
+        auto& ui = GetApp().GetUI();
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
@@ -2950,9 +2954,9 @@ namespace {
 
         const auto& design_icon = incomplete_design->Icon();
         if (design_icon.empty())
-            texture = ClientUI::HullIcon(incomplete_design->Hull());
+            texture = ui.HullIcon(incomplete_design->Hull());
         else
-            texture = ClientUI::GetTexture(ClientUI::ArtDir() / design_icon, true);
+            texture = ui.GetTexture(ClientUI::ArtDir() / design_icon, true);
 
         const int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
         turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
@@ -2973,7 +2977,7 @@ namespace {
         std::set<float> enemy_shots{typical_shot};
 
         std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
-        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst()) {
+        if (auto map_wnd = ui.GetMapWndConst()) {
             if (const auto* planet = objects.getRaw<Planet>(map_wnd->SelectedPlanetID())) {
                 if (!planet->SpeciesName().empty())
                     additional_species.insert(planet->SpeciesName());
@@ -3045,12 +3049,9 @@ namespace {
                                             GG::Clr& color, bool only_description = false)
     {
         int object_id = ToInt(item_name, INVALID_OBJECT_ID);
-        const auto* app = GGHumanClientApp::GetApp();
-        int client_empire_id = app->EmpireID();
-        const Universe& universe = app->GetContext().ContextUniverse();
-        const ObjectMap& objects = app->GetContext().ContextObjects();
+        const auto& app = GetApp();
 
-        auto obj = objects.get(object_id);
+        auto obj = app.GetContext().ContextObjects().get(object_id);
         if (!obj) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << object_id;
             return;
@@ -3061,18 +3062,17 @@ namespace {
         if (only_description)
             return;
 
-        name = obj->PublicName(client_empire_id, universe);
+        name = obj->PublicName(app.EmpireID(), app.GetContext().ContextUniverse());
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name()
                           << " (" << object_id << ")";
-            return;
         }
     }
 
     std::vector<std::string_view> ReportedSpeciesForPlanet(Planet& planet) {
-        const auto* app = GGHumanClientApp::GetApp();
-        const ScriptingContext& context = app->GetContext();
+        const auto& app = GetApp();
+        const ScriptingContext& context = app.GetContext();
         const ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
         const EmpireManager& empires = context.Empires();
@@ -3089,7 +3089,7 @@ namespace {
                 retval.push_back(planet_current_species);
         }
 
-        const auto empire_id = app->EmpireID();
+        const auto empire_id = app.EmpireID();
         const auto empire = empires.GetEmpire(empire_id);
         if (!empire)
             return retval;
@@ -3151,9 +3151,10 @@ namespace {
         const auto orig_initial_target_pop = planet->GetMeter(MeterType::METER_TARGET_POPULATION)->Initial();
 
         const std::vector<int> planet_id_vec{planet->ID()};
-        const auto empire_id = GGHumanClientApp::GetApp()->EmpireID();
 
-        ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto& app = GetApp();
+        const auto empire_id = app.EmpireID();
+        ScriptingContext& context = app.GetContext();
         Universe& universe = context.ContextUniverse();
         universe.InhibitUniverseObjectSignals(true);
 
@@ -3215,7 +3216,7 @@ namespace {
             return retval;
 
         static constexpr auto format = GG::FORMAT_NONE;
-        auto font = ClientUI::GetFont();
+        const auto font = GetApp().GetUI().GetFont();
 
 #if defined(__cpp_lib_char8_t)
         DebugLogger() << "HairSpaceExtext with __cpp_lib_char8_t defined";
@@ -3247,7 +3248,7 @@ namespace {
 
     auto SpeciesSuitabilityColumn1(const std::vector<std::string_view>& species_names) {
         std::unordered_map<std::string_view, std::string> retval;
-        auto font = ClientUI::GetFont();
+        const auto font = GetApp().GetUI().GetFont();
 
         for (const auto& species_name : species_names) {
             try {
@@ -3427,7 +3428,7 @@ namespace {
 
         general_type = UserString("SP_PLANET_SUITABILITY");
 
-        auto& context = GGHumanClientApp::GetApp()->GetContext();
+        auto& context = GetApp().GetContext();
         auto& objects = context.ContextObjects();
         auto& universe = context.ContextUniverse();
 
@@ -3519,7 +3520,7 @@ namespace {
                                             std::string& detailed_description)
     {
         general_type = UserString("SEARCH_RESULTS");
-        texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "search.png");
+        texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "search.png");
         detailed_description = std::move(item_name);
     }
 
@@ -3994,7 +3995,7 @@ namespace {
 
 
     auto ExtractWords(std::string_view text)
-    { return GG::GUI::GetGUI()->FindWordsStringViews(text); }
+    { return GetApp().FindWordsStringViews(text); }
 
     void SearchPediaArticleForWords(        std::string article_key,
                                             std::string article_directory,
@@ -4098,7 +4099,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     timer.EnterSection("Find words in search text");
 
     // force MapWnd construction before possible parallel accesses below...
-    ClientUI::GetClientUI()->GetMapWnd(true);
+    GetApp().GetUI().GetMapWnd(true);
 
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     boost::asio::thread_pool thread_pool(num_threads);
@@ -4283,7 +4284,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;
 
-        const auto& stat_records = GetUniverse().GetStatRecords();
+        const auto& stat_records = GetApp().GetContext().ContextUniverse().GetStatRecords();
 
         auto stat_name_it = stat_records.find(graph_id);
         if (stat_name_it != stat_records.end()) {

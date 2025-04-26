@@ -28,14 +28,18 @@ class System;
 class ShipDesignManager;
 struct ScriptingContext;
 class ObjectMap;
+class GGHumanClientApp;
 
 //! \brief ClientUI Main Module
-//!This is the main class of the ClientUI module.
-//!it contains objects of many other classes and controls the
-//!display of all information onscreen.
+//! This is the main class of the ClientUI module.
+//! It contains objects of many other classes and controls the display of all information onscreen.
 class ClientUI {
 public:
-    ClientUI();
+    explicit ClientUI(GGHumanClientApp& app);
+
+    // not movable or copyable due to reference member
+    ClientUI(const ClientUI&) = delete;
+    ClientUI(ClientUI&&) = delete;
 
     MapWnd*                                 GetMapWnd(bool construct);  //!< Returns the main map window. if \a is true, creates a MapWnd if one doesn't already exist. if \a is false, may return nullptr
     const MapWnd*                           GetMapWndConst() const noexcept { return m_map_wnd.get(); }
@@ -113,34 +117,31 @@ public:
     const std::vector<std::shared_ptr<GG::Texture>>& GetPrefixedTextures(
         const boost::filesystem::path& dir, std::string_view prefix, bool mipmap = false);
 
-    static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
-
     /** Shows a message dialog box with the given message; if
       * \a play_alert_sound is true, and UI sound effects are currently enabled,
       * the default alert sound will be played as the message box opens */
-    static void MessageBox(const std::string& message, bool play_alert_sound = false);
+    void MessageBox(const std::string& message, bool play_alert_sound = false);
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true; loads default missing.png if name isn't
       * found. */
-    static std::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path,
-                                                   bool mipmap = false);
+    std::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
     /** Returns the default font in the specified point size. Uses "ui.font.path"
       * option setting as the font filename, and provides Unicode character sets
       * based on the contents of the stringtable in use. */
-    static std::shared_ptr<GG::Font> GetFont(int pts = Pts());
+    std::shared_ptr<GG::Font> GetFont(int pts = Pts()) const;
 
     /** Returns the default font in the specified point size.  Uses
       * "ui.font.bold.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use.
       * */
-    static std::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());
+    std::shared_ptr<GG::Font> GetBoldFont(int pts = Pts()) const;
 
     /** Returns the default font in the specified point size.  Uses
       * "ui.font.title.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use. */
-    static std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
+    std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts()) const;
 
     /** Returns formatted POSIX UTC-time in local timezone. */
     static std::string FormatTimestamp(boost::posix_time::ptime timestamp);
@@ -182,20 +183,20 @@ public:
     static bool     DisplayTimestamp();                 //!< Will be timestamp shown in the chats.
 
     // Content Texture Getters
-    static std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);
-    static std::shared_ptr<GG::Texture> PlanetSizeIcon(PlanetSize planet_size);
-    static std::shared_ptr<GG::Texture> MeterIcon(MeterType meter_type);
-    static std::shared_ptr<GG::Texture> BuildingIcon(std::string_view building_type_name);
-    static std::shared_ptr<GG::Texture> CategoryIcon(std::string_view category_name);
-    static std::shared_ptr<GG::Texture> TechIcon(std::string_view tech_name);
-    static std::shared_ptr<GG::Texture> PolicyIcon(std::string_view policy_name);
-    static std::shared_ptr<GG::Texture> SpecialIcon(std::string_view special_name);
-    static std::shared_ptr<GG::Texture> SpeciesIcon(std::string_view species_name);
-    static std::shared_ptr<GG::Texture> FieldTexture(std::string_view field_type_name);
-    static std::shared_ptr<GG::Texture> PartIcon(std::string_view part_name);
-    static std::shared_ptr<GG::Texture> HullTexture(std::string_view hull_name);
-    static std::shared_ptr<GG::Texture> HullIcon(std::string_view hull_name);
-    static std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id);
+    std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);
+    std::shared_ptr<GG::Texture> PlanetSizeIcon(PlanetSize planet_size);
+    std::shared_ptr<GG::Texture> MeterIcon(MeterType meter_type);
+    std::shared_ptr<GG::Texture> BuildingIcon(std::string_view building_type_name);
+    std::shared_ptr<GG::Texture> CategoryIcon(std::string_view category_name);
+    std::shared_ptr<GG::Texture> TechIcon(std::string_view tech_name);
+    std::shared_ptr<GG::Texture> PolicyIcon(std::string_view policy_name);
+    std::shared_ptr<GG::Texture> SpecialIcon(std::string_view special_name);
+    std::shared_ptr<GG::Texture> SpeciesIcon(std::string_view species_name);
+    std::shared_ptr<GG::Texture> FieldTexture(std::string_view field_type_name);
+    std::shared_ptr<GG::Texture> PartIcon(std::string_view part_name);
+    std::shared_ptr<GG::Texture> HullTexture(std::string_view hull_name);
+    std::shared_ptr<GG::Texture> HullIcon(std::string_view hull_name);
+    std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id);
 
     // research screen
     static GG::Clr  KnownTechFillColor();
@@ -217,6 +218,7 @@ private:
     void HandleSizeChange(bool fullscreen) const;
     void HandleFullscreenSwitch() const;
 
+    GGHumanClientApp&                       m_app;
     mutable std::shared_ptr<MapWnd>         m_map_wnd;              //!< the galaxy map
     std::shared_ptr<MessageWnd>             m_message_wnd;          //!< the messages / chat display
     std::shared_ptr<PlayerListWnd>          m_player_list_wnd;      //!< the players list

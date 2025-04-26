@@ -40,31 +40,17 @@ namespace {
     constexpr EmpireColor CLR_ZERO{{0, 0, 0, 0}};
 
     void SendMessageToAllPlayers(const Message& message) {
-        ServerApp* server = ServerApp::GetApp();
-        if (!server) {
-            ErrorLogger(FSM) << "SendMessageToAllPlayers couldn't get server.";
-            return;
-        }
-
-        for (const auto& player : server->Networking().EstablishedPlayerConnections())
+        for (const auto& player : GetApp().Networking().EstablishedPlayerConnections())
             player->SendMessage(message);
     }
 
     void SendMessageToHost(const Message& message) {
-        ServerApp* server = ServerApp::GetApp();
-        if (!server) {
-            ErrorLogger(FSM) << "SendMessageToHost couldn't get server.";
-            return;
-        }
-        ServerNetworking& networking = server->Networking();
+        ServerNetworking& networking = GetApp().Networking();
 
-        const auto host = networking.GetPlayer(networking.HostPlayerID());
-        if (!host) {
+        if (const auto host = networking.GetPlayer(networking.HostPlayerID()))
+            host->SendMessage(message);
+        else
             ErrorLogger(FSM) << "SendMessageToHost couldn't get host player.";
-            return;
-        }
-
-        host->SendMessage(message);
     }
 
     std::string GetHostNameFromSinglePlayerSetupData(const SinglePlayerSetupData& single_player_setup_data) {
@@ -403,9 +389,9 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 // inform players that save is complete
                 SendMessageToAllPlayers(ServerSaveGameCompleteMessage(save_filename, bytes_written));
             }
-            m_server.m_fsm->process_event(Hostless());
+            m_server.m_fsm.process_event(Hostless());
         } else {
-            m_server.m_fsm->process_event(ShutdownServer());
+            m_server.m_fsm.process_event(ShutdownServer());
         }
     } else {
         // can continue.  Select new host if necessary.
@@ -2999,7 +2985,7 @@ sc::result PlayingGame::react(const LobbyUpdate& msg) {
         if (player.first == sender->PlayerID() && player.second.save_game_empire_id != ALL_EMPIRES) {
             int empire_id = server.AddPlayerIntoGame(sender, player.second.save_game_empire_id);
             if (empire_id != ALL_EMPIRES) {
-                server.m_fsm->UpdateIngameLobby();
+                server.m_fsm.UpdateIngameLobby();
                 return discard_event();
             }
         }
@@ -3033,7 +3019,7 @@ void PlayingGame::TurnTimedoutHandler(boost::system::error_code error) {
     }
     Server().ExpireTurn();
     // check if AI players made their orders and advance turn
-    Server().m_fsm->process_event(CheckTurnEndConditions());
+    Server().m_fsm.process_event(CheckTurnEndConditions());
 }
 
 ////////////////////////////////////////////////////////////
@@ -3462,7 +3448,7 @@ void WaitingForTurnEnd::SaveTimedoutHandler(const boost::system::error_code& err
 
     DebugLogger() << "Save timed out.";
     PlayerConnectionPtr dummy_connection = nullptr;
-    Server().m_fsm->process_event(SaveGameRequest(HostSaveGameInitiateMessage(
+    Server().m_fsm.process_event(SaveGameRequest(HostSaveGameInitiateMessage(
         GetAutoSaveFileName(Server().CurrentTurn(), Server().GetGalaxySetupData())),
         dummy_connection));
     if (GetOptionsDB().Get<int>("save.auto.interval") > 0) {

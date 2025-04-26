@@ -18,13 +18,12 @@ void AccordionPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
-    auto* app = GGHumanClientApp::GetApp();
-    if (!app) return;
+    auto& ui = GetApp().GetUI();
 
     m_expand_button = Wnd::Create<CUIButton>(
-        GG::SubTexture(app->GetTexture(button_texture_dir / "downarrownormal.png")),
-        GG::SubTexture(app->GetTexture(button_texture_dir / "downarrowclicked.png")),
-        GG::SubTexture(app->GetTexture(button_texture_dir / "downarrowmouseover.png")));
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "downarrownormal.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "downarrowclicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "downarrowmouseover.png")));
     m_expand_button->SetMinSize(GG::Pt(GG::X(EXPAND_BUTTON_SIZE), GG::Y(EXPAND_BUTTON_SIZE)));
     m_expand_button->NonClientChild(true);
 
@@ -104,17 +103,16 @@ void AccordionPanel::SetCollapsed(bool collapsed) {
 
     m_collapsed = collapsed;
 
-    auto* app = GGHumanClientApp::GetApp();
-    if (!app) return;
+    auto& ui = GetApp().GetUI();
 
     if (!collapsed) {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(app->GetTexture(button_texture_dir / "uparrownormal.png"   )));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(app->GetTexture(button_texture_dir / "uparrowclicked.png"  )));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(app->GetTexture(button_texture_dir / "uparrowmouseover.png")));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrownormal.png"   )));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrowclicked.png"  )));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrowmouseover.png")));
     } else {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(app->GetTexture(button_texture_dir / "downarrownormal.png"   )));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(app->GetTexture(button_texture_dir / "downarrowclicked.png"  )));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(app->GetTexture(button_texture_dir / "downarrowmouseover.png")));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir / "downarrownormal.png"   )));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ui.GetTexture(button_texture_dir / "downarrowclicked.png"  )));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(button_texture_dir / "downarrowmouseover.png")));
     }
 
     ExpandCollapseSignal();

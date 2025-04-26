@@ -2,6 +2,7 @@
 
 #include "../util/i18n.h"
 #include "CUIControls.h"
+#include "../client/human/GGHumanClientApp.h"
 
 namespace {
     constexpr int   EDGE_PAD(3);
@@ -66,7 +67,7 @@ void ResourceBrowseWnd::CompleteConstruction() {
 
     m_title_text->MoveTo(GG::Pt(top_left.x + EDGE_PAD, top_left.y));
     m_title_text->Resize(GG::Pt(BrowseTextWidth() - 2 * EDGE_PAD, ROW_HEIGHT));
-    m_title_text->SetFont(ClientUI::GetBoldFont());
+    m_title_text->SetFont(GetApp().GetUI().GetBoldFont());
     top_left.y += m_title_text->Height() + EDGE_PAD;
 
     AttachChild(m_title_text);
@@ -300,7 +301,7 @@ void WastedStockpiledResourceBrowseWnd::CompleteConstruction() {
 
     m_title_text->MoveTo(GG::Pt(top_left.x + EDGE_PAD, top_left.y));
     m_title_text->Resize(GG::Pt(BrowseTextWidth() - 2 * EDGE_PAD, ROW_HEIGHT));
-    m_title_text->SetFont(ClientUI::GetBoldFont());
+    m_title_text->SetFont(GetApp().GetUI().GetBoldFont());
     top_left.y += m_title_text->Height() + EDGE_PAD;
 
     AttachChild(m_title_text);

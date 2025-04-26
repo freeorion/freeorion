@@ -26,6 +26,17 @@ unroll and hide the stack trace, print a message and still crash anyways. */
 #  include <windows.h>
 #endif
 
+namespace {
+const auto& GetLoggerInitHelper() {
+    // used to for init of logger before ServerApp and thus logger shutdown after ServerApp
+    static struct [[nodiscard]] LoggerHelper {
+        LoggerHelper() { ServerApp::InitLogging(); }
+        ~LoggerHelper() { ShutdownLoggingSystemFileSink(); }
+    } static_logger_init_helper;
+    return static_logger_init_helper;
+}
+}
+
 #ifndef FREEORION_WIN32
 int main(int argc, char* argv[]) {
     InitDirs(argv[0]);
@@ -51,12 +62,13 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
                                 argi8.data(), utf8_sz, NULL, NULL);
             args.push_back(argi8);
         } else {
-            ErrorLogger() << "main() couldn't convert argument to UTF8: " << argi16;
             std::cerr << "main() couldn't convert argument to UTF8" << std::endl;
         }
     }
-    InitDirs((args.empty() ? "" : *args.begin()));
+    InitDirs((args.empty() ? "" : args.front()));
 #endif
+
+    const auto& logger_init_helper = GetLoggerInitHelper();
 
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
@@ -100,49 +112,43 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         // override previously-saved and default options with command line parameters and flags
         GetOptionsDB().SetFromCommandLine(args);
 
+
         auto help_arg = GetOptionsDB().Get<std::string>("help");
         if (help_arg != "NOOP") {
             GetOptionsDB().GetUsage(std::cerr, help_arg);
-            ShutdownLoggingSystemFileSink();
             return 0;
         }
 
         // did the player request the version output?
         if (GetOptionsDB().Get<bool>("version")) {
             std::cout << "FreeOrionD " << FreeOrionVersionString() << std::endl;
-            ShutdownLoggingSystemFileSink();
             return 0;   // quit without actually starting server
         }
 
-        ServerApp g_app;
-        g_app(); // Calls ServerApp::Run() to run app (intialization and main process loop)
+        ServerApp& app = GetApp();
+        app.Run();
 
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
-        ShutdownLoggingSystemFileSink();
         return 1;
     } catch (const std::runtime_error& e) {
         ErrorLogger() << "main() caught exception(std::runtime_error): " << e.what();
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
-        ShutdownLoggingSystemFileSink();
         return 1;
     } catch (const std::exception& e) {
         ErrorLogger() << "main() caught exception(std::exception): " << e.what();
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
-        ShutdownLoggingSystemFileSink();
         return 1;
     } catch (...) {
         ErrorLogger() << "main() caught unknown exception.";
         std::cerr << "main() caught unknown exception." << std::endl;
-        ShutdownLoggingSystemFileSink();
         return 1;
     }
 #endif
 
     DebugLogger() << "freeorion server main exited cleanly.";
-    ShutdownLoggingSystemFileSink();
     return 0;
 }
 

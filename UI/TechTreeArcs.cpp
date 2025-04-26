@@ -81,7 +81,7 @@ public:
         std::set<std::string> highlights;
 
         // We highlight lines that lead to techs that are queued for research
-        if (const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID())) {
+        if (const Empire* empire = GetEmpire(GetApp().EmpireID())) {
             const ResearchQueue& queue = empire->GetResearchQueue();
             for (const auto& edge : m_edges_to_show) {
                 auto& tech1 = edge.first;

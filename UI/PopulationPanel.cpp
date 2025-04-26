@@ -38,10 +38,9 @@ void PopulationPanel::CompleteConstruction() {
     m_expand_button->LeftPressedSignal.connect(
         boost::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
 
-    const auto* app = IApp::GetApp();
-    if (!app)
-        return;
-    const auto& objects = app->GetContext().ContextObjects();
+    auto& app = GetApp();
+    const auto& objects = app.GetContext().ContextObjects();
+    auto& ui = app.GetUI();
 
     auto planet = objects.get<Planet>(m_popcenter_id);
     if (!planet) {
@@ -53,22 +52,22 @@ void PopulationPanel::CompleteConstruction() {
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.emplace_back(
         MeterType::METER_POPULATION,
-        GG::Wnd::Create<StatisticIcon>(ClientUI::SpeciesIcon(species_name),
+        GG::Wnd::Create<StatisticIcon>(ui.SpeciesIcon(species_name),
                                        planet->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
     m_meter_stats.emplace_back(
         MeterType::METER_HAPPINESS,
-        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_HAPPINESS),
+        GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_HAPPINESS),
                                        planet->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
     m_meter_stats.emplace_back(
         MeterType::METER_CONSTRUCTION,
-        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_CONSTRUCTION),
+        GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_CONSTRUCTION),
                                        planet->GetMeter(MeterType::METER_CONSTRUCTION)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
     m_meter_stats.emplace_back(
         MeterType::METER_REBEL_TROOPS,
-        GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_REBEL_TROOPS),
+        GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_REBEL_TROOPS),
                                        planet->GetMeter(MeterType::METER_REBEL_TROOPS)->Initial(), 3, false,
                                        MeterIconSize().x, MeterIconSize().y));
 
@@ -78,17 +77,12 @@ void PopulationPanel::CompleteConstruction() {
 
     for (const auto& [meter_type, stat_icon] : m_meter_stats) {
         stat_icon->RightClickedSignal.connect([this, meter_type{meter_type}](GG::Pt pt) {
-            const auto* app = IApp::GetApp();
-            if (!app)
-                return;
-            const auto& objects = app->GetContext().ContextObjects();
-
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             if (meter_type == MeterType::METER_POPULATION) {
-                if (const auto* planet = objects.getRaw<Planet>(m_popcenter_id)) {
+                if (const auto* planet = GetApp().GetContext().ContextObjects().getRaw<Planet>(m_popcenter_id)) {
                     const auto& species_name = planet->SpeciesName();
                     if (!species_name.empty()) {
-                        auto zoom_species_action = [species_name]() { ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
+                        auto zoom_species_action = [species_name]() { GetApp().GetUI().ZoomToSpecies(species_name); };
                         std::string species_label = boost::io::str(
                             FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
                         popup->AddMenuItem(GG::MenuItem(std::move(species_label), false, false, zoom_species_action));
@@ -96,7 +90,7 @@ void PopulationPanel::CompleteConstruction() {
                 }
             }
 
-            auto pedia_meter_type_action = [meter_type]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{to_string(meter_type)}); };
+            auto pedia_meter_type_action = [meter_type]() { GetApp().GetUI().ZoomToMeterTypeArticle(std::string{to_string(meter_type)}); };
             std::string popup_label = boost::io::str(
                 FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(to_string(meter_type)));
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_meter_type_action));
@@ -162,8 +156,7 @@ void PopulationPanel::Refresh() {
 
 void PopulationPanel::PreRender() {
     AccordionPanel::PreRender();
-    if (const auto* app = IApp::GetApp())
-        Update(app->GetContext().ContextObjects());
+    Update(GetApp().GetContext().ContextObjects());
     DoLayout();
 }
 

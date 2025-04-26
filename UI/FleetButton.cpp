@@ -43,7 +43,7 @@ namespace {
     }
 
     /* returns prefix of filename used for icons for the indicated fleet button size type */
-    constexpr std::string_view FleetIconSizePrefix(FleetButton::SizeType size_type) {
+    constexpr std::string_view FleetIconSizePrefix(FleetButton::SizeType size_type) noexcept {
         switch (size_type) {
         case FleetButton::SizeType::LARGE:  return "big-"; break;
         case FleetButton::SizeType::MEDIUM: return "med-"; break;
@@ -52,7 +52,7 @@ namespace {
         }
     }
 
-    constexpr std::string_view FleetIconSizePrefixTail(FleetButton::SizeType size_type) {
+    constexpr std::string_view FleetIconSizePrefixTail(FleetButton::SizeType size_type) noexcept {
         switch (size_type) {
         case FleetButton::SizeType::LARGE:  return "big-tail-"; break;
         case FleetButton::SizeType::MEDIUM: return "med-tail-"; break;
@@ -82,10 +82,12 @@ void FleetButton::CompleteConstruction() {
 }
 
 void FleetButton::Refresh(SizeType size_type) {
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const ScriptingContext& context = app.GetContext();
     const Universe& u = context.ContextUniverse();
     const ObjectMap& o = context.ContextObjects();
     const EmpireManager& e = context.Empires();
+    const int empire_id = app.EmpireID();
 
     const auto fleets = o.findRaw<const Fleet>(m_fleets);
 
@@ -134,7 +136,7 @@ void FleetButton::Refresh(SizeType size_type) {
 
     // determine direction button should be rotated to orient along a starlane
     GLfloat pointing_angle = 0.0f;
-    const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+    const auto map_wnd = app.GetUI().GetMapWndConst();
     if (!map_wnd)
         return;
 
@@ -236,7 +238,6 @@ void FleetButton::Refresh(SizeType size_type) {
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // Scanlines for not currently-visible objects?
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("ui.map.scanlines.shown")) {
         DetachChild(m_scanline_control);
         m_scanline_control.reset();
@@ -252,7 +253,7 @@ void FleetButton::Refresh(SizeType size_type) {
 
     bool at_least_one_fleet_visible = false;
     for (int fleet_id : m_fleets) {
-        if (GetUniverse().GetObjectVisibilityByEmpire(fleet_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
+        if (u.GetObjectVisibilityByEmpire(fleet_id, empire_id) >= Visibility::VIS_BASIC_VISIBILITY) {
             at_least_one_fleet_visible = true;
             break;
         }
@@ -281,7 +282,7 @@ bool FleetButton::InWindow(GG::Pt pt) const noexcept {
 }
 
 void FleetButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+    const auto map_wnd = GetApp().GetUI().GetMapWndConst();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
         if (State() != ButtonState::BN_ROLLOVER)
             PlayFleetButtonRolloverSound();
@@ -297,7 +298,11 @@ void FleetButton::SizeMove(GG::Pt ul, GG::Pt lr) {
 }
 
 void FleetButton::LayoutIcons() {
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const ScriptingContext& context = app.GetContext();
+    const auto client_empire_id = app.EmpireID();
+    const auto& u{context.ContextUniverse()};
+    const auto& o{context.ContextObjects()};
 
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
     for (auto& graphic : m_icons) {
@@ -314,10 +319,6 @@ void FleetButton::LayoutIcons() {
         GG::Pt graphic_ul = middle - subtexture_sz / 2;
         m_selection_indicator->SizeMove(graphic_ul, graphic_ul + subtexture_sz);
     }
-
-    const auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const auto& u{context.ContextUniverse()};
-    const auto& o{context.ContextObjects()};
 
     // refresh fleet button tooltip
     if (m_fleet_blockaded) {
@@ -430,7 +431,8 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
     bool hasMonsters = false;
     bool canDamageShips = false;
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const ScriptingContext& context = app.GetContext();
     const Universe& u = context.ContextUniverse();
 
     for (const auto* fleet : fleets) {
@@ -460,7 +462,7 @@ std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(
 
     result.reserve(main_filenames.size());
     for (const std::string& name : main_filenames) {
-        auto texture_temp = ClientUI::GetTexture(
+        auto texture_temp = app.GetUI().GetTexture(
             ClientUI::ArtDir() / "icons" / "fleet" / name, false);
         glBindTexture(GL_TEXTURE_2D, texture_temp->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -480,20 +482,21 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
     if (size_type == FleetButton::SizeType::NONE)
         return nullptr;
 
+    auto& ui = GetApp().GetUI();
+
     if (size_type == FleetButton::SizeType::TINY) {
         if (fleet_size > 1u)
-            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet-multi.png", false);
+            return ui.GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet-multi.png", false);
         else
-            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet.png", false);
+            return ui.GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet.png", false);
     }
 
     auto size_prefix_tail = FleetIconSizePrefixTail(size_type);
     if (size_prefix_tail.empty())
         return nullptr;
 
-    auto texture_temp = ClientUI::GetClientUI()->GetModuloTexture(
-        ClientUI::ArtDir() / "icons" / "fleet", size_prefix_tail,
-        FleetSizeIconNumber(fleet_size), false);
+    auto texture_temp = ui.GetModuloTexture(ClientUI::ArtDir() / "icons" / "fleet", size_prefix_tail,
+                                            FleetSizeIconNumber(fleet_size), false);
     if (texture_temp) {
         glBindTexture(GL_TEXTURE_2D, texture_temp->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -505,9 +508,8 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
 }
 
 std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type) {
-    std::shared_ptr<GG::Texture> retval;
     if (size_type == FleetButton::SizeType::NONE)
-        return retval;
+        return {};
 
     // don't know why, but this crashes when refactored to use ?:
     std::string size_blockade_prefix;
@@ -516,8 +518,7 @@ std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type)
     else
         size_blockade_prefix = FleetIconSizePrefix(size_type) + "blockade.png";
 
-    retval = ClientUI::GetClientUI()->GetTexture(
-        ClientUI::ArtDir() / "icons" / "fleet" / size_blockade_prefix, false);
+    auto retval = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / size_blockade_prefix, false);
     if (retval) {
         glBindTexture(GL_TEXTURE_2D, retval->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -531,12 +532,13 @@ std::shared_ptr<GG::Texture> FleetBlockadedIcon(FleetButton::SizeType size_type)
 std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon() {
     static std::shared_ptr<GG::Texture> retval;
     if (!retval) {
-        retval = ClientUI::GetClientUI()->GetTexture(
-            ClientUI::ArtDir() / "icons" / "fleet" / "fleet_selection.png", false);
-        glBindTexture(GL_TEXTURE_2D, retval->OpenGLId());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        retval = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "fleet_selection.png", false);
+        if (retval) {
+            glBindTexture(GL_TEXTURE_2D, retval->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
     }
     return retval;
 }

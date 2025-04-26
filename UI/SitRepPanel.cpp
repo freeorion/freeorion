@@ -49,57 +49,56 @@ namespace {
     }
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
-        auto* app = GGHumanClientApp::GetApp();
-        if (!app) return;
-        auto& context = app->GetContext();
+        auto& app = GetApp();
+        auto& context = app.GetContext();
         auto& universe = context.ContextUniverse();
-        auto client_empire_id = app->EmpireID();
-        auto* ui = ClientUI::GetClientUI();
+        auto client_empire_id = app.EmpireID();
+        auto& ui = app.GetUI();
         const auto data_int = [&data]() { return boost::lexical_cast<int>(data); };
 
         try {
-            if (link_type == VarText::PLANET_ID_TAG && app) {
-                ui->ZoomToPlanet(data_int(), context);
-            } else if (link_type == VarText::SYSTEM_ID_TAG && app) {
-                ui->ZoomToSystem(data_int(), context);
-            } else if (link_type == VarText::FLEET_ID_TAG && app) {
-                ui->ZoomToFleet(data_int(), context, client_empire_id);
-            } else if (link_type == VarText::SHIP_ID_TAG && app) {
-                ui->ZoomToShip(data_int(), context, client_empire_id);
+            if (link_type == VarText::PLANET_ID_TAG) {
+                ui.ZoomToPlanet(data_int(), context);
+            } else if (link_type == VarText::SYSTEM_ID_TAG) {
+                ui.ZoomToSystem(data_int(), context);
+            } else if (link_type == VarText::FLEET_ID_TAG) {
+                ui.ZoomToFleet(data_int(), context, client_empire_id);
+            } else if (link_type == VarText::SHIP_ID_TAG) {
+                ui.ZoomToShip(data_int(), context, client_empire_id);
             } else if (link_type == VarText::BUILDING_ID_TAG) {
-                ui->ZoomToBuilding(data_int(), context);
+                ui.ZoomToBuilding(data_int(), context);
 
             } else if (link_type == VarText::COMBAT_ID_TAG) {
-                ui->ZoomToCombatLog(data_int());
+                ui.ZoomToCombatLog(data_int());
 
             } else if (link_type == VarText::EMPIRE_ID_TAG) {
-                ui->ZoomToEmpire(data_int());
+                ui.ZoomToEmpire(data_int());
             } else if (link_type == VarText::DESIGN_ID_TAG) {
-                ui->ZoomToShipDesign(data_int());
+                ui.ZoomToShipDesign(data_int());
             } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
                 if (const ShipDesign* design = universe.GetGenericShipDesign(data))
-                    ui->ZoomToShipDesign(design->ID());
+                    ui.ZoomToShipDesign(design->ID());
 
             } else if (link_type == VarText::TECH_TAG) {
-                ui->ZoomToTech(data);
+                ui.ZoomToTech(data);
             } else if (link_type == VarText::POLICY_TAG) {
-                ui->ZoomToPolicy(data);
+                ui.ZoomToPolicy(data);
             } else if (link_type == VarText::BUILDING_TYPE_TAG) {
-                ui->ZoomToBuildingType(data);
+                ui.ZoomToBuildingType(data);
             } else if (link_type == VarText::SPECIAL_TAG) {
-                ui->ZoomToSpecial(data);
+                ui.ZoomToSpecial(data);
             } else if (link_type == VarText::SHIP_HULL_TAG) {
-                ui->ZoomToShipHull(data);
+                ui.ZoomToShipHull(data);
             } else if (link_type == VarText::SHIP_PART_TAG) {
-                ui->ZoomToShipPart(data);
+                ui.ZoomToShipPart(data);
             } else if (link_type == VarText::SPECIES_TAG) {
-                ui->ZoomToSpecies(data);
+                ui.ZoomToSpecies(data);
             } else if (link_type == VarText::METER_TYPE_TAG) {
-                ui->ZoomToMeterTypeArticle(data);
+                ui.ZoomToMeterTypeArticle(data);
             } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
-                ui->ZoomToEncyclopediaEntry(data);
+                ui.ZoomToEncyclopediaEntry(data);
             } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
-                app->BrowsePath(FilenameToPath(data));
+                app.BrowsePath(FilenameToPath(data));
             }
         } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
@@ -119,7 +118,7 @@ namespace {
     std::set<std::string> EmpireSitRepTemplateStrings(int empire_id) {
         std::set<std::string> template_set;
 
-        const Empire* empire = GGHumanClientApp::GetApp()->GetEmpire(empire_id);
+        const Empire* empire = GetApp().GetEmpire(empire_id);
         if (!empire)
             return template_set;
 
@@ -228,10 +227,12 @@ namespace {
 
             SetChildClippingMode(ChildClippingMode::ClipToClient);
 
+            auto& app = GetApp();
+
             const int icon_dim = GetIconSize();
             std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
-            std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(ClientUI::ArtDir() / icon_texture, true);
+            auto icon = app.GetUI().GetTexture(ClientUI::ArtDir() / icon_texture, true);
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
             m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
@@ -242,7 +243,7 @@ namespace {
             GG::X text_width(ClientWidth() - text_left - spacer.x);
 
             m_link_text = GG::Wnd::Create<SitRepLinkText>(
-                GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText(IApp::GetApp()->GetContext()) + " ", ClientUI::GetFont(),
+                GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText(app.GetContext()) + " ", app.GetUI().GetFont(),
                 GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, TextLinker::DecoratorType::ColorByEmpire);
             m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, TextLinker::DecoratorType::PathType);
@@ -500,7 +501,7 @@ namespace {
         if (hidden_templates.contains(label))
             return true;
 
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
 
         // Validation is time consuming because all variables are substituted.
         // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
@@ -560,19 +561,19 @@ void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
 void SitRepPanel::PrevClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::NextClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
     ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::LastClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
     // search backwards from current turn for a non-empty sitrep turn
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, GGHumanClientApp::GetApp()->CurrentTurn() + 1,
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, GetApp().CurrentTurn() + 1,
                                                   false, m_hidden_sitrep_templates));
 }
 
@@ -649,7 +650,7 @@ void SitRepPanel::IgnoreSitRep(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG
     if (sitrep.GetTurn() <= 0)
         return;
 
-    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText(IApp::GetApp()->GetContext()));
+    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText(GetApp().GetContext()));
 
     Update();
 }
@@ -667,7 +668,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<G
 
     if (sitrep_row) {
         const SitRepEntry& sitrep_entry = sitrep_row->GetSitRepEntry();
-        sitrep_text = sitrep_entry.GetText(IApp::GetApp()->GetContext());
+        sitrep_text = sitrep_entry.GetText(GetApp().GetContext());
         start_turn = sitrep_entry.GetTurn();
         if (start_turn > 0) {
             auto snooze5_action = [&sitrep_text, start_turn]() { SnoozeSitRepForNTurns(sitrep_text, start_turn, 5); };
@@ -732,9 +733,9 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<G
     auto copy_action = [&sitrep_text]() {
         if (sitrep_text.empty())
             return;
-        GG::GUI::GetGUI()->SetClipboardText(GG::Font::StripTags(sitrep_text));
+        GetApp().SetClipboardText(GG::Font::StripTags(sitrep_text));
     };
-    auto help_action = []() { ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE"); };
+    auto help_action = []() { GetApp().GetUI().ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE"); };
     popup->AddMenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action);
     popup->AddMenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") + UserString("SITREP_IGNORE_BLOCK_TITLE"),
                        false, false, help_action);
@@ -763,7 +764,7 @@ void SitRepPanel::Update() {
     // if this client is an observer or moderator.
     // todo: double check that no-empire players are actually moderator or
     //       observers, instead of just passing the client empire id.
-    auto sitreps_by_turn = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
+    auto sitreps_by_turn = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
 
     m_showing_turn = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn - 1, true, m_hidden_sitrep_templates);
     if (m_showing_turn < 1)
@@ -860,8 +861,8 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 }
 
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GGHumanClientApp::GetApp()->EmpireID());
-    auto& this_turn_sitreps = turns[GGHumanClientApp::GetApp()->CurrentTurn()];
+    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
+    auto& this_turn_sitreps = turns[GetApp().CurrentTurn()];
     auto is_valid = [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); };
 
     return std::count_if(this_turn_sitreps.begin(), this_turn_sitreps.end(), is_valid);
