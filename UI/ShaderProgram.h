@@ -62,10 +62,10 @@ public:
     void                stopUse();
 
 private:
-    GLuint      m_program_id;
-    GLuint      m_vertex_shader_id;
-    GLuint      m_fragment_shader_id;
-    bool        m_link_succeeded;
+    GLuint      m_program_id = 0;
+    GLuint      m_vertex_shader_id = 0;
+    GLuint      m_fragment_shader_id = 0;
+    bool        m_link_succeeded = false;
     std::string m_program_log;
     std::string m_program_validity_log;
     std::string m_vertex_shader_log;
