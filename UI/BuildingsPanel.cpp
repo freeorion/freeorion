@@ -91,12 +91,12 @@ void BuildingsPanel::Update() {
 
     const auto* app = GGHumanClientApp::GetApp();
     const auto& context = app->GetContext();
-    auto planet = context.ContextObjects().get<Planet>(m_planet_id);
+    const auto planet = context.ContextObjects().get<Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
-    int system_id = planet->SystemID();
+    const int system_id = planet->SystemID();
 
     const int indicator_size = static_cast<int>(Width() / static_cast<float>(m_columns));
 
@@ -262,7 +262,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     auto texture = ClientUI::BuildingIcon(building_type);
 
     const BuildingType* type = GetBuildingType(building_type);
-    const std::string& desc = type ? type->Description() : "";
+    const std::string_view desc = type ? type->Description() : "";
 
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         texture, UserString(building_type), UserString(desc)));
@@ -375,7 +375,6 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     const ScriptingContext& context = app->GetContext();
     const ObjectMap& objects{context.ContextObjects()};
 
-    int empire_id = app->EmpireID();
     auto building = objects.get<Building>(m_building_id);
     if (!building)
         return;
@@ -388,9 +387,9 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         return;
     }
 
-    auto scrap_building_action = [this, empire_id]() {
+    auto scrap_building_action = [this]() {
         auto* app = GGHumanClientApp::GetApp();
-        app->Orders().IssueOrder<ScrapOrder>(app->GetContext(), empire_id, m_building_id);
+        app->Orders().IssueOrder<ScrapOrder>(app->GetContext(), app->EmpireID(), m_building_id);
     };
 
     auto un_scrap_building_action = [building]() {
@@ -404,7 +403,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    if (m_order_issuing_enabled && ScrapOrder::Check(empire_id, m_building_id, context)) {
+    if (m_order_issuing_enabled && ScrapOrder::Check(app->EmpireID(), m_building_id, context)) {
         if (!building->OrderedScrapped()) {
             // create popup menu with "Scrap" option
             popup->AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false,
