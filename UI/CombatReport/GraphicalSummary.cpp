@@ -2,7 +2,7 @@
 
 #include "../CUIControls.h"
 #include "../CUIDrawUtil.h"
-#include "../../client/ClientApp.h"
+#include "../../client/human/GGHumanClientApp.h"
 #include "../../Empire/Empire.h"
 #include "../../universe/UniverseObject.h"
 #include "../../util/i18n.h"
@@ -14,6 +14,7 @@
 #include <GG/Layout.h>
 
 #include <boost/format.hpp>
+
 
 namespace {
     // These margins determine how we avoid drawing children on top of the
@@ -264,9 +265,10 @@ public:
         m_participant(participant),
         m_sizer(sizer)
     {
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const auto& app = GetApp();
+        const auto& context = app.GetContext();
         if (auto object = context.ContextObjects().getRaw(participant.object_id)) {
-            SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID(), context.ContextUniverse()) +
+            SetBrowseText(object->PublicName(app.EmpireID(), context.ContextUniverse()) +
                           " " + DoubleToString(participant.current_health, 3, false) +
                           "/" + DoubleToString(participant.max_health, 3, false));
         }
@@ -491,8 +493,6 @@ public:
     }
 
     void DoLayout() {
-        auto cui_font = ClientUI::GetFont();
-
         GG::Pt pos(GG::X0, GG::Y0);
         for (auto& data : m_toggles) {
             if (!data->button->Children().empty()) {
@@ -634,22 +634,22 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
     if (!log) {
         ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
+        const auto& objects = GetApp().GetContext().ContextObjects();
         for (int object_id : log->object_ids) {
             if (object_id < 0)
                 continue;   // fighters and invalid objects
-            auto object = ClientApp::GetApp()->GetContext().ContextObjects().get(object_id);
+            const auto object = objects.get(object_id);
             if (!object) {
                 ErrorLogger() << "GraphicalSummaryWnd::MakeSummaries couldn't find object with id: " << object_id;
                 continue;
             }
 
-            int owner_id = object->Owner();
-            if (!m_summaries.contains(owner_id))
-                m_summaries[owner_id] = CombatSummary(owner_id);
+            const int owner_id = object->Owner();
+            auto& summary = m_summaries.try_emplace(owner_id, owner_id).first->second;
 
             auto map_it = log->participant_states.find(object_id);
             if (map_it != log->participant_states.end()) {
-                m_summaries[owner_id].AddUnit(object_id, map_it->second);
+                summary.AddUnit(object_id, map_it->second);
             } else {
                 ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
             }

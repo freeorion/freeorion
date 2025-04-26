@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "../util/i18n.h"
 #include "../util/ranges.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/ClrConstants.h>
 
@@ -181,11 +182,11 @@ void GraphControl::Render() {
 
     if (m_show_scale && !m_y_scale_ticks.empty()) {
         glEnable(GL_TEXTURE_2D);
-        const auto font = ClientUI::GetFont();
+        const auto font = GetApp().GetUI().GetFont();
         GG::Font::RenderState rs{ClientUI::TextColor()};
-        for (auto label : m_y_scale_ticks) {
-            const auto roundedlabel = boost::format("%|1$.12|") % label.second;
-            font->RenderText(GG::Pt{ul.x + GG::X1, lr.y + label.first}, roundedlabel.str(), rs);
+        for (auto& [y_pos, val] : m_y_scale_ticks) {
+            const auto roundedlabel = boost::format("%|1$.12|") % val;
+            font->RenderText(GG::Pt{ul.x + GG::X1, lr.y + y_pos}, roundedlabel.str(), rs);
         }
     }
 

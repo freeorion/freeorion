@@ -4,6 +4,7 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "../client/human/GGHumanClientApp.h"
 
 namespace {
     /** Returns height of rows of text in InfoTextBrowseWnd. */
@@ -42,7 +43,7 @@ void IconTextBrowseWnd::PreRender() {
     m_title_text_label = GG::Wnd::Create<CUILabel>(m_title_text, GG::FORMAT_LEFT);
     m_title_text_label->MoveTo(GG::Pt(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0));
     m_title_text_label->Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT));
-    m_title_text_label->SetFont(ClientUI::GetBoldFont());
+    m_title_text_label->SetFont(GetApp().GetUI().GetBoldFont());
 
 
     m_main_text_label = GG::Wnd::Create<CUILabel>(ValueRefLinkText(m_main_text,false),

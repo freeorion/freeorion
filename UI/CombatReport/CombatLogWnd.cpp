@@ -31,9 +31,8 @@ class CombatLogWnd::Impl {
 public:
     Impl(CombatLogWnd& _log);
 
-    GG::Pt MinUsableSize() const;
+    GG::Pt MinUsableSize() const noexcept { return m_min_usable_sz; }
 
-    void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
     /** Add a row \p wnd at the end of the combat report. */
@@ -50,7 +49,7 @@ public:
         event using the pre-calculated \p details.*/
     void PopulateWithFlatLogs(
         GG::X w, int viewing_empire_id, std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
-        ConstCombatEventPtr& event, std::string&& details);
+        ConstCombatEventPtr& event, std::string details);
 
     // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
     std::vector<std::shared_ptr<GG::Wnd>> MakeCombatLogPanel(
@@ -61,8 +60,7 @@ public:
 
     // default flags for a text link log segment
     GG::Flags<GG::TextFormat> m_text_format_flags;
-    std::shared_ptr<GG::Font> m_font;
-
+    GG::Pt                    m_min_usable_sz;
 };
 
 namespace {
@@ -102,7 +100,7 @@ namespace {
     {
         decltype(SegregateForces(owners, objects, categories, order)) forces;
 
-        for (const auto& object : ClientApp::GetApp()->GetContext().ContextObjects().find(objects)) {
+        for (const auto& object : GetApp().GetContext().ContextObjects().find(objects)) {
             if (!object || !owners.contains(object->Owner()))
                 continue;
 
@@ -138,7 +136,7 @@ namespace {
         std::string retval;
         static constexpr std::size_t retval_sz = 24 + 1 + VarText::EMPIRE_ID_TAG.length()*2 + 1 + 8 + 1 + 30 + 3 + 1 + 10 + 20; // semi-guesstimate
         retval.reserve(retval_sz);
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         if (const auto empire = context.GetEmpire(empire_id))
             return retval.append(GG::RgbaTag(empire->Color())).append("<").append(VarText::EMPIRE_ID_TAG).append(" ")
                          .append(std::to_string(empire->EmpireID())).append(">").append(empire->Name()).append("</")
@@ -160,7 +158,7 @@ namespace {
         bool operator()(const std::shared_ptr<UniverseObject>& lhs,
                         const std::shared_ptr<UniverseObject>& rhs)
         {
-            const ScriptingContext& context = IApp::GetApp()->GetContext();
+            const ScriptingContext& context = GetApp().GetContext();
             const auto& lhs_public_name = lhs->PublicName(viewing_empire_id, context.ContextUniverse());
             const auto& rhs_public_name = rhs->PublicName(viewing_empire_id, context.ContextUniverse());
             if (lhs_public_name != rhs_public_name) {
@@ -187,7 +185,7 @@ namespace {
         const std::string_view delimiter = ", ",
         const std::string_view category_delimiter = "\n-\n")
     {
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const ScriptingContext& context = GetApp().GetContext();
 
         std::stringstream ss;
         bool first_category = true;
@@ -248,7 +246,7 @@ namespace {
         log(log_),
         viewing_empire_id(viewing_empire_id_),
         event(event_),
-        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, IApp::GetApp()->GetContext())))
+        title(log.DecorateLinkText(event->CombatLogDescription(viewing_empire_id, GetApp().GetContext())))
     {}
 
     void CombatLogAccordionPanel::CompleteConstruction() {
@@ -357,16 +355,23 @@ namespace {
 
         SetCollapsed(new_collapsed);
     }
+
+    GG::Pt ImpleMinSz() {
+        auto& ui = GetApp().GetUI();
+        if (const auto font = ui.GetFont())
+            return {font->SpaceWidth()*20, font->Lineskip()*10};
+        else
+            return GG::Pt{GG::X1, GG::Y1} * ui.Pts();
+    }
 }
+
+
 
 CombatLogWnd::Impl::Impl(CombatLogWnd& _wnd) :
     m_wnd(_wnd),
     m_text_format_flags(GG::FORMAT_WORDBREAK| GG::FORMAT_LEFT | GG::FORMAT_TOP),
-    m_font(ClientUI::GetFont())
+    m_min_usable_sz(ImpleMinSz())
 {}
-
-GG::Pt CombatLogWnd::Impl::MinUsableSize() const
-{ return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10); }
 
 void CombatLogWnd::Impl::HandleWndChanged()
 { m_wnd.RequirePreRender(); }
@@ -377,7 +382,7 @@ namespace {
     template <typename T>
     T const* FindParentOfType(GG::Wnd const* parent)
     {
-        GG::Wnd const * iwnd = parent;
+        GG::Wnd const* iwnd = parent;
         T const* type_T = dynamic_cast<const T*>(iwnd);
         while (iwnd && !type_T) {
             iwnd = iwnd->Parent().get();
@@ -408,10 +413,10 @@ namespace {
         mutable boost::signals2::signal<void ()> ChangedSignal;
 
         LazyScrollerLinkText(
-            GG::Wnd& parent, GG::X x, GG::Y y, const std::string& str,
-            const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
-            LinkText(x, y, UserString("ELLIPSIS"), font, color),
-            m_text(std::make_unique<std::string>(str))
+            const GG::Wnd& parent, GG::X x, GG::Y y, std::string str,
+            std::shared_ptr<GG::Font> font, GG::Clr color = GG::CLR_BLACK) :
+            LinkText(x, y, UserString("ELLIPSIS"), std::move(font), color),
+            m_text(std::make_unique<std::string>(std::move(str)))
         {
             // Register for signals that might bring the text into view
             if (const auto* log = FindParentOfType<CombatLogWnd>(std::addressof(parent))) {
@@ -422,16 +427,16 @@ namespace {
             namespace ph = boost::placeholders;
 
             if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(std::addressof(parent))) {
-                const auto* scroll = scroll_panel->GetScroll();
-                m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
-                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
-                              this, ph::_1, ph::_2, ph::_3, ph::_4)));
+                if (const auto* scroll = scroll_panel->GetScroll())
+                    m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
+                        boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,
+                                    this, ph::_1, ph::_2, ph::_3, ph::_4)));
             }
 
             // Parent doesn't contain any of the expected parents so just
             // show the text.
             if (m_signals.empty()) {
-                SetText(str);
+                SetText(std::move(str));
                 m_text.reset();
             } else {
                 HandleMaybeVisible();
@@ -476,8 +481,10 @@ namespace {
 }
 
 std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(std::string text) {
-    auto links = GG::Wnd::Create<LazyScrollerLinkText>(m_wnd, GG::X0, GG::Y0,
-                                                       std::move(text), m_font, GG::CLR_WHITE);
+    auto font = GetApp().GetUI().GetFont();
+    if (!font) return nullptr;
+    auto links = GG::Wnd::Create<LazyScrollerLinkText>(
+        m_wnd, GG::X0, GG::Y0, std::move(text), std::move(font), GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
 
@@ -498,7 +505,7 @@ std::shared_ptr<LinkText> CombatLogWnd::Impl::DecorateLinkText(std::string text)
     event using the pre-calculated \p details.*/
 void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
                                               std::vector<std::shared_ptr<GG::Wnd>>& new_logs,
-                                              ConstCombatEventPtr& event, std::string&& details)
+                                              ConstCombatEventPtr& event, std::string details)
 {
     if (!details.empty())
         new_logs.push_back(DecorateLinkText(std::move(details)));
@@ -532,7 +539,7 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
         return new_logs;
     }
 
-    std::string title = event->CombatLogDescription(viewing_empire_id, IApp::GetApp()->GetContext());
+    std::string title = event->CombatLogDescription(viewing_empire_id, GetApp().GetContext());
     if (!(event->FlattenSubEvents() && title.empty()))
         new_logs.push_back(DecorateLinkText(title));
 
@@ -547,9 +554,6 @@ void CombatLogWnd::Impl::AddRow(std::shared_ptr<GG::Wnd> wnd) {
     if (auto layout = m_wnd.GetLayout())
         layout->Add(std::move(wnd), layout->Rows(), 0);
 }
-
-void CombatLogWnd::Impl::SetFont(std::shared_ptr<GG::Font> font)
-{ m_font = std::move(font); }
 
 void CombatLogWnd::Impl::SetLog(int log_id) {
     boost::optional<const CombatLog&> log = GetCombatLog(log_id);
@@ -566,12 +570,12 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                                                      );
     m_wnd.SetLayout(layout);
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
-
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const auto& app = GetApp();
+    const ScriptingContext& context = app.GetContext();
+    const int client_empire_id = app.EmpireID();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
-    //const EmpireManager& empires = Empires();
+    const auto font = app.GetUI().GetFont();
 
     // Write Header text
     const auto* system = objects.getRaw<System>(log->system_id);
@@ -613,9 +617,10 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
     }
 
     // Write Logs
+    const auto panel_width = font ? font->SpaceWidth()*10 : GG::X1;
     for (CombatEventPtr event : log->combat_events) {
         DebugLogger(combat_log) << "event debug info: " << event->DebugString(context);
-        for (auto& wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event))
+        for (auto& wnd : MakeCombatLogPanel(panel_width, client_empire_id, event))
             AddRow(std::move(wnd));
     }
 
@@ -634,9 +639,6 @@ CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
 { SetName("CombatLogWnd"); }
 
 CombatLogWnd::~CombatLogWnd() = default;
-
-void CombatLogWnd::SetFont(std::shared_ptr<GG::Font> font)
-{ m_impl->SetFont(std::move(font)); }
 
 void CombatLogWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }
@@ -664,8 +666,9 @@ void CombatLogWnd::PreRender() {
     This fix forces the combat accordion window to correctly resize itself.
 
     TODO: Fix intial size of CombatReport from (30,15) to its actual first displayed size.*/
-    const auto size = Size();
-    Resize(size + GG::Pt(2 * m_impl->m_font->SpaceWidth(), GG::Y0));
+    const auto font = GetApp().GetUI().GetFont();
+    const auto size = Size() + GG::Pt{font ? font->SpaceWidth() * 2 : GG::X0, GG::Y0};
+    Resize(size);
     GG::GUI::PreRenderWindow(this);
     Resize(size);
     GG::GUI::PreRenderWindow(this);

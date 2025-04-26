@@ -185,7 +185,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientNetworking.h" />
-    <ClInclude Include="..\..\client\human\chmain.h" />
     <ClInclude Include="..\..\client\human\GGHumanClientApp.h" />
     <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
     <ClInclude Include="..\..\client\human\ClientFSMEvents.h" />

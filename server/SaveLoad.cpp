@@ -351,8 +351,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     SectionedScopedTimer timer("LoadGame");
 
     // player notifications
-    if (ServerApp* server = ServerApp::GetApp())
-        server->Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
+    GetApp().Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
     GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
 

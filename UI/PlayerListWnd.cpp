@@ -18,84 +18,63 @@
 namespace {
     constexpr int DATA_PANEL_BORDER = 1;
 
-    auto AIIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ai.png");
-        return retval;
-    }
+    auto AIIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "ai.png"); }
 
-    auto MessageIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png");
-        return retval;
-    }
+    auto MessageIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png"); }
 
-    auto HumanIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "human.png");
-        return retval;
-    }
-    auto ObserverIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "observer.png");
-        return retval;
-    }
-    auto ModeratorIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "moderator.png");
-        return retval;
-    }
-    auto HostIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "host.png");
-        return retval;
-    }
-    auto PlayingIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "not_ready.png");
-        return retval;
-    }
-    auto WaitingIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ready.png");
-        return retval;
-    }
-    auto WarIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "war.png");
-        return retval;
-    }
-    auto PeaceIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png");
-        return retval;
-    }
-    auto AlliedIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "allied.png");
-        return retval;
-    }
-    auto UnknownIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png");
-        return retval;
-    }
-    auto ShipIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png");
-        return retval;
-    }
-    auto ProductionIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png");
-        return retval;
-    }
-    auto ResearchIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png");
-        return retval;
-    }
-    auto InfluenceIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "influence.png");
-        return retval;
-    }
-    auto DetectionIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "detection.png");
-        return retval;
-    }
-    auto WonIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "victory.png");
-        return retval;
-    }
-    auto LostIcon() {
-        static auto retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png");
-        return retval;
-    }
+    auto HumanIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "human.png"); }
+
+    auto ObserverIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "observer.png"); }
+
+    auto ModeratorIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "moderator.png"); }
+
+    auto HostIcon(ClientUI& ui) 
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "host.png"); }
+
+    auto PlayingIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "not_ready.png"); }
+
+    auto WaitingIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "ready.png"); }
+
+    auto WarIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "war.png"); }
+
+    auto PeaceIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "peace.png"); }
+
+    auto AlliedIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "allied.png"); }
+
+    auto UnknownIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png"); }
+
+    auto ShipIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
+
+    auto ProductionIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png"); }
+
+    auto ResearchIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png"); }
+
+    auto InfluenceIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "influence.png"); }
+
+    auto DetectionIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "detection.png"); }
+
+    auto WonIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "victory.png"); }
+
+    auto LostIcon(ClientUI& ui)
+    { return ui.GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png"); }
+
 
 
     ////////////////////////////////////////////////
@@ -113,30 +92,18 @@ namespace {
         void CompleteConstruction() override {
             GG::Control::CompleteConstruction();
 
+            auto& ui = GetApp().GetUI();
             switch (m_diplo_status) {
-            case DiplomaticStatus::DIPLO_WAR:
-                m_icon = WarIcon();
-                break;
-            case DiplomaticStatus::DIPLO_PEACE:
-                m_icon = PeaceIcon();
-                break;
-            case DiplomaticStatus::DIPLO_ALLIED:
-                m_icon = AlliedIcon();
-                break;
-            default:
-                m_icon = UnknownIcon();
-                break;
+            case DiplomaticStatus::DIPLO_WAR:       m_icon = WarIcon(ui);     break;
+            case DiplomaticStatus::DIPLO_PEACE:     m_icon = PeaceIcon(ui);   break;
+            case DiplomaticStatus::DIPLO_ALLIED:    m_icon = AlliedIcon(ui);  break;
+            default:                                m_icon = UnknownIcon(ui); break;
             }
 
         }
 
         void Update() {
-            const ClientApp* app = ClientApp::GetApp();
-            if (!app) {
-                ErrorLogger() << "DiplomaticStatusIndicator::Render couldn't get client app!";
-                return;
-            }
-            const auto& empires = Empires();
+            const auto& empires = GetApp().Empires();
 
             // add id for each empire with specified diplomatic status
             m_empire_ids.clear();
@@ -213,7 +180,7 @@ namespace {
         DiplomaticStatus                m_diplo_status;
         std::shared_ptr<GG::Texture>    m_icon;
 
-        int IconSize() const { return Value(Height()); }
+        int IconSize() const noexcept { return Value(Height()); }
         static constexpr int PAD = 3;
     };
 
@@ -263,13 +230,9 @@ namespace {
             AttachChild(m_peace_indicator);
             AttachChild(m_allied_indicator);
 
-            const auto* app = GGHumanClientApp::GetApp();
-            if (app) {
-                DoLayout(app->GetContext().Empires());
-                Update(*app);
-            } else {
-                DoLayout(0);
-            }    
+            const auto& app = GetApp();
+            DoLayout(app.GetContext().Empires());
+            Update(app);
         }
 
         /** Excludes border from the client area. */
@@ -295,54 +258,51 @@ namespace {
 
             GG::Pt ICON_SIZE = GG::Pt(GG::X{IconSize()}, GG::Y{IconSize()});
 
+            auto& app = GetApp();
+            auto& ui = app.GetUI();
 
-            ShipIcon()->OrthoBlit(UpperLeft() + m_ship_icon_ul, UpperLeft() + m_ship_icon_ul+ ICON_SIZE);
+            ShipIcon(ui)->OrthoBlit(UpperLeft() + m_ship_icon_ul, UpperLeft() + m_ship_icon_ul+ ICON_SIZE);
 
             //ClientUI::PlanetIcon(favored_planet_type)->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
-            ClientUI::PlanetIcon(PlanetType::PT_TERRAN)->OrthoBlit(UpperLeft() + m_planet_icon_ul , UpperLeft() + m_planet_icon_ul + ICON_SIZE);
+            ui.PlanetIcon(PlanetType::PT_TERRAN)->OrthoBlit(UpperLeft() + m_planet_icon_ul , UpperLeft() + m_planet_icon_ul + ICON_SIZE);
 
-            ProductionIcon()->OrthoBlit(UpperLeft() + m_production_icon_ul, UpperLeft() + m_production_icon_ul + ICON_SIZE);
-            ResearchIcon()->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
-            InfluenceIcon()->OrthoBlit(UpperLeft() + m_influence_icon_ul, UpperLeft() + m_influence_icon_ul + ICON_SIZE);
-            DetectionIcon()->OrthoBlit(UpperLeft() + m_detection_icon_ul, UpperLeft() + m_detection_icon_ul + ICON_SIZE);
+            ProductionIcon(ui)->OrthoBlit(UpperLeft() + m_production_icon_ul, UpperLeft() + m_production_icon_ul + ICON_SIZE);
+            ResearchIcon(ui)->OrthoBlit(UpperLeft() + m_research_icon_ul, UpperLeft() + m_research_icon_ul + ICON_SIZE);
+            InfluenceIcon(ui)->OrthoBlit(UpperLeft() + m_influence_icon_ul, UpperLeft() + m_influence_icon_ul + ICON_SIZE);
+            DetectionIcon(ui)->OrthoBlit(UpperLeft() + m_detection_icon_ul, UpperLeft() + m_detection_icon_ul + ICON_SIZE);
 
-            const ClientApp* app = ClientApp::GetApp();
-            if (!app) {
-                ErrorLogger() << "PlayerDataPanel::Render couldn't get client app!";
-                return;
-            }
-            if (m_empire_id != app->EmpireID()) {
+            if (m_empire_id != app.EmpireID()) {
                 // render diplomacy icon
                 switch (m_diplo_status) {
-                case DiplomaticStatus::DIPLO_WAR:                 WarIcon()->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
-                case DiplomaticStatus::DIPLO_PEACE:               PeaceIcon()->OrthoBlit(  UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
-                case DiplomaticStatus::DIPLO_ALLIED:              AlliedIcon()->OrthoBlit( UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
-                case DiplomaticStatus::INVALID_DIPLOMATIC_STATUS: UnknownIcon()->OrthoBlit(UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::DIPLO_WAR:                 WarIcon(ui)->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::DIPLO_PEACE:               PeaceIcon(ui)->OrthoBlit(  UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::DIPLO_ALLIED:              AlliedIcon(ui)->OrthoBlit( UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DiplomaticStatus::INVALID_DIPLOMATIC_STATUS: UnknownIcon(ui)->OrthoBlit(UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
                 default:    break;
                 }
             }
 
             // render incoming diplomatic message icon, if there is one
             const DiplomaticMessage& incoming_message_to_client =
-                app->Empires().GetDiplomaticMessage(m_empire_id, app->EmpireID());
+                app.Empires().GetDiplomaticMessage(m_empire_id, app.EmpireID());
             if (incoming_message_to_client.GetType() != DiplomaticMessage::Type::INVALID)
-                MessageIcon()->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
+                MessageIcon(ui)->OrthoBlit(UpperLeft() + m_diplo_msg_ul, UpperLeft() + m_diplo_msg_ul + ICON_SIZE);
 
             // render player status icon
-            if (const auto empire = app->GetContext().GetEmpire(m_empire_id))
-                (empire->Ready() ? WaitingIcon() : PlayingIcon())->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE);
+            if (const auto empire = app.GetContext().GetEmpire(m_empire_id))
+                (empire->Ready() ? WaitingIcon(ui) : PlayingIcon(ui))->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE);
 
             // render player type icon
             switch (m_player_type) {
-            case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon()->OrthoBlit(    UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:         AIIcon()->OrthoBlit(       UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon()->OrthoBlit( UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
-            case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      HumanIcon(ui)->OrthoBlit(    UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:         AIIcon(ui)->OrthoBlit(       UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    ObserverIcon(ui)->OrthoBlit( UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
+            case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon(ui)->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
             default:    break;
             }
 
             if (m_host)
-                HostIcon()->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
+                HostIcon(ui)->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
 
             // render diplomatic status indicators
             m_war_indicator->Render();
@@ -352,8 +312,8 @@ namespace {
             // render win/lose icon
             switch (m_win_status)
             {
-            case WON:     WonIcon()->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
-            case LOST:    LostIcon()->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
+            case WON:     WonIcon(ui)->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
+            case LOST:    LostIcon(ui)->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
             case NEITHER: break;
             }
         }
@@ -365,8 +325,7 @@ namespace {
             const auto old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
-                if (const auto* app = ClientApp::GetApp())
-                    DoLayout(app->GetContext().Empires());
+                DoLayout(GetApp().Empires());
         }
 
         void Update(const ClientApp& app) { Update(app.GetContext(), app.Players(), app.EmpireID()); }
@@ -716,22 +675,16 @@ void PlayerListWnd::CompleteConstruction() {
         boost::bind(&PlayerListWnd::PlayerRightClicked, this, ph::_1, ph::_2, ph::_3));
     AttachChild(m_player_list);
 
-    const auto* app = ClientApp::GetApp();
-    if (app) {
-        const auto& empires = app->GetContext().Empires();
+    const auto& app = GetApp();
+    const auto& empires = app.GetContext().Empires();
 
-        m_diplo_message_connection = empires.DiplomaticStatusChangedSignal.connect(
-            [this](auto, auto) { if (const auto* app = ClientApp::GetApp()) Update(*app); });
-        m_diplo_status_connection = empires.DiplomaticMessageChangedSignal.connect(
-            [this](auto id1, auto id2) {
-                if (const auto* app = ClientApp::GetApp()) HandleDiplomaticMessageChange(id1, id2, *app);
-            });
-    }
+    m_diplo_message_connection = empires.DiplomaticStatusChangedSignal.connect(
+        [this](auto, auto) { Update(GetApp()); });
+    m_diplo_status_connection = empires.DiplomaticMessageChangedSignal.connect(
+        [this](auto id1, auto id2) { HandleDiplomaticMessageChange(id1, id2, GetApp()); });
 
     DoLayout();
-
-    if (app)
-        Refresh(*app);
+    Refresh(app);
 }
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
@@ -916,7 +869,7 @@ namespace {
         const int client_empire_id, const int clicked_empire_id,
         const std::function<DiplomaticMessage(int, int)>& message)
     {
-        auto& networking = GGHumanClientApp::GetApp()->Networking();
+        auto& networking = GetApp().Networking();
         return boost::bind(&ClientNetworking::SendMessage, &networking,
                            DiplomacyMessage(message(client_empire_id, clicked_empire_id)));
     }
@@ -927,17 +880,13 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     int clicked_empire_id = EmpireInRow(it);
     if (clicked_empire_id == ALL_EMPIRES)
         return;
-    const ClientApp* app = ClientApp::GetApp();
-    if (!app) {
-        ErrorLogger() << "PlayerListWnd::PlayerRightClicked couldn't get client app!";
-        return;
-    }
-    int client_player_id = app->PlayerID();
+    const auto& app = GetApp();
+    int client_player_id = app.PlayerID();
     if (client_player_id == Networking::INVALID_PLAYER_ID)
         return;
-    int client_empire_id = app->EmpireID();
+    int client_empire_id = app.EmpireID();
 
-    if (!GetEmpire(clicked_empire_id)) {
+    if (!app.GetEmpire(clicked_empire_id)) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
                       << clicked_empire_id
                       << " but couldn't find such an empire";
@@ -961,10 +910,10 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
         client_empire_id, clicked_empire_id, CancelDiplomaticMessage);
     auto proposal_reject_action = MakeSendDiplomaticAction(
         client_empire_id, clicked_empire_id, RejectProposalDiplomaticMessage);
-    auto pedia_lookup_action = [clicked_empire_id]() { ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id); };
+    auto pedia_lookup_action = [clicked_empire_id]() { GetApp().GetUI().ZoomToEmpire(clicked_empire_id); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
         client_empire_id != ALL_EMPIRES &&
         clicked_empire_id != ALL_EMPIRES)
     {

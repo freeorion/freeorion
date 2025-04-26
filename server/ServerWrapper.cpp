@@ -61,7 +61,7 @@ namespace {
     // Wrapper for getting empire objects
     auto GetAllEmpiresIDs() -> py::list
     {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         py::list empire_list;
         for (const auto id : context.EmpireIDs())
             empire_list.append(id);
@@ -72,7 +72,7 @@ namespace {
     void GenerateSitRep(int empire_id, const std::string& template_string,
                         const py::dict& py_params, const std::string& icon)
     {
-        ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        auto& context = GetApp().GetContext();
         int sitrep_turn = context.current_turn + 1;
 
         std::vector<std::pair<std::string, std::string>> params;
@@ -105,7 +105,7 @@ namespace {
     // Wrappers for Species / SpeciesManager class (member) functions
     auto SpeciesDefaultFocus(const std::string& species_name) -> py::object
     {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "SpeciesDefaultFocus: couldn't get species " << species_name;
@@ -116,7 +116,7 @@ namespace {
 
     auto SpeciesGetPlanetEnvironment(const std::string& species_name, PlanetType planet_type) -> PlanetEnvironment
     {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "SpeciesGetPlanetEnvironment: couldn't get species " << species_name;
@@ -127,7 +127,7 @@ namespace {
 
     void SpeciesAddHomeworld(const std::string& species_name, int homeworld_id)
     {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "SpeciesAddHomeworld: couldn't get species " << species_name;
@@ -138,7 +138,7 @@ namespace {
 
     void SpeciesRemoveHomeworld(const std::string& species_name, int homeworld_id)
     {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "SpeciesAddHomeworld: couldn't get species " << species_name;
@@ -149,7 +149,7 @@ namespace {
 
     auto SpeciesCanColonize(const std::string& species_name) -> bool
     {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         const Species* species = context.species.GetSpecies(species_name);
         if (!species) {
             ErrorLogger() << "SpeciesCanColonize: couldn't get species " << species_name;
@@ -161,7 +161,7 @@ namespace {
     auto GetAllSpecies() -> py::list
     {
         py::list species_list;
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         for (const auto& name : context.species.AllSpecies() | range_keys)
             species_list.append(py::object(name));
         return species_list;
@@ -170,7 +170,7 @@ namespace {
     auto GetPlayableSpecies() -> py::list
     {
         py::list species_list;
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         SpeciesManager& species_manager = context.species;
         for (const auto& name : species_manager.AllSpecies() | range_filter(SpeciesManager::is_playable) | range_keys)
             species_list.append(py::object(name));
@@ -180,7 +180,7 @@ namespace {
     auto GetNativeSpecies() -> py::list
     {
         py::list species_list;
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         SpeciesManager& species_manager = context.species;
         for (const auto& name : species_manager.AllSpecies() | range_filter(SpeciesManager::is_native) | range_keys)
             species_list.append(py::object(name));
@@ -197,7 +197,7 @@ namespace {
         if (!cond)
             DebugLogger() << "FilterIDsWithCondition passed null condition";
 
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
 
         Condition::ObjectSet objs;
         py::stl_input_iterator<int> end;
@@ -1351,7 +1351,7 @@ namespace FreeOrionPython {
                 py::return_value_policy<py::reference_existing_object>());
         py::def("get_all_empires",              GetAllEmpiresIDs);
         py::def("get_empire",
-                +[](int id) -> const Empire* { return ServerApp::GetApp()->GetEmpire(id); },
+                +[](int id) -> const Empire* { return GetApp().GetEmpire(id); },
                 py::return_value_policy<py::reference_existing_object>());
 
         py::def("userString",
@@ -1370,10 +1370,10 @@ namespace FreeOrionPython {
         py::def("invalid_position",                 +[]() -> double { return UniverseObject::INVALID_POSITION; });
 
         py::def("get_galaxy_setup_data",            GetGalaxySetupData,             py::return_value_policy<py::reference_existing_object>());
-        py::def("current_turn",                     +[]() -> int { return ServerApp::GetApp()->GetContext().current_turn; });
+        py::def("current_turn",                     +[]() -> int { return GetApp().GetContext().current_turn; });
         py::def("generate_sitrep",                  GenerateSitRep);
         py::def("generate_sitrep",                  +[](int empire_id, const std::string& template_string, const std::string& icon) { GenerateSitRep(empire_id, template_string, py::dict(), icon); });
-        py::def("generate_starlanes",               +[](int max_jumps_between_systems, int max_starlane_length) { auto& context = ServerApp::GetApp()->GetContext(); GenerateStarlanes(max_jumps_between_systems, max_starlane_length, context.ContextUniverse(), context.Empires()); });
+        py::def("generate_starlanes",               +[](int max_jumps_between_systems, int max_starlane_length) { auto& context = GetApp().GetContext(); GenerateStarlanes(max_jumps_between_systems, max_starlane_length, context.ContextUniverse(), context.Empires()); });
 
         py::def("species_preferred_focus",          SpeciesDefaultFocus);
         py::def("species_get_planet_environment",   SpeciesGetPlanetEnvironment);
@@ -1415,10 +1415,10 @@ namespace FreeOrionPython {
         py::def("add_special",                      AddSpecial);
         py::def("remove_special",                   RemoveSpecial);
 
-        py::def("get_universe_width",               +[]() -> double { return ServerApp::GetApp()->GetContext().ContextUniverse().UniverseWidth(); });
-        py::def("set_universe_width",               +[](double width) { ServerApp::GetApp()->GetContext().ContextUniverse().SetUniverseWidth(width); });
-        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { const auto& context = ServerApp::GetApp()->GetContext(); return context.ContextUniverse().GetPathfinder().LinearDistance(system1_id, system2_id, context.ContextObjects()); });
-        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return ServerApp::GetApp()->GetContext().ContextUniverse().GetPathfinder().JumpDistanceBetweenSystems(system1_id, system2_id); });
+        py::def("get_universe_width",               +[]() -> double { return GetApp().GetContext().ContextUniverse().UniverseWidth(); });
+        py::def("set_universe_width",               +[](double width) { GetApp().GetContext().ContextUniverse().SetUniverseWidth(width); });
+        py::def("linear_distance",                  +[](int system1_id, int system2_id) -> double { const auto& context = GetApp().GetContext(); return context.ContextUniverse().GetPathfinder().LinearDistance(system1_id, system2_id, context.ContextObjects()); });
+        py::def("jump_distance",                    +[](int system1_id, int system2_id) -> int { return GetApp().GetContext().ContextUniverse().GetPathfinder().JumpDistanceBetweenSystems(system1_id, system2_id); });
         py::def("get_all_objects",                  GetAllObjects);
         py::def("get_systems",                      GetSystems);
         py::def("create_system",                    CreateSystem);

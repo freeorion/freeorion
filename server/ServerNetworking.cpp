@@ -93,7 +93,7 @@ void ServerNetworking::DiscoveryServer::HandleReceive(boost::system::error_code 
     DebugLogger(network) << "DiscoveryServer evaluating FOCS expression: " << message;
     std::string reply;
     try {
-        const ScriptingContext& context = ServerApp::GetApp()->GetContext();
+        const auto& context = GetApp().GetContext();
         if (parse::int_free_variable(message)) {
             auto value_ref = std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, message);
             reply = std::to_string(value_ref->Eval(context));

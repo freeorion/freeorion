@@ -43,21 +43,21 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
     SetName("MultiIconValueIndicator");
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-    const auto& objects = app->GetContext().ContextObjects();
+    auto& app = GetApp();
+    const auto& objects = app.GetContext().ContextObjects();
+    auto& ui = app.GetUI();
 
     GG::X x{EDGE_PAD};
     for (const auto primary_meter_type : m_meter_types | range_keys) {
         {
             // get icon texture.
-            auto texture = ClientUI::MeterIcon(primary_meter_type);
+            auto texture = ui.MeterIcon(primary_meter_type);
 
             // special case for population meter for an indicator showing only a
             // single popcenter: icon is species icon, rather than generic pop icon
             if (primary_meter_type == MeterType::METER_POPULATION && m_object_ids.size() == 1) {
                 if (auto pc = objects.get<Planet>(m_object_ids.front()))
-                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+                    texture = ui.SpeciesIcon(pc->SpeciesName());
             }
 
             m_icons.push_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
@@ -68,28 +68,26 @@ void MultiIconValueIndicator::CompleteConstruction() {
         m_icons.back()->SizeMove(icon_ul, icon_lr);
 
         m_icons.back()->RightClickedSignal.connect([this, primary_meter_type](GG::Pt pt) {
-            const auto* app = IApp::GetApp();
-            if (!app) return;
-            const auto& objects = app->GetContext().ContextObjects();
 
             const auto meter_string = to_string(primary_meter_type);
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
             if (primary_meter_type == MeterType::METER_POPULATION && this->m_object_ids.size() == 1) {
+                const auto& objects = GetApp().GetContext().ContextObjects();
                 if (auto planet = objects.get<Planet>(this->m_object_ids.front())) {
                     auto species_name{planet->SpeciesName()}; // intentional copy for use in lambda
                     if (species_name.empty()) {
                         std::string species_label =
                             boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
                         auto zoom_species_action = [species_name{std::move(species_name)}]()
-                        { ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
+                        { GetApp().GetUI().ZoomToSpecies(species_name); };
                         popup->AddMenuItem(GG::MenuItem(std::move(species_label), false, false, zoom_species_action));
                     }
                 }
             }
 
 
-            auto zoom_article_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string});}; // TODO: avoid copy
+            auto zoom_article_action = [meter_string]() { GetApp().GetUI().ZoomToMeterTypeArticle(std::string{meter_string});}; // TODO: avoid copy
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
             popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_article_action));
@@ -123,9 +121,7 @@ void MultiIconValueIndicator::Update() {
         return;
     }
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-    const auto objs = app->GetContext().ContextObjects().findRaw<UniverseObject>(m_object_ids);
+    const auto objs = GetApp().GetContext().ContextObjects().findRaw<UniverseObject>(m_object_ids);
     if (objs.empty()) {
         for (auto& icon : m_icons)
             icon->SetValue(0);

@@ -166,8 +166,9 @@ void GameRulesPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
     DebugLogger() << "GalaxySetupPanel::CompleteConstruction";
 
+    auto& ui = GetApp().GetUI();
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, SPIN_WIDTH, GG::Y1,
-                                         ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
+                                         ui.GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     AttachChild(m_tabs);
 
     // create storage and default general rule page
@@ -262,7 +263,7 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
 {
     assert(0 <= indentation_level);
     auto heading_text = GG::Wnd::Create<CUILabel>(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
-    heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
+    heading_text->SetFont(GetApp().GetUI().GetFont(ClientUI::Pts() * 4 / 3));
 
     auto heading_min_y_sz{heading_text->MinUsableSize().y};
     auto row = GG::Wnd::Create<RuleListRow>(Width(),
@@ -554,8 +555,10 @@ void GalaxySetupPanel::CompleteConstruction() {
     DebugLogger() << "GalaxySetupPanel::CompleteConstruction";
     Sound::TempUISoundDisabler sound_disabler;
 
+    auto& ui = GetApp().GetUI();
+
     // seed
-    m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction attempting to access common galaxy settings from OptionsDB";
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.seed")));
@@ -573,70 +576,70 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     // random seed button
     m_random = Wnd::Create<CUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_mouseover.png")));
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "randomize.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "randomize_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "randomize_mouseover.png")));
 
     m_random->SetBrowseText(UserString("GSETUP_RANDOM_SEED"));
     m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // number of stars
-    m_stars_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_stars_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARS"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.star.count")));
     m_stars_spin = GG::Wnd::Create<CUISpin<int>>(100, 1, 10, 5000, true);
 
     // galaxy shape
-    m_galaxy_shapes_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_galaxy_shapes_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SHAPE"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.galaxy.shape")));
     m_galaxy_shapes_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
-    m_galaxy_ages_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_galaxy_ages_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AGE"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.galaxy.age")));
     m_galaxy_ages_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
-    m_starlane_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starlane_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARLANE_FREQ"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.starlane.frequency")));
     m_starlane_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
-    m_planet_density_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_planet_density_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLANET_DENSITY"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.planet.density")));
     m_planet_density_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
-    m_specials_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_specials_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIALS_FREQ"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.specials.frequency")));
     m_specials_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
-    m_monster_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_monster_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_MONSTER_FREQ"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.monster.frequency")));
     m_monster_freq_list = GG::Wnd::Create<CUIDropDownList>(8);
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
-    m_native_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_native_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NATIVE_FREQ"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.native.frequency")));
     m_native_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
-    m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), ui, GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.ai.aggression")));
     m_ai_aggression_list = GG::Wnd::Create<CUIDropDownList>(5);
@@ -686,16 +689,16 @@ void GalaxySetupPanel::CompleteConstruction() {
     // create and load textures
     m_textures.clear();
     m_textures.resize(int(Shape::GALAXY_SHAPES));
-    m_textures[int(Shape::SPIRAL_2)] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral2.png");
-    m_textures[int(Shape::SPIRAL_3)] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral3.png");
-    m_textures[int(Shape::SPIRAL_4)] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
-    m_textures[int(Shape::CLUSTER)] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
-    m_textures[int(Shape::ELLIPTICAL)] = ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
-    m_textures[int(Shape::DISC)] =       ClientUI::GetTexture(ClientUI::ArtDir() / "gp_disc.png");
-    m_textures[int(Shape::BOX)] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_box.png");
-    m_textures[int(Shape::IRREGULAR)] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
-    m_textures[int(Shape::RING)] =       ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
-    m_textures[int(Shape::RANDOM)] =     ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");
+    m_textures[int(Shape::SPIRAL_2)] =   ui.GetTexture(ClientUI::ArtDir() / "gp_spiral2.png");
+    m_textures[int(Shape::SPIRAL_3)] =   ui.GetTexture(ClientUI::ArtDir() / "gp_spiral3.png");
+    m_textures[int(Shape::SPIRAL_4)] =   ui.GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
+    m_textures[int(Shape::CLUSTER)] =    ui.GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
+    m_textures[int(Shape::ELLIPTICAL)] = ui.GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
+    m_textures[int(Shape::DISC)] =       ui.GetTexture(ClientUI::ArtDir() / "gp_disc.png");
+    m_textures[int(Shape::BOX)] =        ui.GetTexture(ClientUI::ArtDir() / "gp_box.png");
+    m_textures[int(Shape::IRREGULAR)] =  ui.GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[int(Shape::RING)] =       ui.GetTexture(ClientUI::ArtDir() / "gp_ring.png");
+    m_textures[int(Shape::RANDOM)] =     ui.GetTexture(ClientUI::ArtDir() / "gp_random.png");
 
     // fill droplists
     TraceLogger() << "GalaxySetupPanel::CompleteConstruction filling droplists";
@@ -857,7 +860,7 @@ void GalaxySetupPanel::DoLayout() {
     label_ul += row_advance;
     label_lr += row_advance;
     control_ul += row_advance;
-    control_lr = control_ul + GG::Pt(GG::X(75),  ClientUI::GetFont()->Height() + 2 * 5);
+    control_lr = control_ul + GG::Pt(GG::X(75), GetApp().GetUI().GetFont()->Height() + 2 * 5);
 
     m_stars_label->SizeMove(label_ul, label_lr);
     m_stars_spin->SizeMove(control_ul, control_lr);
@@ -1113,8 +1116,8 @@ void GalaxySetupWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 }
 
 GG::Rect GalaxySetupWnd::CalculatePosition() const {
-    GG::Pt new_ul((GGHumanClientApp::GetApp()->AppWidth() - GalSetupWndWidth()) / 2,
-                  (GGHumanClientApp::GetApp()->AppHeight() - GalSetupWndHeight()) / 2);
+    GG::Pt new_ul((GetApp().AppWidth() - GalSetupWndWidth()) / 2,
+                  (GetApp().AppHeight() - GalSetupWndHeight()) / 2);
     GG::Pt new_sz(GalSetupWndWidth(), GalSetupWndHeight());
     return GG::Rect(new_ul, new_ul + new_sz);
 }
@@ -1160,7 +1163,7 @@ void GalaxySetupWnd::DoLayout() {
     label_ul += row_advance;
     label_lr += row_advance;
     control_ul += row_advance;
-    control_lr = control_ul + GG::Pt(GG::X(75),  ClientUI::GetFont()->Height() + 2 * 5);
+    control_lr = control_ul + GG::Pt(GG::X(75), GetApp().GetUI().GetFont()->Height() + 2 * 5);
 
     m_number_ais_label->SizeMove(label_ul, label_lr);
     m_number_ais_spin->SizeMove(control_ul, control_lr);

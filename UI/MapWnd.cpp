@@ -316,22 +316,12 @@ namespace {
         };
     }
 
-    GG::X AppWidth() noexcept {
-        if (const auto* app = GGHumanClientApp::GetApp())
-            return app->AppWidth();
-        return GG::X0;
-    }
+    GG::X AppWidth() { return GetApp().AppWidth(); }
 
-    GG::Y AppHeight() noexcept {
-        if (const auto* app = GGHumanClientApp::GetApp())
-            return app->AppHeight();
-        return GG::Y0;
-    }
+    GG::Y AppHeight() { return GetApp().AppHeight(); }
 
-    bool ClientPlayerIsModerator() {
-        const auto* app = ClientApp::GetApp();
-        return app && (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR);
-    }
+    bool ClientPlayerIsModerator()
+    { return GetApp().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     void PlayTurnButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.turn.press.sound.path"), true); }
@@ -346,16 +336,14 @@ namespace {
                              std::function<void()> end_turn_action,
                              std::function<void()> revoke_orders_action)
     {
-        const auto* app = ClientApp::GetApp();
-        if (!app)
-            return;
-        const auto order_count = app->Orders().size();
-        const auto turn = app->CurrentTurn();
-
+        const auto& app = GetApp();
+        const auto order_count = app.Orders().size();
+        const auto turn = app.CurrentTurn();
 
         // create popup menu with a commands in it
         const GG::Pt pt = turn_btn ? turn_btn->LowerRight() : GG::Pt{GG::X1, GG::Y1};
         auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
+        if (!popup) return;
 
         //popup->AddMenuItem(GG::MenuItem(true)); // separator
 
@@ -494,13 +482,16 @@ namespace {
 
         /** Constructs and attaches new description and value labels
          *  for the given description row @p descr. */
-        void NewLabelValue(const std::string& descr, bool title = false) {
+        void NewLabelValue(std::string descr, bool title = false) {
             if (m_labels.contains(descr))
                 return;
 
-            GG::Y height{ClientUI::Pts()};
+            const GG::Y height{ClientUI::Pts()};
+
             // center format for title label
-            m_labels.emplace(descr, std::pair(
+            auto& [desc_label, num_label] = m_labels.emplace(std::piecewise_construct,
+                                                            std::forward_as_tuple(std::move(descr)),
+                                                            std::forward_as_tuple(
                 GG::Wnd::Create<CUILabel>(UserString(descr),
                                           title ? GG::FORMAT_CENTER : GG::FORMAT_RIGHT,
                                           GG::NO_WND_FLAGS, GG::X0, GG::Y0,
@@ -510,15 +501,16 @@ namespace {
                                           GG::NO_WND_FLAGS, GG::X0, GG::Y0,
                                           m_col_widths.at(1) - (m_margin * 2), height
                 )
-            ));
+            )).first->second;
 
-            if (title) {  // utilize bold font for title label and value
-                m_labels.at(descr).first->SetFont(ClientUI::GetBoldFont());
-                m_labels.at(descr).second->SetFont(ClientUI::GetBoldFont());
+            if (title) {  // use bold font for title label and value
+                auto bf = GetApp().GetUI().GetBoldFont();
+                desc_label->SetFont(bf);
+                num_label->SetFont(std::move(bf));
             }
 
-            AttachChild(m_labels.at(descr).first);
-            AttachChild(m_labels.at(descr).second);
+            AttachChild(desc_label);
+            AttachChild(num_label);
         }
 
         /** Updates the text displayed for the value of each label */
@@ -541,7 +533,7 @@ namespace {
             if (m_empire_id == ALL_EMPIRES)
                 return;
 
-            const ScriptingContext& context = IApp::GetApp()->GetContext();
+            const ScriptingContext& context = GetApp().GetContext();
             const Universe& universe = context.ContextUniverse();
             const ObjectMap& objects = context.ContextObjects();
             const SpeciesManager& sm = context.species;
@@ -570,7 +562,7 @@ namespace {
                 if (!design)
                     continue;
                 m_ship_design_counts[design->ID()]++;
-                for (const std::string& part : design->Parts()) {
+                for (const auto& part : design->Parts()) {
                     m_values[FLEET_DETAIL_SLOT_COUNT]++;
                     if (!part.empty())
                         m_values[FLEET_DETAIL_PART_COUNT]++;
@@ -609,34 +601,40 @@ namespace {
         /** Remove the old labels for ship design counts, and add the new ones.
             The stats themselves are updated in UpdateValues. */
         void ResetShipDesignLabels() {
-            for (auto& labels : m_ship_design_labels) {
-                DetachChild(labels.first);
-                DetachChild(labels.second);
+            for (auto& [label, value] : m_ship_design_labels) {
+                DetachChild(label);
+                DetachChild(value);
             }
             m_ship_design_labels.clear();
-            for (const auto& entry : m_ship_design_counts) {
+
+            auto& app = GetApp();
+            auto& ui = app.GetUI();
+            auto& universe = app.GetContext().ContextUniverse();
+
+            for (const auto& [design_id, count] : m_ship_design_counts) {
                 GG::Y height{ ClientUI::Pts() };
                 // center format for title label
                 m_ship_design_labels.emplace_back(
                     GG::Wnd::Create<CUILabel>(
-                        GetUniverse().GetShipDesign(entry.first)->Name(),
+                        universe.GetShipDesign(design_id)->Name(),
+                        ui,
                         GG::FORMAT_RIGHT,
                         GG::NO_WND_FLAGS, GG::X0, GG::Y0,
                         m_col_widths.at(0) - (m_margin * 2), height),
                     GG::Wnd::Create<CUILabel>(
-                        std::to_string(entry.second),
+                        std::to_string(count),
+                        ui,
                         GG::FORMAT_RIGHT,
                         GG::NO_WND_FLAGS, GG::X0, GG::Y0,
                         m_col_widths.at(1) - (m_margin * 2), height)
                 );
             }
             std::sort(m_ship_design_labels.begin(), m_ship_design_labels.end(),
-                [](LabelValueType a, LabelValueType b)
-                { return a.first->Text() < b.first->Text(); }
+                [](LabelValueType a, LabelValueType b) { return a.first->Text() < b.first->Text(); }
             );
-            for (auto& labels : m_ship_design_labels) {
-                AttachChild(labels.first);
-                AttachChild(labels.second);
+            for (auto& [label, value] : m_ship_design_labels) {
+                AttachChild(label);
+                AttachChild(value);
             }
         }
 
@@ -668,14 +666,14 @@ public:
         GG::Control(x, y, w, h, GG::ONTOP)
     {
         m_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "",
-                                                   ClientUI::GetFont(), ClientUI::TextColor());
+                                                   GetApp().GetUI().GetFont(), ClientUI::TextColor());
     }
 
     void CompleteConstruction() override {
         GG::Control::CompleteConstruction();
         AttachChild(m_label);
-        std::set<int> dummy = std::set<int>();
-        Update(1.0, dummy, INVALID_OBJECT_ID, GGHumanClientApp::GetApp()->GetContext().ContextObjects());
+        std::set<int> dummy;
+        Update(1.0, dummy, INVALID_OBJECT_ID, GetApp().GetContext().ContextObjects());
         m_legend_show_connection = GetOptionsDB().OptionChangedSignal("ui.map.scale.legend.shown").connect(
             [this]() { UpdateEnabled(); });
         UpdateEnabled();
@@ -860,9 +858,8 @@ void MapWndPopup::CompleteConstruction() {
 
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
-    if (auto client = ClientUI::GetClientUI())
-        if (auto mapwnd = client->GetMapWnd(false))
-            mapwnd->RegisterPopup(std::static_pointer_cast<MapWndPopup>(shared_from_this()));
+    if (auto mapwnd = GetApp().GetUI().GetMapWnd(false))
+        mapwnd->RegisterPopup(std::static_pointer_cast<MapWndPopup>(shared_from_this()));
 }
 
 MapWndPopup::~MapWndPopup() {
@@ -880,9 +877,8 @@ MapWndPopup::~MapWndPopup() {
 
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
-    if (auto client = ClientUI::GetClientUI())
-        if (auto mapwnd = client->GetMapWnd(false))
-            mapwnd->RemovePopup(this);
+    if (auto mapwnd = GetApp().GetUI().GetMapWnd(false))
+        mapwnd->RemovePopup(this);
 }
 
 void MapWndPopup::CloseClicked()
@@ -920,7 +916,7 @@ MapWnd::MovementLineData::MovementLineData(const std::vector<MovePathNode>& path
     int     next_sys_id =               INVALID_OBJECT_ID;
     auto    prev_eta =                  first_node.eta;
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const auto& context = GetApp().GetContext();
     const auto empire = context.GetEmpire(empireID);
     std::set<int> unobstructed;
     bool s_flag = false;
@@ -1015,17 +1011,16 @@ void MapWnd::CompleteConstruction() {
 
     SetName("MapWnd");
 
-    auto* app = IApp::GetApp();
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
 
-    if (app) {
-        m_signal_connections.push_back(app->GetContext().ContextUniverse().UniverseObjectDeleteSignal.connect(
-            [this](const auto& obj) { UniverseObjectDeleted(obj); }));
-    }
+    m_signal_connections.push_back(app.GetContext().ContextUniverse().UniverseObjectDeleteSignal.connect(
+        [this](const auto& obj) { UniverseObjectDeleted(obj); }));
 
     // toolbar
     m_toolbar = GG::Wnd::Create<CUIToolBar>();
     m_toolbar->SetName("MapWnd Toolbar");
-    GG::GUI::GetGUI()->Register(m_toolbar);
+    app.Register(m_toolbar);
     m_toolbar->Hide();
 
 
@@ -1052,9 +1047,9 @@ void MapWnd::CompleteConstruction() {
 
     // auto turn button
     m_btn_auto_turn = Wnd::Create<CUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "auto_turn.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "manual_turn.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "auto_turn.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
     m_signal_connections.push_back(m_btn_auto_turn->LeftClickedSignal.connect([this]() { ToggleAutoEndTurn(); }));
     m_btn_auto_turn->Resize(ICON_SIZE);
@@ -1076,9 +1071,9 @@ void MapWnd::CompleteConstruction() {
 
     // Menu button
     m_btn_menu = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "menu.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "menu_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "menu_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_menu->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_menu->LeftClickedSignal.connect([this]() { ShowMenu(); }));
@@ -1088,9 +1083,9 @@ void MapWnd::CompleteConstruction() {
 
     // Encyclo"pedia" button
     m_btn_pedia = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "pedia.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "pedia_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "pedia_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_pedia->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_pedia->LeftClickedSignal.connect([this]() { TogglePedia(); }));
@@ -1100,9 +1095,9 @@ void MapWnd::CompleteConstruction() {
 
     // Graphs button
     m_btn_graphs = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "charts.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "charts_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "charts_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_graphs->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_graphs->LeftClickedSignal.connect([this]() { ShowGraphs(); }));
@@ -1112,9 +1107,9 @@ void MapWnd::CompleteConstruction() {
 
     // Design button
     m_btn_design = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "design.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "design_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "design_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_design->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_design->LeftClickedSignal.connect([this]() { ToggleDesign(); }));
@@ -1124,9 +1119,9 @@ void MapWnd::CompleteConstruction() {
 
     // Government button
     m_btn_government = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "government_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "government.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "government_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "government_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_government->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_government->LeftClickedSignal.connect([this]() { ToggleGovernment(); }));
@@ -1136,9 +1131,9 @@ void MapWnd::CompleteConstruction() {
 
     // Production button
     m_btn_production = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "production.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "production_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "production_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_production->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_production->LeftClickedSignal.connect([this]() { ToggleProduction(); }));
@@ -1148,22 +1143,22 @@ void MapWnd::CompleteConstruction() {
 
     // Research button
     m_btn_research = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "research.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "research_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "research_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_research->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_research->LeftClickedSignal.connect(
-        [this]() { if (auto* app = IApp::GetApp()) ToggleResearch(app->GetContext()); }));
+        [this]() { ToggleResearch(GetApp().GetContext()); }));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_btn_research->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
 
     // Objects button
     m_btn_objects = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "objects.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "objects_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "objects_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_objects->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_objects->LeftClickedSignal.connect([this]() { ToggleObjects(); }));
@@ -1173,9 +1168,9 @@ void MapWnd::CompleteConstruction() {
 
     // Empires button
     m_btn_empires = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "empires.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "empires_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "empires_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_empires->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_empires->LeftClickedSignal.connect([this]() { ToggleEmpires(); }));
@@ -1185,9 +1180,9 @@ void MapWnd::CompleteConstruction() {
 
     // SitRep button
     m_btn_siterep = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "sitrep.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "sitrep_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "sitrep_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_siterep->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_siterep->LeftClickedSignal.connect([this]() { ToggleSitRep(); }));
@@ -1197,9 +1192,9 @@ void MapWnd::CompleteConstruction() {
 
     // Messages button
     m_btn_messages = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "messages.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "messages_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "messages_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_messages->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_messages->LeftClickedSignal.connect([this]() { ToggleMessages(); }));
@@ -1209,9 +1204,9 @@ void MapWnd::CompleteConstruction() {
 
     // Moderator button
     m_btn_moderator = Wnd::Create<SettableInWindowCUIButton>(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "moderator.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "moderator_clicked.png")),
+        GG::SubTexture(ui.GetTexture(button_texture_dir / "moderator_mouseover.png")),
         InWndRect(m_toolbar.get()));
     m_btn_moderator->SetMinSize(MENU_ICON_SIZE);
     m_signal_connections.push_back(m_btn_moderator->LeftClickedSignal.connect([this]() { ToggleModeratorActions(); }));
@@ -1221,44 +1216,44 @@ void MapWnd::CompleteConstruction() {
 
 
     // resources
-    m_population = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_POPULATION),
+    m_population = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_POPULATION),
                                                   0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
 
-    m_industry = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INDUSTRY),
+    m_industry = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_INDUSTRY),
                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_signal_connections.push_back(m_industry->LeftClickedSignal.connect([this](auto) { ToggleProduction(); }));
 
-    m_stockpile = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_STOCKPILE),
+    m_stockpile = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_STOCKPILE),
                                                  0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_stockpile->SetName("Stockpile StatisticIcon");
 
-    m_research = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_RESEARCH),
+    m_research = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_RESEARCH),
                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_signal_connections.push_back(m_research->LeftClickedSignal.connect(
-        [this](auto) { if (auto* app = IApp::GetApp()) ToggleResearch(app->GetContext()); }));
+        [this](auto) { ToggleResearch(GetApp().GetContext()); }));
 
-    m_influence = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_INFLUENCE),
+    m_influence = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_INFLUENCE),
                                                  0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_influence->SetName("Influence StatisticIcon");
     m_signal_connections.push_back(m_influence->LeftClickedSignal.connect([this](auto) { ToggleGovernment(); }));
 
-    m_fleet = GG::Wnd::Create<StatisticIcon>(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
+    m_fleet = GG::Wnd::Create<StatisticIcon>(ui.GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                              0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_fleet->SetName("Fleet StatisticIcon");
 
-    m_detection = GG::Wnd::Create<StatisticIcon>(ClientUI::MeterIcon(MeterType::METER_DETECTION),
+    m_detection = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_DETECTION),
                                                  0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
     m_detection->SetName("Detection StatisticIcon");
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(
-        ClientUI::GetTexture(button_texture_dir / "wasted_resource.png", false));
+        ui.GetTexture(button_texture_dir / "wasted_resource.png", false));
     GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(
-        ClientUI::GetTexture(button_texture_dir / "wasted_resource_mouseover.png", false));
+        ui.GetTexture(button_texture_dir / "wasted_resource_mouseover.png", false));
     GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(
-        ClientUI::GetTexture(button_texture_dir / "wasted_resource_clicked.png", false));
+        ui.GetTexture(button_texture_dir / "wasted_resource_clicked.png", false));
 
     m_industry_wasted = Wnd::Create<CUIButton>(
         wasted_ressource_subtexture,
@@ -1281,7 +1276,7 @@ void MapWnd::CompleteConstruction() {
     m_signal_connections.push_back(m_industry_wasted->LeftClickedSignal.connect(
         [this]() { ZoomToSystemWithWastedPP(); }));
     m_signal_connections.push_back(m_research_wasted->LeftClickedSignal.connect(
-        [this]() { if (auto* app = IApp::GetApp()) ToggleResearch(app->GetContext()); }));
+        [this]() { ToggleResearch(GetApp().GetContext()); }));
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -1292,6 +1287,7 @@ void MapWnd::CompleteConstruction() {
     /////////////////////////////////////
     // place buttons / icons on toolbar
     /////////////////////////////////////
+    {
     std::vector<GG::X> widths{
         m_btn_turn->Width(),        ICON_WIDTH,                 ICON_WIDTH,
         ICON_WIDTH,                 ICON_WIDTH,                 ICON_SINGLE_WIDTH,
@@ -1314,46 +1310,49 @@ void MapWnd::CompleteConstruction() {
         0.0f,                       0.0f,                       0.0f,
         0.0f};
 
-    auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
-                                              m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
-                                              1, widths.size());
-    layout->SetName("Toolbar Layout");
-    layout->SetCellMargin(5);
-    layout->SetBorderMargin(5);
-    layout->SetMinimumRowHeight(0, ICON_SIZE.y);
-    //layout->RenderOutline(true);
-    layout->SetColumnStretches(std::move(stretches));
-    layout->SetMinimumColumnWidths(std::move(widths));
+        if (auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
+                                                      m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),
+                                                      1, widths.size()))
+        {
+            layout->SetName("Toolbar Layout");
+            layout->SetCellMargin(5);
+            layout->SetBorderMargin(5);
+            layout->SetMinimumRowHeight(0, ICON_SIZE.y);
+            //layout->RenderOutline(true);
+            layout->SetColumnStretches(std::move(stretches));
+            layout->SetMinimumColumnWidths(std::move(widths));
 
-    int layout_column{0};
+            int layout_column{0};
 
-    layout->Add(m_btn_turn,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 0
-    layout->Add(m_btn_auto_turn,    0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_timeout_remain,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_FPS,              0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_industry_wasted,  0, layout_column++, GG::ALIGN_RIGHT  | GG::ALIGN_VCENTER);
-    layout->Add(m_industry,         0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);  // 5
-    layout->Add(m_stockpile,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
-    layout->Add(m_research_wasted,  0, layout_column++, GG::ALIGN_RIGHT  | GG::ALIGN_VCENTER);
-    layout->Add(m_research,         0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
-    layout->Add(m_influence,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
-    layout->Add(m_fleet,            0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);  // 10
-    layout->Add(m_population,       0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
-    layout->Add(m_detection,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_moderator,    0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_messages,     0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_siterep,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 15
-    layout->Add(m_btn_empires,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_objects,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_research,     0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_production,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_design,       0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 20
-    layout->Add(m_btn_government,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_graphs,       0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_pedia,        0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-    layout->Add(m_btn_menu,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_turn,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 0
+            layout->Add(m_btn_auto_turn,    0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_timeout_remain,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_FPS,              0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_industry_wasted,  0, layout_column++, GG::ALIGN_RIGHT  | GG::ALIGN_VCENTER);
+            layout->Add(m_industry,         0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);  // 5
+            layout->Add(m_stockpile,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+            layout->Add(m_research_wasted,  0, layout_column++, GG::ALIGN_RIGHT  | GG::ALIGN_VCENTER);
+            layout->Add(m_research,         0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+            layout->Add(m_influence,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+            layout->Add(m_fleet,            0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);  // 10
+            layout->Add(m_population,       0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+            layout->Add(m_detection,        0, layout_column++, GG::ALIGN_LEFT   | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_moderator,    0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_messages,     0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_siterep,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 15
+            layout->Add(m_btn_empires,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_objects,      0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_research,     0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_production,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_design,       0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);  // 20
+            layout->Add(m_btn_government,   0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_graphs,       0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_pedia,        0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            layout->Add(m_btn_menu,         0, layout_column++, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
 
-    m_toolbar->SetLayout(layout);
+            m_toolbar->SetLayout(std::move(layout));
+        }
+    }
 
     ///////////////////
     // Misc widgets on map screen
@@ -1361,10 +1360,9 @@ void MapWnd::CompleteConstruction() {
     // scale line
     m_scale_line = GG::Wnd::Create<MapScaleLine>(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
                                                  SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
-    GG::GUI::GetGUI()->Register(m_scale_line);
-    int sel_system_id = SidePanel::SystemID();
-    if (app)
-        m_scale_line->Update(ZoomFactor(), m_selected_fleet_ids, sel_system_id, app->GetContext().ContextObjects());
+    app.Register(m_scale_line);
+    const int sel_system_id = SidePanel::SystemID();
+    m_scale_line->Update(ZoomFactor(), m_selected_fleet_ids, sel_system_id, app.GetContext().ContextObjects());
     m_scale_line->Hide();
 
     // Zoom slider
@@ -1376,7 +1374,7 @@ void MapWnd::CompleteConstruction() {
     m_zoom_slider->MoveTo(GG::Pt(m_btn_turn->Left(), m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
     m_zoom_slider->Resize(GG::Pt(GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT));
     m_zoom_slider->SlideTo(m_zoom_steps_in);
-    GG::GUI::GetGUI()->Register(m_zoom_slider);
+    app.Register(m_zoom_slider);
     m_zoom_slider->Hide();
     m_signal_connections.push_back(m_zoom_slider->SlidSignal.connect(
         [this](double pos, double, double) { SetZoom(pos, false); }));
@@ -1389,18 +1387,18 @@ void MapWnd::CompleteConstruction() {
 
     // system-view side panel
     m_side_panel = GG::Wnd::Create<SidePanel>(MAP_SIDEPANEL_WND_NAME);
-    GG::GUI::GetGUI()->Register(m_side_panel);
+    app.Register(m_side_panel);
 
     m_signal_connections.push_back(SidePanel::SystemSelectedSignal.connect(
-        [this](auto id) { if (auto* app = IApp::GetApp()) SelectSystem(id, app->GetContext()); }));
+        [this](auto id) { SelectSystem(id, GetApp().GetContext()); }));
     m_signal_connections.push_back(SidePanel::PlanetSelectedSignal.connect(
-        [this](auto id) { if (auto* app = IApp::GetApp()) SelectPlanet(id, app->GetContext()); }));
+        [this](auto id) { SelectPlanet(id, GetApp().GetContext()); }));
     m_signal_connections.push_back(SidePanel::PlanetDoubleClickedSignal.connect(
-        [this](auto id) { if (auto* app = IApp::GetApp()) PlanetDoubleClicked(id); }));
+        [this](auto id) { PlanetDoubleClicked(id); }));
     m_signal_connections.push_back(SidePanel::PlanetRightClickedSignal.connect(
-        [this](auto id) { if (auto* app = IApp::GetApp()) PlanetRightClicked(id); }));
+        [this](auto id) { PlanetRightClicked(id); }));
     m_signal_connections.push_back(SidePanel::BuildingRightClickedSignal.connect(
-        [this](auto id) { if (auto* app = IApp::GetApp()) BuildingRightClicked(id); }));
+        [this](auto id) { BuildingRightClicked(id); }));
 
     // not strictly necessary, as in principle whenever any Planet
     // changes, all meter estimates and resource pools should / could be
@@ -1411,11 +1409,10 @@ void MapWnd::CompleteConstruction() {
     // and resource pools due to this will be in the same system
     m_signal_connections.push_back(SidePanel::ResourceCenterChangedSignal.connect([this](){
         if (GetOptionsDB().Get<bool>("ui.map.object-changed.meter-refresh")) {
-            if (auto* app = IApp::GetApp()) {
-                auto& context = app->GetContext();
-                context.ContextUniverse().UpdateMeterEstimates(context);
-                UpdateEmpireResourcePools(context, app->EmpireID());
-            }
+            auto& app = GetApp();
+            auto& context = app.GetContext();
+            context.ContextUniverse().UpdateMeterEstimates(context);
+            UpdateEmpireResourcePools(context, app.EmpireID());
         }
     }));
 
@@ -1425,8 +1422,8 @@ void MapWnd::CompleteConstruction() {
     m_signal_connections.push_back(m_sitrep_panel->ClosingSignal.connect([this]() { HideSitRep(); }));
     if (m_sitrep_panel->Visible()) {
         PushWndStack(m_sitrep_panel);
-        m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
-        m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
+        m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
+        m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
     }
 
     // encyclopedia panel
@@ -1435,19 +1432,19 @@ void MapWnd::CompleteConstruction() {
     m_signal_connections.push_back(m_pedia_panel->ClosingSignal.connect([this]() { HidePedia(); }));
     if (m_pedia_panel->Visible()) {
         PushWndStack(m_pedia_panel);
-        m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
-        m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+        m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
+        m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
     }
 
     // objects list
     m_object_list_wnd = GG::Wnd::Create<ObjectListWnd>(OBJECT_WND_NAME);
     // Wnd is manually closed by user
     m_signal_connections.push_back(m_object_list_wnd->ClosingSignal.connect([this]() { HideObjects(); }));
-    m_signal_connections.push_back(m_object_list_wnd->ObjectDumpSignal.connect([](int id) { ClientUI::GetClientUI()->DumpObject(id); }));
+    m_signal_connections.push_back(m_object_list_wnd->ObjectDumpSignal.connect([](int id) { GetApp().GetUI().DumpObject(id); }));
     if (m_object_list_wnd->Visible()) {
         PushWndStack(m_object_list_wnd);
-        m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
-        m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+        m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
+        m_btn_objects->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
     }
 
     // moderator actions
@@ -1455,8 +1452,8 @@ void MapWnd::CompleteConstruction() {
     m_signal_connections.push_back(m_moderator_wnd->ClosingSignal.connect([this]() { HideModeratorActions(); }));
     if (m_moderator_wnd->Visible()) {
         PushWndStack(m_moderator_wnd);
-        m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
-        m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
+        m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
+        m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
     }
 
     // Combat report
@@ -1468,8 +1465,8 @@ void MapWnd::CompleteConstruction() {
     m_signal_connections.push_back(m_government_wnd->ClosingSignal.connect([this]() { HideGovernment(); }));
     if (m_government_wnd->Visible()) {
         PushWndStack(m_government_wnd);
-        m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
-        m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
+        m_btn_government->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
+        m_btn_government->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
     }
 
 
@@ -1477,53 +1474,49 @@ void MapWnd::CompleteConstruction() {
     InitializeWindows();
 
     // messages and empires windows
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        if (const auto& msg_wnd = cui->GetMessageWnd()) {
+        if (const auto& msg_wnd = ui.GetMessageWnd()) {
             // Wnd is manually closed by user
             m_signal_connections.push_back(msg_wnd->ClosingSignal.connect([this]() { HideMessages(); }));
             if (msg_wnd->Visible()) {
                 PushWndStack(msg_wnd);
-                m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
-                m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+                m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+                m_btn_messages->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
             }
         }
-        if (const auto& plr_wnd = cui->GetPlayerListWnd()) {
+        if (const auto& plr_wnd = ui.GetPlayerListWnd()) {
             // Wnd is manually closed by user
             m_signal_connections.push_back(plr_wnd->ClosingSignal.connect([this]() { HideEmpires(); }));
             if (plr_wnd->Visible()) {
                 PushWndStack(plr_wnd);
-                m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
-                m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+                m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+                m_btn_empires->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
             }
         }
-    }
 
-    auto* gghcapp = dynamic_cast<const GGHumanClientApp*>(app);
-    if (gghcapp)
-        m_signal_connections.push_back(gghcapp->RepositionWindowsSignal.connect([this]() { InitializeWindows(); }));
-    const GG::X subwnd_width = gghcapp ? gghcapp->AppWidth() : this->Width();
-    const GG::Y subwnd_height = (gghcapp ? gghcapp->AppHeight() : this->Height()) - m_toolbar->Height();
+    m_signal_connections.push_back(app.RepositionWindowsSignal.connect([this]() { InitializeWindows(); }));
+    const GG::X subwnd_width = app.AppWidth();
+    const GG::Y subwnd_height = app.AppHeight() - m_toolbar->Height();
 
     // research window
     m_research_wnd = GG::Wnd::Create<ResearchWnd>(subwnd_width, subwnd_height);
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_research_wnd);
+    app.Register(m_research_wnd);
     m_research_wnd->Hide();
 
     // production window
     m_production_wnd = GG::Wnd::Create<ProductionWnd>(subwnd_width, subwnd_height);
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_production_wnd);
+    app.Register(m_production_wnd);
     m_production_wnd->Hide();
     m_signal_connections.push_back(m_production_wnd->SystemSelectedSignal.connect(
-        [this](int id) { if (auto* app = IApp::GetApp()) SelectSystem(id, app->GetContext()); }));
+        [this](int id) { SelectSystem(id, GetApp().GetContext()); }));
     m_signal_connections.push_back(m_production_wnd->PlanetSelectedSignal.connect(
-        [this](int id) { if (auto* app = IApp::GetApp()) SelectPlanet(id, app->GetContext()); }));
+        [this](int id) { SelectPlanet(id, GetApp().GetContext()); }));
 
     // design window
     m_design_wnd = GG::Wnd::Create<DesignWnd>(subwnd_width, subwnd_height);
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
-    GG::GUI::GetGUI()->Register(m_design_wnd);
+    app.Register(m_design_wnd);
     m_design_wnd->Hide();
 
     //////////////////
@@ -1563,12 +1556,10 @@ void MapWnd::DoLayout() {
     m_combat_report_wnd->ValidatePosition();
     m_moderator_wnd->ValidatePosition();
 
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        if (const auto& msg_wnd = cui->GetMessageWnd())
-            msg_wnd->ValidatePosition();
-        if (const auto& plr_wnd = cui->GetPlayerListWnd())
-            plr_wnd->ValidatePosition();
-    }
+    if (const auto& msg_wnd = GetApp().GetUI().GetMessageWnd())
+        msg_wnd->ValidatePosition();
+    if (const auto& plr_wnd = GetApp().GetUI().GetPlayerListWnd())
+        plr_wnd->ValidatePosition();
 
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
     for (auto& fwnd : FleetUIManager::GetFleetUIManager()) {
@@ -1755,9 +1746,10 @@ void MapWnd::RenderStarfields() {
         m_starfield_colours.createServerBuffer();
     }
 
+    const auto& app = GetApp();
 
-    GLfloat window_width = Value(AppWidth());
-    GLfloat window_height = std::max(1, Value(AppHeight()));
+    GLfloat window_width = Value(app.AppWidth());
+    GLfloat window_height = std::max(1, Value(app.AppHeight()));
     glViewport(0, 0, window_width, window_height);
 
     bool perspective_starfield = true;
@@ -1795,9 +1787,8 @@ void MapWnd::RenderStarfields() {
     // first: starfield manipulations
     bool rotate_starfield = false;
     if (rotate_starfield) {
-        float ticks = GG::GUI::GetGUI()->Ticks();
         glTranslatef(starfield_width/2, starfield_width/2, 0.0f);   // move back to original position
-        glRotatef(ticks/10, 0.0f, 0.0f, 1.0f);                      // rotate about centre of starfield
+        glRotatef(app.Ticks()/10.0f, 0.0f, 0.0f, 1.0f);             // rotate about centre of starfield
         glTranslatef(-starfield_width/2, -starfield_width/2, 0.0f); // move centre of starfield to origin
     }
 
@@ -1852,7 +1843,7 @@ void MapWnd::RenderFields() {
 
     // if any, render scanlines over not-visible fields
     if (!m_field_scanline_circles.empty()
-        && GGHumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES
+        && GetApp().EmpireID() != ALL_EMPIRES
         && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1887,11 +1878,12 @@ namespace {
     std::shared_ptr<GG::Texture> GetGasTexture() {
         static std::shared_ptr<GG::Texture> gas_texture;
         if (!gas_texture) {
-            gas_texture = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png");
-            gas_texture->SetFilters(GL_NEAREST, GL_NEAREST);
-            glBindTexture(GL_TEXTURE_2D, gas_texture->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            if (gas_texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png")) {
+                gas_texture->SetFilters(GL_NEAREST, GL_NEAREST);
+                glBindTexture(GL_TEXTURE_2D, gas_texture->OpenGLId());
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            }
         }
         return gas_texture;
     }
@@ -1924,8 +1916,8 @@ void MapWnd::RenderSystemOverlays() {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glPushMatrix();
     glLoadIdentity();
-    for (auto& system_icon : m_system_icons)
-    { system_icon.second->RenderOverlay(ZoomFactor()); }
+    for (auto& system_icon : m_system_icons | range_values)
+        system_icon->RenderOverlay(ZoomFactor());
     glPopMatrix();
 }
 
@@ -1944,12 +1936,12 @@ void MapWnd::RenderSystems() {
         glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
         glTranslatef(-0.5f, -0.5f, 0.0f);
         m_star_texture_coords.activate();
-        for (auto& star_halo_buffer : m_star_halo_quad_vertices) {
-            if (!star_halo_buffer.second.size())
+        for (auto& [halo_texture, star_halo_buffer] : m_star_halo_quad_vertices) {
+            if (!star_halo_buffer.size() || !halo_texture)
                 continue;
-            glBindTexture(GL_TEXTURE_2D, star_halo_buffer.first->OpenGLId());
-            star_halo_buffer.second.activate();
-            glDrawArrays(GL_QUADS, 0, star_halo_buffer.second.size());
+            glBindTexture(GL_TEXTURE_2D, halo_texture->OpenGLId());
+            star_halo_buffer.activate();
+            glDrawArrays(GL_QUADS, 0, star_halo_buffer.size());
         }
         glLoadIdentity();
         glMatrixMode(GL_MODELVIEW);
@@ -1959,12 +1951,12 @@ void MapWnd::RenderSystems() {
         ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
     {
         m_star_texture_coords.activate();
-        for (auto& star_core_buffer : m_star_core_quad_vertices) {
-            if (!star_core_buffer.second.size())
+        for (auto& [core_texture, star_core_buffer] : m_star_core_quad_vertices) {
+            if (!star_core_buffer.size())
                 continue;
-            glBindTexture(GL_TEXTURE_2D, star_core_buffer.first->OpenGLId());
-            star_core_buffer.second.activate();
-            glDrawArrays(GL_QUADS, 0, star_core_buffer.second.size());
+            glBindTexture(GL_TEXTURE_2D, core_texture->OpenGLId());
+            star_core_buffer.activate();
+            glDrawArrays(GL_QUADS, 0, star_core_buffer.size());
         }
     }
 
@@ -1972,13 +1964,14 @@ void MapWnd::RenderSystems() {
     bool circles = GetOptionsDB().Get<bool>("ui.map.system.circle.shown");
     bool fog_scanlines = false;
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const ScriptingContext& context = GetApp().GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
     const EmpireManager& empires = context.Empires();
     const SupplyManager& supply = context.supply;
 
-    int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    int empire_id =app.EmpireID();
     if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("ui.map.scanlines.shown"))
         fog_scanlines = true;
 
@@ -2235,7 +2228,7 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 
 namespace {
     auto MoveLineDotTexture()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png"); }
+    { return GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png"); }
 }
 
 void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
@@ -2319,7 +2312,7 @@ void MapWnd::RenderFleetMovementLines() {
     // determine animation shift for move lines
     const int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
     const float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
-    const int ticks = GG::GUI::GetGUI()->Ticks();
+    const int ticks = GetApp().Ticks();
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
     const float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
@@ -2422,7 +2415,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
     static constexpr GG::Pt MARKER_HALF_SIZE_PT{GG::X{9}, GG::Y{9}};
     const int MARKER_PTS = ClientUI::Pts();
-    auto font = ClientUI::GetBoldFont(MARKER_PTS);
+    auto font = GetApp().GetUI().GetBoldFont(MARKER_PTS);
     auto flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
     glPushMatrix();
@@ -2570,7 +2563,7 @@ void MapWnd::RenderVisibilityRadii() {
         glDisable(GL_STENCIL_TEST);
 
         // future position ranges for selected fleets
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        const ScriptingContext& context = GetApp().GetContext();
         auto future_turn_circles = GetFleetFutureTurnDetectionRangeCircles(context, m_selected_fleet_ids);
         GG::GL2DVertexBuffer verts;
         verts.reserve(120);
@@ -2608,7 +2601,7 @@ void MapWnd::RenderScaleCircle() {
     if (!GetOptionsDB().Get<bool>("ui.map.scale.legend.shown") || !GetOptionsDB().Get<bool>("ui.map.scale.circle.shown"))
         return;
     if (m_scale_circle_vertices.empty())
-        InitScaleCircleRenderingBuffer(GGHumanClientApp::GetApp()->GetContext().ContextObjects());
+        InitScaleCircleRenderingBuffer(GetApp().GetContext().ContextObjects());
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -2636,31 +2629,29 @@ void MapWnd::RegisterWindows() {
     // TODO: move these wnds into a GG::Wnd and call parent_wnd->Show(false) to
     //       hide all windows instead of unregistering them all.
     // Actually register these CUIWnds so that the Visible() ones are rendered.
-    if (GGHumanClientApp* app = GGHumanClientApp::GetApp()) {
-        app->Register(m_sitrep_panel);
-        app->Register(m_object_list_wnd);
-        app->Register(m_pedia_panel);
-        app->Register(m_side_panel);
-        app->Register(m_combat_report_wnd);
-        app->Register(m_moderator_wnd);
-        app->Register(m_government_wnd);
-        // message and player list wnds are managed by the HumanClientFSM
-    }
+    auto& app = GetApp();
+    app.Register(m_sitrep_panel);
+    app.Register(m_object_list_wnd);
+    app.Register(m_pedia_panel);
+    app.Register(m_side_panel);
+    app.Register(m_combat_report_wnd);
+    app.Register(m_moderator_wnd);
+    app.Register(m_government_wnd);
+    // message and player list wnds are managed by the HumanClientFSM
 }
 
 void MapWnd::RemoveWindows() {
     // Hide windows by unregistering them which works regardless of their
     // m_visible attribute.
-    if (GGHumanClientApp* app = GGHumanClientApp::GetApp()) {
-        app->Remove(m_sitrep_panel);
-        app->Remove(m_object_list_wnd);
-        app->Remove(m_pedia_panel);
-        app->Remove(m_side_panel);
-        app->Remove(m_combat_report_wnd);
-        app->Remove(m_moderator_wnd);
-        app->Remove(m_government_wnd);
-        // message and player list wnds are managed by the HumanClientFSM
-    }
+    auto& app = GetApp();
+    app.Remove(m_sitrep_panel);
+    app.Remove(m_object_list_wnd);
+    app.Remove(m_pedia_panel);
+    app.Remove(m_side_panel);
+    app.Remove(m_combat_report_wnd);
+    app.Remove(m_moderator_wnd);
+    app.Remove(m_government_wnd);
+    // message and player list wnds are managed by the HumanClientFSM
 }
 
 void MapWnd::Pan(const GG::Pt delta) {
@@ -2708,8 +2699,7 @@ void MapWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_dragged && !m_in_production_view_mode && fleet_wnd && quick_close_wnds) {
         manager.CloseAll();
     } else if (!m_dragged && !m_in_production_view_mode) {
-        if (auto* app = IApp::GetApp())
-            SelectSystem(INVALID_OBJECT_ID, app->GetContext());
+        SelectSystem(INVALID_OBJECT_ID, GetApp().GetContext());
         m_side_panel->Hide();
     }
     m_dragged = false;
@@ -2720,12 +2710,9 @@ void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (ClientPlayerIsModerator()) {
         // only supported action on empty map location at present is creating a system
         if (m_moderator_wnd->SelectedAction() == ModeratorActionSetting::MAS_CreateSystem) {
-            auto* app = ClientApp::GetApp();
-            if (!app) return;
-            ClientNetworking& net = app->Networking();
             const auto [xpos, ypos] = this->UniversePositionFromScreenCoords(pt);
             StarType star_type = m_moderator_wnd->SelectedStarType();
-            net.SendMessage(ModeratorActionMessage(Moderator::CreateSystem(xpos, ypos, star_type)));
+            GetApp().Networking().SendMessage(ModeratorActionMessage(Moderator::CreateSystem(xpos, ypos, star_type)));
             return;
         }
     }
@@ -2744,32 +2731,33 @@ void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         bool zoomSlider     = GetOptionsDB().Get<bool>("ui.map.zoom.slider.shown");
         bool detectionRange = GetOptionsDB().Get<bool>("ui.map.detection.range.shown");
 
-        auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                     !fps);              };
-        auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("ui.map.sidepanel.planet.shown",       !showPlanets);      };
-        auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("ui.map.system.circle.shown",          !systemCircles);    };
-        auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("ui.map.starlane.empire.color.shown",  !resourceColor);    };
-        auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("ui.map.fleet.supply.shown",           !fleetSupply);      };
-        auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("ui.map.background.gas.shown",         !gas);              };
-        auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("ui.map.background.starfields.shown",  !starfields);       };
-        auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("ui.map.scale.legend.shown",           !scale);            };
-        auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("ui.map.scale.circle.shown",           !scaleCircle);      };
-        auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("ui.map.zoom.slider.shown",            !zoomSlider);       };
-        auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("ui.map.detection.range.shown",        !detectionRange);   };
+        auto show_fps_action        = [fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                     !fps);              };
+        auto show_planets_action    = [showPlanets]()    { GetOptionsDB().Set<bool>("ui.map.sidepanel.planet.shown",       !showPlanets);      };
+        auto system_circles_action  = [systemCircles]()  { GetOptionsDB().Set<bool>("ui.map.system.circle.shown",          !systemCircles);    };
+        auto resource_color_action  = [resourceColor]()  { GetOptionsDB().Set<bool>("ui.map.starlane.empire.color.shown",  !resourceColor);    };
+        auto fleet_supply_action    = [fleetSupply]()    { GetOptionsDB().Set<bool>("ui.map.fleet.supply.shown",           !fleetSupply);      };
+        auto gas_action             = [gas]()            { GetOptionsDB().Set<bool>("ui.map.background.gas.shown",         !gas);              };
+        auto starfield_action       = [starfields]()     { GetOptionsDB().Set<bool>("ui.map.background.starfields.shown",  !starfields);       };
+        auto map_scale_action       = [scale]()          { GetOptionsDB().Set<bool>("ui.map.scale.legend.shown",           !scale);            };
+        auto scale_circle_action    = [scaleCircle]()    { GetOptionsDB().Set<bool>("ui.map.scale.circle.shown",           !scaleCircle);      };
+        auto zoom_slider_action     = [zoomSlider]()     { GetOptionsDB().Set<bool>("ui.map.zoom.slider.shown",            !zoomSlider);       };
+        auto detection_range_action = [detectionRange]() { GetOptionsDB().Set<bool>("ui.map.detection.range.shown",        !detectionRange);   };
 
-        auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),       false, showPlanets,    show_planets_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),            false, systemCircles,  system_circles_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"),  false, resourceColor,  resource_color_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),           false, fleetSupply,    fleet_supply_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),               false, gas,            gas_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),        false, starfields,     starfield_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),        false, scale,          map_scale_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),      false, scaleCircle,    scale_circle_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       false, zoomSlider,     zoom_slider_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   false, detectionRange, detection_range_action));
-        // display popup menu
-        popup->Run();
+        if (auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y)) {
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),       false, showPlanets,    show_planets_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),            false, systemCircles,  system_circles_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"),  false, resourceColor,  resource_color_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),           false, fleetSupply,    fleet_supply_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),               false, gas,            gas_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),        false, starfields,     starfield_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),        false, scale,          map_scale_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),      false, scaleCircle,    scale_circle_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       false, zoomSlider,     zoom_slider_action));
+            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   false, detectionRange, detection_range_action));
+            // display popup menu
+            popup->Run();
+        }
     }
 }
 
@@ -2791,32 +2779,24 @@ void MapWnd::KeyRelease(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModK
 void MapWnd::EnableOrderIssuing(bool enable) {
     // disallow order enabling if this client does not have an empire
     // and is not a moderator
-    const auto* app = GGHumanClientApp::GetApp();
-    bool moderator = false;
-    bool observer = false;
-    m_btn_turn->Disable(GGHumanClientApp::GetApp()->SinglePlayerGame() && !enable);
-    if (!app) {
+    const auto& app = GetApp();
+    m_btn_turn->Disable(app.SinglePlayerGame() && !enable);
+
+    const bool have_empire = (app.EmpireID() != ALL_EMPIRES);
+    const bool moderator = (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR);
+    if (!have_empire && !moderator) {
         enable = false;
         m_btn_turn->Disable(true);
-    } else {
-        bool have_empire = (app->EmpireID() != ALL_EMPIRES);
-        moderator = (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR);
-        if (!have_empire && !moderator) {
-            enable = false;
-            m_btn_turn->Disable(true);
-        }
-        observer = (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER);
     }
+    const bool observer = (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER);
 
     m_moderator_wnd->EnableActions(enable && moderator);
     m_ready_turn = !enable;
 
-    const auto& button_label = (!app) ? UserString("ERROR") :
-        (!moderator && !observer && m_ready_turn && !app->SinglePlayerGame()) ?
+    const auto& button_label = (!moderator && !observer && m_ready_turn && !app.SinglePlayerGame()) ?
             UserString("MAP_BTN_TURN_UNREADY") : UserString("MAP_BTN_TURN_UPDATE");
 
-    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) %
-                                       std::to_string(app ? app->CurrentTurn() : 0)));
+    m_btn_turn->SetText(boost::io::str(FlexibleFormat(button_label) % std::to_string(app.CurrentTurn())));
     RefreshTurnButtonTooltip();
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);
@@ -2833,8 +2813,8 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     //DebugLogger() << GetSupplyManager().Dump();
 
-    GGHumanClientApp* app = GGHumanClientApp::GetApp();
-    const auto client_empire_id = app->EmpireID();
+    auto& app = GetApp();
+    const auto client_empire_id = app.EmpireID();
     Universe& universe = context.ContextUniverse();
     ObjectMap& objects = context.ContextObjects();
 
@@ -2851,7 +2831,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     // if we've just loaded the game there may be some unexecuted orders, we
     // should reapply them now, so they are reflected in the UI, but do not
     // influence current meters or their discrepancies for this turn
-    app->Orders().ApplyOrders(context);
+    app.Orders().ApplyOrders(context);
 
     timer.EnterSection("meter estimates");
     universe.UpdateMeterEstimates(context);
@@ -3017,7 +2997,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     DispatchFleetsExploring(context, client_empire_id);
 
     timer.EnterSection("enable observers");
-    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
+    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
         // this client is a moderator
         m_btn_moderator->Disable(false);
         m_btn_moderator->Show();
@@ -3026,7 +3006,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
         m_btn_moderator->Disable();
         m_btn_moderator->Hide();
     }
-    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
         m_btn_auto_turn->Disable();
         m_btn_auto_turn->Hide();
     } else {
@@ -3042,8 +3022,8 @@ void MapWnd::MidTurnUpdate() {
     DebugLogger() << "MapWnd::MidTurnUpdate";
     ScopedTimer timer("MapWnd::MidTurnUpdate");
 
-    auto* app = GGHumanClientApp::GetApp();
-    ScriptingContext& context = app->GetContext();
+    auto& app = GetApp();
+    ScriptingContext& context = app.GetContext();
 
     context.ContextUniverse().InitializeSystemGraph(context.Empires(), context.ContextObjects());
     context.ContextUniverse().UpdateCommonFilteredSystemGraphsWithMainObjectMap(context.Empires());
@@ -3051,7 +3031,7 @@ void MapWnd::MidTurnUpdate() {
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
-    FleetUIManager::GetFleetUIManager().RefreshAll(app->EmpireID(), context);
+    FleetUIManager::GetFleetUIManager().RefreshAll(app.EmpireID(), context);
     SidePanel::Refresh();
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
@@ -3085,11 +3065,9 @@ void MapWnd::InitTurnRendering() {
     m_field_icon_connections.clear();
 
 
-    const auto* app = GGHumanClientApp::GetApp();
-    if (!app) return;
-
-    const Universe& universe = GetUniverse();
-    const int client_empire_id = app->EmpireID();
+    const auto& app = GetApp();
+    const Universe& universe = app.GetContext().ContextUniverse();
+    const int client_empire_id = app.EmpireID();
     const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
     const ObjectMap& objects = universe.Objects();
@@ -3097,8 +3075,8 @@ void MapWnd::InitTurnRendering() {
     {
         // adjust size of map window for universe and application size
         const auto zoomed_offset_width = universe.UniverseWidth() * ZOOM_MAX;
-        Resize(GG::Pt(static_cast<GG::X>(zoomed_offset_width + app->AppWidth() * 1.5),
-                      static_cast<GG::Y>(zoomed_offset_width + app->AppHeight() * 1.5)));
+        Resize(GG::Pt(static_cast<GG::X>(zoomed_offset_width + app.AppWidth() * 1.5),
+                      static_cast<GG::Y>(zoomed_offset_width + app.AppHeight() * 1.5)));
     }
 
     // create system icons
@@ -3968,9 +3946,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     ClearStarlaneRenderingBuffers();
 
-    const auto* app = GGHumanClientApp::GetApp();
-    const int empire_id = app->EmpireID();
-    const auto& context = app->GetContext();
+    const auto& app = GetApp();
+    const int empire_id = app.EmpireID();
+    const auto& context = app.GetContext();
 
     // todo: move this somewhere better... fill in starlane endpoint cache
     m_starlane_endpoints = CalculateStarlaneEndpoints(m_system_icons, context, empire_id);
@@ -4010,10 +3988,10 @@ void MapWnd::InitFieldRenderingBuffers() {
 
     ClearFieldRenderingBuffers();
 
-    const Universe& universe = GetUniverse();
-    const auto* app = GGHumanClientApp::GetApp();
-    const auto empire_id = app->EmpireID();
-    const auto current_turn = app->CurrentTurn();
+    const auto& app = GetApp();
+    const Universe& universe = app.GetContext().ContextUniverse();
+    const auto empire_id = app.EmpireID();
+    const auto current_turn = app.CurrentTurn();
 
     // reverse size processing so large fields are painted first and smaller ones on top of larger ones
     for (auto& field_icon : m_field_icons | range_reverse) {
@@ -4133,11 +4111,12 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     ClearVisibilityRadiiRenderingBuffers();
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const auto& context = app.GetContext();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int client_empire_id = app.EmpireID();
     const auto& stale_object_ids = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
     auto empire_position_max_detection_ranges = universe.GetEmpiresAndNeutralPositionDetectionRanges(objects, stale_object_ids);
     //auto empire_position_max_detection_ranges = universe.GetEmpiresPositionNextTurnFleetDetectionRanges(context);
@@ -4326,7 +4305,7 @@ void MapWnd::ShowPlanet(int planet_id) {
 void MapWnd::ShowCombatLog(int log_id) {
     m_combat_report_wnd->SetLog(log_id);
     m_combat_report_wnd->Show();
-    GG::GUI::GetGUI()->MoveUp(m_combat_report_wnd);
+    GetApp().MoveUp(m_combat_report_wnd);
     PushWndStack(m_combat_report_wnd);
 }
 
@@ -4529,7 +4508,7 @@ void MapWnd::SelectSystem(const System* system, ScriptingContext& context) {
     } else {
         // selected a valid system, show sidepanel
         m_side_panel->Show();
-        GG::GUI::GetGUI()->MoveUp(m_side_panel);
+        GetApp().MoveUp(m_side_panel);
         PushWndStack(m_side_panel);
     }
 }
@@ -4586,7 +4565,7 @@ void MapWnd::SelectFleet(int fleet_id, const ScriptingContext& context, int clie
 
     // make sure selected fleet's FleetWnd is active
     manager.SetActiveFleetWnd(fleet_wnd);
-    GG::GUI::GetGUI()->MoveUp(fleet_wnd);
+    GetApp().MoveUp(fleet_wnd);
     PushWndStack(fleet_wnd);
 
     // if indicated fleet is already the only selected fleet in the active FleetWnd, nothing to do.
@@ -4610,7 +4589,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    const ScriptingContext& context = GGHumanClientApp::GetApp()->GetContext();
+    const ScriptingContext& context = GetApp().GetContext();
 
     auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
     if (!fleet) {
@@ -4666,7 +4645,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::vector<int>&
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    const auto& context = GetApp().GetContext();
 
     // ensure passed fleet exists
     auto fleet = context.ContextObjects().get<Fleet>(fleet_id);
@@ -4740,8 +4719,8 @@ void MapWnd::ForgetObject(int id) {
     // Tell the server to change what the empire wants to know
     // in future so that the server doesn't keep resending this
     // object information.
-    auto* app = GGHumanClientApp::GetApp();
-    ScriptingContext& context = app->GetContext();
+    auto& app = GetApp();
+    ScriptingContext& context = app.GetContext();
     ObjectMap& objects{context.ContextObjects()};
     Universe& universe{context.ContextUniverse()};
     auto obj = objects.get(id);
@@ -4759,9 +4738,9 @@ void MapWnd::ForgetObject(int id) {
         }
     }
 
-    const int client_empire_id = app->EmpireID();
+    const int client_empire_id = app.EmpireID();
 
-    app->Orders().IssueOrder<ForgetOrder>(context, client_empire_id, obj->ID());
+    app.Orders().IssueOrder<ForgetOrder>(context, client_empire_id, obj->ID());
 
     // Client changes for immediate effect
     // Force the client to change immediately.
@@ -4920,12 +4899,10 @@ boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
         return std::pair(fleet->X(), fleet->Y());
     }
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
-
     // return apparent position of fleet on starlane
     const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
     return ScreenPosOnStarlane(fleet->X(), fleet->Y(), sys1_id, sys2_id,
-                               screen_lane_endpoints, context);
+                               screen_lane_endpoints, GetApp().GetContext());
 }
 
 namespace {
@@ -5022,9 +4999,8 @@ void MapWnd::RefreshFleetButtons(bool recreate) {
 }
 
 void MapWnd::DeferredRefreshFleetButtons() {
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-    const auto& context = app->GetContext();
+    const auto& app = GetApp();
+    const auto& context = app.GetContext();
     const auto& objects = context.ContextObjects();
 
     if (!m_deferred_recreate_fleet_buttons && !m_deferred_refresh_fleet_buttons) {
@@ -5054,14 +5030,14 @@ void MapWnd::DeferredRefreshFleetButtons() {
     // be grouped by empire owner and buttons created
 
 
-    const auto client_empire_id = app->EmpireID();
+    const auto client_empire_id = app.EmpireID();
     const auto& universe = context.ContextUniverse();
 
     const auto& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(client_empire_id);
     const auto& this_client_stale_object_info = universe.EmpireStaleKnowledgeObjectIDs(client_empire_id);
 
-    SystemXEmpireToFleetsMap   departing_fleets;
-    SystemXEmpireToFleetsMap   stationary_fleets;
+    SystemXEmpireToFleetsMap departing_fleets;
+    SystemXEmpireToFleetsMap stationary_fleets;
     m_moving_fleets.clear();
     LocationXEmpireToFleetsMap moving_fleets;
     LocationXEmpireToFleetsMap offroad_fleets;
@@ -5281,7 +5257,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) 
     else
         ShowSystemNames();
 
-    const auto& objects = GGHumanClientApp::GetApp()->GetContext().ContextObjects();
+    const auto& objects = GetApp().GetContext().ContextObjects();
 
 
     DoSystemIconsLayout(objects);
@@ -5324,9 +5300,11 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt position) 
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
-    GG::X contents_width(GG::ToX(ZoomFactor() * GetUniverse().UniverseWidth()));
-    GG::X app_width =  AppWidth();
-    GG::Y app_height = AppHeight();
+    const auto& app = GetApp();
+
+    GG::X contents_width(GG::ToX(ZoomFactor() * app.GetContext().ContextUniverse().UniverseWidth()));
+    GG::X app_width = app.AppWidth();
+    GG::Y app_height = app.AppHeight();
     GG::X map_margin_width(app_width);
 
     //std::cout << "MapWnd::CorrectMapPosition appwidth: " << Value(app_width) << " appheight: " << Value(app_height)
@@ -5357,14 +5335,8 @@ void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
 }
 
 void MapWnd::FieldRightClicked(int field_id) {
-    if (ClientPlayerIsModerator()) {
-        ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-        ClientNetworking& net = GGHumanClientApp::GetApp()->Networking();
-
-        if (mas == ModeratorActionSetting::MAS_Destroy)
-            net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(field_id)));
-        return;
-    }
+    if (ClientPlayerIsModerator() && m_moderator_wnd->SelectedAction() == ModeratorActionSetting::MAS_Destroy)
+        GetApp().Networking().SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(field_id)));
 }
 
 void MapWnd::SystemDoubleClicked(int system_id) {
@@ -5372,31 +5344,26 @@ void MapWnd::SystemDoubleClicked(int system_id) {
     if (!m_production_wnd->Visible())
         ToggleProduction();
 
-    auto* app = IApp::GetApp();
-    if (!app)
-        return;
-    auto& context = app->GetContext();
-
+    auto& context = GetApp().GetContext();
     CenterOnObject(system_id, context.ContextObjects());
     m_production_wnd->SelectSystem(system_id, context);
 }
 
 void MapWnd::SystemLeftClicked(int system_id) {
-    if (auto* app = IApp::GetApp())
-        SelectSystem(system_id, app->GetContext());
+    SelectSystem(system_id, GetApp().GetContext());
     SystemLeftClickedSignal(system_id);
 }
 
 void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
-    const auto& objects = GGHumanClientApp::GetApp()->GetContext().ContextObjects();
+    auto& app = GetApp();
+    const auto& objects = app.GetContext().ContextObjects();
 
     if (ClientPlayerIsModerator()) {
-        ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-        ClientNetworking& net = GGHumanClientApp::GetApp()->Networking();
+        auto mas = m_moderator_wnd->SelectedAction();
+        ClientNetworking& net = app.Networking();
 
         if (mas == ModeratorActionSetting::MAS_Destroy) {
-            net.SendMessage(ModeratorActionMessage(
-                Moderator::DestroyUniverseObject(system_id)));
+            net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(system_id)));
 
         } else if (mas == ModeratorActionSetting::MAS_CreatePlanet) {
             net.SendMessage(ModeratorActionMessage(
@@ -5404,24 +5371,20 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags<GG::ModKey> mod_keys) {
                                         m_moderator_wnd->SelectedPlanetSize())));
 
         } else if (mas == ModeratorActionSetting::MAS_AddStarlane) {
-            int selected_system_id = SidePanel::SystemID();
-            if (objects.getRaw<System>(selected_system_id)) {
-                net.SendMessage(ModeratorActionMessage(
-                    Moderator::AddStarlane(system_id, selected_system_id)));
-            }
+            const int selected_system_id = SidePanel::SystemID();
+            if (objects.getRaw<System>(selected_system_id))
+                net.SendMessage(ModeratorActionMessage(Moderator::AddStarlane(system_id, selected_system_id)));
 
         } else if (mas == ModeratorActionSetting::MAS_RemoveStarlane) {
-            int selected_system_id = SidePanel::SystemID();
-            if (objects.getRaw<System>(selected_system_id)) {
-                net.SendMessage(ModeratorActionMessage(
-                    Moderator::RemoveStarlane(system_id, selected_system_id)));
-            }
+            const int selected_system_id = SidePanel::SystemID();
+            if (objects.getRaw<System>(selected_system_id))
+                net.SendMessage(ModeratorActionMessage(Moderator::RemoveStarlane(system_id, selected_system_id)));
         } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
-            auto system = objects.get<System>(system_id);
+            const auto system = objects.get<System>(system_id);
             if (!system)
                 return;
 
-            int empire_id = m_moderator_wnd->SelectedEmpire();
+            const int empire_id = m_moderator_wnd->SelectedEmpire();
             for (auto* obj : objects.findRaw<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= UniverseObjectType::OBJ_BUILDING &&
@@ -5457,9 +5420,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
     if (planet_id == INVALID_OBJECT_ID)
         return;
 
-    auto* app = IApp::GetApp();
-    if (!app) return;
-    ScriptingContext& context = app->GetContext();
+    ScriptingContext& context = GetApp().GetContext();
 
     // retrieve system_id from planet_id
     auto planet = std::as_const(context).ContextObjects().get<Planet>(planet_id);
@@ -5484,10 +5445,8 @@ void MapWnd::PlanetRightClicked(int planet_id) {
     if (!ClientPlayerIsModerator())
         return;
 
-    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-    auto* app = ClientApp::GetApp();
-    if (!app) return;
-    ClientNetworking& net = app->Networking();
+    const auto mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = GetApp().Networking();
 
     if (mas == ModeratorActionSetting::MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(planet_id)));
@@ -5503,10 +5462,8 @@ void MapWnd::BuildingRightClicked(int building_id) {
     if (!ClientPlayerIsModerator())
         return;
 
-    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-    auto* app = ClientApp::GetApp();
-    if (!app) return;
-    ClientNetworking& net = app->Networking();
+    const auto mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = GetApp().Networking();
 
     if (mas == ModeratorActionSetting::MAS_Destroy) {
         net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(building_id)));
@@ -5537,10 +5494,10 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     else
         TraceLogger() << "PlotfleetMovement";
 
-    auto* app = GGHumanClientApp::GetApp();
-    int empire_id = app->EmpireID();
+    auto& app = GetApp();
+    const int empire_id = app.EmpireID();
     auto fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
-    ScriptingContext& context = app->GetContext();
+    ScriptingContext& context = app.GetContext();
     ObjectMap& objects{context.ContextObjects()};
     const Universe& universe{context.ContextUniverse()};
 
@@ -5590,7 +5547,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
-            app->Orders().IssueOrder<FleetMoveOrder>(context, empire_id, fleet->ID(), system_id, append);
+            app.Orders().IssueOrder<FleetMoveOrder>(context, empire_id, fleet->ID(), system_id, append);
             StopFleetExploring(fleet->ID(), context, empire_id);
         }
 
@@ -5708,10 +5665,9 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         RestoreSidePanel();
     }
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-    const auto empire_id = app->EmpireID();
-    const auto& context = app->GetContext();
+    const auto& app = GetApp();
+    const auto empire_id = app.EmpireID();
+    const auto& context = app.GetContext();
 
     // Add any overlapping fleet buttons for moving or offroad fleets.
     const auto fleet_ids_to_include_in_fleet_wnd =
@@ -5792,9 +5748,9 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     if (!fleet_btn)
         return;
 
-    const auto* app = GGHumanClientApp::GetApp();
-    const auto empire_id = app->EmpireID();
-    const auto& context = app->GetContext();
+    const auto& app = GetApp();
+    const auto empire_id = app.EmpireID();
+    const auto& context = app.GetContext();
     const auto& objects = context.ContextObjects();
     const auto& universe = context.ContextUniverse();
 
@@ -5851,22 +5807,16 @@ void MapWnd::FleetsRightClicked(const std::vector<int>& fleet_ids) {
     if (!ClientPlayerIsModerator())
         return;
 
-    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-    auto* app = ClientApp::GetApp();
-    if (!app) return;
-    ClientNetworking& net = app->Networking();
+    const auto mas = m_moderator_wnd->SelectedAction();
+    ClientNetworking& net = GetApp().Networking();
 
     if (mas == ModeratorActionSetting::MAS_Destroy) {
-        for (int fleet_id : fleet_ids) {
-            net.SendMessage(ModeratorActionMessage(
-                Moderator::DestroyUniverseObject(fleet_id)));
-        }
+        for (int fleet_id : fleet_ids)
+            net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(fleet_id)));
     } else if (mas == ModeratorActionSetting::MAS_SetOwner) {
-        int empire_id = m_moderator_wnd->SelectedEmpire();
-        for (int fleet_id : fleet_ids) {
-            net.SendMessage(ModeratorActionMessage(
-                Moderator::SetOwner(fleet_id, empire_id)));
-        }
+        const int empire_id = m_moderator_wnd->SelectedEmpire();
+        for (int fleet_id : fleet_ids)
+            net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(fleet_id, empire_id)));
     }
 }
 
@@ -5883,10 +5833,8 @@ void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
     if (!ClientPlayerIsModerator())
         return;
 
-    ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
-    auto* app = ClientApp::GetApp();
-    if (!app) return;
-    auto& net = app->Networking();
+    const auto mas = m_moderator_wnd->SelectedAction();
+    auto& net = GetApp().Networking();
 
     if (mas == ModeratorActionSetting::MAS_Destroy) {
         for (int ship_id : ship_ids)
@@ -5991,11 +5939,9 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
 }
 
 void MapWnd::ResetEmpireShown() {
-    const auto* app = GGHumanClientApp::GetApp();
-    const auto empire_id = app->EmpireID();
-    const ScriptingContext& context = app->GetContext();
-    m_production_wnd->SetEmpireShown(empire_id, context);
-    m_research_wnd->SetEmpireShown(empire_id, context);
+    const auto& app = GetApp();
+    m_production_wnd->SetEmpireShown(app.EmpireID(), app.GetContext());
+    m_research_wnd->SetEmpireShown(app.EmpireID(), app.GetContext());
     // TODO: Design?
 }
 
@@ -6019,9 +5965,8 @@ void MapWnd::Sanitize() {
 
     ResetEmpireShown();
 
-    auto* app = IApp::GetApp();
-    if (app)
-        SelectSystem(INVALID_OBJECT_ID, app->GetContext());
+    auto& app = GetApp();
+    SelectSystem(INVALID_OBJECT_ID, app.GetContext());
 
     // temp
     m_starfield_verts.clear();
@@ -6035,23 +5980,20 @@ void MapWnd::Sanitize() {
     ClearScaleCircleRenderingBuffer();
     ClearStarfieldRenderingBuffers();
 
+    auto& ui = app.GetUI();
+    // clearing of message window commented out because scrollbar has quirks
+    // after doing so until enough messages are added
+    //if (MessageWnd* msg_wnd = cui->GetMessageWnd())
+    //    msg_wnd->Clear();
+    if (const auto& plr_wnd = ui.GetPlayerListWnd())
+        plr_wnd->Clear();
 
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        // clearing of message window commented out because scrollbar has quirks
-        // after doing so until enough messages are added
-        //if (MessageWnd* msg_wnd = cui->GetMessageWnd())
-        //    msg_wnd->Clear();
-        if (const auto& plr_wnd = cui->GetPlayerListWnd())
-            plr_wnd->Clear();
-    }
-
-    MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
+    MoveTo(-app.AppSize());
     m_zoom_steps_in = 1.0;
 
 
     m_research_wnd->Sanitize();
-    if (app)
-        m_production_wnd->Sanitize(app->GetContext().ContextObjects());
+    m_production_wnd->Sanitize(app.GetContext().ContextObjects());
     m_design_wnd->Sanitize();
     m_government_wnd->Sanitize();
 
@@ -6104,7 +6046,7 @@ void MapWnd::TimerFiring(unsigned int ticks, GG::Timer* timer) {
     }
 
     if (!m_timeout_clock.Running()) {
-        m_timeout_clock.Reset(GG::GUI::GetGUI()->Ticks());
+        m_timeout_clock.Reset(GetApp().Ticks());
         m_timeout_clock.Start();
     }
 }
@@ -6146,18 +6088,17 @@ bool MapWnd::ReturnToMap() {
         wnd = m_wnd_stack.back().lock();
         m_wnd_stack.pop_back();
     }
-    // If no non-null and visible Wnd was found, then there's nothing to do.
-    if (!(wnd && wnd->Visible()))
+    // If null or not visible Wnd was found, then there's nothing to do.
+    if (!wnd || !wnd->Visible())
         return true;
 
-    auto cui = ClientUI::GetClientUI();
-    auto* app = IApp::GetApp();
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
 
     if (wnd == m_sitrep_panel) {
         ToggleSitRep();
     } else if (wnd == m_research_wnd) {
-        if (app)
-            ToggleResearch(app->GetContext());
+        ToggleResearch(app.GetContext());
     } else if (wnd == m_design_wnd) {
         ToggleDesign();
     } else if (wnd == m_production_wnd) {
@@ -6171,14 +6112,13 @@ bool MapWnd::ReturnToMap() {
     } else if (wnd == m_combat_report_wnd) {
         m_combat_report_wnd->Hide();
     } else if (wnd == m_side_panel) {
-        if (app)
-            SelectSystem(INVALID_OBJECT_ID, app->GetContext());
+        SelectSystem(INVALID_OBJECT_ID, app.GetContext());
     } else if (dynamic_cast<FleetWnd*>(wnd.get())) {
         // if it is any fleet window at all, go ahead and close all fleet windows.
         FleetUIManager::GetFleetUIManager().CloseAll();
-    } else if (cui && wnd == cui->GetPlayerListWnd()) {
+    } else if (wnd == ui.GetPlayerListWnd()) {
         HideEmpires();
-    } else if (cui && wnd == cui->GetMessageWnd()) {
+    } else if (wnd == ui.GetMessageWnd()) {
         HideMessages();
     } else if (wnd == m_government_wnd) {
         HideGovernment();
@@ -6190,27 +6130,17 @@ bool MapWnd::ReturnToMap() {
 }
 
 bool MapWnd::RevertOrders() {
-    ClientUI* cui = ClientUI::GetClientUI();
-    if (!cui) {
-        ErrorLogger() << "MapWnd::RevertOrders: No client UI available";
-        return false;
-    }
-    GGHumanClientApp::GetApp()->RevertOrders();
+    GetApp().RevertOrders();
     return true;
 }
 
 bool MapWnd::EndTurn() {
     if (m_ready_turn) {
-        GGHumanClientApp::GetApp()->UnreadyTurn();
+        GetApp().UnreadyTurn();
     } else {
-        ClientUI* cui = ClientUI::GetClientUI();
-        if (!cui) {
-            ErrorLogger() << "MapWnd::EndTurn: No client UI available";
-            return false;
-        }
         SaveGameUIData ui_data;
-        cui->GetSaveGameUIData(ui_data);
-        GGHumanClientApp::GetApp()->StartTurn(ui_data);
+        GetApp().GetUI().GetSaveGameUIData(ui_data);
+        GetApp().StartTurn(ui_data);
     }
     return true;
 }
@@ -6218,12 +6148,13 @@ bool MapWnd::EndTurn() {
 void MapWnd::ToggleAutoEndTurn() {
     if (!m_btn_auto_turn)
         return;
+    auto& ui = GetApp().GetUI();
 
      if (m_auto_end_turn) {
         m_auto_end_turn = false;
-        m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
-        m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
-        m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
+        m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
+        m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
+        m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         m_btn_auto_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -6232,9 +6163,9 @@ void MapWnd::ToggleAutoEndTurn() {
         ));
     } else {
         m_auto_end_turn = true;
-        m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
-        m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
-        m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
+        m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
+        m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
+        m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         m_btn_auto_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -6257,18 +6188,18 @@ void MapWnd::ShowModeratorActions() {
 
     // show the moderator window
     m_moderator_wnd->Show();
-    GG::GUI::GetGUI()->MoveUp(m_moderator_wnd);
+    GetApp().MoveUp(m_moderator_wnd);
     PushWndStack(m_moderator_wnd);
 
-    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
-    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
+    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
+    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
 }
 
 void MapWnd::HideModeratorActions() {
     m_moderator_wnd->Hide();
     RemoveFromWndStack(m_moderator_wnd);
-    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
-    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
+    m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
+    m_btn_moderator->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
 }
 
 bool MapWnd::ToggleModeratorActions() {
@@ -6292,24 +6223,23 @@ void MapWnd::ShowObjects() {
     RestoreSidePanel();
 
     // update objects window
-    if (const auto* app = IApp::GetApp())
-        m_object_list_wnd->Refresh(app->GetContext());
+    m_object_list_wnd->Refresh(GetApp().GetContext());
 
     // show the objects window
     m_object_list_wnd->Show();
-    GG::GUI::GetGUI()->MoveUp(m_object_list_wnd);
+    GetApp().MoveUp(m_object_list_wnd);
     PushWndStack(m_object_list_wnd);
 
     // indicate selection on button
-    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
-    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
+    m_btn_objects->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
 }
 
 void MapWnd::HideObjects() {
     m_object_list_wnd->Hide(); // necessary so it won't be visible when next toggled
     RemoveFromWndStack(m_object_list_wnd);
-    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
-    m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
+    m_btn_objects->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+    m_btn_objects->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
 }
 
 bool MapWnd::ToggleObjects() {
@@ -6334,19 +6264,19 @@ void MapWnd::ShowSitRep() {
 
     // show the sitrep window
     m_sitrep_panel->Show();
-    GG::GUI::GetGUI()->MoveUp(m_sitrep_panel);
+    GetApp().MoveUp(m_sitrep_panel);
     PushWndStack(m_sitrep_panel);
 
     // indicate selection on button
-    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
-    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
+    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
+    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
 }
 
 void MapWnd::HideSitRep() {
     m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     RemoveFromWndStack(m_sitrep_panel);
-    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
-    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
+    m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
+    m_btn_siterep->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
 }
 
 bool MapWnd::ToggleSitRep() {
@@ -6367,39 +6297,32 @@ void MapWnd::ShowMessages() {
     HideDesign();
     RestoreSidePanel();
 
-    ClientUI* cui = ClientUI::GetClientUI();
-    if (!cui)
-        return;
-    const auto msg_wnd = cui->GetMessageWnd();
+    auto& app = GetApp();
+    const auto& msg_wnd = app.GetUI().GetMessageWnd();
     if (!msg_wnd)
-        return;
-    GG::GUI* gui = GG::GUI::GetGUI();
-    if (!gui)
         return;
     msg_wnd->Show();
     msg_wnd->OpenForInput();
-    gui->MoveUp(msg_wnd);
+    app.MoveUp(msg_wnd);
     PushWndStack(msg_wnd);
 
     // indicate selection on button
-    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
-    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(app.GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+    m_btn_messages->SetRolloverGraphic (GG::SubTexture(app.GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
 }
 
 void MapWnd::HideMessages() {
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        cui->GetMessageWnd()->Hide();
-        RemoveFromWndStack(cui->GetMessageWnd());
+    auto& ui = GetApp().GetUI();
+    if (auto mw = ui.GetMessageWnd()) {
+        mw->Hide();
+        RemoveFromWndStack(mw);
     }
-    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
-    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
 }
 
 bool MapWnd::ToggleMessages() {
-    ClientUI* cui = ClientUI::GetClientUI();
-    if (!cui)
-        return false;
-    const auto& msg_wnd = cui->GetMessageWnd();
+    const auto msg_wnd = GetApp().GetUI().GetMessageWnd();
     if (!msg_wnd)
         return false;
     if (!msg_wnd->Visible() || m_production_wnd->Visible() ||
@@ -6419,38 +6342,31 @@ void MapWnd::ShowEmpires() {
     HideDesign();
     RestoreSidePanel();
 
-    ClientUI* cui = ClientUI::GetClientUI();
-    if (!cui)
-        return;
-    const auto& plr_wnd = cui->GetPlayerListWnd();
-    if (!plr_wnd)
-        return;
-    GG::GUI* gui = GG::GUI::GetGUI();
-    if (!gui)
-        return;
-    plr_wnd->Show();
-    gui->MoveUp(plr_wnd);
-    PushWndStack(plr_wnd);
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
+    if (const auto plr_wnd = ui.GetPlayerListWnd()) {
+        plr_wnd->Show();
+        app.MoveUp(plr_wnd);
+        PushWndStack(plr_wnd);
+    }
 
     // indicate selection on button
-    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
-    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
 }
 
 void MapWnd::HideEmpires() {
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        cui->GetPlayerListWnd()->Hide();
-        RemoveFromWndStack(cui->GetPlayerListWnd());
+    auto& ui = GetApp().GetUI();
+    if (const auto plr_wnd = ui.GetPlayerListWnd()) {
+        plr_wnd->Hide();
+        RemoveFromWndStack(plr_wnd);
     }
-    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
-    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+    m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+    m_btn_empires->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
 }
 
 bool MapWnd::ToggleEmpires() {
-    ClientUI* cui = ClientUI::GetClientUI();
-    if (!cui)
-        return false;
-    const auto plr_wnd = cui->GetPlayerListWnd();
+    const auto& plr_wnd = GetApp().GetUI().GetPlayerListWnd();
     if (!plr_wnd)
         return false;
     if (!plr_wnd->Visible() || m_production_wnd->Visible() ||
@@ -6466,41 +6382,49 @@ bool MapWnd::ToggleEmpires() {
 void MapWnd::ShowPedia() {
     // if production screen is visible, toggle the production screen's pedia, not the one of the map screen
     if (m_in_production_view_mode) {
-        m_production_wnd->TogglePedia();
+        if (m_production_wnd)
+            m_production_wnd->TogglePedia();
         return;
     }
     // same for research
-    if (m_research_wnd->Visible()) {
+    if (m_research_wnd && m_research_wnd->Visible()) {
         m_research_wnd->TogglePedia();
         return;
     }
     // design screen already has a pedia in it...
-    if (m_design_wnd->Visible())
+    if (m_design_wnd && m_design_wnd->Visible())
         return;
 
     ClearProjectedFleetMovementLines();
 
-    if (m_pedia_panel->GetItemsSize() == 0)
-        m_pedia_panel->SetIndex();
+    if (m_pedia_panel) {
+        if (m_pedia_panel->GetItemsSize() == 0)
+            m_pedia_panel->SetIndex();
 
-    // update pedia window
-    m_pedia_panel->Refresh();
+        m_pedia_panel->Refresh();
 
-    // show the pedia window
-    m_pedia_panel->Show();
-    GG::GUI::GetGUI()->MoveUp(m_pedia_panel);
-    PushWndStack(m_pedia_panel);
+        // show the pedia window
+        m_pedia_panel->Show();
+        GetApp().MoveUp(m_pedia_panel);
+        PushWndStack(m_pedia_panel);
+    }
 
-    // indicate selection on button
-    m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
-    m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+    if (m_btn_pedia) {
+        // indicate selection on button
+        m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
+        m_btn_pedia->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+    }
 }
 
 void MapWnd::HidePedia() {
-    m_pedia_panel->Hide();
-    RemoveFromWndStack(m_pedia_panel);
-    m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
-    m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
+    if (m_pedia_panel) {
+        m_pedia_panel->Hide();
+        RemoveFromWndStack(m_pedia_panel);
+    }
+    if (m_btn_pedia) {
+        m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+        m_btn_pedia->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
+    }
 }
 
 bool MapWnd::TogglePedia() {
@@ -6528,8 +6452,7 @@ void MapWnd::HideSidePanelAndRememberIfItWasVisible() {
 
 void MapWnd::RestoreSidePanel() {
     if (m_sidepanel_open_before_showing_other)
-        if (auto* app = IApp::GetApp())
-            ReselectLastSystem(app->GetContext());
+        ReselectLastSystem(GetApp().GetContext());
 }
 
 void MapWnd::ShowResearch(const ScriptingContext& context) {
@@ -6542,7 +6465,7 @@ void MapWnd::ShowResearch(const ScriptingContext& context) {
 
     // show the research window
     m_research_wnd->Show();
-    GG::GUI::GetGUI()->MoveUp(m_research_wnd);
+    GetApp().MoveUp(m_research_wnd);
     PushWndStack(m_research_wnd);
 
     m_research_wnd->Update(context);
@@ -6552,17 +6475,17 @@ void MapWnd::ShowResearch(const ScriptingContext& context) {
         m_research_wnd->HidePedia();
 
     // indicate selection on button
-    m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
-    m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
+    m_btn_research->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
+    m_btn_research->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
 }
 
 void MapWnd::HideResearch() {
-    GGHumanClientApp::GetApp()->SendPartialOrders();
+    GetApp().SendPartialOrders();
 
     m_research_wnd->Hide();
     RemoveFromWndStack(m_research_wnd);
-    m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
-    m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
+    m_btn_research->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
+    m_btn_research->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
 }
 
 bool MapWnd::ToggleResearch(const ScriptingContext& context) {
@@ -6584,38 +6507,39 @@ void MapWnd::ShowProduction() {
     HideSidePanelAndRememberIfItWasVisible();
     HidePedia();
 
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
+
     if (GetOptionsDB().Get<bool>("ui.production.mappanels.removed")) {
         RemoveWindows();
-        GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetMessageWnd());
-        GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
+        app.Remove(ui.GetMessageWnd());
+        app.Remove(ui.GetPlayerListWnd());
     }
 
     m_in_production_view_mode = true;
     HideAllPopups();
-    GG::GUI::GetGUI()->MoveUp(m_production_wnd);
+    app.MoveUp(m_production_wnd);
     PushWndStack(m_production_wnd);
 
     // indicate selection on button
-    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
-    m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
+    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
+    m_btn_production->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
 
-    if (auto* app = IApp::GetApp()) {
-        auto& context = app->GetContext();
-        const auto empire_id = app->EmpireID();
+    auto& context = app.GetContext();
+    const auto empire_id = app.EmpireID();
 
-        // if no system is currently shown in sidepanel, default to this empire's
-        // home system (ie. where the capital is)
-        if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
-            if (auto empire = context.GetEmpire(empire_id))
-                if (auto obj = context.ContextObjects().get(empire->CapitalID()))
-                    SelectSystem(obj->SystemID(), context);
-        } else {
-            // if a system is already shown, make sure a planet gets selected by
-            // default when the production screen opens up
-            m_production_wnd->SelectDefaultPlanet(context.ContextObjects());
-        }
-        m_production_wnd->Update(context);
+    // if no system is currently shown in sidepanel, default to this empire's
+    // home system (ie. where the capital is)
+    if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
+        if (auto empire = context.GetEmpire(empire_id))
+            if (auto obj = context.ContextObjects().get(empire->CapitalID()))
+                SelectSystem(obj->SystemID(), context);
+    } else {
+        // if a system is already shown, make sure a planet gets selected by
+        // default when the production screen opens up
+        m_production_wnd->SelectDefaultPlanet(context.ContextObjects());
     }
+    m_production_wnd->Update(context);
     m_production_wnd->Show();
 
     // hide pedia again if it is supposed to be hidden persistently
@@ -6624,19 +6548,22 @@ void MapWnd::ShowProduction() {
 }
 
 void MapWnd::HideProduction() {
-    GGHumanClientApp::GetApp()->SendPartialOrders();
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
+
+    app.SendPartialOrders();
 
     m_production_wnd->Hide();
     RemoveFromWndStack(m_production_wnd);
     m_in_production_view_mode = false;
-    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
-    m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
+    m_btn_production->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
+    m_btn_production->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
 
     // Don't check ui.production.mappanels.removed to avoid a
     // situation where the option is changed and the panels aren't re-registered.
     RegisterWindows();
-    GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetMessageWnd());
-    GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetPlayerListWnd());
+    app.Register(ui.GetMessageWnd());
+    app.Register(ui.GetPlayerListWnd());
 
     ShowAllPopups();
 }
@@ -6650,7 +6577,8 @@ bool MapWnd::ToggleProduction() {
     }
 
     // make info panels in production/map window's side panel update their expand-collapse state
-    m_side_panel->Update();
+    if (m_side_panel)
+        m_side_panel->Update();
 
     return true;
 }
@@ -6663,24 +6591,38 @@ void MapWnd::ShowDesign() {
     HideProduction();
     HideSidePanelAndRememberIfItWasVisible();
 
-    // show the design window
-    m_design_wnd->Show();
-    GG::GUI::GetGUI()->MoveUp(m_design_wnd);
-    PushWndStack(m_design_wnd);
-    m_design_wnd->Reset();
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
 
-    // indicate selection on button
-    m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
-    m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+    if (m_design_wnd) {
+        // show the design window
+        m_design_wnd->Show();
+        app.MoveUp(m_design_wnd);
+        PushWndStack(m_design_wnd);
+        m_design_wnd->Reset();
+    }
+
+    if (m_btn_design) {
+        // indicate selection on button
+        m_btn_design->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+        m_btn_design->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+    }
 }
 
 void MapWnd::HideDesign() {
-    GGHumanClientApp::GetApp()->SendPartialOrders();
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
 
-    m_design_wnd->Hide();
-    RemoveFromWndStack(m_design_wnd);
-    m_btn_design->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
-    m_btn_design->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+    app.SendPartialOrders();
+
+    if (m_design_wnd) {
+        m_design_wnd->Hide();
+        RemoveFromWndStack(m_design_wnd);
+    }
+    if (m_btn_design) {
+        m_btn_design->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design.png")));
+        m_btn_design->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "design_mouseover.png")));
+    }
 }
 
 bool MapWnd::ToggleDesign() {
@@ -6702,24 +6644,37 @@ void MapWnd::ShowGovernment() {
     HideDesign();
     RestoreSidePanel();
 
-    // show the government window
-    m_government_wnd->Show();
-    GG::GUI::GetGUI()->MoveUp(m_government_wnd);
-    PushWndStack(m_government_wnd);
-    m_government_wnd->Reset();
+    auto& app = GetApp();
 
-    // indicate selection on button
-    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
-    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
+    if (m_government_wnd) {
+        // show the government window
+        m_government_wnd->Show();
+        app.MoveUp(m_government_wnd);
+        PushWndStack(m_government_wnd);
+        m_government_wnd->Reset();
+    }
+
+    if (m_btn_government) {
+        // indicate selection on button
+        m_btn_government->SetUnpressedGraphic(GG::SubTexture(app.GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
+        m_btn_government->SetRolloverGraphic (GG::SubTexture(app.GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
+    }
 }
 
 void MapWnd::HideGovernment() {
-    GGHumanClientApp::GetApp()->SendPartialOrders();
+    auto& app = GetApp();
 
-    m_government_wnd->Hide();
-    RemoveFromWndStack(m_government_wnd);
-    m_btn_government->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
-    m_btn_government->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
+    app.SendPartialOrders();
+
+    if (m_government_wnd) {
+        m_government_wnd->Hide();
+        RemoveFromWndStack(m_government_wnd);
+    }
+
+    if (m_btn_government) {
+        m_btn_government->SetUnpressedGraphic(GG::SubTexture(app.GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government.png")));
+        m_btn_government->SetRolloverGraphic (GG::SubTexture(app.GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "government_mouseover.png")));
+    }
 }
 
 bool MapWnd::ToggleGovernment() {
@@ -6740,27 +6695,29 @@ bool MapWnd::ShowMenu() {
     ClearProjectedFleetMovementLines();
     m_menu_showing = true;
 
-    m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
-    m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+    if (m_btn_menu) {
+        m_btn_menu->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
+        m_btn_menu->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+    }
 
-    auto menu = GG::Wnd::Create<InGameMenu>();
-    menu->Run();
+    if (auto menu = GG::Wnd::Create<InGameMenu>())
+        menu->Run();
     m_menu_showing = false;
 
-    m_btn_menu->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
-    m_btn_menu->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
+    if (m_btn_menu) {
+        m_btn_menu->SetUnpressedGraphic(GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu.png")));
+        m_btn_menu->SetRolloverGraphic (GG::SubTexture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "menu_mouseover.png")));
+    }
 
     return true;
 }
 
 bool MapWnd::CloseSystemView() {
-    auto* app = ClientApp::GetApp();
-    if (!app) return false;
+    GetApp().SendPartialOrders();
 
-    app->SendPartialOrders();
-
-    SelectSystem(INVALID_OBJECT_ID, app->GetContext());
-    m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
+    SelectSystem(INVALID_OBJECT_ID, GetApp().GetContext());
+    if (m_side_panel)
+        m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
     return true;
 }
 
@@ -6775,29 +6732,31 @@ bool MapWnd::KeyboardZoomOut() {
 }
 
 void MapWnd::RefreshTurnButtonTooltip() {
-    auto app = GGHumanClientApp::GetApp();
-    std::string btn_turn_tooltip;
+    auto& app = GetApp();
+    std::string_view btn_turn_tooltip;
 
     if (!m_ready_turn) {
-        if (app->SinglePlayerGame())
+        if (app.SinglePlayerGame())
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_SP");
         else
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MP");
-        if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
+        if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MOD");
     }
-    if (m_ready_turn && !app->SinglePlayerGame())
+    if (m_ready_turn && !app.SinglePlayerGame())
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_WAIT");
-    if (app->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_OBS");
 
-    m_btn_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_btn_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
-        UserString("MAP_BTN_TURN_TOOLTIP"), btn_turn_tooltip));
+    if (m_btn_turn) {
+        m_btn_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+        m_btn_turn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
+            UserString("MAP_BTN_TURN_TOOLTIP"), std::string{btn_turn_tooltip}));
+    }
 }
 
 void MapWnd::RefreshInfluenceResourceIndicator() {
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
     if (!empire) {
         m_influence->SetValue(0.0);
         return;
@@ -6847,7 +6806,7 @@ void MapWnd::RefreshFleetResourceIndicator(const ScriptingContext& context, int 
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
     if (!empire) {
         m_research->SetValue(0.0);
         m_research_wasted->Hide();
@@ -6885,7 +6844,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
 }
 
 void MapWnd::RefreshDetectionIndicator() {
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
     if (!empire)
         return;
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
@@ -6896,8 +6855,11 @@ void MapWnd::RefreshDetectionIndicator() {
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
-    auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
+    const auto& context = app.GetContext();
+    const auto& objects = context.ContextObjects();
+    const auto empire = context.GetEmpire(app.EmpireID());
     if (!empire) {
         m_industry->SetValue(0.0);
         m_industry_wasted->Hide();
@@ -6914,7 +6876,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     float  stockpile = empire->GetIndustryPool().Stockpile();
     const auto stockpile_values = empire->GetProductionQueue().AllocatedStockpilePP() | range_values;
     float  stockpile_used = std::accumulate(stockpile_values.begin(), stockpile_values.end(), 0.0f);
-    float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity(context.ContextObjects());
+    float  stockpile_use_capacity = empire->GetProductionQueue().StockpileCapacity(objects);
     float  expected_stockpile = empire->GetProductionQueue().ExpectedNewStockpileAmount();
 
     float  stockpile_plusminus_next_turn = expected_stockpile - stockpile;
@@ -6945,11 +6907,11 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
                        << total_PP_spent << " and Industry Production: " << total_PP_output << ", wasting " << total_PP_wasted;
         boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
-        m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+        m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "wasted_resource.png", false)));
-        m_industry_wasted->SetPressedGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+        m_industry_wasted->SetPressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "wasted_resource_clicked.png", false)));
-        m_industry_wasted->SetRolloverGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+        m_industry_wasted->SetRolloverGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "wasted_resource_mouseover.png", false)));
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
@@ -6962,11 +6924,11 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     } else if (total_PP_to_stockpile > 0.05 && (expected_stockpile > (10 * stockpile_use_capacity) ||
                                                 total_PP_excess > 0.2 * total_PP_output)) {
         boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
-        m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+        m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "warned_resource.png", false)));
-        m_industry_wasted->SetPressedGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+        m_industry_wasted->SetPressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "warned_resource_clicked.png", false)));
-        m_industry_wasted->SetRolloverGraphic(GG::SubTexture(ClientUI::GetTexture(button_texture_dir /
+        m_industry_wasted->SetRolloverGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "warned_resource_mouseover.png", false)));
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
@@ -6982,9 +6944,9 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 }
 
 void MapWnd::RefreshPopulationIndicator() {
-    const auto* app = GGHumanClientApp::GetApp();
-    const auto empire_id = app->EmpireID();
-    const auto& context = app->GetContext();
+    const auto& app = GetApp();
+    const auto empire_id = app.EmpireID();
+    const auto& context = app.GetContext();
 
     float target_population = 0.0f;
     const auto empire = context.GetEmpire(empire_id);
@@ -7050,10 +7012,9 @@ void MapWnd::UpdateEmpireResourcePools(ScriptingContext& context, int empire_id)
 }
 
 bool MapWnd::ZoomToHomeSystem() {
-    auto* app = IApp::GetApp();
-    if (!app) return false;
-    auto& context = app->GetContext();
-    const auto empire = context.GetEmpire(app->EmpireID());
+    auto& app = GetApp();
+    auto& context = app.GetContext();
+    const auto empire = context.GetEmpire(app.EmpireID());
     if (!empire)
         return false;
     const int home_id = empire->CapitalID();
@@ -7132,10 +7093,9 @@ namespace {
     }
 
     bool ZoomToPrevOrNextOwnedSystem(SearchDir dir, MapWnd& mw) {
-        auto* app = IApp::GetApp();
-        if (!app) return false;
-        const auto empire_id = app->EmpireID();
-        auto& context = app->GetContext();
+        auto& app = GetApp();
+        const auto empire_id = app.EmpireID();
+        auto& context = app.GetContext();
         auto& objs = context.ContextObjects();
 
         const auto contains_owned_by_empire = [empire_id, &objs](const System* sys) {
@@ -7161,9 +7121,8 @@ namespace {
     }
 
     bool ZoomToPrevOrNextSystem(SearchDir dir, MapWnd& mw) {
-        auto* app = IApp::GetApp();
-        if (!app) return false;
-        auto& context = app->GetContext();
+        auto& app = GetApp();
+        auto& context = app.GetContext();
         auto& objs = context.ContextObjects();
 
         const auto next_sys_id = GetNext(IDsSortedByName<System>(objs), SidePanel::SystemID(), dir);
@@ -7181,10 +7140,9 @@ namespace {
     }
 
     bool ZoomToPrevOrNextOwnedFleet(SearchDir dir, MapWnd& mw) {
-        auto* app = IApp::GetApp();
-        if (!app) return false;
-        const auto empire_id = app->EmpireID();
-        auto& context = app->GetContext();
+        auto& app = GetApp();
+        const auto empire_id = app.EmpireID();
+        auto& context = app.GetContext();
         auto& objs = context.ContextObjects();
 
         const auto is_owned_fleet = [empire_id](const Fleet* fleet)
@@ -7206,12 +7164,12 @@ namespace {
     }
 
     bool ZoomToPrevOrNextIdleFleet(SearchDir dir, MapWnd& mw) {
-        const auto* app = IApp::GetApp();
-        if (!app) return false;
-        const auto& context = app->GetContext();
+        const auto& app = GetApp();
+        const auto& context = app.GetContext();
         const auto& objs = context.ContextObjects();
+        const auto client_empire_id = app.EmpireID();
 
-        auto is_stationary_owned_fleet = [client_empire_id{app->EmpireID()}](const Fleet* fleet) {
+        auto is_stationary_owned_fleet = [client_empire_id](const Fleet* fleet) {
             return (fleet->FinalDestinationID() == INVALID_OBJECT_ID || fleet->TravelRoute().empty()) &&
                     (client_empire_id == ALL_EMPIRES ||
                     (!fleet->Unowned() && fleet->Owner() == client_empire_id));
@@ -7223,7 +7181,7 @@ namespace {
             return false;
 
         mw.CenterOnObject(next_fleet_id, objs);
-        mw.SelectFleet(next_fleet_id, context, app->EmpireID());
+        mw.SelectFleet(next_fleet_id, context, client_empire_id);
         return true;
     }
 }
@@ -7253,10 +7211,9 @@ bool MapWnd::ZoomToNextFleet()
 { return ZoomToPrevOrNextOwnedFleet(SearchDir::FORWARD, *this); }
 
 bool MapWnd::ZoomToSystemWithWastedPP() {
-    auto* app = IApp::GetApp();
-    if (!app) return false;
-    ScriptingContext& context = app->GetContext();
-    const auto empire = std::as_const(context).GetEmpire(app->EmpireID());
+    auto& app = GetApp();
+    ScriptingContext& context = app.GetContext();
+    const auto empire = std::as_const(context).GetEmpire(app.EmpireID());
     if (!empire)
         return false;
     const ProductionQueue& queue = empire->GetProductionQueue();
@@ -7302,7 +7259,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
     hkm.Connect(boost::bind(&MapWnd::ToggleSitRep, this), "ui.map.sitrep",
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
-    hkm.Connect([this]() { return ToggleResearch(IApp::GetApp()->GetContext()); }, "ui.research",
+    hkm.Connect([this]() { return ToggleResearch(GetApp().GetContext()); }, "ui.research",
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
     hkm.Connect(boost::bind(&MapWnd::ToggleProduction, this), "ui.production",
                 AndCondition(VisibleWindowCondition(this), NoModalWndsOpenCondition));
@@ -7464,9 +7421,11 @@ namespace {
     }
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
-    OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id) {
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
+    OrderedRouteType GetShortestRoute(int empire_id, int start_id, int destination_id,
+                                      const ScriptingContext& context)
+    {
+
+        const auto& objects = context.ContextObjects();
         const auto start_system = objects.getRaw<System>(start_id);
         const auto dest_system = objects.getRaw<System>(destination_id);
         if (!start_system || !dest_system) {
@@ -7475,7 +7434,7 @@ namespace {
         }
 
         auto [system_list, path_length] =
-            universe.GetPathfinder().ShortestPath(start_id, destination_id, empire_id, objects);
+            context.ContextUniverse().GetPathfinder().ShortestPath(start_id, destination_id, empire_id, objects);
 
         if (!system_list.empty() && path_length > 0.0)
             return {path_length, system_list};
@@ -7499,7 +7458,8 @@ namespace {
             return {};
         }
 
-        auto [route_length, route_ids] = GetShortestRoute(fleet->Owner(), fleet->SystemID(), destination->ID());
+        auto [route_length, route_ids] = GetShortestRoute(fleet->Owner(), fleet->SystemID(),
+                                                          destination->ID(), context);
 
         if (route_length <= 0.0) {
             TraceLogger() << "No suitable route from system " << fleet->SystemID() << " to " << destination->ID()
@@ -7548,7 +7508,7 @@ namespace {
             OrderedRouteType shortest_route;
 
         for (auto supply_system_id : supplyable_systems) {
-            shortest_route = GetShortestRoute(empire->EmpireID(), dest_id, supply_system_id);
+            shortest_route = GetShortestRoute(empire->EmpireID(), dest_id, supply_system_id, context);
             TraceLogger() << [&shortest_route, dest_id]() {
                     std::string msg = "Checking supply route from " + std::to_string(dest_id) +
                                       " dist:" + std::to_string(shortest_route.first) + " systems:";
@@ -7653,8 +7613,7 @@ namespace {
         auto num_jumps_resupply = JumpsForRoute(route.second);
         int max_fleet_jumps = std::trunc(fleet->Fuel(context.ContextObjects()));
         if (num_jumps_resupply <= max_fleet_jumps) {
-            auto* app = GGHumanClientApp::GetApp(); // TODO: pass in
-            app->Orders().IssueOrder<FleetMoveOrder>(
+            GetApp().Orders().IssueOrder<FleetMoveOrder>(
                 context, fleet->Owner(), fleet->ID(), *route.second.crbegin(), false);
         } else {
             TraceLogger() << "Not enough fuel for fleet " << fleet->ID()
@@ -7693,7 +7652,7 @@ namespace {
             return false;
         }
 
-        GGHumanClientApp::GetApp()->Orders().IssueOrder<FleetMoveOrder>( // TODO: pass in app
+        GetApp().Orders().IssueOrder<FleetMoveOrder>( // TODO: pass in app
             context, fleet->Owner(), fleet->ID(), route.back(), false);
         if (fleet->FinalDestinationID() == route.back()) {
             TraceLogger() << "Sending fleet " << fleet->ID() << " to explore system " << route.back();

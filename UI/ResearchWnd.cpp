@@ -74,7 +74,7 @@ namespace {
         }
 
         void Init() {
-            const ScriptingContext& context = IApp::GetApp()->GetContext();
+            const ScriptingContext& context = GetApp().GetContext();
             const auto empire = context.GetEmpire(elem.empire_id);
 
             const Tech* tech = GetTech(elem.name);
@@ -149,7 +149,9 @@ namespace {
         const GG::X METER_WIDTH = std::max(Width() - GRAPHIC_SIZE - 4*MARGIN - 3, GG::X1);
         const GG::X TURNS_AND_COST_WIDTH = std::max(NAME_WIDTH/2 - MARGIN, GG::X1);
 
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+        auto& app = GetApp();
+        const auto& context = app.GetContext();
+        auto& ui = app.GetUI();
         const Tech* tech = GetTech(m_tech_name);
         m_total_turns = tech ? tech->ResearchTime(m_empire_id, context) : 1;
 
@@ -160,14 +162,14 @@ namespace {
         GG::Y top{MARGIN};
         GG::X left{MARGIN};
 
-        m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
+        m_icon = GG::Wnd::Create<GG::StaticGraphic>(ui.TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC);
         m_icon->MoveTo(GG::Pt(left, top));
         m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
         m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::CLR_ZERO);
         left += m_icon->Width() + MARGIN;
 
         m_name_text = GG::Wnd::Create<CUILabel>(m_paused ? UserString("PAUSED") : UserString(m_tech_name),
-                                                GG::FORMAT_TOP | GG::FORMAT_LEFT);
+                                                ui, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->MoveTo(GG::Pt(left, top));
         m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
@@ -196,7 +198,7 @@ namespace {
         std::string turns_cost_text = boost::io::str(FlexibleFormat(UserString("TECH_TURN_COST_STR"))
             % DoubleToString(turn_spending, 3, false)
             % DoubleToString(max_spending_per_turn, 3, false));
-        m_RPs_and_turns_text = GG::Wnd::Create<CUILabel>(std::move(turns_cost_text), GG::FORMAT_LEFT);
+        m_RPs_and_turns_text = GG::Wnd::Create<CUILabel>(std::move(turns_cost_text), ui, GG::FORMAT_LEFT);
         m_RPs_and_turns_text->MoveTo(GG::Pt(left, top));
         m_RPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_RPs_and_turns_text->SetTextColor(clr);
@@ -209,7 +211,7 @@ namespace {
             (turns_left < 0) ? UserString("TECH_TURNS_LEFT_NEVER") :
             str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
 
-        m_turns_remaining_text = GG::Wnd::Create<CUILabel>(std::move(turns_left_text), GG::FORMAT_RIGHT);
+        m_turns_remaining_text = GG::Wnd::Create<CUILabel>(std::move(turns_left_text), ui, GG::FORMAT_RIGHT);
         m_turns_remaining_text->MoveTo(GG::Pt(left, top));
         m_turns_remaining_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_text->SetTextColor(clr);
@@ -361,7 +363,8 @@ public:
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 
-        SetEmpire(GGHumanClientApp::GetApp()->EmpireID(), IApp::GetApp()->GetContext());
+        const auto& app = GetApp();
+        SetEmpire(app.EmpireID(), app.GetContext());
 
         AttachChild(m_queue_lb);
 
@@ -486,7 +489,7 @@ void ResearchWnd::Refresh(const ScriptingContext& context) {
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
 
-    if (auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID())) {
+    if (auto empire = context.GetEmpire(GetApp().EmpireID())) {
         m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
             boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     }
@@ -536,8 +539,8 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
     if (!queue_row)
         return;
 
-    auto* app = GGHumanClientApp::GetApp();
-    ScriptingContext& context = app->GetContext();
+    auto& app = GetApp();
+    ScriptingContext& context = app.GetContext();
 
     // This precorrects the position for a factor in Empire::PlaceTechInQueue
     const int new_position = m_queue_wnd->GetQueueListBox()->IteraterIndex(row_it);
@@ -545,11 +548,11 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::iterator row_it,
     const auto direction = original_position < new_position;
     const int corrected_new_position = new_position + (direction ? 1 : 0);
 
-    const int empire_id = app->EmpireID();
+    const int empire_id = app.EmpireID();
     if (empire_id == ALL_EMPIRES)
         return;
 
-    app->Orders().IssueOrder<ResearchQueueOrder>(context, empire_id, queue_row->elem.name,
+    app.Orders().IssueOrder<ResearchQueueOrder>(context, empire_id, queue_row->elem.name,
                                                  static_cast<int>(corrected_new_position));
 
     if (auto empire = context.GetEmpire(empire_id))
@@ -560,9 +563,8 @@ void ResearchWnd::Sanitize()
 { m_tech_tree_wnd->Clear(); }
 
 void ResearchWnd::Render() {
-    bool do_update = m_refresh_needed.exchange(false);
-    if (do_update) {
-        const ScriptingContext& context = IApp::GetApp()->GetContext();
+    if (m_refresh_needed.exchange(false)) {
+        const auto& context = GetApp().GetContext();
         UpdateQueue(context);
         UpdateInfoPanel(context);
         m_tech_tree_wnd->Update();
@@ -591,7 +593,7 @@ void ResearchWnd::UpdateQueue(const ScriptingContext& context) {
         first_visible_queue_row = 0;
     queue_lb->Clear();
 
-    auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    auto empire = context.GetEmpire(GetApp().EmpireID());
     if (!empire)
         return;
 
@@ -633,14 +635,15 @@ void ResearchWnd::AddTechsToQueueSlot(std::vector<std::string> tech_vec, int pos
     if (!m_enabled)
         return;
 
-    ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    auto& context = app.GetContext();
 
-    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
+    const int empire_id = app.EmpireID();
     auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
-    const ResearchQueue& queue = empire->GetResearchQueue();
-    OrderSet& orders = GGHumanClientApp::GetApp()->Orders();
+    const auto& queue = empire->GetResearchQueue();
+    auto& orders = app.Orders();
 
     for (std::string& tech_name : tech_vec) {
         if (empire->TechResearched(tech_name))
@@ -674,10 +677,10 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!m_enabled || m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0)
         return;
 
-    auto* app = GGHumanClientApp::GetApp();
-    ScriptingContext& context = app->GetContext();
-    int empire_id = app->EmpireID();
-    OrderSet& orders = app->Orders();
+    auto& app = GetApp();
+    ScriptingContext& context = app.GetContext();
+    const int empire_id = app.EmpireID();
+    OrderSet& orders = app.Orders();
     if (auto queue_row = dynamic_cast<const QueueRow*>(it->get()))
         orders.IssueOrder<ResearchQueueOrder>(context, empire_id, queue_row->elem.name);
     if (auto empire = context.GetEmpire(empire_id))
@@ -711,9 +714,9 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     if (!m_enabled || m_queue_wnd->GetQueueListBox()->IteraterIndex(it) < 0)
         return;
 
-    auto* app = GGHumanClientApp::GetApp();
-    ScriptingContext& context = app->GetContext();
-    const int client_empire_id = app->EmpireID();
+    auto& app = GetApp();
+    ScriptingContext& context = app.GetContext();
+    const int client_empire_id = app.EmpireID();
     auto empire = context.GetEmpire(client_empire_id);
     if (!empire)
         return;
@@ -721,7 +724,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     // TODO: reject action if shown queue is not this client's empire's queue
 
     if (auto* queue_row = dynamic_cast<const QueueRow*>(it->get())) {
-        app->Orders().IssueOrder<ResearchQueueOrder>(
+        app.Orders().IssueOrder<ResearchQueueOrder>(
             context, client_empire_id, queue_row->elem.name, pause, -1.0f);
     }
 

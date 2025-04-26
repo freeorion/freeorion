@@ -97,9 +97,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
     // Set up texture coord and vertex buffers (quads) for the glyphs.
     // Consider extending GG::Font to do similar.
 
-    int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const int client_empire_id = app.EmpireID();
+    const auto& context = app.GetContext();
     const EmpireManager& empire_manager = context.Empires();
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
@@ -116,8 +116,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
 
     // get system name
-    std::string system_name = system->ApparentName(
-        client_empire_id, universe, blank_unexplored_and_none);
+    std::string system_name = system->ApparentName(client_empire_id, universe, blank_unexplored_and_none);
 
     // loop through planets in system, checking if any are a homeworld, capital
     // or have a shipyard, or have neutral population
@@ -189,12 +188,12 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
         wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
     if (has_shipyard)
         wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
-    const auto font = capital ? ClientUI::GetBoldFont(font_size) : ClientUI::GetFont(font_size);
+    const auto font = capital ? GetApp().GetUI().GetBoldFont(font_size) : GetApp().GetUI().GetFont(font_size);
 
     GG::Clr text_color = ClientUI::SystemNameTextColor();
     if (has_player_planet) {
         if (owner_empire_ids.size() == 1) {
-            if (const auto* owner_empire = GetEmpire(*owner_empire_ids.begin()))
+            if (const auto owner_empire = context.GetEmpire(*owner_empire_ids.begin()))
                 text_color = owner_empire->Color();
             else
                 DebugLogger() << "OwnerColoredSystemName couldn't get empire with id: " << *owner_empire_ids.begin();
@@ -249,20 +248,20 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
 void SystemIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
-    ClientUI* ui = ClientUI::GetClientUI();
+    auto& ui = GetApp().GetUI();
     if (auto system = Objects().get<System>(m_system_id)) {
         StarType star_type = system->GetStarType();
-        m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
-                                              ClientUI::StarTypeFilePrefix(star_type),
-                                              m_system_id);
-        m_halo_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
-                                              ClientUI::HaloStarTypeFilePrefix(star_type),
-                                              m_system_id);
-        m_tiny_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
-                                              std::string("tiny_").append(ClientUI::StarTypeFilePrefix(star_type)),
-                                              m_system_id);
+        m_disc_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
+                                             ClientUI::StarTypeFilePrefix(star_type),
+                                             m_system_id);
+        m_halo_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
+                                             ClientUI::HaloStarTypeFilePrefix(star_type),
+                                             m_system_id);
+        m_tiny_texture = ui.GetModuloTexture(ClientUI::ArtDir() / "stars",
+                                             std::string("tiny_").append(ClientUI::StarTypeFilePrefix(star_type)),
+                                             m_system_id);
     } else {
-        m_disc_texture = ui->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
+        m_disc_texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
         m_halo_texture = m_disc_texture;
         m_tiny_texture = m_disc_texture;
     }
@@ -273,7 +272,7 @@ void SystemIcon::CompleteConstruction() {
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
-    auto texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
+    auto texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
     GG::Pt sz{texture->DefaultWidth(), texture->DefaultHeight()};
     m_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
         std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -282,7 +281,7 @@ void SystemIcon::CompleteConstruction() {
     m_selection_indicator->Resize(sz);
 
     // tiny selection indicator graphic
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
+    texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
     sz = {texture->DefaultWidth(), texture->DefaultHeight()};
     m_tiny_selection_indicator = GG::Wnd::Create<RotatingGraphic>(
         std::move(texture), GG::GRAPHIC_NONE);
@@ -291,21 +290,21 @@ void SystemIcon::CompleteConstruction() {
     m_tiny_selection_indicator->Resize(sz);
 
     // mouseover indicator graphic
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
+    texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
     sz = {texture->DefaultWidth(), texture->DefaultHeight()};
     m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(
         std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_indicator->Resize(sz);
 
     // unexplored mouseover indicator graphic
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
+    texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
     sz = {texture->DefaultWidth(), texture->DefaultHeight()};
     m_mouseover_unexplored_indicator = GG::Wnd::Create<GG::StaticGraphic>(
         std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_unexplored_indicator->Resize(sz);
 
     // tiny mouseover indicator graphic
-    texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
+    texture = ui.GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
     sz = {texture->DefaultWidth(), texture->DefaultHeight()};
     m_tiny_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(
         std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -337,7 +336,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 
 
     // get fleetbutton radius to use for layout
-    auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+    auto map_wnd = GetApp().GetUI().GetMapWndConst();
     FleetButton::SizeType fb_size_type = map_wnd ? map_wnd->FleetButtonSizeType() : FleetButton::SizeType::LARGE;
     GG::Pt button_size = GG::Pt();
     double FB_RADIUS = 0.0;
@@ -571,7 +570,7 @@ void SystemIcon::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
                                               (Width() < m_tiny_mouseover_indicator->Width());
     // indicate mouseover
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
-        int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
+        int client_empire_id = GetApp().EmpireID();
         Empire* this_empire = GetEmpire(client_empire_id);
         bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
                 !m_mouseover_unexplored_indicator;
@@ -599,7 +598,7 @@ void SystemIcon::MouseEnter(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_showing_name) {
         // get font size
         int name_pts = ClientUI::Pts();
-        if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())
+        if (auto map_wnd = GetApp().GetUI().GetMapWndConst())
             name_pts = map_wnd->SystemNamePts();
         auto it = m_colored_names.find(name_pts);
         if (it != m_colored_names.end())
@@ -641,7 +640,11 @@ void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
-    auto system = Objects().get<System>(m_system_id);
+    auto& app = GetApp();
+    const auto& objects = app.GetContext().ContextObjects();
+    auto& ui = app.GetUI();
+
+    auto system = objects.get<System>(m_system_id);
     if (system) {
         name = system->Name();
         m_system_connection = system->StateChangedSignal.connect(
@@ -653,7 +656,7 @@ void SystemIcon::Refresh() {
 
     // get font size
     int name_pts = ClientUI::Pts();
-    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst())
+    if (auto map_wnd = ui.GetMapWndConst())
         name_pts = map_wnd->SystemNamePts();
 
     // remove existing system name control
@@ -665,20 +668,16 @@ void SystemIcon::Refresh() {
     // create new system name control
     if (m_showing_name && !name.empty()) {
         // create and position
-        auto it = m_colored_names.find(name_pts);
-        if (it == m_colored_names.end()) {
-            it = m_colored_names.emplace(name_pts,
-                                         GG::Wnd::Create<OwnerColoredSystemName>(
-                                            m_system_id, name_pts, true)).first;
-        }
+        const auto& name_ctrl = m_colored_names.try_emplace(
+            name_pts, GG::Wnd::Create<OwnerColoredSystemName>(m_system_id, name_pts, true)).first->second;
 
         PositionSystemName(name_pts);
-        if (it->second->Parent().get() != this)
-            AttachChild(it->second);
+        if (name_ctrl->Parent().get() != this)
+            AttachChild(name_ctrl);
     }
 
     if (system && !system->OverlayTexture().empty())
-        m_overlay_texture = ClientUI::GetTexture(ClientUI::ArtDir() / system->OverlayTexture());
+        m_overlay_texture = ui.GetTexture(ClientUI::ArtDir() / system->OverlayTexture());
     else
         m_overlay_texture.reset();
     if (system)
@@ -690,7 +689,7 @@ void SystemIcon::ShowName() {
 
     // get font size
     int name_pts = ClientUI::Pts();
-    if (auto map_wnd = ClientUI::GetClientUI()->GetMapWnd(true))
+    if (auto map_wnd = GetApp().GetUI().GetMapWnd(true))
         name_pts = map_wnd->SystemNamePts();
 
     auto it = m_colored_names.find(name_pts);

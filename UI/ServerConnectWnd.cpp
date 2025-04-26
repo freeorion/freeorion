@@ -164,12 +164,11 @@ void ServerConnectWnd::CompleteConstruction() {
 }
 
 void ServerConnectWnd::ModalInit()
-{ GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit); }
+{ GetApp().SetFocusWnd(m_player_name_edit); }
 
 GG::Rect ServerConnectWnd::CalculatePosition() const {
-    GG::Pt new_ul((GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2,
-                  (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2);
     GG::Pt new_sz(WINDOW_WIDTH, WINDOW_HEIGHT);
+    GG::Pt new_ul = (GetApp().AppSize() - new_sz) / 2;
     return GG::Rect(new_ul, new_ul + new_sz);
 }
 
@@ -198,7 +197,7 @@ namespace {
 void ServerConnectWnd::PopulateServerList() {
     m_servers_lb->Clear();
     {
-        auto server_names = GGHumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
+        auto server_names = GetApp().Networking().DiscoverLANServerNames();
         for (const auto& server_name : server_names) {
             auto row = GG::Wnd::Create<GG::ListBox::Row>();
             row->push_back(GG::Wnd::Create<CUILabel>(std::move(server_name)));

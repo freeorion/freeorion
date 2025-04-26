@@ -93,13 +93,14 @@ namespace {
 
     /// Creates a text control that support resizing and word wrap.
     std::shared_ptr<GG::Label> CreateResizingText(std::string str, GG::X width) {
-        const auto font = ClientUI::GetFont();
+        auto& ui = GetApp().GetUI();
+        const auto font = ui.GetFont();
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
         auto text_elements = font->ExpensiveParseFromTextToTextElements(str, GG::FORMAT_NONE);
         const auto extent = font->TextExtent(font->DetermineLines(str, GG::FORMAT_NONE, width, text_elements));
 
-        auto text = GG::Wnd::Create<CUILabel>(std::move(str), std::move(text_elements),
+        auto text = GG::Wnd::Create<CUILabel>(std::move(str), std::move(text_elements), ui,
                                               GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT,
                                               GG::NO_WND_FLAGS, GG::X0, GG::Y0, extent.x, extent.y);
         text->ClipText(true);
@@ -108,9 +109,9 @@ namespace {
     }
 
     bool Prompt(std::string question) {
-        const auto font = ClientUI::GetFont();
-        auto prompt = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
-            PROMT_WIDTH, PROMPT_HEIGHT, std::move(question), font,
+        auto& app = GetApp();
+        auto prompt = app.GetStyleFactory().NewThreeButtonDlg(
+            PROMT_WIDTH, PROMPT_HEIGHT, std::move(question), app.GetUI().GetFont(),
             ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(),
             ClientUI::CtrlColor(), ClientUI::TextColor(),
             2, UserString("YES"), UserString("CANCEL"));
@@ -132,7 +133,7 @@ public:
 
     static auto TitleForColumn(const SaveFileColumn& column) {
         auto retval = GG::Wnd::Create<CUILabel>(column.Title(), GG::FORMAT_LEFT);
-        retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
+        retval->Resize(GG::Pt(GG::X1, GetApp().GetUI().GetFont()->Height()));
         return retval;
     }
 
@@ -149,9 +150,10 @@ public:
         std::shared_ptr<GG::Label> retval;
 
         if (column.m_fixed) {
-            retval = GG::Wnd::Create<CUILabel>(std::move(value), format_flags, GG::NO_WND_FLAGS,
+            auto& ui = GetApp().GetUI();
+            retval = GG::Wnd::Create<CUILabel>(std::move(value), ui, format_flags, GG::NO_WND_FLAGS,
                                                GG::X0, GG::Y0,
-                                               column.FixedWidth(), ClientUI::GetFont()->Height());
+                                               column.FixedWidth(), ui.GetFont()->Height());
         } else {
             retval = CreateResizingText(std::move(value), max_width);
         }
@@ -247,7 +249,7 @@ private:
     }
 
     static GG::X ComputeFixedWidth(const std::string& title, const std::string& wide_as, GG::X max_width) {
-        const auto font = ClientUI::GetFont();
+        const auto font = GetApp().GetUI().GetFont();
         // We need to maintain the fixed sizes since the base list box messes them
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
 
@@ -371,17 +373,18 @@ public:
 
     void Init() override {
         SaveFileRow::Init();
-        const auto font_height = ClientUI::GetFont()->Height();
+        const auto font_height = GetApp().GetUI().GetFont()->Height();
 
         for (unsigned int i = 0; i < m_columns.size(); ++i) {
             if (i == 0) {
                 auto label = GG::Wnd::Create<CUILabel>(PATH_DELIM_BEGIN + m_filename + PATH_DELIM_END,
+                                                       GetApp().GetUI(),
                                                        GG::FORMAT_NOWRAP | GG::FORMAT_LEFT);
                 label->Resize(GG::Pt(DirectoryNameSize(), font_height));
                 push_back(std::move(label));
             } else {
                 // Dummy columns so that all rows have the same number of cols
-                auto label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_NOWRAP);
+                auto label = GG::Wnd::Create<CUILabel>("", GetApp().GetUI(), GG::FORMAT_NOWRAP);
                 label->Resize(GG::Pt(GG::X0, font_height));
                 push_back(std::move(label));
             }
@@ -395,9 +398,8 @@ public:
     { return m_filename; }
 
     GG::X DirectoryNameSize() {
-        auto layout = GetLayout();
-        if (!layout)
-            return ClientUI::GetFont()->SpaceWidth() * 10;
+        if (!GetLayout())
+            return GetApp().GetUI().GetFont()->SpaceWidth() * 10;
 
         // Give the directory label at least all the room that the other columns demand anyway
         GG::X sum(GG::X0);
@@ -641,19 +643,22 @@ void SaveFileDialog::Init() {
     m_confirm_btn = Wnd::Create<CUIButton>(UserString("OK"));
     auto cancel_btn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
+    auto& app = GetApp();
+    auto& ui = app.GetUI();
+
     m_name_edit = GG::Wnd::Create<CUIEdit>("");
     if (m_extension != MP_SAVE_FILE_EXTENSION && m_extension != SP_SAVE_FILE_EXTENSION) {
-        std::string savefile_ext = GGHumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
+        std::string savefile_ext = app.SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
         DebugLogger() << "SaveFileDialog passed invalid extension " << m_extension << ", changing to " << savefile_ext;
-        m_extension = savefile_ext;
+        m_extension = std::move(savefile_ext);
     }
 
-    auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
-    auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
+    auto filename_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_FILENAME"), ui, GG::FORMAT_NOWRAP);
+    auto directory_label = GG::Wnd::Create<CUILabel>(UserString("SAVE_DIRECTORY"), ui, GG::FORMAT_NOWRAP);
 
     m_layout->Add(directory_label, 0, 0);
 
-    std::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    auto font = ui.GetFont();
     if (!m_server_previews) {
         m_current_dir_edit = GG::Wnd::Create<CUIEdit>(PathToString(GetSaveDir()));
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
@@ -686,23 +691,22 @@ void SaveFileDialog::Init() {
 
     m_layout->SetMinimumRowHeight(0, m_current_dir_edit->MinUsableSize().y);
     m_layout->SetRowStretch      (1, 1.0 );
-    GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
-    std::string cancel_text(cancel_btn->Text());
-    auto text_elements = font->ExpensiveParseFromTextToTextElements(cancel_text, fmt);
-    auto lines = ClientUI::GetFont()->DetermineLines(
-        cancel_text, fmt, GG::X(1 << 15), text_elements);
-    GG::Pt extent = ClientUI::GetFont()->TextExtent(lines);
-    m_layout->SetMinimumRowHeight(3, extent.y);
+    const GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
+    const std::string cancel_text(cancel_btn->Text());
+    const auto text_elements0 = font->ExpensiveParseFromTextToTextElements(cancel_text, fmt);
+    const auto lines0 = font->DetermineLines(cancel_text, fmt, GG::X(1 << 15), text_elements0);
+    const GG::Pt extent0 = font->TextExtent(lines0);
+    m_layout->SetMinimumRowHeight(3, extent0.y);
 
-    std::string filename_label_text(filename_label->Text());
-    text_elements = font->ExpensiveParseFromTextToTextElements(filename_label_text, fmt);
-    lines = font->DetermineLines(filename_label_text, fmt, ClientWidth(), text_elements);
-    GG::Pt extent1 = font->TextExtent(lines);
+    const std::string filename_label_text(filename_label->Text());
+    const auto text_elements1 = font->ExpensiveParseFromTextToTextElements(filename_label_text, fmt);
+    const auto lines1 = font->DetermineLines(filename_label_text, fmt, ClientWidth(), text_elements1);
+    const GG::Pt extent1 = font->TextExtent(lines1);
 
-    std::string dir_label_text(directory_label->Text());
-    text_elements = font->ExpensiveParseFromTextToTextElements(dir_label_text, fmt);
-    lines = font->DetermineLines(dir_label_text, fmt, ClientWidth(), text_elements);
-    GG::Pt extent2 = font->TextExtent(lines);
+    const std::string dir_label_text(directory_label->Text());
+    const auto text_elements2 = font->ExpensiveParseFromTextToTextElements(dir_label_text, fmt);
+    const auto lines2 = font->DetermineLines(dir_label_text, fmt, ClientWidth(), text_elements2);
+    const GG::Pt extent2 = font->TextExtent(lines2);
 
     m_layout->SetMinimumColumnWidth(0, std::max(extent1.x, extent2.x));
     m_layout->SetColumnStretch(1, 1.0);
@@ -736,15 +740,14 @@ void SaveFileDialog::Init() {
 }
 
 GG::Rect SaveFileDialog::CalculatePosition() const {
-    GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,
-              (GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT) / 2);
+    GG::Pt ul = (GetApp().AppSize() - GG::Pt{SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT}) / 2;
     GG::Pt wh(SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT);
     return GG::Rect(ul, ul + wh);
 }
 
 void SaveFileDialog::ModalInit() {
     GG::Wnd::ModalInit();
-    GG::GUI::GetGUI()->SetFocusWnd(m_name_edit);
+    GetApp().SetFocusWnd(m_name_edit);
 }
 
 void SaveFileDialog::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys ) {
@@ -759,7 +762,7 @@ void SaveFileDialog::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG
         if (m_loaded_dir != GetDirPath()) {
             UpdatePreviewList();
         } else {
-            if (GG::GUI::GetGUI()->FocusWnd() == m_name_edit) {
+            if (GetApp().FocusWnd() == m_name_edit) {
                 Confirm();
             }
         }
@@ -767,8 +770,8 @@ void SaveFileDialog::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG
     } else if (key == GG::Key::GGK_DELETE) { // Delete would be better, but gets eaten by someone
         // Ask to delete selection on Delete, if valid and not editing text
         if (CheckChoiceValidity() &&
-            GG::GUI::GetGUI()->FocusWnd() != m_name_edit &&
-            GG::GUI::GetGUI()->FocusWnd() != m_current_dir_edit)
+            GetApp().FocusWnd() != m_name_edit &&
+            GetApp().FocusWnd() != m_current_dir_edit)
         {
             AskDelete();
         }
@@ -910,7 +913,7 @@ void SaveFileDialog::UpdatePreviewList() {
     if (!m_server_previews) {
         SetPreviewList(FilenameToPath(GetDirPath()));
     } else {
-        GGHumanClientApp::GetApp()->RequestSavePreviews(GetDirPath());
+        GetApp().RequestSavePreviews(GetDirPath());
     }
 }
 

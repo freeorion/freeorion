@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "Sound.h"
 #include "../util/OptionsDB.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/Spin.h>
 
@@ -25,8 +26,8 @@ public:
     typedef typename GG::Spin<T>::ValueType ValueType;
 
     CUISpin(T value, T step, T min, T max, bool edits) :
-    GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
-                ClientUI::TextColor())
+        GG::Spin<T>(value, step, min, max, edits, GetApp().GetUI().GetFont(),
+                    ClientUI::CtrlBorderColor(), ClientUI::TextColor())
     {}
 
     void CompleteConstruction() override {

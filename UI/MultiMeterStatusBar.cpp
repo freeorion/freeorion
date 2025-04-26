@@ -74,13 +74,12 @@ namespace {
 MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id,
                                          std::vector<std::pair<MeterType, MeterType>> meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
+    m_bar_shading_texture(GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(std::move(meter_types)),
     m_object_id(object_id)
 {
     SetName("MultiMeterStatusBar");
-    if (const auto* app = IApp::GetApp())
-        Update(app->GetContext().ContextObjects());
+    Update(GetApp().GetContext().ContextObjects());
 }
 
 void MultiMeterStatusBar::Render() {

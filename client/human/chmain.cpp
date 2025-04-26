@@ -6,6 +6,7 @@
 #include "../../util/i18n.h"
 #include "../../UI/Hotkeys.h"
 
+#include "chmain.h"
 #include <GG/utf8/checked.h>
 
 #include <boost/format.hpp>
@@ -46,9 +47,6 @@ constexpr bool STORE_FULLSCREEN_FLAG = true;
 // by default
 constexpr bool FAKE_MODE_CHANGE_FLAG = true;
 #endif
-
-int mainSetupAndRun();
-int mainConfigOptionsSetup(const std::vector<std::string>& args);
 
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
@@ -109,9 +107,15 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 }
 #endif
 
+[[nodiscard]] GGHumanClientApp& GetApp() {
+    static GGHumanClientApp app("FreeOrion " + FreeOrionVersionString());
+    return app;
+}
 
 int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     InitDirs((args.empty() ? "" : args.front()));
+
+    GGHumanClientApp::InitLogging();
 
     // read and process command-line arguments, if any
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
@@ -247,7 +251,6 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     return 0;
 }
 
-
 int mainSetupAndRun() {
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     try {
@@ -264,21 +267,22 @@ int mainSetupAndRun() {
 #  endif
 #endif
 
-        GGHumanClientApp app("FreeOrion " + FreeOrionVersionString());
+        GGHumanClientApp& app = GetApp();
+        app.Initialize();
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and
             // go into a single player game, using default universe options (a
             // standard quickstart, without requiring the user to click the
             // quickstart button).
-            app.NewSinglePlayerGame(true);  // acceptable to call before app()
+            app.NewSinglePlayerGame(true);
         }
 
         if (GetOptionsDB().Get<bool>("continue")) {
             // immediately start the server, establish network connections, and
             // go into a single player game, continuing from the newest
             // save game.
-            app.ContinueSinglePlayerGame();  // acceptable to call before app()
+            app.ContinueSinglePlayerGame();
         }
 
         std::string load_filename = GetOptionsDB().Get<std::string>("load");
@@ -286,7 +290,7 @@ int mainSetupAndRun() {
             // immediately start the server, establish network connections, and
             // go into a single player game, loading the indicated file
             // (without requiring the user to click the load button).
-            app.LoadSinglePlayerGame(load_filename);  // acceptable to call before app()
+            app.LoadSinglePlayerGame(load_filename);
         }
 
         // run rendering loop

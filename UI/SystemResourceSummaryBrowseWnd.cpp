@@ -128,32 +128,33 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
     GG::Y top = GG::Y0;
 
+    auto& ui = GetApp().GetUI();
 
     production_label_top = top;
-    m_production_label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
+    m_production_label = GG::Wnd::Create<CUILabel>("", ui, GG::FORMAT_RIGHT);
     m_production_label->MoveTo(GG::Pt(GG::X0, production_label_top));
     m_production_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
-    m_production_label->SetFont(ClientUI::GetBoldFont());
+    m_production_label->SetFont(ui.GetBoldFont());
     AttachChild(m_production_label);
     top += row_height;
     UpdateProduction(top);
 
 
     allocation_label_top = top;
-    m_allocation_label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
+    m_allocation_label = GG::Wnd::Create<CUILabel>("", ui, GG::FORMAT_RIGHT);
     m_allocation_label->MoveTo(GG::Pt(GG::X0, allocation_label_top));
     m_allocation_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
-    m_allocation_label->SetFont(ClientUI::GetBoldFont());
+    m_allocation_label->SetFont(ui.GetBoldFont());
     AttachChild(m_allocation_label);
     top += row_height;
     UpdateAllocation(top);
 
 
     import_export_label_top = top;
-    m_import_export_label = GG::Wnd::Create<CUILabel>("", GG::FORMAT_RIGHT);
+    m_import_export_label = GG::Wnd::Create<CUILabel>("", ui, GG::FORMAT_RIGHT);
     m_import_export_label->MoveTo(GG::Pt(GG::X0, import_export_label_top));
     m_import_export_label->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, row_height));
-    m_import_export_label->SetFont(ClientUI::GetBoldFont());
+    m_import_export_label->SetFont(ui.GetBoldFont());
     AttachChild(m_import_export_label);
     top += row_height;
     UpdateImportExport(top);
