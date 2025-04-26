@@ -14,7 +14,6 @@
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include "SaveLoad.h"
-#include "ServerFSM.h"
 #include "UniverseGenerator.h"
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
@@ -85,22 +84,9 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::HandleMessage, this, boost::placeholders::_1, boost::placeholders::_2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, boost::placeholders::_1)),
     m_context(*this),
-    m_fsm(std::make_unique<ServerFSM>(*this)),
+    m_fsm(*this),
     m_chat_history(1000)
 {
-    // Force the log file if requested.
-    if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string SERVER_LOG_FILENAME(PathToString(GetUserDataDir() / "freeoriond.log"));
-        GetOptionsDB().Set("log-file", SERVER_LOG_FILENAME);
-    }
-    // Force the log threshold if requested.
-    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
-    if (!force_log_level.empty())
-        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
-
-    InitLoggingSystem(GetOptionsDB().Get<std::string>("log-file"), "Server");
-    InitLoggingOptionsDBSystem();
-
     InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
@@ -133,7 +119,7 @@ ServerApp::ServerApp() :
     // to have data initialized before autostart execution
     StartBackgroundParsing(PythonParser(m_python_server, GetResourceDir() / "scripting"));
 
-    m_fsm->initiate();
+    m_fsm.initiate();
 
     namespace ph = boost::placeholders;
 
@@ -151,6 +137,8 @@ ServerApp::ServerApp() :
 ServerApp::~ServerApp() {
     DebugLogger() << "ServerApp::~ServerApp";
 
+    m_networking.DisconnectAll();
+
     // Calling Py_Finalize here causes segfault when m_python_server destructing with its python
     // object fields
 
@@ -159,13 +147,30 @@ ServerApp::~ServerApp() {
     DebugLogger() << "Server exited cleanly.";
 }
 
-void ServerApp::operator()()
-{ Run(); }
+void ServerApp::InitLogging() {
+    // Force the log file if requested.
+    if (GetOptionsDB().Get<std::string>("log-file").empty()) {
+        const std::string SERVER_LOG_FILENAME(PathToString(GetUserDataDir() / "freeoriond.log"));
+        GetOptionsDB().Set("log-file", SERVER_LOG_FILENAME);
+    }
+    // Force the log threshold if requested.
+    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    if (!force_log_level.empty())
+        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
+
+    InitLoggingSystem(GetOptionsDB().Get<std::string>("log-file"), "Server");
+    InitLoggingOptionsDBSystem();
+}
+
+ServerApp& GetApp() {
+    static ServerApp app;
+    return app;
+}
 
 void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number) {
     if (error)
         ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
-    m_fsm->process_event(ShutdownServer());
+    m_fsm.process_event(ShutdownServer());
 }
 
 namespace {
@@ -362,7 +367,7 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
@@ -376,16 +381,14 @@ void ServerApp::AsyncIOTimedoutHandler(const boost::system::error_code& error) {
         }
     } else {
         ErrorLogger() << "Python scripted authentication failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
 void ServerApp::UpdateEmpireTurnReceived(bool success, int empire_id, int turn) {
     if (success) {
-        if (auto empire = m_empires.GetEmpire(empire_id)) {
+        if (auto empire = m_empires.GetEmpire(empire_id))
             empire->SetLastTurnReceived(turn);
-        }
     }
 }
 
@@ -414,7 +417,7 @@ void ServerApp::CleanupAIs() {
     DebugLogger() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
     try {
         for (auto& process : m_ai_client_processes)
-        { process.second.Kill(); }
+            process.second.Kill();
     } catch (...) {
         ErrorLogger() << "ServerApp::CleanupAIs() exception while killing processes";
     }
@@ -443,28 +446,28 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     m_networking.UpdateCookie(player_connection->Cookie()); // update cookie expire date
 
     switch (msg.Type()) {
-    case Message::MessageType::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
-    case Message::MessageType::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
-    case Message::MessageType::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
-    case Message::MessageType::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
-    case Message::MessageType::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
-    case Message::MessageType::TURN_PARTIAL_ORDERS:      m_fsm->process_event(TurnPartialOrders(msg, player_connection));break;
-    case Message::MessageType::UNREADY:                  m_fsm->process_event(RevokeReadiness(msg, player_connection));  break;
-    case Message::MessageType::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
-    case Message::MessageType::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
-    case Message::MessageType::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
-    case Message::MessageType::ELIMINATE_SELF:           m_fsm->process_event(EliminateSelf(msg, player_connection));    break;
-    case Message::MessageType::AUTO_TURN:                m_fsm->process_event(AutoTurn(msg, player_connection));         break;
-    case Message::MessageType::REVERT_ORDERS:            m_fsm->process_event(RevertOrders(msg, player_connection));     break;
+    case Message::MessageType::HOST_SP_GAME:             m_fsm.process_event(HostSPGame(msg, player_connection));       break;
+    case Message::MessageType::START_MP_GAME:            m_fsm.process_event(StartMPGame(msg, player_connection));      break;
+    case Message::MessageType::LOBBY_UPDATE:             m_fsm.process_event(LobbyUpdate(msg, player_connection));      break;
+    case Message::MessageType::SAVE_GAME_INITIATE:       m_fsm.process_event(SaveGameRequest(msg, player_connection));  break;
+    case Message::MessageType::TURN_ORDERS:              m_fsm.process_event(TurnOrders(msg, player_connection));       break;
+    case Message::MessageType::TURN_PARTIAL_ORDERS:      m_fsm.process_event(TurnPartialOrders(msg, player_connection));break;
+    case Message::MessageType::UNREADY:                  m_fsm.process_event(RevokeReadiness(msg, player_connection));  break;
+    case Message::MessageType::PLAYER_CHAT:              m_fsm.process_event(PlayerChat(msg, player_connection));       break;
+    case Message::MessageType::DIPLOMACY:                m_fsm.process_event(Diplomacy(msg, player_connection));        break;
+    case Message::MessageType::MODERATOR_ACTION:         m_fsm.process_event(ModeratorAct(msg, player_connection));     break;
+    case Message::MessageType::ELIMINATE_SELF:           m_fsm.process_event(EliminateSelf(msg, player_connection));    break;
+    case Message::MessageType::AUTO_TURN:                m_fsm.process_event(AutoTurn(msg, player_connection));         break;
+    case Message::MessageType::REVERT_ORDERS:            m_fsm.process_event(RevertOrders(msg, player_connection));     break;
 
     case Message::MessageType::ERROR_MSG:
     case Message::MessageType::DEBUG:                    break;
 
     case Message::MessageType::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
-    case Message::MessageType::AI_END_GAME_ACK:          m_fsm->process_event(LeaveGame(msg, player_connection));        break;
+    case Message::MessageType::AI_END_GAME_ACK:          m_fsm.process_event(LeaveGame(msg, player_connection));        break;
 
     case Message::MessageType::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
-    case Message::MessageType::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
+    case Message::MessageType::REQUEST_COMBAT_LOGS:      m_fsm.process_event(RequestCombatLogs(msg, player_connection));break;
     case Message::MessageType::LOGGER_CONFIG:            HandleLoggerConfig(msg, player_connection); break;
 
     default:
@@ -482,7 +485,7 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
         return;
     }
     DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
-    m_fsm->process_event(ShutdownServer());
+    m_fsm.process_event(ShutdownServer());
 }
 
 void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection) {
@@ -509,11 +512,11 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
-    case Message::MessageType::HOST_SP_GAME:  m_fsm->process_event(HostSPGame(msg, player_connection));   break;
-    case Message::MessageType::HOST_MP_GAME:  m_fsm->process_event(HostMPGame(msg, player_connection));   break;
-    case Message::MessageType::JOIN_GAME:     m_fsm->process_event(JoinGame(msg, player_connection));     break;
-    case Message::MessageType::AUTH_RESPONSE: m_fsm->process_event(AuthResponse(msg, player_connection)); break;
-    case Message::MessageType::ERROR_MSG:     m_fsm->process_event(Error(msg, player_connection));        break;
+    case Message::MessageType::HOST_SP_GAME:  m_fsm.process_event(HostSPGame(msg, player_connection));   break;
+    case Message::MessageType::HOST_MP_GAME:  m_fsm.process_event(HostMPGame(msg, player_connection));   break;
+    case Message::MessageType::JOIN_GAME:     m_fsm.process_event(JoinGame(msg, player_connection));     break;
+    case Message::MessageType::AUTH_RESPONSE: m_fsm.process_event(AuthResponse(msg, player_connection)); break;
+    case Message::MessageType::ERROR_MSG:     m_fsm.process_event(Error(msg, player_connection));        break;
     case Message::MessageType::DEBUG:         break;
     default:
         if ((m_networking.size() == 1) &&
@@ -522,7 +525,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
         {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
                           << "connected player, who is local and so the request is being honored; server shutting down.";
-            m_fsm->process_event(ShutdownServer());
+            m_fsm.process_event(ShutdownServer());
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";
@@ -533,14 +536,14 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
 }
 
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
-{ m_fsm->process_event(Disconnection(player_connection)); }
+{ m_fsm.process_event(Disconnection(player_connection)); }
 
 void ServerApp::ShutdownTimedoutHandler(boost::system::error_code error) {
     if (error)
         DebugLogger() << "Shutdown timed out cancelled";
 
     DebugLogger() << "Shutdown timed out.  Disconnecting remaining clients.";
-    m_fsm->process_event(DisconnectClients());
+    m_fsm.process_event(DisconnectClients());
 }
 
 void ServerApp::SelectNewHost() {
@@ -1062,15 +1065,14 @@ void ServerApp::LoadChatHistory() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted chat failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
@@ -1094,15 +1096,14 @@ void ServerApp::PushChatMessage(std::string text, std::string player_name, std::
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted chat failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(
-            ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
@@ -1526,17 +1527,16 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Exiting.";
-            m_fsm->process_event(ShutdownServer());
+            m_fsm.process_event(ShutdownServer());
         }
     }
 
     if (!success)
-        ServerApp::GetApp()->Networking().SendMessageAll(
-            ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
-    for (auto& empire : m_empires) {
-        empire.second->ApplyNewTechs(m_universe, m_current_turn);
-        empire.second->ApplyPolicies(m_universe, m_current_turn);
+    for (auto& empire : m_empires | range_values) {
+        empire->ApplyNewTechs(m_universe, m_current_turn);
+        empire->ApplyPolicies(m_universe, m_current_turn);
     }
 
     DebugLogger() << "Applying first turn effects and updating meters";
@@ -1597,14 +1597,14 @@ void ServerApp::ExecuteScriptedTurnEvents() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted turn events failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
@@ -1683,15 +1683,14 @@ bool ServerApp::IsAuthRequiredOrFillRoles(const std::string& player_name, const 
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted authentication failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
     return result;
 }
@@ -1717,15 +1716,14 @@ bool ServerApp::IsAuthSuccessAndFillRoles(const std::string& player_name,
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted authentication failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
     return result;
 }
@@ -1745,15 +1743,14 @@ std::vector<PlayerSetupData> ServerApp::FillListPlayers() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted player list failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(
-            ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
     return result;
 }
@@ -2028,24 +2025,20 @@ std::vector<std::string> ServerApp::GetPlayerDelegation(const std::string& playe
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                m_fsm->process_event(ShutdownServer());
+                m_fsm.process_event(ShutdownServer());
             }
         }
     }
 
     if (!success) {
         ErrorLogger() << "Python scripted authentication failed.";
-        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"),
-                                                                      false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
     return {result.begin(), result.end()};
 }
 
 bool ServerApp::IsHostless() const
 { return GetOptionsDB().Get<bool>("hostless"); }
-
-const boost::circular_buffer<ChatHistoryEntity>& ServerApp::GetChatHistory() const
-{ return m_chat_history; }
 
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
 { return GetPlayerClientType(ServerApp::EmpirePlayerID(empire_id)); }

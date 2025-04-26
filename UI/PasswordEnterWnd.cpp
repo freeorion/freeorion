@@ -59,22 +59,22 @@ void PasswordEnterWnd::CompleteConstruction() {
 }
 
 GG::Rect PasswordEnterWnd::CalculatePosition() const {
-    GG::Pt new_ul((GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2,
-                  (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2);
+    GG::Pt new_ul((GetApp().AppWidth() - WINDOW_WIDTH) / 2,
+                  (GetApp().AppHeight() - WINDOW_HEIGHT) / 2);
     GG::Pt new_sz(WINDOW_WIDTH, WINDOW_HEIGHT);
     return GG::Rect(new_ul, new_ul + new_sz);
 }
 
 void PasswordEnterWnd::ModalInit()
-{ GG::GUI::GetGUI()->SetFocusWnd(m_password_edit); }
+{ GetApp().SetFocusWnd(m_password_edit); }
 
 void PasswordEnterWnd::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::Key::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
         CancelClicked();
     } else if (key == GG::Key::GGK_RETURN || key == GG::Key::GGK_KP_ENTER) {
-        if (GG::GUI::GetGUI()->FocusWnd() == m_player_name_edit) {
-            GG::GUI::GetGUI()->SetFocusWnd(m_password_edit);
-        } else if (GG::GUI::GetGUI()->FocusWnd() == m_password_edit) {
+        if (GetApp().FocusWnd() == m_player_name_edit) {
+            GetApp().SetFocusWnd(m_password_edit);
+        } else if (GetApp().FocusWnd() == m_password_edit) {
             OkClicked();
         }
     }
@@ -86,12 +86,12 @@ void PasswordEnterWnd::SetPlayerName(const std::string& player_name) {
 }
 
 void PasswordEnterWnd::OkClicked() {
-    GGHumanClientApp::GetApp()->Networking().SendMessage(
+    GetApp().Networking().SendMessage(
         AuthResponseMessage(*m_player_name_edit, m_password_edit->RawText()));
     // hide window
-    GGHumanClientApp::GetApp()->Remove(shared_from_this());
+    GetApp().Remove(shared_from_this());
 }
 
 void PasswordEnterWnd::CancelClicked()
-{ GGHumanClientApp::GetApp()->CancelMultiplayerGameFromLobby(); }
+{ GetApp().CancelMultiplayerGameFromLobby(); }
 

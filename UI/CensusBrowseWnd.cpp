@@ -1,6 +1,7 @@
 #include "CensusBrowseWnd.h"
 
 #include "../util/i18n.h"
+#include "../client/human/GGHumanClientApp.h"
 #include "CUIControls.h"
 
 class CensusRowPanel;
@@ -28,19 +29,20 @@ namespace {
 
 class CensusRowPanel : public GG::Control {
 public:
-    CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, int worlds, bool show_icon) :
+    CensusRowPanel(GG::X w, GG::Y h, std::string_view name, double census_val, int worlds, bool show_icon) :
         GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_show_icon(show_icon)
     {
+        auto& ui = GetApp().GetUI();
+            
         if (m_show_icon)
-            m_icon = GG::Wnd::Create<GG::StaticGraphic>(
-                ClientUI::SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
+            m_icon = GG::Wnd::Create<GG::StaticGraphic>(ui.SpeciesIcon(name), GG::GRAPHIC_FITGRAPHIC);
+        m_name = GG::Wnd::Create<CUILabel>(UserString(name), ui, GG::FORMAT_RIGHT);
 
-        m_name = GG::Wnd::Create<CUILabel>(UserString(name), GG::FORMAT_RIGHT);
         std::stringstream ss;
         ss << std::fixed << std::setprecision(1) << census_val;
-        m_census_val = GG::Wnd::Create<CUILabel>(ss.str(), GG::FORMAT_RIGHT);
-        m_worlds = GG::Wnd::Create<CUILabel>(std::to_string(worlds), GG::FORMAT_RIGHT);
+        m_census_val = GG::Wnd::Create<CUILabel>(ss.str(), ui, GG::FORMAT_RIGHT);
+        m_worlds = GG::Wnd::Create<CUILabel>(std::to_string(worlds), ui, GG::FORMAT_RIGHT);
     }
 
     void CompleteConstruction() override {
@@ -157,9 +159,11 @@ void CensusBrowseWnd::CompleteConstruction() {
 
     GG::Y top = GG::Y0;
 
+    const auto& app = GetApp();
+
     m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));
     m_title_text->Resize(GG::Pt(BrowseTextWidth(), ROW_HEIGHT));
-    m_title_text->SetFont(ClientUI::GetBoldFont());
+    m_title_text->SetFont(app.GetUI().GetBoldFont());
 
     top += ROW_HEIGHT;
     m_species_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, top + m_offset.y));

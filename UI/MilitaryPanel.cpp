@@ -36,10 +36,9 @@ void MilitaryPanel::CompleteConstruction() {
 
     SetName("MilitaryPanel");
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
+    auto& app = GetApp();
 
-    auto planet = app->GetContext().ContextObjects().get<Planet>(m_planet_id);
+    auto planet = app.GetContext().ContextObjects().get<Planet>(m_planet_id);
     if (!planet) {
         ErrorLogger() << "MilitaryPanel::CompleteConstruction couldn't get planet with id  " << m_planet_id;
         return;
@@ -57,7 +56,7 @@ void MilitaryPanel::CompleteConstruction() {
                             MeterType::METER_DETECTION, MeterType::METER_STEALTH})
     {
         auto stat = GG::Wnd::Create<StatisticIcon>(
-            ClientUI::MeterIcon(meter), planet->GetMeter(meter)->Initial(),
+            app.GetUI().MeterIcon(meter), planet->GetMeter(meter)->Initial(),
             3, false, MeterIconSize().x, MeterIconSize().y);
         AttachChild(stat);
         m_meter_stats.emplace_back(meter, stat);
@@ -65,7 +64,7 @@ void MilitaryPanel::CompleteConstruction() {
         stat->RightClickedSignal.connect([meter](GG::Pt pt) {
             auto meter_string = to_string(meter);
 
-            auto zoom_action = [meter_string]() { ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); };
+            auto zoom_action = [meter_string]() { GetApp().GetUI().ZoomToMeterTypeArticle(std::string{meter_string}); };
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
@@ -129,8 +128,7 @@ void MilitaryPanel::Refresh() {
 
 void MilitaryPanel::PreRender() {
     AccordionPanel::PreRender();
-    if (const auto* app = IApp::GetApp())
-        Update(app->GetContext().ContextObjects());
+    Update(GetApp().GetContext().ContextObjects());
     DoLayout();
 }
 

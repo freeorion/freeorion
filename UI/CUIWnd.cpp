@@ -76,8 +76,8 @@ void CUI_MinRestoreButton::Toggle() {
 // CUI_PinButton
 ////////////////////////////////////////////////
 namespace {
-    auto GetButtonSubTexture(std::string name)
-    { return GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / name)); }
+    GG::SubTexture GetButtonSubTexture(std::string name)
+    { return GG::SubTexture(GetApp().GetUI().GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / name)); }
 }
 
 CUI_PinButton::CUI_PinButton() :
@@ -165,14 +165,14 @@ void CUIWnd::Init() {
     InitButtons();
     SetChildClippingMode(ChildClippingMode::ClipToClientAndWindowSeparately);
 
-    auto* app = GGHumanClientApp::GetApp();
+    auto& app = GetApp();
 
     if (!m_config_name.empty()) {
         LoadOptions();
-        app->FullscreenSwitchSignal.connect(boost::bind(&CUIWnd::LoadOptions, this));
+        app.FullscreenSwitchSignal.connect(boost::bind(&CUIWnd::LoadOptions, this));
     }
 
-    m_title = GG::Wnd::Create<CUILabel>(Name(), GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
+    m_title = GG::Wnd::Create<CUILabel>(Name(), app.GetUI(), GG::FORMAT_LEFT, GG::NO_WND_FLAGS,
                                         BORDER_LEFT, TITLE_OFFSET, Width(), TopBorder());
 
     // User-dragable windows recalculate their position only when told to (e.g.
@@ -180,9 +180,9 @@ void CUIWnd::Init() {
     // Non-user-dragable windows are given the chance to position themselves on
     // every resize event.
     if (Dragable() || m_resizable)
-        app->RepositionWindowsSignal.connect(boost::bind(&CUIWnd::ResetDefaultPosition, this));
+        app.RepositionWindowsSignal.connect(boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
-        app->WindowResizedSignal.connect(boost::bind(&CUIWnd::ResetDefaultPosition, this));
+        app.WindowResizedSignal.connect(boost::bind(&CUIWnd::ResetDefaultPosition, this));
 }
 
 void CUIWnd::InitSizeMove(GG::Pt ul, GG::Pt lr) {
@@ -245,13 +245,9 @@ void CUIWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
         if (const auto parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
             available_size = parent->ClientSize();
-        } else if (const auto* app = GGHumanClientApp::GetApp()) {
-            // Keep this CUIWnd entirely inside the application window.
-            available_size = app->AppSize();
         } else {
-            available_size = GG::Pt(GG::X(GGHumanClientApp::MaximumPossibleWidth()),
-                                    GG::Y(GGHumanClientApp::MaximumPossibleHeight()));
-            ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
+            // Keep this CUIWnd entirely inside the application window.
+            available_size = GetApp().AppSize();
         }
 
         // Limit window size to be no larger than the containing window.
@@ -305,8 +301,8 @@ void CUIWnd::Render() {
         glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[0].first, m_buffer_indices[0].second);
 
     } else {
-        bool flashing = m_flashing && static_cast<int>(GG::GUI::GetGUI()->Ticks()) % (m_flash_duration * 2) > m_flash_duration;
-        auto focus_wnd = GG::GUI::GetGUI()->FocusWnd();
+        bool flashing = m_flashing && static_cast<int>(GetApp().Ticks()) % (m_flash_duration * 2) > m_flash_duration;
+        auto focus_wnd = GetApp().FocusWnd();
         bool highlight = (focus_wnd.get() == this || this->IsAncestorOf(focus_wnd));
 
         flashing ? glColor(GG::LightenClr(ClientUI::WndColor())) : glColor(ClientUI::WndColor());
@@ -366,8 +362,7 @@ void CUIWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
         GG::Pt requested_lr = pt - m_drag_offset;
 
         const auto parent = Parent();
-        const GG::Pt max_lr = parent ?
-            parent->ClientLowerRight() : GGHumanClientApp::GetApp()->AppSize();
+        const GG::Pt max_lr = parent ? parent->ClientLowerRight() : GetApp().AppSize();
 
         GG::X new_x = std::min(max_lr.x, requested_lr.x);
         GG::Y new_y = std::min(max_lr.y, requested_lr.y);
@@ -441,9 +436,9 @@ void CUIWnd::InitButtons() {
     // create the close button
     if (m_closable) {
         m_close_button = Wnd::Create<CUIButton>(
-            GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close.png")),
-            GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
-            GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
+            GG::SubTexture(GetApp().GetUI().GetTexture(button_texture_dir / "close.png")),
+            GG::SubTexture(GetApp().GetUI().GetTexture(button_texture_dir / "close_clicked.png")),
+            GG::SubTexture(GetApp().GetUI().GetTexture(button_texture_dir / "close_mouseover.png")));
         m_close_button->SetColor(ClientUI::WndInnerBorderColor());
         m_close_button->LeftClickedSignal.connect(-1, &PlayCloseSound);
         m_close_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
@@ -482,7 +477,7 @@ void CUIWnd::CloseClicked() {
     if (auto parent = Parent())
         parent->DetachChild(this);
     else
-        GG::GUI::GetGUI()->Remove(shared_from_this());
+        GetApp().Remove(shared_from_this());
 
     //m_minimized_buffer.clear();
     //m_outer_border_buffer.clear();
@@ -913,7 +908,7 @@ void CUIEditWnd::CompleteConstruction() {
     m_cancel_bn->OffsetMove(GG::Pt(GG::X0, (m_edit->Height() - m_ok_bn->Height()) / 2));
 
     Resize(GG::Pt(Width(), std::max(m_edit->Bottom(), m_cancel_bn->Bottom()) + BottomBorder() + 3));
-    MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - Width()) / 2, (GG::GUI::GetGUI()->AppHeight() - Height()) / 2));
+    MoveTo(GG::Pt((GetApp().AppWidth() - Width()) / 2, (GetApp().AppHeight() - Height()) / 2));
 
     AttachChild(m_edit);
     AttachChild(m_ok_bn);
@@ -926,7 +921,7 @@ void CUIEditWnd::CompleteConstruction() {
 }
 
 void CUIEditWnd::ModalInit()
-{ GG::GUI::GetGUI()->SetFocusWnd(m_edit); }
+{ GetApp().SetFocusWnd(m_edit); }
 
 void CUIEditWnd::KeyPress(GG::Key key, uint32_t key_code_point,
                           GG::Flags<GG::ModKey> mod_keys)

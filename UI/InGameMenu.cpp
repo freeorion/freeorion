@@ -27,7 +27,7 @@ void InGameMenu::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     m_save_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_SAVE"));
-    if (GGHumanClientApp::GetApp()->SinglePlayerGame())
+    if (GetApp().SinglePlayerGame())
         m_load_or_concede_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_LOAD"));
     else
         m_load_or_concede_btn = Wnd::Create<CUIButton>(UserString("GAME_MENU_CONCEDE"));
@@ -42,7 +42,7 @@ void InGameMenu::CompleteConstruction() {
     AttachChild(m_done_btn);
 
     m_save_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Save, this));
-    if (GGHumanClientApp::GetApp()->SinglePlayerGame()) {
+    if (GetApp().SinglePlayerGame()) {
         m_load_or_concede_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Load, this));
     } else {
         m_load_or_concede_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Concede, this));
@@ -51,7 +51,7 @@ void InGameMenu::CompleteConstruction() {
     m_resign_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Resign, this));
     m_done_btn->LeftClickedSignal.connect(boost::bind(&InGameMenu::Done, this));
 
-    if (!GGHumanClientApp::GetApp()->CanSaveNow()) {
+    if (!GetApp().CanSaveNow()) {
         m_save_btn->Disable();
         m_save_btn->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         m_save_btn->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
@@ -61,7 +61,7 @@ void InGameMenu::CompleteConstruction() {
         ));
     }
 
-    if (!GGHumanClientApp::GetApp()->SinglePlayerGame() &&
+    if (!GetApp().SinglePlayerGame() &&
         !GetGameRules().Get<bool>("RULE_ALLOW_CONCEDE"))
     {
         m_load_or_concede_btn->Disable();
@@ -86,8 +86,8 @@ GG::Rect InGameMenu::CalculatePosition() const {
                     GG::ToY(5.75 * ButtonCellHeight()) + V_MAINMENU_MARGIN); // 9 rows + 0.75 before exit button
 
     // This wnd determines its own position.
-    GG::Pt new_ul((GGHumanClientApp::GetApp()->AppWidth()  - new_size.x) / 2,
-                  (GGHumanClientApp::GetApp()->AppHeight() - new_size.y) / 2);
+    GG::Pt new_ul((GetApp().AppWidth()  - new_size.x) / 2,
+                  (GetApp().AppHeight() - new_size.y) / 2);
 
     return GG::Rect(new_ul, new_ul + new_size);
 }
@@ -147,44 +147,43 @@ void InGameMenu::KeyPress(GG::Key key, uint32_t key_code_point,
 void InGameMenu::Save() {
     DebugLogger() << "InGameMenu::Save";
 
-    GGHumanClientApp* app = GGHumanClientApp::GetApp();
-    if (!app)
-        return;
-    if (!app->CanSaveNow()) {
+    auto& app = GetApp();
+
+    if (!app.CanSaveNow()) {
         ErrorLogger() << "InGameMenu::Save aborting; Client app can't save now";
         return;
     }
 
     // send order changes could be made when player decide to save game
-    app->SendPartialOrders();
+    app.SendPartialOrders();
 
     try {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
         DebugLogger() << "... running save file dialog";
-        auto filename = ClientUI::GetClientUI()->GetFilenameWithSaveFileDialog(
+        auto filename = app.GetUI().GetFilenameWithSaveFileDialog(
             SaveFileDialog::Purpose::Save,
-            app->SinglePlayerGame() ? SaveFileDialog::SaveType::SinglePlayer : SaveFileDialog::SaveType::MultiPlayer);
+            app.SinglePlayerGame() ? SaveFileDialog::SaveType::SinglePlayer : SaveFileDialog::SaveType::MultiPlayer);
 
         if (!filename.empty()) {
-            if (!app->CanSaveNow()) {
+            if (!app.CanSaveNow()) {
                 ErrorLogger() << "InGameMenu::Save aborting; Client app can't save now";
                 throw std::runtime_error(UserString("UNABLE_TO_SAVE_NOW_TRY_AGAIN"));
             }
             DebugLogger() << "... initiating save to " << filename ;
-            app->SaveGame(filename);
+            app.SaveGame(filename);
             CloseClicked();
         }
 
     } catch (const std::exception& e) {
         ErrorLogger() << "Exception thrown attempting save: " << e.what();
-        ClientUI::MessageBox(e.what(), true);
+        app.GetUI().MessageBox(e.what(), true);
     }
 }
 
 void InGameMenu::Load() {
     Hide();
-    GGHumanClientApp::GetApp()->LoadSinglePlayerGame();
+    GetApp().LoadSinglePlayerGame();
     CloseClicked();
 }
 
@@ -194,25 +193,28 @@ void InGameMenu::Options() {
 }
 
 void InGameMenu::Concede() {
+    auto& app = GetApp();
+
     // show confirmation dialog
-    std::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    auto prompt = GG::GUI::GetGUI()->GetStyleFactory().NewThreeButtonDlg(
-        GG::X(200), GG::Y(75), UserString("GAME_MENU_REALLY_CONCEDE"), font,
+    auto prompt = app.GetStyleFactory().NewThreeButtonDlg(
+        GG::X(200), GG::Y(75), UserString("GAME_MENU_REALLY_CONCEDE"), app.GetUI().GetFont(),
         ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
         2, UserString("YES"), UserString("CANCEL"));
+
     prompt->Run();
+
     if (prompt->Result() == 0) {
        // send ELIMINATE_SELF message
-       GGHumanClientApp::GetApp()->EliminateSelf();
+       app.EliminateSelf();
        CloseClicked();
     }
 }
 
 void InGameMenu::Resign() {
     // send order changes could be made when player decides to disconnect
-    GGHumanClientApp::GetApp()->SendPartialOrders();
+    GetApp().SendPartialOrders();
 
-    GGHumanClientApp::GetApp()->ResetToIntro(false);
+    GetApp().ResetToIntro(false);
     CloseClicked();
 }
 
