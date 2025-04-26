@@ -68,10 +68,6 @@ namespace {
         }
         return ALL_EMPIRES;
     }
-
-    template <typename T>
-    auto to_span(const boost::container::flat_set<T>& rhs)
-    { return std::span<const T>{rhs.begin(), rhs.end()}; }
 };
 
 void Seed(unsigned int seed);
