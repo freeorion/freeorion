@@ -4906,7 +4906,7 @@ void MapWnd::DoFleetButtonsLayout(const ObjectMap& objects) {
 }
 
 boost::optional<std::pair<double, double>> MapWnd::MovingFleetMapPositionOnLane(
-    std::shared_ptr<const Fleet> fleet) const
+    const std::shared_ptr<const Fleet>& fleet) const
 {
     if (!fleet)
         return boost::none;
