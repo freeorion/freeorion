@@ -37,17 +37,14 @@ void ResourcePanel::CompleteConstruction() {
 
     SetName("ResourcePanel");
 
-    const auto* app = IApp::GetApp();
-    if (!app) return;
-
-    auto obj = app->GetContext().ContextObjects().get(m_rescenter_id);
+    auto& app = GetApp();
+    auto obj = app.GetContext().ContextObjects().get(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id  " << m_rescenter_id;
         return;
     }
 
-    m_expand_button->LeftPressedSignal.connect(
-        boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
+    m_expand_button->LeftPressedSignal.connect(boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
@@ -73,7 +70,7 @@ void ResourcePanel::CompleteConstruction() {
         }
 
         auto stat = GG::Wnd::Create<StatisticIcon>(
-            ClientUI::MeterIcon(meter), obj->GetMeter(meter)->Initial(),
+            app.GetUI().MeterIcon(meter), obj->GetMeter(meter)->Initial(),
             3, false, MeterIconSize().x, MeterIconSize().y);
         AttachChild(stat);
         m_meter_stats.emplace_back(meter, stat);
@@ -82,7 +79,7 @@ void ResourcePanel::CompleteConstruction() {
             auto meter_string = to_string(meter);
 
             auto pedia_zoom_to_article_action = [meter_string]() {
-                ClientUI::GetClientUI()->ZoomToMeterTypeArticle(std::string{meter_string}); };
+                GetApp().GetUI().ZoomToMeterTypeArticle(std::string{meter_string}); };
 
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
@@ -174,8 +171,7 @@ void ResourcePanel::Refresh() {
 
 void ResourcePanel::PreRender() {
     AccordionPanel::PreRender();
-    if (const auto* app = IApp::GetApp())
-        Update(app->GetContext().ContextObjects());
+    Update(GetApp().GetContext().ContextObjects());
     DoLayout();
 }
 
@@ -185,8 +181,8 @@ void ResourcePanel::ExpandCollapseButtonPressed()
 void ResourcePanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    for (auto& meter_stat : m_meter_stats)
-        DetachChild(meter_stat.second);
+    for (auto& stat : m_meter_stats | range_values)
+        DetachChild(stat);
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -197,10 +193,9 @@ void ResourcePanel::DoLayout() {
         // position and reattach icons to be shown
         int n = 0;
         GG::X stride = MeterIconSize().x * 7/2;
-        for (auto& meter_stat : m_meter_stats) {
+        for (auto& icon : m_meter_stats | range_values) {
             GG::X x = n * stride;
 
-            auto& icon = meter_stat.second;
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);

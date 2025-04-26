@@ -124,9 +124,9 @@ struct ProcessingTurn;
 
 /** The finite state machine that represents the server's operation. */
 struct ServerFSM : sc::state_machine<ServerFSM, Idle> {
-    ServerFSM(ServerApp &server);
+    ServerFSM(ServerApp& server);
 
-    void unconsumed_event(const sc::event_base &event);
+    void unconsumed_event(const sc::event_base& event);
     ServerApp& Server() noexcept { return m_server; }
     void HandleNonLobbyDisconnection(const Disconnection& d);
     void UpdateIngameLobby();

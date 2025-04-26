@@ -63,9 +63,6 @@
     <ClInclude Include="..\..\client\human\HumanClientFSM.h">
       <Filter>Header Files\client\human</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\client\human\chmain.h">
-      <Filter>Header Files\client\human</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\client\human\ClientFSMEvents.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>

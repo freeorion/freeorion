@@ -24,7 +24,7 @@ void FieldIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     // mouseover indicator graphic
-    auto mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "field_mouseover.png");
+    auto mouseover_texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "misc" / "field_mouseover.png");
     GG::Pt sz{mouseover_texture->DefaultWidth(), mouseover_texture->DefaultHeight()};
     m_mouseover_indicator = GG::Wnd::Create<GG::StaticGraphic>(
         std::move(mouseover_texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -71,8 +71,9 @@ void FieldIcon::SizeMove(GG::Pt ul, GG::Pt lr) {
 }
 
 void FieldIcon::Refresh() {
-    if (auto field = GGHumanClientApp::GetApp()->GetContext().ContextObjects().get<Field>(m_field_id))
-        m_texture = ClientUI::FieldTexture(field->FieldTypeName());
+    auto& app = GetApp();
+    if (auto field = app.GetContext().ContextObjects().get<Field>(m_field_id))
+        m_texture = app.GetUI().FieldTexture(field->FieldTypeName());
 }
 
 void FieldIcon::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -85,18 +86,17 @@ void FieldIcon::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!Disabled())
         RightClickedSignal(m_field_id);
 
-    auto field = GGHumanClientApp::GetApp()->GetContext().ContextObjects().get<Field>(m_field_id);
+    auto field = GetApp().GetContext().ContextObjects().get<Field>(m_field_id);
     if (!field)
         return;
-    const std::string& field_type_name = field->FieldTypeName();
+    const auto& field_type_name = field->FieldTypeName();
     if (field_type_name.empty())
         return;
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(field_type_name));
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    auto pedia_lookup_field_type_action = [field_type_name]() { ClientUI::GetClientUI()->ZoomToFieldType(field_type_name); };
-    popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
-                                    pedia_lookup_field_type_action));
+    auto pedia_lookup_field_type_action = [field_type_name]() { GetApp().GetUI().ZoomToFieldType(field_type_name); };
+    popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_lookup_field_type_action));
     popup->Run();
 }
 
