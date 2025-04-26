@@ -49,16 +49,7 @@ namespace {
     }
 }
 
-ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader) :
-    m_program_id(0),
-    m_vertex_shader_id(0),
-    m_fragment_shader_id(0),
-    m_link_succeeded(false),
-    m_program_log(),
-    m_program_validity_log(),
-    m_vertex_shader_log(),
-    m_fragment_shader_log()
-{
+ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader) {
     glGetError();
 
     m_program_id = glCreateProgram();
@@ -120,16 +111,28 @@ std::unique_ptr<ShaderProgram> ShaderProgram::shaderProgramFactory(const std::st
 ShaderProgram::~ShaderProgram() {
     glGetError();
     if (glIsShader(m_vertex_shader_id)) {
-        glDeleteShader(m_vertex_shader_id);
-        CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_vertex_shader_id)");
+        GLint result = 0;
+        glGetShaderiv(m_vertex_shader_id, GL_DELETE_STATUS, &result);
+        if (result) {
+            glDeleteShader(m_vertex_shader_id);
+            CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_vertex_shader_id)");
+        }
     }
     if (glIsShader(m_fragment_shader_id)) {
-        glDeleteShader(m_fragment_shader_id);
-        CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_fragment_shader_id)");
+        GLint result = 0;
+        glGetShaderiv(m_fragment_shader_id, GL_DELETE_STATUS, &result);
+        if (result) {
+            glDeleteShader(m_fragment_shader_id);
+            CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_fragment_shader_id)");
+        }
     }
     if (glIsProgram(m_program_id)) {
-        glDeleteProgram(m_program_id);
-        CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteProgram()");
+        GLint result = 0;
+        glGetProgramiv(m_program_id, GL_DELETE_STATUS, &result);
+        if (result) {
+            glDeleteProgram(m_program_id);
+            CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteProgram()");
+        }
     }
 }
 
