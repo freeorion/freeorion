@@ -307,7 +307,8 @@ private:
         squishing of fleets moving along a lane into the space between the
         system circles at the ends of the lane.  Return boost::none if the
         fleet has no valid screen position. */
-    boost::optional<std::pair<double, double>> MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const;
+    boost::optional<std::pair<double, double>> MovingFleetMapPositionOnLane(
+        const std::shared_ptr<const Fleet>& fleet) const;
 
     void DoSystemIconsLayout(const ObjectMap& objects); //!< does layout of system icons
     void DoFieldIconsLayout(const ObjectMap& objects);  //!< does layout of field icons
