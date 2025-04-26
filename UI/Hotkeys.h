@@ -109,7 +109,8 @@ private:
 
 /// On only when no modal Wnds are open
 inline bool NoModalWndsOpenCondition() {
-    return !GG::GUI::GetGUI()->ModalWndsOpen();
+    const auto* gui = GG::GUI::GetGUI();
+    return !gui || !gui->ModalWndsOpen();
 };
 
 /// On when the given window is visible
@@ -148,12 +149,13 @@ public:
     {}
 
     bool operator()() const {
-        const auto& foc = GG::GUI::GetGUI()->FocusWnd();
-        return target && target == foc.get();
+        const auto gui = GG::GUI::GetGUI();
+        return target && gui && (target == gui->FocusWnd().get());
+        return false;
     };
 
 private:
-    const GG::Wnd* target = nullptr;
+    const GG::Wnd* const target = nullptr;
 };
 
 template <typename W>
