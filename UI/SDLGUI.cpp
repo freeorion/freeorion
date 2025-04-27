@@ -108,11 +108,7 @@ class Framebuffer {
 public:
     /// Construct a framebuffer of dimensions \a size.
     /// \throws FramebufferFailedException if using framebuffers is not going to work.
-    Framebuffer(GG::Pt size) :
-        m_id(0),
-        m_texture(0),
-        m_depth_rbo(0)
-    {
+    explicit Framebuffer(GG::Pt size) {
         int width = Value(size.x);
         int height = Value(size.y);
 
@@ -166,11 +162,9 @@ public:
         glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
     }
 
-    GLuint OpenGLId()
-    { return m_id; }
+    GLuint OpenGLId() const noexcept { return m_id; }
 
-    GLuint TextureId()
-    { return m_texture; }
+    GLuint TextureId() const noexcept { return m_texture; }
 
     ~Framebuffer() {
         glDeleteFramebuffersEXT(1, &m_id);
@@ -179,9 +173,9 @@ public:
     }
 
 private:
-    GLuint m_id;
-    GLuint m_texture;
-    GLuint m_depth_rbo;
+    GLuint m_id = 0;
+    GLuint m_texture = 0;
+    GLuint m_depth_rbo = 0;
 };
 
 // member functions
