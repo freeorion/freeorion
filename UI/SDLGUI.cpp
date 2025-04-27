@@ -121,7 +121,7 @@ public:
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
-                        GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+                     GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // create a renderbuffer object to store depth and stencil info
@@ -134,29 +134,28 @@ public:
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_id);
 
         // attach the texture to FBO color attachment point
-        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,        // 1. fbo target: GL_FRAMEBUFFER_EXT
-                                    GL_COLOR_ATTACHMENT0_EXT,  // 2. attachment point
-                                    GL_TEXTURE_2D,         // 3. tex target: GL_TEXTURE_2D
-                                    m_texture,             // 4. tex ID
-                                    0);                    // 5. mipmap level: 0(base)
+        glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,       // 1. fbo target: GL_FRAMEBUFFER_EXT
+                                  GL_COLOR_ATTACHMENT0_EXT, // 2. attachment point
+                                  GL_TEXTURE_2D,            // 3. tex target: GL_TEXTURE_2D
+                                  m_texture,                // 4. tex ID
+                                  0);                       // 5. mipmap level: 0(base)
 
         // attach the renderbuffer to depth attachment point
-        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,     // 1. fbo target: GL_FRAMEBUFFER_EXT
-                                        GL_DEPTH_ATTACHMENT_EXT,
-                                        GL_RENDERBUFFER_EXT,     // 3. rbo target: GL_RENDERBUFFER_EXT
-                                        m_depth_rbo);              // 4. rbo ID
+        glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,    // 1. fbo target: GL_FRAMEBUFFER_EXT
+                                     GL_DEPTH_ATTACHMENT_EXT,
+                                     GL_RENDERBUFFER_EXT,   // 3. rbo target: GL_RENDERBUFFER_EXT
+                                     m_depth_rbo);          // 4. rbo ID
 
         // the same render buffer has the stencil data in other bits
         glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,
-                                    GL_STENCIL_ATTACHMENT_EXT,
-                                    GL_RENDERBUFFER_EXT,
-                                    m_depth_rbo);
+                                     GL_STENCIL_ATTACHMENT_EXT,
+                                     GL_RENDERBUFFER_EXT,
+                                     m_depth_rbo);
 
         // check FBO status
         GLenum status = glCheckFramebufferStatusEXT (GL_FRAMEBUFFER_EXT);
-        if (status != GL_FRAMEBUFFER_COMPLETE_EXT) {
+        if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
             throw FramebufferFailedException (status);
-        }
 
         // switch back to window-system-provided framebuffer
         glBindFramebufferEXT (GL_FRAMEBUFFER_EXT, 0);
@@ -188,9 +187,7 @@ SDLGUI::SDLGUI(int w, int h, bool calc_FPS, std::string app_name, int x, int y,
     m_initial_y{y},
     m_fullscreen(fullscreen),
     m_fake_mode_change(fake_mode_change)
-{
-    SDLInit();
-}
+{ SDLInit(); }
 
 SDLGUI::~SDLGUI()
 { SDLQuit(); }
@@ -200,8 +197,7 @@ unsigned int SDLGUI::Ticks() const
 
 std::string SDLGUI::ClipboardText() const {
     if (SDL_HasClipboardText()) {
-        char* text = SDL_GetClipboardText();
-        if (text) {
+        if (char* text = SDL_GetClipboardText()) {
             std::string result{text};
             SDL_free(text);
             return result;
