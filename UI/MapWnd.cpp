@@ -4549,7 +4549,7 @@ void MapWnd::SelectFleet(int fleet_id, const ScriptingContext& context, int clie
 
         // first deselect any selected fleets in non-active fleet wnd.  this should
         // not emit any signals about the active fleet wnd's fleets changing
-        const auto& active_fleet_wnd = manager.ActiveFleetWnd();
+        auto* const active_fleet_wnd = manager.ActiveFleetWnd();
 
         for (const auto& fwnd : manager) {
             auto wnd = fwnd.lock();
@@ -6375,7 +6375,7 @@ void MapWnd::ShowMessages() {
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return;
-    const auto& msg_wnd = cui->GetMessageWnd();
+    const auto msg_wnd = cui->GetMessageWnd();
     if (!msg_wnd)
         return;
     GG::GUI* gui = GG::GUI::GetGUI();
@@ -6455,7 +6455,7 @@ bool MapWnd::ToggleEmpires() {
     ClientUI* cui = ClientUI::GetClientUI();
     if (!cui)
         return false;
-    const auto& plr_wnd = cui->GetPlayerListWnd();
+    const auto plr_wnd = cui->GetPlayerListWnd();
     if (!plr_wnd)
         return false;
     if (!plr_wnd->Visible() || m_production_wnd->Visible() ||
