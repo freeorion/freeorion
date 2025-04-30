@@ -1415,12 +1415,11 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         // get index into save game data for this player id
         int player_save_game_data_index = -1;   // default invalid index
-        for (const std::pair<int, int>& entry : player_id_to_save_game_data_index) {
-            int index_player_id = entry.first;
-            if (player_id != index_player_id)
-                continue;
-            player_save_game_data_index = entry.second;
-            break;
+        for (const auto& [index_player_id, index_data] : player_id_to_save_game_data_index) {
+            if (player_id == index_player_id) {
+                player_save_game_data_index = index_data;
+                break;
+            }
         }
         if (player_save_game_data_index == -1) {
             DebugLogger() << "No save game data index for player with id " << player_id;
@@ -1433,7 +1432,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         try {
             const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
             empire_id = psgd.empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
-            player_id_save_game_data[player_id] = psgd; // store by player ID for easier access later
+            player_id_save_game_data.insert_or_assign(player_id, psgd); // store by player ID for easier access later
         } catch (...) {
             ErrorLogger() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
             continue;
@@ -1444,7 +1443,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // and empire IDs are not necessarily the same when loading a game as
         // the player controlling a particular empire might have a different
         // player ID than when the game was first created
-        m_player_empire_ids[player_id] = empire_id;
+        m_player_empire_ids.insert_or_assign(player_id, empire_id);
 
         // set actual authentication status
         if (auto empire = m_empires.GetEmpire(empire_id))
@@ -1737,9 +1736,9 @@ int ServerApp::PlayerEmpireID(int player_id) const {
 }
 
 int ServerApp::EmpirePlayerID(int empire_id) const {
-    for (const auto& entry : m_player_empire_ids)
-        if (entry.second == empire_id)
-            return entry.first;
+    for (const auto& [player_id, player_empire_id] : m_player_empire_ids)
+        if (player_empire_id == empire_id)
+            return player_id;
     return Networking::INVALID_PLAYER_ID;
 }
 
