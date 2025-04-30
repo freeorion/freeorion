@@ -45,6 +45,7 @@
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/Pending.h"
+#include "../util/ranges.h"
 #include "../util/Random.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/ScopedTimer.h"
@@ -222,13 +223,9 @@ void ServerApp::StartBackgroundParsing(const PythonParser& python, std::promise<
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
     DebugLogger() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
     // check if AI clients are needed for given setup data
-    bool need_AIs = false;
-    for (const PlayerSetupData& psd : player_setup_data) {
-        if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
-            need_AIs = true;
-            break;
-        }
-    }
+    static constexpr auto is_ai = [](const auto& psd)
+    { return psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER; };
+    const bool need_AIs = range_any_of(player_setup_data, is_ai);
     if (need_AIs)
         m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::STARTING_AIS));
 
