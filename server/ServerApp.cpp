@@ -269,17 +269,16 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
 
     // TODO: add other command line args to AI client invocation as needed
-    std::vector<std::string> args, arg;
+    std::vector<std::string> args;
+    args.reserve(16);
     args.push_back("\"" + AI_CLIENT_EXE + "\"");
     args.push_back("place_holder");
-    std::size_t player_pos = args.size()-1;
-    std::stringstream max_aggr_str;
-    max_aggr_str << max_aggression;
-    args.push_back(max_aggr_str.str());
+    const std::size_t player_pos = args.size()-1;
+    args.push_back(std::to_string(max_aggression));
     args.push_back("--resource.path");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
 
-    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    const auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
@@ -299,21 +298,25 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     DebugLogger() << "starting AIs with " << AI_CLIENT_EXE ;
     DebugLogger() << "ai-aggression set to " << max_aggression;
     DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
-    std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
-    if (!ai_config.empty()) {
-        args.push_back("--ai-config");
-        args.push_back(ai_config);
-        DebugLogger() << "ai-config set to '" << ai_config << "'";
-    } else {
-        DebugLogger() << "ai-config not set.";
+    {
+        std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
+        if (!ai_config.empty()) {
+            args.push_back("--ai-config");
+            DebugLogger() << "ai-config set to '" << ai_config << "'";
+            args.push_back(std::move(ai_config));
+        } else {
+            DebugLogger() << "ai-config not set.";
+        }
     }
-    std::string ai_log_dir = GetOptionsDB().Get<std::string>("ai-log-dir");
-    if (!ai_log_dir.empty()) {
-        args.push_back("--ai-log-dir");
-        args.push_back(ai_log_dir);
-        DebugLogger() << "ai-log-dir set to '" << ai_log_dir << "'";
-    } else {
-        DebugLogger() << "ai-log-dir not set.";
+    {
+        std::string ai_log_dir = GetOptionsDB().Get<std::string>("ai-log-dir");
+        if (!ai_log_dir.empty()) {
+            args.push_back("--ai-log-dir");
+            DebugLogger() << "ai-log-dir set to '" << ai_log_dir << "'";
+            args.push_back(std::move(ai_log_dir));
+        } else {
+            DebugLogger() << "ai-log-dir not set.";
+        }
     }
 
     // for each AI client player, create a new AI client process
