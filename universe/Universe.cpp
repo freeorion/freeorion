@@ -438,21 +438,19 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
     if (empire_id != ALL_EMPIRES) {
         auto empire_it = m_empire_object_visible_specials.find(empire_id);
         if (empire_it == m_empire_object_visible_specials.end())
-            return std::set<std::string>();
+            return {};
         const ObjectSpecialsMap& object_specials_map = empire_it->second;
         auto object_it = object_specials_map.find(object_id);
         if (object_it == object_specials_map.end())
-            return std::set<std::string>();
+            return {};
         return object_it->second;
     } else {
         auto obj = m_objects.get(object_id);
         if (!obj)
-            return std::set<std::string>();
+            return {};
         // all specials visible
-        std::set<std::string> retval;
-        for (const auto& entry : obj->Specials())
-            retval.insert(entry.first);
-        return retval;
+        auto sp_names_rng = obj->Specials() | range_keys;
+        return {sp_names_rng.begin(), sp_names_rng.end()};
     }
 }
 
