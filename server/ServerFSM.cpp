@@ -106,24 +106,23 @@ namespace {
 
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData>>& psd) {
         DebugLogger(FSM) << "PlayerSetupData:";
-        for (const std::pair<int, PlayerSetupData>& entry : psd) {
+        for (const auto& [id, data] : psd) {
             std::stringstream ss;
-            ss << std::to_string(entry.first) << " : "
-               << entry.second.player_name << ", ";
-            switch (entry.second.client_type) {
+            ss << std::to_string(id) << " : " << data.player_name << ", ";
+            switch (data.client_type) {
             case Networking::ClientType::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
             case Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
             case Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
             case Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER:      ss << "PLAYER, "; break;
             default:                                                    ss << "<invalid client type>, ";
             }
-            EmpireColor empire_color = entry.second.empire_color;
+            const EmpireColor empire_color = data.empire_color;
             ss << "(" << static_cast<unsigned int>(std::get<0>(empire_color))
                << ", " << static_cast<unsigned int>(std::get<1>(empire_color))
                << ", " << static_cast<unsigned int>(std::get<2>(empire_color))
                << ", " << static_cast<unsigned int>(std::get<3>(empire_color)) << "), ";
-            ss << entry.second.starting_species_name;
-            if (entry.second.player_ready)
+            ss << data.starting_species_name;
+            if (data.player_ready)
                 ss << ", Ready";
             DebugLogger(FSM) << " ... " << ss.str();
         }
