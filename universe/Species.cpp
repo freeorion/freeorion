@@ -663,6 +663,8 @@ PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
 }
 
 namespace {
+    static constexpr auto pe_less = [](const auto& lhs, const auto& rhs) noexcept { return lhs.second < rhs.second; };
+
     constexpr PlanetType RingNextPlanetType(PlanetType current_type) noexcept {
         PlanetType next(PlanetType(int(current_type)+1));
         if (next >= PlanetType::PT_ASTEROIDS)
@@ -757,6 +759,12 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
             return RingPreviousPlanetType(initial_planet_type);
     });
 }
+
+PlanetType Species::BestEnvironmentPlanetType() const noexcept {
+    if (m_planet_environments.empty())
+        return PlanetType::INVALID_PLANET_TYPE;
+    return range_max_element(m_planet_environments, pe_less)->first; // type with the best environment rating
+} 
 
 uint32_t Species::GetCheckSum() const {
     uint32_t retval{0};
