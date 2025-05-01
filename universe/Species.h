@@ -150,9 +150,10 @@ public:
     [[nodiscard]] const auto&        Foci() const noexcept { return m_foci; }                  ///< focus types this species can use
     [[nodiscard]] const std::string& DefaultFocus() const noexcept { return m_default_focus; } ///< name of the planetary focus this species defaults to. Used for new colonies and uninvaded natives.
     [[nodiscard]] const auto&        PlanetEnvironments() const noexcept { return m_planet_environments; } ///< map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
-    [[nodiscard]] PlanetEnvironment  GetPlanetEnvironment(PlanetType planet_type) const;                   ///< PlanetEnvironment this species has on PlanetType \a planet_type
-    [[nodiscard]] PlanetType         NextBestPlanetType(PlanetType initial_planet_type) const;             ///< best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
-    [[nodiscard]] PlanetType         NextBetterPlanetType(PlanetType initial_planet_type) const;           ///< PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
+    [[nodiscard]] PlanetEnvironment  GetPlanetEnvironment(PlanetType planet_type) const;       ///< PlanetEnvironment this species has on PlanetType \a planet_type
+    [[nodiscard]] PlanetType         NextBestPlanetType(PlanetType initial_planet_type) const; ///< best PlanetType for this species from the \a initial_planet_type specified which needs the few steps to reach
+    [[nodiscard]] PlanetType         NextBetterPlanetType(PlanetType initial_planet_type) const;///< PlanetType for this species which is a step closer to the best PlanetType than the specified \a initial_planet_type (if such exists)
+    [[nodiscard]] PlanetType         BestEnvironmentPlanetType() const noexcept;               ///< preferred planet type for this species, which is determined by ordering based on environment
 
     /** Returns the EffectsGroups that encapsulate the effects that species of
         this type have. */

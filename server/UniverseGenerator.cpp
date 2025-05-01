@@ -780,24 +780,19 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name,
     // set homeword's planet type to the preferred type for this species
     const auto& spte = species->PlanetEnvironments();
     if (!spte.empty()) {
-        // invert map from planet type to environments to map from
-        // environments to type, sorted by environment
-        std::map<PlanetEnvironment, PlanetType> sept;
-        for (const auto& entry : spte)
-            sept[entry.second] = entry.first;
-        // assuming enum values are ordered in increasing goodness...
-        PlanetType preferred_planet_type = sept.rbegin()->second;
-
-        // both the current as well as the original type need to be set to the preferred type
-        home_planet->SetType(preferred_planet_type);
-        home_planet->SetOriginalType(preferred_planet_type);
-        // set planet size according to planet type
-        if (preferred_planet_type == PlanetType::PT_ASTEROIDS)
-            home_planet->SetSize(PlanetSize::SZ_ASTEROIDS);
-        else if (preferred_planet_type == PlanetType::PT_GASGIANT)
-            home_planet->SetSize(PlanetSize::SZ_GASGIANT);
-        else
-            home_planet->SetSize(PlanetSize::SZ_MEDIUM);
+        const PlanetType preferred_planet_type = species->BestEnvironmentPlanetType();
+        if (preferred_planet_type != PlanetType::INVALID_PLANET_TYPE) {
+            // both the current as well as the original type need to be set to the preferred type
+            home_planet->SetType(preferred_planet_type);
+            home_planet->SetOriginalType(preferred_planet_type);
+            // set planet size according to planet type
+            if (preferred_planet_type == PlanetType::PT_ASTEROIDS)
+                home_planet->SetSize(PlanetSize::SZ_ASTEROIDS);
+            else if (preferred_planet_type == PlanetType::PT_GASGIANT)
+                home_planet->SetSize(PlanetSize::SZ_GASGIANT);
+            else
+                home_planet->SetSize(PlanetSize::SZ_MEDIUM);
+        }
     }
 
     home_planet->Colonize(empire->EmpireID(), species_name, Meter::LARGE_VALUE, context);
