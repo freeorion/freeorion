@@ -614,12 +614,12 @@ std::string Species::Dump(uint8_t ntabs) const {
               .append("\n");
     } else {
         retval += DumpIndent(ntabs+1) + "environments = [\n";
-        for (const auto& entry : m_planet_environments) {
+        for (const auto& [ptype, penv] : m_planet_environments) {
             retval.append(DumpIndent(ntabs+2))
                   .append("type = ")
-                  .append(ValueRef::PlanetTypeToString(entry.first))
+                  .append(ValueRef::PlanetTypeToString(ptype))
                   .append(" environment = ")
-                  .append(ValueRef::PlanetEnvironmentToString(entry.second))
+                  .append(ValueRef::PlanetEnvironmentToString(penv))
                   .append("\n");
         }
         retval += DumpIndent(ntabs+1) + "]\n";
@@ -664,6 +664,19 @@ PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
 
 namespace {
     static constexpr auto pe_less = [](const auto& lhs, const auto& rhs) noexcept { return lhs.second < rhs.second; };
+    static constexpr auto is_ring_pt = [](const auto& pt_pe)
+    { return pt_pe.first >= PlanetType::PT_SWAMP && pt_pe.first <= PlanetType::PT_OCEAN; };
+
+    PlanetEnvironment BestEnv(const auto& planet_types_envs) {
+        static_assert(std::is_same_v<::PlanetType, decltype(planet_types_envs.begin()->first)>);
+        static_assert(std::is_same_v<::PlanetEnvironment, decltype(planet_types_envs.begin()->second)>);
+        auto ring_pt_envs_rng = planet_types_envs | range_filter(is_ring_pt) | range_values;
+        auto best_env_it = range_max_element(ring_pt_envs_rng);
+        if (best_env_it == ring_pt_envs_rng.end())
+            return PlanetEnvironment::PE_UNINHABITABLE;
+        PlanetEnvironment result = *best_env_it;
+        return std::min(std::max(result, PlanetEnvironment::PE_UNINHABITABLE), PlanetEnvironment::PE_GOOD);
+    }
 
     constexpr PlanetType RingNextPlanetType(PlanetType current_type) noexcept {
         PlanetType next(PlanetType(int(current_type)+1));
@@ -698,22 +711,10 @@ PlanetType Species::TheNextBestPlanetTypeApply(PlanetType initial_planet_type,
 
     // determine which environment rating is the best available for this species,
     // excluding gas giants and asteroids
-    PlanetEnvironment best_environment = PlanetEnvironment::PE_UNINHABITABLE;
-    //std::set<PlanetType> best_types;
-    for (const auto& [pt, pe] : m_planet_environments) {
-        if (pt < PlanetType::PT_ASTEROIDS) {
-            if (pe == best_environment) {
-                //best_types.insert(pt);
-            } else if (pe > best_environment) {
-                best_environment = pe;
-                //best_types.clear();
-                //best_types.insert(pt);
-            }
-        }
-    }
+    const PlanetEnvironment best_environment = BestEnv(m_planet_environments);
 
     // if no improvement available, abort early
-    PlanetEnvironment initial_environment = GetPlanetEnvironment(initial_planet_type);
+    const PlanetEnvironment initial_environment = GetPlanetEnvironment(initial_planet_type);
     if (initial_environment >= best_environment)
         return initial_planet_type;
 
@@ -812,8 +813,7 @@ SpeciesManager& SpeciesManager::operator=(SpeciesManager&& rhs) noexcept {
 
 const Species* SpeciesManager::GetSpecies(std::string_view name) const {
     CheckPendingSpeciesTypes();
-    const auto it = m_species.find(name);
-    return it != m_species.end() ? &(it->second) : nullptr;
+    return GetSpeciesUnchecked(name);
 }
 
 const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const {
