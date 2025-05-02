@@ -224,45 +224,54 @@ namespace {
         return retval;
     }
 
-    void RenderSphere(
-        double radius, const GG::Clr ambient, const GG::Clr diffuse,
-        const GG::Clr spec, double shine,
-        std::shared_ptr<GG::Texture> texture)
-    {
-        struct PolarCoordinate {
-            GLfloat sin;
-            GLfloat cos;
-        };
+    struct PolarCoordinate {
+        GLfloat sin = 0;
+        GLfloat cos = 0;
+    };
+    constexpr std::size_t sphere_coords_size = 31;
 
-        static bool usphere_initialized = false;
-        static std::array<PolarCoordinate, 30 + 1> azimuth = {};
-        static std::array<PolarCoordinate, 30 + 1> elevation = {};
+#if defined(__cpp_lib_constexpr_cmath)
+#  define CONSTEXPR_SPHERE_COORDS constexpr
+#else
+#  define CONSTEXPR_SPHERE_COORDS const
+#endif
 
-        if (!usphere_initialized) {
-            // calculate azimuth on unit sphere along equator
-            for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
-                float phi = 2 * M_PI * longitude / (azimuth.size() - 1);
-                azimuth[longitude] = {std::sin(phi), std::cos(phi)};
-            }
+    CONSTEXPR_SPHERE_COORDS auto azimuth = []() {
+        std::array<PolarCoordinate, sphere_coords_size> azimuth{};
 
-            // Make sure equator is a closed circle
-            azimuth.back() = azimuth[0];
+        // calculate azimuth on unit sphere along equator
+        for (std::size_t idx = 0u; idx < sphere_coords_size; ++idx) {
+            GLfloat phi = 2 * M_PI * idx / (sphere_coords_size - 1);
+            azimuth[idx] = {std::sin(phi), std::cos(phi)};
+        }
+        // Make sure equator is a closed circle
+        azimuth.back() = azimuth.front();
 
-            // calculate elevation on unit sphere along meridian
-            for (auto latitude : boost::irange<std::size_t>(0, elevation.size())) {
-                float theta = M_PI * latitude / (elevation.size() - 1);
-                elevation[latitude] = {std::sin(theta), std::cos(theta)};
-            }
+        return azimuth;
+    }();
 
-            // Make sure sphere poles collapse at true zero
-            elevation.front() = {0.0f, 1.0f};
-            elevation.back() = {0.0f, -1.0f};
+    CONSTEXPR_SPHERE_COORDS auto elevation = []() {
+        std::array<PolarCoordinate, sphere_coords_size> elevation{};
 
-            usphere_initialized = true;
+        // calculate elevation on unit sphere along meridian
+        for (std::size_t idx = 0u; idx < sphere_coords_size; ++idx) {
+            GLfloat theta = M_PI * idx / (sphere_coords_size - 1);
+            elevation[idx] = {std::sin(theta), std::cos(theta)};
         }
 
-        if (texture)
-            glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+        // Make sure sphere poles collapse at true zero
+        elevation.front() = {0.0f, 1.0f};
+        elevation.back() = {0.0f, -1.0f};
+
+        return elevation;
+    }();
+
+    void RenderSphere(
+        double radius, const GG::Clr ambient, const GG::Clr diffuse,
+        const GG::Clr spec, double shine, GLuint texture_id)
+    {
+        if (texture_id != 0)
+            glBindTexture(GL_TEXTURE_2D, texture_id);
 
 
         // commented out shininess rendering because it wasn't working properly.
@@ -305,21 +314,23 @@ namespace {
         }
     }
 
-    GLfloat* GetLightPosition() {
-        static GLfloat retval[] = {0.0, 0.0, 0.0, 0.0};
+    const GLfloat* GetLightPosition() {
+        static const auto retval = []() {
+            std::array<GLfloat, 4> retval{0.0f, 0.0f, 0.0f, 0.0f};
 
-        if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0) {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
+            const auto& lpos = doc.root_node.Child("GLPlanets").Child("light_pos");
 
-            retval[0] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
-            retval[1] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
-            retval[2] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
-        }
+            retval[0] = boost::lexical_cast<GLfloat>(lpos.Child("x").Text());
+            retval[1] = boost::lexical_cast<GLfloat>(lpos.Child("y").Text());
+            retval[2] = boost::lexical_cast<GLfloat>(lpos.Child("z").Text());
 
-        return retval;
+            return retval;
+        }();
+        return retval.data();
     }
 
     const auto& GetStarLightColors() {
@@ -367,8 +378,7 @@ namespace {
         return white;
     }
 
-    void RenderPlanet(GG::Pt center, int diameter, std::shared_ptr<GG::Texture> texture,
-                      std::shared_ptr<GG::Texture> overlay_texture,
+    void RenderPlanet(GG::Pt center, int diameter, GLuint texture_id, GLuint overlay_texture_id,
                       double initial_rotation, double RPM, double axial_tilt, double shininess,
                       StarType star_type)
     {
@@ -390,12 +400,12 @@ namespace {
         glLoadIdentity();
 
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
-        GLfloat* light_position = GetLightPosition();
+        const auto light_position = GetLightPosition();
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
 
-        auto& colour = StarLightColour(star_type);
+        const auto& colour = StarLightColour(star_type);
         glLightfv(GL_LIGHT0, GL_DIFFUSE, colour.data());
         glLightfv(GL_LIGHT0, GL_SPECULAR, colour.data());
         glEnable(GL_TEXTURE_2D);
@@ -409,14 +419,14 @@ namespace {
         intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
-        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
 
-        if (overlay_texture) {
+        if (overlay_texture_id != 0) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glCullFace(GL_FRONT);
             glEnable(GL_CULL_FACE);
-            RenderSphere(diameter / 2 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture);
+            RenderSphere(diameter / 2 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture_id);
             glDisable(GL_CULL_FACE);
             glDisable(GL_BLEND);
         }
@@ -782,9 +792,12 @@ public:
     }
 
     void Render() override {
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
+        const auto ul = UpperLeft();
+        const auto lr = LowerRight();
         // render rotating base planet texture
-        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_overlay_texture,
+        RenderPlanet(ul + Size() / 2, Value(Width()),
+                     m_surface_texture ? m_surface_texture->OpenGLId() : 0,
+                     m_overlay_texture ? m_overlay_texture->OpenGLId() : 0,
                      m_initial_rotation, m_rpm, m_axial_tilt, m_shininess, m_star_type);
 
         // overlay atmosphere texture (non-animated)
