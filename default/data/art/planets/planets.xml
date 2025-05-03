@@ -143,68 +143,68 @@
     <RotatingPlanetData
       planet_type="PT_TUNDRA"
       filename="planets/Tundra01.png"
-      shininess="25.0"
+      shininess="4.0"
     />
     <RotatingPlanetData
       planet_type="PT_TUNDRA"
       filename="planets/Tundra02.png"
-      shininess="25.0"
+      shininess="4.0"
     />
     <RotatingPlanetData
       planet_type="PT_TUNDRA"
       filename="planets/Tundra03.png"
-      shininess="20.0"
+      shininess="4.0"
     />
 
 
     <RotatingPlanetData
       planet_type="PT_DESERT"
       filename="planets/Desert01.png"
-      shininess="0.0"
+      shininess="12.0"
     />
     <RotatingPlanetData
       planet_type="PT_DESERT"
       filename="planets/Desert02.png"
-      shininess="0.0"
+      shininess="12.0"
     />
     <RotatingPlanetData
       planet_type="PT_DESERT"
       filename="planets/Desert03.png"
-      shininess="0.0"
+      shininess="12.0"
     />
 
 
     <RotatingPlanetData
       planet_type="PT_TERRAN"
       filename="planets/Terran01.png"
-      shininess="20.0"
+      shininess="8.0"
     />
     <RotatingPlanetData
       planet_type="PT_TERRAN"
       filename="planets/Terran02.png"
-      shininess="20.0"
+      shininess="8.0"
     />
     <RotatingPlanetData
       planet_type="PT_TERRAN"
       filename="planets/Terran03.png"
-      shininess="20.0"
+      shininess="8.0"
     />
 
 
     <RotatingPlanetData
       planet_type="PT_OCEAN"
       filename="planets/Ocean01.png"
-      shininess="40.0"
+      shininess="4.0"
     />
     <RotatingPlanetData
       planet_type="PT_OCEAN"
       filename="planets/Ocean02.png"
-      shininess="40.0"
+      shininess="4.0"
     />
     <RotatingPlanetData
       planet_type="PT_OCEAN"
       filename="planets/Ocean03.png"
-      shininess="40.0"
+      shininess="4.0"
     />
 
 
