@@ -476,16 +476,27 @@ void SDLGUI::RenderEnd() {
         // Draw the virtual screen on the real screen
         glBindTexture(GL_TEXTURE_2D, m_framebuffer->TextureId());
         glEnable(GL_TEXTURE_2D);
-        glBegin(GL_QUADS);
-            glTexCoord2f(0.0, 1.0);
-            glVertex2i(0, 0);
-            glTexCoord2f(1.0, 1.0);
-            glVertex2i(width, 0);
-            glTexCoord2f(1.0, 0.0);
-            glVertex2i(width, height);
-            glTexCoord2f(0.0, 0.0);
-            glVertex2i(0, height);
-        glEnd();
+
+        GL2DVertexBuffer verts;
+        verts.store(std::array<float, 8>{
+            0, 0, static_cast<float>(width), 0,
+            static_cast<float>(width), static_cast<float>(height), 0, static_cast<float>(height)});
+        verts.activate();
+
+        GLTexCoordBuffer tex;
+        tex.store(std::array<float, 8>{0, 1, 1, 1, 1, 0, 0, 0});
+        tex.activate();
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glDrawArrays(GL_QUADS, 0, verts.size());
+
+        glPopClientAttrib();
+
         glEnable(GL_BLEND);
         Exit2DMode();
     }
