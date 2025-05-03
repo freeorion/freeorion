@@ -227,7 +227,7 @@ namespace {
         GLfloat cos = 0;
     };
     constexpr double PI = 3.1415926535897932384626433;
-    constexpr std::size_t sphere_coords_size = 31;
+    constexpr std::size_t sphere_coords_size = 43; // less and there are (more) weird artifacts with larger sizes
 
 #if defined(__cpp_lib_constexpr_cmath)
     using cxsin = std::sin;
@@ -317,6 +317,74 @@ namespace {
     }();
     static_assert(elevation.front().sin == 0 && elevation.back().cos == -1);
 
+    const std::tuple<const GG::GL3DVertexBuffer&,
+                     const GG::GLNormalBuffer&,
+                     const GG::GLTexCoordBuffer&>
+    SphereVerticesNormalsTexCoords(GLfloat radius) {
+        static const GG::GLNormalBuffer norms = []() {
+            GG::GLNormalBuffer norms;
+            norms.reserve(elevation.size()*azimuth.size()*2);
+
+            for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
+                for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
+                    norms.store(azimuth[long_idx].sin * elevation[lat_idx+1].sin,
+                                azimuth[long_idx].cos * elevation[lat_idx+1].sin,
+                                elevation[lat_idx+1].cos);
+                    norms.store(azimuth[long_idx].sin * elevation[lat_idx].sin,
+                                azimuth[long_idx].cos * elevation[lat_idx].sin,
+                                elevation[lat_idx].cos);
+                }
+            }
+
+            return norms;
+        }();
+
+        static const GG::GLTexCoordBuffer tex = []() {
+            GG::GLTexCoordBuffer tex;
+            tex.reserve(elevation.size()*azimuth.size()*2);
+
+            for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
+                const float lat1 = 1.0f - static_cast<GLfloat>(lat_idx + 1) / (elevation.size() - 1);
+                const float lat0 = 1.0f - static_cast<GLfloat>(lat_idx) / (elevation.size() - 1);
+
+                for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
+                    const float long0 = 1.0f - static_cast<GLfloat>(long_idx) / (azimuth.size() - 1);
+                    tex.store(long0, lat1);
+                    tex.store(long0, lat0);
+                }
+            }
+
+            return tex;
+        }();
+
+        static std::map<GLfloat, GG::GL3DVertexBuffer> verts;
+        {
+            auto it = verts.find(radius);
+            if (it != verts.end())
+                return {it->second, norms, tex};
+        }
+
+        auto& new_verts = [radius]() -> const auto& {
+            auto& new_verts = verts[radius];
+            new_verts.reserve(elevation.size()*azimuth.size()*2);
+
+            for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
+                for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
+                    new_verts.store(azimuth[long_idx].sin * elevation[lat_idx+1u].sin * radius,
+                                    azimuth[long_idx].cos * elevation[lat_idx+1u].sin * radius,
+                                    elevation[lat_idx+1u].cos * radius);
+                    new_verts.store(azimuth[long_idx].sin * elevation[lat_idx].sin * radius,
+                                    azimuth[long_idx].cos * elevation[lat_idx].sin * radius,
+                                    elevation[lat_idx].cos * radius);
+                }
+            }
+
+            return new_verts;
+        }();
+            
+        return {new_verts, norms, tex};
+    }
+
     void RenderSphere(double radius, const GG::Clr ambient, const GG::Clr diffuse,
                       const GG::Clr spec, float shine, GLuint texture_id)
     {
@@ -336,31 +404,21 @@ namespace {
 
         glColor(GG::CLR_WHITE);
 
+        const auto& [verts, norms, tex] = SphereVerticesNormalsTexCoords(radius);
 
+        verts.activate();
+        norms.activate();
+        tex.activate();
 
-        for (auto latitude : boost::irange<std::size_t>(0, elevation.size() - 1)) {
-            glBegin(GL_QUAD_STRIP);
-            for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
-                glNormal3f(azimuth[longitude].sin * elevation[latitude+1].sin,
-                           azimuth[longitude].cos * elevation[latitude+1].sin,
-                           elevation[latitude+1].cos);
-                glTexCoord2f(1 - (float)(longitude) / (azimuth.size() - 1),
-                             1 - (float)(latitude+1) / (elevation.size() - 1));
-                glVertex3f(azimuth[longitude].sin * elevation[latitude+1].sin * radius,
-                           azimuth[longitude].cos * elevation[latitude+1].sin * radius,
-                           elevation[latitude+1].cos * radius);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-                glNormal3f(azimuth[longitude].sin * elevation[latitude].sin,
-                           azimuth[longitude].cos * elevation[latitude].sin,
-                           elevation[latitude].cos);
-                glTexCoord2f(1 - (float)(longitude) / (azimuth.size() - 1),
-                             1 - (float)(latitude) / (elevation.size() - 1));
-                glVertex3f(azimuth[longitude].sin * elevation[latitude].sin * radius,
-                           azimuth[longitude].cos * elevation[latitude].sin * radius,
-                           elevation[latitude].cos * radius);
-            }
-            glEnd();
-        }
+        glDrawArrays(GL_QUAD_STRIP, 0, verts.size());
+
+        glPopClientAttrib();
     }
 
     const GLfloat* GetLightPosition() {
