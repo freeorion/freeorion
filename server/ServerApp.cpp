@@ -262,7 +262,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     max_aggr_str << max_aggression;
     args.push_back(max_aggr_str.str());
     args.push_back("--resource.path");
-    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
+    args.push_back("\"" + PathToString(GetOptionsDB().Get<boost::filesystem::path>("resource.path")) + "\"");
 
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {

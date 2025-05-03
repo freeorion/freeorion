@@ -22,9 +22,9 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
 #ifdef FREEORION_ANDROID
-        db.Add<std::string>("resource.path",                UserStringNop("OPTIONS_DB_RESOURCE_DIR"),           "default");
+        db.Add<boost::filesystem::path>("resource.path",    UserStringNop("OPTIONS_DB_RESOURCE_DIR"),           {"default"});
 #else
-        db.Add<std::string>("resource.path",                UserStringNop("OPTIONS_DB_RESOURCE_DIR"),           PathToString(GetRootDataDir() / "default"));
+        db.Add<boost::filesystem::path>("resource.path",    UserStringNop("OPTIONS_DB_RESOURCE_DIR"),           GetRootDataDir() / "default");
 #endif
         db.Add<std::string>('S', "save.path",               UserStringNop("OPTIONS_DB_SAVE_DIR"),               PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("save.server.path",             UserStringNop("OPTIONS_DB_SERVER_SAVE_DIR"),        PathToString(GetUserDataDir() / "save"));
