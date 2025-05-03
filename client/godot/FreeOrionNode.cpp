@@ -72,7 +72,9 @@ void FreeOrionNode::_register_methods() {
 
     register_method("new_single_player_game", &FreeOrionNode::new_single_player_game);
     register_method("network_thread", &FreeOrionNode::network_thread);
+    register_method("parsing_thread", &FreeOrionNode::parsing_thread);
     register_method("start_network_thread", &FreeOrionNode::start_network_thread);
+    register_method("start_parsing_thread", &FreeOrionNode::start_parsing_thread);
     register_method("get_version", &FreeOrionNode::get_version);
     register_method("is_server_connected", &FreeOrionNode::is_server_connected);
     register_method("connect_to_server", &FreeOrionNode::connect_to_server);
@@ -92,6 +94,7 @@ void FreeOrionNode::_register_methods() {
     godot::register_signal<FreeOrionNode>("start_game", "is_new_game", GODOT_VARIANT_TYPE_BOOL);
     // ToDo: implement timestamps
     godot::register_signal<FreeOrionNode>("chat_message", "text", GODOT_VARIANT_TYPE_STRING, "player_name", GODOT_VARIANT_TYPE_STRING, "text_color", GODOT_VARIANT_TYPE_COLOR, "pm", GODOT_VARIANT_TYPE_BOOL);
+    godot::register_signal<FreeOrionNode>("parsing_completed");
 }
 
 FreeOrionNode::FreeOrionNode()
@@ -163,6 +166,9 @@ void FreeOrionNode::_init() {
 #endif
 
     m_app = std::make_unique<GodotClientApp>();
+
+    m_parsing_thread = godot::Ref<godot::Thread>();
+    m_parsing_thread.instance();
 
     m_network_thread = godot::Ref<godot::Thread>();
     m_network_thread.instance();
@@ -362,8 +368,19 @@ void FreeOrionNode::network_thread() {
     DebugLogger() << "FreeOrionNode::network_thread(): Freeorion networking stopped";
 }
 
+void FreeOrionNode::parsing_thread() {
+    DebugLogger() << "FreeOrionNode::parsing_thread(): Freeorion parsing started";
+    m_app->StartParsingContent();
+    emit_signal("parsing_completed");
+    DebugLogger() << "FreeOrionNode::parsing_thread(): Freeorion parsing stopped";
+}
+
 void FreeOrionNode::start_network_thread() {
-    m_network_thread->start(this, "network_thread");   
+    m_network_thread->start(this, "network_thread");
+}
+
+void FreeOrionNode::start_parsing_thread() {
+    m_parsing_thread->start(this, "parsing_thread");
 }
 
 void FreeOrionNode::new_single_player_game() {

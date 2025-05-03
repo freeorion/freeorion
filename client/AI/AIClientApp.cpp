@@ -134,10 +134,7 @@ void AIClientApp::Run() {
                                                  boost::uuids::nil_uuid()));
 
         // Start parsing content
-        std::promise<void> barrier;
-        std::future<void> barrier_future = barrier.get_future();
-        StartBackgroundParsing(PythonParser(*m_AI, GetResourceDir() / "scripting"), std::move(barrier));
-        barrier_future.wait();
+        StartBackgroundParsing(PythonParser(*m_AI, GetResourceDir() / "scripting"));
 
         // Import python main module only after game content has been parsed, allowing
         // python to query e.g. NamedReals during module initialization.

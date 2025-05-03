@@ -94,7 +94,7 @@ public:
 
     void operator()(); ///< external interface to Run()
 
-    void StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier) override;
+    void StartBackgroundParsing(const PythonParser& python) override;
 
     /** Returns the galaxy setup data used for the current game */
     [[nodiscard]] GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
