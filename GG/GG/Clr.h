@@ -89,6 +89,10 @@ struct Clr
     [[nodiscard]] constexpr std::array<uint8_t, 4> RGBA() const noexcept
     { return {r, g, b, a}; }
 
+    [[nodiscard]] constexpr std::array<float, 4> ToNormalizedRGBA() const noexcept
+    { return {r/255.0f, g/255.0f, b/255.0f, a/255.0f}; }
+
+
 #if defined(__cpp_impl_three_way_comparison)
     [[nodiscard]] constexpr auto operator<=>(const Clr&) const noexcept = default;
 #else
