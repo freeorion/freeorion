@@ -118,8 +118,8 @@ namespace {
     };
 
     const auto& GetRotatingPlanetData() {
-        static boost::container::flat_map<PlanetType, std::vector<RotatingPlanetData>> data;
-        if (data.empty()) {
+        static const auto data = []() {
+            boost::container::flat_map<PlanetType, std::vector<RotatingPlanetData>> data;
             ScopedTimer timer("GetRotatingPlanetData initialization", true);
             XMLDoc doc;
             try {
@@ -139,18 +139,19 @@ namespace {
                     }
                 }
             }
-        }
+            return data;
+        }();
         return data;
     }
 
     const auto& GetPlanetAtmosphereData() {
-        static boost::container::flat_map<std::string, PlanetAtmosphereData> data;
-        if (data.empty()) {
+        static const auto data = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
+            boost::container::flat_map<std::string, PlanetAtmosphereData> data;
             for (const XMLElement& atmosphere_definition : doc.root_node.Children()) {
                 if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
                     try {
@@ -162,65 +163,62 @@ namespace {
                     }
                 }
             }
-        }
+            return data;
+        }();
         return data;
     }
 
     double GetAsteroidsFPS() {
-        static double retval = -1.0;
-        if (retval == -1.0) {
+        static const double retval = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
             if (doc.root_node.ContainsChild("asteroids_fps"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("asteroids_fps").Text());
+                return std::max(0.0, std::min(60.0, boost::lexical_cast<double>(
+                    doc.root_node.Child("asteroids_fps").Text())));
             else
-                retval = 15.0;
-
-            retval = std::max(0.0, std::min(retval, 60.0));
-        }
+                return 15.0;
+        }();
         return retval;
     }
 
     double GetRotatingPlanetAmbientIntensity() {
-        static double retval = -1.0;
-
-        if (retval == -1.0) {
+        static const double retval = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
-            else
-                retval = 0.5;
-
-            retval = std::max(0.0, std::min(retval, 1.0));
-        }
-
+            if (doc.root_node.ContainsChild("GLPlanets") &&
+                doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
+            {
+                return std::max(0.0, std::min(1.0, boost::lexical_cast<double>(
+                    doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text())));
+            } else {
+                return 0.5;
+            }
+        }();
         return retval;
     }
 
     double GetRotatingPlanetDiffuseIntensity() {
-        static double retval = -1.0;
-
-        if (retval == -1.0) {
+        static const double retval = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
-            else
-                retval = 0.5;
-
-            retval = std::max(0.0, std::min(retval, 1.0));
-        }
-
+            if (doc.root_node.ContainsChild("GLPlanets") &&
+                doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
+            {
+                return std::max(0.0, std::min(1.0, boost::lexical_cast<double>(
+                    doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text())));
+            } else {
+                return 0.5;
+            }
+        }();
         return retval;
     }
 
