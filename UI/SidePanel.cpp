@@ -78,15 +78,15 @@ namespace {
 
             planet_type = PlanetTypeFromString(elem.Attribute("planet_type"));
             filename = elem.Attribute("filename");
-            shininess = boost::lexical_cast<double>(elem.Attribute("shininess"));
+            shininess = boost::lexical_cast<float>(elem.Attribute("shininess"));
 
             // ensure proper bounds
-            shininess = std::max(0.0, std::min(shininess, 128.0));
+            shininess = std::max(0.0f, std::min(shininess, 128.0f));
         }
 
         PlanetType  planet_type;    ///< the type of planet for which this data may be used
         std::string filename;       ///< the filename of the image used to texture a rotating image
-        double      shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
+        float       shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
     };
 
     struct PlanetAtmosphereData {
@@ -317,29 +317,27 @@ namespace {
     }();
     static_assert(elevation.front().sin == 0 && elevation.back().cos == -1);
 
-    void RenderSphere(
-        double radius, const GG::Clr ambient, const GG::Clr diffuse,
-        const GG::Clr spec, double shine, GLuint texture_id)
+    void RenderSphere(double radius, const GG::Clr ambient, const GG::Clr diffuse,
+                      const GG::Clr spec, float shine, GLuint texture_id)
     {
         if (texture_id != 0)
             glBindTexture(GL_TEXTURE_2D, texture_id);
 
+        if (shine != 0) {
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shine);
+            const auto spec_v = spec.ToNormalizedRGBA();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v.data());
+        }
 
-        // commented out shininess rendering because it wasn't working properly.
-        // it just appeared as a white blob, seemingly at the poles of the planet (but possibly not?)
-        // regardless, IMO it didn't look good. -Geoff
-        //if (shine) {
-        //    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, static_cast<float>(shine));
-        //    GLfloat spec_v[] = {spec.r / 255.0f, spec.g / 255.0f, spec.b / 255.0f, spec.a / 255.0f};
-        //    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
-        //}
-
-        GLfloat ambient_v[] = {ambient.r / 255.0f, ambient.g / 255.0f, ambient.b / 255.0f, ambient.a / 255.0f};
-        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_v);
-        GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v);
+        const auto ambient_v = ambient.ToNormalizedRGBA();
+        const auto diffuse_v = diffuse.ToNormalizedRGBA();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_v.data());
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v.data());
 
         glColor(GG::CLR_WHITE);
+
+
+
         for (auto latitude : boost::irange<std::size_t>(0, elevation.size() - 1)) {
             glBegin(GL_QUAD_STRIP);
             for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
@@ -430,7 +428,7 @@ namespace {
     }
 
     void RenderPlanet(GG::Pt center, int diameter, GLuint texture_id, GLuint overlay_texture_id,
-                      double initial_rotation, double RPM, double axial_tilt, double shininess,
+                      double initial_rotation, double RPM, float axial_tilt, float shininess,
                       StarType star_type)
     {
         glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT | GL_SCISSOR_BIT);
@@ -470,14 +468,14 @@ namespace {
         intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
-        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
+        RenderSphere(diameter / 2.0, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
 
         if (overlay_texture_id != 0) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glCullFace(GL_FRONT);
             glEnable(GL_CULL_FACE);
-            RenderSphere(diameter / 2 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture_id);
+            RenderSphere(diameter / 2.0 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture_id);
             glDisable(GL_CULL_FACE);
             glDisable(GL_BLEND);
         }
@@ -508,16 +506,17 @@ namespace {
         default                       : scale = 3.0/7.0; break;
         }
 
+        int MAX_PLANET_DIAMETER = MaxPlanetDiameter();
         int MIN_PLANET_DIAMETER = GetOptionsDB().Get<int>("ui.map.sidepanel.planet.diameter.min");
         // sanity check
-        if (MIN_PLANET_DIAMETER > MaxPlanetDiameter())
-            MIN_PLANET_DIAMETER = MaxPlanetDiameter();
+        if (MIN_PLANET_DIAMETER > MAX_PLANET_DIAMETER)
+            MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER;
 
-        return static_cast<int>(MIN_PLANET_DIAMETER + (MaxPlanetDiameter() - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
+        return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
     }
 
     /** Adds options related to sidepanel to Options DB. */
-    void        AddOptions(OptionsDB& db) {
+    void AddOptions(OptionsDB& db) {
         db.Add("ui.map.sidepanel.planet.diameter.max",      UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),
                128,                         RangedValidator<int>(16, 512));
         db.Add("ui.map.sidepanel.planet.diameter.min",      UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),
@@ -526,7 +525,7 @@ namespace {
                true,                        Validator<bool>());
         db.Add("ui.map.sidepanel.planet.scanlane.color",    UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),
                GG::Clr(0, 0, 0, 128),       Validator<GG::Clr>());
-        db.Add("UI.sidepanel-planet-status-icon-size",       UserStringNop("OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE"),
+        db.Add("UI.sidepanel-planet-status-icon-size",      UserStringNop("OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE"),
                32,                          RangedValidator<int>(8, 128));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
