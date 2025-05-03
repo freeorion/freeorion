@@ -226,35 +226,87 @@ namespace {
         GLfloat sin = 0;
         GLfloat cos = 0;
     };
+    constexpr double PI = 3.1415926535897932384626433;
     constexpr std::size_t sphere_coords_size = 31;
 
 #if defined(__cpp_lib_constexpr_cmath)
-#  define CONSTEXPR_SPHERE_COORDS constexpr
+    using cxsin = std::sin;
+    using cxcos = std::cos;
 #else
-#  define CONSTEXPR_SPHERE_COORDS const
+    constexpr GLfloat cxsin(GLfloat a) {
+        if (a == 0 || a == PI) return 0.0;
+        if (a == PI/2) return 1.0;
+        if (a < 0) return -cxsin(-a);
+        if (a > 2*PI) return cxsin(a - 2*PI*static_cast<uint64_t>(a / (2*PI)));
+        if (a > PI/2) return cxsin(PI - a);
+
+        GLfloat apow = a;
+        GLfloat sum = a;
+        uint64_t factorial = 1;
+        int8_t signpart = 1;
+        const GLfloat a2 = a*a;
+
+        static_assert(15*14 < std::numeric_limits<uint8_t>::max());
+        for (uint8_t pow = 3; pow <= 15; pow += 2) {
+            apow *= a2;
+            factorial *= (pow * (pow - 1));
+            signpart = -signpart;
+            sum += (apow / factorial * signpart);
+        }
+
+        return sum;
+    }
+
+    constexpr GLfloat cxcos(GLfloat a) {
+        if (a == 0) return 1.0;
+        if (a == PI/2) return 0.0;
+        if (a < 0) return cxcos(-a);
+        if (a > 2*PI) return cxcos(a - 2*PI*static_cast<uint64_t>(a / (2*PI)));
+        if (a > PI/2) return -cxcos(PI - a);
+
+        GLfloat apow = 1;
+        GLfloat sum = 1;
+        uint64_t factorial = 1;
+        int8_t signpart = 1;
+        const GLfloat a2 = a*a;
+
+        static_assert(14*13 < std::numeric_limits<uint8_t>::max());
+        for (uint8_t pow = 2; pow <= 14u; pow += 2u) {
+            apow *= a2;
+            factorial *= (pow * (pow - 1));
+            signpart = -signpart;
+            sum += (apow / factorial * signpart);
+        }
+
+        return sum;
+    }
+
+    consteval uint64_t factorial(uint64_t n) { return (n >= 2u) ? (n * factorial(n-1u)) : 1u; }
+    static_assert(factorial(15) == 1307674368000 && 1307674368000 < std::numeric_limits<uint64_t>::max());
 #endif
 
-    CONSTEXPR_SPHERE_COORDS auto azimuth = []() {
+    constexpr auto azimuth = []() {
         std::array<PolarCoordinate, sphere_coords_size> azimuth{};
 
         // calculate azimuth on unit sphere along equator
         for (std::size_t idx = 0u; idx < sphere_coords_size; ++idx) {
             GLfloat phi = 2 * M_PI * idx / (sphere_coords_size - 1);
-            azimuth[idx] = {std::sin(phi), std::cos(phi)};
+            azimuth[idx] = {cxsin(phi), cxcos(phi)};
         }
         // Make sure equator is a closed circle
         azimuth.back() = azimuth.front();
 
         return azimuth;
     }();
+    static_assert(azimuth.front().sin == 0);
 
-    CONSTEXPR_SPHERE_COORDS auto elevation = []() {
+    constexpr auto elevation = []() {
         std::array<PolarCoordinate, sphere_coords_size> elevation{};
 
         // calculate elevation on unit sphere along meridian
         for (std::size_t idx = 0u; idx < sphere_coords_size; ++idx) {
             GLfloat theta = M_PI * idx / (sphere_coords_size - 1);
-            elevation[idx] = {std::sin(theta), std::cos(theta)};
+            elevation[idx] = {cxsin(theta), cxcos(theta)};
         }
 
         // Make sure sphere poles collapse at true zero
@@ -263,6 +315,7 @@ namespace {
 
         return elevation;
     }();
+    static_assert(elevation.front().sin == 0 && elevation.back().cos == -1);
 
     void RenderSphere(
         double radius, const GG::Clr ambient, const GG::Clr diffuse,
