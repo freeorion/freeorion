@@ -54,14 +54,14 @@ struct Clr
     [[nodiscard]] constexpr Clr(std::string_view hex_colour)
     {
         const auto sz = hex_colour.size();
-        r = (sz >= 2) ? ValFromTwoHexChars(hex_colour.substr(0, 2)) : 0;
-        g = (sz >= 4) ? ValFromTwoHexChars(hex_colour.substr(2, 2)) : 0;
-        b = (sz >= 6) ? ValFromTwoHexChars(hex_colour.substr(4, 2)) : 0;
-        a = (sz >= 8) ? ValFromTwoHexChars(hex_colour.substr(6, 2)) : 255;
+        r = (sz >= 2u) ? ValFromTwoHexChars(hex_colour.substr(0, 2)) : 0u;
+        g = (sz >= 4u) ? ValFromTwoHexChars(hex_colour.substr(2, 2)) : 0u;
+        b = (sz >= 6u) ? ValFromTwoHexChars(hex_colour.substr(4, 2)) : 0u;
+        a = (sz >= 8u) ? ValFromTwoHexChars(hex_colour.substr(6, 2)) : 255u;
     }
 
     [[nodiscard]] explicit constexpr operator uint32_t() const noexcept
-    { return (r << 24) + (g << 16) + (b << 8) + a; }
+    { return (uint32_t{r} << 24u) + (uint32_t{g} << 16u) + (uint32_t{b} << 8u) + uint32_t{a}; }
 
     [[nodiscard]] constexpr auto ToCharArray() const noexcept
     {
