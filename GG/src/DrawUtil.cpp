@@ -297,6 +297,17 @@ void XMark(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glEnable(GL_TEXTURE_2D);
 }
 
+namespace {
+    constexpr auto CorrectAngle(double theta) {
+        // correct to range [0, 2pi)
+        if (theta < 0)
+            return theta + (static_cast<int64_t>(-theta / twoPI) + 1) * twoPI;
+        else if (theta >= twoPI)
+            return theta - static_cast<int64_t>(theta / twoPI) * twoPI;
+        else
+            return theta;
+    }
+}
 
 void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
                unsigned int bevel_thick, double theta1, double theta2)
@@ -306,15 +317,13 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     const GLfloat ht = Value(lr.y - ul.y);
     glDisable(GL_TEXTURE_2D);
 
-    // correct theta* values to range [0, 2pi)
-    if (theta1 < 0)
-        theta1 += (int(-theta1 / twoPI) + 1) * twoPI;
-    else if (theta1 >= twoPI)
-        theta1 -= int(theta1 / twoPI) * twoPI;
-    if (theta2 < 0)
-        theta2 += (int(-theta2 / twoPI) + 1) * twoPI;
-    else if (theta2 >= twoPI)
-        theta2 -= int(theta2 / twoPI) * twoPI;
+    theta1 = CorrectAngle(theta1);
+    theta2 = CorrectAngle(theta2);
+
+    const double theta1_x = cos(-theta1);
+    const double theta1_y = sin(-theta1);
+    const double theta2_x = cos(-theta2);
+    const double theta2_y = sin(-theta2);
 
     const std::size_t SLICES = std::min(3.0 + std::max(wd, ht), 50.0);  // how much to tesselate the circle coordinates
     const double HORZ_THETA = twoPI / SLICES;
@@ -349,7 +358,6 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(0, 0);
     // point on circle at angle theta1
-    const double theta1_x = cos(-theta1), theta1_y = sin(-theta1);
     glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
@@ -357,7 +365,6 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
         int Y = X + 1;
         glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
-    const double theta2_x = cos(-theta2), theta2_y = sin(-theta2);
     glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
     glEnd();
     glBegin(GL_QUAD_STRIP);
