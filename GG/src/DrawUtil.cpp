@@ -8,7 +8,6 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <utility>
-#include <valarray>
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
 #include <GG/GLClientAndServerBuffer.h>
@@ -123,11 +122,6 @@ std::vector<Rect> g_scissor_clipping_rects;
 
 /// the index of the next stencil bit to use for stencil clipping
 unsigned int g_stencil_bit = 0;
-
-/// whenever points on the unit circle are calculated with expensive sin() and cos() calls, the results are cached here
-std::map<int, std::valarray<double>> unit_circle_coords;
-/// this doesn't serve as a cache, but does allow us to prevent numerous constructions and destructions of Clr valarrays.
-std::map<int, std::valarray<Clr>> color_arrays;
 
 void Rectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
                unsigned int bevel_thick, bool bevel_left, bool bevel_top,
@@ -307,6 +301,38 @@ namespace {
         else
             return theta;
     }
+
+    const auto GetUnitCircleAndColours(std::size_t SLICES) {
+        // whenever points on the unit circle are calculated with expensive
+        // sin() and cos() calls, the results are cached here
+        static std::map<int, std::vector<double>> unit_circle_coords;
+
+        // this doesn't serve as a cache, but does allow us to prevent numerous
+        // constructions and destructions of Clr valarrays.
+        static std::map<int, std::vector<Clr>> color_arrays;
+
+        auto& verts = unit_circle_coords[SLICES];
+        auto& colors = color_arrays[SLICES];
+
+        if (verts.empty()) {
+            const double HORZ_THETA = twoPI / SLICES;
+
+            verts.resize(2u * (SLICES + 1), 0.0);
+
+            // calculate x,y values for each point on a unit circle divided into SLICES arcs
+            double theta = 0.0f;
+            for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
+                verts[j*2] = cos(-theta);
+                verts[j*2+1] = sin(-theta);
+            }
+
+            // create but don't initialize (this is essentially just scratch space,
+            // since the colors are different call-to-call)
+            colors.resize(SLICES + 1, Clr());
+        }
+
+        return std::pair<const std::vector<double>&, std::vector<GG::Clr>&>{verts, colors};
+    }
 }
 
 void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
@@ -328,17 +354,9 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     const std::size_t SLICES = std::min(3.0 + std::max(wd, ht), 50.0);  // how much to tesselate the circle coordinates
     const double HORZ_THETA = twoPI / SLICES;
 
-    auto& unit_vertices = unit_circle_coords[SLICES];
-    auto& colors = color_arrays[SLICES];
-    if (unit_vertices.size() == 0) { // no .empty() apparently?
-        unit_vertices.resize(2u * (SLICES + 1), 0.0);
-        double theta = 0.0f;
-        for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
-            unit_vertices[j*2] = cos(-theta);
-            unit_vertices[j*2+1] = sin(-theta);
-        }
-        colors.resize(SLICES + 1, Clr()); // create but don't initialize (this is essentially just scratch space, since the colors are different call-to-call)
-    }
+    auto& [unit_vertices, colors] = GetUnitCircleAndColours(SLICES);
+
+
     const int first_slice_idx = int(theta1 / HORZ_THETA + 1);
     int last_slice_idx = int(theta2 / HORZ_THETA - 1);
     if (theta1 >= theta2)
