@@ -361,9 +361,14 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     int last_slice_idx = int(theta2 / HORZ_THETA - 1);
     if (theta1 >= theta2)
         last_slice_idx += SLICES;
-    for (std::size_t j = first_slice_idx; cmp_less_equal(j, last_slice_idx); ++j) { // calculate the color value for each needed point
-        std::size_t X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1; // confusing use of operator ,
-        const double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
+
+    // calculate the color for each needed point
+    for (std::size_t j = first_slice_idx; cmp_less_equal(j, last_slice_idx); ++j) {
+        std::size_t X = (j > SLICES ? (j - SLICES) : j) * 2;
+        std::size_t Y = X + 1;
+        // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2),
+        // the direction of the light source, scaled to the range [0,1]
+        const double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2;
         colors[j] = BlendClr(border_color1, border_color2, color_scale_factor);
     }
 
