@@ -70,7 +70,7 @@ namespace {
     }
 
     struct QuitSignal {
-        QuitSignal(int exit_code_) :
+        constexpr QuitSignal(int exit_code_) noexcept:
             exit_code(exit_code_)
         {}
 
@@ -79,11 +79,11 @@ namespace {
 
     class FramebufferFailedException : public std::exception {
     public:
-        FramebufferFailedException(GLenum status):
+        FramebufferFailedException(GLenum status) noexcept :
             m_status(status)
         {}
 
-        const char* what() const noexcept override {
+        [[nodiscard]] const char* what() const noexcept override {
             switch (m_status) {
                 case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
                     return "The requested framebuffer format was unsupported";
