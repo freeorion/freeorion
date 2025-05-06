@@ -308,7 +308,7 @@ namespace {
         static std::map<int, std::vector<double>> unit_circle_coords;
 
         // this doesn't serve as a cache, but does allow us to prevent numerous
-        // constructions and destructions of Clr valarrays.
+        // constructions and destructions of Clr vectors.
         static std::map<int, std::vector<Clr>> color_arrays;
 
         auto& verts = unit_circle_coords[SLICES];
@@ -394,7 +394,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     // point on circle at angle theta1
     double color_scale_factor = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
     Clr clr = BlendClr(border_color1, border_color2, color_scale_factor);
-    glColor4ub(clr.r, clr.g, clr.b, clr.a);
+    glColor(clr);
     glVertex2f(theta1_x, theta1_y);
     glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
@@ -408,7 +408,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     // theta2
     color_scale_factor = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
     clr = BlendClr(border_color1, border_color2, color_scale_factor);
-    glColor4ub(clr.r, clr.g, clr.b, clr.a);
+    glColor(clr);
     glVertex2f(theta2_x, theta2_y);
     glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
     glEnd();
