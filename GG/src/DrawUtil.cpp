@@ -302,37 +302,35 @@ namespace {
             return theta;
     }
 
-    const auto GetUnitCircleAndColours(std::size_t SLICES) {
-        // whenever points on the unit circle are calculated with expensive
-        // sin() and cos() calls, the results are cached here
-        static std::map<int, std::vector<double>> unit_circle_coords;
+    constexpr std::size_t SLICES = 36u; // how much to tesselate the circle coordinates
 
-        // this doesn't serve as a cache, but does allow us to prevent numerous
-        // constructions and destructions of Clr vectors.
-        static std::map<int, std::vector<Clr>> color_arrays;
+    // this doesn't serve as a cache, but does allow us to prevent numerous
+    // constructions and destructions of Clr vectors.
+#if defined(__cpp_constinit)
+    constinit
+#endif
+    auto colors = []() {
+        std::array<GG::Clr, SLICES+1u> colors{};
+        colors.fill(GG::CLR_ZERO);
+        return colors;
+    }();
 
-        auto& verts = unit_circle_coords[SLICES];
-        auto& colors = color_arrays[SLICES];
+    constexpr double HORZ_THETA = twoPI / SLICES;
 
-        if (verts.empty()) {
-            const double HORZ_THETA = twoPI / SLICES;
+    // cache of sin() and cos() calls
+    const auto unit_vertices = []() {
+        std::array<double, 2u*(SLICES+1u)> verts{};
 
-            verts.resize(2u * (SLICES + 1), 0.0);
+        const double HORZ_THETA = twoPI / SLICES;
 
-            // calculate x,y values for each point on a unit circle divided into SLICES arcs
-            double theta = 0.0f;
-            for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
-                verts[j*2] = cos(-theta);
-                verts[j*2+1] = sin(-theta);
-            }
-
-            // create but don't initialize (this is essentially just scratch space,
-            // since the colors are different call-to-call)
-            colors.resize(SLICES + 1, Clr());
+        // calculate x,y values for each point on a unit circle divided into SLICES arcs
+        double theta = 0.0f;
+        for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
+            verts[j*2] = cos(-theta);
+            verts[j*2+1] = sin(-theta);
         }
-
-        return std::pair<const std::vector<double>&, std::vector<GG::Clr>&>{verts, colors};
-    }
+        return verts;
+    }();
 }
 
 void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
@@ -350,12 +348,6 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     const double theta1_y = sin(-theta1);
     const double theta2_x = cos(-theta2);
     const double theta2_y = sin(-theta2);
-
-    const std::size_t SLICES = std::min(3.0 + std::max(wd, ht), 50.0);  // how much to tesselate the circle coordinates
-    const double HORZ_THETA = twoPI / SLICES;
-
-    auto& [unit_vertices, colors] = GetUnitCircleAndColours(SLICES);
-
 
     const int first_slice_idx = int(theta1 / HORZ_THETA + 1);
     int last_slice_idx = int(theta2 / HORZ_THETA - 1);
@@ -392,9 +384,9 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     glEnd();
     glBegin(GL_QUAD_STRIP);
     // point on circle at angle theta1
-    double color_scale_factor = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
-    Clr clr = BlendClr(border_color1, border_color2, color_scale_factor);
-    glColor(clr);
+    const auto color_scale_factor1 = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
+    const auto clr1 = BlendClr(border_color1, border_color2, color_scale_factor1);
+    glColor(clr1);
     glVertex2f(theta1_x, theta1_y);
     glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
@@ -406,9 +398,9 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
         glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
     // theta2
-    color_scale_factor = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
-    clr = BlendClr(border_color1, border_color2, color_scale_factor);
-    glColor(clr);
+    const auto color_scale_factor2 = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
+    const auto clr2 = BlendClr(border_color1, border_color2, color_scale_factor2);
+    glColor(clr2);
     glVertex2f(theta2_x, theta2_y);
     glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
     glEnd();
