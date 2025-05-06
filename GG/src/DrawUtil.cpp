@@ -364,46 +364,77 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
         colors[j] = BlendClr(border_color1, border_color2, color_scale_factor);
     }
 
+
     glPushMatrix();
     glTranslatef(Value(ul.x) + wd/2.0f, Value(ul.y) + ht/2.0f, 0.0f);// move origin to the center of the rectangle
     glScalef(wd/2.0f, ht/2.0f, 1.0f);                                // map the range [-1,1] to the rectangle in both (x- and y-) directions
 
     const double inner_radius = (std::min(wd, ht) - 2.0*bevel_thick) / std::min(wd, ht);
-    glColor(color);
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(0, 0);
-    // point on circle at angle theta1
-    glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
+
+    GL2DVertexBuffer fan_vert_buf;
+    fan_vert_buf.reserve(3u + last_slice_idx - first_slice_idx);
+    fan_vert_buf.store(X0, Y0);
+    fan_vert_buf.store(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
         int X = 2 * (cmp_greater(i, SLICES) ? (i - SLICES) : i);
         int Y = X + 1;
-        glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
+        fan_vert_buf.store(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
-    glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
-    glEnd();
-    glBegin(GL_QUAD_STRIP);
+    fan_vert_buf.store(theta2_x * inner_radius, theta2_y * inner_radius);
+
+    glColor(color);
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    fan_vert_buf.activate();
+    glDrawArrays(GL_TRIANGLE_FAN, 0u, fan_vert_buf.size());
+
+
+
+    GL2DVertexBuffer quads_vert_buf;
+    quads_vert_buf.reserve(4u + 2u*(last_slice_idx - first_slice_idx));
+
+    GLRGBAColorBuffer quads_colour_buf;
+    quads_colour_buf.reserve(quads_vert_buf.size());
+
+
     // point on circle at angle theta1
     const auto color_scale_factor1 = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
     const auto clr1 = BlendClr(border_color1, border_color2, color_scale_factor1);
-    glColor(clr1);
-    glVertex2f(theta1_x, theta1_y);
-    glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
+    quads_colour_buf.store(clr1);
+    quads_vert_buf.store(theta1_x, theta1_y);
+    quads_colour_buf.store(clr1);
+    quads_vert_buf.store(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
         const int X = 2 * (cmp_greater(i, SLICES) ? (i - SLICES) : i);
         const int Y = X + 1;
-        glColor(colors[i]);
-        glVertex2f(unit_vertices[X], unit_vertices[Y]);
-        glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
+        quads_colour_buf.store(colors[i]);
+        quads_vert_buf.store(unit_vertices[X], unit_vertices[Y]);
+        quads_colour_buf.store(colors[i]);
+        quads_vert_buf.store(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
     // theta2
     const auto color_scale_factor2 = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
     const auto clr2 = BlendClr(border_color1, border_color2, color_scale_factor2);
-    glColor(clr2);
-    glVertex2f(theta2_x, theta2_y);
-    glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
-    glEnd();
+    quads_colour_buf.store(clr2);
+    quads_vert_buf.store(theta2_x, theta2_y);
+    quads_colour_buf.store(clr2);
+    quads_vert_buf.store(theta2_x * inner_radius, theta2_y * inner_radius);
+
+
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    quads_vert_buf.activate();
+    quads_colour_buf.activate();
+    glDrawArrays(GL_QUAD_STRIP, 0u, quads_vert_buf.size());
+
+    glPopClientAttrib();
     glPopMatrix();
     glEnable(GL_TEXTURE_2D);
 }
