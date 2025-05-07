@@ -3840,15 +3840,13 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (const auto& entry : resource_meters) {
-            MeterType type = entry.first;
+        for (const auto type : resource_meters | range_keys) {
             m_system_resource_summary->SetToolTip(type,
                 GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
                     MeterToResource(type), s_system_id, empire_id));
         }
         // and the other meters
-        for (const auto& entry : general_meters) {
-            MeterType type = entry.first;
+        for (const auto type : general_meters | range_keys) {
             m_system_resource_summary->SetToolTip(type,
                 GG::Wnd::Create<SystemMeterBrowseWnd>(type, s_system_id));
         }
