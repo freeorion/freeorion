@@ -148,43 +148,43 @@ INVALID_POSITION
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME
-Fleet %1%
+%1% 舰队
 
 # Name for a newly created general purpose fleet when no uniqe number could be
 # created.
 NEW_FLEET_NAME_NO_NUMBER
-Fleet
+舰队
 
 # Name for a newly created monster-only fleet.
 # %1% represents a unique number.
 NEW_MONSTER_FLEET_NAME
-Herd %1%
+%1% 群
 
 # Name for a newly created colony-only fleet.
 # %1% represents a unique number.
 NEW_COLONY_FLEET_NAME
-Colony Fleet %1%
+%1% 殖民舰队
 
 # Name for a newly created reconnaissance-only fleet.
 # %1% represents a unique number.
 NEW_RECON_FLEET_NAME
-Recon Fleet %1%
+%1% 侦察舰队
 
 # Name for a newly created troop carrier only fleet.
 # %1% represents a unique number.
 NEW_TROOP_FLEET_NAME
-Troop Fleet %1%
+%1% 运输舰队
 
 # Name for a newly created bomber only fleet.
 # %1% represents a unique number.
 NEW_BOMBARD_FLEET_NAME
-Bomber Fleet %1%
+%1% 轰炸舰队
 
 # Name for a newly created combat group group fleet. This includes battleships,
 # bombers and troop carriers.
 # %1% represents a unique number.
 NEW_BATTLE_FLEET_NAME
-Battle Fleet %1%
+%1% 战斗舰队
 
 # Name for a newly created planet.
 # Suffix bears some explanation:
@@ -209,71 +209,71 @@ EMPTY_SPACE
 
 # appended to names of systems
 UNEXPLORED_REGION
-''' (unexplored)'''
+'''（未探索）'''
 
 UNEXPLORED_SYSTEM
-''' (unexplored)'''
+''' （未探索）'''
 
 NOT_APPLICABLE
-N/A
+不适用
 
 BOMBER
-Bomber
+轰炸机
 
 INTERCEPTOR
-Interceptor
+截击机
 
 DEFAULT_EMPIRE_NAME
-Terran Imperium
+人类帝国
 
 DEFAULT_PLAYER_NAME
-Human_Player
+人类玩家
 
 MONSTER
-Monster
+怪物
 
 PASSED
-<rgba 0 255 0 255>(PASSED)</rgba>
+<rgba 0 255 0 255>（通过）</rgba>
 
 FAILED
-<rgba 255 0 0 255>(FAILED)</rgba>
+<rgba 255 0 0 255>（失败）</rgba>
 
 ALL_OF
-All Of:
+所有：
 
 ANY_OF
-Any Of:
+任一：
 
 DUMP
-Debug Data Dump
+调试数据转储
 
 UNOWNED
-Unowned
+无主
 
 NOWHERE
-Cannot be produced
+无法生产
 
 # Prefix to use for menu items that will open a pedia entry
 POPUP_MENU_PEDIA_PREFIX
-'''Help: '''
+'''帮助：'''
 
 GENERAL
-General
+常规
 
 TEST
-Test
+测试
 
 BALANCE
-Balance:Misc
+平衡：杂项
 
 CONTENT
-Content
+内容
 
 MULTIPLAYER
-Multiplayer
+多人
 
 BALANCE_STABILITY
-Balance:Stability
+平衡：稳定
 
 
 ##
@@ -281,68 +281,68 @@ Balance:Stability
 ##
 
 ERROR_SOUND_INITIALIZATION_FAILED
-'''OpenAL audio system initialization failed.
-Check log files for more detailed messages.
+'''OpenAL 音频系统初始化失败。
+检查日志以获取详细信息。
 '''
 
 OPENGL_VERSION_LOW_TITLE
-OpenGL Version Low
+OpenGL 版本低
 
 OPENGL_VERSION_LOW_TEXT
-'''The OpenGL version on this system is less than 2.0
+'''此系统上的 OpenGL 版本低于2.0
 
-FreeOrion may crash while starting.'''
+FreeOrion 启动时可能崩溃。'''
 
 # Used as a prefix for the FORMAT_LIST_[1-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_PLURAL_HEADER
-There are:
+这里有：
 
 # Used as a prefix for the FORMAT_LIST_0_ITEMS translation entry.
 FORMAT_LIST_DEFAULT_SINGLE_HEADER
-There is one:
+这里有一个：
 
 FORMAT_LIST_DEFAULT_EMPTY_HEADER
-There are none.
+这里什么都没有。
 
 # Used as a prefix for the FORMAT_LIST_[0-MANY]_ITEMS translation entries.
 FORMAT_LIST_DEFAULT_DUAL_HEADER
-There are:
+这里有：
 
 FORMAT_LIST_0_ITEMS
 %1%
 
 FORMAT_LIST_1_ITEMS
-%1% %2%.
+%1% %2%。
 
 FORMAT_LIST_2_ITEMS
-%1% %2% and %3%.
+%1% %2% 和 %3%。
 
 FORMAT_LIST_3_ITEMS
-%1% %2%, %3% and %4%.
+%1% %2%、%3% 和 %4%。
 
 FORMAT_LIST_4_ITEMS
-%1% %2%, %3%, %4% and %5%.
+%1% %2%、%3%、%4% 和 %5%。
 
 FORMAT_LIST_5_ITEMS
-%1% %2%, %3%, %4%, %5% and %6%.
+%1% %2%、%3%、%4%、%5% 和 %6%。
 
 FORMAT_LIST_6_ITEMS
-%1% %2%, %3%, %4%, %5%, %6% and %7%.
+%1% %2%、%3%、%4%、%5%、%6% 和 %7%。
 
 FORMAT_LIST_7_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7% and %8%.
+%1% %2%、%3%、%4%、%5%、%6%、%7% 和 %8%。
 
 FORMAT_LIST_8_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8% and %9%.
+%1% %2%、%3%、%4%、%5%、%6%、%7%、%8% 和 %9%。
 
 FORMAT_LIST_9_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9% and %10%.
+%1% %2%、%3%、%4%、%5%、%6%、%7%、%8%、%9% 和 %10%。
 
 FORMAT_LIST_10_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10% and %11%.
+%1% %2%、%3%、%4%、%5%、%6%、%7%、%8%、%9%、%10% 和 %11%。
 
 FORMAT_LIST_MANY_ITEMS
-%1% %2%, %3%, %4%, %5%, %6%, %7%, %8%, %9%, %10%, %11% ...
+%1% %2%、%3%、%4%、%5%、%6%、%7%、%8%、%9%、%10%、%11% ...
 
 
 ##
@@ -350,21 +350,20 @@ FORMAT_LIST_MANY_ITEMS
 ##
 
 PROJECT_BT_STOCKPILE
-Stockpile Transfer
+库存转移
 
 PROJECT_BT_STOCKPILE_SHORT_DESC
-Transfers PP into the imperial stockpile
+转移PP（制造点）到帝国库存。
 
 PROJECT_BT_STOCKPILE_DESC
-'''Production Points (PP) allocated to the transfer project are added to the [[encyclopedia STOCKPILE_TITLE]]. The amount to transfer and how many times the transfer should repeat can be specified.
+'''制造点（Production Points）分配到[[encyclopedia STOCKPILE_TITLE]]。可指定转移的数额和次数。
 
-Only PP that are produced in the same supply-group (and none from the imperial stockpile) are allocated to the stockpile transfer project.
+只有在同一供应组的PP能被分配库存。
 
-Surplus PP (PP not allocated to anything on the queue) at this or any other location will be transferred to the stockpile with or without a stockpile transfer project on the queue. PP allocated to a stockpile transfer are sent to the stockpile, even if there are additional items later in the production queue.
+未分配的剩余PP将被转到国库，无论生产队列中是否有转移项目。转移到库存的PP将被送到库存，即使生产队列中稍后有其他项目。
 
-For example: An empire wants to draw PP from the stockpile in a secondary supply-group, in which there is insufficient PP being generated. To do this, the stockpile needs to be filled from the primary supply-group. The empire has 100 PP industry in the primary supply-group, its stockpile use limit is 10 PP and it wants to have 10 PP always available in the stockpile. The build queue contains items on planets in the primary supply-group which need 120 PP per turn, so all available PP would be used.
-To be able to use the PP in the secondary supply-group, the empire adds to the top of the queue a 10x Stockpile Transfer project on a planet in the primary supply-group.
-Because the Stockpile Transfer project is above other primary supply-group projects in the build queue, it is fully funded and will increase the stockpile by 10 PP on the next turn. To ensure a continuing transfer each turn, the repetition of the project is set to 99 times.'''
+例如：一个帝国想从二级供应组库存中提取PP，其中PP不足。为此，要从主要供应组补充库存。帝国有100个PP工业，其库存使用限制为10PP，并且它希望库存中始终有10PP。建造队列包含主要供应组中的每回合需要120PP的行星项目，因此将使用所有可用的PP。为了在次要供应组中使用PP，帝国在主要供应组中的行星添加了一个10倍的库存转移项目。
+因为库存转移项目在建造队列中的其他主要供应组项目之上，所以会有充足的资金，并将在下回合增加10PP库存。为确保每回合持续转移，重复次数设为99次。'''
 
 
 ##
