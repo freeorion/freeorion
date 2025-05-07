@@ -197,43 +197,28 @@ namespace {
     bool IsMultiplayerSaveFile(const boost::filesystem::path& path)
     { return IsExistingFile(path) && MP_SAVE_FILE_EXTENSION == path.extension(); }
 
+    constexpr auto to_empire_colour = [](const auto& entry) noexcept {
+        if constexpr (requires { entry.second.empire_color; })
+            return entry.second.empire_color;
+        else if constexpr (requires { entry.second.color; })
+            return entry.second.color;
+    };
+
+    constexpr EmpireColor fallback_empire_colour{{192, 192, 192, 255}};
+
     EmpireColor GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd,
                                       const std::map<int, SaveGameEmpireData>& sged = std::map<int, SaveGameEmpireData>())
     {
-        //DebugLogger(FSM) << "finding colours for empire of player " << player_name;
-        EmpireColor empire_colour{{192, 192, 192, 255}};
-        for (const EmpireColor possible_colour : EmpireColors()) {
-            //DebugLogger(FSM) << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
+        const auto not_in_psd_or_sged = [&](const auto& clr) {
+            auto psd_empire_colours_rng = psd | range_transform(to_empire_colour);
+            auto sged_empire_colours_rng = sged | range_transform(to_empire_colour);
+            return !range_contains(psd_empire_colours_rng, clr) &&
+                   !range_contains(sged_empire_colours_rng, clr);
+        };
 
-            // check if any other player / empire is using this colour
-            bool colour_is_new = true;
-            for (const std::pair<int, PlayerSetupData>& entry : psd) {
-                const auto player_colour = entry.second.empire_color;
-                if (player_colour == possible_colour) {
-                    colour_is_new = false;
-                    break;
-                }
-            }
-
-            if (colour_is_new) {
-                for (const auto& entry : sged) {
-                    const auto player_colour = entry.second.color;
-                    if (player_colour == possible_colour) {
-                        colour_is_new = false;
-                        break;
-                    }
-                }
-            }
-
-            // use colour and exit loop if no other empire is using the colour
-            if (colour_is_new) {
-                empire_colour = possible_colour;
-                break;
-            }
-
-            //DebugLogger(FSM) << " ... colour already used.";
-        }
-        return empire_colour;
+        auto new_colour_rng = EmpireColors() | range_filter(not_in_psd_or_sged);
+        const auto ok_colour_it = new_colour_rng.begin();
+        return (ok_colour_it == new_colour_rng.end()) ? fallback_empire_colour : *ok_colour_it;
     }
 }
 
@@ -796,6 +781,7 @@ sc::result Idle::react(const Hostless&) {
 
             lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
         }
+
     } else {
         DebugLogger(FSM) << "Loading file " << autostart_load_filename;
         try {
@@ -803,7 +789,7 @@ sc::result Idle::react(const Hostless&) {
                      player_save_game_data,     server.GetUniverse(),
                      server.Empires(),          server.GetSpeciesManager(),
                      GetCombatLogManager(),     server.m_galaxy_setup_data);
-            int seed = 0;
+            unsigned int seed = 0;
             try {
                 seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
             } catch (...) {
@@ -817,11 +803,12 @@ sc::result Idle::react(const Hostless&) {
                              << "  interpreted as: " << seed;
             Seed(seed);
 
+            static constexpr auto is_ai = [](const auto& psgd)
+            { return psgd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER; };
+
             // fill lobby data with AI to start them with server
-            int ai_next_index = 1;
-            for (const auto& psgd : player_save_game_data) {
-                if (psgd.client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-                    continue;
+            std::size_t ai_next_index = 1u;
+            for (const auto& psgd : player_save_game_data | range_filter(is_ai)) {
                 PlayerSetupData player_setup_data;
                 player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
                 player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
