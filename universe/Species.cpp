@@ -580,18 +580,12 @@ std::string Species::Dump(uint8_t ntabs) const {
     }
     retval += DumpIndent(ntabs+1) + "defaultfocus = \"" + m_default_focus + "\"\n";
     retval += DumpIndent(ntabs+1) + "likes = [";
-    for (const auto& entry : m_likes) {
-        retval += "\"";
-        retval += entry;
-        retval += "\" ";
-    }
+    for (const auto& entry : m_likes)
+        retval.append("\"").append(entry).append("\" ");
     retval += "]\n";
     retval += DumpIndent(ntabs+1) + "dislikes = [";
-    for (const auto& entry : m_dislikes) {
-        retval += "\"";
-        retval += entry;
-        retval += "\" ";
-    }
+    for (const auto& entry : m_dislikes)
+        retval.append("\"").append(entry).append("\" ");
     retval += "]\n";
     if (m_effects.size() == 1) {
         retval += DumpIndent(ntabs+1) + "effectsgroups =\n";
