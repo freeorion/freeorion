@@ -371,244 +371,244 @@ PROJECT_BT_STOCKPILE_DESC
 ##
 
 SD_CARRIER
-Escort Carrier
+护航航母
 
 SD_CARRIER_DESC
-Carrier designed to defend other armed vessels by launching interceptor squadrons.
+此设计旨在通过发射截击机队保卫其他武装舰船。
 
 SD_CARRIER_2
-Fleet Carrier
+轰炸机队航母
 
 SD_CARRIER_2_DESC
-Carrier designed for offensive fleet action with attack bomber squadrons and mass drivers.
+专为攻击轰炸机队的进攻性舰队行动而设计。
 
 SD_SCOUT
-Scout
+侦察艇
 
 SD_SCOUT_DESC
-Small and cheap unarmed vessel designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
+廉价的非武装小船，专为侦察和探索而设计。[[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_2
-Radar Scout
+雷达侦察艇
 
 SD_SCOUT_2_DESC
-Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
+相比于老旧级别，装备了改进的[[metertype METER_DETECTION]]。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_3
-Scanner Scout
+扫描仪侦察艇
 
 SD_SCOUT_3_DESC
-Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
+相比于老旧级别，装备了改进的[[metertype METER_DETECTION]]。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_SCOUT_4
-Sensor Scout
+传感器侦察艇
 
 SD_SCOUT_4_DESC
-Small and cheap unarmed vessel equipped with improved [[metertype METER_DETECTION]] designed for recon and exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
+相比于老旧级别，装备了改进的[[metertype METER_DETECTION]]。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
-Energy Scout
+能量侦察艇
 
 SD_ENG_SCOUT_DESC
-Small and fast unarmed vessel designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
+快速的非武装小船，专为侦察和探索而设计。[[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_SMALL_MARK_1
-Corvette M
+护卫舰 M
 
 SD_SMALL_MARK1_DESC
-Small and cheap mass-driver ship. [[BLD_SHIPYARD_BASE_REQUIRED]]
+廉价的质量投射器小船。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_MARK_1
-Frigate Ms
+护卫舰 Ms
 
 SD_MARK1_DESC
-Basic mass-driver frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
+基础质量投射器护卫舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_1
-Cruiser Ms
+巡洋舰 Ms
 
 SD_LARGE_MARK1_DESC
-Cruiser equipped for long range independent action with improved weapons and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
+装备了改进的武器和装甲，具有远程独立行动的巡洋舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
-Cruiser Lz
+巡洋舰 Lz
 
 SD_LARGE_MARK2_DESC
-Cruiser equipped for long range independent action. [[BLD_SHIPYARD_BASE_REQUIRED]]
+具有远程独立行动的巡洋舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
-Destroyer Ms
+驱逐舰 Ms
 
 SD_LARGE_MARK3_DESC
-Destroyer equipped for fleet actions. [[BLD_SHIPYARD_BASE_REQUIRED]]
+驱逐舰，为配合舰队而生。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_4
-Destroyer Lz
+驱逐舰 Lz
 
 SD_LARGE_MARK4_DESC
-Destroyer equipped for fleet actions with improved lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
+装备了改进的激光和装甲的驱逐舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
-Robotic Outpost
+自动前哨
 
 SD_ROBOTIC_OUTPOST_DESC
-Can establish outposts on faraway worlds.
+在遥远的星球上建立前哨站。
 
 SD_ROBO_FLUX_SCOUT
-Flux Scout
+Flux 侦察艇
 
 SD_ROBO_FLUX_SCOUT_DESC
-Fast scouting hull with some stealth abilities
+具有一些隐形能力的侦察船体。
 
 SD_ROBO_FLUX_TROOPS
-Flux Troops
+Flux 运输船
 
 SD_ROBO_FLUX_TROOPS_DESC
-Fast troop carrier
+快速运输船。
 
 SD_ROBO_FLUX_TROOPS_HVY
-Flux Heavy Troops
+Flux 重型运输船
 
 SD_ROBO_FLUX_TROOPS_HVY_DESC
-Fast advanced troop carrier
+快速的高级运输船。
 
 SD_ROBOTIC1
-Robocruiser Mfs
+自动巡洋舰 Mfs
 
 SD_ROBOTIC1_DESC
-Cruiser designed for fleet and independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+专为舰队和独立行动而设计。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2
-Destroyer Mfs DG
+驱逐舰 Mfs DG
 
 SD_ROBOTIC2_DESC
-Robotic hull equipped for fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+为配合舰队行动的自动驱逐舰船体。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
-Robocruiser Lzi
+自动驱逐舰 Lzi
 
 SD_ROBOTIC3_DESC
-Robotic ship equipped for long range independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+具有远程独立行动的自动驱逐舰。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER1
-Fleet Carrier MBs
+攻击航母 MBs
 
 SD_ROBOTIC_CARRIER1_DESC
-Attack Carrier designed for fleet action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+专为舰队行动而设计。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER2
-Fleet Carrier LBz
+攻击航母 LBz
 
 SD_ROBOTIC_CARRIER2_DESC
-Attack Carrier designed for fleet action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+专为舰队行动而设计。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER3
-Escort Carrier MIs
+护航航母 MIs
 
 SD_ROBOTIC_CARRIER3_DESC
-Escort Carrier designed for convoy and picket duties. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+专为护航和哨戒（picket）任务而设计。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_GRAVITATING1
-Battleship Pfd DS
+战列舰 Pfd DS
 
 SD_GRAVITATING1_DESC
-Self-gravitating battleship equipped for large fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+自引力战列舰，配合大型舰队行动。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
-Battleship Dfx BS
+战列舰 Dfx BS
 
 SD_GRAVITATING2_DESC
-Large state-of-art battleship armed and protected with top technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+大型先进战列舰，装备了顶级科技的武器和装甲。因此定价 。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_ROBO_TITAN1
-Dreadnaught
+无畏
 
 SD_ROBO_TITAN1_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+大型先进战列舰，装备了最新科技的武器和装甲。因此定价。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_AST_1
-Rock Destroyer (L)
+石质驱逐舰 (L)
 
 SD_AST_1_DESC
-Asteroid hull designed for fleet action. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
+小行星船体，配合舰队行动。[[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
-Colony Ship
+殖民船
 
 SD_COLONY_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
+非武装船只 [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]。[[MIN_POPULATION_REQUIRED]]，需要 [[buildingtype BLD_SHIPYARD_BASE]]。
 
 SD_CRYONIC_COLONY_SHIP
-Cryonic Colony Ship
+冷冻殖民船
 
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
+非武装船只 [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]。[[MIN_POPULATION_REQUIRED]]，需要[[buildingtype BLD_SHIPYARD_BASE]]。
 
 SD_OUTPOST_SHIP
-Outpost Ship
+前哨船
 
 SD_OUTPOST_SHIP_DESC
-Unarmed vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+非武装船只 [[SHIPDESIGN_OUTPOSTS_CAPACITY]]。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ORG_OUTPOST_SHIP
-Organic Outpost Ship
+有机前哨船
 
 SD_ORG_OUTPOST_SHIP_DESC
-Unarmed organic vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
+非武装有机船只 [[SHIPDESIGN_OUTPOSTS_CAPACITY]]。[[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
 
 SD_COLONY_BASE
-Colony Base
+殖民基地
 
 SD_COLONY_BASE_DESC
-Unarmed vessel capable of creating a [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+非武装基地，可创建 [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]。[[MIN_POPULATION_REQUIRED]]。[[SHIPDESIGN_NO_TRAVEL]]
 
 SD_CRYONIC_COLONY_BASE
-Cryonic Colony Base
+冷冻殖民基地
 
 SD_CRYONIC_COLONY_BASE_DESC
-Unarmed vessel capable of creating a large [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]. [[MIN_POPULATION_REQUIRED]]. [[SHIPDESIGN_NO_TRAVEL]]
+非武装基地，可创建大型 [[SHIPDESIGN_COLONIZATION_CAPACITY_SAME_SYSTEM]]。[[MIN_POPULATION_REQUIRED]]。[[SHIPDESIGN_NO_TRAVEL]]
 
 SD_OUTPOST_BASE
-Outpost Base
+前哨基地
 
 SD_OUTPOST_BASE_DESC
-Unarmed vessel [[SHIPDESIGN_OUTPOSTS_CAPACITY]] in the system where it is produced. [[SHIPDESIGN_NO_TRAVEL]]
+在生产它的星系中的非武装基地 [[SHIPDESIGN_OUTPOSTS_CAPACITY]]。[[SHIPDESIGN_NO_TRAVEL]]
 
 SD_BASE_DECOY
-Comsat
+通讯卫星
 
 SD_BASE_DECOY_DESC
-Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a [[buildingtype BLD_SHIPYARD_BASE]].
+非武装卫星，只能挡住敌人火力。造船种族殖民的任意星球上建造，不需要 [[buildingtype BLD_SHIPYARD_BASE]]。
 
 SD_TROOP_DROP
-Troop Drop
+空投部队
 
 SD_TROOP_DROP_DESC
-Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]] in the same system.
+在同一星系可带一个陆战旅 [[SHIPDESIGN_PLANET_INVASION]]。
 
 SD_TROOP_DROP_HVY
-Heavy Troop Drop
+重型空投部队
 
 SD_TROOP_DROP_HVY_DESC
-Carries a brigade of ground advanced [[SHIPDESIGN_PLANET_INVASION]] in the same system.
+在同一星系可带一个先遣旅 [[SHIPDESIGN_PLANET_INVASION]]。
 
 SD_SMALL_TROOP_SHIP
-Small Troop Ship
+小型运兵船
 
 SD_SMALL_TROOP_SHIP_DESC
-Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+可带1个陆战旅 [[SHIPDESIGN_PLANET_INVASION]]。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_TROOP_SHIP
-Troop Ship
+运兵船
 
 SD_TROOP_SHIP_DESC
-Carries 3 brigades of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
+可带3个陆战旅 [[SHIPDESIGN_PLANET_INVASION]]。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_DRAGON_TOOTH
-Dragon Tooth
+龙牙
 
 SD_DRAGON_TOOTH_DESC
-Ancient ship design with advanced weaponry and defensive systems. [[BLD_SHIPYARD_BASE_REQUIRED]]
+古老的船只设计，具有先进的武器和防御系统。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
 ##
