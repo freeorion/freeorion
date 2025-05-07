@@ -54,10 +54,10 @@ struct Clr
     [[nodiscard]] constexpr Clr(std::string_view hex_colour)
     {
         const auto sz = hex_colour.size();
-        r = (sz >= 2u) ? ValFromTwoHexChars(hex_colour.substr(0, 2)) : 0u;
-        g = (sz >= 4u) ? ValFromTwoHexChars(hex_colour.substr(2, 2)) : 0u;
-        b = (sz >= 6u) ? ValFromTwoHexChars(hex_colour.substr(4, 2)) : 0u;
-        a = (sz >= 8u) ? ValFromTwoHexChars(hex_colour.substr(6, 2)) : 255u;
+        r = (sz >= 2u) ? HexCharsToUInt8(hex_colour.substr(0, 2)) : 0u;
+        g = (sz >= 4u) ? HexCharsToUInt8(hex_colour.substr(2, 2)) : 0u;
+        b = (sz >= 6u) ? HexCharsToUInt8(hex_colour.substr(4, 2)) : 0u;
+        a = (sz >= 8u) ? HexCharsToUInt8(hex_colour.substr(6, 2)) : 255u;
     }
 
     [[nodiscard]] explicit constexpr operator uint32_t() const noexcept
@@ -126,13 +126,17 @@ struct Clr
         return {rhex[0], rhex[1], ghex[0], ghex[1], bhex[0], bhex[1], ahex[0], ahex[1]};
     }
 
-    [[nodiscard]] static constexpr uint8_t ValFromTwoHexChars(std::string_view chars) noexcept
-    {
-        auto digit0 = chars[0];
-        auto digit1 = chars[1];
-        uint8_t val0 = 16 * (digit0 >= 'A' ? (digit0 - 'A' + 10) : (digit0 - '0'));
-        uint8_t val1 = (digit1 >= 'A' ? (digit1 - 'A' + 10) : (digit1 - '0'));
-        return val0 + val1;
+    [[nodiscard]] static constexpr uint8_t HexCharToUint8(std::string_view::value_type digit) noexcept
+    { return (digit >= 'A' ? (digit - 'A' + 10) : (digit - '0')); }
+
+    [[nodiscard]] static constexpr uint8_t HexCharsToUInt8(std::string_view chars) noexcept {
+        if (chars.empty())
+            return 0;
+        const uint8_t val0 = HexCharToUint8(chars[0]);
+        if (chars.size() == 1) [[unlikely]]
+            return val0;
+        const uint8_t val1 = HexCharToUint8(chars[1]);
+        return 16*val0 + val1;
     };
 
     static constexpr std::string::value_type* UInt8ToChars(

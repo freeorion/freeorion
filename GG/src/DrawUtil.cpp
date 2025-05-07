@@ -71,10 +71,18 @@ namespace {
     }
     static_assert(ArrEq(Clr("A0FF01BB").Hex(), "A0FF01BB"));
 
-    static_assert(Clr::ValFromTwoHexChars("01") == 1);
-    static_assert(Clr::ValFromTwoHexChars("FF") == 255);
-    static_assert(Clr::ValFromTwoHexChars("A0") == 160);
-    static_assert(Clr::ValFromTwoHexChars("!.") == 14u);
+    static_assert(Clr::HexCharToUint8('0') == 0u);
+    static_assert(Clr::HexCharToUint8('9') == 9u);
+    static_assert(Clr::HexCharToUint8('A') == 10u);
+    static_assert(Clr::HexCharToUint8('F') == 15u);
+    static_assert(Clr::HexCharToUint8('G') == 16u);
+
+    static_assert(Clr::HexCharsToUInt8("") == 0u);
+    static_assert(Clr::HexCharsToUInt8("A") == 10u);
+    static_assert(Clr::HexCharsToUInt8("01") == 1u);
+    static_assert(Clr::HexCharsToUInt8("FF") == 255u);
+    static_assert(Clr::HexCharsToUInt8("A0") == 160u);
+    static_assert(Clr::HexCharsToUInt8("!.") == 14u);
 
     static_assert(ArrEq(Clr::ToHexChars(0), "00"));
     static_assert(ArrEq(Clr::ToHexChars(1), "01"));
@@ -84,10 +92,10 @@ namespace {
     static_assert(ArrEq(Clr::ToHexChars(16), "10"));
     static_assert(ArrEq(Clr::ToHexChars(255), "FF"));
 
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("00")), "00"));
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("09")), "09"));
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("2C")), "2C"));
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("EF")), "EF"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("00")), "00"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("09")), "09"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("2C")), "2C"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("EF")), "EF"));
 
     using sva4 = std::array<std::string::value_type, 4>;
     constexpr bool TestUint8ToCharArray(uint8_t num, sva4 expected_result) noexcept
