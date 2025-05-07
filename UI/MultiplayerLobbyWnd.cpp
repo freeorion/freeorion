@@ -785,16 +785,18 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, uint32_t key_code_point, GG::Fla
     }
 }
 
-void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::ptime& timestamp, const std::string& msg) {
+void MultiPlayerLobbyWnd::ChatMessage(int player_id, const boost::posix_time::ptime& timestamp,
+                                      const std::string& msg)
+{
     // look up player name by ID
     std::string player_name{UserString("PLAYER") + " " + std::to_string(player_id)};
     GG::Clr text_color{ClientUI::GetClientUI()->TextColor()};
     if (player_id != Networking::INVALID_PLAYER_ID) {
-        for (auto& entry : m_lobby_data.players) {
-            if (entry.first != player_id || entry.first == Networking::INVALID_PLAYER_ID)
+        for (auto& [lobby_player_id, psd] : m_lobby_data.players) {
+            if (lobby_player_id != player_id || lobby_player_id == Networking::INVALID_PLAYER_ID)
                 continue;
-            player_name = entry.second.player_name;
-            text_color = entry.second.empire_color;
+            player_name = psd.player_name;
+            text_color = psd.empire_color;
         }
     } else {
         // It's a server message. Don't set player name.
@@ -817,14 +819,14 @@ void MultiPlayerLobbyWnd::TurnPhaseUpdate(Message::TurnProgressPhase phase_id)
 { m_chat_wnd->HandleTurnPhaseUpdate(phase_id, true); }
 
 namespace {
-    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData>>& psd) {
+    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData>>& psds) {
         DebugLogger() << "PlayerSetupData:";
-        for (const std::pair<int, PlayerSetupData>& entry : psd)
-            DebugLogger() << std::to_string(entry.first) << " : "
-                                   << entry.second.player_name << ", "
-                                   << entry.second.client_type << ", "
-                                   << entry.second.starting_species_name
-                                   << (entry.second.player_ready ? ", Ready" : "");
+        for (const auto& [player_id, psd] : psds)
+            DebugLogger() << std::to_string(player_id) << " : "
+                          << psd.player_name << ", "
+                          << psd.client_type << ", "
+                          << psd.starting_species_name
+                          << (psd.player_ready ? ", Ready" : "");
     }
 }
 
