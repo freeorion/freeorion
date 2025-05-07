@@ -1237,8 +1237,8 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
     m_scale = scale;
     GetOptionsDB().Set<double>("ui.research.tree.zoom.scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
 
-    for (auto& entry : m_techs)
-        entry.second->RequirePreRender();
+    for (auto& tech : m_techs | range_values)
+        tech->RequirePreRender();
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(std::string category) {
