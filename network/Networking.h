@@ -28,6 +28,36 @@ namespace Networking {
         ((NUM_CLIENT_TYPES))
     )
 
+    constexpr auto is_ct = [](const auto& thing, const Networking::ClientType ct) noexcept {
+        if constexpr (requires { thing == ct; })
+            return thing == ct;
+        else if constexpr (requires { thing.client_type == ct; })
+            return thing.client_type == ct;
+        else if constexpr (requires { thing->GetClientType() == ct; })
+            return thing && thing->GetClientType() == ct;
+    };
+
+    constexpr auto is_ai = [](const auto& thing) noexcept
+    { return is_ct(thing, Networking::ClientType::CLIENT_TYPE_AI_PLAYER); };
+
+    constexpr auto is_human = [](const auto& thing) noexcept
+    { return is_ct(thing, Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER); };
+
+    static constexpr auto is_ai_or_human = [](const auto& thing) noexcept
+    { return is_ai(thing) || is_human(thing); };
+
+    static constexpr auto is_mod = [](const auto& thing) noexcept
+    { return is_ct(thing, Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR); };
+
+    static constexpr auto is_obs = [](const auto& thing) noexcept
+    { return is_ct(thing, Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER); };
+
+    static constexpr auto is_mod_or_obs = [](const auto& thing) noexcept
+    { return is_mod(thing) || is_obs(thing); };
+
+    constexpr auto is_invalid = [](const auto& thing) noexcept
+    { return is_ct(thing, Networking::ClientType::INVALID_CLIENT_TYPE); };
+
     enum class RoleType : uint8_t {
         ROLE_HOST = 0,              ///< allows save and load games, edit other player settings, stop server
         ROLE_CLIENT_TYPE_MODERATOR, ///< allows have a client type Moderator
@@ -56,7 +86,6 @@ namespace Networking {
     private:
         std::bitset<int(RoleType::Roles_Count)> m_roles;
     };
-
 }
 
 #endif
