@@ -356,7 +356,7 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 转移PP（制造点）到帝国库存。
 
 PROJECT_BT_STOCKPILE_DESC
-'''制造点（Production Points）分配到[[encyclopedia STOCKPILE_TITLE]]。可指定转移的数额和次数。
+'''制造点（Production Points）分配到 [[encyclopedia STOCKPILE_TITLE]]。可指定转移的数额和次数。
 
 只有在同一供应组的PP能被分配库存。
 
@@ -428,13 +428,13 @@ SD_LARGE_MARK_1
 巡洋舰 Ms
 
 SD_LARGE_MARK1_DESC
-装备了改进的武器和装甲，具有远程独立行动的巡洋舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
+装备了改进的武器和装甲，拥有远程独立行动的巡洋舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
 巡洋舰 Lz
 
 SD_LARGE_MARK2_DESC
-具有远程独立行动的巡洋舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
+拥有远程独立行动的巡洋舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
 驱逐舰 Ms
@@ -449,7 +449,7 @@ SD_LARGE_MARK4_DESC
 装备了改进的激光和装甲的驱逐舰。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
-自动前哨
+无人前哨
 
 SD_ROBOTIC_OUTPOST_DESC
 在遥远的星球上建立前哨站。
@@ -458,7 +458,7 @@ SD_ROBO_FLUX_SCOUT
 Flux 侦察艇
 
 SD_ROBO_FLUX_SCOUT_DESC
-具有一些隐形能力的侦察船体。
+拥有一些隐形能力的侦察船体。
 
 SD_ROBO_FLUX_TROOPS
 Flux 运输船
@@ -473,7 +473,7 @@ SD_ROBO_FLUX_TROOPS_HVY_DESC
 快速的高级运输船。
 
 SD_ROBOTIC1
-自动巡洋舰 Mfs
+无人巡洋舰 Mfs
 
 SD_ROBOTIC1_DESC
 专为舰队和独立行动而设计。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
@@ -482,13 +482,13 @@ SD_ROBOTIC2
 驱逐舰 Mfs DG
 
 SD_ROBOTIC2_DESC
-为配合舰队行动的自动驱逐舰船体。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+为配合舰队行动的无人驱逐舰船体。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
-自动驱逐舰 Lzi
+无人驱逐舰 Lzi
 
 SD_ROBOTIC3_DESC
-具有远程独立行动的自动驱逐舰。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+拥有远程独立行动的无人驱逐舰。[[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC_CARRIER1
 攻击航母 MBs
@@ -542,7 +542,7 @@ SD_CRYONIC_COLONY_SHIP
 冷冻殖民船
 
 SD_CRYONIC_COLONY_SHIP_DESC
-非武装船只 [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]。[[MIN_POPULATION_REQUIRED]]，需要[[buildingtype BLD_SHIPYARD_BASE]]。
+非武装船只 [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]。[[MIN_POPULATION_REQUIRED]]，需要 [[buildingtype BLD_SHIPYARD_BASE]]。
 
 SD_OUTPOST_SHIP
 前哨船
@@ -608,7 +608,7 @@ SD_DRAGON_TOOTH
 龙牙
 
 SD_DRAGON_TOOTH_DESC
-古老的船只设计，具有先进的武器和防御系统。[[BLD_SHIPYARD_BASE_REQUIRED]]
+古老的船只设计，拥有先进的武器和防御系统。[[BLD_SHIPYARD_BASE_REQUIRED]]
 
 
 ##
@@ -616,245 +616,241 @@ SD_DRAGON_TOOTH_DESC
 ##
 
 SM_MONSTER
-Monster
+怪物
 
 SM_KRILL_1
-Small Krill Swarm
+小型磷虾群
 
 SM_KRILL_1_DESC
-[[SM_KRILL_MACRO_1]]. Though normally not aggressive, their numbers, even low, become a hazard for navigation and block resupply. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]。虽然它们不喜攻击，但会威胁航行和阻碍补给。[[SM_KRILL_MACRO_2]]
 
 SM_KRILL_2
-Medium Krill Swarm
+中型磷虾群
 
 SM_KRILL_2_DESC
-[[SM_KRILL_MACRO_1]]. Though normally not aggressive, their growing numbers become a hazard for navigation and block resupply. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]。虽然它们不喜攻击，但数量在增长，会威胁航行和阻碍补给。[[SM_KRILL_MACRO_2]]
 
 SM_KRILL_3
-Large Krill Swarm
+大型磷虾群
 
 SM_KRILL_3_DESC
-[[SM_KRILL_MACRO_1]]. When in large enough numbers, they begin to become aggressive towards ships. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]。它们开始凭依庞大数量来攻击船只。[[SM_KRILL_MACRO_2]]
 
 SM_KRILL_4
-Plague of Krill
+磷虾灾祸
 
 SM_KRILL_4_DESC
-[[SM_KRILL_MACRO_1]]. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. [[SM_KRILL_MACRO_2]]
+[[SM_KRILL_MACRO_1]]。它们的数量突破了临界值（千万级），行为剧变，刺激了胆小的磷虾变得好战，攻击船只和轨道结构。[[SM_KRILL_MACRO_2]]
 
 SM_TREE
-Dyson Forest
+戴森森林
 
 SM_TREE_DESC
-A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect. When a Dyson Forest grows, Space Krill often start nesting inbetween the trees.
+由众多太空生长的“树木”组成的“森林”，这些树木有丝状枝条，在与宿主恒星的适宜距离的气泡中繁殖并排列成行。戴森森林会威胁航行，不断生长，变得难以根除。若不及时铲除，它们会定期通过航线向其他星系发射种子进行繁殖。[[SM_TREE]] 种子被称为 [[predefinedshipdesign SM_FLOATER]]，难被发现。当戴森森林生长时，太空磷虾经常在此筑巢。
 
 SM_FLOATER
-Floater
+漂浮者
 
 SM_FLOATER_DESC
-A gas-filled bulbous sac drifting through space, sent as a seed by a [[predefinedshipdesign SM_TREE]] to found a new forest around other stars. It is generally advisable to destroy [[SM_FLOATER]]s as soon as possible. However, they are small and difficult to detect; it will generally require the [[tech SPY_DETECT_2]] technology to do so.
+一个充满气体的球状囊泡，漂浮在太空中，作为 [[predefinedshipdesign SM_TREE]] 的种子，在其他恒星系周围建立新的森林。建议尽快铲除 [[SM_FLOATER]]，但它们体积小且难以探测，需要 [[tech SPY_DETECT_2]] 科技才能实现。
 
 SM_DRAGON
-Vacuum Dragon
+太空龙
 
 SM_DRAGON_DESC
-A terrifying giant monster that prowls space for prey, wreaking havoc on populated areas.
+一个可怖巨物在太空中狩猎，会对人口稠密区造成大破坏。
 
 SM_DRONE
-Drone
+无人机
 
 SM_DRONE_DESC
-A tool of a forgotten war, still fulfilling its original purpose: to mindlessly attack any ships in range.
+一种被遗忘的战争工具，仍然执行默认任务：攻击可见范围所有目标。
 
 SM_DRONE_FACTORY
-Drone Factory
+无人机工厂
 
 SM_DRONE_FACTORY_DESC
-A production facility built in some long-forgotten war to defend long-vanished builders, Amazingly, it still functions, slowly producing new Drone Fighters.
+一个在被遗忘的战争中的生产设施，以保护早已消失的造物主。令人惊讶，它依然运作，缓慢地生产新的战斗无人机。
 
 SM_GUARD_0
-Maintenance Ship
+维护船
 
 SM_GUARD_0_DESC
-An unmanned ship programmed by the Precursors to maintain the starlane entries of the system. It is armed only lightly, but will attack all intruders.
+一艘由先驱者编程的无人飞船，以维护行星轨道结构。它只有轻武器，但会攻击所有入侵者。
 
 SM_GUARD_1
-Sentry
+哨兵
 
 SM_GUARD_1_DESC
-A small unmanned guard ship [[SM_GUARD_MACRO]].
+小型警卫无人船 [[SM_GUARD_MACRO]]。
 
 SM_GUARD_2
-Sentinel
+卫兵
 
 SM_GUARD_2_DESC
-An unmanned guard ship [[SM_GUARD_MACRO]].
+警卫无人船 [[SM_GUARD_MACRO]]。
 
 SM_GUARD_3
-Warden
+看守者
 
 SM_GUARD_3_DESC
-A powerful unmanned guard ship [[SM_GUARD_MACRO]].
+强大的警卫无人船 [[SM_GUARD_MACRO]]。
 
 SM_KRAKEN_1
-Larval Kraken
+克拉肯幼虫
 
 SM_KRAKEN_1_DESC
-'''In the larval form, a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarm. A well-fed larval kraken may grow into a larger and more dangerous adult form.
+'''幼虫形式，一种谨慎且相对无害的太空兽群，猎物为太空磷虾群。发育良好的幼虫会长大为更危险的成虫。
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_2
-Kraken
+克拉肯
 
 SM_KRAKEN_2_DESC
-'''A formidable medium-weight space monster. Its natural prey is the krill swarm. A well-fed kraken may grow into an even larger and more dangerous form.
+'''一种强大的中等质量的太空生物，猎物为太空磷虾群。发育良好的克拉肯会长大为更危险的形式。
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_3
-Great Kraken
+大型克拉肯
 
 SM_KRAKEN_3_DESC
-'''A formidable and very tough space monster.
+'''一种强悍的太空怪物。
 
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_WHITE_KRAKEN
-White Kraken
+白色克拉肯
 
 SM_WHITE_KRAKEN_DESC
-The White Kraken is a white-colored prehistoric ancestor of the Kraken Space Monster.
+是克拉肯的白色先祖。
 
 SM_BLACK_KRAKEN
-Black Kraken
+黑色克拉肯
 
 SM_BLACK_KRAKEN_DESC
-'''A powerful, unnatural-seeming space monster.
-
-Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their [[metertype METER_POPULATION]].'''
+'''一种异常且强大的太空怪物。是经过生物过程改造的太空怪物，极其坚韧，拥有危险的武器和高度 [[metertype METER_STEALTH]]。需要一支强大的舰队和优秀的 [[encyclopedia DETECTION_TITLE]] 来追踪它们。它们会寻找可见行星的所有建筑并攻击其 [[metertype METER_POPULATION]]。'''
 
 SM_SNOWFLAKE_1
-Small Snowflake
+小雪花
 
 SM_SNOWFLAKE_1_DESC
-'''A small and harmless space monster with exceptional vision.
+'''一种无害的小型太空生物，拥有卓越的视力。
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_2
-Snowflake
+雪花
 
 SM_SNOWFLAKE_2_DESC
-'''A light-weight space monster with exceptional vision.
+'''一种轻盈的太空生物，拥有卓越的视力。
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_SNOWFLAKE_3
-Large Snowflake
+大型雪花
 
 SM_SNOWFLAKE_3_DESC
-'''A formidable light-weight space monster.
+'''一种强大的轻型太空生物。
 
 [[SM_SNOWFLAKE_ENVIRONMENT]]'''
 
 SM_PSIONIC_SNOWFLAKE
-Psionic Snowflake
+灵能雪花
 
 SM_PSIONIC_SNOWFLAKE_DESC
-'''A monster with the power to neutralize the minds of organic beings.
-
-Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire. They are also able to directly attack the [[metertype METER_POPULATION]] of planets.'''
+'''一种拥有影响有机生物心智能力的怪物，是经过生物工程改造的太空怪物，拥有危险的武器，并能控制由 [[encyclopedia ORGANIC_SPECIES_TITLE]] 组成的飞船。需要一支强大的舰队才能对抗它们。它们会狩猎飞船，迫使精神脆弱的船员背叛帝国。它们也能攻击行星 [[metertype METER_POPULATION]]。'''
 
 SM_JUGGERNAUT_1
-Small Juggernaut
+小型主宰者
 
 SM_JUGGERNAUT_1_DESC
-'''A formidable heavy-weight space monster with some protective shielding.
+'''一种强大的重型太空生物，带有一些护盾。
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_2
-Juggernaut
+主宰者
 
 SM_JUGGERNAUT_2_DESC
-'''A formidable heavy-weight space monster with moderate protective shielding.
+'''一种强大的重型太空生物，带有中等护盾。
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_3
-Large Juggernaut
+大型主宰者
 
 SM_JUGGERNAUT_3_DESC
-'''A formidable heavy-weight space monster with powerful protective shielding.
+'''一种强大的重型太空生物，带有强大的护盾。
 
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_BLOATED_JUGGERNAUT
-Bloated Juggernaut
+浮肿主宰者
 
 SM_BLOATED_JUGGERNAUT_DESC
-'''A massive, sickly-looking space monster.
+'''一种巨大且病态的太空怪物。
 
-Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their [[metertype METER_POPULATION]].'''
+是经过生物工程改造的太空怪物，极其坚韧，拥有危险的武器和高度 [[metertype METER_STEALTH]]。需要一支强大的舰队和优秀的 [[encyclopedia DETECTION_TITLE]]。它们会寻找行星上所有可见建筑并攻击其 [[metertype METER_POPULATION]]。'''
 
 SM_CLOUD
-Space Cloud
+太空云
 
 SM_CLOUD_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+一种星云状的生物，会随机增加行星的 [[metertype METER_STEALTH]]。
 
 SM_ASH
-Space Volcano
+太空灰烬
 
 SM_ASH_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+一种星云状的生物，会随机增加行星的 [[metertype METER_STEALTH]]。
 
 SM_DIM
-Dimensional Drifter
+维度流浪者
 
 SM_DIM_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+一种星云状的生物，会随机增加行星的 [[metertype METER_STEALTH]]。
 
 SM_VOID
-Behemoth of the Void
+虚空兽
 
 SM_VOID_DESC
-A nebulous creature that adds [[metertype METER_STEALTH]] to random planets.
+一种星云状的生物，会随机增加行星的 [[metertype METER_STEALTH]]。
 
 SM_SNAIL
-Asteroid Snail
+小行星之蜗
 
 SM_SNAIL_DESC
-A timid monster, feeding on minerals. Its shell strongly resembles a normal asteroid, increasing its [[metertype METER_STEALTH]] if it can hide inside an asteroid belt.
+一种胆小的生物，以矿物为食。它的壳体类似小行星。如果它潜藏于小行星带中，就会增加 [[metertype METER_STEALTH]]。
 
 SM_DAMPENING_CLOUD
-Dampening Cloud
+抑制云
 
 SM_DAMPENING_CLOUD_DESC
-A cosmic cloud of highly energetic particles that has gained some form of sentience. It is repelled by the energy signatures of populated colonies. It is nonetheless highly attracted to reserves of potential energy, and will steal the [[metertype METER_FUEL]] from vessels in the system.
+一团由高能粒子组成的宇宙云，获得了某种感知能力。它会被人口稠密的殖民地的能力特质所排斥。但它易被潜在能量储备所吸引，并试图窃取星系中的舰船 [[metertype METER_FUEL]]。
 
 SM_ACIREMA_GUARD
-Acirema Guard Ship
+艾希瑞玛护卫舰
 
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship built by the Acirema, standing guard over the system.
+一艘由艾希瑞玛人制造的武装无人飞船，保护着这个星系。
 
 SM_EXP_OUTPOST
-Experiment Zero
+零号实验室
 
 SM_EXP_OUTPOST_DESC
-'''An ancient creation of the Experimentors that reduces [[metertype METER_SHIELD]] and [[encyclopedia DAMAGE_TITLE]].
+'''实验者的古老造物，能降低 [[metertype METER_SHIELD]] 和 [[encyclopedia DAMAGE_TITLE]]。
 
-Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack ships directly, it fills the whole system with quadrillions of diminutive units, hampering enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
+它独特的能力以守护实验者前哨站。虽然它不直接攻击飞船，但会向星系散布数万颗纳米单位，削弱敌人护盾和武器，至于除了最好的装备外，其他装备都将失效。'''
 
 SM_COSMIC_DRAGON
-Cosmic Dragon
+宇宙龙
 
 SM_COSMIC_DRAGON_DESC
-'''A fearsome space monster with the power to destroy entire star systems.
+'''一种可怕的太空怪物，拥有摧毁整个恒星系的力量。
 
-Cosmic Dragons are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[metertype METER_STEALTH]]. A very powerful fleet with high [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack inhabited planets, and are able to vaporise entire star systems if left alone.'''
+是经过生物工程改造的太空怪物，极其坚韧，拥有危险的武器和高度 [[metertype METER_STEALTH]]。需要一支强大的舰队和优秀的 [[encyclopedia DETECTION_TITLE]] 来追踪它们。它们会搜寻并攻击有人行星，如果放任不管，它们能消灭整个恒星系。'''
 
 
 ##
