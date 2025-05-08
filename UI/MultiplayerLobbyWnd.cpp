@@ -307,7 +307,7 @@ namespace {
                     boost::bind(&NewGamePlayerRow::SpeciesChanged, this, _1));
 
             // ready state
-            if (m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+            if (Networking::is_ai(m_player_data)) {
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
@@ -426,7 +426,7 @@ namespace {
                     boost::bind(&LoadGamePlayerRow::EmpireChanged, this, _1));
 
             // ready state
-            if (m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+            if (Networking::is_ai(m_player_data)) {
                 push_back(GG::Wnd::Create<CUILabel>(""));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
@@ -982,13 +982,13 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
 
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
-            if (empty_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+            if (Networking::is_ai(empty_row->m_player_data))
                 m_lobby_data.players.emplace_back(Networking::INVALID_PLAYER_ID, player_row->m_player_data);
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
         } else if (const LoadGameEmpireRow* empire_row = dynamic_cast<const LoadGameEmpireRow*>(player_row)) {
-            if (empire_row->m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+            if (Networking::is_ai(empire_row->m_player_data))
                 m_lobby_data.players.emplace_back(Networking::INVALID_PLAYER_ID, empire_row->m_player_data);
 
         } else if (player_row) {
@@ -1024,7 +1024,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             bool immutable_row =
                 !HasAuthRole(Networking::RoleType::ROLE_HOST) &&
                 data_player_id != GGHumanClientApp::GetApp()->PlayerID() &&
-                !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
+                !(Networking::is_ai(psd) &&
                   HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP));// host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             auto row = GG::Wnd::Create<NewGamePlayerRow>(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
@@ -1035,7 +1035,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             bool immutable_row =
                 (!HasAuthRole(Networking::RoleType::ROLE_HOST) &&
                     (data_player_id != GGHumanClientApp::GetApp()->PlayerID()) &&
-                    !(psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
+                    !(Networking::is_ai(psd) &&
                         HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)))
                 || m_lobby_data.save_game_empire_data.empty();
             auto row = GG::Wnd::Create<LoadGamePlayerRow>(psd, data_player_id,
@@ -1059,10 +1059,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
         // checks for ready button
         if (data_player_id == GGHumanClientApp::GetApp()->PlayerID())
             is_client_ready = psd.player_ready;
-        else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
-            psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-            psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
-        { is_other_ready = is_other_ready && psd.player_ready; }
+        else if (Networking::is_human(psd) || Networking::is_mod_or_obs(psd))
+            is_other_ready = is_other_ready && psd.player_ready;
     }
 
     // add rows for unassigned empires and adds "Add AI" to assign AI to empire
