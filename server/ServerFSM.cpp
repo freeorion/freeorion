@@ -1780,20 +1780,18 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     }
 
     if (has_important_changes) {
-        for (auto& player : m_lobby_data->players)
-            player.second.player_ready = false;
+        for (auto& player : m_lobby_data->players | range_values)
+            player.player_ready = false;
     } else {
         // check if all established human players ready to play
-        bool is_all_ready = true;
-        for (auto& player : m_lobby_data->players) {
-            if ((player.first >= 0) && (player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-                player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
-                player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER))
-            {
-                if (! player.second.player_ready)
-                    is_all_ready = false;
-            }
-        }
+        static constexpr auto has_valid_id = [](const auto& id_lb_data) { return id_lb_data.first >= 0; };
+        static constexpr auto is_obs_mod_human_player = [](const auto& lb_data)
+        { return Networking::is_mod_or_obs(lb_data) || Networking::is_human(lb_data); };
+        static constexpr auto is_ready = [](const auto& lb_data) { return lb_data.player_ready; };
+
+        bool is_all_ready = range_all_of(m_lobby_data->players | range_filter(has_valid_id) |
+                                         range_values | range_filter(is_obs_mod_human_player),
+                                         is_ready);
 
         if (is_all_ready) {
             // TODO: merge this code with MPLobby::react(const StartMPGame& msg)
@@ -2467,16 +2465,17 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
     player_connection->SetAuthenticated();
     Networking::ClientType client_type = player_connection->GetClientType();
 
-    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+    if (Networking::is_human(client_type)) {
         // drop other connection with same name before checks for expected players
         std::vector<PlayerConnectionPtr> to_disconnect;
         to_disconnect.reserve(server.m_networking.size());
         for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
              it != server.m_networking.established_end(); ++it)
         {
-            if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                (*it)->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
-                to_disconnect.push_back(*it);
+            auto& player = *it;
+            if (player->PlayerName() == player_name && player_connection != player) {
+                player->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
+                to_disconnect.push_back(player);
             }
         }
         for (auto& conn : to_disconnect)
@@ -2664,9 +2663,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     int player_id = sender->PlayerID();
     ServerApp& server = Server();
 
-    Networking::ClientType client_type = sender->GetClientType();
-
-    if (client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
+    if (!Networking::is_mod(sender)) {
         ErrorLogger(FSM) << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignoring";
         return discard_event();
     }
@@ -2959,10 +2956,10 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     ServerApp& server = Server();
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    int player_id = player_connection->PlayerID();
+    const int player_id = player_connection->PlayerID();
 
-    if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
-        ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) Only human client can set empire to auto-turn. Got auto-turn issue from " << player_id;
+    if (!Networking::is_human(player_connection)) {
+        ErrorLogger(FSM) << "PlayingGame::react(AutoTurn&) Only human client can set empire to auto-turn. Got auto-turn issue from " << player_connection->PlayerID();
         player_connection->SendMessage(ErrorMessage(UserStringNop("WRONG_CLIENT_TYPE_AUTOTURN"), false));
         return discard_event();
     }
@@ -3002,7 +2999,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     for (auto player_it = server.m_networking.established_begin();
          player_it != server.m_networking.established_end(); ++player_it)
     {
-        PlayerConnectionPtr player_ctn = *player_it;
+        auto player_ctn = *player_it;
         player_ctn->SendMessage(PlayerStatusMessage(empire->Ready() ?
                                                     Message::PlayerStatus::WAITING :
                                                     Message::PlayerStatus::PLAYING_TURN,
