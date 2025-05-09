@@ -858,22 +858,22 @@ SM_COSMIC_DRAGON_DESC
 ##
 
 FLD_ION_STORM
-Ion Storm
+离子风暴
 
 FLD_ION_STORM_DESC
-Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it. All objects inside the storm receive an increase to [[metertype METER_STEALTH]] of [[value FLD_ION_STORM_STEALTH_BONUS]], but a decrease to [[metertype METER_DETECTION]] of [[value FLD_ION_STORM_DETECTION_MALUS]].
+由相对论性带电粒子构成的磁涡旋，能够干扰传感器并遮蔽其内的所有物体。处于风暴范围内的所有物体将获得 [[metertype METER_STEALTH]] 的 [[value FLD_ION_STORM_STEALTH_BONUS]] 加成，但同时会受到 [[metertype METER_DETECTION]] 的[[value FLD_ION_STORM_DETECTION_MALUS]] 减益。
 
 FLD_MOLECULAR_CLOUD
-Molecular Cloud
+分子云
 
 FLD_MOLECULAR_CLOUD_DESC
-Diffuse cloud of complex molecules that disrupts ship shielding. All ships have their [[metertype METER_SHIELD]] decreased by [[value FLD_MOLECULAR_CLOUD_SHIELD_MALUS]].
+由复杂分子构成的弥散云团，会干扰舰船护盾系统。所有舰船的 [[metertype METER_SHIELD]] 将受到 [[value FLD_MOLECULAR_CLOUD_SHIELD_MALUS]] 减益。
 
 FLD_NEBULA_1
-Nebula
+星云
 
 FLD_NEBULA_1_DESC
-Cloud of hydrogen gas that could coalesce to form a new star. Ship [[metertype METER_SPEED]] is reduced by [[value FLD_NEBULA_SPEED_MALUS]], [[metertype METER_DETECTION]] is reduced by [[value FLD_NEBULA_DETECTION_MALUS]], [[metertype METER_STEALTH]] is increased by [[value FLD_NEBULA_STEALTH_BONUS]].
+由氢气构成的星云云团，可能凝聚形成新恒星。舰船的 [[metertype METER_SPEED]] 将受到 [[value FLD_NEBULA_SPEED_MALUS]]，[[metertype METER_DETECTION]]减益，[[value FLD_NEBULA_DETECTION_MALUS]]，[[metertype METER_STEALTH]] 将获得 [[value FLD_NEBULA_STEALTH_BONUS]] 加成。
 
 FLD_NEBULA_2
 [[FLD_NEBULA_1]]
@@ -888,34 +888,34 @@ FLD_NEBULA_3_DESC
 [[FLD_NEBULA_1_DESC]]
 
 FLD_SUBSPACE_RIFT
-Scissor Rift
+亚空间裂隙
 
 FLD_SUBSPACE_RIFT_DESC
-Violent and destructive tear in spacetime which rapidly collapses. Pulls in and devours ships, systems, and planets that are caught within its area, although ships may be able to escape if moving quick enough.
+剧烈且具有破坏性的时空撕裂，会迅速坍缩。会吞噬其范围内的舰船、系统和行星，不过舰船若移动速度足够快，仍有可能逃脱。
 
 FLD_ACCRETION_DISC
-Accretion Disc
+吸积盘
 
 FLD_ACCRETION_DISC_DESC
-An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[metertype METER_SUPPLY]] penalty of -1.
+由弥散物质围绕中心大质量天体轨道运动形成的结构（通常为周星盘）。受影响系统内的所有行星将受到 [[metertype METER_SUPPLY]] -1的惩罚。
 
 FLD_NANITE_SWARM
-Nanite Swarm
+纳米群
 
 FLD_NANITE_SWARM_DESC
-A swarm of ancient nanorobots that attach themselves to and attempts to repair the hulls of ships within the swarm. Ship [[metertype METER_STRUCTURE]] increases by [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] per turn, spread equally over ships within the swarm.
+古代纳米机器人组成的集群，会附着在虫群范围内的舰船表面并尝试修复船体。舰船的 [[metertype METER_STRUCTURE]] 每回合提升 [[value FLD_NANITE_SWARM_STRUCTURE_FLAT]] 点，在群内的舰船间平均分配。
 
 FLD_METEOR_BLIZZARD
-Meteor Blizzard
+陨星风暴
 
 FLD_METEOR_BLIZZARD_DESC
-Anomalously self-attracting conglomeration of meteors. Generates [[metertype METER_RESEARCH]] on ships within as they observe the phenomenon.
+异常自吸引聚合体构成的陨星群。处于该现象范围内的舰船将获得 [[metertype METER_RESEARCH]] 增益。
 
 FLD_VOID_RIFT
-Void Rift
+虚空裂隙
 
 FLD_VOID_RIFT_DESC
-Anomalous rift in spacetime that reduces ship [[metertype METER_SPEED]] by 50%.
+异常的时空裂隙，会使舰船的 [[metertype METER_SPEED]] 减少50%。
 
 
 ##
@@ -923,16 +923,16 @@ Anomalous rift in spacetime that reduces ship [[metertype METER_SPEED]] by 50%.
 ##
 
 FN_BATTLE_FLEET
-Battle Fleet
+战斗舰队
 
 FN_SCOUT_FLEET
-Scout Fleet
+巡逻舰队
 
 FN_COLONY_FLEET
-Colony Fleet
+殖民舰队
 
 MONSTERS
-Monsters
+怪物
 
 
 ##
