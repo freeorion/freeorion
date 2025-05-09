@@ -110,10 +110,11 @@ struct Clr
     [[nodiscard]] static constexpr auto ToHexChars(uint8_t bits) noexcept
     {
         using val_t = std::string_view::value_type;
-        const uint8_t high_bits = bits >> 4;
-        val_t high_char = (high_bits > 9) ? ('A' + high_bits - 10) : ('0' + high_bits);
-        const uint8_t low_bits = bits & 0xF;
-        val_t low_char = (low_bits > 9) ? ('A' + low_bits - 10) : ('0' + low_bits);
+        constexpr auto to_char = [](uint8_t nibble) -> val_t
+        { return (nibble > 9) ? ('A' - 10 + nibble) : ('0' + nibble); };
+
+        val_t high_char = to_char(bits >> 4);
+        val_t low_char = to_char(bits & 0xF);
         return std::array<val_t, 2>{high_char, low_char};
     };
 
