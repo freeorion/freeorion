@@ -292,19 +292,19 @@ bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
 /////////////////////////////////////////////////////
 std::string MultiplayerLobbyData::Dump() const {
     std::stringstream stream;
-    for (const std::pair<int, PlayerSetupData>& psd : players) {
-        stream << psd.first << ": " << (psd.second.player_name.empty() ? "NO NAME" : psd.second.player_name) << "  ";
-        if (psd.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+    for (const auto& [player_id, psd] : players) {
+        stream << player_id << ": " << (psd.player_name.empty() ? "NO NAME" : psd.player_name) << "  ";
+        if (Networking::is_ai(psd))
             stream << "AI PLAYER";
-        else if (psd.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+        else if (Networking::is_human(psd))
             stream << "HUMAN PLAYER";
-        else if (psd.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
+        else if (Networking::is_obs(psd))
             stream << "HUMAN OBSERVER";
-        else if (psd.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
+        else if (Networking::is_mod(psd))
             stream << "HUMAN MODERATOR";
         else
             stream << "UNKNOWN CLIENT TPYE";
-        stream << "  " << (psd.second.empire_name.empty() ? "NO EMPIRE NAME" : psd.second.empire_name) << "\n";
+        stream << "  " << (psd.empire_name.empty() ? "NO EMPIRE NAME" : psd.empire_name) << "\n";
     }
     return stream.str();
 }
@@ -321,13 +321,13 @@ PlayerSaveGameData::PlayerSaveGameData(std::string name, int empire_id,
     orders(std::move(orders_)),
     ui_data(std::move(ui_data_))
 {
-    if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER && save_state_string.empty())
+    if (!Networking::is_ai(client_type) && save_state_string.empty())
         save_state_string = "NOT_SET_BY_CLIENT_TYPE";
 
     // The generation of the savegame data may be before any orders have been sent by clients. 
     // This is expected behaviour and to be handled differently by the AI than a possibly 
     // default-generated empty save_state_string.
-    if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER && orders.empty() && save_state_string.empty())
+    if (Networking::is_ai(client_type) && orders.empty() && save_state_string.empty())
         save_state_string = "NO_STATE_YET";
 }
 
