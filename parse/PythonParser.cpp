@@ -426,6 +426,23 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
     return true;
 }
 
+py::object PythonParser::LoadModule(PyObject* (*init_function)()) const {
+    PyObject *py_module = init_function();
+    if (py_module) {
+        const char* module_name = PyModule_GetName(py_module);
+        DebugLogger() << "Injecting parser module " << module_name;
+        py::object module{py::handle<>(py_module)};
+        py::extract<py::dict>(py::import("sys").attr("modules"))()[module_name] = module;
+        return module;
+    }
+    return py::object();
+}
+
+void PythonParser::UnloadModule(py::object module) const {
+    const char* module_name = PyModule_GetName(module.ptr());
+    py::import("sys").attr("modules").attr("pop")(module_name);
+}
+
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     auto module_path(m_scripting_dir);
     std::string parent;

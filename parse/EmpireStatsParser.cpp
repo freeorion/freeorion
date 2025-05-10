@@ -33,6 +33,8 @@ namespace std {
 }
 #endif
 
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit_empire_statistic_();
+
 namespace {
     using start_rule_payload = std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>>;
     using start_rule_signature = void(start_rule_payload&);
@@ -121,10 +123,13 @@ namespace {
 
     struct py_grammar {
         boost::python::dict globals;
+        const PythonParser& parser;
         start_rule_payload& stats;
+        boost::python::object module;
 
-        py_grammar(const PythonParser& parser, start_rule_payload& stats_) :
+        py_grammar(const PythonParser& parser_, start_rule_payload& stats_) :
             globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_),
             stats(stats_)
         {
             RegisterGlobalsConditions(globals);
@@ -135,6 +140,14 @@ namespace {
             globals["EmpireStatistic"] = boost::python::raw_function(
                 [&stats_](const boost::python::tuple& args, const boost::python::dict& kw)
                 { return py_insert_empire_statistics_(stats_, args, kw); });
+
+            module = parser.LoadModule(&PyInit_empire_statistic_);
+
+            module.attr("__stats") = boost::cref(*this);
+        }
+
+        ~py_grammar() {
+            parser.UnloadModule(module);
         }
 
         boost::python::dict operator()() const { return globals; }
