@@ -1317,17 +1317,17 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
-        if (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit) {
-            has_important_changes = true;
-            m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
+    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST) && 
+        (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit))
+    {
+        has_important_changes = true;
+        m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
 
-            // change role ROLE_GALAXY_SETUP for all non-host players
-            for (const auto& player_connection : server.Networking()) {
-                if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
-                    player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
-                                                   m_lobby_data->any_can_edit);
-                }
+        // change role ROLE_GALAXY_SETUP for all non-host players
+        for (const auto& player_connection : server.Networking()) {
+            if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
+                player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
+                                               m_lobby_data->any_can_edit);
             }
         }
     }
@@ -1360,7 +1360,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.empire_name.empty())
                     psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.players);
                 if (psd.starting_species_name.empty()) {
-                    if (m_lobby_data->seed != "")
+                    if (!m_lobby_data->seed.empty())
                         psd.starting_species_name = server.m_species_manager.RandomPlayableSpeciesName();
                     else
                         psd.starting_species_name = server.m_species_manager.SequentialPlayableSpeciesName(m_ai_next_index);
@@ -1376,8 +1376,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
         }
 
+
         bool has_collision = false;
-        // check for color, names, and IDs
+
+        // check for colliding color, names, and IDs
         std::set<EmpireColor> psd_colors;
         std::set<std::string> psd_names;
         std::set<int> psd_ids;
@@ -1634,6 +1636,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
         }
+
     } else {
         // can change only himself
         for (auto& i_player : m_lobby_data->players) {
@@ -1714,9 +1717,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     }
 
     ValidateClientLimits();
-    if (m_lobby_data->start_locked) {
+    if (m_lobby_data->start_locked)
         has_important_changes = true;
-    }
 
     // to determine if a new save file was selected, check if the selected file
     // index is different, and the new file index is in the valid range
@@ -1789,6 +1791,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     if (has_important_changes) {
         for (auto& player : m_lobby_data->players | range_values)
             player.player_ready = false;
+
     } else {
         // check if all established human players ready to play
         static constexpr auto has_valid_id = [](const auto& id_lb_data) { return id_lb_data.first >= 0; };
@@ -1854,8 +1857,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
         if (new_save_file_selected || player_setup_data_changed ||
-            player_id != sender->PlayerID() || has_important_changes )
-            player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+            player_id != sender->PlayerID() || has_important_changes)
+        { player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
     }
 
     return discard_event();
