@@ -1396,37 +1396,40 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd_names.emplace(incoming_player.player_name);
             }
 
-            if (incoming_player_id != Networking::INVALID_PLAYER_ID) {
-                const auto& player_it = server.Networking().GetPlayer(incoming_player_id);
-                if (player_it != server.Networking().established_end()) {
-                    // check for roles and client types
-                    if ((incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-                        !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
-                        (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
-                        !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                        (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
-                        !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
-                    {
-                        has_collision = true;
-                        WarnLogger(FSM) << "Got unallowed client types.";
-                        break;
-                    }
-                    // set correct authentication status
-                    incoming_player.authenticated = (*player_it)->IsAuthenticated();
-                } else {
-                    // player wasn't found
-                    // don't allow "ghost" records
+            if (incoming_player_id == Networking::INVALID_PLAYER_ID)
+                continue;
+
+            const auto player_it = server.Networking().GetPlayer(incoming_player_id);
+            if (player_it != server.Networking().established_end()) {
+                // check for roles and client types
+                if ((incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+                    !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
+                    (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
+                    !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                    (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+                    !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
+                {
                     has_collision = true;
-                    WarnLogger(FSM) << "Got missing player.";
+                    WarnLogger(FSM) << "Got unallowed client types.";
                     break;
                 }
-                if (!psd_ids.emplace(incoming_player_id).second) {
-                    // player id was already used
-                    // don't allow ID collision
-                    has_collision = true;
-                    WarnLogger(FSM) << "Got player's id collision.";
-                    break;
-                }
+                // set correct authentication status
+                incoming_player.authenticated = (*player_it)->IsAuthenticated();
+
+            } else {
+                // player wasn't found
+                // don't allow "ghost" records
+                has_collision = true;
+                WarnLogger(FSM) << "Got missing player.";
+                break;
+            }
+
+            if (!psd_ids.emplace(incoming_player_id).second) {
+                // player id was already used
+                // don't allow ID collision
+                has_collision = true;
+                WarnLogger(FSM) << "Got player's id collision.";
+                break;
             }
         }
 
@@ -1499,10 +1502,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // directly configurable lobby data
-            m_lobby_data->new_game       = incoming_lobby_data.new_game;
+            m_lobby_data->new_game = incoming_lobby_data.new_game;
             if (m_lobby_data->new_game) {
                 // empty save data
-                m_lobby_data->save_game = "";
+                m_lobby_data->save_game.clear();
                 m_lobby_data->save_game_empire_data.clear();
                 // prevent updating lobby by having old and new file name equal
                 incoming_lobby_data.save_game.clear();
@@ -1606,9 +1609,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // up iteration above.  these disconnections will lead to Disconnect events
             // being generated and MPLobby::react(Disconnect) being called.  If this
             // disconnects the host, then a new host will be selected within that function.
-            for (PlayerConnectionPtr drop_con : player_connections_to_drop) {
+            for (PlayerConnectionPtr drop_con : player_connections_to_drop)
                 server.m_networking.Disconnect(drop_con);
-            }
 
             // remove empty lobby player entries.  these will occur if AIs are dropped
             // from the lobby.  this will also occur when humans are dropped, but those
