@@ -1465,17 +1465,20 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (player_setup_data_changed) {
                 if (m_lobby_data->players.size() != incoming_lobby_data.players.size()) {
                     has_important_changes = true; // drop ready at number of players changed
+
                 } else {
-                    for (auto& [i_id, i_player] : m_lobby_data->players) {
-                        if (i_id < 0) // ignore changes in AI.
-                            continue;
+                    static constexpr auto not_ai_id = [](const auto& id_p) noexcept { return id_p.first >= 0; };
+
+                    // do any of the non-AI lobby players have the same ID and are
+                    // changed compared to what is in the incoming loby data?
+                    for (auto& [i_id, i_player] : m_lobby_data->players | range_filter(not_ai_id)) { // ignore AIs
+                        const auto is_i_id = [i_id{i_id}](auto& id_p) noexcept { return id_p.first == i_id; };
+
                         bool is_found_player = false;
-                        for (auto& [j_id, j_player] : incoming_lobby_data.players) {
-                            if (i_id == j_id) {
-                                has_important_changes = has_important_changes || IsPlayerChanged(i_player, j_player);
-                                is_found_player = true;
-                                break;
-                            }
+                        for (auto& [j_id, j_player] : incoming_lobby_data.players | range_filter(is_i_id)) {
+                            has_important_changes = has_important_changes || IsPlayerChanged(i_player, j_player);
+                            is_found_player = true;
+                            break;
                         }
                         has_important_changes = has_important_changes || (!is_found_player);
                     }
