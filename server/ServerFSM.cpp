@@ -82,7 +82,7 @@ namespace {
                 // In a single player game, the host player is always the human player, so
                 // this is just a matter of finding which player setup data is for
                 // a human player, and assigning that setup data to the host player id
-                if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+                if (Networking::is_human(psd))
                     return psd.player_name;
             }
 
@@ -97,7 +97,7 @@ namespace {
 
             // find which player was the human (and thus the host) in the saved game
             for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
-                if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+                if (Networking::is_human(psgd))
                     return psgd.name;
             }
         }
@@ -463,12 +463,13 @@ void ServerFSM::UpdateIngameLobby() {
     for (auto player_it = m_server.m_networking.established_begin();
         player_it != m_server.m_networking.established_end(); ++player_it)
     {
-        if ((*player_it)->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-            !m_server.GetEmpire(m_server.PlayerEmpireID((*player_it)->PlayerID())))
+        auto player = *player_it;
+        if (Networking::is_human(player) &&
+            !m_server.GetEmpire(m_server.PlayerEmpireID(player->PlayerID())))
         {
-            (*player_it)->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
+            player->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
         } else {
-            (*player_it)->SendMessage(PlayerInfoMessage(player_info_map));
+            player->SendMessage(PlayerInfoMessage(player_info_map));
         }
     }
 }
@@ -483,13 +484,13 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
     // set and test roles
     player_connection->SetAuthRoles(roles);
 
-    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+    if (Networking::is_obs(client_type) &&
         !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER))
     { client_type = Networking::ClientType::INVALID_CLIENT_TYPE; }
-    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
+    if (Networking::is_mod(client_type) &&
         !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR))
     { client_type = Networking::ClientType::INVALID_CLIENT_TYPE; }
-    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+    if (Networking::is_human(client_type) &&
         !player_connection->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER))
     { client_type = Networking::ClientType::INVALID_CLIENT_TYPE; }
 
@@ -506,7 +507,7 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
                 // If we're going to establish Human Player
                 // it will be better to break link with previous connection
                 // so game won't be stopped on disconnection of previous connection.
-                if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+                if (Networking::is_human(client_type)) {
                     m_server.DropPlayerEmpireLink(est_player->PlayerID());
                     est_player->SetClientType(Networking::ClientType::INVALID_CLIENT_TYPE);
                 }
@@ -514,7 +515,7 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
         }
     }
 
-    if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
+    if (Networking::is_invalid(client_type)) {
         InfoLogger() << "ServerFSM::EstablishPlayer player " << player_name
                      << " has client type " << client_type
                      << " version string: " << client_version_string
@@ -550,10 +551,7 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
         player_connection->SendMessage(HostIDMessage(m_server.m_networking.HostPlayerID()));
 
         // send chat history
-        if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR ||
-            client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-            client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
-        {
+        if (Networking::is_mod_or_obs(client_type) || Networking::is_human(client_type)) {
             // add "player enter game" message
             boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
             std::string data = std::string("[[").append(UserStringNop("PLAYER_ENTERED_GAME"))
@@ -854,6 +852,7 @@ MPLobby::MPLobby(my_context c) :
     server.LoadChatHistory();
     m_lobby_data->game_rules = GetGameRules().GetRulesAsStrings();
     const SpeciesManager& sm = server.GetSpeciesManager();
+
     if (server.IsHostless()) {
         DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby data from the previous game.";
 
@@ -938,9 +937,13 @@ MPLobby::MPLobby(my_context c) :
         ValidateClientLimits();
 
         server.Networking().SendMessageAll(ServerLobbyUpdateMessage(*m_lobby_data));
+
     } else {
-        int host_id = server.m_networking.HostPlayerID();
-        const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
+        const int host_id = server.m_networking.HostPlayerID();
+        const auto host_it = server.m_networking.GetPlayer(host_id);
+        if (host_it == server.m_networking.established_end())
+            return;
+        const auto player_connection = *host_it;
 
         // create player setup data for host, and store in list
         m_lobby_data->players.push_back({host_id, PlayerSetupData()});
@@ -1123,8 +1126,8 @@ void MPLobby::EstablishPlayer(PlayerConnectionPtr player_connection,
         PlayerSetupData player_setup_data;
         player_setup_data.player_name = player_name;
         player_setup_data.client_type = client_type;
-        player_setup_data.empire_name = (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ?
-                                         player_name : GenerateEmpireName(player_name, m_lobby_data->players);
+        player_setup_data.empire_name = Networking::is_human(client_type) ?
+            player_name : GenerateEmpireName(player_name, m_lobby_data->players);
         player_setup_data.empire_color = GetUnusedEmpireColour(m_lobby_data->players);
         if (m_lobby_data->seed.empty())
             player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
@@ -1136,14 +1139,14 @@ void MPLobby::EstablishPlayer(PlayerConnectionPtr player_connection,
         m_lobby_data->players.push_back({player_id, player_setup_data});
 
         // drop ready player flag at new player
-        for (auto& plr : m_lobby_data->players) {
-            if (plr.second.empire_name == player_name) {
+        for (auto& plr : m_lobby_data->players | range_values) {
+            if (plr.empire_name == player_name) {
                 // change empire name
-                plr.second.empire_name = (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) ?
-                                          plr.second.player_name : GenerateEmpireName(plr.second.player_name, m_lobby_data->players);
+                plr.empire_name = Networking::is_human(plr) ?
+                    plr.player_name : GenerateEmpireName(plr.player_name, m_lobby_data->players);
             }
 
-            plr.second.player_ready = false;
+            plr.player_ready = false;
         }
 
         ValidateClientLimits();
@@ -1330,15 +1333,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     }
 
     if (sender->HasAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP)) {
-
         DebugLogger(FSM) << "Get message from host or allowed player " << sender->PlayerID();
 
         // assign unique names / colours to any lobby entry that lacks them, or
         // remove empire / colours from observers
         for (auto& psd: incoming_lobby_data.players | range_values) {
-            if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-                psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
-            {
+            if (Networking::is_mod_or_obs(psd)) {
                 psd.empire_color = CLR_ZERO;
                 // On OSX the following two lines must not be included.
                 // Clearing empire name and starting species name from
@@ -1438,8 +1438,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     break;
                 }
             }
-        } else {
 
+        } else {
             player_setup_data_changed = (incoming_lobby_data.players != m_lobby_data->players);
 
             // check if galaxy setup data changed
@@ -3151,13 +3151,12 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     }
 
     int player_id = sender->PlayerID();
-    const Networking::ClientType client_type = sender->GetClientType();
 
     // clear if it shouldn't have been available...
     if (!ui_data_available)
         ui_data = SaveGameUIData();
 
-    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (Networking::is_obs(sender)) {
         // observers cannot submit orders. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                          << sender->PlayerName()
@@ -3166,23 +3165,23 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
-    } else if (client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
+    } else if (Networking::is_invalid(sender)) {
         // ??? lingering connection? shouldn't get to here. ignore.
         ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                          << sender->PlayerName()
                          << "(player id: " << player_id << ") "
-                               << "who has an invalid player type. The server is confused, and the orders being ignored.";
+                         << "who has an invalid player type. The server is confused, and the orders being ignored.";
         sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
-    } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
+    } else if (Networking::is_mod(sender)) {
         // if the moderator ends the turn, it is done, regardless of what
         // players are doing or haven't done
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Moderator ended turn.";
         post_event(ProcessTurn());
         return transit<ProcessingTurn>();
 
-    } else if (Networking::is_ai_or_human(client_type)) {
+    } else if (Networking::is_ai_or_human(sender)) {
         // store empire orders and resume waiting for more
         auto empire = server.Empires().GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
@@ -3218,7 +3217,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                          << " for empire " << empire_id << " count of " << order_set.size();
 
         server.AddEmpireData(PlayerSaveGameData(sender->PlayerName(), empire_id, std::move(order_set),
-                                                std::move(ui_data), std::move(save_state_string), client_type));
+                                                std::move(ui_data), std::move(save_state_string),
+                                                sender->GetClientType()));
         empire->SetAutoTurn(0);
         empire->SetReady(true);
 
