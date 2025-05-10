@@ -3,4 +3,8 @@ try:
 except ModuleNotFoundError:
     pass
 
-EmpireStatistic(name="ARMED_MONSTER_COUNT", value=StatisticCount(float, condition=Ship & Monster & Armed & Unowned))
+from empire_statistic_ import EmpireStatisticModule
+
+EmpireStatisticModule(
+    name="ARMED_MONSTER_COUNT", value=StatisticCount(float, condition=Ship & Monster & Armed & Unowned)
+)
