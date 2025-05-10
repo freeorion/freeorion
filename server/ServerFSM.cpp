@@ -1399,22 +1399,23 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (incoming_player_id == Networking::INVALID_PLAYER_ID)
                 continue;
 
-            const auto player_it = server.Networking().GetPlayer(incoming_player_id);
-            if (player_it != server.Networking().established_end()) {
+            const auto established_for_incoming_player_it = server.Networking().GetPlayer(incoming_player_id);
+            if (established_for_incoming_player_it != server.Networking().established_end()) {
+                const auto established_for_incoming_player = *established_for_incoming_player_it;
                 // check for roles and client types
                 if ((incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-                    !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
+                    !established_for_incoming_player->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
                     (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
-                    !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                    !established_for_incoming_player->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
                     (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
-                    !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
+                    !established_for_incoming_player->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
                 {
                     has_collision = true;
                     WarnLogger(FSM) << "Got unallowed client types.";
                     break;
                 }
                 // set correct authentication status
-                incoming_player.authenticated = (*player_it)->IsAuthenticated();
+                incoming_player.authenticated = established_for_incoming_player->IsAuthenticated();
 
             } else {
                 // player wasn't found
