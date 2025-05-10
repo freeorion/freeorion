@@ -1401,14 +1401,16 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
             const auto established_for_incoming_player_it = server.Networking().GetPlayer(incoming_player_id);
             if (established_for_incoming_player_it != server.Networking().established_end()) {
-                const auto established_for_incoming_player = *established_for_incoming_player_it;
+                const auto& established_for_incoming_player = *established_for_incoming_player_it;
+
                 // check for roles and client types
-                if ((incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-                    !established_for_incoming_player->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
-                    (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
-                    !established_for_incoming_player->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                    (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
-                    !established_for_incoming_player->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
+                using Networking::RoleType;
+                const auto has_role = [&established_for_incoming_player](const RoleType rt)
+                { return established_for_incoming_player->HasAuthRole(rt); };
+
+                if ((Networking::is_human(incoming_player) && !has_role(RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
+                    (Networking::is_mod(incoming_player) && !has_role(RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                    (Networking::is_obs(incoming_player) && !has_role(RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
                 {
                     has_collision = true;
                     WarnLogger(FSM) << "Got unallowed client types.";
