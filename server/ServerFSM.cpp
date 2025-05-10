@@ -1355,7 +1355,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.empire_color == CLR_ZERO)
                     psd.empire_color = GetUnusedEmpireColour(incoming_lobby_data.players);
                 if (psd.player_name.empty())
-                    // ToDo: Should we translate player_name?
+                    // TODO MAYBE: Should we translate player_name? Probably not...
                     psd.player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
                 if (psd.empire_name.empty())
                     psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.players);
@@ -1381,30 +1381,30 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         std::set<EmpireColor> psd_colors;
         std::set<std::string> psd_names;
         std::set<int> psd_ids;
-        for (auto& player : incoming_lobby_data.players) {
-            if (psd_colors.contains(player.second.empire_color) ||
-                psd_names.contains(player.second.empire_name) ||
-                psd_names.contains(player.second.player_name))
+        for (auto& [incoming_player_id, incoming_player] : incoming_lobby_data.players) {
+            if (psd_colors.contains(incoming_player.empire_color) ||
+                psd_names.contains(incoming_player.empire_name) ||
+                psd_names.contains(incoming_player.player_name))
             {
                 has_collision = true;
                 WarnLogger(FSM) << "Got color, empire's name or player's name collision for player "
-                                << player.second.player_name << "(" << player.first << ")";
+                                << incoming_player.player_name << "(" << incoming_player_id << ")";
                 break;
             } else {
-                psd_colors.emplace(player.second.empire_color);
-                psd_names.emplace(player.second.empire_name);
-                psd_names.emplace(player.second.player_name);
+                psd_colors.emplace(incoming_player.empire_color);
+                psd_names.emplace(incoming_player.empire_name);
+                psd_names.emplace(incoming_player.player_name);
             }
 
-            if (player.first != Networking::INVALID_PLAYER_ID) {
-                const auto& player_it = server.Networking().GetPlayer(player.first);
+            if (incoming_player_id != Networking::INVALID_PLAYER_ID) {
+                const auto& player_it = server.Networking().GetPlayer(incoming_player_id);
                 if (player_it != server.Networking().established_end()) {
                     // check for roles and client types
-                    if ((player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+                    if ((incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
                         !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
-                        (player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
+                        (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
                         !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                        (player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
+                        (incoming_player.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
                         !(*player_it)->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
                     {
                         has_collision = true;
@@ -1412,7 +1412,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                         break;
                     }
                     // set correct authentication status
-                    player.second.authenticated = (*player_it)->IsAuthenticated();
+                    incoming_player.authenticated = (*player_it)->IsAuthenticated();
                 } else {
                     // player wasn't found
                     // don't allow "ghost" records
@@ -1420,7 +1420,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     WarnLogger(FSM) << "Got missing player.";
                     break;
                 }
-                if (!psd_ids.emplace(player.first).second) {
+                if (!psd_ids.emplace(incoming_player_id).second) {
                     // player id was already used
                     // don't allow ID collision
                     has_collision = true;
@@ -1432,9 +1432,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         if (has_collision) {
             player_setup_data_changed = true;
-            for (auto& player : m_lobby_data->players) {
-                if (player.first == sender->PlayerID()) {
-                    player.second.player_ready = false;
+            for (auto& [lobby_player_id, lobby_player] : m_lobby_data->players) {
+                if (lobby_player_id == sender->PlayerID()) {
+                    lobby_player.player_ready = false;
                     break;
                 }
             }
@@ -1460,14 +1460,13 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (m_lobby_data->players.size() != incoming_lobby_data.players.size()) {
                     has_important_changes = true; // drop ready at number of players changed
                 } else {
-                    for (auto& i_player : m_lobby_data->players) {
-                        if (i_player.first < 0) // ignore changes in AI.
+                    for (auto& [i_id, i_player] : m_lobby_data->players) {
+                        if (i_id < 0) // ignore changes in AI.
                             continue;
-                        int player_id = i_player.first;
                         bool is_found_player = false;
-                        for (auto& j_player : incoming_lobby_data.players) {
-                            if (player_id == j_player.first) {
-                                has_important_changes = has_important_changes || IsPlayerChanged(i_player.second, j_player.second);
+                        for (auto& [j_id, j_player] : incoming_lobby_data.players) {
+                            if (i_id == j_id) {
+                                has_important_changes = has_important_changes || IsPlayerChanged(i_player, j_player);
                                 is_found_player = true;
                                 break;
                             }
@@ -1495,7 +1494,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (GetOptionsDB().OptionExists("setup.rules.server-locked." + incoming_rule.first) &&
                     !GetOptionsDB().Get<bool>("setup.rules.server-locked." + incoming_rule.first))
                 {
-                    m_lobby_data->game_rules[incoming_rule.first] = incoming_rule.second;
+                    m_lobby_data->game_rules.insert(incoming_rule);
                 }
             }
 
