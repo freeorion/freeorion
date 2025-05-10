@@ -940,147 +940,147 @@ MONSTERS
 ##
 
 RETURN_TO_INTRO
-Returning to Main Menu.
+回到主菜单
 
 SERVER_WONT_START
-The server could not be started.
+服务器无法启动。
 
 SERVER_TIMEOUT
-The server is not responding.
+服务器无响应。
 
 SERVER_LOST
-The connection to the server has been lost.
+与服务器的连接已丢失。
 
 LOCAL_SERVER_ALREADY_RUNNING_ERROR
-Can't start server. A local server is already running.
+无法启动服务器。本地服务器已在运行。
 
 PLAYER_DISCONNECTED
-Player %1% no longer has a connection to the server.
+玩家 %1% 已与服务器断开连接。
 
 SERVER_SAVE_INITIATE_ACK
-Saving...
+保存...
 
 # %1% save game file path as requested by the client.
 # %2% save game file size in bytes.
 SERVER_SAVE_COMPLETE
-Saved %2% bytes to file: %1%
+已保存 %2% 字节至文件：%1%
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
-The server received invalid client save data. Some may be ignored.
+服务器收到无效的客户端存档数据。部分数据可能被忽略。
 
 NON_HOST_SAVE_REQUEST_IGNORED
-The server received an invalid save game request from your client. You are not the host, so you cannot save the game.
+服务器收到无效的存档请求。您不是主机，无法保存游戏。
 
 UNABLE_TO_WRITE_CONFIG_XML
-Error when writing config.xml file. Unable to save options.
+写入 config.xml 时发生错误。无法保存设置。
 
 UNABLE_TO_READ_CONFIG_XML
-Error when reading config.xml file. Using default options.
+读取 config.xml 时发生错误。正在使用默认选项。
 
 UNABLE_TO_READ_PERSISTENT_CONFIG_XML
-Error when attempting to read the optional persistent_config.xml file (this is expected if it does not exist).
+尝试读取 persistent_config.xml 文件时发生错误（若文件不存在属于正常现象）。
 
 UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML
-Error when writing persistent_config.xml file.
+写入 persistent_config.xml 文件时发生错误。
 
 UNABLE_TO_WRITE_SAVE_FILE
-Error when writing save file.
+写入存档文件时发生错误。
 
 UNABLE_TO_READ_SAVE_FILE
-Error when reading save file.
+读取存档文件时发生错误。
 
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
-Unable to save during AI processing. Try again when AIs have finished turns.
+AI处理期间无法保存。请在AI回合结束后重试。
 
 SAVE_GAME_IN_PROGRESS
-A save game is in progress.
+已有存档进行中。
 
 ABORT_SAVE_AND_RESET
-Return to Main Menu without saving.
+返回主菜单（不保存当前进度）。
 
 ABORT_SAVE_AND_EXIT
-Exit FreeOrion without saving.
+退出 FreeOrion（不保存当前进度）。
 
 WRONG_CLIENT_TYPE_AUTOTURN
-Only human players can set automatic cycling.
+仅人类玩家可设置自动回合。
 
 WRONG_CLIENT_TYPE_REVERT_ORDERS
-Orders cannot be reverted for non-players.
+非玩家客户端无法撤销指令。
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
-No empire is being controlled by this client; orders cannot be issued.
+此客户端未控制任何帝国，无法发布指令。
 
 ORDERS_FOR_WRONG_EMPIRE
-Orders were sent for an empire that this client does not control.
+指令针对非当前客户端控制的帝国。
 
 SERVER_ALREADY_HOSTING_GAME
-This server is already hosting a game.
+此服务器已正在托管游戏。
 
 SERVER_UNABLE_TO_SELECT_HOST
-The server was unable to select a new host.
+服务器无法选择新主机。
 
 SERVER_FOUND_NO_ACTIVE_PLAYERS
-Cannot generate game with no active players.
+无活跃玩家，无法生成游戏。
 
 SERVER_UNIVERSE_GENERATION_ERRORS
-Universe generation completed with errors. See log files for detailed error messages. Game can start, but gameplay will probably be impaired.
+宇宙生成完成但出现错误。请查看日志文件获取详细错误信息。游戏可开始，但玩法可能受影响。
 
 SERVER_TURN_EVENTS_ERRORS
-Python scripted turn events executed with errors. See log files for detailed error messages. Game can continue, but gameplay will probably be impaired.
+Python 脚本回合事件执行出现错误。请查看日志文件获取详细错误信息。游戏可继续进行，但玩法可能受影响。
 
 SERVER_ALREADY_PLAYING_GAME
-The server is not currently accepting players because a game is being played.
+服务器当前不接受新玩家，正在游戏中。
 
 ERROR_PYTHON_AI_CRASHED
-Python AI for %1% crashed.
+%1%的 Python AI 崩溃。
 
 ERROR_PLAYER_NAME_ALREADY_USED
-Player name %1% already in use.
+玩家名称 %1% 已被使用。
 
 ERROR_WRONG_PASSWORD
-Password wrong for player name %1%.
+玩家 %1% 的密码错误。
 
 ERROR_CLIENT_TYPE_NOT_ALLOWED
-Client type forbidden.
+客户端类型被禁止。
 
 ERROR_NOT_ENOUGH_AI_PLAYERS
-Not enough AI players.
+AI 玩家数量不足。
 
 ERROR_TOO_MANY_AI_PLAYERS
-Too many ai players.
+AI 玩家数量过多。
 
 ERROR_NOT_ENOUGH_HUMAN_PLAYERS
-Not enough human players.
+人类玩家数量不足。
 
 ERROR_TOO_MANY_HUMAN_PLAYERS
-Too many human players.
+人类玩家数量过多。
 
 ERROR_NOT_ENOUGH_CONNECTED_HUMAN_PLAYERS
-Not enough connected human empire players.
+已连接的人类帝国玩家数量不足。
 
 ERROR_TOO_MANY_UNCONNECTED_HUMAN_PLAYERS
-Too many unconnected human empire players.
+未连接的人类帝国玩家数量过多。
 
 ERROR_CONNECTION_WAS_REPLACED
-Your connection was replaced.
+您的连接已被替代。
 
 ERROR_NONPLAYER_CANNOT_CONCEDE
-Only Players can concede.
+仅玩家可投降。
 
 ERROR_CONCEDE_DISABLED
-Concede is disabled.
+投降功能已禁用。
 
 ERROR_CONCEDE_EXCEED_COLONIES
-Cannot concede; empire controls too many colonies.
+无法投降，帝国控制的殖民地数量过多。
 
 ERROR_CONCEDE_LAST_HUMAN_PLAYER
-Cannot concede from a game with only one human player.
+单人局游戏无法投降。
 
 ERROR_INCOMPATIBLE_VERSION
-Server cannot properly read messages from your client, most likely due to incompatible game versions.
+服务器无法正确读取客户端发送的消息，最可能原因是版本不兼容。
 
 ERROR_CHECKSUM_MISMATCH
-Content checksum on the server and the client differs.
+服务器与客户端的内容校验和不匹配。
 
 
 ##
