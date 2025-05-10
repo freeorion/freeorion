@@ -694,7 +694,7 @@ namespace FreeOrionPython {
         py::def("allPlayerIDs",             AllPlayerIDs,                   py::return_value_policy<py::return_by_value>(), "Returns an object (intVec) that contains the player IDs of all players in the game.");
 
         py::def("playerIsAI",
-                +[](int player_id) -> bool { return AIClientApp::GetApp()->GetPlayerClientType(player_id) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER; },
+                +[](int player_id) -> bool { return Networking::is_ai(AIClientApp::GetApp()->GetPlayerClientType(player_id)); },
                 "Returns True (boolean) if the player with the indicated"
                 " playerID (int) is controlled by an AI and false (boolean)"
                 " otherwise.");

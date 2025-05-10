@@ -8,7 +8,6 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <utility>
-#include <valarray>
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
 #include <GG/GLClientAndServerBuffer.h>
@@ -72,10 +71,18 @@ namespace {
     }
     static_assert(ArrEq(Clr("A0FF01BB").Hex(), "A0FF01BB"));
 
-    static_assert(Clr::ValFromTwoHexChars("01") == 1);
-    static_assert(Clr::ValFromTwoHexChars("FF") == 255);
-    static_assert(Clr::ValFromTwoHexChars("A0") == 160);
-    static_assert(Clr::ValFromTwoHexChars("!.") == 14u);
+    static_assert(Clr::HexCharToUint8('0') == 0u);
+    static_assert(Clr::HexCharToUint8('9') == 9u);
+    static_assert(Clr::HexCharToUint8('A') == 10u);
+    static_assert(Clr::HexCharToUint8('F') == 15u);
+    static_assert(Clr::HexCharToUint8('G') == 16u);
+
+    static_assert(Clr::HexCharsToUInt8("") == 0u);
+    static_assert(Clr::HexCharsToUInt8("A") == 10u);
+    static_assert(Clr::HexCharsToUInt8("01") == 1u);
+    static_assert(Clr::HexCharsToUInt8("FF") == 255u);
+    static_assert(Clr::HexCharsToUInt8("A0") == 160u);
+    static_assert(Clr::HexCharsToUInt8("!.") == 14u);
 
     static_assert(ArrEq(Clr::ToHexChars(0), "00"));
     static_assert(ArrEq(Clr::ToHexChars(1), "01"));
@@ -85,10 +92,10 @@ namespace {
     static_assert(ArrEq(Clr::ToHexChars(16), "10"));
     static_assert(ArrEq(Clr::ToHexChars(255), "FF"));
 
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("00")), "00"));
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("09")), "09"));
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("2C")), "2C"));
-    static_assert(ArrEq(Clr::ToHexChars(Clr::ValFromTwoHexChars("EF")), "EF"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("00")), "00"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("09")), "09"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("2C")), "2C"));
+    static_assert(ArrEq(Clr::ToHexChars(Clr::HexCharsToUInt8("EF")), "EF"));
 
     using sva4 = std::array<std::string::value_type, 4>;
     constexpr bool TestUint8ToCharArray(uint8_t num, sva4 expected_result) noexcept
@@ -123,11 +130,6 @@ std::vector<Rect> g_scissor_clipping_rects;
 
 /// the index of the next stencil bit to use for stencil clipping
 unsigned int g_stencil_bit = 0;
-
-/// whenever points on the unit circle are calculated with expensive sin() and cos() calls, the results are cached here
-std::map<int, std::valarray<double>> unit_circle_coords;
-/// this doesn't serve as a cache, but does allow us to prevent numerous constructions and destructions of Clr valarrays.
-std::map<int, std::valarray<Clr>> color_arrays;
 
 void Rectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
                unsigned int bevel_thick, bool bevel_left, bool bevel_top,
@@ -297,6 +299,47 @@ void XMark(Pt ul, Pt lr, Clr color1, Clr color2, Clr color3)
     glEnable(GL_TEXTURE_2D);
 }
 
+namespace {
+    constexpr auto CorrectAngle(double theta) {
+        // correct to range [0, 2pi)
+        if (theta < 0)
+            return theta + (static_cast<int64_t>(-theta / twoPI) + 1) * twoPI;
+        else if (theta >= twoPI)
+            return theta - static_cast<int64_t>(theta / twoPI) * twoPI;
+        else
+            return theta;
+    }
+
+    constexpr std::size_t SLICES = 36u; // how much to tesselate the circle coordinates
+
+    // this doesn't serve as a cache, but does allow us to prevent numerous
+    // constructions and destructions of Clr vectors.
+#if defined(__cpp_constinit)
+    constinit
+#endif
+    auto colors = []() {
+        std::array<GG::Clr, SLICES+1u> colors{};
+        colors.fill(GG::CLR_ZERO);
+        return colors;
+    }();
+
+    constexpr double HORZ_THETA = twoPI / SLICES;
+
+    // cache of sin() and cos() calls
+    const auto unit_vertices = []() {
+        std::array<double, 2u*(SLICES+1u)> verts{};
+
+        const double HORZ_THETA = twoPI / SLICES;
+
+        // calculate x,y values for each point on a unit circle divided into SLICES arcs
+        double theta = 0.0f;
+        for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
+            verts[j*2] = cos(-theta);
+            verts[j*2+1] = sin(-theta);
+        }
+        return verts;
+    }();
+}
 
 void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
                unsigned int bevel_thick, double theta1, double theta2)
@@ -306,82 +349,100 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     const GLfloat ht = Value(lr.y - ul.y);
     glDisable(GL_TEXTURE_2D);
 
-    // correct theta* values to range [0, 2pi)
-    if (theta1 < 0)
-        theta1 += (int(-theta1 / twoPI) + 1) * twoPI;
-    else if (theta1 >= twoPI)
-        theta1 -= int(theta1 / twoPI) * twoPI;
-    if (theta2 < 0)
-        theta2 += (int(-theta2 / twoPI) + 1) * twoPI;
-    else if (theta2 >= twoPI)
-        theta2 -= int(theta2 / twoPI) * twoPI;
+    theta1 = CorrectAngle(theta1);
+    theta2 = CorrectAngle(theta2);
 
-    const std::size_t SLICES = std::min(3.0 + std::max(wd, ht), 50.0);  // how much to tesselate the circle coordinates
-    const double HORZ_THETA = twoPI / SLICES;
+    const double theta1_x = cos(-theta1);
+    const double theta1_y = sin(-theta1);
+    const double theta2_x = cos(-theta2);
+    const double theta2_y = sin(-theta2);
 
-    auto& unit_vertices = unit_circle_coords[SLICES];
-    auto& colors = color_arrays[SLICES];
-    if (unit_vertices.size() == 0) { // no .empty() apparently?
-        unit_vertices.resize(2u * (SLICES + 1), 0.0);
-        double theta = 0.0f;
-        for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
-            unit_vertices[j*2] = cos(-theta);
-            unit_vertices[j*2+1] = sin(-theta);
-        }
-        colors.resize(SLICES + 1, Clr()); // create but don't initialize (this is essentially just scratch space, since the colors are different call-to-call)
-    }
     const int first_slice_idx = int(theta1 / HORZ_THETA + 1);
     int last_slice_idx = int(theta2 / HORZ_THETA - 1);
     if (theta1 >= theta2)
         last_slice_idx += SLICES;
-    for (std::size_t j = first_slice_idx; cmp_less_equal(j, last_slice_idx); ++j) { // calculate the color value for each needed point
-        std::size_t X = (j > SLICES ? (j - SLICES) : j) * 2, Y = X + 1; // confusing use of operator ,
-        const double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2; // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2), the direction of the light source, scaled to the range [0,1]
+
+    // calculate the color for each needed point
+    for (std::size_t j = first_slice_idx; cmp_less_equal(j, last_slice_idx); ++j) {
+        std::size_t X = (j > SLICES ? (j - SLICES) : j) * 2;
+        std::size_t Y = X + 1;
+        // this is essentially the dot product of (x,y) with (sqrt2over2,sqrt2over2),
+        // the direction of the light source, scaled to the range [0,1]
+        const double color_scale_factor = (SQRT2OVER2 * (unit_vertices[X] + unit_vertices[Y]) + 1) / 2;
         colors[j] = BlendClr(border_color1, border_color2, color_scale_factor);
     }
+
 
     glPushMatrix();
     glTranslatef(Value(ul.x) + wd/2.0f, Value(ul.y) + ht/2.0f, 0.0f);// move origin to the center of the rectangle
     glScalef(wd/2.0f, ht/2.0f, 1.0f);                                // map the range [-1,1] to the rectangle in both (x- and y-) directions
 
     const double inner_radius = (std::min(wd, ht) - 2.0*bevel_thick) / std::min(wd, ht);
-    glColor(color);
-    glBegin(GL_TRIANGLE_FAN);
-    glVertex2f(0, 0);
-    // point on circle at angle theta1
-    const double theta1_x = cos(-theta1), theta1_y = sin(-theta1);
-    glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
+
+    GL2DVertexBuffer fan_vert_buf;
+    fan_vert_buf.reserve(3u + last_slice_idx - first_slice_idx);
+    fan_vert_buf.store(X0, Y0);
+    fan_vert_buf.store(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
         int X = 2 * (cmp_greater(i, SLICES) ? (i - SLICES) : i);
         int Y = X + 1;
-        glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
+        fan_vert_buf.store(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
-    const double theta2_x = cos(-theta2), theta2_y = sin(-theta2);
-    glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
-    glEnd();
-    glBegin(GL_QUAD_STRIP);
+    fan_vert_buf.store(theta2_x * inner_radius, theta2_y * inner_radius);
+
+    glColor(color);
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    fan_vert_buf.activate();
+    glDrawArrays(GL_TRIANGLE_FAN, 0u, fan_vert_buf.size());
+
+
+
+    GL2DVertexBuffer quads_vert_buf;
+    quads_vert_buf.reserve(4u + 2u*(last_slice_idx - first_slice_idx));
+
+    GLRGBAColorBuffer quads_colour_buf;
+    quads_colour_buf.reserve(quads_vert_buf.size());
+
+
     // point on circle at angle theta1
-    double color_scale_factor = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
-    Clr clr = BlendClr(border_color1, border_color2, color_scale_factor);
-    glColor4ub(clr.r, clr.g, clr.b, clr.a);
-    glVertex2f(theta1_x, theta1_y);
-    glVertex2f(theta1_x * inner_radius, theta1_y * inner_radius);
+    const auto color_scale_factor1 = (SQRT2OVER2 * (theta1_x + theta1_y) + 1) / 2;
+    const auto clr1 = BlendClr(border_color1, border_color2, color_scale_factor1);
+    quads_colour_buf.store(clr1);
+    quads_vert_buf.store(theta1_x, theta1_y);
+    quads_colour_buf.store(clr1);
+    quads_vert_buf.store(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
         const int X = 2 * (cmp_greater(i, SLICES) ? (i - SLICES) : i);
         const int Y = X + 1;
-        glColor(colors[i]);
-        glVertex2f(unit_vertices[X], unit_vertices[Y]);
-        glVertex2f(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
+        quads_colour_buf.store(colors[i]);
+        quads_vert_buf.store(unit_vertices[X], unit_vertices[Y]);
+        quads_colour_buf.store(colors[i]);
+        quads_vert_buf.store(unit_vertices[X] * inner_radius, unit_vertices[Y] * inner_radius);
     }
     // theta2
-    color_scale_factor = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
-    clr = BlendClr(border_color1, border_color2, color_scale_factor);
-    glColor4ub(clr.r, clr.g, clr.b, clr.a);
-    glVertex2f(theta2_x, theta2_y);
-    glVertex2f(theta2_x * inner_radius, theta2_y * inner_radius);
-    glEnd();
+    const auto color_scale_factor2 = (SQRT2OVER2 * (theta2_x + theta2_y) + 1) / 2;
+    const auto clr2 = BlendClr(border_color1, border_color2, color_scale_factor2);
+    quads_colour_buf.store(clr2);
+    quads_vert_buf.store(theta2_x, theta2_y);
+    quads_colour_buf.store(clr2);
+    quads_vert_buf.store(theta2_x * inner_radius, theta2_y * inner_radius);
+
+
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    quads_vert_buf.activate();
+    quads_colour_buf.activate();
+    glDrawArrays(GL_QUAD_STRIP, 0u, quads_vert_buf.size());
+
+    glPopClientAttrib();
     glPopMatrix();
     glEnable(GL_TEXTURE_2D);
 }

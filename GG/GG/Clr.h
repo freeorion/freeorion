@@ -54,14 +54,14 @@ struct Clr
     [[nodiscard]] constexpr Clr(std::string_view hex_colour)
     {
         const auto sz = hex_colour.size();
-        r = (sz >= 2) ? ValFromTwoHexChars(hex_colour.substr(0, 2)) : 0;
-        g = (sz >= 4) ? ValFromTwoHexChars(hex_colour.substr(2, 2)) : 0;
-        b = (sz >= 6) ? ValFromTwoHexChars(hex_colour.substr(4, 2)) : 0;
-        a = (sz >= 8) ? ValFromTwoHexChars(hex_colour.substr(6, 2)) : 255;
+        r = (sz >= 2u) ? HexCharsToUInt8(hex_colour.substr(0, 2)) : 0u;
+        g = (sz >= 4u) ? HexCharsToUInt8(hex_colour.substr(2, 2)) : 0u;
+        b = (sz >= 6u) ? HexCharsToUInt8(hex_colour.substr(4, 2)) : 0u;
+        a = (sz >= 8u) ? HexCharsToUInt8(hex_colour.substr(6, 2)) : 255u;
     }
 
     [[nodiscard]] explicit constexpr operator uint32_t() const noexcept
-    { return (r << 24) + (g << 16) + (b << 8) + a; }
+    { return (uint32_t{r} << 24u) + (uint32_t{g} << 16u) + (uint32_t{b} << 8u) + uint32_t{a}; }
 
     [[nodiscard]] constexpr auto ToCharArray() const noexcept
     {
@@ -89,6 +89,10 @@ struct Clr
     [[nodiscard]] constexpr std::array<uint8_t, 4> RGBA() const noexcept
     { return {r, g, b, a}; }
 
+    [[nodiscard]] constexpr std::array<float, 4> ToNormalizedRGBA() const noexcept
+    { return {r/255.0f, g/255.0f, b/255.0f, a/255.0f}; }
+
+
 #if defined(__cpp_impl_three_way_comparison)
     [[nodiscard]] constexpr auto operator<=>(const Clr&) const noexcept = default;
 #else
@@ -106,10 +110,11 @@ struct Clr
     [[nodiscard]] static constexpr auto ToHexChars(uint8_t bits) noexcept
     {
         using val_t = std::string_view::value_type;
-        const uint8_t high_bits = bits >> 4;
-        val_t high_char = (high_bits > 9) ? ('A' + high_bits - 10) : ('0' + high_bits);
-        const uint8_t low_bits = bits & 0xF;
-        val_t low_char = (low_bits > 9) ? ('A' + low_bits - 10) : ('0' + low_bits);
+        constexpr auto to_char = [](uint8_t nibble) -> val_t
+        { return (nibble > 9) ? ('A' - 10 + nibble) : ('0' + nibble); };
+
+        val_t high_char = to_char(bits >> 4);
+        val_t low_char = to_char(bits & 0xF);
         return std::array<val_t, 2>{high_char, low_char};
     };
 
@@ -122,13 +127,17 @@ struct Clr
         return {rhex[0], rhex[1], ghex[0], ghex[1], bhex[0], bhex[1], ahex[0], ahex[1]};
     }
 
-    [[nodiscard]] static constexpr uint8_t ValFromTwoHexChars(std::string_view chars) noexcept
-    {
-        auto digit0 = chars[0];
-        auto digit1 = chars[1];
-        uint8_t val0 = 16 * (digit0 >= 'A' ? (digit0 - 'A' + 10) : (digit0 - '0'));
-        uint8_t val1 = (digit1 >= 'A' ? (digit1 - 'A' + 10) : (digit1 - '0'));
-        return val0 + val1;
+    [[nodiscard]] static constexpr uint8_t HexCharToUint8(std::string_view::value_type digit) noexcept
+    { return (digit >= 'A' ? (digit - 'A' + 10) : (digit - '0')); }
+
+    [[nodiscard]] static constexpr uint8_t HexCharsToUInt8(std::string_view chars) noexcept {
+        if (chars.empty())
+            return 0;
+        const uint8_t val0 = HexCharToUint8(chars[0]);
+        if (chars.size() == 1) [[unlikely]]
+            return val0;
+        const uint8_t val1 = HexCharToUint8(chars[1]);
+        return 16*val0 + val1;
     };
 
     static constexpr std::string::value_type* UInt8ToChars(

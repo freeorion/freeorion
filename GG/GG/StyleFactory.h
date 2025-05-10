@@ -27,7 +27,6 @@ class Button;
 class DropDownList;
 class Edit;
 class Font;
-class GroupBox;
 class ListBox;
 class RadioButtonGroup;
 class Scroll;

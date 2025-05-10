@@ -25,7 +25,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Edit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Font.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GLClientAndServerBuffer.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/GroupBox.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GUI.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Layout.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ListBox.cpp

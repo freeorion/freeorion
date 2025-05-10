@@ -34,7 +34,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Font.h
         ${CMAKE_CURRENT_LIST_DIR}/GGFwd.h
         ${CMAKE_CURRENT_LIST_DIR}/GLClientAndServerBuffer.h
-        ${CMAKE_CURRENT_LIST_DIR}/GroupBox.h
         ${CMAKE_CURRENT_LIST_DIR}/GUI.h
         ${CMAKE_CURRENT_LIST_DIR}/Layout.h
         ${CMAKE_CURRENT_LIST_DIR}/ListBox.h

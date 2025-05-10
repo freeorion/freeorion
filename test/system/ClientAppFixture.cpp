@@ -218,10 +218,9 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         InfoLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
         m_ai_empires.clear();
-        for (const auto& empire : m_empires) {
-            if (GetEmpireClientType(empire.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-                m_ai_empires.insert(empire.first);
-        }
+        auto ai_ids_rng = m_empires | range_keys |
+            range_filter([this](auto id) { return Networking::is_ai(GetEmpireClientType(id)); });
+        m_ai_empires.insert(ai_ids_rng.begin(), ai_ids_rng.end());
         m_ai_waiting = m_ai_empires;
 
         m_game_started = true;
@@ -235,8 +234,8 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
         BOOST_TEST_MESSAGE("...ignored message...");
         return true; // ignore
     case Message::MessageType::PLAYER_STATUS: {
-        int about_empire_id;
-        Message::PlayerStatus status;
+        int about_empire_id = ALL_EMPIRES;
+        Message::PlayerStatus status = Message::PlayerStatus::WAITING;
         ExtractPlayerStatusMessageData(msg, status, about_empire_id);
         SetEmpireStatus(about_empire_id, status);
         if (status == Message::PlayerStatus::WAITING)
@@ -320,12 +319,6 @@ void ClientAppFixture::UpdateLobby() {
     m_networking->SendMessage(LobbyUpdateMessage(m_lobby_data));
 }
 
-unsigned int ClientAppFixture::GetLobbyAICount() const {
-    unsigned int res = 0;
-    for (const auto& plr: m_lobby_data.players) {
-        if (plr.second.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-            ++ res;
-    }
-    return res;
-}
+unsigned int ClientAppFixture::GetLobbyAICount() const
+{ return range_count_if(m_lobby_data.players | range_values, Networking::is_ai); }
 

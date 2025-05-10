@@ -96,27 +96,34 @@ namespace {
         return it;
     }
 
+    //                                 <rgba  255    ' '  '>'   0
+    constexpr std::size_t rgba_tag_sz = 6u + 4u*3u + 3u + 1u + 1u;
+    constexpr std::array<std::string::value_type, rgba_tag_sz> rgba_tag_container_with_prefix{
+        "<rgba \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"};
+    static_assert(rgba_tag_container_with_prefix.back() == 0); // verify array fill with 0 to end
+    constexpr std::string_view rgba_close_tag{"</rgba>"};
 
-    std::string WrapColorTag(std::string_view text, EmpireColor c) {
-        static constexpr auto lim = std::numeric_limits<EmpireColor::value_type>::max();
-        static_assert(lim < 1000); // ensure no more than 3 characters will be consumed per number
-        assert(c.size() >= 4);
-        //                                      <rgba  255  ' ' '>'  0
-        static constexpr std::size_t rgba_tag_sz = 6 + 4*3 + 3 + 1 + 1;
-        std::array<std::string::value_type, rgba_tag_sz> rgba_tag{"<rgba "}; // rest should be nulls
-        static constexpr std::string_view rgba_close_tag{"</rgba>"};
 
-        std::string retval;
-        retval.reserve(text.size() + rgba_tag_sz + rgba_close_tag.size());
+    CONSTEXPR_STRING std::string WrapColorTag(std::string_view text, EmpireColor c) {
+        static_assert(std::numeric_limits<EmpireColor::value_type>::max() < 1000); // ensure no more than 3 characters will be consumed per number
+        static_assert(c.size() >= 4);
+        auto rgba_tag(rgba_tag_container_with_prefix); // copy from constant
 
         auto next_it = ToChars(std::next(rgba_tag.data(), 6), c);
         *next_it++ = '>';
         const auto tag_view = std::string_view(rgba_tag.data(), std::distance(rgba_tag.data(), next_it));
 
+        std::string retval;
+        retval.reserve(text.size() + rgba_tag_sz + rgba_close_tag.size());
         retval.append(tag_view).append(text).append(rgba_close_tag);
 
         return retval;
     }
+
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+    static_assert(WrapColorTag("A", EmpireColor{}).size() == 22);
+    static_assert([]() { return WrapColorTag("A", EmpireColor{1, 2, 3, 255}) == "<rgba 1 2 3 255>A</rgba>"; }());
+#endif
 
     std::string EmpireColorWrappedText(const auto& empire, std::string_view text)
     { return WrapColorTag(text, empire ? empire->Color() : EmpireColor{{80, 255, 128, 255}}); }

@@ -15,7 +15,6 @@
 #include <GG/DropDownList.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/Edit.h>
-#include <GG/GroupBox.h>
 #include <GG/ListBox.h>
 #include <GG/Menu.h>
 #include <GG/MultiEdit.h>

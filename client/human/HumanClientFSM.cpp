@@ -615,7 +615,7 @@ boost::statechart::result MPLobby::react(const ChatHistory& msg) {
     } catch (...) {}
 
     auto& cui = Client().GetClientUI();
-    const auto& wnd = cui.GetMultiPlayerLobbyWnd();
+    const auto wnd = cui.GetMultiPlayerLobbyWnd();
     for (const auto& elem : chat_history)
         wnd->ChatMessage(elem.text,
                          elem.player_name,
@@ -642,13 +642,12 @@ boost::statechart::result MPLobby::react(const SaveGameComplete& msg) {
 boost::statechart::result MPLobby::react(const TurnProgress& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) TurnProgress.";
 
-    Message::TurnProgressPhase phase_id;
     try {
+        Message::TurnProgressPhase phase_id;
         ExtractTurnProgressMessageData(msg.m_message, phase_id);
+        if (const auto wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd())
+            wnd->TurnPhaseUpdate(phase_id);
     } catch (...) {}
-
-    const auto& wnd = Client().GetClientUI().GetMultiPlayerLobbyWnd();
-    wnd->TurnPhaseUpdate(phase_id);
 
     return discard_event();
 }

@@ -45,6 +45,7 @@
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/Pending.h"
+#include "../util/ranges.h"
 #include "../util/Random.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/ScopedTimer.h"
@@ -180,6 +181,8 @@ namespace {
 #endif
         return PathToString(GetBinDir() / ai_client_exe_filename);
     }
+
+    static constexpr auto non_empty_name = [](const auto& thing) { return !thing.player_name.empty(); };
 }
 
 #ifdef FREEORION_MACOSX
@@ -222,13 +225,7 @@ void ServerApp::StartBackgroundParsing(const PythonParser& python, std::promise<
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
     DebugLogger() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
     // check if AI clients are needed for given setup data
-    bool need_AIs = false;
-    for (const PlayerSetupData& psd : player_setup_data) {
-        if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
-            need_AIs = true;
-            break;
-        }
-    }
+    const bool need_AIs = range_any_of(player_setup_data, Networking::is_ai);
     if (need_AIs)
         m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::STARTING_AIS));
 
@@ -254,17 +251,16 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
 
     // TODO: add other command line args to AI client invocation as needed
-    std::vector<std::string> args, arg;
+    std::vector<std::string> args;
+    args.reserve(16);
     args.push_back("\"" + AI_CLIENT_EXE + "\"");
     args.push_back("place_holder");
-    std::size_t player_pos = args.size()-1;
-    std::stringstream max_aggr_str;
-    max_aggr_str << max_aggression;
-    args.push_back(max_aggr_str.str());
+    const std::size_t player_pos = args.size()-1;
+    args.push_back(std::to_string(max_aggression));
     args.push_back("--resource.path");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
 
-    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    const auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
@@ -284,30 +280,31 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     DebugLogger() << "starting AIs with " << AI_CLIENT_EXE ;
     DebugLogger() << "ai-aggression set to " << max_aggression;
     DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
-    std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
-    if (!ai_config.empty()) {
-        args.push_back("--ai-config");
-        args.push_back(ai_config);
-        DebugLogger() << "ai-config set to '" << ai_config << "'";
-    } else {
-        DebugLogger() << "ai-config not set.";
+    {
+        std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
+        if (!ai_config.empty()) {
+            args.push_back("--ai-config");
+            DebugLogger() << "ai-config set to '" << ai_config << "'";
+            args.push_back(std::move(ai_config));
+        } else {
+            DebugLogger() << "ai-config not set.";
+        }
     }
-    std::string ai_log_dir = GetOptionsDB().Get<std::string>("ai-log-dir");
-    if (!ai_log_dir.empty()) {
-        args.push_back("--ai-log-dir");
-        args.push_back(ai_log_dir);
-        DebugLogger() << "ai-log-dir set to '" << ai_log_dir << "'";
-    } else {
-        DebugLogger() << "ai-log-dir not set.";
+    {
+        std::string ai_log_dir = GetOptionsDB().Get<std::string>("ai-log-dir");
+        if (!ai_log_dir.empty()) {
+            args.push_back("--ai-log-dir");
+            DebugLogger() << "ai-log-dir set to '" << ai_log_dir << "'";
+            args.push_back(std::move(ai_log_dir));
+        } else {
+            DebugLogger() << "ai-log-dir not set.";
+        }
     }
 
     // for each AI client player, create a new AI client process
-    for (const PlayerSetupData& psd : player_setup_data) {
-        if (psd.client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-            continue;
-
+    static constexpr auto to_name = [](const auto& psd) noexcept -> const auto& { return psd.player_name; };
+    for (const auto& player_name : player_setup_data | range_filter(Networking::is_ai) | range_transform(to_name)) {
         // check that AIs have a name, as they will be sorted later based on it
-        std::string player_name = psd.player_name;
         if (player_name.empty()) {
             ErrorLogger() << "ServerApp::CreateAIClients can't create a player with no name.";
             return;
@@ -405,11 +402,9 @@ void ServerApp::CleanupAIs() {
 
     bool ai_connection_lingering = false;
     try {
-        for (PlayerConnectionPtr player : m_networking) {
-            if (player->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
-                player->SendMessage(EndGameMessage(Message::EndGameReason::PLAYER_DISCONNECT));
-                ai_connection_lingering = true;
-            }
+        for (PlayerConnectionPtr ai_player : m_networking | range_filter(Networking::is_ai)) {
+            ai_player->SendMessage(EndGameMessage(Message::EndGameReason::PLAYER_DISCONNECT));
+            ai_connection_lingering = true;
         }
     } catch (...) {
         ErrorLogger() << "ServerApp::CleanupAIs() exception while sending end game messages";
@@ -496,8 +491,8 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
 }
 
 void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection) {
-    int player_id = player_connection->PlayerID();
-    bool is_host = m_networking.PlayerIsHost(player_id);
+    const int player_id = player_connection->PlayerID();
+    const bool is_host = m_networking.PlayerIsHost(player_id);
     if (!is_host && m_networking.HostPlayerID() != Networking::INVALID_PLAYER_ID) {
         WarnLogger() << "ServerApp::HandleLoggerConfig rejecting message from non-host player id = " << player_id;
         return;
@@ -512,9 +507,10 @@ void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr playe
     for (auto players_it = m_networking.established_begin();
          players_it != m_networking.established_end(); ++players_it)
     {
-        if ((*players_it)->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
-            DebugLogger() << "Forwarding logging thresholds to AI " << (*players_it)->PlayerID();
-            (*players_it)->SendMessage(relay_options_message);
+        auto& player = *players_it;
+        if (Networking::is_ai(player)) {
+            DebugLogger() << "Forwarding logging thresholds to AI " << player->PlayerID();
+            player->SendMessage(relay_options_message);
         }
     }
 }
@@ -610,8 +606,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     const auto& player_setup_data = multiplayer_lobby_data.players;
     std::vector<PlayerSetupData> psds;
 
-    for (const auto& entry : player_setup_data) {
-        const PlayerSetupData& psd = entry.second;
+    for (const auto& [psd_player_id, psd] : player_setup_data) {
         if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
             psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
             psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
@@ -621,23 +616,22 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
 
             // find player connection with same ID as this player setup data
             bool found_matched_id_connection = false;
-            int player_id = entry.first;
             for (auto established_player_it = m_networking.established_begin();
                  established_player_it != m_networking.established_end(); ++established_player_it)
             {
                 const PlayerConnectionPtr player_connection = *established_player_it;
-                if (player_connection->PlayerID() == player_id)
-                {
+                if (player_connection->PlayerID() == psd_player_id) {
                     PlayerSetupData new_psd = psd;
-                    new_psd.player_id = player_id;
+                    new_psd.player_id = psd_player_id;
                     psds.push_back(std::move(new_psd));
                     found_matched_id_connection = true;
                     break;
                 }
             }
             if (!found_matched_id_connection) {
-                if (player_id != Networking::INVALID_PLAYER_ID) {
-                    ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id << " player name: " << psd.player_name;
+                if (psd_player_id != Networking::INVALID_PLAYER_ID) {
+                    ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: "
+                                  << psd_player_id << " player name: " << psd.player_name;
                 } else {
                     // There is no player currently connected for the current setup data. A player
                     // may connect later, at which time they may be assigned to this data or the
@@ -646,31 +640,29 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 }
             }
 
-        } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+        } else if (Networking::is_ai(psd)) {
             // All AI player setup data, as determined from their client type, is
             // assigned to player IDs of established AI players with the appropriate names
 
             // find player connection with same name as this player setup data
             bool found_matched_name_connection = false;
-            const std::string& player_name = psd.player_name;
             for (auto established_player_it = m_networking.established_begin();
                  established_player_it != m_networking.established_end(); ++established_player_it)
             {
-                const PlayerConnectionPtr player_connection = *established_player_it;
-                if (player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
-                    player_connection->PlayerName() == player_name)
-                {
+                const auto& player_connection = *established_player_it;
+                if (Networking::is_ai(player_connection) && player_connection->PlayerName() == psd.player_name) {
                     // assign name-matched AI client's player setup data to appropriate AI connection
-                    int player_id = player_connection->PlayerID();
                     PlayerSetupData new_psd = psd;
-                    new_psd.player_id = player_id;
+                    new_psd.player_id = player_connection->PlayerID();
                     psds.push_back(std::move(new_psd));
                     found_matched_name_connection = true;
                     break;
                 }
             }
-            if (!found_matched_name_connection)
-                ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for AI player with name: " << player_name;
+            if (!found_matched_name_connection) {
+                ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for AI player with name: "
+                              << psd.player_name;
+            }
 
         } else {
             // do nothing for any other player type, until another player type
@@ -768,14 +760,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_empire_id_setup_data;
     int next_empire_id = 1;
-    for (const auto& psd : player_setup_data_in) {
-        if (!psd.player_name.empty()
-            && (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER
-                || psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER))
-        {
-            active_empire_id_setup_data[next_empire_id++] = psd;
-        }
-    }
+    for (const auto& psd : player_setup_data_in | range_filter(Networking::is_ai_or_human) | range_filter(non_empty_name))
+        active_empire_id_setup_data[next_empire_id++] = psd;
 
     if (active_empire_id_setup_data.empty()) {
         ErrorLogger() << "ServerApp::NewGameInitConcurrentWithJoiners found no active players!";
@@ -913,11 +899,7 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
             return false;
         }
 
-        if (!(client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER
-              || client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
-              || client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER
-              || client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR))
-        {
+        if (!Networking::is_ai_or_human(client_type) || Networking::is_mod_or_obs(client_type)){
             ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners found player connection with unsupported client type.";
         }
     }
@@ -962,26 +944,24 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     // assign all saved game data to a player ID
     for (int i = 0; i < static_cast<int>(player_save_game_data.size()); ++i) {
         const PlayerSaveGameData& psgd = player_save_game_data[i];
-        if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (Networking::is_human(psgd)) {
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
             player_id_to_save_game_data_index.emplace_back(m_networking.HostPlayerID(), i);
 
-        } else if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+        } else if (Networking::is_ai(psgd)) {
             // All saved AI player data, as determined from their client type, is
             // assigned to player IDs of established AI players
 
             // cycle to find next established AI player
-            for (auto established_it = m_networking.established_begin(); established_it != m_networking.established_end(); ++established_it)
+            for (auto established_it = m_networking.established_begin();
+                 established_it != m_networking.established_end(); ++established_it)
             {
                 const PlayerConnectionPtr player_connection = *established_it;
-                if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_AI_PLAYER
-                    || player_connection->PlayerName() != psgd.name)
+                if (!Networking::is_ai(player_connection) || player_connection->PlayerName() != psgd.name)
                     continue;
-
-                int player_id = player_connection->PlayerID();
-                player_id_to_save_game_data_index.emplace_back(player_id, i);
+                player_id_to_save_game_data_index.emplace_back(player_connection->PlayerID(), i);
                 break;
             }
         } else {
@@ -1247,10 +1227,9 @@ namespace {
         for (auto established_player_it = sn.established_begin();
              established_player_it != sn.established_end(); ++established_player_it)
         {
-            const PlayerConnectionPtr player_connection = *established_player_it;
-            if (player_connection->PlayerName() == player_name &&
-                player_connection->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-            { return player_connection->PlayerID(); }
+            const auto& player_connection = *established_player_it;
+            if (Networking::is_ai(player_connection) && player_connection->PlayerName() == player_name)
+                return player_connection->PlayerID();
         }
         return Networking::INVALID_PLAYER_ID;
     }
@@ -1324,12 +1303,12 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     // for every player setup data entry that represents an empire in the game,
     // assign saved game data to the player ID of an established human or AI player
     for (const auto& [setup_data_player_id, psd] : player_setup_data) {
-        if (psd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (Networking::is_human(psd)) {
             GetSaveGameDataIndexForHumanPlayer(player_id_to_save_game_data_index, psd,
                                                setup_data_player_id, player_save_game_data,
                                                m_networking);
 
-        } else if (psd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+        } else if (Networking::is_ai(psd)) {
             // AI clients have no player id in setup data (even though humans do)
             GetSaveGameDataIndexForAIPlayer(player_id_to_save_game_data_index, psd,
                                             player_save_game_data, m_networking);
@@ -1377,11 +1356,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
         Networking::ClientType client_type = player_connection->GetClientType();
-        if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER &&
-            client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
-        {
+        if (!Networking::is_ai_or_human(client_type))
             ErrorLogger() << "ServerApp::LoadGameInit found player connection with unsupported client type.";
-        }
         if (player_connection->PlayerName().empty())
             ErrorLogger() << "ServerApp::LoadGameInit found player connection with empty name!";
     }
@@ -1412,12 +1388,11 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         // get index into save game data for this player id
         int player_save_game_data_index = -1;   // default invalid index
-        for (const std::pair<int, int>& entry : player_id_to_save_game_data_index) {
-            int index_player_id = entry.first;
-            if (player_id != index_player_id)
-                continue;
-            player_save_game_data_index = entry.second;
-            break;
+        for (const auto& [index_player_id, index_data] : player_id_to_save_game_data_index) {
+            if (player_id == index_player_id) {
+                player_save_game_data_index = index_data;
+                break;
+            }
         }
         if (player_save_game_data_index == -1) {
             DebugLogger() << "No save game data index for player with id " << player_id;
@@ -1430,7 +1405,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         try {
             const PlayerSaveGameData& psgd = player_save_game_data.at(player_save_game_data_index);
             empire_id = psgd.empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
-            player_id_save_game_data[player_id] = psgd; // store by player ID for easier access later
+            player_id_save_game_data.insert_or_assign(player_id, psgd); // store by player ID for easier access later
         } catch (...) {
             ErrorLogger() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
             continue;
@@ -1441,7 +1416,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // and empire IDs are not necessarily the same when loading a game as
         // the player controlling a particular empire might have a different
         // player ID than when the game was first created
-        m_player_empire_ids[player_id] = empire_id;
+        m_player_empire_ids.insert_or_assign(player_id, empire_id);
 
         // set actual authentication status
         if (auto empire = m_empires.GetEmpire(empire_id))
@@ -1510,7 +1485,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
-        if (client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+        if (Networking::is_ai(client_type)) {
             // get save state string
             const std::string* sss = nullptr;
             if (!psgd.save_state_string.empty())
@@ -1524,7 +1499,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             !player_connection->IsLocalConnection()),
                                            empire_id, m_current_turn);
 
-        } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+        } else if (Networking::is_human(client_type)) {
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             m_species_manager, GetCombatLogManager(),
@@ -1534,10 +1509,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             !player_connection->IsLocalConnection()),
                                             empire_id, m_current_turn);
 
-        } else if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-                   client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
-        {
-
+        } else if (Networking::is_mod_or_obs(client_type)) {
             player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
                                                             m_species_manager, GetCombatLogManager(),
@@ -1699,7 +1671,7 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
     for (auto player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
-        const PlayerConnectionPtr player_connection = *player_connection_it;
+        const auto player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
 
         int empire_id = PlayerEmpireID(player_id);
@@ -1708,19 +1680,17 @@ std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
 
 
         // validate some connection info
-        Networking::ClientType client_type = player_connection->GetClientType();
-        if (client_type != Networking::ClientType::CLIENT_TYPE_AI_PLAYER && client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (!Networking::is_ai_or_human(player_connection))
             ErrorLogger() << "ServerApp::GetPlayerInfoMap found player connection with unsupported client type.";
-        }
-        if (player_connection->PlayerName().empty()) {
+        if (player_connection->PlayerName().empty())
             ErrorLogger() << "ServerApp::GetPlayerInfoMap found player connection with empty name!";
-        }
 
         // assemble player info for all players
-        player_info_map[player_id] = PlayerInfo{player_connection->PlayerName(),
-                                                empire_id,
-                                                player_connection->GetClientType(),
-                                                m_networking.PlayerIsHost(player_connection->PlayerID())};
+        player_info_map.insert_or_assign(player_id,
+                                         PlayerInfo{player_connection->PlayerName(),
+                                                    empire_id,
+                                                    player_connection->GetClientType(),
+                                                    m_networking.PlayerIsHost(player_id)});
     }
     return player_info_map;
 }
@@ -1734,9 +1704,9 @@ int ServerApp::PlayerEmpireID(int player_id) const {
 }
 
 int ServerApp::EmpirePlayerID(int empire_id) const {
-    for (const auto& entry : m_player_empire_ids)
-        if (entry.second == empire_id)
-            return entry.first;
+    for (const auto& [player_id, player_empire_id] : m_player_empire_ids)
+        if (player_empire_id == empire_id)
+            return player_id;
     return Networking::INVALID_PLAYER_ID;
 }
 
@@ -1990,12 +1960,9 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     int empire_id = ALL_EMPIRES;
     auto delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
-        for (auto& e : m_empires) {
-            if (!e.second->Eliminated() &&
-                GetEmpireClientType(e.first) == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-            {
-                delegation.push_back(e.second->PlayerName());
-            }
+        for (auto& [loop_empire_id, loop_empire] : m_empires) {
+            if (!loop_empire->Eliminated() && Networking::is_ai(GetEmpireClientType(loop_empire_id)))
+                delegation.push_back(loop_empire->PlayerName());
         }
     }
     if (target_empire_id == ALL_EMPIRES) {
@@ -2071,12 +2038,13 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
                      << " previous player " << previous_player_id
                      << " was kicked.";
         DropPlayerEmpireLink(previous_player_id);
-        auto previous_it = m_networking.GetPlayer(previous_player_id);
+        const auto previous_it = m_networking.GetPlayer(previous_player_id);
         if (previous_it != m_networking.established_end()) {
-            const Networking::ClientType previous_client_type = (*previous_it)->GetClientType();
-            const std::string previous_player_name = (*previous_it)->PlayerName();
+            const Networking::ClientType previous_client_type = (*previous_it)->GetClientType(); // intentional copy
+            const std::string previous_player_name = (*previous_it)->PlayerName(); // intentional copy
             m_networking.Disconnect(previous_player_id);
-            if (previous_client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER) {
+
+            if (Networking::is_ai(previous_client_type)) {
                 // change empire's player so after reload the player still could connect
                 // to the empire
                 empire->SetPlayerName(player_connection->PlayerName());
@@ -2245,7 +2213,7 @@ bool ServerApp::AllOrdersReceived() {
             continue;
         }
 
-        if (GetEmpireClientType(psgd.empire_id) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER && m_turn_expired)
+        if (!Networking::is_ai(GetEmpireClientType(psgd.empire_id)) && m_turn_expired)
             DebugLogger() << " ...... turn expired for empire id: " << psgd.empire_id;
         else
             all_orders_received = false;
@@ -4768,19 +4736,16 @@ void ServerApp::PostCombatProcessTurns() {
 void ServerApp::CheckForEmpireElimination() {
     std::set<std::shared_ptr<Empire>> surviving_empires;
     std::set<std::shared_ptr<Empire>> non_eliminated_non_ai_controlled_empires;
-    for (auto& [empire_id, empire] : m_empires) {
-        if (empire->Eliminated()) {
-            continue;   // don't double-eliminate an empire
-        } else if (EmpireEliminated(empire_id, m_universe.Objects())) {
+    static constexpr auto not_already_eliminated = [](const auto& e) { return !e.second->Eliminated(); };
+    for (auto& [empire_id, empire] : m_empires | range_filter(not_already_eliminated)) {
+        if (EmpireEliminated(empire_id, m_universe.Objects())) {
             empire->Eliminate(m_empires, m_current_turn);
             RemoveEmpireData(empire_id);
             const int player_id = EmpirePlayerID(empire_id);
             DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
                           << " of player #" << player_id << " eliminated";
             auto player_it = m_networking.GetPlayer(player_id);
-            if (player_it != m_networking.established_end() &&
-                (*player_it)->GetClientType() == Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
-            {
+            if (player_it != m_networking.established_end() && Networking::is_ai(*player_it)) {
                 auto it = m_ai_client_processes.find((*player_it)->PlayerName());
                 if (it != m_ai_client_processes.end()) {
                     it->second.Kill();
@@ -4792,7 +4757,7 @@ void ServerApp::CheckForEmpireElimination() {
             // empires could be controlled only by connected AI client, connected human client, or
             // disconnected human client.
             // Disconnected AI client controls non-eliminated empire is an error.
-            if (GetEmpireClientType(empire->EmpireID()) != Networking::ClientType::CLIENT_TYPE_AI_PLAYER)
+            if (!Networking::is_ai(GetEmpireClientType(empire->EmpireID())))
                 non_eliminated_non_ai_controlled_empires.insert(empire);
         }
     }

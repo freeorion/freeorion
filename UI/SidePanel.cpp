@@ -78,15 +78,15 @@ namespace {
 
             planet_type = PlanetTypeFromString(elem.Attribute("planet_type"));
             filename = elem.Attribute("filename");
-            shininess = boost::lexical_cast<double>(elem.Attribute("shininess"));
+            shininess = boost::lexical_cast<float>(elem.Attribute("shininess"));
 
             // ensure proper bounds
-            shininess = std::max(0.0, std::min(shininess, 128.0));
+            shininess = std::max(0.0f, std::min(shininess, 128.0f));
         }
 
         PlanetType  planet_type;    ///< the type of planet for which this data may be used
         std::string filename;       ///< the filename of the image used to texture a rotating image
-        double      shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
+        float       shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
     };
 
     struct PlanetAtmosphereData {
@@ -118,8 +118,8 @@ namespace {
     };
 
     const auto& GetRotatingPlanetData() {
-        static boost::container::flat_map<PlanetType, std::vector<RotatingPlanetData>> data;
-        if (data.empty()) {
+        static const auto data = []() {
+            boost::container::flat_map<PlanetType, std::vector<RotatingPlanetData>> data;
             ScopedTimer timer("GetRotatingPlanetData initialization", true);
             XMLDoc doc;
             try {
@@ -139,18 +139,19 @@ namespace {
                     }
                 }
             }
-        }
+            return data;
+        }();
         return data;
     }
 
     const auto& GetPlanetAtmosphereData() {
-        static boost::container::flat_map<std::string, PlanetAtmosphereData> data;
-        if (data.empty()) {
+        static const auto data = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
+            boost::container::flat_map<std::string, PlanetAtmosphereData> data;
             for (const XMLElement& atmosphere_definition : doc.root_node.Children()) {
                 if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
                     try {
@@ -162,164 +163,281 @@ namespace {
                     }
                 }
             }
-        }
+            return data;
+        }();
         return data;
     }
 
     double GetAsteroidsFPS() {
-        static double retval = -1.0;
-        if (retval == -1.0) {
+        static const double retval = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
             if (doc.root_node.ContainsChild("asteroids_fps"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("asteroids_fps").Text());
+                return std::max(0.0, std::min(60.0, boost::lexical_cast<double>(
+                    doc.root_node.Child("asteroids_fps").Text())));
             else
-                retval = 15.0;
-
-            retval = std::max(0.0, std::min(retval, 60.0));
-        }
+                return 15.0;
+        }();
         return retval;
     }
 
     double GetRotatingPlanetAmbientIntensity() {
-        static double retval = -1.0;
-
-        if (retval == -1.0) {
+        static const double retval = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
-            else
-                retval = 0.5;
-
-            retval = std::max(0.0, std::min(retval, 1.0));
-        }
-
+            if (doc.root_node.ContainsChild("GLPlanets") &&
+                doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
+            {
+                return std::max(0.0, std::min(1.0, boost::lexical_cast<double>(
+                    doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text())));
+            } else {
+                return 0.5;
+            }
+        }();
         return retval;
     }
 
     double GetRotatingPlanetDiffuseIntensity() {
-        static double retval = -1.0;
-
-        if (retval == -1.0) {
+        static const double retval = []() {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
-            if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
-                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
-            else
-                retval = 0.5;
-
-            retval = std::max(0.0, std::min(retval, 1.0));
-        }
-
+            if (doc.root_node.ContainsChild("GLPlanets") &&
+                doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
+            {
+                return std::max(0.0, std::min(1.0, boost::lexical_cast<double>(
+                    doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text())));
+            } else {
+                return 0.5;
+            }
+        }();
         return retval;
     }
 
-    void RenderSphere(
-        double radius, const GG::Clr ambient, const GG::Clr diffuse,
-        const GG::Clr spec, double shine,
-        std::shared_ptr<GG::Texture> texture)
-    {
-        struct PolarCoordinate {
-            GLfloat sin;
-            GLfloat cos;
-        };
+    struct PolarCoordinate {
+        GLfloat sin = 0;
+        GLfloat cos = 0;
+    };
+    constexpr double PI = 3.1415926535897932384626433;
+    constexpr std::size_t sphere_coords_size = 43; // less and there are (more) weird artifacts with larger sizes
 
-        static bool usphere_initialized = false;
-        static std::array<PolarCoordinate, 30 + 1> azimuth = {};
-        static std::array<PolarCoordinate, 30 + 1> elevation = {};
+#if defined(__cpp_lib_constexpr_cmath)
+    using cxsin = std::sin;
+    using cxcos = std::cos;
+#else
+    constexpr GLfloat cxsin(GLfloat a) {
+        if (a == 0 || a == PI) return 0.0;
+        if (a == PI/2) return 1.0;
+        if (a < 0) return -cxsin(-a);
+        if (a > 2*PI) return cxsin(a - 2*PI*static_cast<uint64_t>(a / (2*PI)));
+        if (a > PI/2) return cxsin(PI - a);
 
-        if (!usphere_initialized) {
-            // calculate azimuth on unit sphere along equator
-            for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
-                float phi = 2 * M_PI * longitude / (azimuth.size() - 1);
-                azimuth[longitude] = {std::sin(phi), std::cos(phi)};
-            }
+        GLfloat apow = a;
+        GLfloat sum = a;
+        uint64_t factorial = 1;
+        int8_t signpart = 1;
+        const GLfloat a2 = a*a;
 
-            // Make sure equator is a closed circle
-            azimuth.back() = azimuth[0];
-
-            // calculate elevation on unit sphere along meridian
-            for (auto latitude : boost::irange<std::size_t>(0, elevation.size())) {
-                float theta = M_PI * latitude / (elevation.size() - 1);
-                elevation[latitude] = {std::sin(theta), std::cos(theta)};
-            }
-
-            // Make sure sphere poles collapse at true zero
-            elevation.front() = {0.0f, 1.0f};
-            elevation.back() = {0.0f, -1.0f};
-
-            usphere_initialized = true;
+        static_assert(15*14 < std::numeric_limits<uint8_t>::max());
+        for (uint8_t pow = 3; pow <= 15; pow += 2) {
+            apow *= a2;
+            factorial *= (pow * (pow - 1));
+            signpart = -signpart;
+            sum += (apow / factorial * signpart);
         }
 
-        if (texture)
-            glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+        return sum;
+    }
 
+    constexpr GLfloat cxcos(GLfloat a) {
+        if (a == 0) return 1.0;
+        if (a == PI/2) return 0.0;
+        if (a < 0) return cxcos(-a);
+        if (a > 2*PI) return cxcos(a - 2*PI*static_cast<uint64_t>(a / (2*PI)));
+        if (a > PI/2) return -cxcos(PI - a);
 
-        // commented out shininess rendering because it wasn't working properly.
-        // it just appeared as a white blob, seemingly at the poles of the planet (but possibly not?)
-        // regardless, IMO it didn't look good. -Geoff
-        //if (shine) {
-        //    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, static_cast<float>(shine));
-        //    GLfloat spec_v[] = {spec.r / 255.0f, spec.g / 255.0f, spec.b / 255.0f, spec.a / 255.0f};
-        //    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
-        //}
+        GLfloat apow = 1;
+        GLfloat sum = 1;
+        uint64_t factorial = 1;
+        int8_t signpart = 1;
+        const GLfloat a2 = a*a;
 
-        GLfloat ambient_v[] = {ambient.r / 255.0f, ambient.g / 255.0f, ambient.b / 255.0f, ambient.a / 255.0f};
-        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_v);
-        GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
-        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v);
+        static_assert(14*13 < std::numeric_limits<uint8_t>::max());
+        for (uint8_t pow = 2; pow <= 14u; pow += 2u) {
+            apow *= a2;
+            factorial *= (pow * (pow - 1));
+            signpart = -signpart;
+            sum += (apow / factorial * signpart);
+        }
+
+        return sum;
+    }
+
+    consteval uint64_t factorial(uint64_t n) { return (n >= 2u) ? (n * factorial(n-1u)) : 1u; }
+    static_assert(factorial(15) == 1307674368000 && 1307674368000 < std::numeric_limits<uint64_t>::max());
+#endif
+
+    constexpr auto azimuth = []() {
+        std::array<PolarCoordinate, sphere_coords_size> azimuth{};
+
+        // calculate azimuth on unit sphere along equator
+        for (std::size_t idx = 0u; idx < sphere_coords_size; ++idx) {
+            GLfloat phi = 2 * M_PI * idx / (sphere_coords_size - 1);
+            azimuth[idx] = {cxsin(phi), cxcos(phi)};
+        }
+        // Make sure equator is a closed circle
+        azimuth.back() = azimuth.front();
+
+        return azimuth;
+    }();
+    static_assert(azimuth.front().sin == 0);
+
+    constexpr auto elevation = []() {
+        std::array<PolarCoordinate, sphere_coords_size> elevation{};
+
+        // calculate elevation on unit sphere along meridian
+        for (std::size_t idx = 0u; idx < sphere_coords_size; ++idx) {
+            GLfloat theta = M_PI * idx / (sphere_coords_size - 1);
+            elevation[idx] = {cxsin(theta), cxcos(theta)};
+        }
+
+        // Make sure sphere poles collapse at true zero
+        elevation.front() = {0.0f, 1.0f};
+        elevation.back() = {0.0f, -1.0f};
+
+        return elevation;
+    }();
+    static_assert(elevation.front().sin == 0 && elevation.back().cos == -1);
+
+    const std::tuple<const GG::GL3DVertexBuffer&,
+                     const GG::GLNormalBuffer&,
+                     const GG::GLTexCoordBuffer&>
+    SphereVerticesNormalsTexCoords(GLfloat radius) {
+        static const GG::GLNormalBuffer norms = []() {
+            GG::GLNormalBuffer norms;
+            norms.reserve(elevation.size()*azimuth.size()*2);
+
+            for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
+                for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
+                    norms.store(azimuth[long_idx].sin * elevation[lat_idx+1].sin,
+                                azimuth[long_idx].cos * elevation[lat_idx+1].sin,
+                                elevation[lat_idx+1].cos);
+                    norms.store(azimuth[long_idx].sin * elevation[lat_idx].sin,
+                                azimuth[long_idx].cos * elevation[lat_idx].sin,
+                                elevation[lat_idx].cos);
+                }
+            }
+
+            return norms;
+        }();
+
+        static const GG::GLTexCoordBuffer tex = []() {
+            GG::GLTexCoordBuffer tex;
+            tex.reserve(elevation.size()*azimuth.size()*2);
+
+            for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
+                const float lat1 = 1.0f - static_cast<GLfloat>(lat_idx + 1) / (elevation.size() - 1);
+                const float lat0 = 1.0f - static_cast<GLfloat>(lat_idx) / (elevation.size() - 1);
+
+                for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
+                    const float long0 = 1.0f - static_cast<GLfloat>(long_idx) / (azimuth.size() - 1);
+                    tex.store(long0, lat1);
+                    tex.store(long0, lat0);
+                }
+            }
+
+            return tex;
+        }();
+
+        static std::map<GLfloat, GG::GL3DVertexBuffer> verts;
+        {
+            auto it = verts.find(radius);
+            if (it != verts.end())
+                return {it->second, norms, tex};
+        }
+
+        auto& new_verts = [radius]() -> const auto& {
+            auto& new_verts = verts[radius];
+            new_verts.reserve(elevation.size()*azimuth.size()*2);
+
+            for (std::size_t lat_idx = 0u; lat_idx < elevation.size() - 1; ++lat_idx) {
+                for (std::size_t long_idx = 0u; long_idx < azimuth.size(); ++long_idx) {
+                    new_verts.store(azimuth[long_idx].sin * elevation[lat_idx+1u].sin * radius,
+                                    azimuth[long_idx].cos * elevation[lat_idx+1u].sin * radius,
+                                    elevation[lat_idx+1u].cos * radius);
+                    new_verts.store(azimuth[long_idx].sin * elevation[lat_idx].sin * radius,
+                                    azimuth[long_idx].cos * elevation[lat_idx].sin * radius,
+                                    elevation[lat_idx].cos * radius);
+                }
+            }
+
+            return new_verts;
+        }();
+            
+        return {new_verts, norms, tex};
+    }
+
+    void RenderSphere(double radius, const GG::Clr ambient, const GG::Clr diffuse,
+                      const GG::Clr spec, float shine, GLuint texture_id)
+    {
+        if (texture_id != 0)
+            glBindTexture(GL_TEXTURE_2D, texture_id);
+
+        if (shine != 0) {
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shine);
+            const auto spec_v = spec.ToNormalizedRGBA();
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v.data());
+        }
+
+        const auto ambient_v = ambient.ToNormalizedRGBA();
+        const auto diffuse_v = diffuse.ToNormalizedRGBA();
+        glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_v.data());
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_v.data());
 
         glColor(GG::CLR_WHITE);
-        for (auto latitude : boost::irange<std::size_t>(0, elevation.size() - 1)) {
-            glBegin(GL_QUAD_STRIP);
-            for (auto longitude : boost::irange<std::size_t>(0, azimuth.size())) {
-                glNormal3f(azimuth[longitude].sin * elevation[latitude+1].sin,
-                           azimuth[longitude].cos * elevation[latitude+1].sin,
-                           elevation[latitude+1].cos);
-                glTexCoord2f(1 - (float)(longitude) / (azimuth.size() - 1),
-                             1 - (float)(latitude+1) / (elevation.size() - 1));
-                glVertex3f(azimuth[longitude].sin * elevation[latitude+1].sin * radius,
-                           azimuth[longitude].cos * elevation[latitude+1].sin * radius,
-                           elevation[latitude+1].cos * radius);
 
-                glNormal3f(azimuth[longitude].sin * elevation[latitude].sin,
-                           azimuth[longitude].cos * elevation[latitude].sin,
-                           elevation[latitude].cos);
-                glTexCoord2f(1 - (float)(longitude) / (azimuth.size() - 1),
-                             1 - (float)(latitude) / (elevation.size() - 1));
-                glVertex3f(azimuth[longitude].sin * elevation[latitude].sin * radius,
-                           azimuth[longitude].cos * elevation[latitude].sin * radius,
-                           elevation[latitude].cos * radius);
-            }
-            glEnd();
-        }
+        const auto& [verts, norms, tex] = SphereVerticesNormalsTexCoords(radius);
+
+        verts.activate();
+        norms.activate();
+        tex.activate();
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glDrawArrays(GL_QUAD_STRIP, 0, verts.size());
+
+        glPopClientAttrib();
     }
 
-    GLfloat* GetLightPosition() {
-        static GLfloat retval[] = {0.0, 0.0, 0.0, 0.0};
+    const GLfloat* GetLightPosition() {
+        static const auto retval = []() {
+            std::array<GLfloat, 4> retval{0.0f, 0.0f, 0.0f, 0.0f};
 
-        if (retval[0] == 0.0 && retval[1] == 0.0 && retval[2] == 0.0) {
             XMLDoc doc;
             boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
+            const auto& lpos = doc.root_node.Child("GLPlanets").Child("light_pos");
 
-            retval[0] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
-            retval[1] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
-            retval[2] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
-        }
+            retval[0] = boost::lexical_cast<GLfloat>(lpos.Child("x").Text());
+            retval[1] = boost::lexical_cast<GLfloat>(lpos.Child("y").Text());
+            retval[2] = boost::lexical_cast<GLfloat>(lpos.Child("z").Text());
 
-        return retval;
+            return retval;
+        }();
+        return retval.data();
     }
 
     const auto& GetStarLightColors() {
@@ -367,9 +485,8 @@ namespace {
         return white;
     }
 
-    void RenderPlanet(GG::Pt center, int diameter, std::shared_ptr<GG::Texture> texture,
-                      std::shared_ptr<GG::Texture> overlay_texture,
-                      double initial_rotation, double RPM, double axial_tilt, double shininess,
+    void RenderPlanet(GG::Pt center, int diameter, GLuint texture_id, GLuint overlay_texture_id,
+                      double initial_rotation, double RPM, float axial_tilt, float shininess,
                       StarType star_type)
     {
         glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT | GL_SCISSOR_BIT);
@@ -390,12 +507,12 @@ namespace {
         glLoadIdentity();
 
         glPushAttrib(GL_LIGHTING_BIT | GL_ENABLE_BIT);
-        GLfloat* light_position = GetLightPosition();
+        const auto light_position = GetLightPosition();
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
 
-        auto& colour = StarLightColour(star_type);
+        const auto& colour = StarLightColour(star_type);
         glLightfv(GL_LIGHT0, GL_DIFFUSE, colour.data());
         glLightfv(GL_LIGHT0, GL_SPECULAR, colour.data());
         glEnable(GL_TEXTURE_2D);
@@ -409,14 +526,14 @@ namespace {
         intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
-        RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+        RenderSphere(diameter / 2.0, ambient, diffuse, GG::CLR_WHITE, shininess, texture_id);
 
-        if (overlay_texture) {
+        if (overlay_texture_id != 0) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glCullFace(GL_FRONT);
             glEnable(GL_CULL_FACE);
-            RenderSphere(diameter / 2 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture);
+            RenderSphere(diameter / 2.0 + 0.1, ambient, diffuse, GG::CLR_WHITE, 0.0, overlay_texture_id);
             glDisable(GL_CULL_FACE);
             glDisable(GL_BLEND);
         }
@@ -447,16 +564,17 @@ namespace {
         default                       : scale = 3.0/7.0; break;
         }
 
+        int MAX_PLANET_DIAMETER = MaxPlanetDiameter();
         int MIN_PLANET_DIAMETER = GetOptionsDB().Get<int>("ui.map.sidepanel.planet.diameter.min");
         // sanity check
-        if (MIN_PLANET_DIAMETER > MaxPlanetDiameter())
-            MIN_PLANET_DIAMETER = MaxPlanetDiameter();
+        if (MIN_PLANET_DIAMETER > MAX_PLANET_DIAMETER)
+            MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER;
 
-        return static_cast<int>(MIN_PLANET_DIAMETER + (MaxPlanetDiameter() - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
+        return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
     }
 
     /** Adds options related to sidepanel to Options DB. */
-    void        AddOptions(OptionsDB& db) {
+    void AddOptions(OptionsDB& db) {
         db.Add("ui.map.sidepanel.planet.diameter.max",      UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),
                128,                         RangedValidator<int>(16, 512));
         db.Add("ui.map.sidepanel.planet.diameter.min",      UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),
@@ -465,7 +583,7 @@ namespace {
                true,                        Validator<bool>());
         db.Add("ui.map.sidepanel.planet.scanlane.color",    UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),
                GG::Clr(0, 0, 0, 128),       Validator<GG::Clr>());
-        db.Add("UI.sidepanel-planet-status-icon-size",       UserStringNop("OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE"),
+        db.Add("UI.sidepanel-planet-status-icon-size",      UserStringNop("OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE"),
                32,                          RangedValidator<int>(8, 128));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -782,9 +900,12 @@ public:
     }
 
     void Render() override {
-        GG::Pt ul = UpperLeft(), lr = LowerRight();
+        const auto ul = UpperLeft();
+        const auto lr = LowerRight();
         // render rotating base planet texture
-        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_overlay_texture,
+        RenderPlanet(ul + Size() / 2, Value(Width()),
+                     m_surface_texture ? m_surface_texture->OpenGLId() : 0,
+                     m_overlay_texture ? m_overlay_texture->OpenGLId() : 0,
                      m_initial_rotation, m_rpm, m_axial_tilt, m_shininess, m_star_type);
 
         // overlay atmosphere texture (non-animated)
@@ -3719,15 +3840,13 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (const auto& entry : resource_meters) {
-            MeterType type = entry.first;
+        for (const auto type : resource_meters | range_keys) {
             m_system_resource_summary->SetToolTip(type,
                 GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
                     MeterToResource(type), s_system_id, empire_id));
         }
         // and the other meters
-        for (const auto& entry : general_meters) {
-            MeterType type = entry.first;
+        for (const auto type : general_meters | range_keys) {
             m_system_resource_summary->SetToolTip(type,
                 GG::Wnd::Create<SystemMeterBrowseWnd>(type, s_system_id));
         }

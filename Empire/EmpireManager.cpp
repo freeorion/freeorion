@@ -388,13 +388,31 @@ namespace {
     };
     std::vector<EmpireColor> empire_colors;
 
+    constexpr uint8_t HexCharToUint8(std::string_view::value_type digit) noexcept
+    { return (digit >= 'A' ? (digit - 'A' + 10) : (digit - '0')); }
+
     constexpr uint8_t HexCharsToUInt8(std::string_view chars) noexcept {
-        auto digit0 = chars[0];
-        auto digit1 = chars[1];
-        uint8_t val0 = 16 * (digit0 >= 'A' ? (digit0 - 'A' + 10) : (digit0 - '0'));
-        uint8_t val1 = (digit1 >= 'A' ? (digit1 - 'A' + 10) : (digit1 - '0'));
-        return val0 + val1;
+        if (chars.empty())
+            return 0;
+        const uint8_t val0 = HexCharToUint8(chars[0]);
+        if (chars.size() == 1) [[unlikely]]
+            return val0;
+        const uint8_t val1 = HexCharToUint8(chars[1]);
+        return 16*val0 + val1;
     };
+
+    static_assert(HexCharToUint8('0') == 0u);
+    static_assert(HexCharToUint8('9') == 9u);
+    static_assert(HexCharToUint8('A') == 10u);
+    static_assert(HexCharToUint8('F') == 15u);
+    static_assert(HexCharToUint8('G') == 16u);
+
+    static_assert(HexCharsToUInt8("") == 0u);
+    static_assert(HexCharsToUInt8("A") == 10u);
+    static_assert(HexCharsToUInt8("01") == 1u);
+    static_assert(HexCharsToUInt8("FF") == 255u);
+    static_assert(HexCharsToUInt8("A0") == 160u);
+    static_assert(HexCharsToUInt8("!.") == 14u);
 
     constexpr EmpireColor HexStringToEmpireColor(std::string_view hex_colour) noexcept {
         const auto sz = hex_colour.size();

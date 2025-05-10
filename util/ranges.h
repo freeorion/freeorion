@@ -78,4 +78,12 @@ inline auto range_count_if(Args... args) { return boost::count_if(std::forward<A
 
 #endif
 
+#if defined(__cpp_lib_ranges_contains)
+inline constexpr auto& range_contains = std::ranges::contains;
+#else
+template <typename Rng, typename... Args>
+inline auto range_contains(Rng&& rng, Args... args)
+{ return range_find(rng, std::forward<Args>(args)...) != range_end(rng); }
+#endif
+
 #endif
