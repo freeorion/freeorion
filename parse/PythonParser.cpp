@@ -486,9 +486,6 @@ py::object PythonParser::exec_module(py::object& module) {
             // and still import will work
             DebugLogger() << "Executing module file " << module_path.string();
             try {
-#if PY_VERSION_HEX < 0x03080000
-                m_dict["__builtins__"] = boost::python::import("builtins");
-#endif
                 RegisterGlobalsEffects(m_dict);
                 RegisterGlobalsConditions(m_dict);
                 RegisterGlobalsValueRefs(m_dict, *this);

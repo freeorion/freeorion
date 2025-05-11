@@ -168,9 +168,6 @@ namespace {
         py_grammar_techs(const PythonParser& parser, TechManager::TechContainer& techs) :
             globals(boost::python::import("builtins").attr("__dict__"))
         {
-#if PY_VERSION_HEX < 0x03080000
-            globals["__builtins__"] = boost::python::import("builtins");
-#endif
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
             RegisterGlobalsValueRefs(globals, parser);
