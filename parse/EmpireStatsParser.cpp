@@ -117,9 +117,6 @@ namespace {
         py_grammar(const PythonParser& parser, start_rule_payload& stats_) :
             globals(boost::python::import("builtins").attr("__dict__"))
         {
-#if PY_VERSION_HEX < 0x03080000
-            globals["__builtins__"] = boost::python::import("builtins");
-#endif
             RegisterGlobalsConditions(globals);
             RegisterGlobalsValueRefs(globals, parser);
             RegisterGlobalsSources(globals);
