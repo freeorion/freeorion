@@ -45,15 +45,9 @@ namespace {
             ErrorLogger(FSM) << "SendMessageToAllPlayers couldn't get server.";
             return;
         }
-        ServerNetworking& networking = server->Networking();
 
-        for (auto player_it = networking.established_begin();
-             player_it != networking.established_end();
-             ++player_it)
-        {
-            PlayerConnectionPtr player = *player_it;
+        for (const auto& player : server->Networking().EstablishedPlayerConnections())
             player->SendMessage(message);
-        }
     }
 
     void SendMessageToHost(const Message& message) {
@@ -64,13 +58,12 @@ namespace {
         }
         ServerNetworking& networking = server->Networking();
 
-        auto host_it = networking.GetPlayer(networking.HostPlayerID());
-        if (host_it == networking.established_end()) {
+        const auto host = networking.GetPlayer(networking.HostPlayerID());
+        if (!host) {
             ErrorLogger(FSM) << "SendMessageToHost couldn't get host player.";
             return;
         }
 
-        PlayerConnectionPtr host = *host_it;
         host->SendMessage(message);
     }
 
@@ -285,7 +278,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     bool must_quit = false;
     int id = Networking::INVALID_PLAYER_ID;
 
-    if (player_connection->IsEstablished()) {
+    if (player_connection->IsEstablishedNamedValidClient()) {
         // update cookie expire date
         // so player could reconnect within 15 minutes
         m_server.Networking().UpdateCookie(player_connection->Cookie());
@@ -333,11 +326,9 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         m_server.PushChatMessage(data, "", CLR_SERVER, timestamp);
 
         // send message to other players
-        for (auto it = m_server.m_networking.established_begin();
-             it != m_server.m_networking.established_end(); ++it)
-        {
-            if (player_connection != (*it))
-                (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
+        for (const auto& est_player : m_server.m_networking.EstablishedPlayerConnections()) {
+            if (player_connection != est_player)
+                player_connection->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
         }
     } else {
         DebugLogger(FSM) << "Client quit before id was assigned.";
@@ -436,14 +427,12 @@ void ServerFSM::UpdateIngameLobby() {
     dummy_lobby_data.start_locked = true;
     dummy_lobby_data.save_game_current_turn = m_server.CurrentTurn();
     dummy_lobby_data.save_game_empire_data = CompileSaveGameEmpireData(m_server.Empires());
-    for (auto player_it = m_server.m_networking.established_begin();
-        player_it != m_server.m_networking.established_end(); ++player_it)
-    {
+    for (const auto& est_player : m_server.m_networking.EstablishedPlayerConnections()) {
         PlayerSetupData player_setup_data;
-        int player_id = (*player_it)->PlayerID();
+        const int player_id = est_player->PlayerID();
         player_setup_data.player_id =   player_id;
-        player_setup_data.player_name = (*player_it)->PlayerName();
-        player_setup_data.client_type = (*player_it)->GetClientType();
+        player_setup_data.player_name = est_player->PlayerName();
+        player_setup_data.client_type = est_player->GetClientType();
         if (auto empire = m_server.Empires().GetEmpire(m_server.PlayerEmpireID(player_id))) {
             player_setup_data.save_game_empire_id = empire->EmpireID();
             player_setup_data.empire_name = empire->Name();
@@ -451,7 +440,7 @@ void ServerFSM::UpdateIngameLobby() {
         } else {
             player_setup_data.empire_color = {{255, 255, 255, 255}};
         }
-        player_setup_data.authenticated = (*player_it)->IsAuthenticated();
+        player_setup_data.authenticated = est_player->IsAuthenticated();
         dummy_lobby_data.players.emplace_back(player_id, player_setup_data);
     }
     dummy_lobby_data.start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
@@ -460,16 +449,13 @@ void ServerFSM::UpdateIngameLobby() {
 
     // send it to all either in the ingame lobby
     // or in the playing game
-    for (auto player_it = m_server.m_networking.established_begin();
-        player_it != m_server.m_networking.established_end(); ++player_it)
-    {
-        auto player = *player_it;
-        if (Networking::is_human(player) &&
-            !m_server.GetEmpire(m_server.PlayerEmpireID(player->PlayerID())))
+    for (const auto& est_player : m_server.m_networking.EstablishedPlayerConnections()) {
+        if (Networking::is_human(est_player) &&
+            !m_server.GetEmpire(m_server.PlayerEmpireID(est_player->PlayerID())))
         {
-            player->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
+            est_player->SendMessage(ServerLobbyUpdateMessage(dummy_lobby_data));
         } else {
-            player->SendMessage(PlayerInfoMessage(player_info_map));
+            est_player->SendMessage(PlayerInfoMessage(player_info_map));
         }
     }
 }
@@ -496,10 +482,7 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
 
     if (player_connection->IsAuthenticated() || !player_connection->Cookie().is_nil()) {
         // drop other connection with same name
-        for (auto it = m_server.m_networking.established_begin();
-             it != m_server.m_networking.established_end(); ++it)
-        {
-            const auto& est_player = *it;
+        for (const auto& est_player : m_server.m_networking.EstablishedPlayerConnections()) {
             if (est_player->PlayerName() == player_name && player_connection != est_player) {
                 est_player->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
                 to_disconnect.push_back(est_player);
@@ -559,11 +542,10 @@ bool ServerFSM::EstablishPlayer(PlayerConnectionPtr player_connection,
             m_server.PushChatMessage(data, "", CLR_SERVER, timestamp);
 
             // send message to other players
-            for (auto it = m_server.m_networking.established_begin();
-                 it != m_server.m_networking.established_end(); ++it)
-            {
-                if (player_connection != (*it))
-                    (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
+            for (const auto& est_player : m_server.m_networking.EstablishedPlayerConnections()) {
+                if (player_connection != est_player)
+                    player_connection->SendMessage(ServerPlayerChatMessage(
+                        Networking::INVALID_PLAYER_ID, timestamp, data));
             }
 
             std::vector<std::reference_wrapper<const ChatHistoryEntity>> chat_history;
@@ -862,9 +844,9 @@ MPLobby::MPLobby(my_context c) :
         std::vector<PlayerConnectionPtr> to_disconnect;
         to_disconnect.reserve(server.m_networking.size());
         // Try to use connections:
-        for (const auto& player_connection : server.m_networking) {
+        for (const auto& player_connection : server.m_networking.AllPlayerConnections()) {
             // If connection was not established disconnect it.
-            if (!player_connection->IsEstablished()) {
+            if (!player_connection->IsEstablishedNamedValidClient()) {
                 to_disconnect.push_back(player_connection);
                 continue;
             }
@@ -940,27 +922,26 @@ MPLobby::MPLobby(my_context c) :
 
     } else {
         const int host_id = server.m_networking.HostPlayerID();
-        const auto host_it = server.m_networking.GetPlayer(host_id);
-        if (host_it == server.m_networking.established_end())
+        const auto host_con = server.m_networking.GetPlayer(host_id);
+        if (!host_con)
             return;
-        const auto player_connection = *host_it;
 
         // create player setup data for host, and store in list
         m_lobby_data->players.push_back({host_id, PlayerSetupData()});
 
         PlayerSetupData& player_setup_data = m_lobby_data->players.begin()->second;
 
-        player_setup_data.player_name =           player_connection->PlayerName();
-        player_setup_data.empire_name =           Networking::is_ai(player_connection) ?
-            player_connection->PlayerName() :
+        player_setup_data.player_name =           host_con->PlayerName();
+        player_setup_data.empire_name =           Networking::is_ai(host_con) ?
+            host_con->PlayerName() :
             GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
         player_setup_data.empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
         player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
         // leaving save game empire id as default
-        player_setup_data.client_type =           player_connection->GetClientType();
-        player_setup_data.authenticated =         player_connection->IsAuthenticated();
+        player_setup_data.client_type =           host_con->GetClientType();
+        player_setup_data.authenticated =         host_con->IsAuthenticated();
 
-        player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+        host_con->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
 }
 
@@ -1031,15 +1012,14 @@ sc::result MPLobby::react(const Disconnection& d) {
 
     DebugLogger(FSM) << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
     DebugLogger(FSM) << "Remaining player ids: ";
-    for (auto it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
-        DebugLogger(FSM) << " ... " << (*it)->PlayerID() << " (" << (*it)->PlayerName() << ")";
-    }
+    for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
+        DebugLogger(FSM) << " ... " << epc->PlayerID() << " (" << epc->PlayerName() << ")";
 
     if (!server.IsHostless()) {
         // if there are no humans left, it's time to terminate
-        if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
+        if (server.m_networking.empty() ||
+            server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers())
+        {
             DebugLogger(FSM) << "MPLobby.Disconnection : All human players disconnected; server terminating.";
             return transit<ShuttingDownServer>();
         }
@@ -1072,9 +1052,8 @@ sc::result MPLobby::react(const Disconnection& d) {
         Server().Networking().UpdateCookie(player_connection->Cookie());
 
         // drop ready flag as player list changed
-        for (auto& plrs : m_lobby_data->players) {
-            plrs.second.player_ready = false;
-        }
+        for (auto& lobby_player : m_lobby_data->players | range_values)
+            lobby_player.player_ready = false;
 
         // add "player left game" message
         boost::posix_time::ptime timestamp = boost::posix_time::second_clock::universal_time();
@@ -1082,11 +1061,9 @@ sc::result MPLobby::react(const Disconnection& d) {
         server.PushChatMessage(data, "", CLR_SERVER, timestamp);
 
         // send message to other players
-        for (auto it = server.m_networking.established_begin();
-             it != server.m_networking.established_end(); ++it)
-        {
-            if (player_connection != (*it))
-                (*it)->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
+        for (const auto& econ : server.m_networking.EstablishedPlayerConnections()) {
+            if (player_connection != econ)
+                econ->SendMessage(ServerPlayerChatMessage(Networking::INVALID_PLAYER_ID, timestamp, data));
         }
     } else {
         DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
@@ -1096,11 +1073,8 @@ sc::result MPLobby::react(const Disconnection& d) {
     ValidateClientLimits();
 
     // send updated lobby data to players after disconnection-related changes
-    for (auto it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
-        (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
-    }
+    for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
+        epc->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
 
     return discard_event();
 }
@@ -1151,9 +1125,8 @@ void MPLobby::EstablishPlayer(PlayerConnectionPtr player_connection,
 
         ValidateClientLimits();
 
-        for (auto it = server.m_networking.established_begin();
-             it != server.m_networking.established_end(); ++it)
-        { (*it)->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
+        for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
+            epc->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
 }
 
@@ -1317,17 +1290,17 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST) && 
-        (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit))
-    {
-        has_important_changes = true;
-        m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
+    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
+        if (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit) {
+            has_important_changes = true;
+            m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
 
-        // change role ROLE_GALAXY_SETUP for all non-host players
-        for (const auto& player_connection : server.Networking()) {
-            if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
-                player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
-                                               m_lobby_data->any_can_edit);
+            // change role ROLE_GALAXY_SETUP for all non-host players
+            for (const auto& player_connection : server.Networking().AllPlayerConnections()) {
+                if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
+                    player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
+                                                   m_lobby_data->any_can_edit);
+                }
             }
         }
     }
@@ -1360,7 +1333,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.empire_name.empty())
                     psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.players);
                 if (psd.starting_species_name.empty()) {
-                    if (!m_lobby_data->seed.empty())
+                    if (m_lobby_data->seed != "")
                         psd.starting_species_name = server.m_species_manager.RandomPlayableSpeciesName();
                     else
                         psd.starting_species_name = server.m_species_manager.SequentialPlayableSpeciesName(m_ai_next_index);
@@ -1376,10 +1349,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
         }
 
-
         bool has_collision = false;
-
-        // check for colliding color, names, and IDs
+        // check for color, names, and IDs
         std::set<EmpireColor> psd_colors;
         std::set<std::string> psd_names;
         std::set<int> psd_ids;
@@ -1401,10 +1372,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (incoming_player_id == Networking::INVALID_PLAYER_ID)
                 continue;
 
-            const auto established_for_incoming_player_it = server.Networking().GetPlayer(incoming_player_id);
-            if (established_for_incoming_player_it != server.Networking().established_end()) {
-                const auto& established_for_incoming_player = *established_for_incoming_player_it;
-
+            if (const auto established_for_incoming_player = server.Networking().GetPlayer(incoming_player_id)) {
                 // check for roles and client types
                 using Networking::RoleType;
                 const auto has_role = [&established_for_incoming_player](const RoleType rt)
@@ -1573,12 +1541,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // update player connection types according to modified lobby selections,
             // while recording connections that are to be dropped
             std::vector<PlayerConnectionPtr> player_connections_to_drop;
-            for (auto player_connection_it = server.m_networking.established_begin();
-                 player_connection_it != server.m_networking.established_end();
-                 ++player_connection_it)
-            {
-                PlayerConnectionPtr player_connection = *player_connection_it;
-                if (!player_connection->IsEstablished())
+            for (const auto& player_connection : server.m_networking.EstablishedPlayerConnections()) {
+                if (!player_connection->IsEstablishedNamedValidClient())
                     continue;
                 int player_id = player_connection->PlayerID();
 
@@ -1636,7 +1600,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
         }
-
     } else {
         // can change only himself
         for (auto& i_player : m_lobby_data->players) {
@@ -1717,8 +1680,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     }
 
     ValidateClientLimits();
-    if (m_lobby_data->start_locked)
+    if (m_lobby_data->start_locked) {
         has_important_changes = true;
+    }
 
     // to determine if a new save file was selected, check if the selected file
     // index is different, and the new file index is in the valid range
@@ -1791,7 +1755,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     if (has_important_changes) {
         for (auto& player : m_lobby_data->players | range_values)
             player.player_ready = false;
-
     } else {
         // check if all established human players ready to play
         static constexpr auto has_valid_id = [](const auto& id_lb_data) { return id_lb_data.first >= 0; };
@@ -1847,18 +1810,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     // propagate lobby changes to players, so everyone has the latest updated
     // version of the lobby data
-    for (auto player_connection_it = server.m_networking.established_begin();
-         player_connection_it != server.m_networking.established_end(); ++player_connection_it)
-    {
-        const PlayerConnectionPtr& player_connection = *player_connection_it;
+    for (const auto& player_connection : server.m_networking.EstablishedPlayerConnections()) {
         const int player_id = player_connection->PlayerID();
         // new save file update needs to be sent to everyone, as does an update
         // after a player is added or dropped.  otherwise, messages can just go
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
         if (new_save_file_selected || player_setup_data_changed ||
-            player_id != sender->PlayerID() || has_important_changes)
-        { player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data)); }
+            player_id != sender->PlayerID() || has_important_changes )
+            player_connection->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
 
     return discard_event();
@@ -1891,13 +1851,12 @@ sc::result MPLobby::react(const PlayerChat& msg) {
     }
 
     if (recipients.empty()) { // the receiver is everyone
-        for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm));
-        }
+        for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
+            epc->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm));
     } else {
-        for (auto it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            if (recipients.find((*it)->PlayerID()) != recipients.end())
-                (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm));
+        for (const auto& epc : server.m_networking.EstablishedPlayerConnections()) {
+            if (recipients.contains(epc->PlayerID()))
+                epc->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm));
         }
     }
 
@@ -2347,12 +2306,10 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             // drop other connection with same name before checks for expected players
             std::vector<PlayerConnectionPtr> to_disconnect;
             to_disconnect.reserve(server.m_networking.size());
-            for (auto it = server.m_networking.established_begin();
-                 it != server.m_networking.established_end(); ++it)
-            {
-                if ((*it)->PlayerName() == player_name && player_connection != (*it)) {
-                    (*it)->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
-                    to_disconnect.push_back(*it);
+            for (const auto& epc : server.m_networking.EstablishedPlayerConnections()) {
+                if (epc->PlayerName() == player_name && player_connection != epc) {
+                    epc->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
+                    to_disconnect.push_back(epc);
                 }
             }
             for (const auto& conn : to_disconnect)
@@ -2479,10 +2436,7 @@ sc::result WaitingForMPGameJoiners::react(const AuthResponse& msg) {
         // drop other connection with same name before checks for expected players
         std::vector<PlayerConnectionPtr> to_disconnect;
         to_disconnect.reserve(server.m_networking.size());
-        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-             it != server.m_networking.established_end(); ++it)
-        {
-            auto& player = *it;
+        for (const auto& player : server.m_networking.EstablishedPlayerConnections()) {
             if (player->PlayerName() == player_name && player_connection != player) {
                 player->SendMessage(ErrorMessage(UserStringNop("ERROR_CONNECTION_WAS_REPLACED"), true));
                 to_disconnect.push_back(player);
@@ -2638,16 +2592,12 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
         server.PushChatMessage(data, sender->PlayerName(), text_color, timestamp);
     }
 
-    for (auto it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
+    for (const auto& epc : server.m_networking.EstablishedPlayerConnections()) {
         // send message to: (1) specified recipients, (2) all if no recipient  specified, (3) sender
-        if (recipients.find((*it)->PlayerID()) != recipients.end() || recipients.empty()
-            || ((*it)->PlayerID() == sender->PlayerID()))
-        {
-            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp,
-                                                       data, pm));
-        }
+        if (recipients.contains(epc->PlayerID())
+            || recipients.empty()
+            || (epc->PlayerID() == sender->PlayerID()))
+        { epc->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), timestamp, data, pm)); }
     }
     return discard_event();
 }
@@ -3006,10 +2956,7 @@ sc::result PlayingGame::react(const AutoTurn& msg) {
     empire->SetReady(turns_count != 0);
 
     // notify other player that this empire submitted orders
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end(); ++player_it)
-    {
-        auto player_ctn = *player_it;
+    for (const auto& player_ctn : server.m_networking.EstablishedPlayerConnections()) {
         player_ctn->SendMessage(PlayerStatusMessage(empire->Ready() ?
                                                     Message::PlayerStatus::WAITING :
                                                     Message::PlayerStatus::PLAYING_TURN,
@@ -3233,12 +3180,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         empire->SetReady(true);
 
         // notify other player that this empire submitted orders
-        for (auto player_it = server.m_networking.established_begin();
-             player_it != server.m_networking.established_end(); ++player_it)
-        {
-            PlayerConnectionPtr player_ctn = *player_it;
-            player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::WAITING, empire_id));
-        }
+        for (const auto& est_player : server.m_networking.EstablishedPlayerConnections())
+            est_player->SendMessage(PlayerStatusMessage(Message::PlayerStatus::WAITING, empire_id));
     }
 
     // inform player who just submitted of their new status.  Note: not sure why
@@ -3387,12 +3330,8 @@ sc::result WaitingForTurnEnd::react(const RevertOrders& msg) {
 
 
     // notify other players that this empire has not submitted orders
-    for (auto player_it = server.m_networking.established_begin();
-         player_it != server.m_networking.established_end(); ++player_it)
-    {
-        PlayerConnectionPtr player_ctn = *player_it;
+    for (const auto& player_ctn : server.m_networking.EstablishedPlayerConnections())
         player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::PLAYING_TURN, empire_id));
-    }
 
     return discard_event();
 }
@@ -3431,12 +3370,8 @@ sc::result WaitingForTurnEnd::react(const RevokeReadiness& msg) {
         sender->SendMessage(msg.m_message);
 
         // notify other players that this empire revoked readiness
-        for (auto player_it = server.m_networking.established_begin();
-             player_it != server.m_networking.established_end(); ++player_it)
-        {
-            PlayerConnectionPtr player_ctn = *player_it;
+        for (const auto& player_ctn : server.m_networking.EstablishedPlayerConnections())
             player_ctn->SendMessage(PlayerStatusMessage(Message::PlayerStatus::PLAYING_TURN, empire_id));
-        }
     }
 
     return discard_event();
@@ -3565,17 +3500,13 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
     server.PostCombatProcessTurns();
 
     // update players that other empires are now playing their turn
-    for (const auto& empire : server.Empires()) {
+    for (const auto& [empire_id, empire] : server.Empires()) {
         // inform all players that this empire is playing a turn if not eliminated
-        for (auto recipient_player_it = server.m_networking.established_begin();
-            recipient_player_it != server.m_networking.established_end();
-            ++recipient_player_it)
-        {
-            const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
-            recipient_player_ctn->SendMessage(PlayerStatusMessage(empire.second->Eliminated() || empire.second->Ready() ?
-                                                                      Message::PlayerStatus::WAITING :
-                                                                      Message::PlayerStatus::PLAYING_TURN,
-                                                                  empire.first));
+        for (const auto& recipient_player : server.m_networking.EstablishedPlayerConnections()) {
+            recipient_player->SendMessage(PlayerStatusMessage(
+                empire->Eliminated() || empire->Ready() ?
+                    Message::PlayerStatus::WAITING : Message::PlayerStatus::PLAYING_TURN,
+                empire_id));
         }
     }
 
@@ -3615,7 +3546,7 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
 
     // Inform all players that the game is ending.  Only check the AIs for acknowledgement, because
     // they are the server's child processes.
-    for (PlayerConnectionPtr player : server.m_networking) {
+    for (const auto& player : server.m_networking.AllPlayerConnections()) {
         player->SendMessage(EndGameMessage(Message::EndGameReason::PLAYER_DISCONNECT));
         if (Networking::is_ai(player)) {
             // If sending message will result in error it will be processed in Disconnection handle.
