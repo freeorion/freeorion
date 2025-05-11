@@ -1,10 +1,8 @@
 try:
-    from focs._empire_statistics import *
+    from focs._effects import *
 except ModuleNotFoundError:
     pass
 
-from focs.empire_statistic_ import EmpireStatisticModule
+from focs._empire_statistics import EmpireStatistic
 
-EmpireStatisticModule(
-    name="ARMED_MONSTER_COUNT", value=StatisticCount(float, condition=Ship & Monster & Armed & Unowned)
-)
+EmpireStatistic(name="ARMED_MONSTER_COUNT", value=StatisticCount(float, condition=Ship & Monster & Armed & Unowned))

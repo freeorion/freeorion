@@ -33,7 +33,7 @@ namespace std {
 }
 #endif
 
-extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit_empire_statistic_();
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__empire_statistics();
 
 namespace {
     using start_rule_payload = std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>>;
@@ -106,18 +106,6 @@ namespace {
         start_rule  start;
     };
 
-    boost::python::object py_insert_empire_statistics_(start_rule_payload& stats_, const boost::python::tuple& args,
-                                                       const boost::python::dict& kw)
-    {
-        auto name = boost::python::extract<std::string>(kw["name"])();
-
-        auto value = pyobject_to_vref<double>(kw["value"]);
-
-        stats_.emplace(std::move(name), std::move(value));
-
-        return boost::python::object();
-    }
-
     boost::python::object py_insert_empire_statistics_scoped_(boost::python::object scope, const boost::python::tuple& args,
                                                        const boost::python::dict& kw);
 
@@ -140,11 +128,7 @@ namespace {
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
-            globals["EmpireStatistic"] = boost::python::raw_function(
-                [&stats_](const boost::python::tuple& args, const boost::python::dict& kw)
-                { return py_insert_empire_statistics_(stats_, args, kw); });
-
-            module = parser.LoadModule(&PyInit_empire_statistic_);
+            module = parser.LoadModule(&PyInit__empire_statistics);
 
             module.attr("__stats") = boost::cref(*this);
         }
@@ -171,14 +155,14 @@ namespace {
     }
 }
 
-BOOST_PYTHON_MODULE(empire_statistic_) {
+BOOST_PYTHON_MODULE(_empire_statistics) {
     boost::python::docstring_options doc_options(true, true, false);
 
     boost::python::class_<py_grammar, boost::python::bases<>, py_grammar, boost::noncopyable>("__Grammar", boost::python::no_init);
 
     boost::python::object current_module = boost::python::scope();
 
-    boost::python::def("EmpireStatisticModule", boost::python::raw_function(
+    boost::python::def("EmpireStatistic", boost::python::raw_function(
         [current_module](const boost::python::tuple& args, const boost::python::dict& kw)
         { return py_insert_empire_statistics_scoped_(current_module, args, kw); }));
 }

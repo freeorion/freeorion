@@ -1,4 +1,4 @@
-def EmpireStatisticModule(
+def EmpireStatistic(
     name: str,
     value: float,
 ): ...
