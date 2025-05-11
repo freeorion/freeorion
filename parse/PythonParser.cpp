@@ -432,7 +432,7 @@ py::object PythonParser::LoadModule(PyObject* (*init_function)()) const {
         const char* module_name = PyModule_GetName(py_module);
         DebugLogger() << "Injecting parser module " << module_name;
         py::object module{py::handle<>(py_module)};
-        py::extract<py::dict>(py::import("sys").attr("modules"))()[module_name] = module;
+        py::extract<py::dict>(py::import("sys").attr("modules"))()[std::string{"focs."} + module_name] = module;
         return module;
     }
     return py::object();
@@ -440,7 +440,7 @@ py::object PythonParser::LoadModule(PyObject* (*init_function)()) const {
 
 void PythonParser::UnloadModule(py::object module) const {
     const char* module_name = PyModule_GetName(module.ptr());
-    py::import("sys").attr("modules").attr("pop")(module_name);
+    py::import("sys").attr("modules").attr("pop")(std::string{"focs."} + module_name);
 }
 
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
