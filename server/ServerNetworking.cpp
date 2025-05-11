@@ -220,7 +220,7 @@ void PlayerConnection::SendMessage(const Message& message, int empire_id, int tu
                                              message, empire_id, turn));
 }
 
-bool PlayerConnection::IsEstablished() const noexcept {
+bool PlayerConnection::IsEstablishedNamedValidClient() const noexcept {
     return (m_ID != INVALID_PLAYER_ID && !m_player_name.empty()
             && m_client_type != Networking::ClientType::INVALID_CLIENT_TYPE);
 }
@@ -261,7 +261,7 @@ void PlayerConnection::EstablishPlayer(int id, std::string player_name, Networki
                          << client_type << ", " << client_version_string << ")";
 
     // ensure that this connection isn't already established
-    if (IsEstablished()) {
+    if (IsEstablishedNamedValidClient()) {
         ErrorLogger(network) << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
         return;
     }
@@ -573,26 +573,6 @@ ServerNetworking::ServerNetworking(boost::asio::io_context& io_context,
     m_disconnected_callback(disconnected_callback)
 { Init(); }
 
-std::size_t ServerNetworking::NumEstablishedPlayers() const
-{ return std::distance(established_begin(), established_end()); }
-
-ServerNetworking::const_established_iterator ServerNetworking::GetPlayer(int id) const
-{ return std::find_if(established_begin(), established_end(),
-                      [id](const auto& player_con) noexcept { return player_con->PlayerID() == id; });
-}
-
-ServerNetworking::const_established_iterator ServerNetworking::established_begin() const {
-    return const_established_iterator(is_established_player,
-                                      m_player_connections.begin(),
-                                      m_player_connections.end());
-}
-
-ServerNetworking::const_established_iterator ServerNetworking::established_end() const {
-    return const_established_iterator(is_established_player,
-                                      m_player_connections.end(),
-                                      m_player_connections.end());
-}
-
 int ServerNetworking::NewPlayerID() const {
     int biggest_current_player_id(0);
     for (const PlayerConnectionPtr& player : m_player_connections) {
@@ -647,17 +627,16 @@ bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
 }
 
 void ServerNetworking::SendMessageAll(const Message& message) {
-    for (auto player_it = established_begin(); player_it != established_end(); ++player_it)
-        (*player_it)->SendMessage(message);
+    for (auto& player : EstablishedPlayerConnections())
+        player->SendMessage(message);
 }
 
 void ServerNetworking::Disconnect(int id) {
-    const established_iterator it = GetPlayer(id);
-    if (it == established_end()) {
+    const auto player = GetPlayer(id);
+    if (!player) {
         ErrorLogger(network) << "ServerNetworking::Disconnect couldn't find player with id " << id << " to disconnect.  aborting";
         return;
     }
-    const PlayerConnectionPtr player = *it;
     if (player->PlayerID() != id) {
         ErrorLogger(network) << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requested (" << id << ")";
         return;
@@ -675,23 +654,6 @@ void ServerNetworking::DisconnectAll() {
     const auto connections_copy{m_player_connections};
     for (auto& pcon : connections_copy)
         DisconnectImpl(pcon);
-}
-
-ServerNetworking::established_iterator ServerNetworking::GetPlayer(int id) {
-    return std::find_if(established_begin(), established_end(),
-                      [id](const auto& player_con) noexcept { return player_con->PlayerID() == id; });
-}
-
-ServerNetworking::established_iterator ServerNetworking::established_begin() {
-    return established_iterator(is_established_player,
-                                m_player_connections.begin(),
-                                m_player_connections.end());
-}
-
-ServerNetworking::established_iterator ServerNetworking::established_end() {
-    return established_iterator(is_established_player,
-                                m_player_connections.end(),
-                                m_player_connections.end());
 }
 
 void ServerNetworking::HandleNextEvent() {
@@ -736,8 +698,8 @@ void ServerNetworking::CleanupCookies() {
             to_delete.insert(cookie.first);
     }
     // don't clean up cookies from active connections
-    for (auto it = established_begin(); it != established_end(); ++it)
-        to_delete.erase((*it)->Cookie());
+    for (auto& player : EstablishedPlayerConnections())
+        to_delete.erase(player->Cookie());
 
     for (const auto& cookie : to_delete)
         m_cookies.erase(cookie);

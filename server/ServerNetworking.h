@@ -2,6 +2,7 @@
 #define _ServerNetworking_h_
 
 #include "../network/Message.h"
+#include "../util/ranges.h"
 
 #include <boost/asio.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -92,7 +93,7 @@ public:
     [[nodiscard]] bool IsLocalConnection() const noexcept { return m_is_local_connection; }
 
     /** Checks if the player is established, has a valid name, id and client type. */
-    [[nodiscard]] bool IsEstablished() const noexcept;
+    [[nodiscard]] bool IsEstablishedNamedValidClient() const noexcept;
 
     /** Checks if the player was authenticated. */
     [[nodiscard]] bool IsAuthenticated() const noexcept { return m_authenticated; }
@@ -197,12 +198,6 @@ private:
     } is_established_player{};
 
 public:
-    using PlayerConnections = std::set<PlayerConnectionPtr>;
-    using iterator = PlayerConnections::iterator;
-    using const_iterator = PlayerConnections::const_iterator;
-    using established_iterator = boost::filter_iterator<IsEstablishedPlayer, iterator>;
-    using const_established_iterator= boost::filter_iterator<IsEstablishedPlayer, const_iterator>;
-
     ServerNetworking(boost::asio::io_context& io_context,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback,
@@ -213,25 +208,18 @@ public:
     /** Returns the \a total number of PlayerConnections (not just established ones). */
     std::size_t size() const noexcept { return m_player_connections.size(); }
 
-    /** Returns an iterator to the first PlayerConnection object. */
-    const_iterator begin() const noexcept { return m_player_connections.begin(); }
-
-    /** Returns an iterator to the one-past-the-last PlayerConnection object. */
-    const_iterator end() const noexcept { return m_player_connections.end(); }
+    const auto& AllPlayerConnections() const noexcept { return m_player_connections; }
+    auto EstablishedPlayerConnections() const { return m_player_connections | range_filter(is_established_player); }
 
     /** Returns the number of established-player PlayerConnections. */
-    std::size_t NumEstablishedPlayers() const;
+    std::size_t NumEstablishedPlayers() const { return range_distance(EstablishedPlayerConnections()); }
 
-    /** Returns an iterator to the established PlayerConnection object with ID
-        \a id, or established_end() if none is found. */
-    const_established_iterator GetPlayer(int id) const;
-
-    /** Returns an iterator to the first \a established PlayerConnection object. */
-    const_established_iterator established_begin() const;
-
-    /** Returns an iterator to the one-past-the-last \a established
-        PlayerConnection object. */
-    const_established_iterator established_end() const;
+    /** Returns PlayerConnectionPtr with ID \a id, or null pointer if none is found. */
+    auto GetPlayer(int id) const {
+        auto econs = EstablishedPlayerConnections();
+        auto it = range_find_if(econs, [id](const auto& econ) { return econ->PlayerID() == id; });
+        return (it != econs.end()) ? *it : nullptr;
+    }
 
     /** Returns the ID number for new player, which will be larger than the ID of all the established players. */
     int NewPlayerID() const;
@@ -269,24 +257,6 @@ public:
 
     /** Disconnects the server from all clients. */
     void DisconnectAll();
-
-    /** Returns an iterator to the first PlayerConnection object. */
-    iterator begin() noexcept { return m_player_connections.begin(); }
-
-    /** Returns an iterator to the one-past-the-last PlayerConnection object. */
-    iterator end() noexcept { return m_player_connections.end(); }
-
-    /** Returns an iterator to the established PlayerConnection object with ID
-        \a id, or end() if none is found. */
-    established_iterator GetPlayer(int id);
-
-    /** Returns an iterator to the first established PlayerConnection
-        object. */
-    established_iterator established_begin();
-
-    /** Returns an iterator to the one-past-the-last established
-        PlayerConnection object. */
-    established_iterator established_end();
 
     /** Dequeues and executes the next event in the queue.  Results in a noop
         if the queue is empty. */
@@ -339,12 +309,12 @@ private:
 
 #if BOOST_VERSION >= 107000
     boost::asio::basic_socket_acceptor<boost::asio::ip::tcp, boost::asio::io_context::executor_type>
-                           m_player_connection_acceptor;
+                                   m_player_connection_acceptor;
 #else
     boost::asio::ip::tcp::acceptor m_player_connection_acceptor;
 #endif
-    PlayerConnections      m_player_connections;
-    std::queue<NullaryFn>  m_event_queue;
+    std::set<PlayerConnectionPtr> m_player_connections;
+    std::queue<NullaryFn>         m_event_queue;
     std::unordered_map<boost::uuids::uuid, CookieData, boost::hash<boost::uuids::uuid>> m_cookies;
 
     MessageAndConnectionFn m_nonplayer_message_callback;
