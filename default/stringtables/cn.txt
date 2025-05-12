@@ -1088,475 +1088,475 @@ ERROR_CHECKSUM_MISMATCH
 ##
 
 RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
-Turn PP overcommit
+回合 PP 预付款比例
 
 RULE_PRODUCTION_QUEUE_FRONTLOAD_FACTOR_DESC
-Percentage of PP overcommitment per item build turn to build in time.
+每项建造回合的生产点超额投入百分比，以便及时建造。
 
 RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
-Final PP overcommit
+最终生产点超额投入比例
 
 RULE_PRODUCTION_QUEUE_TOPPING_UP_FACTOR_DESC
-Percentage of PP overcommitment on final item build turn to build in time.
+最终物品建造回合的生产点超额投入百分比，以便及时建造。
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH
-Cheap and Fast Techs
+廉价快速科技
 
 RULE_CHEAP_AND_FAST_TECH_RESEARCH_DESC
-Techs cost 1 RP and take 1 turn to research.
+科技花费1科研点，耗时1回合研究。
 
 RULE_CHEAP_POLICIES
-Cheap Policies
+廉价政策
 
 RULE_CHEAP_POLICIES_DESC
-Policies cost 1 IP to adopt.
+采纳政策花费1影响力点。
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION
-Cheap and Fast Buildings
+廉价快速建筑
 
 RULE_CHEAP_AND_FAST_BUILDING_PRODUCTION_DESC
-Buildings cost 1 PP and take 1 turn to produce.
+建筑花费1生产点，耗时1回合建造。
 
 RULE_CHEAP_AND_FAST_SHIP_PRODUCTION
-Cheap and Fast Ships
+廉价快速飞船
 
 RULE_CHEAP_AND_FAST_SHIP_PRODUCTION_DESC
-Ships cost 1 PP and take 1 turn to produce.
+飞船花费1生产点，耗时1回合建造。
 
 # value ref description
 RULE_NUM_COMBAT_ROUNDS
-Combat Rounds
+战斗轮数
 
 RULE_NUM_COMBAT_ROUNDS_DESC
-How many rounds of combat occur each turn.
+每回合发生的战斗轮数。
 
 RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE
-Close Range Targeting Combat Round
+近距离瞄准战斗回合
 
 RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE_DESC
-The first combat round in which close range weapons are able to shoot at targets.
+近距离武器能够射击目标的首个战斗回合。
 
 RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE
-Aggressive Ships Combat Visible
+攻击性飞船战斗可见
 
 RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE_DESC
-Ships in fleets that are set to control their system start combat visible to all empires, regardless of their stealth and detection levels.
+舰队设置为控制其所在星系的飞船，无论其隐形和侦测等级如何，对所有帝国都可见。
 
 RULE_RESEED_PRNG_SERVER
-Random Reseeding
+随机数重新播种
 
 RULE_RESEED_PRNG_SERVER_DESC
-With reseeding, replaying the same save or using the same settings and seed is not expected to produce the same random results. This is possibly preferable if players want to be sure that none of them can predict future random results based on previous random results or if a player wants to 're-roll' the results of a battle or random effect when re-playing a turn, and not get the same results as a previous attempt.
+通过重新播种，重玩相同的存档或使用相同的设置和种子预计不会产生相同的随机结果。如果玩家希望确保他们中的任何人都无法根据先前的随机结果预测未来的随机结果，或者如果玩家希望在重玩回合时“重新掷骰子”战斗或随机效果的结果，而不是获得与先前尝试相同的结果，则这可能是更可取的。
 
 RULE_SHIP_SPEED_FACTOR
-Ship Speed Scaling
+飞船速度缩放
 
 RULE_SHIP_SPEED_FACTOR_DESC
-Adjusts speeds of ship hulls and speed parts
+调整飞船船体和速度部件的速度
 
 RULE_SHIP_STRUCTURE_FACTOR
-Ship Structure Scaling
+飞船结构缩放
 
 RULE_SHIP_STRUCTURE_FACTOR_DESC
-Adjusts structure of ship hulls and armour parts. Adjusts structure growth, damage control and planetary shield as well
+调整飞船船体和装甲部件的结构。同时调整结构增长、损伤控制和行星护盾
 
 RULE_SHIP_WEAPON_DAMAGE_FACTOR
-Ship Weapon Damage Scaling
+飞船武器伤害缩放
 
 RULE_SHIP_WEAPON_DAMAGE_FACTOR_DESC
-Adjusts damage and shields of ship main weapons. Adjusts planetary defense as well
+调整飞船主要武器的伤害和护盾。同时调整行星防御
 
 RULE_FIGHTER_DAMAGE_FACTOR
-Fighter Damage Scaling
+战斗机伤害缩放
 
 RULE_FIGHTER_DAMAGE_FACTOR_DESC
-Adjusts damage of fighters
+调整战斗机的伤害
 
 RULE_SHIP_HULL_COST_FACTOR
-Hull Cost Scaling
+船体成本缩放
 
 RULE_SHIP_HULL_COST_FACTOR_DESC
-Adjusts costs of ship hulls
+调整飞船船体的成本
 
 RULE_SHIP_PART_COST_FACTOR
-Part Cost Scaling
+部件成本缩放
 
 RULE_SHIP_PART_COST_FACTOR_DESC
-Adjusts costs of ship parts
+调整飞船部件的成本
 
 RULE_BUILDING_COST_FACTOR
-Building Cost Scaling
+建筑成本缩放
 
 RULE_BUILDING_COST_FACTOR_DESC
-Adjusts costs of buildings
+调整建筑的成本
 
 RULE_TECH_COST_FACTOR
-Tech Cost Scaling
+科技成本缩放
 
 RULE_TECH_COST_FACTOR_DESC
-Adjusts costs of tech
+调整科技的成本
 
 RULE_SINGULARITY_COST_FACTOR
-[[LRN_TRANSCEND]] Cost Scaling
+[[LRN_TRANSCEND]] 成本缩放
 
 RULE_SINGULARITY_COST_FACTOR_DESC
-Adjusts costs of [[LRN_TRANSCEND]] tech
+调整 [[LRN_TRANSCEND]] 科技的成本
 
 RULE_ENABLE_EXPERIMENTORS
-Enable Experimentors
+启用实验者
 
 RULE_ENABLE_EXPERIMENTORS_DESC
-Enables Experimentors during galaxy generation
+在星系生成期间启用实验者
 
 RULE_EXPERIMENTORS_SPAWN_BASE_TURN
-Experimentors spawn base turn
+实验者出现的基础回合
 
 RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC
-Minimum turn experimentors spawn. Modified by galaxy size and AI Agression.
+实验者出现的最早回合。受星系大小和AI侵略性的影响。
 
 RULE_NESTS_ALWAYS_SPAWN_WILD
-Nests always spawn wild monsters
+巢穴总是产生野生怪物
 
 RULE_NESTS_ALWAYS_SPAWN_WILD_DESC
-Monster nests will always spawn wild monsters, even when outposted
+怪物巢穴总是会产生野生怪物，即使在前哨站也是如此。
 
 RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM
-Wandering monsters ocassionally stop insystem
+游荡的怪物偶尔会在星系内停留
 
 RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM_DESC
-Wandering monsters ocassionally stop insystem
+游荡的怪物偶尔会在星系内停留
 
 RULE_WILD_NEST_MONSTER_SPAWN_FACTOR
-Wild nest monster spawn factor
+野生巢穴怪物生成因子
 
 RULE_WILD_NEST_MONSTER_SPAWN_FACTOR_DESC
-Multiplies the probability of a nest spawning a wild monster
+乘以 巢穴生成野生怪物 的概率
 
 RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR
-Domestic nest monster spawn factor
+驯养巢穴怪物生成因子
 
 RULE_DOMESTIC_NEST_MONSTER_SPAWN_FACTOR_DESC
-Multiplies the probability of a nest spawning a domesticated monster
+乘以 巢穴生成驯养怪物 的概率
 
 RULE_ENABLE_SUPER_TESTER
-Enable Super-Tester Takeover
+启用超级测试者接管
 
 RULE_ENABLE_SUPER_TESTER_DESC
-Enables [[BLD_SUPER_TEST]] building
+启用 [[BLD_SUPER_TEST]] 建筑
 
 RULE_ALLOW_REPEATED_SPECIES
-Allows repeated species
+允许重复物种
 
 RULE_ALLOW_REPEATED_SPECIES_DESC
-Allows repeated species when there are less players than playable species. When there are more players than playable species there are always repeated species.
+当玩家数量少于可玩物种数量时，允许重复物种。当玩家数量多于可玩物种数量时，总是存在重复物种。
 
 RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY
-Guarantee habitable planet in homeworld vicinity
+保证母星附近有可居住行星
 
 RULE_ENSURE_HABITABLE_PLANET_HW_VICINITY_DESC
-Guarantees at least 1 planet of adequate environment or better close to the homeworld. Currently occurs before native or special placement.
+保证在母星附近至少有1个环境适宜或更好的行星。目前在原生或特殊放置之前发生。
 
 RULE_STOCKPILE_IMPORT_LIMITED
-Stockpile Import Limited
+限制库存进口
 
 RULE_STOCKPILE_IMPORT_LIMITED_DESC
-Enables limits on stockpile import per turn
+启用每回合库存进口的限制
 
 RULE_TEST_INT
-Test Integer
+测试整数
 
 RULE_TEST_INT_DESC
-Test
+测试
 
 RULE_TEST_STRING
-Test String
+测试字符串
 
 RULE_TEST_STRING_DESC
-Test
+测试
 
 RULE_STARLANES_EVERYWHERE
-Starlanes Everywhere
+星际航道遍布
 
 RULE_STARLANES_EVERYWHERE_DESC
-Starlanes are generated between every pair of systems, regardless of geometry. Lanes may still be removed during a game, however. Lanes are also not rendered on the galaxy map.
+无论几何结构如何，每两个星系之间都会生成星际航道。然而，在游戏过程中仍然可以移除航道。航道也不会在星系地图上渲染。
 
 RULE_ALL_OBJECTS_VISIBLE
-All Objects Visible
+所有物体可见
 
 RULE_ALL_OBJECTS_VISIBLE_DESC
-All systems, planets, buildings, fleets, ships, and fields can be detected by all empires at at least partial visibility.
+所有星系、行星、建筑、舰队、飞船和场都可以被所有帝国以至少部分可见性探测到。
 
 RULE_ALL_SYSTEMS_VISIBLE
-All Systems Visible
+所有星系可见
 
 RULE_ALL_SYSTEMS_VISIBLE_DESC
-All system locations are known by all empires.
+所有星系的位置都被所有帝国知晓。
 
 RULE_EXTRASOLAR_SHIP_DETECTION
-Extrasolar Ship Detection
+外星系飞船探测
 
 RULE_EXTRASOLAR_SHIP_DETECTION_DESC
-Ships outside systems provide detection.
+星系外的飞船提供探测能力。
 
 RULE_OVERRIDE_VIS_LEVEL
-Stealthy Blockader Visibility
+隐形封锁者可见性
 
 RULE_OVERRIDE_VIS_LEVEL_DESC
-Visibility level at which otherwise stealthy fleets and ships are revealed to the empire that owns a fleet that is blockaded.
+原本隐形的舰队和飞船对拥有被封锁舰队的帝国可见的可见度等级。
 
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
-Undetectable Stealthy Planets
+未被发现的隐形行星
 
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
-'''<u>If On</u>: Planets that have more stealth than an empire's detection strength cannot be detected by that empire just by having an object in the same system, unless that empire has previously detected that planet.
+'''<u>开启</u>：隐形能力高于帝国探测能力的行星，除非该帝国先前探测到该行星，否则仅凭在该星系拥有物体无法被该帝国探测到。
 
-<u>If Off</u>: Planets that have more stealth than an empire's detection strength are detectable by that empire if the empire owns another object in the same system.'''
+<u>关闭</u>：隐形能力高于帝国探测能力的行星，如果该帝国在该星系拥有其他物体，则可以被该帝国探测到。'''
 
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
-Basic System Info Visible
+显示基本星系信息
 
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
-'''<u>If On</u>: Systems that are detected by an empire at only basic visibility have their name and star type revealed to that empire. Causes a UI issue where it is difficult to tell if starlanes of a system are known.
+'''<u>开启</u>：仅以基本可见度被帝国探测到的星系，其名称和恒星类型将向该帝国显示。这会导致一个用户界面问题，难以判断一个星系的星际航道是否已知。
 
-<u>If Off</u>: Basic level visible systems that have never been detected at higher visiblity have unknown name and star type.'''
+<u>关闭</u>：从未以更高可见度探测到的基本可见等级的星系，其名称和恒星类型未知。'''
 
 RULE_HIDDEN_POLICIES
-Hide Empire Policies
+隐藏帝国政策
 
 RULE_HIDDEN_POLICIES_DESC
-'''<u>If On</u>: Players who are not allied to an empire do not know other empires' adopted or available policies.
+'''<u>开启</u>：非盟友的玩家不知道其他帝国已采纳或可用的政策。
 
-<u>If Off</u>: All players know all other empires' adopted and available policies.'''
+<u>关闭</u>：所有玩家都知道所有其他帝国已采纳和可用的政策。'''
 
 RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES
-Hide Empire Techs, Queues, and Availabilites
+隐藏帝国科技、队列和可用性
 
 RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES_DESC
-'''<u>If On</u>: Players who are not allied to an empire do not know other empires' researched techs, queues and part, hull, or building availabilities.
+'''<u>开启</u>：非盟友的玩家不知道其他帝国已研究的科技、队列以及部件、船体或建筑的可用性。
 
-<u>If Off</u>: All players know all other empires' researched techs, queues, and availabilities.'''
+<u>关闭</u>：所有玩家都知道所有其他帝国已研究的科技、队列和可用性。'''
 
 RULE_HABITABLE_SIZE_TINY
-Tiny planets Habitable size
+微型行星可居住规模
 
 RULE_HABITABLE_SIZE_SMALL
-Small planets Habitable size
+小型行星可居住规模
 
 RULE_HABITABLE_SIZE_MEDIUM
-Medium planets Habitable size
+中型行星可居住规模
 
 RULE_HABITABLE_SIZE_LARGE
-Large planets Habitable size
+大型行星可居住规模
 
 RULE_HABITABLE_SIZE_HUGE
-Huge planets Habitable size
+巨型行星可居住规模
 
 RULE_HABITABLE_SIZE_ASTEROIDS
-Asteroids Habitable size
+小行星可居住规模
 
 RULE_HABITABLE_SIZE_GASGIANT
-Gas Giants Habitable size
+气态巨行星可居住规模
 
 RULE_HABITABLE_SIZE_DESC
-Value used to adjust for [[METER_POPULATION]] changes on a planet of this size
+用于调整此大小行星上 [[METER_POPULATION]] 变化的数值
 
 RULE_BASELINE_PLANET_STABILITY
-Planet Stability Baseline
+行星稳定度基线
 
 RULE_BASELINE_PLANET_STABILITY_DESC
-Baseline level of planet [[METER_HAPPINESS]].
+行星 [[METER_HAPPINESS]] 的基线水平。
 
 RULE_BASELINE_SPECIES_EMPIRE_OPINION
-Species Empire Opinion Baseline
+物种对帝国意见基线
 
 RULE_BASELINE_SPECIES_EMPIRE_OPINION_DESC
-Baseline level of species opinions of empires.
+物种对帝国意见的基线水平。
 
 RULE_INVASION_OPINION_PENALTY_SCALING
-Planet invasion species opinion scaling
+行星入侵物种意见惩罚缩放
 
 RULE_INVASION_OPINION_PENALTY_SCALING_DESC
-Scales penalty to species opinion of an empire that was the most recent invader of planets with species
+缩放对最近入侵拥有物种行星的帝国的物种意见的惩罚
 
 RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING
-Ship loss or destruction species opinion scaling
+飞船损失或摧毁物种意见缩放
 
 RULE_SHIPS_LOST_DESTROYED_PENALTY_SCALING_DESC
-Scales penalty to species opinion of an empire that loses or destroys in combat ships of a species
+缩放对在战斗中损失或摧毁某物种飞船的帝国的物种意见的惩罚
 
 RULE_COLONIES_FOUNDED_BONUS_SCALING
-Colonies founded opinion scaling
+殖民地建立意见缩放
 
 RULE_COLONIES_FOUNDED_BONUS_SCALING_DESC
-Scales bonus to species opinion of an empire that founds colonies with that species
+缩放对建立该物种殖民地的帝国的物种意见的奖励
 
 RULE_PROTECTION_FOCUS_STABILITY
-Protection Focus Stability Bonus
+保护焦点稳定度加成
 
 RULE_PROTECTION_FOCUS_STABILITY_DESC
-Bonus [[METER_HAPPINESS]] from Protection Focus.
+来自保护焦点的 [[METER_HAPPINESS]] 加成。
 
 RULE_IMPERIAL_PALACE_INFLUENCE
-Influence Generated by Imperial Palace
+皇宫产生的影响力
 
 RULE_IMPERIAL_PALACE_INFLUENCE_DESC
-[[METER_INFLUENCE]] generated by Imperial Palace.
+皇宫产生的 [[METER_INFLUENCE]]。
 
 RULE_GOOD_ENVIRONMENT_STABILITY
-Stability Modifier for Good Environment
+良好环境稳定度修正
 
 RULE_GOOD_ENVIRONMENT_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Good Environment.
+良好环境对 [[METER_HAPPINESS]] 的修正。
 
 RULE_ADEQUATE_ENVIRONMENT_STABILITY
-Stability Modifier for Adequate Environment
+适宜环境稳定度修正
 
 RULE_ADEQUATE_ENVIRONMENT_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Adequate Environment.
+适宜环境对 [[METER_HAPPINESS]] 的修正。
 
 RULE_POOR_ENVIRONMENT_STABILITY
-Stability Modifier for Poor Environment
+恶劣环境稳定度修正
 
 RULE_POOR_ENVIRONMENT_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Poor Environment.
+恶劣环境对 [[METER_HAPPINESS]] 的修正。
 
 RULE_HOSTILE_ENVIRONMENT_STABILITY
-Stability Modifier for Hostile/Uninhabitable Environment
+恶劣/不适宜居住环境稳定度修正
 
 RULE_HOSTILE_ENVIRONMENT_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Hostile/Uninhabitable Environment.
+恶劣/不适宜居住环境对 [[METER_HAPPINESS]] 的修正。
 
 RULE_TINY_SIZE_STABILITY
-Stability Modifier for Tiny Planets
+微型行星稳定度修正
 
 RULE_TINY_SIZE_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Tiny Planets.
+微型行星对 [[METER_HAPPINESS]] 的修正。
 
 RULE_SMALL_SIZE_STABILITY
-Stability Modifier for Small Planets
+小型行星稳定度修正
 
 RULE_SMALL_SIZE_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Small Planets.
+小型行星对 [[METER_HAPPINESS]] 的修正。
 
 RULE_MEDIUM_SIZE_STABILITY
-Stability Modifier for Medium Planets
+中型行星稳定度修正
 
 RULE_MEDIUM_SIZE_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Medium Planets.
+中型行星对 [[METER_HAPPINESS]] 的修正。
 
 RULE_LARGE_SIZE_STABILITY
-Stability Modifier for Large Planet
+大型行星稳定度修正
 
 RULE_LARGE_SIZE_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Large Planets.
+大型行星对 [[METER_HAPPINESS]] 的修正。
 
 RULE_HUGE_SIZE_STABILITY
-Stability Modifier for Huge Planets
+巨型行星稳定度修正
 
 RULE_HUGE_SIZE_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Huge Planets.
+巨型行星对 [[METER_HAPPINESS]] 的修正。
 
 RULE_GAS_GIANT_SIZE_STABILITY
-Stability Modifier for Gas Giants
+气态巨行星稳定度修正
 
 RULE_GAS_GIANT_SIZE_STABILITY_DESC
-Modifier of [[METER_HAPPINESS]] for Gas Giants.
+气态巨行星对 [[METER_HAPPINESS]] 的修正。
 
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL
-Minimum distance monsters start from Capital
+怪物起始距离首都的最小值
 
 RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC
-Minimum distance monsters start from Capital
+怪物起始距离首都的最小值
 
 RULE_ALLOW_CONCEDE
-Allow Conceding
+允许认输
 
 RULE_ALLOW_CONCEDE_DESC
-Allows empires to concede from a game. This eliminates the empire's assets from the universe. The game continues with the remaining players.
+允许帝国认输。这将从宇宙中移除该帝国的所有资产。游戏将继续由剩余的玩家进行。
 
 RULE_CONCEDE_COLONIES_THRESHOLD
-Maximum Colonies When Conceding
+认输时的最大殖民地数量
 
 RULE_CONCEDE_COLONIES_THRESHOLD_DESC
-Empires with more than this number of colonies may not concede.
+拥有超过此数量殖民地的帝国不得认输。
 
 RULE_CONCEDE_DESTROY_COLONIES
-Depopulate Conceded Colonies
+放弃殖民地时清除人口
 
 RULE_CONCEDE_DESTROY_COLONIES_DESC
-If true, colonies owned by empires that concede are depopulated. If false, ships are set to unowned.
+如果为真，则放弃的帝国拥有的殖民地将被清除人口。如果为假，则飞船设置为无主。
 
 RULE_CONCEDE_DESTROY_BUILDINGS
-Destroy Conceded Buildings
+摧毁放弃的建筑
 
 RULE_CONCEDE_DESTROY_BUILDINGS_DESC
-If true, buildings owned by empires that concede are destroyed. If false, buildings are set to unowned.
+如果为真，则放弃的帝国拥有的建筑将被摧毁。如果为假，则建筑设置为无主。
 
 RULE_CONCEDE_DESTROY_SHIPS
-Destroy Conceded Ships
+摧毁放弃的飞船
 
 RULE_CONCEDE_DESTROY_SHIPS_DESC
-If true, ships owned by empires that concede are destroyed. If false, ships are set to unowned.
+如果为真，则放弃的帝国拥有的飞船将被摧毁。如果为假，则飞船设置为无主。
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN
-Max human player winners
+人类玩家获胜人数上限
 
 RULE_THRESHOLD_HUMAN_PLAYER_WIN_DESC
-Maximum number of human players that could win together in multiplayer games if there are no other human player survivors.
+如果没有其他人类玩家幸存，多人游戏中可以一起获胜的人类玩家的最大数量。
 
 RULE_ONLY_ALLIANCE_WIN
-Only allied players win
+只有盟友获胜
 
 RULE_ONLY_ALLIANCE_WIN_DESC
-Allied players can win together if the number of human players in their alliance is no more than the maximum human player winners and there are no other human player survivors.
+如果其联盟中的人类玩家数量不超过最大人类玩家获胜人数，并且没有其他人类玩家幸存，则盟友玩家可以一起获胜。
 
 RULE_SHIP_PART_BASED_UPKEEP
-Use part-based upkeep
+使用基于部件的维护费
 
 RULE_SHIP_PART_BASED_UPKEEP_DESC
-Calculate upkeep based on ship parts instead of ships themselves.
+根据飞船部件而非飞船本身计算维护费。
 
 RULE_DIPLOMACY
-Allowed diplomacy
+允许外交
 
 RULE_DIPLOMACY_DESC
-Manages diplomatic restrictions between players. By default all interactions are allowed.
+管理玩家之间的外交限制。默认情况下，允许所有互动。
 
 RULE_DIPLOMACY_ALLOWED_FOR_ALL
-All Allowed
+全部允许
 
 RULE_DIPLOMACY_FORBIDDEN_FOR_ALL
-All Forbidden
+全部禁止
 
 RULE_ANNEX_COST_OPINION_EXP_BASE
-Annex Cost Opinion Exponential Base
+吞并成本意见指数基数
 
 RULE_ANNEX_COST_OPINION_EXP_BASE_DESC
-Base of exponential determining how annexation costs scale with species empire opinion.
+决定吞并成本如何随物种帝国意见变化的指数的底数。
 
 RULE_ANNEX_COST_SCALING
-Annex Cost Population Scaling
+吞并成本人口缩放
 
 RULE_ANNEX_COST_SCALING_DESC
-Scaling factor for how annexation costs scale with planet population.
+吞并成本如何随行星人口变化的缩放因子。
 
 RULE_ANNEX_COST_STABILITY_EXP_BASE
-Annex Cost Stability Exponential Base
+吞并成本稳定度指数基数
 
 RULE_ANNEX_COST_STABILITY_EXP_BASE_DESC
-Base of exponential determining how annexation costs scale with planet stability.
+决定吞并成本如何随行星稳定度变化的指数的底数。
 
 RULE_BUILDING_ANNEX_COST_SCALING
-Annex Cost Building Scaling
+吞并成本建筑缩放
 
 RULE_BUILDING_ANNEX_COST_SCALING_DESC
-Scaling factor for how annexation costs scale with building production cost.
+吞并成本如何随建筑生产成本变化的缩放因子。
 
 RULE_ANNEX_COST_MINIMUM
-Annex Cost Minimum
+吞并成本最小值
 
 RULE_ANNEX_COST_MINIMUM_DESC
-Minimum cost to annex a planet.
+吞并行星的最低成本。
 
 
 ##
