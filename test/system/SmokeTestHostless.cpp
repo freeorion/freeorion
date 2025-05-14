@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             "--setup.ai.player.count", "0",
             "--testing",
             "--log-level", "info",
-            "--resource.path", GetOptionsDB().Get<std::string>("resource.path")
+            "--resource.path", "\"" + PathToString(GetOptionsDB().Get<boost::filesystem::path>("resource.path")) + "\""
         };
 
 #ifdef FREEORION_LINUX
