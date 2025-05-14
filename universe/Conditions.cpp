@@ -2948,7 +2948,7 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 namespace StaticTests {
-#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || _MSC_VER >= 1942) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
+#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || (_MSC_VER >= 1942 && _MSC_VER != 1944)) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
     struct ContainerTestObj : public UniverseObjectCXBase {
         constexpr explicit ContainerTestObj(std::vector<int> contained_ids_ = {}, int this_id = 2) :
             UniverseObjectCXBase(UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE),
@@ -10837,8 +10837,10 @@ namespace StaticTests {
     constexpr auto contains_aggressive_cx1 = Contains<Aggressive>{};
     constexpr auto contains_aggressive_cx2 = Contains{Aggressive{true}};
     constexpr auto contains_aggressive_cx3 = Contains<Aggressive>{true};
+#if (!defined(_MSC_VER) || (_MSC_VER != 1944))
     static_assert(static_cast<const Condition&>(contains_target_cx) != contains_capital_cx);
     static_assert(static_cast<const Condition&>(contains_capital_cx) != contains_aggressive_cx1);
+#endif
     static_assert(contains_aggressive_cx1 == contains_aggressive_cx2);
     static_assert(contains_aggressive_cx2 == contains_aggressive_cx3);
 
