@@ -22,7 +22,7 @@ Chinese
 ##
 
 OK
-OK
+确定
 
 APPLY
 应用
@@ -1561,7 +1561,7 @@ RULE_ANNEX_COST_MINIMUM_DESC
 
 ##
 ## Command-line and options database entries
-##
+## :(
 
 COMMAND_LINE_HELP_GENERAL_DESCRIPTION
 '''FreeOrion is a 4X Space Strategy game.
@@ -2485,82 +2485,82 @@ Path to freeoriond server executable.
 ##
 
 OPTIONS_DB_SECTION_ALL
-All options
+所有选项
 
 OPTIONS_DB_SECTION_AUDIO
-Audio
+音频
 
 OPTIONS_DB_SECTION_AUDIO_MUSIC
-Background music
+背景音乐
 
 OPTIONS_DB_SECTION_AUDIO_EFFECTS
-Sound effects
+音效
 
 OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS
-Sound effect paths
+音效路径
 
 OPTIONS_DB_SECTION_EFFECTS
-Effects
+效果
 
 OPTIONS_DB_SECTION_LOGGING
-Logging
+日志
 
 OPTIONS_DB_SECTION_MISC
-Miscellaneous
+杂项
 
 OPTIONS_DB_SECTION_NETWORK
-Network and server
+网络和服务器
 
 OPTIONS_DB_SECTION_RAW
-All options with only raw description keys
+仅有原始描述键的所有选项
 
 OPTIONS_DB_SECTION_RESOURCE
-Game data resources
+游戏数据资源
 
 OPTIONS_DB_SECTION_SAVE
-Save game
+保存游戏
 
 OPTIONS_DB_SECTION_SETUP
-New game starting settings
+新游戏起始设置
 
 OPTIONS_DB_SECTION_UI
-User interface
+用户界面
 
 OPTIONS_DB_SECTION_UI_COLORS
-Colors
+颜色
 
 OPTIONS_DB_SECTION_UI_CONTROL
-Control (generic)
+控制（通用）
 
 OPTIONS_DB_SECTION_UI_HOTKEYS
-Hotkeys
+热键
 
 OPTIONS_DB_SECTION_UI_MAP
-Main map
+主地图
 
 OPTIONS_DB_SECTION_UI_MAP_FLEET
-Fleets (map)
+舰队（地图）
 
 OPTIONS_DB_SECTION_UI_FLEET
-Fleet window
+舰队窗口
 
 OPTIONS_DB_UI_WINDOW
-Window (generic)
+窗口（通用）
 
 OPTIONS_DB_SECTION_VERSION
-Version
+版本
 
 OPTIONS_DB_SECTION_VIDEO
-Video
+视频
 
 OPTIONS_DB_SECTION_VIDEO_FPS
-Frames per second
+每秒帧数
 
 OPTIONS_DB_SECTION_VIDEO_FULLSCREEN
-Fullscreen mode
+全屏模式
 
 OPTIONS_DB_SECTION_VIDEO_WINDOWED
-Windowed mode
+窗口模式
 
 
 ##
@@ -2568,25 +2568,25 @@ Windowed mode
 ##
 
 FILE_DLG_FILES
-File(s):
+文件(s)：
 
 FILE_DLG_FILE_TYPES
-Type(s):
+类型(s)：
 
 FILE_DLG_OVERWRITE_PROMPT
-'''%1% exists.
-OK to overwrite it?'''
+'''%1% 已存在。
+确定覆盖吗？'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
-is a directory.'''
+是一个目录。'''
 
 FILE_DLG_FILE_DOES_NOT_EXIST
-'''File "%1%"
-does not exist.'''
+'''文件 "%1%"
+不存在。'''
 
 FILE_DLG_DEVICE_IS_NOT_READY
-Device is not ready.
+设备未就绪。
 
 
 ##
@@ -2626,46 +2626,46 @@ A:
 ##
 
 INTRO_WINDOW_TITLE
-FreeOrion Main Menu
+FreeOrion 主菜单
 
 INTRO_BTN_CONTINUE
-Continue
+继续
 
 INTRO_BTN_SINGLE_PLAYER
-Single Player
+单人
 
 INTRO_BTN_QUICK_START
-Quick Start
+快速开始
 
 INTRO_BTN_MULTI_PLAYER
-Multi Player
+多人
 
 INTRO_BTN_LOAD_GAME
-Load Game
+加载游戏
 
 INTRO_BTN_OPTIONS
-Options
+选项
 
 INTRO_BTN_PEDIA
 [[MAP_BTN_PEDIA]]
 
 INTRO_BTN_ABOUT
-About
+关于
 
 INTRO_BTN_WEBSITE
-Open freeorion.org
+打开官网
 
 INTRO_BTN_CREDITS
-Credits
+致谢
 
 INTRO_BTN_EXIT
-Exit
+退出
 
 ERR_CONNECT_TIMED_OUT
-Timed out while attempting to connect to server
+尝试连接服务器超时
 
 INTRO_CREDITS_LICENSE
-Released under
+发布于
 
 
 ##
@@ -2673,25 +2673,25 @@ Released under
 ##
 
 SCONNECT_WINDOW_TITLE
-Connect to Server
+服务器
 
 LAN_GAME_LABEL
-Lan game at:
+局域网游戏地址：
 
 INTERNET_GAME_LABEL
-Internet game at:
+互联网游戏地址：
 
 PLAYER_NAME_LABEL
-Player name
+玩家名称
 
 HOST_GAME_BN
-Host a new game
+主机新建游戏
 
 JOIN_GAME_BN
-Join a game as
+参加游戏
 
 REFRESH_LIST_BN
-Refresh list
+刷新列表
 
 
 ##
@@ -2699,13 +2699,13 @@ Refresh list
 ##
 
 AUTHENTICATION_WINDOW_TITLE
-Authentication
+身份验证
 
 AUTHENTICATION_DESC
-This player name requires authentication. Reminder! Password will be transfered plain-text.
+该玩家名称需要身份验证。请注意！密码将以明文传输。
 
 PASSWORD_LABEL
-Password
+密码
 
 
 ##
