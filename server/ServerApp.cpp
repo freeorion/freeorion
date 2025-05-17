@@ -591,41 +591,40 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     // available (human) and names (for AI clients which didn't have an ID
     // before now because the lobby data was set up without connected/established
     // clients for the AIs.
-    const auto& player_setup_data = multiplayer_lobby_data.players;
+    const auto& lobby_player_setup_data = multiplayer_lobby_data.players;
     std::vector<PlayerSetupData> psds;
+    psds.reserve(lobby_player_setup_data.size());
+
     static constexpr auto is_human_obs_mod = [](const auto& id_p)
     { return Networking::is_human(id_p.second) || Networking::is_mod_or_obs(id_p.second); };
 
-    for (const auto& [psd_player_id, psd] : player_setup_data | range_filter(is_human_obs_mod)) {
+    for (const auto& [lobby_id, lobby_psd] : lobby_player_setup_data | range_filter(is_human_obs_mod)) {
         // Human players have consistent IDs, so these can be easily
         // matched between established player connections and setup data.
 
         // find player connection with same ID as this player setup data
-        bool found_matched_id_connection = false;
-        for (const auto& player_connection : m_networking.EstablishedPlayerConnections()) {
-            if (player_connection->PlayerID() == psd_player_id) {
-                PlayerSetupData new_psd = psd;
-                new_psd.player_id = psd_player_id;
-                psds.push_back(std::move(new_psd));
-                found_matched_id_connection = true;
-                break;
-            }
-        }
-        if (!found_matched_id_connection) {
-            if (psd_player_id != Networking::INVALID_PLAYER_ID) {
-                ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: "
-                              << psd_player_id << " player name: " << psd.player_name;
-            } else {
-                // There is no player currently connected for the current setup data. A player
-                // may connect later, at which time they may be assigned to this data or the
-                // corresponding empire.
-                psds.push_back(psd);
-            }
+        const auto pcon_has_lobby_id = [lobby_id{lobby_id}](const auto& pcon) noexcept
+        { return pcon->PlayerID() == lobby_id; };
+        const bool found_matched_id_connection = range_any_of(m_networking.EstablishedPlayerConnections(),
+                                                              pcon_has_lobby_id);
+        if (found_matched_id_connection) {
+            // copy setup data into output container and set its internal player id to the lobby id
+            auto& new_psd = psds.emplace_back(lobby_psd);
+            new_psd.player_id = lobby_id;
+
+        } else if (lobby_id != Networking::INVALID_PLAYER_ID) {
+            ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: "
+                          << lobby_id << " player name: " << lobby_psd.player_name;
+        } else {
+            // There is no player currently connected for the current setup data. A player
+            // may connect later, at which time they may be assigned to this data or the
+            // corresponding empire.
+            psds.push_back(lobby_psd);
         }
     }
 
     static constexpr auto is_ai = [](const auto& id_p) { return Networking::is_ai(id_p.second); };
-    for (const auto& [psd_player_id, psd] : player_setup_data | range_filter(is_ai)) {
+    for (const auto& [psd_player_id, psd] : lobby_player_setup_data | range_filter(is_ai)) {
         // All AI player setup data, as determined from their client type, is
         // assigned to player IDs of established AI players with the appropriate names
 
