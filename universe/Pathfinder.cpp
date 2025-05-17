@@ -961,6 +961,26 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
     return boost::apply_visitor(visitor, obj1);
 }
 
+GraphImpl::SystemGraph* Pathfinder::PathfinderImpl::GetEmpireGraph(int empire_id) const {
+    // Try to get empire-specific graph view
+    auto it = m_graph_impl.empire_system_graph_views.find(empire_id);
+    if (it != m_graph_impl.empire_system_graph_views.end())
+        return &(it->second);
+    
+    // Consistent fallback to ALL_EMPIRES graph if available
+    it = m_graph_impl.empire_system_graph_views.find(ALL_EMPIRES);
+    if (it != m_graph_impl.empire_system_graph_views.end())
+        return &(it->second);
+    
+    // Consistent fallback to complete system graph if available
+    if (m_graph_impl.system_graph)
+        return m_graph_impl.system_graph.get();
+    
+    // No graphs available
+    ErrorLogger() << "No graphs available in PathfinderImpl::GetEmpireGraph";
+    return nullptr;
+}
+
 std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
     int system1_id, int system2_id, int empire_id, const ObjectMap& objects) const
 { return pimpl->ShortestPath(system1_id, system2_id, objects, empire_id); }
@@ -972,30 +992,17 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     { return ShortestPathImpl(graph, system1_id, system2_id, m_system_id_to_graph_index); };
 
     try {
-        if (empire_id == ALL_EMPIRES) {
-            if (!m_graph_impl.system_graph) [[unlikely]] {
-                ErrorLogger() << "No system graph in PathfinderImpl::ShortestPath";
-                return {{}, -1.0};
-            }
-            // find path on full / complete system graph
-            return get_path(*m_graph_impl.system_graph);
+        // COMPONENT 2 (modified): Graph selection for all empires
+        GraphImpl::SystemGraph* graph = GetEmpireGraph(empire_id);
+        if (!graph) {
+            ErrorLogger() << "No graph available in PathfinderImpl::ShortestPath";
+            return {{}, -1.0};
         }
-
-        const auto& graph_views = m_graph_impl.empire_system_graph_views;
-
-        // check if a filtered view to use for all empires is present
-        auto graph_it = graph_views.find(ALL_EMPIRES);
-        // if not, then check for a filtered view for specific empire
-        if (graph_it == graph_views.end())
-            graph_it = graph_views.find(empire_id);
-        if (graph_it == graph_views.end()) {
-            ErrorLogger() << "PathfinderImpl::ShortestPath passed unknown empire id: " << empire_id;
-            throw std::out_of_range("PathfinderImpl::ShortestPath passed unknown empire id");
-        }
-
-        return get_path(graph_it->second);
+        
+        return get_path(*graph);
 
     } catch (const std::out_of_range&) {
+        // COMPONENT 4: Error handling for invalid system IDs (unchanged)
         ErrorLogger() << "PathfinderImpl::ShortestPath passed invalid system id(s): "
                       << system1_id << " & " << system2_id;
         return {{}, -1.0};
@@ -1018,7 +1025,7 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     const GraphImpl::SystemPredicateGraph sys_pred_graph(
         *m_graph_impl.system_graph,
         GraphImpl::SystemPredicateFilter{m_graph_impl.system_graph.get(), &objects, sys_pred});
-    
+
     try {
         return ShortestPathImpl(sys_pred_graph, system1_id, system2_id, m_system_id_to_graph_index);
     } catch (const std::out_of_range&) {
@@ -1099,7 +1106,7 @@ std::pair<std::vector<int>, int> Pathfinder::PathfinderImpl::LeastJumpsPath(
     auto empire_view_graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
     if (empire_id == ALL_EMPIRES || empire_view_graph_it == m_graph_impl.empire_system_graph_views.end()) {
         // was called either for neutral/monster
-        // or by a client process
+        // or by a client process, or empire doesn't have a view
         use_system_graph = true;
     }
     if (use_system_graph) {
@@ -1160,19 +1167,15 @@ std::vector<std::pair<double, int>> Pathfinder::PathfinderImpl::ImmediateNeighbo
         ErrorLogger() << "Mapping is missing. m_system_id_to_graph_index is empty in PathfinderImpl::ImmediateNeighbors";
         return {};
     }
-    // immediate neighbors for a system do not depend on the empire knowledge; use the generic system graph
-    if (!m_graph_impl.system_graph) [[unlikely]] {
-        ErrorLogger() << "No system graph in PathfinderImpl::ImmediateNeighbors";
-        auto graph_it = m_graph_impl.empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl.empire_system_graph_views.end() && m_system_id_to_graph_index.size() > 0) {
-            return ImmediateNeighborsImpl(graph_it->second, system_id, m_system_id_to_graph_index);
-        } else {
-            ErrorLogger() << "Also no fallback empire system graph in PathfinderImpl::ImmediateNeighbors";
-            return {};
-        }
+    
+    // Get appropriate graph with consistent fallback behavior
+    GraphImpl::SystemGraph* graph = GetEmpireGraph(empire_id);
+    if (!graph) {
+        ErrorLogger() << "No graph available in PathfinderImpl::ImmediateNeighbors";
+        return {};
     }
-    return ImmediateNeighborsImpl(*m_graph_impl.system_graph, system_id,
-                                  m_system_id_to_graph_index);
+    
+    return ImmediateNeighborsImpl(*graph, system_id, m_system_id_to_graph_index);
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
@@ -1545,6 +1548,25 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(
     if (!system_graph) [[unlikely]] {
         ErrorLogger() << "UpdateEmpireVisibilityFilteredSystemGraphs have null system graph...";
         return;
+    }
+
+    // Create ALL_EMPIRES entry for consistent fallback
+    for (const auto& [empire_id, emp_objs] : empire_object_maps) {
+        if (empire_id == ALL_EMPIRES) {
+            m_graph_impl.empire_system_graph_views.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(ALL_EMPIRES),
+                std::forward_as_tuple(*system_graph, GraphImpl::EdgeVisibilityFilter{system_graph, emp_objs}));
+            break;
+        }
+    }
+    
+    // If ALL_EMPIRES entry wasn't created from empire_object_maps, create it from system_graph directly
+    if (m_graph_impl.empire_system_graph_views.find(ALL_EMPIRES) == m_graph_impl.empire_system_graph_views.end()) {
+        m_graph_impl.empire_system_graph_views.emplace(
+            std::piecewise_construct,
+            std::forward_as_tuple(ALL_EMPIRES),
+            std::forward_as_tuple(*system_graph, GraphImpl::EdgeVisibilityFilter{system_graph, ObjectMap()}));
     }
 
     // each empire has its own filtered graph

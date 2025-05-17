@@ -205,6 +205,22 @@ public:
     [[nodiscard]] int         TurnSystemExplored(int system_id) const;
     [[nodiscard]] LaneSet     KnownStarlanes(const Universe& universe) const;     ///< map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     [[nodiscard]] LaneSet     VisibleStarlanes(const Universe& universe) const;   ///< map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
+    /**
+     * Returns a standardized view of traversable starlanes for this empire.
+     * @param universe The universe to check starlanes in
+     * @return Set of traversable starlane endpoints for this empire
+     */
+    [[nodiscard]] std::set<std::pair<int, int>> TraversableStarlanes(const Universe& universe) const;
+
+    /**
+     * Checks if a specific starlane is traversable by this empire.
+     * @param system1_id First system ID
+     * @param system2_id Second system ID
+     * @param supply The supply manager to check traversability
+     * @return True if the empire can traverse the lane, false otherwise
+     */
+    [[nodiscard]] bool CanTraverseLane(int system1_id, int system2_id, const SupplyManager& supply) const;
+    
     [[nodiscard]] const auto& SitReps() const noexcept { return m_sitrep_entries; }
     [[nodiscard]] float       ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
 

@@ -30,6 +30,41 @@ const std::set<std::pair<int, int>>& SupplyManager::SupplyStarlaneTraversals(int
     return EMPTY_INT_PAIR_SET;
 }
 
+// In file: Supply.cpp
+// Location: After existing SupplyManager method implementations
+
+const std::set<std::pair<int, int>>& SupplyManager::SupplyStarlaneTraversals(int empire_id) const {
+    auto it = m_supply_starlane_traversals.find(empire_id);
+    if (it != m_supply_starlane_traversals.end())
+        return it->second;
+    return EMPTY_INT_PAIR_SET;
+}
+
+std::set<std::pair<int, int>> SupplyManager::GetEmpireTraversableLanes(int empire_id) const {
+    // Check for empire-specific traversable lanes
+    auto it = m_supply_starlane_traversals.find(empire_id);
+    if (it != m_supply_starlane_traversals.end())
+        return it->second;
+    
+    // If empire-specific lanes not found, use ALL_EMPIRES as consistent fallback
+    // regardless of client/server context
+    it = m_supply_starlane_traversals.find(ALL_EMPIRES);
+    if (it != m_supply_starlane_traversals.end())
+        return it->second;
+    
+    // If no lanes found at all, return empty set
+    return {};
+}
+
+bool SupplyManager::IsLaneTraversable(int empire_id, int system1_id, int system2_id) const {
+    // Get traversable lanes for this empire with standardized fallback
+    const auto& traversable_lanes = GetEmpireTraversableLanes(empire_id);
+    
+    // Check if the lane exists in either direction
+    return traversable_lanes.contains({system1_id, system2_id}) || 
+           traversable_lanes.contains({system2_id, system1_id});
+}
+
 const std::set<std::pair<int, int>>& SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const {
     auto it = m_supply_starlane_obstructed_traversals.find(empire_id);
     if (it != m_supply_starlane_obstructed_traversals.end())
@@ -326,7 +361,6 @@ void SupplyManager::Update(const ScriptingContext& context) {
         }
         empire_total_supply_range_sums[empire_id] = EmpireTotalSupplyRange(empire_id, objects);
     }
-
 
     for (const auto empire_id : empires | range_keys) {
         const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(empire_id);
@@ -928,6 +962,18 @@ void SupplyManager::Update(const ScriptingContext& context) {
             TraceLogger(supply) << " ... " << a << " to " << b;
     }
 
+    // Ensure ALL_EMPIRES entry exists with complete universe graph
+    // This provides a consistent fallback for both server and client
+    if (m_supply_starlane_traversals.find(ALL_EMPIRES) == m_supply_starlane_traversals.end()) {
+        // Create a complete universe graph from all visible starlanes
+        std::set<std::pair<int, int>> all_lanes;
+        for (const auto& [empire_id, lanes] : m_supply_starlane_traversals) {
+            all_lanes.insert(lanes.begin(), lanes.end());
+        }
+        
+        // If no lanes found (empty universe?), create empty entry
+        m_supply_starlane_traversals[ALL_EMPIRES] = std::move(all_lanes);
+    }
 
     // determine supply-connected groups of systems for each empire.
     // need to merge interconnected supply groups into as few sets of mutually-
