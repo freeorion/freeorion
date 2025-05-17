@@ -623,28 +623,27 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
         }
     }
 
+
     static constexpr auto is_ai = [](const auto& id_p) { return Networking::is_ai(id_p.second); };
-    for (const auto& [psd_player_id, psd] : lobby_player_setup_data | range_filter(is_ai)) {
+
+    for (const auto& lobby_psd : lobby_player_setup_data | range_filter(is_ai) | range_values) {
         // All AI player setup data, as determined from their client type, is
         // assigned to player IDs of established AI players with the appropriate names
 
         // find player connection with same name as this player setup data
-        bool found_matched_name_connection = false;
-        for (const auto& player_connection : m_networking.EstablishedPlayerConnections() |
-             range_filter(Networking::is_ai))
-        {
-            if (Networking::is_ai(player_connection) && player_connection->PlayerName() == psd.player_name) {
-                // assign name-matched AI client's player setup data to appropriate AI connection
-                PlayerSetupData new_psd = psd;
-                new_psd.player_id = player_connection->PlayerID();
-                psds.push_back(std::move(new_psd));
-                found_matched_name_connection = true;
-                break;
-            }
-        }
-        if (!found_matched_name_connection) {
+        const auto pcon_has_lobby_name =
+            [lobby_name{std::string_view{lobby_psd.player_name}}](const auto& pcon) noexcept
+            { return pcon->PlayerName() == lobby_name; };
+        auto matched_name_connection_rng = m_networking.EstablishedPlayerConnections() |
+            range_filter(Networking::is_ai) | range_filter(pcon_has_lobby_name);
+
+        if (!matched_name_connection_rng.empty()) {
+            // assign name-matched AI client's player setup data with appropriate AI connection ID
+            auto& new_psd = psds.emplace_back(lobby_psd);
+            new_psd.player_id = matched_name_connection_rng.front()->PlayerID();
+        } else {
             ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for AI player with name: "
-                          << psd.player_name;
+                          << lobby_psd.player_name;
         }
     }
 
