@@ -217,7 +217,7 @@ public:
     /** Returns PlayerConnectionPtr with ID \a id, or null pointer if none is found. */
     auto GetPlayer(int id) const {
         auto econs = EstablishedPlayerConnections();
-        auto it = range_find_if(econs, [id](const auto& econ) { return econ->PlayerID() == id; });
+        auto it = range_find_if(econs, [id](const auto& econ) noexcept { return econ->PlayerID() == id; });
         return (it != econs.end()) ? *it : nullptr;
     }
 
