@@ -32,6 +32,9 @@ public:
                          const boost::python::dict& globals,
                          std::string& filename, std::string& file_contents) const;
 
+    [[nodiscard]] boost::python::object LoadModule(PyObject* (*)()) const;
+    void UnloadModule(boost::python::object module) const;
+
     boost::python::object type_int;
     boost::python::object type_float;
     boost::python::object type_bool;

@@ -1,9 +1,0 @@
-Statistic name = "ARMED_MONSTER_COUNT" value =
-    Statistic Count condition = And [
-        And [
-            Ship
-            Monster
-            Armed
-        ]
-        Unowned
-    ]
