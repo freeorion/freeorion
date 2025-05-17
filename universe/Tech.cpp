@@ -44,7 +44,7 @@ namespace {
             if (!name_tech.second.Researchable() || is_researched(name_tech.first))
                 return false;
             const auto& prereqs = name_tech.second.Prerequisites();
-            return std::all_of(prereqs.begin(), prereqs.end(), is_researched);
+            return range_all_of(prereqs, is_researched);
         };
 
         std::vector<const Tech*> retval;
