@@ -621,8 +621,7 @@ bool Empire::ResearchableTech(std::string_view name) const {
     if (!tech)
         return false;
     const auto& prereqs = tech->Prerequisites();
-    return std::all_of(prereqs.begin(), prereqs.end(),
-                       [&](const auto& p) -> bool { return m_techs.contains(p); });
+    return range_all_of(prereqs, [&](const auto& p) -> bool { return m_techs.contains(p); });
 }
 
 bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) const {

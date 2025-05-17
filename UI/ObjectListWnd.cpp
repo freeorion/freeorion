@@ -1350,12 +1350,11 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
     // toggle types for this visibility
 
     // determine if all types are already on for requested visibility
-    bool all_on = std::all_of(m_filter_buttons.begin(), m_filter_buttons.end(),
-                              [this, vis](const auto& uot_vis_buttons) {
-                                  const UniverseObjectType uot = uot_vis_buttons.first;
-                                  const auto it = m_vis_filters.find(uot);
-                                  return it != m_vis_filters.end() && it->second.contains(vis);
-                              });
+    bool all_on = range_all_of(m_filter_buttons, [this, vis](const auto& uot_vis_buttons) {
+        const UniverseObjectType uot = uot_vis_buttons.first;
+        const auto it = m_vis_filters.find(uot);
+        return it != m_vis_filters.end() && it->second.contains(vis);
+    });
 
     // if all on, turn all off. otherwise, turn all on
     for (const auto uot : m_filter_buttons | range_keys) {
