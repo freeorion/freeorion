@@ -3,7 +3,14 @@
 #include "Logger.h"
 
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/process.hpp>
+#if BOOST_VERSION >= 108800
+# include <boost/asio.hpp>
+# include <boost/process/v1/args.hpp>
+# include <boost/process/v1/async.hpp>
+# include <boost/process/v1/child.hpp>
+#else
+# include <boost/process.hpp>
+#endif
 
 #include <stdexcept>
 
@@ -40,6 +47,13 @@ std::vector<std::wstring> ToWStringArray(InputIt first, InputIt last) {
 }
 #endif
 
+#if BOOST_VERSION >= 108800
+    namespace bpv1 = boost::process::v1;
+#else
+    namespace bpv1 = boost::process;
+#endif
+
+
 class Process::Impl {
 public:
     Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv);
@@ -51,11 +65,11 @@ public:
     void Free();
 
 private:
-    bool                m_free = false;
+    bool        m_free = false;
 #if defined(FREEORION_MACOSX)
-    pid_t               m_process_id;
+    pid_t       m_process_id;
 #elif defined(FREEORION_WIN32) || defined(FREEORION_LINUX)
-    boost::process::child m_child;
+    bpv1::child m_child;
 #endif
 };
 
@@ -214,9 +228,9 @@ void Process::Impl::Kill() {
 
 Process::Impl::Impl(boost::asio::io_context& io_context, const std::string& cmd, const std::vector<std::string>& argv) :
 #if defined(FREEORION_LINUX)
-    m_child(cmd, boost::process::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
+    m_child(cmd, bpv1::args = std::vector(argv.cbegin() + 1, argv.cend()), io_context)
 #elif defined(FREEORION_WIN32)
-    m_child(ToWString(cmd), boost::process::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
+    m_child(ToWString(cmd), bpv1::args = ToWStringArray(argv.cbegin() + 1, argv.cend()), io_context)
 #endif
 {
     std::error_code ec;
