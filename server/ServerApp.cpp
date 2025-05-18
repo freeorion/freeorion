@@ -677,29 +677,27 @@ namespace {
         boost::asio::thread_pool thread_pool(num_threads);
 
         for (auto& [empire_id, empire] : context.Empires() | range_filter(uneliminated)) {
-            const auto tct_it = std::find_if(tech_costs_times.begin(), tech_costs_times.end(),
-                                             [empire_id{empire_id}](const auto& tct) { return empire_id == tct.first; });
+            const auto is_empire = [empire_id{empire_id}](const auto& pct) noexcept { return empire_id == pct.first; };
+
+            const auto tct_it = range_find_if(tech_costs_times, is_empire);
             if (tct_it == tech_costs_times.end()) {
                 ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find tech costs/times for empire " << empire_id;
                 continue;
             }
 
-            const auto ac_it = std::find_if(annex_costs.begin(), annex_costs.end(),
-                                            [empire_id{empire_id}](const auto& ac) { return empire_id == ac.first; });
+            const auto ac_it = range_find_if(annex_costs, is_empire);
             if (ac_it == annex_costs.end()) {
                 ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find annex costs for empire " << empire_id;
                 continue;
             }
 
-            const auto pc_it = std::find_if(policy_costs.begin(), policy_costs.end(),
-                                            [empire_id{empire_id}](const auto& pc) { return empire_id == pc.first; });
+            const auto pc_it = range_find_if(policy_costs, is_empire);
             if (pc_it == policy_costs.end()) {
                 ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find policy costs for empire " << empire_id;
                 continue;
             }
 
-            const auto pct_it = std::find_if(prod_costs.begin(), prod_costs.end(),
-                                             [empire_id{empire_id}](const auto& pct) { return empire_id == pct.first; });
+            const auto pct_it = range_find_if(prod_costs, is_empire);
             if (pct_it == prod_costs.end()) {
                 ErrorLogger() << "UpdateResourcePools in ServerApp couldn't find production costs/times for empire " << empire_id;
                 continue;
@@ -735,7 +733,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     std::map<int, PlayerSetupData> active_empire_id_setup_data;
     int next_empire_id = 1;
     for (const auto& psd : player_setup_data_in | range_filter(Networking::is_ai_or_human) | range_filter(non_empty_name))
-        active_empire_id_setup_data[next_empire_id++] = psd;
+        active_empire_id_setup_data.emplace(next_empire_id++, psd);
 
     if (active_empire_id_setup_data.empty()) {
         ErrorLogger() << "ServerApp::NewGameInitConcurrentWithJoiners found no active players!";
@@ -778,7 +776,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     // moderators are not included.
     for (auto& [empire_id, psd] : active_empire_id_setup_data) {
         if (psd.player_id != Networking::INVALID_PLAYER_ID)
-            m_player_empire_ids[psd.player_id] = empire_id;
+            m_player_empire_ids.insert_or_assign(psd.player_id, empire_id);
 
         // add empires to turn processing
         if (auto empire = m_empires.GetEmpire(empire_id)) {
@@ -792,8 +790,8 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns(m_context.current_turn);
 
     // initialize empire owned object counters
-    for (auto& entry : m_empires)
-        entry.second->UpdateOwnedObjectCounters(m_universe);
+    for (auto& empire : m_empires | range_values)
+        empire->UpdateOwnedObjectCounters(m_universe);
 
     UpdateEmpireSupply(m_context, m_supply_manager, false);
     CacheCostsTimes(m_context);
@@ -815,12 +813,12 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
     bool host_in_player_id_setup_data = false;
 
     for (const auto& psd : player_setup_data) {
-        if (psd.client_type == Networking::ClientType::INVALID_CLIENT_TYPE) {
+        if (Networking::is_invalid(psd)) {
             ErrorLogger() << "Player with id " << psd.player_id << " has invalid client type";
             continue;
         }
 
-        player_id_setup_data[psd.player_id] = psd;
+        player_id_setup_data.insert_or_assign(psd.player_id, psd);
 
         if (m_networking.HostPlayerID() == psd.player_id)
             host_in_player_id_setup_data = true;
@@ -870,9 +868,8 @@ bool ServerApp::NewGameInitVerifyJoiners(const std::vector<PlayerSetupData>& pla
             return false;
         }
 
-        if (!Networking::is_ai_or_human(client_type) || Networking::is_mod_or_obs(client_type)){
+        if (!Networking::is_ai_or_human(client_type) || Networking::is_mod_or_obs(client_type))
             ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners found player connection with unsupported client type.";
-        }
     }
     return true;
 }
@@ -975,17 +972,14 @@ namespace {
         // Add all directories to list
         fs::directory_iterator end;
         for (fs::directory_iterator it(fs::canonical(directory)); it != end; ++it) {
-            if (!fs::is_directory(it->path()) || !IsInServerSaveDir(it->path()))
-                continue;
-            add_to_list(it->path());
+            if (fs::is_directory(it->path()) && IsInServerSaveDir(it->path()))
+                add_to_list(it->path());
         }
         return list;
     }
 }
 
-void ServerApp::UpdateSavePreviews(const Message& msg,
-                                   PlayerConnectionPtr player_connection)
-{
+void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection) {
     // Only relative paths are allowed to prevent client from list arbitrary
     // directories, or knowing the absolute path of the server save directory.
     std::string relative_directory_name;
@@ -1026,13 +1020,11 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     // Compose a vector of the requested ids and logs
     std::vector<std::pair<int, const CombatLog>> logs;
     logs.reserve(ids.size());
-    for (auto it = ids.begin(); it != ids.end(); ++it) {
-        auto log = GetCombatLogManager().GetLog(*it);
-        if (!log) {
-            ErrorLogger() << "UpdateCombatLogs can't fetch log with id = "<< *it << " ... skipping.";
-            continue;
-        }
-        logs.emplace_back(*it, *log);
+    for (auto id : ids) {
+        if (auto log = GetCombatLogManager().GetLog(id))
+            logs.emplace_back(id, *log);
+        else 
+            ErrorLogger() << "UpdateCombatLogs can't fetch log with id = " << id << " ... skipping.";
     }
 
     // Return them to the client
@@ -1120,7 +1112,7 @@ void ServerApp::ExpireTurn() {
 }
 
 bool ServerApp::IsHaveWinner() const
-{ return std::any_of(m_empires.begin(), m_empires.end(), [](const auto& e) { return e.second->Won(); }); }
+{ return range_any_of(m_empires | range_values, [](const auto& e) { return e->Won(); }); }
 
 namespace {
     /** Verifies that a human player is connected with the indicated \a id. */
@@ -2323,9 +2315,8 @@ namespace {
                 false;
             const auto id = obj->ID();
 
-            if (std::any_of(override_vis_ids.begin(), override_vis_ids.end(),
-                            [id](int oid) { return id == oid; }))
-            { return true; }
+            if (range_any_of(override_vis_ids, [id](int oid) { return id == oid; }))
+                return true;
 
             if constexpr (std::is_same_v<FleetOrPlanet, Planet>) {
                 // skip planets that have no owner and that are unpopulated;
@@ -3302,8 +3293,7 @@ namespace {
                 p.OrderedGivenToEmpire() == ALL_EMPIRES ||
                 p.OwnedBy(p.OrderedGivenToEmpire()) ||
                 p.SystemID() == INVALID_OBJECT_ID ||
-                std::any_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
-                            [pid{p.ID()}](const auto iid) { return iid == pid; }))
+                range_any_of(invaded_planet_ids, [pid{p.ID()}](const auto iid) { return iid == pid; }))
             { return false; }
 
             auto it = empire_receiving_locations.find(p.SystemID());
