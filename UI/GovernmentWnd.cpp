@@ -661,11 +661,11 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     m_policies_list->ClearPolicySignal.connect(ClearPolicySignal);
 
     // class buttons
-    for (auto& cat_view : GetPolicyManager().PolicyCategories()) {
+    for (const auto& cat_view : GetPolicyManager().PolicyCategories()) {
         // are there any policies of this class?
-        if (std::none_of(GetPolicyManager().begin(), GetPolicyManager().end(),
-                         [cat_view](auto& e){ return cat_view == e.second.Category(); }))
-        { continue; }
+        const auto in_category = [cat_view](const auto& p) noexcept { return cat_view == p.Category(); };
+        if (range_none_of(GetPolicyManager() | range_values, in_category))
+            continue;
 
         const auto& us_cateory{UserString(cat_view)};
         auto ptr_it = m_category_buttons.emplace(std::string{cat_view}, GG::Wnd::Create<CUIStateButton>(
