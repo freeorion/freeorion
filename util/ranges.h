@@ -20,6 +20,7 @@ inline constexpr auto& range_find_if = std::ranges::find_if;
 inline constexpr auto& range_find = std::ranges::find;
 inline constexpr auto& range_any_of = std::ranges::any_of;
 inline constexpr auto& range_all_of = std::ranges::all_of;
+inline constexpr auto& range_none_of = std::ranges::none_of;
 inline constexpr auto& range_copy = std::ranges::copy;
 inline constexpr auto& range_copy_if = std::ranges::copy_if;
 inline constexpr auto& range_max_element = std::ranges::max_element;
@@ -39,6 +40,7 @@ inline constexpr auto& range_distance = std::ranges::distance;
 # include <boost/range/end.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
 # include <boost/algorithm/cxx11/all_of.hpp>
+# include <boost/algorithm/cxx11/none_of.hpp>
 # include <boost/algorithm/cxx11/copy_if.hpp>
 inline const auto& range_keys = boost::adaptors::map_keys;
 inline const auto& range_values = boost::adaptors::map_values;
@@ -62,6 +64,8 @@ inline const auto range_any_of(std::span<T, E> s, Args... args)
 
 template <typename... Args>
 inline const auto range_all_of(Args... args) { return boost::algorithm::all_of(std::forward<Args>(args)...); }
+template <typename... Args>
+inline const auto range_none_of(Args... args) { return boost::algorithm::none_of(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_copy(Args... args) { return boost::range::copy(std::forward<Args>(args)...); }
 template <typename... Args>
