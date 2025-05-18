@@ -3262,14 +3262,10 @@ namespace {
             { return false; }
             auto it = empire_receiving_locations.find(f.SystemID());
             return it != empire_receiving_locations.end() &&
-                it->second.contains(f.OrderedGivenToEmpire());
+                   it->second.contains(f.OrderedGivenToEmpire());
         };
-        auto not_invading_not_colonizing_ship = [invading_ship_ids, colonizing_ship_ids](const Ship& s) {
-            return std::none_of(invading_ship_ids.begin(), invading_ship_ids.end(),
-                                [sid{s.ID()}] (const auto iid) { return iid == sid; }) &&
-                std::none_of(colonizing_ship_ids.begin(), colonizing_ship_ids.end(),
-                             [sid{s.ID()}] (const auto cid) { return cid == sid; });
-        };
+        auto not_invading_not_colonizing_ship = [invading_ship_ids, colonizing_ship_ids](const Ship& s)
+        { return !range_contains(invading_ship_ids, s.ID()) && !range_contains(colonizing_ship_ids, s.ID()); };
         for (auto* fleet : objects.findRaw<Fleet>(owned_given_stationary_fleet)) {
             const auto recipient_empire_id = fleet->OrderedGivenToEmpire();
             empire_gifted_fleets[recipient_empire_id].push_back(fleet);
@@ -3381,13 +3377,8 @@ namespace {
         // only scap ships that aren't being gifted and that aren't invading or colonizing this turn
         const auto scrapped_ships = objects.findRaw<Ship>(
             [invading_ship_ids, colonizing_ship_ids, gifted_ids](const Ship* s) {
-                return s->OrderedScrapped() &&
-                    std::none_of(gifted_ids.begin(), gifted_ids.end(),
-                                 [sid{s->ID()}](const auto gid) { return gid == sid; }) &&
-                    std::none_of(invading_ship_ids.begin(), invading_ship_ids.end(),
-                                 [sid{s->ID()}](const auto iid) { return iid == sid; }) &&
-                    std::none_of(colonizing_ship_ids.begin(), colonizing_ship_ids.end(),
-                                 [sid{s->ID()}](const auto cid) { return cid == sid; });
+                return s && s->OrderedScrapped() && !range_contains(gifted_ids, s->ID()) &&
+                    !range_contains(invading_ship_ids, s->ID()) && !range_contains(colonizing_ship_ids, s->ID());
         });
 
         for (const auto* ship : scrapped_ships) {
@@ -3420,11 +3411,8 @@ namespace {
 
         auto scrapped_buildings = objects.findRaw<Building>(
             [invaded_planet_ids, gifted_ids](const Building* b) {
-                return b->OrderedScrapped() &&
-                    std::none_of(gifted_ids.begin(), gifted_ids.end(),
-                                 [bid{b->ID()}](const auto gid) { return gid == bid; }) &&
-                    std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
-                                 [pid{b->PlanetID()}](const auto iid) { return iid == pid; });
+                return b && b->OrderedScrapped() && !range_contains(gifted_ids, b->ID()) &&
+                    !range_contains(invaded_planet_ids, b->PlanetID());
         });
         for (auto* building : scrapped_buildings) {
             if (auto* planet = objects.getRaw<Planet>(building->PlanetID()))
@@ -3466,11 +3454,8 @@ namespace {
         const int current_turn = context.current_turn;
 
 
-        const auto annexed_not_invaded_planet = [invaded_planet_ids](const Planet& p) {
-            return p.IsAboutToBeAnnexed() &&
-                std::none_of(invaded_planet_ids.begin(), invaded_planet_ids.end(),
-                             [pid{p.ID()}](const auto iid) { return iid == pid; });
-        };
+        const auto annexed_not_invaded_planet = [invaded_planet_ids](const Planet& p)
+        { return p.IsAboutToBeAnnexed() && !range_contains(invaded_planet_ids, p.ID()); };
 
 
         // collect planets being annexed from passed-in IDs, that aren't also being invaded

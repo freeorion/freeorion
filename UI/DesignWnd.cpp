@@ -346,8 +346,8 @@ namespace {
             return current_design && *current_design == *design;
         };
 
-        const auto& current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
-        return std::none_of(current_ids.begin(), current_ids.end(), is_same_design);
+        const auto current_ids = GetDisplayedDesignsManager().AllOrderedIDs();
+        return range_none_of(current_ids, is_same_design);
     }
 
     /** Add \p design to the \p is_front of \p empire_id's list of current designs. */

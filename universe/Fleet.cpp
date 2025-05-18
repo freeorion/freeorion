@@ -202,8 +202,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
         this->SystemID() != INVALID_OBJECT_ID &&
-        std::none_of(fleet_supplied_systems.begin(), fleet_supplied_systems.end(),
-                     [sys_id{this->SystemID()}] (const int fss) noexcept { return fss == sys_id; }))
+        !range_contains(fleet_supplied_systems, this->SystemID()))
     {
         // no fuel and out of supply => can't move => path is just this system with explanatory ETA
         retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE, this->SystemID(),
