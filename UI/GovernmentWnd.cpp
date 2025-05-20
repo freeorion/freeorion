@@ -475,16 +475,16 @@ void PoliciesListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> 
 
 std::map<std::string, std::vector<const Policy*>>
 PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
-    using PolicyAndCat = const std::pair<const Policy*, const std::string&>;
+    using PolicyAndCat = std::pair<const Policy*, const std::string&>;
     static constexpr auto to_policy_and_cat = [](const Policy& p) -> PolicyAndCat { return {&p, p.Category()}; };
-    const auto cat_shown_policy_displayed = [this](PolicyAndCat& p_c) {
+    const auto cat_shown_policy_displayed = [this](const PolicyAndCat& p_c) {
         return m_policy_categories_shown.contains(p_c.second) &&
             m_availabilities_state.PolicyDisplayed(*p_c.first);
     };
 
     // loop through all possible policies, outputting those shown
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
-    auto policies_rng = std::as_const(GetPolicyManager()) | range_values;
+    auto policies_rng = GetPolicyManager().Policies() | range_values;
     auto policy_cat_rng = policies_rng | range_transform(to_policy_and_cat)
         | range_filter(cat_shown_policy_displayed);
     for (const auto& [policy, category] : policy_cat_rng)
@@ -664,7 +664,7 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     for (const auto& cat_view : GetPolicyManager().PolicyCategories()) {
         // are there any policies of this class?
         const auto in_category = [cat_view](const auto& p) noexcept { return cat_view == p.Category(); };
-        if (range_none_of(GetPolicyManager() | range_values, in_category))
+        if (range_none_of(GetPolicyManager().Policies() | range_values, in_category))
             continue;
 
         const auto& us_cateory{UserString(cat_view)};
