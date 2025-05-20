@@ -71,21 +71,19 @@ private:
 //! Keeps track of policies that can be chosen by empires.
 class FO_COMMON_API PolicyManager {
 public:
-    using PoliciesTypeMap = boost::container::flat_map<std::string, Policy, std::less<>>;
-    using iterator = PoliciesTypeMap::const_iterator;
-    using const_iterator = iterator;
+    using PoliciesTypeMap = std::vector<std::pair<std::string, Policy>>;
+    using const_iterator = PoliciesTypeMap::const_iterator;
 
     //! returns the policy with the name \a name; you should use the free
     //! function GetPolicy() instead
     [[nodiscard]] const Policy*                 GetPolicy(std::string_view name) const;
-    [[nodiscard]] std::vector<std::string_view> PolicyNames() const;
-    //! returns list of names of policies in specified category
-    [[nodiscard]] std::vector<std::string_view> PolicyNames(const std::string& category_name) const;
+    [[nodiscard]] const PoliciesTypeMap&        Policies() const noexcept;
+    [[nodiscard]] std::vector<std::string>      PolicyNamesCopies() const;
+    [[nodiscard]] std::vector<std::string_view> PolicyNames(std::string_view category_name) const;
     [[nodiscard]] std::vector<std::string_view> PolicyCategories() const; // sorted
     [[nodiscard]] uint32_t                      GetCheckSum() const;
 
-    [[nodiscard]] iterator begin() const; //! iterator to the first policy
-    [[nodiscard]] iterator end() const;   //! iterator to the last + 1th policy
+    
 
     //! sets types to the value of \p future
     void SetPolicies(Pending::Pending<std::vector<Policy>>&& future);

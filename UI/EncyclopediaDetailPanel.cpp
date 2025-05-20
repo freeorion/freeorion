@@ -364,7 +364,7 @@ namespace {
 
         }
         else if (dir_name == "ENC_POLICY") {
-            for (auto& policy_name : GetPolicyManager().PolicyNames()) {
+            for (auto& policy_name : GetPolicyManager().Policies() | range_keys) {
                 auto& us_name{UserString(policy_name)}; // line before to avoid order of evaluation issues when moving from policy_name
                 std::string tagged_text{LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, us_name).append("\n")};
                 retval.emplace_back(std::piecewise_construct,
@@ -1354,11 +1354,8 @@ namespace {
         std::vector<std::string> retval;
         retval.reserve(GetTechManager().size()); // rough guesstimate
 
-        // transform_if
         for (const auto& [tech_name, tech] : GetTechManager()) {
-            const auto& tech_items = tech.UnlockedItems();
-            auto it = std::find(tech_items.begin(), tech_items.end(), item);
-            if (it != tech_items.end())
+            if (range_contains(tech.UnlockedItems(), item))
                 retval.push_back(tech_name);
         }
 
@@ -1367,12 +1364,10 @@ namespace {
 
     [[nodiscard]] std::vector<std::string> PoliciesThatUnlockItem(const UnlockableItem& item) {
         std::vector<std::string> retval;
+        retval.reserve(GetTechManager().size()); // rough guesstimate
 
-        for (auto& [policy_name, policy] : GetPolicyManager()) {
-            // transform_if
-            const auto& unlocks = policy.UnlockedItems();
-            const auto it = std::find(unlocks.begin(), unlocks.end(), item);
-            if (it != unlocks.end())
+        for (auto& [policy_name, policy] : GetPolicyManager().Policies()) {
+            if (range_contains(policy.UnlockedItems(), item))
                 retval.push_back(policy_name);
         }
 
