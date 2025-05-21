@@ -75,7 +75,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         & OwnedBy(empire=Source.Owner)
         & (
             (HasSpecies(name=["SP_MISIORLA"]) & Population(low=MIN_RECOLONIZING_SIZE) & Happiness(low=5))
-            & (
+            | (
                 OwnerHasTech(name="TECH_COL_MISIORLA")
                 & HasSpecial(name="EXTINCT_MISIORLA_SPECIAL")
                 & Contains(IsBuilding(name=["BLD_XENORESURRECTION_LAB"]))
@@ -162,7 +162,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         & OwnedBy(empire=Source.Owner)
         & (
             (HasSpecies(name=["SP_MISIORLA"]) & Population(low=MIN_RECOLONIZING_SIZE) & Happiness(low=5))
-            & (
+            | (
                 OwnerHasTech(name="TECH_COL_MISIORLA")
                 & HasSpecial(name="EXTINCT_MISIORLA_SPECIAL")
                 & Contains(IsBuilding(name=["BLD_XENORESURRECTION_LAB"]))
