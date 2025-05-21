@@ -164,7 +164,7 @@ t_species_cond_extinct = string.Template(
                     HasSpecies( name = ["${id}"])&
                     Population( low = MIN_RECOLONIZING_SIZE)&
                     Happiness( low = 5)
-                )&
+                )|
                 (
                     OwnerHasTech( name = "${tech_name}")&
                     HasSpecial (name = "EXTINCT_${name}_SPECIAL")&
