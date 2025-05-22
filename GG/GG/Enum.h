@@ -16,6 +16,7 @@
 #define _GG_Enum_h_
 
 
+#include <algorithm>
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
@@ -36,18 +37,36 @@ public:
     constexpr explicit EnumMap(const char* comma_separated_names)
     { Build(comma_separated_names); }
 
+    [[nodiscard]] constexpr auto find(std::string_view name) const
+    {
+#if defined(__cpp_lib_constexpr_algorithms)
+        return std::find(m_names.begin(), m_names.end(), name);
+#else
+        for (auto name_it = m_names.cbegin(); name_it != m_names.cend(); ++name_it)
+            if (*name_it == name)
+                return name_it;
+        return m_names.cend();
+#endif
+    }
+
+    [[nodiscard]] constexpr auto find(EnumType value) const
+    {
+#if defined(__cpp_lib_constexpr_algorithms)
+        return std::find(m_values.cbegin(), m_values.cend(), value);
+#else
+        for (auto val_it = m_values.cbegin(); val_it != m_values.cend(); ++val_it)
+            if (*val_it == value)
+                return val_it;
+        return m_values.cend();
+#endif
+    }
+
+
     [[nodiscard]] constexpr std::string_view operator[](EnumType value) const noexcept
     {
-        std::size_t idx = 0;
-        for (; idx < m_size; ++idx)
-        {
-            if (m_values[idx] == value)
-            {
-                auto name_it = m_names.cbegin() + idx;
-                return *name_it;
-            }
-        }
-        return "None";
+        const auto val_it = find(value);
+        return (val_it == m_values.end()) ? "None" :
+            *(m_names.cbegin() + std::distance(m_values.cbegin(), val_it));
     }
 
     [[nodiscard]] constexpr EnumType operator[](std::string_view name) const noexcept
@@ -56,16 +75,9 @@ public:
     [[nodiscard]] constexpr EnumType FromString(std::string_view name,
                                                 EnumType not_found_result = EnumType(0)) const noexcept
     {
-        std::size_t idx = 0;
-        for (; idx < m_size; ++idx) // TODO: use constexpr std::find once C++20 is available
-        {
-            if (m_names[idx] == name)
-            {
-                auto value_it = m_values.cbegin() + idx;
-                return *value_it;
-            }
-        }
-        return not_found_result;
+        const auto name_it = find(name);
+        return (name_it == m_names.end()) ? not_found_result :
+            *(m_values.cbegin() + std::distance(m_names.cbegin(), name_it));
     }
 
     [[nodiscard]] constexpr auto size() const noexcept { return m_size; }
@@ -75,11 +87,11 @@ public:
 private:
     constexpr void Build(const char* comma_separated_names)
     {
-        if (Count(comma_separated_names, ',') > CAPACITY)
+        if (CountParts(comma_separated_names, ',') > CAPACITY)
             throw std::invalid_argument("too many comma separated enum vals to build map");
-        auto count_names = SplitApply(comma_separated_names, Trim, ',');
-        for (std::size_t i = 0; i < count_names.first; ++i)
-            Insert(count_names.second[i]);
+        const auto [count, names] = SplitApply(comma_separated_names, Trim, ',');
+        for (std::size_t i = 0; i < count; ++i)
+            Insert(names[i]);
     }
 
     // Formats entries passed as series of "SYMBOL = 0x1b" into key-value pairs
@@ -122,7 +134,19 @@ public:
         return {delim_separated_vals.substr(0, comma_idx),
             delim_separated_vals.substr(comma_idx + 1)};
     }
+
 private:
+    [[nodiscard]] static constexpr auto count(const std::string_view text, const char c)
+    {
+#if defined(__cpp_lib_constexpr_algorithms)
+        return std::count(text.cbegin(), text.cend(), c);
+#else
+        std::ptrdiff_t retval = 0;
+        for (auto it = text.cbegin(); it != text.cend(); ++it)
+            retval += (*it == c);
+        return retval;
+#endif
+    }
 
     static constexpr std::string_view test_cs_names = "123 = 7  , next_thing =   124, last thing  =-1";
     static constexpr auto first_and_rest = Split(test_cs_names, ',');
@@ -135,16 +159,11 @@ private:
     static_assert(third_and_rest.first == third_result_expected);
 
 
-    // how many times does \a delim appear in text?
-    [[nodiscard]] static constexpr auto Count(std::string_view text, const char delim)
-    {
-        std::size_t retval = 1;
-        for (std::size_t i = 0; i < text.length(); ++i)
-            retval += text[i] == delim;
-        return retval;
-    }
-    static constexpr auto comma_count = Count(test_cs_names, ',');
-    static_assert(comma_count == 3);
+    // how many delimited parts = 1 + how many times does \a delim appear in \a text?
+    [[nodiscard]] static constexpr auto CountParts(std::string_view text, const char delim)
+    { return 1u + static_cast<std::size_t>(count(text, delim)); }
+    static constexpr auto part_count = CountParts(test_cs_names, ',');
+    static_assert(part_count == 3);
 
 public:
     template <std::size_t RETVAL_CAP = CAPACITY, typename F>
@@ -152,13 +171,13 @@ public:
         SplitApply(std::string_view comma_separated_names, F&& fn, char delim)
     {
         std::size_t count = 0;
-        std::array<std::string_view, RETVAL_CAP> retval;
+        std::array<std::string_view, RETVAL_CAP> retval{};
         while (count < RETVAL_CAP) {
-            auto next_and_rest = Split(comma_separated_names, delim);
-            if (next_and_rest.first.empty())
+            const auto [next, rest] = Split(comma_separated_names, delim);
+            if (next.empty())
                 break;
-            retval[count++] = fn(next_and_rest.first);
-            comma_separated_names = next_and_rest.second;
+            retval[count++] = fn(next);
+            comma_separated_names = rest;
         }
         return {count, retval};
     }
@@ -166,8 +185,8 @@ public:
     [[nodiscard]] static constexpr std::string_view Trim(std::string_view padded)
     {
         constexpr std::string_view whitespace = " \b\f\n\r\t\v";
-        auto start_idx = padded.find_first_not_of(whitespace);
-        auto end_idx = padded.find_last_not_of(whitespace);
+        const auto start_idx = padded.find_first_not_of(whitespace);
+        const auto end_idx = padded.find_last_not_of(whitespace);
         return padded.substr(start_idx, end_idx - start_idx + 1);
     }
 private:
@@ -190,27 +209,24 @@ private:
     static constexpr std::string_view dec_sml = "123";
     static constexpr std::string_view alpha = "xxxx";
 
-    [[nodiscard]] static constexpr bool IsDecChar(char c)
+    [[nodiscard]] static constexpr bool IsDecChar(char c) noexcept
     { return c >= '0' && c <= '9'; }
     [[nodiscard]] static constexpr bool IsDec(std::string_view txt)
     {
-        return txt.length() >= 1 &&
-            (IsDecChar(txt[0]) || (txt[0] == '-' && txt.length() >= 2)) &&
+        return !txt.empty() &&
+            (IsDecChar(txt.front()) || (txt.front() == '-' && txt.length() >= 2)) &&
             txt.substr(1).find_first_not_of("0123456789") == std::string_view::npos;
     }
     static_assert(IsDec(dec_neg) && IsDec(dec_big) && IsDec(dec_sml) &&
                   !IsDec(hex) && IsDec(bin) && !IsDec(alpha));
 
 
-    [[nodiscard]] static constexpr bool IsAtoF(char c)
+    [[nodiscard]] static constexpr bool IsAtoF(char c) noexcept
     { return c >= 'a' && c <= 'f'; }
-    [[nodiscard]] static constexpr bool IsHexChar(char c)
+    [[nodiscard]] static constexpr bool IsHexChar(char c) noexcept
     { return IsDecChar(c) || IsAtoF(c); }
     [[nodiscard]] static constexpr bool IsHex(std::string_view txt)
-    {
-        return txt.length() == 4 && txt[0] == '0' && txt[1] == 'x' &&
-            IsHexChar(txt[2]) && IsHexChar(txt[3]);
-    }
+    { return txt.length() == 4 && txt[0] == '0' && txt[1] == 'x' && IsHexChar(txt[2]) && IsHexChar(txt[3]); }
     static_assert(IsHex(hex) && !IsHex(bin) && !IsHex(dec_neg) && IsHex("0x1d"));
 
 
@@ -233,19 +249,19 @@ private:
         constexpr std::string_view hex_chars = "0123456789abcdef";
         //static_assert(hex_chars.find('b') == 11);
 
-        auto base = Base(txt);
+        const auto base = Base(txt);
         if (base == 0)
             return 0;
 
-        std::string_view valid_chars = base == 10 ? dec_chars :
+        const std::string_view valid_chars = base == 10 ? dec_chars :
             base == 16 ? hex_chars : "";
-        bool is_negative = txt[0] == '-';
-        bool is_hex = base == 16;
+        const bool is_negative = txt[0] == '-';
+        const bool is_hex = base == 16;
 
         int retval = 0;
         for (auto c : txt.substr(static_cast<size_t>((is_negative ? 1u : 0u) + 2u*is_hex))) {
             retval *= base;
-            std::size_t digit = valid_chars.find(c);
+            const std::size_t digit = valid_chars.find(c);
             retval += static_cast<int>(digit);
         }
 
