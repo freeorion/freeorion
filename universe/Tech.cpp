@@ -37,7 +37,7 @@ namespace {
     // and of which all prereqs are in \a researched_techs
     auto NextTechs(std::vector<std::string_view> researched_techs, const TechManager::TechContainer& techs) {
         const auto is_researched = [rt{std::move(researched_techs)}](const auto& tech)
-        { return std::find(rt.begin(), rt.end(), tech) != rt.end(); };
+        { return range_contains(rt, tech); };
 
         // are prereqs researched but not itself researched
         const auto is_researchable_now = [is_researched](const auto& name_tech) -> bool {

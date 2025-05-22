@@ -78,7 +78,7 @@ void ServerNetworking::DiscoveryServer::HandleReceive(boost::system::error_code 
     }
 
     auto message = std::string(m_recv_buffer.begin(), m_recv_buffer.end());
-    message.erase(std::find(message.begin(), message.end(), '\0'), message.end());
+    message.erase(range_find(message, '\0'), message.end());
     boost::trim(message);
 
     if (message == DISCOVERY_QUESTION) {

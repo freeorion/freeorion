@@ -766,7 +766,7 @@ void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
 }
 
 std::vector<int> Fleet::TruncateRouteToEndAtFirstOf(std::vector<int> route, int system_id) {
-    const auto sys_it = std::find(route.begin(), route.end(), system_id);
+    const auto sys_it = range_find(route, system_id);
     if (sys_it == route.end())
         route.clear();
     else
