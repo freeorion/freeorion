@@ -1387,6 +1387,14 @@ namespace {
         }
     }
 
+
+    constexpr auto not_null = [](const auto& p) noexcept -> bool { return p; };
+    constexpr auto not_empty = [](const auto& sp_name) noexcept { return !sp_name.empty(); };
+    constexpr auto can_colonize = [](const auto* species) noexcept { return species && species->CanColonize(); };
+    constexpr auto to_species_name = [](const auto& planet) noexcept -> auto& { return planet->SpeciesName(); };
+    constexpr auto to_name = [](const auto* s) noexcept -> std::string_view { return s->Name(); };
+
+
     void RefreshDetailPanelPediaTag(        const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -3026,84 +3034,56 @@ namespace {
     }
 
     std::vector<std::string_view> ReportedSpeciesForPlanet(Planet& planet) {
-        std::vector<std::string_view> retval;
-
         const auto* app = GGHumanClientApp::GetApp();
         const ScriptingContext& context = app->GetContext();
         const ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
         const EmpireManager& empires = context.Empires();
 
+        std::vector<std::string_view> retval;
+        retval.reserve(species_manager.NumSpecies()); // probably an underestimate
+        {
+            const std::string_view planet_current_species = planet.SpeciesName();
+            if (!planet_current_species.empty())
+                retval.push_back(planet_current_species);
+        }
+
         const auto empire_id = app->EmpireID();
         const auto empire = empires.GetEmpire(empire_id);
         if (!empire)
             return retval;
 
-        const std::string_view planet_current_species = planet.SpeciesName();
+        const auto extinct_species_is_tech_enabled = [&empire](const auto& tag) {
+            const auto tech_has_extinct_tag_and_this_tag = [&tag](const auto& tech_name) {
+                const auto tech = GetTech(tech_name);
+                return tech && tech->HasTag(TAG_EXTINCT) && tech->HasTag(tag);
+            };
+            return range_any_of(empire->ResearchedTechs() | range_keys, tech_has_extinct_tag_and_this_tag);
+        };
 
         // Collect species colonizing/environment hospitality information
         // start by building roster -- any species tagged as 'ALWAYS_REPORT' plus any species
         // represented in this empire's PopCenters that can colonize
         for (auto& [species_str, species] : species_manager) {
-            if (species.HasTag(TAG_ALWAYS_REPORT)) {
-                retval.push_back(species_str);
-
-            } else if (species.HasTag(TAG_EXTINCT)) {
-                for (auto& tech_name : empire->ResearchedTechs() | range_keys) {
-                    // Check for presence of tags in tech
-                    if (auto tech = GetTech(tech_name)) {
-                        if (tech->HasTag(TAG_EXTINCT) && tech->HasTag(species_str)) {
-                            retval.push_back(species_str);
-                            break;
-                        }
-                    } else {
-                        ErrorLogger() << "ReportedSpeciesForPlanet couldn't get tech " << tech_name;
-                    }
-                }
-            }
+            if (species.HasTag(TAG_ALWAYS_REPORT) ||
+                (species.HasTag(TAG_EXTINCT) && extinct_species_is_tech_enabled(species_str)))
+            { retval.push_back(species_str); }
         }
 
         const auto is_empire_pop_planet = [empire_id](const Planet& p) noexcept
         { return p.OwnedBy(empire_id) && p.Populated(); };
 
-        static constexpr auto not_null = [](const auto& p) noexcept -> bool { return p; };
-
-        static constexpr auto to_species_name = [](const auto& planet) noexcept -> auto&
-        { return planet->SpeciesName(); };
-
-        // skip not-a-species and duplicates
-        static constexpr auto not_empty = [](const auto& sp_name) noexcept { return !sp_name.empty(); };
-
         const auto to_species = [&context](const auto& sp_name) -> const auto*
         { return context.species.GetSpecies(sp_name); };
 
-        // Exclude species that can't colonize UNLESS they are already here
-        // (aka: it's their home planet). Showing them on their own planet allows
-        // comparison vs other races, which might be better suited to this planet.
-        const auto on_planet_or_can_colonize = [planet_current_species](const auto* species)
-        { return species && (species->CanColonize() || species->Name() == planet_current_species); };
-
-        // The planet's species may change, so better create a string_view
-        // from the species->Name(), not planet->SpeciesName()
-        static constexpr auto to_name = [](const auto* s) noexcept -> std::string_view { return s->Name(); };
-
         const auto empire_pop_planets = objects.findRaw<Planet>(is_empire_pop_planet);
-        auto empire_species_rng = empire_pop_planets | range_filter(not_null) |
-                                  range_transform(to_species_name) | range_filter(not_empty);
-        std::vector<std::string_view> empire_species(empire_species_rng.begin(), empire_species_rng.end());
+        auto species_rng = empire_pop_planets | range_filter(not_null) | range_transform(to_species_name) |
+            range_filter(not_empty) | range_transform(to_species) | range_filter(can_colonize) |
+            range_transform(to_name); // intentionally taking name string_view from species, not planet
+        retval.insert(retval.end(), species_rng.begin(), species_rng.end());
 
-        const auto not_in_retval = [&retval](const auto& val) { return !range_contains(retval, val); };
-        const auto new_stuff_end =
-            std::stable_partition(empire_species.begin(), empire_species.end(), not_in_retval);
-        std::stable_sort(empire_species.begin(), new_stuff_end);
-        const auto unique_it = std::unique(empire_species.begin(), new_stuff_end);
-        empire_species.erase(unique_it, empire_species.end());
-
-        auto to_add_rng = empire_species | range_transform(to_species) |
-                          range_filter(on_planet_or_can_colonize) | range_transform(to_name);
-
-        retval.insert(retval.end(), to_add_rng.begin(), to_add_rng.end());
-
+        std::stable_sort(retval.begin(), retval.end());
+        retval.erase(std::unique(retval.begin(), retval.end()), retval.end());
         return retval;
     }
 
