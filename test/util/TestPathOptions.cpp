@@ -47,6 +47,14 @@ BOOST_AUTO_TEST_CASE(EscapePath) {
 BOOST_AUTO_TEST_CASE(CyrPath) {
     boost::filesystem::path cyr = "кириллица";
 
+    static const char* cyrxml = 
+#if defined(FREEORION_WIN32)
+                      "&#208;&#186;&#208;&#184;&#209;&#8364;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#8224;&#208;&#176;"
+#else
+                      "&#208;&#186;&#208;&#184;&#209;&#128;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#134;&#208;&#176;"
+#endif
+    ;
+
     GetOptionsDB().Add<boost::filesystem::path>("test.cyr.path", UserStringNop("TEST_CYR"), std::move(cyr));
     auto exp_cyr = GetOptionsDB().Get<boost::filesystem::path>("test.cyr.path");
     BOOST_CHECK_EQUAL(boost::filesystem::path{"кириллица"}, exp_cyr);
@@ -54,14 +62,7 @@ BOOST_AUTO_TEST_CASE(CyrPath) {
     XMLDoc doc;
     GetOptionsDB().GetXML(doc);
     auto textual_path = doc.root_node.Child("test").Child("cyr").Child("path").Text();
-    BOOST_CHECK_EQUAL(
-#if defined(FREEORION_WIN32)
-                      "&#208;&#186;&#208;&#184;&#209;&#8364;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#8224;&#208;&#176;"
-#else
-                      "&#208;&#186;&#208;&#184;&#209;&#128;&#208;&#184;&#208;&#187;&#208;&#187;&#208;&#184;&#209;&#134;&#208;&#176;"
-#endif
-                    
-                      , textual_path);
+    BOOST_CHECK_EQUAL(cyrxml, textual_path);
 
     GetOptionsDB().SetFromXML(doc);
 

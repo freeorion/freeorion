@@ -50,7 +50,7 @@ namespace {
     }
 
     template<typename T>
-    void AppendNativeCharToXMLText(std::string& text, T ch) noexcept {
+    constexpr void AppendNativeCharToXMLText(std::string& text, T ch) {
         const uint_fast32_t chval = static_cast<uint_fast32_t>(static_cast<std::make_unsigned_t<T>>(ch));
         switch (chval) {
         case static_cast<uint_fast32_t>('&'):
@@ -69,7 +69,7 @@ namespace {
             text.append("&quot;");
             break;
         default:
-            if (chval >= 20 && chval <= 127) {
+            if (chval >= 0x20 && chval <= 0x7f) {
                 text.push_back(static_cast<char>(chval));
             } else {
                 text.append("&#").append(std::to_string(chval)).append(";");
@@ -78,14 +78,14 @@ namespace {
     }
 
     template<typename T>
-    std::basic_string<T> ConvertXMLTextToPath(std::string_view input_string) noexcept {
+    std::basic_string<T> ConvertXMLTextToPath(std::string_view input_string) {
         std::basic_string<T> retval{};
         for (size_t index = 0; index < input_string.size(); ++index) {
             const auto ch = input_string[index];
             if (ch == '&') {
                 const auto semicolon_index = input_string.find(';', index);
                 if (semicolon_index == std::string_view::npos) {
-                    ErrorLogger() << "Cann't find semicolon after ampersand in string: " << input_string;
+                    ErrorLogger() << "Can't find semicolon after ampersand in string: " << input_string;
                     retval.push_back('?');
                     return retval;                
                 }
@@ -101,13 +101,12 @@ namespace {
                 } else if (entity == "quot") {
                     retval.push_back('\"');
                 } else if (entity.starts_with('#')) {
-                    try {
-                        const auto number = entity.substr(1);
-                        uint_fast32_t code;
-                        std::from_chars(number.data(), number.data() + number.size(), code);
+                    const auto number = entity.substr(1);
+                    uint_fast32_t code{0};
+                    if (std::from_chars(number.data(), number.data() + number.size(), code).ec == std::errc{}) {
                         retval.push_back(static_cast<T>(code));
-                    } catch (const std::exception& exc) {
-                        ErrorLogger() << "Cann't convert decimal code: " << entity << " reason: " << exc.what();
+                    } else {
+                        ErrorLogger() << "Can't convert decimal code: " << entity;
                         retval.push_back('?');
                     }
                 } else {
@@ -1027,9 +1026,8 @@ std::string PathToXMLText(boost::filesystem::path path) {
     return text;
 }
 
-boost::filesystem::path XMLTextToPath(std::string_view input_string) {
-    return {ConvertXMLTextToPath<boost::filesystem::path::value_type>(input_string)};
-}
+boost::filesystem::path XMLTextToPath(std::string_view input_string)
+{ return {ConvertXMLTextToPath<boost::filesystem::path::value_type>(input_string)}; }
 
 boost::filesystem::path XMLTextToPath(const char* input_string)
 { return XMLTextToPath(std::string_view{input_string}); }
