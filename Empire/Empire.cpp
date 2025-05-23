@@ -229,9 +229,9 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
 
     // get slots for category requested for policy to be adopted in
+    const auto is_in_cat = [category](const auto& cat_slots) noexcept { return cat_slots.first == category; };
     const auto total_slots = TotalPolicySlots();
-    const auto cat_slot_it = std::find_if(total_slots.begin(), total_slots.end(),
-                                          [category](const auto& cat_slots) { return cat_slots.first == category; });
+    const auto cat_slot_it = range_find_if(total_slots, is_in_cat);
     if (cat_slot_it == total_slots.end()) {
         ErrorLogger() << "Empire::AdoptPolicy can't adopt policy: " << name
                       << " into unrecognized category " << category;
@@ -247,10 +247,10 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     }
 
     // collect already-adopted policies in category
+    const auto is_in_cat2 = [category](const auto& info) noexcept { return info.second.category == category; };
+
     std::map<int, std::string> adopted_policies_in_category_map;
-    for (auto& [policy_name, adoption_info] : m_adopted_policies) {
-        if (adoption_info.category != category)
-            continue;
+    for (const auto& [policy_name, adoption_info] : m_adopted_policies | range_filter(is_in_cat2)) {
         if (adoption_info.slot_in_category >= total_slots_in_category) {
             ErrorLogger() << "Empire::AdoptPolicy found adopted policy: "
                           << policy_name << "  in category: " << category
@@ -266,7 +266,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
             return;
         }
 
-        adopted_policies_in_category_map[adoption_info.slot_in_category] = policy_name;
+        adopted_policies_in_category_map.insert_or_assign(adoption_info.slot_in_category, policy_name);
     }
     // convert to vector
     std::vector<std::string> adopted_policies_in_category(total_slots_in_category, "");
@@ -278,7 +278,6 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
         }
         adopted_policies_in_category[adopted_policy_slot] = std::move(adopted_policy_name);
     }
-
 
 
     // if no particular slot was specified, try to find a suitable slot in category
@@ -300,16 +299,15 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
     // adopt policy in requested category on this turn, unless it was already
     // adopted at the start of this turn, in which case restore / keep its
     // previous adtoption turn
-    int adoption_turn = context.current_turn;
-    auto it = m_initial_adopted_policies.find(name);
-    if (it != m_initial_adopted_policies.end())
-        adoption_turn = it->second.adoption_turn;
-    m_adopted_policies[name] = {adoption_turn, category, slot};
+    const auto it = m_initial_adopted_policies.find(name);
+    const int adoption_turn = (it != m_initial_adopted_policies.end()) ?
+        context.current_turn : it->second.adoption_turn;
 
-    DebugLogger() << "Empire::AdoptPolicy policy " << name << "  adopted in category "
-                  << m_adopted_policies[name].category << "  in slot "
-                  << m_adopted_policies[name].slot_in_category << "  on turn "
-                  << m_adopted_policies[name].adoption_turn;
+    const auto& pai = m_adopted_policies.insert_or_assign(
+        name, PolicyAdoptionInfo{adoption_turn, category, slot}).first->second;
+
+    DebugLogger() << "Empire::AdoptPolicy policy " << name << "  adopted in category " << pai.category
+                  << "  in slot " << pai.slot_in_category << "  on turn " << pai.adoption_turn;
 
     PoliciesChangedSignal();
 }
