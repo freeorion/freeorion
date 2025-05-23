@@ -576,15 +576,17 @@ namespace {
         CheckPendingDesigns();
         if (m_saved_designs.contains(design.UUID())) {
             // UUID already exists so this is a move.  Remove the old UUID location
-            const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), design.UUID());
+            const auto existing_it = range_find(m_ordered_uuids, design.UUID());
             if (existing_it != m_ordered_uuids.end())
                 m_ordered_uuids.erase(existing_it);
 
         } else {
             // Add the new saved design.
-            m_saved_designs.emplace(design.UUID(),
-                                    std::pair{std::make_unique<ShipDesign>(design),
-                                              CreateSavePathForDesign(design)});
+            m_saved_designs.emplace(std::piecewise_construct,
+                                    std::forward_as_tuple(design.UUID()),
+                                    std::forward_as_tuple(
+                                        std::make_unique<ShipDesign>(design),
+                                        CreateSavePathForDesign(design)));
             SaveDesign(design.UUID());
         }
 
@@ -609,7 +611,7 @@ namespace {
             return false;
         }
 
-        const auto moved_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), moved_uuid);
+        const auto moved_it = range_find(m_ordered_uuids, moved_uuid);
         if (moved_it == m_ordered_uuids.end()) {
             ErrorLogger() << "Unable to move saved design because moved design is missing.";
             return false;
@@ -617,7 +619,7 @@ namespace {
 
         m_ordered_uuids.erase(moved_it);
 
-        const auto next_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), next_uuid);
+        const auto next_it = range_find(m_ordered_uuids, next_uuid);
 
         // Insert in the list.
         m_ordered_uuids.insert(next_it, moved_uuid);
@@ -634,7 +636,7 @@ namespace {
             m_saved_designs.erase(erased_uuid);
         }
 
-        const auto uuid_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), erased_uuid);
+        const auto uuid_it = range_find(m_ordered_uuids, erased_uuid);
         m_ordered_uuids.erase(uuid_it);
     }
 
@@ -2576,10 +2578,9 @@ void EmptyHullsListBox::PopulateCore() {
     auto hulls = manager.OrderedHulls();
     if (hulls.size() < GetShipHullManager().size()) {
         ErrorLogger() << "EmptyHulls::PopulateCoreordered has fewer than expected entries...";
-        for (auto& hull : GetShipHullManager()) {
-            auto it = std::find(hulls.begin(), hulls.end(), hull.first);
-            if (it == hulls.end())
-                hulls.push_back(hull.first);    // O(N^2) in loop, but I don't care...
+        for (auto& hull : GetShipHullManager() | range_keys) {
+            if (!range_contains(hulls, hull))
+                hulls.push_back(hull);
         }
     }
 
