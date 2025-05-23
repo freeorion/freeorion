@@ -1402,8 +1402,8 @@ struct ContainedBySimpleMatch {
         // this tested faster than binary_search or scanning over each object and
         // checking if it contained the candidate
         const auto& scm = m_subcondition_matches_ids;
-        return (sys_ok && std::find(scm.begin(), scm.end(), system_id) != scm.end()) ||
-               (con_ok && std::find(scm.begin(), scm.end(), container_id) != scm.end());
+        return (sys_ok && range_contains(scm, system_id)) ||
+               (con_ok && range_contains(scm, container_id));
     }
 
     const std::vector<int> m_subcondition_matches_ids;
