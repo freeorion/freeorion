@@ -1392,7 +1392,12 @@ namespace {
     constexpr auto not_empty = [](const auto& sp_name) noexcept { return !sp_name.empty(); };
     constexpr auto can_colonize = [](const auto* species) noexcept { return species && species->CanColonize(); };
     constexpr auto to_species_name = [](const auto& planet) noexcept -> auto& { return planet->SpeciesName(); };
-    constexpr auto to_name = [](const auto* s) noexcept -> std::string_view { return s->Name(); };
+    constexpr auto to_name = [](const auto& s) noexcept -> std::string_view {
+        if constexpr (requires { s->Name(); })
+            return s->Name();
+        else if constexpr (requires { s.Name(); })
+            return s.Name();
+    };
 
 
     void RefreshDetailPanelPediaTag(        const std::string& item_type, const std::string& item_name,
@@ -3042,6 +3047,10 @@ namespace {
 
         std::vector<std::string_view> retval;
         retval.reserve(species_manager.NumSpecies()); // probably an underestimate
+
+        // Collect species colonizing/environment hospitality information
+        // start by building roster:
+        // -- planet's current species, if any
         {
             const std::string_view planet_current_species = planet.SpeciesName();
             if (!planet_current_species.empty())
@@ -3053,23 +3062,30 @@ namespace {
         if (!empire)
             return retval;
 
-        const auto extinct_species_is_tech_enabled = [&empire](const auto& tag) {
-            const auto tech_has_extinct_tag_and_this_tag = [&tag](const auto& tech_name) {
+
+        // -- species tagged as 'ALWAYS_REPORT'
+        // -- extinct species that a researched tech has a tag matching the name
+        const auto should_report = [&empire](const auto& name_species) -> bool {
+            if (name_species.second.HasTag(TAG_ALWAYS_REPORT))
+                return true;
+            if (!name_species.second.HasTag(TAG_EXTINCT))
+                return false;
+
+            const auto tech_has_extinct_tag_and_this_tag = [&name_species](const auto& tech_name) {
                 const auto tech = GetTech(tech_name);
-                return tech && tech->HasTag(TAG_EXTINCT) && tech->HasTag(tag);
+                return tech && tech->HasTag(TAG_EXTINCT) && tech->HasTag(name_species.first);
             };
-            return range_any_of(empire->ResearchedTechs() | range_keys, tech_has_extinct_tag_and_this_tag);
+            auto res_tech_names_rng = empire->ResearchedTechs() | range_keys;
+
+            return range_any_of(res_tech_names_rng, tech_has_extinct_tag_and_this_tag);
         };
+        auto reported_species_rng = species_manager | range_filter(should_report) |
+                                    range_values | range_transform(to_name);
+        static_assert(std::is_same_v<std::decay_t<decltype(reported_species_rng.front())>, std::string_view>);
+        retval.insert(retval.end(), reported_species_rng.begin(), reported_species_rng.end());
 
-        // Collect species colonizing/environment hospitality information
-        // start by building roster -- any species tagged as 'ALWAYS_REPORT' plus any species
-        // represented in this empire's PopCenters that can colonize
-        for (auto& [species_str, species] : species_manager) {
-            if (species.HasTag(TAG_ALWAYS_REPORT) ||
-                (species.HasTag(TAG_EXTINCT) && extinct_species_is_tech_enabled(species_str)))
-            { retval.push_back(species_str); }
-        }
 
+        // -- species in empire that can colonize
         const auto is_empire_pop_planet = [empire_id](const Planet& p) noexcept
         { return p.OwnedBy(empire_id) && p.Populated(); };
 
@@ -3082,6 +3098,8 @@ namespace {
             range_transform(to_name); // intentionally taking name string_view from species, not planet
         retval.insert(retval.end(), species_rng.begin(), species_rng.end());
 
+
+        // deduplicate
         std::stable_sort(retval.begin(), retval.end());
         retval.erase(std::unique(retval.begin(), retval.end()), retval.end());
         return retval;
