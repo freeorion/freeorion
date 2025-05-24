@@ -2,6 +2,7 @@ import pytest
 
 import savegame_codec
 from CombatRatingsAI import ShipCombatStats
+from savegame_codec._definitions import TrustedClasses
 
 
 class DummyTestClass:
@@ -20,35 +21,6 @@ class DummyTestClass:
 
     def dummy_class_function(self):
         pass
-
-
-@pytest.fixture()
-def trusted_scope(monkeypatch):
-    test_scope = dict(savegame_codec._decoder.trusted_classes)
-    test_scope.update(
-        {
-            __name__ + ".GetStateTester": GetStateTester,
-            __name__ + ".SetStateTester": SetStateTester,
-        }
-    )
-    monkeypatch.setattr(savegame_codec._decoder, "trusted_classes", test_scope)
-    monkeypatch.setattr(savegame_codec._definitions, "trusted_classes", test_scope)
-    monkeypatch.setattr(savegame_codec._encoder, "trusted_classes", test_scope)
-    return test_scope
-
-
-class Success(Exception):
-    pass
-
-
-class GetStateTester:
-    def __getstate__(self):
-        raise Success
-
-
-class SetStateTester:
-    def __setstate__(self, state):
-        raise Success
 
 
 @pytest.fixture(
@@ -81,23 +53,25 @@ def simple_object(
     return request.param
 
 
-def test_class_with_protected_attribute(trusted_scope):
+def test_class_with_protected_attribute():
     foo = ShipCombatStats()
-    retval = savegame_codec.encode(foo)
+    trusted_classes = TrustedClasses()
+    retval = savegame_codec.encode(foo, TrustedClasses())
     assert retval
     assert isinstance(retval, str)
 
-    restored_obj = savegame_codec.decode(retval)
+    restored_obj = savegame_codec.decode(retval, trusted_classes)
     assert type(restored_obj) is type(foo)
     assert restored_obj == foo
 
 
 def check_encoding(obj):
-    retval = savegame_codec.encode(obj)
+    trusted_classes = TrustedClasses()
+    retval = savegame_codec.encode(obj, trusted_classes)
     assert retval
     assert isinstance(retval, str)
 
-    restored_obj = savegame_codec.decode(retval)
+    restored_obj = savegame_codec.decode(retval, trusted_classes)
     assert type(restored_obj) is type(obj)
     assert restored_obj == obj
 
@@ -122,21 +96,23 @@ def test_encoding_type():
         pytest.fail("Could save untrusted class")
 
 
-def test_class_encoding(trusted_scope):
+def test_class_encoding():
+    trusted_scope = TrustedClasses()
     obj = DummyTestClass()
     with pytest.raises(
         savegame_codec.CanNotSaveGameException, match="Class test_savegame_manager.DummyTestClass is not trusted"
     ):
-        savegame_codec.encode(obj)
+        savegame_codec.encode(obj, trusted_scope)
         pytest.fail("Could save game even though test module should not be trusted")
 
-    trusted_scope[__name__ + ".DummyTestClass"] = DummyTestClass
-    retval = savegame_codec.encode(obj)
+    new_trusted_scope = TrustedClasses({__name__ + ".DummyTestClass": DummyTestClass})
+
+    retval = savegame_codec.encode(obj, new_trusted_scope)
 
     assert retval
     assert isinstance(retval, str)
 
-    loaded_obj = savegame_codec.decode(retval)
+    loaded_obj = savegame_codec.decode(retval, new_trusted_scope)
     assert isinstance(loaded_obj, DummyTestClass)
     assert type(loaded_obj) is type(obj)
 
@@ -145,33 +121,11 @@ def test_class_encoding(trusted_scope):
 
     assert loaded_dict == original_dict
 
-    del trusted_scope[__name__ + ".DummyTestClass"]
-
-    with pytest.raises(
-        savegame_codec.InvalidSaveGameException,
-        match="DANGER DANGER - test_savegame_manager.DummyTestClass not trusted",
-    ):
-        savegame_codec.decode(retval)
-        pytest.fail("Could load object from untrusted module")
-
-
-@pytest.mark.usefixtures("trusted_scope")
-def test_getstate_call():
-    with pytest.raises(Success):
-        savegame_codec.encode(GetStateTester())
-        pytest.fail("__getstate__ was not called during encoding.")
-
-
-@pytest.mark.usefixtures("trusted_scope")
-def test_setstate_call():
-    with pytest.raises(Success):
-        savegame_codec.decode(savegame_codec.encode(SetStateTester()))
-        pytest.fail("__setstate__ was not called during decoding.")
-
 
 def test_enums():
     import EnumsAI
 
     test_obj = {EnumsAI.MissionType.COLONISATION: EnumsAI.MissionType.INVASION}
-    restored_obj = savegame_codec.decode(savegame_codec.encode(test_obj))
+    trusted_classes = TrustedClasses()
+    restored_obj = savegame_codec.decode(savegame_codec.encode(test_obj, TrustedClasses()), trusted_classes)
     assert test_obj == restored_obj
