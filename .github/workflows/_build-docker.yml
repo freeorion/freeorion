@@ -12,7 +12,7 @@ jobs:
       matrix:
         image:
           - ubuntu-24.10
-          - fedora-33
+          - fedora-35
           - debian-oldstable
           - debian-stable
           - debian-sid
