@@ -809,7 +809,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, Empire
     DebugLogger() << "Initializing " << player_setup_data.size() << " empires";
 
     // copy empire colour table, so that individual colours can be removed after they're used
-    auto colors{EmpireColors()};
+    std::vector<EmpireColor> colors{EmpireColors()};
 
     // create empire objects and do some basic initilization for each player
     for (auto& [empire_id, psd] : player_setup_data) {
@@ -824,9 +824,8 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, Empire
 
         // validate or generate empire colour
         // ensure no other empire gets auto-assigned this colour automatically
-        auto color_it = std::find(colors.begin(), colors.end(), empire_colour);
-        if (color_it != colors.end())
-            colors.erase(color_it);
+        // TODO: remove_if colour is close enough, not necessarily exact match
+        colors.erase(std::remove(colors.begin(), colors.end(), empire_colour), colors.end());
 
         static constexpr EmpireColor CLR_ZERO{{0, 0, 0, 0}};
 
@@ -837,7 +836,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data, Empire
                 empire_colour = colors[0];
                 colors.erase(colors.begin());
             } else {
-                // as a last resort, make up a colour
+                // as a last resort, make up a colour  TODO: generate colour with hue as far as possible from existing colours?
                 empire_colour = {{static_cast<uint8_t>(RandInt(0, 255)),
                                   static_cast<uint8_t>(RandInt(0, 255)),
                                   static_cast<uint8_t>(RandInt(0, 255)),
