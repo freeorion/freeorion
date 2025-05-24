@@ -2,7 +2,6 @@ import freeOrionAIInterface as fo
 import math
 from collections.abc import Sequence
 from logging import debug, error, warning
-from typing import Union
 
 import AIDependencies
 import MoveUtilsAI
@@ -669,7 +668,7 @@ def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
     return math.ceil(float(distance) / fleet.speed)
 
 
-def get_fleet_system(fleet: Union[TargetFleet, int]) -> int:
+def get_fleet_system(fleet: TargetFleet | int) -> int:
     """Return the current fleet location or the target system if currently on starlane."""
     if isinstance(fleet, int):
         fleet = fo.getUniverse().getFleet(fleet)

@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 from common.statistic_interface import LOG_PREFIX, StatKey, StatValue
 

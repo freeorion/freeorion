@@ -7,7 +7,6 @@ from operator import itemgetter
 from typing import (
     NamedTuple,
     NewType,
-    Union,
 )
 
 import AIDependencies
@@ -1388,7 +1387,7 @@ def _location_rating(planet: fo.planet) -> float:
 
 def _try_enqueue(
     building_type: BuildingTypeBase,
-    candidates: Union[PlanetId, Iterable[PlanetId]],
+    candidates: PlanetId | Iterable[PlanetId],
     *,
     at_front: bool = False,
     ignore_dislike: bool = False,

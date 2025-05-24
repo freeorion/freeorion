@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import error, warning
-from typing import Optional, Union
+from typing import Union
 
 import AIDependencies
 from AIDependencies import ALL_EMPIRES
@@ -53,8 +53,8 @@ def get_max_empire_detection(empire_list: Union[list[int], "fo.IntVec"]) -> floa
 
 def colony_detectable_by_empire(
     planet_id: int,
-    species_name: Optional[str] = None,
-    empire: Union[int, list[int]] = ALL_EMPIRES,
+    species_name: str | None = None,
+    empire: int | list[int] = ALL_EMPIRES,
     future_stealth_bonus: int = 0,
     default_result: bool = True,
 ) -> bool:

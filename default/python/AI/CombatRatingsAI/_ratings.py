@@ -1,5 +1,4 @@
 from collections import Counter
-from typing import Optional
 
 from CombatRatingsAI._fleet_combat_stats import get_fleet_combat_stats
 from CombatRatingsAI._ship_combat_stats import AttackCount, AttackDamage, ShipCombatStats, get_ship_combat_stats
@@ -50,7 +49,7 @@ def default_ship_stats() -> ShipCombatStats:
     )
 
 
-def species_shield_bonus(species: Optional[SpeciesName], shield_type: Optional[str]) -> float:
+def species_shield_bonus(species: SpeciesName | None, shield_type: str | None) -> float:
     skill = get_species_ship_shields(species)
     shield_class = {
         "SH_DEFENSE_GRID": 1,

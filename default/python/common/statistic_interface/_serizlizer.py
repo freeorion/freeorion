@@ -1,5 +1,6 @@
 from abc import ABC
-from typing import Callable, TypeVar
+from collections.abc import Callable
+from typing import TypeVar
 
 Serializable = TypeVar("Serializable")
 

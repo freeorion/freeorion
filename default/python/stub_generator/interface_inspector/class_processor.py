@@ -1,5 +1,5 @@
 from inspect import getdoc
-from typing import Any, Optional
+from typing import Any
 
 from stub_generator.interface_inspector.inspection_helpers import (
     _get_member_info,
@@ -8,7 +8,7 @@ from stub_generator.interface_inspector.inspection_helpers import (
 
 
 class ClassInfo:
-    def __init__(self, name: str, attributes: dict[str, Any], doc: Optional[str], parents: list[str]):
+    def __init__(self, name: str, attributes: dict[str, Any], doc: str | None, parents: list[str]):
         self.name = name
         self.attributes = attributes
         self.doc = doc

@@ -1,11 +1,12 @@
 from abc import ABC
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, TypeVar, Union
+from typing import TypeVar
 
 from common.statistic_interface._dump_value import DumpDict, DumpInt, DumpMultiple
 from common.statistic_interface._serizlizer import to_float, to_int, to_str
 
-_ScalarValue = Union[str, int, float]
+_ScalarValue = str | int | float
 
 StatValue = TypeVar("StatValue", dict[str, _ScalarValue], _ScalarValue)
 

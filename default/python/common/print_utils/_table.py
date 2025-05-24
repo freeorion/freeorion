@@ -9,7 +9,7 @@ from collections import defaultdict
 from collections.abc import Collection
 from itertools import zip_longest
 from math import ceil
-from typing import Any, Union
+from typing import Any
 
 from common.print_utils._base_field import Field
 
@@ -33,7 +33,7 @@ def as_columns(items: Collection[Any], columns=2) -> str:
 class Table:
     def __init__(
         self,
-        *fields: Union[Field, Collection[Field]],
+        *fields: Field | Collection[Field],
         vertical_sep="|",
         header_sep="=",
         bottom_sep="-",

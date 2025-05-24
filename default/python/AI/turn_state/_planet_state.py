@@ -1,6 +1,5 @@
 import freeOrionAIInterface as fo
-from collections.abc import Mapping
-from typing import Callable
+from collections.abc import Callable, Mapping
 
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName, SystemId

@@ -12,7 +12,7 @@ def _get_member_info(name, member):
         info["getter"] = getdoc(member.fget)
     elif isroutine(member):
         info["routine"] = (member.__name__, getdoc(member))
-    elif isinstance(member, (int, str, float, list, tuple, dict, set, frozenset)):
+    elif isinstance(member, int | str | float | list | tuple | dict | set | frozenset):
         pass  # we don't need any
     elif "freeOrionAIInterface" in type_ or "freeorion" in type_:
         pass  # TODO we got some instance here, probably we should inspect it too.

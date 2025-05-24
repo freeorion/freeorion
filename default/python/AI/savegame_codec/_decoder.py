@@ -14,7 +14,6 @@ to provide a __setstate__ method to verify and possibly sanitize the content of 
 
 import binascii
 import json
-from typing import Union
 
 import EnumsAI
 from AIstate import AIstate
@@ -52,7 +51,7 @@ def _extract_collection(prefix: str, value: str):
     return value[len(prefix) + 1 : -1]
 
 
-def load_savegame_string(string: Union[str, bytes]) -> AIstate:
+def load_savegame_string(string: str | bytes) -> AIstate:
     """
     :raises: SaveDecompressException, InvalidSaveGameException
     """
@@ -121,7 +120,7 @@ class _FreeOrionAISaveGameDecoder(json.JSONDecoder):
     def __interpret(self, x):  # noqa: C901
         """Interpret an object that was just decoded."""
         # primitive types do not have to be interpreted
-        if isinstance(x, (int, float)):
+        if isinstance(x, int | float):
             return x
 
         # special handling for dicts as they could encode our classes

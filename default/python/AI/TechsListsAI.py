@@ -8,7 +8,6 @@ import freeOrionAIInterface as fo
 from collections.abc import Iterator
 from itertools import zip_longest
 from logging import debug, warning
-from typing import Union
 
 import AIDependencies as Dep
 from freeorion_tools import chat_human
@@ -75,7 +74,7 @@ class TechGroup:
         self._add_remaining()
         return list(self._tech_queue)
 
-    def enqueue(self, *tech_lists: Union[list[str], str]):
+    def enqueue(self, *tech_lists: list[str] | str):
         """
         Pop first entry in the list or take entry if it is string and add it to research orders.
 

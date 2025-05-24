@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import freeOrionAIInterface as fo
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from copy import copy
 from logging import debug, error
-from typing import Callable, NamedTuple
+from typing import NamedTuple
 
 import PlanetUtilsAI
 from AIDependencies import Tags

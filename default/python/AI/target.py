@@ -100,7 +100,7 @@ class TargetFleet(Target):
         # will also return INVALID_ID if somehow the fleet cannot be retrieved
         return fleet.systemID if fleet else INVALID_ID
 
-    def get_system(self) -> Optional[TargetSystem]:
+    def get_system(self) -> TargetSystem | None:
         """
         Get current fleet location or target system if currently on starlane.
         """
