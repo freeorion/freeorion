@@ -1,4 +1,4 @@
-FROM docker.io/fedora:33
+FROM docker.io/fedora:35
 
 RUN dnf update -y
 RUN dnf install -y cmake \
