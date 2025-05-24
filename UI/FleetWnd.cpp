@@ -1423,16 +1423,10 @@ void FleetDataPanel::Refresh() {
             // Searching for each Ship one at a time is probably faster than
             // FindObjects(ship_ids), because an early exit avoids searching the
             // remaining ids.
-            const auto& ship_ids{fleet->ShipIDs()};
-            return std::all_of(
-                ship_ids.begin(), ship_ids.end(),
+            return range_all_of(fleet->ShipIDs(),
                 [&pred, &o](const int ship_id) {
                     auto ship = o.get<Ship>(ship_id);
-                    if (!ship) {
-                        WarnLogger() << "Object map is missing ship with expected id " << ship_id;
-                        return false;
-                    }
-                    return pred(ship);
+                    return ship && pred(ship);
                 });
         };
 

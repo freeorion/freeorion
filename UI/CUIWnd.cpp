@@ -872,9 +872,7 @@ void CUIWnd::InvalidateUnusedOptions() {
 
         auto option_name{std::string{prefix}.append(window_name).append(".initialized")};
 
-        if (std::none_of(window_options.begin(), window_options.end(),
-                         [&option_name](auto wo) { return wo == option_name; }))
-        {
+        if (!range_contains(window_options, option_name)) {
             // If the ".initialized" option isn't present under this name, remove the options.
             InvalidateWindowOptions(window_name);
         }

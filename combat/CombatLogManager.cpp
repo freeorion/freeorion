@@ -73,7 +73,7 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
     object_ids.insert(combat_info.destroyed_object_ids.begin(), combat_info.destroyed_object_ids.end());
     for (const auto* obj : combat_info.objects.allRaw()) {
         object_ids.insert(obj->ID());
-        participant_states[obj->ID()] = CombatParticipantState(*obj);
+        participant_states.insert_or_assign(obj->ID(), CombatParticipantState(*obj));
     }
 }
 

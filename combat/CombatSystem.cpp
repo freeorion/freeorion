@@ -22,6 +22,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
+#include "../util/ranges.h"
 
 #include "../network/Message.h"
 
@@ -947,12 +948,13 @@ namespace {
                     continue;   // destroyed objects can't launch fighters
 
                 auto weapons = ShipWeaponsStrengths(ship, combat_info.universe);
-                for (const PartAttackInfo& weapon : weapons) { // TODO: any_of
-                    if (weapon.part_class == ShipPartClass::PC_FIGHTER_BAY &&
+                static constexpr auto is_armed_launched_bay = [](const PartAttackInfo& weapon) noexcept {
+                    return weapon.part_class == ShipPartClass::PC_FIGHTER_BAY &&
                         weapon.fighters_launched > 0 &&
-                        weapon.fighter_damage > 0.0f)
-                    { return true; }
-                }
+                        weapon.fighter_damage > 0.0f;
+                };
+                if (range_any_of(weapons, is_armed_launched_bay))
+                    return true;
             }
 
             return false;
@@ -1657,15 +1659,13 @@ namespace {
                 continue;   // destroyed fighters can't return
             auto launched_from_id = fighter->LaunchedFrom();
             const auto& cidoi = combat_info.destroyed_object_ids;
-            if (std::any_of(cidoi.begin(), cidoi.end(),
-                            [launched_from_id](int id) { return launched_from_id == id; }))
-            {
+            if (range_any_of(cidoi, [launched_from_id](int id) { return launched_from_id == id; })) {
                 DebugLogger() << " ... Fighter " << fighter->Name() << " (" << obj_id
                               << ") is from destroyed ship id" << launched_from_id
                               << " so can't be recovered";
                 continue;   // can't return to a destroyed ship
             }
-            ships_fighters_to_add_back[launched_from_id]++;
+            ships_fighters_to_add_back[launched_from_id] += 1.0f;
         }
         DebugLogger() << "Fighters left at end of combat:";
         for (const auto& [ship_id, fighter_count] : ships_fighters_to_add_back)

@@ -717,7 +717,7 @@ namespace {
                         continue;
 
                     // locate in from_set
-                    auto from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
+                    auto from_it = range_find(from_set, object_to_transfer);
                     if (from_it == from_set.end())
                         continue;
 
@@ -853,8 +853,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
         // put matched objects that are in subcondition_matching_non_matches into matches
         for (auto& matched_object : matched_objects) {
             // is this matched object in subcondition_matching_non_matches?
-            auto smnt_it = std::find(subcondition_matching_non_matches.begin(),
-                                     subcondition_matching_non_matches.end(), matched_object);
+            auto smnt_it = range_find(subcondition_matching_non_matches, matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
                 // yes; move object to matches
                 *smnt_it = subcondition_matching_non_matches.back(); // replace pointer to matched_object with whatever is at the end of subcondition_matching_non_matches
@@ -883,8 +882,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
         // put matched objecs that are in subcondition_matching_matches back into matches
         for (auto& matched_object : matched_objects) {
             // is this matched object in subcondition_matching_matches?
-            auto smt_it = std::find(subcondition_matching_matches.begin(),
-                                    subcondition_matching_matches.end(), matched_object);
+            auto smt_it = range_find(subcondition_matching_matches, matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
                 // yes; move back into matches
                 *smt_it = subcondition_matching_matches.back();  // replace pointer to matched_object with whatever is at the end of subcondition_matching_matches
@@ -2223,8 +2221,7 @@ namespace {
                 return true;
 
             // is it one of the specified building types?
-            return std::find(m_names.begin(), m_names.end(), building->BuildingTypeName()) != m_names.end();
-            //return std::count(m_names.begin(), m_names.end(), building->BuildingTypeName());
+            return range_contains(m_names, building->BuildingTypeName());
         }
 
         const std::vector<std::string>& m_names;
@@ -4250,7 +4247,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
                 static CONSTEXPR_VEC std::decay_t<decltype(species->Likes())> NOTHING{};
                 const auto& stuff{comp == ComparisonType::GREATER_THAN ? species->Likes() :
                                   comp == ComparisonType::LESS_THAN  ? species->Dislikes() : NOTHING};
-                return std::none_of(stuff.begin(), stuff.end(), [&content](const auto l) { return l == content; });
+                return !range_contains(stuff, content);
             };
 
             // get subset of species that match the criteron about liking or disliking the content
@@ -9331,9 +9328,9 @@ namespace {
             // is candidate object connected to a subcondition matching object by resource supply?
             // first check if candidate object is (or is a building on) a blockaded planet
             // "isolated" objects are anything not in a non-blockaded system
-            const bool is_isolated = std::none_of(groups.begin(), groups.end(),
-                                                  [sys_id{candidate->SystemID()}](const auto& group)
-                                                  { return group.contains(sys_id); });
+            const auto contains_candidate_system = [sys_id{candidate->SystemID()}](const auto& group)
+            { return group.contains(sys_id); };
+            const bool is_isolated = range_none_of(groups, contains_candidate_system);
             if (is_isolated) { // planets are still supply-connected to themselves even if blockaded
                 static constexpr auto planet_id_from_obj = [](const auto* obj) {
                     const auto candidate_type = obj->ObjectType();

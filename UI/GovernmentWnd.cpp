@@ -171,7 +171,9 @@ namespace {
         main_text += UserString(policy->ShortDescription()) + "\n\n";
 
         if (const auto empire = context.GetEmpire(empire_id)) {
-            bool adopted = empire->PolicyAdopted(policy_name);
+            const auto is_adopted = [empire{empire}](const auto& plc) { return empire->PolicyAdopted(plc); };
+
+            const bool adopted = is_adopted(policy_name);
             bool available = empire->PolicyAvailable(policy_name);
             bool restricted = !empire->PolicyPrereqsAndExclusionsOK(policy_name, context.current_turn);
 
@@ -184,12 +186,7 @@ namespace {
             main_text += boost::io::str(FlexibleFormat(adoption_cost_template) % cost) + "\n\n";
 
             bool exclusion_prereq_line_added = false;
-
-            const auto empire_policies = empire->AdoptedPolicies();
-            for (auto& ex : policy->Exclusions()) {
-                auto ad_it = std::find(empire_policies.begin(), empire_policies.end(), ex);
-                if (ad_it == empire_policies.end())
-                    continue;
+            for (auto& ex : policy->Exclusions() | range_filter(is_adopted)) {
                 main_text += boost::io::str(FlexibleFormat(UserString("POLICY_EXCLUDED"))
                                             % UserString(ex)) + "\n";
                 exclusion_prereq_line_added = true;
@@ -197,9 +194,8 @@ namespace {
 
             const auto empire_initial_policies = empire->InitialAdoptedPolicies();
             for (auto& prereq : policy->Prerequisites()) {
-                auto init_it = std::find(
-                    empire_initial_policies.begin(), empire_initial_policies.end(), prereq);
-                const auto& template_str = init_it == empire_initial_policies.end() ?
+                const bool prereq_in_initial_policies = range_contains(empire_initial_policies, prereq);
+                const auto& template_str = !prereq_in_initial_policies ?
                     UserString("POLICY_PREREQ_MISSING") : UserString("POLICY_PREREQ_MET");
                 main_text += boost::io::str(FlexibleFormat(template_str)
                                             % UserString(prereq)) + "\n";
@@ -475,16 +471,16 @@ void PoliciesListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> 
 
 std::map<std::string, std::vector<const Policy*>>
 PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
-    using PolicyAndCat = const std::pair<const Policy*, const std::string&>;
+    using PolicyAndCat = std::pair<const Policy*, const std::string&>;
     static constexpr auto to_policy_and_cat = [](const Policy& p) -> PolicyAndCat { return {&p, p.Category()}; };
-    const auto cat_shown_policy_displayed = [this](PolicyAndCat& p_c) {
+    const auto cat_shown_policy_displayed = [this](const PolicyAndCat& p_c) {
         return m_policy_categories_shown.contains(p_c.second) &&
             m_availabilities_state.PolicyDisplayed(*p_c.first);
     };
 
     // loop through all possible policies, outputting those shown
     std::map<std::string, std::vector<const Policy*>> policies_categorized;
-    auto policies_rng = std::as_const(GetPolicyManager()) | range_values;
+    auto policies_rng = GetPolicyManager().Policies() | range_values;
     auto policy_cat_rng = policies_rng | range_transform(to_policy_and_cat)
         | range_filter(cat_shown_policy_displayed);
     for (const auto& [policy, category] : policy_cat_rng)
@@ -661,11 +657,11 @@ void GovernmentWnd::PolicyPalette::CompleteConstruction() {
     m_policies_list->ClearPolicySignal.connect(ClearPolicySignal);
 
     // class buttons
-    for (auto& cat_view : GetPolicyManager().PolicyCategories()) {
+    for (const auto& cat_view : GetPolicyManager().PolicyCategories()) {
         // are there any policies of this class?
-        if (std::none_of(GetPolicyManager().begin(), GetPolicyManager().end(),
-                         [cat_view](auto& e){ return cat_view == e.second.Category(); }))
-        { continue; }
+        const auto in_category = [cat_view](const auto& p) noexcept { return cat_view == p.Category(); };
+        if (range_none_of(GetPolicyManager().Policies() | range_values, in_category))
+            continue;
 
         const auto& us_cateory{UserString(cat_view)};
         auto ptr_it = m_category_buttons.emplace(std::string{cat_view}, GG::Wnd::Create<CUIStateButton>(

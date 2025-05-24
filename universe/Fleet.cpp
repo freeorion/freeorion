@@ -202,8 +202,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0f &&
         this->SystemID() != INVALID_OBJECT_ID &&
-        std::none_of(fleet_supplied_systems.begin(), fleet_supplied_systems.end(),
-                     [sys_id{this->SystemID()}] (const int fss) noexcept { return fss == sys_id; }))
+        !range_contains(fleet_supplied_systems, this->SystemID()))
     {
         // no fuel and out of supply => can't move => path is just this system with explanatory ETA
         retval.emplace_back(this->X(), this->Y(), true, ETA_OUT_OF_RANGE, this->SystemID(),
@@ -767,7 +766,7 @@ void Fleet::SetRoute(std::vector<int> route, const ObjectMap& objects) {
 }
 
 std::vector<int> Fleet::TruncateRouteToEndAtFirstOf(std::vector<int> route, int system_id) {
-    const auto sys_it = std::find(route.begin(), route.end(), system_id);
+    const auto sys_it = range_find(route, system_id);
     if (sys_it == route.end())
         route.clear();
     else
@@ -1376,17 +1375,17 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
     };
 
     std::string_view fleet_name_key;
-    if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->IsMonster(u); }))
+    if (range_all_of(ships, [&u](const auto& ship){ return ship->IsMonster(u); }))
         fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");
-    else if (std::all_of(ships.begin(), ships.end(), [&u, &sm](const auto& ship){ return ship->CanColonize(u, sm); }))
+    else if (range_all_of(ships, [&u, &sm](const auto& ship){ return ship->CanColonize(u, sm); }))
         fleet_name_key = UserStringNop("NEW_COLONY_FLEET_NAME");
-    else if (std::all_of(ships.begin(), ships.end(), [&IsCombatShip](const auto& ship){ return !IsCombatShip(*ship); }))
+    else if (range_all_of(ships, [&IsCombatShip](const auto& ship){ return !IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_RECON_FLEET_NAME");
-    else if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->CanHaveTroops(u); }))
+    else if (range_all_of(ships, [&u](const auto& ship){ return ship->CanHaveTroops(u); }))
         fleet_name_key = UserStringNop("NEW_TROOP_FLEET_NAME");
-    else if (std::all_of(ships.begin(), ships.end(), [&u](const auto& ship){ return ship->CanBombard(u); }))
+    else if (range_all_of(ships, [&u](const auto& ship){ return ship->CanBombard(u); }))
         fleet_name_key = UserStringNop("NEW_BOMBARD_FLEET_NAME");
-    else if (std::all_of(ships.begin(), ships.end(), [&IsCombatShip](const auto& ship){ return IsCombatShip(*ship); }))
+    else if (range_all_of(ships, [&IsCombatShip](const auto& ship){ return IsCombatShip(*ship); }))
         fleet_name_key = UserStringNop("NEW_BATTLE_FLEET_NAME");
     else
         fleet_name_key = UserStringNop("NEW_FLEET_NAME");
