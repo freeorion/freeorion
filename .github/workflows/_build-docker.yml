@@ -13,7 +13,8 @@ jobs:
         image:
           - ubuntu-24.10
           - fedora-35
-          - debian-oldstable
+          # Restore Debian oldstable until bookworm become it
+          # - debian-oldstable
           - debian-stable
           - debian-sid
           - debian-sid-i386
