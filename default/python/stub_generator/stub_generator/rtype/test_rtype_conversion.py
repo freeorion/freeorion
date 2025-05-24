@@ -11,14 +11,13 @@ from stub_generator.stub_generator.rtype.utils import get_name_for_mapping
     [
         (int, "int"),
         (Sequence[int], "Sequence[int]"),
-        (Sequence[PlanetId], "Sequence[PlanetId]"),
+        (Sequence[PlanetId], "Sequence[PlanetId[]]"),
         (Set[int], "Set[int]"),
-        (Set[PlanetId], "Set[PlanetId]"),
-        (Mapping[int, PlanetId], "Mapping[int, PlanetId]"),
+        (Set[PlanetId], "Set[PlanetId[]]"),
+        (Mapping[int, PlanetId], "Mapping[int, PlanetId[]]"),
         (Sequence[Sequence[int]], "Sequence[Sequence[int]]"),
-        (Sequence[Sequence[PlanetId]], "Sequence[Sequence[PlanetId]]"),
+        (Sequence[Sequence[PlanetId]], "Sequence[Sequence[PlanetId[]]]"),
     ],
 )
 def test_get_name_for_mapping(type_, string):
-    print()
     assert get_name_for_mapping(type_) == string
