@@ -6,30 +6,42 @@ import ColonisationAI
 import CombatRatingsAI
 import fleet_orders
 
-trusted_classes = {
-    f"{cls.__module__}.{cls.__name__}": cls
-    for cls in [
-        AIFleetMission.AIFleetMission,
-        fleet_orders.AIFleetOrder,
-        fleet_orders.OrderMilitary,
-        fleet_orders.OrderDefend,
-        fleet_orders.OrderColonize,
-        fleet_orders.OrderOutpost,
-        fleet_orders.OrderPause,
-        fleet_orders.OrderInvade,
-        fleet_orders.OrderMove,
-        fleet_orders.OrderRepair,
-        fleet_orders.OrderResupply,
-        character.character_module.Trait,
-        character.character_module.Aggression,
-        character.character_module.EmpireIDTrait,
-        character.character_module.Character,
-        AIstate.AIstate,
-        ColonisationAI.OrbitalColonizationManager,
-        ColonisationAI.OrbitalColonizationPlan,
-        CombatRatingsAI.ShipCombatStats,
-    ]
-}
+
+class TrustedClasses:
+    def __init__(self, extra_classes: dict | None = None):
+        self._trusted_classes = {
+            f"{cls.__module__}.{cls.__name__}": cls
+            for cls in [
+                AIFleetMission.AIFleetMission,
+                fleet_orders.AIFleetOrder,
+                fleet_orders.OrderMilitary,
+                fleet_orders.OrderDefend,
+                fleet_orders.OrderColonize,
+                fleet_orders.OrderOutpost,
+                fleet_orders.OrderPause,
+                fleet_orders.OrderInvade,
+                fleet_orders.OrderMove,
+                fleet_orders.OrderRepair,
+                fleet_orders.OrderResupply,
+                character.character_module.Trait,
+                character.character_module.Aggression,
+                character.character_module.EmpireIDTrait,
+                character.character_module.Character,
+                AIstate.AIstate,
+                ColonisationAI.OrbitalColonizationManager,
+                ColonisationAI.OrbitalColonizationPlan,
+                CombatRatingsAI.ShipCombatStats,
+            ]
+        }
+        if extra_classes:
+            self._trusted_classes.update(extra_classes)
+
+    def __contains__(self, name: str):
+        return name in self._trusted_classes
+
+    def get(self, name: str):
+        return self._trusted_classes.get(name)
+
 
 # prefixes to encode types not supported by json
 # or not fully supported as dictionary key
