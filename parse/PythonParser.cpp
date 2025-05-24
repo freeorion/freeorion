@@ -42,6 +42,34 @@ namespace {
     }
 
     constexpr bool STATIC_FALSE = false;
+
+    template<typename T>
+    void compile_eval(const char* content, const std::basic_string<T>& filename, const py::object& globals) {
+        InfoLogger() << "Trying to convert path to bytes...";
+        PyObject *filename_str;
+        if constexpr (std::is_same_v<T, wchar_t>) {
+            filename_str = PyUnicode_FromWideChar(filename.c_str(), filename.size());
+        } else {
+            filename_str = PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
+        }
+        if (!filename_str) {
+            ErrorLogger() << "Failed to convert path to str";
+            py::throw_error_already_set();
+        }
+        py::object o_filename_str{py::handle<>(filename_str)};
+        PyObject *code = Py_CompileStringObject(content, o_filename_str.ptr(), Py_file_input, nullptr, 2);
+        if (!code) {
+            ErrorLogger() << "Failed to compile";
+            py::throw_error_already_set();
+        }
+        py::object o_code{py::handle<>(code)};
+        PyObject *result = PyEval_EvalCode(o_code.ptr(), globals.ptr(), globals.ptr());
+        if (!result) {
+            ErrorLogger() << "Failed to eval";
+            py::throw_error_already_set();
+        }
+        py::object o_result{py::handle<>(result)};
+    }
 }
 
 struct module_spec {
@@ -408,7 +436,7 @@ bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
     }
 
     try {
-        py::exec(file_contents.c_str(), globals);
+        compile_eval(file_contents.c_str(), path.native(), globals);
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
         ErrorLogger() << "Unable to parse data file " << filename;
@@ -509,7 +537,7 @@ py::object PythonParser::exec_module(py::object& module) {
                 RegisterGlobalsSources(m_dict);
                 RegisterGlobalsEnums(m_dict);
 
-                py::exec(file_contents.c_str(), m_dict, m_dict);
+                compile_eval(file_contents.c_str(), module_path.native(), m_dict);
             } catch (const boost::python::error_already_set&) {
                 m_python.HandleErrorAlreadySet();
                 ErrorLogger() << "Unable to parse module file " << module_path.string();
