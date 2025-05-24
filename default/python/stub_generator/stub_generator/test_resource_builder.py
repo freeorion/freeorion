@@ -1,7 +1,6 @@
 from io import StringIO
 
-from interface_inspector.class_processor import ClassInfo
-
+from stub_generator.interface_inspector.class_processor import ClassInfo
 from stub_generator.stub_generator.class_generator import process_instantiated_class
 from stub_generator.stub_generator.result_builder import Import, ResultBuilder, merge_imports, sort_imports
 
@@ -97,8 +96,8 @@ def test_process_instantiated_class():
     expected = "\n".join(
         [
             "class diplomaticMessage(NamedTuple):",
-            "    recipient: PlayerId",
-            "    sender: PlayerId",
+            "    recipient: PlayerId[]",
+            "    sender: PlayerId[]",
             "    type: diplomaticMessageType",
         ]
     )
