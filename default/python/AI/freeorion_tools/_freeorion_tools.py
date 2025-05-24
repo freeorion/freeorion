@@ -6,7 +6,6 @@ import traceback
 from collections.abc import Mapping
 from functools import wraps
 from logging import ERROR, Handler, debug, error, getLogger, warning
-from typing import Optional
 
 import AIDependencies
 from common.configure_logging import FOLogFormatter
@@ -299,7 +298,7 @@ def assertion_fails(cond: bool, msg: str = "") -> bool:
 
 
 @cache_for_session
-def get_species_tag_grade(species_name: Optional[SpeciesName], tag_type: AIDependencies.Tags) -> str:
+def get_species_tag_grade(species_name: SpeciesName | None, tag_type: AIDependencies.Tags) -> str:
     """Determine grade string ("NO", "BAD", "GOOD", etc.), if any, for given tag and species."""
     if not species_name:
         return ""
@@ -311,61 +310,61 @@ def get_species_tag_grade(species_name: Optional[SpeciesName], tag_type: AIDepen
 
 
 @cache_for_session
-def get_species_stealth(species_name: Optional[SpeciesName]) -> float:
+def get_species_stealth(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.STEALTH)
     return AIDependencies.STEALTH_STRENGTHS_BY_SPECIES_TAG.get(grade, 0.0)
 
 
 @cache_for_session
-def get_species_attack_troops(species_name: Optional[SpeciesName]) -> float:
+def get_species_attack_troops(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.ATTACKTROOPS)
     return AIDependencies.SPECIES_TROOP_MODIFIER.get(grade, 1.0)
 
 
 @cache_for_session
-def get_species_fuel(species_name: Optional[SpeciesName]) -> float:
+def get_species_fuel(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.FUEL)
     return AIDependencies.SPECIES_FUEL_MODIFIER.get(grade, 0.0)
 
 
 @cache_for_session
-def get_species_ship_shields(species_name: Optional[SpeciesName]) -> float:
+def get_species_ship_shields(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.SHIP_SHIELDS)
     return AIDependencies.SPECIES_SHIP_SHIELD_MODIFIER.get(grade, 0.0)
 
 
 @cache_for_session
-def get_species_stability(species_name: Optional[SpeciesName]) -> float:
+def get_species_stability(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.STABILITY)
     return AIDependencies.SPECIES_STABILITY_MODIFIER.get(grade, 0.0)
 
 
 @cache_for_session
-def get_species_supply(species_name: Optional[SpeciesName]) -> int:
+def get_species_supply(species_name: SpeciesName | None) -> int:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.SUPPLY)
     return int(AIDependencies.SPECIES_SUPPLY_MODIFIER.get(grade, 1))
 
 
 @cache_for_session
-def get_species_population(species_name: Optional[SpeciesName]) -> float:
+def get_species_population(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.POPULATION)
     return AIDependencies.SPECIES_POPULATION_MODIFIER.get(grade, 1.0)
 
 
 @cache_for_session
-def get_species_influence(species_name: Optional[SpeciesName]) -> float:
+def get_species_influence(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.INFLUENCE)
     return AIDependencies.SPECIES_INFLUENCE_MODIFIER.get(grade, 1.0)
 
 
 @cache_for_session
-def get_species_research(species_name: Optional[SpeciesName]) -> float:
+def get_species_research(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.RESEARCH)
     return AIDependencies.SPECIES_RESEARCH_MODIFIER.get(grade, 1.0)
 
 
 @cache_for_session
-def get_species_industry(species_name: Optional[SpeciesName]) -> float:
+def get_species_industry(species_name: SpeciesName | None) -> float:
     grade = get_species_tag_grade(species_name, AIDependencies.Tags.INDUSTRY)
     return AIDependencies.SPECIES_INDUSTRY_MODIFIER.get(grade, 1.0)
 

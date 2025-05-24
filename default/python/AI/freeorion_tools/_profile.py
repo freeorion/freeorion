@@ -1,9 +1,9 @@
 import cProfile
 import pstats
+from collections.abc import Callable
 from functools import wraps
 from io import StringIO
 from logging import debug
-from typing import Callable
 
 
 def profile(func: Callable):

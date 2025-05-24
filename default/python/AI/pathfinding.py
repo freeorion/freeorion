@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo
 from collections import namedtuple
+from collections.abc import Callable
 from heapq import heappop, heappush
 from logging import error, warning
-from typing import Callable, Optional
 
 import PlanetUtilsAI
 from AIDependencies import INVALID_ID
@@ -67,7 +67,7 @@ def find_path_with_resupply(
     target: int,
     fleet_id: int,
     minimum_fuel_at_target: int = 0,
-    mission_type_override: Optional[MissionType] = None,
+    mission_type_override: MissionType | None = None,
 ) -> PathInformation:
     """
     :param start: start system id
@@ -171,9 +171,9 @@ def find_path_with_resupply_generic(  # noqa: C901
     max_fuel: float,
     system_suppliable_func: Callable[[int], bool],
     minimum_fuel_at_target=0,
-    may_travel_system_func: Optional[Callable[[int], bool]] = None,
-    may_travel_starlane_func: Optional[Callable[[int, int], bool]] = None,
-) -> Optional[PathInformation]:
+    may_travel_system_func: Callable[[int], bool] | None = None,
+    may_travel_starlane_func: Callable[[int, int], bool] | None = None,
+) -> PathInformation | None:
     """Find the shortest possible path between two systems that complies with FreeOrion fuel mechanics.
 
      If the fleet can travel the shortest possible path between start and target system, then return that path.

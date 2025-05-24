@@ -1,5 +1,4 @@
 from collections.abc import Mapping, Sequence
-from typing import Union
 
 import AIDependencies
 from common.fo_typing import PlanetId, SpeciesName
@@ -20,7 +19,7 @@ def set_colony_builders(species_name: SpeciesName, yards: Sequence[PlanetId]):
 
 
 @survey_universe_lock
-def can_build_colony_for_species(species_name: Union[SpeciesName, str]):
+def can_build_colony_for_species(species_name: SpeciesName | str):
     return species_name in get_colony_builders()
 
 

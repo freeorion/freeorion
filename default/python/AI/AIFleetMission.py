@@ -407,7 +407,7 @@ class AIFleetMission:
         just_issued_move_order = False
         last_move_target_id = INVALID_ID
         for fleet_order in self.orders:
-            if isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)) and self._check_abort_mission(
+            if isinstance(fleet_order, OrderColonize | OrderOutpost | OrderInvade) and self._check_abort_mission(
                 fleet_order
             ):
                 self.clear_fleet_orders()

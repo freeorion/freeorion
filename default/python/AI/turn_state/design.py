@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo
 import math
 import random
 from collections.abc import Iterable, Iterator
-from typing import Optional, Union
+from typing import Optional
 
 import ShipDesignAI
 from empire.ship_builders import get_shipyards
@@ -74,7 +74,7 @@ def cur_best_military_design_rating() -> float:
     return 0.001
 
 
-def _get_locations(locations: Union[int, Iterable[int], None]) -> frozenset[int]:
+def _get_locations(locations: int | Iterable[int] | None) -> frozenset[int]:
     if locations is None:
         return get_inhabited_planets()
 
@@ -84,8 +84,8 @@ def _get_locations(locations: Union[int, Iterable[int], None]) -> frozenset[int]
 
 
 def get_best_ship_info(
-    priority: PriorityType, loc: Union[int, Iterable[int], None] = None
-) -> tuple[Optional[int], Optional["fo.shipDesign"], Optional[list[int]]]:
+    priority: PriorityType, loc: int | Iterable[int] | None = None
+) -> tuple[int | None, Optional["fo.shipDesign"], list[int] | None]:
     """Returns 3 item tuple: designID, design, buildLocList."""
     planet_ids = _get_locations(loc)
     if not planet_ids:
@@ -95,7 +95,7 @@ def get_best_ship_info(
 
 def _get_best_ship_info(
     priority: PriorityType, planet_ids: tuple[int]
-) -> tuple[Optional[int], Optional["fo.shipDesign"], Optional[list[int]]]:
+) -> tuple[int | None, Optional["fo.shipDesign"], list[int] | None]:
     design_repository = get_design_repository()
 
     if priority in design_repository:

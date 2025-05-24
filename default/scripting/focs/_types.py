@@ -7,7 +7,7 @@
 
 # mypy: disable-error-code="empty-body"
 try:
-    from typing import TypeVar, Union
+    from typing import TypeVar
 
     class _MeterType: ...
 
@@ -29,7 +29,7 @@ try:
     class _Empire: ...
 
     # Type for arguments, since invalid Empire is -1
-    _EmpireId = Union[_Empire, int]
+    _EmpireId = _Empire | int
 
     class _Focus: ...
 
@@ -96,8 +96,8 @@ try:
     _StringParam = str
     _IntParam = int
     # We assume that we accept int anywhere we could accept float
-    _FloatParam = Union[int, float]
-    _ValueParam = Union[int, float, str]
+    _FloatParam = int | float
+    _ValueParam = int | float | str
 
     class _BuildingType: ...
 

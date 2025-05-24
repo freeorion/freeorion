@@ -1,5 +1,4 @@
 from collections.abc import Iterable, Iterator
-from typing import Optional
 
 
 class UnmatchedType(Exception):
@@ -93,7 +92,7 @@ def _fetch_group(stream: Iterable[Token]):
         return [first, [key, val]]
 
 
-def make_type(string: Optional[str]):
+def make_type(string: str | None):
     if not string:
         return ""
     try:

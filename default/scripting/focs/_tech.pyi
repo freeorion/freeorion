@@ -1,4 +1,4 @@
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 from focs._types import _EffectGroup, _FloatParam
 

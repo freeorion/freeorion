@@ -4,8 +4,6 @@ from enum import Enum
 from logging import debug, error
 from typing import (
     NamedTuple,
-    Optional,
-    Union,
 )
 
 from AIDependencies import INVALID_ID, STABILITY_PER_LIKED_FOCUS
@@ -30,7 +28,7 @@ def sys_name_ids(sys_ids: Iterable[int]) -> str:
     return ppstring([str(universe.getSystem(sys_id)) for sys_id in sys_ids])
 
 
-def planet_string(planet_ids: Union[PlanetId, Iterable[PlanetId]]) -> str:
+def planet_string(planet_ids: PlanetId | Iterable[PlanetId]) -> str:
     """
     Get a string representation of the passed planets.
     """
@@ -189,7 +187,7 @@ class Opinion(NamedTuple):
         return neutral_value
 
 
-def get_planet_opinion(feature: Union[str, Enum]) -> Opinion:
+def get_planet_opinion(feature: str | Enum) -> Opinion:
     """
     Returns sets of empire planets that like, are neutral and dislike the given feature
     """
@@ -200,7 +198,7 @@ def get_planet_opinion(feature: Union[str, Enum]) -> Opinion:
     return _calculate_get_planet_opinions().get(feature, default)
 
 
-def _get_species_from_colony_building(name: str) -> Optional[SpeciesName]:
+def _get_species_from_colony_building(name: str) -> SpeciesName | None:
     """Extract a species if name is the name of a colony building"""
     building_prefix = "BLD_COL_"
     species_prefix = "SP_"
@@ -239,7 +237,7 @@ def _planned_species() -> Mapping[PlanetId, SpeciesName]:
     return planned_species
 
 
-def _planet_species(pid: PlanetId) -> Optional[fo.species]:
+def _planet_species(pid: PlanetId) -> fo.species | None:
     universe = fo.getUniverse()
     planet = universe.getPlanet(pid)
     species_name = planet.speciesName

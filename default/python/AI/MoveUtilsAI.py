@@ -89,7 +89,7 @@ def get_nearest_supplied_system(start_system_id: SystemId):
         return TargetSystem(supply_system_id)
 
 
-def get_best_drydock_system_id(start_system_id: int, fleet_id: int) -> Optional[int]:
+def get_best_drydock_system_id(start_system_id: int, fleet_id: int) -> int | None:
     """
     Get system_id of best drydock capable of repair, where best is nearest drydock
     that has a current and target happiness greater than the HAPPINESS_THRESHOLD

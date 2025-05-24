@@ -1,7 +1,6 @@
 from collections.abc import Iterable
 from functools import reduce
 from itertools import chain
-from typing import Union
 
 
 def _combine_ratings(rating1: float, rating2: float) -> float:
@@ -33,10 +32,10 @@ def _combine_ratings(rating1: float, rating2: float) -> float:
     return rating1 + rating2 + 2 * (rating1 * rating2) ** 0.5
 
 
-def combine_ratings(first: Union[float, Iterable], *ratings: float) -> float:
+def combine_ratings(first: float | Iterable, *ratings: float) -> float:
     """
     Combine multiple ratings to one.
     """
-    if isinstance(first, (int, float)):
+    if isinstance(first, int | float):
         first = (first,)
     return reduce(_combine_ratings, chain(first, ratings), 0.0)

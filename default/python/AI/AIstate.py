@@ -4,7 +4,6 @@ from collections import Counter
 from collections import OrderedDict as odict
 from logging import debug, error, info, warning
 from operator import itemgetter
-from typing import Optional
 
 import AIFleetMission
 import ColonisationAI
@@ -734,7 +733,7 @@ class AIstate:
             threat_fleets.update(sys_status.get("local_fleet_threats", []))
         return threat, max_threat, myrating, threat_fleets
 
-    def get_fleet_mission(self, fleet_id: int) -> Optional[AIFleetMission.AIFleetMission]:
+    def get_fleet_mission(self, fleet_id: int) -> AIFleetMission.AIFleetMission | None:
         """
         Returns AIFleetMission with fleetID.
         """

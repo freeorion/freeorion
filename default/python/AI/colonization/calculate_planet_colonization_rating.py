@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo
 from logging import debug
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 import AIDependencies
 import EspionageAI
@@ -52,8 +52,8 @@ def calculate_planet_colonization_rating(
     *,
     planet_id: PlanetId,
     mission_type: MissionType,
-    spec_name: Optional[SpeciesName],
-    detail: Optional[list],
+    spec_name: SpeciesName | None,
+    detail: list | None,
 ) -> float:
     """Returns the colonisation value of a planet."""
     if spec_name is None:

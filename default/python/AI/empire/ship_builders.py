@@ -1,5 +1,4 @@
 from collections.abc import Mapping
-from typing import Union
 
 from common.fo_typing import PlanetId, SpeciesName
 from empire.survey_lock import survey_universe_lock
@@ -7,7 +6,7 @@ from freeorion_tools.caching import cache_for_current_turn
 
 
 @survey_universe_lock
-def can_build_ship_for_species(species_name: Union[SpeciesName, str]):
+def can_build_ship_for_species(species_name: SpeciesName | str):
     return species_name in get_ship_builders()
 
 

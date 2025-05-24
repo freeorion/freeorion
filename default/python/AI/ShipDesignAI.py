@@ -48,7 +48,7 @@ import math
 from collections import Counter, defaultdict
 from collections.abc import Iterable, Sequence
 from logging import debug, error, warning
-from typing import Optional, Union
+from typing import Optional
 
 import AIDependencies
 import FleetUtilsAI
@@ -536,7 +536,7 @@ class ShipDesigner:
         self,
         additional_parts=(),
         additional_hulls: Sequence = (),
-        loc: Optional[Union[int, list[int]]] = None,
+        loc: int | list[int] | None = None,
         verbose: bool = False,
         consider_fleet_count: bool = True,
     ) -> list[tuple[float, int, int, float, DesignStats]]:
