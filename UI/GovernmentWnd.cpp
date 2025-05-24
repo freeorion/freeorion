@@ -171,7 +171,9 @@ namespace {
         main_text += UserString(policy->ShortDescription()) + "\n\n";
 
         if (const auto empire = context.GetEmpire(empire_id)) {
-            bool adopted = empire->PolicyAdopted(policy_name);
+            const auto is_adopted = [empire{empire}](const auto& plc) { return empire->PolicyAdopted(plc); };
+
+            const bool adopted = is_adopted(policy_name);
             bool available = empire->PolicyAvailable(policy_name);
             bool restricted = !empire->PolicyPrereqsAndExclusionsOK(policy_name, context.current_turn);
 
@@ -184,12 +186,7 @@ namespace {
             main_text += boost::io::str(FlexibleFormat(adoption_cost_template) % cost) + "\n\n";
 
             bool exclusion_prereq_line_added = false;
-
-            const auto empire_policies = empire->AdoptedPolicies();
-            for (auto& ex : policy->Exclusions()) {
-                auto ad_it = std::find(empire_policies.begin(), empire_policies.end(), ex);
-                if (ad_it == empire_policies.end())
-                    continue;
+            for (auto& ex : policy->Exclusions() | range_filter(is_adopted)) {
                 main_text += boost::io::str(FlexibleFormat(UserString("POLICY_EXCLUDED"))
                                             % UserString(ex)) + "\n";
                 exclusion_prereq_line_added = true;
@@ -197,9 +194,8 @@ namespace {
 
             const auto empire_initial_policies = empire->InitialAdoptedPolicies();
             for (auto& prereq : policy->Prerequisites()) {
-                auto init_it = std::find(
-                    empire_initial_policies.begin(), empire_initial_policies.end(), prereq);
-                const auto& template_str = init_it == empire_initial_policies.end() ?
+                const bool prereq_in_initial_policies = range_contains(empire_initial_policies, prereq);
+                const auto& template_str = !prereq_in_initial_policies ?
                     UserString("POLICY_PREREQ_MISSING") : UserString("POLICY_PREREQ_MET");
                 main_text += boost::io::str(FlexibleFormat(template_str)
                                             % UserString(prereq)) + "\n";
