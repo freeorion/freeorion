@@ -113,7 +113,7 @@ void GodotClientApp::StartServer() {
     std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
     args.emplace_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.emplace_back("--resource.path");
-    args.emplace_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
+    args.emplace_back("\"" + PathToString(GetOptionsDB().Get<boost::filesystem::path>("resource.path")) + "\"");
 
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty()) {

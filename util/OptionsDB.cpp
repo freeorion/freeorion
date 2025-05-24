@@ -7,6 +7,7 @@
 #include "XMLDoc.h"
 #include "ranges.h"
 
+#include <charconv>
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
@@ -46,6 +47,78 @@ namespace {
         if (str.size() < 2 || str[0] != '"' || str[str.size() - 1] != '"')
             return str;
         return str.substr(1, str.size() - 2);
+    }
+
+    template<typename T>
+    constexpr void AppendNativeCharToXMLText(std::string& text, T ch) {
+        const uint_fast32_t chval = static_cast<uint_fast32_t>(static_cast<std::make_unsigned_t<T>>(ch));
+        switch (chval) {
+        case static_cast<uint_fast32_t>('&'):
+            text.append("&amp;");
+            break;
+        case static_cast<uint_fast32_t>('<'):
+            text.append("&lt;");
+            break;
+        case static_cast<uint_fast32_t>('>'):
+            text.append("&gt;");
+            break;
+        case static_cast<uint_fast32_t>('\''):
+            text.append("&apos;");
+            break;
+        case static_cast<uint_fast32_t>('\"'):
+            text.append("&quot;");
+            break;
+        default:
+            if (chval >= 0x20 && chval <= 0x7f) {
+                text.push_back(static_cast<char>(chval));
+            } else {
+                text.append("&#").append(std::to_string(chval)).append(";");
+            }
+        }
+    }
+
+    template<typename T>
+    std::basic_string<T> ConvertXMLTextToPath(std::string_view input_string) {
+        std::basic_string<T> retval{};
+        for (size_t index = 0; index < input_string.size(); ++index) {
+            const auto ch = input_string[index];
+            if (ch == '&') {
+                const auto semicolon_index = input_string.find(';', index);
+                if (semicolon_index == std::string_view::npos) {
+                    ErrorLogger() << "Can't find semicolon after ampersand in string: " << input_string;
+                    retval.push_back('?');
+                    return retval;                
+                }
+                const auto entity = input_string.substr(index + 1, semicolon_index - index - 1);
+                if (entity == "amp") {
+                    retval.push_back('&');
+                } else if (entity == "lt") {
+                    retval.push_back('<');
+                } else if (entity == "gt") {
+                    retval.push_back('>');
+                } else if (entity == "apos") {
+                    retval.push_back('\'');
+                } else if (entity == "quot") {
+                    retval.push_back('\"');
+                } else if (entity.starts_with('#')) {
+                    const auto number = entity.substr(1);
+                    uint_fast32_t code{0};
+                    if (std::from_chars(number.data(), number.data() + number.size(), code).ec == std::errc{}) {
+                        retval.push_back(static_cast<T>(code));
+                    } else {
+                        ErrorLogger() << "Can't convert decimal code: " << entity;
+                        retval.push_back('?');
+                    }
+                } else {
+                    ErrorLogger() << "Unknown XML entity: " << entity;
+                    retval.push_back('?');
+                }
+                index = semicolon_index;
+            } else {
+                retval.push_back(static_cast<T>(ch));
+            }
+        }
+        return retval;
     }
 
     ///< the master list of abbreviated option names, and their corresponding long-form names
@@ -943,3 +1016,22 @@ std::vector<std::string> StringToList(const std::string& input_string) {
     Tokenizer tokens{input_string, separator};
     return {tokens.begin(), tokens.end()};
 }
+
+std::string PathToXMLText(boost::filesystem::path path) {
+    auto native = path.native();
+    std::string text{};
+    for (auto it = native.cbegin(); it != native.cend(); ++it) {
+        AppendNativeCharToXMLText(text, *it);
+    }
+    return text;
+}
+
+boost::filesystem::path XMLTextToPath(std::string_view input_string)
+{ return {ConvertXMLTextToPath<boost::filesystem::path::value_type>(input_string)}; }
+
+boost::filesystem::path XMLTextToPath(const char* input_string)
+{ return XMLTextToPath(std::string_view{input_string}); }
+
+boost::filesystem::path XMLTextToPath(const std::string& input_string)
+{ return XMLTextToPath(std::string_view{input_string}); }
+
