@@ -1,3 +1,5 @@
+import typing
+
 _basic_types = {str, int, float, bool}
 
 
@@ -14,5 +16,5 @@ def get_name_for_mapping(annotation) -> str:
     elif isinstance(annotation, str):
         return annotation
     else:
-        args = [get_name_for_mapping(x) for x in annotation.__args__]
+        args = [str(get_name_for_mapping(x)) for x in typing.get_args(annotation)]
         return f"{annotation.__name__}[{', '.join(args)}]"
