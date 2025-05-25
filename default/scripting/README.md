@@ -123,7 +123,7 @@ It's recommended to have a Python IDE for this.
 
 
 #### One time setup
-- Install [Python 3.9+](https://www.python.org/downloads/)
+- Install [Python 3.10+](https://www.python.org/downloads/)
 - Open a project in the repository root
 - [optional] install [pre-commit](https://pre-commit.com/) hooks
   - `pip install pre-commit`
