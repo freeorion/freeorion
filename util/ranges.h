@@ -16,7 +16,9 @@ inline constexpr auto& range_transform = std::views::transform;
 inline constexpr auto& range_filter = std::views::filter;
 //inline constexpr auto& range_join = std::views::join; // no equivalent in boost ranges
 inline constexpr auto& range_reverse = std::views::reverse;
+inline constexpr auto& range_drop = std::views::drop;
 inline constexpr auto& range_find_if = std::ranges::find_if;
+inline constexpr auto& range_empty = std::ranges::empty;
 inline constexpr auto& range_any_of = std::ranges::any_of;
 inline constexpr auto& range_copy = std::ranges::copy;
 inline constexpr auto& range_copy_if = std::ranges::copy_if;
@@ -31,6 +33,7 @@ inline constexpr auto& range_end = std::ranges::end;
 # include <boost/range/adaptor/reversed.hpp>
 # include <boost/range/algorithm.hpp>
 # include <boost/range/end.hpp>
+# include <boost/range/empty.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
 # include <boost/algorithm/cxx11/copy_if.hpp>
 inline const auto& range_keys = boost::adaptors::map_keys;
@@ -40,6 +43,10 @@ inline const auto& range_transform = boost::adaptors::transformed;
 inline const auto& range_reverse = boost::adaptors::reversed;
 template <typename... Args>
 inline auto range_find_if(Args... args) { return boost::range::find_if(std::forward<Args>(args)...); }
+
+template <typename... Args>
+inline const auto range_empty(Args&&... args) { return boost::empty(std::forward<Args>(args)...); }
+
 template <typename... Args>
 inline const auto range_any_of(Args... args) { return boost::algorithm::any_of(std::forward<Args>(args)...); }
 template <typename... Args>
@@ -55,6 +62,18 @@ inline auto range_equal(Args... args) { return boost::range::equal_range(std::fo
 template <typename... Args>
 inline auto range_end(Args... args) { return boost::end(std::forward<Args>(args)...); }
 
+struct range_drop {
+    const std::size_t drop = 1u;
+    [[nodiscard]] constexpr explicit range_drop(std::size_t drop_) noexcept : drop(drop_) {}
+};
+inline auto operator|(auto&& r, range_drop drop) {
+    auto begin_it = r.begin();
+    const auto end_it = r.end();
+    const auto sz = static_cast<std::size_t>(boost::distance(r));
+    std::advance(begin_it, std::min(sz, drop.drop));
+    using it_t = std::decay_t<decltype(begin_it)>;
+    return boost::iterator_range<it_t>(begin_it, end_it);
+}
 #endif
 
 #endif
