@@ -224,7 +224,7 @@ void GodotClientApp::NewSinglePlayerGame() {
         if (sm.NumPlayableSpecies() < 1)
             human_player_setup_data.starting_species_name.clear();
         else
-            human_player_setup_data.starting_species_name = sm.playable_begin()->first;
+            human_player_setup_data.starting_species_name = sm.PlayableSpecies().front().first;
     }
 
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games

@@ -887,7 +887,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
                 return ZoomToShipPart(part_name);
         }
 
-        for (const auto& species_name : ClientApp::GetApp()->GetSpeciesManager() | range_keys) {
+        for (const auto& species_name : ClientApp::GetApp()->GetSpeciesManager().AllSpecies() | range_keys) {
             if (boost::iequals(name, UserString(species_name)))
                 return ZoomToSpecies(species_name);
         }
