@@ -384,15 +384,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
         py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"))();
-#if PY_VERSION_HEX < 0x030c0000
-        const auto meta_path_len = py::len(*m_meta_path);
-        for (std::decay_t<decltype(meta_path_len)> i = 0; i < meta_path_len; ++i)
-            m_meta_path->pop();
-#endif
         m_meta_path->append(boost::cref(*this));
         m_meta_path_len = static_cast<int>(py::len(*m_meta_path));
-
-        py::import("sys").attr("modules") = py::dict();
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
