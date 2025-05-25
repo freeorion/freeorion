@@ -17,8 +17,10 @@ inline constexpr auto& range_transform = std::views::transform;
 inline constexpr auto& range_filter = std::views::filter;
 //inline constexpr auto& range_join = std::views::join; // no equivalent in boost ranges
 inline constexpr auto& range_reverse = std::views::reverse;
+inline constexpr auto& range_drop = std::views::drop;
 inline constexpr auto& range_find_if = std::ranges::find_if;
 inline constexpr auto& range_find = std::ranges::find;
+inline constexpr auto& range_empty = std::ranges::empty;
 inline constexpr auto& range_any_of = std::ranges::any_of;
 inline constexpr auto& range_all_of = std::ranges::all_of;
 inline constexpr auto& range_none_of = std::ranges::none_of;
@@ -36,6 +38,7 @@ inline constexpr auto& range_distance = std::ranges::distance;
 # include <boost/range/algorithm.hpp>
 # include <boost/range/begin.hpp>
 # include <boost/range/end.hpp>
+# include <boost/range/empty.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
 # include <boost/algorithm/cxx11/all_of.hpp>
 # include <boost/algorithm/cxx11/none_of.hpp>
@@ -57,6 +60,9 @@ template <typename... Args>
 inline auto range_find_if(Args&&... args) { return boost::range::find_if(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_find(Args&&... args) { return boost::range::find(std::forward<Args>(args)...); }
+
+template <typename... Args>
+inline const auto range_empty(Args&&... args) { return boost::empty(std::forward<Args>(args)...); }
 
 template <typename... Args>
 inline const auto range_any_of(Args&&... args) { return boost::algorithm::any_of(std::forward<Args>(args)...); }
@@ -87,6 +93,19 @@ template <typename... Args>
 inline auto range_count_if(Args&&... args) { return boost::count_if(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_distance(Args&&... args) { return boost::distance(std::forward<Args>(args)...); }
+
+struct range_drop {
+    const std::size_t drop = 1u;
+    [[nodiscard]] constexpr explicit range_drop(std::size_t drop_) noexcept : drop(drop_) {}
+};
+inline auto operator|(auto&& r, range_drop drop) {
+    auto begin_it = r.begin();
+    const auto end_it = r.end();
+    const auto sz = static_cast<std::size_t>(boost::distance(r));
+    std::advance(begin_it, std::min(sz, drop.drop));
+    using it_t = std::decay_t<decltype(begin_it)>;
+    return boost::iterator_range<it_t>(begin_it, end_it);
+}
 #endif
 
 #if defined(__cpp_lib_ranges_contains)
