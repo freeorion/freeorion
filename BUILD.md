@@ -30,7 +30,7 @@ FreeOrion depends on the following software to build:
   * A C++20 compliant compiler - Other Operating Systems
     * [GNU GCC] - 11 or later
     * [Clang] - 10 or later
-  * [Python] - 3.9 or later
+  * [Python] - 3.10 or later
   * [Git]
 
 FreeOrion depends on the following libraries or APIs to run:
@@ -40,7 +40,7 @@ FreeOrion depends on the following libraries or APIs to run:
   * OpenAL - It's recommended to use the [OpenAL Soft] implementation
   * [Boost] - 1.73 or later
   * [zlib]
-  * [libpython] - 3.9 or later
+  * [libpython] - 3.10 or later
   * [FreeType2]
   * [libpng]
   * [libogg]
