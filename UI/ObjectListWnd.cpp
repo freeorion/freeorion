@@ -360,8 +360,8 @@ namespace {
             col_types[{UserStringNop("PRODUCTION_COST"),            UserStringNop("FLEETS_SUBMENU")}] = DesignCostValueRef();
 
             // planet environments species
-            for (const auto& entry : GetSpeciesManager())
-                col_types[{entry.first,                             UserStringNop("PLANET_ENVIRONMENTS_SUBMENU")}] = PlanetEnvForSpecies(entry.first);
+            for (const auto& name : GetSpeciesManager().AllSpecies() | range_keys)
+                col_types[{name,                                    UserStringNop("PLANET_ENVIRONMENTS_SUBMENU")}] = PlanetEnvForSpecies(name);
 
             // all meters
             for (MeterType meter = MeterType(0); meter <= MeterType::METER_SPEED;  // the meter(s) after MeterType::METER_SPEED are part-specific
@@ -928,10 +928,8 @@ private:
             auto row_it = m_string_drop->Insert(GG::Wnd::Create<StringRow>("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
-            for (const auto& entry : GetSpeciesManager()) { // TODO: range_values
-                const std::string& species_name = entry.first;
-                m_string_drop->Insert(GG::Wnd::Create<StringRow>(species_name, GG::Y(ClientUI::Pts())));
-            }
+            for (const auto& sp_name : GetSpeciesManager().AllSpecies() | range_keys)
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(sp_name, GG::Y(ClientUI::Pts())));
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
             // droplist of valid specials

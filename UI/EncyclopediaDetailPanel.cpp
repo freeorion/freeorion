@@ -402,7 +402,7 @@ namespace {
         else if (dir_name == "ENC_SPECIES") {
             // directory populated with list of links to other articles that list species
             if (!exclude_custom_categories_from_dir_name) {
-                for (const auto& species_name : sm | range_keys) {
+                for (const auto& species_name : sm.AllSpecies() | range_keys) {
                     auto& us_name{UserString(species_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
@@ -415,7 +415,7 @@ namespace {
         else if (dir_name == "ENC_HOMEWORLDS") {
             const auto& homeworlds{sm.GetSpeciesHomeworldsMap()};
 
-            for (const auto& species_name : sm | range_keys) {
+            for (const auto& species_name : sm.AllSpecies() | range_keys) {
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, species_name).append(" ");
 
@@ -486,7 +486,7 @@ namespace {
                                 std::forward_as_tuple(slash_thing),
                                 std::forward_as_tuple("\n\n", "  "));
 
-            for (const auto& species_name : sm | range_keys) {
+            for (const auto& species_name : sm.AllSpecies() | range_keys) {
                 if (!homeworlds.contains(species_name) || homeworlds.at(species_name).empty()) {
                     std::string species_entry{
                         LinkTaggedPresetText(VarText::SPECIES_TAG, species_name, UserString(species_name))
@@ -730,7 +730,7 @@ namespace {
                                              std::forward_as_tuple(VarText::BUILDING_TYPE_TAG, building_name));
 
             // species
-            for (auto& [species_name, species] : GGHumanClientApp::GetApp()->GetSpeciesManager())
+            for (auto& [species_name, species] : GGHumanClientApp::GetApp()->GetSpeciesManager().AllSpecies())
                 if (dir_name == "ALL_SPECIES" ||
                    (dir_name == "NATIVE_SPECIES" && species.Native()) ||
                    (dir_name == "PLAYABLE_SPECIES" && species.Playable()) ||
@@ -3079,7 +3079,7 @@ namespace {
 
             return range_any_of(res_tech_names_rng, tech_has_extinct_tag_and_this_tag);
         };
-        auto reported_species_rng = species_manager | range_filter(should_report) |
+        auto reported_species_rng = species_manager.AllSpecies() | range_filter(should_report) |
                                     range_values | range_transform(to_name);
         static_assert(std::is_same_v<std::decay_t<decltype(reported_species_rng.front())>, std::string_view>);
         retval.insert(retval.end(), reported_species_rng.begin(), reported_species_rng.end());
