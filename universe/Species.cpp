@@ -815,6 +815,11 @@ const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const 
     return it != m_species.end() ? &(it->second) : nullptr;
 }
 
+const SpeciesManager::SpeciesTypeMap& SpeciesManager::AllSpecies() const {
+    CheckPendingSpeciesTypes();
+    return m_species;
+}
+
 void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<std::map<std::string, Species>, CensusOrder>>&& future) {
     std::scoped_lock lock(m_species_mutex);
     m_pending_types = std::move(future);
@@ -838,48 +843,10 @@ void SpeciesManager::CheckPendingSpeciesTypes() const {
     m_census_order = std::move(container.second);
 }
 
-SpeciesManager::iterator SpeciesManager::begin() const {
-    CheckPendingSpeciesTypes();
-    return m_species.begin();
-}
-
-SpeciesManager::iterator SpeciesManager::end() const {
-    CheckPendingSpeciesTypes();
-    return m_species.end();
-}
-
-SpeciesManager::playable_iterator SpeciesManager::playable_begin() const
-{ return playable_iterator(PlayableSpecies(), begin(), end()); }
-
-SpeciesManager::playable_iterator SpeciesManager::playable_end() const
-{ return playable_iterator(PlayableSpecies(), end(), end()); }
-
-SpeciesManager::native_iterator SpeciesManager::native_begin() const
-{ return native_iterator(NativeSpecies(), begin(), end()); }
-
-SpeciesManager::native_iterator SpeciesManager::native_end() const
-{ return native_iterator(NativeSpecies(), end(), end()); }
-
 const SpeciesManager::CensusOrder& SpeciesManager::census_order() const {
     CheckPendingSpeciesTypes();
     return m_census_order;
 }
-
-bool SpeciesManager::empty() const {
-    CheckPendingSpeciesTypes();
-    return m_species.empty();
-}
-
-int SpeciesManager::NumSpecies() const {
-    CheckPendingSpeciesTypes();
-    return m_species.size();
-}
-
-int SpeciesManager::NumPlayableSpecies() const
-{ return std::distance(playable_begin(), playable_end()); }
-
-int SpeciesManager::NumNativeSpecies() const
-{ return static_cast<int>(std::distance(native_begin(), native_end())); }
 
 namespace {
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
@@ -887,34 +854,32 @@ namespace {
 #else
     const std::string EMPTY_STRING;
 #endif
+
+    [[nodiscard]] const std::string& PickIdxOrEmpty(auto&& rng, std::size_t idx) {
+        const std::size_t sz = range_distance(rng);
+        if (sz == 0) return EMPTY_STRING;
+        auto rng_drop = rng | range_drop(idx % sz);
+        return range_empty(rng_drop) ? EMPTY_STRING : rng_drop.front();
+    }
+
+    [[nodiscard]] const std::string& PickRandOrEmpty(auto&& rng) {
+        const std::size_t sz = range_distance(rng);
+        if (sz == 0) return EMPTY_STRING;
+        const auto idx = RandInt(0, sz - 1);
+        auto rng_drop = rng | range_drop(idx);
+        return range_empty(rng_drop) ? EMPTY_STRING : rng_drop.front();
+    }
 }
 
-const std::string& SpeciesManager::RandomSpeciesName() const {
-    CheckPendingSpeciesTypes();
-    if (m_species.empty())
-        return EMPTY_STRING;
+const std::string& SpeciesManager::RandomSpeciesName() const
+{ return PickRandOrEmpty(AllSpecies() | range_keys); }
 
-    int species_idx = RandInt(0, static_cast<int>(m_species.size()) - 1);
-    return std::next(begin(), species_idx)->first;
-}
+const std::string& SpeciesManager::RandomPlayableSpeciesName() const
+{ return PickRandOrEmpty(PlayableSpecies() | range_keys); }
 
-const std::string& SpeciesManager::RandomPlayableSpeciesName() const {
-    if (NumPlayableSpecies() <= 0)
-        return EMPTY_STRING;
-
-    int species_idx = RandInt(0, NumPlayableSpecies() - 1);
-    return std::next(playable_begin(), species_idx)->first;
-}
-
-const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
-    if (NumPlayableSpecies() <= 0)
-        return EMPTY_STRING;
-
-    int species_idx = id % NumPlayableSpecies();
-    DebugLogger() << "SpeciesManager::SequentialPlayableSpeciesName has " << NumPlayableSpecies() << " and is given id " << id << " yielding index " << species_idx;
-    return std::next(playable_begin(), species_idx)->first;
-}
-
+const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const
+{ return PickIdxOrEmpty(PlayableSpecies() | range_keys, static_cast<std::size_t>(id)); }
+        
 void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids) {
     m_species_homeworlds.clear();
     using homeworlds_value_t = decltype(m_species_homeworlds)::value_type;
