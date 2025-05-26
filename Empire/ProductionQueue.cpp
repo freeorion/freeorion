@@ -712,9 +712,8 @@ void ProductionQueue::Update(const ScriptingContext& context,
             const int location_id = element.location;
 
             // search through groups to find object
-            const auto group_it = std::find_if(available_pp.begin(), available_pp.end(),
-                                               [location_id](const auto& group_pp)
-                                               { return group_pp.first.contains(location_id); });
+            const auto group_contains_location = [location_id](const auto& group_pp) noexcept { return group_pp.first.contains(location_id); };
+            const auto group_it = range_find_if(available_pp, group_contains_location);
             if (group_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
                 retval.emplace_back();

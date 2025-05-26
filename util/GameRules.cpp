@@ -1,5 +1,7 @@
 #include "GameRules.h"
 
+#include "ranges.h"
+
 namespace {
     std::vector<GameRulesFn>& GameRulesRegistry() {
         static std::vector<GameRulesFn> game_rules_registry;
@@ -36,8 +38,8 @@ namespace {
         if (category.empty())
             return static_cast<int8_t>(GameRuleCategories::GameRuleCategory::GENERAL);
 
-        const auto it = std::find_if(category_ranks.begin(), category_ranks.end(),
-                                     [category](auto entry) { return entry.second == category; });
+        const auto it = range_find_if(category_ranks,
+                                     [category](const auto& entry) noexcept { return entry.second == category; });
         return static_cast<int8_t>(
             (it == category_ranks.end() ? GameRuleCategories::GameRuleCategory::UNDEFINED : it->first));
     }
