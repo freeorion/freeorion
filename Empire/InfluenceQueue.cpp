@@ -51,7 +51,7 @@ float InfluenceQueue::AllocatedStockpileIP() const noexcept
 { return 0.0f; } // TODO: implement this...
 
 InfluenceQueue::const_iterator InfluenceQueue::find(const std::string& item_name) const
-{ return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
+{ return range_find_if(m_queue, [&](const auto& e) noexcept { return e.name == item_name; }); }
 
 const InfluenceQueue::Element& InfluenceQueue::operator[](std::size_t i) const {
     if (i >= m_queue.size())
@@ -83,8 +83,8 @@ void InfluenceQueue::Update(const ScriptingContext& context,
         for (const auto& [policy_name, adoption_turn] : empire->TurnsPoliciesAdopted()) {
             if (adoption_turn != context.current_turn)
                 continue;
-            const auto ct_it = std::find_if(policy_costs.begin(), policy_costs.end(),
-                                            [pn{policy_name}](const auto& ct) { return ct.first == pn; });
+            const auto is_policy = [pn{policy_name}](const auto& ct) noexcept { return ct.first == pn; };
+            const auto ct_it = range_find_if(policy_costs, is_policy);
             if (ct_it == policy_costs.end()) {
                 ErrorLogger() << "Missing policy " << policy_name << " cost time in InfluenceQueue::Update!";
                 continue;
@@ -104,8 +104,8 @@ void InfluenceQueue::Update(const ScriptingContext& context,
     const float spending_on_annexation_IP = [&annexed_planets, &annex_costs]() {
         float spending_on_annexation_IP = 0.0f;
         for (const auto planet_id : annexed_planets) {
-            const auto p_it = std::find_if(annex_costs.begin(), annex_costs.end(),
-                                           [planet_id](const auto& pac) { return pac.first == planet_id; });
+            const auto is_planet = [planet_id](const auto& pac) noexcept { return pac.first == planet_id; };
+            const auto p_it = range_find_if(annex_costs, is_planet);
             if (p_it == annex_costs.end()) {
                 ErrorLogger() << "Missing annexation cost for plaent " << planet_id << " in InfluenceQueue::Update!";
                 continue;
@@ -131,7 +131,7 @@ void InfluenceQueue::erase(int i) {
 }
 
 InfluenceQueue::iterator InfluenceQueue::find(const std::string& item_name)
-{ return std::find_if(begin(), end(), [&](const auto& e) { return e.name == item_name; }); }
+{ return range_find_if(m_queue, [&](const auto& e) noexcept { return e.name == item_name; }); }
 
 InfluenceQueue::Element& InfluenceQueue::operator[](int i) {
     assert(0 <= i && std::cmp_less(i, m_queue.size()));

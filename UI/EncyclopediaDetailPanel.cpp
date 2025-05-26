@@ -897,8 +897,8 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     auto custom_block_factory_map{GG::RichText::DefaultBlockFactoryMap()};
 
     // insert or replace plain text factory with one made above
-    auto plain_text_it = std::find_if(custom_block_factory_map.begin(), custom_block_factory_map.end(),
-                                      [](const auto& fac) { return fac.first == GG::RichText::PLAINTEXT_TAG; });
+    static constexpr auto is_plaintext = [](const auto& fac) noexcept { return fac.first == GG::RichText::PLAINTEXT_TAG; };
+    auto plain_text_it = range_find_if(custom_block_factory_map, is_plaintext);
     if (plain_text_it == custom_block_factory_map.end())
         custom_block_factory_map.emplace_back(GG::RichText::PLAINTEXT_TAG, std::move(factory));
     else
