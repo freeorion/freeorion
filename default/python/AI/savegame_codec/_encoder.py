@@ -21,8 +21,9 @@ import base64
 import collections
 import json
 import zlib
+from collections.abc import Callable
 from enum import IntEnum
-from typing import Any, Callable
+from typing import Any
 
 from ._definitions import (
     ENUM_PREFIX,
