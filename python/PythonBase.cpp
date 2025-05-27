@@ -13,6 +13,33 @@
 namespace fs = boost::filesystem;
 namespace py = boost::python;
 
+namespace {
+    template<typename T>
+    py::object PathToPythonString(const std::basic_string<T>& filename) {
+        PyObject *py_filename;
+        if constexpr (std::is_same_v<T, wchar_t>) {
+            py_filename = PyUnicode_FromWideChar(filename.c_str(), filename.size());
+        } else {
+            py_filename = PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
+        }
+        if (!py_filename) {
+            ErrorLogger() << "Failed to convert filename to Python str";
+            py::throw_error_already_set();
+        }
+        return py::object{py::handle<>(py_filename)};
+    }
+
+    template<typename T>
+    py::object PathToPythonBytes(const std::basic_string<T>& filename) {
+        PyObject *py_filename = PyBytes_FromStringAndSize(reinterpret_cast<const char*>(filename.c_str()), filename.size() * sizeof(T));
+        if (!py_filename) {
+            ErrorLogger() << "Failed to convert filename to Python bytes";
+            py::throw_error_already_set();
+        }
+        return py::object{py::handle<>(py_filename)};
+    }
+}
+
 // Python module for logging functions
 BOOST_PYTHON_MODULE(freeorion_logger) {
     boost::python::docstring_options doc_options(true, true, false);
@@ -110,12 +137,9 @@ void PythonBase::SetCurrentDir(const fs::path& dir) {
         ErrorLogger() << "Tried setting current dir to non-existing dir: " << PathToString(dir);
         return;
     }
-    py::str script = "import os\n"
-        "os.chdir(r'";
-    script += dir.native();
-    script += "')\n"
-        "print ('Python current directory set to', os.getcwd())";
-    exec(script, *m_namespace, *m_namespace);
+    py::object py_os = py::import("os");
+    py_os.attr("chdir")(PathToPythonBytes(dir.native()));
+    InfoLogger() << "Python current directory set to " << py::extract<std::string>(py::str(py_os.attr("getcwd")()))();
 }
 
 void PythonBase::AddToSysPath(const fs::path& dir) {
@@ -123,11 +147,8 @@ void PythonBase::AddToSysPath(const fs::path& dir) {
         ErrorLogger() << "Tried adding non-existing dir to sys.path: " << PathToString(dir);
         return;
     }
-    py::str script = "import sys\n"
-        "sys.path.append(r'";
-    script += dir.native();
-    script += "')";
-    exec(script, *m_namespace, *m_namespace);
+    py::object py_sys = py::import("sys");
+    py_sys.attr("path").attr("append")(PathToPythonString(dir.native()));
 }
 
 void PythonBase::SetErrorModule(py::object& module)
