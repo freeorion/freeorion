@@ -54,8 +54,8 @@ float ResourcePool::TotalOutput() const {
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
-    auto it = std::find_if(m_connected_object_groups_resource_output.begin(), m_connected_object_groups_resource_output.end(),
-                           [object_id](const auto& entry) { return entry.first.contains(object_id); });
+    auto it = range_find_if(m_connected_object_groups_resource_output,
+                            [object_id](const auto& entry) { return entry.first.contains(object_id); });
     if (it != m_connected_object_groups_resource_output.end())
         return it->second;
 
@@ -66,14 +66,13 @@ float ResourcePool::GroupOutput(int object_id) const {
 float ResourcePool::TargetOutput() const {
     return std::transform_reduce(m_connected_object_groups_resource_target_output.begin(),
                                  m_connected_object_groups_resource_target_output.end(),
-                                 0.0f, std::plus{}, [](const auto& entry) { return entry.second; });
+                                 0.0f, std::plus{}, [](const auto& entry) noexcept { return entry.second; });
 }
 
 float ResourcePool::GroupTargetOutput(int object_id) const {
     // find group containing specified object
-    auto it = std::find_if(m_connected_object_groups_resource_target_output.begin(),
-                           m_connected_object_groups_resource_target_output.end(),
-                           [object_id](const auto& entry) { return entry.first.contains(object_id); });
+    auto it = range_find_if(m_connected_object_groups_resource_target_output,
+                            [object_id](const auto& entry) { return entry.first.contains(object_id); });
     if (it != m_connected_object_groups_resource_target_output.end())
         return it->second;
 

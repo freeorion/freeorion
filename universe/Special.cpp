@@ -28,7 +28,7 @@ std::vector<std::string_view> SpecialsManager::SpecialNames() const {
 
 const Special* SpecialsManager::GetSpecial(std::string_view name) const {
     CheckPendingSpecialsTypes();
-    auto name_it = std::find(m_special_names.begin(), m_special_names.end(), name);
+    auto name_it = range_find(m_special_names, name);
     if (name_it == m_special_names.end())
         return nullptr;
     auto offset = std::distance(m_special_names.begin(), name_it);
