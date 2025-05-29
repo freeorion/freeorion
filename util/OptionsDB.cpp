@@ -335,8 +335,8 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
     }
 
     const auto find_section = [this](const auto section_name) {
-        const auto has_section_name = [section_name](const auto& s) { return s.name == section_name; };
-        return std::find_if(m_sections.begin(), m_sections.end(), has_section_name);
+        const auto has_section_name = [section_name](const auto& s) noexcept { return s.name == section_name; };
+        return range_find_if(m_sections, has_section_name);
     };
 
     // sort options into common sections
@@ -416,8 +416,8 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
     }
 
     const auto find_section = [this](const auto section_name) {
-        const auto has_section_name = [section_name](const auto& s) { return s.name == section_name; };
-        return std::find_if(m_sections.begin(), m_sections.end(), has_section_name);
+        const auto has_section_name = [section_name](const auto& s) noexcept { return s.name == section_name; };
+        return range_find_if(m_sections, has_section_name);
     };
 
     // print description of command_line arg as section
@@ -857,8 +857,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, std::string_view sec
 void OptionsDB::AddSection(const char* name, std::string description,
                            std::function<bool (const std::string&)> option_predicate)
 {
-    auto it = std::find_if(m_sections.begin(), m_sections.end(),
-                           [sec_name{std::string_view{name}}](const auto& sec) { return sec.name == sec_name; });
+    const auto has_section_name = [sec_name{std::string_view{name}}](const auto& sec) noexcept { return sec.name == sec_name; };
+    auto it = range_find_if(m_sections, has_section_name);
     if (it != m_sections.end()) {
         // if previously existing section, update description/predicate if empty/null
         if (!description.empty() && it->description.empty())
