@@ -2007,28 +2007,24 @@ void MapWnd::RenderSystems() {
     std::vector<std::pair<int, int>> colony_count_by_empire_id;
     colony_count_by_empire_id.reserve(static_cast<std::size_t>(empires.NumEmpires()) + 1u);
     auto increment_empire_colony_count = [&colony_count_by_empire_id](int col_empire_id) {
-        auto it = std::find_if(colony_count_by_empire_id.begin(), colony_count_by_empire_id.end(),
-                               [col_empire_id](const auto& e) { return e.first == col_empire_id; });
+        const auto is_empire_id = [col_empire_id](const auto& e) noexcept { return e.first == col_empire_id; };
+        auto it = range_find_if(colony_count_by_empire_id, is_empire_id);
         if (it != colony_count_by_empire_id.end())
             it->second++;
         else
             colony_count_by_empire_id.emplace_back(col_empire_id, 1);
     };
 
+    static constexpr auto to_id_clr = [](const auto& e) noexcept { return std::pair{e.first, e.second->Color()}; };
+    auto id_clr_rng = empires | range_transform(to_id_clr);
+    const std::vector<std::pair<int, GG::Clr>> empire_colours(id_clr_rng.begin(), id_clr_rng.end());
 
-    std::vector<std::pair<int, GG::Clr>> empire_colours;
-    empire_colours.reserve(colony_count_by_empire_id.size());
-    std::transform(empires.begin(), empires.end(), std::back_inserter(empire_colours),
-                   [](const auto& e) { return std::pair{e.first, e.second->Color()}; });
-    auto get_empire_colour = [&empire_colours,
-                              neutral_colour{GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color")}]
-                              (int empire_id)
+    const auto neutral_colour = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
+    const auto get_empire_colour = [&empire_colours, neutral_colour](int empire_id)
     {
-        auto it = std::find_if(empire_colours.begin(), empire_colours.end(),
-                               [empire_id](const auto& id_clr) { return empire_id == id_clr.first; });
-        if (it != empire_colours.end())
-            return it->second;
-        return neutral_colour;
+        const auto is_empire_id = [empire_id](const auto& id_clr) noexcept { return empire_id == id_clr.first; };
+        auto it = range_find_if(empire_colours, is_empire_id);
+        return (it != empire_colours.end()) ? it->second : neutral_colour;
     };
 
     m_scanline_circle_vertices.clear();
@@ -5989,8 +5985,7 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (!popup)
         return;
 
-    auto it = std::find_if(m_popups.begin(), m_popups.end(),
-                           [popup](const auto& xx){ return xx.lock().get() == popup;});
+    auto it = range_find_if(m_popups, [popup](const auto& xx){ return xx.lock().get() == popup;});
     if (it != m_popups.end())
         m_popups.erase(it);
 }
