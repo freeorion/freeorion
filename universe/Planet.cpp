@@ -557,9 +557,9 @@ bool Planet::FocusAvailable(std::string_view focus, const ScriptingContext& cont
     const auto* species = context.species.GetSpecies(this->SpeciesName());
     if (!species)
         return false;
+    const auto is_focus = [focus](const FocusType& focus_type) noexcept { return focus_type.Name() == focus; };
     const auto& foci = species->Foci();
-    const auto it = std::find_if(foci.begin(), foci.end(),
-                                 [focus](const FocusType& focus_type) noexcept { return focus_type.Name() == focus; });
+    const auto it = range_find_if(foci, is_focus);
     if (it == foci.end())
         return false;
     const auto* location = it->Location();

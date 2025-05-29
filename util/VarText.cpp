@@ -263,8 +263,8 @@ namespace {
     std::pair<boost::optional<std::string>, bool> EvalContextSub(
         std::string_view tag, std::string_view value, const ScriptingContext& context)
     {
-        const auto it = std::find_if(context_substitution_map.begin(), context_substitution_map.end(),
-                                     [tag](const auto& e) { return e.first == tag; });
+        const auto it = range_find_if(context_substitution_map,
+                                      [tag](const auto& e) noexcept { return e.first == tag; });
         if (it == context_substitution_map.end())
             return {boost::none, false}; // no such substitution found
         const auto& sub_func = it->second;
@@ -276,8 +276,8 @@ namespace {
     std::pair<boost::optional<std::string>, bool> EvalNoContextSub(
         std::string_view tag, std::string_view value)
     {
-        const auto it = std::find_if(no_context_substitution_map.begin(), no_context_substitution_map.end(),
-                                     [tag](const auto& e) { return e.first == tag; });
+        const auto it = range_find_if(no_context_substitution_map,
+                                      [tag](const auto& e) noexcept { return e.first == tag; });
         if (it == no_context_substitution_map.end())
             return {boost::none, false}; // no such substitution found
         const auto& sub_func = it->second;
