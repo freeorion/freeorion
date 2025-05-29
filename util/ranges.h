@@ -9,6 +9,7 @@
 #endif
 
 #if (USING_STD_RANGES)
+# include <algorithm>
 # include <ranges>
 inline constexpr auto& range_keys = std::views::keys;
 inline constexpr auto& range_values = std::views::values;
