@@ -847,7 +847,7 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
         return (it != rng.end()) ? *it : nullptr;
 
     } else if constexpr (invokable_on_const_entry) {
-        auto it = std::find_if(map.begin(), map.end(), pred);
+        auto it = range_find_if(map, pred);
         return (it != map.end()) ? it->second : nullptr;
 
     } else if constexpr (invokable_on_const_reference) {
@@ -856,7 +856,7 @@ std::shared_ptr<const std::decay_t<T>> ObjectMap::get(Pred pred) const
         return (it != rng.end()) ? it->second : nullptr;
 
     } else if constexpr (invokable_on_int) {
-        auto it = std::find_if(map.begin(), map.end(), [&pred](const auto& id_obj) { return pred(id_obj->first); });
+        auto it = range_find_if(map, [&pred](const auto& id_obj) { return pred(id_obj->first); });
         return (it != map.end()) ? it->second : nullptr;
 
     } else {
@@ -893,7 +893,7 @@ const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
         return (it != map.end()) ? it->get() : nullptr;
 
     } else if constexpr (invokable_on_const_entry) {
-        auto it = std::find_if(map.begin(), map.end(), pred);
+        auto it = range_find_if(map, pred);
         return (it != map.end()) ? it->second.get() : nullptr;
 
     } else if constexpr (invokable_on_const_reference) {

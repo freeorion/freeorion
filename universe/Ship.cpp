@@ -378,9 +378,9 @@ const std::string& Ship::PublicName(int empire_id) const {
 
 const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) const {
     const Meter* retval = nullptr;
-    const auto it = std::find_if(m_part_meters.begin(), m_part_meters.end(),
-                                 [type, &part_name](const auto& name_type)
-                                 { return name_type.first.first == part_name && name_type.first.second == type; });
+    const auto it = range_find_if(m_part_meters,
+                                  [type, &part_name](const auto& name_type)
+                                  { return name_type.first.first == part_name && name_type.first.second == type; });
     if (it != m_part_meters.end())
         retval = &it->second;
     return retval;
@@ -388,9 +388,9 @@ const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) co
 
 Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
     Meter* retval = nullptr;
-    const auto it = std::find_if(m_part_meters.begin(), m_part_meters.end(),
-                                 [type, &part_name](const auto& name_type)
-                                 { return name_type.first.first == part_name && name_type.first.second == type; });
+    const auto it = range_find_if(m_part_meters,
+                                  [type, &part_name](const auto& name_type)
+                                  { return name_type.first.first == part_name && name_type.first.second == type; });
     if (it != m_part_meters.end())
         retval = &it->second;
     return retval;

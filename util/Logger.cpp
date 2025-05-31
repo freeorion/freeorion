@@ -24,6 +24,7 @@
 #include <boost/unordered_map.hpp>
 
 #include "Directories.h"
+#include "ranges.h"
 
 #ifdef _MSC_VER
 #  include <ctime>
@@ -237,8 +238,8 @@ namespace {
     LogLevel GetSourceThreshold(std::string_view source) {
         std::scoped_lock lock(severity_filter_mutex);
 
-        auto it = std::find_if(severity_filters.begin(), severity_filters.end(),
-                               [source](const auto& src_severity) { return src_severity.first == source; });
+        const auto is_src = [source](const auto& src_severity) noexcept { return src_severity.first == source; };
+        auto it = range_find_if(severity_filters, is_src);
         return (it == severity_filters.end()) ? LogLevel::error : it->second;
     }
 
@@ -249,8 +250,8 @@ namespace {
         severity_filter[source] = used_threshold;
         logging::core::get()->set_filter(severity_filter);
 
-        auto it = std::find_if(severity_filters.begin(), severity_filters.end(),
-                               [&source](auto& src_severity) { return src_severity.first == source; });
+        const auto is_src = [&source](const auto& src_severity) noexcept { return src_severity.first == source; };
+        auto it = range_find_if(severity_filters, is_src);
         if (it == severity_filters.end())
             severity_filters.emplace_back(std::move(source), threshold);
         else

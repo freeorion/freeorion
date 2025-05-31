@@ -334,8 +334,8 @@ TextLinker::TextLinker()
 { RegisterLinkTags(); }
 
 void TextLinker::SetDecorator(std::string_view link_type, DecoratorType dt) {
-    auto it = std::find_if(m_decorators.begin(), m_decorators.end(),
-                           [link_type](const auto& deco) { return deco.first == link_type; });
+    const auto is_link_type = [link_type](const auto& deco) noexcept { return deco.first == link_type; };
+    auto it = range_find_if(m_decorators, is_link_type);
     if (it != m_decorators.end())
         it->second = dt;
     else
@@ -344,15 +344,15 @@ void TextLinker::SetDecorator(std::string_view link_type, DecoratorType dt) {
 }
 
 std::string TextLinker::LinkDefaultFormatTag(const Link& link, const std::string& content) const {
-    const auto it = std::find_if(m_decorators.begin(), m_decorators.end(),
-                                 [dt{link.type}](const auto& deco) { return deco.first == dt; });
+    const auto is_link_type = [dt{link.type}](const auto& deco) noexcept { return deco.first == dt; };
+    const auto it = range_find_if(m_decorators, is_link_type);
     const auto dt = (it != m_decorators.end() ? it->second : DecoratorType::Default);
     return Decorate(dt, link.data, content);
 }
 
 std::string TextLinker::LinkRolloverFormatTag(const Link& link, const std::string& content) const {
-    const auto it = std::find_if(m_decorators.begin(), m_decorators.end(),
-                                 [dt{link.type}](const auto& deco) { return deco.first == dt; });
+    const auto is_link_type = [dt{link.type}](const auto& deco) noexcept { return deco.first == dt; };
+    const auto it = range_find_if(m_decorators, is_link_type);
     const auto dt = (it != m_decorators.end() ? it->second : DecoratorType::Default);
     return DecorateRollover(dt, link.data, content);
 }

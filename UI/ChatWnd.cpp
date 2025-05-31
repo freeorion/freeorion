@@ -159,7 +159,7 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(special_name));
     }
      // add species names
-    for (const auto& name : context.species | range_keys) {
+    for (const auto& name : context.species.AllSpecies() | range_keys) {
         if (!name.empty())
             m_game_words.insert(UserString(name));
     }

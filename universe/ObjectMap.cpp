@@ -228,7 +228,7 @@ void ObjectMap::TypedInsertExisting(int ID, std::shared_ptr<ObjectType> obj) {
 
     auto& evec = ExistingVec<OT>();
     const auto* raw_obj = obj.get();
-    if (std::find(evec.begin(), evec.end(), raw_obj) == evec.end()) // avoid inserting duplicates
+    if (!range_contains(evec, raw_obj)) // avoid inserting duplicates
         evec.push_back(raw_obj);
 
     //std::cout << obj->ID() << " -> " << ID << " (" << to_string(raw_obj->ObjectType()) << ") "
@@ -303,12 +303,12 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
 
     // remove from existing and core vectors and maps...
     auto erase_from_vec = [o{result.get()}](auto& vec) {
-        const auto it = std::find(vec.begin(), vec.end(), o);
+        const auto it = range_find(vec , o);
         if (it != vec.end()) // cannot pass end() to vector::erase
             vec.erase(it);
     };
     ApplyToExistingVecs(erase_from_vec);
-    auto erase_from_map = [id](auto& map) { map.erase(id); };
+    const auto erase_from_map = [id](auto& map) noexcept(noexcept(map.erase(id))) { map.erase(id); };
     ApplyToExistingMaps(erase_from_map);
     ApplyToCoreMaps(erase_from_map);
 
@@ -316,7 +316,7 @@ std::shared_ptr<UniverseObject> ObjectMap::erase(int id) {
 }
 
 namespace {
-    constexpr auto clear_container = [](auto& c) { c.clear(); };
+    constexpr auto clear_container = [](auto& c) noexcept(noexcept(c.clear())) { c.clear(); };
 }
 
 void ObjectMap::clear() {
