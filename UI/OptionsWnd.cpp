@@ -547,6 +547,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "ui.map.sidepanel.planet.shown", UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
     BoolOption(current_page, 0, "ui.reposition.auto.enabled", UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
     BoolOption(current_page, 0, "ui.map.messages.timestamp.shown", UserString("OPTIONS_DISPLAY_TIMESTAMP"));
+    BoolOption(current_page, 0, "ui.map.sidepanel.stale-buildings.shown", UserString("OPTIONS_SHOW_SIDEPANEL_STALE_BUILDING"));
 
     // manual reposition windows button
     auto window_reset_button = Wnd::Create<CUIButton>(UserString("OPTIONS_WINDOW_RESET"));
