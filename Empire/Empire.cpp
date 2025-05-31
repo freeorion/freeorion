@@ -465,25 +465,16 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
 
     // is there an exclusion conflict?
     for (auto& already_adopted_policy_name : m_adopted_policies | range_keys) {
-        if (std::any_of(to_adopt_exclusions.begin(), to_adopt_exclusions.end(),
-                        [a{already_adopted_policy_name}](auto& x) { return x == a; }))
-        {
-            // policy to be adopted has an exclusion with an already-adopted policy
-            return false;
-        }
+        if (range_contains(to_adopt_exclusions, already_adopted_policy_name))
+            return false; // policy to be adopted has an exclusion with an already-adopted policy
 
         const Policy* already_adopted_policy = GetPolicy(already_adopted_policy_name);
         if (!already_adopted_policy) {
             ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name;
             continue;
         }
-        const auto& adopted_exclusions = already_adopted_policy->Exclusions();
-        if (std::any_of(adopted_exclusions.begin(), adopted_exclusions.end(),
-                        [name](const auto& x) { return name == x; }))
-        {
-            // already-adopted policy has an exclusion with the policy to be adopted
-            return false;
-        }
+        if (range_contains(already_adopted_policy->Exclusions(), name))
+            return false; // already-adopted policy has an exclusion with the policy to be adopted
     }
 
     // are there any unmet prerequisites (with the initial adopted policies this turn)
@@ -622,10 +613,8 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) con
     if (!tech)
         return false;
     const auto& prereqs = tech->Prerequisites();
-    bool one_unresearched = std::any_of(prereqs.begin(), prereqs.end(),
-                                        [&](const auto& p) -> bool { return !m_techs.contains(p); });
-    bool one_researched = std::any_of(prereqs.begin(), prereqs.end(),
-                                      [&](const auto& p) -> bool { return m_techs.contains(p); });
+    const bool one_unresearched = range_any_of(prereqs, [this](const auto& p) -> bool { return !m_techs.contains(p); });
+    const bool one_researched = range_any_of(prereqs, [this](const auto& p) -> bool { return m_techs.contains(p); });
     return one_unresearched && one_researched;
 }
 
@@ -2393,15 +2382,14 @@ void Empire::CheckProductionProgress(
                                  INVALID_OBJECT_ID : elem.location);
         const auto& item = elem.item;
         const std::string_view item_name = item.name;
-        auto same_item_and_loc = [location_id, bt{item.build_type}, did{item.design_id}, item_name]
-            (const auto& q_item_time)
+        auto same_item_and_loc =
+            [location_id, bt{item.build_type}, did{item.design_id}, item_name](const auto& q_item_time)
         {
             return location_id == q_item_time.location_id && bt == q_item_time.build_type &&
                 did == q_item_time.design_id && item_name == q_item_time.name;
         };
-        if (std::any_of(queue_item_costs_and_times.begin(), queue_item_costs_and_times.end(),
-                        same_item_and_loc))
-        { continue; } // already have this item and location cached
+        if (range_any_of(queue_item_costs_and_times, same_item_and_loc))
+            continue; // already have this item and location cached
 
         auto [cost, time] = elem.ProductionCostAndTime(context);
         queue_item_costs_and_times.emplace_back(location_id, item.build_type, item.design_id,
