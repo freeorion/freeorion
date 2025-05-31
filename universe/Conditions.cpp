@@ -127,6 +127,11 @@ namespace {
         retval.push_back(std::forward<decltype(thing)>(thing));
         return retval;
     }
+
+    constexpr auto not_null = [](const auto& o) noexcept -> bool { return !!o; };
+    constexpr auto is_false = [](const auto& p) noexcept -> bool { return !p; };
+    constexpr auto lc_invariant = [](const auto& e) { return !e || e->LocalCandidateInvariant(); };
+    constexpr auto get_raw = [](const auto& xx) noexcept(noexcept(xx.get())) { return xx.get(); };
 }
 
 namespace Condition {
@@ -168,9 +173,9 @@ namespace Condition {
         ConditionDescriptionAndTest(denested_conditions, source_context, candidate);
 
     const auto result_rng = condition_description_and_test_results | range_values;
-    static constexpr auto is_true = [](const bool b) { return b; };
-    const bool all_conditions_match_candidate = std::all_of(result_rng.begin(), result_rng.end(), is_true);
-    const bool at_least_one_condition_matches_candidate = std::any_of(result_rng.begin(), result_rng.end(), is_true);
+    static constexpr auto is_true = [](const bool b) noexcept { return b; };
+    const bool all_conditions_match_candidate = range_all_of(result_rng, is_true);
+    const bool at_least_one_condition_matches_candidate = range_any_of(result_rng, is_true);
 
 
     // concatenate (non-duplicated) single-description results
@@ -219,12 +224,11 @@ bool Condition::EvalAny(const ScriptingContext& parent_context,
                         std::span<const UniverseObjectCXBase*> candidates) const
 {
     try {
-        return std::any_of(candidates.begin(), candidates.end(),
-                           [cond{this}, &parent_context](const auto* candidate) -> bool
-        {
+        const auto matches_this = [cond{this}, &parent_context](const auto* candidate) -> bool {
             const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
             return cond->Match(candidate_context); // this requies a derived Condition class to override either this EvalAny or Match
-        });
+        };
+        return range_any_of(candidates, matches_this);
 
     } catch (const std::exception& e) {
         static std::atomic<uint32_t> fail_count = 0;
@@ -704,8 +708,8 @@ namespace {
             std::vector<std::pair<uint32_t, SortKeyType>> inv_histogram; // TODO: should this be a string_view if SortKeyType is string?
             inv_histogram.reserve(histogram.size());
             using inv_h_entry_t = typename decltype(inv_histogram)::value_type;
-            std::transform(histogram.begin(), histogram.end(), std::back_inserter(inv_histogram),
-                           [](const auto& h) { return inv_h_entry_t{h.second, h.first}; });
+            static constexpr auto swap_fs = [](const auto& h) { return inv_h_entry_t{h.second, h.first}; };
+            std::transform(histogram.begin(), histogram.end(), std::back_inserter(inv_histogram), swap_fs);
             // sort with more common entries first
             std::stable_sort(inv_histogram.begin(), inv_histogram.end(), std::greater<>{});
 
@@ -1257,12 +1261,10 @@ namespace {
                 break;
 
             case EmpireAffiliationType::AFFIL_CAN_SEE: {
-                if (m_empire_id != ALL_EMPIRES)
-                    return m_context.ContextVis(candidate->ID(), m_empire_id) >= Visibility::VIS_BASIC_VISIBILITY;
-                const auto& empire_ids = m_context.EmpireIDs();
-                return std::any_of(empire_ids.begin(), empire_ids.end(),
-                                   [this, cid{candidate->ID()}](const auto empire_id)
-                                   { return m_context.ContextVis(cid, m_empire_id) >= Visibility::VIS_BASIC_VISIBILITY; });
+                const auto can_see_candidate = [this, cid{candidate->ID()}](const auto empire_id)
+                { return m_context.ContextVis(cid, empire_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+                return (m_empire_id != ALL_EMPIRES) ?
+                    can_see_candidate(m_empire_id) : range_any_of(m_context.EmpireIDs(), can_see_candidate);
                 break;
             }
 
@@ -1490,8 +1492,7 @@ namespace {
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
     m_names(std::move(names)), // TODO: remove any nullptr names?
-    m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
-                                        [](const auto& e) { return e->LocalCandidateInvariant(); }))
+    m_names_local_invariant(range_all_of(m_names, lc_invariant))
 {}
 
 Homeworld::Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -1562,19 +1563,24 @@ namespace {
 
             if (m_names.empty()) {
                 // match homeworlds for any species
-                return (std::any_of(m_species_homeworlds.begin(), m_species_homeworlds.end(),
-                                   [planet_id](const auto& name_ids)
-                                   { return name_ids.second.contains(planet_id); }));
+                const auto contains_candidate_planet_id = [planet_id](const auto& species_homeworld_ids)
+                { return species_homeworld_ids.second.contains(planet_id); };
+
+                return range_any_of(m_species_homeworlds, contains_candidate_planet_id);
 
             } else {
-                // match any of the species specified
-                return (std::any_of(m_names.begin(), m_names.end(), [planet_id, this](const auto& name) {
+                // match only but any of the species specified
+                const auto homeworlds_contain_planet_id = [planet_id, this](const auto& name) {
+                    // get homeworlds of this species, if any
                     const auto it = m_species_homeworlds.find(name);
                     if (it == m_species_homeworlds.end())
                         return false;
-                    const auto& planet_ids = it->second;
-                    return planet_ids.contains(planet_id);
-                }));
+                    const auto& homeworld_planet_ids = it->second;
+                    // check if one of them is the id of the candidate planet
+                    return homeworld_planet_ids.contains(planet_id);
+                };
+
+                return range_any_of(m_names, homeworlds_contain_planet_id);
             }
 
             return false;
@@ -1596,11 +1602,10 @@ void Homeworld::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         if (!m_names.empty()) {
             // evaluate names once, and use to check all candidate objects
-            std::vector<std::string> names;
-            names.reserve(m_names.size());
-            // get all names from valuerefs
-            std::transform(m_names.begin(), m_names.end(), std::back_inserter(names),
-                           [&parent_context](const auto& ref) { return ref->Eval(parent_context); });
+            const auto eval_name = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+            auto evaluated_names_rng = m_names | range_transform(eval_name);
+            const std::vector<std::string> names(evaluated_names_rng.begin(), evaluated_names_rng.end());
+            // TODO: try passing range instead of putting into vector first?
             const HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
             EvalImpl(matches, non_matches, search_domain, hsm);
 
@@ -1708,9 +1713,9 @@ namespace {
         else if constexpr (requires { container.find(num); container.end(); })
             return container.find(num) != container.end();
         else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val; });
+            return range_contains(container, num);
         else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return val && num == val->ID(); });
+            return range_any_of(container, [num](const auto& val) noexcept { return val && num == val->ID(); });
         else
             return false;
     }
@@ -1746,14 +1751,14 @@ bool Capital::EvalAny(const ScriptingContext& parent_context,
     // check if candidates are capitals of any empire
     const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
     { return FlexibleContains(capitals, obj->ID()); };
-    return std::any_of(candidates.begin(), candidates.end(), is_capital);
+    return range_any_of(candidates, is_capital);
 }
 
 bool Capital::EvalAny(const ScriptingContext& parent_context, std::span<const int> candidate_ids) const {
     // check if candidate ids are capitals of any empire
     const auto is_capital_id = [capitals{parent_context.Empires().CapitalIDs()}](const auto id)
     { return FlexibleContains(capitals, id); };
-    return std::any_of(candidate_ids.begin(), candidate_ids.end(), is_capital_id);
+    return range_any_of(candidate_ids, is_capital_id);
 }
 
 std::string Capital::Description(bool negated) const
@@ -1872,7 +1877,7 @@ namespace {
             // check if candidates / candidate IDs are capitals of any empire
             auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto obj)
             { return FlexibleContains(capitals, obj); };
-            return std::any_of(candidates.begin(), candidates.end(), is_capital);
+            return range_any_of(candidates, is_capital);
 
         } else {
             const bool simple_eval_safe = empire_id->ConstantExpr() ||
@@ -1896,7 +1901,7 @@ namespace {
                 };
 
                 if constexpr (std::is_same_v<CandidatesValueT, const UniverseObjectCXBase*>) {
-                    return std::any_of(candidates.begin(), candidates.end(), is_specific_empire_capital);
+                    return range_any_of(candidates, is_specific_empire_capital);
 
                 } else {
                     const auto id_is_specific_empire_capital =
@@ -1906,7 +1911,7 @@ namespace {
                         return obj && is_specific_empire_capital(obj);
                     };
 
-                    return std::any_of(candidates.begin(), candidates.end(), id_is_specific_empire_capital);
+                    return range_any_of(candidates, id_is_specific_empire_capital);
                 }
             }
         }
@@ -2051,15 +2056,15 @@ bool Type::EvalAny(const ScriptingContext& parent_context,
                                                     parent_context.condition_root_candidate));
     if (simple_eval_safe) {
         const UniverseObjectType type = m_type->Eval(parent_context);
-        return std::any_of(candidates.begin(), candidates.end(),
-                           [type](const auto* obj) { return obj->ObjectType() == type; });
+        const auto is_type = [type](const auto* obj) noexcept { return obj && obj->ObjectType() == type; };
+        return range_any_of(candidates, is_type);
     } else {
+        const auto is_type = [this, &parent_context](const auto* obj) {
+            const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, obj};
+            return obj && obj->ObjectType() == m_type->Eval(candidate_context);
+        };
         // re-evaluate allowed turn range for each candidate object
-        return std::any_of(candidates.begin(), candidates.end(),
-                           [this, &parent_context](const auto* obj) {
-                               const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, obj};
-                               return obj->ObjectType() == m_type->Eval(candidate_context);
-                           });
+        return range_any_of(candidates, is_type);
     }
 }
 
@@ -2067,10 +2072,8 @@ std::string Type::Description(bool negated) const {
     std::string value_str = m_type->ConstantExpr() ?
                                 UserString(to_string(m_type->Eval())) :
                                 m_type->Description();
-    return str(FlexibleFormat((!negated)
-           ? UserString("DESC_TYPE")
-           : UserString("DESC_TYPE_NOT"))
-           % value_str);
+    return str(FlexibleFormat((!negated) ? UserString("DESC_TYPE") : UserString("DESC_TYPE_NOT"))
+               % value_str);
 }
 
 std::string Type::Dump(uint8_t ntabs) const {
@@ -2144,8 +2147,7 @@ std::unique_ptr<Condition> Type::Clone() const
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names), CheckSums::GetCheckSum("Condition::Building", names)),
     m_names(std::move(names)),
-    m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
-                                        [](const auto& e) { return e->LocalCandidateInvariant(); }))
+    m_names_local_invariant(range_all_of(m_names, lc_invariant))
 {}
 
 Building::Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -2305,16 +2307,13 @@ bool Building::Match(const ScriptingContext& local_context) const {
 
     // match any of the specified building types
     const auto& btn{building->BuildingTypeName()};
-    return std::any_of(m_names.begin(), m_names.end(),
-                       [&local_context, &btn] (const auto& name)
-                       { return name->Eval(local_context) == btn; });
+    const auto is_type = [&local_context, &btn] (const auto& name) { return name->Eval(local_context) == btn; };
+    return range_any_of(m_names, is_type);
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
-    for (auto& name : m_names) {
-        if (name)
-            name->SetTopLevelContent(content_name);
-    }
+    for (auto& name : m_names | range_filter(not_null))
+        name->SetTopLevelContent(content_name);
 }
 
 std::unique_ptr<Condition> Building::Clone() const
@@ -2326,8 +2325,7 @@ std::unique_ptr<Condition> Building::Clone() const
 Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
     m_names(std::move(names)),
-    m_names_local_invariant(std::all_of(m_names.begin(), m_names.end(),
-                                        [](const auto& e) { return e->LocalCandidateInvariant(); }))
+    m_names_local_invariant(range_all_of(m_names, lc_invariant))
 {}
 
 Field::Field(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -3554,10 +3552,8 @@ namespace {
             m_objects(objects)
         {}
 
-        bool operator()(const Planet* candidate) const {
-            return candidate && std::any_of(m_sizes.begin(), m_sizes.end(),
-                                            [sz{candidate->Size()}](auto size) { return size == sz; });
-        }
+        bool operator()(const Planet* candidate) const
+        { return candidate && range_contains(m_sizes, candidate->Size()); }
 
         bool operator()(const auto* candidate) const
         { return operator()(PlanetFromObject(candidate, m_objects)); }
@@ -3652,20 +3648,17 @@ bool PlanetSize::Match(const ScriptingContext& local_context) const {
         auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
         planet = local_context.ContextObjects().getRaw<Planet>(plt_id);
     }
+    if (!planet) return false;
 
-    if (planet) {
-        return std::any_of(m_sizes.begin(), m_sizes.end(),
-                           [&local_context, plt_sz{planet->Size()}](const auto& sz)
-                           { return sz->Eval(local_context) == plt_sz; });
-    }
-    return false;
+    const auto is_size = [&local_context, plt_sz{planet->Size()}](const auto& sz_ref)
+    { return sz_ref->Eval(local_context) == plt_sz; };
+
+    return range_any_of(m_sizes, is_size);
 }
 
 void PlanetSize::SetTopLevelContent(const std::string& content_name) {
-    for (auto& size : m_sizes) {
-        if (size)
-            size->SetTopLevelContent(content_name);
-    }
+    for (auto& size : m_sizes | range_filter(not_null))
+        size->SetTopLevelContent(content_name);
 }
 
 uint32_t PlanetSize::GetCheckSum() const {
@@ -3728,8 +3721,7 @@ namespace {
 
             // get plaent's environment for specified species, and check if it matches any of the indicated environments
             const auto planet_env = candidate->EnvironmentForSpecies(m_context.species, species_to_check);
-            return std::any_of(m_environments.begin(), m_environments.end(),
-                               [planet_env](const auto env) { return env == planet_env; });
+            return range_contains(m_environments, planet_env);
         }
 
         bool operator()(const auto* candidate) const
@@ -3746,16 +3738,9 @@ void PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                              SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_species_name || m_species_name->LocalCandidateInvariant()) &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& environment : m_environments) {
-            if (!environment->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()) &&
+                             range_all_of(m_environments, lc_invariant)); // TODO: could check in constructor
+
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
         std::vector< ::PlanetEnvironment> environments;
@@ -3839,31 +3824,26 @@ bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     const Planet* planet = candidate->ObjectType() == UniverseObjectType::OBJ_PLANET ?
         static_cast<const Planet*>(candidate) : nullptr;
     if (!planet && candidate->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
-        auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
+        const auto plt_id = static_cast<const ::Building*>(candidate)->PlanetID();
         planet = local_context.ContextObjects().getRaw<Planet>(plt_id);
     }
     if (!planet)
         return false;
 
-    std::string species_name;
-    if (m_species_name)
-        species_name = m_species_name->Eval(local_context);
+    const std::string species_name = m_species_name ? m_species_name->Eval(local_context) : "";
 
     const auto env_for_planets_species = planet->EnvironmentForSpecies(local_context.species, species_name);
-    return std::any_of(m_environments.begin(), m_environments.end(),
-                       [&local_context, env_for_planets_species](const auto& env)
-    { return env->Eval(local_context) == env_for_planets_species; });
+    const auto is_efps = [&local_context, env_for_planets_species](const auto& env)
+    { return env && env->Eval(local_context) == env_for_planets_species; };
 
-    return false;
+    return range_any_of(m_environments, is_efps);
 }
 
 void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
     if (m_species_name)
         m_species_name->SetTopLevelContent(content_name);
-    for (auto& environment : m_environments) {
-        if (environment)
-            environment->SetTopLevelContent(content_name);
-    }
+    for (auto& environment : m_environments | range_filter(not_null))
+        environment->SetTopLevelContent(content_name);
 }
 
 uint32_t PlanetEnvironment::GetCheckSum() const {
@@ -4229,8 +4209,12 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
     if (m_content && m_content->LocalCandidateInvariant()) {
         const auto process_objects_with_different_species =
             [&sm, search_domain, &matches, &non_matches, this]
-            (const auto species_for_objects, const std::string& content)
+            (const auto& species_for_objects, const std::string& content)
         {
+            using sfo_val_t = decltype(species_for_objects.front());
+            static_assert(!std::is_same_v<std::string, sfo_val_t>); // don't want to make string_view of temporaries
+            static_assert(std::is_same_v<const std::string&, sfo_val_t> ||
+                          std::is_same_v<std::string_view, sfo_val_t>);
             std::vector<std::string_view> suitable_species(species_for_objects.begin(), species_for_objects.end());
 
             // determine all unique species
@@ -4258,7 +4242,7 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             // liking/disliking or not the content (ie. if in or not in matching_species)
             // ie. if (is_in_matching_species != test_val) move();
             const auto is_matching_species = [&suitable_species](const std::string& s) -> bool
-            { return std::any_of(suitable_species.begin(), suitable_species.end(), [s](const auto& ms) { return s == ms; }); };
+            { return range_contains(suitable_species, s); };
 
             MoveBasedOnPairedValPredicate(search_domain, matches, non_matches, species_for_objects, is_matching_species);
         };
@@ -4276,16 +4260,10 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             }
 
             bool species_matches = false;
-            if (m_comp == ComparisonType::GREATER_THAN) {
-                const auto& likes = species->Likes();
-                species_matches = std::any_of(likes.begin(), likes.end(),
-                                              [&content](const auto l) { return l == content; });
-
-            } else if (m_comp == ComparisonType::LESS_THAN) {
-                const auto& dislikes = species->Dislikes();
-                species_matches = std::any_of(dislikes.begin(), dislikes.end(),
-                                              [&content](const auto d) { return d == content; });
-            }
+            if (m_comp == ComparisonType::GREATER_THAN)
+                species_matches = range_contains(species->Likes(), content);
+            else if (m_comp == ComparisonType::LESS_THAN)
+                species_matches = range_contains(species->Dislikes(), content);
 
             const bool test_val = search_domain == SearchDomain::MATCHES;
             auto& from = test_val ? matches : non_matches;
@@ -4303,12 +4281,8 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             { return SpeciesForObject(obj, parent_context); };
 
             // get species for each object
-            std::vector<std::string> species_for_objects; // TODO: can maybe be vector<string_view> but similar cases have lead to weird errors...
-            species_for_objects.reserve(from.size());
-            std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
-                           get_species_for_object);
-
-            process_objects_with_different_species(std::move(species_for_objects), m_content->Eval(parent_context));
+            auto species_objs_rng = from | range_transform(get_species_for_object);
+            process_objects_with_different_species(species_objs_rng, m_content->Eval(parent_context));
 
         } else if (!m_species->LocalCandidateInvariant()) {
             auto eval_object_species = [&parent_context, this](const auto* obj) -> std::string {
@@ -4318,12 +4292,10 @@ void SpeciesOpinion::Eval(const ScriptingContext& parent_context,
             };
 
             // get species for each object
-            std::vector<std::string> species_for_objects; // this cannot be vector<string_view> because eval_object_species returns a temporary
-            species_for_objects.reserve(from.size());
-            std::transform(from.begin(), from.end(), std::back_inserter(species_for_objects),
-                           eval_object_species);
-
-            process_objects_with_different_species(std::move(species_for_objects), m_content->Eval(parent_context));
+            auto obj_species_rng = from | range_transform(eval_object_species);
+            process_objects_with_different_species(
+                std::vector<std::string>(obj_species_rng.begin(), obj_species_rng.end()),
+                m_content->Eval(parent_context));
 
         } else {
             process_objects_with_same_species(m_species->Eval(parent_context), m_content->Eval(parent_context));
@@ -4398,13 +4370,11 @@ bool SpeciesOpinion::Match(const ScriptingContext& local_context) const {
 
     switch (m_comp) {
     case ComparisonType::GREATER_THAN: {
-        const auto& likes = species->Likes();
-        return std::any_of(likes.begin(), likes.end(), [&content](const auto l) { return l == content; });
+        return range_contains(species->Likes(), content);
         break;
     }
     case ComparisonType::LESS_THAN: {
-        const auto& dislikes = species->Dislikes();
-        return std::any_of(dislikes.begin(), dislikes.end(), [&content](const auto d) { return d == content; });
+        return range_contains(species->Dislikes(), content);
         break;
     }
     default:
@@ -4891,9 +4861,9 @@ bool FocusType::Match(const ScriptingContext& local_context) const {
     if (m_names.empty())
         return !focus_name.empty();
 
-    return std::any_of(m_names.begin(), m_names.end(),
-                       [&focus_name, &local_context](const auto& name)
-                       { return name->Eval(local_context) == focus_name; });
+    const auto is_fname = [&focus_name, &local_context](const auto& name)
+    { return name && name->Eval(local_context) == focus_name; };
+    return range_any_of(m_names, is_fname);
 }
 
 ObjectSet FocusType::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
@@ -4971,16 +4941,12 @@ namespace {
             if (!candidate || m_types.empty())
                 return false;
 
-            if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
-                auto system = static_cast<const System*>(candidate);
-                return std::any_of(m_types.begin(), m_types.end(),
-                                   [st{system->GetStarType()}] (const auto t) { return st == t; });
-            } else if (auto system = m_objects.getRaw<System>(candidate->SystemID())) {
-                return std::any_of(m_types.begin(), m_types.end(),
-                                   [st{system->GetStarType()}] (const auto t) { return st == t; });
-            } else {
+            if (candidate->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
+                return range_contains(m_types, static_cast<const System*>(candidate)->GetStarType());
+            else if (auto system = m_objects.getRaw<System>(candidate->SystemID()))
+                return range_contains(m_types, system->GetStarType());
+            else
                 return false;
-            }
         }
 
         const std::vector< ::StarType>& m_types;
@@ -7670,14 +7636,13 @@ namespace {
         bool operator()(const auto* candidate) const {
             if (!candidate)
                 return false;
-
+            const auto is_close = [this, x{candidate->X()}, y{candidate->Y()}](const auto* obj) noexcept {
+                double delta_x = x - obj->X();
+                double delta_y = y - obj->Y();
+                return (delta_x*delta_x + delta_y*delta_y <= m_distance2);
+            };
             // is candidate object close enough to any of the passed-in objects?
-            return std::any_of(m_from_objects.begin(), m_from_objects.end(),
-                               [this, x{candidate->X()}, y{candidate->Y()}](const auto* obj) {
-                                    double delta_x = x - obj->X();
-                                    double delta_y = y - obj->Y();
-                                    return (delta_x*delta_x + delta_y*delta_y <= m_distance2);
-                               });
+            return range_any_of(m_from_objects, is_close);
         }
 
         const ObjectSet& m_from_objects;
@@ -7743,8 +7708,7 @@ bool WithinDistance::EvalAny(const ScriptingContext& parent_context,
         // TODO: or, create another condition that has a single object id ref instead of a subcondition
         const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
-        return std::any_of(candidates.begin(), candidates.end(),
-                           WithinDistanceSimpleMatch(subcondition_matches, distance));
+        return range_any_of(candidates, WithinDistanceSimpleMatch(subcondition_matches, distance));
 
     //} else if (m_distance->LocalCandidateInvariant()) {
 
@@ -7752,9 +7716,7 @@ bool WithinDistance::EvalAny(const ScriptingContext& parent_context,
 
     } else {
         // re-evaluate distance and contained objects for each candidate object
-        return std::any_of(candidates.begin(), candidates.end(),
-                           [this, &parent_context](const auto* candidate) -> bool
-        {
+        const auto is_close = [this, &parent_context](const auto* candidate) -> bool {
             if (!candidate)
                 return false;
             const ScriptingContext candidate_context{parent_context, ScriptingContext::LocalCandidate{}, candidate};
@@ -7763,7 +7725,9 @@ bool WithinDistance::EvalAny(const ScriptingContext& parent_context,
                 return false;
             const auto distance = m_distance->Eval(candidate_context);
             return WithinDistanceSimpleMatch(subcondition_matches, distance)(candidate);
-        });
+        };
+
+        return range_any_of(candidates, is_close);
     }
 }
 
@@ -7916,8 +7880,8 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
         const int sys_id = candidate->SystemID();
         if (sys_id == INVALID_OBJECT_ID)
             return false;
-        return std::any_of(subcondition_matches.begin(), subcondition_matches.end(),
-                           [sys_id](const auto* scm) { return scm && scm->SystemID() == sys_id; });
+        const auto is_in_sys = [sys_id](const auto* scm) noexcept { return scm && scm->SystemID() == sys_id; };
+        return range_any_of(subcondition_matches, is_in_sys);
 
     } else {
         ObjectSet candidate_set{candidate};
@@ -7981,10 +7945,9 @@ namespace {
 
         bool operator()(const System* candidate_sys) const {
             // does the candidate have a starlane to the system of any of m_to_objects
-            return candidate_sys &&
-                std::any_of(m_to_objects.begin(), m_to_objects.end(),
-                            [candidate_sys](const auto* obj)
-                            { return obj && candidate_sys->HasStarlaneTo(obj->SystemID()); });
+            const auto candidate_has_lane_to_sys_of = [candidate_sys](const auto* obj)
+            { return obj && candidate_sys->HasStarlaneTo(obj->SystemID()); };
+            return candidate_sys && range_any_of(m_to_objects, candidate_has_lane_to_sys_of);
         }
 
         bool operator()(const auto* candidate) const
@@ -8311,14 +8274,13 @@ namespace {
         if (!sys) return false;
 
         // get System endpoints of starlanes of \a sys
-        const auto& sys_lanes = sys->Starlanes();
         const auto get_sys = [&objects](const int id) { return objects.getRaw<System>(id); };
-        auto sys_lane_sys_rng = sys_lanes | range_transform(get_sys);
+        auto sys_lane_sys_rng = sys->Starlanes() | range_transform(get_sys);
 
         // do any of the lanes of \a sys cross a lane from \a lane_obj1 and \a lane_obj2 ?
-        const auto lane_to_sys_from_sys_crosses_lane = [lane_obj1, lane_obj2, sys](const System* sys_lane_end)
+        const auto lane_to_sys_from_sys_crosses_lane = [lane_obj1, lane_obj2, sys](const System* sys_lane_end) noexcept
         { return LanesCross(lane_obj1, lane_obj2, sys, sys_lane_end); };
-        return std::any_of(sys_lane_sys_rng.begin(), sys_lane_sys_rng.end(), lane_to_sys_from_sys_crosses_lane);
+        return range_any_of(sys_lane_sys_rng, lane_to_sys_from_sys_crosses_lane);
     }
 
     // would a lane between \a lane_obj1 and \a lane_obj2 cross any other lanes between systems?
@@ -8333,8 +8295,7 @@ namespace {
         { return LaneCrossesSystemLane(lane_obj1, lane_obj2, sys, objects); };
 
         // does ANY system have any lanes that cross lane between lane_obj1 and lane_obj2
-        auto systems_rng = objects.allRaw<System>();
-        return std::any_of(systems_rng.begin(), systems_rng.end(), system_has_crossing_lane);
+        return range_any_of(objects.allRaw<System>(), system_has_crossing_lane);
     }
 
 
@@ -8353,7 +8314,7 @@ namespace {
             { return LaneCrossesAnyExistingLane(candidate, o, m_objects); };
 
             // check if lanes from candidate to any subcondition object cross existing lanes
-            return std::any_of(m_to_objects.begin(), m_to_objects.end(), lane_to_crosses_existing_lane);
+            return range_any_of(m_to_objects, lane_to_crosses_existing_lane);
         }
 
         const ObjectSet& m_to_objects;
@@ -8494,11 +8455,8 @@ namespace {
             return rv.first;
         };
 
-        const auto& sys_lanes = system->Starlanes();
-        const auto get_sys = [&objects](const int sys_id)
-        { return objects.getRaw<System>(sys_id); };
-        auto sys_rng = sys_lanes | range_transform(get_sys);
-        return std::any_of(sys_rng.begin(), sys_rng.end(), lanes_close);
+        const auto get_sys = [&objects](const int sys_id) { return objects.getRaw<System>(sys_id); };
+        return range_any_of(system->Starlanes() | range_transform(get_sys), lanes_close);
     }
 
     bool LaneWouldBeCloseToExistingSystemLane(const auto* obj1, const auto* obj2,
@@ -8539,7 +8497,7 @@ namespace {
 
             // check if lanes from candidate to any subcondition object are
             // angularly close to an existing lane on either end
-            auto result = std::any_of(m_to_objects.begin(), m_to_objects.end(), has_angularly_close_lane);
+            auto result = range_any_of(m_to_objects, has_angularly_close_lane);
             if (result)
                 TraceLogger(conditions) << " ... there are lanes angularly conflicting with a lane from " << candidate->Name()
                                         << " to at least one of " << m_to_objects.size() << " objects";
@@ -8859,7 +8817,7 @@ namespace {
             return retval;
         };
 
-        return std::any_of(close_objects.begin(), close_objects.end(), lane_would_be_close_to_object);
+        return range_any_of(close_objects, lane_would_be_close_to_object);
     }
 
 
@@ -8882,8 +8840,7 @@ namespace {
 
             // check if lanes from candidate to any subcondition object are
             // angularly close to an existing lane on either end
-            const auto retval = std::any_of(m_to_objects.begin(), m_to_objects.end(),
-                                            lane_to_close_to_other_object);
+            const auto retval = range_any_of(m_to_objects, lane_to_close_to_other_object);
 
             TraceLogger(conditions) << "lane from an object to " << candidate->Name()
                                     << " would " << (retval ? "" : "not ") << "be close to another object...";
@@ -9305,8 +9262,6 @@ bool ResourceSupplyConnectedByEmpire::operator==(const ResourceSupplyConnectedBy
 }
 
 namespace {
-    constexpr auto not_null = [](const auto* o) noexcept -> bool { return !!o; };
-
     struct ResourceSupplySimpleMatch {
         ResourceSupplySimpleMatch(int empire_id, const ObjectSet& from_objects,
                                   const ObjectMap& objects, const SupplyManager& supply) :
@@ -10168,7 +10123,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
         // if there is no 3rd reference to compare to, or if all candidates
         // didn't pass the first comparison, then the result of ref1 to ref2
         // comparison is the final result
-        if (!ref3 || std::all_of(passed.begin(), passed.end(), [](const auto p) { return !p; })) {
+        if (!ref3 || range_all_of(passed, is_false)) {
             MoveBasedOnMask(search_domain, matches, non_matches, passed);
             return;
         }
@@ -10959,15 +10914,26 @@ bool And::EvalAny(const ScriptingContext& parent_context,
     if (candidates.size() == 1 && !candidates.front())
         return false;
 
-    static constexpr auto random_pick = false; // enable to A/B test looping over candidates first instead of operands first
+    static constexpr auto random_pick = false; // enable to A/B/C test looping over candidates first with/without rangification instead of operands first
     if constexpr (random_pick) {
-        if (RandInt(1, 10000) >= 5000) {
+        const auto picker_val = RandInt(1, 15000);
+        if (picker_val <= 5000) {
             return std::any_of(candidates.begin(), candidates.end(),
                                [&parent_context, this](const auto* candidate) {
                                    return std::all_of(m_operands.begin(), m_operands.end(),
                                                       [&parent_context, candidate](const auto& op)
                                                       { return op->EvalOne(parent_context, candidate); });
                                });
+
+        } else if (picker_val <= 10000) {
+            if (RandInt(1, 10000) >= 5000) {
+                const auto matches_all_subconditions = [&parent_context, this](const auto* candidate) {
+                    const auto candidate_matches = [&parent_context, candidate](const auto& op)
+                    { return op && op->EvalOne(parent_context, candidate); }; 
+                    return range_all_of(m_operands, candidate_matches);
+                };
+                return range_any_of(candidates, matches_all_subconditions);
+            }
         }
     }
 
@@ -10984,10 +10950,9 @@ bool And::EvalAny(const ScriptingContext& parent_context,
 }
 
 bool And::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const {
-    return candidate &&
-        std::all_of(m_operands.begin(), m_operands.end(),
-                    [candidate, &parent_context](const auto& op)
-                    { return op->EvalOne(parent_context, candidate); });
+    const auto matches_candidate = [candidate, &parent_context](const auto& op)
+    { return op->EvalOne(parent_context, candidate); };
+    return candidate && range_all_of(m_operands, matches_candidate);
 }
 
 std::string And::Description(bool negated) const {
@@ -11045,11 +11010,8 @@ uint32_t And::GetCheckSum() const {
 }
 
 std::vector<const Condition*> And::OperandsRaw() const {
-    std::vector<const Condition*> retval;
-    retval.reserve(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
-                   [](const auto& xx) noexcept(noexcept(xx.get())) { return xx.get(); });
-    return retval;
+    auto raw_rng = m_operands | range_transform(get_raw);
+    return {raw_rng.begin(), raw_rng.end()};
 }
 
 std::unique_ptr<Condition> And::Clone() const
@@ -11107,9 +11069,10 @@ bool Or::EvalAny(const ScriptingContext& parent_context,
         return false;
 
     // check operands until one is found that matches any of the candidates
-    return std::any_of(m_operands.begin(), m_operands.end(),
-                       [&parent_context, &candidates](const auto& operand)
-                       { return operand->EvalAny(parent_context, candidates); });
+    const auto candidate_matches = [&parent_context, &candidates](const auto& operand)
+    { return operand->EvalAny(parent_context, candidates); };
+
+    return range_any_of(m_operands, candidate_matches);
     // or:
     /*
     ObjectSet non_matches{candidates};
@@ -11125,10 +11088,9 @@ bool Or::EvalAny(const ScriptingContext& parent_context,
 }
 
 bool Or::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const {
-    return candidate &&
-        std::any_of(m_operands.begin(), m_operands.end(),
-                    [candidate, &parent_context](const auto& op)
-                    { return op->EvalOne(parent_context, candidate); });
+    const auto candidate_matches = [candidate, &parent_context](const auto& op)
+    { return op->EvalOne(parent_context, candidate); };
+    return candidate && range_any_of(m_operands, candidate_matches);
 }
 
 std::string Or::Description(bool negated) const {
@@ -11177,11 +11139,8 @@ void Or::SetTopLevelContent(const std::string& content_name) {
 }
 
 std::vector<const Condition*> Or::OperandsRaw() const {
-    std::vector<const Condition*> retval;
-    retval.reserve(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
-                   [](auto& xx) {return xx.get();});
-    return retval;
+    auto raw_rng = m_operands | range_transform(get_raw);
+    return {raw_rng.begin(), raw_rng.end()};
 }
 
 std::unique_ptr<Condition> Or::Clone() const
@@ -11215,9 +11174,9 @@ bool Not::EvalAny(const ScriptingContext& parent_context,
     //
     // eg. Capital::EvalAny would return true iff there is any candidate that is a capital
     // Not(Capital)::EvalAny would return true iff there is any candidate that is not a capital
-    return std::any_of(candidates.begin(), candidates.end(),
-                       [&parent_context, this](const auto* candidate)
-                       { return !m_operand->EvalOne(parent_context, candidate); });
+    const auto not_a_match = [&parent_context, this](const auto* candidate)
+    { return !m_operand->EvalOne(parent_context, candidate); };
+    return range_any_of(candidates, not_a_match);
     // or:
     //ObjectSet potential_matches{candidates};
     //ObjectSet non_matches;
@@ -11385,9 +11344,9 @@ bool OrderedAlternativesOf::EvalAny(const ScriptingContext& parent_context,
 
     // for matching any candidate, this condition effectively becomes equivalent to
     // the Or condition, needing any candidate to match any operand condition
-    return std::any_of(m_operands.begin(), m_operands.end(),
-                       [&parent_context, &candidates](const auto& operand)
-                       { return operand->EvalAny(parent_context, candidates); });
+    const auto matches_any_candidate = [&parent_context, &candidates](const auto& operand)
+    { return operand->EvalAny(parent_context, candidates); };
+    return range_any_of(m_operands, matches_any_candidate);
 }
 
 std::string OrderedAlternativesOf::Description(bool negated) const {
@@ -11447,11 +11406,8 @@ uint32_t OrderedAlternativesOf::GetCheckSum() const {
 }
 
 std::vector<const Condition*> OrderedAlternativesOf::Operands() const {
-    std::vector<const Condition*> retval;
-    retval.reserve(m_operands.size());
-    std::transform(m_operands.begin(), m_operands.end(), std::back_inserter(retval),
-                   [](auto& xx) {return xx.get();});
-    return retval;
+    auto raw_rng = m_operands | range_transform(get_raw);
+    return {raw_rng.begin(), raw_rng.end()};
 }
 
 std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
