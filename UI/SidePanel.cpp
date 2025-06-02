@@ -468,6 +468,7 @@ namespace {
                GG::Clr(0, 0, 0, 128),       Validator<GG::Clr>());
         db.Add("UI.sidepanel-planet-status-icon-size",       UserStringNop("OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE"),
                32,                          RangedValidator<int>(8, 128));
+        db.Add("ui.map.sidepanel.stale-buildings.shown",     UserStringNop("OPTIONS_DB_UI_SHOW_SIDEPANEL_STALE_BUILDING"), false,         Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
