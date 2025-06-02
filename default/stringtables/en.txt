@@ -2016,6 +2016,9 @@ Sets the color of the scan-line shading over planet graphics on the sidepanel.
 OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE
 Sets the size of the planet status icon.
 
+OPTIONS_DB_UI_SHOW_SIDEPANEL_STALE_BUILDING
+Enables display of stale visibility buildings on sidepanel. Stale visibility means previously detected and should be currently visible based on last known state and location and a player's current detection levels, but nevertheless not currently detected anywhere.
+
 OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE
 Planet status notification
 
@@ -3114,6 +3117,9 @@ Automatically reposition windows
 
 OPTIONS_DISPLAY_TIMESTAMP
 Show chat timestamp
+
+OPTIONS_SHOW_SIDEPANEL_STALE_BUILDING
+Show stale visibility buildings on sidepanel
 
 OPTIONS_MISC_UI
 Miscellaneous UI Settings

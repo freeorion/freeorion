@@ -109,7 +109,7 @@ void BuildingsPanel::Update() {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.contains(object_id))
             continue;
-        if (this_client_stale_object_info.contains(object_id))
+        if (this_client_stale_object_info.contains(object_id) && !GetOptionsDB().Get<bool>("ui.map.sidepanel.stale-buildings.shown"))
             continue;
 
         auto building = context.ContextObjects().get<Building>(object_id);
@@ -413,6 +413,17 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
             popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false,
                                             un_scrap_building_action));
         }
+    }
+
+    // find sensor ghost
+    if (empire_id != ALL_EMPIRES &&
+        !building->OwnedBy(empire_id) &&
+        context.ContextVis(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
+    {
+        auto forget_building_action = [this, map_wnd]() { map_wnd->ForgetObject(m_building_id); };
+
+        popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false,
+                                        forget_building_action));
     }
 
     const std::string& building_type = building->BuildingTypeName();
