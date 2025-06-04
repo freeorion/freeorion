@@ -522,24 +522,23 @@ float Ship::TotalWeaponsShipDamage(const ScriptingContext& context, float shield
 std::vector<float> Ship::AllWeaponsFighterDamage(const ScriptingContext& context,
                                                  bool launch_fighters) const
 {
-    return Combat::WeaponDamageImpl(context, *this, /*target_shield_DR*/0, /*max meters*/false,
-                                    launch_fighters, /*target_ships*/false);
+    return Combat::WeaponDamageImpl(context, *this, /*target_shield_DR*/0.0f, Combat::MaxWD::CURRENT,
+                                    Combat::InclFightersWD{launch_fighters}, Combat::TargetShipsWD::NoShips);
 }
 
 std::vector<float> Ship::AllWeaponsShipDamage(const ScriptingContext& context, float shield_DR,
                                               bool launch_fighters) const
-{ return Combat::WeaponDamageImpl(context, *this, shield_DR, false, launch_fighters, true); }
+{
+    return Combat::WeaponDamageImpl(context, *this, shield_DR, Combat::MaxWD::CURRENT,
+                                    Combat::InclFightersWD{launch_fighters}, Combat::TargetShipsWD::TargetShips);
+}
 
 std::vector<float> Ship::AllWeaponsMaxShipDamage(const ScriptingContext& context, float shield_DR,
                                                  bool launch_fighters) const
 {
-    std::vector<float> retval;
-
-    const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_design_id);
-    if (!design)
-        return retval;
-
-    return Combat::WeaponDamageImpl(context, *this, shield_DR, true, launch_fighters);
+    if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(m_design_id))
+        return Combat::WeaponDamageImpl(context, *this, shield_DR, Combat::MaxWD::MAX, Combat::InclFightersWD::WITH);
+    return {};
 }
 
 std::size_t Ship::SizeInMemory() const {
