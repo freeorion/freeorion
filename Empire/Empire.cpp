@@ -2,6 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Random.h"
+#include "../util/ranges.h"
 #include "../util/GameRules.h"
 #include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
@@ -58,14 +59,11 @@ namespace {
     }
 
     auto PolicyCategoriesSlotsMeters() {
-        std::vector<std::pair<std::string_view, std::string>> retval;
-        const auto cats = GetPolicyManager().PolicyCategories();
-        retval.reserve(cats.size());
-        // derive meters from PolicyManager parsed policies' categories
-        std::transform(cats.begin(), cats.end(), std::back_inserter(retval),
-                       [](std::string_view cat) -> std::pair<std::string_view, std::string>
-                       { return {cat, cat + "_NUM_POLICY_SLOTS"}; });
-        return retval;
+        auto cats = GetPolicyManager().PolicyCategories();
+        static constexpr auto to_csm = [](std::string_view cat)
+        { return std::pair<std::string_view, std::string>{cat, cat + "_NUM_POLICY_SLOTS"}; }; // derive meters from PolicyManager parsed policies' categories
+        auto cats_slot_meters_rng = cats | range_transform(to_csm);
+        return std::vector(cats_slot_meters_rng.begin(), cats_slot_meters_rng.end());
     }
 
     DeclareThreadSafeLogger(supply);
