@@ -4075,6 +4075,8 @@ namespace {
         }
         return empire_blockading_fleets;
     }
+
+    static constexpr auto empire_not_null = [](const auto& id_e) noexcept -> bool { return id_e.second.get(); };
 }
 
 void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
@@ -4108,21 +4110,26 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
                                      std::forward_as_tuple(nct_rng.begin(), nct_rng.end()));
         };
 
-        static constexpr auto not_null = [](const auto& id_e) noexcept -> bool { return id_e.second.get(); };
-        auto map_values = m_empires | range_filter(not_null) | range_transform(to_id_and_cache);
+        auto map_values = m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache);
 
         return map_t(map_values.begin(), map_values.end());
     }();
     m_cached_empire_production_costs_times = [this, &context]() {
-        std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> retval;
-        for (const auto& [empire_id, empire] : m_empires) {
-            retval[empire_id].reserve(empire->GetProductionQueue().size());
-            for (const auto& elem : empire->GetProductionQueue()) {
+        using map_t = decltype(m_cached_empire_production_costs_times);
+
+        const auto to_id_and_cache = [&context](const auto& id_empire) {
+            const auto to_name_designid_cost_time = [&context](const auto& elem) {
                 const auto [cost, time] = elem.ProductionCostAndTime(context);
-                retval[empire_id].emplace_back(elem.item.name, elem.item.design_id, cost, time);
-            }
-        }
-        return retval;
+                return map_t::mapped_type::value_type{elem.item.name, elem.item.design_id, cost, time};
+            };
+
+            auto ndct_rng = id_empire.second->GetProductionQueue() | range_transform(to_name_designid_cost_time);
+            return map_t::value_type{std::piecewise_construct, std::forward_as_tuple(id_empire.first),
+                                     std::forward_as_tuple(ndct_rng.begin(), ndct_rng.end())};
+        };
+
+        auto map_values = m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache);
+        return map_t(map_values.begin(), map_values.end());
     }();
     m_cached_empire_annexation_costs = [&context]() {
         std::map<int, std::vector<std::pair<int, double>>> retval;
