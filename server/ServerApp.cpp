@@ -4079,32 +4079,34 @@ namespace {
 
 void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
     m_cached_empire_policy_adoption_costs = [this, &context]() {
-        std::map<int, std::vector<std::pair<std::string_view, double>>> retval;
-        std::transform(m_empires.begin(), m_empires.end(), std::inserter(retval, retval.end()),
-                       [&context](const auto& e)
-                       { return std::pair{e.first, e.second->PolicyAdoptionCosts(context)}; });
-        return retval;
+        const auto to_costs = [&context](const auto& e) { return std::pair{e.first, e.second->PolicyAdoptionCosts(context)}; };
+        auto ids_costs_rng = m_empires | range_transform(to_costs);
+        return decltype(m_cached_empire_policy_adoption_costs)(ids_costs_rng.begin(), ids_costs_rng.end());
     }();
     m_cached_empire_research_costs_times = [this, &context]() {
-        std::map<int, std::vector<std::tuple<std::string_view, double, int>>> retval;
+        using vec_val_t = std::tuple<std::string_view, double, int>;
+        std::map<int, std::vector<vec_val_t>> retval;
         const auto& tm = GetTechManager();
         // cache costs for each empire for techs on queue an that are researchable, which
         // may be used later when updating the queue
         for (const auto& [empire_id, empire] : m_empires) {
-            retval[empire_id].reserve(tm.size());
-
-            const auto should_cache = [empire{empire.get()}](const auto tech_name, const auto& tech) {
-                return (tech.Researchable() &&
-                        empire->GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
-                    empire->GetResearchQueue().InQueue(tech_name);
+            const auto should_cache = [empire{empire.get()}](const auto& name_tech) {
+                return empire &&
+                    (   (   name_tech.second.Researchable() &&
+                            empire->GetTechStatus(name_tech.first) == TechStatus::TS_RESEARCHABLE
+                        ) ||
+                        empire->GetResearchQueue().InQueue(name_tech.first)
+                    );
             };
 
-            for (const auto& [tech_name, tech] : tm) {
-                if (should_cache(tech_name, tech)) {
-                    retval[empire_id].emplace_back(
-                        tech_name, tech.ResearchCost(empire_id, context), tech.ResearchTime(empire_id, context));
-                }
-            }
+            const auto to_name_cost_time = [&context, empire_id{empire_id}](const auto& name_tech) {
+                return vec_val_t{name_tech.first, name_tech.second.ResearchCost(empire_id, context),
+                                 name_tech.second.ResearchTime(empire_id, context)};
+            };
+
+            auto nct_rng = tm | range_filter(should_cache) | range_transform(to_name_cost_time);
+            retval.emplace(std::piecewise_construct, std::forward_as_tuple(empire_id),
+                           std::forward_as_tuple(nct_rng.begin(), nct_rng.end()));
         }
         return retval;
     }();
