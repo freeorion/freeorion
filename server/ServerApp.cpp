@@ -1505,10 +1505,10 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     m_species_manager.ClearSpeciesHomeworlds();
 
     // Reset the object id manager for the new empires.
-    std::vector<int> empire_ids(player_setup_data.size());
-    std::transform(player_setup_data.begin(), player_setup_data.end(), empire_ids.begin(),
-                   [](const auto& ii) { return ii.first; });
-    m_universe.ResetAllIDAllocation(empire_ids);
+    {
+        auto ids_rng = player_setup_data | range_keys;
+        m_universe.ResetAllIDAllocation(std::vector<int>(ids_rng.begin(), ids_rng.end()));
+    }
 
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse(m_universe);
@@ -3029,13 +3029,11 @@ namespace {
         const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
+        const auto is_invading_ship = [&universe](const Ship& s)
+        { return s.SystemID() != INVALID_OBJECT_ID && s.OrderedInvadePlanet() != INVALID_OBJECT_ID && s.HasTroops(universe); };
+
         // collect ships that are invading and the troops they carry
-        for (auto* ship : objects.findRaw<Ship>([&universe](const Ship& s) {
-                                                    return s.SystemID() != INVALID_OBJECT_ID &&
-                                                        s.OrderedInvadePlanet() != INVALID_OBJECT_ID &&
-                                                        s.HasTroops(universe);
-                                                }))
-        {
+        for (auto* ship : objects.findRaw<Ship>(is_invading_ship)) {
             invade_ships.push_back(ship);
 
             auto* planet = objects.getRaw<Planet>(ship->OrderedInvadePlanet());
@@ -3057,10 +3055,9 @@ namespace {
                           << " named " << ship->Name();
         }
 
-        std::vector<int> invading_ship_ids;
-        invading_ship_ids.reserve(invade_ships.size());
-        std::transform(invade_ships.begin(), invade_ships.end(), std::back_inserter(invading_ship_ids),
-                       [](const auto* ship) { return ship->ID(); });
+        static constexpr auto to_id = [](const auto& o) noexcept { return o->ID(); };
+        auto invading_ids_rng = invade_ships | range_transform(to_id);
+        std::vector<int> invading_ship_ids(invading_ids_rng.begin(), invading_ids_rng.end());
 
         // delete ships that invaded something
         for (auto* ship : invade_ships) {
@@ -3102,11 +3099,10 @@ namespace {
             if (empires_troops.empty())
                 continue;
 
-            std::set<int> all_involved_empires;
-            for (const auto empire_id : empires_troops | range_keys) {
-                if (empire_id != ALL_EMPIRES)
-                    all_involved_empires.insert(empire_id);
-            }
+            auto emp_ids_rng = empires_troops | range_keys |
+                range_filter([](const auto id) noexcept { return id != ALL_EMPIRES; });
+            std::set<int> all_involved_empires(emp_ids_rng.begin(), emp_ids_rng.end());
+
             auto planet = objects.get<Planet>(planet_id);
             if (!planet) {
                 ErrorLogger() << "Ground combat couldn't get planet with id " << planet_id;
@@ -3401,8 +3397,7 @@ namespace {
             }
 
             // record scrapping in empire stats
-            auto scrapping_empire = empires.GetEmpire(ship->Owner());
-            if (scrapping_empire)
+            if (auto scrapping_empire = empires.GetEmpire(ship->Owner()))
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
