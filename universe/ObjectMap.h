@@ -898,7 +898,7 @@ const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
 
     } else if constexpr (invokable_on_const_reference) {
         auto it = range_find_if(map | range_values | range_transform(ref_tx), pred);
-        return (it != map.end()) ? &*it : nullptr;
+        return (it != map.end()) ? it.get() : nullptr;
 
     } else if constexpr (invokable_on_int) {
         auto it = range_find_if(map, [pred](const auto& id_obj) { return pred(id_obj.first); });
