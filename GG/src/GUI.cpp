@@ -1297,7 +1297,7 @@ void GUI::RunModal(std::shared_ptr<Wnd> wnd)
 {
     if (!wnd)
         return;
-    //std::cout << "RunModal start on " << wnd->Name() << "  at: " << &*wnd << "\n";
+    //std::cout << "RunModal start on " << wnd->Name() << "  at: " << wnd.get() << "\n";
     while (!wnd->ModalDone()) {
         HandleSystemEvents();
         // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
