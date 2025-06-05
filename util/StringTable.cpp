@@ -102,10 +102,20 @@ const std::string& StringTable::Add(std::string key, std::string value)
 { return m_strings.emplace(std::move(key), std::move(value)).first->second; }
 
 namespace {
+    auto to_addr(const auto it) {
+        using to_addr_t = decltype(std::to_address(it));
+        using and_star_t = decltype(&*it);
+        if constexpr (std::is_same_v<to_addr_t, and_star_t>) // fails on Clang 14.0.1 on android / arm64-v8a test build
+            return std::to_address(it);
+        else
+            return &*it;
+    }
+
+
     std::string_view MatchLookupKey(const boost::xpressive::smatch& match, std::size_t idx) {
         //return match[idx].str(); // constructs a std::string, which should be avoidable for lookup purposes...
         const auto& m{match[idx]};
-        return {&*m.first, static_cast<std::size_t>(std::max(0, static_cast<int>(m.length())))};
+        return {to_addr(m.first), static_cast<std::size_t>(std::max(0, static_cast<int>(m.length())))};
     }
 
     using namespace boost::xpressive;
