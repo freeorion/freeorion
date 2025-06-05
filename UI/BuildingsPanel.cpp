@@ -379,7 +379,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!building)
         return;
 
-    const auto map_wnd = ClientUI::GetClientUI()->GetMapWndConst();
+    auto map_wnd = ClientUI::GetClientUI()->GetMapWnd(false);
     if (ClientPlayerIsModerator() &&
         map_wnd && map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
     {
@@ -416,9 +416,10 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 
     // find sensor ghost
-    if (empire_id != ALL_EMPIRES &&
-        !building->OwnedBy(empire_id) &&
-        context.ContextVis(m_building_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY)
+    if (map_wnd &&
+        app->EmpireID() != ALL_EMPIRES &&
+        !building->OwnedBy(app->EmpireID()) &&
+        context.ContextVis(m_building_id, app->EmpireID()) < Visibility::VIS_BASIC_VISIBILITY)
     {
         auto forget_building_action = [this, map_wnd]() { map_wnd->ForgetObject(m_building_id); };
 
