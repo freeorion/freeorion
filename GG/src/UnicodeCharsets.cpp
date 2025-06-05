@@ -184,17 +184,29 @@ const UnicodeCharset* GG::CharsetContaining(uint32_t c) noexcept
     return block < s_charset_blocks.size() ? s_charset_blocks[block] : nullptr;
 }
 
+namespace {
+    template <typename T>
+    constexpr auto to_addr(T it) noexcept
+    {
+#if defined(__cpp_lib_to_address)
+        return std::to_address(it);
+#else
+        return std::addressof(*it);
+#endif
+    }
+}
+
 const UnicodeCharset* GG::CharsetWithName(std::string_view name) noexcept
 {
     const auto name_eq = [name](const auto& cs) noexcept { return cs.m_script_name == name; };
     if constexpr (noexcept(std::find_if(ALL_UNICODE_CHARSETS.begin(), ALL_UNICODE_CHARSETS.end(), name_eq))) {
         const auto it = std::find_if(ALL_UNICODE_CHARSETS.begin(), ALL_UNICODE_CHARSETS.end(), name_eq);
         if (it != ALL_UNICODE_CHARSETS.end())
-            return &*it;
+            return to_addr(it);
     } else {
         for (auto it = ALL_UNICODE_CHARSETS.begin(); it != ALL_UNICODE_CHARSETS.end(); ++it)
             if (name_eq(*it))
-                return &*it;
+                return to_addr(it);
     }
     return nullptr;
 }
