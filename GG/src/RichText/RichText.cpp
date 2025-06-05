@@ -30,7 +30,7 @@ constexpr auto to_address(const std::string_view::const_iterator it) noexcept
 #if defined(__cpp_lib_to_address)
     return std::to_address(it);
 #else
-    return &*it;
+    return std::addressof(*it);
 #endif
 }
 
