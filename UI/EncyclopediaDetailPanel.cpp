@@ -3797,14 +3797,14 @@ namespace {
                 once = false;
                 const uint8_t prev_c1 = *prev_char_it;
                 std::ptrdiff_t prev_sequence_length = (prev_c1 < 0x80) ? 1 : (prev_c1 <= 0xDF) ? 2 : (prev_c1 <= 0xEF) ? 3 : 4;
-                DebugLogger() << "not handled char: " << std::string_view(&*prev_char_it, prev_sequence_length);
+                DebugLogger() << "not handled char: " << std::string_view(std::to_address(prev_char_it), prev_sequence_length);
             }
 
             prev_char_it = it;
             const uint8_t c1 = *it;
 
             const std::ptrdiff_t sequence_length = (c1 < 0x80) ? 1 : (c1 <= 0xDF) ? 2 : (c1 <= 0xEF) ? 3 : 4;
-            //DebugLogger() << std::string_view(&*it, sequence_length) << "(" << sequence_length << ") : " << static_cast<int>(c1) << " " << static_cast<int>(*(it+1));
+            //DebugLogger() << std::string_view(std::to_address(it), sequence_length) << "(" << sequence_length << ") : " << static_cast<int>(c1) << " " << static_cast<int>(*(it+1));
 
             // adjust current sequence if it is a recognized capital letter
             if (sequence_length == 1) { // ASCII
@@ -3936,7 +3936,7 @@ namespace {
 
             } else if (sequence_length == 3) {
                 if (dist < 3 || !IsOK3CharCode(it)) {
-                    //DebugLogger() << "unrecognized 3 length code: " << std::string_view(&*it, 3);
+                    //DebugLogger() << "unrecognized 3 length code: " << std::string_view(std::addressof(*it), 3);
                     retval = false;  // unrecognized code
                 }
 

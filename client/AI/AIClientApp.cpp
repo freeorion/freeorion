@@ -69,7 +69,7 @@ namespace {
         AddTraitBypassOption(db, "aggression", "AGGRESSION", no_value, RangedValidator<int>(no_value, max_aggression));
         AddTraitBypassOption(db, "empire-id",  "EMPIREID",   no_value, RangedValidator<int>(no_value, IApp::MAX_AI_PLAYERS()));
     }
-    bool temp_bool = RegisterOptions(&AddOptions);
+    bool temp_bool = RegisterOptions(std::addressof(AddOptions));
 
 }
 
