@@ -103,7 +103,7 @@ auto PythonAI::InitImports() -> bool
 {
     DebugLogger() << "Initializing AI Python imports";
     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
-    return PyImport_AppendInittab("freeOrionAIInterface", &PyInit_freeOrionAIInterface) != -1;
+    return PyImport_AppendInittab("freeOrionAIInterface", std::addressof(PyInit_freeOrionAIInterface)) != -1;
 }
 
 auto PythonAI::InitModules() -> bool
