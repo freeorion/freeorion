@@ -55,17 +55,17 @@ namespace {
 
         } else {
             // Consider the first player the main player
-            const PlayerSaveGameData* player = &player_save_game_data.front();
+            const PlayerSaveGameData* player = player_save_game_data.data();
 
             // If there are human players, the first of them should be the main player
-            int16_t humans = 0;
+            int16_t humans = 0; // TODO: use algorithms and avoid raw poitners here...
             for (const PlayerSaveGameData& psgd : player_save_game_data) {
                 if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
                     if (player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
                         player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
                         player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
                     {
-                        player = &psgd;
+                        player = std::addressof(psgd);
                     }
                     ++humans;
                 }

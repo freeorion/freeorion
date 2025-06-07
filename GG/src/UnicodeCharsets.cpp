@@ -160,7 +160,7 @@ namespace {
             std::size_t first_block = uchs.m_first_char / UnicodeCharset::BLOCK_SIZE;
             std::size_t last_block = uchs.m_last_char / UnicodeCharset::BLOCK_SIZE;
             for (std::size_t j = first_block; j != last_block; ++j)
-                retval[j] = &uchs;
+                retval[j] = std::addressof(uchs);
         }
         return retval;
     }();

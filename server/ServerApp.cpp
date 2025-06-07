@@ -1432,9 +1432,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         if (Networking::is_ai(client_type)) {
             // get save state string
-            const std::string* sss = nullptr;
-            if (!psgd.save_state_string.empty())
-                sss = &psgd.save_state_string;
+            const std::string* const sss = psgd.save_state_string.empty() ?
+                nullptr : std::addressof(psgd.save_state_string);
 
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
