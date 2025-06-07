@@ -86,7 +86,7 @@ HumanClientFSM::HumanClientFSM(GGHumanClientApp &human_client) :
 
 void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event) {
     std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
-    const boost::statechart::event_base* event_ptr = &event;
+    const boost::statechart::event_base* event_ptr = std::addressof(event);
     if (dynamic_cast<const Disconnection*>(event_ptr))
         most_derived_message_type_str = "Disconnection";
 #define EVENT_CASE(r, data, name)                                       \
@@ -1345,7 +1345,7 @@ QuittingGame::~QuittingGame()
 boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
     TraceLogger(FSM) << "(HumanClientFSM) QuittingGame";
 
-    m_server_process = &u.m_server;
+    m_server_process = std::addressof(u.m_server);
     m_after_server_shutdown_action = u.m_after_server_shutdown_action;
 
     post_event(ShutdownServer());

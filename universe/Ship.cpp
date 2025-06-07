@@ -382,7 +382,7 @@ const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) co
                                   [type, &part_name](const auto& name_type)
                                   { return name_type.first.first == part_name && name_type.first.second == type; });
     if (it != m_part_meters.end())
-        retval = &it->second;
+        retval = std::addressof(it->second);
     return retval;
 }
 
@@ -392,7 +392,7 @@ Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
                                   [type, &part_name](const auto& name_type)
                                   { return name_type.first.first == part_name && name_type.first.second == type; });
     if (it != m_part_meters.end())
-        retval = &it->second;
+        retval = std::addressof(it->second);
     return retval;
 }
 

@@ -1808,7 +1808,7 @@ namespace {
 
         xpr::sregex& BindRegexToText(const std::string& new_text, bool ignore_tags) noexcept
         {
-            m_text = &new_text;
+            m_text = std::addressof(new_text);
             m_ignore_tags = ignore_tags;
             return m_EVERYTHING;
         }
