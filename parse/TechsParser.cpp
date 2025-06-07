@@ -190,8 +190,8 @@ namespace parse {
         std::map<std::string, std::unique_ptr<TechCategory>, std::less<>> categories;
         std::set<std::string> categories_seen;
 
-        g_categories_seen = &categories_seen;
-        g_categories = &categories;
+        g_categories_seen = std::addressof(categories_seen);
+        g_categories = std::addressof(categories);
 
         ScopedTimer timer("Techs Parsing");
 

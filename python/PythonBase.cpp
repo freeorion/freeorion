@@ -131,7 +131,7 @@ void PythonBase::AddToSysPath(const fs::path& dir) {
 }
 
 void PythonBase::SetErrorModule(py::object& module)
-{ m_python_module_error = &module; }
+{ m_python_module_error = std::addressof(module); }
 
 std::vector<std::string> PythonBase::ErrorReport() {
     std::vector<std::string> err_list;
