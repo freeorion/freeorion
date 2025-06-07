@@ -548,7 +548,7 @@ Message AIEndGameAcknowledgeMessage()
 Message ModeratorActionMessage(const Moderator::ModeratorAction& action) {
     std::ostringstream os;
     {
-        const Moderator::ModeratorAction* mod_action = &action;
+        const auto* mod_action = std::addressof(action);
         freeorion_xml_oarchive oa(os);
         oa << BOOST_SERIALIZATION_NVP(mod_action);
     }
@@ -661,9 +661,8 @@ Message ChatHistoryMessage(const std::vector<std::reference_wrapper<const ChatHi
             freeorion_xml_oarchive oa(zos);
             std::size_t size = chat_history.size();
             oa << BOOST_SERIALIZATION_NVP(size);
-            for (const auto &elem : chat_history) {
+            for (const auto& elem : chat_history)
                 oa << boost::serialization::make_nvp(BOOST_PP_STRINGIZE(elem), elem.get());
-            }
         }
         if (!zos.strict_sync())
             zos.reset();
@@ -1455,16 +1454,16 @@ void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name
     }
 }
 
-void ExtractSetAuthorizationRolesMessage(const Message &msg, Networking::AuthRoles& roles)
+void ExtractSetAuthorizationRolesMessage(const Message& msg, Networking::AuthRoles& roles)
 { roles.SetText(msg.Text()); }
 
-void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players) {
+void ExtractPlayerInfoMessageData(const Message& msg, std::map<int, PlayerInfo>& players) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(players);
     } catch(const std::exception& err) {
-        ErrorLogger() << "ExtractPlayerInfo(const Message &msg, std::map<int, PlayerInfo>& players) failed!  Message:\n"
+        ErrorLogger() << "ExtractPlayerInfo(const Message& msg, std::map<int, PlayerInfo>& players) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
     }

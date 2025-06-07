@@ -203,7 +203,7 @@ public:
         /** True iff .first == .second. */
         [[nodiscard]] constexpr bool empty() const noexcept { return first == second; }
 
-        [[nodiscard]] CONSTEXPR_FONT bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
+        [[nodiscard]] CONSTEXPR_FONT bool IsDefaultEmpty() const noexcept { return str == std::addressof(EMPTY_STRING); }
 
         /** Length, in original string chars, of the substring. */
         [[nodiscard]] constexpr std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }

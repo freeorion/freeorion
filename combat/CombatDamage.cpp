@@ -165,8 +165,8 @@ std::vector<float> Combat::WeaponDamageImpl(
     if (target_ships == Combat::TargetShipsWD::TargetShips) {
         auto temp_ship = TempShipForDamageCalcs(source, context);
         const ScriptingContext temp_ship_context{context, empire_object_vis, empire_object_visibility_turns,
-                                                 ScriptingContext::Source{}, &source,
-                                                 ScriptingContext::Target{}, &temp_ship};
+                                                 ScriptingContext::Source{}, std::addressof(source),
+                                                 ScriptingContext::Target{}, std::addressof(temp_ship)};
 
         return WeaponDamageCalcImpl(source, max, launch_fighters, target_ships, temp_ship_context);
 
@@ -174,8 +174,8 @@ std::vector<float> Combat::WeaponDamageImpl(
         // create temporary fighter to test targetting condition on...
         auto temp_fighter = TempFighterForDamageCalcs(source, context);
         const ScriptingContext temp_fighter_context{context, empire_object_vis, empire_object_visibility_turns,
-                                                    ScriptingContext::Source{}, &source,
-                                                    ScriptingContext::Target{}, &temp_fighter};
+                                                    ScriptingContext::Source{}, std::addressof(source),
+                                                    ScriptingContext::Target{}, std::addressof(temp_fighter)};
 
         return WeaponDamageCalcImpl(source, max, launch_fighters, target_ships, temp_fighter_context);
     }
@@ -201,7 +201,7 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
     auto temp_ship = TempShipForDamageCalcs(*ship, context);
     ScriptingContext ship_target_context{context, empire_object_vis, empire_object_visibility_turns,
                                          ScriptingContext::Source{}, ship.get(),
-                                         ScriptingContext::Target{}, &temp_ship};
+                                         ScriptingContext::Target{}, std::addressof(temp_ship)};
 
     for (int bout = 1; bout <= target_bout; ++bout) {
         ship_target_context.combat_bout = bout;

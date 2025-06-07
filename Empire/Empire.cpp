@@ -580,7 +580,7 @@ std::vector<std::pair<std::string_view, int>> Empire::EmptyPolicySlots() const {
 Meter* Empire::GetMeter(std::string_view name) {
     auto it = range_find_if(m_meters, [name](const auto& e) noexcept { return e.first == name; });
     if (it != m_meters.end())
-        return &(it->second);
+        return std::addressof(it->second);
     else
         return nullptr;
 }
@@ -588,7 +588,7 @@ Meter* Empire::GetMeter(std::string_view name) {
 const Meter* Empire::GetMeter(std::string_view name) const {
     auto it = range_find_if(m_meters, [name](const auto& e) noexcept { return e.first == name; });
     if (it != m_meters.end())
-        return &(it->second);
+        return std::addressof(it->second);
     else
         return nullptr;
 }
@@ -603,7 +603,7 @@ bool Empire::ResearchableTech(std::string_view name) const {
     if (!tech)
         return false;
     const auto& prereqs = tech->Prerequisites();
-    return range_all_of(prereqs, [&](const auto& p) -> bool { return m_techs.contains(p); });
+    return range_all_of(prereqs, [this](const auto& p) -> bool { return m_techs.contains(p); });
 }
 
 bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) const {
@@ -659,7 +659,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech(const ScriptingContext& con
         float tech_cost = tech->ResearchCost(m_id, context);
         if (tech_cost > biggest_cost) {
             biggest_cost = tech_cost;
-            best_elem = &elem;
+            best_elem = std::addressof(elem);
         }
     }
 
@@ -682,7 +682,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech(const ScriptingContext& co
         float tech_cost = tech->ResearchCost(m_id, context);
         if (tech_cost < smallest_cost) {
             smallest_cost = tech_cost;
-            best_elem = &elem;
+            best_elem = std::addressof(elem);
         }
     }
 
@@ -700,7 +700,7 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
         if (!m_research_queue.InQueue(tech_name))
             continue;
         if (rp_spent > most_spent) {
-            best_progress = &progress;
+            best_progress = std::addressof(progress);
             most_spent = rp_spent;
         }
     }
@@ -727,7 +727,7 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech(const ScriptingContext& co
         float rp_left = std::max(0.0f, rp_total_cost - rp_spent);
 
         if (rp_left > most_left) {
-            best_progress = &progress;
+            best_progress = std::addressof(progress);
             most_left = rp_left;
         }
     }

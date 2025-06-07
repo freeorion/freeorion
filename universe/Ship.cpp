@@ -107,7 +107,7 @@ std::shared_ptr<UniverseObject> Ship::Clone(const Universe& universe, int empire
 }
 
 void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
 
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_SHIP) {
@@ -119,7 +119,7 @@ void Ship::Copy(const UniverseObject& copied_object, const Universe& universe, i
 }
 
 void Ship::Copy(const Ship& copied_ship, const Universe& universe, int empire_id) {
-    if (&copied_ship == this)
+    if (std::addressof(copied_ship) == this)
         return;
 
     const int copied_object_id = copied_ship.ID();

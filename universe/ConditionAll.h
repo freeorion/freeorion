@@ -15,7 +15,7 @@ struct FO_COMMON_API All final : public Condition {
     constexpr All() noexcept : Condition(true, true, true) {};
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<const All*>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<const All*>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const All&) const noexcept { return true; }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,

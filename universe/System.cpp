@@ -55,7 +55,7 @@ std::shared_ptr<UniverseObject> System::Clone(const Universe& universe, int empi
 }
 
 void System::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_SYSTEM) {
         ErrorLogger() << "System::Copy passed an object that wasn't a System";
@@ -66,7 +66,7 @@ void System::Copy(const UniverseObject& copied_object, const Universe& universe,
 }
 
 void System::Copy(const System& copied_system, const Universe& universe, int empire_id) {
-    if (&copied_system == this)
+    if (std::addressof(copied_system) == this)
         return;
 
     const int copied_object_id = copied_system.ID();

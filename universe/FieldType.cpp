@@ -76,7 +76,7 @@ FieldType::FieldType(std::string&& name, std::string&& description,
 }
 
 bool FieldType::operator==(const FieldType& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
 
     if (m_name != rhs.m_name ||
