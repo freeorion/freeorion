@@ -129,10 +129,10 @@ namespace {
         const auto& context_objects{context.ContextObjects()};
         const auto& context_universe{context.ContextUniverse()};
 
-        if (&universe != &context_universe)
+        if (std::addressof(universe) != std::addressof(context_universe))
             ErrorLogger() << "Universe member function passed context with different Universe from this";
 
-        if (&context_objects != &universe_objects)
+        if (std::addressof(context_objects) != std::addressof(universe_objects))
             ErrorLogger() << "Universe member function passed context different ObjectMap from this Universe";
     }
 

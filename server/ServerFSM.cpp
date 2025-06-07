@@ -239,7 +239,7 @@ ServerFSM::ServerFSM(ServerApp &server) :
 
 void ServerFSM::unconsumed_event(const sc::event_base &event) {
     std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
-    const sc::event_base* event_ptr = &event;
+    const sc::event_base* const event_ptr = std::addressof(event);
     if (dynamic_cast<const Disconnection*>(event_ptr))
         most_derived_message_type_str = "Disconnection";
 #define MESSAGE_EVENT_CASE(r, data, name)                               \

@@ -124,7 +124,7 @@ namespace {
         Y BufferHeight() const noexcept { return m_capacity_height; }
 
         /// Return a pointer to the storage buffer where the data is kept
-        T* Buffer() noexcept { return &m_data.front(); }
+        T* Buffer() noexcept { return m_data.data(); }
 
         /// Returns the size of the storage buffer where the data is kept
         auto BufferSize() const noexcept { return m_data.size(); }
@@ -186,7 +186,7 @@ namespace {
     {
         FTLibraryWrapper()
         {
-            if (!m_library && FT_Init_FreeType(&m_library)) // if no library exists and we can't create one...
+            if (!m_library && FT_Init_FreeType(std::addressof(m_library))) // if no library exists and we can't create one...
                 throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
         }
         ~FTLibraryWrapper() { FT_Done_FreeType(m_library); }
@@ -3116,7 +3116,7 @@ void Font::Init(FT_Face& face)
 
             for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
                 uint8_t* src = src_start + row * glyph_bitmap.pitch;
-                uint16_t* dst = &buffer.get(x, y + Y(row));
+                uint16_t* dst = std::addressof(buffer.get(x, y + Y(row)));
                 // Rows are always contiguous, so we can copy along a row using simple incrementation
                 for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__

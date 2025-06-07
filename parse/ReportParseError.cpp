@@ -50,7 +50,7 @@ void parse::detail::info_visitor::operator()(const boost::spirit::info& what) co
 { boost::apply_visitor(info_visitor(m_os, what.tag, m_indent), what.value); }
 
 void parse::detail::info_visitor::operator()(const std::pair<boost::spirit::info, boost::spirit::info>& pair) const {
-    const boost::spirit::info* infos = &pair.first;
+    const boost::spirit::info* infos = std::addressof(pair.first);
     multi_info(infos, infos + 2);
 }
 
