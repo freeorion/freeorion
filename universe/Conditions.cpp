@@ -210,7 +210,7 @@ namespace Condition {
 // Condition                                             //
 ///////////////////////////////////////////////////////////
 bool Condition::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
 
     try {
@@ -551,7 +551,7 @@ SortedNumberOf::SortedNumberOf(std::unique_ptr<ValueRef::ValueRef<int>>&& number
 {}
 
 bool SortedNumberOf::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -1163,14 +1163,14 @@ EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
 {}
 
 bool EmpireAffiliation::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool EmpireAffiliation::operator==(const EmpireAffiliation& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     if (m_affiliation != rhs_.m_affiliation)
@@ -1505,14 +1505,14 @@ Homeworld::Homeworld() noexcept(noexcept(string_vref_ptr_vec{})) :
 {}
 
 bool Homeworld::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool Homeworld::operator==(const Homeworld& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     if (m_names.size() != rhs_.m_names.size())
@@ -1790,14 +1790,14 @@ CapitalWithID::CapitalWithID(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_i
 {}
 
 bool CapitalWithID::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool CapitalWithID::operator==(const CapitalWithID& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
@@ -2159,14 +2159,14 @@ Building::Building(std::string name) :
 {}
 
 bool Building::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool Building::operator==(const Building& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -2337,14 +2337,14 @@ Field::Field(std::string name) :
 {}
 
 bool Field::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool Field::operator==(const Field& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
     if (m_names.size() != rhs_.m_names.size())
         return false;
@@ -2538,7 +2538,7 @@ HasSpecial::HasSpecial(const HasSpecial& rhs) :
 {}
 
 bool HasSpecial::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -2827,7 +2827,7 @@ CreatedOnTurn::CreatedOnTurn(std::unique_ptr<ValueRef::ValueRef<int>>&& low,
 {}
 
 bool CreatedOnTurn::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -3140,7 +3140,7 @@ InOrIsSystem::InOrIsSystem(std::unique_ptr<ValueRef::ValueRef<int>>&& system_id)
 {}
 
 bool InOrIsSystem::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -3274,14 +3274,14 @@ OnPlanet::OnPlanet(std::unique_ptr<ValueRef::ValueRef<int>>&& planet_id) :
 {}
 
 bool OnPlanet::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool OnPlanet::operator==(const OnPlanet& rhs) const {
-    return (this == &rhs) || (m_planet_id == rhs.m_planet_id) ||
+    return (this == std::addressof(rhs)) || (m_planet_id == rhs.m_planet_id) ||
         (m_planet_id && rhs.m_planet_id && *m_planet_id == *(rhs.m_planet_id));
 }
 
@@ -3414,7 +3414,7 @@ ObjectID::ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id) :
 {}
 
 bool ObjectID::operator==(const ObjectID& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_object_id)
@@ -3529,7 +3529,7 @@ PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetS
 {}
 
 bool PlanetSize::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -3685,7 +3685,7 @@ PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::Value
 {}
 
 bool PlanetEnvironment::operator==(const PlanetEnvironment& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_species_name)
@@ -3875,14 +3875,14 @@ Species::Species() :
 {}
 
 bool Species::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool Species::operator==(const Species& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     if (m_names.size() != rhs_.m_names.size())
@@ -4067,7 +4067,7 @@ SpeciesOpinion::SpeciesOpinion(std::unique_ptr<ValueRef::ValueRef<std::string>>&
 {}
 
 bool SpeciesOpinion::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -4450,14 +4450,14 @@ Enqueued::Enqueued(const Enqueued& rhs) :
 {}
 
 bool Enqueued::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool Enqueued::operator==(const Enqueued& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
     if (m_build_type != rhs_.m_build_type)
         return false;
@@ -4730,14 +4730,14 @@ FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>
 {}
 
 bool FocusType::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
 }
 
 bool FocusType::operator==(const FocusType& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     if (m_names.size() != rhs_.m_names.size())
@@ -4913,7 +4913,7 @@ StarType::StarType(::StarType type) :
 {}
 
 bool StarType::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
     return rhs_p && *this == *rhs_p;
@@ -5071,7 +5071,7 @@ DesignHasHull::DesignHasHull(std::unique_ptr<ValueRef::ValueRef<std::string>>&& 
 {}
 
 bool DesignHasHull::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -5198,7 +5198,7 @@ DesignHasPart::DesignHasPart(std::unique_ptr<ValueRef::ValueRef<std::string>>&& 
 {}
 
 bool DesignHasPart::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -5387,7 +5387,7 @@ DesignHasPartClass::DesignHasPartClass(ShipPartClass part_class,
 {}
 
 bool DesignHasPartClass::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -5558,7 +5558,7 @@ PredefinedShipDesign::PredefinedShipDesign(std::unique_ptr<ValueRef::ValueRef<st
 {}
 
 bool PredefinedShipDesign::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -5696,7 +5696,7 @@ NumberedShipDesign::NumberedShipDesign(std::unique_ptr<ValueRef::ValueRef<int>>&
 {}
 
 bool NumberedShipDesign::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -5799,7 +5799,7 @@ ProducedByEmpire::ProducedByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& em
 {}
 
 bool ProducedByEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -5904,7 +5904,7 @@ Chance::Chance(std::unique_ptr<ValueRef::ValueRef<double>>&& chance) :
 {}
 
 bool Chance::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -6002,7 +6002,7 @@ MeterValue::MeterValue(MeterType meter,
 {}
 
 bool MeterValue::operator==(const MeterValue& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     if (m_meter != rhs_.m_meter)
@@ -6193,7 +6193,7 @@ ShipPartMeterValue::ShipPartMeterValue(std::unique_ptr<ValueRef::ValueRef<std::s
 {}
 
 bool ShipPartMeterValue::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -6364,7 +6364,7 @@ EmpireMeterValue::EmpireMeterValue(std::unique_ptr<ValueRef::ValueRef<int>>&& em
 {}
 
 bool EmpireMeterValue::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -6548,7 +6548,7 @@ EmpireStockpileValue::EmpireStockpileValue(std::unique_ptr<ValueRef::ValueRef<in
 {}
 
 bool EmpireStockpileValue::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -6719,7 +6719,7 @@ EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRe
 EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy() = default;
 
 bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -6859,7 +6859,7 @@ OwnerHasTech::OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& na
 {}
 
 bool OwnerHasTech::operator==(const OwnerHasTech& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
@@ -7001,7 +7001,7 @@ EmpireHasBuildingTypeAvailable::EmpireHasBuildingTypeAvailable(
 {}
 
 bool EmpireHasBuildingTypeAvailable::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -7141,7 +7141,7 @@ EmpireHasShipDesignAvailable::EmpireHasShipDesignAvailable(std::unique_ptr<Value
 {}
 
 bool EmpireHasShipDesignAvailable::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -7281,7 +7281,7 @@ EmpireHasShipPartAvailable::EmpireHasShipPartAvailable(std::unique_ptr<ValueRef:
 {}
 
 bool EmpireHasShipPartAvailable::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -7416,7 +7416,7 @@ VisibleToEmpire::VisibleToEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empi
 {}
 
 bool VisibleToEmpire::operator==(const VisibleToEmpire& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
@@ -7613,7 +7613,7 @@ WithinDistance::WithinDistance(std::unique_ptr<ValueRef::ValueRef<double>>&& dis
 {}
 
 bool WithinDistance::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -7795,7 +7795,7 @@ WithinStarlaneJumps::WithinStarlaneJumps(std::unique_ptr<ValueRef::ValueRef<int>
 {}
 
 bool WithinStarlaneJumps::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -7924,7 +7924,7 @@ HasStarlaneTo::HasStarlaneTo(std::unique_ptr<Condition>&& condition) :
 {}
 
 bool HasStarlaneTo::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -8029,7 +8029,7 @@ StarlaneToWouldCrossExistingStarlane::StarlaneToWouldCrossExistingStarlane(std::
 {}
 
 bool StarlaneToWouldCrossExistingStarlane::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -8396,7 +8396,7 @@ StarlaneToWouldBeAngularlyCloseToExistingStarlane::StarlaneToWouldBeAngularlyClo
 {}
 
 bool StarlaneToWouldBeAngularlyCloseToExistingStarlane::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -8602,7 +8602,7 @@ StarlaneToWouldBeCloseToObject::StarlaneToWouldBeCloseToObject(
 {}
 
 bool StarlaneToWouldBeCloseToObject::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -8947,7 +8947,7 @@ ExploredByEmpire::ExploredByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& em
 {}
 
 bool ExploredByEmpire::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -9143,7 +9143,7 @@ FleetSupplyableByEmpire::FleetSupplyableByEmpire(std::unique_ptr<ValueRef::Value
 {}
 
 bool FleetSupplyableByEmpire::operator==(const FleetSupplyableByEmpire& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
@@ -9253,7 +9253,7 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
 {}
 
 bool ResourceSupplyConnectedByEmpire::operator==(const ResourceSupplyConnectedByEmpire& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_empire_id)
@@ -9533,7 +9533,7 @@ OrderedBombarded::OrderedBombarded(std::unique_ptr<Condition>&& by_object_condit
 {}
 
 bool OrderedBombarded::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -9893,7 +9893,7 @@ ValueTest::ValueTest(const ValueTest& rhs) :
 {}
 
 bool ValueTest::operator==(const ValueTest& rhs_) const {
-    if (this == &rhs_)
+    if (this == std::addressof(rhs_))
         return true;
 
     CHECK_COND_VREF_MEMBER(m_value_ref1)
@@ -10404,7 +10404,7 @@ Location::Location(ContentType content_type,
 {}
 
 bool Location::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -10573,7 +10573,7 @@ CombatTarget::CombatTarget(ContentType content_type,
 {}
 
 bool CombatTarget::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -11230,7 +11230,7 @@ OrderedAlternativesOf::OrderedAlternativesOf(std::vector<std::unique_ptr<Conditi
 {}
 
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -11423,7 +11423,7 @@ Described::Described(std::unique_ptr<Condition>&& condition, std::string desc_st
 {}
 
 bool Described::operator==(const Condition& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;

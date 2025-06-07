@@ -170,8 +170,8 @@ uint32_t Policy::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 const Policy* PolicyManager::GetPolicy(std::string_view name) const {
     CheckPendingPolicies();
-    auto it = range_find_if(m_policies, [name](const auto& n_p) { return n_p.first == name; });
-    return it == m_policies.end() ? nullptr : &it->second;
+    auto it = range_find_if(m_policies, [name](const auto& n_p) noexcept { return n_p.first == name; });
+    return it == m_policies.end() ? nullptr : std::addressof(it->second);
 }
 
 const PolicyManager::PoliciesTypeMap& PolicyManager::Policies() const noexcept {

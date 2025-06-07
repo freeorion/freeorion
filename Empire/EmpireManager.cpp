@@ -16,7 +16,7 @@ namespace {
 }
 
 EmpireManager& EmpireManager::operator=(EmpireManager&& other) noexcept {
-    if (this != &other) {
+    if (this != std::addressof(other)) {
         m_empire_ids = std::move(other.m_empire_ids);
         m_capital_ids = std::move(other.m_capital_ids);
         m_empire_map = std::move(other.m_empire_map);
@@ -172,7 +172,7 @@ boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusW
     retval.reserve(statuses.size()); // probably an overestimate
 
     // find ids of empires with the specified diplomatic status with the specified empire
-    for (auto const &[emp1, emp2] : statuses
+    for (auto const& [emp1, emp2] : statuses
          | range_filter([diplo_status](const auto& ids_status) noexcept { return ids_status.second == diplo_status; })
          | range_keys)
     {

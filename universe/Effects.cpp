@@ -230,7 +230,7 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
 EffectsGroup::~EffectsGroup() = default;
 
 bool EffectsGroup::operator==(const EffectsGroup& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
 
     if (m_stacking_group != rhs.m_stacking_group ||
@@ -380,7 +380,7 @@ std::string Dump(const std::vector<EffectsGroup>& effects_groups) {
 // Effect                                                //
 ///////////////////////////////////////////////////////////
 bool Effect::operator==(const Effect& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
 
     if (typeid(*this) != typeid(rhs))
@@ -465,7 +465,7 @@ SetMeter::SetMeter(MeterType meter,
 }
 
 bool SetMeter::operator==(const Effect& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -701,7 +701,7 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
 {}
 
 bool SetShipPartMeter::operator==(const Effect& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -976,7 +976,7 @@ SetEmpireMeter::SetEmpireMeter(std::unique_ptr<ValueRef::ValueRef<int>>&& empire
 {}
 
 bool SetEmpireMeter::operator==(const Effect& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -1211,7 +1211,7 @@ SetEmpireStockpile::SetEmpireStockpile(std::unique_ptr<ValueRef::ValueRef<int>>&
 {}
 
 bool SetEmpireStockpile::operator==(const Effect& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;
@@ -1293,7 +1293,7 @@ SetEmpireCapital::SetEmpireCapital(std::unique_ptr<ValueRef::ValueRef<int>>&& em
 {}
 
 bool SetEmpireCapital::operator==(const Effect& rhs) const {
-    if (this == &rhs)
+    if (this == std::addressof(rhs))
         return true;
     if (typeid(*this) != typeid(rhs))
         return false;

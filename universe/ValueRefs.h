@@ -144,13 +144,13 @@ struct FO_COMMON_API Constant final : public ValueRef<T>
 #endif
 
     [[nodiscard]] constexpr bool operator==(const ValueRef<T>& rhs) const noexcept override {
-        if (&rhs == this)
+        if (std::addressof(rhs) == this)
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
     [[nodiscard]] constexpr bool operator==(const Constant& rhs) const noexcept {
-        if (&rhs == this)
+        if (std::addressof(rhs) == this)
             return true;
         if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
@@ -191,7 +191,7 @@ struct FO_COMMON_API Constant<std::string> final : public ValueRef<std::string>
 #endif
 
     [[nodiscard]] constexpr bool operator==(const ValueRef<std::string>& rhs) const override {
-        if (&rhs == this)
+        if (std::addressof(rhs) == this)
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         if (!rhs_p)
@@ -299,13 +299,13 @@ struct FO_COMMON_API Variable : public ValueRef<T>
 #endif
 
     [[nodiscard]] constexpr bool operator==(const ValueRef<T>& rhs) const override {
-        if (&rhs == this)
+        if (std::addressof(rhs) == this)
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *rhs_p == *this;
     }
     [[nodiscard]] constexpr bool operator==(const Variable<T>& rhs) const noexcept {
-        if (&rhs == this)
+        if (std::addressof(rhs) == this)
             return true;
         if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
@@ -947,7 +947,7 @@ FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(
 template <typename T, typename V>
 bool Statistic<T, V>::operator==(const ValueRef<T>& rhs) const
 {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
@@ -1444,7 +1444,7 @@ FO_COMMON_API std::string Statistic<std::string, std::string>::Eval(const Script
 template <typename T>
 bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
 {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
@@ -1593,7 +1593,7 @@ FO_COMMON_API std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) cons
 template <typename FromType, typename ToType>
 bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
@@ -1638,7 +1638,7 @@ void StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content
 template <typename FromType>
 bool StringCast<FromType>::operator==(const ValueRef<std::string>& rhs) const
 {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
@@ -1713,7 +1713,7 @@ void StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 template <typename FromType>
 bool UserStringLookup<FromType>::operator==(const ValueRef<std::string>& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
@@ -1770,7 +1770,7 @@ void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_n
 template <typename T>
 bool Operation<T>::operator==(const ValueRef<T>& rhs) const
 {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;

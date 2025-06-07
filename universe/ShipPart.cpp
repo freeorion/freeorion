@@ -312,7 +312,7 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
 ShipPart::~ShipPart() = default;
 
 bool ShipPart::operator==(const ShipPart& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
 
     if (m_name != rhs.m_name ||

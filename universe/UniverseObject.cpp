@@ -42,7 +42,7 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
                           Visibility vis, const std::set<std::string>& visible_specials,
                           const Universe&)
 {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
 
     static constexpr Meter DEFAULT_METER;

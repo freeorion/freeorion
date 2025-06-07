@@ -34,7 +34,7 @@ FocusType::FocusType(std::string name, std::string description,
 FocusType::~FocusType() = default;
 
 bool FocusType::operator==(const FocusType& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
 
     if (m_name != rhs.m_name ||
@@ -514,7 +514,7 @@ Species::Species(std::string&& name, std::string&& desc,
 Species::~Species() = default;
 
 bool Species::operator==(const Species& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
 
     if (m_name != rhs.m_name ||

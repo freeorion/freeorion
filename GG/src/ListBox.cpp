@@ -1504,7 +1504,7 @@ void ListBox::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
 
 void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
 {
-    if (timer == &m_auto_scroll_timer && !m_rows.empty()) {
+    if (timer == std::addressof(m_auto_scroll_timer) && !m_rows.empty()) {
         if (m_vscroll) {
             if (m_auto_scrolling_up &&
                 m_first_row_shown != m_rows.end() &&
