@@ -116,7 +116,7 @@ void ObjectMap::Copy(const ObjectMap& copied_map, const Universe& universe, int 
 }
 
 void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
-    if (&copied_map == this)
+    if (std::addressof(copied_map) == this)
         return;
 
     // note: the following relies upon only m_objects actually getting serialized by ObjectMap::serialize

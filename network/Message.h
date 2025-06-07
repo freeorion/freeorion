@@ -486,9 +486,9 @@ FO_COMMON_API void ExtractAuthRequestMessageData(const Message& msg, std::string
 
 FO_COMMON_API void ExtractAuthResponseMessageData(const Message& msg, std::string& player_name, std::string& auth);
 
-FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message &msg, Networking::AuthRoles& roles);
+FO_COMMON_API void ExtractSetAuthorizationRolesMessage(const Message& msg, Networking::AuthRoles& roles);
 
-FO_COMMON_API void ExtractPlayerInfoMessageData(const Message &msg, std::map<int, PlayerInfo>& players);
+FO_COMMON_API void ExtractPlayerInfoMessageData(const Message& msg, std::map<int, PlayerInfo>& players);
 
 
 #endif

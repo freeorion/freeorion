@@ -50,7 +50,7 @@ struct FO_COMMON_API NamedRef final : public ValueRef<T>
     { return NamedRefInitInvariants() ? GetValueRef()->ConstantExpr() : false; }
 
     [[nodiscard]] bool operator==(const ValueRef<T>& rhs) const override {
-        if (&rhs == this)
+        if (std::addressof(rhs) == this)
             return true;
         if (typeid(rhs) != typeid(*this))
             return false;

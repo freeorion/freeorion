@@ -271,7 +271,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
     const Universe& universe = context.ContextUniverse();
     const ObjectMap& objects = context.ContextObjects();
 
-    if (this != &context.supply)
+    if (this != std::addressof(context.supply))
         WarnLogger() << "SupplyManager::Update passed a ScriptingContext with a different SupplyManager referenced in it";
 
     m_supply_starlane_traversals.clear();

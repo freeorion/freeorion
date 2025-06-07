@@ -74,7 +74,7 @@ std::shared_ptr<UniverseObject> Planet::Clone(const Universe& universe, int empi
 }
 
 void Planet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
 
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_PLANET) {

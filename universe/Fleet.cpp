@@ -35,7 +35,7 @@ std::shared_ptr<UniverseObject> Fleet::Clone(const Universe& universe, int empir
 }
 
 void Fleet::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_FLEET) {
         ErrorLogger() << "Fleet::Copy passed an object that wasn't a Fleet";

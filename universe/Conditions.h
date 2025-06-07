@@ -337,7 +337,7 @@ namespace Impl {
 
         static constexpr bool opeq_noexcept = cond_equals_noexcept && cond_deref_equals_noexcept;
         [[nodiscard]] constexpr bool operator==(const NestedCondition& rhs) const noexcept(opeq_noexcept) {
-            if (this == &rhs || m_condition == rhs.m_condition)
+            if (this == std::addressof(rhs) || m_condition == rhs.m_condition)
                 return true;
             if constexpr (cond_is_ptr)
                 return m_condition && (*m_condition == *rhs.m_condition);
@@ -428,13 +428,13 @@ struct FO_COMMON_API Number final : public Condition {
     {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
     [[nodiscard]] bool operator==(const Number& rhs) const {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         return Impl::ptr_eq(m_low, rhs.m_low) && Impl::ptr_eq(m_high, rhs.m_high) &&
                Impl::ptr_eq(m_condition, rhs.m_condition);
@@ -472,14 +472,14 @@ struct FO_COMMON_API Turn final : public Condition {
     {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
 
     [[nodiscard]] bool operator==(const Turn& rhs) const {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         return Impl::ptr_eq(m_low, rhs.m_low) && Impl::ptr_eq(m_high, rhs.m_high);
     }
@@ -559,7 +559,7 @@ struct FO_COMMON_API None final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] bool operator==(const None&) const noexcept { return true; }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -585,7 +585,7 @@ struct FO_COMMON_API NoOp final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] bool operator==(const NoOp&) const noexcept { return true; }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -650,7 +650,7 @@ struct FO_COMMON_API RootCandidate final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const RootCandidate&) const noexcept { return true; }
 
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const noexcept override {
@@ -688,7 +688,7 @@ struct FO_COMMON_API Target final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Target&) const noexcept { return true; }
 
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const noexcept override
@@ -752,7 +752,7 @@ struct FO_COMMON_API Capital final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Capital&) const noexcept { return true; }
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -814,7 +814,7 @@ struct FO_COMMON_API Monster final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Monster&) const noexcept { return true; }
 
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
@@ -841,7 +841,7 @@ struct FO_COMMON_API Armed final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Armed&) const noexcept { return true; }
 
     [[nodiscard]] bool EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const override
@@ -879,13 +879,13 @@ struct FO_COMMON_API Type final : public Condition {
     Type(Type&&) noexcept = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
     [[nodiscard]] bool operator==(const Type& rhs) const {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         return Impl::ptr_eq(m_type, rhs.m_type);
     }
@@ -1053,13 +1053,13 @@ struct FO_COMMON_API HasTag final : public Condition {
     // no constexpr destructor GCC workaround as ~unique_ptr is not constexpr before C++23 anyway...
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
     [[nodiscard]] bool operator==(const HasTag& rhs) const {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         return Impl::ptr_eq(m_name, rhs.m_name);
     }
@@ -1208,7 +1208,7 @@ struct FO_COMMON_API Contains final : public Impl::NestedCondition<ConditionT> {
     }
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -1451,7 +1451,7 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
     }
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -1702,7 +1702,7 @@ struct FO_COMMON_API ObjectID final : public Condition {
     explicit ObjectID(std::unique_ptr<ValueRef::ValueRef<int>>&& object_id);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const noexcept override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -1786,7 +1786,7 @@ public:
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -2047,7 +2047,7 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
                                std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref = nullptr);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_ = dynamic_cast<decltype(this)>(&rhs);
         return rhs_ && (*rhs_ == *this);
@@ -2404,7 +2404,7 @@ struct FO_COMMON_API MeterValue final : public Condition {
                std::unique_ptr<ValueRef::ValueRef<double>>&& high);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -2567,7 +2567,7 @@ struct FO_COMMON_API OwnerHasTech final : public Condition {
     explicit OwnerHasTech(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -2683,7 +2683,7 @@ struct FO_COMMON_API VisibleToEmpire final : public Condition {
                     std::unique_ptr<ValueRef::ValueRef<Visibility>>&& vis);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -2919,7 +2919,7 @@ struct FO_COMMON_API Stationary final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Stationary&) const noexcept
     { return true; }
 
@@ -2947,7 +2947,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const Aggressive&) const noexcept
     { return true; }
 
@@ -2975,7 +2975,7 @@ struct FO_COMMON_API FleetSupplyableByEmpire final : public Condition {
     explicit FleetSupplyableByEmpire(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -3008,7 +3008,7 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire final : public Condition {
                                     std::unique_ptr<Condition>&& condition);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -3044,7 +3044,7 @@ struct FO_COMMON_API CanColonize final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const CanColonize&) const noexcept
     { return true; }
 
@@ -3071,7 +3071,7 @@ struct FO_COMMON_API CanProduceShips final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const CanProduceShips&) const noexcept
     { return true; }
 
@@ -3121,7 +3121,7 @@ struct FO_COMMON_API OrderedAnnexed final : public Condition {
 #endif
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const noexcept override
-    { return this == &rhs || dynamic_cast<decltype(this)>(&rhs); }
+    { return this == std::addressof(rhs) || dynamic_cast<decltype(this)>(&rhs); }
     [[nodiscard]] constexpr bool operator==(const OrderedAnnexed&) const noexcept
     { return true; }
 
@@ -3160,7 +3160,7 @@ struct FO_COMMON_API ValueTest final : public Condition {
     ValueTest(ValueTest&& rhs) = default;
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
@@ -3312,13 +3312,13 @@ struct FO_COMMON_API And final : public Condition {
     {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
     [[nodiscard]] constexpr bool operator==(const And& rhs) const {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
 
         if (m_operands.size() != rhs.m_operands.size())
@@ -3481,13 +3481,13 @@ public:
     {}
 
     [[nodiscard]] constexpr bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;
     }
     [[nodiscard]] constexpr bool operator==(const Or& rhs) const {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
 
         if (m_operands.size() != rhs.m_operands.size())
@@ -3604,7 +3604,7 @@ struct FO_COMMON_API Not final : public Condition {
     {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
-        if (this == &rhs)
+        if (this == std::addressof(rhs))
             return true;
         const auto* rhs_p = dynamic_cast<decltype(this)>(&rhs);
         return rhs_p && *this == *rhs_p;

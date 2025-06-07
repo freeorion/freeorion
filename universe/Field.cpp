@@ -38,7 +38,7 @@ std::shared_ptr<UniverseObject> Field::Clone(const Universe& universe, int empir
 }
 
 void Field::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_FIELD) {
         ErrorLogger() << "Field::Copy passed an object that wasn't a Field";
@@ -49,7 +49,7 @@ void Field::Copy(const UniverseObject& copied_object, const Universe& universe, 
 }
 
 void Field::Copy(const Field& copied_field, const Universe& universe, int empire_id) {
-    if (&copied_field == this)
+    if (std::addressof(copied_field) == this)
         return;
 
     int copied_object_id = copied_field.ID();
