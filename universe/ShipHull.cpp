@@ -199,7 +199,7 @@ ShipHull::ShipHull(float fuel, float speed, float stealth, float structure,
 ShipHull::~ShipHull() = default;
 
 bool ShipHull::operator==(const ShipHull& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
 
     if (m_name != rhs.m_name ||

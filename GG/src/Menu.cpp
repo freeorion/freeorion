@@ -73,9 +73,9 @@ void PopupMenu::Render()
         bool needs_indicator = false;
 
         // get the correct submenu  // TODO: move into a lambda?
-        MenuItem* menu_ptr = &m_menu_data;
+        MenuItem* menu_ptr = std::addressof(m_menu_data);
         for (std::size_t j = 0; j < i; ++j)
-            menu_ptr = &menu_ptr->next_level[m_caret[j]];
+            menu_ptr = std::addressof(menu_ptr->next_level[m_caret[j]]);
         const MenuItem& menu = *menu_ptr;
 
         // determine the total size of the menu, render it, and record its bounding rect
@@ -176,11 +176,10 @@ void PopupMenu::Render()
 void PopupMenu::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 {
     if (m_caret[0] != INVALID_CARET) {
-        MenuItem* menu_ptr = &m_menu_data;
+        MenuItem* menu_ptr = std::addressof(m_menu_data);
         for (std::size_t caret : m_caret) {
-            if (caret != INVALID_CARET) {
-                menu_ptr = &menu_ptr->next_level[caret];
-            }
+            if (caret != INVALID_CARET)
+                menu_ptr = std::addressof(menu_ptr->next_level[caret]);
         }
         if (!menu_ptr->disabled && !menu_ptr->separator) {
             m_item_selected = menu_ptr;
@@ -203,9 +202,9 @@ void PopupMenu::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
         const std::size_t level_idx = static_cast<std::size_t>(i);
 
         // get the correct submenu
-        const MenuItem* menu_ptr = &m_menu_data;
+        const MenuItem* menu_ptr = std::addressof(m_menu_data);
         for (std::size_t j = 0; std::cmp_less(j, i); ++j)
-            menu_ptr = &menu_ptr->next_level[m_caret[j]];
+            menu_ptr = std::addressof(menu_ptr->next_level[m_caret[j]]);
         if (!menu_ptr)
             break;
         const MenuItem& menu = *menu_ptr;

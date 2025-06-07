@@ -29,7 +29,7 @@ std::shared_ptr<UniverseObject> Building::Clone(const Universe& universe, int em
 }
 
 void Building::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_BUILDING) {
         ErrorLogger() << "Building::Copy passed an object that wasn't a Building";

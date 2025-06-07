@@ -81,10 +81,8 @@ namespace {
      */
     auto AllPlayerIDs() -> std::vector<int>
     {
-        std::vector<int> player_ids;
-        for (auto& entry : AIClientApp::GetApp()->Players())
-            player_ids.push_back(entry.first);
-        return player_ids;
+        auto ids_rng = AIClientApp::GetApp()->Players() | range_keys;
+        return {ids_rng.begin(), ids_rng.end()};
     }
 
     /** @brief Return if the player identified by @a player_id is the game

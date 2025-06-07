@@ -119,6 +119,18 @@ Pt TextControl::MinUsableSize(X width) const
     return m_cached_minusable_size;
 }
 
+namespace {
+    template <typename T>
+    constexpr auto to_addr(T it) noexcept
+    {
+#if defined(__cpp_lib_to_address)
+        return std::to_address(it);
+#else
+        return std::addressof(*it);
+#endif
+    }
+}
+
 std::string_view TextControl::Text(CPSize from, CPSize to) const
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
@@ -135,7 +147,7 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     const auto low_it = m_text.begin() + low_string_idx;
 
     try {
-        return {&*low_it, out_length};
+        return {to_addr(low_it), out_length};
     } catch (...) {
         return {};
     }

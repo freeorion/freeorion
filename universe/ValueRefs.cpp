@@ -1560,7 +1560,7 @@ namespace StaticTests {
 // TotalFighterShots (of a carrier during one battle)    //
 ///////////////////////////////////////////////////////////
 bool TotalFighterShots::operator==(const ValueRef<int>& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (typeid(rhs) != typeid(*this))
         return false;
@@ -3074,7 +3074,7 @@ std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingCont
 // NameLookup                                      //
 /////////////////////////////////////////////////////
 bool NameLookup::operator==(const ValueRef<std::string>& rhs) const {
-    if (&rhs == this)
+    if (std::addressof(rhs) == this)
         return true;
     if (!this->ValueRefBase::operator==(rhs) || typeid(*this) != typeid(rhs))
         return false;

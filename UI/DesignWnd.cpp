@@ -2388,19 +2388,18 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         return;
     if (wnds.size() != 1)
         ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
-    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
+    const GG::Wnd* wnd = wnds.front(); // should only be one wnd in list as BasesListBox doesn't allow selection, so dragging is only one-at-a-time
     auto* original_row = dynamic_cast<const Row*>(wnd);
     if (!original_row)
         return;
 
-    iterator insertion_point = std::find_if(
-        begin(), end(), [&original_row](const auto& xx){return xx.get() == original_row;});
+    const auto is_orig_row = [original_row](const auto& xx) { return xx.get() == original_row; };
+    auto insertion_point = std::find_if(begin(), end(), is_orig_row);
     if (insertion_point != end())
         ++insertion_point;
 
     // replace dragged-away control with new copy
-    auto row = ChildrenDraggedAwayCore(wnd);
-    if (row) {
+    if (auto row = ChildrenDraggedAwayCore(wnd)) {
         Insert(row, insertion_point);
         row->Resize(ListRowSize());
     }

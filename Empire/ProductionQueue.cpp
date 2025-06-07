@@ -712,9 +712,8 @@ void ProductionQueue::Update(const ScriptingContext& context,
             const int location_id = element.location;
 
             // search through groups to find object
-            const auto group_it = std::find_if(available_pp.begin(), available_pp.end(),
-                                               [location_id](const auto& group_pp)
-                                               { return group_pp.first.contains(location_id); });
+            const auto group_contains_location = [location_id](const auto& group_pp) noexcept { return group_pp.first.contains(location_id); };
+            const auto group_it = range_find_if(available_pp, group_contains_location);
             if (group_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
                 retval.emplace_back();
@@ -734,12 +733,10 @@ void ProductionQueue::Update(const ScriptingContext& context,
     // cache producibility, and production item costs and times
     // initialize production queue item completion status to 'never'
     auto is_producible = [this, &context, &empire]() {
-        std::vector<uint8_t> is_producible;
-        is_producible.reserve(m_queue.size());
-        std::transform(m_queue.begin(), m_queue.end(), std::back_inserter(is_producible),
-                       [&context, &empire](const auto& elem)
-                       { return empire->ProducibleItem(elem.item, elem.location, context); });
-        return is_producible;
+        const auto to_producible = [&context, &empire](const auto& elem)
+        { return empire->ProducibleItem(elem.item, elem.location, context); };
+        auto prod_rng = m_queue | range_transform(to_producible);
+        return std::vector<uint8_t>(prod_rng.begin(), prod_rng.end());
     }();
 
     boost::unordered_map<std::pair<ProductionQueue::ProductionItem, int>,

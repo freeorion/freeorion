@@ -4,6 +4,7 @@
 #include "ReportParseError.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
+#include "../util/ranges.h"
 
 #include <array>
 
@@ -43,13 +44,13 @@ namespace parse::detail {
             if constexpr (is_map_v<Container>) {
                 using key_type = typename Container::key_type;
                 static_assert(std::is_same_v<std::string, key_type>);
-                will_be_unique = (container.find(key) == container.end());
+                will_be_unique = !container.contains(key);
 
             } else if constexpr (is_vector_v<Container>) {
                 using value_type = typename Container::value_type;
                 static_assert(!std::is_pointer_v<value_type>); // doesn't check for unique_ptr
-                will_be_unique = container.end() == std::find_if(container.begin(), container.end(),
-                                              [&key](const auto& entry) { return entry.Name() == key; });
+                auto names_rng = container | range_transform([](const auto& e) -> const auto& { return e.Name(); });
+                will_be_unique = !range_contains(names_rng, key);
 
             } else {
                 static_assert(is_map_v<Container>, "unknown container, can't check for uniqueness of parsed content...");

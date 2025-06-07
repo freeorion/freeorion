@@ -42,7 +42,7 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
                           Visibility vis, const std::set<std::string>& visible_specials,
                           const Universe&)
 {
-    if (&copied_object == this)
+    if (std::addressof(copied_object) == this)
         return;
 
     static constexpr Meter DEFAULT_METER;
@@ -99,14 +99,12 @@ bool UniverseObject::HasSpecial(std::string_view name) const {
 }
 
 int UniverseObject::SpecialAddedOnTurn(std::string_view name) const {
-    auto it = std::find_if(m_specials.begin(), m_specials.end(),
-                           [name](const auto& s) { return name == s.first; });
+    auto it = range_find_if(m_specials, [name](const auto& s) noexcept { return name == s.first; });
     return (it == m_specials.end()) ? INVALID_GAME_TURN : it->second.first;
 }
 
 float UniverseObject::SpecialCapacity(std::string_view name) const {
-    auto it = std::find_if(m_specials.begin(), m_specials.end(),
-                           [name](const auto& s) { return name == s.first; });
+    auto it = range_find_if(m_specials, [name](const auto& s) noexcept { return name == s.first; });
     return (it == m_specials.end()) ? 0.0f : it->second.second;
 }
 

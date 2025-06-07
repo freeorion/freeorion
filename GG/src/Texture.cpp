@@ -446,7 +446,7 @@ SubTexture::SubTexture(const SubTexture& rhs)
 
 SubTexture& SubTexture::operator=(const SubTexture& rhs)
 {
-    if (this != &rhs) {
+    if (this != std::addressof(rhs)) {
         m_texture = rhs.m_texture;
         m_width = rhs.m_width;
         m_height = rhs.m_height;
@@ -460,7 +460,7 @@ SubTexture& SubTexture::operator=(const SubTexture& rhs)
 
 SubTexture& SubTexture::operator=(SubTexture&& rhs) noexcept
 {
-    if (this != &rhs) {
+    if (this != std::addressof(rhs)) {
         m_texture = std::move(rhs.m_texture);
         m_width = rhs.m_width;
         m_height = rhs.m_height;

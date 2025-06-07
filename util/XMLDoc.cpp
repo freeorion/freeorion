@@ -58,6 +58,7 @@
 
 
 #include "XMLDoc.h"
+#include "ranges.h"
 
 #if defined(_MSC_VER) && _MSC_VER >= 1930
 struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax error: 'identifier' was unexpected here; expected 'type specifier'"
@@ -294,14 +295,11 @@ namespace {
 
 
 bool XMLElement::ContainsChild(const std::string& tag) const {
-    return children.end() != std::find_if(children.begin(), children.end(),
-        [&tag] (const XMLElement& e) { return e.m_tag == tag; });
+    return children.end() != range_find_if(children, [&tag](const auto& e) noexcept { return e.m_tag == tag; });
 }
 
 const XMLElement& XMLElement::Child(const std::string& tag) const {
-    auto match = std::find_if(children.begin(), children.end(),
-        [&tag] (const XMLElement& e) { return e.m_tag == tag; });
-
+    auto match = range_find_if(children, [&tag](const auto& e) noexcept { return e.m_tag == tag; });
     if (match == children.end())
         throw std::out_of_range("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 

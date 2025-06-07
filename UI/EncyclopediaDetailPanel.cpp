@@ -402,7 +402,7 @@ namespace {
         else if (dir_name == "ENC_SPECIES") {
             // directory populated with list of links to other articles that list species
             if (!exclude_custom_categories_from_dir_name) {
-                for (const auto& species_name : sm | range_keys) {
+                for (const auto& species_name : sm.AllSpecies() | range_keys) {
                     auto& us_name{UserString(species_name)};
                     retval.emplace_back(std::piecewise_construct,
                                         std::forward_as_tuple(us_name),
@@ -415,7 +415,7 @@ namespace {
         else if (dir_name == "ENC_HOMEWORLDS") {
             const auto& homeworlds{sm.GetSpeciesHomeworldsMap()};
 
-            for (const auto& species_name : sm | range_keys) {
+            for (const auto& species_name : sm.AllSpecies() | range_keys) {
                 std::set<int> known_homeworlds;
                 std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, species_name).append(" ");
 
@@ -486,7 +486,7 @@ namespace {
                                 std::forward_as_tuple(slash_thing),
                                 std::forward_as_tuple("\n\n", "  "));
 
-            for (const auto& species_name : sm | range_keys) {
+            for (const auto& species_name : sm.AllSpecies() | range_keys) {
                 if (!homeworlds.contains(species_name) || homeworlds.at(species_name).empty()) {
                     std::string species_entry{
                         LinkTaggedPresetText(VarText::SPECIES_TAG, species_name, UserString(species_name))
@@ -730,7 +730,7 @@ namespace {
                                              std::forward_as_tuple(VarText::BUILDING_TYPE_TAG, building_name));
 
             // species
-            for (auto& [species_name, species] : GGHumanClientApp::GetApp()->GetSpeciesManager())
+            for (auto& [species_name, species] : GGHumanClientApp::GetApp()->GetSpeciesManager().AllSpecies())
                 if (dir_name == "ALL_SPECIES" ||
                    (dir_name == "NATIVE_SPECIES" && species.Native()) ||
                    (dir_name == "PLAYABLE_SPECIES" && species.Playable()) ||
@@ -897,8 +897,8 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     auto custom_block_factory_map{GG::RichText::DefaultBlockFactoryMap()};
 
     // insert or replace plain text factory with one made above
-    auto plain_text_it = std::find_if(custom_block_factory_map.begin(), custom_block_factory_map.end(),
-                                      [](const auto& fac) { return fac.first == GG::RichText::PLAINTEXT_TAG; });
+    static constexpr auto is_plaintext = [](const auto& fac) noexcept { return fac.first == GG::RichText::PLAINTEXT_TAG; };
+    auto plain_text_it = range_find_if(custom_block_factory_map, is_plaintext);
     if (plain_text_it == custom_block_factory_map.end())
         custom_block_factory_map.emplace_back(GG::RichText::PLAINTEXT_TAG, std::move(factory));
     else
@@ -3079,7 +3079,7 @@ namespace {
 
             return range_any_of(res_tech_names_rng, tech_has_extinct_tag_and_this_tag);
         };
-        auto reported_species_rng = species_manager | range_filter(should_report) |
+        auto reported_species_rng = species_manager.AllSpecies() | range_filter(should_report) |
                                     range_values | range_transform(to_name);
         static_assert(std::is_same_v<std::decay_t<decltype(reported_species_rng.front())>, std::string_view>);
         retval.insert(retval.end(), reported_species_rng.begin(), reported_species_rng.end());
@@ -3797,14 +3797,14 @@ namespace {
                 once = false;
                 const uint8_t prev_c1 = *prev_char_it;
                 std::ptrdiff_t prev_sequence_length = (prev_c1 < 0x80) ? 1 : (prev_c1 <= 0xDF) ? 2 : (prev_c1 <= 0xEF) ? 3 : 4;
-                DebugLogger() << "not handled char: " << std::string_view(&*prev_char_it, prev_sequence_length);
+                DebugLogger() << "not handled char: " << std::string_view(std::to_address(prev_char_it), prev_sequence_length);
             }
 
             prev_char_it = it;
             const uint8_t c1 = *it;
 
             const std::ptrdiff_t sequence_length = (c1 < 0x80) ? 1 : (c1 <= 0xDF) ? 2 : (c1 <= 0xEF) ? 3 : 4;
-            //DebugLogger() << std::string_view(&*it, sequence_length) << "(" << sequence_length << ") : " << static_cast<int>(c1) << " " << static_cast<int>(*(it+1));
+            //DebugLogger() << std::string_view(std::to_address(it), sequence_length) << "(" << sequence_length << ") : " << static_cast<int>(c1) << " " << static_cast<int>(*(it+1));
 
             // adjust current sequence if it is a recognized capital letter
             if (sequence_length == 1) { // ASCII
@@ -3936,7 +3936,7 @@ namespace {
 
             } else if (sequence_length == 3) {
                 if (dist < 3 || !IsOK3CharCode(it)) {
-                    //DebugLogger() << "unrecognized 3 length code: " << std::string_view(&*it, 3);
+                    //DebugLogger() << "unrecognized 3 length code: " << std::string_view(std::addressof(*it), 3);
                     retval = false;  // unrecognized code
                 }
 

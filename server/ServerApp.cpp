@@ -1432,9 +1432,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         if (Networking::is_ai(client_type)) {
             // get save state string
-            const std::string* sss = nullptr;
-            if (!psgd.save_state_string.empty())
-                sss = &psgd.save_state_string;
+            const std::string* const sss = psgd.save_state_string.empty() ?
+                nullptr : std::addressof(psgd.save_state_string);
 
             player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
@@ -1505,10 +1504,10 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     m_species_manager.ClearSpeciesHomeworlds();
 
     // Reset the object id manager for the new empires.
-    std::vector<int> empire_ids(player_setup_data.size());
-    std::transform(player_setup_data.begin(), player_setup_data.end(), empire_ids.begin(),
-                   [](const auto& ii) { return ii.first; });
-    m_universe.ResetAllIDAllocation(empire_ids);
+    {
+        auto ids_rng = player_setup_data | range_keys;
+        m_universe.ResetAllIDAllocation(std::vector<int>(ids_rng.begin(), ids_rng.end()));
+    }
 
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse(m_universe);
@@ -3029,13 +3028,11 @@ namespace {
         const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
+        const auto is_invading_ship = [&universe](const Ship& s)
+        { return s.SystemID() != INVALID_OBJECT_ID && s.OrderedInvadePlanet() != INVALID_OBJECT_ID && s.HasTroops(universe); };
+
         // collect ships that are invading and the troops they carry
-        for (auto* ship : objects.findRaw<Ship>([&universe](const Ship& s) {
-                                                    return s.SystemID() != INVALID_OBJECT_ID &&
-                                                        s.OrderedInvadePlanet() != INVALID_OBJECT_ID &&
-                                                        s.HasTroops(universe);
-                                                }))
-        {
+        for (auto* ship : objects.findRaw<Ship>(is_invading_ship)) {
             invade_ships.push_back(ship);
 
             auto* planet = objects.getRaw<Planet>(ship->OrderedInvadePlanet());
@@ -3057,10 +3054,9 @@ namespace {
                           << " named " << ship->Name();
         }
 
-        std::vector<int> invading_ship_ids;
-        invading_ship_ids.reserve(invade_ships.size());
-        std::transform(invade_ships.begin(), invade_ships.end(), std::back_inserter(invading_ship_ids),
-                       [](const auto* ship) { return ship->ID(); });
+        static constexpr auto to_id = [](const auto& o) noexcept { return o->ID(); };
+        auto invading_ids_rng = invade_ships | range_transform(to_id);
+        std::vector<int> invading_ship_ids(invading_ids_rng.begin(), invading_ids_rng.end());
 
         // delete ships that invaded something
         for (auto* ship : invade_ships) {
@@ -3102,11 +3098,10 @@ namespace {
             if (empires_troops.empty())
                 continue;
 
-            std::set<int> all_involved_empires;
-            for (const auto empire_id : empires_troops | range_keys) {
-                if (empire_id != ALL_EMPIRES)
-                    all_involved_empires.insert(empire_id);
-            }
+            auto emp_ids_rng = empires_troops | range_keys |
+                range_filter([](const auto id) noexcept { return id != ALL_EMPIRES; });
+            std::set<int> all_involved_empires(emp_ids_rng.begin(), emp_ids_rng.end());
+
             auto planet = objects.get<Planet>(planet_id);
             if (!planet) {
                 ErrorLogger() << "Ground combat couldn't get planet with id " << planet_id;
@@ -3401,8 +3396,7 @@ namespace {
             }
 
             // record scrapping in empire stats
-            auto scrapping_empire = empires.GetEmpire(ship->Owner());
-            if (scrapping_empire)
+            if (auto scrapping_empire = empires.GetEmpire(ship->Owner()))
                 scrapping_empire->RecordShipScrapped(*ship);
 
             //scrapped_object_ids.push_back(ship->ID());
@@ -4080,49 +4074,61 @@ namespace {
         }
         return empire_blockading_fleets;
     }
+
+    static constexpr auto empire_not_null = [](const auto& id_e) noexcept -> bool { return id_e.second.get(); };
 }
 
 void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
     m_cached_empire_policy_adoption_costs = [this, &context]() {
-        std::map<int, std::vector<std::pair<std::string_view, double>>> retval;
-        std::transform(m_empires.begin(), m_empires.end(), std::inserter(retval, retval.end()),
-                       [&context](const auto& e)
-                       { return std::pair{e.first, e.second->PolicyAdoptionCosts(context)}; });
-        return retval;
+        const auto to_costs = [&context](const auto& e) { return std::pair{e.first, e.second->PolicyAdoptionCosts(context)}; };
+        auto ids_costs_rng = m_empires | range_transform(to_costs);
+        return decltype(m_cached_empire_policy_adoption_costs)(ids_costs_rng.begin(), ids_costs_rng.end());
     }();
     m_cached_empire_research_costs_times = [this, &context]() {
-        std::map<int, std::vector<std::tuple<std::string_view, double, int>>> retval;
+        using map_t = decltype(m_cached_empire_research_costs_times);
         const auto& tm = GetTechManager();
+
         // cache costs for each empire for techs on queue an that are researchable, which
         // may be used later when updating the queue
-        for (const auto& [empire_id, empire] : m_empires) {
-            retval[empire_id].reserve(tm.size());
 
-            const auto should_cache = [empire{empire.get()}](const auto tech_name, const auto& tech) {
-                return (tech.Researchable() &&
-                        empire->GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
-                    empire->GetResearchQueue().InQueue(tech_name);
+        const auto to_id_and_cache = [this, &tm, &context](const auto& id_empire) {
+            const auto should_cache = [empire{id_empire.second.get()}](const auto& name_tech) -> bool {
+                return (name_tech.second.Researchable() &&
+                        empire->GetTechStatus(name_tech.first) == TechStatus::TS_RESEARCHABLE
+                       ) || empire->GetResearchQueue().InQueue(name_tech.first);
             };
 
-            for (const auto& [tech_name, tech] : tm) {
-                if (should_cache(tech_name, tech)) {
-                    retval[empire_id].emplace_back(
-                        tech_name, tech.ResearchCost(empire_id, context), tech.ResearchTime(empire_id, context));
-                }
-            }
-        }
-        return retval;
+            const auto to_name_cost_time = [&context, empire_id{id_empire.first}](const auto& name_tech) {
+                return map_t::mapped_type::value_type{name_tech.first,
+                                                      name_tech.second.ResearchCost(empire_id, context),
+                                                      name_tech.second.ResearchTime(empire_id, context)};
+            };
+
+            auto nct_rng = tm | range_filter(should_cache) | range_transform(to_name_cost_time);
+            return map_t::value_type(std::piecewise_construct, std::forward_as_tuple(id_empire.first),
+                                     std::forward_as_tuple(nct_rng.begin(), nct_rng.end()));
+        };
+
+        auto map_values = m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache);
+
+        return map_t(map_values.begin(), map_values.end());
     }();
     m_cached_empire_production_costs_times = [this, &context]() {
-        std::map<int, std::vector<std::tuple<std::string_view, int, float, int>>> retval;
-        for (const auto& [empire_id, empire] : m_empires) {
-            retval[empire_id].reserve(empire->GetProductionQueue().size());
-            for (const auto& elem : empire->GetProductionQueue()) {
+        using map_t = decltype(m_cached_empire_production_costs_times);
+
+        const auto to_id_and_cache = [&context](const auto& id_empire) {
+            const auto to_name_designid_cost_time = [&context](const auto& elem) {
                 const auto [cost, time] = elem.ProductionCostAndTime(context);
-                retval[empire_id].emplace_back(elem.item.name, elem.item.design_id, cost, time);
-            }
-        }
-        return retval;
+                return map_t::mapped_type::value_type{elem.item.name, elem.item.design_id, cost, time};
+            };
+
+            auto ndct_rng = id_empire.second->GetProductionQueue() | range_transform(to_name_designid_cost_time);
+            return map_t::value_type{std::piecewise_construct, std::forward_as_tuple(id_empire.first),
+                                     std::forward_as_tuple(ndct_rng.begin(), ndct_rng.end())};
+        };
+
+        auto map_values = m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache);
+        return map_t(map_values.begin(), map_values.end());
     }();
     m_cached_empire_annexation_costs = [&context]() {
         std::map<int, std::vector<std::pair<int, double>>> retval;

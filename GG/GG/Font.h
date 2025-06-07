@@ -141,7 +141,7 @@ public:
         using IterPair = std::pair<std::string::const_iterator, std::string::const_iterator>;
 
         CONSTEXPR_FONT explicit Substring(const std::string& str_) noexcept :
-            str(&str_)
+            str(std::addressof(str_))
         {}
         constexpr explicit Substring(const std::string* str_) noexcept :
             str(str_)
@@ -159,7 +159,7 @@ public:
         }
         template <typename T, std::enable_if_t<std::is_unsigned_v<T>>* = nullptr>
         CONSTEXPR_FONT Substring(const std::string& str_, T first_, T second_) noexcept :
-            Substring(&str_, static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
+            Substring(std::addressof(str_), static_cast<uint32_t>(first_), static_cast<uint32_t>(second_))
         {}
 
         CONSTEXPR_FONT Substring(const std::string& str_, std::ptrdiff_t first_, std::ptrdiff_t second_) noexcept :
@@ -186,7 +186,7 @@ public:
         CONSTEXPR_FONT void Bind(const std::string& str_) noexcept
         {
             assert(std::distance(str_.begin(), str_.end()) >= second);
-            str = &str_;
+            str = std::addressof(str_);
         }
 
         [[nodiscard]] CONSTEXPR_FONT auto data() const noexcept -> const std::string::value_type*
@@ -203,7 +203,7 @@ public:
         /** True iff .first == .second. */
         [[nodiscard]] constexpr bool empty() const noexcept { return first == second; }
 
-        [[nodiscard]] CONSTEXPR_FONT bool IsDefaultEmpty() const noexcept { return str == &EMPTY_STRING; }
+        [[nodiscard]] CONSTEXPR_FONT bool IsDefaultEmpty() const noexcept { return str == std::addressof(EMPTY_STRING); }
 
         /** Length, in original string chars, of the substring. */
         [[nodiscard]] constexpr std::size_t size() const noexcept { return static_cast<std::size_t>(second - first); }
@@ -243,7 +243,7 @@ public:
 #endif
 
     private:
-        const std::string* str = &EMPTY_STRING;
+        const std::string* str = std::addressof(EMPTY_STRING);
         uint32_t first = 0;
         uint32_t second = 0;
     };

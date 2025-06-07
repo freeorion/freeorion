@@ -2,6 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Random.h"
+#include "../util/ranges.h"
 #include "../util/GameRules.h"
 #include "../util/GameRuleRanks.h"
 #include "../util/Logger.h"
@@ -58,14 +59,11 @@ namespace {
     }
 
     auto PolicyCategoriesSlotsMeters() {
-        std::vector<std::pair<std::string_view, std::string>> retval;
-        const auto cats = GetPolicyManager().PolicyCategories();
-        retval.reserve(cats.size());
-        // derive meters from PolicyManager parsed policies' categories
-        std::transform(cats.begin(), cats.end(), std::back_inserter(retval),
-                       [](std::string_view cat) -> std::pair<std::string_view, std::string>
-                       { return {cat, cat + "_NUM_POLICY_SLOTS"}; });
-        return retval;
+        auto cats = GetPolicyManager().PolicyCategories();
+        static constexpr auto to_csm = [](std::string_view cat)
+        { return std::pair<std::string_view, std::string>{cat, cat + "_NUM_POLICY_SLOTS"}; }; // derive meters from PolicyManager parsed policies' categories
+        auto cats_slot_meters_rng = cats | range_transform(to_csm);
+        return std::vector(cats_slot_meters_rng.begin(), cats_slot_meters_rng.end());
     }
 
     DeclareThreadSafeLogger(supply);
@@ -329,9 +327,8 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     for (auto& [adoption_turn, slot_in_category, category] : m_adopted_policies | range_values) {
         (void)adoption_turn; // quiet warning
         const auto& slot_count = category_slot_policy_counts[category][slot_in_category]++; // count how many policies in this slot of this category...
-        const auto cat_slot_it = std::find_if(total_category_slot_counts.begin(), total_category_slot_counts.end(),
-                                              [cat{std::string_view{category}}](const auto& cat_slots)
-                                              { return cat_slots.first == cat; });
+        const auto is_cat = [cat{std::string_view{category}}](const auto& cat_slots) noexcept { return cat_slots.first == cat; };
+        const auto cat_slot_it = range_find_if(total_category_slot_counts, is_cat);
         const auto cat_slots_count = (cat_slot_it != total_category_slot_counts.end()) ? cat_slot_it->second : 0;
         if (slot_count > 1 || slot_in_category >= cat_slots_count) // if multiple policies in a slot, or slot a policy is in is too high, mark category as problematic...
             categories_needing_rearrangement.insert(category);
@@ -341,16 +338,16 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     // and remove the excess policies
     for (const auto& cat : categories_needing_rearrangement) {
         DebugLogger() << "Rearranging poilicies in category " << cat << ":";
-        const auto cat_slots_it = std::find_if(total_category_slot_counts.begin(), total_category_slot_counts.end(),
-                                               [cat](const auto& cat_slots){ return cat == cat_slots.first; });
+        const auto is_cat = [cat](const auto& cat_slots) noexcept { return cat == cat_slots.first; };
+        const auto cat_slots_it = range_find_if(total_category_slot_counts, is_cat);
         const auto cat_slot_count = (cat_slots_it != total_category_slot_counts.end()) ? cat_slots_it->second : 0;
 
-        const auto policies_temp{m_adopted_policies};
+        const auto policies_temp{m_adopted_policies}; // copy for iterating while changing original
 
         // all adopted policies in this category, sorted by slot and adoption turn (lower first)
         std::vector<std::tuple<int, int, std::string>> slots_turns_policies;
         slots_turns_policies.reserve(m_adopted_policies.size());
-        for (auto& [temp_policy_name, temp_adoption_info] : policies_temp) {
+        for (const auto& [temp_policy_name, temp_adoption_info] : policies_temp) {
             auto& [turn, slot, temp_category] = temp_adoption_info;  // PolicyAdoptionInfo { int adoption_turn; int slot_in_category; std::string category; }
             if (temp_category != cat)
                 continue;
@@ -359,14 +356,14 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
             slots_turns_policies.emplace_back(slot, turn, temp_policy_name);
         }
 
-        auto slot_turn_comp = [](const auto& lhs, const auto& rhs) {
+        static constexpr auto slot_turn_comp = [](const auto& lhs, const auto& rhs) noexcept {
             auto& [l_slot, l_turn, l_ignored] = lhs;
             auto& [r_slot, r_turn, r_ignored] = rhs;
             (void)l_ignored;
             (void)r_ignored;
             return (l_slot < r_slot) || ((l_slot == r_slot) && (l_turn < r_turn));
         };
-        std::sort(slots_turns_policies.begin(), slots_turns_policies.end(), slot_turn_comp);
+        std::stable_sort(slots_turns_policies.begin(), slots_turns_policies.end(), slot_turn_comp);
 
         // re-add in category up to limit, ordered priority by original slot and adoption turn
         int added = 0;
@@ -402,18 +399,16 @@ int Empire::TurnPolicyAdopted(std::string_view name) const {
 }
 
 int Empire::CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const {
-    auto it = std::find_if(m_policy_adoption_current_duration.begin(),
-                           m_policy_adoption_current_duration.end(),
-                           [name](const auto& pacd) { return name == pacd.first; });
+    auto it = range_find_if(m_policy_adoption_current_duration,
+                            [name](const auto& pacd) noexcept { return name == pacd.first; });
     if (it == m_policy_adoption_current_duration.end())
         return 0;
     return it->second;
 }
 
 int Empire::CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const {
-    auto it = std::find_if(m_policy_adoption_total_duration.begin(),
-                           m_policy_adoption_total_duration.end(),
-                           [name](const auto& patd) { return name == patd.first; });
+    auto it = range_find_if(m_policy_adoption_total_duration,
+                            [name](const auto& patd) noexcept { return name == patd.first; });
     if (it == m_policy_adoption_total_duration.end())
         return 0;
     return it->second;
@@ -468,25 +463,16 @@ bool Empire::PolicyPrereqsAndExclusionsOK(std::string_view name, int current_tur
 
     // is there an exclusion conflict?
     for (auto& already_adopted_policy_name : m_adopted_policies | range_keys) {
-        if (std::any_of(to_adopt_exclusions.begin(), to_adopt_exclusions.end(),
-                        [a{already_adopted_policy_name}](auto& x) { return x == a; }))
-        {
-            // policy to be adopted has an exclusion with an already-adopted policy
-            return false;
-        }
+        if (range_contains(to_adopt_exclusions, already_adopted_policy_name))
+            return false; // policy to be adopted has an exclusion with an already-adopted policy
 
         const Policy* already_adopted_policy = GetPolicy(already_adopted_policy_name);
         if (!already_adopted_policy) {
             ErrorLogger() << "Couldn't get already adopted policy: " << already_adopted_policy_name;
             continue;
         }
-        const auto& adopted_exclusions = already_adopted_policy->Exclusions();
-        if (std::any_of(adopted_exclusions.begin(), adopted_exclusions.end(),
-                        [name](const auto& x) { return name == x; }))
-        {
-            // already-adopted policy has an exclusion with the policy to be adopted
-            return false;
-        }
+        if (range_contains(already_adopted_policy->Exclusions(), name))
+            return false; // already-adopted policy has an exclusion with the policy to be adopted
     }
 
     // are there any unmet prerequisites (with the initial adopted policies this turn)
@@ -582,8 +568,7 @@ std::vector<std::pair<std::string_view, int>> Empire::EmptyPolicySlots() const {
     // subtract used policy categories
     static constexpr auto to_cat = [](const auto& pai) -> const auto& { return pai.category; };
     for (const auto& cat : m_adopted_policies | range_values | range_transform(to_cat)) {
-        const auto it = std::find_if(retval.begin(), retval.end(),
-                                     [&cat](const auto& rv) { return rv.first == cat; });
+        const auto it = range_find_if(retval, [&cat](const auto& rv) noexcept { return rv.first == cat; });
         if (it != retval.end())
             it->second--;
     }
@@ -593,25 +578,24 @@ std::vector<std::pair<std::string_view, int>> Empire::EmptyPolicySlots() const {
 }
 
 Meter* Empire::GetMeter(std::string_view name) {
-    auto it = std::find_if(m_meters.begin(), m_meters.end(), [name](const auto& e) { return e.first == name; });
+    auto it = range_find_if(m_meters, [name](const auto& e) noexcept { return e.first == name; });
     if (it != m_meters.end())
-        return &(it->second);
+        return std::addressof(it->second);
     else
         return nullptr;
 }
 
 const Meter* Empire::GetMeter(std::string_view name) const {
-    auto it = std::find_if(m_meters.begin(), m_meters.end(),
-                           [name](const auto& e) { return e.first == name; });
+    auto it = range_find_if(m_meters, [name](const auto& e) noexcept { return e.first == name; });
     if (it != m_meters.end())
-        return &(it->second);
+        return std::addressof(it->second);
     else
         return nullptr;
 }
 
 void Empire::BackPropagateMeters() noexcept {
-    for (auto& meter : m_meters)
-        meter.second.BackPropagate();
+    for (auto& meter : m_meters | range_values)
+        meter.BackPropagate();
 }
 
 bool Empire::ResearchableTech(std::string_view name) const {
@@ -619,7 +603,7 @@ bool Empire::ResearchableTech(std::string_view name) const {
     if (!tech)
         return false;
     const auto& prereqs = tech->Prerequisites();
-    return range_all_of(prereqs, [&](const auto& p) -> bool { return m_techs.contains(p); });
+    return range_all_of(prereqs, [this](const auto& p) -> bool { return m_techs.contains(p); });
 }
 
 bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) const {
@@ -627,10 +611,8 @@ bool Empire::HasResearchedPrereqAndUnresearchedPrereq(std::string_view name) con
     if (!tech)
         return false;
     const auto& prereqs = tech->Prerequisites();
-    bool one_unresearched = std::any_of(prereqs.begin(), prereqs.end(),
-                                        [&](const auto& p) -> bool { return !m_techs.contains(p); });
-    bool one_researched = std::any_of(prereqs.begin(), prereqs.end(),
-                                      [&](const auto& p) -> bool { return m_techs.contains(p); });
+    const bool one_unresearched = range_any_of(prereqs, [this](const auto& p) -> bool { return !m_techs.contains(p); });
+    const bool one_researched = range_any_of(prereqs, [this](const auto& p) -> bool { return m_techs.contains(p); });
     return one_unresearched && one_researched;
 }
 
@@ -677,7 +659,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech(const ScriptingContext& con
         float tech_cost = tech->ResearchCost(m_id, context);
         if (tech_cost > biggest_cost) {
             biggest_cost = tech_cost;
-            best_elem = &elem;
+            best_elem = std::addressof(elem);
         }
     }
 
@@ -700,7 +682,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech(const ScriptingContext& co
         float tech_cost = tech->ResearchCost(m_id, context);
         if (tech_cost < smallest_cost) {
             smallest_cost = tech_cost;
-            best_elem = &elem;
+            best_elem = std::addressof(elem);
         }
     }
 
@@ -718,7 +700,7 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
         if (!m_research_queue.InQueue(tech_name))
             continue;
         if (rp_spent > most_spent) {
-            best_progress = &progress;
+            best_progress = std::addressof(progress);
             most_spent = rp_spent;
         }
     }
@@ -745,7 +727,7 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech(const ScriptingContext& co
         float rp_left = std::max(0.0f, rp_total_cost - rp_spent);
 
         if (rp_left > most_left) {
-            best_progress = &progress;
+            best_progress = std::addressof(progress);
             most_left = rp_left;
         }
     }
@@ -2101,8 +2083,8 @@ int Empire::AddShipDesign(ShipDesign ship_design, Universe& universe) {
      * On clients, this checks whether this empire knows of this exact
      * design and is trying to re-add it.  On the server, this checks
      * whether this exact design exists at all yet */
-    const auto it = std::find_if(universe.ShipDesigns().begin(), universe.ShipDesigns().end(),
-                                 [&ship_design](const auto& id_design) { return ship_design == id_design.second; });
+    const auto it = range_find_if(universe.ShipDesigns(),
+                                 [&ship_design](const auto& id_design) noexcept { return ship_design == id_design.second; });
     if (it != universe.ShipDesigns().end()) {
         // ship design is already present in universe.  just need to add it to the empire's set of ship designs
         const int ship_design_id = it->first;
@@ -2213,21 +2195,23 @@ namespace {
 }
 
 std::vector<std::string> Empire::CheckResearchProgress(
-    const ScriptingContext& context, const std::vector<std::tuple<std::string_view, double, int>>& costs_times)
+    const ScriptingContext& context,
+    const std::vector<std::tuple<std::string_view, double, int>>& costs_times)
 {
     SanitizeResearchQueue(m_research_queue);
 
     float spent_rp = 0.0f;
     const float total_rp_available = m_research_pool.TotalAvailable();
 
+    static constexpr auto has_allocated_rp = [](const auto& elem) noexcept { return elem.allocated_rp > 0.0f; };
+
     // process items on queue
     std::vector<std::string> to_erase_from_queue_and_grant_next_turn;
-    for (auto& elem : m_research_queue) {
-        if (elem.allocated_rp <= 0.0)
-            continue;
-        const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
-                                        [tech_name{elem.name}](const std::tuple<std::string_view, double, int>& ct)
-                                        { return std::get<0>(ct) == tech_name; });
+    for (auto& elem : m_research_queue | range_filter(has_allocated_rp)) {
+        const auto is_tech = [tech_name{elem.name}](const std::tuple<std::string_view, double, int>& ct)
+        { return std::get<0>(ct) == tech_name; };
+
+        const auto ct_it = range_find_if(costs_times, is_tech);
         if (ct_it == costs_times.end()) {
             ErrorLogger() << "Missing tech " << elem.name << " cost time in CheckResearchProgress!";
             continue;
@@ -2278,19 +2262,20 @@ std::vector<std::string> Empire::CheckResearchProgress(
         if (progress_fraction >= 1.0)
             continue;
 
-        const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
-                                        [tech_name{tech_name}](const std::tuple<std::string_view, double, int>& ct)
-                                        { return std::get<0>(ct) == tech_name; });
+        const auto is_tech = [tech_name{tech_name}](const std::tuple<std::string_view, double, int>& ct)
+        { return std::get<0>(ct) == tech_name; };
+
+        const auto ct_it = range_find_if(costs_times, is_tech);
         if (ct_it == costs_times.end()) {
             ErrorLogger() << "Missing tech " << tech_name << " cost time in CheckResearchProgress!";
             continue;
         }
 
-        const double remaining_cost = std::get<1>(*ct_it) * (1 - progress_fraction);
+        const double remaining_cost = std::get<1>(*ct_it) * (1.0 - progress_fraction);
         costs_to_complete_available_unpaused_techs.emplace_back(remaining_cost, tech_name);
     }
-    std::sort(costs_to_complete_available_unpaused_techs.begin(),
-              costs_to_complete_available_unpaused_techs.end());
+    std::stable_sort(costs_to_complete_available_unpaused_techs.begin(),
+                     costs_to_complete_available_unpaused_techs.end());
 
     // in order of minimum additional cost to complete, allocate RP to
     // techs up to available RP and per-turn limits
@@ -2395,15 +2380,14 @@ void Empire::CheckProductionProgress(
                                  INVALID_OBJECT_ID : elem.location);
         const auto& item = elem.item;
         const std::string_view item_name = item.name;
-        auto same_item_and_loc = [location_id, bt{item.build_type}, did{item.design_id}, item_name]
-            (const auto& q_item_time)
+        auto same_item_and_loc =
+            [location_id, bt{item.build_type}, did{item.design_id}, item_name](const auto& q_item_time)
         {
             return location_id == q_item_time.location_id && bt == q_item_time.build_type &&
                 did == q_item_time.design_id && item_name == q_item_time.name;
         };
-        if (std::any_of(queue_item_costs_and_times.begin(), queue_item_costs_and_times.end(),
-                        same_item_and_loc))
-        { continue; } // already have this item and location cached
+        if (range_any_of(queue_item_costs_and_times, same_item_and_loc))
+            continue; // already have this item and location cached
 
         auto [cost, time] = elem.ProductionCostAndTime(context);
         queue_item_costs_and_times.emplace_back(location_id, item.build_type, item.design_id,
@@ -2421,7 +2405,7 @@ void Empire::CheckProductionProgress(
                 did == q_item_time.design_id && item_name == q_item_time.name;
         };
 
-        auto it = std::find_if(qicat.begin(), qicat.end(), same_item_and_loc);
+        auto it = range_find_if(qicat, same_item_and_loc);
         if (it != qicat.end())
             return {it->cost, it->time};
         return {0.0f, 1};

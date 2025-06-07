@@ -4,6 +4,7 @@
 #include "Export.h"
 #include "Logger.h"
 #include "OptionValidators.h"
+#include "ranges.h"
 
 #include <boost/any.hpp>
 #include <boost/container/flat_set.hpp>
@@ -161,10 +162,14 @@ public:
 private:
     using ContainerType = std::vector<Option>;
 
-    auto find_option(const std::string_view name) const
-    { return std::find_if(m_options.begin(), m_options.end(), [name](const auto& o) { return o.name == name; }); }
-    auto find_option(const std::string_view name)
-    { return std::find_if(m_options.begin(), m_options.end(), [name](const auto& o) { return o.name == name; }); }
+    auto find_option(const std::string_view name) const {
+        const auto has_name = [name](const auto& o) noexcept { return o.name == name; };
+        return range_find_if(m_options, has_name);
+    }
+    auto find_option(const std::string_view name) {
+        const auto has_name = [name](const auto& o) noexcept { return o.name == name; };
+        return range_find_if(m_options, has_name);
+    }
 
 public:
     /** Has an option with name \a name been added to this OptionsDB? */

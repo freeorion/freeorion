@@ -162,8 +162,8 @@ namespace {
     {
         py::list species_list;
         const ScriptingContext& context = ServerApp::GetApp()->GetContext();
-        for (const auto& entry : context.species)
-            species_list.append(py::object(entry.first));
+        for (const auto& name : context.species.AllSpecies() | range_keys)
+            species_list.append(py::object(name));
         return species_list;
     }
 
@@ -172,8 +172,8 @@ namespace {
         py::list species_list;
         const ScriptingContext& context = ServerApp::GetApp()->GetContext();
         SpeciesManager& species_manager = context.species;
-        for (auto it = species_manager.playable_begin(); it != species_manager.playable_end(); ++it)
-            species_list.append(py::object(it->first)); // TODO: add GetPlayable() and use range for loop here
+        for (const auto& name : species_manager.PlayableSpecies() | range_keys)
+            species_list.append(py::object(name));
         return species_list;
     }
 
@@ -182,8 +182,8 @@ namespace {
         py::list species_list;
         const ScriptingContext& context = ServerApp::GetApp()->GetContext();
         SpeciesManager& species_manager = context.species;
-        for (auto it = species_manager.native_begin(); it != species_manager.native_end(); ++it)
-            species_list.append(py::object(it->first));
+        for (const auto& name : species_manager.NativeSpecies() | range_keys)
+            species_list.append(py::object(name));
         return species_list;
     }
 

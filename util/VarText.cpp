@@ -263,8 +263,8 @@ namespace {
     std::pair<boost::optional<std::string>, bool> EvalContextSub(
         std::string_view tag, std::string_view value, const ScriptingContext& context)
     {
-        const auto it = std::find_if(context_substitution_map.begin(), context_substitution_map.end(),
-                                     [tag](const auto& e) { return e.first == tag; });
+        const auto it = range_find_if(context_substitution_map,
+                                      [tag](const auto& e) noexcept { return e.first == tag; });
         if (it == context_substitution_map.end())
             return {boost::none, false}; // no such substitution found
         const auto& sub_func = it->second;
@@ -276,8 +276,8 @@ namespace {
     std::pair<boost::optional<std::string>, bool> EvalNoContextSub(
         std::string_view tag, std::string_view value)
     {
-        const auto it = std::find_if(no_context_substitution_map.begin(), no_context_substitution_map.end(),
-                                     [tag](const auto& e) { return e.first == tag; });
+        const auto it = range_find_if(no_context_substitution_map,
+                                      [tag](const auto& e) noexcept { return e.first == tag; });
         if (it == no_context_substitution_map.end())
             return {boost::none, false}; // no such substitution found
         const auto& sub_func = it->second;
@@ -302,8 +302,9 @@ namespace {
 
         static constexpr decltype(label_match.length()) zero = 0;
 
-        const std::size_t label_sz = static_cast<std::size_t>(std::max(zero, label_match.length()));
-        const std::string_view label(&*label_match.first, label_sz);
+        const auto label_start_address = &*label_match.first; // std::to_address causes problem on Clang 14.0.1, which I wasn't able to work around with if constexpr (decltype) checks
+        const auto label_sz = static_cast<std::size_t>(std::max(zero, label_match.length()));
+        const std::string_view label(label_start_address, label_sz);
 
         // look up child
         const auto elem = variables.find(label);
@@ -312,8 +313,9 @@ namespace {
         if (elem == variables.end())
             return {"", "", "", false};
 
+        const auto tag_start_address = &*tag_match.first; // std::to_address causes problem on Clang 14.0.1, which I wasn't able to work around with if constexpr (decltype) checks
         const std::size_t tag_sz = static_cast<std::size_t>(std::max(zero, tag_match.length()));
-        const std::string_view tag(&*tag_match.first, tag_sz);
+        const std::string_view tag(tag_start_address, tag_sz);
 
         return {label, elem->second, tag, true};
     }

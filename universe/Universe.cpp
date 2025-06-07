@@ -129,10 +129,10 @@ namespace {
         const auto& context_objects{context.ContextObjects()};
         const auto& context_universe{context.ContextUniverse()};
 
-        if (&universe != &context_universe)
+        if (std::addressof(universe) != std::addressof(context_universe))
             ErrorLogger() << "Universe member function passed context with different Universe from this";
 
-        if (&context_objects != &universe_objects)
+        if (std::addressof(context_objects) != std::addressof(universe_objects))
             ErrorLogger() << "Universe member function passed context different ObjectMap from this Universe";
     }
 
@@ -167,7 +167,7 @@ Universe::Universe() :
 {}
 
 Universe& Universe::operator=(Universe&& other) noexcept {
-    if (this == &other)
+    if (this == std::addressof(other))
         return *this;
 
     m_pathfinder = std::move(other.m_pathfinder);
@@ -1428,7 +1428,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         species_objects[species_name].push_back(planet);
     }
     // allocate storage for target sets and dispatch condition evaluations
-    for ([[maybe_unused]] auto& [species_name, species] : context.species) {
+    for ([[maybe_unused]] auto& [species_name, species] : context.species.AllSpecies()) {
         auto species_objects_it = species_objects.find(species_name);
         if (species_objects_it == species_objects.end())
             continue;
@@ -1466,7 +1466,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         species_objects[species_name].push_back(ship);
     }
     // allocate storage for target sets and dispatch condition evaluations
-    for ([[maybe_unused]] auto& [species_name, species] : context.species) {
+    for ([[maybe_unused]] auto& [species_name, species] : context.species.AllSpecies()) {
         auto species_objects_it = species_objects.find(species_name);
         if (species_objects_it == species_objects.end())
             continue;
@@ -3454,7 +3454,7 @@ const Universe::ShipDesignMap& Universe::GetShipDesignsToSerialize(
 }
 
 void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const {
-    if (&objects == &m_objects)
+    if (std::addressof(objects) == std::addressof(m_objects))
         return;
 
     objects.clear();
@@ -3503,7 +3503,7 @@ void Universe::GetDestroyedObjectsToSerialize(std::set<int>& destroyed_object_id
 void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects,
                                                 int encoding_empire) const
 {
-    if (&empire_latest_known_objects == &m_empire_latest_known_objects)
+    if (std::addressof(empire_latest_known_objects) == std::addressof(m_empire_latest_known_objects))
         return;
 
     DebugLogger() << "GetEmpireKnownObjectsToSerialize encoding empire: " << encoding_empire;
@@ -3563,7 +3563,7 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
 void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids,
                                               int encoding_empire) const
 {
-    if (&empire_known_destroyed_object_ids == &m_empire_known_destroyed_object_ids)
+    if (std::addressof(empire_known_destroyed_object_ids) == std::addressof(m_empire_known_destroyed_object_ids))
         return;
 
     if (encoding_empire == ALL_EMPIRES) {
@@ -3582,7 +3582,7 @@ void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_d
 void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids,
                                               int encoding_empire) const
 {
-    if (&empire_stale_knowledge_object_ids == &m_empire_stale_knowledge_object_ids)
+    if (std::addressof(empire_stale_knowledge_object_ids) == std::addressof(m_empire_stale_knowledge_object_ids))
         return;
 
     if (encoding_empire == ALL_EMPIRES) {

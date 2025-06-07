@@ -34,27 +34,26 @@ namespace py = boost::python;
 
 
 namespace {
+    constexpr auto to_string = [](std::string_view sv) { return std::string{sv}; };
+
+    auto ToVec(auto&& in)
+    { return std::vector(in.begin(), in.end()); }
+
     template <typename T>
     auto ObjectIDs(const Universe& universe) -> std::vector<int>
     {
-        std::vector<int> result;
-        result.reserve(universe.Objects().size<T>());
-        for (const auto* obj : universe.Objects().allRaw<T>())
-            result.push_back(obj->ID());
-        return result;
+        auto ids_rng = universe.Objects().allWithIDs<T>() | range_keys;
+        return ToVec(ids_rng);
     }
+
 
     auto ObjectTagsAsStringVec(const UniverseObject& o) -> std::vector<std::string>
     {
         UniverseObject::TagVecs tags = o.Tags(IApp::GetApp()->GetContext());
-
         std::vector<std::string> result;
         result.reserve(tags.size());
-
-        std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(result),
-                       [](std::string_view sv) { return std::string{sv}; });
-        std::transform(tags.second.begin(), tags.second.end(), std::back_inserter(result),
-                       [](std::string_view sv) { return std::string{sv}; });
+        std::transform(tags.first.begin(), tags.first.end(), std::back_inserter(result), to_string);
+        std::transform(tags.second.begin(), tags.second.end(), std::back_inserter(result), to_string);
         return result;
     }
 
@@ -75,22 +74,13 @@ namespace {
             }
         }();
 
-        std::vector<std::string> result;
-        result.reserve(tags.size());
-
-        std::transform(tags.begin(), tags.end(), std::back_inserter(result),
-                       [](std::string_view sv) { return std::string{sv}; });
-        return result;
+        return ToVec(tags | range_transform(to_string));
     }
 
     auto SpeciesFoci(const Species& species) -> std::vector<std::string>
     {
-        std::vector<std::string> retval;
-        const auto& foci = species.Foci();
-        retval.reserve(foci.size());
-        std::transform(foci.begin(), foci.end(), std::back_inserter(retval),
-                       [](const auto& f) { return f.Name(); });
-        return retval;
+        static constexpr auto to_name = [](const auto& f) noexcept -> const auto& { return f.Name(); };
+        return ToVec(species.Foci() | range_transform(to_name));
     }
 
     auto SpeciesHomeworlds(const Species& species) -> std::set<int>
@@ -107,8 +97,8 @@ namespace {
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto path = universe.GetPathfinder().ShortestPath(
-            start_sys, end_sys, empire_id, universe.EmpireKnownObjects(empire_id)).first;
+        auto path{universe.GetPathfinder().ShortestPath(
+            start_sys, end_sys, empire_id, universe.EmpireKnownObjects(empire_id)).first};
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
     }
@@ -127,7 +117,7 @@ namespace {
 
     auto LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto path = universe.GetPathfinder().LeastJumpsPath(start_sys, end_sys, empire_id).first;
+        auto path{universe.GetPathfinder().LeastJumpsPath(start_sys, end_sys, empire_id).first};
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
     }
@@ -135,30 +125,19 @@ namespace {
     auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
     {
         auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
-        std::vector<int> retval;
-        retval.reserve(neighbours.size());
-        std::transform(neighbours.begin(), neighbours.end(), std::back_inserter(retval),
-                       [](auto& n) { return n.second; });
-        return retval;
+        return ToVec(neighbours | range_values);
     }
 
     auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id) -> std::map<int, double>
     {
         auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
-        std::map<int, double> retval;
-        std::transform(neighbours.begin(), neighbours.end(), std::inserter(retval, retval.end()),
-                       [](auto& n) { return std::pair{n.second, n.first}; });
-        return retval;
+        static constexpr auto swap_kvp = [](const auto& kvp) { return std::pair{kvp.second, kvp.first}; };
+        auto dist_id_rng = neighbours | range_transform(swap_kvp);
+        return std::map<int, double>(dist_id_rng.begin(), dist_id_rng.end());
     }
 
     auto ObjectSpecials(const UniverseObject& object) -> std::vector<std::string>
-    {
-        std::vector<std::string> retval;
-        retval.reserve(object.Specials().size());
-        std::transform(object.Specials().begin(), object.Specials().end(), std::back_inserter(retval),
-                       [](const auto& s) { return s.first; });
-        return retval;
-    }
+    { return ToVec(object.Specials() | range_keys); }
 
     auto ObjectCurrentMeterValue(const UniverseObject& o, MeterType meter_type) -> float
     {
@@ -176,22 +155,18 @@ namespace {
 
     auto AttackStats(const ShipDesign& ship_design) -> std::vector<int>
     {
-        std::vector<int> results;
-        results.reserve(ship_design.Parts().size());
-        for (const std::string& part_name : ship_design.Parts()) {
-            const ShipPart* part = GetShipPart(part_name);
-            if (part && part->Class() == ShipPartClass::PC_DIRECT_WEAPON)  // TODO: handle other weapon classes when they are implemented
-                results.push_back(part->Capacity());
-        }
-        return results;
+        static constexpr auto get_part = [](std::string_view name) -> const auto* { return GetShipPart(name); };
+        static constexpr auto is_pcdw = [](const auto* p) noexcept { return p && p->Class() == ShipPartClass::PC_DIRECT_WEAPON; }; // TODO: handle other weapon classes when they are implemented
+        static constexpr auto to_cap = [](const auto* p) { return static_cast<int>(p->Capacity()); };
+        auto pcdw_cap_rng = ship_design.Parts() | range_transform(get_part) | range_filter(is_pcdw) |
+                            range_transform(to_cap);
+        return ToVec(pcdw_cap_rng);
     }
 
     auto HullSlots(const ShipHull& hull) -> std::vector<ShipSlotType>
     {
-        std::vector<ShipSlotType> retval;
-        for (const ShipHull::Slot& slot : hull.Slots())
-            retval.push_back(slot.type);
-        return retval;
+        static constexpr auto to_slot_type = [](const auto& slot) noexcept { return slot.type; };
+        return ToVec(hull.Slots() | range_transform(to_slot_type));
     }
 
     auto HullProductionLocation(const ShipHull& hull, int location_id) -> bool
@@ -237,16 +212,8 @@ namespace {
         return retval;
     }
 
-    std::vector<std::string> ViewsToStrings(const std::vector<std::string_view>& svs) {
-        std::vector<std::string> retval;
-        retval.reserve(svs.size());
-        std::transform(svs.begin(), svs.end(), std::back_inserter(retval),
-                       [](const auto& sv) { return std::string{sv}; });
-        return retval;
-    }
-
-    auto ToVec(const auto& in)
-    { return std::vector(in.begin(), in.end()); }
+    std::vector<std::string> ViewsToStrings(const std::vector<std::string_view>& svs)
+    { return ToVec(svs | range_transform(to_string)); }
 }
 
 namespace FreeOrionPython {

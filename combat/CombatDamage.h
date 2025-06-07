@@ -28,11 +28,15 @@ namespace Combat {
      * @p sampling_condition can consider the bout */
     [[nodiscard]] FO_COMMON_API int TotalFighterShots(const ScriptingContext& context, const Ship& ship,
                                                       const Condition::Condition* sampling_condition);
+    enum class MaxWD : bool { CURRENT = false, MAX = true };
+    enum class InclFightersWD : bool { WITH = true, WITHOUT = false };
+    enum class TargetShipsWD : bool { TargetShips = true, NoShips = false };
 
     [[nodiscard]] FO_COMMON_API std::vector<float> WeaponDamageImpl(
         const ScriptingContext& context,
         const Ship& ship, float target_shields,
-        bool use_max_meters, bool launch_fighters, bool target_ships = true);
+        MaxWD use_max_meters, InclFightersWD launch_fighters,
+        TargetShipsWD target_ships = TargetShipsWD::TargetShips);
 }
 
 #endif
