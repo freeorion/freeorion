@@ -1111,11 +1111,9 @@ private:
             param_widget_top += m_string_drop->Height();
 
             // add rows for empire names
-            for (const auto& entry : context.Empires()) { // TODO: range_values
-                const std::string& empire_name = entry.second->Name();
-                m_string_drop->Insert(GG::Wnd::Create<StringRow>(
-                    empire_name, GG::Y(ClientUI::Pts()), false));
-            }
+            static constexpr auto to_name = [](const auto& e) -> const auto& { return e->Name(); };
+            for (const auto& empire_name : context.Empires() | range_values | range_transform(to_name))
+                m_string_drop->Insert(GG::Wnd::Create<StringRow>(empire_name, GG::Y(ClientUI::Pts()), false));
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
         }
