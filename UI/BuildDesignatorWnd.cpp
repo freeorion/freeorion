@@ -246,8 +246,9 @@ namespace {
                                                        int empire_id, bool only_failed_conditions)
     {
         std::vector<const Condition::Condition*> enqueue_conditions;
-        Condition::EmpireHasBuildingTypeAvailable bld_avail_cond(building_name);
-        enqueue_conditions.push_back(&bld_avail_cond);
+        enqueue_conditions.reserve(3);
+        const Condition::EmpireHasBuildingTypeAvailable bld_avail_cond(building_name);
+        enqueue_conditions.push_back(std::addressof(bld_avail_cond));
         if (const BuildingType* building_type = GetBuildingType(building_name)) {
             enqueue_conditions.push_back(building_type->EnqueueLocation());
             enqueue_conditions.push_back(building_type->Location());
@@ -279,8 +280,8 @@ namespace {
 
         std::vector<const Condition::Condition*> location_conditions;
         location_conditions.reserve(4);
-        location_conditions.push_back(&can_prod_ship_cond);
-        location_conditions.push_back(&ship_avail_cond);
+        location_conditions.push_back(std::addressof(can_prod_ship_cond));
+        location_conditions.push_back(std::addressof(ship_avail_cond));
 
         const ScriptingContext& context = IApp::GetApp()->GetContext();
         const Universe& universe = context.ContextUniverse();

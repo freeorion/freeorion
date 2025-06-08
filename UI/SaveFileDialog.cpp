@@ -584,15 +584,15 @@ private:
     /// b) be sorted alphabetically
     /// This custom comparer achieves these goals.
     static bool DirectoryAwareCmp(const Row& row1, const Row& row2, int column_int) noexcept {
-        const auto* row1_as_filerow = dynamic_cast<const SaveFileRow*>(&row1);
-        const auto* row2_as_filerow = dynamic_cast<const SaveFileRow*>(&row2);
+        const auto* row1_as_filerow = dynamic_cast<const SaveFileRow*>(std::addressof(row1));
+        const auto* row2_as_filerow = dynamic_cast<const SaveFileRow*>(std::addressof(row2));
         if (!row1_as_filerow)
             return !row2_as_filerow; // row1 is not a file row, should be sorted greater than (after) anything that is, and equal with another not a file row
         if (!row2_as_filerow)
             return true;             // row2 is not a file row, but row1 is, so row1 should be less than (before) row2
 
-        const auto* row1_as_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row1);
-        const auto* row2_as_directory = dynamic_cast<const SaveFileDirectoryRow*>(&row2);
+        const auto* row1_as_directory = dynamic_cast<const SaveFileDirectoryRow*>(std::addressof(row1));
+        const auto* row2_as_directory = dynamic_cast<const SaveFileDirectoryRow*>(std::addressof(row2));
 
         if (row1_as_directory && row2_as_directory) {
             // both are directories: compare keys

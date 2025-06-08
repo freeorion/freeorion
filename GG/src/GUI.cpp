@@ -1370,10 +1370,10 @@ void GUI::CancelDragDrop()
 }
 
 void GUI::RegisterTimer(Timer& timer)
-{ m_impl->m_timers.emplace(&timer); }
+{ m_impl->m_timers.emplace(std::addressof(timer)); }
 
 void GUI::RemoveTimer(Timer& timer)
-{ m_impl->m_timers.erase(&timer); }
+{ m_impl->m_timers.erase(std::addressof(timer)); }
 
 void GUI::EnableKeyPressRepeat(unsigned int delay, unsigned int interval)
 {

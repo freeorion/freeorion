@@ -54,7 +54,7 @@ namespace {
         using ServerList = std::vector<std::pair<boost::asio::ip::address, std::string>>;
 
         ServerDiscoverer(boost::asio::io_context& io_context) :
-            m_io_context(&io_context),
+            m_io_context(std::addressof(io_context)),
             m_timer(io_context),
             m_socket(io_context)
         {}
