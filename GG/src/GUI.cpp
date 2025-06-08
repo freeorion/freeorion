@@ -1683,11 +1683,11 @@ void GUI::RenderWindow(Wnd* wnd)
         std::vector<Wnd*> children;
         children.reserve(wnd->Children().size());
         std::transform(wnd_children.begin(), wnd_children.end(), std::back_inserter(children),
-                       [](const auto& child) { return child.get(); });
+                       [](const auto& child) noexcept { return child.get(); });
 
         const auto client_child_begin =
             std::partition(children.begin(), children.end(),
-                           [](const auto& child) { return child->NonClientChild(); });
+                           [](const auto& child) noexcept { return child->NonClientChild(); });
 
         if (children.begin() != client_child_begin) {
             wnd->BeginNonclientClipping();
