@@ -18,6 +18,8 @@
 #include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"
 
+#include <numeric>
+
 namespace {
     DeclareThreadSafeLogger(combat_log);
 
@@ -254,7 +256,7 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftPressedSignal.connect(boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
-        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, std::addressof(log)));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -297,7 +299,6 @@ namespace {
 
     private:
         void ToggleExpansion();
-        static std::size_t CountForces(std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces);
 
         CombatLogWnd::Impl& log;
         const int viewing_empire_id = ALL_EMPIRES;
@@ -308,6 +309,11 @@ namespace {
         // distance between expansion symbol and text
         static constexpr unsigned int BORDER_MARGIN = 5;
     };
+
+    std::size_t CountForces(const auto& forces) {
+        auto size_rng = forces | range_transform([](const auto& frc) noexcept { return frc.size(); });
+        return std::reduce(size_rng.begin(), size_rng.end(), std::size_t{0u});
+    }
 
     EmpireForcesAccordionPanel::EmpireForcesAccordionPanel(GG::X w,
                                                            CombatLogWnd::Impl& log_,
@@ -326,7 +332,7 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         m_expand_button->LeftPressedSignal.connect(boost::bind(&EmpireForcesAccordionPanel::ToggleExpansion, this));
-        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
+        this->ExpandCollapseSignal.connect(boost::bind(&CombatLogWnd::Impl::HandleWndChanged, std::addressof(log)));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -350,15 +356,6 @@ namespace {
         }
 
         SetCollapsed(new_collapsed);
-    }
-
-    std::size_t EmpireForcesAccordionPanel::CountForces(
-        std::vector<std::vector<std::shared_ptr<UniverseObject>>> forces)
-    {
-        std::size_t n = 0;
-        for (const auto& owner_forces : forces)
-            n += owner_forces.size();
-        return n;
     }
 }
 
