@@ -172,7 +172,7 @@ void ShaderProgram::Bind(const std::string& name, float f0, float f1, float f2, 
     CHECK_ERROR("ShaderProgram::Bind", "glUniform4f()");
 }
 
-void ShaderProgram::Bind(const std::string& name, std::size_t element_size, const std::vector<float> &floats) {
+void ShaderProgram::Bind(const std::string& name, std::size_t element_size, const std::vector<float>& floats) {
     assert(1 <= element_size && element_size <= 4);
     assert((floats.size() % element_size) == 0);
 
@@ -242,7 +242,7 @@ void ShaderProgram::BindInts(const std::string& name, int i0, int i1, int i2, in
     CHECK_ERROR("ShaderProgram::BindInts", "glUniform4i()");
 }
 
-void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, const std::vector<GLint> &ints) {
+void ShaderProgram::BindInts(const std::string& name, std::size_t element_size, const std::vector<GLint>& ints) {
     assert(1 <= element_size && element_size <= 4);
     assert((ints.size() % element_size) == 0);
 
