@@ -52,7 +52,7 @@ namespace {
             m_data.clear();
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
-            for (auto &row_mutex : m_row_mutexes)
+            for (auto& row_mutex : m_row_mutexes)
                 row_mutex = std::make_shared<std::shared_mutex>();
         }
 
@@ -102,7 +102,7 @@ namespace {
         using cache_miss_handler = std::function<void (std::size_t&, Row)>;
 
         /// A function to examine an entire row cache hit
-        using cache_hit_handler = std::function<void (std::size_t &/*ii*/, const Row /*row*/)>;
+        using cache_hit_handler = std::function<void (std::size_t&/*ii*/, const Row /*row*/)>;
 
         /** Retrieve a single element at (\p ii, \p jj).
           * On cache miss call the \p fill_row which must fill the row
@@ -121,21 +121,21 @@ namespace {
             }
             {
                 std::shared_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
-                const Row &row_data = m_storage.m_data[ii];
+                const Row& row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size())
                     return row_data[jj];
             }
             {
                 std::shared_lock<std::shared_mutex> column_guard(*m_storage.m_row_mutexes[jj]);
-                const Row &column_data = m_storage.m_data[jj];
+                const Row& column_data = m_storage.m_data[jj];
 
                 if (NN == column_data.size())
                     return column_data[ii];
             }
             {
                 std::unique_lock<std::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
-                Row &row_data = m_storage.m_data[ii];
+                Row& row_data = m_storage.m_data[ii];
 
                 if (NN == row_data.size()) {
                     return row_data[jj];

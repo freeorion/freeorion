@@ -91,9 +91,9 @@ class MultiPlayerLobbyWnd;
 struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMenu> {
     typedef boost::statechart::state_machine<HumanClientFSM, IntroMenu> Base;
 
-    HumanClientFSM(GGHumanClientApp &human_client);
+    HumanClientFSM(GGHumanClientApp& human_client);
 
-    void unconsumed_event(const boost::statechart::event_base &event);
+    void unconsumed_event(const boost::statechart::event_base& event);
 
     GGHumanClientApp& m_client;
 
