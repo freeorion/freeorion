@@ -152,20 +152,28 @@ std::map<std::string, std::string> GameRules::GetRulesAsStrings() {
     return retval;
 }
 
+namespace {
+    static constexpr auto rule_ptr_less = [](const GameRule* lhs, const GameRule* rhs) {
+        if (lhs == rhs)
+            return false;
+        if (!lhs)
+            return true;
+        if (!rhs)
+            return false;
+        auto lhs_category_rank = GetCategoryRank(lhs->category);
+        auto rhs_category_rank = GetCategoryRank(rhs->category);
+        return lhs_category_rank == rhs_category_rank ?
+            lhs->rank < rhs->rank :
+            lhs_category_rank < rhs_category_rank;
+    };
+}
+
 std::vector<const GameRule*> GameRules::GetSortedByCategoryAndRank() {
     CheckPendingGameRules();
-    std::vector<const GameRule*> sorted_rules;
-    sorted_rules.reserve(m_game_rules.size());
-    std::transform(m_game_rules.begin(), m_game_rules.end(), std::back_inserter(sorted_rules),
-                   [](const auto& rule_pair) { return &rule_pair.second; });
-    std::sort(sorted_rules.begin(), sorted_rules.end(),
-              [](const GameRule* lhs, const GameRule* rhs) {
-                auto lhs_category_rank = GetCategoryRank(lhs->category);
-                auto rhs_category_rank = GetCategoryRank(rhs->category);
-                return lhs_category_rank == rhs_category_rank ?
-                    lhs->rank < rhs->rank :
-                    lhs_category_rank < rhs_category_rank;
-    });
+    static constexpr auto to_addr = [](const auto& rule) noexcept { return std::addressof(rule); };
+    auto rules_ptr_rng = m_game_rules | range_values | range_transform(to_addr);
+    std::vector<const GameRule*> sorted_rules(rules_ptr_rng.begin(), rules_ptr_rng.end());
+    std::stable_sort(sorted_rules.begin(), sorted_rules.end(), rule_ptr_less);
     return sorted_rules;
 }
 void GameRules::Add(Pending::Pending<GameRulesTypeMap>&& future)
