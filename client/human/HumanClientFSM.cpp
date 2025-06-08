@@ -80,11 +80,11 @@ namespace {
 ////////////////////////////////////////////////////////////
 // HumanClientFSM
 ////////////////////////////////////////////////////////////
-HumanClientFSM::HumanClientFSM(GGHumanClientApp &human_client) :
+HumanClientFSM::HumanClientFSM(GGHumanClientApp& human_client) :
     m_client(human_client)
 {}
 
-void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event) {
+void HumanClientFSM::unconsumed_event(const boost::statechart::event_base& event) {
     std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
     const boost::statechart::event_base* event_ptr = std::addressof(event);
     if (dynamic_cast<const Disconnection*>(event_ptr))

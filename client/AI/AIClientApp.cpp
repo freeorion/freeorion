@@ -45,7 +45,7 @@ namespace {
         ...
         ai.trait.\<trait name\>.ai_40          -- Use for AI_40
      */
-    void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
+    void AddTraitBypassOption(OptionsDB& db, std::string const& root, std::string ROOT,
                               auto def, const ValidatorBase& validator)
     {
         const std::string option_root = "ai.trait." + root + ".";
