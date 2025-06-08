@@ -312,9 +312,9 @@ public:
     { return std::chrono::high_resolution_clock::now() - m_start; }
 
     [[nodiscard]] const Sections::SectionTable* GetSectionTable() const noexcept
-    { return m_sections ? &m_sections->m_table : nullptr; }
+    { return m_sections ? std::addressof(m_sections->m_table) : nullptr; }
 
-    [[nodiscard]]const std::vector<std::pair<std::string_view, std::chrono::nanoseconds>> SectionsElapsed() const {
+    [[nodiscard]] const std::vector<std::pair<std::string_view, std::chrono::nanoseconds>> SectionsElapsed() const {
         if (!m_sections)
             return {};
         const auto& t = m_sections->m_table;
