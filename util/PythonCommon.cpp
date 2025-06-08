@@ -127,8 +127,8 @@ void PythonCommon::HandleErrorAlreadySet() {
     }
 
     PyObject *extype, *value, *traceback;
-    PyErr_Fetch(&extype, &value, &traceback);
-    PyErr_NormalizeException(&extype, &value, &traceback);
+    PyErr_Fetch(std::addressof(extype), std::addressof(value), std::addressof(traceback));
+    PyErr_NormalizeException(std::addressof(extype), std::addressof(value), std::addressof(traceback));
     if (!extype) {
         ErrorLogger() << "Missing python exception type";
         return;
@@ -136,7 +136,8 @@ void PythonCommon::HandleErrorAlreadySet() {
 
     py::object o_extype(py::handle<>(py::borrowed(extype)));
     py::object o_value(py::handle<>(py::borrowed(value)));
-    py::object o_traceback = traceback != nullptr ? py::object(py::handle<>(py::borrowed(traceback))) : py::object();
+    py::object o_traceback = (traceback != nullptr) ?
+        py::object(py::handle<>(py::borrowed(traceback))) : py::object();
 
     py::object lines = m_traceback_format_exception(o_extype, o_value, o_traceback);
     for (int i = 0; i < len(lines); ++i) {
