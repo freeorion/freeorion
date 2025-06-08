@@ -1017,7 +1017,7 @@ std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
     }
     const GraphImpl::SystemPredicateGraph sys_pred_graph(
         *m_graph_impl.system_graph,
-        GraphImpl::SystemPredicateFilter{m_graph_impl.system_graph.get(), &objects, sys_pred});
+        GraphImpl::SystemPredicateFilter{m_graph_impl.system_graph.get(), std::addressof(objects), sys_pred});
     
     try {
         return ShortestPathImpl(sys_pred_graph, system1_id, system2_id, m_system_id_to_graph_index);
