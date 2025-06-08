@@ -95,7 +95,7 @@ public:
     // try to store the buffered data in a server buffer
     void createServerBuffer(GLenum usage = GL_STATIC_DRAW) {
         if (!b_name)
-            glGenBuffers(1, &b_name);
+            glGenBuffers(1, std::addressof(b_name));
         if (!b_name)
             return;
         glBindBuffer(GL_ARRAY_BUFFER, b_name);

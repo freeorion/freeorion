@@ -19,7 +19,7 @@ using namespace GG;
 void GLBufferBase::dropServerBuffer()
 {
     if (b_name) {
-        glDeleteBuffers(1, &b_name);
+        glDeleteBuffers(1, std::addressof(b_name));
         b_name = 0;
     }
 }

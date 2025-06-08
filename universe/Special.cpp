@@ -32,7 +32,7 @@ const Special* SpecialsManager::GetSpecial(std::string_view name) const {
     if (name_it == m_special_names.end())
         return nullptr;
     auto offset = std::distance(m_special_names.begin(), name_it);
-    return &m_specials[offset];
+    return std::addressof(m_specials[offset]);
 }
 
 uint32_t SpecialsManager::GetCheckSum() const {

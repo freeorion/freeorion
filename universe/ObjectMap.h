@@ -142,8 +142,8 @@ public:
 
         } else if constexpr (invokable_on_const_reference) {
             static constexpr auto to_cref = [](const auto& id_ptr) -> const auto& { return *(id_ptr.second); };
-            static constexpr auto to_address = [](const auto& r) { return &r; };
-            auto rng = map | range_transform(to_cref) | range_filter(pred) | range_transform(to_address);
+            static constexpr auto to_addr = [](const auto& o) noexcept { return std::addressof(o); };
+            auto rng = map | range_transform(to_cref) | range_filter(pred) | range_transform(to_addr);
             result.reserve(map.size());
             range_copy(rng, std::back_inserter(result));
             return result;

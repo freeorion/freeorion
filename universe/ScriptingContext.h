@@ -36,9 +36,9 @@ struct [[nodiscard]] ScriptingContext final {
         galaxy_setup_data(app.GetGalaxySetupData()),
         species(          app.GetSpeciesManager()),
         supply(           app.GetSupplyManager()),
-        universe(         &app.GetUniverse()),
+        universe(         std::addressof(app.GetUniverse())),
         const_universe(   app.GetUniverse()),
-        empires(          &app.Empires()),
+        empires(          std::addressof(app.Empires())),
         const_empires(    app.Empires())
     {}
 
@@ -322,7 +322,7 @@ struct [[nodiscard]] ScriptingContext final {
 private: // Universe and ObjectMap getters select one of these based on constness
     Universe*                                      universe = nullptr;
     const Universe&                                const_universe;
-    ObjectMap*                                     objects = universe ? &(universe->Objects()) : nullptr;
+    ObjectMap*                                     objects = universe ? std::addressof(universe->Objects()) : nullptr;
     const ObjectMap&                               const_objects{objects ? *objects : const_universe.Objects()};
 public:
     const Universe::EmpireObjectVisibilityMap&     empire_object_vis{const_universe.GetEmpireObjectVisibility()};

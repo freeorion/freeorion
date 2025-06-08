@@ -10725,18 +10725,18 @@ namespace StaticTests {
     static_assert(stationary_combined_checksum == 2142u);
     constexpr auto stationary_combined_address_checksum = []() {
         uint32_t sum = 0;
-        CheckSums::CheckSumCombine(sum, &stationary_cx);
+        CheckSums::CheckSumCombine(sum, std::addressof(stationary_cx));
         return sum;
     }();
     static_assert(stationary_combined_address_checksum == 2142u);
-    constexpr auto stationary_combined_with_number = CheckSums::GetCheckSum(858u, &stationary_cx);
+    constexpr auto stationary_combined_with_number = CheckSums::GetCheckSum(858u, std::addressof(stationary_cx));
     static_assert(stationary_combined_with_number == 3000u);
 
-    constexpr std::array<const Condition*, 2> null_and_stationary_cx{{nullptr, &stationary_cx}};
+    constexpr std::array<const Condition*, 2> null_and_stationary_cx{{nullptr, std::addressof(stationary_cx)}};
     constexpr auto null_and_stationary_checksum = CheckSums::GetCheckSum(null_and_stationary_cx);
     static_assert(null_and_stationary_checksum == (2142u + 2u));
 
-    constexpr std::array<const Condition*, 2> none_and_stationary_cx{{&none_cx, &stationary_cx}};
+    constexpr std::array<const Condition*, 2> none_and_stationary_cx{{std::addressof(none_cx), std::addressof(stationary_cx)}};
     constexpr auto none_and_stationary_checksum = CheckSums::GetCheckSum(none_and_stationary_cx);
     static_assert(none_and_stationary_checksum == (CheckSums::GetCheckSum(none_cx) + 2142u + 2u));
 
