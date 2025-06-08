@@ -394,7 +394,7 @@ const ShipDesign* Universe::GetGenericShipDesign(std::string_view name) const {
     const auto has_name = [name](const auto& design) { return name == design.Name(false); };
     const auto rng = m_ship_designs | range_values;
     const auto it = range_find_if(rng, has_name);
-    return it != rng.end() ? &(*it) : nullptr;
+    return it != rng.end() ? std::addressof(*it) : nullptr;
 }
 
 const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {

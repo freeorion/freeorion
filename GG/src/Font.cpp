@@ -3005,10 +3005,10 @@ StrSize GG::StringIndexOfCodePoint(CPSize index, const Font::LineVec& line_data)
 { return StringIndexOfCodePointInLines(index, line_data); }
 
 FT_Error Font::GetFace(FT_Face& face)
-{ return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, &face); }
+{ return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, std::addressof(face)); }
 
 FT_Error Font::GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face)
-{ return FT_New_Memory_Face(g_library.m_library, &file_contents[0], file_contents.size(), 0, &face); }
+{ return FT_New_Memory_Face(g_library.m_library, file_contents.data(), file_contents.size(), 0, std::addressof(face)); }
 
 void Font::CheckFace(FT_Face face, FT_Error error)
 {

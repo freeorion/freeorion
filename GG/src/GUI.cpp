@@ -92,13 +92,10 @@ void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
     glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-    glReadPixels(Value(ul.x),
-                    Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
-                    Value(size.x),
-                    Value(size.y),
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
-                    &bytes[0]);
+    glReadPixels(Value(ul.x), Value(GUI::GetGUI()->AppHeight() - wnd->Bottom()),
+                 Value(size.x), Value(size.y),
+                 GL_RGBA, GL_UNSIGNED_BYTE,
+                 bytes.data());
 
     glPopClientAttrib();
 

@@ -181,7 +181,7 @@ std::vector<RichTextTag> TagParser::ParseTags(const std::string& text, std::set<
 
     try {
         // Parse all text into tags.
-        ParseTagsImpl::ParseTagsImpl(text.begin(), text.end(), &tags);
+        ParseTagsImpl::ParseTagsImpl(text.begin(), text.end(), std::addressof(tags));
     } catch (const std::exception& ex) {
         // If an error was encountered, display it in the text box.
         tags.clear();

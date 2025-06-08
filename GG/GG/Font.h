@@ -1081,7 +1081,7 @@ std::shared_ptr<GG::Font>
 GG::FontManager::GetFont(std::string_view font_filename, unsigned int pts,
                          const std::vector<uint8_t>& file_contents,
                          CharSetIter first, CharSetIter last)
-{ return GetFontImpl(font_filename, pts, &file_contents, first, last); }
+{ return GetFontImpl(font_filename, pts, std::addressof(file_contents), first, last); }
 
 
 template <typename CharSetIter>

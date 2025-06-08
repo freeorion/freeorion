@@ -113,7 +113,7 @@ const ValueRef::ValueRefBase* NamedValueRefManager::GetValueRefBase(std::string_
 NamedValueRefManager& NamedValueRefManager::GetNamedValueRefManager() {
     //TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager starts (check the thread)";
     static NamedValueRefManager manager; // function local
-    //TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager at " << &manager;
+    //TraceLogger() << "NamedValueRefManager::GetNamedValueRefManager at " << std::addressof(manager);
     return manager;
 }
 

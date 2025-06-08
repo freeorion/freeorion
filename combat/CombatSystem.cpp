@@ -192,7 +192,7 @@ ScriptingContext::ScriptingContext(CombatInfo& info, Attacker, UniverseObjectCXB
     species(                info.species),
     supply(                 info.supply),
     const_universe(         info.universe),
-    objects(                &info.objects), // not taken from Universe!
+    objects(                std::addressof(info.objects)), // not taken from Universe!
     const_objects(          info.objects),
     empire_object_vis(      info.empire_object_visibility), // not taken from Universe!
     empire_object_vis_turns(info.empire_object_vis_turns), // not taken from Universe!

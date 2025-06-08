@@ -257,7 +257,7 @@ int mainSetupAndRun() {
 #  ifdef IDI_ICON1
         // set window icon to embedded application icon
         HWND hwnd;
-        window->getCustomAttribute("WINDOW", &hwnd);
+        window->getCustomAttribute("WINDOW", std::addressof(hwnd));
         HINSTANCE hInst = (HINSTANCE)GetModuleHandle(nullptr);
         SetClassLong (hwnd, GCL_HICON,
             (LONG)LoadIcon (hInst, MAKEINTRESOURCE (IDI_ICON1)));
