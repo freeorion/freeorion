@@ -476,7 +476,7 @@ namespace {
         auto empire_sitrep_inserter = [&turns](const Empire* e) {
             const auto& sitreps = e->SitReps();
             std::for_each(sitreps.begin(), sitreps.end(),
-                          [&turns](const auto& s) { turns[s.GetTurn()].push_back(&s); });
+                          [&turns](const auto& s) { turns[s.GetTurn()].push_back(std::addressof(s)); });
         };
         auto empire_pair_sitrep_inserter = [empire_sitrep_inserter](const auto& ep)
         { empire_sitrep_inserter(ep.second.get()); };

@@ -675,7 +675,8 @@ namespace {
 
             for (auto& [ref_key, val_ref] : GetNamedValueRefManager().GetItems()) {
                 auto& vref = val_ref.get();
-                std::string_view value_type = dynamic_cast<ValueRef::ValueRef<int>*>(&vref)? " int " : (dynamic_cast<ValueRef::ValueRef<double>*>(&vref)?" real ":" any ");
+                std::string_view value_type = dynamic_cast<ValueRef::ValueRef<int>*>(std::addressof(vref)) ?
+                    " int " : (dynamic_cast<ValueRef::ValueRef<double>*>(std::addressof(vref)) ? " real ":" any ");
                 std::string_view key_str = UserStringExists(ref_key) ?
                     std::string_view{UserString(ref_key)} : std::string_view{""};
 

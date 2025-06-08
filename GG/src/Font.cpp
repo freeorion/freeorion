@@ -959,7 +959,7 @@ namespace {
     };
     constexpr struct DummyGlyphMap {
         static constexpr DummyPair value{};
-        constexpr auto* find(uint32_t) const noexcept { return &value; }
+        constexpr auto* find(uint32_t) const noexcept { return std::addressof(value); }
         constexpr decltype(value)* end() const noexcept { return nullptr; }
     } dummy_glyph_map;
 

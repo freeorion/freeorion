@@ -362,11 +362,11 @@ namespace parse {
 
 #define PARSING_LABELS_OPTIONAL false
     label_rule& Labeller::operator()(const parse::lexer::string_token_def& token) {
-        auto it = m_rules.find(&token);
+        auto it = m_rules.find(std::addressof(token));
         if (it != m_rules.end())
             return it->second;
 
-        label_rule& retval = m_rules[&token];
+        label_rule& retval = m_rules[std::addressof(token)];
         if (PARSING_LABELS_OPTIONAL) {
             retval = -(token >> '=');
         } else {

@@ -408,20 +408,20 @@ namespace {
         mutable boost::signals2::signal<void ()> ChangedSignal;
 
         LazyScrollerLinkText(
-            GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
+            GG::Wnd& parent, GG::X x, GG::Y y, const std::string& str,
             const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, UserString("ELLIPSIS"), font, color),
             m_text(std::make_unique<std::string>(str))
         {
             // Register for signals that might bring the text into view
-            if (const auto* log = FindParentOfType<CombatLogWnd>(&parent)) {
+            if (const auto* log = FindParentOfType<CombatLogWnd>(std::addressof(parent))) {
                 m_signals.push_back(log->WndChangedSignal.connect(
                     boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
             namespace ph = boost::placeholders;
 
-            if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
+            if (const auto* scroll_panel = FindParentOfType<GG::ScrollPanel>(std::addressof(parent))) {
                 const auto* scroll = scroll_panel->GetScroll();
                 m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
                     boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped,

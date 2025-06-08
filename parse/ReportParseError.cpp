@@ -63,7 +63,7 @@ void parse::detail::info_visitor::multi_info(Iter first, const Iter last) const
     if (m_tag == "sequence" || m_tag == "expect") {
         if (first->tag.find(" =") == first->tag.size() - 2)
             ++first;
-        const string* value = boost::get<string>(&first->value);
+        const string* value = boost::get<string>(std::addressof(first->value));
         if (value && *value == "[") {
             for (; first != last; ++first)
                 boost::apply_visitor(info_visitor(m_os, first->tag, 1), first->value);

@@ -810,7 +810,7 @@ bool ClientUI::ZoomToSystem(int id, ScriptingContext& context) {
 bool ClientUI::ZoomToSystem(const System& system, ScriptingContext& context) {
     if (auto mapwnd = GetMapWnd(false)) {
         mapwnd->CenterOnMapCoord(system.X(), system.Y());
-        mapwnd->SelectSystem(&system, context);
+        mapwnd->SelectSystem(std::addressof(system), context);
         return true;
     }
 
