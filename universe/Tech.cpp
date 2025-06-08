@@ -644,8 +644,9 @@ std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_nam
     // working list of prereqs as being processed.  may contain duplicates. initialized with 1st order prereqs
     const auto& prereqs = initial_tech->Prerequisites();
     std::list<std::string> prereqs_list{prereqs.begin(), prereqs.end()};  
-    std::set<std::string> prereqs_set;                  // set of (unique) prereqs leading to tech
-    std::multimap<float, std::string> techs_to_add_map; // indexed and sorted by cost per turn
+    std::set<std::string> prereqs_set; // set of (unique) prereqs leading to tech
+    std::vector<std::pair<float, std::string>> techs_to_add_map; // cost per turn and name of tech
+    techs_to_add_map.reserve(m_techs.size());
 
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
     for (std::string& cur_name : prereqs_list) {
@@ -661,7 +662,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_nam
         if (!cur_tech)
             continue;
 
-        techs_to_add_map.emplace(cur_tech->ResearchCost(empire_id, context), std::move(cur_name));
+        techs_to_add_map.emplace_back(cur_tech->ResearchCost(empire_id, context), std::move(cur_name));
 
         // get prereqs of new tech, append to list
         const auto& cur_prereqs = cur_tech->Prerequisites();
@@ -669,6 +670,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(std::string_view tech_nam
     }
 
     // extract sorted techs into vector, to be passed to signal...
+    std::stable_sort(techs_to_add_map.begin(), techs_to_add_map.end());
     auto retval_rng =
 #if !defined(__GNUC__) || (__GNUC__ > 11)
         std::move(techs_to_add_map) | range_values;
