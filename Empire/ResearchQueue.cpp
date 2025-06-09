@@ -47,9 +47,8 @@ namespace {
                 const auto progress_it = research_progress.find(elem.name);
                 const float progress = progress_it == research_progress.end() ? 0.0f : progress_it->second;
 
-                const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
-                                                [t{std::string_view{elem.name}}](const auto& ct)
-                                                { return std::get<0>(ct) == t; });
+                const auto is_elem = [t{std::string_view{elem.name}}](const auto& ct) { return std::get<0>(ct) == t; };
+                const auto ct_it = range_find_if(costs_times, is_elem);
                 if (ct_it == costs_times.end()) {
                     ErrorLogger() << "SetTechQueueElementSpending couldn't find cached cost / time for tech " << elem.name;
                     continue;
@@ -129,7 +128,7 @@ std::string ResearchQueue::Dump() const {
 }
 
 ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const
-{ return std::find_if(begin(), end(), [&tech_name](const auto& elem) { return elem.name == tech_name; }); }
+{ return range_find_if(m_queue, [&tech_name](const auto& elem) noexcept { return elem.name == tech_name; }); }
 
 const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
     if (i < 0 || std::cmp_greater_equal(i, m_queue.size()))
@@ -187,8 +186,8 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     std::map<std::size_t, float> dpsim_research_progress;
     for (std::size_t i = 0; i < m_queue.size(); ++i) {
         const auto& tname = m_queue[i].name;
-        orig_queue_order[tname] = i;
-        dpsim_research_progress[i] = dp_prog[tname];
+        orig_queue_order.emplace(tname, i);
+        dpsim_research_progress.emplace(i, dp_prog[tname]);
     }
 
     std::map<std::string, TechStatus> dpsim_tech_status_map = std::move(sim_tech_status_map);
@@ -199,15 +198,19 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     constexpr std::size_t DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
 
-    std::map<std::string, std::set<std::string>> waiting_for_prereqs;
+    std::map<std::string_view, std::set<std::string_view>> waiting_for_prereqs;
     std::set<std::size_t> dp_researchable_techs;
 
     boost::container::flat_map<int, std::pair<float, int>> tech_cost_time;
     tech_cost_time.reserve(m_queue.size());
 
-    auto is_incomplete = [&dpsim_tech_status_map](const auto& tech) {
+    const auto is_incomplete = [&dpsim_tech_status_map](const auto& tech) {
         const auto t_it = dpsim_tech_status_map.find(tech);
         return t_it != dpsim_tech_status_map.end() && t_it->second != TechStatus::TS_COMPLETE;
+    };
+    static constexpr auto to_cost_time = [](const auto& xct_tup) noexcept -> std::pair<float, int> {
+        const auto& [ignored, cost, time] = xct_tup;
+        return {static_cast<float>(cost), std::max(1, time)};
     };
 
     for (std::size_t i = 0; i < m_queue.size(); ++i) {
@@ -217,35 +220,28 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
+        const std::string& elem_name = elem.name;
 
-        const auto ct_it = std::find_if(costs_times.begin(), costs_times.end(),
-                                        [t{std::string_view{elem.name}}](const auto& ct) noexcept
-                                        { return t == std::get<0>(ct); });
+        const auto is_elem = [elem_name{std::string_view{elem_name}}](const auto& ct) noexcept { return elem_name == std::get<0>(ct); };
+        const auto ct_it = range_find_if(costs_times, is_elem);
         if (ct_it == costs_times.end()) {
-            ErrorLogger() << "ResearchQueue::Update no cost/time for tech " << elem.name;
+            ErrorLogger() << "ResearchQueue::Update no cost/time for tech " << elem_name;
             continue;
         }
-        const auto cost_time = [ct_it]() noexcept -> std::pair<float, int> {
-            const auto& [ignored, cost, time] = *ct_it;
-            return {static_cast<float>(cost), std::max(1, time)};
-        };
-        tech_cost_time.emplace(i, cost_time());
 
-        if (dpsim_tech_status_map[elem.name] == TechStatus::TS_RESEARCHABLE) {
+        tech_cost_time.emplace(i, to_cost_time(*ct_it));
+
+        if (dpsim_tech_status_map[elem_name] == TechStatus::TS_RESEARCHABLE) {
             dp_researchable_techs.insert(i);
             continue;
         }
 
-        if (dpsim_tech_status_map[elem.name] == TechStatus::TS_UNRESEARCHABLE ||
-            dpsim_tech_status_map[elem.name] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
+        if (dpsim_tech_status_map[elem_name] == TechStatus::TS_UNRESEARCHABLE ||
+            dpsim_tech_status_map[elem_name] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
         {
-            const auto& these_prereqs{tech->Prerequisites()};
-            std::set<std::string> incomplete_prereqs;
-            std::copy_if(these_prereqs.begin(), these_prereqs.end(),
-                         std::inserter(incomplete_prereqs, incomplete_prereqs.end()),
-                         is_incomplete);
-
-            waiting_for_prereqs[elem.name] = std::move(incomplete_prereqs);
+            auto prereqs_rng = tech->Prerequisites() | range_filter(is_incomplete);
+            waiting_for_prereqs.insert_or_assign(
+                elem_name, std::set<std::string_view>(prereqs_rng.begin(), prereqs_rng.end()));
         }
     }
 
