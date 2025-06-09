@@ -114,9 +114,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         const auto current_turn = app ? app->CurrentTurn() : INVALID_GAME_TURN;
 
         m_policy_adoption_current_duration.clear();
-        for (auto& [policy_name, adoption_info] : m_adopted_policies) {
-            m_policy_adoption_current_duration[policy_name] =
-                app ? (current_turn - adoption_info.adoption_turn) : 0;
+        for (const auto& [policy_name, adoption_info] : m_adopted_policies) {
+            m_policy_adoption_current_duration.emplace(
+                policy_name, app ? (current_turn - adoption_info.adoption_turn) : 0);
         }
 
     } else if constexpr (Archive::is_loading::value) {
@@ -126,6 +126,25 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         const auto& current_durations_to_serialize = GetAdoptionCurrentDurationsToSerialize(encoding_empire);
         ar  & boost::serialization::make_nvp("m_policy_adoption_current_duration", current_durations_to_serialize);
     }
+
+    if (Archive::is_loading::value && version < 14) {
+        // initialize to current turn for all currently adopted policies.
+        // others ignored, since there is no previous record of if or when they were adopted
+        const auto* app = IApp::GetApp();
+        const auto current_turn = app ? app->CurrentTurn() : 1;
+
+        m_policy_latest_turn_adopted.clear();
+        for (const auto& policy_name : m_adopted_policies | range_keys)
+            m_policy_latest_turn_adopted.emplace(policy_name, current_turn);
+
+    } else if constexpr (Archive::is_loading::value) {
+        ar  & BOOST_SERIALIZATION_NVP(m_policy_latest_turn_adopted);
+
+    } else {
+        const auto& adopted_last_turns_to_serialize = GetAdoptionLatestTurnsToSerialize(encoding_empire);
+        ar  & boost::serialization::make_nvp("m_policy_latest_turn_adopted", adopted_last_turns_to_serialize);
+    }
+
 
     if (Archive::is_loading::value && version < 11) {
         std::map<std::string, Meter> meters;
@@ -275,7 +294,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-BOOST_CLASS_VERSION(Empire, 13)
+BOOST_CLASS_VERSION(Empire, 14)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);

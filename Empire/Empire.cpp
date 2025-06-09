@@ -382,8 +382,10 @@ void Empire::UpdatePolicies(bool update_cumulative_adoption_time, int current_tu
     for (auto& [policy_name, adoption_info] : m_adopted_policies) {
         m_policy_adoption_current_duration[policy_name] = current_turn - adoption_info.adoption_turn;
 
-        if (update_cumulative_adoption_time)
+        if (update_cumulative_adoption_time) {
             m_policy_adoption_total_duration[policy_name]++;  // assumes default initialization to 0
+            m_policy_latest_turn_adopted.insert_or_assign(policy_name, current_turn);
+        }
     }
 
     // update initial adopted policies for next turn
@@ -410,6 +412,14 @@ int Empire::CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const {
     auto it = range_find_if(m_policy_adoption_total_duration,
                             [name](const auto& patd) noexcept { return name == patd.first; });
     if (it == m_policy_adoption_total_duration.end())
+        return 0;
+    return it->second;
+}
+
+int Empire::LatestTurnPolicyWasAdopted(std::string_view name) const {
+    const auto is_name = [name](const auto& patd) noexcept { return name == patd.first; };
+    auto it = range_find_if(m_policy_latest_turn_adopted, is_name);
+    if (it == m_policy_latest_turn_adopted.end())
         return 0;
     return it->second;
 }
@@ -3131,6 +3141,9 @@ void Empire::PrepPolicyInfoForSerialization(const ScriptingContext& context) {
         m_policy_adoption_current_duration_to_serialize_for_empires.emplace(std::piecewise_construct,
                                                                             std::forward_as_tuple(eid),
                                                                             std::forward_as_tuple());
+        m_policy_latest_turn_adopted_to_serialize_for_empires.emplace(std::piecewise_construct,
+                                                                      std::forward_as_tuple(eid),
+                                                                      std::forward_as_tuple());
         m_available_policies_to_serialize_for_empires.emplace(std::piecewise_construct,
                                                               std::forward_as_tuple(eid),
                                                               std::forward_as_tuple());
@@ -3163,6 +3176,13 @@ Empire::GetAdoptionCurrentDurationsToSerialize(int encoding_empire) const {
     const auto it = m_policy_adoption_current_duration_to_serialize_for_empires.find(encoding_empire);
     return (it == m_policy_adoption_current_duration_to_serialize_for_empires.end()) ?
         m_policy_adoption_current_duration : it->second;
+}
+
+const decltype(Empire::m_policy_latest_turn_adopted)&
+Empire::GetAdoptionLatestTurnsToSerialize(int encoding_empire) const {
+    const auto it = m_policy_latest_turn_adopted_to_serialize_for_empires.find(encoding_empire);
+    return (it == m_policy_latest_turn_adopted_to_serialize_for_empires.end()) ?
+        m_policy_latest_turn_adopted : it->second;
 }
 
 const decltype(Empire::m_available_policies)&

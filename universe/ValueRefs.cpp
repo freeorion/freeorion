@@ -1716,6 +1716,8 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         empire_property_string_key = &Empire::PolicyCurrentAdoptedDurations;
     else if (m_property_name == "CumulativeTurnsPolicyAdopted")
         empire_property_string_key = &Empire::PolicyTotalAdoptedDurations;
+    else if (m_property_name == "LatestTurnPolicyAdopted")
+        empire_property_string_key = &Empire::PolicyLatestTurnsAdopted;
 
     if (empire_property_string_key || empire_property_string_key2 || empire_property_string_key3) {
         std::shared_ptr<const Empire> empire;

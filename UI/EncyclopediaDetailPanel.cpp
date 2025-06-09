@@ -2047,39 +2047,70 @@ namespace {
         const auto& meters = empire->GetMeters();
         if (!meters.empty()) {
             detailed_description += "\n\n";
-            for (auto& [mt, m] : meters) {
-                detailed_description += UserString(mt) + ": "
-                                     + DoubleToString(m.Initial(), 3, false)
-                                     + "\n";
-            }
+            for (auto& [mt, m] : meters)
+                detailed_description += UserString(mt) + ": " + DoubleToString(m.Initial(), 3, false) + "\n";
         }
 
 
         // Policies
-        const auto policies = empire->AdoptedPolicies();
-        if (!policies.empty()) {
+        const auto adopted_policies = empire->AdoptedPolicies();
+        if (!adopted_policies.empty()) {
             // re-sort by adoption turn
-            const auto turns_policies_adopted = [&empire, &policies]() {
-                std::vector<std::pair<int, std::string_view>> turns_policies_adopted;
-                using tpa_val_t = typename decltype(turns_policies_adopted)::value_type;
-                turns_policies_adopted.reserve(policies.size());
-                std::transform(policies.begin(), policies.end(), std::back_inserter(turns_policies_adopted),
-                               [&empire](const auto& policy_name) -> tpa_val_t
-                               { return { empire->TurnPolicyAdopted(policy_name), policy_name}; });
-                return turns_policies_adopted;
-            }();
+            const auto to_adopt_turn_total_turns_name = [&empire](const auto& policy_name) {
+                return std::tuple{empire->TurnPolicyAdopted(policy_name),
+                                  empire->CumulativeTurnsPolicyHasBeenAdopted(policy_name),
+                                  std::string_view{policy_name}};
+            };
+            auto atn_rng = adopted_policies | range_transform(to_adopt_turn_total_turns_name);
+            std::vector turns_policies_adopted(atn_rng.begin(), atn_rng.end());
+            std::stable_sort(turns_policies_adopted.begin(), turns_policies_adopted.end());
 
             detailed_description.append("\n").append(UserString("ADOPTED_POLICIES"));
-            for (auto& [adoption_turn, policy_name] : turns_policies_adopted) {
-                detailed_description += "\n";
-                const std::string turn_text{adoption_turn == BEFORE_FIRST_TURN ? UserString("BEFORE_FIRST_TURN") :
-                    (UserString("TURN") + " " + ToChars(adoption_turn))};
-                detailed_description.append(LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name)))
-                    .append(" : ").append(turn_text);
+            for (auto& [adoption_turn, total_turns, policy_name] : turns_policies_adopted) {
+                std::string turn_adopted_text = (adoption_turn == BEFORE_FIRST_TURN) ?
+                    UserString("BEFORE_FIRST_TURN") :
+                    str(FlexibleFormat(UserString("POLICY_ADOPTED_TURN")) % ToChars(adoption_turn));
+                std::string total_adopted_turns_text = ToChars(total_turns);
+                std::string policy_link =
+                    LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name));
+
+                detailed_description.append("\n").append(
+                    str(FlexibleFormat(UserString("POLICY_ADOPTED_ON_TURN_AND_TOTAL_TURNS"))
+                    % policy_link % turn_adopted_text % total_adopted_turns_text));
             }
 
         } else {
             detailed_description.append("\n\n").append(UserString("NO_POLICIES_ADOPTED"));
+        }
+
+        {
+            // previously-adopted but not currently adopted policies' last and cumulative adopted turns
+            const auto not_currently_adopted = [&adopted_policies](const auto& policy_last_turn)
+            { return !range_contains(adopted_policies, policy_last_turn.first); };
+
+            const auto to_latest_turn_total_turns_name = [&empire](const auto& policy_name_latest_turn) {
+                return std::tuple{policy_name_latest_turn.second,
+                                  empire->CumulativeTurnsPolicyHasBeenAdopted(policy_name_latest_turn.first),
+                                  std::string_view{policy_name_latest_turn.first}};
+                };
+            auto not_adopted_policy_name_last_turn_total_turns = empire->PolicyLatestTurnsAdopted()
+                | range_filter(not_currently_adopted) | range_transform(to_latest_turn_total_turns_name);
+
+            if (!range_empty(not_adopted_policy_name_last_turn_total_turns))
+                detailed_description.append("\n").append(UserString("FORMERLY_ADOPTED_POLICIES"));
+
+            for (const auto& [last_turn, total_turns, policy_name] : not_adopted_policy_name_last_turn_total_turns) {
+                std::string last_turn_adopted_text = (last_turn == BEFORE_FIRST_TURN) ?
+                    UserString("BEFORE_FIRST_TURN") :
+                    str(FlexibleFormat(UserString("POLICY_ADOPTED_TURN")) % ToChars(last_turn));
+                std::string total_adopted_turns_text = ToChars(total_turns);
+                std::string policy_link =
+                    LinkTaggedPresetText(VarText::POLICY_TAG, policy_name, UserString(policy_name));
+
+                detailed_description.append("\n").append(
+                    str(FlexibleFormat(UserString("POLICY_WAS_LAST_ADOPTED_ON_TURN_AND_TOTAL_TURNS"))
+                        % policy_link % last_turn_adopted_text % total_adopted_turns_text));
+            }
         }
 
 

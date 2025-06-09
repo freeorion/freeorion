@@ -72,6 +72,7 @@ public:
     [[nodiscard]] int          TurnPolicyAdopted(std::string_view name) const;
     [[nodiscard]] int          CurrentTurnsPolicyHasBeenAdopted(std::string_view name) const;
     [[nodiscard]] int          CumulativeTurnsPolicyHasBeenAdopted(std::string_view name) const;
+    [[nodiscard]] int          LatestTurnPolicyWasAdopted(std::string_view name) const;
 
     [[nodiscard]] int                           SlotPolicyAdoptedIn(std::string_view name) const;
     [[nodiscard]] std::vector<std::string_view> AdoptedPolicies() const;
@@ -87,6 +88,7 @@ public:
     [[nodiscard]] std::map<std::string_view, int, std::less<>> TurnsPoliciesAdopted() const;
     [[nodiscard]] const auto& PolicyTotalAdoptedDurations() const noexcept { return m_policy_adoption_total_duration; }
     [[nodiscard]] const auto& PolicyCurrentAdoptedDurations() const noexcept { return m_policy_adoption_current_duration; }
+    [[nodiscard]] const auto& PolicyLatestTurnsAdopted() const noexcept { return m_policy_latest_turn_adopted; }
 
     /** Returns the set of policies / slots the empire has avaialble. */
     [[nodiscard]] const auto& AvailablePolicies() const noexcept { return m_available_policies; }
@@ -523,6 +525,7 @@ private:
     std::map<std::string, PolicyAdoptionInfo, std::less<>> m_initial_adopted_policies;         ///< adopted policies at start of turn
     std::map<std::string, int>                             m_policy_adoption_total_duration;   ///< how many turns each policy has been adopted over the course of the game by this empire
     std::map<std::string, int>                             m_policy_adoption_current_duration; ///< how many turns each currently-adopted policy has been adopted since it was last adopted. somewhat redundant with adoption_turn in AdoptionInfo, but seems necessary to avoid off-by-one issues between client and server
+    std::map<std::string, int>                             m_policy_latest_turn_adopted;       ///< on which turn was each policy most recently adopted
     std::set<std::string, std::less<>>                     m_available_policies;               ///< names of unlocked policies
 
 public:
@@ -534,12 +537,14 @@ private:
     std::map<int, decltype(m_initial_adopted_policies)>         m_initial_adopted_policies_to_serialize_for_empires;
     std::map<int, decltype(m_policy_adoption_total_duration)>   m_policy_adoption_total_duration_to_serialize_for_empires;
     std::map<int, decltype(m_policy_adoption_current_duration)> m_policy_adoption_current_duration_to_serialize_for_empires;
+    std::map<int, decltype(m_policy_latest_turn_adopted)>       m_policy_latest_turn_adopted_to_serialize_for_empires;
     std::map<int, decltype(m_available_policies)>               m_available_policies_to_serialize_for_empires;
 
     const decltype(m_adopted_policies)& GetAdoptedPoliciesToSerialize(int encoding_empire) const;
     const decltype(m_initial_adopted_policies)& GetInitialPoliciesToSerialize(int encoding_empire) const;
     const decltype(m_policy_adoption_total_duration)& GetAdoptionTotalDurationsToSerialize(int encoding_empire) const;
     const decltype(m_policy_adoption_current_duration)& GetAdoptionCurrentDurationsToSerialize(int encoding_empire) const;
+    const decltype(m_policy_latest_turn_adopted)& GetAdoptionLatestTurnsToSerialize(int encoding_empire) const;
     const decltype(m_available_policies)& GetAvailablePoliciesToSerialize(int encoding_empire) const;
 
 
