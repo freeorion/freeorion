@@ -357,13 +357,14 @@ PROJECT_BT_STOCKPILE_SHORT_DESC
 
 PROJECT_BT_STOCKPILE_DESC
 '''制造点（Production Points）分配到 [[encyclopedia STOCKPILE_TITLE]]。可指定转移的数额和次数。
-
 只有在同一供应组的PP能被分配库存。
-
 未分配的剩余PP将被转到国库，无论生产队列中是否有转移项目。转移到库存的PP将被送到库存，即使生产队列中稍后有其他项目。
 
-例如：一个帝国想从二级供应组库存中提取PP，其中PP不足。为此，要从主要供应组补充库存。帝国有100个PP工业，其库存使用限制为10PP，并且它希望库存中始终有10PP。建造队列包含主要供应组中的每回合需要120PP的行星项目，因此将使用所有可用的PP。为了在次要供应组中使用PP，帝国在主要供应组中的行星添加了一个10倍的库存转移项目。
-因为库存转移项目在建造队列中的其他主要供应组项目之上，所以会有充足的资金，并将在下回合增加10PP库存。为确保每回合持续转移，重复次数设为99次。'''
+例如：一个帝国想从二级供应组库存中提取PP，其中PP不足。为此，要从主要供应组补充库存。帝国有100个PP工业，其库存使用限制为10PP，并且它希望库存中始终有10PP。
+建造队列包含主要供应组中的每回合需要120PP的行星项目，因此将使用所有可用的PP。
+为了在次要供应组中使用PP，帝国在主要供应组中的行星添加了一个10倍的库存转移项目。
+因为库存转移项目在建造队列中的其他主要供应组项目之上，所以会有充足的资金，并将在下回合增加10PP库存。
+为确保每回合持续转移，重复次数设为99次。'''
 
 
 ##
@@ -701,7 +702,6 @@ SM_KRAKEN_1
 
 SM_KRAKEN_1_DESC
 '''幼虫形式，一种谨慎且相对无害的太空兽群，猎物为太空磷虾群。发育良好的幼虫会长大为更危险的成虫。
-
 [[SM_KRAKEN_ENVIRONMENT]]'''
 
 SM_KRAKEN_2
@@ -767,7 +767,6 @@ SM_JUGGERNAUT_1
 
 SM_JUGGERNAUT_1_DESC
 '''一种强大的重型太空生物，带有一些护盾。
-
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_2
@@ -775,7 +774,6 @@ SM_JUGGERNAUT_2
 
 SM_JUGGERNAUT_2_DESC
 '''一种强大的重型太空生物，带有中等护盾。
-
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_JUGGERNAUT_3
@@ -783,7 +781,6 @@ SM_JUGGERNAUT_3
 
 SM_JUGGERNAUT_3_DESC
 '''一种强大的重型太空生物，带有强大的护盾。
-
 [[SM_JUGGERNAUT_ENVIRONMENT]]'''
 
 SM_BLOATED_JUGGERNAUT
@@ -841,7 +838,6 @@ SM_EXP_OUTPOST
 
 SM_EXP_OUTPOST_DESC
 '''实验者的古老造物，能降低 [[metertype METER_SHIELD]] 和 [[encyclopedia DAMAGE_TITLE]]。
-
 它独特的能力以守护实验者前哨站。虽然它不直接攻击飞船，但会向星系散布数万颗纳米单位，削弱敌人护盾和武器，至于除了最好的装备外，其他装备都将失效。'''
 
 SM_COSMIC_DRAGON
@@ -1309,7 +1305,6 @@ RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE
 
 RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE_DESC
 '''<u>开启</u>：隐形能力高于帝国探测能力的行星，除非该帝国先前探测到该行星，否则仅凭在该星系拥有物体无法被该帝国探测到。
-
 <u>关闭</u>：隐形能力高于帝国探测能力的行星，如果该帝国在该星系拥有其他物体，则可以被该帝国探测到。'''
 
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
@@ -1317,7 +1312,6 @@ RULE_BASIC_VIS_SYSTEM_INFO_SHOWN
 
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
 '''<u>开启</u>：仅以基本可见度被帝国探测到的星系，其名称和恒星类型将向该帝国显示。这会导致一个用户界面问题，难以判断一个星系的星际航道是否已知。
-
 <u>关闭</u>：从未以更高可见度探测到的基本可见等级的星系，其名称和恒星类型未知。'''
 
 RULE_HIDDEN_POLICIES
@@ -1333,7 +1327,6 @@ RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES
 
 RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES_DESC
 '''<u>开启</u>：非盟友的玩家不知道其他帝国已研究的科技、队列以及部件、船体或建筑的可用性。
-
 <u>关闭</u>：所有玩家都知道所有其他帝国已研究的科技、队列和可用性。'''
 
 RULE_HABITABLE_SIZE_TINY
@@ -2713,61 +2706,61 @@ PASSWORD_LABEL
 ##
 
 MPLOBBY_WINDOW_TITLE
-Multiplayer Setup
+联机设置
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Unique names and colors required
+名称和颜色必须唯一
 
 MULTIPLAYER_PLAYER_LIST_TYPES
-Type
+类型
 
 MULTIPLAYER_PLAYER_LIST_NAMES
-Player
+玩家
 
 MULTIPLAYER_PLAYER_LIST_EMPIRES
-Empire
+帝国
 
 MULTIPLAYER_PLAYER_LIST_COLOURS
-Empire Color
+帝国颜色
 
 MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES
-Previous Player
+上个玩家
 
 MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES
-Starting Species
+起始物种
 
 EDITABLE_GALAXY_SETTINGS
-All Can Edit Settings
+可全编辑设置
 
 EDITABLE_GALAXY_SETTINGS_DESC
-All players can edit galaxy and AI settings.
+所有玩家都可编辑星系和AI设置
 
 NEW_GAME_BN
-New game
+新游戏
 
 LOAD_GAME_BN
-Load game
+加载游戏
 
 START_GAME_BN
-Start game
+开始游戏
 
 READY_BN
-Accept
+同意
 
 NOT_READY_BN
-Decline
+拒绝
 
 # %1% is a turn progress phase
 PLAYING_GAME
-Playing game: %1%
+游玩中：%1%
 
 # %1% is a player name
 PLAYER_ENTERED_GAME
-%1% entered game
+%1% 进入游戏
 
 # %1% is a player name
 PLAYER_LEFT_GAME
-%1% left game
+%1% 离开游戏
 
 
 ##
@@ -2775,167 +2768,167 @@ PLAYER_LEFT_GAME
 ##
 
 GSETUP_WINDOW_TITLE
-Galaxy Setup
+银河设置
 
 GSETUP_PLAYER_NAME
-Player Name
+玩家名称
 
 GSETUP_EMPIRE_NAME
-Empire Name
+帝国名称
 
 GSETUP_EMPIRE_COLOR
-Empire Color
+帝国颜色
 
 GSETUP_SPECIES
-Starting Species
+起始物种
 
 GSETUP_NUMBER_AIS
-Number of AI Players
+AI玩家数
 
 GSETUP_SEED
-Seed
+种子
 
 GSETUP_RANDOM_SEED
-Toggle generation of a random seed
+切换种子生成方式
 
 GSETUP_STARS
-Systems
+星系
 
 GSETUP_SHAPE
-Galaxy Shape
+银河形状
 
 GSETUP_AGE
-Galaxy Age
+银河时代
 
 GSETUP_STARLANE_FREQ
 Starlane Frequency
 
 GSETUP_PLANET_DENSITY
-Planet Density
+银河密度
 
 GSETUP_SPECIALS_FREQ
-Specials Frequency
+特殊频率
 
 GSETUP_MONSTER_FREQ
-Monster Frequency
+怪物频率
 
 GSETUP_NATIVE_FREQ
-Native Frequency
+原生频率
 
 GSETUP_AI_AGGR
-Max AI Aggression
+最大 AI 侵略性
 
 # A galaxy shape to select when generating a universe.
 GSETUP_2ARM
-Spiral, 2-arm
+螺旋式，2 臂
 
 # A galaxy shape to select when generating a universe.
 GSETUP_3ARM
-Spiral, 3-arm
+螺旋式， 3 臂
 
 # A galaxy shape to select when generating a universe.
 GSETUP_4ARM
-Spiral, 4-arm
+螺旋式， 4 臂
 
 # A galaxy shape to select when generating a universe.
 GSETUP_CLUSTER
-Cluster
+群
 
 # A galaxy shape to select when generating a universe.
 GSETUP_ELLIPTICAL
-Elliptical
+椭圆
 
 # A galaxy shape to select when generating a universe.
 GSETUP_DISC
-Disc
+碟
 
 # A galaxy shape to select when generating a universe.
 GSETUP_BOX
-Box
+盒
 
 # A galaxy shape to select when generating a universe.
 GSETUP_IRREGULAR
-Irregular
+异型
 
 # A galaxy shape to select when generating a universe.
 GSETUP_RING
-Ring
+环
 
 # A galaxy shape to select when generating a universe.
 GSETUP_RANDOM
-Random
+随机
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_NONE
-None
+无
 
 # Frequency value of monsters.
 GSETUP_EXTREMELY_LOW
-Extremely Low
+极低
 
 # Frequency value of monsters.
 GSETUP_VERY_LOW
-Very Low
+非常低
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_LOW
-Low
+低
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_MEDIUM
-Medium
+中等
 
 # Frequency value of starlanes, planets, specials, monsters and native species.
 GSETUP_HIGH
-High
+高
 
 # Frequency value of monsters.
 GSETUP_VERY_HIGH
-Very High
+非常高
 
 # Frequency value of monsters.
 GSETUP_EXTREMELY_HIGH
-Extremely High
+极高
 
 # A galaxy age to select when generating a universe.
 GSETUP_YOUNG
-Young
+年轻
 
 # A galaxy age to select when generating a universe.
 GSETUP_MATURE
-Mature
+成熟
 
 # A galaxy age to select when generating a universe.
 GSETUP_ANCIENT
-Ancient
+古老
 
 # AI aggression level.
 GSETUP_BEGINNER
-Beginner Mode
+初学者模式
 
 # AI aggression level.
 GSETUP_TURTLE
-Turtle
+龟缩
 
 # AI aggression level.
 GSETUP_CAUTIOUS
-Cautious
+谨慎
 
 # AI aggression level.
 GSETUP_TYPICAL
-Typical
+正常
 
 # AI aggression level.
 GSETUP_AGGRESSIVE
-Aggressive
+侵略
 
 # AI aggression level.
 GSETUP_MANIACAL
-Maniacal
+疯狂
 
 # Random species selection description
 GSETUP_SPECIES_RANDOM_DESC
-Picks a random selection from the available playable species.
+从可玩物种中随机选择
 
 
 ##
@@ -2943,16 +2936,18 @@ Picks a random selection from the available playable species.
 ##
 
 LICENSE
-License
+许可
 
 ABOUT_WINDOW_TITLE
-About FreeOrion
+关于 FreeOrion
 
 VISION
-Vision
+版本
 
 FREEORION_VISION
-FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model.
+'''
+FreeOrion 是一款基于 Master of Orion 的开源游戏，是一款史诗般的太空策略回合制游戏，它建立在经典的“4X”模型之上，融合了 Europa Universalis 2 等游戏的国家建设元素和多功能战术战斗引擎。
+虽然其模块化、开源设计允许社区对游戏引擎和故事元素进行很大程度的定制，但 FreeOrion 团队致力于在“宏大战役”模型中构建一个栩栩如生的宇宙。'''
 
 
 ##
@@ -2960,40 +2955,38 @@ FreeOrion, an open-source game based on Master of Orion, is a turn-based game of
 ##
 
 GAME_MENU_WINDOW_TITLE
-Menu
+菜单
 
 GAME_MENU_SAVE
-Save Game
+保存游戏
 
 GAME_MENU_LOAD
-Load Game
+加载游戏
 
 GAME_MENU_RESIGN
-Exit to Menu
+回到菜单
 
 GAME_MENU_CONCEDE
-Concede
+认输
 
 GAME_MENU_SAVE_FILES
-Save Game Files
+存档文件
 
 BUTTON_DISABLED
-Button Disabled
+按钮已禁用
 
 SAVE_DISABLED_BROWSE_TEXT
-'''The Save Game button is disabled. This may be be because:
-
--This is a multiplayer game in which this client is neither Host nor Moderator.
-
--When this menu was opened at least one of the AIs had not yet finished submitting its moves for the turn (indicated by a green triangle status icon just to the left of its player-type icon in the Empires window).
-
--Another save is ongoing.'''
+'''Save Game（保存游戏）按钮已禁用。
+这可能是因为：
+- 这是一个多人游戏，该客户端不是主机。
+- 当此菜单打开时，至少有一个 AI 尚未完成提交回合的动作（由 帝国 窗口中其玩家类型图标左侧的绿色三角形状态图标表示）。
+- 另一个扑救正在进行中。'''
 
 GAME_MENU_REALLY_CONCEDE
-Confirm conceding? This empire will be removed from the game.
+确认认输？这个帝国将从游戏中移除。
 
 GAME_MENU_CONFIRM_NOT_READY
-Confirm quit? Orders not finalized.
+确认退出？命令未最终确定。
 
 
 ##
@@ -3001,88 +2994,88 @@ Confirm quit? Orders not finalized.
 ##
 
 SAVE_TIME_TITLE
-<u>Time</u>
+<u>时间</u>
 
 SAVE_TURN_TITLE
-<u>Turn</u>
+<u>回合</u>
 
 SAVE_PLAYER_TITLE
-<u>Player</u>
+<u>玩家</u>
 
 SAVE_EMPIRE_TITLE
-<u>Empire</u>
+<u>帝国</u>
 
 SAVE_FILE_TITLE
-<u>File</u>
+<u>文件</u>
 
 SAVE_SEED_TITLE
-<u>Seed</u>
+<u>种子</u>
 
 SAVE_GALAXY_AGE_TITLE
-<u>Galaxy Age</u>
+<u>银河时代</u>
 
 SAVE_MONSTER_FREQ_TITLE
-<u>Monster Frequency</u>
+<u>怪物频率</u>
 
 SAVE_NATIVE_FREQ_TITLE
-<u>Native Frequency</u>
+<u>原生频率</u>
 
 SAVE_PLANET_FREQ_TITLE
-<u>Planet Frequency</u>
+<u>行星频率</u>
 
 SAVE_SPECIALS_FREQ_TITLE
-<u>Specials Frequency</u>
+<u>特殊频率</u>
 
 SAVE_STARLANE_FREQ_TITLE
-<u>Starlane Frequency</u>
+<u>银河密度</u>
 
 SAVE_GALAXY_SIZE_TITLE
-<u>Galaxy size</u>
+<u>银河规模</u>
 
 SAVE_GALAXY_SHAPE_TITLE
-<u>Galaxy Shape</u>
+<u>银河形状</u>
 
 SAVE_AI_AGGRESSION_TITLE
-<u>AI Aggression</u>
+<u>AI 侵略性</u>
 
 SAVE_NUMBER_EMPIRES_TITLE
-<u>Empires</u>
+<u>帝国</u>
 
 SAVE_NUMBER_HUMANS_TITLE
-<u>Human Players</u>
+<u>人类玩家</u>
 
 SAVE_DIALOG_ROW_BROWSE_TEMPLATE
 '''
-Filename:  %rawtext:file%
-Save time: %rawtext:time%
-Turn:       %rawtext:turn%
-Seed:      %rawtext:seed%
-Player:    %rawtext:player%
-Empire:   %rawtext:empire%
-Empires:  %rawtext:number_of_empires%
-Human Players: %rawtext:number_of_humans%
-Galaxy
-    Shape: %rawtext:galaxy_shape%
-    Age:     %rawtext:galaxy_age%
-Frequencies:
-    Specials:   %rawtext:specials_freq%
-    Monsters: %rawtext:monster_freq%
-    Natives:    %rawtext:native_freq%
+文件名：%rawtext:file%
+保存时间：%rawtext:time%
+回合：%rawtext:turn%
+种子：%rawtext:seed%
+玩家：%rawtext:player%
+帝国：%rawtext:empire%
+帝国：%rawtext:number_of_empires%
+人类玩家：%rawtext:number_of_humans%
+银河
+    形状：%rawtext:galaxy_shape%
+    时代：%rawtext:galaxy_age%
+频率
+    特殊：%rawtext:specials_freq%
+    怪物：%rawtext:monster_freq%
+    原生：%rawtext:native_freq%
 '''
 
 SAVE_FILENAME
-File:
+文件：
 
 SAVE_DIRECTORY
-Path:
+路径：
 
 # %1% entered path to the save game file that should be deleted.
 SAVE_REALLY_DELETE
-Really delete %1%?
+确定删除 %1% ？
 
 # %1% entered path to the save game file that should be overwritten.
 SAVE_REALLY_OVERRIDE
-Really overwrite %1%?
+确定覆盖 %1% ？
 
 
 ##
@@ -3090,187 +3083,187 @@ Really overwrite %1%?
 ##
 
 OPTIONS_TITLE
-Options
+选项
 
 OPTIONS_PEDIA_SEARCH_ARTICLE_TEXT
-Search Pedia Article Text
+搜索百科
 
 OPTIONS_MULTIPLE_FLEET_WNDS
-Multiple fleet windows
+舰队多窗口
 
 OPTIONS_QUICK_CLOSE_WNDS
-Quick-close fleet window(s)
+快捷关闭队列窗口（S）
 
 OPTIONS_SHOW_SIDEPANEL_PLANETS
-Show side panel planets
+显示行星面板
 
 OPTIONS_AUTO_REPOSITION_WINDOWS
-Automatically reposition windows
+自动定位窗口
 
 OPTIONS_DISPLAY_TIMESTAMP
-Show chat timestamp
+显示聊天时间戳
 
 OPTIONS_MISC_UI
-Miscellaneous UI Settings
+其他 UI 设置
 
 OPTIONS_AUTOSAVE_LIMIT
-Autosaves limit
+自动保存限制
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
-Turns between autosaves
+自动保存回合
 
 OPTIONS_LANGUAGE
-Language file
+语言文件
 
 OPTIONS_FONTS
-Fonts
+字体
 
 OPTIONS_FONT_SIZES
-Font Sizes
+字体尺寸
 
 OPTIONS_FONT_TEXT
-Text
+文本
 
 OPTIONS_FONT_BOLD_TEXT
-Bold text
+粗体文本
 
 OPTIONS_FONT_TITLE
-Window titles
+窗口标题
 
 SHOW_FONT_TEXTURES
-Show Font Textures
+显示字体纹理
 
 OPTIONS_RESEARCH_WND
-Research Window
+研究窗口
 
 OPTIONS_QUEUES
-Queues
+队列
 
 OPTIONS_TECH_SPACING_HORIZONTAL
-Horizontal Spacing
+水平间距
 
 OPTIONS_TECH_SPACING_VERTICAL
-Vertical Spacing
+垂直间距
 
 OPTIONS_TECH_LAYOUT_ZOOM
-Zoom
+缩放
 
 OPTIONS_TECH_CTRL_ICON_SIZE
-Icon Size
+图标尺寸
 
 OPTIONS_TOOLTIP_DELAY
-Tooltip delay (ms)
+工具提示延迟（ms）
 
 OPTIONS_KEYPRESS_REPEAT_DELAY
-Held key repeat delay (ms)
+按住键重复延迟（ms）
 
 OPTIONS_KEYPRESS_REPEAT_INTERVAL
-Held key repeat interval (ms)
+按住键重复间隔（ms）
 
 OPTIONS_MOUSE_REPEAT_DELAY
-Held mouse button repeat delay (ms)
+按住鼠标按钮重复延迟（ms）
 
 OPTIONS_MOUSE_REPEAT_INTERVAL
-Held mouse button repeat interval (ms)
+按住鼠标按钮重复间隔（ms）
 
 OPTIONS_SWAP_MOUSE_LR
-Swap Mouse Buttons Left-Right
+交换鼠标左右键
 
 OPTIONS_VIDEO_MODE
-Full-Screen Video Mode
+全屏幕模式
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Sets bits per pixel and full-screen resolution. Clicking Apply may cause this to take effect, or may require a restart.
+设置每像素位数和全屏分辨率。单击 应用 可能生效，或可能重启。
 
 OPTIONS_VIDEO_MODE_WINDOWED
-Windowed Video Mode
+窗口模式
 
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
-Sets width and height of window in windowed mode. Windowed bits per pixel uses full-screen mode setting.
+在窗口模式下设置窗口的宽度和高度。每像素的窗口位数使用全屏幕设置。
 
 OPTIONS_APP_WIDTH_WINDOWED
-Window Width
+窗口宽度
 
 OPTIONS_APP_HEIGHT_WINDOWED
-Window Height
+窗口高度
 
 OPTIONS_APP_LEFT_WINDOWED
-Window Left Edge Position
+窗口左边缘位置
 
 OPTIONS_APP_TOP_WINDOWED
-Window Top Position
+窗口顶部位置
 
 OPTIONS_FULLSCREEN
-Fullscreen
+全屏
 
 OPTIONS_FAKE_MODE_CHANGE
-Fake resolution change
+分辨率伪更改
 
 OPTIONS_FULLSCREEN_MONITOR_ID
-Fullscreen Monitor ID
+全屏显示器 ID
 
 OPTIONS_SHOW_FPS
-Show FPS
+显示 FPS
 
 OPTIONS_LIMIT_FPS
-Limit FPS
+限制 FPS
 
 OPTIONS_MAX_FPS
-Max FPS
+最大 FPS
 
 OPTIONS_LIMIT_FPS_NO_FOCUS
-Limit FPS (Non Focused)
+限制 FPS （非聚焦）
 
 OPTIONS_MAX_FPS_NO_FOCUS
-Max FPS (Non Focused)
+最大 FPS （未聚焦）
 
 OPTIONS_APPLY
-Apply
+应用
 
 OPTIONS_FLUSH_STRINGTABLE
-Flush Stringtables
+刷新字串表格
 
 OPTIONS_WINDOW_RESET
-Reposition Windows Now
+立即恢复窗口
 
 OPTIONS_GALAXY_MAP
-Galaxy Map
+银河地图
 
 OPTIONS_DESCRIPTIONS
-Content Descriptions
+内容描述
 
 OPTIONS_SYSTEM_ICONS
-System Icons
+星系图标
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
-System icon size
+星系图标尺寸
 
 OPTIONS_UI_SYSTEM_FOG
-System icon fog of war scan-lines
+星系图标 战争迷雾 扫描线
 
 OPTIONS_UI_SYSTEM_FOG_SPACING
-Fog of war scan-line spacing
+战争迷雾 扫描线间距
 
 OPTIONS_UI_SYSTEM_CIRCLES
-System enclosing circles
+星系 封闭圆圈
 
 OPTIONS_UI_SYSTEM_CIRCLE_SIZE
-System circle relative size
+星系 相对尺寸
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-System selection indicator relative size
+星系 选择指示 相对尺寸
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
-System selection indicator animation rate (rpm)
+星系 选择指示 动画速率（rpm）
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Tiny system icon size threshold
+小型星系 系统图标 尺寸阈值
 
 OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
-Unowned system name color
+无主星系 名称颜色
 
 OPTIONS_FLEET_ICONS
-Fleet Icons
+舰队图标
 
 OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
 Tiny fleet icon minimum zoom
