@@ -5732,6 +5732,25 @@ ADOPTED_POLICIES
 NO_POLICIES_ADOPTED
 No Policies Known Adopted
 
+# %1% name or link to policy
+# %2% turn start of current adoption, or "before first turn"
+# %3% total turns has been adopted
+POLICY_ADOPTED_ON_TURN_AND_TOTAL_TURNS
+%1%  since %2%  total turns: %3%
+
+FORMERLY_ADOPTED_POLICIES
+'''Formerly Adopted Policies: '''
+
+# %1% name or link to policy
+# %2% turn end of when policy was previously adopted
+# %3% total turns has been adopted
+POLICY_WAS_LAST_ADOPTED_ON_TURN_AND_TOTAL_TURNS
+%1%  last on %2%  total turns: %3%
+
+# %1% turn number
+POLICY_ADOPTED_TURN
+turn: %1%
+
 AVAILABLE_PARTS
 '''Available Parts: '''
 
