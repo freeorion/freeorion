@@ -83,6 +83,7 @@ namespace parse {
                     |   tok.TurnPolicyAdopted_
                     |   tok.TurnsSincePolicyAdopted_
                     |   tok.CumulativeTurnsPolicyAdopted_
+                    |   tok.LatestTurnPolicyAdopted_
                     |   tok.NumPoliciesAdopted_
                     )
                 >  -(   label(tok.empire_) > int_rules.expr)

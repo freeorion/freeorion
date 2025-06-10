@@ -1170,6 +1170,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
                                  "TurnPolicyAdopted",
                                  "TurnsSincePolicyAdopted",
                                  "CumulativeTurnsPolicyAdopted",
+                                 "LatestTurnPolicyAdopted",
                                  "NumPoliciesAdopted"})
     {
         const auto f_insert_int_complex_variable = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_int_complex_variable_(variable, args, kw); };
