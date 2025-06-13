@@ -2004,7 +2004,7 @@ Sets the color of the scan-line shading over planet graphics on the sidepanel.
 OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE
 Sets the size of the planet status icon.
 
-OPTIONS_DB_UI_SHOW_SIDEPANEL_STALE_BUILDINGAdd commentMore actions
+OPTIONS_DB_UI_SHOW_SIDEPANEL_STALE_BUILDING
 Enables display of stale visibility buildings on sidepanel. Stale visibility means previously detected and should be currently visible based on last known state and location and a player's current detection levels, but nevertheless not currently detected anywhere.
 
 OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE
@@ -3272,307 +3272,307 @@ OPTIONS_FLEET_ICONS
 舰队图标
 
 OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Tiny fleet icon minimum zoom
+微型舰队图标 最小尺寸
 
 OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Small fleet icon minimum zoom
+小型舰队图标 最小尺寸
 
 OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
-Medium fleet icon minimum zoom
+中等舰队图标 最小尺寸
 
 OPTIONS_UI_BIG_FLEET_BUTTON_MIN_ZOOM
-Big fleet icon minimum zoom
+大型舰队图标 最小尺寸
 
 OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
-Fleet selection indicator relative size
+舰队选择 相对尺寸
 
 OPTIONS_UI_FLEET_BUTTON_SIZE
-Fleet button relative size
+舰队按钮 相对尺寸
 
 OPTIONS_GALAXY_MAP_GENERAL
-General
+常规
 
 OPTIONS_GALAXY_MAP_GAS
-Galaxy map gas rendering
+星系地图 气体渲染
 
 OPTIONS_GALAXY_MAP_STARFIELDS
-Galaxy map star fields rendering
+星系地图 星域渲染
 
 OPTIONS_GALAXY_MAP_STARFIELDS_SCALE
-Galaxy map star fields star size
+星系地图 行星尺寸
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
-Galaxy distance scale line
+星系距离 尺度线
 
 OPTIONS_GALAXY_MAP_SCALE_CIRCLE
-Galaxy distance scale circle
+星系距离 刻度圆
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
-Galaxy map zoom slider
+星系地图 缩放滑块
 
 OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY
-Unexplored System distinctive mouseover overlay
+未探索星系 鼠标悬停层
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
-Detection range circles
+探测范围
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE_FUTURE
-Selected fleet future detection range circles
+选定舰队 探测圈
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
-Range circle opacity
+探测圈 不透明度
 
 OPTIONS_GALAXY_MAP_POPUP
-Galaxy map pop-up menu
+银河地图 弹出地图
 
 OPTIONS_UI_HIDE_MAP_PANELS
-Hide map panels in production view
+生产视图中隐藏地图
 
 OPTIONS_UI_LOCK_MAP
-Lock map zoom and panning
+锁定 地图缩放和平移
 
 OPTIONS_STARLANES
-Starlanes
+航道
 
 OPTIONS_STARLANE_THICKNESS
-Starlane thickness
+航道 密度
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
-Resource starlane coloring
+资源 航道 着色
 
 OPTIONS_FLEET_SUPPLY_LINES
-Fleet supply lines
+舰队补给线
 
 OPTIONS_FLEET_SUPPLY_LINE_WIDTH
-Fleet supply line width
+舰队补给线 宽度
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
-Fleet supply line dot spacing
+舰队补给线内 点间隔
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
-Fleet supply line dot rate
+舰队补给线 点率（dot rate）
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
-Default starlane color
+默认航道颜色
 
 OPTIONS_UI_QUEUE_WIDTH
-Queue width
+队列宽度
 
 OPTIONS_UI_PROD_QUEUE_LOCATION
-Show Queue Production Location
+显示生产队列位置
 
 OPTIONS_MUSIC
-Music
+音乐
 
 OPTIONS_UI_SOUNDS
-UI sounds
+UI 音效
 
 OPTIONS_BACKGROUND_MUSIC
-Music
+音乐
 
 OPTIONS_SOUNDS
-Sounds
+音效
 
 OPTIONS_SOUND_CLOSE
-Close window
+关闭窗口
 
 OPTIONS_SOUND_MINIMIZE
-Minimize window
+最小化窗口
 
 OPTIONS_SOUND_MAXIMIZE
-Maximize window
+最大化窗口
 
 OPTIONS_SOUND_CLICK
-Click
+点击
 
 OPTIONS_SOUND_ROLLOVER
-Rollover
+滚动
 
 OPTIONS_SOUND_FLEET_CLICK
-Fleet Button Click
+舰队按钮点击
 
 OPTIONS_SOUND_FLEET_ROLLOVER
-Fleet Button Rollover
+舰队按钮滚动
 
 OPTIONS_SOUND_SYSTEM_ROLLOVER
-System Icon Rollover
+星系图标滚动
 
 OPTIONS_SOUND_WINDOW
-Window Sounds
+窗口音效
 
 OPTIONS_SOUND_BUTTON
-Button Sounds
+按钮音效
 
 OPTIONS_SOUND_NEWTURN
-New Turn
+新回合
 
 OPTIONS_SOUND_NEWTURN_TOGGLE
-Enabled
+启用
 
 OPTIONS_SOUND_NEWTURN_FILE
-Sound File
+音效文件
 
 OPTIONS_SOUND_ALERT
-Alert
+警报
 
 OPTIONS_SOUND_TYPING
-Typing
+输入
 
 OPTIONS_SOUND_TURN
-Turn button click
+回合按钮音效
 
 OPTIONS_SOUND_SIDEPANEL
-Side-panel open
+侧面板 打开
 
 OPTIONS_SOUND_PLANET
-Planet click
+行星点击
 
 OPTIONS_SOUND_LIST
-List sounds
+列表音效
 
 OPTIONS_SOUND_DROP
-Item drop
+物品掉落
 
 OPTIONS_SOUND_PULLDOWN
-Drop-down list open
+下拉列表打开
 
 OPTIONS_SOUND_SELECT
-List select
+列表选择
 
 OPTIONS_GENERAL_COLORS
-General
+常规
 
 OPTIONS_CONTROL_COLORS
-UI Controls
+UI 控制
 
 OPTIONS_FILL_COLOR
-Fill
+填充
 
 OPTIONS_BORDER_COLOR
-Border
+边缘
 
 OPTIONS_TEXT_COLOR
-Text
+文本
 
 OPTIONS_DEFAULT_LINK_COLOR
-Default links
+默认链接
 
 OPTIONS_ROLLOVER_LINK_COLOR
-Rollover links
+滚动链接
 
 OPTIONS_DEFAULT_TOOLTIP_COLOR
-Default tooltips
+默认提示
 
 OPTIONS_ROLLOVER_TOOLTIP_COLOR
-Rollover tooltips
+滚动提示
 
 OPTIONS_HIGHLIGHT_COLOR
-Selection highlighting
+高亮选择
 
 OPTIONS_DROPLIST_ARROW_COLOR
-Drop-list arrow
+下拉列表箭头
 
 OPTIONS_STATE_BUTTON_COLOR
-Toggle button selected
+选定切换按钮
 
 OPTIONS_STAT_INCREASE_COLOR
-Statistic increasing
+统计增加
 
 OPTIONS_STAT_DECREASE_COLOR
-Statistic decreasing
+统计减少
 
 OPTIONS_WINDOW_COLORS
-Windows
+窗口
 
 OPTIONS_INNER_BORDER_COLOR
-Inner border
+内边缘
 
 OPTIONS_OUTER_BORDER_COLOR
-Outer border
+外边缘
 
 OPTIONS_PAGE_VIDEO
-Video
+视频
 
 OPTIONS_PAGE_AUDIO
-Audio
+音频
 
 OPTIONS_PAGE_AUTOSAVE
-Autosave
+自动保存
 
 OPTIONS_PAGE_UI
 UI
 
 OPTIONS_PAGE_OBJECTS_WINDOW
-Objects List
+对象列表
 
 OPTIONS_COLUMNS
-Column Widths
+列宽
 
 OPTIONS_PAGE_COLORS
-Colors
+颜色
 
 OPTIONS_PAGE_DIRECTORIES
-Directories
+目录
 
 OPTIONS_PAGE_LOGS
-Logs
+日志
 
 OPTIONS_PAGE_MISC
-Other
+其他
 
 OPTIONS_TECH_COLORS
-Techs
+科技
 
 OPTIONS_TEXT_AND_BORDER_COLOR
-Text and Border
+文本和边缘
 
 OPTIONS_KNOWN_TECH_COLORS
-Known techs
+已知科技
 
 OPTIONS_RESEARCHABLE_TECH_COLORS
-Researchable techs
+可研究科技
 
 OPTIONS_UNRESEARCHABLE_TECH_COLORS
-Unresearchable techs
+不可研究科技
 
 OPTIONS_TECH_PROGRESS_COLORS
-Research progress bars
+研究进度条
 
 OPTIONS_PROGRESS_BAR_COLOR
-Background
+背景
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
-Bar
+条
 
 OPTIONS_FOLDER_SETTINGS
-Resource Files
+资源文件
 
 OPTIONS_FOLDER_SAVE
-Save files
+保存文件
 
 OPTIONS_SERVER_FOLDER_SAVE
-Server Save files
+服务器保存文件
 
 OPTIONS_FOLDER_CONFIG_LOG
-Config and log files
+配置和日志文件
 
 OPTIONS_SERVER_EXE
-Server Binary
+服务器二进制文件
 
 OPTIONS_LANGUAGE_FILE
-Language files
+语言文件
 
 OPTIONS_VOLUME_AND_MUSIC
-Volume And Music
+音量和音乐
 
 OPTIONS_MUSIC_FILE
-Music files
+音乐文件
 
 OPTIONS_SOUND_FILE
-Sound files
+声音文件
 
 OPTIONS_FONT_FILE
-Font files
+字体文件
 
 OPTIONS_DUMP_EFFECTS_GROUPS_DESC
 Auto-generated effect descriptions
@@ -3661,9 +3661,9 @@ OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE
 Create Full Config (Intermediate Feature)
 
 OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
-'''Saves the current config settings in config.xml including all settings, even if not modified from their defaults.
-
-The existing options.xml is overwitten, but may be regenerated (with just non-default options) if another option is changed, including by repositioning some game windows or within the options window.'''
+'''将当前配置存到config.xml，包括所有设置及其默认值。
+现有options.xml是覆盖的，但若更改其他选项，包括再定位窗口或者在选项窗口中，则可再生成。（仅用非默认选项）。
+'''
 
 
 ##
