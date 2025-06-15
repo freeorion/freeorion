@@ -3,6 +3,24 @@ Changelog
 
 Notable changes to the FreeOrion project will be documented in this file.
 
+[v0.5.1.1] - 2025-06-22
+---------------
+
+### Bugfixes / Improvements
+
+- Sync AIDependencies to fighter damage pilot trait or reference hangar values in species_macros/weapons.py
+- Fix fighter damage with scaling info in pedia
+- Update French translation
+- Fix build on MSVS 14.43
+- Fix English translation
+- Fix address sanitizer error in pyhon FOCS parser
+- Fix repeatedly creating strings and passing mismatched iterators
+- Use null terminate concatenated strings
+- Remove warnings by adding  SR GRAV PULSE to upgrade dicts
+- Move shared BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY valueref definition to named_values.focs.txt
+- Rewrite savegame coder, to provide better testing
+- Allow to see and dismiss stale ghost buildings
+
 
 [v0.5.1] - 2025-02-02
 ---------------
