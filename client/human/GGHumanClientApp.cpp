@@ -563,7 +563,7 @@ void GGHumanClientApp::FreeServer() {
 }
 
 void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
-    TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame start";
+    DebugLogger() << "GGHumanClientApp::NewSinglePlayerGame " << (quickstart ? "quickstart" : "start");
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 
     if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
@@ -588,10 +588,15 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         TraceLogger() << "Running galaxy setup window";
         galaxy_wnd->Run();
         ended_with_ok = galaxy_wnd->EndedWithOk();
-        TraceLogger() << "Setup ran, " << (ended_with_ok ? "ended with OK" : "ended without OK");
-        if (ended_with_ok)
+        DebugLogger() << "Setup ran, " << (ended_with_ok ? "ended with OK" : "ended without OK");
+        if (ended_with_ok) {
+            DebugLogger() << "GalaxySetupWnd ended with OK";
             game_rules = galaxy_wnd->GetRulesAsStrings();
-        TraceLogger() << "Got rules as strings";
+        } else {
+            DebugLogger() << "GalaxySetupWnd ended without OK";
+            ResetToIntro(true);
+            return;
+        }
     }
 
 
@@ -603,10 +608,6 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         return;
     }
 
-    if (!(quickstart || ended_with_ok)) {
-        ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
-        ResetToIntro(true);
-    }
 
     SinglePlayerSetupData setup_data;
     setup_data.new_game = true;
@@ -680,14 +681,14 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
         ai_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
 
-        setup_data.players.push_back(ai_setup_data);
+        setup_data.players.push_back(std::move(ai_setup_data));
     }
 
 
-    TraceLogger() << "Sending host SP setup message";
+    DebugLogger() << "Sending host SP setup message";
     m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
     m_fsm.process_event(HostSPGameRequested());
-    TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
+    DebugLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
 }
 
 void GGHumanClientApp::MultiPlayerGame() {
