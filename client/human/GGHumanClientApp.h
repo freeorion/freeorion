@@ -40,6 +40,8 @@ public:
     const GGHumanClientApp& operator=(const GGHumanClientApp&) = delete;
     GGHumanClientApp& operator=(const GGHumanClientApp&&) = delete;
 
+    static void InitLogging();
+
     [[nodiscard]] int SelectedSystemID() const override;
     [[nodiscard]] int SelectedPlanetID() const override;
     [[nodiscard]] int SelectedFleetID() const override;
@@ -94,8 +96,8 @@ public:
     void DecAutoTurns(int n = 1);       ///< Decrease auto turn counter
     void EliminateSelf();               ///< Resign from the game
 
-    [[nodiscard]] ClientUI& GetClientUI() noexcept { return m_ui; }
-    [[nodiscard]] const ClientUI& GetClientUI() const noexcept { return m_ui; }
+    [[nodiscard]] ClientUI& GetUI() noexcept { return m_ui; }
+    [[nodiscard]] const ClientUI& GetUI() const noexcept { return m_ui; }
 
     void Reinitialize();
     [[nodiscard]] float GLVersion() const;
@@ -114,8 +116,6 @@ public:
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
     mutable RepositionWindowsSignalType RepositionWindowsSignal;
 
-    [[nodiscard]] static GGHumanClientApp* GetApp() noexcept { return static_cast<GGHumanClientApp*>(GG::GUI::GetGUI()); }
-
     /** Adds window dimension options to OptionsDB after the start of main, but before GGHumanClientApp constructor.
         OSX will not tolerate static initialization of SDL, to check screen size. */
     static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
@@ -129,8 +129,7 @@ public:
     [[nodiscard]] boost::intrusive_ptr<const boost::statechart::event_base> GetDeferredPostedEvent();
     void PostDeferredEvent(boost::intrusive_ptr<const boost::statechart::event_base> event);
 
-protected:
-    void Initialize() noexcept override {};
+    void Initialize() override;
 
 private:
     struct AppParams {
@@ -206,6 +205,6 @@ private:
     boost::signals2::signal<void ()>    SaveGamesCompletedSignal;
 };
 
-[[nodiscard]] inline GGHumanClientApp* GetApp() noexcept { return GGHumanClientApp::GetApp(); }
+[[nodiscard]] GGHumanClientApp& GetApp();
 
 #endif

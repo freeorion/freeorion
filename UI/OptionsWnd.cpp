@@ -110,7 +110,7 @@ namespace {
                     m_edit->EditedSignal(m_edit->Text());
                 }
             } catch (const std::exception& e) {
-                ClientUI::MessageBox(e.what(), true);
+                GetApp().GetUI().MessageBox(e.what(), true);
             }
         }
 
@@ -235,8 +235,8 @@ namespace {
     public:
         FontTextureWnd() :
             CUIWnd(UserString("OPTIONS_FONTS"),
-                   GG::GUI::GetGUI()->AppWidth() / 6,       GG::GUI::GetGUI()->AppHeight() / 6,
-                   GG::GUI::GetGUI()->AppWidth() * 2 / 3,   GG::GUI::GetGUI()->AppHeight() * 2 / 3,
+                   GetApp().AppWidth() / 6,     GetApp().AppHeight() / 6,
+                   GetApp().AppWidth() * 2 / 3, GetApp().AppHeight() * 2 / 3,
                    GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE | CLOSABLE)
         {}
 
@@ -245,38 +245,33 @@ namespace {
 
             GG::Y top = GG::Y1;
 
-            std::shared_ptr<GG::Font> font = ClientUI::GetFont();
-            std::shared_ptr<GG::Texture> texture;
-            if (font)
-                texture = font->GetTexture();
-            if (texture) {
-                m_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
-                m_font_graphic->MoveTo(GG::Pt(GG::X0, top));
-                m_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
-                AttachChild(m_font_graphic);
-                top += m_font_graphic->Height() + 1;
+            if (auto font = GetApp().GetUI().GetFont()) {
+                if (auto& texture = font->GetTexture()) {
+                    m_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
+                    m_font_graphic->MoveTo(GG::Pt(GG::X0, top));
+                    m_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
+                    AttachChild(m_font_graphic);
+                    top += m_font_graphic->Height() + 1;
+                }
             }
 
-            font = ClientUI::GetBoldFont();
-            if (font)
-                texture = font->GetTexture();
-            if (texture) {
-                m_bold_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
-                m_bold_font_graphic->MoveTo(GG::Pt(GG::X0, top));
-                m_bold_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
-                AttachChild(m_bold_font_graphic);
-                top += m_bold_font_graphic->Height() + 1;
+            if (auto bold_font = GetApp().GetUI().GetBoldFont()) {
+                if (auto& texture = bold_font->GetTexture()) {
+                    m_bold_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
+                    m_bold_font_graphic->MoveTo(GG::Pt(GG::X0, top));
+                    m_bold_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
+                    AttachChild(m_bold_font_graphic);
+                    top += m_bold_font_graphic->Height() + 1;
+                }
             }
 
-            font = ClientUI::GetTitleFont();
-            texture.reset();
-            if (font)
-                texture = font->GetTexture();
-            if (texture) {
-                m_title_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
-                m_title_font_graphic->MoveTo(GG::Pt(GG::X0, top));
-                m_title_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
-                AttachChild(m_title_font_graphic);
+            if (auto title_font = GetApp().GetUI().GetTitleFont()) {
+                if (auto& texture = title_font->GetTexture()) {
+                    m_title_font_graphic = GG::Wnd::Create<GG::StaticGraphic>(texture);
+                    m_title_font_graphic->MoveTo(GG::Pt(GG::X0, top));
+                    m_title_font_graphic->Resize(GG::Pt(texture->Width(), texture->Height()));
+                    AttachChild(m_title_font_graphic);
+                }
             }
 
 
@@ -458,7 +453,7 @@ namespace {
                     return;
                 const auto dropdown_row = dynamic_cast<CUISimpleDropDownListRow* const>(it->get());
                 const auto& option_value = dropdown_row->Name();
-                GGHumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
+                GetApp().ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
     }
 }
@@ -476,7 +471,7 @@ void OptionsWnd::CompleteConstruction() {
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
     m_tabs = GG::Wnd::Create<GG::TabWnd>(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1,
-                                         ClientUI::GetFont(), ClientUI::WndColor(),
+                                         GetApp().GetUI().GetFont(), ClientUI::WndColor(),
                                          ClientUI::TextColor());
 
     CUIWnd::CompleteConstruction();
@@ -556,7 +551,7 @@ void OptionsWnd::CompleteConstruction() {
         window_reset_button, 0);
     current_page->Insert(row);
     window_reset_button->LeftClickedSignal.connect(
-        GGHumanClientApp::GetApp()->RepositionWindowsSignal);
+        GetApp().RepositionWindowsSignal);
 
     FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
@@ -807,9 +802,9 @@ void OptionsWnd::CompleteConstruction() {
         GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_TITLE"),
                                        UserString("OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
     all_config_button->LeftClickedSignal.connect([]() {
-        ClientUI::MessageBox(UserString(GetOptionsDB().Commit(false, false) ?
-                                        UserStringNop("OPTIONS_CREATE_ALL_CONFIG_SUCCESS") :
-                                        UserStringNop("OPTIONS_CREATE_ALL_CONFIG_FAILURE")));
+        GetApp().GetUI().MessageBox(UserString(GetOptionsDB().Commit(false, false) ?
+                                               UserStringNop("OPTIONS_CREATE_ALL_CONFIG_SUCCESS") :
+                                               UserStringNop("OPTIONS_CREATE_ALL_CONFIG_FAILURE")));
     });
     current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
                                                          all_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
@@ -822,9 +817,9 @@ void OptionsWnd::CompleteConstruction() {
         GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE"),
                                        UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
     persistent_config_button->LeftClickedSignal.connect([]() {
-        ClientUI::MessageBox(UserString(GetOptionsDB().CommitPersistent() ?
-                                        UserStringNop("OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS") :
-                                        UserStringNop("OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE")));
+        GetApp().GetUI().MessageBox(UserString(GetOptionsDB().CommitPersistent() ?
+                                               UserStringNop("OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS") :
+                                               UserStringNop("OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE")));
     });
     current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
                                                          persistent_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
@@ -852,7 +847,7 @@ void OptionsWnd::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void OptionsWnd::DoLayout() {
     static constexpr GG::X BUTTON_WIDTH{75};
-    const auto font = ClientUI::GetFont();
+    const auto font = GetApp().GetUI().GetFont();
     const GG::Y BUTTON_HEIGHT((font ? font->Lineskip() : GG::Y1) + 6);
 
     GG::Pt done_button_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN));
@@ -866,7 +861,7 @@ void OptionsWnd::DoLayout() {
 
 GG::Rect OptionsWnd::CalculatePosition() const {
     static constexpr GG::Pt PG_SZ{PAGE_WIDTH + 20, PAGE_HEIGHT + 70};
-    GG::Pt ul = (GGHumanClientApp::GetApp()->AppSize() - PG_SZ) / 2;
+    GG::Pt ul = (GetApp().AppSize() - PG_SZ) / 2;
     return GG::Rect(ul, ul + PG_SZ);
 }
 
@@ -883,7 +878,8 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
 {
     assert(0 <= indentation_level);
     auto heading_text = GG::Wnd::Create<CUILabel>(std::move(name), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
-    heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
+    if (auto font = GetApp().GetUI().GetFont(ClientUI::Pts() * 4 / 3))
+        heading_text->SetFont(std::move(font));
 
     auto heading_min_sz_y{heading_text->MinUsableSize().y};
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
@@ -1297,7 +1293,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // compile list of resolutions available on this system
 
-    auto resolutions = GG::GUI::GetGUI()->GetSupportedResolutions();
+    auto resolutions = GetApp().GetSupportedResolutions();
 
     // find text representation of current fullscreen resolution selection
     int width = GetOptionsDB().Get<int>("video.fullscreen.width");
@@ -1395,8 +1391,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                           apply_button, indentation_level);
     page->Insert(row);
-    apply_button->LeftClickedSignal.connect(
-        boost::bind(&GGHumanClientApp::Reinitialize, GGHumanClientApp::GetApp()));
+    apply_button->LeftClickedSignal.connect([]() { GetApp().Reinitialize(); });
 
     drop_list->SelChangedSignal.connect(
         [drop_list](GG::ListBox::iterator it) {
@@ -1534,5 +1529,5 @@ void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::Initial
         m_effects_button->SetCheck(false);
     if (m_music_button)
         m_music_button->SetCheck(false);
-    ClientUI::MessageBox(UserString(e.what()), false);
+    GetApp().GetUI().MessageBox(UserString(e.what()), false);
 }

@@ -111,7 +111,7 @@ namespace {
             return false;
 
         // check tech status
-        const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+        const Empire* empire = GetEmpire(GetApp().EmpireID());
         if (!empire)
             return true;    // if no empire, techs have no status, so just return true
         if (!statuses_shown.contains(empire->GetTechStatus(tech_name)))
@@ -126,7 +126,8 @@ namespace {
 //   TechRowBrowseWnd    //
 ///////////////////////////
 std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name, int empire_id) {
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const auto& context = app.GetContext();
     auto empire = context.GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
     if (!tech)
@@ -212,8 +213,7 @@ std::shared_ptr<GG::BrowseInfoWnd> TechRowBrowseWnd(const std::string& tech_name
             % turns);
     }
 
-    return GG::Wnd::Create<IconTextBrowseWnd>(
-        ClientUI::TechIcon(tech_name), UserString(tech_name), main_text);
+    return GG::Wnd::Create<IconTextBrowseWnd>(app.GetUI().TechIcon(tech_name), UserString(tech_name), main_text);
 }
 
 
@@ -276,12 +276,14 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
     const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
+    auto& ui = GetApp().GetUI();
+
     GG::Clr icon_color = GG::Clr{113, 150, 182, 255};
     // and one for "ALL"
     m_all_cat_button = GG::Wnd::Create<GG::StateButton>(
-        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
-            ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
+            ui.GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
     m_all_cat_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("ALL"), ""));
     m_all_cat_button->SetBrowseModeTime(tooltip_delay);
     m_all_cat_button->SetCheck(true);
@@ -289,9 +291,9 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
 
     // create a button for each tech status
     m_status_buttons[TechStatus::TS_UNRESEARCHABLE] = GG::Wnd::Create<GG::StateButton>(
-        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
          std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
-             ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
+             ui.GetTexture(icon_dir / "01_locked.png", true)), icon_color));
     m_status_buttons[TechStatus::TS_UNRESEARCHABLE]->SetBrowseInfoWnd(
         GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TechStatus::TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
@@ -300,9 +302,9 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     AttachChild(m_status_buttons[TechStatus::TS_UNRESEARCHABLE]);
 
     m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ] = GG::Wnd::Create<GG::StateButton>(
-        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
-            ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
+            ui.GetTexture(icon_dir / "02_partial.png", true)), icon_color));
     m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]->SetCheck(
@@ -310,9 +312,9 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     AttachChild(m_status_buttons[TechStatus::TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TechStatus::TS_RESEARCHABLE] = GG::Wnd::Create<GG::StateButton>(
-        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
-            ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
+            ui.GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
     m_status_buttons[TechStatus::TS_RESEARCHABLE]->SetBrowseInfoWnd(
         GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
     m_status_buttons[TechStatus::TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
@@ -321,9 +323,9 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     AttachChild(m_status_buttons[TechStatus::TS_RESEARCHABLE]);
 
     m_status_buttons[TechStatus::TS_COMPLETE] = GG::Wnd::Create<GG::StateButton>(
-        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
-            ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
+            ui.GetTexture(icon_dir / "04_completed.png", true)), icon_color));
     m_status_buttons[TechStatus::TS_COMPLETE]->SetBrowseInfoWnd(
         GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TechStatus::TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
@@ -333,11 +335,11 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
 
     // create button to switch between tree and list views
     m_view_type_button = GG::Wnd::Create<GG::StateButton>(
-        "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+        "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(
-            ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)),
+            ui.GetTexture(icon_dir / "06_view_tree.png", true)),
         icon_color,
-        std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)),
+        std::make_shared<GG::SubTexture>(ui.GetTexture(icon_dir / "05_view_list.png", true)),
         GG::Clr{110, 172, 150, 255}));
     m_view_type_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
     m_view_type_button->SetBrowseModeTime(tooltip_delay);
@@ -359,15 +361,17 @@ void TechTreeWnd::TechTreeControls::RefreshCategoryButtons(const std::set<std::s
 
     const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
+    auto& ui = GetApp().GetUI();
+
     // create a button for each tech category...
     for (const auto& cat_view : GetTechManager().CategoryNames()) {
         std::string category{cat_view};
         auto& button = m_cat_buttons[category];
 
         const GG::Clr icon_clr = ClientUI::CategoryColor(category);
-        auto icon = std::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
+        auto icon = std::make_shared<GG::SubTexture>(ui.CategoryIcon(category));
         button = GG::Wnd::Create<GG::StateButton>(
-            "", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
+            "", ui.GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
             std::make_shared<CUIIconButtonRepresenter>(std::move(icon), icon_clr));
 
         button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString(category), ""));
@@ -709,13 +713,14 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_tech_name(tech_name),
     m_layout_panel(panel)
 {
+    auto& ui = GetApp().GetUI();
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
-    m_icon = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon = GG::Wnd::Create<GG::StaticGraphic>(ui.TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
 
-    m_name_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
-    m_cost_and_duration_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_VCENTER | GG::FORMAT_RIGHT);
-    m_eta_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
+    m_name_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ui.GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+    m_cost_and_duration_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ui.GetFont(FontSize()), ClientUI::TextColor(), GG::FORMAT_VCENTER | GG::FORMAT_RIGHT);
+    m_eta_label = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ui.GetFont(FontSize()),ClientUI::TextColor());
 
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
@@ -767,7 +772,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::PreRender() {
         m_name_label->SizeMove(text_ul, text_ul + text_size);
 
         // show cost and duration for unresearched techs
-        const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+        const Empire* empire = GetEmpire(GetApp().EmpireID());
         if (empire) {
             if (empire->TechResearched(m_tech_name))
                 m_cost_and_duration_label->Hide();
@@ -849,8 +854,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         m_name_label->SizeMove(text_ul, text_ul + text_size);
 
         /// Need to render children too
-        GG::GUI::GetGUI()->RenderWindow(m_name_label);
-        GG::GUI::GetGUI()->RenderWindow(m_cost_and_duration_label);
+        GetApp().RenderWindow(m_name_label);
+        GetApp().RenderWindow(m_cost_and_duration_label);
 
         // box around whole panel to indicate enqueue
         if (m_enqueued) {
@@ -875,7 +880,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
             glEnable(GL_TEXTURE_2D);
 
             /// Need to render text too
-            GG::GUI::GetGUI()->RenderWindow(m_eta_label);
+            GetApp().RenderWindow(m_eta_label);
             glDisable(GL_TEXTURE_2D);
         }
 
@@ -943,8 +948,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
 void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     Select(m_layout_panel->m_selected_tech_name == m_tech_name);
 
-    const int client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+    auto& app = GetApp();
+    const int client_empire_id = app.EmpireID();
+    const auto& context = app.GetContext();
+    auto& ui = app.GetUI();
 
     if (auto empire = context.GetEmpire(client_empire_id)) {
         m_status = empire->GetTechStatus(m_tech_name);
@@ -988,10 +995,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             for (const UnlockableItem& item : tech->UnlockedItems()) {
                 std::shared_ptr<GG::Texture> texture;
                 switch (item.type) {
-                case UnlockableItemType::UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;
-                case UnlockableItemType::UIT_SHIP_PART: texture = ClientUI::PartIcon(item.name);        break;
-                case UnlockableItemType::UIT_SHIP_HULL: texture = ClientUI::HullIcon(item.name);        break;
-                case UnlockableItemType::UIT_POLICY:    texture = ClientUI::PolicyIcon(item.name);      break;
+                case UnlockableItemType::UIT_BUILDING:  texture = ui.BuildingIcon(item.name); break;
+                case UnlockableItemType::UIT_SHIP_PART: texture = ui.PartIcon(item.name);     break;
+                case UnlockableItemType::UIT_SHIP_HULL: texture = ui.HullIcon(item.name);     break;
+                case UnlockableItemType::UIT_POLICY:    texture = ui.PolicyIcon(item.name);   break;
                 case UnlockableItemType::UIT_TECH:
                 case UnlockableItemType::UIT_SHIP_DESIGN:
                 default: break;
@@ -1027,7 +1034,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             }
 
             for (const std::string& part_name : parts_whose_meters_are_affected) {
-                std::shared_ptr<GG::Texture> texture = ClientUI::PartIcon(part_name);
+                std::shared_ptr<GG::Texture> texture = ui.PartIcon(part_name);
                 if (texture) {
                     auto graphic = GG::Wnd::Create<GG::StaticGraphic>(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
@@ -1036,23 +1043,23 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 }
             }
             for (MeterType meter_type : meters_affected) {
-                auto texture = ClientUI::MeterIcon(meter_type);
-                if (texture) {
-                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture),
-                                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                if (auto texture = ui.MeterIcon(meter_type)) {
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(
+                        std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
-                    graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
+                    graphic->SizeMove(GG::Pt(icon_left, icon_top),
+                                      GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
                 }
             }
 
             for (const std::string& special_name : specials_affected) {
-                auto texture = ClientUI::SpecialIcon(special_name);
-                if (texture) {
-                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture),
-                                                                      GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                if (auto texture = ui.SpecialIcon(special_name)) {
+                    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(
+                        std::move(texture), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
-                    graphic->SizeMove(GG::Pt(icon_left, icon_top), GG::Pt(icon_left + icon_width, icon_top + icon_height));
+                    graphic->SizeMove(GG::Pt(icon_left, icon_top),
+                                      GG::Pt(icon_left + icon_width, icon_top + icon_height));
                     icon_left += icon_width + PAD;
                 }
             }
@@ -1610,7 +1617,9 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     const Tech* this_row_tech = ::GetTech(m_tech);
     if (!this_row_tech)
         return;
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
+
+    auto& app = GetApp();
+    const auto& context = app.GetContext();
 
     const auto col_widths = ColWidths(Width());
     const GG::X GRAPHIC_WIDTH = col_widths.empty() ? GG::X{48} : col_widths.front();
@@ -1620,7 +1629,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     static constexpr auto just_pad = "    "; // TODO: replace string padding with new TextFormat flag
     static constexpr auto graphic_style = GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC;
 
-    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(ClientUI::TechIcon(m_tech), graphic_style);
+    auto graphic = GG::Wnd::Create<GG::StaticGraphic>(app.GetUI().TechIcon(m_tech), graphic_style);
     graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(std::move(graphic));
@@ -1632,7 +1641,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     push_back(std::move(text));
 
     const std::string cost_str = std::to_string(std::lround(
-        this_row_tech->ResearchCost(GGHumanClientApp::GetApp()->EmpireID(), context)));
+        this_row_tech->ResearchCost(app.EmpireID(), context)));
     text = GG::Wnd::Create<CUILabel>(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
@@ -1640,7 +1649,7 @@ void TechTreeWnd::TechListBox::TechRow::CompleteConstruction() {
     push_back(std::move(text));
 
     const std::string time_str = std::to_string(
-        this_row_tech->ResearchTime(GGHumanClientApp::GetApp()->EmpireID(), context));
+        this_row_tech->ResearchTime(app.EmpireID(), context));
     text = GG::Wnd::Create<CUILabel>(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
@@ -1666,9 +1675,10 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
-    auto client_empire_id = GGHumanClientApp::GetApp()->EmpireID();
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
-    auto empire = context.GetEmpire(client_empire_id);
+    auto& app = GetApp();
+    const auto client_empire_id = app.EmpireID();
+    const ScriptingContext& context = app.GetContext();
+    const auto empire = context.GetEmpire(client_empire_id);
 
     std::string cost_str = std::to_string(std::lround(
         this_row_tech->ResearchCost(client_empire_id, context)));
@@ -1932,7 +1942,7 @@ void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, GG::Pt 
 void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey> modkeys) {
     if ((*it)->Disabled())
         return;
-    const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
     if (!empire)
         return;
 
@@ -2014,7 +2024,7 @@ void TechTreeWnd::CompleteConstruction() {
         m_tech_tree_controls->SaveDefaultedOptions();
     }
 
-    GGHumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+    GetApp().RepositionWindowsSignal.connect(
         boost::bind(&TechTreeWnd::InitializeWindows, this));
 
     AttachChild(m_enc_detail_panel);
@@ -2217,7 +2227,7 @@ void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     // ensure tech exists and is visible
     const Tech* tech = ::GetTech(tech_name);
     if (!tech) return;
-    if (const Empire* empire = GetEmpire(GGHumanClientApp::GetApp()->EmpireID()))
+    if (const Empire* empire = GetEmpire(GetApp().EmpireID()))
         SetTechStatus(empire->GetTechStatus(tech_name), true);
     ShowCategory(tech->Category());
 
@@ -2272,8 +2282,10 @@ void TechTreeWnd::AddTechToResearchQueue(std::string tech_name, bool to_front) {
     const Tech* tech = GetTech(tech_name);
     if (!tech) return;
 
-    const ScriptingContext& context = IApp::GetApp()->GetContext();
-    const auto empire = context.GetEmpire(GGHumanClientApp::GetApp()->EmpireID());
+    auto& app = GetApp();
+    const ScriptingContext& context = app.GetContext();
+    const int empire_id = GetApp().EmpireID();
+    const auto empire = context.GetEmpire(empire_id);
     if (!empire)
         return;
     const TechStatus tech_status = empire->GetTechStatus(tech_name);
@@ -2291,7 +2303,6 @@ void TechTreeWnd::AddTechToResearchQueue(std::string tech_name, bool to_front) {
 
     // if tech can't yet be researched, add any prerequisites it requires (recursively) and then add it
     const TechManager& manager = GetTechManager();
-    const int empire_id = GGHumanClientApp::GetApp()->EmpireID();
     auto all_prereqs = manager.RecursivePrereqs(tech_name, empire_id, context);
     std::vector<std::string> unresearched_techs;
     unresearched_techs.reserve(all_prereqs.size() + 1);

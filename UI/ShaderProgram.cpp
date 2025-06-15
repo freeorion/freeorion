@@ -99,7 +99,7 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
 std::unique_ptr<ShaderProgram> ShaderProgram::shaderProgramFactory(const std::string& vertex_shader,
                                                                    const std::string& fragment_shader)
 {
-    if (GGHumanClientApp::GetApp()->GLVersion() >= 2.0f)
+    if (GetApp().GLVersion() >= 2.0f)
         return std::make_unique<ShaderProgram>(vertex_shader,fragment_shader);
     return nullptr;
 }
