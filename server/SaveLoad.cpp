@@ -55,37 +55,29 @@ namespace {
             preview.main_player_empire_name = UserString("NO_EMPIRE");
 
         } else {
-            // Consider the first player the main player
-            const PlayerSaveGameData* player = player_save_game_data.data();
+            auto human_players_rng = player_save_game_data | range_filter(Networking::is_human);
+            preview.number_of_human_players =
+                static_cast<decltype(preview.number_of_human_players)>(range_distance(human_players_rng));
 
-            // If there are human players, the first of them should be the main player
-            int16_t humans = 0; // TODO: use algorithms and avoid raw poitners here...
-            for (const PlayerSaveGameData& psgd : player_save_game_data) {
-                if (Networking::is_human(psgd)) {
-                    if (!Networking::is_human(player) && !Networking::is_mod_or_obs(player))
-                        player = std::addressof(psgd);
-                    ++humans;
+            if (!range_empty(human_players_rng)) {
+                const auto& human_player = human_players_rng.front();
+
+                preview.main_player_name = human_player.name;
+
+                auto empire_it = empire_save_game_data.find(human_player.empire_id);
+                if (empire_it != empire_save_game_data.end()) {
+                    preview.main_player_empire_name = empire_it->second.empire_name;
+                    preview.main_player_empire_colour = empire_it->second.color;
                 }
-            }
-
-            preview.main_player_name = player->name;
-            preview.number_of_human_players = humans;
-
-            // Find the empire of the player, if it has one
-            auto empire = empire_save_game_data.find(player->empire_id);
-            if (empire != empire_save_game_data.end()) {
-                preview.main_player_empire_name = empire->second.empire_name;
-                preview.main_player_empire_colour = empire->second.color;
             }
         }
     }
 
-    const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
-
-    const std::string XML_COMPRESSED_MARKER("zlib-xml");
-    const std::string XML_COMPRESSED_BASE64_MARKER("zb64-xml");
-    const std::string XML_DIRECT_MARKER("raw-xml");
-    const std::string BINARY_MARKER("binary");
+    constexpr const char* UNABLE_TO_OPEN_FILE = "Unable to open file";
+    constexpr const std::string_view XML_COMPRESSED_MARKER("zlib-xml");
+    constexpr const std::string_view XML_COMPRESSED_BASE64_MARKER("zb64-xml");
+    constexpr const std::string_view XML_DIRECT_MARKER("raw-xml");
+    constexpr const std::string_view BINARY_MARKER("binary");
 }
 
 std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empires) {
