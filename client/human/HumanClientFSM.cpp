@@ -1300,16 +1300,9 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
 
     if (Networking::is_mod(Client()) && mapwnd && mapwnd->AutoEndTurnEnabled()) {
         // check status of all empires: are they all done their turns?
-        bool all_participants_waiting = true;
-        for (const auto& empire : std::as_const(Client()).Empires() | range_values) { // TODO: could use any_of
-            if (!empire->Ready()) {
-                all_participants_waiting = false;
-                break;
-            }
-        }
-
         // if all participants waiting, can end turn immediately
-        if (all_participants_waiting)
+        static constexpr auto ready = [](const auto& e) noexcept { return !e || e->Ready(); };
+        if (range_all_of(std::as_const(Client()).Empires() | range_values, ready))
             post_event(AdvanceTurn());
     }
 
