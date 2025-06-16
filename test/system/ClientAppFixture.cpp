@@ -45,13 +45,16 @@ ClientAppFixture::ClientAppFixture() :
 
     GetOptionsDB().Set<std::string>("resource.path", PathToString(GetBinDir() / "default"));
 
-    std::thread background([this] () {
+    std::promise<void> barrier;
+    std::future<void> barrier_future = barrier.get_future();
+    std::thread background([this] (auto b) {
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
-    });
-    background.join();
+        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
+    }, std::move(barrier));
+    background.detach();
+    barrier_future.wait();
 }
 
 int ClientAppFixture::EffectsProcessingThreads() const

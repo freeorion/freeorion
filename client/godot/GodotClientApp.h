@@ -19,7 +19,6 @@ public:
     const GodotClientApp& operator=(const GodotClientApp&) = delete;
     GodotClientApp& operator=(const GodotClientApp&&) = delete;
 
-    void StartParsingContent();
     int EffectsProcessingThreads() const override;
     bool SinglePlayerGame() const;  ///< returns true iff this game is a single-player game
 

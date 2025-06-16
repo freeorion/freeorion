@@ -70,7 +70,6 @@ __meta__ = {
 margin_right = 196.0
 margin_bottom = 40.0
 size_flags_vertical = 3
-disabled = true
 Title = "Continue"
 
 [node name="SinglePlayerBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 8 )]
@@ -78,7 +77,6 @@ margin_top = 50.0
 margin_right = 196.0
 margin_bottom = 91.0
 size_flags_vertical = 3
-disabled = true
 Title = "Single Player"
 
 [node name="QuickstartBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 8 )]
@@ -86,7 +84,6 @@ margin_top = 101.0
 margin_right = 196.0
 margin_bottom = 142.0
 size_flags_vertical = 3
-disabled = true
 Title = "Quickstart"
 
 [node name="MultiplayerBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 8 )]
@@ -94,7 +91,6 @@ margin_top = 152.0
 margin_right = 196.0
 margin_bottom = 193.0
 size_flags_vertical = 3
-disabled = true
 Title = "Multiplayer"
 
 [node name="LoadGameBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 8 )]
@@ -102,7 +98,6 @@ margin_top = 203.0
 margin_right = 196.0
 margin_bottom = 243.0
 size_flags_vertical = 3
-disabled = true
 Title = "Load Game"
 
 [node name="OptionsBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 8 )]
@@ -117,7 +112,6 @@ margin_top = 304.0
 margin_right = 196.0
 margin_bottom = 345.0
 size_flags_vertical = 3
-disabled = true
 Title = "Pedia"
 
 [node name="AboutBtn" parent="MainMenu/VBoxContainer" instance=ExtResource( 8 )]

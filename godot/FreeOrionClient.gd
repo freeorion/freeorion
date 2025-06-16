@@ -38,11 +38,6 @@ func _ready():
 	)
 	FreeOrionNode.connect("chat_message", self, "_on_FreeOrion_chat_message", [], CONNECT_DEFERRED)
 	FreeOrionNode.connect("error", self, "_on_FreeOrion_error", [], CONNECT_DEFERRED)
-	FreeOrionNode.connect(
-		"parsing_completed", self, "_on_FreeOrion_parsing_completed", [], CONNECT_DEFERRED
-	)
-
-	FreeOrionNode.start_parsing_thread()
 
 	var scale = 1
 	if OS.get_name() == "Android":
@@ -146,15 +141,6 @@ func _on_FreeOrion_error(problem: String, _fatal: bool):
 	$Popup.add_child(error_dlg)
 	error_dlg.set_error_text(problem)
 	$Popup.popup()
-
-
-func _on_FreeOrion_parsing_completed():
-	$MainMenu/VBoxContainer/ContinueBtn.disabled = false
-	$MainMenu/VBoxContainer/SinglePlayerBtn.disabled = false
-	$MainMenu/VBoxContainer/QuickstartBtn.disabled = false
-	$MainMenu/VBoxContainer/MultiplayerBtn.disabled = false
-	$MainMenu/VBoxContainer/LoadGameBtn.disabled = false
-	$MainMenu/VBoxContainer/PediaBtn.disabled = false
 
 
 func _on_FreeOrion_start_game(_is_new_game):

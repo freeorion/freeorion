@@ -131,7 +131,10 @@ ServerApp::ServerApp() :
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
-    StartBackgroundParsing(PythonParser(m_python_server, GetResourceDir() / "scripting"));
+    std::promise<void> barrier;
+    std::future<void> barrier_future = barrier.get_future();
+    StartBackgroundParsing(PythonParser(m_python_server, GetResourceDir() / "scripting"), std::move(barrier));
+    barrier_future.wait();
 
     m_fsm->initiate();
 
@@ -186,8 +189,9 @@ namespace {
 #include <stdlib.h>
 #endif
 
-void ServerApp::StartBackgroundParsing(const PythonParser& python) {
-    IApp::StartBackgroundParsing(python);
+void ServerApp::StartBackgroundParsing(const PythonParser& python, std::promise<void>&& barrier) {
+    std::promise<void> empty_barrier;
+    IApp::StartBackgroundParsing(python, std::move(empty_barrier));
     const auto& rdir = GetResourceDir();
 
     if (fs::exists(rdir / "scripting/starting_unlocks/items.inf"))
@@ -211,9 +215,10 @@ void ServerApp::StartBackgroundParsing(const PythonParser& python) {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/monster_fleets.inf").string();
 
     if (fs::exists(rdir / "scripting/empire_statistics"))
-        m_universe.SetEmpireStats(Pending::ParseSynchronously(parse::statistics, python, rdir / "scripting/empire_statistics"));
+        m_universe.SetEmpireStats(Pending::ParseSynchronously(parse::statistics, python, rdir / "scripting/empire_statistics", std::move(barrier)));
     else {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/empire_statistics").string();
+        barrier.set_value();
     }
 }
 

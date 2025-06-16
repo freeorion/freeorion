@@ -429,14 +429,16 @@ GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, 
     m_fsm.initiate();
 
     // Start parsing content
-    std::thread background([this](){
+    std::promise<void> barrier;
+    std::future<void> barrier_future = barrier.get_future();
+    std::thread background([this](auto b){
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
-        PostDeferredEvent(std::move(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted())));
-    });
+        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
+    }, std::move(barrier));
     background.detach();
+    barrier_future.wait();
     GetOptionsDB().OptionChangedSignal("resource.path").connect(
         boost::bind(&GGHumanClientApp::HandleResoureDirChange, this));
 }
@@ -1623,14 +1625,16 @@ void GGHumanClientApp::UpdateFPSLimit() {
 void GGHumanClientApp::HandleResoureDirChange() {
     if (!m_game_started) {
         DebugLogger() << "Resource directory changed.  Reparsing universe ...";
-        std::thread background([this] () {
+        std::promise<void> barrier;
+        std::future<void> barrier_future = barrier.get_future();
+        std::thread background([this] (auto b) {
             DebugLogger() << "Started background parser thread";
             PythonCommon python;
             python.Initialize();
-            StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
-            PostDeferredEvent(std::move(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted())));
-        });
+            StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"), std::move(b));
+        }, std::move(barrier));
         background.detach();
+        barrier_future.wait();
     } else {
         WarnLogger() << "Resource directory changes will take effect on application restart.";
     }
