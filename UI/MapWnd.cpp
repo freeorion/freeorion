@@ -321,7 +321,7 @@ namespace {
     GG::Y AppHeight() { return GetApp().AppHeight(); }
 
     bool ClientPlayerIsModerator()
-    { return GetApp().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
+    { return Networking::is_mod(GetApp()); }
 
     void PlayTurnButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.turn.press.sound.path"), true); }
@@ -2783,12 +2783,12 @@ void MapWnd::EnableOrderIssuing(bool enable) {
     m_btn_turn->Disable(app.SinglePlayerGame() && !enable);
 
     const bool have_empire = (app.EmpireID() != ALL_EMPIRES);
-    const bool moderator = (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR);
+    const bool moderator = Networking::is_mod(app);
     if (!have_empire && !moderator) {
         enable = false;
         m_btn_turn->Disable(true);
     }
-    const bool observer = (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER);
+    const bool observer = Networking::is_obs(app);
 
     m_moderator_wnd->EnableActions(enable && moderator);
     m_ready_turn = !enable;
@@ -2997,7 +2997,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     DispatchFleetsExploring(context, client_empire_id);
 
     timer.EnterSection("enable observers");
-    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
+    if (Networking::is_mod(app)) {
         // this client is a moderator
         m_btn_moderator->Disable(false);
         m_btn_moderator->Show();
@@ -3006,7 +3006,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
         m_btn_moderator->Disable();
         m_btn_moderator->Hide();
     }
-    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (Networking::is_obs(app)) {
         m_btn_auto_turn->Disable();
         m_btn_auto_turn->Hide();
     } else {
@@ -6732,7 +6732,7 @@ bool MapWnd::KeyboardZoomOut() {
 }
 
 void MapWnd::RefreshTurnButtonTooltip() {
-    auto& app = GetApp();
+    const auto& app = GetApp();
     std::string_view btn_turn_tooltip;
 
     if (!m_ready_turn) {
@@ -6740,12 +6740,12 @@ void MapWnd::RefreshTurnButtonTooltip() {
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_SP");
         else
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MP");
-        if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
+        if (Networking::is_mod(app))
             btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_MOD");
     }
     if (m_ready_turn && !app.SinglePlayerGame())
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_WAIT");
-    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (Networking::is_obs(app))
         btn_turn_tooltip = UserString("MAP_BTN_TURN_TOOLTIP_DESC_OBS");
 
     if (m_btn_turn) {

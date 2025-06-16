@@ -33,8 +33,14 @@ namespace Networking {
             return thing == ct;
         else if constexpr (requires { thing.client_type == ct; })
             return thing.client_type == ct;
+        else if constexpr (requires { thing->client_type == ct; })
+            return thing && thing->client_type == ct;
+        else if constexpr (requires { thing.GetClientType() == ct; })
+            return thing.GetClientType() == ct;
         else if constexpr (requires { thing->GetClientType() == ct; })
             return thing && thing->GetClientType() == ct;
+        else
+            static_assert(requires { thing == ct; });
     };
 
     constexpr auto is_ai = [](const auto& thing) noexcept

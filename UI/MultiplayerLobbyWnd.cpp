@@ -247,8 +247,7 @@ namespace {
             // player name text
             push_back(GG::Wnd::Create<CUILabel>(m_player_data.player_name));
 
-            if (m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-                m_player_data.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR) {
+            if (Networking::is_mod_or_obs(m_player_data)) {
                 // observers don't need to pick an empire or species
                 push_back(GG::Wnd::Create<CUILabel>("", ui));
                 push_back(GG::Wnd::Create<CUILabel>("", ui));
