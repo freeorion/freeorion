@@ -1127,7 +1127,7 @@ namespace {
             return false;
         }
         
-        if (player_connection->GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+        if (Networking::is_human(player_connection)) {
             ErrorLogger() << "ServerApp::LoadMPGameInit found player connection of wrong type "
                           << "for human player setup data with player id: " << id;
             return false;
@@ -1756,14 +1756,10 @@ std::vector<PlayerSetupData> ServerApp::FillListPlayers() {
 }
 
 void ServerApp::AddObserverPlayerIntoGame(const PlayerConnectionPtr& player_connection) {
-    std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
+    const std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
+    const bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
 
-    Networking::ClientType client_type = player_connection->GetClientType();
-    bool use_binary_serialization = player_connection->IsBinarySerializationUsed();
-
-    if (client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER ||
-        client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
-    {
+    if (Networking::is_mod_or_obs(player_connection)) {
         // simply sends GAME_START message so established player will known he is in the game now
         player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                         m_current_turn, m_empires, m_universe,
@@ -1791,12 +1787,10 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 
     // test if there other human or disconnected players in the game
     bool other_human_player = false;
-    for (auto& [loop_empire_id, loop_empire] : m_empires) {
+    for (auto& [loop_empire_id, loop_empire] : m_empires) { // TODO: use none_of / range_none_of ?
         if (!loop_empire->Eliminated() && empire_id != loop_empire_id) {
             const auto other_client_type = GetEmpireClientType(loop_empire_id);
-            if (other_client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER ||
-                other_client_type == Networking::ClientType::INVALID_CLIENT_TYPE)
-            {
+            if (Networking::is_human(other_client_type) || Networking::is_invalid(other_client_type)) {
                 other_human_player = true;
                 break;
             }

@@ -2685,15 +2685,13 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
         return;
     auto& app = GetApp();
     auto& net = app.Networking();
-    bool moderator = false;
-    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
-        moderator = true;
+    const bool moderator = Networking::is_mod(app);
 
     // Right click on an unselected row should automatically select it
     m_list_box->SelectRow(it, true);
 
     auto dump_action = [this, object_id]() { ObjectDumpSignal(object_id); };
-    auto suitability_action = [object_id]() { GetApp().GetUI().ZoomToPlanetPedia(object_id, GetApp().GetContext().ContextObjects()); };
+    auto suitability_action = [object_id]() { auto& app = GetApp(); app.GetUI().ZoomToPlanetPedia(object_id, app.GetContext().ContextObjects()); };
 
     // Refresh and clean up common to focus and production changes.
     auto focus_ship_building_common_action = [this]() {

@@ -8,6 +8,7 @@
 #include "../util/base64_filter.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../network/Networking.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
@@ -60,13 +61,9 @@ namespace {
             // If there are human players, the first of them should be the main player
             int16_t humans = 0; // TODO: use algorithms and avoid raw poitners here...
             for (const PlayerSaveGameData& psgd : player_save_game_data) {
-                if (psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
-                    if (player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-                        player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
-                        player->client_type != Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
-                    {
+                if (Networking::is_human(psgd)) {
+                    if (!Networking::is_human(player) && !Networking::is_mod_or_obs(player))
                         player = std::addressof(psgd);
-                    }
                     ++humans;
                 }
             }

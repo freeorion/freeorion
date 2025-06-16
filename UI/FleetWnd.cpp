@@ -165,7 +165,7 @@ namespace {
     }
 
     bool ClientPlayerIsModerator()
-    { return GetApp().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
+    { return Networking::is_mod(GetApp()); }
 
     bool CanDamageShips(const std::vector<int>& ship_ids, const ScriptingContext& context) {
         const auto ships = context.ContextObjects().findRaw<Ship>(ship_ids);
