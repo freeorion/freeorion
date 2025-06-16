@@ -1203,17 +1203,17 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().GetUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % context.current_turn) + "\n");
 
-    if (mapwnd && Client().GetClientType() != Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER)
+    if (mapwnd && !Networking::is_obs(Client())) // TODO: should this be is_human ?
         mapwnd->EnableOrderIssuing(true);
 
-    if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER) {
+    if (Networking::is_obs(Client())) {
         // observers can't do anything but wait for the next update, and need to
         // be back in WaitingForTurnData, so posting TurnEnded here has the effect
         // of keeping observers in the WaitingForTurnData state so they can receive
         // updates from the server.
         post_event(TurnEnded());
 
-    } else if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER) {
+    } else if (Networking::is_human(Client())) {
         if (mapwnd && mapwnd->AutoEndTurnEnabled()) {
             // if in-game-GUI auto turn advance enabled, set auto turn counter to 1
             Client().InitAutoTurns(1);
@@ -1251,7 +1251,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     Client().SaveGameCompleted();
 
     // auto quit save has completed, close the app
-    if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
+    if (Networking::is_human(Client())
         && Client().AutoTurnsLeft() <= 0
         && GetOptionsDB().Get<bool>("auto-quit"))
     {
@@ -1298,9 +1298,7 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
 
     auto mapwnd = Client().GetUI().GetMapWndConst();
 
-    if (Client().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
-        mapwnd && mapwnd->AutoEndTurnEnabled())
-    {
+    if (Networking::is_mod(Client()) && mapwnd && mapwnd->AutoEndTurnEnabled()) {
         // check status of all empires: are they all done their turns?
         bool all_participants_waiting = true;
         for (const auto& empire : std::as_const(Client()).Empires() | range_values) { // TODO: could use any_of

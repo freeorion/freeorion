@@ -1514,7 +1514,7 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
         if (was_playing && !m_single_player_game &&
             m_empires.GetEmpire(m_empire_id) != nullptr &&
             !m_empires.GetEmpire(m_empire_id)->Ready() &&
-            GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+            Networking::is_human(GetClientType()))
         {
             auto font = m_ui.GetFont();
             auto prompt = GetStyleFactory().NewThreeButtonDlg(

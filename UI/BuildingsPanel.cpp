@@ -40,7 +40,7 @@ namespace {
     }
 
     bool ClientPlayerIsModerator()
-    { return GetApp().GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR; }
+    { return Networking::is_mod(GetApp()); }
 }
 
 BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :

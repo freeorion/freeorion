@@ -1616,12 +1616,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd_colors.contains(j_player.second.empire_color) ||
                     psd_names.contains(j_player.second.empire_name) ||
                     psd_names.contains(j_player.second.player_name) ||
-                    (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
-                        !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
-                    (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR &&
-                        !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
-                    (j_player.second.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER &&
-                        !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
+                    (Networking::is_human(j_player.second) && !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_PLAYER)) ||
+                    (Networking::is_mod(j_player.second) && !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_MODERATOR)) ||
+                    (Networking::is_obs(j_player.second) && !sender->HasAuthRole(Networking::RoleType::ROLE_CLIENT_TYPE_OBSERVER)))
                 {
                     i_player.second.player_ready = false;
                     player_setup_data_changed = true;

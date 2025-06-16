@@ -590,8 +590,8 @@ bool ServerNetworking::PlayerIsHost(int player_id) const noexcept {
 }
 
 bool ServerNetworking::ModeratorsInGame() const noexcept {
-    for (const PlayerConnectionPtr& player : m_player_connections) {
-        if (player->GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR)
+    for (const PlayerConnectionPtr& player : m_player_connections) { // TODO: range_any_of ?
+        if (Networking::is_mod(player))
             return true;
     }
     return false;

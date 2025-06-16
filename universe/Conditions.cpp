@@ -1271,7 +1271,7 @@ namespace {
             case EmpireAffiliationType::AFFIL_HUMAN: {
                 if (candidate->Unowned())
                     return false;
-                if (GetEmpireClientType(candidate->Owner()) == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+                if (Networking::is_human(GetEmpireClientType(candidate->Owner())))
                     return true;
                 return false;
                 break;

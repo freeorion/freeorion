@@ -913,20 +913,21 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
     auto pedia_lookup_action = [clicked_empire_id]() { GetApp().GetUI().ZoomToEmpire(clicked_empire_id); };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    if (app.GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER &&
+    if (Networking::is_human(app) &&
         client_empire_id != ALL_EMPIRES &&
         clicked_empire_id != ALL_EMPIRES)
     {
+        const auto& empires = app.Empires();
         // get diplomatic status between client and clicked empires
-        DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
+        DiplomaticStatus diplo_status = empires.GetDiplomaticStatus(clicked_empire_id, client_empire_id);
         if (diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS && clicked_empire_id != client_empire_id) {
             ErrorLogger() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
             return;
         }
         const DiplomaticMessage& existing_message_from_clicked_empire_to_this_player =
-            Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
+            empires.GetDiplomaticMessage(clicked_empire_id, client_empire_id);
         const DiplomaticMessage& existing_message_from_this_player_to_clicked_empire =
-            Empires().GetDiplomaticMessage(client_empire_id, clicked_empire_id);
+            empires.GetDiplomaticMessage(client_empire_id, clicked_empire_id);
 
         // decide what diplomatic commands to show in popup menu
         bool show_peace_propose = false;
