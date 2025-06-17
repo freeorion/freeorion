@@ -172,7 +172,7 @@ namespace {
         py::list species_list;
         const ScriptingContext& context = ServerApp::GetApp()->GetContext();
         SpeciesManager& species_manager = context.species;
-        for (const auto& name : species_manager.PlayableSpecies() | range_keys)
+        for (const auto& name : species_manager.AllSpecies() | range_filter(SpeciesManager::is_playable) | range_keys)
             species_list.append(py::object(name));
         return species_list;
     }
@@ -182,7 +182,7 @@ namespace {
         py::list species_list;
         const ScriptingContext& context = ServerApp::GetApp()->GetContext();
         SpeciesManager& species_manager = context.species;
-        for (const auto& name : species_manager.NativeSpecies() | range_keys)
+        for (const auto& name : species_manager.AllSpecies() | range_filter(SpeciesManager::is_native) | range_keys)
             species_list.append(py::object(name));
         return species_list;
     }

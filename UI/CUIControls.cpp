@@ -1569,7 +1569,7 @@ SpeciesSelector::SpeciesSelector(const std::string& preselect_species, GG::X w, 
             SpeciesChangedSignal((it == this->end() || !(*it)) ? EMPTY_STRING : (*it)->Name()); });
 
     const SpeciesManager& sm = GGHumanClientApp::GetApp()->GetSpeciesManager();
-    for (const auto& [name, species] : sm.PlayableSpecies()) {
+    for (const auto& [name, species] : sm.AllSpecies() | range_filter(SpeciesManager::is_playable)) {
         auto row_it = Insert(GG::Wnd::Create<SpeciesRow>(species, w, h - 4));
         if (name == preselect_species)
             Select(row_it);

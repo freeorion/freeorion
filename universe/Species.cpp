@@ -875,10 +875,10 @@ const std::string& SpeciesManager::RandomSpeciesName() const
 { return PickRandOrEmpty(AllSpecies() | range_keys); }
 
 const std::string& SpeciesManager::RandomPlayableSpeciesName() const
-{ return PickRandOrEmpty(PlayableSpecies() | range_keys); }
+{ return PickRandOrEmpty(AllSpecies() | range_filter(is_playable) | range_keys); }
 
 const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const
-{ return PickIdxOrEmpty(PlayableSpecies() | range_keys, static_cast<std::size_t>(id)); }
+{ return PickIdxOrEmpty(AllSpecies() | range_filter(is_playable) | range_keys, static_cast<std::size_t>(id)); }
         
 void SpeciesManager::SetSpeciesHomeworlds(std::map<std::string, std::set<int>>&& species_homeworld_ids) {
     m_species_homeworlds.clear();

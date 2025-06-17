@@ -654,10 +654,12 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (human_player_setup_data.starting_species_name != "RANDOM" &&
         !m_species_manager.GetSpecies(human_player_setup_data.starting_species_name))
     {
-        if (m_species_manager.NumPlayableSpecies() < 1)
+        if (m_species_manager.NumPlayableSpecies() < 1) {
             human_player_setup_data.starting_species_name.clear();
-        else
-            human_player_setup_data.starting_species_name = m_species_manager.PlayableSpecies().front().first;
+        } else {
+            auto playable_rng = m_species_manager.AllSpecies() | range_filter(SpeciesManager::is_playable);
+            human_player_setup_data.starting_species_name = playable_rng.front().first;
+        }
     }
 
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games

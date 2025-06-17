@@ -218,13 +218,14 @@ void GodotClientApp::NewSinglePlayerGame() {
         human_player_setup_data.starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
     if (human_player_setup_data.starting_species_name != "RANDOM" &&
-        !GetSpeciesManager().GetSpecies(human_player_setup_data.starting_species_name))
+        !m_species_manager.GetSpecies(human_player_setup_data.starting_species_name))
     {
-        const SpeciesManager& sm = GetSpeciesManager();
-        if (sm.NumPlayableSpecies() < 1)
+        if (m_species_manager.NumPlayableSpecies() < 1) {
             human_player_setup_data.starting_species_name.clear();
-        else
-            human_player_setup_data.starting_species_name = sm.PlayableSpecies().front().first;
+        } else {
+            auto playable_rng = m_species_manager.AllSpecies() | range_filter(SpeciesManager::is_playable);
+            human_player_setup_data.starting_species_name = playable_rng.front().first;
+        }
     }
 
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
