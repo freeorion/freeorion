@@ -1359,6 +1359,8 @@ namespace {
             });
         }
     }
+
+    constexpr std::string_view EMPTY_STRING_VIEW;
 }
 
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
@@ -1407,6 +1409,18 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
 
     int n = 0;  // count dispatched condition evaluations
 
+    const auto not_destroyed = [&destroyed_object_ids](const auto& o)
+    { return o && !destroyed_object_ids.contains(o->ID()); };
+
+    const auto to_plt_sp = [&context](const Planet* p) noexcept
+        -> std::tuple<const Planet*, const Species*, std::string_view>
+    {
+        if (!p) return {nullptr, nullptr, EMPTY_STRING_VIEW};
+        const auto& species_name = p->SpeciesName();
+        return {p, species_name.empty() ? nullptr : context.species.GetSpecies(species_name), species_name};
+    };
+
+    static constexpr auto has_species = [](const auto& pssn) noexcept { return !std::get<2>(pssn).empty(); };
 
     // 1) EffectsGroups from Planet Species
     type_timer.EnterSection("planet species");
@@ -1414,18 +1428,13 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
         TraceLogger(effects) << "Universe::GetEffectsAndTargets for PLANET SPECIES";
     std::map<std::string_view, Condition::ObjectSet> species_objects;
     // find each species planets in single pass, maintaining object map order per-species
-    for (auto planet : context.ContextObjects().allRaw<Planet>()) {
-        if (destroyed_object_ids.contains(planet->ID()))
-            continue;
-        const std::string& species_name = planet->SpeciesName();
-        if (species_name.empty())
-            continue;
-        const Species* species = context.species.GetSpecies(species_name);
-        if (!species) {
+    auto sp_rng = context.ContextObjects().allRaw<Planet>()
+        | range_filter(not_destroyed) | range_transform(to_plt_sp) | range_filter(has_species);
+    for (const auto& [planet, species, species_name] : sp_rng) {
+        if (!species)
             ErrorLogger() << "GetEffectsAndTargets couldn't get Species " << species_name;
-            continue;
-        }
-        species_objects[species_name].push_back(planet);
+        else
+            species_objects[species_name].push_back(planet);
     }
     // allocate storage for target sets and dispatch condition evaluations
     for ([[maybe_unused]] auto& [species_name, species] : context.species.AllSpecies()) {
