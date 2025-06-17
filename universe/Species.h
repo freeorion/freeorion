@@ -240,7 +240,7 @@ public:
     using SpeciesTypeMap = std::map<std::string, const Species, std::less<>>;
 
     static constexpr auto is_playable = [](const auto& species_entry) noexcept { return species_entry.second.Playable(); };
-    static constexpr auto is_native = [](const auto& species_entry) noexcept { return species_entry.second.Playable(); };
+    static constexpr auto is_native = [](const auto& species_entry) noexcept { return species_entry.second.Native(); };
 
     using CensusOrder = std::vector<std::string>;
 
