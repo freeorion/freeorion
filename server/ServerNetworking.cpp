@@ -574,36 +574,23 @@ ServerNetworking::ServerNetworking(boost::asio::io_context& io_context,
 { Init(); }
 
 int ServerNetworking::NewPlayerID() const {
-    int biggest_current_player_id(0);
-    for (const PlayerConnectionPtr& player : m_player_connections) {
-        const int player_id = player->PlayerID();
-        if (player_id != INVALID_PLAYER_ID && player_id > biggest_current_player_id)
-            biggest_current_player_id = player_id;
-    }
-    return biggest_current_player_id + 1;
+    static constexpr auto to_id = [](const auto& pc) noexcept { return pc->PlayerID(); };
+    static constexpr auto is_valid = [](const auto id) noexcept { return id != INVALID_PLAYER_ID; };
+    auto ids_rng = m_player_connections | range_transform(to_id) | range_filter(is_valid);
+    return range_empty(ids_rng) ? 0 : (*range_max_element(ids_rng) + 1);
 }
 
-bool ServerNetworking::PlayerIsHost(int player_id) const noexcept {
-    if (player_id == Networking::INVALID_PLAYER_ID)
-        return false;
-    return player_id == m_host_player_id;
-}
+bool ServerNetworking::PlayerIsHost(int player_id) const noexcept
+{ return player_id != Networking::INVALID_PLAYER_ID && player_id == m_host_player_id; }
 
-bool ServerNetworking::ModeratorsInGame() const noexcept {
-    for (const PlayerConnectionPtr& player : m_player_connections) { // TODO: range_any_of ?
-        if (Networking::is_mod(player))
-            return true;
-    }
-    return false;
-}
+bool ServerNetworking::ModeratorsInGame() const noexcept
+{ return range_any_of(m_player_connections, Networking::is_mod); }
 
 bool ServerNetworking::IsAvailableNameInCookies(const std::string& player_name) const {
     boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-    for (const auto& cookie : m_cookies) {
-        if (cookie.second.expired >= now && cookie.second.player_name == player_name)
-            return false;
-    }
-    return true;
+    auto is_unexpired_with_name = [&player_name, now](const auto& cookie) noexcept
+    { return cookie.expired >= now && cookie.player_name == player_name; };
+    return range_none_of(m_cookies | range_values, is_unexpired_with_name);
 }
 
 bool ServerNetworking::CheckCookie(boost::uuids::uuid cookie,
@@ -668,13 +655,13 @@ boost::uuids::uuid ServerNetworking::GenerateCookie(std::string player_name,
                                                     Networking::AuthRoles roles,
                                                     bool authenticated)
 {
-    boost::uuids::uuid cookie = boost::uuids::random_generator()();
+    auto cookie = boost::uuids::random_generator()();
+    auto expiry = boost::posix_time::second_clock::local_time() +
+        boost::posix_time::minutes(GetOptionsDB().Get<int>("network.server.cookies.expire-minutes"));
     m_cookies.erase(cookie); // remove previous cookie if exists
-    m_cookies.emplace(cookie, CookieData(std::move(player_name),
-                                         boost::posix_time::second_clock::local_time() +
-                                             boost::posix_time::minutes(GetOptionsDB().Get<int>("network.server.cookies.expire-minutes")),
-                                         roles,
-                                         authenticated));
+    m_cookies.emplace(std::piecewise_construct,
+                      std::forward_as_tuple(cookie),
+                      std::forward_as_tuple(std::move(player_name), expiry, roles, authenticated));
     return cookie;
 }
 
@@ -693,9 +680,9 @@ void ServerNetworking::CleanupCookies() {
     std::unordered_set<boost::uuids::uuid, boost::hash<boost::uuids::uuid>> to_delete;
     boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
     // clean up expired cookies
-    for (const auto& cookie : m_cookies) {
-        if (cookie.second.expired < now)
-            to_delete.insert(cookie.first);
+    for (const auto& [cookie, data] : m_cookies) {
+        if (data.expired < now)
+            to_delete.insert(cookie);
     }
     // don't clean up cookies from active connections
     for (auto& player : EstablishedPlayerConnections())
