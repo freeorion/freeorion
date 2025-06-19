@@ -166,22 +166,22 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
 boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
     int empire_id, DiplomaticStatus diplo_status, const DiploStatusMap& statuses)
 {
-    boost::container::flat_set<int> retval;
     if (empire_id == ALL_EMPIRES || diplo_status == DiplomaticStatus::INVALID_DIPLOMATIC_STATUS)
-        return retval;
-    retval.reserve(statuses.size()); // probably an overestimate
+        return {};
 
     // find ids of empires with the specified diplomatic status with the specified empire
-    for (auto const& [emp1, emp2] : statuses
-         | range_filter([diplo_status](const auto& ids_status) noexcept { return ids_status.second == diplo_status; })
-         | range_keys)
-    {
-        if (emp1 == empire_id)
-            retval.insert(emp2);
-        else if (emp2 == empire_id)
-            retval.insert(emp1);
-    }
-    return retval;
+    const auto is_status = [diplo_status](const auto& ids_status) noexcept
+    { return ids_status.second == diplo_status; };
+
+    const auto has_empire_id = [empire_id](const auto& e1e2) noexcept
+    { return e1e2.first == empire_id || e1e2.second == empire_id; };
+
+    const auto to_other_id = [empire_id](const auto& e1e2) noexcept
+    { return e1e2.first == empire_id ? e1e2.second : e1e2.first; };
+
+    auto eids_rng = statuses | range_filter(is_status) | range_keys
+        | range_filter(has_empire_id) | range_transform(to_other_id);
+    return {eids_rng.begin(), eids_rng.end()};
 }
 
 bool EmpireManager::DiplomaticMessageAvailable(int sender_id, int recipient_id) const {
