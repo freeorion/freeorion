@@ -1200,20 +1200,21 @@ namespace {
         /// If so, remove that empire's entry
         void CleanEmpires() {
             DebugLogger(combat) << "CleanEmpires";
-            auto temp{empire_infos};
 
-            boost::container::flat_set<int> empire_ids_with_objects;
-            empire_ids_with_objects.reserve(20); // guesstimate, should normally be enough
-            for (const auto* obj : combat_info.objects.allRaw()) // TODO: range, range init, and make container const
-                empire_ids_with_objects.insert(obj->Owner());
+            static constexpr auto to_owner_id = [](const auto& obj) noexcept { return obj->Owner(); };
+            auto owner_ids_rng = combat_info.objects.allRaw() | range_transform(to_owner_id);
+            const boost::container::flat_set<int> empire_ids_with_objects(owner_ids_rng.begin(), owner_ids_rng.end());
 
-            for (const auto empire_id : empire_infos | range_keys) {
-                if (!contains(empire_ids_with_objects, empire_id)) {
-                    temp.erase(empire_id);
-                    DebugLogger(combat) << "No objects left for empire with id: " << empire_id;
-                }
+            const auto has_no_objects = [&empire_ids_with_objects](int id)
+            { return !empire_ids_with_objects.contains(id); };
+
+            auto info_ids_rng = empire_infos | range_keys | range_filter(has_no_objects);
+            const std::vector no_obj_info_ids(info_ids_rng.begin(), info_ids_rng.end());
+
+            for (auto& empire_id : no_obj_info_ids) {
+                empire_infos.erase(empire_id);
+                DebugLogger(combat) << "No objects left for empire with id: " << empire_id;
             }
-            empire_infos = std::move(temp);
 
             if (!empire_infos.empty()) {
                 DebugLogger(combat) << "Empires with objects remaining:";
