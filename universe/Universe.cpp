@@ -1163,15 +1163,17 @@ namespace {
                     return retval;
 
                 } else {
-                    // need to apply separately to each source object, using a context with the object as source
+                    const auto eval_one = [&context, activation](const auto* obj) {
+                        const ScriptingContext source_context(context, ScriptingContext::Source{}, obj);
+                        return activation->EvalOne(source_context, obj);
+                    };
                     Condition::ObjectSet retval;
                     retval.reserve(source_objects.size());
-                    std::copy_if(source_objects.begin(), source_objects.end(), std::back_inserter(retval),
-                                 [&context, activation](const auto* obj) {
-                                     const ScriptingContext source_context(context, ScriptingContext::Source{}, obj);
-                                     return activation->EvalOne(source_context, obj);
-                                 });
+                    range_copy_if(source_objects, std::back_inserter(retval), eval_one);
                     return retval;
+                    // using range_filter crashes... not sure why...
+                    // auto evaled_rng = source_objects | range_filter(eval_one);
+                    // return {evaled_rng.begin(), evaled_rng.end()};
                 }
 
             };
