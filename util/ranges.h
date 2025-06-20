@@ -140,6 +140,13 @@ template <typename... Args>
 inline auto range_copy(Args&&... args) { return boost::range::copy(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_copy_if(Args&&... args) { return boost::algorithm::copy_if(std::forward<Args>(args)...); }
+
+# if defined(__GNUC__)
+template <typename T, std::size_t E, typename... Args>
+inline const auto range_copy_if(std::span<T, E> s, Args&&... args)
+{ return boost::algorithm::copy_if(s.begin(), s.end(), std::forward<Args>(args)...); }
+# endif
+
 template <typename... Args>
 inline auto range_max_element(Args&&... args) { return boost::range::max_element(std::forward<Args>(args)...); }
 template <typename... Args>
