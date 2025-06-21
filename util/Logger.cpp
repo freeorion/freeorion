@@ -180,7 +180,6 @@ namespace {
             for (const auto& name_and_frontend : m_names_to_front_ends)
                 logging::core::get()->remove_sink(name_and_frontend.second);
         }
-
     };
 
     LoggersToSinkFrontEnds& GetLoggersToSinkFrontEnds() {

@@ -284,26 +284,30 @@ GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, 
                                    bool fullscreen, bool fake_mode_change) :
     SDLGUI(Value(width), Value(height), true, std::move(name),
            Value(x), Value(y), fullscreen, fake_mode_change),
-    m_fsm(*this)
+    m_fsm(*this),
+    m_ui(*this)
 {
-#ifdef ENABLE_CRASH_BACKTRACE
-    signal(SIGSEGV, SigHandler);
-#endif
-#ifdef FREEORION_MACOSX
-    SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
-#endif
+    if (fake_mode_change && !FramebuffersAvailable())
+        ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
+}
 
+namespace {
+    auto DefaultLogPath() { return PathToString(GetUserDataDir() / "freeorion.log"); }
+
+    static constexpr std::string_view unnamed_logger_identifer = "Client";
+}
+
+void GGHumanClientApp::InitLogging() {
     // Force the log file if requested.
-    if (GetOptionsDB().Get<std::string>("log-file").empty()) {
-        const std::string HUMAN_CLIENT_LOG_FILENAME(PathToString(GetUserDataDir() / "freeorion.log"));
-        GetOptionsDB().Set("log-file", HUMAN_CLIENT_LOG_FILENAME);
-    }
+    if (GetOptionsDB().Get<std::string>("log-file").empty())
+        GetOptionsDB().Set("log-file", PathToString(GetUserDataDir() / "freeorion.log"));
+
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
         OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
-    InitLoggingSystem(GetOptionsDB().Get<std::string>("log-file"), "Client");
+    InitLoggingSystem(GetOptionsDB().Get<std::string>("log-file"), unnamed_logger_identifer);
     InitLoggingOptionsDBSystem();
 
     // Force loggers to always appear in the config.xml and OptionsWnd even before their
@@ -326,6 +330,15 @@ GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, 
     RegisterLoggerWithOptionsDB("python");
     RegisterLoggerWithOptionsDB("timer");
     RegisterLoggerWithOptionsDB("IDallocator");
+}
+
+void GGHumanClientApp::Initialize() {
+#ifdef ENABLE_CRASH_BACKTRACE
+    signal(SIGSEGV, SigHandler);
+#endif
+#ifdef FREEORION_MACOSX
+    SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
+#endif
 
     InfoLogger() << FreeOrionVersionString();
 
@@ -377,12 +390,9 @@ GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, 
     GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
         boost::bind(&GGHumanClientApp::UpdateFPSLimit, this));
 
-
-    m_ui.InitializeWindows();
-
     auto default_browse_info_wnd{
         GG::Wnd::Create<GG::TextBoxBrowseInfoWnd>(
-            GG::X(400), ClientUI::GetFont(),
+            GG::X(400), m_ui.GetFont(),
             GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
             GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1)};
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
@@ -415,13 +425,9 @@ GGHumanClientApp::GGHumanClientApp(GG::X width, GG::Y height, std::string name, 
 
     m_auto_turns = GetOptionsDB().Get<int>("auto-advance-n-turns");
 
-    if (fake_mode_change && !FramebuffersAvailable()) {
-        ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
-    }
-
     // Placed after mouse initialization.
     if (inform_user_sound_failed)
-        ClientUI::MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
+        m_ui.MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
 
     // Register LinkText tags with GG::Font
     RegisterLinkTags();
@@ -458,7 +464,6 @@ void GGHumanClientApp::ConnectKeyboardAcceleratorSignals() {
 GGHumanClientApp::~GGHumanClientApp() {
     m_networking->DisconnectFromServer();
     m_server_process.RequestTermination();
-    DebugLogger() << "GGHumanClientApp exited cleanly.";
 }
 
 bool GGHumanClientApp::SinglePlayerGame() const
@@ -563,7 +568,7 @@ void GGHumanClientApp::FreeServer() {
 }
 
 void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
-    TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame start";
+    DebugLogger() << "GGHumanClientApp::NewSinglePlayerGame " << (quickstart ? "quickstart" : "start");
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 
     if (!GetOptionsDB().Get<bool>("network.server.external.force")) {
@@ -571,11 +576,11 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         try {
             StartServer();
         } catch (const LocalServerAlreadyRunningException&) {
-            ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+            m_ui.MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
             ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
-            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+            m_ui.MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
     }
@@ -588,10 +593,15 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         TraceLogger() << "Running galaxy setup window";
         galaxy_wnd->Run();
         ended_with_ok = galaxy_wnd->EndedWithOk();
-        TraceLogger() << "Setup ran, " << (ended_with_ok ? "ended with OK" : "ended without OK");
-        if (ended_with_ok)
+        DebugLogger() << "Setup ran, " << (ended_with_ok ? "ended with OK" : "ended without OK");
+        if (ended_with_ok) {
+            DebugLogger() << "GalaxySetupWnd ended with OK";
             game_rules = galaxy_wnd->GetRulesAsStrings();
-        TraceLogger() << "Got rules as strings";
+        } else {
+            DebugLogger() << "GalaxySetupWnd ended without OK";
+            ResetToIntro(true);
+            return;
+        }
     }
 
 
@@ -599,14 +609,11 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (!m_connected) {
         DebugLogger() << "Not connected; returning to intro screen and showing timed out error";
         ResetToIntro(true);
-        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        m_ui.MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
 
-    if (!(quickstart || ended_with_ok)) {
-        ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
-        ResetToIntro(true);
-    }
+
 
     SinglePlayerSetupData setup_data;
     setup_data.new_game = true;
@@ -654,10 +661,12 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (human_player_setup_data.starting_species_name != "RANDOM" &&
         !m_species_manager.GetSpecies(human_player_setup_data.starting_species_name))
     {
-        if (m_species_manager.NumPlayableSpecies() < 1)
+        if (m_species_manager.NumPlayableSpecies() < 1) {
             human_player_setup_data.starting_species_name.clear();
-        else
-            human_player_setup_data.starting_species_name = m_species_manager.PlayableSpecies().front().first;
+        } else {
+            auto playable_rng = m_species_manager.AllSpecies() | range_filter(SpeciesManager::is_playable);
+            human_player_setup_data.starting_species_name = playable_rng.front().first;
+        }
     }
 
     human_player_setup_data.save_game_empire_id = ALL_EMPIRES; // not used for new games
@@ -678,14 +687,14 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ai_setup_data.save_game_empire_id = ALL_EMPIRES;  // not used for new games
         ai_setup_data.client_type = Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
 
-        setup_data.players.push_back(ai_setup_data);
+        setup_data.players.push_back(std::move(ai_setup_data));
     }
 
 
-    TraceLogger() << "Sending host SP setup message";
+    DebugLogger() << "Sending host SP setup message";
     m_networking->SendMessage(HostSPGameMessage(setup_data, DependencyVersions()));
     m_fsm.process_event(HostSPGameRequested());
-    TraceLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
+    DebugLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
 }
 
 void GGHumanClientApp::MultiPlayerGame() {
@@ -711,11 +720,11 @@ void GGHumanClientApp::MultiPlayerGame() {
                 StartServer();
                 FreeServer();
             } catch (const LocalServerAlreadyRunningException&) {
-                ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+                m_ui.MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
                 return;
             } catch (const std::runtime_error& err) {
                 ErrorLogger() << "Couldn't start server.  Got error message: " << err.what();
-                ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+                m_ui.MessageBox(UserString("SERVER_WONT_START"), true);
                 return;
             }
             server_dest = "localhost";
@@ -725,7 +734,7 @@ void GGHumanClientApp::MultiPlayerGame() {
 
     m_connected = m_networking->ConnectToServer(server_dest);
     if (!m_connected) {
-        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        m_ui.MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED")
             ResetToIntro(true);
         return;
@@ -817,7 +826,7 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
                 is->RequirePreRender();
 
         } catch (const std::exception& e) {
-            ClientUI::MessageBox(e.what(), true);
+            m_ui.MessageBox(e.what(), true);
         }
     }
 
@@ -840,11 +849,11 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
         try {
             StartServer();
         } catch (const LocalServerAlreadyRunningException&) {
-            ClientUI::MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
+            m_ui.MessageBox(UserString("LOCAL_SERVER_ALREADY_RUNNING_ERROR"), true);
             return;
         } catch (const std::runtime_error& err) {
             ErrorLogger() << "GGHumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
-            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+            m_ui.MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
     } else {
@@ -855,7 +864,7 @@ void GGHumanClientApp::LoadSinglePlayerGame(std::string filename) {
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ResetToIntro(true);
-        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        m_ui.MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
 
@@ -975,7 +984,7 @@ void GGHumanClientApp::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id
     ClientApp::HandleTurnPhaseUpdate(phase_id);
 
     // Pass updates to message window.
-    GetClientUI().GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
+    m_ui.GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 }
 
 boost::intrusive_ptr<const boost::statechart::event_base> GGHumanClientApp::GetDeferredPostedEvent() {
@@ -1074,7 +1083,7 @@ void GGHumanClientApp::UpdateCombatLogs(const Message& msg) {
 }
 
 void GGHumanClientApp::HandleSaveGamePreviews(const Message& msg) {
-    auto sfd = GetClientUI().GetSaveFileDialog();
+    auto sfd = m_ui.GetSaveFileDialog();
     if (!sfd)
         return;
 
@@ -1121,12 +1130,10 @@ void GGHumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
 }
 
 void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
-    if (ClientUI* ui = ClientUI::GetClientUI()) {
-        if (auto map_wnd = ui->GetMapWnd(false))
-            map_wnd->DoLayout();
-        if (auto intro_screen = ui->GetIntroScreen())
-            intro_screen->Resize(GG::Pt(w, h));
-    }
+    if (auto map_wnd = m_ui.GetMapWnd(false))
+        map_wnd->DoLayout();
+    if (auto intro_screen = m_ui.GetIntroScreen())
+        intro_screen->Resize(GG::Pt(w, h));
 
     if (!GetOptionsDB().Get<bool>("video.fullscreen.enabled") &&
          (GetOptionsDB().Get<GG::X>("video.windowed.width") != w ||
@@ -1507,9 +1514,9 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
         if (was_playing && !m_single_player_game &&
             m_empires.GetEmpire(m_empire_id) != nullptr &&
             !m_empires.GetEmpire(m_empire_id)->Ready() &&
-            GetClientType() == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER)
+            Networking::is_human(GetClientType()))
         {
-            auto font = ClientUI::GetFont();
+            auto font = m_ui.GetFont();
             auto prompt = GetStyleFactory().NewThreeButtonDlg(
                 GG::X(275), GG::Y(75), UserString("GAME_MENU_CONFIRM_NOT_READY"), font,
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::CtrlColor(), ClientUI::TextColor(),
@@ -1531,7 +1538,7 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
             // Ask the player if they want to wait for the save game to complete
             auto dlg = GetStyleFactory().NewThreeButtonDlg(
                 GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
-                ClientUI::GetFont(ClientUI::Pts()+2),
+                m_ui.GetFont(ClientUI::Pts()+2),
                 ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
                 ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
                 (reset ?
@@ -1542,7 +1549,6 @@ void GGHumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_c
             this->SaveGamesCompletedSignal.connect(
                 [dlg](){
                     DebugLogger() << "SaveGamePendingDialog::SaveCompletedHandler save game completed handled.";
-
                     dlg->EndRun();
                 }
             );

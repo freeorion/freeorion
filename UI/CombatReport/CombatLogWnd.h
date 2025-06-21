@@ -19,7 +19,6 @@ public:
 
     void PreRender() override;
 
-    void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
 

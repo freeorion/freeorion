@@ -29,7 +29,7 @@ namespace {
     constexpr std::string_view XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed. The main gamestate information follows, possibly stored as zlib-comprssed XML archive in the last entry in the main archive.");
     constexpr std::string_view BIN_SAVE_FILE_DESCRIPTION("This is binary archive FreeOrion saved game.");
 
-    const std::string XML_COMPRESSED_MARKER("zlib-xml");
+    constexpr std::string_view XML_COMPRESSED_MARKER("zlib-xml");
 
     /// Splits time and date on separate lines for an ISO datetime string
     std::string split_time(std::string time) {

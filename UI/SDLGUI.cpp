@@ -525,7 +525,6 @@ void SDLGUI::SDLQuit() {
 
 void SDLGUI::Run() {
     try {
-        Initialize();
         RunModal(m_done);
     } catch (const QuitSignal& e) {
         if (e.exit_code != 0)

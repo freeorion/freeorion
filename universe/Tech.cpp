@@ -46,16 +46,10 @@ namespace {
             const auto& prereqs = name_tech.second.Prerequisites();
             return range_all_of(prereqs, is_researched);
         };
+        static constexpr auto to_addr = [](const auto& t) noexcept { return std::addressof(t); };
 
-        std::vector<const Tech*> retval;
-        retval.reserve(techs.size());
-        // transform_if
-        for (const auto& name_tech : techs) {
-            if (is_researchable_now(name_tech))
-                retval.push_back(&name_tech.second);
-        }
-
-        return retval;
+        return techs | range_filter(is_researchable_now) | range_values
+            | range_transform(to_addr) | range_to_vec;
     }
 
     const Tech* Cheapest(const std::vector<const Tech*>& next_techs, int empire_id,

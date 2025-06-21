@@ -14,6 +14,13 @@
 #    define CONSTEXPR_VEC_AND_STRING
 #  endif
 #endif
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
 
 struct CombatInfo;
 
@@ -22,6 +29,7 @@ struct [[nodiscard]] ScriptingContext final {
         int, double, PlanetType, PlanetSize, ::PlanetEnvironment, StarType,
         UniverseObjectType, Visibility, std::string, std::vector<std::string>>;
     inline static CONSTEXPR_VEC_AND_STRING const CurrentValueVariant DEFAULT_CURRENT_VALUE{0};
+    inline static CONSTEXPR_STRING const std::string EMPTY_STRING{};
 
     // used to disambiguate constructors
     class LocalCandidate final {};
@@ -278,6 +286,8 @@ struct [[nodiscard]] ScriptingContext final {
             return Visibility::VIS_NO_VISIBILITY;
         return object_it->second;
     }
+
+    [[nodiscard]] const std::string& GetVisibleObjectName(int id) const noexcept { return EMPTY_STRING; }
 
     // mutable empire not thread safe to modify
     [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id) {

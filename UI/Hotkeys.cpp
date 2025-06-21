@@ -288,6 +288,7 @@ void HotkeyManager::RebuildShortcuts() {
 
     // Now, build up again all the shortcuts
     GG::GUI* gui = GG::GUI::GetGUI();
+    if (!gui) return;
     for (auto& entry : m_connections) {
         const Hotkey& hk = Hotkey::NamedHotkey(entry.first);
 
@@ -306,8 +307,11 @@ void HotkeyManager::AddConditionalConnection(const std::string& name,
 bool HotkeyManager::ProcessNamedShortcut(const std::string& name, GG::Key key,
                                          GG::Flags<GG::ModKey> mod)
 {
+    GG::GUI* gui = GG::GUI::GetGUI();
+    if (!gui) return false;
+
     // reject unsafe-for-typing key combinations while typing
-    if (GG::GUI::GetGUI()->FocusWndAcceptsTypingInput() && !::IsTypingSafe(key, mod))
+    if (gui->FocusWndAcceptsTypingInput() && !::IsTypingSafe(key, mod))
         return false;
 
     // First update the connection state according to the current status.

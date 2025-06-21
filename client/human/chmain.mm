@@ -15,9 +15,10 @@ int main(int argc, char *argv[])
 {
     // copy command line arguments to vector
     std::vector<std::string> args;
+    args.reserve(static_cast<std::size_t>(argc));
     for (int i = 0; i < argc; ++i)
         args.push_back(argv[i]);
-    
+
     // set options from command line or config.xml, or generate config.xml
     if (mainConfigOptionsSetup(args) != 0) {
         std::cerr << "main() failed config." << std::endl;

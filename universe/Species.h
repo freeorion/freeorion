@@ -240,7 +240,7 @@ public:
     using SpeciesTypeMap = std::map<std::string, const Species, std::less<>>;
 
     static constexpr auto is_playable = [](const auto& species_entry) noexcept { return species_entry.second.Playable(); };
-    static constexpr auto is_native = [](const auto& species_entry) noexcept { return species_entry.second.Playable(); };
+    static constexpr auto is_native = [](const auto& species_entry) noexcept { return species_entry.second.Native(); };
 
     using CensusOrder = std::vector<std::string>;
 
@@ -258,11 +258,9 @@ public:
 
     /** species accessors */
     [[nodiscard]] const SpeciesTypeMap& AllSpecies() const;
-    [[nodiscard]] auto                  PlayableSpecies() const { return AllSpecies() | range_filter(is_playable); }
-    [[nodiscard]] auto                  NativeSpecies() const { return AllSpecies() | range_filter(is_native); }
 
     /** returns an ordered list of tags that should be considered for census listings. */
-    [[nodiscard]] const CensusOrder&  census_order() const;
+    [[nodiscard]] const CensusOrder& census_order() const;
 
     /** returns true iff this SpeciesManager is empty. */
     [[nodiscard]] bool empty() const { return AllSpecies().empty(); }

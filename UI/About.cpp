@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
+#include "../client/human/GGHumanClientApp.h"
 
 #include <GG/GUI.h>
 
