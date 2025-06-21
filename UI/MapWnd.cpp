@@ -7408,16 +7408,13 @@ namespace {
         using starlanes_t = std::decay_t<decltype(starlanes)>;
         static_assert(std::is_same_v<starlanes_t, boost::container::flat_set<Empire::LaneEndpoints>>,
                       "make sure starlanes is sorted for efficient insertion into flat_set below");
-        const auto lane_starts_in_system_in_ids = [&system_ids](const auto lane) {
-            return std::any_of(system_ids.begin(), system_ids.end(),
-                               [lane](const auto sys_id) { return lane.start == sys_id; });
-        };
-        auto rng = starlanes | range_filter(lane_starts_in_system_in_ids)
-            | range_transform([](const auto lane) { return lane.end; });
-        boost::container::flat_set<int> retval;
-        retval.reserve(starlanes.size());
-        retval.insert(rng.begin(), rng.end());
-        return retval;
+        const auto lane_starts_in_system_in_ids = [&system_ids](const auto lane)
+        { return range_any_of(system_ids,[lane](const auto sys_id) noexcept { return lane.start == sys_id; }); };
+
+        static constexpr auto to_lane_end = [](const auto& lane) noexcept { return lane.end; };
+
+        return starlanes | range_filter(lane_starts_in_system_in_ids)
+            | range_transform(to_lane_end) | range_to<boost::container::flat_set<int>>();
     }
 
     /** Get the shortest suitable route from @p start_id to @p destination_id as known to @p empire_id */
