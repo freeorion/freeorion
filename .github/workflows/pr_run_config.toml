@@ -4,7 +4,7 @@ build_windows_with_cmake = ['focs_py', 'cpp', 'cmake', 'godot', 'workflows', 'fo
 build_windows_with_msvs = ['cpp', 'workflows', 'visual_studio']
 build_android = ['cpp', 'workflows']
 build_macos = ['cpp', 'workflows']
-build_ubuntu = ['cpp', 'workflows']
+build_ubuntu = ['cpp', 'cmake', 'workflows']
 lint_py_focs = ['focs_py', 'pyproject_toml', 'python_dev_requirements', 'workflows']
 lint_python = ['focs_py', 'pyproject_toml', 'python_dev_requirements', 'workflows', 'python']
 lint_string_tables = ['stringtables', 'workflows']
@@ -45,7 +45,7 @@ examples = [
     'parse/CMakeLists.txt',
     'GG/cmake/GiGi.pc.in',
 ]
-patterns = ['cmake']
+patterns = ['cmake', 'CMakeLists.txt']
 
 [group.workflows]
 examples = [
