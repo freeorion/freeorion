@@ -804,7 +804,7 @@ void SaveFileDialog::Confirm() {
     fs::path current_dir = FilenameToPath(GetDirPath());
     DebugLogger() << [&]() {
         const auto cdpstr = PathToString(current_dir);
-        return "current dir PathString: " + PathToString(current_dir) +
+        return "current dir PathString: " + cdpstr +
             (utf8::is_valid(cdpstr.begin(), cdpstr.end()) ? "is valid UTF8" : "is NOT valid UTF8");
     }();
 
