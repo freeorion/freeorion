@@ -1202,14 +1202,14 @@ namespace {
             DebugLogger(combat) << "CleanEmpires";
 
             static constexpr auto to_owner_id = [](const auto& obj) noexcept { return obj->Owner(); };
-            auto owner_ids_rng = combat_info.objects.allRaw() | range_transform(to_owner_id);
-            const boost::container::flat_set<int> empire_ids_with_objects(owner_ids_rng.begin(), owner_ids_rng.end());
+            const auto empire_ids_with_objects = combat_info.objects.allRaw() | range_transform(to_owner_id)
+                | range_to<boost::container::flat_set<int>>();
 
             const auto has_no_objects = [&empire_ids_with_objects](int id)
             { return !empire_ids_with_objects.contains(id); };
 
-            auto info_ids_rng = empire_infos | range_keys | range_filter(has_no_objects);
-            const std::vector no_obj_info_ids(info_ids_rng.begin(), info_ids_rng.end());
+            // copy before modifying...
+            const auto no_obj_info_ids = empire_infos | range_keys | range_filter(has_no_objects) | range_to_vec;
 
             for (auto& empire_id : no_obj_info_ids) {
                 empire_infos.erase(empire_id);
@@ -1228,7 +1228,7 @@ namespace {
 
         /// Clears and refills \a shuffled with attacker ids in a random order
         auto GetShuffledValidAttackerIDs() {
-            std::vector<int> retval{valid_attacker_object_ids.begin(), valid_attacker_object_ids.end()};
+            auto retval = valid_attacker_object_ids | range_to_vec;
             RandomShuffle(retval);
             return retval;
         }
