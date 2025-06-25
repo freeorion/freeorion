@@ -48,7 +48,7 @@ std::vector<int> SupplyManager::FleetSupplyableSystemIDs(
     int empire_id, bool include_allies, const ScriptingContext& context) const
 {
     auto& direct_sys = FleetSupplyableSystemIDs(empire_id);
-    std::vector<int> retval(direct_sys.begin(), direct_sys.end());
+    std::vector<int> retval = direct_sys | range_to_vec;
     if (!include_allies)
         return retval;
 
@@ -379,8 +379,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
     const auto to_known_lanes = [&universe](const auto& id_e) -> decltype(auto)
     { return std::pair(id_e.first, id_e.second->KnownStarlanes(universe)); };
 
-    auto lanes_rng = empires | range_transform(to_known_lanes);
-    boost::container::flat_map<int, Empire::LaneSet> empire_visible_starlanes{lanes_rng.begin(), lanes_rng.end()};
+    const auto empire_visible_starlanes = empires | range_transform(to_known_lanes)
+        | range_to<boost::container::flat_map<int, Empire::LaneSet>>();
 
     boost::container::flat_set<int> systems_with_supply_in_them;
     systems_with_supply_in_them.reserve(objects.size<System>());
@@ -397,7 +397,8 @@ void SupplyManager::Update(const ScriptingContext& context) {
         for (const auto& [system_id, system_supply_range] : system_ranges) {
             if (unobstructed_systems.contains(system_id)) {
                 // stored: first -> source supply range.  second -> distance to source (0 for the source itself)
-                empire_propagating_supply_ranges[empire_id][system_id] = {system_supply_range, 0.0f};
+                empire_propagating_supply_ranges[empire_id].insert_or_assign(
+                    system_id, std::pair{system_supply_range, 0.0f});
                 if (system_supply_range > max_range)
                     max_range = system_supply_range;
                 systems_with_supply_in_them.insert(system_id);
