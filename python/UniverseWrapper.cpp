@@ -41,10 +41,7 @@ namespace {
 
     template <typename T>
     auto ObjectIDs(const Universe& universe) -> std::vector<int>
-    {
-        auto ids_rng = universe.Objects().allWithIDs<T>() | range_keys;
-        return ToVec(ids_rng);
-    }
+    { return universe.Objects().allWithIDs<T>() | range_keys | range_to_vec; }
 
 
     auto ObjectTagsAsStringVec(const UniverseObject& o) -> std::vector<std::string>
@@ -74,13 +71,13 @@ namespace {
             }
         }();
 
-        return ToVec(tags | range_transform(to_string));
+        return tags | range_transform(to_string) | range_to_vec;
     }
 
     auto SpeciesFoci(const Species& species) -> std::vector<std::string>
     {
         static constexpr auto to_name = [](const auto& f) noexcept -> const auto& { return f.Name(); };
-        return ToVec(species.Foci() | range_transform(to_name));
+        return species.Foci() | range_transform(to_name) | range_to_vec;
     }
 
     auto SpeciesHomeworlds(const Species& species) -> std::set<int>
@@ -89,7 +86,7 @@ namespace {
         auto it = species_homeworlds.find(species.Name());
         if (it == species_homeworlds.end())
             return {};
-        return {it->second.begin(), it->second.end()};
+        return it->second | range_to<std::set<int>>();
     }
 
     void UpdateMetersWrapper(Universe& universe, const py::object&)
@@ -124,20 +121,19 @@ namespace {
 
     auto ImmediateNeighbors(const Universe& universe, int system1_id, int empire_id) -> std::vector<int>
     {
-        auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
-        return ToVec(neighbours | range_values);
+        const auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
+        return neighbours | range_values | range_to_vec;
     }
 
     auto SystemNeighborsMap(const Universe& universe, int system1_id, int empire_id) -> std::map<int, double>
     {
-        auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
+        const auto neighbours{universe.GetPathfinder().ImmediateNeighbors(system1_id, empire_id)};
         static constexpr auto swap_kvp = [](const auto& kvp) { return std::pair{kvp.second, kvp.first}; };
-        auto dist_id_rng = neighbours | range_transform(swap_kvp);
-        return std::map<int, double>(dist_id_rng.begin(), dist_id_rng.end());
+        return neighbours | range_transform(swap_kvp) | range_to<std::map<int, double>>();
     }
 
     auto ObjectSpecials(const UniverseObject& object) -> std::vector<std::string>
-    { return ToVec(object.Specials() | range_keys); }
+    { return object.Specials() | range_keys | range_to_vec; }
 
     auto ObjectCurrentMeterValue(const UniverseObject& o, MeterType meter_type) -> float
     {
@@ -158,15 +154,14 @@ namespace {
         static constexpr auto get_part = [](std::string_view name) -> const auto* { return GetShipPart(name); };
         static constexpr auto is_pcdw = [](const auto* p) noexcept { return p && p->Class() == ShipPartClass::PC_DIRECT_WEAPON; }; // TODO: handle other weapon classes when they are implemented
         static constexpr auto to_cap = [](const auto* p) { return static_cast<int>(p->Capacity()); };
-        auto pcdw_cap_rng = ship_design.Parts() | range_transform(get_part) | range_filter(is_pcdw) |
-                            range_transform(to_cap);
-        return ToVec(pcdw_cap_rng);
+        return ship_design.Parts() | range_transform(get_part) | range_filter(is_pcdw)
+            | range_transform(to_cap) | range_to_vec;
     }
 
     auto HullSlots(const ShipHull& hull) -> std::vector<ShipSlotType>
     {
         static constexpr auto to_slot_type = [](const auto& slot) noexcept { return slot.type; };
-        return ToVec(hull.Slots() | range_transform(to_slot_type));
+        return hull.Slots() | range_transform(to_slot_type) | range_to_vec;
     }
 
     auto HullProductionLocation(const ShipHull& hull, int location_id) -> bool
@@ -213,7 +208,7 @@ namespace {
     }
 
     std::vector<std::string> ViewsToStrings(const std::vector<std::string_view>& svs)
-    { return ToVec(svs | range_transform(to_string)); }
+    { return svs | range_transform(to_string) | range_to_vec; }
 }
 
 namespace FreeOrionPython {
