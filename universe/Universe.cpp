@@ -3307,16 +3307,17 @@ std::vector<int> Universe::RecursiveDestroy(int object_id, const std::span<const
         for (auto* sys : m_objects.allRaw<System>())
             sys->RemoveStarlane(this_sys_id);
 
+
         // remove fleets / ships moving along destroyed starlane
-        std::vector<int> fleets_to_destroy;
-        fleets_to_destroy.reserve(m_objects.size<Fleet>());
-        for (const auto* fleet : m_objects.allRaw<Fleet>()) { // TODO: rangify?
-            if (fleet->SystemID() == INVALID_OBJECT_ID && (
-                fleet->NextSystemID() == this_sys_id ||
-                fleet->PreviousSystemID() == this_sys_id))
-            { fleets_to_destroy.push_back(fleet->ID()); }
-        }
-        for (const auto fleet_id : fleets_to_destroy)
+        const auto moving_to_or_from = [this_sys_id](const Fleet& fleet) noexcept {
+            return fleet.SystemID() == INVALID_OBJECT_ID &&
+                (fleet.NextSystemID() == this_sys_id || fleet.PreviousSystemID() == this_sys_id);
+        };
+
+        // collect before modifying source...
+        const auto fleet_ids_to_destroy = m_objects.findIDs<Fleet>(moving_to_or_from) | range_to_vec;
+
+        for (const auto fleet_id : fleet_ids_to_destroy)
             RecursiveDestroy(fleet_id, empire_ids);
 
         // then destroy system itself
