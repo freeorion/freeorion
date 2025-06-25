@@ -15,6 +15,7 @@
 namespace py = boost::python;
 
 namespace {
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
 wchar_t* GetFilePath(const boost::filesystem::path& path)
 {
 #if defined(FREEORION_WIN32)
@@ -27,6 +28,7 @@ wchar_t* GetFilePath(const boost::filesystem::path& path)
     return Py_DecodeLocale(path.string().c_str(), nullptr);
 #endif
 }
+#endif
 
 auto GetLoggableString(const wchar_t* const original)
 {
