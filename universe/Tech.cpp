@@ -566,7 +566,7 @@ std::string TechManager::FindFirstDependencyCycle() const {
                            << current_tech_name << "\"";
                     for (auto stack_it = stack.rbegin(); stack_it != stack_duplicate_it; ++stack_it) {
                         const auto& prereqs = (*stack_it)->Prerequisites();
-                        if (std::count(prereqs.begin(), prereqs.end(), current_tech_name)) {
+                        if (range_count(prereqs, current_tech_name)) {
                             current_tech_name = (*stack_it)->Name();
                             stream << " <-- \"" << current_tech_name << "\"";
                         }
