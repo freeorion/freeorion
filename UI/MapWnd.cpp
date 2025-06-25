@@ -2009,12 +2009,10 @@ void MapWnd::RenderSystems() {
     };
 
     static constexpr auto to_id_clr = [](const auto& e) noexcept { return std::pair{e.first, e.second->Color()}; };
-    auto id_clr_rng = empires | range_transform(to_id_clr);
-    const std::vector<std::pair<int, GG::Clr>> empire_colours(id_clr_rng.begin(), id_clr_rng.end());
+    const auto empire_colours = empires | range_transform(to_id_clr) | range_to_vec;
 
     const auto neutral_colour = GetOptionsDB().Get<GG::Clr>("ui.map.starlane.color");
-    const auto get_empire_colour = [&empire_colours, neutral_colour](int empire_id)
-    {
+    const auto get_empire_colour = [&empire_colours, neutral_colour](int empire_id) {
         const auto is_empire_id = [empire_id](const auto& id_clr) noexcept { return empire_id == id_clr.first; };
         auto it = range_find_if(empire_colours, is_empire_id);
         return (it != empire_colours.end()) ? it->second : neutral_colour;
@@ -2241,19 +2239,10 @@ void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
     const float dot_half_sz = dot_size / 2.0f;
 
     const auto colour = colour_override == GG::CLR_ZERO ? move_line.colour : colour_override;
-
-    std::vector<std::pair<int, int>> vert_screen_coords;
-    vert_screen_coords.reserve(move_line.vertices.size());
-    std::transform(move_line.vertices.begin(), move_line.vertices.end(),
-                   std::back_inserter(vert_screen_coords),
-                   [left{Value(ClientUpperLeft().x)},
-                    top{Value(ClientUpperLeft().y)},
-                    zoom{ZoomFactor()}] (const auto& vert)
-    {
-        int x = (vert.x * zoom) + left;
-        int y = (vert.y * zoom) + top;
-        return std::pair{x, y};
-    });
+    const auto to_zoom_shifted_xy =
+        [left{Value(ClientUpperLeft().x)}, top{Value(ClientUpperLeft().y)}, zoom{ZoomFactor()}]
+        (const auto& vert) -> std::pair<int, int> { return {(vert.x * zoom) + left, (vert.y * zoom) + top}; };
+    const auto vert_screen_coords = move_line.vertices | range_transform(to_zoom_shifted_xy) | range_to_vec;
 
     const auto vert_coord_end = vert_screen_coords.end();
     for (auto vert_coord_it = vert_screen_coords.begin(); vert_coord_it != vert_coord_end;) {
@@ -7046,19 +7035,13 @@ namespace {
                 return objects.findExistingRaw<const T>(pred);
         }();
         // collect ids and corresponding names
-        std::vector<std::pair<int, std::string_view>> ids_names;
-        ids_names.reserve(objects.size<T>());
-        range_copy(objs | range_transform(to_id_name), std::back_inserter(ids_names));
+        auto ids_names = objs | range_transform(to_id_name) | range_to_vec;
         // alphabetize, with empty names at end
-        auto not_empty_it = std::partition(ids_names.begin(), ids_names.end(),
-                                           [](const auto& id_name) { return !id_name.second.empty(); });
-        std::sort(ids_names.begin(), not_empty_it,
-                  [](const auto& lhs, const auto& rhs) { return lhs.second < rhs.second; });
-        // extract ordered ids
-        std::vector<int> retval;
-        retval.reserve(ids_names.size());
-        range_copy(ids_names | range_keys, std::back_inserter(retval));
-        return retval;
+        static constexpr auto not_empty = [](const auto& id_name) noexcept { return !id_name.second.empty(); };
+        auto not_empty_it = std::partition(ids_names.begin(), ids_names.end(), not_empty);
+        static constexpr auto second_less = [](const auto& lhs, const auto& rhs) noexcept { return lhs.second < rhs.second; };
+        std::sort(ids_names.begin(), not_empty_it, second_less);
+        return ids_names | range_keys | range_to_vec;
     }
 
     template <typename It>
