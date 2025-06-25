@@ -735,8 +735,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
     auto is_producible = [this, &context, &empire]() {
         const auto to_producible = [&context, &empire](const auto& elem)
         { return empire->ProducibleItem(elem.item, elem.location, context); };
-        auto prod_rng = m_queue | range_transform(to_producible);
-        return std::vector<uint8_t>(prod_rng.begin(), prod_rng.end());
+        return m_queue | range_transform(to_producible) | range_to<std::vector<uint8_t>>();
     }();
 
     boost::unordered_map<std::pair<ProductionQueue::ProductionItem, int>,
@@ -748,8 +747,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
         const int location_id = elem.item.CostIsProductionLocationInvariant(universe) ?
             INVALID_OBJECT_ID : elem.location;
 
-        using key_t = decltype(queue_item_costs_and_times)::key_type;
-        queue_item_costs_and_times.try_emplace(key_t{elem.item, location_id},
+        queue_item_costs_and_times.try_emplace(std::pair(elem.item, location_id),
                                                elem.ProductionCostAndTime(context));
 
         elem.turns_left_to_next_item = -1;
@@ -783,8 +781,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     const bool simulate_future =
-        std::any_of(available_pp.begin(), available_pp.end(),
-                    [](const auto& available) { return available.second > EPSILON; });
+        range_any_of(available_pp, [](const auto& available) noexcept { return available.second > EPSILON; });
 
     if (!simulate_future) {
         update_timer.EnterSection("Signal and Finish");
