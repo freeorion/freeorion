@@ -91,8 +91,9 @@ std::string ResearchQueue::Element::Dump() const {
     return retval.str();
 }
 
-bool ResearchQueue::InQueue(const std::string& tech_name) const
-{ return std::any_of(m_queue.begin(), m_queue.end(), [&tech_name](const Element& e){ return e.name == tech_name; }); }
+bool ResearchQueue::InQueue(const std::string& tech_name) const {
+    const auto is_name = [&tech_name](const Element& e) noexcept { return e.name == tech_name; };
+    return range_any_of(m_queue, is_name); }
 
 bool ResearchQueue::Paused(const std::string& tech_name) const {
     const auto it = find(tech_name);
@@ -108,11 +109,8 @@ bool ResearchQueue::Paused(int idx) const {
 }
 
 std::vector<std::string> ResearchQueue::AllEnqueuedProjects() const {
-    std::vector<std::string> retval;
-    retval.reserve(m_queue.size());
-    std::transform(m_queue.begin(), m_queue.end(), std::back_inserter(retval),
-                   [](const auto& elem) { return elem.name; });
-    return retval;
+    static constexpr auto to_name = [](const auto& elem) { return elem.name; };
+    return m_queue | range_transform(to_name) | range_to_vec;
 }
 
 std::string ResearchQueue::Dump() const {
@@ -149,12 +147,11 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         return;
     }
 
+    using SimTechStatusMap = std::map<std::string, TechStatus>;
     const auto& tm{GetTechManager()};
-    std::map<std::string, TechStatus> sim_tech_status_map;
-    using STSM_vt = decltype(sim_tech_status_map)::value_type;
-    std::transform(tm.begin(), tm.end(), std::inserter(sim_tech_status_map, sim_tech_status_map.end()),
-                   [&empire](const auto& name_tech)
-                   { return STSM_vt{name_tech.first, empire->GetTechStatus(name_tech.first)}; });
+    const auto to_name_status = [&empire](const auto& name_tech) -> SimTechStatusMap::value_type
+    { return {name_tech.first, empire->GetTechStatus(name_tech.first)}; };
+    auto sim_tech_status_map = tm | range_transform(to_name_status) | range_to<SimTechStatusMap>();
 
     SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue,
                                 m_total_RPs_spent, m_projects_in_progress, m_empire_id,
@@ -239,9 +236,9 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
         if (dpsim_tech_status_map[elem_name] == TechStatus::TS_UNRESEARCHABLE ||
             dpsim_tech_status_map[elem_name] == TechStatus::TS_HAS_RESEARCHED_PREREQ)
         {
-            auto prereqs_rng = tech->Prerequisites() | range_filter(is_incomplete);
             waiting_for_prereqs.insert_or_assign(
-                elem_name, std::set<std::string_view>(prereqs_rng.begin(), prereqs_rng.end()));
+                elem_name,
+                tech->Prerequisites() | range_filter(is_incomplete) | range_to<std::set<std::string_view>>());
         }
     }
 
@@ -279,7 +276,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
             const float RPs_to_spend = std::min(std::min(RPs_needed, RPs_per_turn_limit), cur_turn_rp_available);
             progress += RPs_to_spend / std::max(EPSILON, tech_cost);
-            dpsim_research_progress[cur_tech] = progress;
+            dpsim_research_progress.insert_or_assign(cur_tech, progress);
             cur_turn_rp_available -= RPs_to_spend;
 
             auto next_res_tech_it = cur_tech_it;
@@ -296,7 +293,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                 continue;
             }
 
-            dpsim_tech_status_map[tech_name] = TechStatus::TS_COMPLETE;
+            dpsim_tech_status_map.insert_or_assign(tech_name, TechStatus::TS_COMPLETE);
             dpsimulation_results[cur_tech] = static_cast<int>(dp_turns);
 
             m_queue[cur_tech].turns_left = static_cast<int>(dp_turns);
@@ -325,7 +322,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                 const auto this_tech_idx = orig_queue_order[u_tech_name];
                 dp_researchable_techs.insert(this_tech_idx);
                 waiting_for_prereqs.erase(prereq_tech_it);
-                already_processed[this_tech_idx] = true; // doesn't get any allocation on current turn
+                already_processed.insert_or_assign(this_tech_idx, true); // doesn't get any allocation on current turn
                 if (this_tech_idx < next_res_tech_idx )
                     next_res_tech_idx = this_tech_idx;
             }
@@ -338,10 +335,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 }
 
 void ResearchQueue::push_back(const std::string& tech_name, bool paused)
-{ m_queue.push_back(Element{tech_name, m_empire_id, 0.0f, -1, paused}); }
+{ m_queue.emplace_back(tech_name, m_empire_id, 0.0f, -1, paused); }
 
 void ResearchQueue::insert(iterator it, const std::string& tech_name, bool paused)
-{ m_queue.insert(it, Element{tech_name, m_empire_id, 0.0f, -1, paused}); }
+{ m_queue.emplace(it, tech_name, m_empire_id, 0.0f, -1, paused); }
 
 void ResearchQueue::erase(iterator it) {
     if (it == end())
@@ -350,11 +347,8 @@ void ResearchQueue::erase(iterator it) {
 }
 
 ResearchQueue::iterator ResearchQueue::find(const std::string& tech_name) {
-    for (iterator it = begin(); it != end(); ++it) {
-        if (it->name == tech_name)
-            return it;
-    }
-    return end();
+    const auto is_tech_name = [&tech_name](const auto& entry) noexcept { return entry.name == tech_name; };
+    return range_find_if(m_queue, is_tech_name);
 }
 
 void ResearchQueue::clear() {

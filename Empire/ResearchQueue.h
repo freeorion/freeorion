@@ -16,6 +16,17 @@ struct ScriptingContext;
 struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
+#if !defined(_MSC_VER)
+        Element() = default;
+        Element(std::string name_, int empire_id_, float alloc, int turns, bool p) :
+            name(std::move(name_)),
+            empire_id(empire_id_),
+            allocated_rp(alloc),
+            turns_left(turns),
+            paused(p)
+        {}
+#endif
+
         [[nodiscard]] std::string Dump() const;
 
         std::string name;
