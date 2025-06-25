@@ -80,10 +80,7 @@ namespace {
      * @return A vector containing the identifiers of all players.
      */
     auto AllPlayerIDs() -> std::vector<int>
-    {
-        auto ids_rng = AIClientApp::GetApp()->Players() | range_keys;
-        return {ids_rng.begin(), ids_rng.end()};
-    }
+    { return AIClientApp::GetApp()->Players() | range_keys | range_to_vec; }
 
     /** @brief Return if the player identified by @a player_id is the game
      *      host
