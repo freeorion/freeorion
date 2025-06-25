@@ -57,16 +57,18 @@ namespace {
     {
         if (next_techs.empty())
             return nullptr;
-        std::vector<float> costs;
-        costs.reserve(next_techs.size());
-        static constexpr float BIG_COST = std::numeric_limits<float>::max();
-        std::transform(next_techs.begin(), next_techs.end(), std::back_inserter(costs),
-                       [&context, empire_id](const Tech* tech)
-                       { return tech ? tech->ResearchCost(empire_id, context) : BIG_COST; });
-        const auto min_cost_it = std::min_element(costs.begin(), costs.end());
-        if (min_cost_it == costs.end() || *min_cost_it == BIG_COST)
+
+        static constexpr float BIG_COST = std::numeric_limits<float>::infinity();
+        const auto to_cost = [&context, empire_id](const Tech* tech)
+        { return tech ? tech->ResearchCost(empire_id, context) : BIG_COST; };
+
+        auto costs_rng = next_techs | range_transform(to_cost);
+        auto min_cost_it = range_min_element(costs_rng);
+
+        if (min_cost_it == costs_rng.end() || !std::isfinite(*min_cost_it))
             return nullptr;
-        const auto idx = std::distance(costs.begin(), min_cost_it);
+
+        const auto idx = range_distance(costs_rng.begin(), min_cost_it);
         return next_techs[idx];
     }
 }
@@ -154,7 +156,7 @@ Tech::Tech(std::string&& name, std::string&& description,
     m_tags_concatenated([&tags]() {
         // allocate storage for concatenated tags
         std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
-                                                      [](const auto& tag) { return tag.size(); });
+                                                      [](const auto& tag) noexcept { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
 
@@ -401,21 +403,18 @@ const TechCategory* TechManager::GetTechCategory(std::string_view name) const {
 
 std::vector<std::string_view> TechManager::CategoryNames() const {
     CheckPendingTechs();
-    auto cat_names_rng = m_categories | range_keys;
-    return {cat_names_rng.begin(), cat_names_rng.end()};
+    return m_categories | range_keys | range_to<std::vector<std::string_view>>();
 }
 
 std::vector<std::string_view> TechManager::TechNames() const {
     CheckPendingTechs();
-    auto tech_names_rng = m_techs | range_keys;
-    return {tech_names_rng.begin(), tech_names_rng.end()};
+    return m_techs | range_keys | range_to<std::vector<std::string_view>>();
 }
 
 std::vector<std::string_view> TechManager::TechNames(std::string_view name) const {
     CheckPendingTechs();
     const auto is_in_name_cat = [cat{name}](const auto& name_tech) noexcept { return name_tech.second.Category() == cat; };
-    auto tech_names_rng = m_techs | range_filter(is_in_name_cat) | range_keys;
-    return {tech_names_rng.begin(), tech_names_rng.end()};
+    return m_techs | range_filter(is_in_name_cat) | range_keys | range_to<std::vector<std::string_view>>();
 }
 
 std::vector<const Tech*> TechManager::AllNextTechs(const std::vector<std::string_view>& researched_techs) {
