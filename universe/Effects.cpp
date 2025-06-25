@@ -2713,11 +2713,8 @@ void AddStarlanes::Execute(ScriptingContext& context) const {
         return; // nothing to do!
 
     // get systems containing at least one endpoint object
-    std::vector<System*> endpoint_systems;
-    endpoint_systems.reserve(endpoint_objects.size());
-    auto end_sys_rng = endpoint_objects | range_filter(not_null)
-        | range_transform(to_system) | range_filter(not_null);
-    range_copy(end_sys_rng, std::back_inserter(endpoint_systems));
+    auto endpoint_systems = endpoint_objects | range_filter(not_null)
+        | range_transform(to_system) | range_filter(not_null) | range_to_vec;
 
     // ensure uniqueness of results
     std::sort(endpoint_systems.begin(), endpoint_systems.end());
@@ -2780,10 +2777,9 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
     const auto endpoint_objects = m_other_lane_endpoint_condition->Eval(std::as_const(context));
 
     // get system IDs of those objects
-    std::vector<int> endpoint_system_ids;
-    endpoint_system_ids.reserve(endpoint_objects.size());
-    std::transform(endpoint_objects.begin(), endpoint_objects.end(), std::back_inserter(endpoint_system_ids),
-                   [](const auto* obj) { return obj ? obj->SystemID() : INVALID_OBJECT_ID; });
+    static constexpr auto to_sys_id = [](const auto* obj) { return obj ? obj->SystemID() : INVALID_OBJECT_ID; };
+    auto endpoint_system_ids = endpoint_objects | range_transform(to_sys_id) | range_to_vec;
+
     // uniquify
     std::sort(endpoint_system_ids.begin(), endpoint_system_ids.end());
     auto unique_it = std::unique(endpoint_system_ids.begin(), endpoint_system_ids.end());
@@ -4103,11 +4099,9 @@ uint32_t GenerateSitRepMessage::GetCheckSum() const {
 
 std::vector<std::pair<std::string, const ValueRef::ValueRef<std::string>*>>
 GenerateSitRepMessage::MessageParameters() const {
-    std::vector<std::pair<std::string, const ValueRef::ValueRef<std::string>*>> retval;
-    retval.reserve(m_message_parameters.size());
-    std::transform(m_message_parameters.begin(), m_message_parameters.end(), std::back_inserter(retval),
-                   [](const auto& xx) { return std::pair(xx.first, xx.second.get()); });
-    return retval;
+    static constexpr auto massage = [](const auto& xx) -> std::pair<std::string, const ValueRef::ValueRef<std::string>*>
+    { return {xx.first, xx.second.get()}; };
+    return m_message_parameters | range_transform(massage) | range_to_vec;
 }
 
 std::unique_ptr<Effect> GenerateSitRepMessage::Clone() const {
