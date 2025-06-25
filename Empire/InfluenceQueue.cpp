@@ -43,8 +43,8 @@ std::string InfluenceQueue::Element::Dump() const {
 // InfluenceQueue //
 ////////////////////
 bool InfluenceQueue::InQueue(const std::string& name) const {
-    return std::any_of(m_queue.begin(), m_queue.end(),
-                       [name](const Element& e){ return e.name == name; });
+    const auto is_name = [&name](const Element& e) noexcept { return e.name == name; };
+    return range_any_of(m_queue, is_name);
 }
 
 float InfluenceQueue::AllocatedStockpileIP() const noexcept
