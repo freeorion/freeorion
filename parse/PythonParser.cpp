@@ -57,13 +57,13 @@ namespace {
             py::throw_error_already_set();
         }
         py::object o_filename_str{py::handle<>(filename_str)};
-        PyObject *code = Py_CompileStringObject(content, o_filename_str.ptr(), Py_file_input, nullptr, 2);
+        PyObject* code = Py_CompileStringObject(content, o_filename_str.ptr(), Py_file_input, nullptr, 2);
         if (!code) {
             ErrorLogger() << "Failed to compile";
             py::throw_error_already_set();
         }
         py::object o_code{py::handle<>(code)};
-        PyObject *result = PyEval_EvalCode(o_code.ptr(), globals.ptr(), globals.ptr());
+        PyObject* result = PyEval_EvalCode(o_code.ptr(), globals.ptr(), globals.ptr());
         if (!result) {
             ErrorLogger() << "Failed to eval";
             py::throw_error_already_set();
