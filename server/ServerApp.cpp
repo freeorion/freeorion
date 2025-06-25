@@ -1505,10 +1505,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     m_species_manager.ClearSpeciesHomeworlds();
 
     // Reset the object id manager for the new empires.
-    {
-        auto ids_rng = player_setup_data | range_keys;
-        m_universe.ResetAllIDAllocation(std::vector<int>(ids_rng.begin(), ids_rng.end()));
-    }
+    m_universe.ResetAllIDAllocation(player_setup_data | range_keys | range_to_vec);
 
     // Add predefined ship designs to universe
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse(m_universe);
@@ -1823,8 +1820,7 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
         m_universe.RecursiveDestroy(id, m_empires.EmpireIDs());
 #else
-        const auto& empire_ids = m_empires.EmpireIDs();
-        const std::vector<int> empire_ids_vec(empire_ids.begin(), empire_ids.end());
+        const auto empire_ids_vec = m_empires.EmpireIDs() | range_to_vec;
         const std::span<const int> empire_ids_span(empire_ids_vec);
         m_universe.RecursiveDestroy(id, empire_ids_span);
 #endif
@@ -1930,8 +1926,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     if (empire->Eliminated())
         return ALL_EMPIRES;
 
-    auto orders_it = std::find_if(m_player_data.begin(), m_player_data.end(),
-                                  [empire_id](const auto& pd) { return pd.empire_id == empire_id; });
+    const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
+    auto orders_it = range_find_if(m_player_data, is_empire_id);
     if (orders_it == m_player_data.end()) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
                      << " for \"" << player_connection->PlayerName()
@@ -2028,7 +2024,7 @@ std::vector<std::string> ServerApp::GetPlayerDelegation(const std::string& playe
         ErrorLogger() << "Python scripted authentication failed.";
         m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
-    return {result.begin(), result.end()};
+    return result;
 }
 
 bool ServerApp::IsHostless() const
@@ -2051,8 +2047,8 @@ int ServerApp::EffectsProcessingThreads() const
 void ServerApp::AddEmpireData(PlayerSaveGameData psgd) {
     if (psgd.empire_id == ALL_EMPIRES)
         return;
-    auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
-                           [eid{psgd.empire_id}](const auto& pd) { return pd.empire_id == eid; });
+    const auto is_empire_id = [eid{psgd.empire_id}](const auto& pd) noexcept { return pd.empire_id == eid; };
+    auto it = range_find_if(m_player_data, is_empire_id);
     if (it != m_player_data.end())
         *it = std::move(psgd);
     else
@@ -2062,8 +2058,8 @@ void ServerApp::AddEmpireData(PlayerSaveGameData psgd) {
 void ServerApp::RemoveEmpireData(int empire_id) {
     if (empire_id == ALL_EMPIRES)
         return;
-    auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
-                           [empire_id](const auto& pd) { return pd.empire_id == empire_id; });
+    const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
+    auto it = range_find_if(m_player_data, is_empire_id);
     if (it != m_player_data.end())
         m_player_data.erase(it);
 }
@@ -2073,8 +2069,8 @@ void ServerApp::ClearEmpireTurnOrders(int empire_id) {
         for (auto& pd : m_player_data)
             pd.orders.Reset();
     } else {
-        auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
-                               [empire_id](const auto& pd) { return pd.empire_id == empire_id; });
+        const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
+        auto it = range_find_if(m_player_data, is_empire_id);
         if (it != m_player_data.end())
             it->orders.Reset(); // leaving UI data and AI state intact
     }
@@ -2083,8 +2079,8 @@ void ServerApp::ClearEmpireTurnOrders(int empire_id) {
 void ServerApp::UpdatePartialOrders(int empire_id, OrderSet added, const std::set<int>& deleted) {
     if (empire_id == ALL_EMPIRES)
         return;
-    auto it = std::find_if(m_player_data.begin(), m_player_data.end(),
-                           [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; });
+    const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
+    auto it = range_find_if(m_player_data, is_empire_id);
     if (it == m_player_data.end()) {
         ErrorLogger() << "Server given partial orders for unknown empire id: " << empire_id;
         return;
@@ -2513,15 +2509,16 @@ namespace {
 #if (!defined(__clang_major__) || (__clang_major__ >= 16)) && (BOOST_VERSION >= 107700)
         const auto empire_ids = std::span<const int>(empires.EmpireIDs());
 #else
-        const std::vector<int> empire_ids_vec(empires.EmpireIDs().begin(), empires.EmpireIDs().end());
+        const auto empire_ids_vec = empires.EmpireIDs() | range_to_vec;
         const auto empire_ids = std::span<const int>(empire_ids_vec);
 #endif
 
         for (const CombatInfo& combat_info : combats) {
             // update visibilities from combat, in case anything was revealed
             // by shooting during combat
+            static constexpr auto id_0_plus = [](auto id) noexcept { return id.first >= 0; };
             for (const auto& [vis_empire_id, empire_vis] : combat_info.empire_object_visibility) {
-                for (const auto& [vis_object_id, object_vis] : empire_vis | range_filter([](auto id) { return id.first >= 0; }))
+                for (const auto& [vis_object_id, object_vis] : empire_vis | range_filter(id_0_plus))
                     universe.SetEmpireObjectVisibility(vis_empire_id, vis_object_id, object_vis);  // does not lower visibility
             }
 
@@ -2650,7 +2647,7 @@ namespace {
 
     /** De-nests sub-events into a single layer list of events */
     std::vector<ConstCombatEventPtr> FlattenEvents(const std::vector<CombatEventPtr>& events1) {
-        std::vector<ConstCombatEventPtr> flat_events{events1.begin(), events1.end()}; // copy top-level input events
+        auto flat_events = events1 | range_to<std::vector<ConstCombatEventPtr>>(); // copy top-level input events
 
         // copy nested sub-events of top-level events
         for (const auto& event1 : events1) {                        // can't modify the input events pointers
@@ -2829,7 +2826,7 @@ namespace {
         const std::span<const int> empire_ids(context.EmpireIDs());
 #else
         const auto& empire_ids_fs = context.EmpireIDs();
-        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const auto empire_ids_vec = empire_ids_fs | range_to_vec;
         const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
@@ -3011,7 +3008,7 @@ namespace {
         const std::span<const int> empire_ids(context.EmpireIDs());
 #else
         const auto& empire_ids_fs = context.EmpireIDs();
-        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const auto empire_ids_vec = empire_ids_fs | range_to_vec;
         const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
@@ -3042,8 +3039,7 @@ namespace {
         }
 
         static constexpr auto to_id = [](const auto& o) noexcept { return o->ID(); };
-        auto invading_ids_rng = invade_ships | range_transform(to_id);
-        std::vector<int> invading_ship_ids(invading_ids_rng.begin(), invading_ids_rng.end());
+        auto invading_ship_ids = invade_ships | range_transform(to_id) | range_to_vec;
 
         // delete ships that invaded something
         for (auto* ship : invade_ships) {
@@ -3085,9 +3081,9 @@ namespace {
             if (empires_troops.empty())
                 continue;
 
-            auto emp_ids_rng = empires_troops | range_keys |
-                range_filter([](const auto id) noexcept { return id != ALL_EMPIRES; });
-            std::set<int> all_involved_empires(emp_ids_rng.begin(), emp_ids_rng.end());
+            static constexpr auto is_valid_empire_id = [](const auto id) noexcept { return id != ALL_EMPIRES; };
+            auto all_involved_empires = empires_troops | range_keys
+                | range_filter(is_valid_empire_id) | range_to<std::set<int>>();
 
             auto planet = objects.get<Planet>(planet_id);
             if (!planet) {
@@ -3352,7 +3348,7 @@ namespace {
         const std::span<const int> empire_ids(empires.EmpireIDs());
 #else
         const auto& empire_ids_fs = empires.EmpireIDs();
-        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const auto empire_ids_vec = empire_ids_fs | range_to_vec;
         const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
@@ -3452,7 +3448,7 @@ namespace {
             }
 
             // sort by annexation cost, so most expensive annexations are resolved first.
-            static constexpr auto expensive_first = [](const auto& lhs, const auto& rhs) { return lhs.second > rhs.second; };
+            static constexpr auto expensive_first = [](const auto& lhs, const auto& rhs) noexcept { return lhs.second > rhs.second; };
             std::stable_sort(planets_costs.begin(), planets_costs.end(), expensive_first);
         }
 
@@ -3587,7 +3583,7 @@ namespace {
         const std::span<const int> empire_ids(context.EmpireIDs());
 #else
         const auto& empire_ids_fs = context.EmpireIDs();
-        const std::vector<int> empire_ids_vec(empire_ids_fs.begin(), empire_ids_fs.end());
+        const auto empire_ids_vec = empire_ids_fs | range_to_vec;
         const std::span<const int> empire_ids(empire_ids_vec);
 #endif
 
@@ -3632,7 +3628,7 @@ namespace {
 
             static constexpr auto is_turn_end = [](const MovePathNode& n) { return n.turn_end || n.blockaded_here; };
             // get first turn end node. blockades also count as a turn end for this purpose
-            auto turn_end_node_it = std::find_if(nodes.begin(), nodes.end(), is_turn_end);
+            auto turn_end_node_it = range_find_if(nodes, is_turn_end);
             if (turn_end_node_it == nodes.end())
                 return {fleet_id_and_owner, {}}; // didn't find a turn end node??? (unexpected)
 
@@ -4068,8 +4064,8 @@ namespace {
 void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
     m_cached_empire_policy_adoption_costs = [this, &context]() {
         const auto to_costs = [&context](const auto& e) { return std::pair{e.first, e.second->PolicyAdoptionCosts(context)}; };
-        auto ids_costs_rng = m_empires | range_transform(to_costs);
-        return decltype(m_cached_empire_policy_adoption_costs)(ids_costs_rng.begin(), ids_costs_rng.end());
+        using OutT = decltype(m_cached_empire_policy_adoption_costs);
+        return m_empires | range_transform(to_costs) | range_to<OutT>();
     }();
     m_cached_empire_research_costs_times = [this, &context]() {
         using map_t = decltype(m_cached_empire_research_costs_times);
@@ -4095,10 +4091,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
             return map_t::value_type(std::piecewise_construct, std::forward_as_tuple(id_empire.first),
                                      std::forward_as_tuple(nct_rng.begin(), nct_rng.end()));
         };
-
-        auto map_values = m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache);
-
-        return map_t(map_values.begin(), map_values.end());
+        return m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache) | range_to<map_t>();
     }();
     m_cached_empire_production_costs_times = [this, &context]() {
         using map_t = decltype(m_cached_empire_production_costs_times);
@@ -4114,8 +4107,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
                                      std::forward_as_tuple(ndct_rng.begin(), ndct_rng.end())};
         };
 
-        auto map_values = m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache);
-        return map_t(map_values.begin(), map_values.end());
+        return m_empires | range_filter(empire_not_null) | range_transform(to_id_and_cache) | range_to<map_t>();
     }();
     m_cached_empire_annexation_costs = [&context]() {
         std::map<int, std::vector<std::pair<int, double>>> retval;
