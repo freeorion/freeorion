@@ -68,7 +68,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     InitDirs((args.empty() ? "" : args.front()));
 #endif
 
-    const auto& logger_init_helper = GetLoggerInitHelper();
+    [[maybe_unused]] const auto& logger_init_helper = GetLoggerInitHelper();
 
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
     try {
