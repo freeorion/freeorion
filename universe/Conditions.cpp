@@ -131,7 +131,7 @@ namespace {
     constexpr auto not_null = [](const auto& o) noexcept -> bool { return !!o; };
     constexpr auto is_false = [](const auto& p) noexcept -> bool { return !p; };
     constexpr auto lc_invariant = [](const auto& e) { return !e || e->LocalCandidateInvariant(); };
-    constexpr auto get_raw = [](const auto& xx) noexcept(noexcept(xx.get())) { return xx.get(); };
+    constexpr auto get_raw = [](const auto& xx) noexcept(noexcept(xx.get())) -> const auto* { return xx.get(); };
 }
 
 namespace Condition {
@@ -626,14 +626,13 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::vector<std::pair<SortKeyType, const UniverseObjectCXBase*>> sort_key_objects;
-        using sort_key_pair_t = typename decltype(sort_key_objects)::value_type;
-        sort_key_objects.reserve(from_set.size());
-        std::transform(from_set.begin(), from_set.end(), std::back_inserter(sort_key_objects),
-                       [&context, sort_key](const auto* obj) -> sort_key_pair_t {
-                           const ScriptingContext source_context{context, ScriptingContext::LocalCandidate{}, obj};
-                           return {sort_key->Eval(source_context), obj};
-                       });
+        const auto to_sortkey =
+            [&context, sort_key](const auto* obj) -> std::pair<SortKeyType, const UniverseObjectCXBase*>
+        {
+            const ScriptingContext source_context{context, ScriptingContext::LocalCandidate{}, obj};
+            return {sort_key->Eval(source_context), obj};
+        };
+        auto sort_key_objects = from_set | range_transform(to_sortkey) | range_to_vec;
 
         // how many objects to select?
         number = std::min<uint32_t>(number, sort_key_objects.size());
@@ -11009,10 +11008,8 @@ uint32_t And::GetCheckSum() const {
     return retval;
 }
 
-std::vector<const Condition*> And::OperandsRaw() const {
-    auto raw_rng = m_operands | range_transform(get_raw);
-    return {raw_rng.begin(), raw_rng.end()};
-}
+std::vector<const Condition*> And::OperandsRaw() const
+{ return m_operands | range_transform(get_raw) | range_to_vec; }
 
 std::unique_ptr<Condition> And::Clone() const
 { return std::make_unique<And>(ValueRef::CloneUnique(m_operands)); }
@@ -11138,10 +11135,8 @@ void Or::SetTopLevelContent(const std::string& content_name) {
         operand->SetTopLevelContent(content_name);
 }
 
-std::vector<const Condition*> Or::OperandsRaw() const {
-    auto raw_rng = m_operands | range_transform(get_raw);
-    return {raw_rng.begin(), raw_rng.end()};
-}
+std::vector<const Condition*> Or::OperandsRaw() const
+{ return m_operands | range_transform(get_raw) | range_to_vec; }
 
 std::unique_ptr<Condition> Or::Clone() const
 { return std::make_unique<Or>(ValueRef::CloneUnique(m_operands)); }
@@ -11405,10 +11400,8 @@ uint32_t OrderedAlternativesOf::GetCheckSum() const {
     return retval;
 }
 
-std::vector<const Condition*> OrderedAlternativesOf::Operands() const {
-    auto raw_rng = m_operands | range_transform(get_raw);
-    return {raw_rng.begin(), raw_rng.end()};
-}
+std::vector<const Condition*> OrderedAlternativesOf::Operands() const
+{ return m_operands | range_transform(get_raw) | range_to_vec; }
 
 std::unique_ptr<Condition> OrderedAlternativesOf::Clone() const
 { return std::make_unique<OrderedAlternativesOf>(ValueRef::CloneUnique(m_operands)); }
