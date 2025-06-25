@@ -300,7 +300,7 @@ namespace {
 void GGHumanClientApp::InitLogging() {
     // Force the log file if requested.
     if (GetOptionsDB().Get<std::string>("log-file").empty())
-        GetOptionsDB().Set("log-file", PathToString(GetUserDataDir() / "freeorion.log"));
+        GetOptionsDB().Set("log-file", DefaultLogPath());
 
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
