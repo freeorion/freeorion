@@ -31,6 +31,7 @@ inline constexpr auto& range_min_element = std::ranges::min_element;
 inline constexpr auto& range_equal = std::ranges::equal_range;
 inline constexpr auto& range_end = std::ranges::end;
 inline constexpr auto& range_count_if = std::ranges::count_if;
+inline constexpr auto& range_count = std::ranges::count;
 inline constexpr auto& range_distance = std::ranges::distance;
 #else
 # include <span>
@@ -157,6 +158,8 @@ template <typename... Args>
 inline auto range_end(Args&&... args) { return boost::end(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_count_if(Args&&... args) { return boost::count_if(std::forward<Args>(args)...); }
+template <typename... Args>
+inline auto range_count(Args&&... args) { return boost::count(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_distance(Args&&... args) { return boost::distance(std::forward<Args>(args)...); }
 
