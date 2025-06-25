@@ -179,9 +179,8 @@ boost::container::flat_set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusW
     const auto to_other_id = [empire_id](const auto& e1e2) noexcept
     { return e1e2.first == empire_id ? e1e2.second : e1e2.first; };
 
-    auto eids_rng = statuses | range_filter(is_status) | range_keys
-        | range_filter(has_empire_id) | range_transform(to_other_id);
-    return {eids_rng.begin(), eids_rng.end()};
+    return statuses | range_filter(is_status) | range_keys | range_filter(has_empire_id)
+        | range_transform(to_other_id) | range_to<boost::container::flat_set<int>>();
 }
 
 bool EmpireManager::DiplomaticMessageAvailable(int sender_id, int recipient_id) const {
@@ -357,8 +356,7 @@ void EmpireManager::ResetDiplomacy() {
 
 void EmpireManager::RefreshCapitalIDs() {
     static constexpr auto to_cap_id = [](const auto& e) noexcept { return e.second->CapitalID(); };
-    auto ids_rng = m_const_empire_map | range_transform(to_cap_id);
-    m_capital_ids = decltype(m_capital_ids)(ids_rng.begin(), ids_rng.end());
+    m_capital_ids = m_const_empire_map | range_transform(to_cap_id) | range_to<decltype(m_capital_ids)>();
 }
 
 void EmpireManager::GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
