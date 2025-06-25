@@ -62,8 +62,7 @@ namespace {
         auto cats = GetPolicyManager().PolicyCategories();
         static constexpr auto to_csm = [](std::string_view cat)
         { return std::pair<std::string_view, std::string>{cat, cat + "_NUM_POLICY_SLOTS"}; }; // derive meters from PolicyManager parsed policies' categories
-        auto cats_slot_meters_rng = cats | range_transform(to_csm);
-        return std::vector(cats_slot_meters_rng.begin(), cats_slot_meters_rng.end());
+        return cats | range_transform(to_csm) | range_to_vec;
     }
 
     DeclareThreadSafeLogger(supply);
@@ -778,11 +777,8 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 
 std::vector<int> Empire::AvailableShipDesigns(const Universe& universe) const {
     // create new map containing all ship designs that are available
-    std::vector<int> retval;
-    retval.reserve(m_known_ship_designs.size());
-    std::copy_if(m_known_ship_designs.begin(), m_known_ship_designs.end(),
-                 std::back_inserter(retval), [&universe, this](int design_id)
-                 { return ShipDesignAvailable(design_id, universe); });
+    const auto is_available = [&universe, this](int design_id) { return ShipDesignAvailable(design_id, universe); };
+    auto retval = m_known_ship_designs | range_filter(is_available) | range_to_vec;
     std::sort(retval.begin(), retval.end());
     auto unique_it = std::unique(retval.begin(), retval.end());
     retval.erase(unique_it, retval.end());
