@@ -42,7 +42,7 @@ public:
     [[nodiscard]] boost::optional<const CombatLog&> GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs, if any. */
-    [[nodiscard]] std::vector<int> IncompleteLogIDs() const { return {m_incomplete_logs.begin(), m_incomplete_logs.end()}; }
+    [[nodiscard]] std::vector<int> IncompleteLogIDs() const { return m_incomplete_logs | range_to_vec; }
 
     int AddNewLog(CombatLog log);      // adds log, returns unique log id
 
