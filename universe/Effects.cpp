@@ -1536,7 +1536,7 @@ SetSpecies::SetSpecies(std::unique_ptr<ValueRef::ValueRef<std::string>>&& specie
 {}
 
 void SetSpecies::Execute(ScriptingContext& context) const {
-    if (!context.effect_target)
+    if (!context.effect_target || !m_species_name)
         return;
 
     if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_SHIP) {
@@ -2684,11 +2684,12 @@ AddStarlanes::AddStarlanes(std::unique_ptr<Condition::Condition>&& other_lane_en
 {}
 
 namespace {
-    constexpr auto not_null = [](const auto* o) -> bool { return o; };
+    constexpr auto not_null = [](const auto& o) noexcept -> bool { return static_cast<bool>(o); };
 }
 
 void AddStarlanes::Execute(ScriptingContext& context) const {
     const auto to_system = [&context](UniverseObject* o) -> System* {
+        if (!o) return nullptr;
         if (o->ObjectType() == UniverseObjectType::OBJ_SYSTEM)
             return static_cast<System*>(o);
         return context.ContextObjects().getRaw<System>(o->SystemID()); // may be nullptr
@@ -2787,6 +2788,7 @@ void RemoveStarlanes::Execute(ScriptingContext& context) const {
     std::sort(endpoint_system_ids.begin(), endpoint_system_ids.end());
     auto unique_it = std::unique(endpoint_system_ids.begin(), endpoint_system_ids.end());
     endpoint_system_ids.erase(unique_it, endpoint_system_ids.end());
+
     // get all those systems
     auto endpoint_systems = context.ContextObjects().findRaw<System>(endpoint_system_ids);
 
@@ -4415,7 +4417,7 @@ void Conditional::Execute(ScriptingContext& context, const TargetSet& targets) c
         return;
 
     // apply sub-condition to target set to pick which to act on with which of sub-effects
-    TargetSet matches{targets.begin(), targets.end()};
+    TargetSet matches(targets);
     TargetSet non_matches;
     non_matches.reserve(matches.size());
     if (m_target_condition)
@@ -4447,7 +4449,7 @@ void Conditional::Execute(ScriptingContext& context,
     TraceLogger(effects) << "\n\nExecute Conditional effect: \n" << Dump();
 
     // apply sub-condition to target set to pick which to act on with which of sub-effects
-    TargetSet matches{targets.begin(), targets.end()};
+    TargetSet matches(targets);
     TargetSet non_matches;
     non_matches.reserve(matches.size());
 
