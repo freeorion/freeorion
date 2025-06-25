@@ -181,22 +181,19 @@ const PolicyManager::PoliciesTypeMap& PolicyManager::Policies() const noexcept {
 
 std::vector<std::string> PolicyManager::PolicyNamesCopies() const {
     CheckPendingPolicies();
-    auto names_rng = m_policies | range_keys;
-    return {names_rng.begin(), names_rng.end()};
+    return m_policies | range_keys | range_to_vec;
 }
 
 std::vector<std::string_view> PolicyManager::PolicyNames(std::string_view category_name) const {
     CheckPendingPolicies();
     const auto is_cat = [cat{category_name}](const auto& n_p) noexcept { return n_p.second.Category() == cat; };
-    auto names_rng = m_policies | range_filter(is_cat) | range_keys;
-    return {names_rng.begin(), names_rng.end()};
+    return m_policies | range_filter(is_cat) | range_keys | range_to<std::vector<std::string_view>>();
 }
 
 std::vector<std::string_view> PolicyManager::PolicyCategories() const {
     CheckPendingPolicies();
     static constexpr auto to_cat = [](const auto& n_p) noexcept -> std::string_view { return n_p.second.Category(); };
-    auto cats_rng = m_policies | range_transform(to_cat);
-    std::vector<std::string_view> retval(cats_rng.begin(), cats_rng.end());
+    auto retval = m_policies | range_transform(to_cat) | range_to_vec;
     std::sort(retval.begin(), retval.end());
     auto unique_it = std::unique(retval.begin(), retval.end());
     retval.erase(unique_it, retval.end());
@@ -215,7 +212,7 @@ void PolicyManager::CheckPendingPolicies() const {
         return;
 
     std::sort(parsed_vec.begin(), parsed_vec.end(),
-              [](const auto& lhs, const auto& rhs) { return lhs.Name() < rhs.Name(); });
+              [](const auto& lhs, const auto& rhs) noexcept { return lhs.Name() < rhs.Name(); });
 
     m_policies.reserve(parsed_vec.size());
 
