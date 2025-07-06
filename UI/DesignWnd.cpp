@@ -1146,7 +1146,8 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         // Remove the default designs from the empire's current designs.
         // Purpose and logic of this is unclear... author didn't comment upon inquiry, but having this here reportedly fixes some issues...
         DebugLogger() << "Remove default designs from empire";
-        for (const auto design_id : empire->ShipDesigns())
+        const auto empire_design_ids = empire->ShipDesigns();
+        for (const auto design_id : empire_design_ids)
             app.Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design_id, true);
     }
 
