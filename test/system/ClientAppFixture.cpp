@@ -43,7 +43,7 @@ ClientAppFixture::ClientAppFixture() :
     InfoLogger() << FreeOrionVersionString();
     DebugLogger() << "Test client initialized";
 
-    GetOptionsDB().Set<std::string>("resource.path", PathToString(GetBinDir() / "default"));
+    GetOptionsDB().Set<boost::filesystem::path>("resource.path", GetBinDir() / "default");
 
     std::thread background([this] () {
         DebugLogger() << "Started background parser thread";
