@@ -18,7 +18,8 @@ jobs:
           - debian-stable
           - debian-sid
           - debian-sid-i386
-          - fedora-rawhide
+          # Disabling due to consistent error: "nothing provides libminiupnpc.so.20()(64bit) needed by godot3-headless-3.6-5.fc43.x86_64 from rawhide"
+          # - fedora-rawhide
         godot3: [true]
         include:
           - image: manjaro
