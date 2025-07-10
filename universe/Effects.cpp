@@ -1559,26 +1559,20 @@ void SetSpecies::Execute(ScriptingContext& context) const {
         auto& initial_focus = planet->Focus();
         auto available_foci = planet->AvailableFoci(context);
 
-        // leave current focus unchanged if available.
-        if (std::any_of(available_foci.begin(), available_foci.end(),
-                        [&initial_focus](const auto& af) { return initial_focus == af; }))
-        { return; }
+        // leave current focus unchanged, if available.
+        if (range_contains(available_foci, initial_focus))
+            return;
 
-        const Species* species = context.species.GetSpecies(planet->SpeciesName());
-        const auto default_focus = species ? std::string_view{species->DefaultFocus()} : "";
-
-        // chose default focus if available. otherwise use any available focus
-        bool default_available = false;
-        for (const auto& available_focus : available_foci) {
-            if (available_focus == default_focus) {
-                default_available = true;
-                break;
+        // chose default focus for species, if available.
+        if (const Species* species = context.species.GetSpecies(planet->SpeciesName())) {
+            if (range_contains(available_foci, species->DefaultFocus())) {
+                planet->SetFocus(species->DefaultFocus(), context);
+                return;
             }
         }
 
-        if (default_available)
-            planet->SetFocus(std::string{default_focus}, context);
-        else if (!available_foci.empty())
+        // otherwise use any available focus
+        if (!available_foci.empty())
             planet->SetFocus(std::string{available_foci.front()}, context);
     }
 }
