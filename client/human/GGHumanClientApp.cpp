@@ -363,6 +363,9 @@ void GGHumanClientApp::Initialize() {
         ErrorLogger() << "OpenGL version is less than 2.1; FreeOrion may crash during initialization";
     }
 
+    SetStringtableDependentOptionDefaults();
+    SetGLVersionDependentOptionDefaults();
+
     SetStyleFactory(std::make_unique<CUIStyle>());
 
     SetMinDragTime(0);
@@ -415,9 +418,6 @@ void GGHumanClientApp::Initialize() {
     WindowMovedSignal.connect(  boost::bind(&GGHumanClientApp::HandleWindowMove,  this, ph::_1, ph::_2));
     WindowClosingSignal.connect(boost::bind(&GGHumanClientApp::HandleAppQuitting, this));
     AppQuittingSignal.connect(  boost::bind(&GGHumanClientApp::HandleAppQuitting, this));
-
-    SetStringtableDependentOptionDefaults();
-    SetGLVersionDependentOptionDefaults();
 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("ui.input.mouse.button.swap.enabled"));
 
