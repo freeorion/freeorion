@@ -4418,16 +4418,12 @@ void Conditional::Execute(ScriptingContext& context, const TargetSet& targets) c
         m_target_condition->Eval(context, matches, non_matches, Condition::SearchDomain::MATCHES);
 
     if (!matches.empty() && !m_true_effects.empty()) {
-        for (auto& effect : m_true_effects) {
-            if (effect)
-                effect->Execute(context, matches);
-        }
+        for (auto& effect : m_true_effects | range_filter(not_null))
+            effect->Execute(context, matches);
     }
     if (!non_matches.empty() && !m_false_effects.empty()) {
-        for (auto& effect : m_false_effects) {
-            if (effect)
-                effect->Execute(context, non_matches);
-        }
+        for (auto& effect : m_false_effects | range_filter(not_null))
+            effect->Execute(context, non_matches);
     }
 }
 
