@@ -4201,6 +4201,28 @@ SetVisibility::SetVisibility(std::unique_ptr<ValueRef::ValueRef<Visibility>> vis
     m_condition(std::move(of_objects))
 {}
 
+namespace {
+    constexpr auto to_id = [](const auto* o) noexcept(noexcept(o->ID())) { return o->ID(); };
+
+    std::vector<int> GetUniqueMatchesIDs(const ScriptingContext& context, const Condition::Condition* cond) {
+        if (!cond && !context.effect_target)
+            return {};
+        if (!cond)
+            return {context.effect_target->ID()};
+
+        // get target object IDs
+        const auto condition_matches = cond->Eval(context);
+        auto object_ids = condition_matches | range_filter(not_null) | range_transform(to_id) | range_to_vec;
+
+        // ensure uniqueness
+        std::sort(object_ids.begin(), object_ids.end());
+        auto unique_it = std::unique(object_ids.begin(), object_ids.end());
+        object_ids.erase(unique_it, object_ids.end());
+
+        return object_ids;
+    }
+}
+
 void SetVisibility::Execute(ScriptingContext& context) const {
     if (!context.effect_target)
         return;
@@ -4282,22 +4304,7 @@ void SetVisibility::Execute(ScriptingContext& context) const {
     }
 
     // what to set visibility of?
-    std::vector<int> object_ids;
-    if (!m_condition) {
-        object_ids.push_back(context.effect_target->ID());
-    } else {
-        // get target object IDs
-        Condition::ObjectSet condition_matches = m_condition->Eval(std::as_const(context));
-        object_ids.reserve(condition_matches.size());
-        std::transform(condition_matches.begin(), condition_matches.end(),
-                       std::back_inserter(object_ids),
-                       [](const auto* o) { return o->ID(); });
-        // ensure uniqueness
-        std::sort(object_ids.begin(), object_ids.end());
-        auto unique_it = std::unique(object_ids.begin(), object_ids.end());
-        object_ids.resize(std::distance(object_ids.begin(), unique_it));
-    }
-
+    const auto object_ids = GetUniqueMatchesIDs(context, m_condition.get());
     const int source_id = context.source ? context.source->ID() : INVALID_OBJECT_ID;
 
     for (const int emp_id : empire_ids) {
