@@ -1144,10 +1144,17 @@ void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     auto& db = GetOptionsDB();
 
-    if (db.OptionExists(vfe_opt) && !GetOptionsDB().Get<bool>(vfe_opt) &&
-        (db.Get<GG::X>(width_opt) != w || db.Get<GG::Y>(height_opt) != h))
-    {
-        if (db.Get<bool>(repo_opt)) {
+    const auto windowed = db.OptionExistsAndHasTypedValue<bool>(vfe_opt) &&
+                          !GetOptionsDB().Get<bool>(vfe_opt);
+
+    const auto wind_width_height_opts_inited = windowed &&
+        db.OptionExistsAndHasTypedValue<int>(width_opt) && db.OptionExistsAndHasTypedValue<int>(height_opt);
+
+    const auto mismatched_width_height = wind_width_height_opts_inited &&
+        (db.Get<int>(width_opt) != Value(w) || db.Get<int>(height_opt) != Value(h));
+
+    if (mismatched_width_height) {
+        if (db.OptionExistsAndHasTypedValue<bool>(repo_opt) && db.Get<bool>(repo_opt)) {
             // Reposition windows if in windowed mode.
             RepositionWindowsSignal();
         }
