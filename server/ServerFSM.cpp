@@ -1276,17 +1276,17 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
-        if (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit) {
-            has_important_changes = true;
-            m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
+    if (sender->HasAuthRole(Networking::RoleType::ROLE_HOST) && 
+        (m_lobby_data->any_can_edit != incoming_lobby_data.any_can_edit))
+    {
+        has_important_changes = true;
+        m_lobby_data->any_can_edit = incoming_lobby_data.any_can_edit;
 
-            // change role ROLE_GALAXY_SETUP for all non-host players
-            for (const auto& player_connection : server.Networking().AllPlayerConnections()) {
-                if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
-                    player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
-                                                   m_lobby_data->any_can_edit);
-                }
+        // change role ROLE_GALAXY_SETUP for all non-host players
+        for (const auto& player_connection : server.Networking().AllPlayerConnections()) {
+            if (!player_connection->HasAuthRole(Networking::RoleType::ROLE_HOST)) {
+                player_connection->SetAuthRole(Networking::RoleType::ROLE_GALAXY_SETUP,
+                                               m_lobby_data->any_can_edit);
             }
         }
     }
@@ -1319,7 +1319,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.empire_name.empty())
                     psd.empire_name = GenerateEmpireName(psd.player_name, incoming_lobby_data.players);
                 if (psd.starting_species_name.empty()) {
-                    if (m_lobby_data->seed != "")
+                    if (!m_lobby_data->seed.empty())
                         psd.starting_species_name = server.m_species_manager.RandomPlayableSpeciesName();
                     else
                         psd.starting_species_name = server.m_species_manager.SequentialPlayableSpeciesName(m_ai_next_index);
