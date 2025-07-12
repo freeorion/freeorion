@@ -178,6 +178,32 @@ public:
         return it != m_options.end() && it->recognized;
     }
 
+    /** Has an option with name \a name been added to this OptionsDB and
+      * has a value that can be interpreted as specified type OptT */
+    template <typename OptT>
+    bool OptionExistsAndHasTypedValue(std::string_view name) const {
+        auto it = find_option(name);
+        if (it == m_options.end() || !it->recognized)
+            return false; // no so-named option
+
+        try {
+            [[maybe_unused]] auto val = boost::any_cast<OptT>(it->value);
+            //std::cout << name << " : " << typeid(val).name() << " value: " << val << "\n";
+            return true; // directly interprable as OptT
+        } catch (const boost::bad_any_cast&) {
+            if constexpr (std::is_enum_v<std::decay_t<OptT>>) {
+                try {
+                    [[maybe_unused]] auto val = boost::any_cast<std::underlying_type_t<OptT>>(it->value);
+                    //std::cout << name << " : " << typeid(val).name() << " value: " << val << "\n";
+                    return true; // castable to OptT
+                } catch (...) {}                
+            }
+        } catch (...) {}
+
+        //std::cout << name << " : not a " << typeid(OptT).name() << "\n";
+        return false; // not interpreable an OptT
+    }
+
     /** write the optionDB's non-default state to the XML config file. */
     bool Commit(bool only_if_dirty = true, bool only_non_default = true);
 
