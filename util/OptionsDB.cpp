@@ -42,11 +42,17 @@ namespace {
         return retval;
     }
 
-    std::string_view StripQuotation(std::string_view str) {
+    constexpr std::string_view StripQuotation(std::string_view str) noexcept {
         if (str.size() < 2 || str[0] != '"' || str[str.size() - 1] != '"')
             return str;
         return str.substr(1, str.size() - 2);
     }
+
+    static_assert(StripQuotation("\"quoted\"") == "quoted");
+    static_assert(StripQuotation("partly quoted\"") == "partly quoted\"");
+    static_assert(StripQuotation("unquoted") == "unquoted");
+    static_assert(StripQuotation("").empty());
+
 
     ///< the master list of abbreviated option names, and their corresponding long-form names
     boost::container::flat_map<char, std::string> short_names;
