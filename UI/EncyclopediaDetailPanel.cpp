@@ -1336,43 +1336,31 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        const auto* location = context.ContextObjects().getRaw(empire->CapitalID());
+        if (const auto* location = context.ContextObjects().getRaw(empire->CapitalID()))
+            return location->ID();
+
         // no capital?  scan through all objects to find one owned by this empire
-        // TODO: only loop over planets?
-        // TODO: pass in a location condition, and pick a location that matches it if possible
-        if (!location) {
-            for (const auto* obj : context.ContextObjects().allRaw()) {
-                if (obj->OwnedBy(empire_id)) {
-                    location = obj;
-                    break;
-                }
-            }
-        }
-        return location ? location->ID() : INVALID_OBJECT_ID;
+        const auto owned_by_empire = [empire_id](const UniverseObjectCXBase& o) noexcept
+        { return o.OwnedBy(empire_id); };
+
+        if (const auto* location = context.ContextObjects().getRaw(owned_by_empire))
+            return location->ID();
+
+        return INVALID_OBJECT_ID;
     }
 
     [[nodiscard]] std::vector<std::string> TechsThatUnlockItem(const UnlockableItem& item) {
-        std::vector<std::string> retval;
-        retval.reserve(GetTechManager().size()); // rough guesstimate
+        const auto tech_unlocks_item = [&item](const auto& name_tech)
+        { return range_contains(name_tech.second.UnlockedItems(), item); };
 
-        for (const auto& [tech_name, tech] : GetTechManager()) {
-            if (range_contains(tech.UnlockedItems(), item))
-                retval.push_back(tech_name);
-        }
-
-        return retval;
+        return GetTechManager() | range_filter(tech_unlocks_item) | range_keys | range_to_vec;
     }
 
     [[nodiscard]] std::vector<std::string> PoliciesThatUnlockItem(const UnlockableItem& item) {
-        std::vector<std::string> retval;
-        retval.reserve(GetTechManager().size()); // rough guesstimate
+        const auto policy_unlocks_item = [&item](const auto& name_policy)
+        { return range_contains(name_policy.second.UnlockedItems(), item); };
 
-        for (auto& [policy_name, policy] : GetPolicyManager().Policies()) {
-            if (range_contains(policy.UnlockedItems(), item))
-                retval.push_back(policy_name);
-        }
-
-        return retval;
+        return GetPolicyManager().Policies() | range_filter(policy_unlocks_item) | range_keys | range_to_vec;
     }
 
     [[nodiscard]] const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
