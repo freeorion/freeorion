@@ -351,7 +351,7 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireMana
 int Universe::HighestDestroyedObjectID() const {
     if (m_destroyed_object_ids.empty())
         return INVALID_OBJECT_ID;
-    return *std::max_element(m_destroyed_object_ids.begin(), m_destroyed_object_ids.end());
+    return *range_max_element(m_destroyed_object_ids);
 }
 
 const std::unordered_set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const {

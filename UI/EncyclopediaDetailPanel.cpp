@@ -2594,7 +2594,7 @@ namespace {
                                               bool                          only_description = false
     ) {
         // DONE: list current known occurances of the fieldtype with id / galactic coordinates to be clickable like instances of ship designs
-        // TODO: second method for detailled view of particular field instances, listing affected systems, fleets, etc.
+        // TODO: second method for detailed view of particular field instances, listing affected systems, fleets, etc.
         const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << item_name;
@@ -2737,7 +2737,7 @@ namespace {
         const float attack = ship->TotalWeaponsShipDamage(context);
         const float destruction = ship->TotalWeaponsFighterDamage(context);
         const float strength = std::pow(attack * structure, 0.6f);
-        const float typical_shot = enemy_shots.empty() ? 0.0f : *std::max_element(enemy_shots.begin(), enemy_shots.end()); // TODO: cbegin, cend (also elsewhere)
+        const float typical_shot = enemy_shots.empty() ? 0.0f : *range_max_element(enemy_shots);
         const float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME: TotalWeaponsFighterDamage 
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species

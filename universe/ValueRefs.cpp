@@ -1501,8 +1501,9 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     for (auto& entry : object_property_values)
         observed_values[std::move(entry)]++;
 
-    auto max = std::max_element(observed_values.begin(), observed_values.end(),
-                                [](const auto& p1, const auto& p2) -> bool { return p1.second < p2.second; });
+    static constexpr auto second_less = [](const auto& p1, const auto& p2) -> bool
+    { return p1.second < p2.second; };
+    auto max = range_max_element(observed_values, second_less);
 
     return max->first;
 }
