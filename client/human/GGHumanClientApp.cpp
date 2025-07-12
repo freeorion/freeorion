@@ -1129,29 +1129,37 @@ void GGHumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     }
 }
 
+namespace {
+    constexpr std::string_view vfe_opt = "video.fullscreen.enabled";
+    constexpr std::string_view width_opt = "video.windowed.width";
+    constexpr std::string_view height_opt = "video.windowed.height";
+    constexpr std::string_view repo_opt = "ui.reposition.auto.enabled";
+}
+
 void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     if (auto map_wnd = m_ui.GetMapWnd(false))
         map_wnd->DoLayout();
     if (auto intro_screen = m_ui.GetIntroScreen())
         intro_screen->Resize(GG::Pt(w, h));
 
-    if (!GetOptionsDB().Get<bool>("video.fullscreen.enabled") &&
-         (GetOptionsDB().Get<GG::X>("video.windowed.width") != w ||
-          GetOptionsDB().Get<GG::Y>("video.windowed.height") != h))
+    auto& db = GetOptionsDB();
+
+    if (db.OptionExists(vfe_opt) && !GetOptionsDB().Get<bool>(vfe_opt) &&
+        (db.Get<GG::X>(width_opt) != w || db.Get<GG::Y>(height_opt) != h))
     {
-        if (GetOptionsDB().Get<bool>("ui.reposition.auto.enabled")) {
+        if (db.Get<bool>(repo_opt)) {
             // Reposition windows if in windowed mode.
             RepositionWindowsSignal();
         }
         // store resize if window is not full-screen (so that fullscreen
         // resolution doesn't overwrite windowed resolution)
-        GetOptionsDB().Set<int>("video.windowed.width", Value(w));
-        GetOptionsDB().Set<int>("video.windowed.height", Value(h));
+        db.Set<int>(width_opt, Value(w));
+        db.Set<int>(height_opt, Value(h));
     }
 
     glViewport(0, 0, Value(w), Value(h));
 
-    GetOptionsDB().Commit();
+    db.Commit();
 }
 
 void GGHumanClientApp::HandleFocusChange(bool gained_focus) {
