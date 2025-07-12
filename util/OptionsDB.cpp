@@ -302,12 +302,21 @@ namespace {
         return retval.str();
     }
 
-    bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) {
+    constexpr bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) noexcept {
         auto it = lhs.find_last_of('.');
         if (it == std::string::npos)
             return false;
         return lhs.substr(0, it) == rhs;
     }
+
+    static_assert(OptionNameHasParentSection("parent.child", "parent"));
+    static_assert(!OptionNameHasParentSection("grandparent.parent.child", "parent"));
+    static_assert(!OptionNameHasParentSection("parent", "parent"));
+    static_assert(!OptionNameHasParentSection(".child", "child"));
+    static_assert(!OptionNameHasParentSection("parent.child", "tacos"));
+    static_assert(!OptionNameHasParentSection("parent.child", ""));
+    static_assert(!OptionNameHasParentSection("", "tacos"));
+    static_assert(!OptionNameHasParentSection("", ""));
 }
 
 std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
