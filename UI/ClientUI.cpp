@@ -1024,9 +1024,14 @@ void ClientUI::InitializeWindows() {}
 void ClientUI::HandleSizeChange(bool fullscreen) const {
     OptionsDB& db = GetOptionsDB();
 
-    if (db.Get<bool>("ui.reposition.auto.enabled")) {
+    if (m_message_wnd && db.Get<bool>("ui.reposition.auto.enabled")) {
         std::string window_mode = fullscreen ? ".fullscreen" : ".windowed";
         std::string option_name = "ui." + MESSAGE_WND_NAME + window_mode + ".left";
+
+        if (!db.OptionExistsAndHasTypedValue<int>(option_name)) {
+            DebugLogger() << "Skipping messages window reposition";
+            return;
+        }
 
         // Invalidate the message window position so that we know to
         // recalculate positions on the next resize or fullscreen switch...
