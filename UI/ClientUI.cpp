@@ -1040,6 +1040,9 @@ void ClientUI::HandleSizeChange(bool fullscreen) const {
 }
 
 void ClientUI::HandleFullscreenSwitch() const {
+    if (!m_message_wnd)
+        return;
+
     OptionsDB& db = GetOptionsDB();
 
     std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
