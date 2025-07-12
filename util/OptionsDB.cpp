@@ -42,11 +42,17 @@ namespace {
         return retval;
     }
 
-    std::string_view StripQuotation(std::string_view str) {
+    constexpr std::string_view StripQuotation(std::string_view str) noexcept {
         if (str.size() < 2 || str[0] != '"' || str[str.size() - 1] != '"')
             return str;
         return str.substr(1, str.size() - 2);
     }
+
+    static_assert(StripQuotation("\"quoted\"") == "quoted");
+    static_assert(StripQuotation("partly quoted\"") == "partly quoted\"");
+    static_assert(StripQuotation("unquoted") == "unquoted");
+    static_assert(StripQuotation("").empty());
+
 
     ///< the master list of abbreviated option names, and their corresponding long-form names
     boost::container::flat_map<char, std::string> short_names;
@@ -296,12 +302,21 @@ namespace {
         return retval.str();
     }
 
-    bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) {
+    constexpr bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) noexcept {
         auto it = lhs.find_last_of('.');
         if (it == std::string::npos)
             return false;
         return lhs.substr(0, it) == rhs;
     }
+
+    static_assert(OptionNameHasParentSection("parent.child", "parent"));
+    static_assert(!OptionNameHasParentSection("grandparent.parent.child", "parent"));
+    static_assert(!OptionNameHasParentSection("parent", "parent"));
+    static_assert(!OptionNameHasParentSection(".child", "child"));
+    static_assert(!OptionNameHasParentSection("parent.child", "tacos"));
+    static_assert(!OptionNameHasParentSection("parent.child", ""));
+    static_assert(!OptionNameHasParentSection("", "tacos"));
+    static_assert(!OptionNameHasParentSection("", ""));
 }
 
 std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {

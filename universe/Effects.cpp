@@ -4182,10 +4182,8 @@ uint32_t SetTexture::GetCheckSum() const {
     return retval;
 }
 
-std::unique_ptr<Effect> SetTexture::Clone() const {
-    auto texture{m_texture};
-    return std::make_unique<SetTexture>(texture);
-}
+std::unique_ptr<Effect> SetTexture::Clone() const
+{ return std::make_unique<SetTexture>(m_texture); }
 
 
 ///////////////////////////////////////////////////////////
