@@ -897,11 +897,18 @@ const std::decay_t<T>* ObjectMap::getRaw(Pred pred) const
         return (it != map.end()) ? it->second.get() : nullptr;
 
     } else if constexpr (invokable_on_const_reference) {
-        auto it = range_find_if(map | range_values | range_transform(ref_tx), pred);
-        return (it != map.end()) ? it.get() : nullptr;
+        auto rng = map | range_values | range_transform(ref_tx);
+        auto it = range_find_if(rng, pred);
+        if (it == rng.end())
+            return nullptr;
+        const auto& result = *it;
+        static_assert(std::is_same_v<decltype(result), const DecayT&>);
+        return std::addressof(result);
 
     } else if constexpr (invokable_on_int) {
-        auto it = range_find_if(map, [pred](const auto& id_obj) { return pred(id_obj.first); });
+        static constexpr bool is_nx = noexcept(pred(INVALID_OBJECT_ID));
+        const auto check_pred = [pred](const auto& id_obj) noexcept(is_nx) { return pred(id_obj.first); };
+        auto it = range_find_if(map, check_pred);
         return (it != map.end()) ? it->second.get() : nullptr;
 
     } else {
