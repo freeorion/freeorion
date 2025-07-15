@@ -112,11 +112,15 @@ public:
     /** emitted when an option has changed */
     using OptionChangedSignalType = boost::signals2::signal<void ()>;
 
+    enum class Storable : bool { STORABLE = true, UNSTORABLE = false };
+    enum class Flag : bool { FLAG = true, NOTFLAG = false};
+    enum class Recognized : bool { RECOGNIZED = true, UNRECOGNIZED = false };
+
     struct FO_COMMON_API Option {
         Option(char short_name_, std::string name_, boost::any value_,
                boost::any default_value_, std::string description_,
-               std::unique_ptr<ValidatorBase>&& validator_, bool storable_, bool flag_,
-               bool recognized_, std::string section = std::string());
+               std::unique_ptr<ValidatorBase>&& validator_, Storable storable_, Flag flag_,
+               Recognized recognized_, std::string section = std::string());
         Option(Option&& rhs) = default;
         Option(const Option& rhs) = delete;
         virtual ~Option();
@@ -325,11 +329,13 @@ public:
     /** adds an Option, optionally with a custom validator */
     template <typename T>
     void Add(std::string name, std::string description, T&& default_value,
-             std::unique_ptr<ValidatorBase> validator = nullptr, bool storable = true,
+             std::unique_ptr<ValidatorBase> validator = nullptr, Storable storable = Storable::STORABLE,
              std::string section = "")
     {
+        using DecayT = std::decay_t<T>;
+
         auto it = find_option(name);
-        boost::any value = default_value;
+        boost::any value = DecayT{std::as_const(default_value)};
         if (!validator)
             validator = std::make_unique<Validator<std::decay_t<T>>>();
 
@@ -357,8 +363,8 @@ public:
         }
 
         Option option{static_cast<char>(0), name, std::move(value), std::forward<T>(default_value),
-                      std::move(description), std::move(validator), storable, false, true,
-                      std::move(section)};
+                      std::move(description), std::move(validator),
+                      storable, Flag::NOTFLAG, Recognized::RECOGNIZED, std::move(section)};
         if (it != m_options.end())
             *it = std::move(option);
         else
@@ -370,7 +376,7 @@ public:
     template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
     void Add(std::string name, std::string description, T&& default_value,
              V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
-             bool storable = true, std::string section = "")
+             Storable storable = Storable::STORABLE, std::string section = "")
     {
         Add(std::move(name), std::move(description), std::forward<T>(default_value),
             std::forward<V>(validator).Clone(), storable, std::move(section));
@@ -379,7 +385,7 @@ public:
     template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
     void Add(const char* name, const char* description, T&& default_value,
              V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
-             bool storable = true, const char* section = "")
+             Storable storable = Storable::STORABLE, const char* section = "")
     {
         Add(name, description, std::forward<T>(default_value),
             std::forward<V>(validator).Clone(), storable, section);
@@ -389,8 +395,8 @@ public:
       * optionally with a custom validator */
     template <typename T>
     void Add(char short_name, std::string name, std::string description, T&& default_value,
-             std::unique_ptr<ValidatorBase> validator = nullptr, bool storable = true,
-             std::string section = "")
+             std::unique_ptr<ValidatorBase> validator = nullptr,
+             Storable storable = Storable::STORABLE, std::string section = "")
     {
         auto it = find_option(name);
         boost::any value{default_value};
@@ -421,8 +427,8 @@ public:
         }
 
         Option option{short_name, name, std::move(value), std::forward<T>(default_value),
-                      std::move(description), std::move(validator), storable, false, true,
-                      std::move(section)};
+                      std::move(description), std::move(validator), storable,
+                      Flag::NOTFLAG, Recognized::RECOGNIZED, std::move(section)};
         if (it != m_options.end())
             *it = std::move(option);
         else
@@ -434,17 +440,17 @@ public:
     template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
     void Add(char short_name, std::string name, std::string description,
              T default_value, V&& validator, // validator should be wrapped in unique_ptr
-             bool storable = true, std::string section = "")
+             Storable storable = Storable::STORABLE, std::string section = "")
     {
         Add<T>(short_name, std::move(name), std::move(description), std::move(default_value),
-               std::make_unique<V>(std::move(validator)), storable, std::move(section));
+            std::make_unique<V>(std::move(validator)), storable, std::move(section));
     }
 
     /** adds a flag Option, which is treated as a boolean value with a default
       * of false.  Using the flag on the command line at all indicates that its
       * value it set to true. */
     void AddFlag(std::string name, std::string description,
-                 bool storable = true, std::string section = std::string())
+                 Storable storable = Storable::STORABLE, std::string section = std::string())
     {
         const auto it = find_option(name);
         bool value = false;
@@ -464,7 +470,8 @@ public:
         }
 
         Option option{static_cast<char>(0), name, value, value, std::move(description),
-                      std::make_unique<Validator<bool>>(), storable, true, true, std::move(section)};
+                      std::make_unique<Validator<bool>>(), storable,
+                      Flag::FLAG, Recognized::RECOGNIZED, std::move(section)};
         if (it != m_options.end())
             *it = std::move(option);
         else
@@ -477,7 +484,7 @@ public:
       * is treated as a boolean value with a default of false.  Using the flag
       * on the command line at all indicates that its value it set to true. */
     void AddFlag(char short_name, std::string name, std::string description,
-                 bool storable = true, std::string section = std::string())
+                 Storable storable = Storable::STORABLE, std::string section = std::string())
     {
         auto it = find_option(name);
         bool value = false;
@@ -497,8 +504,8 @@ public:
             value = true; // if the flag is present at all its value is true
         }
 
-        Option option{short_name, name, value, value, std::move(description),
-                      std::move(validator), storable, true, true, std::move(section)};
+        Option option{short_name, name, value, value, std::move(description), std::move(validator),
+                      storable, Flag::FLAG, Recognized::RECOGNIZED, std::move(section)};
         if (it != m_options.end())
             *it = std::move(option);
         else

@@ -53,8 +53,9 @@ GameRule::GameRule(Type type_, std::string name_, boost::any value_,
                    std::unique_ptr<ValidatorBase>&& validator_, bool engine_internal_, uint32_t rank_,
                    std::string category_) :
     OptionsDB::Option(static_cast<char>(0), std::move(name_), std::move(value_),
-                      std::move(default_value_), std::move(description_),
-                      std::move(validator_), engine_internal_, false, true, "setup.rules"),
+                      std::move(default_value_), std::move(description_), std::move(validator_),
+                      engine_internal_ ? OptionsDB::Storable::STORABLE : OptionsDB::Storable::UNSTORABLE,
+                      OptionsDB::Flag::NOTFLAG, OptionsDB::Recognized::RECOGNIZED, "setup.rules"),
     type(type_),
     category(std::move(category_)),
     rank(rank_)
@@ -203,7 +204,7 @@ void GameRules::Add(GameRule&& rule) {
         throw std::runtime_error("GameRules::Add<>() : GameRule " + name + " was added twice.");
 
     if (!GetOptionsDB().OptionExists("setup.rules.server-locked." + name))
-        GetOptionsDB().Add<bool>("setup.rules.server-locked." + name, rule.description, false);
+        GetOptionsDB().Add("setup.rules.server-locked." + name, rule.description, false);
 
     switch (rule.type) {
     case GameRule::Type::TOGGLE:    CheckValidatorAndAddRuleOption<bool>(rule);         break;
