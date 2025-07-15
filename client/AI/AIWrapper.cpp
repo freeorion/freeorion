@@ -624,10 +624,10 @@ namespace {
 
         // create design from stuff chosen in UI
         try {
-            auto design = std::make_unique<ShipDesign>(
-                std::invalid_argument(""), name, description, context.current_turn,
-                empire_id, hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
-            app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, *design);
+            ShipDesign design(std::invalid_argument(""), name, description, context.current_turn,
+                              empire_id, hull, parts, icon, model, name_desc_in_stringtable,
+                              ShipDesign::Monster::NOTMONSTER, uuid);
+            app->Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design); // TODO: move?
             return 1;
 
         } catch (const std::invalid_argument&) {
