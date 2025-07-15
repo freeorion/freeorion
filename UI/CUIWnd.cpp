@@ -24,7 +24,8 @@ namespace {
     void PlayCloseSound() { PlayOptionSound("ui.window.close.sound.path"); }
 
     void AddOptions(OptionsDB& db) {
-        db.AddFlag('w', "window-reset", UserStringNop("OPTIONS_DB_WINDOW_RESET"), false);
+        db.AddFlag('w', "window-reset", UserStringNop("OPTIONS_DB_WINDOW_RESET"),
+                   OptionsDB::Storable::UNSTORABLE);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -781,14 +782,15 @@ std::string CUIWnd::AddWindowOptions(std::string_view config_name,
         } else {
             // Old window has been destroyed, use the properties it had.
             db.Add<bool>(std::string{"ui."}.append(config_name).append(".initialized"),
-                         UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"), false, Validator<bool>(), false);
+                         UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"), false, Validator<bool>(),
+                         OptionsDB::Storable::UNSTORABLE);
             new_name = config_name;
         }
     } else if (!config_name.empty()) {
         const int max_width_plus_one = GGHumanClientApp::MaximumPossibleWidth() + 1;
         const int max_height_plus_one = GGHumanClientApp::MaximumPossibleHeight() + 1;
 
-        db.Add(std::string{"ui."}.append(config_name).append(".initialized"),      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(), false);
+        db.Add(std::string{"ui."}.append(config_name).append(".initialized"),      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(), OptionsDB::Storable::UNSTORABLE);
 
         db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.left"),  UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one),   DiscreteValidator<int>(Value(INVALID_X))));
         db.Add(std::string{"ui."}.append(config_name).append(".fullscreen.top"),   UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one),  DiscreteValidator<int>(Value(INVALID_Y))));

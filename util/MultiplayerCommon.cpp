@@ -30,9 +30,9 @@ namespace {
         db.Add<std::string>("save.server.path",             UserStringNop("OPTIONS_DB_SERVER_SAVE_DIR"),        PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("log-level",                    UserStringNop("OPTIONS_DB_LOG_LEVEL"),              "",
                             OrValidator<std::string>(LogLevelValidator(), std::make_unique<DiscreteValidator<std::string>>("")),
-                            false);
+                            OptionsDB::Storable::UNSTORABLE);
         db.Add<std::string>("log-file",                     UserStringNop("OPTIONS_DB_LOG_FILE"),               "",
-                            Validator<std::string>(),                                                           false);
+                            Validator<std::string>(),                                                           OptionsDB::Storable::UNSTORABLE);
         // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName
         db.Add<std::string>("resource.stringtable.path",    UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),   "");
         db.Add("save.format.binary.enabled",                UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),   false);
@@ -40,9 +40,9 @@ namespace {
         db.Add("save.auto.hostless.enabled",                UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS"),      true);
         db.Add("save.auto.hostless.each-player.enabled",    UserStringNop("OPTIONS_DB_AUTOSAVE_HOSTLESS_EACH_PLAYER"), false);
         db.Add<int>("save.auto.interval",                   UserStringNop("OPTIONS_DB_AUTOSAVE_INTERVAL"),      0);
-        db.Add<std::string>("load",                         UserStringNop("OPTIONS_DB_LOAD"),                   "",                           Validator<std::string>(), false);
+        db.Add<std::string>("load",                         UserStringNop("OPTIONS_DB_LOAD"),                   "",                           Validator<std::string>(), OptionsDB::Storable::UNSTORABLE);
         db.Add("save.auto.exit.enabled",                    UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),    true);
-        db.AddFlag('q', "quickstart",                       UserStringNop("OPTIONS_DB_QUICKSTART"),             false);
+        db.AddFlag('q', "quickstart",                       UserStringNop("OPTIONS_DB_QUICKSTART"),             OptionsDB::Storable::UNSTORABLE);
 
         // Common galaxy settings
         db.Add("setup.seed",                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),               std::string("0"),                       Validator<std::string>());
@@ -60,9 +60,9 @@ namespace {
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
-        db.Add<std::string>("ai-path",      UserStringNop("OPTIONS_DB_AI_FOLDER_PATH"),               "python/AI",                            nullptr, false);
-        db.Add<std::string>("ai-config",    UserStringNop("OPTIONS_DB_AI_CONFIG"),                    "",                                     nullptr, false);
-        db.Add<std::string>("ai-log-dir",   UserStringNop("OPTIONS_DB_AI_LOG_DIR"),                   "",                                     nullptr, false);
+        db.Add<std::string>("ai-path",      UserStringNop("OPTIONS_DB_AI_FOLDER_PATH"),               "python/AI",                            nullptr, OptionsDB::Storable::UNSTORABLE);
+        db.Add<std::string>("ai-config",    UserStringNop("OPTIONS_DB_AI_CONFIG"),                    "",                                     nullptr, OptionsDB::Storable::UNSTORABLE);
+        db.Add<std::string>("ai-log-dir",   UserStringNop("OPTIONS_DB_AI_LOG_DIR"),                   "",                                     nullptr, OptionsDB::Storable::UNSTORABLE);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

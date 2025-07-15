@@ -74,13 +74,13 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     try {
 #endif
         GetOptionsDB().Add<std::string>('h', "help",                                    UserStringNop("OPTIONS_DB_HELP"),                       "NOOP",
-                                        Validator<std::string>(),   false);
-        GetOptionsDB().AddFlag('v', "version",                                          UserStringNop("OPTIONS_DB_VERSION"),                    false);
-        GetOptionsDB().AddFlag('s', "singleplayer",                                     UserStringNop("OPTIONS_DB_SINGLEPLAYER"),               false);
-        GetOptionsDB().AddFlag("hostless",                                              UserStringNop("OPTIONS_DB_HOSTLESS"),                   false);
-        GetOptionsDB().AddFlag("skip-checksum",                                         UserStringNop("OPTIONS_DB_SKIP_CHECKSUM"),              false);
-        GetOptionsDB().AddFlag("testing",                                               UserStringNop("OPTIONS_DB_TESTING"),                    false);
-        GetOptionsDB().AddFlag("load-or-quickstart",                                    UserStringNop("OPTIONS_DB_LOAD_OR_QUICKSTART"),         false);
+                                        Validator<std::string>(), OptionsDB::Storable::UNSTORABLE);
+        GetOptionsDB().AddFlag('v', "version",                                          UserStringNop("OPTIONS_DB_VERSION"),                    OptionsDB::Storable::UNSTORABLE);
+        GetOptionsDB().AddFlag('s', "singleplayer",                                     UserStringNop("OPTIONS_DB_SINGLEPLAYER"),               OptionsDB::Storable::UNSTORABLE);
+        GetOptionsDB().AddFlag("hostless",                                              UserStringNop("OPTIONS_DB_HOSTLESS"),                   OptionsDB::Storable::UNSTORABLE);
+        GetOptionsDB().AddFlag("skip-checksum",                                         UserStringNop("OPTIONS_DB_SKIP_CHECKSUM"),              OptionsDB::Storable::UNSTORABLE);
+        GetOptionsDB().AddFlag("testing",                                               UserStringNop("OPTIONS_DB_TESTING"),                    OptionsDB::Storable::UNSTORABLE);
+        GetOptionsDB().AddFlag("load-or-quickstart",                                    UserStringNop("OPTIONS_DB_LOAD_OR_QUICKSTART"),         OptionsDB::Storable::UNSTORABLE);
         GetOptionsDB().Add<int>("network.server.ai.min",                                UserStringNop("OPTIONS_DB_MP_AI_MIN"),                  0);
         GetOptionsDB().Add<int>("network.server.ai.max",                                UserStringNop("OPTIONS_DB_MP_AI_MAX"),                  -1);
         GetOptionsDB().Add<int>("network.server.human.min",                             UserStringNop("OPTIONS_DB_MP_HUMAN_MIN"),               0);
