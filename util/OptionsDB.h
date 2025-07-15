@@ -443,7 +443,7 @@ public:
              Storable storable = Storable::STORABLE, std::string section = "")
     {
         Add<T>(short_name, std::move(name), std::move(description), std::move(default_value),
-            std::make_unique<V>(std::move(validator)), storable, std::move(section));
+               std::make_unique<V>(std::move(validator)), storable, std::move(section));
     }
 
     /** adds a flag Option, which is treated as a boolean value with a default

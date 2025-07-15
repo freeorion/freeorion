@@ -144,7 +144,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 #ifdef FREEORION_WIN32
         GetOptionsDB().Add("misc.server-local-binary.path",         UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
 #else
-        GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond"));
+        GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),   PathToString(GetBinDir() / "freeoriond"));
 #endif
 
         // add sections for option sorting
