@@ -111,15 +111,28 @@ namespace {
     }
 }
 
+#if !defined(CONSTEXPR_FROM_CHARS)
+# if defined(__cpp_lib_constexpr_charconv)
+#  define CONSTEXPR_FROM_CHARS constexpr
+# else
+#  define CONSTEXPR_FROM_CHARS
+# endif
+#endif
+
 namespace {
     // wrapper for converting string to integer
-    [[nodiscard]] int ToInt(std::string_view sv, int default_result = -1)
+    [[nodiscard]] CONSTEXPR_FROM_CHARS int ToInt(std::string_view sv, int default_result = -1)
         noexcept(noexcept(std::from_chars("", "", std::declval<int&>())))
     {
         int retval = default_result;
         std::from_chars(sv.data(), sv.data() + sv.size(), retval);
         return retval;
     }
+
+#if defined(__cpp_lib_constexpr_charconv)
+    static_assert(ToInt("1") == 1 && ToInt("banana") == -1 &&
+                  ToInt("-42") == -42 && ToInt(std::string_view{}) == -1);
+#endif
 
     static_assert(std::numeric_limits<long long>::max() > std::numeric_limits<int>::max());
     static_assert(std::numeric_limits<int>::max() > 0);
