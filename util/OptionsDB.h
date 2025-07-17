@@ -11,6 +11,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include <concepts>
 #include <functional>
 #include <map>
 #include <unordered_map>
@@ -40,6 +41,10 @@ template<typename T> struct is_unique_ptr : std::false_type {};
 template<typename T> struct is_unique_ptr<std::unique_ptr<T>> : std::true_type {};
 template<typename T> constexpr bool is_unique_ptr_v = is_unique_ptr<T>::value;
 
+template<typename T> struct is_any : std::false_type {};
+template<> struct is_any<boost::any> : std::true_type {};
+template<typename T> constexpr bool is_any_v = is_any<T>::value;
+static_assert(!is_any_v<int> && is_any_v<boost::any>);
 
 /////////////////////////////////////////////
 // OptionsDB
@@ -327,17 +332,17 @@ public:
 
 
     /** adds an Option, optionally with a custom validator */
-    template <typename T>
-    void Add(std::string name, std::string description, T&& default_value,
-             std::unique_ptr<ValidatorBase> validator = nullptr, Storable storable = Storable::STORABLE,
-             std::string section = "")
+    void Add(std::string name, std::string description, auto default_value,
+             std::unique_ptr<ValidatorBase> validator = nullptr,
+             Storable storable = Storable::STORABLE, std::string section = "")
     {
-        using DecayT = std::decay_t<T>;
+        using T = std::decay_t<decltype(default_value)>;
+
+        if (!validator)
+            validator = std::make_unique<Validator<T>>();
 
         auto it = find_option(name);
-        boost::any value = DecayT{std::as_const(default_value)};
-        if (!validator)
-            validator = std::make_unique<Validator<std::decay_t<T>>>();
+        boost::any value = T(default_value); // intentional copy, original used below
 
         // Check that this option hasn't already been registered and apply any
         // value that was specified on the command line or from a config file.
@@ -362,9 +367,9 @@ public:
             }
         }
 
-        Option option{static_cast<char>(0), name, std::move(value), std::forward<T>(default_value),
-                      std::move(description), std::move(validator),
-                      storable, Flag::NOTFLAG, Recognized::RECOGNIZED, std::move(section)};
+        Option option{static_cast<char>(0), name, std::move(value), std::move(default_value),
+                      std::move(description), std::move(validator), storable,
+                      Flag::NOTFLAG, Recognized::RECOGNIZED, std::move(section)};
         if (it != m_options.end())
             *it = std::move(option);
         else
@@ -373,35 +378,29 @@ public:
         m_dirty = true;
     }
 
-    template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
-    void Add(std::string name, std::string description, T&& default_value,
-             V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
+    /** takes a Validator by value and clones it, passing along the rest. */
+    void Add(std::string name, std::string description, auto default_value,
+             auto validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
              Storable storable = Storable::STORABLE, std::string section = "")
+        requires requires { {validator.Clone()} -> std::same_as<std::unique_ptr<ValidatorBase>>; }
     {
-        Add(std::move(name), std::move(description), std::forward<T>(default_value),
-            std::forward<V>(validator).Clone(), storable, std::move(section));
-    }
-
-    template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
-    void Add(const char* name, const char* description, T&& default_value,
-             V&& validator, // validator needs to be wrapped in unique_ptr (eg. by cloning itself)
-             Storable storable = Storable::STORABLE, const char* section = "")
-    {
-        Add(name, description, std::forward<T>(default_value),
-            std::forward<V>(validator).Clone(), storable, section);
+        Add(std::move(name), std::move(description), std::move(default_value),
+            std::move(validator).Clone(), storable, std::move(section));
     }
 
     /** adds an Option with an alternative one-character shortened name,
-      * optionally with a custom validator */
-    template <typename T>
-    void Add(char short_name, std::string name, std::string description, T&& default_value,
+      * optionally with a custom validator, with \a default_value specified 
+      * that must be convertible to type T. */
+    template <typename T> requires (std::is_same_v<T, std::decay_t<T>> && !is_any_v<T>)
+    void Add(char short_name, std::string name, std::string description, auto default_value,
              std::unique_ptr<ValidatorBase> validator = nullptr,
              Storable storable = Storable::STORABLE, std::string section = "")
+        requires requires { T(default_value); }
     {
         auto it = find_option(name);
-        boost::any value{default_value};
+        boost::any value{T(default_value)};
         if (!validator)
-            validator = std::make_unique<Validator<std::decay_t<T>>>();
+            validator = std::make_unique<Validator<T>>();
 
         // Check that this option hasn't already been registered and apply any
         // value that was specified on the command line or from a config file.
@@ -426,7 +425,7 @@ public:
             }
         }
 
-        Option option{short_name, name, std::move(value), std::forward<T>(default_value),
+        Option option{short_name, name, std::move(value), boost::any(T(std::move(default_value))),
                       std::move(description), std::move(validator), storable,
                       Flag::NOTFLAG, Recognized::RECOGNIZED, std::move(section)};
         if (it != m_options.end())
@@ -437,20 +436,26 @@ public:
         m_dirty = true;
     }
 
-    template <typename T, typename V> requires(!is_unique_ptr_v<V> && !std::is_null_pointer_v<V>)
-    void Add(char short_name, std::string name, std::string description,
-             T default_value, V&& validator, // validator should be wrapped in unique_ptr
-             Storable storable = Storable::STORABLE, std::string section = "")
+    /** add an Option with an alternative one-character shortened name,
+      * taking a Validator by value and cloning it, passing along the rest.
+      * with \a default_value specified that must be convertible to type T. */
+    template <typename T> requires (!is_any_v<T>)
+    void Add(char short_name, std::string name, std::string description, auto&& default_value,
+             auto&& validator, Storable storable = Storable::STORABLE, std::string section = "")
+        requires (requires { {validator.Clone()} -> std::same_as<std::unique_ptr<ValidatorBase>>; } &&
+                  requires { T(std::forward<decltype(default_value)>(default_value)); } )
     {
-        Add<T>(short_name, std::move(name), std::move(description), std::move(default_value),
-               std::make_unique<V>(std::move(validator)), storable, std::move(section));
+        Add<T>(short_name, std::move(name), std::move(description),
+               std::forward<decltype(default_value)>(default_value),
+               std::forward<decltype(validator)>(validator).Clone(),
+               storable, std::move(section));
     }
 
     /** adds a flag Option, which is treated as a boolean value with a default
       * of false.  Using the flag on the command line at all indicates that its
       * value it set to true. */
     void AddFlag(std::string name, std::string description,
-                 Storable storable = Storable::STORABLE, std::string section = std::string())
+                 Storable storable = Storable::STORABLE, std::string section = "")
     {
         const auto it = find_option(name);
         bool value = false;
@@ -484,7 +489,7 @@ public:
       * is treated as a boolean value with a default of false.  Using the flag
       * on the command line at all indicates that its value it set to true. */
     void AddFlag(char short_name, std::string name, std::string description,
-                 Storable storable = Storable::STORABLE, std::string section = std::string())
+                 Storable storable = Storable::STORABLE, std::string section = "")
     {
         auto it = find_option(name);
         bool value = false;
