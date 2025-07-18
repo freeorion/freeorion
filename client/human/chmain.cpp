@@ -116,80 +116,82 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     InitDirs((args.empty() ? "" : args.front()));
 
     GGHumanClientApp::InitLogging();
+    auto& db = GetOptionsDB();
 
     // read and process command-line arguments, if any
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     try {
 #endif
         // add entries in options DB that have no other obvious place
-        GetOptionsDB().Add<std::string>('h', "help",                UserStringNop("OPTIONS_DB_HELP"),                   "NOOP",
-                                        Validator<std::string>(),   OptionsDB::Storable::UNSTORABLE);
-        GetOptionsDB().AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),
-                               OptionsDB::Storable::UNSTORABLE,     "version");
-        GetOptionsDB().AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    OptionsDB::Storable::UNSTORABLE);
-        GetOptionsDB().AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);
-        GetOptionsDB().Add("video.fullscreen.reset",                UserStringNop("OPTIONS_DB_RESET_FSSIZE"),           true);
-        GetOptionsDB().Add("video.fullscreen.fake.enabled",         UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
-        GetOptionsDB().Add("video.monitor.id",                      UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"),  0,
-                           RangedValidator<int>(0, 5));
-        GetOptionsDB().AddFlag("continue",                          UserStringNop("OPTIONS_DB_CONTINUE"),               OptionsDB::Storable::UNSTORABLE);
-        GetOptionsDB().AddFlag("auto-quit",                         UserStringNop("OPTIONS_DB_AUTO_QUIT"),              OptionsDB::Storable::UNSTORABLE);
-        GetOptionsDB().Add("auto-advance-n-turns",                  UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
-                           RangedValidator<int>(0, 400),            OptionsDB::Storable::UNSTORABLE);
-        GetOptionsDB().Add("audio.music.enabled",                   UserStringNop("OPTIONS_DB_MUSIC_ON"),               true);
-        GetOptionsDB().Add("audio.effects.enabled",                 UserStringNop("OPTIONS_DB_SOUND_ON"),               true);
-        GetOptionsDB().Add("version.string",                        UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
-                           Validator<std::string>(),                OptionsDB::Storable::STORABLE);
-        GetOptionsDB().AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          OptionsDB::Storable::UNSTORABLE);
+        db.Add<std::string>('h', "help",                UserStringNop("OPTIONS_DB_HELP"),                   "NOOP",
+                            Validator<std::string>(),   OptionsDB::Storable::UNSTORABLE);
+        db.AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),
+                   OptionsDB::Storable::UNSTORABLE,     "version");
+        db.AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    OptionsDB::Storable::UNSTORABLE);
+        db.AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);
+        db.Add<bool>("video.fullscreen.reset",          UserStringNop("OPTIONS_DB_RESET_FSSIZE"),           true);
+        db.Add<bool>("video.fullscreen.fake.enabled",   UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
+        db.Add<int>("video.monitor.id",                 UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"),  0,
+                    RangedValidator<int>(0, 5));
+        db.AddFlag("continue",                          UserStringNop("OPTIONS_DB_CONTINUE"),               OptionsDB::Storable::UNSTORABLE);
+        db.AddFlag("auto-quit",                         UserStringNop("OPTIONS_DB_AUTO_QUIT"),              OptionsDB::Storable::UNSTORABLE);
+        db.Add<int>("auto-advance-n-turns",             UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),           0,
+                    RangedValidator<int>(0, 400),       OptionsDB::Storable::UNSTORABLE);
+        db.Add<bool>("audio.music.enabled",             UserStringNop("OPTIONS_DB_MUSIC_ON"),               true);
+        db.Add<bool>("audio.effects.enabled",           UserStringNop("OPTIONS_DB_SOUND_ON"),               true);
+        db.Add<std::string>("version.string",           UserStringNop("OPTIONS_DB_VERSION_STRING"),         FreeOrionVersionString(),
+                            Validator<std::string>(),   OptionsDB::Storable::STORABLE);
+        db.AddFlag('r', "render-simple",                UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),          OptionsDB::Storable::UNSTORABLE);
+        db.Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),
 #ifdef FREEORION_WIN32
-        GetOptionsDB().Add("misc.server-local-binary.path",         UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),        PathToString(GetBinDir() / "freeoriond.exe"));
+                            PathToString(GetBinDir() / "freeoriond.exe"));
 #else
-        GetOptionsDB().Add<std::string>("misc.server-local-binary.path", UserStringNop("OPTIONS_DB_FREEORIOND_PATH"),   PathToString(GetBinDir() / "freeoriond"));
+                            PathToString(GetBinDir() / "freeoriond"));
 #endif
 
         // add sections for option sorting
-        GetOptionsDB().AddSection("audio",                          UserStringNop("OPTIONS_DB_SECTION_AUDIO"));
-        GetOptionsDB().AddSection("audio.music",                    UserStringNop("OPTIONS_DB_SECTION_AUDIO_MUSIC"));
-        GetOptionsDB().AddSection("audio.effects",                  UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS"));
-        GetOptionsDB().AddSection("audio.effects.paths",            UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS"),
-                                  [](std::string_view name) -> bool {
-                                      static constexpr std::string_view suffix{"sound.path"};
-                                      return name.size() > suffix.size() &&
-                                             name.substr(name.size() - suffix.size()) == suffix;
-                                  });
-        GetOptionsDB().AddSection("effects",    UserStringNop("OPTIONS_DB_SECTION_EFFECTS"));
-        GetOptionsDB().AddSection("logging",    UserStringNop("OPTIONS_DB_SECTION_LOGGING"));
-        GetOptionsDB().AddSection("network",    UserStringNop("OPTIONS_DB_SECTION_NETWORK"));
-        GetOptionsDB().AddSection("resource",   UserStringNop("OPTIONS_DB_SECTION_RESOURCE"));
-        GetOptionsDB().AddSection("save",       UserStringNop("OPTIONS_DB_SECTION_SAVE"));
-        GetOptionsDB().AddSection("setup",      UserStringNop("OPTIONS_DB_SECTION_SETUP"));
-        GetOptionsDB().AddSection("ui",         UserStringNop("OPTIONS_DB_SECTION_UI"));
-        GetOptionsDB().AddSection("ui.colors",  UserStringNop("OPTIONS_DB_SECTION_UI_COLORS"),
-                                  [](std::string_view name) -> bool {
-                                      static constexpr std::string_view suffix{".color"};
-                                      return name.size() > suffix.size() &&
-                                             name.substr(name.size() - suffix.size()) == suffix;
-                                  });
-        GetOptionsDB().AddSection("ui.hotkeys", UserStringNop("OPTIONS_DB_SECTION_UI_HOTKEYS"),
-                                  [](std::string_view name) -> bool {
-                                      static constexpr std::string_view suffix{".hotkey"};
-                                      return name.size() > suffix.size() &&
-                                             name.substr(name.size() - suffix.size()) == suffix;
-                                  });
-        GetOptionsDB().AddSection("version",            UserStringNop("OPTIONS_DB_SECTION_VERSION"));
-        GetOptionsDB().AddSection("video",              UserStringNop("OPTIONS_DB_SECTION_VIDEO"));
-        GetOptionsDB().AddSection("video.fullscreen",   UserStringNop("OPTIONS_DB_SECTION_VIDEO_FULLSCREEN"));
-        GetOptionsDB().AddSection("video.windowed",     UserStringNop("OPTIONS_DB_SECTION_VIDEO_WINDOWED"));
+        db.AddSection("audio",              UserStringNop("OPTIONS_DB_SECTION_AUDIO"));
+        db.AddSection("audio.music",        UserStringNop("OPTIONS_DB_SECTION_AUDIO_MUSIC"));
+        db.AddSection("audio.effects",      UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS"));
+        db.AddSection("audio.effects.paths",UserStringNop("OPTIONS_DB_SECTION_AUDIO_EFFECTS_PATHS"),
+                      [](std::string_view name) -> bool {
+                          static constexpr std::string_view suffix{"sound.path"};
+                          return name.size() > suffix.size() &&
+                                 name.substr(name.size() - suffix.size()) == suffix;
+                      });
+        db.AddSection("effects",            UserStringNop("OPTIONS_DB_SECTION_EFFECTS"));
+        db.AddSection("logging",            UserStringNop("OPTIONS_DB_SECTION_LOGGING"));
+        db.AddSection("network",            UserStringNop("OPTIONS_DB_SECTION_NETWORK"));
+        db.AddSection("resource",           UserStringNop("OPTIONS_DB_SECTION_RESOURCE"));
+        db.AddSection("save",               UserStringNop("OPTIONS_DB_SECTION_SAVE"));
+        db.AddSection("setup",              UserStringNop("OPTIONS_DB_SECTION_SETUP"));
+        db.AddSection("ui",                 UserStringNop("OPTIONS_DB_SECTION_UI"));
+        db.AddSection("ui.colors",          UserStringNop("OPTIONS_DB_SECTION_UI_COLORS"),
+                      [](std::string_view name) -> bool {
+                          static constexpr std::string_view suffix{".color"};
+                          return name.size() > suffix.size() &&
+                                 name.substr(name.size() - suffix.size()) == suffix;
+                      });
+        db.AddSection("ui.hotkeys",         UserStringNop("OPTIONS_DB_SECTION_UI_HOTKEYS"),
+                      [](std::string_view name) -> bool {
+                          static constexpr std::string_view suffix{".hotkey"};
+                          return name.size() > suffix.size() &&
+                                 name.substr(name.size() - suffix.size()) == suffix;
+                      });
+        db.AddSection("version",            UserStringNop("OPTIONS_DB_SECTION_VERSION"));
+        db.AddSection("video",              UserStringNop("OPTIONS_DB_SECTION_VIDEO"));
+        db.AddSection("video.fullscreen",   UserStringNop("OPTIONS_DB_SECTION_VIDEO_FULLSCREEN"));
+        db.AddSection("video.windowed",     UserStringNop("OPTIONS_DB_SECTION_VIDEO_WINDOWED"));
 
         // Add the keyboard shortcuts
-        Hotkey::AddOptions(GetOptionsDB());
+        Hotkey::AddOptions(db);
 
         // if config.xml and persistent_config.xml are present, read and set options entries
-        GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
-        GetOptionsDB().SetFromFile(GetPersistentConfigPath());
+        db.SetFromFile(GetConfigPath(), FreeOrionVersionString());
+        db.SetFromFile(GetPersistentConfigPath());
 
         // override previously-saved and default options with command line parameters and flags
-        GetOptionsDB().SetFromCommandLine(args);
+        db.SetFromCommandLine(args);
 
         CompleteXDGMigration();
 
@@ -203,7 +205,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
-            GetOptionsDB().Set<std::string>("resource.path", "");
+            db.Set<std::string>("resource.path", "");
 
             // double-check that resetting actually fixed things...
             if (!boost::filesystem::exists(GetResourceDir()) ||
@@ -218,18 +220,18 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
 
         // did the player request generation of config.xml, saving the default (or current) options to disk?
-        if (GetOptionsDB().Get<bool>("generate-config-xml")) {
+        if (db.Get<bool>("generate-config-xml")) {
             try {
-                GetOptionsDB().Commit(false);
+                db.Commit(false);
             } catch (...) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
             }
         }
 
-        if (GetOptionsDB().Get<bool>("render-simple")) {
-            GetOptionsDB().Set<bool>("ui.map.background.gas.shown", false);
-            GetOptionsDB().Set<bool>("ui.map.background.starfields.shown", false);
-            GetOptionsDB().Set<bool>("video.fps.shown", true);
+        if (db.Get<bool>("render-simple")) {
+            db.Set<bool>("ui.map.background.gas.shown", false);
+            db.Set<bool>("ui.map.background.starfields.shown", false);
+            db.Set<bool>("video.fps.shown", true);
         }
 
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
@@ -270,7 +272,9 @@ int mainSetupAndRun() {
         GGHumanClientApp& app = GetApp();
         app.Initialize();
 
-        if (GetOptionsDB().Get<bool>("quickstart")) {
+        const auto& db = GetOptionsDB();
+
+        if (db.Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and
             // go into a single player game, using default universe options (a
             // standard quickstart, without requiring the user to click the
@@ -278,14 +282,14 @@ int mainSetupAndRun() {
             app.NewSinglePlayerGame(true);
         }
 
-        if (GetOptionsDB().Get<bool>("continue")) {
+        if (db.Get<bool>("continue")) {
             // immediately start the server, establish network connections, and
             // go into a single player game, continuing from the newest
             // save game.
             app.ContinueSinglePlayerGame();
         }
 
-        std::string load_filename = GetOptionsDB().Get<std::string>("load");
+        std::string load_filename = db.Get<std::string>("load");
         if (!load_filename.empty()) {
             // immediately start the server, establish network connections, and
             // go into a single player game, loading the indicated file
