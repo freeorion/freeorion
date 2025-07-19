@@ -17,9 +17,21 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::Pt
 ////////////////////////////////////////////////
+std::ostream& GG::operator<<(std::ostream& os, X x)
+{
+    os << Value(x);
+    return os;
+}
+
+std::ostream& GG::operator<<(std::ostream& os, Y y)
+{
+    os << Value(y);
+    return os;
+}
+
 std::ostream& GG::operator<<(std::ostream& os, Pt pt)
 {
-    os << "(" << Value(pt.x) << ", " << Value(pt.y) << ")";
+    os << "(" << pt.x << ", " << pt.y << ")";
     return os;
 }
 
