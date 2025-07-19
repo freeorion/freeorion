@@ -1644,7 +1644,8 @@ void ShipDesignOrder::ExecuteImpl(ScriptingContext& context) const {
             ShipDesign new_ship_design(std::invalid_argument(""), m_name, m_description,
                                        m_designed_on_turn, EmpireID(), m_hull, m_parts,
                                        m_icon, m_3D_model, m_name_desc_in_stringtable,
-                                       m_is_monster, m_uuid);
+                                       m_is_monster ? ShipDesign::Monster::MONSTER : ShipDesign::Monster::NOTMONSTER,
+                                       m_uuid);
 
             if (m_design_id == INVALID_DESIGN_ID) {
                 // On the client create a new design id

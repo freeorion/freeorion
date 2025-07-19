@@ -4778,7 +4778,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
             name.StoredString(), description.StoredString(),
             GetApp().CurrentTurn(), GetApp().EmpireID(),
             hull, Parts(), icon, "", name.IsInStringtable(),
-            false, std::move(uuid));
+            ShipDesign::Monster::NOTMONSTER, std::move(uuid));
         m_incomplete_design->SetID(INCOMPLETE_DESIGN_ID);
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign " << e.what();
@@ -4848,7 +4848,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::MainPanel::AddDesign() {
                           name.StoredString(), description.StoredString(),
                           app.CurrentTurn(), empire_id,
                           hull_name, parts, icon, "some model", name.IsInStringtable(),
-                          false, new_uuid);
+                          ShipDesign::Monster::NOTMONSTER, new_uuid);
 
         // If editing a saved design insert into saved designs
         if (m_type_to_create == DesignWnd::BaseSelector::BaseSelectorTab::Saved) {

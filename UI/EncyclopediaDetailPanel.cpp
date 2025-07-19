@@ -58,8 +58,8 @@ namespace {
     constexpr int DESCRIPTION_PADDING(3);
 
     void AddOptions(OptionsDB& db) {
-        db.Add("resource.effects.description.shown", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"), false);
-        db.Add("ui.pedia.search.articles.enabled", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"), true);
+        db.Add<bool>("resource.effects.description.shown", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"), false);
+        db.Add<bool>("ui.pedia.search.articles.enabled",   UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"), true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -111,15 +111,28 @@ namespace {
     }
 }
 
+#if !defined(CONSTEXPR_FROM_CHARS)
+# if defined(__cpp_lib_constexpr_charconv)
+#  define CONSTEXPR_FROM_CHARS constexpr
+# else
+#  define CONSTEXPR_FROM_CHARS
+# endif
+#endif
+
 namespace {
     // wrapper for converting string to integer
-    [[nodiscard]] int ToInt(std::string_view sv, int default_result = -1)
+    [[nodiscard]] CONSTEXPR_FROM_CHARS int ToInt(std::string_view sv, int default_result = -1)
         noexcept(noexcept(std::from_chars("", "", std::declval<int&>())))
     {
         int retval = default_result;
         std::from_chars(sv.data(), sv.data() + sv.size(), retval);
         return retval;
     }
+
+#if defined(__cpp_lib_constexpr_charconv)
+    static_assert(ToInt("1") == 1 && ToInt("banana") == -1 &&
+                  ToInt("-42") == -42 && ToInt(std::string_view{}) == -1);
+#endif
 
     static_assert(std::numeric_limits<long long>::max() > std::numeric_limits<int>::max());
     static_assert(std::numeric_limits<int>::max() > 0);
@@ -1336,43 +1349,31 @@ namespace {
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
-        const auto* location = context.ContextObjects().getRaw(empire->CapitalID());
+        if (const auto* location = context.ContextObjects().getRaw(empire->CapitalID()))
+            return location->ID();
+
         // no capital?  scan through all objects to find one owned by this empire
-        // TODO: only loop over planets?
-        // TODO: pass in a location condition, and pick a location that matches it if possible
-        if (!location) {
-            for (const auto* obj : context.ContextObjects().allRaw()) {
-                if (obj->OwnedBy(empire_id)) {
-                    location = obj;
-                    break;
-                }
-            }
-        }
-        return location ? location->ID() : INVALID_OBJECT_ID;
+        const auto owned_by_empire = [empire_id](const UniverseObjectCXBase& o) noexcept
+        { return o.OwnedBy(empire_id); };
+
+        if (const auto* location = context.ContextObjects().getRaw(owned_by_empire))
+            return location->ID();
+
+        return INVALID_OBJECT_ID;
     }
 
     [[nodiscard]] std::vector<std::string> TechsThatUnlockItem(const UnlockableItem& item) {
-        std::vector<std::string> retval;
-        retval.reserve(GetTechManager().size()); // rough guesstimate
+        const auto tech_unlocks_item = [&item](const auto& name_tech)
+        { return range_contains(name_tech.second.UnlockedItems(), item); };
 
-        for (const auto& [tech_name, tech] : GetTechManager()) {
-            if (range_contains(tech.UnlockedItems(), item))
-                retval.push_back(tech_name);
-        }
-
-        return retval;
+        return GetTechManager() | range_filter(tech_unlocks_item) | range_keys | range_to_vec;
     }
 
     [[nodiscard]] std::vector<std::string> PoliciesThatUnlockItem(const UnlockableItem& item) {
-        std::vector<std::string> retval;
-        retval.reserve(GetTechManager().size()); // rough guesstimate
+        const auto policy_unlocks_item = [&item](const auto& name_policy)
+        { return range_contains(name_policy.second.UnlockedItems(), item); };
 
-        for (auto& [policy_name, policy] : GetPolicyManager().Policies()) {
-            if (range_contains(policy.UnlockedItems(), item))
-                retval.push_back(policy_name);
-        }
-
-        return retval;
+        return GetPolicyManager().Policies() | range_filter(policy_unlocks_item) | range_keys | range_to_vec;
     }
 
     [[nodiscard]] const std::string& GeneralTypeOfObject(UniverseObjectType obj_type) {
@@ -2606,7 +2607,7 @@ namespace {
                                               bool                          only_description = false
     ) {
         // DONE: list current known occurances of the fieldtype with id / galactic coordinates to be clickable like instances of ship designs
-        // TODO: second method for detailled view of particular field instances, listing affected systems, fleets, etc.
+        // TODO: second method for detailed view of particular field instances, listing affected systems, fleets, etc.
         const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
             ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << item_name;
@@ -2749,7 +2750,7 @@ namespace {
         const float attack = ship->TotalWeaponsShipDamage(context);
         const float destruction = ship->TotalWeaponsFighterDamage(context);
         const float strength = std::pow(attack * structure, 0.6f);
-        const float typical_shot = enemy_shots.empty() ? 0.0f : *std::max_element(enemy_shots.begin(), enemy_shots.end()); // TODO: cbegin, cend (also elsewhere)
+        const float typical_shot = enemy_shots.empty() ? 0.0f : *range_max_element(enemy_shots);
         const float typical_strength = std::pow(ship->TotalWeaponsShipDamage(context, enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f); // FIXME: TotalWeaponsFighterDamage 
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species

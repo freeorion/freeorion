@@ -59,9 +59,9 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     InitDirs((args.empty() ? "" : args.front()));
 #endif
 
-    GetOptionsDB().AddFlag("testing", UserStringNop("OPTIONS_DB_TESTING"), false);
+    GetOptionsDB().AddFlag("testing", UserStringNop("OPTIONS_DB_TESTING"), OptionsDB::Storable::UNSTORABLE);
     GetOptionsDB().Add<std::string>('h', "help", UserStringNop("OPTIONS_DB_HELP"), "NOOP",
-                                    Validator<std::string>(), false);
+                                    Validator<std::string>(), OptionsDB::Storable::UNSTORABLE);
 
     // if config.xml and persistent_config.xml are present, read and set options entries
     GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());

@@ -29,7 +29,7 @@ namespace {
     constexpr GG::Y MAIN_MENU_HEIGHT{450};
 
     void Options(OptionsDB& db) {
-        db.AddFlag("network.server.external.force", UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),  false);
+        db.AddFlag("network.server.external.force", UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),  OptionsDB::Storable::UNSTORABLE);
         db.Add<std::string>("network.server.uri",   UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),"localhost");
         db.Add("ui.intro.menu.center.x",            UserStringNop("OPTIONS_DB_UI_MAIN_MENU_X"),         0.75,           RangedStepValidator<double>(0.01, 0.0, 1.0));
         db.Add("ui.intro.menu.center.y",            UserStringNop("OPTIONS_DB_UI_MAIN_MENU_Y"),         0.5,            RangedStepValidator<double>(0.01, 0.0, 1.0));

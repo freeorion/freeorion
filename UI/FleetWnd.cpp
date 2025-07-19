@@ -1541,9 +1541,9 @@ void FleetDataPanel::SetStatIconValues() {
         }
     }
     if (!fuels.empty())
-        min_fuel = *std::min_element(fuels.cbegin(), fuels.cend());
+        min_fuel = *range_min_element(fuels);
     if (!speeds.empty())
-        min_speed = *std::min_element(speeds.cbegin(), speeds.cend());
+        min_speed = *range_min_element(speeds);
 
     for (auto& [stat_name, icon] : m_stat_icons) {
         DetachChild(icon);

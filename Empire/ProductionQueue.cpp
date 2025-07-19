@@ -169,6 +169,8 @@ namespace {
         return starting_stockpile + new_contributions + project_transfer_to_stockpile - stockpile_used;
     }
 
+    enum class Simulating : bool { SIM = true, NOTSIM = false };
+
     /** Sets the allocated_pp value for each Element in the passed
       * ProductionQueue \a queue.  Elements are allocated PP based on their need,
       * the limits they can be given per turn, and the amount available at their
@@ -191,7 +193,7 @@ namespace {
         ProductionQueue::QueueType& queue,
         std::map<boost::container::flat_set<int>, float>& allocated_pp,
         std::map<boost::container::flat_set<int>, float>& allocated_stockpile_pp,
-        int& projects_in_progress, bool simulating,
+        int& projects_in_progress, Simulating simulating,
         const Universe& universe)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
@@ -337,7 +339,7 @@ namespace {
                 queue_element.turns_left_to_next_item = 1;
 
             // if simulating, update progress
-            if (simulating)
+            if (simulating == Simulating::SIM)
                 queue_element.progress += allocation / std::max(EPSILON, block_cost);    // add turn's progress due to allocation
 
             if (allocation > 0.0f)
@@ -768,7 +770,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
         available_pp, available_stockpile, stockpile_limit, queue_element_groups,
         queue_item_costs_and_times, is_producible, m_queue,
         m_object_group_allocated_pp, m_object_group_allocated_stockpile_pp,
-        m_projects_in_progress, false, universe);
+        m_projects_in_progress, Simulating::NOTSIM, universe);
 
     //update expected new stockpile amount
     m_expected_new_stockpile_amount = CalculateNewStockpile(
@@ -841,7 +843,7 @@ void ProductionQueue::Update(const ScriptingContext& context,
         const float sim_project_transfer_to_stockpile = SetProdQueueElementSpending(
             available_pp, sim_available_stockpile, stockpile_limit, queue_element_groups,
             queue_item_costs_and_times, is_producible, sim_queue,
-            allocated_pp, allocated_stockpile_pp, dummy_int, true, universe);
+            allocated_pp, allocated_stockpile_pp, dummy_int, Simulating::SIM, universe);
 
         // check completion status and update m_queue and sim_queue as appropriate
         for (unsigned int i = 0; i < sim_queue.size(); i++) {

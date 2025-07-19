@@ -109,7 +109,7 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
                        int designed_on_turn, int designed_by_empire,
                        std::string hull, std::vector<std::string> parts,
                        std::string icon, std::string model,
-                       bool name_desc_in_stringtable, bool monster,
+                       bool name_desc_in_stringtable, Monster monster,
                        boost::uuids::uuid uuid) :
     m_name(std::move(name)),
     m_description(std::move(description)),
@@ -120,7 +120,7 @@ ShipDesign::ShipDesign(const boost::optional<std::invalid_argument>& should_thro
     m_parts(std::move(parts)),
     m_icon(std::move(icon)),
     m_3D_model(std::move(model)),
-    m_is_monster(monster),
+    m_is_monster(static_cast<bool>(monster)),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
     // Either force a valid design and log about it or just throw std::invalid_argument
@@ -133,7 +133,7 @@ ShipDesign::ShipDesign(const ParsedShipDesign& design) :
                design.m_designed_on_turn, design.m_designed_by_empire,
                design.m_hull, design.m_parts,
                design.m_icon, design.m_3D_model, design.m_name_desc_in_stringtable,
-               design.m_is_monster, design.m_uuid)
+               design.m_is_monster ? Monster::MONSTER : Monster::NOTMONSTER, design.m_uuid)
 {}
 
 const std::string& ShipDesign::Name(bool stringtable_lookup) const {

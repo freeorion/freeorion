@@ -43,6 +43,8 @@ struct FO_COMMON_API ParsedShipDesign {
 
 class FO_COMMON_API ShipDesign {
 public:
+    enum class Monster : bool { MONSTER = true, NOTMONSTER = false };
+
     /** The ShipDesign() constructor constructs invalid designs and is only used by boost
         serialization. */
     ShipDesign();
@@ -71,7 +73,7 @@ public:
                int designed_on_turn, int designed_by_empire, std::string hull,
                std::vector<std::string> parts,
                std::string icon, std::string model,
-               bool name_desc_in_stringtable = false, bool monster = false,
+               bool name_desc_in_stringtable = false, Monster monster = Monster::NOTMONSTER,
                boost::uuids::uuid uuid = boost::uuids::nil_uuid());
 
     /** Convert a parsed ship design and do any required verification. */
@@ -166,7 +168,7 @@ public:
     void SetID(int id);                                                  ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     void SetUUID(boost::uuids::uuid uuid) { m_uuid = uuid; }
     void Rename(std::string name) noexcept { m_name = std::move(name); } ///< renames this design to \a name
-    void SetMonster(const bool is_monster) noexcept { m_is_monster = is_monster; }
+    void SetMonster(bool is_monster) noexcept { m_is_monster = is_monster; }
 
     /** Return true if \p hull and \p parts would make a valid design. */
     [[nodiscard]] static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);

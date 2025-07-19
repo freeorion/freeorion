@@ -42,11 +42,17 @@ namespace {
         return retval;
     }
 
-    std::string_view StripQuotation(std::string_view str) {
+    constexpr std::string_view StripQuotation(std::string_view str) noexcept {
         if (str.size() < 2 || str[0] != '"' || str[str.size() - 1] != '"')
             return str;
         return str.substr(1, str.size() - 2);
     }
+
+    static_assert(StripQuotation("\"quoted\"") == "quoted");
+    static_assert(StripQuotation("partly quoted\"") == "partly quoted\"");
+    static_assert(StripQuotation("unquoted") == "unquoted");
+    static_assert(StripQuotation("").empty());
+
 
     ///< the master list of abbreviated option names, and their corresponding long-form names
     boost::container::flat_map<char, std::string> short_names;
@@ -77,8 +83,8 @@ OptionsDB& GetOptionsDB() {
 /////////////////////////////////////////////
 OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_,
                           boost::any default_value_, std::string description_,
-                          std::unique_ptr<ValidatorBase>&& validator_, bool storable_,
-                          bool flag_, bool recognized_, std::string section) :
+                          std::unique_ptr<ValidatorBase>&& validator_, Storable storable_,
+                          Flag flag_, Recognized recognized_, std::string section) :
     name(std::move(name_)),
     value(std::move(value_)),
     default_value(std::move(default_value_)),
@@ -86,9 +92,9 @@ OptionsDB::Option::Option(char short_name_, std::string name_, boost::any value_
     validator(std::move(validator_)),
     option_changed_sig(std::make_unique<OptionChangedSignalType>()),
     short_name(short_name_),
-    storable(storable_),
-    flag(flag_),
-    recognized(recognized_)
+    storable(static_cast<bool>(storable_)),
+    flag(static_cast<bool>(flag_)),
+    recognized(static_cast<bool>(recognized_))
 {
     if (!validator)
         DebugLogger() << "Option " << name << " created with null validator...";
@@ -296,12 +302,21 @@ namespace {
         return retval.str();
     }
 
-    bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) {
+    constexpr bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) noexcept {
         auto it = lhs.find_last_of('.');
         if (it == std::string::npos)
             return false;
         return lhs.substr(0, it) == rhs;
     }
+
+    static_assert(OptionNameHasParentSection("parent.child", "parent"));
+    static_assert(!OptionNameHasParentSection("grandparent.parent.child", "parent"));
+    static_assert(!OptionNameHasParentSection("parent", "parent"));
+    static_assert(!OptionNameHasParentSection(".child", "child"));
+    static_assert(!OptionNameHasParentSection("parent.child", "tacos"));
+    static_assert(!OptionNameHasParentSection("parent.child", ""));
+    static_assert(!OptionNameHasParentSection("", "tacos"));
+    static_assert(!OptionNameHasParentSection("", ""));
 }
 
 std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::OptionsBySection(bool allow_unrecognized) const {
@@ -697,12 +712,14 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 if (value_str.front() == '-') {
                     // this is either the last parameter or the next parameter is another option, assume this one is a flag
                     m_options.emplace_back(static_cast<char>(0), option_name, true, false, "",
-                                           std::make_unique<Validator<bool>>(), false, true, false);
+                                           std::make_unique<Validator<bool>>(),
+                                           Storable::UNSTORABLE, Flag::FLAG, Recognized::UNRECOGNIZED);
                 } else {
                     // the next parameter is the value, store it as a string to be parsed later, but
                     // don't attempt to store options that have only been specified on the command line
                     m_options.emplace_back(static_cast<char>(0), option_name, value_str, value_str, "",
-                                           std::make_unique<Validator<std::string>>(), false, false, false);
+                                           std::make_unique<Validator<std::string>>(),
+                                           Storable::UNSTORABLE, Flag::NOTFLAG, Recognized::UNRECOGNIZED);
                 }
 
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized."
@@ -828,7 +845,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, std::string_view sec
         } else {
             // Store unrecognized option to be parsed later if this options is added.
             m_options.emplace_back(static_cast<char>(0), option_name, elem.Text(), elem.Text(), "",
-                                   std::make_unique<Validator<std::string>>(), true, false, false,
+                                   std::make_unique<Validator<std::string>>(),
+                                   Storable::STORABLE, Flag::NOTFLAG, Recognized::UNRECOGNIZED,
                                    std::string{section_name});
         }
 

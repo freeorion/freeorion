@@ -92,7 +92,7 @@ struct Validator : public ValidatorBase
 };
 
 /** a Validator that constrains the range of valid values */
-template <typename T>
+template <typename T> requires (std::is_arithmetic_v<T> || std::is_enum_v<T>)
 struct RangedValidator final : public Validator<T>
 {
     RangedValidator(T min, T max) :
@@ -119,14 +119,13 @@ struct RangedValidator final : public Validator<T>
 
     const T m_min;
     const T m_max;
-    static_assert(std::is_arithmetic_v<T> || std::is_enum_v<T>);
 };
 
 /** a Validator that constrains valid values to certain step-values
     (eg: 0, 25, 50, ...).  The steps are assumed to begin at the
     validated type's default-constructed value, unless another origin
     is specified. */
-template <typename T>
+template <typename T> requires std::is_arithmetic_v<T>
 struct StepValidator final : public Validator<T>
 {
     StepValidator(T step, T origin = 0) :
@@ -161,17 +160,15 @@ struct StepValidator final : public Validator<T>
 
     const T m_step_size;
     const T m_origin;
-    static_assert(std::is_arithmetic_v<T>);
 };
 
 /** a Validator similar to a StepValidator, but that further constrains the valid values to be within a certain range (eg: [25, 50, ..., 200]). */
-template <typename T>
+template <typename T> requires std::is_arithmetic_v<T>
 struct RangedStepValidator final : public Validator<T>
 {
 public:
     RangedStepValidator(T step, T min, T max) :
         m_step_size(step),
-        m_origin(T()),
         m_min(min),
         m_max(max)
     {
@@ -224,15 +221,14 @@ public:
     { return std::make_unique<RangedStepValidator>(std::move(*this)); }
 
     const T m_step_size;
-    const T m_origin;
+    const T m_origin = T{};
     const T m_min;
     const T m_max;
-    static_assert(std::is_arithmetic_v<T>);
 };
 
 /// a Validator that specifies a finite number of valid values.
 /** Probably won't work well with floating point types. */
-template <typename T>
+template <typename T> requires (std::is_arithmetic_v<T> || std::is_same_v<std::string, T>)
 struct DiscreteValidator final : public Validator<T>
 {
     explicit DiscreteValidator(T single_value) :
@@ -275,15 +271,14 @@ struct DiscreteValidator final : public Validator<T>
     { return std::make_unique<DiscreteValidator>(std::move(m_values)); }
 
     /// Stores the list of vaild values.
-    std::vector<T> m_values;
-    static_assert(std::is_arithmetic_v<T> || std::is_same_v<std::string, T>);
+    std::vector<T> m_values;;
 };
 
 /// a Validator that performs a logical OR of two validators.
 /** Stores and owns clones of the provided validators in std::unique_ptr.
  *  Always calls m_validator_a->Validate(). Only calls m_validator_b->Validate()
  *  if the first one throws. */
-template <typename T>
+template <typename T> requires std::is_nothrow_move_constructible_v<std::unique_ptr<Validator<T>>>
 struct OrValidator final : public Validator<T>
 {
     OrValidator(Validator<T>&& validator_a, Validator<T>&& validator_b) :
@@ -327,7 +322,6 @@ struct OrValidator final : public Validator<T>
 
     std::unique_ptr<Validator<T>> m_validator_a;
     std::unique_ptr<Validator<T>> m_validator_b;
-    static_assert(std::is_nothrow_move_constructible_v<std::unique_ptr<Validator<T>>>);
 };
 
 

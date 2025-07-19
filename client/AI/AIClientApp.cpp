@@ -50,8 +50,8 @@ namespace {
     {
         const std::string option_root = "ai.trait." + root + ".";
         const std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_" + ROOT;
-        db.Add(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"),       false);
-        db.Add(option_root + "default",       UserStringNop(user_string_root + "_FORCE_VALUE"), def,    validator.Clone());
+        db.Add<bool>(option_root + "force.enabled", UserStringNop(user_string_root + "_FORCE"),       false);
+        db.Add(option_root + "default",             UserStringNop(user_string_root + "_FORCE_VALUE"), def,    validator.Clone());
 
         for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
             db.Add(option_root + "ai_" + std::to_string(ii),

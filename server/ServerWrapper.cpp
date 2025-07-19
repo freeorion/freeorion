@@ -405,8 +405,10 @@ namespace {
 
         // Create the design and add it to the universe
         try {
+            static constexpr bool NAME_IN_STRINGTABLE = true;
             ShipDesign design(std::invalid_argument(""), name, description, BEFORE_FIRST_TURN,
-                              ALL_EMPIRES, hull, parts, icon, model, true, monster);
+                              ALL_EMPIRES, hull, parts, icon, model, NAME_IN_STRINGTABLE,
+                              monster ? ShipDesign::Monster::MONSTER : ShipDesign::Monster::NOTMONSTER);
 
             const auto new_id = universe.InsertShipDesign(design);
             if (new_id == INVALID_DESIGN_ID) {
