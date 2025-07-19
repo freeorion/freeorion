@@ -74,6 +74,8 @@ struct GG_API Pt
 inline constexpr Pt Pt0{GG::X0, GG::Y0};
 
 GG_API std::ostream& operator<<(std::ostream& os, Pt pt);
+GG_API std::ostream& operator<<(std::ostream& os, X x);
+GG_API std::ostream& operator<<(std::ostream& os, Y y);
 
 [[nodiscard]] GG_API constexpr bool operator<(Pt lhs, Pt rhs) noexcept     { return lhs.x < rhs.x && lhs.y < rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both less than the corresponding components of \a rhs
 [[nodiscard]] GG_API constexpr bool operator>(Pt lhs, Pt rhs) noexcept     { return lhs.x > rhs.x && lhs.y > rhs.y; }   ///< returns true if \a lhs.x and \a lhs.y are both greater than the corresponding components of \a rhs
