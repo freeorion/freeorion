@@ -1137,11 +1137,7 @@ namespace {
 }
 
 void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
-    if (auto map_wnd = m_ui.GetMapWnd(false))
-        map_wnd->DoLayout();
-    if (auto intro_screen = m_ui.GetIntroScreen())
-        intro_screen->Resize(GG::Pt(w, h));
-
+    TraceLogger() << "GGHumanClientApp::HandleWindowResize(" << w << ", " << h << ")";
     auto& db = GetOptionsDB();
 
     const auto windowed = db.OptionExistsAndHasTypedValue<bool>(vfe_opt) &&
@@ -1152,6 +1148,13 @@ void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     const auto mismatched_width_height = wind_width_height_opts_inited &&
         (db.Get<int>(width_opt) != Value(w) || db.Get<int>(height_opt) != Value(h));
+
+    SetAppSize(GG::Pt{w, h});
+
+    if (auto* map_wnd = m_ui.GetMapWnd(false))
+        map_wnd->DoLayout();
+    if (auto intro_screen = m_ui.GetIntroScreen())
+        intro_screen->Resize(GG::Pt(w, h));
 
     if (mismatched_width_height) {
         if (db.OptionExistsAndHasTypedValue<bool>(repo_opt) && db.Get<bool>(repo_opt)) {
