@@ -1556,9 +1556,9 @@ void MapWnd::DoLayout() {
     m_combat_report_wnd->ValidatePosition();
     m_moderator_wnd->ValidatePosition();
 
-    if (const auto& msg_wnd = GetApp().GetUI().GetMessageWnd())
+    if (auto msg_wnd = GetApp().GetUI().GetMessageWnd())
         msg_wnd->ValidatePosition();
-    if (const auto& plr_wnd = GetApp().GetUI().GetPlayerListWnd())
+    if (auto plr_wnd = GetApp().GetUI().GetPlayerListWnd())
         plr_wnd->ValidatePosition();
 
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
