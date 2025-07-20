@@ -888,9 +888,7 @@ void CUIWnd::SetParent(std::shared_ptr<GG::Wnd> wnd) noexcept {
 ///////////////////////////////////////
 CUIEditWnd::CUIEditWnd(GG::X w, std::string prompt_text, std::string edit_text, GG::Flags<GG::WndFlag> flags) :
     CUIWnd(std::move(prompt_text), GG::X0, GG::Y0, w, GG::Y1, flags)
-{
-    m_edit = GG::Wnd::Create<CUIEdit>(std::move(edit_text));
-}
+{ m_edit = GG::Wnd::Create<CUIEdit>(std::move(edit_text)); }
 
 void CUIEditWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
