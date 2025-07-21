@@ -597,7 +597,7 @@ void CUIWnd::Show() {
 }
 
 void CUIWnd::ResetDefaultPosition() {
-    GG::Rect default_position = CalculatePosition();
+    const GG::Rect default_position = CalculatePosition();
     if (default_position.ul.x != INVALID_X) // do nothing if not overridden
         InitSizeMove(default_position.ul, default_position.lr);
 }
@@ -620,41 +620,34 @@ void CUIWnd::SaveDefaultedOptions() {
     const std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
     const auto size = m_minimized ? m_original_size : Size();
 
-    std::string config_name = config_prefix + window_mode + ".left";
-    int int_value = Value(RelativeUpperLeft().x);
-    if (m_defaulted_options.contains(config_name))
-        db.SetDefault(config_name, int_value);
+    const auto left_config_name = config_prefix + window_mode + ".left";
+    if (m_defaulted_options.contains(left_config_name))
+        db.SetDefault(left_config_name, Value(RelativeUpperLeft().x));
 
-    config_name = config_prefix + window_mode + ".top";
-    int_value = Value(RelativeUpperLeft().y);
-    if (m_defaulted_options.contains(config_name))
-        db.SetDefault(config_name, int_value);
+    const auto top_config_name = config_prefix + window_mode + ".top";
+    if (m_defaulted_options.contains(top_config_name))
+        db.SetDefault(top_config_name, Value(RelativeUpperLeft().y));
 
-    config_name = config_prefix + window_mode + ".width";
-    int_value = Value(size.x);
-    if (m_defaulted_options.contains(config_name))
-        db.SetDefault(config_name, int_value);
+    const auto width_config_name = config_prefix + window_mode + ".width";
+    if (m_defaulted_options.contains(width_config_name))
+        db.SetDefault(width_config_name, Value(size.x));
 
-    config_name = config_prefix + window_mode + ".height";
-    int_value = Value(size.y);
-    if (m_defaulted_options.contains(config_name))
-        db.SetDefault(config_name, int_value);
+    const auto height_config_name = config_prefix + window_mode + ".height";
+    if (m_defaulted_options.contains(height_config_name))
+        db.SetDefault(height_config_name, Value(size.y));
 
     if (!Modal()) {
-        config_name = config_prefix + ".visible";
-        bool bool_value = Visible();
-        if (m_defaulted_options.contains(config_name))
-            db.SetDefault(config_name, bool_value);
+        const auto vis_config_name = config_prefix + ".visible";
+        if (m_defaulted_options.contains(vis_config_name))
+            db.SetDefault(vis_config_name, Visible());
 
-        config_name = config_prefix + ".pinned";
-        bool_value = m_pinned;
-        if (m_defaulted_options.contains(config_name))
-            db.SetDefault(config_name, bool_value);
+        const auto pinned_config_name = config_prefix + ".pinned";
+        if (m_defaulted_options.contains(pinned_config_name))
+            db.SetDefault(pinned_config_name, m_pinned);
 
-        config_name = config_prefix + ".minimized";
-        bool_value = m_minimized;
-        if (m_defaulted_options.contains(config_name))
-            db.SetDefault(config_name, bool_value);
+        const auto min_config_name = config_prefix + ".minimized";
+        if (m_defaulted_options.contains(min_config_name))
+            db.SetDefault(min_config_name, m_minimized);
     }
 }
 
@@ -677,17 +670,16 @@ void CUIWnd::SaveOptions() const {
 
     const auto size = m_minimized ? m_original_size : Size();
 
-    const std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ?
-                              ".fullscreen" : ".windowed";
+    const std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
 
-    db.Set(option_prefix + window_mode + ".left",      Value(RelativeUpperLeft().x));
-    db.Set(option_prefix + window_mode + ".top",       Value(RelativeUpperLeft().y));
-    db.Set(option_prefix + window_mode + ".width",     Value(size.x));
-    db.Set(option_prefix + window_mode + ".height",    Value(size.y));
+    db.Set(option_prefix + window_mode + ".left",   Value(RelativeUpperLeft().x));
+    db.Set(option_prefix + window_mode + ".top",    Value(RelativeUpperLeft().y));
+    db.Set(option_prefix + window_mode + ".width",  Value(size.x));
+    db.Set(option_prefix + window_mode + ".height", Value(size.y));
 
     if (!Modal()) {
-        db.Set(option_prefix + ".visible", Visible());
-        db.Set(option_prefix + ".pinned", m_pinned);
+        db.Set(option_prefix + ".visible",   Visible());
+        db.Set(option_prefix + ".pinned",    m_pinned);
         db.Set(option_prefix + ".minimized", m_minimized);
     }
 
@@ -698,10 +690,11 @@ void CUIWnd::LoadOptions() {
     OptionsDB& db = GetOptionsDB();
 
     // The default empty string means 'do not save/load properties'
-    std::string option_prefix = "ui." + m_config_name;
-    if (m_config_name.empty()) {
+    const std::string option_prefix = "ui." + m_config_name;
+    if (m_config_name.empty())
         return;
-    } else if (!db.OptionExists(option_prefix + ".initialized")) {
+
+    if (!db.OptionExists(option_prefix + ".initialized")) {
         ErrorLogger() << "CUIWnd::LoadOptions() : attempted to load window options using name \"" << m_config_name << "\" but the options do not appear to be registered in the OptionsDB.";
         return;
     }
@@ -718,9 +711,8 @@ void CUIWnd::LoadOptions() {
 
     m_config_save = false;
 
-    if (m_minimized) {
+    if (m_minimized)
         MinimizeClicked();
-    }
 
     if (ul.x == INVALID_X || ul.y == INVALID_Y) {
         // If no options have been saved yet, allow the window to calculate its
@@ -735,19 +727,16 @@ void CUIWnd::LoadOptions() {
     }
 
     if (!Modal()) {
-        if (db.Get<bool>(option_prefix + ".visible")) {
+        if (db.Get<bool>(option_prefix + ".visible"))
             Show();
-        } else {
+        else
             Hide();
-        }
 
-        if (db.Get<bool>(option_prefix + ".pinned") != m_pinned) {
+        if (db.Get<bool>(option_prefix + ".pinned") != m_pinned)
             PinClicked();
-        }
 
-        if (db.Get<bool>(option_prefix + ".minimized") != m_minimized) {
+        if (db.Get<bool>(option_prefix + ".minimized") != m_minimized)
             MinimizeClicked();
-        }
     }
 
     m_config_save = true;
