@@ -1474,24 +1474,24 @@ void MapWnd::CompleteConstruction() {
     InitializeWindows();
 
     // messages and empires windows
-        if (const auto& msg_wnd = ui.GetMessageWnd()) {
-            // Wnd is manually closed by user
-            m_signal_connections.push_back(msg_wnd->ClosingSignal.connect([this]() { HideMessages(); }));
-            if (msg_wnd->Visible()) {
-                PushWndStack(msg_wnd);
-                m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
-                m_btn_messages->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
-            }
+    if (auto msg_wnd = ui.GetMessageWnd()) {
+        // Wnd is manually closed by user
+        m_signal_connections.push_back(msg_wnd->ClosingSignal.connect([this]() { HideMessages(); }));
+        if (msg_wnd->Visible()) {
+            PushWndStack(msg_wnd);
+            m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+            m_btn_messages->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
         }
-        if (const auto& plr_wnd = ui.GetPlayerListWnd()) {
-            // Wnd is manually closed by user
-            m_signal_connections.push_back(plr_wnd->ClosingSignal.connect([this]() { HideEmpires(); }));
-            if (plr_wnd->Visible()) {
-                PushWndStack(plr_wnd);
-                m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
-                m_btn_empires->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
-            }
+    }
+    if (auto plr_wnd = ui.GetPlayerListWnd()) {
+        // Wnd is manually closed by user
+        m_signal_connections.push_back(plr_wnd->ClosingSignal.connect([this]() { HideEmpires(); }));
+        if (plr_wnd->Visible()) {
+            PushWndStack(plr_wnd);
+            m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+            m_btn_empires->SetRolloverGraphic (GG::SubTexture(ui.GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
         }
+    }
 
     m_signal_connections.push_back(app.RepositionWindowsSignal.connect([this]() { InitializeWindows(); }));
     const GG::X subwnd_width = app.AppWidth();
@@ -6287,7 +6287,7 @@ void MapWnd::ShowMessages() {
     RestoreSidePanel();
 
     auto& app = GetApp();
-    const auto& msg_wnd = app.GetUI().GetMessageWnd();
+    auto msg_wnd = app.GetUI().GetMessageWnd();
     if (!msg_wnd)
         return;
     msg_wnd->Show();
