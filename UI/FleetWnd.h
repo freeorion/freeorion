@@ -126,7 +126,6 @@ public:
     mutable boost::signals2::signal<void (int)> ShipRightClickedSignal;
 
 protected:
-    void CloseClicked() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void DoLayout();
 

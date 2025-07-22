@@ -3188,9 +3188,6 @@ void FleetWnd::Refresh(int this_client_empire_id, const ScriptingContext& contex
     RefreshStateChangedSignals();
 }
 
-void FleetWnd::CloseClicked()
-{ CUIWnd::CloseClicked(); }
-
 void FleetWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     MapWndPopup::LClick(pt, mod_keys);
     ClickedSignal(std::static_pointer_cast<FleetWnd>(shared_from_this()));
