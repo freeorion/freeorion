@@ -550,8 +550,7 @@ void OptionsWnd::CompleteConstruction() {
         ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
         window_reset_button, 0);
     current_page->Insert(row);
-    window_reset_button->LeftClickedSignal.connect(
-        GetApp().RepositionWindowsSignal);
+    window_reset_button->LeftClickedSignal.connect(GetApp().RepositionWindowsSignal);
 
     FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
