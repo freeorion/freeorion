@@ -707,7 +707,7 @@ namespace {
         const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_design_ids.end());
         const auto inserted_it = m_ordered_design_ids.insert(insert_before_it, id);
 
-        m_id_to_obsolete_and_loc[id] = std::pair(boost::none, inserted_it);
+        m_id_to_obsolete_and_loc.insert_or_assign(id, std::pair(boost::none, inserted_it));
     }
 
     bool DisplayedShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
@@ -767,7 +767,7 @@ namespace {
                                        : m_ordered_hulls.end());
         const auto inserted_it = m_ordered_hulls.insert(insert_before_it, hull);
 
-        m_hull_to_obsolete_and_loc[hull] = {std::pair{false, NextUIObsoleteEvent()}, inserted_it};
+        m_hull_to_obsolete_and_loc.insert_or_assign(hull, std::pair{std::pair{false, NextUIObsoleteEvent()}, inserted_it});
     }
 
     [[nodiscard]] bool FlexibleContains(const auto& container, const auto& val) {
@@ -777,8 +777,15 @@ namespace {
             return container.count(val) > 0;
         else if constexpr (requires { container.find(val) != container.end(); })
             return container.find(val) != container.end();
-        else
-            return std::any_of(container.begin(), container.end(), [&val](const auto& cv) { return val == cv; });
+        else if constexpr (requires { range_contains(container, val); })
+            return range_contains(container, val);
+        else {
+            const auto is_val = [&val](const auto& cv) noexcept(noexcept(val == cv)) { return val == cv; };
+            if constexpr (requires { range_any_of(container, is_val); })
+                return range_any_of(container, is_val);
+            else
+                return std::any_of(container.begin(), container.end(), is_val);
+        }
     }
 
     [[nodiscard]] bool DisplayedShipDesignManager::IsKnown(const int id) const
