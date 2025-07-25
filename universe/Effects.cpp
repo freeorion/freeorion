@@ -64,11 +64,11 @@ namespace {
         Universe& universe = context.ContextUniverse();
         auto fleet = universe.InsertNew<Fleet>("", x, y, ship->Owner(), context.current_turn);
 
-        fleet->Rename(fleet->GenerateFleetName(context));
-        fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-
         fleet->AddShips({ship->ID()});
         ship->SetFleetID(fleet->ID());
+
+        fleet->Rename(fleet->GenerateFleetName(context));
+        fleet->GetMeter(MeterType::METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         // if aggression specified, use that, otherwise get from whether ship is armed
         FleetAggression new_aggr = aggression == FleetAggression::INVALID_FLEET_AGGRESSION ?
@@ -2862,6 +2862,30 @@ MoveTo::MoveTo(std::unique_ptr<Condition::Condition>&& location_condition) :
     m_location_condition(std::move(location_condition))
 {}
 
+namespace {
+    constexpr Fleet* get_fleet(auto* destination, ObjectMap& objs) {
+        const auto obj_type = destination->ObjectType();
+        if (obj_type == UniverseObjectType::OBJ_FLEET)
+            return static_cast<Fleet*>(destination);
+        if (obj_type == UniverseObjectType::OBJ_SHIP) {
+            auto ship = static_cast<Ship*>(destination);
+            return objs.getRaw<Fleet>(ship->FleetID());
+        }
+        return nullptr;
+    };
+
+    constexpr Planet* get_planet(auto* destination, ObjectMap& objs) {
+        const auto obj_type = destination->ObjectType();
+        if (obj_type == UniverseObjectType::OBJ_PLANET)
+            return static_cast<Planet*>(destination);
+        if (obj_type == UniverseObjectType::OBJ_BUILDING) {
+            auto building = static_cast<Building*>(destination);
+            return objs.getRaw<Planet>(building->PlanetID());
+        }
+        return nullptr;
+    };
+}
+
 void MoveTo::Execute(ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger(effects) << "MoveTo::Execute given no target object";
@@ -2887,28 +2911,6 @@ void MoveTo::Execute(ScriptingContext& context) const {
 
     // get previous system from which to remove object if necessary
     auto old_sys = objects.getRaw<System>(context.effect_target->SystemID());
-
-    auto get_fleet = [](auto* destination, ObjectMap& objs) -> Fleet* {
-        const auto obj_type = destination->ObjectType();
-        if (obj_type == UniverseObjectType::OBJ_FLEET)
-            return static_cast<Fleet*>(destination);
-        if (obj_type == UniverseObjectType::OBJ_SHIP) {
-            auto ship = static_cast<Ship*>(destination);
-            return objs.getRaw<Fleet>(ship->FleetID());
-        }
-        return nullptr;
-    };
-
-    auto get_planet = [](auto* destination, ObjectMap& objs) -> Planet* {
-        const auto obj_type = destination->ObjectType();
-        if (obj_type == UniverseObjectType::OBJ_PLANET)
-            return static_cast<Planet*>(destination);
-        if (obj_type == UniverseObjectType::OBJ_BUILDING) {
-            auto building = static_cast<Building*>(destination);
-            return objs.getRaw<Planet>(building->PlanetID());
-        }
-        return nullptr;
-    };
 
     // do the moving...
     if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_FLEET) {
@@ -2976,62 +2978,69 @@ void MoveTo::Execute(ScriptingContext& context) const {
         }
 
     } else if (context.effect_target->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-        auto ship = static_cast<Ship*>(context.effect_target);
+        auto const ship = static_cast<Ship*>(context.effect_target);
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
-        // is destination a ship/fleet ?
-        auto dest_fleet = get_fleet(destination, objects);
-        if (dest_fleet)
-            if (dest_fleet->ID() == ship->FleetID())
-                return; // already in destination fleet. nothing to do.
+        // is destination a fleet or a ship in a fleet? if so, get that fleet.
+        auto const dest_fleet = get_fleet(destination, objects);
+        if (dest_fleet && dest_fleet->ID() == ship->FleetID())
+            return; // already in destination fleet. nothing to do.
 
 
-        bool same_owners = ship->Owner() == destination->Owner();
-        int dest_sys_id = destination->SystemID();
-        int ship_sys_id = ship->SystemID();
+        auto const old_fleet = objects.getRaw<Fleet>(ship->FleetID());
+        //DebugLogger() << "old fleet? " << (old_fleet ? old_fleet->ID() : INVALID_OBJECT_ID);
 
 
-        if (ship_sys_id != dest_sys_id) {
-            // ship is moving to a different system.
+        const bool same_owner = !ship->Unowned() && (ship->Owner() == destination->Owner());
+        const int dest_sys_id = destination->SystemID();
+        const int initial_ship_sys_id = ship->SystemID();
+        //DebugLogger() << "owners same: " << same_owner << "  dest sys: " << dest_sys_id
+        //            << "  initial ship sys: " << initial_ship_sys_id;
 
-            // remove ship from old system
-            if (old_sys) {
+
+        // handle ship system
+        if (initial_ship_sys_id != dest_sys_id) {
+            // ship is moving to a different system or from its initial system to non-system location
+
+            if (auto const new_sys = objects.getRaw<System>(dest_sys_id)) {
+                // (move and) insert ship into new system
+                new_sys->Insert(ship, System::NO_ORBIT, context.current_turn, context.ContextObjects());
+
+            } else if (old_sys) {
+                // remove ship from old system
                 old_sys->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
-
-            if (auto new_sys = objects.getRaw<System>(dest_sys_id)) {
-                // ship is moving to a new system. insert it.
-                new_sys->Insert(ship, System::NO_ORBIT, context.current_turn, context.ContextObjects());
-            } else {
-                // ship is moving to a non-system location. move it there.
-                ship->MoveTo(dest_fleet);
-            }
-
-            // may create a fleet for ship below...
         }
 
-        auto old_fleet = objects.getRaw<Fleet>(ship->FleetID());
 
-        if (dest_fleet && same_owners) {
+        // handle ship fleet
+        if (dest_fleet && same_owner) {
+            //DebugLogger() << "moving ship into existing same-owner fleet";
             // ship is moving to a different fleet owned by the same empire, so
             // can be inserted into it.
             if (old_fleet)
                 old_fleet->RemoveShips({ship->ID()});
+            ship->MoveTo(dest_fleet); // should not change (system / fleet) of ship
             dest_fleet->AddShips({ship->ID()});
             ship->SetFleetID(dest_fleet->ID());
 
-        } else if (dest_sys_id == ship_sys_id && dest_sys_id != INVALID_OBJECT_ID) {
-            // ship is moving to the system it is already in, but isn't being or
-            // can't be moved into a specific fleet, so the ship can be left in
-            // its current fleet and at its current location
+        } else if (dest_sys_id != INVALID_OBJECT_ID && dest_sys_id == initial_ship_sys_id) {
+            //DebugLogger() << "moving ship to non-fleety object in the same system; no fleet change";
+            // ship is moving to the system it is/was already in, but isn't being or
+            // can't be moved into a specific fleet with the same owner, so the ship
+            // can be left in its current fleet and at its current location
 
-        } else if (destination->X() == ship->X() && destination->Y() == ship->Y()) {
+        } else if (dest_sys_id == INVALID_OBJECT_ID &&
+                   std::pair{ship->X(), ship->Y()} == std::pair{destination->X(), destination->Y()})
+        {
+            //DebugLogger() << "ship already at non-system destination; no fleet change";
             // ship is moving to the same location it's already at, but isn't
-            // being or can't be moved to a specific fleet, so the ship can be
+            // being moved to a specific fleet, so the ship can be
             // left in its current fleet and at its current location
 
         } else {
+            //DebugLogger() << "need new fleet!";
             // need to create a new fleet for ship
 
             // if ship is armed use old fleet's aggression. otherwise use auto-determined aggression
@@ -3049,7 +3058,8 @@ void MoveTo::Execute(ScriptingContext& context) const {
         }
 
         if (old_fleet && old_fleet->Empty()) {
-            old_sys->Remove(old_fleet->ID());
+            if (old_sys)
+                old_sys->Remove(old_fleet->ID());
             universe.EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID); // no particular object destroyed this fleet
         }
 
