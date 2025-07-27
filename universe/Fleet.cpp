@@ -1375,7 +1375,9 @@ std::string Fleet::GenerateFleetName(const ScriptingContext& context) const {
     };
 
     std::string_view fleet_name_key;
-    if (range_all_of(ships, [&u](const auto& ship){ return ship->IsMonster(u); }))
+    if (ships.empty())
+        fleet_name_key = UserStringNop("NEW_FLEET_NAME");
+    else if (range_all_of(ships, [&u](const auto& ship){ return ship->IsMonster(u); }))
         fleet_name_key = UserStringNop("NEW_MONSTER_FLEET_NAME");
     else if (range_all_of(ships, [&u, &sm](const auto& ship){ return ship->CanColonize(u, sm); }))
         fleet_name_key = UserStringNop("NEW_COLONY_FLEET_NAME");
