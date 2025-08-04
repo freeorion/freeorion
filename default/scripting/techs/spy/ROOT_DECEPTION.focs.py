@@ -1,9 +1,7 @@
 from focs._effects import (
     BlackHole,
     EffectsGroup,
-    Floor,
     InSystem,
-    MaxOf,
     NamedReal,
     Neutron,
     NoStar,
@@ -53,23 +51,22 @@ Tech(
             accountinglabel="FLEET_UNSTEALTHINESS",
             effects=SetStealth(
                 value=Value
-                - NamedReal(name="FLEET_UNSTEALTH_SHIPS_SCALING", value=5.0)
-                * Floor(
-                    float,
-                    MaxOf(
-                        float,
-                        0,
-                        (
-                            StatisticCount(
-                                float, condition=Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner)
-                            )
-                        )
-                        - NamedReal(name="FLEET_UNSTEALTHY_SHIPS_THRESHOLD", value=10),
-                    )
-                    ** 0.5,
-                )
+                - NamedReal(name="FLEET_UNSTEALTH_SHIPS_SCALING", value=1.0)
+                * StatisticCount(float, condition=Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner))
             ),
-            # large fleets only start affecting stealth when there are more than the threshold of ships in a single system
+        ),
+        EffectsGroup(
+            scope=Ship & ~InSystem() & OwnedBy(empire=Source.Owner),
+            accountinglabel="FLEET_UNSTEALTHINESS",
+            effects=SetStealth(
+                value=Value
+                - NamedRealLookup(name="FLEET_UNSTEALTH_SHIPS_SCALING")
+                * StatisticCount(float, condition=
+                                 Ship
+                                 & ~InSystem()
+                                 & ((LocalCandidate.NextSystemID == Target.SystemID) |  (LocalCandidate.NextSystemID == Target.SystemID))
+                                 & OwnedBy(empire=Source.Owner))
+            ),
         ),
     ],
 )
