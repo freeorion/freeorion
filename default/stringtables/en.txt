@@ -16933,7 +16933,7 @@ Symbiotic Hull
 
 SH_SYMBIOTIC_DESC
 '''A living hull with two internal and two external slots. Exists in a symbiotic relationship with its crew, increasing its [[metertype METER_STEALTH]] and speed.
-Organic Growth: starts with 32 [[metertype METER_STRUCTURE]], but grows an additional 128 structure over 40 turns.
+Organic Growth: starts with [[value SH_SYMBIOTIC_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_SYMBIOTIC_GROWTH_STRUCTURE]] structure over [[value SH_SYMBIOTIC_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
