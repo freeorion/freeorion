@@ -5,7 +5,7 @@ Hull
     fuel = 6
     NoDefaultFuelEffect
     stealth = 5
-    structure = 3
+    structure = [[SH_ORGANIC_BASE_STRUCTURE]]
     slots = [
         Slot type = External position = (0.80, 0.50)
         Slot type = Internal position = (0.60, 0.50)
@@ -32,11 +32,7 @@ Hull
                 SetStructure value = Value + (2*[[SHIP_STRUCTURE_FACTOR]])
             ]
 
-        EffectsGroup
-            scope = Source
-            accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + ( min(Source.Age*0.2, 3) * [[SHIP_STRUCTURE_FACTOR]] )
-
+        [[LIVING_HULL_GROWTH_EFFECTS_GROUPS(SH_ORGANIC)]]
         [[GREAT_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[LIVING_HULL_BASE_FUEL_REGEN]]
