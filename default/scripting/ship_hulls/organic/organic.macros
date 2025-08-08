@@ -27,6 +27,14 @@ LIVING_HULL_BASE_FUEL_REGEN
    [[REFUEL_MESSAGE(0.3)]]
 '''
 
+LIVING_HULL_GROWTH_EFFECTS_GROUPS
+'''EffectsGroup
+    scope = Source
+    accountinglabel = "ORGANIC_GROWTH"
+    effects = SetMaxStructure value = Value + min(Source.Age * (NamedRealLookup name = "@1@_GROWTH_PER_TURN"), NamedIntegerLookup name = "@1@_GROWTH_STRUCTURE")
+'''
+
+
 #include "/scripting/macros/priorities.macros"
 
 #include "/scripting/macros/misc.macros"

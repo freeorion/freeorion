@@ -16996,7 +16996,7 @@ Bio-Adaptive Hull
 
 SH_BIOADAPTIVE_DESC
 '''A living hull with mind and body in unison, master of healing and endurance. It has three external slots and three internal slots.
-Organic Growth: starts with 80 [[metertype METER_STRUCTURE]], grows an additional 240 structure over 60 turns.
+Organic Growth: starts with [[value SH_BIOADAPTIVE_STRUCTURE]] [[metertype METER_STRUCTURE]], grows an additional [[value SH_BIOADAPTIVE_GROWTH_STRUCTURE]] structure over [[value SH_BIOADAPTIVE_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 

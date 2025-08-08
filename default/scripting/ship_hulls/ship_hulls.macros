@@ -225,4 +225,6 @@ ADD_HULL_FUEL_TO_MAX_FUEL_METER
             effects = SetMaxFuel value = ( Value + HullFuel name = Source.Hull )
 '''
 
+
+#include "./hull_structures.macros"
 #include "/scripting/macros/priorities.macros"
