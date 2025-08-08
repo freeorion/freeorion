@@ -1111,7 +1111,7 @@ namespace {
     }
 
     boost::python::object insert_const_(const PythonParser& parser, const boost::python::object& type, const boost::python::object& value) {
-         if (type == parser.type_int) {
+        if (type == parser.type_int) {
             return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Constant<int>>(
                 boost::python::extract<int>(value)
             )));
@@ -1240,7 +1240,9 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
         const auto f = [&parser, e](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_minmaxoneof_(parser, e, args, kw); };
         globals[op.first] = boost::python::raw_function(f, 3);
     }
-
+    const auto noop = ValueRef::OpType::NOOP;
+    const auto xf = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_1arg_(parser, noop, args, kw); };
+    globals["NoOpValue"] = boost::python::raw_function(xf, 2); // needs type and value like NoOpValue(int, 1)
     const auto f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
     globals["StatisticIf"] = boost::python::raw_function(f_insert_statistic_if, 1);
 
