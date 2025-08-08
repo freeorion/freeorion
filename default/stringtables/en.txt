@@ -16963,7 +16963,7 @@ SH_ENDOSYMBIOTIC_DESC
 '''This living mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles.
 It has four external slots and three internal slots.
 
-The base hull is born with 40 [[metertype METER_STRUCTURE]], but grows an additional 120 structure over 30 turns.
+Organic Growth: Is born with [[value SH_ENDOSYMBIOTIC_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_ENDOSYMBIOTIC_GROWTH_STRUCTURE]] structure over [[value SH_ENDOSYMBIOTIC_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is high, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
