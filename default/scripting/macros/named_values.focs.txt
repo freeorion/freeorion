@@ -42,11 +42,17 @@ SPATIAL_FLUX_STEALTH_HULL_BASE
 SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS
 '''10'''
 
-// base structure comes from ship_hulls/hull_structures.macros
-NamedReal    name = "SH_BIOADAPTIVE_STRUCTURE" value = ([[SH_BIOADAPTIVE_BASE_STRUCTURE]] * [[SHIP_STRUCTURE_FACTOR]])
-NamedInteger name = "SH_BIOADAPTIVE_GROWTH_STRUCTURE" value = round(30 * [[SHIP_STRUCTURE_FACTOR]])
-NamedInteger name = "SH_BIOADAPTIVE_GROWTH_TURNS" value = 60
-NamedReal    name = "SH_BIOADAPTIVE_GROWTH_PER_TURN" value = (NamedIntegerLookup name = "SH_BIOADAPTIVE_GROWTH_STRUCTURE" / NamedIntegerLookup name = "SH_BIOADAPTIVE_GROWTH_TURNS")
+
+// Named values for living hulls - LIVING_HULL_NAMED macro and base values come from ship_hulls/hull_structures.macros
+[[LIVING_HULL_NAMED(SH_BIOADAPTIVE)]]
+
+LIVING_HULL_NAMED
+'''
+NamedReal    name = "@1@_STRUCTURE" value = ([[@1@_BASE_STRUCTURE]] * [[SHIP_STRUCTURE_FACTOR]])
+NamedInteger name = "@1@_GROWTH_STRUCTURE" value = round([[@1@_GROWTH_STRUCTURE]] * [[SHIP_STRUCTURE_FACTOR]])
+NamedInteger name = "@1@_GROWTH_TURNS" value = [[@1@_GROWTH_TURNS]]
+NamedReal    name = "@1@_GROWTH_PER_TURN" value = (NamedIntegerLookup name = "@1@_GROWTH_STRUCTURE" / NamedIntegerLookup name = "@1@_GROWTH_TURNS")
+'''
 
 
 // Black hole and hyper dam
