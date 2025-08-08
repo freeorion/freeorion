@@ -5,7 +5,7 @@ Hull
     fuel = 1
     NoDefaultFuelEffect
     stealth = 25
-    structure = 12
+    structure = [[SH_SENTIENT_BASE_STRUCTURE]]
     slots = [
         Slot type = External position = (0.40, 0.40)
         Slot type = External position = (0.50, 0.40)
@@ -66,11 +66,7 @@ Hull
             effects = SetEmpireMeter empire = Source.Owner
                                      meter = "MILITARY_CATEGORY_NUM_POLICY_SLOTS" value = Value + 1 
 
-        EffectsGroup
-            scope = Source
-            accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + ( min(Source.Age*1, 60) * [[SHIP_STRUCTURE_FACTOR]] )
-
+        [[LIVING_HULL_GROWTH_EFFECTS_GROUPS(SH_SENTIENT)]]
         [[AVERAGE_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[LIVING_HULL_EFFECTS_GROUPS]]

@@ -16948,7 +16948,7 @@ Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
 '''A living hull with three internal slots and two external slots.
-Organic Growth: starts with 40 [[metertype METER_STRUCTURE]], gains an additional 200 over 50 turns.
+Organic Growth: starts with [[value SH_PROTOPLASMIC_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_PROTOPLASMIC_GROWTH_STRUCTURE]] structure over [[value SH_PROTOPLASMIC_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
@@ -17012,7 +17012,7 @@ Sentient Hull
 
 SH_SENTIENT_DESC
 '''This self-aware organic flagship with powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[metertype METER_STEALTH]] and [[metertype METER_DETECTION]] bonus to all accompanying friendly ships. It has six external slots, three internal slots, and a core slot.
-Organic Growth: Starts with 96 [[metertype METER_STRUCTURE]], grows an additional 480 over 60 turns.
+Organic Growth: starts with [[value SH_SENTIENT_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_SENTIENT_GROWTH_STRUCTURE]] structure over [[value SH_SENTIENT_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is very high, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 
