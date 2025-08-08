@@ -22,6 +22,29 @@ Example usage:
 
 import freeOrionAIInterface as fo
 
+# FIXMW Note this would do a dependency cycle
+# from freeorion_tools import (
+#    get_named_real,
+#)
+def get_named_int(name: str) -> int:
+    if fo.namedIntDefined(name):
+        return fo.getNamedInt(name)
+    error(f"Requested integer {name} does not exist!")
+    return 1.0
+def get_named_real(name: str) -> float:
+    """
+    Returns a NamedReal from FOCS.
+    If the value does not exist, reports an error and returns 1.0.
+    Note that we do not raise and exception so that the AI can continue, as good as it can, with outdated information.
+    This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
+    """
+    if fo.namedRealDefined(name):
+        return fo.getNamedReal(name)
+    error(f"Requested float {name} does not exist!")
+    return 1.0
+
+
+
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
 # Many dictionaries herein (a prime example being the building_supply dictionary) have a primary key (such as
 # special_name, or building_type_name), and then provide a sub-dictionary with which to look up the resultant value
@@ -735,45 +758,45 @@ HULL_EFFECTS = {
     "SH_ORGANIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
-        ORGANIC_GROWTH: (get_named_real("SH_ORGANIC_GROWTH_PER_TURN"), get_named_real("SH_ORGANIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_ORGANIC_GROWTH_PER_TURN"), get_named_int("SH_ORGANIC_GROWTH_STRUCTURE")),
     },
     "SH_ENDOMORPHIC": {
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_ENDOMORPHIC_GROWTH_PER_TURN"), get_named_real("SH_ENDOMORPHIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_ENDOMORPHIC_GROWTH_PER_TURN"), get_named_int("SH_ENDOMORPHIC_GROWTH_STRUCTURE")),
     },
     "SH_SYMBIOTIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_SYMBIOTIC_GROWTH_PER_TURN"), get_named_real("SH_SYMBIOTIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_SYMBIOTIC_GROWTH_PER_TURN"), get_named_int("SH_SYMBIOTIC_GROWTH_STRUCTURE")),
     },
     "SH_PROTOPLASMIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_PROTOPLASMIC_GROWTH_PER_TURN"), get_named_real("SH_PROTOPLASMIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_PROTOPLASMIC_GROWTH_PER_TURN"), get_named_int("SH_PROTOPLASMIC_GROWTH_STRUCTURE")),
     },
     "SH_ENDOSYMBIOTIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_ENDOSYMBIOTIC_GROWTH_PER_TURN"), get_named_real("SH_ENDOSYMBIOTIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_ENDOSYMBIOTIC_GROWTH_PER_TURN"), get_named_int("SH_ENDOSYMBIOTIC_GROWTH_STRUCTURE")),
     },
     "SH_RAVENOUS": {
         DETECTION: 75,
-        ORGANIC_GROWTH: (get_named_real("SH_RAVENOUS_GROWTH_PER_TURN"), get_named_real("SH_RAVENOUS_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_RAVENOUS_GROWTH_PER_TURN"), get_named_int("SH_RAVENOUS_GROWTH_STRUCTURE")),
     },
     "SH_BIOADAPTIVE": {
         REPAIR_PER_TURN: (STRUCTURE, 1),
         FUEL_PER_TURN: 0.2,
         DETECTION: 75,
-        ORGANIC_GROWTH: (get_named_real("SH_BIOADAPTIVE_GROWTH_PER_TURN"), get_named_real("SH_BIOADAPTIVE_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_BIOADAPTIVE_GROWTH_PER_TURN"), get_named_int("SH_BIOADAPTIVE_GROWTH_STRUCTURE")),
     },
     "SH_SENTIENT": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 70,
-        ORGANIC_GROWTH: (get_named_real("SH_SENTIENT_GROWTH_PER_TURN"), get_named_real("SH_SENTIENT_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (get_named_real("SH_SENTIENT_GROWTH_PER_TURN"), get_named_int("SH_SENTIENT_GROWTH_STRUCTURE")),
         STEALTH_MODIFIER: 20,
     },
     # Energy Line
