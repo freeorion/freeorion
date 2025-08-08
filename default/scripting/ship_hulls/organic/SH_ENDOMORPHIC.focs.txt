@@ -5,7 +5,7 @@ Hull
     fuel = 2
     NoDefaultFuelEffect
     stealth = 5
-    structure = 10
+    structure = [[SH_ENDOMORPHIC_BASE_STRUCTURE]]
     slots = [
         Slot type = External position = (0.40, 0.25)
         Slot type = External position = (0.60, 0.35)
@@ -38,11 +38,7 @@ Hull
             scope = Source
             effects = SetDetection value = Value + 50
 
-        EffectsGroup
-            scope = Source
-            accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure value = Value + ( min(Source.Age*0.5, 10) * [[SHIP_STRUCTURE_FACTOR]] )
-
+        [[LIVING_HULL_GROWTH_EFFECTS_GROUPS(SH_ENDOMORPHIC)]]
         [[GOOD_FUEL_EFFICIENCY]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
         [[AVERAGE_BASE_FUEL_REGEN]]

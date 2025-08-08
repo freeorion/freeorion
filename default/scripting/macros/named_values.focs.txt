@@ -45,6 +45,7 @@ SPATIAL_FLUX_STEALTH_NON_AGGRESSIVE_BONUS
 
 // Named values for living hulls - LIVING_HULL_NAMED macro and base values come from ship_hulls/hull_structures.macros
 [[LIVING_HULL_NAMED(SH_BIOADAPTIVE)]]
+[[LIVING_HULL_NAMED(SH_ENDOMORPHIC)]]
 
 LIVING_HULL_NAMED
 '''
