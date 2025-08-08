@@ -29,7 +29,6 @@ import freeOrionAIInterface as fo
 def get_named_int(name: str) -> int:
     if fo.namedIntDefined(name):
         return fo.getNamedInt(name)
-    error(f"Requested integer {name} does not exist!")
     return 1.0
 def get_named_real(name: str) -> float:
     """
@@ -40,7 +39,6 @@ def get_named_real(name: str) -> float:
     """
     if fo.namedRealDefined(name):
         return fo.getNamedReal(name)
-    error(f"Requested float {name} does not exist!")
     return 1.0
 
 
