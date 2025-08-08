@@ -387,7 +387,7 @@ def get_ship_part(part_name: str):
 
 def get_named_int(name: str) -> int:
     """
-    Returns a NamedReal from FOCS.
+    Returns a NamedInt from FOCS.
     If the value does not exist, reports an error and returns 1.
     Note that we do not raise and exception so that the AI can continue, as good as it can, with outdated information.
     This is also why we return 1, returning 0 could cause followup errors if the value is used as divisor.
@@ -407,7 +407,7 @@ def get_named_real(name: str) -> float:
     """
     if fo.namedRealDefined(name):
         return fo.getNamedReal(name)
-    error(f"Requested integer {name} does not exist!")
+    error(f"Requested float {name} does not exist!")
     return 1.0
 
 
