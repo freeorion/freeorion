@@ -16891,7 +16891,7 @@ Organic Hull
 
 SH_ORGANIC_DESC
 '''A living hull with one external slot and one internal slot.
-Organic Growth: starts with 24 [[metertype METER_STRUCTURE]], but grows an additional 24 structure over 15 turns.
+Organic Growth: starts with [[value SH_ORGANIC_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_ORGANIC_GROWTH_STRUCTURE]] structure over [[value SH_ORGANIC_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is high.
 
