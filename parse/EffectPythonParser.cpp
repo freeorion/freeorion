@@ -713,7 +713,7 @@ void RegisterGlobalsEffects(py::dict& globals) {
     globals["Item"] = py::raw_function(insert_item_);
 
     globals["Destroy"] = effect_wrapper(std::make_shared<Effect::Destroy>());
-    globals["NoEffect"] = effect_wrapper(std::make_shared<Effect::NoOp>());
+    globals["NoOpEffect"] = effect_wrapper(std::make_shared<Effect::NoOp>());
 
     globals["GenerateSitRepMessage"] = py::raw_function(insert_generate_sit_rep_message_);
     globals["Conditional"] = py::raw_function(insert_conditional_);
