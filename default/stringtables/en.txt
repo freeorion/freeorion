@@ -16980,7 +16980,7 @@ Ravenous Hull
 SH_RAVENOUS_DESC
 '''This non-living organic hull - or 'zombie' hull - has been built from the blood and parts of its brethren. It has five external slots and two internal slots.
 
-Organic Growth: starts with 40 [[metertype METER_STRUCTURE]], grows an additional 288 structure over 48 turns.
+Organic Growth: starts with [[value SH_RAVENOUS_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_RAVENOUS_GROWTH_STRUCTURE]] structure over [[value SH_RAVENOUS_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is very high and [[metertype METER_SPEED]] is high.
 
