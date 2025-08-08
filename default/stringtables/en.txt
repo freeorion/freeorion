@@ -16918,7 +16918,7 @@ Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
 '''A half living hull with four external slots and two internal slots.
-Organic Growth: starts with 80 [[metertype METER_STRUCTURE]], but grows an additional 80 structure over 20 turns.
+Organic Growth: starts with [[value SH_ENDOMORPHIC_STRUCTURE]] [[metertype METER_STRUCTURE]], but grows an additional [[value SH_ENDOMORPHIC_GROWTH_STRUCTURE]] structure over [[value SH_ENDOMORPHIC_GROWTH_TURNS]] turns.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is high and [[metertype METER_SPEED]] is high.
 
