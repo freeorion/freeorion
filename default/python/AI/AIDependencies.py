@@ -22,6 +22,7 @@ Example usage:
 
 import freeOrionAIInterface as fo
 
+
 # FIXMW Note this would do a dependency cycle
 # from freeorion_tools import (
 #    get_named_real,
