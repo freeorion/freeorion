@@ -141,6 +141,14 @@ class TechGroup1(TechGroup):
             [
                 "SHP_MIL_ROBO_CONT",
                 "SHP_ORG_HULL",
+                "SHP_CONT_SYMB",
+                "SHP_MULTICELL_CAST",
+                "SHP_MONOCELL_EXP",      # -> SH_PROTOPLASMIC
+                "SHP_ENDOCRINE_SYSTEMS", # -> SH_ENDOMORPHIC
+                "SHP_ENDOSYMB_HULL",     # -> SH_ENDOSYMBIOTIC
+                "SHP_CONT_BIOADAPT",     # -> SH_RAVENOUS
+                "SHP_BIOADAPTIVE_SPEC",
+                "SHP_SENT_HULL",
             ]
         )
         # always start with the same first 8 techs; leaves 1 econ, 4 weap, 2 hull
