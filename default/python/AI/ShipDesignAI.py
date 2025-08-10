@@ -1004,11 +1004,17 @@ class ShipDesigner:
 
     def _expected_organic_growth(self) -> float:
         """Get expected organic growth defined by growth rate and expected numbers till fight.
+        Growth after the expected combat turn is counted by half.
 
         :return: Expected organic growth
         """
+        if self.design_stats.organic_growth == 0:
+            return 0.0
+        turns_for_full_growth = self.design_stats.maximum_organic_growth / self.design_stats.organic_growth
+        expected_organic_growth = self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth
+        expected_organic_growth += 0.5 * turns_for_full_growth * self.design_stats.organic_growth
         return min(
-            self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth,
+            expected_organic_growth,
             self.design_stats.maximum_organic_growth,
         )
 
