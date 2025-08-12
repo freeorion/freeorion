@@ -61,11 +61,16 @@ Tech(
             effects=SetStealth(
                 value=Value
                 - NamedRealLookup(name="FLEET_UNSTEALTH_SHIPS_SCALING")
-                * StatisticCount(float, condition=
-                                 Ship
-                                 & ~InSystem()
-                                 & ((LocalCandidate.NextSystemID == Target.SystemID) |  (LocalCandidate.NextSystemID == Target.SystemID))
-                                 & OwnedBy(empire=Source.Owner))
+                * StatisticCount(
+                    float,
+                    condition=Ship
+                    & ~InSystem()
+                    & (
+                        (LocalCandidate.NextSystemID == Target.SystemID)
+                        | (LocalCandidate.NextSystemID == Target.SystemID)
+                    )
+                    & OwnedBy(empire=Source.Owner),
+                )
             ),
         ),
     ],
