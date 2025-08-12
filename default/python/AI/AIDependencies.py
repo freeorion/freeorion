@@ -26,11 +26,13 @@ import freeOrionAIInterface as fo
 # FIXMW Note this would do a dependency cycle
 # from freeorion_tools import (
 #    get_named_real,
-#)
+# )
 def get_named_int(name: str) -> int:
     if fo.namedIntDefined(name):
         return fo.getNamedInt(name)
     return 1.0
+
+
 def get_named_real(name: str) -> float:
     """
     Returns a NamedReal from FOCS.
@@ -41,7 +43,6 @@ def get_named_real(name: str) -> float:
     if fo.namedRealDefined(name):
         return fo.getNamedReal(name)
     return 1.0
-
 
 
 # Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
@@ -761,25 +762,37 @@ HULL_EFFECTS = {
     },
     "SH_ENDOMORPHIC": {
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_ENDOMORPHIC_GROWTH_PER_TURN"), get_named_int("SH_ENDOMORPHIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (
+            get_named_real("SH_ENDOMORPHIC_GROWTH_PER_TURN"),
+            get_named_int("SH_ENDOMORPHIC_GROWTH_STRUCTURE"),
+        ),
     },
     "SH_SYMBIOTIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_SYMBIOTIC_GROWTH_PER_TURN"), get_named_int("SH_SYMBIOTIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (
+            get_named_real("SH_SYMBIOTIC_GROWTH_PER_TURN"),
+            get_named_int("SH_SYMBIOTIC_GROWTH_STRUCTURE"),
+        ),
     },
     "SH_PROTOPLASMIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_PROTOPLASMIC_GROWTH_PER_TURN"), get_named_int("SH_PROTOPLASMIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (
+            get_named_real("SH_PROTOPLASMIC_GROWTH_PER_TURN"),
+            get_named_int("SH_PROTOPLASMIC_GROWTH_STRUCTURE"),
+        ),
     },
     "SH_ENDOSYMBIOTIC": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
         FUEL_PER_TURN: 0.2,
         DETECTION: 50,
-        ORGANIC_GROWTH: (get_named_real("SH_ENDOSYMBIOTIC_GROWTH_PER_TURN"), get_named_int("SH_ENDOSYMBIOTIC_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (
+            get_named_real("SH_ENDOSYMBIOTIC_GROWTH_PER_TURN"),
+            get_named_int("SH_ENDOSYMBIOTIC_GROWTH_STRUCTURE"),
+        ),
     },
     "SH_RAVENOUS": {
         DETECTION: 75,
@@ -789,7 +802,10 @@ HULL_EFFECTS = {
         REPAIR_PER_TURN: (STRUCTURE, 1),
         FUEL_PER_TURN: 0.2,
         DETECTION: 75,
-        ORGANIC_GROWTH: (get_named_real("SH_BIOADAPTIVE_GROWTH_PER_TURN"), get_named_int("SH_BIOADAPTIVE_GROWTH_STRUCTURE")),
+        ORGANIC_GROWTH: (
+            get_named_real("SH_BIOADAPTIVE_GROWTH_PER_TURN"),
+            get_named_int("SH_BIOADAPTIVE_GROWTH_STRUCTURE"),
+        ),
     },
     "SH_SENTIENT": {
         REPAIR_PER_TURN: 2 * SHIP_STRUCTURE_FACTOR,
