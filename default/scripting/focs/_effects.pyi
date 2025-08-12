@@ -190,6 +190,7 @@ class Target:
     Fleet: Fleet
     Construction: Any
     PreviousSystemID: _SystemID
+    NextSystemID: _SystemID
     TurnsSinceFocusChange: int
     Population: float
     Happiness: float
