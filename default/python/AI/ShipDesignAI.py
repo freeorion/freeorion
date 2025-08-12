@@ -1011,7 +1011,9 @@ class ShipDesigner:
         if self.design_stats.organic_growth == 0:
             return 0.0
         turns_for_full_growth = self.design_stats.maximum_organic_growth / self.design_stats.organic_growth
-        expected_organic_growth = self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth
+        expected_organic_growth = (
+            self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth
+        )
         expected_organic_growth += 0.5 * turns_for_full_growth * self.design_stats.organic_growth
         return min(
             expected_organic_growth,
