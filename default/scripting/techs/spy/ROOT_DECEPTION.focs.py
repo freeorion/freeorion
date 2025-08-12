@@ -54,22 +54,34 @@ Tech(
                 - StatisticCount(float, condition=Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner))
             ),
         ),
+        # Do test a) ships going via different starlanes to/from the same system
+        # Using two StatisticCount conditions as the python focs parser got type confused/could not handle .&((i==i)&(i==i))|(i==i)&(i==i))
         EffectsGroup(
             scope=Ship & ~InSystem() & OwnedBy(empire=Source.Owner),
             accountinglabel="FLEET_UNSTEALTHINESS",
-            effects=SetStealth(
-                value=Value
-                - StatisticCount(
-                    float,
-                    condition=Ship
-                    & ~InSystem()
-                    & (
-                        (LocalCandidate.NextSystemID == Target.SystemID)
-                        | (LocalCandidate.NextSystemID == Target.SystemID)
+            effects=[
+                SetStealth(
+                    value=Value
+                    # ships travelling same direction on a starlane
+                    - StatisticCount(
+                        float,
+                        condition=Ship
+                        & ~InSystem()
+                        & (LocalCandidate.Fleet.NextSystemID == Target.Fleet.NextSystemID)
+                        & (LocalCandidate.Fleet.PreviousSystemID == Target.Fleet.PreviousSystemID)
+                        & OwnedBy(empire=Source.Owner),
                     )
-                    & OwnedBy(empire=Source.Owner),
-                )
-            ),
+                    # ships travelling opposite direction on a starlane
+                    - StatisticCount(
+                        float,
+                        condition=Ship
+                        & ~InSystem()
+                        & (LocalCandidate.Fleet.NextSystemID == Target.Fleet.PreviousSystemID)
+                        & (LocalCandidate.Fleet.PreviousSystemID == Target.Fleet.NextSystemID)
+                        & OwnedBy(empire=Source.Owner),
+                    )
+                ),
+            ]
         ),
     ],
 )
