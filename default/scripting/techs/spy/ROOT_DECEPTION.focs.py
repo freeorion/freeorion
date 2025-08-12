@@ -51,8 +51,7 @@ Tech(
             accountinglabel="FLEET_UNSTEALTHINESS",
             effects=SetStealth(
                 value=Value
-                - NamedReal(name="FLEET_UNSTEALTH_SHIPS_SCALING", value=1.0)
-                * StatisticCount(float, condition=Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner))
+                - StatisticCount(float, condition=Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner))
             ),
         ),
         EffectsGroup(
@@ -60,8 +59,7 @@ Tech(
             accountinglabel="FLEET_UNSTEALTHINESS",
             effects=SetStealth(
                 value=Value
-                - NamedRealLookup(name="FLEET_UNSTEALTH_SHIPS_SCALING")
-                * StatisticCount(
+                - StatisticCount(
                     float,
                     condition=Ship
                     & ~InSystem()
