@@ -13,6 +13,13 @@ Special
                 OwnedBy affiliation = AnyEmpire
             ]
         ]
+        Not WithinStarlaneJumps jumps = max(4, (NamedIntegerLookup name = "MIN_MONSTER_DISTANCE")) condition = And [
+            System
+            Contains And [
+                Planet
+                HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+            ]
+        ]
     ]
     effectsgroups = [
         [[MONSTER_NEST(JUGGERNAUT,juggernaut,0.06)]]
