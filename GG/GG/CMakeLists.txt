@@ -18,7 +18,7 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Button.h
         ${CMAKE_CURRENT_LIST_DIR}/ClrConstants.h
         ${CMAKE_CURRENT_LIST_DIR}/Clr.h
-        ${CMAKE_CURRENT_LIST_DIR}/Config.h
+        ${CMAKE_CURRENT_BINARY_DIR}/Config.h
         ${CMAKE_CURRENT_LIST_DIR}/Control.h
         ${CMAKE_CURRENT_LIST_DIR}/Cursor.h
         ${CMAKE_CURRENT_LIST_DIR}/DeferredLayout.h
