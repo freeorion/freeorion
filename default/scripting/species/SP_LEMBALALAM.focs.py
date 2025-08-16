@@ -32,7 +32,7 @@ from species.species_macros.planet_defense import AVERAGE_PLANETARY_DEFENSE
 from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS
 from species.species_macros.research import GOOD_RESEARCH
 from species.species_macros.shields import STANDARD_SHIP_SHIELDS
-from species.species_macros.stealth import GOOD_STEALTH
+from species.species_macros.stealth_trait import GOOD_STEALTH
 from species.species_macros.stockpile import AVERAGE_STOCKPILE
 from species.species_macros.supply import AVERAGE_SUPPLY
 from species.species_macros.troops import AVERAGE_DEFENSE_TROOPS

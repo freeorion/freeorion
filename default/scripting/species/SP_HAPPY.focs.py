@@ -17,7 +17,7 @@ from species.species_macros.native_fortification import DEFAULT_NATIVE_DEFENSE
 from species.species_macros.population import BAD_POPULATION
 from species.species_macros.research import GOOD_RESEARCH
 from species.species_macros.shields import STANDARD_SHIP_SHIELDS
-from species.species_macros.stealth import BAD_STEALTH
+from species.species_macros.stealth_trait import BAD_STEALTH
 from species.species_macros.stockpile import AVERAGE_STOCKPILE
 from species.species_macros.supply import GREAT_SUPPLY
 from species.species_macros.troops import BAD_DEFENSE_TROOPS, BAD_OFFENSE_TROOPS
