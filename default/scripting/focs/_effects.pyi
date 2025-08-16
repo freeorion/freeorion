@@ -101,120 +101,102 @@ class _SystemInfo:
     ID: _ID
     NumStarlanes: int
 
-class _Planet:
-    Species: _SpeciesValue
-    TargetIndustry: float
-    Population: float
-    Owner: _Empire
-    Happiness: float
-
-class _Fleet:
-    PreviousSystemID: _SystemID
-    NextSystemID: _SystemID
-
-class Source:
-    """
-    FOCS Source condition is IsSource, this class is for value ref Source.<something>
-    """
-
-    Owner: _Empire
+class _Object:
     ID: _ID
-    SystemID: _SystemID
-    Species: _SpeciesValue
     System: _SystemInfo
-    PlanetID: _PlanetId
-    TargetPopulation: float
-    Research: float
-    Industry: float
-    HabitableSize: float
-    CreationTurn: int
-    Planet: _Planet
-    Age: int
-    ProducedByEmpireID: _EmpireId
+    SystemID: _SystemID
     X: int
     Y: int
-
-class LocalCandidate:
-    LastTurnConquered: int
-    LastTurnActiveInBattle: int
-    LastTurnColonized: int
-    TurnsSinceFocusChange: int
-    TurnsSinceColonization: int
-    LastTurnAttackedByShip: int
-    LastTurnResupplied: int
-    ETA: int
-    ArrivedOnTurn: int
-    ID: _ID
     Owner: _Empire
-    Focus: _Focus
-    NextSystemID: _SystemID
-    System: _SystemInfo
-    OrderedColonizePlanetID: _PlanetId
+    Age: int
+    CreationTurn: int
+    # Unowned
+    # OwnedBy
+    # Specials??
+    # HasSpecial
+    # SpecialAddedOnTurn
+    # SpecialCapacity
+
+class _Planet(_Object):
     Species: _SpeciesValue
+    PlanetID: _PlanetId
+    Focus: _Focus
+    TurnsSinceFocusChange: int
+    HabitableSize: float
+    PlanetType: _PlanetType
+    OriginalType: _PlanetType
+    NextBestPlanetType: _PlanetType
+    LastTurnConquered: int
     LastInvadedByEmpire: _Empire
+    LastTurnColonized: int
     LastColonizedByEmpire: _Empire
-    MaxStructure: float
-    Industry: float
-    TargetResearch: float
-    Research: float
-    TargetIndustry: float
-    Stockpile: float
-    MaxStockpile: float
-    Construction: float
+    TurnsSinceColonization: int
+    Construction: Any
     TargetConstruction: float
+    Happiness: float
+    TargetHappiness: float
+    Industry: float
+    TargetIndustry: float
     Influence: float
     TargetInfluence: float
     Population: float
     TargetPopulation: float
-    Happiness: float
-    TargetHappiness: float
-    PlanetID: _PlanetId
-    PlanetType: _PlanetType
-    NextBestPlanetType: _PlanetType
-    Age: int
-    CreationTurn: int
-
-class RootCandidate:
-    ID: _ID
-    Owner: _Empire
-    PreviousSystemID: _SystemID
-    SystemID: _SystemID
-    Species: _SpeciesValue
-    PlanetID: _PlanetId
-
-class Target:
-    Owner: _Empire
-    ID: _ID
-    SystemID: _SystemID
-    PlanetID: _PlanetId
-    PlanetType: _PlanetType
-    OriginalType: _PlanetType
-    NextBestPlanetType: _PlanetType
-    DesignID: _DesignID
-    Fleet: _Fleet
-    Construction: Any
-    PreviousSystemID: _SystemID
-    NextSystemID: _SystemID
-    TurnsSinceFocusChange: int
-    Population: float
-    Happiness: float
-    HabitableSize: float
+    Research: float
+    TargetResearch: float
+    Stockpile: float
+    MaxStockpile: float
     MaxSupply: float
-    MaxFuel: float
-    MaxStructure: float
-    MaxTroops: float
     MaxDefense: float
     MaxShield: float
-    MaxStockpile: float
-    TargetPopulation: float
-    TargetResearch: float
-    TargetInfluence: float
-    TargetIndustry: float
-    TargetConstruction: float
-    TargetHappiness: float
+    MaxTroops: float
+
+class _Ship(_Object):
     Species: _SpeciesValue
+    DesignID: _DesignID
+    Fleet: _Fleet
+    LastTurnResupplied: int
+    OrderedColonizePlanetID: _PlanetId
     Speed: int
+    Research: float
+    Industry: float
+    MaxFuel: float
+    MaxStructure: float
+    MaxShield: float
+    MaxTroops: float
+
+class _Fleet(_Object):
+    PreviousSystemID: _SystemID
+    NextSystemID: _SystemID
+    ProducedByEmpireID: _EmpireId
+
+class _Building(_Object):
+    ProducedByEmpireID: _EmpireId
+
+class Source(_Planet, _Ship, _Fleet):
+    """
+    FOCS Source condition is IsSource, this class is for value ref Source.<something>
+    """
+
     System: _SystemInfo
+    CreationTurn: int
+    Planet: _Planet
+
+class LocalCandidate(_Planet, _Ship, _Fleet):
+    LastTurnActiveInBattle: int
+    LastTurnAttackedByShip: int
+    ETA: int
+    ArrivedOnTurn: int
+
+class RootCandidate(_Planet, _Ship, _Fleet):
+    ID: _ID
+    Owner: _Empire
+    PreviousSystemID: _SystemID
+    SystemID: _SystemID
+    Species: _SpeciesValue
+    PlanetID: _PlanetId
+
+class Target(_Planet, _Ship, _Fleet):
+    PlanetID: _PlanetId
 
 _O = TypeVar("_O", str, int, float)
 
