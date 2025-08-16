@@ -187,6 +187,7 @@ class Target:
     OriginalType: _PlanetType
     NextBestPlanetType: _PlanetType
     DesignID: _DesignID
+    Fleet: Fleet
     Construction: Any
     PreviousSystemID: _SystemID
     TurnsSinceFocusChange: int
