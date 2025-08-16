@@ -1,0 +1,8 @@
+Special
+    name = "BASE_STEALTH_SPECIAL"
+    description = "BASE_STEALTH_SPECIAL_DESC"
+    stealth = 5
+    spawnrate = 0.0
+    spawnlimit = 0
+    graphic = "icons/ship_parts/cloak-3.png"
+
