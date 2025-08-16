@@ -875,6 +875,7 @@ namespace {
 }
 
 void RegisterGlobalsConditions(boost::python::dict& globals) {
+    globals["All"] = make_wrapped<Condition::All>();
     globals["Ship"] = make_wrapped<Condition::Type>(UniverseObjectType::OBJ_SHIP);
     globals["System"] = make_wrapped<Condition::Type>(UniverseObjectType::OBJ_SYSTEM);
     globals["Fleet"] = make_wrapped<Condition::Type>(UniverseObjectType::OBJ_FLEET);
