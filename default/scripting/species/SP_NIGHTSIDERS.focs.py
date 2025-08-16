@@ -29,7 +29,7 @@ from species.species_macros.native_fortification import DEFAULT_NATIVE_DEFENSE
 from species.species_macros.population import EXTREMELY_BAD_POPULATION, LIGHT_SENSITIVE
 from species.species_macros.research import AVERAGE_RESEARCH
 from species.species_macros.shields import STANDARD_SHIP_SHIELDS
-from species.species_macros.stealth import GOOD_STEALTH
+from species.species_macros.stealth_trait import GOOD_STEALTH
 from species.species_macros.stockpile import AVERAGE_STOCKPILE
 from species.species_macros.supply import AVERAGE_SUPPLY
 from species.species_macros.telepathic import HAEMAESTHETIC_DETECTION

@@ -15054,7 +15054,7 @@ SPY_PLANET_STEALTH_MOD_DESC
 
 • Colonies may have an extra malus or bonus to [[metertype METER_STEALTH]] based on the colony's species.
 
-• Due to [[FLEET_UNSTEALTHINESS]], when there are more than [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] ships of the same empire in a system, their [[metertype METER_STEALTH]] is reduced by [[value FLEET_UNSTEALTH_SHIPS_SCALING]] multiplied by the square root of [[value FLEET_UNSTEALTHY_SHIPS_THRESHOLD]] less than the number of ships that empire has in the system.
+• Due to [[FLEET_UNSTEALTHINESS]], the [[metertype METER_STEALTH]] of an empire's ship is reduced by the number of other ships of that empire in the same system or on the same starlane.
 
 • Ships in systems with [[STAR_NONE]] receive a [[value SPY_DECEPTION_EMPTY_SPACE_PENALTY]] penalty to [[metertype METER_STEALTH]] due to being [[SPY_DECEPTION_EMPTY_SPACE_PENALTY]].
 

@@ -46,7 +46,7 @@ from species.species_macros.planet_shields import AVERAGE_PLANETARY_SHIELDS
 from species.species_macros.population import AVERAGE_POPULATION
 from species.species_macros.research import BAD_RESEARCH
 from species.species_macros.shields import STANDARD_SHIP_SHIELDS
-from species.species_macros.stealth import GREAT_STEALTH
+from species.species_macros.stealth_trait import GREAT_STEALTH
 from species.species_macros.stockpile import GREAT_STOCKPILE
 from species.species_macros.supply import VERY_BAD_SUPPLY
 from species.species_macros.troops import BAD_OFFENSE_TROOPS, GREAT_DEFENSE_TROOPS

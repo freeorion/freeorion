@@ -13,6 +13,7 @@ from focs._effects import (
     Fleet,
     GasGiantType,
     GenerateSitRepMessage,
+    InSystem,
     IsBuilding,
     IsSource,
     LocalCandidate,
@@ -43,6 +44,19 @@ ETA_NEXT_TURN = CurrentTurn + LocalCandidate.ETA - 1
 # will be at the top of the SitReps display.  As seen below, other labels are fine as well, but they cannot have any spaces if you want to use them in the SITREP_PRIORITY_ORDER
 # More information on the scripting language used for these is available on our wiki;
 # a suitable place to start is http:# www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
+
+debug_starlane_travel = EffectsGroup(
+    scope=Ship & OwnedBy(empire=Source.Owner) & ~InSystem(),
+    activation=IsSource,
+    effects=GenerateSitRepMessage(
+        message="Travel Info %ship% going to , currently on lane %system:prev%-to-%system:next%",
+        label="SITREP_WELCOME_LABEL",
+        NoStringtableLookup=True,
+        icon="icons/tech/categories/spy.png",
+        parameters={"ship": Target.ID, "prev": Target.Fleet.PreviousSystemID, "next": Target.Fleet.NextSystemID},
+        empire=Source.Owner,
+    ),
+)
 
 
 # Important, the following line "effectsgroups = [" is functional and important, do not change it
