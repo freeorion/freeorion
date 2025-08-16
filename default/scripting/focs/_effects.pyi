@@ -461,6 +461,7 @@ def SetOwner(*, empire: _EmpireId) -> _Effect: ...
 def SetSpecialCapacity(name: str | _SpeciesValue, capacity: _ValueParam) -> _Effect: ...
 def GenerateSitRepMessage(
     *,
+    NoStringtableLookup: bool,
     message: str,
     label: str,
     empire: _EmpireId = ...,
