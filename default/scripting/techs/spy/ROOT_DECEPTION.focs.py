@@ -81,7 +81,7 @@ Tech(
                         & OwnedBy(empire=Source.Owner),
                     )
                 ),
-            ]
+            ],
         ),
     ],
 )
