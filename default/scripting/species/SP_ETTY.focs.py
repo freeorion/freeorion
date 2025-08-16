@@ -18,7 +18,7 @@ from species.species_macros.planet_size import LARGE_PLANET
 from species.species_macros.population import AVERAGE_POPULATION
 from species.species_macros.research import AVERAGE_RESEARCH
 from species.species_macros.shields import STANDARD_SHIP_SHIELDS
-from species.species_macros.stealth import GOOD_STEALTH
+from species.species_macros.stealth_trait import GOOD_STEALTH
 from species.species_macros.stockpile import AVERAGE_STOCKPILE
 from species.species_macros.supply import GREAT_SUPPLY
 from species.species_macros.troops import GOOD_DEFENSE_TROOPS
