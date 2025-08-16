@@ -1122,7 +1122,10 @@ int Variable<int>::Eval(const ScriptingContext& context) const
             auto fleet = static_cast<const Fleet*>(object);
             return fleet_property(*fleet);
         }
-        return INVALID_OBJECT_ID;
+
+	LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(int);
+
+	return INVALID_OBJECT_ID;
     }
 
     std::function<int (const Planet&)> planet_property{nullptr};
