@@ -84,6 +84,9 @@ condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrappe
 condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
 { return lhs & rhs.operator condition_wrapper(); }
 
+condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs)
+{ return lhs.operator condition_wrapper() & rhs.operator condition_wrapper(); }
+
 condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs)
 { return lhs.operator condition_wrapper() & rhs.operator condition_wrapper(); }
 
@@ -101,11 +104,17 @@ condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrappe
 condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
 { return lhs | rhs.operator condition_wrapper(); }
 
+condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const condition_wrapper& rhs)
+{ return lhs.operator condition_wrapper() | rhs; }
+
 condition_wrapper operator|(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs)
 { return lhs.operator condition_wrapper() | rhs.operator condition_wrapper(); }
 
 condition_wrapper operator~(const condition_wrapper& lhs)
 { return make_wrapped<Condition::Not>(lhs.condition->Clone()); }
+
+condition_wrapper operator~(const value_ref_wrapper<int>& lhs)
+{ return ~(lhs.operator condition_wrapper()); }
 
 
 namespace {

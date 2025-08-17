@@ -889,6 +889,33 @@ namespace {
 
     }
 
+      value_ref_wrapper<double> insert_double_complex_variable_object_i1_name_s1_(const char* variable, const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<std::string>> name;
+        auto name_args = boost::python::extract<value_ref_wrapper<std::string>>(kw["name"]);
+        if (name_args.check()) {
+            name = ValueRef::CloneUnique(name_args().value_ref);
+        } else {
+            name = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(kw["name"])());
+        }
+
+        std::unique_ptr<ValueRef::ValueRef<int>> object;
+        auto object_args = boost::python::extract<value_ref_wrapper<int>>(kw["object"]);
+        if (object_args.check()) {
+            object = ValueRef::CloneUnique(object_args().value_ref);
+        } else {
+            object = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["object"])());
+        }
+
+        return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+            variable,
+            std::move(object),
+            nullptr,
+            nullptr,
+            std::move(name),
+            nullptr));
+
+    }
+
     value_ref_wrapper<double> insert_direct_distance_between_(boost::python::object arg1, boost::python::object arg2) {
         std::unique_ptr<ValueRef::ValueRef<int>> id1;
         auto id1_args = boost::python::extract<value_ref_wrapper<int>>(arg1);
@@ -1153,6 +1180,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
         globals[variable] = value_ref_wrapper<int>(std::make_shared<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, variable));       
     }
 
+
     // Integer complex variables
     for (const char* variable : {"BuildingTypesOwned",
                                  "BuildingTypesProduced",
@@ -1188,6 +1216,14 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
         const auto f_insert_name_property = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_double_complex_variable_(variable, args, kw); };
         globals[variable] = boost::python::raw_function(f_insert_name_property);
     }
+
+    // name_object_rule (?)
+    for (const char* variable : {"SpecialCapacity"})
+    {
+      const auto f_insert_name_object = [variable](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_double_complex_variable_object_i1_name_s1_(variable, args, kw); };
+      globals[variable] = boost::python::raw_function(f_insert_name_object);
+    }
+
 
     // species_empire_opinion
     for (const char* variable : {"SpeciesEmpireOpinion",
