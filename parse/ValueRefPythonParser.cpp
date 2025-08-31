@@ -687,9 +687,16 @@ namespace {
             else
                 operand = std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[1])());
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operand))));
+        } else if (args[0] == parser.type_str) {
+            std::unique_ptr<ValueRef::ValueRef<std::string>> operand;
+            auto arg = boost::python::extract<value_ref_wrapper<std::string>>(args[1]);
+            if (arg.check())
+                operand = ValueRef::CloneUnique(arg().value_ref);
+            else
+                operand = std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(args[1])());
+            return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Operation<std::string>>(op, std::move(operand))));
         } else {
             ErrorLogger() << "Unsupported type for 1arg : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
-
             throw std::runtime_error(std::string("Not implemented ") + __func__);
         }
 
