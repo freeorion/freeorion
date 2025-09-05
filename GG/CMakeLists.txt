@@ -66,7 +66,7 @@ endif()
 
 set(MINIMUM_BOOST_VERSION 1.69.0)
 
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex system REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex REQUIRED)
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)

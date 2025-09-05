@@ -16,7 +16,6 @@ add_executable(gg_unittest
 target_link_libraries(gg_unittest
     GiGi
     Boost::boost
-    Boost::system
     Boost::unit_test_framework
 )
 

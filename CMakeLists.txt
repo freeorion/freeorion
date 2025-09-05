@@ -283,7 +283,6 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         log
         log_setup
         serialization
-        system
         thread
     REQUIRED)
 
