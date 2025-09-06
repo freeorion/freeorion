@@ -289,6 +289,13 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         thread
     REQUIRED)
 
+if(APPLE)
+find_package(Boost ${MINIMUM_BOOST_VERSION}
+    COMPONENTS
+        system
+    REQUIRED)
+endif()
+
 message(STATUS "Boost version detected ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}")
 
 find_package(Boost OPTIONAL_COMPONENTS python${Boost_PYTHON_SUFFIX})
