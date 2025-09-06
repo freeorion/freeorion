@@ -39,22 +39,22 @@ About::About():
 void About::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
-    if (m_done = Wnd::Create<CUIButton>(UserString("DONE"))) {
+    if ((m_done = Wnd::Create<CUIButton>(UserString("DONE")))) {
         AttachChild(m_done);
         m_done->LeftClickedSignal.connect([this]() { EndRun(); });
     }
 
-    if (m_license = Wnd::Create<CUIButton>(UserString("LICENSE"))) {
+    if ((m_license = Wnd::Create<CUIButton>(UserString("LICENSE")))) {
         AttachChild(m_license);
         m_license->LeftClickedSignal.connect([this]() { ShowLicense(); });
     }
 
-    if (m_vision = Wnd::Create<CUIButton>(UserString("VISION"))) {
+    if ((m_vision = Wnd::Create<CUIButton>(UserString("VISION")))) {
         AttachChild(m_vision);
         m_vision->LeftClickedSignal.connect([this]() { ShowVision(); });
     }
 
-    if (m_info = GG::Wnd::Create<CUIMultiEdit>(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY))
+    if ((m_info = GG::Wnd::Create<CUIMultiEdit>(UserString("FREEORION_VISION"), GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY)))
         AttachChild(m_info);
 
     DoLayout();
