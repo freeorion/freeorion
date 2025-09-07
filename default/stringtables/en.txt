@@ -1613,7 +1613,7 @@ OPTIONS_DB_SINGLEPLAYER
 Start server in single player host mode. This only allows clients on localhost to connect.
 
 OPTIONS_DB_HOSTLESS
-Start server in hostless mode. Server accepts players in the multiplayer lobby, and returns to the lobby after the game session ends.
+Start server in hostless mode. Server accepts players in the multiplayer lobby, and returns to the lobby after the game session ends. If restarting a server in hostless mode, the running game can be specified by giving the current save file name or the containing directory using the --load option. Or one can use --load-or-quickstart 1 and --setup.game.uid GAME-UID. The game UID can be specified on first start using --setup.game.uid MY-CHOSEN-GAME-UID. Note that the auth.txt file must be configured correctly in order for players to connect to the server.
 
 OPTIONS_DB_SKIP_CHECKSUM
 Skip comparing the resource directory checksums.  This allows faster startup when client and server are on the same machine, using the same resource directory.
@@ -2368,7 +2368,7 @@ OPTIONS_DB_UI_SITREP_ICONSIZE
 Sets the sitrep icon width and height; default 16 (min 12, max 64).
 
 OPTIONS_DB_LOAD
-Loads and starts the specified single-player or multi-player save game. In multi-player, it requires hostless mode and no restriction on the minimum number of connected players, because the server will start with no connected players.
+Loads and starts the specified single-player or multi-player save game. If a directory is specified, the newest game (by lexicographical order) in that folder gets loaded. In multi-player, it requires hostless mode and no restriction on the minimum number of connected players, because the server will start with no connected players.
 
 OPTIONS_DB_EFFECTS_THREADS_UI_DESC
 Specifies number of threads to use for effects processing in the user interface. More than one thread may lead to unpredictable crashes.
