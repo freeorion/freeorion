@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-24.04, ubuntu-22.04]
         compiler: [gcc, clang]
         client-godot: ["ON"]
         build-type: [Release]
@@ -69,8 +69,8 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CXXFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
           CFLAGS: '-I/usr/include/SDL2 -I/usr/include/x86_64-linux-gnu/SDL2/ -I/usr/include/x86_64-linux-gnu/'
-          CC: clang-15
-          CXX: clang++-15
+          CC: ${{ matrix.os == 'ubuntu-22.04' && 'clang-15' || 'clang-18' }}
+          CXX: ${{ matrix.os == 'ubuntu-22.04' && 'clang++-15' || 'clang++-18' }}
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} ..
@@ -81,6 +81,8 @@ jobs:
           CCACHE_DIR: ${{ runner.temp }}/ccache
           CXXFLAGS: '-fsanitize=address -g'
           CFLAGS: '-fsanitize=address -g'
+          CC: gcc-14
+          CXX: g++-14
           LDFLAGS: '-fsanitize=address'
         run: |
           cd build
