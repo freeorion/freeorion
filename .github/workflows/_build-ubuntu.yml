@@ -60,6 +60,8 @@ jobs:
         if: ${{ matrix.compiler == 'gcc' }}
         env:
           CCACHE_DIR: ${{ runner.temp }}/ccache
+          CC: ${{ matrix.os == 'ubuntu-22.04' && 'gcc-12' || 'gcc-14' }}
+          CXX: ${{ matrix.os == 'ubuntu-22.04' && 'g++-12' || 'g++-14' }}
         run: |
           cd build
           cmake -DBUILD_TESTING=ON -DBUILD_CLIENT_GG=ON -DBUILD_CLIENT_GODOT=${{ matrix.client-godot }} -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} ..
