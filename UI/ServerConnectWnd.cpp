@@ -32,6 +32,7 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         db.Add("setup.multiplayer.player.name",     UserStringNop("OPTIONS_DB_MP_PLAYER_NAME"),     std::string(""),            Validator<std::string>());
+        db.Add("setup.multiplayer.player.role",     UserStringNop("OPTIONS_DB_MP_PLAYER_ROLE"),     'p',                        Validator<std::string>());
         db.Add("setup.multiplayer.host.address",    UserStringNop("OPTIONS_DB_MP_HOST_ADDRESS"),    std::string("localhost"),   Validator<std::string>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -150,7 +151,22 @@ void ServerConnectWnd::CompleteConstruction() {
     m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::ClientType::CLIENT_TYPE_HUMAN_MODERATOR));
     m_client_type_list->Insert(GG::Wnd::Create<ClientTypeRow>(Networking::ClientType::CLIENT_TYPE_HUMAN_OBSERVER));
 
-    m_client_type_list->Select(0);
+    using namespace std::string_literals;
+
+    auto role = GetOptionsDB().Get<std::string>("setup.multiplayer.player.role");
+    if (role.empty()) {
+      ErrorLogger() << "Got empty setup.multiplayer.player.role '" << role << "' using 'p' for Player instead";
+      m_client_type_list->Select(0);
+    } else if ("moderator"s.starts_with(role)) {
+      m_client_type_list->Select(1);
+    } else if ("observer"s.starts_with(role)) {
+      m_client_type_list->Select(2);
+    } else if ("player"s.starts_with(role)) {
+      m_client_type_list->Select(0);
+    } else {
+      ErrorLogger() << "Got weird setup.multiplayer.player.role '" << role << "' using 'p' for Player instead";
+      m_client_type_list->Select(0);
+    }
     m_result.type = Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER;
 
     m_host_or_join_radio_group->SetCheck(0);

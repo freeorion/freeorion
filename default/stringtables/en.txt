@@ -1741,7 +1741,10 @@ OPTIONS_DB_MP_HOST_ADDRESS
 Address to connect to when joining a multiplayer game.
 
 OPTIONS_DB_MP_PLAYER_NAME
-Player name to use when hosting or joining a multiplayer game.
+Player name to use when hosting or joining a multiplayer game. This sets the default value in the multiplayer connection window.
+
+OPTIONS_DB_MP_PLAYER_ROLE
+Player role to use when hosting or joining a multiplayer game. Use p for Player, m for Moderator, or o for Observer. This sets the default value in the multiplayer connection window.
 
 OPTIONS_DB_MP_AI_MIN
 Set the minimum number of ai players required to start a multiplayer game.
