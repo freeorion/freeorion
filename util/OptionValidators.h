@@ -52,8 +52,15 @@ struct Validator : public ValidatorBase
             return boost::any(StringToList(str));
         else if constexpr (std::is_same_v<T, std::string>)
             return boost::any(std::string{str});
-        else
+        else {
+            if constexpr (std::is_same_v<T, char>) {
+                try {
+                    return boost::any(boost::lexical_cast<int>(str));
+                } catch (const std::exception& e) {
+                }
+            }
             return boost::any(boost::lexical_cast<T>(str));
+        }
     }
 
     [[nodiscard]] std::string String(const boost::any& value) const override {
