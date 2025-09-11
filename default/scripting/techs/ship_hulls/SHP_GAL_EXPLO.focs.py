@@ -65,9 +65,8 @@ Tech(
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=SetSupply(value=MinOf(float, Value(Target.MaxSupply), Value + 1)),
         ),
-        # generate sitrep for any planet that is about to increase to above the
-        # recolonizing population, while also having sufficient happiness to do
-        # do so
+        # generate sitrep for any planet that is about to reach minimum population and stability
+        # to be a source for colony ships and buildings
         EffectsGroup(
             scope=Planet()
             & OwnedBy(empire=Source.Owner)
@@ -77,14 +76,22 @@ Tech(
                 LocalCandidate.Population
                 + LocalCandidate.Population
                 * GROWTH_RATE_FACTOR
-                * (LocalCandidate.TargetPopulation + 1 - LocalCandidate.Population)
+                * (1 + (1 - LocalCandidate.Population) / LocalCandidate.TargetPopulation)
                 >= MIN_RECOLONIZING_SIZE
             )
             & (LocalCandidate.TargetHappiness >= MIN_RECOLONIZING_HAPPINESS)
-            & (LocalCandidate.Happiness >= MIN_RECOLONIZING_HAPPINESS - 1)
             & (
-                (0.1 <= LocalCandidate.Population) & (LocalCandidate.Population <= (MIN_RECOLONIZING_SIZE - 0.001))
-                | (0.1 <= LocalCandidate.Happiness) & (LocalCandidate.Happiness <= (MIN_RECOLONIZING_HAPPINESS - 0.001))
+                LocalCandidate.Happiness
+                + 1
+                + NamedRealLookup(name="PLC_CAPITAL_MARKETS_INFLUENCE_RATE")
+                * StatisticIf(
+                    float, condition=Source & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CAPITAL_MARKETS")
+                )
+                >= MIN_RECOLONIZING_HAPPINESS
+            )
+            & (
+                ((0.1 <= LocalCandidate.Happiness) & (LocalCandidate.Happiness <= (MIN_RECOLONIZING_HAPPINESS - 0.001)))
+                | ((0.1 <= LocalCandidate.Population) & (LocalCandidate.Population <= (MIN_RECOLONIZING_SIZE - 0.001)))
             ),
             effects=[
                 GenerateSitRepMessage(
