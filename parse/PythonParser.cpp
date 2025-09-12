@@ -153,7 +153,9 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(double() - py::self_ns::self)
             .def(py::self_ns::self == int())
             .def(py::self_ns::self != int())
+            .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self | py::self_ns::self)
+            .def(~py::self_ns::self)
             .def(py::self_ns::pow(py::self_ns::self, double()));
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
             .def("__call__", &value_ref_wrapper<double>::call)
@@ -192,6 +194,8 @@ PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path&
             .def(py::self_ns::pow(double(), py::self_ns::self))
             .def(py::self_ns::pow(py::self_ns::self, py::self_ns::self))
             .def(py::self_ns::self & py::self_ns::self)
+            .def(py::self_ns::self | py::self_ns::self)
+            .def(~py::self_ns::self)
             .def(-py::self_ns::self);
         py::class_<value_ref_wrapper<std::string>>("ValueRefString", py::no_init)
             .def(py::self_ns::self + std::string())
