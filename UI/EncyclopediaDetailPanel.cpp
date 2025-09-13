@@ -1446,13 +1446,12 @@ namespace {
             return;
         }
 
+        const auto is_item = [&item_name](const auto& article) noexcept { return item_name == article.name; };
+
         // search for article in custom pedia entries.
         for (const auto& articles : GetEncyclopedia().Articles() | range_values) {
             bool done = false;
-            for (const EncyclopediaArticle& article : articles) {
-                if (article.name != item_name)
-                    continue;
-
+            for (const EncyclopediaArticle& article : articles | range_filter(is_item)) {
                 detailed_description = UserString(article.description);
 
                 const std::string& article_cat = article.category;
@@ -4065,8 +4064,8 @@ namespace {
 
         // most of this disregarded in this case, but needs to be passed in...
         std::shared_ptr<GG::Texture> dummy1, dummy2;
-        int dummyA;
-        float dummyB;
+        int dummyA{};
+        float dummyB{};
         std::string dummy3, dummy4, dummy5, dummy6;
         std::string detailed_description;
         detailed_description.reserve(2000); // guessitmate
