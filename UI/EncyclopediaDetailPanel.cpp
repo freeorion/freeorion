@@ -1450,25 +1450,24 @@ namespace {
 
         // search for article in custom pedia entries.
         for (const auto& articles : GetEncyclopedia().Articles() | range_values) {
-            bool done = false;
-            for (const EncyclopediaArticle& article : articles | range_filter(is_item)) {
-                detailed_description = UserString(article.description);
+            auto it = range_find_if(articles, is_item);
+            if (it == articles.end())
+                continue;
 
-                const std::string& article_cat = article.category;
-                if (article_cat != "ENC_INDEX" && !article_cat.empty())
-                    general_type = UserString(article_cat);
+            const auto& [name, cat, brief, desc, icon] = *it;
+            (void)name;
+            
+            detailed_description = UserString(desc);
 
-                const std::string& article_brief = article.short_description;
-                if (!article_brief.empty())
-                    specific_type = UserString(article_brief);
+            if (cat != "ENC_INDEX" && !cat.empty())
+                general_type = UserString(cat);
 
-                texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / article.icon, true);
+            if (!brief.empty())
+                specific_type = UserString(brief);
 
-                done = true;
-                break;
-            }
-            if (done)
-                break;
+            texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / icon, true);
+
+            break;
         }
 
 
