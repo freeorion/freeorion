@@ -4101,6 +4101,14 @@ namespace {
                 article_match = std::move(article_name_link);
         }
     }
+
+    void Uniquify(auto& vec) {
+        if (vec.empty())
+            return;
+        std::sort(vec.begin(), vec.end());
+        const auto unique_it = std::unique(vec.begin(), vec.end());
+        vec.erase(unique_it, vec.end());
+    }
 }
 
 void EncyclopediaDetailPanel::HandleSearchTextEntered() {
@@ -4194,11 +4202,11 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
 
     timer.EnterSection("sort");
-    // sort results...
-    std::sort(exact_match_report.begin(), exact_match_report.end());
-    std::sort(word_match_report.begin(), word_match_report.end());
-    std::sort(partial_match_report.begin(), partial_match_report.end());
-    std::sort(article_match_report.begin(), article_match_report.end());
+    // sort and uniquify results...
+    Uniquify(exact_match_report);
+    Uniquify(word_match_report);
+    Uniquify(partial_match_report);
+    Uniquify(article_match_report);
 
     static constexpr auto not_empty = [](const auto& m) noexcept { return !m.empty(); };
 
@@ -4206,25 +4214,25 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     // compile list of articles into some dynamically generated search report text
     std::string match_report;
     if (!exact_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
+        match_report += UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
         for (auto& match : exact_match_report | range_values | range_filter(not_empty))
             match_report += match;
     }
 
     if (!word_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
+        match_report += "\n\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
         for (auto& match : word_match_report | range_values)
             match_report += match;
     }
 
     if (!partial_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
+        match_report += "\n\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
         for (auto& match : partial_match_report | range_values)
             match_report += match;
     }
 
     if (!article_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
+        match_report += "\n\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
         for (auto& match : article_match_report | range_values)
             match_report += match;
     }
