@@ -4053,8 +4053,15 @@ namespace {
             // article present in pedia directly
             const auto& article_text{UserString(article_entry.description)};
             std::string article_text_lower = boost::locale::to_lower(article_text, GetLocale("en_US.UTF-8"));
-            if (boost::contains(article_text_lower, search_text))
+
+            if (boost::contains(article_text_lower, search_text)) {
                 article_match = std::move(article_name_link);
+            } else {
+                auto detagged = GG::Font::StripTags(article_text_lower);
+                if (boost::contains(detagged, search_text))
+                    article_match = std::move(article_name_link);
+            }
+
             return;
         }
 
@@ -4088,7 +4095,10 @@ namespace {
 
         if (boost::contains(desc_lower, search_text)) {
             article_match = std::move(article_name_link);
-            return;
+        } else {
+            auto detagged = GG::Font::StripTags(desc_lower);
+            if (boost::contains(detagged, search_text))
+                article_match = std::move(article_name_link);
         }
     }
 }
