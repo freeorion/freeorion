@@ -1745,21 +1745,20 @@ template <typename PT_t = std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>, st
     )
 struct FO_COMMON_API PlanetType final : public PlanetTypeBase {
 private:
-    static constexpr bool have_pt_values = std::is_same_v<PT_t, ::PlanetType>;
-    static constexpr bool have_fixed_count = (N >= 1);
+    // if storing a single value, store that.
+    // if storing a known number of values, store as fixed-length array
+    // if storing unknown number of values, store as variable-length vector
+    using PTs_t = std::conditional_t<N == 0, std::vector<PT_t>,
+                                     std::conditional_t<N == 1, PT_t, std::array<PT_t, N>>>;
+
+    static constexpr bool have_pt_values = std::is_same_v<PT_t, ::PlanetType>; // storing just values, not ValueRefs?
+
+    PTs_t       m_types;
+    const bool  m_types_local_invariant = have_pt_values; // could also be local invariant if storing constant refs, but ignoring that case for simplicity and determining at compile time
 
 public:
     using pt_ref_up = std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>;
 
-    using PTs_t = std::conditional_t<have_fixed_count,
-        std::conditional_t<N == 1, PT_t, std::array<PT_t, N>>,
-        std::vector<PT_t>>;
-
-private:
-    PTs_t       m_types;
-    const bool  m_types_local_invariant = have_pt_values;
-
-public:
     explicit PlanetType(std::vector<pt_ref_up>&& types) requires ((N == 0) && !have_pt_values) :
         PlanetTypeBase(CondsRTSI(types), CheckSums::GetCheckSum("Condition::PlanetType", types)),
         m_types(std::move(types)), // TODO: remove any nullptr types? throw if then empty?
