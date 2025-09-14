@@ -41,17 +41,17 @@ void TestCheckSumFromEnv(const char* env, unsigned int def, unsigned int calcula
 BOOST_AUTO_TEST_CASE(compare_checksum) {
     auto checksums = CheckSumContent(m_context.species);
 
-    TestCheckSumFromEnv("FO_CHECKSUM_BUILDING", 6401719, checksums["BuildingTypeManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_BUILDING", 4811522, checksums["BuildingTypeManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_ENCYCLOPEDIA", 1125744, checksums["Encyclopedia"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_FIELD", 5633696, checksums["FieldTypeManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_POLICY", 5356786, checksums["PolicyManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_FIELD", 7260087, checksums["FieldTypeManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_POLICY", 5476290, checksums["PolicyManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_SHIP_HULL", 4786075, checksums["ShipHullManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_PART", 3729274, checksums["ShipPartManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_PART", 6567124, checksums["ShipPartManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_SHIP_DESIGN", 882055, checksums["PredefinedShipDesignManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SPECIES", 4345855, checksums["SpeciesManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SPECIES", 4201044, checksums["SpeciesManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_SPECIALS", 2699070, checksums["SpecialsManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_TECH", 9195700, checksums["TechManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_NAMED_VALUEREF", 1833808, checksums["NamedValueRefManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_NAMED_VALUEREF", 2629969, checksums["NamedValueRefManager"]);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
