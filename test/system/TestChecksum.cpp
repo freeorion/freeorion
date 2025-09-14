@@ -45,9 +45,9 @@ BOOST_AUTO_TEST_CASE(compare_checksum) {
     TestCheckSumFromEnv("FO_CHECKSUM_ENCYCLOPEDIA", 1125744, checksums["Encyclopedia"]);
     TestCheckSumFromEnv("FO_CHECKSUM_FIELD", 5633696, checksums["FieldTypeManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_POLICY", 5356786, checksums["PolicyManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_HULL", 8986067, checksums["ShipHullManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_HULL", 4786075, checksums["ShipHullManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_SHIP_PART", 3729274, checksums["ShipPartManager"]);
-    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_DESIGN", 878449, checksums["PredefinedShipDesignManager"]);
+    TestCheckSumFromEnv("FO_CHECKSUM_SHIP_DESIGN", 882055, checksums["PredefinedShipDesignManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_SPECIES", 4345855, checksums["SpeciesManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_SPECIALS", 3672180, checksums["SpecialsManager"]);
     TestCheckSumFromEnv("FO_CHECKSUM_TECH", 1230631, checksums["TechManager"]);
