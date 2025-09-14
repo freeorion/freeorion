@@ -4102,12 +4102,15 @@ namespace {
         }
     }
 
+    // removes empties, sorts, and retains only one of each value of input
     void Uniquify(auto& vec) {
         if (vec.empty())
             return;
-        std::sort(vec.begin(), vec.end());
-        const auto unique_it = std::unique(vec.begin(), vec.end());
-        vec.erase(unique_it, vec.end());
+        static constexpr auto is_empty = [](const auto& e) noexcept { return e.first.empty() && e.second.empty(); };
+        auto end_it = std::remove_if(vec.begin(), vec.end(), is_empty); // push empties to end
+        std::sort(vec.begin(), end_it);                                 // sort non-empties
+        const auto unique_it = std::unique(vec.begin(), end_it);        // push duplicates to end
+        vec.erase(unique_it, vec.end());                                // erase everything after unique non-empties
     }
 }
 
