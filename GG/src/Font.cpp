@@ -1747,6 +1747,27 @@ namespace {
     } tag_handler;
     namespace xpr = boost::xpressive;
 
+    // Synonyms for s1 thru s5 sub matches
+    const xpr::mark_tag tag_name_tag{tag_name_tag_idx};
+    const xpr::mark_tag open_bracket_tag{open_bracket_tag_idx};
+    const xpr::mark_tag close_bracket_tag(close_bracket_tag_idx);
+    const xpr::mark_tag whitespace_tag(whitespace_tag_idx);
+    const xpr::mark_tag text_tag(text_tag_idx);
+
+    // The comments before each regex are intended to clarify the mapping from xpressive
+    // notation to the more typical regex notation.  If you read xpressive or don't read
+    // regex then ignore them.
+
+    // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
+    const xpr::sregex TAG_PARAM = -+~xpr::set[xpr::_s | '<'];
+
+    // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
+    // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
+    const xpr::sregex WHITESPACE = (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
+
+    // < followed by not space or <   or one or more not space or <
+    const xpr::sregex TEXT = ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
+
     /** CompiledRegex maintains a compiled boost::xpressive regular
         expression that includes a tag stack which can be cleared and
         provided to callers without the overhead of recompiling the
@@ -1755,35 +1776,15 @@ namespace {
     public:
         CompiledRegex()
         {
-            // Synonyms for s1 thru s5 sub matches
-            xpr::mark_tag tag_name_tag(tag_name_tag_idx);
-            xpr::mark_tag open_bracket_tag(open_bracket_tag_idx);
-            xpr::mark_tag close_bracket_tag(close_bracket_tag_idx);
-            xpr::mark_tag whitespace_tag(whitespace_tag_idx);
-            xpr::mark_tag text_tag(text_tag_idx);
-
             using boost::placeholders::_1;
 
             // The comments before each regex are intended to clarify the mapping from xpressive
             // notation to the more typical regex notation.  If you read xpressive or don't read
             // regex then ignore them.
 
-            // -+ 'non-greedy',   ~ 'not',   set[|] 'set',    _s 'space' = 'anything but space or <'
-            static const xpr::sregex TAG_PARAM =
-                -+~xpr::set[xpr::_s | '<'];
-
             //+_w one or more greedy word chars,  () group no capture,  [] semantic operation
             const xpr::sregex TAG_NAME =
                 (+xpr::_w)[xpr::check(boost::bind(&CompiledRegex::MatchesKnownTag, this, _1))];
-
-            // *blank  'zero or more greedy whitespace',   >> 'followed by',    _ln 'newline',
-            // (set = 'a', 'b') is '[ab]',    +blank 'one or more greedy blank'
-            static const xpr::sregex WHITESPACE =
-                (*xpr::blank >> (xpr::_ln | (xpr::set = '\n', '\r', '\f'))) | +xpr::blank;
-
-            // < followed by not space or <   or one or more not space or <
-            static const xpr::sregex TEXT =
-                ('<' >> *~xpr::set[xpr::_s | '<']) | (+~xpr::set[xpr::_s | '<']);
 
             m_EVERYTHING =
                 ('<'                                                                    // < open tag
