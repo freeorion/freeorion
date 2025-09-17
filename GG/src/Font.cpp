@@ -1831,6 +1831,8 @@ namespace {
         bool                m_ignore_tags = false;
         bool                m_preformatted = false;
     } regex_with_tags;
+
+    std::mutex tags_regex_mutex;
 }
 
 
@@ -2603,6 +2605,7 @@ std::string Font::StripTags(std::string_view text)
     using namespace boost::xpressive;
     std::string text_str{text};
 
+    std::scoped_lock regex_lock{tags_regex_mutex};
     auto& regex = regex_with_tags.BindRegexToText(text_str, false);
 
     std::string retval;
@@ -2740,56 +2743,60 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
 
     const bool ignore_tags = format & FORMAT_IGNORETAGS;
 
-    // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
-    const sregex& regex = regex_with_tags.BindRegexToText(text, ignore_tags);
-    sregex_iterator it(text.begin(), text.end(), regex);
-    const sregex_iterator end_it;
+    {
+        std::scoped_lock regex_lock{tags_regex_mutex};
 
-    for (; it != end_it; ++it) {
-        const auto& it_elem = *it;
+        // Fetch and use the regular expression from the TagHandler which parses all the known XML tags.
+        const sregex& regex = regex_with_tags.BindRegexToText(text, ignore_tags);
+        sregex_iterator it(text.begin(), text.end(), regex);
+        const sregex_iterator end_it;
 
-        if (it_elem[text_tag_idx].matched) {
-            auto matched_text = Substring(text, it_elem[text_tag_idx]);
-            if (!matched_text.empty())
-                text_elements.emplace_back(matched_text); // Basic text element.
+        for (; it != end_it; ++it) {
+            const auto& it_elem = *it;
 
-        } else if (it_elem[open_bracket_tag_idx].matched) {
-            // Open XML tag.
-            Substring text_substr{text, it_elem[full_regex_tag_idx]};
-            Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
+            if (it_elem[text_tag_idx].matched) {
+                auto matched_text = Substring(text, it_elem[text_tag_idx]);
+                if (!matched_text.empty())
+                    text_elements.emplace_back(matched_text); // Basic text element.
 
-            // Check open tags for submatches which are parameters.
-            // For example, a color tag might have RGB parameters.
-            const auto& nested_results{it_elem.nested_results()};
-            std::vector<Substring> params;
-            if (1 < nested_results.size()) {
-                params.reserve(nested_results.size() - 1);
-                for (auto nested_it = std::next(nested_results.begin()); nested_it != nested_results.end(); ++nested_it)
-                {
-                    const auto& nested_elem = *nested_it;
-                    params.emplace_back(text, nested_elem[full_regex_tag_idx]);
+            } else if (it_elem[open_bracket_tag_idx].matched) {
+                // Open XML tag.
+                Substring text_substr{text, it_elem[full_regex_tag_idx]};
+                Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
+
+                // Check open tags for submatches which are parameters.
+                // For example, a color tag might have RGB parameters.
+                const auto& nested_results{it_elem.nested_results()};
+                std::vector<Substring> params;
+                if (1 < nested_results.size()) {
+                    params.reserve(nested_results.size() - 1);
+                    for (auto nested_it = std::next(nested_results.begin()); nested_it != nested_results.end(); ++nested_it)
+                    {
+                        const auto& nested_elem = *nested_it;
+                        params.emplace_back(text, nested_elem[full_regex_tag_idx]);
+                    }
                 }
+
+                text_elements.emplace_back(text_substr, tag_name_substr, std::move(params), OPEN_TAG);
+
+            } else if (it_elem[close_bracket_tag_idx].matched) {
+                // Close XML tag
+                Substring text_substr{text, it_elem[full_regex_tag_idx]};
+                Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
+
+                text_elements.emplace_back(text_substr, tag_name_substr, CLOSE_TAG);
+
+            } else if (it_elem[whitespace_tag_idx].matched) {
+                // Whitespace element
+                Substring text_substr{text, it_elem[full_regex_tag_idx]};
+                const auto& ws_elem = text_elements.emplace_back(text_substr, WHITESPACE);
+                const char last_char = ws_elem.text.empty() ? static_cast<char>(0) : *std::prev(ws_elem.text.end());
+
+                // If the last character of a whitespace element is a line ending then create a
+                // newline TextElement.
+                if (last_char == '\n' || last_char == '\f' || last_char == '\r')
+                    text_elements.emplace_back(NEWLINE);
             }
-
-            text_elements.emplace_back(text_substr, tag_name_substr, std::move(params), OPEN_TAG);
-
-        } else if (it_elem[close_bracket_tag_idx].matched) {
-            // Close XML tag
-            Substring text_substr{text, it_elem[full_regex_tag_idx]};
-            Substring tag_name_substr{text, it_elem[tag_name_tag_idx]};
-
-            text_elements.emplace_back(text_substr, tag_name_substr, CLOSE_TAG);
-
-        } else if (it_elem[whitespace_tag_idx].matched) {
-            // Whitespace element
-            Substring text_substr{text, it_elem[full_regex_tag_idx]};
-            const auto& ws_elem = text_elements.emplace_back(text_substr, WHITESPACE);
-            const char last_char = ws_elem.text.empty() ? static_cast<char>(0) : *std::prev(ws_elem.text.end());
-
-            // If the last character of a whitespace element is a line ending then create a
-            // newline TextElement.
-            if (last_char == '\n' || last_char == '\f' || last_char == '\r')
-                text_elements.emplace_back(NEWLINE);
         }
     }
 
