@@ -1446,30 +1446,28 @@ namespace {
             return;
         }
 
+        const auto is_item = [&item_name](const auto& article) noexcept { return item_name == article.name; };
+
         // search for article in custom pedia entries.
         for (const auto& articles : GetEncyclopedia().Articles() | range_values) {
-            bool done = false;
-            for (const EncyclopediaArticle& article : articles) {
-                if (article.name != item_name)
-                    continue;
+            auto it = range_find_if(articles, is_item);
+            if (it == articles.end())
+                continue;
 
-                detailed_description = UserString(article.description);
+            const auto& [name, cat, brief, desc, icon] = *it;
+            (void)name;
+            
+            detailed_description = UserString(desc);
 
-                const std::string& article_cat = article.category;
-                if (article_cat != "ENC_INDEX" && !article_cat.empty())
-                    general_type = UserString(article_cat);
+            if (cat != "ENC_INDEX" && !cat.empty())
+                general_type = UserString(cat);
 
-                const std::string& article_brief = article.short_description;
-                if (!article_brief.empty())
-                    specific_type = UserString(article_brief);
+            if (!brief.empty())
+                specific_type = UserString(brief);
 
-                texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / article.icon, true);
+            texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / icon, true);
 
-                done = true;
-                break;
-            }
-            if (done)
-                break;
+            break;
         }
 
 
@@ -4055,8 +4053,15 @@ namespace {
             // article present in pedia directly
             const auto& article_text{UserString(article_entry.description)};
             std::string article_text_lower = boost::locale::to_lower(article_text, GetLocale("en_US.UTF-8"));
-            if (boost::contains(article_text_lower, search_text))
+
+            if (boost::contains(article_text_lower, search_text)) {
                 article_match = std::move(article_name_link);
+            } else {
+                auto detagged = GG::Font::StripTags(article_text_lower);
+                if (boost::contains(detagged, search_text))
+                    article_match = std::move(article_name_link);
+            }
+
             return;
         }
 
@@ -4065,8 +4070,8 @@ namespace {
 
         // most of this disregarded in this case, but needs to be passed in...
         std::shared_ptr<GG::Texture> dummy1, dummy2;
-        int dummyA;
-        float dummyB;
+        int dummyA{};
+        float dummyB{};
         std::string dummy3, dummy4, dummy5, dummy6;
         std::string detailed_description;
         detailed_description.reserve(2000); // guessitmate
@@ -4090,8 +4095,22 @@ namespace {
 
         if (boost::contains(desc_lower, search_text)) {
             article_match = std::move(article_name_link);
-            return;
+        } else {
+            auto detagged = GG::Font::StripTags(desc_lower);
+            if (boost::contains(detagged, search_text))
+                article_match = std::move(article_name_link);
         }
+    }
+
+    // removes empties, sorts, and retains only one of each value of input
+    void Uniquify(auto& vec) {
+        if (vec.empty())
+            return;
+        static constexpr auto is_empty = [](const auto& e) noexcept { return e.first.empty() && e.second.empty(); };
+        auto end_it = std::remove_if(vec.begin(), vec.end(), is_empty); // push empties to end
+        std::sort(vec.begin(), end_it);                                 // sort non-empties
+        const auto unique_it = std::unique(vec.begin(), end_it);        // push duplicates to end
+        vec.erase(unique_it, vec.end());                                // erase everything after unique non-empties
     }
 }
 
@@ -4186,11 +4205,11 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
 
     timer.EnterSection("sort");
-    // sort results...
-    std::sort(exact_match_report.begin(), exact_match_report.end());
-    std::sort(word_match_report.begin(), word_match_report.end());
-    std::sort(partial_match_report.begin(), partial_match_report.end());
-    std::sort(article_match_report.begin(), article_match_report.end());
+    // sort and uniquify results...
+    Uniquify(exact_match_report);
+    Uniquify(word_match_report);
+    Uniquify(partial_match_report);
+    Uniquify(article_match_report);
 
     static constexpr auto not_empty = [](const auto& m) noexcept { return !m.empty(); };
 
@@ -4198,25 +4217,25 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     // compile list of articles into some dynamically generated search report text
     std::string match_report;
     if (!exact_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
+        match_report += UserString("ENC_SEARCH_EXACT_MATCHES") + "\n\n";
         for (auto& match : exact_match_report | range_values | range_filter(not_empty))
             match_report += match;
     }
 
     if (!word_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
+        match_report += "\n\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
         for (auto& match : word_match_report | range_values)
             match_report += match;
     }
 
     if (!partial_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
+        match_report += "\n\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
         for (auto& match : partial_match_report | range_values)
             match_report += match;
     }
 
     if (!article_match_report.empty()) {
-        match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
+        match_report += "\n\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
         for (auto& match : article_match_report | range_values)
             match_report += match;
     }
