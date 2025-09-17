@@ -30,8 +30,14 @@
 #define DEBUG_DETERMINELINES 0
 
 namespace GG::detail {
+    std::mutex freetype_mutex;
+
     FTFaceWrapper::~FTFaceWrapper()
-    { if (m_face) FT_Done_Face(m_face); }
+    {
+        std::scoped_lock ft_lock{freetype_mutex};
+        if (m_face)
+            FT_Done_Face(m_face);
+    }
 }
 
 using namespace GG;
@@ -182,16 +188,20 @@ namespace {
         }
     };
 
-    struct FTLibraryWrapper
-    {
-        FTLibraryWrapper()
-        {
-            if (!m_library && FT_Init_FreeType(std::addressof(m_library))) // if no library exists and we can't create one...
-                throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
-        }
-        ~FTLibraryWrapper() { FT_Done_FreeType(m_library); }
-        FT_Library m_library = nullptr;
-    } g_library;
+
+    FT_Library GetFreeTypeLibrary() {
+        static struct FTLibraryWrapper {
+            FTLibraryWrapper()
+            {
+                if (FT_Init_FreeType(std::addressof(library)))
+                    throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
+            }
+            ~FTLibraryWrapper() { FT_Done_FreeType(library); }
+            FT_Library library = nullptr;
+        } library;
+        return library.library;
+    }
+
 
     struct SetPreformattedIfPREP
     {
@@ -3013,10 +3023,16 @@ StrSize GG::StringIndexOfCodePoint(CPSize index, const Font::LineVec& line_data)
 { return StringIndexOfCodePointInLines(index, line_data); }
 
 FT_Error Font::GetFace(FT_Face& face)
-{ return FT_New_Face(g_library.m_library, m_font_filename.c_str(), 0, std::addressof(face)); }
+{
+    std::scoped_lock ft_lock{detail::freetype_mutex};
+    return FT_New_Face(GetFreeTypeLibrary(), m_font_filename.c_str(), 0, std::addressof(face));
+}
 
 FT_Error Font::GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face)
-{ return FT_New_Memory_Face(g_library.m_library, file_contents.data(), file_contents.size(), 0, std::addressof(face)); }
+{
+    std::scoped_lock ft_lock{detail::freetype_mutex};
+    return FT_New_Memory_Face(GetFreeTypeLibrary(), file_contents.data(), file_contents.size(), 0, std::addressof(face));
+}
 
 void Font::CheckFace(FT_Face face, FT_Error error)
 {
