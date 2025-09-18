@@ -43,7 +43,8 @@ def target_has_less_stealth_cond(base_cond):
     return base_cond & (Value(Target.Stealth) < Value(LocalCandidate.Stealth))
 
 
-other_own_ships_insystem = Ship & InSystem(id=Target.SystemID) & ~IsTarget & OwnedBy(empire=Source.Owner)
+own_ships_in_targetz_system = Ship & InSystem(id=Target.SystemID) & OwnedBy(empire=Source.Owner)
+other_own_ships_in_targetz_system = Ship & InSystem(id=Target.SystemID) & ~IsTarget & OwnedBy(empire=Source.Owner)
 own_ships_on_targetz_starlane = (
     Ship
     & ~InSystem()
@@ -146,9 +147,7 @@ Tech(
             effects=[
                 SetSpecialCapacity(
                     name=lower_stealth_count_special,
-                    capacity=count_lower_stealth_ships_statistic_valref(
-                        Ship & InSystem() & OwnedBy(empire=Source.Owner)
-                    ),
+                    capacity=count_lower_stealth_ships_statistic_valref(own_ships_in_targetz_system),
                 ),
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
             ],
@@ -170,7 +169,9 @@ Tech(
             accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
-                SetStealth(value=min_effective_stealth_of_more_stealthy_ships_valref(other_own_ships_insystem)),
+                SetStealth(
+                    value=min_effective_stealth_of_more_stealthy_ships_valref(other_own_ships_in_targetz_system)
+                ),
             ],
         ),
         # Do test a) ships going via different starlanes to/from the same system
