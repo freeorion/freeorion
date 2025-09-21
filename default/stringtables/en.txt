@@ -15110,6 +15110,19 @@ Ships with lower stealth meter value can be detected more easily, see [[encyclop
 FLEET_UNSTEALTHY_SHIPS_THRESHOLD
 Number of ships in a system owned by the same empire, above which ships receive a stealth penalty
 
+# specials used for FLEET_UNSTEALTHINESS implementation
+LOWER_STEALTH_COUNT_SPECIAL
+Pre-Unstealthiness Lower Stealth Ship Count
+
+LOWER_STEALTH_COUNT_SPECIAL_DESC
+Count of own ships at the same location before applying fleet unstealthiness effect. Used in implementation of [[encyclopedia FLEET_UNSTEALTHINESS_TITLE]].
+
+BASE_STEALTH_SPECIAL
+Pre-Unstealthiness Stealth
+
+BASE_STEALTH_SPECIAL_DESC
+Stealth meter before applying fleet unstealthiness effect. Used in implementation of [[encyclopedia FLEET_UNSTEALTHINESS_TITLE]].
+
 
 ##
 ## Technology refinement
