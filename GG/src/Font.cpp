@@ -14,6 +14,7 @@
 #include <cmath>
 #include <iterator>
 #include <numeric>
+#include <shared_mutex>
 #include <sstream>
 #include <boost/format.hpp>
 #include <boost/xpressive/regex_actions.hpp>
@@ -1736,24 +1737,36 @@ namespace {
         /** Add a tag to the set of known tags.*/
         void Insert(std::vector<std::string_view> tags)
         {
+            std::unique_lock lock{m_mutex};
             std::copy_if(tags.begin(), tags.end(), std::back_inserter(m_custom_tags),
-                         [this](const auto tag) { return !IsKnown(tag); });
+                         [this](const auto tag) { return !IsKnownImpl<false>(tag); });
         }
 
         bool IsKnown(std::string_view tag) const
-        {
-            const auto matches_tag = [tag](const auto sv) noexcept{ return sv == tag; };
-            return std::any_of(m_default_tags.begin(), m_default_tags.end(), matches_tag)
-                || std::any_of(m_custom_tags.begin(), m_custom_tags.end(), matches_tag);
-        }
+        { return IsKnownImpl<true>(tag); }
 
     private:
+        template <bool require_lock>
+        bool IsKnownImpl(std::string_view tag) const
+        {
+            const auto matches_tag = [tag](const auto sv) noexcept{ return sv == tag; };
+            if (std::any_of(m_default_tags.begin(), m_default_tags.end(), matches_tag)) {
+                return true;
+            } else if constexpr (require_lock) {
+                std::shared_lock lock{m_mutex};
+                return std::any_of(m_custom_tags.begin(), m_custom_tags.end(), matches_tag);
+            } else {
+                return std::any_of(m_custom_tags.begin(), m_custom_tags.end(), matches_tag);
+            }
+        }
+
         // set of tags known to the handler
         static constexpr std::array<std::string_view, 11> m_default_tags{
             {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG, Font::SUBSCRIPT_TAG,
             Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG, Font::RESET_TAG}};
 
         std::vector<std::string_view> m_custom_tags;
+        mutable std::shared_mutex m_mutex;
     } tag_handler;
     namespace xpr = boost::xpressive;
 
