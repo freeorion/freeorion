@@ -166,7 +166,7 @@ Tech(
         # apply the lowest resulting stealth of ships of higher/equal stealth
         EffectsGroup(
             scope=Ship & InSystem() & OwnedBy(empire=Source.Owner),
-            accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM",
+            accountinglabel="FLEET_UNSTEALTHINESS_INSYSTEM_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetStealth(
@@ -177,7 +177,7 @@ Tech(
         # Do test a) ships going via different starlanes to/from the same system
         EffectsGroup(
             scope=Ship & ~InSystem() & OwnedBy(empire=Source.Owner),
-            accountinglabel="FLEET_UNSTEALTHINESS",
+            accountinglabel="FLEET_UNSTEALTHINESS_ON_STARLANE_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetStealth(
