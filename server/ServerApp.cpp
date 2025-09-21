@@ -1159,7 +1159,7 @@ namespace {
         // safety check: setup data has valid empire assigned
         if (psd.save_game_empire_id == ALL_EMPIRES) {
             ErrorLogger() << "ServerApp::LoadMPGameInit got player setup data for human player "
-                                    << "with no empire assigned...";
+                          << "with no empire assigned...";
             return;
         }
 
@@ -1174,7 +1174,7 @@ namespace {
             player_id_to_save_game_data_index.push_back({setup_data_player_id, index});
         } else {
             ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
-                                   << "human player with assigned empire id: " << psd.save_game_empire_id;
+                          << "human player with assigned empire id: " << psd.save_game_empire_id;
         }
     }
 
