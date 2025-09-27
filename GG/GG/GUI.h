@@ -357,7 +357,7 @@ public:
     bool SetPrevFocusWndInCycle();                          ///< sets the focus Wnd to the next INTERACTIVE Wnd in a cycle determined by Wnd parent-child relationships
     bool SetNextFocusWndInCycle();                          ///< sets the focus Wnd to the next in the cycle.
 
-    static GUI*  GetGUI() noexcept;                         ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
+    static GUI*  GetGUI() noexcept { return s_gui; }        ///< allows any GG code access to GUI framework by calling GUI::GetGUI()
 
     /** If \p wnd is visible recursively call PreRenderWindow() on all \p wnd's children and then
         call \p wnd->PreRender().  The order guarantees that when wnd->PreRender() is called all
@@ -377,7 +377,7 @@ public:
 
     /** Emitted when the Window in which the GUI is operating gains or loses
       * focus. bool parameter is true when gaining focus, and false otherwise.*/
-     boost::signals2::signal<void (bool)>   FocusChangedSignal;
+    boost::signals2::signal<void (bool)>    FocusChangedSignal;
 
     /** Emitted whenever the window manager requests the window close. */
     boost::signals2::signal<void ()>        WindowClosingSignal;
