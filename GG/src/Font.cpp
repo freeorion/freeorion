@@ -1812,21 +1812,19 @@ namespace {
     public:
         CompiledRegex()
         {
-            using boost::placeholders::_1;
-
             m_EVERYTHING =
-                ('<'                                                                    // < open tag
-                 >> (tag_name_tag = TAG_NAME)                                           // TAG_NAME 
-                    [xpr::check(boost::bind(&CompiledRegex::NotPreformatted, this, _1))]// unless in preformatted mode
-                 >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)                         // repeat 0 to 9 times: blank followed by TAG_PARAM
-                 >> (open_bracket_tag.proto_base() = '>')                               // > close tag
+                ('<'                                            // < open tag
+                 >> (tag_name_tag = TAG_NAME)                   // TAG_NAME 
+                 [xpr::check([this](const auto& s) { return NotPreformatted(s); })] // unless in preformatted mode
+                 >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM) // repeat 0 to 9 times: blank followed by TAG_PARAM
+                 >> (open_bracket_tag.proto_base() = '>')       // > close tag
                     [SetPreformattedIfPRE(xpr::ref(m_text), tag_name_tag, xpr::ref(m_preformatted), true)]
                 ) |
 
-                ("</"                                                                           // </ open tag with slash
-                 >> (tag_name_tag = TAG_NAME)                                                   // TAG_NAME
-                    [xpr::check(boost::bind(&CompiledRegex::NotPreformattedOrIsPre, this, _1))] // unless in preformatted mode or unless tag is </pre>
-                 >> (close_bracket_tag.proto_base() = '>')                                      // > close tag
+                ("</"                                           // </ open tag with slash
+                 >> (tag_name_tag = TAG_NAME)                   // TAG_NAME
+                    [xpr::check([this](const auto& s) { return NotPreformatted(s); })] // unless in preformatted mode or unless tag is </pre>
+                 >> (close_bracket_tag.proto_base() = '>')      // > close tag
                     [SetPreformattedIfPRE(xpr::ref(m_text), tag_name_tag, xpr::ref(m_preformatted), false)]
                 ) |
 
