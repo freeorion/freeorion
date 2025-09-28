@@ -15056,23 +15056,23 @@ SPY_PLANET_STEALTH_MOD_DESC
 
 [[PLANET_STEALTH_MODIFIERS]]
 
-For other kinds of object receiving stealth, have a look at the [[metertype METER_STEALTH]] entry.'''
+Stealth received by other types of objects are listed in [[metertype METER_STEALTH]].'''
 
 PLANET_STEALTH_MODIFIERS
 '''• [[BASIC_PLANET_STEALTH]] gives [[value PLANET_BASIC_STEALTH]] [[metertype METER_STEALTH]] to all planets.
 • Colonies may have an extra malus or bonus to [[metertype METER_STEALTH]] based on the colony's species.
-• Planetary stealth specials decrease [[metertype METER_STEALTH]] of the planet. The main source for these specials is the research of planetary stealth technologies.'''
+• Planetary stealth specials increase [[metertype METER_STEALTH]] of the planet. The main source for these specials is the research of planetary stealth technologies.'''
 
 # Note: ship stealth decrease by stars is also shown in DETECTION_STAR_MODIFIERS
 SHIP_STEALTH_MODIFIERS
 '''
-• Larger fleets are easier to detect. Empire's ships will suffer a malus to [[metertype METER_STEALTH]] based on the number of ships in the system or on a starlane. See [[encyclopedia FLEET_UNSTEALTHINESS_TITLE]].
+• Larger fleets are easier to detect. Empire's ships will suffer a malus to [[metertype METER_STEALTH]] based on the number of ships in the same system or on the same starlane. See [[encyclopedia FLEET_UNSTEALTHINESS_TITLE]].
 • Stealth ship parts add a bonus to ship [[metertype METER_STEALTH]].
 • Ships in systems with [[STAR_NONE]] receive a [[value SPY_DECEPTION_EMPTY_SPACE_PENALTY]] penalty to [[metertype METER_STEALTH]] due to being [[SPY_DECEPTION_EMPTY_SPACE_PENALTY]].
 • Ships in systems with a [[STAR_RED]] star receive a [[value SPY_DECEPTION_DIM_STAR_PENALTY]] penalty to [[metertype METER_STEALTH]] due to being [[SPY_DECEPTION_DIM_STAR_PENALTY]].
 • Ships in systems with a [[STAR_NEUTRON]] star receive a [[value SPY_DECEPTION_NEUTRON_INTERFERENCE]] bonus to [[metertype METER_STEALTH]] due to [[SPY_DECEPTION_SUBSTELLAR_INTERFERENCE]].
 • Ships in systems with a [[STAR_BLACK]] star receive a [[value SPY_DECEPTION_BLACK_INTERFERENCE]] bonus to [[metertype METER_STEALTH]] due to [[SPY_DECEPTION_SUBSTELLAR_INTERFERENCE]].
-• Ships inside fields like [[fieldtype FLD_ION_STORM]] or [[fieldtype FLD_NEBULA_1]] can increase [[metertype METER_STEALTH]].
+• Ships inside fields like [[fieldtype FLD_ION_STORM]] or [[fieldtype FLD_NEBULA_1]] have increased [[metertype METER_STEALTH]].
 • There are also buildings and policies which reduce [[metertype METER_STEALTH]]'''
 
 BASIC_PLANET_STEALTH
@@ -15088,14 +15088,15 @@ FLEET_UNSTEALTHINESS_TITLE
 Fleet Unstealthiness (Game Concept)
 
 FLEET_UNSTEALTHINESS_TEXT
-'''Empire's ships will suffer a malus to [[metertype METER_STEALTH]] based on the number of those ships in the system or on a starlane. This effect is called fleet unstealthiness.
+'''Empire's ships will suffer a malus to [[metertype METER_STEALTH]] based on the number of those ships in the same system or on the same starlane. This effect is called fleet unstealthiness.
 
 
 Fleet unstealthiness decreases a ship's stealth meter by an amount equal to a count of ships:
 
-• Only ships of the ship's empire are counted. Other empires' ships are ignored, example given also allies' ships are ignored.
+• Only ships of the ship's empire are counted. Other empires' ships are ignored, including allied empires' ships, do not contribute.
 
 • This gets counted for each starlane and each system separately. For each system all own ships in all fleets in that system are considered. For each starlane all own fleets on that starlane are considered, ignoring the direction of travel.
+Fleet unstealthiness is applied and calculated separately for each starlane and each system. For each system, all ships with the same owner are counted. For each starlane, all ships with the same owner are counted, regardless of direction of travel or location on the starlane.
 
 • Only ships which have lower or equal stealth are counted for the malus. This is for gameplay reasons: without this restriction an observer would know the count of invisible ships. With this restriction one can hide higher stealth ships in a mixed fleet completely.
 
