@@ -344,7 +344,7 @@ def add_planets_to_vicinity(vicinity, num_planets, acceptable_planet_types, allo
         # finally, create the planet in the system and orbit we got
         print("...adding", planet_size, planet_type, "planet to system", system)
         if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
-            report_error("Python add_planets_to_vicinity: create planet in system %d failed" % system)
+            report_error(f"Python add_planets_to_vicinity: create planet in system {system} failed")
 
         if not allow_repeat_types:
             acceptable_planet_types.remove(planet_type)
@@ -448,8 +448,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
     # if not, our galaxy obviously is too crowded, report an error and return an empty list
     if len(home_systems) < num_home_systems:
         report_error(
-            "Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
-            % (num_home_systems, len(systems))
+            f"Python generate_home_system_list: requested {num_home_systems} homeworlds in a galaxy with {len(systems)} systems"
         )
         return []
 
@@ -657,7 +656,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         for ship_design in fleet_plan.ship_designs():
             design = fo.getPredefinedShipDesign(ship_design)
             if design is None:
-                report_error("Looked up null design with name %s", ship_design)
+                report_error(f"Looked up null design with name {ship_design}")
             elif design.isArmed:
                 should_be_aggressive = True
                 break
@@ -666,7 +665,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         fleet = fo.create_fleet(fleet_plan.name(), home_system, empire, should_be_aggressive)
         # if the fleet couldn't be created, report an error and try to continue with the next fleet plan
         if fleet == fo.invalid_object():
-            report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
+            report_error(f"Python setup empire: couldn't create fleet {fleet_plan.name()}")
             continue
 
         # second, iterate over the list of ship design names in the fleet plan
