@@ -45,7 +45,7 @@ def pick_star_type(galaxy_age):
     except:  # noqa: E722
         # in case of an error play save and set star type to invalid
         star_type = fo.starType.unknown
-        util.report_error("Python pick_star_type: Pick star type failed\n" + sys.exc_info()[1])
+        util.report_error(f"Python pick_star_type: Pick star type failed\n{sys.exc_info()[1]}")
 
     # if we got an invalid star type (for whatever reason),
     # just select one randomly from the global tuple

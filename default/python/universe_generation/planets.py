@@ -107,7 +107,7 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
     except:  # noqa: E722
         # in case of an error play it safe and set planet size to invalid
         planet_size = fo.planetSize.unknown
-        util.report_error("Python calc_planet_size: Pick planet size failed" + str(sys.exc_info()[1]))
+        util.report_error(f"Python calc_planet_size: Pick planet size failed\n{sys.exc_info()[1]}")
 
     # if we got an invalid planet size (for whatever reason),
     # just select one randomly from the global tuple based
@@ -153,6 +153,6 @@ def generate_a_planet(system, star_type, orbit, planet_density, galaxy_shape):
         return False
     if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
         # create planet failed, report an error
-        util.report_error("Python generate_systems: create planet in system %d failed" % system)
+        util.report_error(f"Python generate_systems: create planet in system {system} failed")
         return False
     return True
