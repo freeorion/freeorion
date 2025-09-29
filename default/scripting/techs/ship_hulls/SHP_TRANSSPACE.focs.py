@@ -8,7 +8,7 @@ Tech(
     category="SHIP_HULLS_CATEGORY",
     researchcost=80 * TECH_COST_MULTIPLIER,
     researchturns=8,
-    tags=["PEDIA_ROBOTIC_HULL_TECHS"],
+    tags=["PEDIA_SHIP_HULLS_CATEGORY"],
     prerequisites=["PRO_NANOTECH_PROD"],
     unlock=[
         Item(type=UnlockShipHull, name="SH_TRANSSPATIAL"),
