@@ -519,7 +519,6 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
             "planets in the near vicinity, required minimum:",
             min_planets_in_vicinity_limit(num_systems_in_vicinity),
         )
-        planet_types_in_systems = list_planet_types_in_systems(systems_in_vicinity)
         if num_planet_types_to_add > 0:
             planet_types_in_systems = list_planet_types_in_systems(systems_in_vicinity)
             # get the set of missing planet types
