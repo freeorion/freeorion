@@ -9,7 +9,7 @@ from focs._effects import (
     TargetPopulation,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
-from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
+from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET, LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED
 
 try:
     from focs._buildings import *
@@ -26,7 +26,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         Planet()
         & OwnedBy(empire=Source.Owner)
         & ~Contains(IsBuilding(name=["BLD_NEUTRONIUM_FORGE"]))
-        & Contains(IsBuilding(name=["BLD_SHIPYARD_BASE"]) & OwnedBy(empire=Source.Owner))
+        & LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED("BLD_SHIPYARD_BASE")
         & Number(
             low=1,
             high=999,
