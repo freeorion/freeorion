@@ -295,7 +295,7 @@ void Empire::AdoptPolicy(const std::string& name, const std::string& category,
 
     // adopt policy in requested category on this turn, unless it was already
     // adopted at the start of this turn, in which case restore / keep its
-    // previous adtoption turn
+    // previous adoption turn
     const auto it = m_initial_adopted_policies.find(name);
     const int adoption_turn = (it == m_initial_adopted_policies.end()) ?
         context.current_turn : it->second.adoption_turn;

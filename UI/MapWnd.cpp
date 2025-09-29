@@ -3414,7 +3414,7 @@ namespace GetPathsThroughSupplyLanes {
             // Try the next system from the queue.
             const PrevCurrInfo& curr = try_next.front();
 
-            // Check each supply lane that exits this sytem.
+            // Check each supply lane that exits this system.
             auto supplylane_endpoints = supply_lanes.equal_range(curr.curr);
             for (auto sup_it = supplylane_endpoints.first;
                  sup_it != supplylane_endpoints.second; ++sup_it)
