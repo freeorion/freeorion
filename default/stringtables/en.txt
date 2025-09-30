@@ -150,7 +150,7 @@ Unknown Position
 NEW_FLEET_NAME
 Fleet %1%
 
-# Name for a newly created general purpose fleet when no uniqe number could be
+# Name for a newly created general purpose fleet when no unique number could be
 # created.
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
@@ -647,7 +647,7 @@ SM_TREE
 Dyson Forest
 
 SM_TREE_DESC
-A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect. When a Dyson Forest grows, Space Krill often start nesting inbetween the trees.
+A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems. A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect. When a Dyson Forest grows, Space Krill often start nesting in-between the trees.
 
 SM_FLOATER
 Floater
@@ -1217,7 +1217,7 @@ RULE_EXPERIMENTORS_SPAWN_BASE_TURN
 Experimentors spawn base turn
 
 RULE_EXPERIMENTORS_SPAWN_BASE_TURN_DESC
-Minimum turn experimentors spawn. Modified by galaxy size and AI Agression.
+Minimum turn Experimentors spawn. Modified by galaxy size and AI Aggression.
 
 RULE_NESTS_ALWAYS_SPAWN_WILD
 Nests always spawn wild monsters
@@ -1226,10 +1226,10 @@ RULE_NESTS_ALWAYS_SPAWN_WILD_DESC
 Monster nests will always spawn wild monsters, even when outposted
 
 RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM
-Wandering monsters ocassionally stop insystem
+Wandering monsters occasionally stop in-system
 
 RULE_WANDERING_MONSTERS_CAN_STOP_INSYSTEM_DESC
-Wandering monsters ocassionally stop insystem
+Wandering monsters occasionally stop in-system
 
 RULE_WILD_NEST_MONSTER_SPAWN_FACTOR
 Wild nest monster spawn factor
@@ -1323,7 +1323,7 @@ Basic System Info Visible
 RULE_BASIC_VIS_SYSTEM_INFO_SHOWN_DESC
 '''<u>If On</u>: Systems that are detected by an empire at only basic visibility have their name and star type revealed to that empire. Causes a UI issue where it is difficult to tell if starlanes of a system are known.
 
-<u>If Off</u>: Basic level visible systems that have never been detected at higher visiblity have unknown name and star type.'''
+<u>If Off</u>: Basic level visible systems that have never been detected at higher visibility have unknown name and star type.'''
 
 RULE_HIDDEN_POLICIES
 Hide Empire Policies
@@ -1334,7 +1334,7 @@ RULE_HIDDEN_POLICIES_DESC
 <u>If Off</u>: All players know all other empires' adopted and available policies.'''
 
 RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES
-Hide Empire Techs, Queues, and Availabilites
+Hide Empire Techs, Queues, and Availabilities
 
 RULE_HIDDEN_TECHS_QUEUES_AVAILABILITIES_DESC
 '''<u>If On</u>: Players who are not allied to an empire do not know other empires' researched techs, queues and part, hull, or building availabilities.
@@ -1765,7 +1765,7 @@ OPTIONS_DB_COOKIES_EXPIRE
 Count of minutes after the cookie record will be considered expired.
 
 OPTIONS_DB_PUBLISH_STATISTICS
-Enable sending empire staticstics to the player.
+Enable sending empire statistics to the player.
 
 OPTIONS_DB_PUBLISH_SEED
 Enable sending galaxy seed to the player.
@@ -2017,7 +2017,7 @@ OPTIONS_DB_UI_PLANET_STATUS_ICON_SIZE
 Sets the size of the planet status icon.
 
 OPTIONS_DB_UI_SHOW_SIDEPANEL_STALE_BUILDING
-Enables display of stale visibility buildings on sidepanel. Stale visibility means previously detected and should be currently visible based on last known state and location and a player's current detection levels, but nevertheless not currently detected anywhere.
+Enables display of stale visibility buildings on the sidepanel. Stale visibility means previously detected and should be currently visible based on last known state and location and a player's current detection levels, but nevertheless not currently detected anywhere.
 
 OPTIONS_DB_UI_PLANET_STATUS_ICON_TITLE
 Planet status notification
@@ -2710,7 +2710,7 @@ AUTHENTICATION_WINDOW_TITLE
 Authentication
 
 AUTHENTICATION_DESC
-This player name requires authentication. Reminder! Password will be transfered plain-text.
+This player name requires authentication. Reminder! Password will be transferred plain-text.
 
 PASSWORD_LABEL
 Password
@@ -3675,7 +3675,7 @@ Create Full Config (Intermediate Feature)
 OPTIONS_CREATE_ALL_CONFIG_TOOLTIP_DESC
 '''Saves the current config settings in config.xml including all settings, even if not modified from their defaults.
 
-The existing options.xml is overwitten, but may be regenerated (with just non-default options) if another option is changed, including by repositioning some game windows or within the options window.'''
+The existing options.xml is overwritten, but may be regenerated (with just non-default options) if another option is changed, including by repositioning some game windows or within the options window.'''
 
 
 ##
@@ -4019,7 +4019,7 @@ Cancel Annexation (%1% IP)
 # %2% name of client empire
 # %3% species on planet opinion of client empire
 # %4% name of owner empire or "unowned"
-# %5% species opinion of onwer empire
+# %5% species opinion of owner empire
 # %6% stability of planet
 # %7% population of planet
 # %8% PP cost for client empire of buildings on planet
@@ -4284,7 +4284,7 @@ FW_FLEET_MOVING_TO
 Moving to %1%
 
 # %1% system name where this fleet is moving to.
-# %2% estiminated time in turns when the fleet will arrive.
+# %2% estimated time in turns when the fleet will arrive.
 FW_FLEET_MOVING_TO_ETA
 Moving to %1% (ETA %2%)
 
@@ -4693,7 +4693,7 @@ TECH_WND_UNRESEARCHED_PREREQUISITES
 TECH_WND_VIEW_TYPE
 Tree View / List View
 
-# %1% research points already spent on a reseach.
+# %1% research points already spent on a research.
 # %2% total research points required to complete the research.
 # %3% research points used per turn.
 # %4% research points available per turn.
@@ -4738,7 +4738,7 @@ POLICY_PREREQ_MISSING
 Policy Adoption Restricted by Prerequisite %1%
 
 POLICY_PREREQ_MET
-Policy Adtoption Allowed by Prerequisite %1%
+Policy Adoption Allowed by Prerequisite %1%
 
 POLICY_ADOPTABLE_COST
 Policy Adoptable for %1% IP
@@ -5023,7 +5023,7 @@ PRODUCTION_QUEUE_EMPIRE
 PRODUCTION_QUEUE_MULTIPLES
 '''%1%x '''
 
-# %1% number of repetions an item should be produced on after another.
+# %1% number of repetitions an item should be produced on after another.
 PRODUCTION_QUEUE_REPETITIONS
 %1%⟳
 
@@ -5956,7 +5956,7 @@ ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
 At location %1%, the cost and time are %2% %3% over %4% turns.'''
 
-# Displays a ship design inside the Pedia with the basic informations.
+# Displays a ship design inside the Pedia with the basic information.
 # %1% description.
 # %2% hull name.
 # %3% list of builtin parts.
@@ -6164,7 +6164,7 @@ ENC_COMBAT_STEALTH_DECLOAK_LAUNCH
 %2% detects %1% during fighter launch.
 
 # %1% unused
-# %2% name of empire detecting decloacking ship
+# %2% name of empire detecting decloaking ship
 ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS
 %2% detects
 
