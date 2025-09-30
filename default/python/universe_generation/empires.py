@@ -42,7 +42,7 @@ def get_empire_name_generator():
 empire_name_generator = get_empire_name_generator()
 
 
-def get_starting_species_pool(already_used = None):
+def get_starting_species_pool(already_used=None):
     """
     Empire species pool generator, return random empire species and ensure somewhat even distribution
     @param alreadyUsed - if set, then RULE_ALLOW_REPEATED_SPECIES is false and it contains the species already in use e.g. by player's choice
