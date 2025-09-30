@@ -22,5 +22,5 @@ def generate_fields(systems):
         # and create the field
         if fo.create_field_in_system(field_type, uniform(40, 120), system) == fo.invalid_object():
             # create field failed, report an error
-            report_error("Python generate_fields: create field %s in system %d failed" % (field_type, system))
-    print("...fields created in %d systems out of %d empty no star systems" % (len(accepted), len(candidates)))
+            report_error(f"Python generate_fields: create field {field_type} in system {system} failed")
+    print(f"...fields created in {len(accepted)} systems out of {len(candidates)} empty no star systems")

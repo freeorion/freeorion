@@ -99,7 +99,7 @@ def count_planet_types_in_systems(systems):
 
 
 def calculate_home_system_merit(system):
-    """Calculate the system's merit as the number of planets within HS_VICINTIY_RANGE."""
+    """Calculate the system's merit as the number of planets within HS_VICINITY_RANGE."""
     return count_planets_in_systems(fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system]))
 
 
@@ -116,7 +116,7 @@ class HomeSystemFinder:
     """Finds a set of home systems with a least ''num_home_systems'' systems."""
 
     def __init__(self, _num_home_systems):
-        # cache of sytem merits
+        # cache of system merits
         self.system_merit = {}
         self.num_home_systems = _num_home_systems
 
@@ -153,7 +153,7 @@ class HomeSystemFinder:
 
         # From experimentation with cluster and 3 arm spiral galaxies, with low, med and high
         # starlane density and (number of systems, number of home systems) pairs of (9999, 399),
-        # (999, 39) and (199, 19) the following was observered.  The distribution of candidate
+        # (999, 39) and (199, 19) the following was observed.  The distribution of candidate
         # length is a normal random variable with standard deviation approximately equal to
 
         # expected_len_candidate_std = (len(systems) ** (1.0/2.0)) * 0.03
@@ -341,7 +341,7 @@ def add_planets_to_vicinity(vicinity, num_planets, acceptable_planet_types, allo
         # finally, create the planet in the system and orbit we got
         print("...adding", planet_size, planet_type, "planet to system", system)
         if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
-            report_error("Python add_planets_to_vicinity: create planet in system %d failed" % system)
+            report_error(f"Python add_planets_to_vicinity: create planet in system {system} failed")
 
         if not allow_repeat_types:
             acceptable_planet_types.remove(planet_type)
@@ -445,8 +445,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
     # if not, our galaxy obviously is too crowded, report an error and return an empty list
     if len(home_systems) < num_home_systems:
         report_error(
-            "Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
-            % (num_home_systems, len(systems))
+            f"Python generate_home_system_list: requested {num_home_systems} homeworlds in a galaxy with {len(systems)} systems"
         )
         return []
 
@@ -516,7 +515,6 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
             "planets in the near vicinity, required minimum:",
             min_planets_in_vicinity_limit(num_systems_in_vicinity),
         )
-        planet_types_in_systems = list_planet_types_in_systems(systems_in_vicinity)
         if num_planet_types_to_add > 0:
             planet_types_in_systems = list_planet_types_in_systems(systems_in_vicinity)
             # get the set of missing planet types
@@ -530,7 +528,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):  # noqa: C901
 
         if num_planets_to_add > 0:
             systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
-            # sort the systems_in_vicinity before adding, since the C++ engine doesn't guarrantee the same
+            # sort the systems_in_vicinity before adding, since the C++ engine doesn't guarantee the same
             # platform independence as python.
             add_planets_to_vicinity(
                 sorted(systems_in_vicinity), num_planets_to_add, HS_ACCEPTABLE_PLANET_TYPES, True, gsd
@@ -655,7 +653,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         for ship_design in fleet_plan.ship_designs():
             design = fo.getPredefinedShipDesign(ship_design)
             if design is None:
-                report_error("Looked up null design with name %s", ship_design)
+                report_error(f"Looked up null design with name {ship_design}")
             elif design.isArmed:
                 should_be_aggressive = True
                 break
@@ -664,7 +662,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         fleet = fo.create_fleet(fleet_plan.name(), home_system, empire, should_be_aggressive)
         # if the fleet couldn't be created, report an error and try to continue with the next fleet plan
         if fleet == fo.invalid_object():
-            report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
+            report_error(f"Python setup empire: couldn't create fleet {fleet_plan.name()}")
             continue
 
         # second, iterate over the list of ship design names in the fleet plan
@@ -689,7 +687,7 @@ def home_system_layout(home_systems, systems):  # noqa: C901
     Returns map from home system to neighbor home systems.
     """
     # for each system found nearest home systems
-    # maybe multiple if home worlds placed on the same jump distnace
+    # maybe multiple if home worlds placed on the same jump distance
     system_hs = {}
     for system in systems:
         nearest_hs = set()

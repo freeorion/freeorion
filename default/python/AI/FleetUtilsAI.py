@@ -87,7 +87,7 @@ def get_fleets_for_mission(  # noqa: C901
 ) -> list[int]:
     """Get fleets for a mission.
 
-    Implements breadth-first search through systems starting at the **starting_sytem**.
+    Implements breadth-first search through systems starting at the **starting_system**.
     In each system, local fleets are checked if they are in the allowed **fleet_pool_set** and suitable for the mission.
     If so, they are added to the **fleet_list** and **cur_stats** is updated with the currently selected fleet summary.
     The search continues until the requirements defined in **target_stats** are met or there are no more systems/fleets.

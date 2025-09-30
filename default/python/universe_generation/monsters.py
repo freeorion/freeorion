@@ -42,10 +42,9 @@ class StarlaneAlteringMonsters:
 
         if num_contiguous_regions < expected_num_contiguous_regions:
             report_error(
-                "Number of contiguous regions %d is below the expected number "
-                "of contiguous regions %d when placing %d monster %s that can "
-                "break starlanes."
-                % (num_contiguous_regions, expected_num_contiguous_regions, len(self.placed) + 1, plan.name())
+                f"Number of contiguous regions {num_contiguous_regions} is below the expected "
+                f"number of contiguous regions {expected_num_contiguous_regions} when placing "
+                f"{len(self.placed) + 1} monster {plan.name()} that can break starlanes."
             )
             return False
 
