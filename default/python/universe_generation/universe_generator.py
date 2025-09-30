@@ -10,7 +10,7 @@ import universe_statistics
 from common.handlers import init_handlers
 from common.listeners import listener
 from common.option_tools import parse_config
-from empires import compile_home_system_list, setup_empire, get_starting_species_pool
+from empires import compile_home_system_list, get_starting_species_pool, setup_empire
 from fields import generate_fields
 from galaxy import calc_star_system_positions
 from monsters import generate_monsters
