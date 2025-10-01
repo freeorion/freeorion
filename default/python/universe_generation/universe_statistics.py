@@ -220,8 +220,10 @@ def log_specials_summary():
         table_name="Special Placement Summary",
     )
     for special in sorted(specials_summary):
-        special_placement_count_table.add_row(special, specials_summary[special])
-    print(special_placement_count_table)
+        if fo.special_spawn_rate(special) > 0.0 and fo.special_spawn_limit(special) > 0:
+            special_placement_count_table.add_row(special, specials_summary[special])
+    for line in special_placement_count_table:
+        print(line)
     print()
 
     special_placement = Table(
