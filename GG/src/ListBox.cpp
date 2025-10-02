@@ -1725,7 +1725,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
     if (dropped)
         original_dropped_position = std::find(m_rows.begin(), m_rows.end(), row);
 
-    bool moved = (original_dropped_position != m_rows.end());
+    const bool moved = (original_dropped_position != m_rows.end());
     std::size_t original_dropped_offset = moved ? std::distance(begin(), original_dropped_position) :0;
 
     iterator retval = it;
@@ -1762,7 +1762,7 @@ ListBox::iterator ListBox::Insert(std::shared_ptr<Row> row, iterator it, bool dr
 
     row->Hide();
     row->Resize(Pt(std::max(ClientWidth(), X1), row->Height()));
-    row->RightClickedSignal.connect([this](Pt pt, GG::Flags<GG::ModKey> mod)
+    row->RightClickedSignal.connect([this](Pt pt, GG::Flags<GG::ModKey> mod) // row has an event filter for this Wnd, which should keep this Wnd alive until the row is remove from this ListBox
                                     { HandleRowRightClicked(pt, mod); });
 
     AfterInsertRowSignal(it);
