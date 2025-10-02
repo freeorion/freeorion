@@ -15749,13 +15749,15 @@ Starlane Bore
 
 BLD_STARLANE_BORE_DESC
 '''Generates a single new starlane to the nearest system that can be connected without crossing existing starlanes or passing too close to another system.
-New lanes may not pass closer than 20 uu to another system and may not meet existing star lanes at less than 30 degrees.'''
+New lanes may not pass closer than 20 uu to another system and may not meet existing star lanes at less than 30 degrees.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_STARLANE_NEXUS
 Starlane Nexus
 
 BLD_STARLANE_NEXUS_DESC
-Generates new starlanes to other star systems. Works like a [[buildingtype BLD_STARLANE_BORE]], except that it keeps creating lanes until no new one can be added anymore.
+'''Generates new starlanes to other star systems. Works like a [[buildingtype BLD_STARLANE_BORE]], except that it keeps creating lanes until no new one can be added anymore.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_XENORESURRECTION_LAB
 Xenoresurrection Lab

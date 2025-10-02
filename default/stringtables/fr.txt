@@ -15663,13 +15663,15 @@ Générateur de Voies Spatiales
 
 BLD_STARLANE_BORE_DESC
 '''Génère une nouvelle Voie spatiale vers le système le plus proche en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
-Les nouvelles Voies ne peuvent pas passer à moins de 20 uu d'un autre système et ne peuvent pas croiser des Voies spatiales déjà existantes à moins de 30 degrés.'''
+Les nouvelles Voies ne peuvent pas passer à moins de 20 uu d'un autre système et ne peuvent pas approcher des Voies spatiales déjà existantes à moins de 30 degrés.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_STARLANE_NEXUS
 Générateur Avancé de Voies Spatiales
 
 BLD_STARLANE_NEXUS_DESC
-Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires. Fonctionne comme un [[buildingtype BLD_STARLANE_BORE]], sauf que les Voies spatiales sont continuellement créées jusqu'à qu'il ne soit plus possible d'en ajouter de nouvelles.
+'''Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires. Fonctionne comme un [[buildingtype BLD_STARLANE_BORE]], sauf que les Voies spatiales sont continuellement créées jusqu'à ce qu'il ne soit plus possible d'en ajouter.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_XENORESURRECTION_LAB
 Laboratoire de Xénorésurrection

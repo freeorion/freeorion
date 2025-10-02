@@ -6543,13 +6543,15 @@ BLD_STARLANE_BORE
 Sternstraßenbohrer
 
 BLD_STARLANE_BORE_DESC
-Erschafft eine neue Sternstraße zum nächtgelegen möglichen System. Die Straße kann keine existierenden Straßen überschneiden oder zu nahe an anderen Systemen vorbei gehen.
+'''Erschafft eine neue Sternstraße zum nächtgelegen möglichen System. Die Straße kann keine existierenden Straßen überschneiden oder zu nahe an anderen Systemen vorbei gehen.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_STARLANE_NEXUS
 Sternstraßenkonnex
 
 BLD_STARLANE_NEXUS_DESC
-Erschafft neue Sternstraßen zu umliegenden Systemen, sofern die entstehenden Straßen keine existierenden Straßen überschneiden oder zu nahe an anderen Systemen vorbei gehen würden.
+'''Erschafft neue Sternstraßen zu umliegenden Systemen, und zwar so viele wie möglich, ohne existierende Straßen zu überschneiden oder zu nahe an anderen Systemen vorbei zu gehen.
+[[BUILDING_AVAILABLE_ON_OUTPOSTS]].'''
 
 BLD_XENORESURRECTION_LAB
 Xeno-Reanimierungslabor
