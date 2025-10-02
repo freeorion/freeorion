@@ -534,6 +534,8 @@ private:
     std::shared_ptr<Scroll> m_hscroll;          ///< horizontal scroll bar at bottom
     unsigned int            m_vscroll_wheel_scroll_increment = 0;
     unsigned int            m_hscroll_wheel_scroll_increment = 0;
+    boost::signals2::scoped_connection m_vscroll_connection;
+    boost::signals2::scoped_connection m_hscroll_connection;
 
     iterator        m_caret = m_rows.end();             ///< the item currently selected, or the last item selected by the user 
     SelectionSet    m_selections;                       ///< vector of indexes of selected items
