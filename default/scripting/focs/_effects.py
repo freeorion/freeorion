@@ -1,4 +1,6 @@
 # Placeholder for module.
+from typing import cast
+
 from focs._effects import (
     LocalCandidate,
     StatisticIf,
@@ -10,7 +12,7 @@ def InGame():
 
     :returns: a focs condition matching objects with positive ID
     """
-    return LocalCandidate.ID > 0
+    return cast(int, LocalCandidate.ID) > 0
 
 
 def StatisticElse(type_, *, condition):
