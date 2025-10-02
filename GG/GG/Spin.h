@@ -122,7 +122,6 @@ protected:
     std::shared_ptr<Edit> m_edit;
 
 private:
-    void ConnectSignals();
     void ValueUpdated(const std::string& val_text);
     void IncrImpl(bool signal);
     void DecrImpl(bool signal);
@@ -174,7 +173,11 @@ void Spin<T>::CompleteConstruction()
     AttachChild(m_edit);
     AttachChild(m_up_button);
     AttachChild(m_down_button);
-    ConnectSignals();
+    // event filters store shared_ptr to this and should keep this alive for responding to these signals
+    m_edit->FocusUpdateSignal.connect([this](const std::string& value_text) { ValueUpdated(value_text); });
+    m_up_button->LeftClickedSignal.connect([this]() { IncrImpl(true); });
+    m_down_button->LeftClickedSignal.connect([this]() { DecrImpl(true); });
+
     SizeMove(UpperLeft(), LowerRight());
     Spin<T>::SetEditTextFromValue();
 }
@@ -397,14 +400,6 @@ void Spin<T>::SetEditTextFromValue()
 {
     if (m_edit)
         m_edit->SetText(std::to_string(m_value));
-}
-
-template <typename T>
-void Spin<T>::ConnectSignals()
-{
-    m_edit->FocusUpdateSignal.connect([this](const std::string& value_text) { ValueUpdated(value_text); });
-    m_up_button->LeftClickedSignal.connect([this]() { IncrImpl(true); });
-    m_down_button->LeftClickedSignal.connect([this]() { DecrImpl(true); });
 }
 
 template <typename T>
