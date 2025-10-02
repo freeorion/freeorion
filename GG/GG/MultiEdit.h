@@ -204,6 +204,8 @@ private:
     std::shared_ptr<Scroll> m_hscroll;
     unsigned int            m_vscroll_wheel_scroll_increment = 0;
     unsigned int            m_hscroll_wheel_scroll_increment = 0;
+    boost::signals2::scoped_connection m_vscroll_connection;
+    boost::signals2::scoped_connection m_hscroll_connection;
 
     bool            m_preserve_text_position_on_next_set_text = false;
     bool            m_ignore_adjust_scrolls = false;
