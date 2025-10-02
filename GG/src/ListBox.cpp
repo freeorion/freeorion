@@ -1918,12 +1918,12 @@ ListBox::Row& ListBox::ColHeaders()
 
 void ListBox::ConnectSignals()
 {
-    namespace ph = boost::placeholders;
-
     if (m_vscroll)
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_vscroll_connection = m_vscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high) { VScrolled(tab_low, tab_high, low, high); });
     if (m_hscroll)
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_hscroll_connection = m_hscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high) { HScrolled(tab_low, tab_high, low, high); });
 }
 
 void ListBox::ValidateStyle()
@@ -2042,10 +2042,9 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
-        namespace ph = boost::placeholders;
-
         AttachChild(m_vscroll);
-        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_vscroll_connection = m_vscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high) { VScrolled(tab_low, tab_high, low, high); });
     }
 
     if (vertical_needed) {
@@ -2092,17 +2091,16 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
-        namespace ph = boost::placeholders;
-
         AttachChild(m_hscroll);
-        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+        m_hscroll_connection = m_hscroll->ScrolledSignal.connect(
+            [this](int tab_low, int tab_high, int low, int high) { HScrolled(tab_low, tab_high, low, high); });
     }
 
     if (horizontal_needed) {
         unsigned int line_size = m_hscroll_wheel_scroll_increment;
-        if (line_size == 0 && !this->Empty()) {
+        if (line_size == 0u && !this->Empty()) {
             const auto& row = *begin();
-            line_size = Value(row->Height());
+            line_size = static_cast<unsigned int>(Value(row->Height()));
         }
 
         unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0)));
