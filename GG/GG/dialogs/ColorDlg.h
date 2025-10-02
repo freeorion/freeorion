@@ -256,10 +256,10 @@ public:
     /** Returns true iff the user selected a color and then clicked the "Ok"
         button.  Otherwise, the color returned by Result() will be the
         original color if one was selected, or undefined if one was not. */
-    bool ColorWasSelected() const;
+    bool ColorWasSelected() const noexcept { return m_color_was_picked; }
 
     /** returns the color selected by the user, if the "Ok" button was used to close the dialog. */
-    Clr Result() const;
+    Clr Result() const noexcept { return m_current_color; }
 
     void Render() override;
     void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;

@@ -488,12 +488,6 @@ void ColorDlg::CompleteConstruction()
     m_value_picker->ChangedSignal.connect([this](auto value) { ValuePickerChanged(value); });
 }
 
-bool ColorDlg::ColorWasSelected() const
-{ return m_color_was_picked; }
-
-Clr ColorDlg::Result() const
-{ return m_current_color; }
-
 void ColorDlg::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight();
