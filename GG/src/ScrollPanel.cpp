@@ -54,16 +54,14 @@ void ScrollPanel::CompleteConstruction()
     m_vscroll = style.NewMultiEditVScroll(CLR_WHITE, CLR_BLACK);
 
     // Don't accept less than MIN_SCROLL_WIDTH pixels wide scrolls.
-    if (m_vscroll->Width() < MIN_SCROLL_WIDTH) {
+    if (m_vscroll->Width() < MIN_SCROLL_WIDTH)
         m_vscroll->Resize(Pt(MIN_SCROLL_WIDTH, m_vscroll->Height()));
-    }
 
     AttachChild(m_vscroll);
     AttachChild(m_content);
 
-    namespace ph = boost::placeholders;
-
-    m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, ph::_1, ph::_2, ph::_3, ph::_4));
+    m_vscroll_connection = m_vscroll->ScrolledSignal.connect(
+        [this](int tab_low, int tab_high, int low, int high) { OnScrolled(tab_low, tab_high, low, high); });
 
     DoLayout();
 }

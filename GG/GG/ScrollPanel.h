@@ -57,6 +57,7 @@ public:
 
 private:
     std::shared_ptr<Scroll> m_vscroll;      //!< The vertical scroll bar.
+    boost::signals2::scoped_connection m_vscroll_connection;
     std::shared_ptr<Wnd> m_content;         //!< The content window of the panel.
     Pt m_content_pos;                       //!< The position of the content when scrolled properly.
     Clr m_background_color = GG::CLR_ZERO;  //!< The color to paint the background with.
