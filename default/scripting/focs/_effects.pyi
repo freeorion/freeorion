@@ -17,6 +17,7 @@ from focs._types import (
     _EffectGroup,
     _Empire,
     _EmpireId,
+    _FleetID,
     _FloatParam,
     _Focus,
     _IntParam,
@@ -155,6 +156,7 @@ class _Ship(_Object):
     Species: _SpeciesValue
     DesignID: _DesignID
     Fleet: _Fleet
+    FleetID: _FleetID
     LastTurnResupplied: int
     OrderedColonizePlanetID: _PlanetId
     Speed: int
@@ -169,6 +171,7 @@ class _Ship(_Object):
 class _Fleet(_Object):
     PreviousSystemID: _SystemID
     NextSystemID: _SystemID
+    FleetID: _FleetID
     ProducedByEmpireID: _EmpireId
 
 class _Building(_Object):
@@ -342,6 +345,7 @@ CanColonize = _Condition()
 IsAnyObject = _Condition()
 CanProduceShips = _Condition()
 
+def InGame() -> _Condition: ...
 def InSystem(*, id: _SystemID = _SystemID()) -> _Condition: ...
 
 GalaxyMaxAIAggression = 0
