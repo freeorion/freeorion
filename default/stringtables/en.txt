@@ -15487,7 +15487,8 @@ BLD_FIELD_REPELLOR
 Field Repellor
 
 BLD_FIELD_REPELLOR_DESC
-Pushes mobile fields (those not in systems) away from its location.
+'''Pushes mobile fields (those not in systems) away from its location.
+Can only be built once per empire.'''
 
 BLD_HYPER_DAM
 Hyperspatial Dam

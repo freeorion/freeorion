@@ -15401,7 +15401,8 @@ BLD_FIELD_REPELLOR
 Répulseur de Milieux Interstellaires
 
 BLD_FIELD_REPELLOR_DESC
-Repousse les milieux interstellaires mobiles (ceux n'étant pas dans un système) loin de leur emplacement actuel.
+'''Repousse les milieux interstellaires mobiles (ceux n'étant pas dans un système) loin de son emplacement.
+Ne peut être construit qu'une seule fois par empire.'''
 
 BLD_HYPER_DAM
 Barrage Hyperspatial
