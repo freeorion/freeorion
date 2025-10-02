@@ -4,9 +4,13 @@ from buildings.buildings_macros import (
     SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS,
 )
 from focs._effects import (
+    BuildBuilding,
+    Contains,
     Destroy,
     EffectsGroup,
+    Enqueued,
     GenerateSitRepMessage,
+    IsBuilding,
     IsSource,
     Object,
     Planet,
@@ -14,6 +18,7 @@ from focs._effects import (
     Target,
 )
 from macros.base_prod import BUILDING_COST_MULTIPLIER
+from macros.enqueue import ENQUEUE_BUILD_ONE_PER_PLANET
 
 try:
     from focs._buildings import *
@@ -25,7 +30,13 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     description="BLD_STARLANE_NEXUS_DESC",
     buildcost=1000 * BUILDING_COST_MULTIPLIER,
     buildtime=8,
-    location=(Planet()),
+    location=(
+        Planet()
+        & ~Contains(IsBuilding(name=["BLD_STARLANE_NEXUS"]))
+        & ~Contains(IsBuilding(name=["BLD_STARLANE_BORE"]))
+        & ~Enqueued(type=BuildBuilding, name="BLD_STARLANE_BORE")
+    ),
+    enqueuelocation=ENQUEUE_BUILD_ONE_PER_PLANET,
     effectsgroups=[
         *SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS,
         EffectsGroup(
