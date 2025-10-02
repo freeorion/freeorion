@@ -1,6 +1,7 @@
 from focs._effects import (
     BlackHole,
     EffectsGroup,
+    InGame,
     InSystem,
     LocalCandidate,
     Min,
@@ -152,15 +153,16 @@ Tech(
                 AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
             ],
         ),
+        # Check InGame(), this should not trigger in e.g. ShipDesigner (where the ship is ~InSystem). No meter effects - not strictly necessary
         EffectsGroup(
-            scope=Ship & ~InSystem() & OwnedBy(empire=Source.Owner),
+            scope=Ship & InGame() & ~InSystem() & OwnedBy(empire=Source.Owner),
             priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
                 SetSpecialCapacity(
                     name=lower_stealth_count_special,
                     capacity=count_lower_stealth_ships_statistic_valref(own_ships_on_targetz_starlane),
                 ),
-                AddSpecial(name=base_stealth_special, capacity=NoOpValue(float, Value(Target.Stealth))),
+                AddSpecial(name=base_stealth_special, capacity=Value(Target.Stealth)),
             ],
         ),
         # apply the lowest resulting stealth of ships of higher/equal stealth
@@ -174,9 +176,10 @@ Tech(
                 ),
             ],
         ),
+        # Needs InGame(), this should not trigger in e.g. ShipDesigner (where the ship is ~InSystem).
         # Do test a) ships going via different starlanes to/from the same system
         EffectsGroup(
-            scope=Ship & ~InSystem() & OwnedBy(empire=Source.Owner),
+            scope=Ship & InGame() & ~InSystem() & OwnedBy(empire=Source.Owner),
             accountinglabel="FLEET_UNSTEALTHINESS_ON_STARLANE_LABEL",
             priority=LATE_AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
             effects=[
