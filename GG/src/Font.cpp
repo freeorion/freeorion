@@ -204,22 +204,6 @@ namespace {
     }
 
 
-    struct SetPreformattedIfPREP
-    {
-        using result_type = void ;
-
-        void operator()(const std::string* str, const Font::Substring::IterPair& tag_match_iter_pair,
-                        bool& is_preformatted, bool set_to_value) const
-        {
-            if (str) {
-                const Font::Substring tag_ss(*str, tag_match_iter_pair);
-                if (tag_ss == Font::PRE_TAG)
-                    is_preformatted = set_to_value;
-            }
-        }
-    };
-    const boost::xpressive::function<SetPreformattedIfPREP>::type SetPreformattedIfPRE = {{}};
-
     constexpr double ITALICS_SLANT_ANGLE = 12; // degrees
     const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
@@ -637,7 +621,7 @@ namespace {
             justification = ALIGN_CENTER;
         else if (elem.tag_name == Font::ALIGN_RIGHT_TAG)
             justification = ALIGN_RIGHT;
-        else if (elem.tag_name != Font::PRE_TAG)
+        else
             pending_formatting_tags.push_back(elem);
         last_line_of_curr_just = false;
         code_point_offset += elem.CodePointSize();
@@ -653,7 +637,7 @@ namespace {
             (elem.tag_name == Font::ALIGN_RIGHT_TAG && justification == ALIGN_RIGHT))
         {
             last_line_of_curr_just = true;
-        } else if (elem.tag_name != Font::PRE_TAG) {
+        } else {
             pending_formatting_tags.push_back(elem);
         }
         code_point_offset += elem.CodePointSize();
@@ -1727,8 +1711,6 @@ namespace {
     constexpr std::size_t text_tag_idx = 5;
 
 
-
-
     /** TagHandler stores a set of all known tags and provides pre-compiled regexs for those tags.
 
     Known tags are tags that will be parsed into TextElement OPEN_TAG or CLOSE_TAG. */
@@ -1761,9 +1743,10 @@ namespace {
         }
 
         // set of tags known to the handler
-        static constexpr std::array<std::string_view, 11> m_default_tags{
-            {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG, Font::SUBSCRIPT_TAG,
-            Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG, Font::ALIGN_RIGHT_TAG, Font::PRE_TAG, Font::RESET_TAG}};
+        static constexpr std::array<std::string_view, 10> m_default_tags{
+            {Font::ITALIC_TAG, Font::SHADOW_TAG, Font::UNDERLINE_TAG, Font::SUPERSCRIPT_TAG,
+             Font::SUBSCRIPT_TAG, Font::RGBA_TAG, Font::ALIGN_LEFT_TAG, Font::ALIGN_CENTER_TAG,
+             Font::ALIGN_RIGHT_TAG, Font::RESET_TAG}};
 
         std::vector<std::string_view> m_custom_tags;
         mutable std::shared_mutex m_mutex;
@@ -1804,57 +1787,15 @@ namespace {
     // +_w one or more greedy word chars,  () group no capture,  [] semantic operation
     const xpr::sregex TAG_NAME = (+xpr::_w)[xpr::check(&MatchesKnownTag)];
 
-    /** CompiledRegex maintains a compiled boost::xpressive regular
-        expression that includes a tag stack which can be cleared and
-        provided to callers without the overhead of recompiling the
-        regular expression.*/
-    class CompiledRegex {
-    public:
-        CompiledRegex()
-        {
-            m_EVERYTHING =
-                ('<'                                            // < open tag
-                 >> (tag_name_tag = TAG_NAME)                   // TAG_NAME 
-                 [xpr::check([this](const auto& s) { return NotPreformatted(s); })] // unless in preformatted mode
-                 >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM) // repeat 0 to 9 times: blank followed by TAG_PARAM
-                 >> (open_bracket_tag.proto_base() = '>')       // > close tag
-                    [SetPreformattedIfPRE(xpr::ref(m_text), tag_name_tag, xpr::ref(m_preformatted), true)]
-                ) |
+    const xpr::sregex TAGGED_TEXT_PARSER =
+            ('<' >> (tag_name_tag = TAG_NAME)
+                 >> xpr::repeat<0, 9>(+xpr::blank >> TAG_PARAM)
+                 >> (open_bracket_tag.proto_base() = '>'))
 
-                ("</"                                           // </ open tag with slash
-                 >> (tag_name_tag = TAG_NAME)                   // TAG_NAME
-                    [xpr::check([this](const auto& s) { return NotPreformatted(s); })] // unless in preformatted mode or unless tag is </pre>
-                 >> (close_bracket_tag.proto_base() = '>')      // > close tag
-                    [SetPreformattedIfPRE(xpr::ref(m_text), tag_name_tag, xpr::ref(m_preformatted), false)]
-                ) |
+         |  ("</" >> (tag_name_tag = TAG_NAME)
+                  >> (close_bracket_tag.proto_base() = '>'))
 
-                (whitespace_tag = WHITESPACE) |
-
-                (text_tag = TEXT);
-        }
-
-        const xpr::sregex& BindRegexToText(const std::string& new_text) noexcept
-        { 
-            m_text = std::addressof(new_text);
-            return m_EVERYTHING;
-        }
-
-    private:
-        bool NotPreformatted(const boost::xpressive::ssub_match&) const noexcept
-        { return !m_preformatted; }
-
-        bool NotPreformattedOrIsPre(const boost::xpressive::ssub_match& sub) const
-        { return !m_preformatted || sub.str() == Font::PRE_TAG; }
-
-        const std::string*  m_text = nullptr;
-
-        // The combined regular expression.
-        xpr::sregex         m_EVERYTHING;
-
-        bool                m_preformatted = false;
-    } regex_with_tags;
-
-    std::mutex tags_regex_mutex;
+         |  (whitespace_tag = WHITESPACE) | (text_tag = TEXT);
 }
 
 
@@ -2624,18 +2565,16 @@ void Font::ProcessTags(const LineVec& line_data, RenderState& render_state)
 
 std::string Font::StripTags(std::string_view text)
 {
-    using namespace boost::xpressive;
-    std::string text_str{text};
-
-    std::scoped_lock regex_lock{tags_regex_mutex};
-    const auto& regex = regex_with_tags.BindRegexToText(text_str); // requires unique lock to be thread safe
+    const std::string text_str{text};
 
     std::string retval;
+    if (text.empty())
+        return retval;
     retval.reserve(text.size());
 
     // scan through matched markup and text, saving only the non-tag-text
-    sregex_iterator it(text_str.begin(), text_str.end(), regex);
-    const sregex_iterator end_it;
+    xpr::sregex_iterator it(text_str.begin(), text_str.end(), TAGGED_TEXT_PARSER);
+    const xpr::sregex_iterator end_it;
 
     for (; it != end_it; ++it) {
         auto& text_match = (*it)[text_tag_idx];
@@ -2831,17 +2770,10 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     if (text.empty())
         return {};
 
-    if (format & FORMAT_IGNORETAGS) {
-        // use regex that doens't check tags
-        boost::xpressive::sregex_iterator it(text.begin(), text.end(), WHITESPACE_OR_TEXT);
-        return EPFTTTE(text, format, glyphs, space_width, it);
-    } else {
-        // bind to text the regex that uses TagHandler which parses all the known XML tags
-        std::scoped_lock regex_lock{tags_regex_mutex};
-        const auto& regex = regex_with_tags.BindRegexToText(text); // requires unique lock to be thread safe
-        boost::xpressive::sregex_iterator it(text.begin(), text.end(), regex);
-        return EPFTTTE(text, format, glyphs, space_width, it);
-    }
+    const auto& regex = (format & FORMAT_IGNORETAGS) ? WHITESPACE_OR_TEXT : TAGGED_TEXT_PARSER;
+
+    xpr::sregex_iterator it(text.begin(), text.end(), regex);
+    return EPFTTTE(text, format, glyphs, space_width, it);
 }
 
 void Font::ChangeTemplatedText(std::string& text, std::vector<TextElement>& text_elements,

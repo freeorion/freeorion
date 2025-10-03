@@ -385,8 +385,7 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text,
         wrapped_text.append(UserString("MESSAGES_WHISPER"));
     wrapped_text.append(": ")
                 .append(filtered_message)
-                .append("</pre>").append("<reset>"); // ensure message doesn't leave text state in preformatted mode or with any other tags applied
-    static_assert(GG::Font::PRE_TAG == "pre");
+                .append("<reset>"); // ensure message doesn't leave text state with any other tags
     static_assert(GG::Font::RESET_TAG == "reset");
 
     TraceLogger() << "HandlePlayerChatMessage sender: " << player_name

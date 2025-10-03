@@ -102,7 +102,6 @@ GG_API std::string RgbaTag(Clr c);
     - \verbatim<left></left> \endverbatim           Left-justified text.
     - \verbatim<center></center> \endverbatim       Centered text.
     - \verbatim<right></right> \endverbatim         Right-justified text.
-    - \verbatim<pre></pre> \endverbatim             Preformatted.  Similar to HTML \<pre> tag, except this one only causes all tags to be ignored until a subsequent \</pre> tag is seen.  Note that due to their semantics, \<pre> tags cannot be nested.
 
     <p>Users of Font may wish to create their own tags as well.  Though Font
     will know nothing about the semantics of the new tags, it is possible to
@@ -111,8 +110,7 @@ GG_API std::string RgbaTag(Clr c);
     RegisterKnownTags(), RemoveKnownTag(), and ClearKnownTags() for details.
     It is not possible to remove the built-in tags using these methods.  If
     you wish not to use tags at all, call DetermineLines() and RenderText()
-    with the format parameter containing FORMAT_IGNORETAGS, or include a
-    \<pre> tag at the beginning of the text to be rendered.
+    with the format parameter containing FORMAT_IGNORETAGS.
    */
 class GG_API Font
 {
@@ -126,7 +124,6 @@ public:
     static constexpr std::string_view ALIGN_LEFT_TAG = "left";
     static constexpr std::string_view ALIGN_CENTER_TAG = "center";
     static constexpr std::string_view ALIGN_RIGHT_TAG = "right";
-    static constexpr std::string_view PRE_TAG = "pre";
     static constexpr std::string_view RESET_TAG = "reset";
 
     /** \brief A range of iterators into a std::string that defines a
