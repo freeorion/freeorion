@@ -683,10 +683,10 @@ sc::result Idle::react(const Error& msg) {
 
 sc::result Idle::react(const Hostless&) {
     TraceLogger(FSM) << "(ServerFSM) Idle.Hostless";
-    std::string autostart_load_filename = GetOptionsDB().Get<std::string>("load");
+    std::string autostart_load_path = GetOptionsDB().Get<std::string>("load");
     bool quickstart = GetOptionsDB().Get<bool>("quickstart");
     bool load_or_quickstart = GetOptionsDB().Get<bool>("load-or-quickstart");
-    if (!quickstart && !load_or_quickstart && autostart_load_filename.empty())
+    if (!quickstart && !load_or_quickstart && autostart_load_path.empty())
         return transit<MPLobby>();
 
     if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0) {
@@ -700,11 +700,16 @@ sc::result Idle::react(const Hostless&) {
     server.InitializePython();
     server.LoadChatHistory();
 
-    if (load_or_quickstart) {
+    std::string autostart_load_filename = autostart_load_path;
+    if (load_or_quickstart || (!autostart_load_path.empty() || IsExistingDir(autostart_load_path))) {
         // Search save games in a subfolder with game UID or "auto" formed in
-        // `GetAutoSaveFileName`.
+        // `GetAutoSaveFileName` or in a given load folder.
         std::string subdir = server.m_galaxy_setup_data.GetGameUID();
         boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
+        if (!autostart_load_path.empty()) {
+            autosave_dir_path = autostart_load_path;
+        }
+        DebugLogger(FSM) << "Scanning directory for (lexicographic) latest savegame: " << autosave_dir_path;
         if (IsExistingDir(autosave_dir_path)) {
             auto saves = ListDir(autosave_dir_path, IsMultiplayerSaveFile);
             for (const auto& save : saves) {
