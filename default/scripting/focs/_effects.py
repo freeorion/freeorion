@@ -12,7 +12,7 @@ def InGame():
 
     :returns: a focs condition matching objects with positive ID
     """
-    return cast(int, LocalCandidate.ID) > 0
+    return cast(int, LocalCandidate.ID) >= 0
 
 
 def StatisticElse(type_, *, condition):
