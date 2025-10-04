@@ -365,16 +365,19 @@ void Number::Eval(const ScriptingContext& parent_context,
 }
 
 bool Number::Match(const ScriptingContext& local_context) const {
+    // get acceptable range of subcondition matches for candidate
+    const int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    if (low == 1 && !m_high)
+        return m_condition->EvalAny(local_context);
+
     // get set of all UniverseObjects that satisfy m_condition
-    ObjectSet condition_matches = m_condition->Eval(local_context);
+    const ObjectSet condition_matches = m_condition->Eval(local_context);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     const int matched = condition_matches.size();
-
-    // get acceptable range of subcondition matches for candidate
-    const int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     if (low > matched)
         return false;
+
     const int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
     return matched <= high;
 }
