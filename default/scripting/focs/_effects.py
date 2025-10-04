@@ -10,7 +10,7 @@ from focs._effects import (
 def InGame():
     """Returns a condition which matches objects on the map
 
-    :returns: a focs condition matching objects with positive ID
+    :returns: a focs condition matching objects with non-negative ID
     """
     return cast(int, LocalCandidate.ID) >= 0
 
