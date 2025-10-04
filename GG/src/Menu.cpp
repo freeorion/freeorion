@@ -57,13 +57,15 @@ void PopupMenu::AddMenuItem(std::string str, bool disable, bool check, std::func
 
 void PopupMenu::Render()
 {
-    if (m_menu_data.next_level.empty())
+    if (m_menu_data.next_level.empty() || !m_font)
         return;
 
     const Pt ul = ClientUpperLeft();
+    const auto [app_w, app_h] = [gui{GUI::GetGUI()}]() { return std::pair{gui->AppWidth(), gui->AppHeight()}; }();
+    const Y lineskip = m_font->Lineskip();
 
     const Y INDICATOR_VERTICAL_MARGIN{3};
-    const Y INDICATOR_HEIGHT = m_font->Lineskip() - 2 * INDICATOR_VERTICAL_MARGIN;
+    const Y INDICATOR_HEIGHT = lineskip - 2 * INDICATOR_VERTICAL_MARGIN;
     const Y CHECK_HEIGHT = INDICATOR_HEIGHT;
     const X CHECK_WIDTH{Value(CHECK_HEIGHT)};
 
@@ -85,28 +87,28 @@ void PopupMenu::Render()
             if (menu.next_level[j].next_level.size() || menu.next_level[j].checked)
                 needs_indicator = true;
         }
-        Flags<TextFormat> fmt = FORMAT_LEFT | FORMAT_TOP;
-        auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
-        auto lines = m_font->DetermineLines(str, fmt, X0, text_elements);
-        Pt menu_sz = m_font->TextExtent(lines); // get dimensions of text in menu
+        static constexpr Flags<TextFormat> fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
+        const auto text_lines = m_font->DetermineLines(str, fmt, X0, text_elements);
+        Pt menu_sz = m_font->TextExtent(text_lines); // get dimensions of text in menu
         menu_sz.x += 2 * HORIZONTAL_MARGIN;
         if (needs_indicator)
             menu_sz.x += CHECK_WIDTH + 2 * HORIZONTAL_MARGIN; // make room for the little arrow
         Rect r(ul.x + next_menu_x_offset, ul.y + next_menu_y_offset,
-                ul.x + next_menu_x_offset + menu_sz.x, ul.y + next_menu_y_offset + menu_sz.y);
-
-        if (r.lr.x > GUI::GetGUI()->AppWidth()) {
-            X offset = r.lr.x - GUI::GetGUI()->AppWidth();
+               ul.x + next_menu_x_offset + menu_sz.x, ul.y + next_menu_y_offset + menu_sz.y);
+        if (r.lr.x > app_w) {
+            X offset = r.lr.x - app_w;
             r.ul.x -= offset;
             r.lr.x -= offset;
         }
-        if (r.lr.y > GUI::GetGUI()->AppHeight()) {
-            Y offset = r.lr.y - GUI::GetGUI()->AppHeight();
+        if (r.lr.y > app_h) {
+            Y offset = r.lr.y - app_h;
             r.ul.y -= offset;
             r.lr.y -= offset;
         }
+
         next_menu_x_offset = menu_sz.x;
-        next_menu_y_offset = static_cast<int>(m_caret[i]) * m_font->Lineskip();
+        next_menu_y_offset = static_cast<int>(m_caret[i]) * lineskip;
         FlatRectangle(r.ul, r.lr, m_int_color, m_border_color, BORDER_THICKNESS);
         m_open_levels[i] = r;
 
@@ -116,8 +118,8 @@ void PopupMenu::Render()
             !menu.next_level[m_caret[i]].disabled)
         {
             Rect tmp_r = r;
-            tmp_r.ul.y += static_cast<int>(m_caret[i]) * m_font->Lineskip();
-            tmp_r.lr.y = tmp_r.ul.y + m_font->Lineskip() + 3;
+            tmp_r.ul.y += static_cast<int>(m_caret[i]) * lineskip;
+            tmp_r.lr.y = tmp_r.ul.y + lineskip + 3;
             tmp_r.ul.x += BORDER_THICKNESS;
             tmp_r.lr.x -= BORDER_THICKNESS;
             if (m_caret[i] == 0)
@@ -160,14 +162,15 @@ void PopupMenu::Render()
             // submenu indicator arrow
             if (menu.next_level[j].next_level.size() > 0u) {
                 Triangle(line_rect.lr.x - Value(INDICATOR_HEIGHT/2) - HORIZONTAL_MARGIN,
-                            line_rect.ul.y + INDICATOR_VERTICAL_MARGIN,
-                            line_rect.lr.x - Value(INDICATOR_HEIGHT/2) - HORIZONTAL_MARGIN,
-                            line_rect.ul.y + m_font->Lineskip() - INDICATOR_VERTICAL_MARGIN,
-                            line_rect.lr.x - HORIZONTAL_MARGIN,
-                            line_rect.ul.y + m_font->Lineskip()/2);
+                         line_rect.ul.y + INDICATOR_VERTICAL_MARGIN,
+                         line_rect.lr.x - Value(INDICATOR_HEIGHT/2) - HORIZONTAL_MARGIN,
+                         line_rect.ul.y + lineskip - INDICATOR_VERTICAL_MARGIN,
+                         line_rect.lr.x - HORIZONTAL_MARGIN,
+                         line_rect.ul.y + lineskip/2);
                 glEnable(GL_TEXTURE_2D);
             }
-            line_rect.ul.y += m_font->Lineskip();
+
+            line_rect.ul.y += lineskip;
         }
     }
 }
