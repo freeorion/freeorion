@@ -4,9 +4,13 @@ from buildings.buildings_macros import (
     SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS,
 )
 from focs._effects import (
+    BuildBuilding,
+    Contains,
     Destroy,
     EffectsGroup,
+    Enqueued,
     GenerateSitRepMessage,
+    IsBuilding,
     IsSource,
     Object,
     Planet,
@@ -25,7 +29,11 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     description="BLD_STARLANE_BORE_DESC",
     buildcost=(200 + 50 * Target.System.NumStarlanes) * BUILDING_COST_MULTIPLIER,
     buildtime=Target.System.NumStarlanes + 1,
-    location=Planet(),
+    location=(
+        Planet()
+        & ~Contains(IsBuilding(name=["BLD_STARLANE_NEXUS"]))
+        & ~Enqueued(type=BuildBuilding, name="BLD_STARLANE_NEXUS")
+    ),
     effectsgroups=[
         *SPECIES_LIKES_OR_DISLIKES_BUILDING_STABILITY_EFFECTS,
         EffectsGroup(
