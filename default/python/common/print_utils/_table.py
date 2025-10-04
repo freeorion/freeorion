@@ -46,6 +46,16 @@ class Table:
         - specify headers in constructor
         - add rows
         - print
+
+
+        Note: There are two ways to print it:
+
+        A simple one is print(table), but if the table is big, it will be truncated by logger.
+
+        If you expect to have many rows iter over it and print/log line by line.
+        for line in table:
+            print(line)
+            info(line)
         """
         self._table_name = table_name
         self._bottom_sep = bottom_sep
@@ -58,7 +68,17 @@ class Table:
         self.totals = defaultdict(int)
 
     def __str__(self):
-        return self.get_table()
+        """
+        Return table as text.
+
+        Note: long output will be truncated by logger.
+
+        If you expect to have many rows iter over it and print/log line by line.
+        for line in table:
+            print(line)
+            info(line)
+        """
+        return "\n".join(self)
 
     def add_row(self, *row, note: str = ""):
         table_row = []
@@ -135,13 +155,3 @@ class Table:
             name_width = max(len(x.name) for x in legend)
             for header in legend:
                 yield "*%-*s %s" % (name_width, header.name[:-1], header.description)
-
-    def get_table(self) -> str:
-        """
-        Return table as text.
-
-        This method is deprecated, since long output will be truncated by logger.
-        Use  print_table instead.
-        """
-
-        return "\n".join(self)
