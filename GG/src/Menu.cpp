@@ -165,7 +165,6 @@ void PopupMenu::Render()
                             line_rect.ul.y + m_font->Lineskip() - INDICATOR_VERTICAL_MARGIN,
                             line_rect.lr.x - HORIZONTAL_MARGIN,
                             line_rect.ul.y + m_font->Lineskip()/2);
-                glEnd();
                 glEnable(GL_TEXTURE_2D);
             }
             line_rect.ul.y += m_font->Lineskip();
