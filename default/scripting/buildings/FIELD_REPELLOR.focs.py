@@ -24,7 +24,8 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     buildtime=5,
     location=(Number(high=0, condition=IsBuilding(name=[ThisBuilding]) & OwnedBy(empire=Source.Owner))),
     enqueuelocation=(
-        ENQUEUE_BUILD_ONE_PER_PLANET & Number(high=0, condition=Enqueued(type=BuildBuilding, name=ThisBuilding))
+        ENQUEUE_BUILD_ONE_PER_PLANET
+        & Number(high=0, condition=Enqueued(type=BuildBuilding, name=ThisBuilding, empire=Source.Owner))
     ),
     effectsgroups=[
         EffectsGroup(
