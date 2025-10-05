@@ -56,14 +56,12 @@ BuildingType(  # type: ignore[reportUnboundVariable]
             condition=System & Contains(IsBuilding(name=["BLD_INTERSPECIES_ACADEMY"]) & OwnedBy(empire=Source.Owner)),
         )
         & Number(
-            low=0,
             high=0,
             condition=IsBuilding(name=["BLD_INTERSPECIES_ACADEMY"])
             & HasSpecies(name=[RootCandidate.Species])
             & OwnedBy(empire=RootCandidate.Owner),
         )
         & Number(
-            low=0,
             high=0,
             condition=Described(
                 description="CONDITION_INTERSPECIES_ACADEMY_SPECIES_ALREADY_EXISTS",
@@ -74,7 +72,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
                 & ~Object(id=RootCandidate.PlanetID),
             ),
         )
-        & Number(low=0, high=6, condition=IsBuilding(name=["BLD_INTERSPECIES_ACADEMY"]) & OwnedBy(empire=Source.Owner))
+        & Number(high=6, condition=IsBuilding(name=["BLD_INTERSPECIES_ACADEMY"]) & OwnedBy(empire=Source.Owner))
     ),
     enqueuelocation=ENQUEUE_BUILD_ONE_PER_PLANET,
     effectsgroups=[

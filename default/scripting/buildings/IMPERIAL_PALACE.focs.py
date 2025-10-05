@@ -59,7 +59,6 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         & ~Contains(IsBuilding(name=["BLD_IMPERIAL_PALACE"]))
         & TargetPopulation(low=1)
         & Number(
-            low=0,
             high=0,
             condition=IsBuilding(name=["BLD_IMPERIAL_PALACE"])
             & OwnedBy(empire=Source.Owner)
@@ -73,7 +72,6 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         & TargetPopulation(low=1)
         # can't enqueue if already have an enqueued palace anywhere
         & Number(
-            low=0,
             high=0,
             condition=(
                 IsBuilding(name=["BLD_IMPERIAL_PALACE"])
@@ -83,9 +81,8 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         )
         # can't enqueue if already own a self-built palace
         & Number(
-            low=0,
             high=0,
-            condition=Planet() & Enqueued(type=BuildBuilding, name="BLD_IMPERIAL_PALACE", empire=Source.Owner, low=1),
+            condition=Planet() & Enqueued(type=BuildBuilding, name="BLD_IMPERIAL_PALACE", empire=Source.Owner),
         )
     ),
     effectsgroups=[

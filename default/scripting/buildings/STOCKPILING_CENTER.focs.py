@@ -32,18 +32,17 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     location=(
         Capital
         & OwnedBy(empire=Source.Owner)
-        & Number(low=0, high=0, condition=IsBuilding(name=["BLD_STOCKPILING_CENTER"]) & OwnedBy(empire=Source.Owner))
+        & Number(high=0, condition=IsBuilding(name=["BLD_STOCKPILING_CENTER"]) & OwnedBy(empire=Source.Owner))
     ),
     enqueuelocation=(
         Capital
         & OwnedBy(empire=Source.Owner)
-        & Number(low=0, high=0, condition=IsBuilding(name=["BLD_STOCKPILING_CENTER"]) & OwnedBy(empire=Source.Owner))
+        & Number(high=0, condition=IsBuilding(name=["BLD_STOCKPILING_CENTER"]) & OwnedBy(empire=Source.Owner))
         # can't enqueue if already have an enqueued stockpiling_center anywhere
         & Number(
-            low=0,
             high=0,
             condition=(
-                Planet() & Enqueued(type=BuildBuilding, name="BLD_STOCKPILING_CENTER", empire=Source.Owner, low=1)
+                Planet() & Enqueued(type=BuildBuilding, name="BLD_STOCKPILING_CENTER", empire=Source.Owner)
             ),
         )
     ),
