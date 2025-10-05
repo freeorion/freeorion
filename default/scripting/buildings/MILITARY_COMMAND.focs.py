@@ -38,7 +38,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         & OwnedBy(empire=Source.Owner)
         & ~Contains(IsBuilding(name=["BLD_MILITARY_COMMAND"]))
         & TargetPopulation(low=1)
-        & Number(low=0, high=0, condition=IsBuilding(name=["BLD_MILITARY_COMMAND"]) & OwnedBy(empire=Source.Owner))
+        & Number(high=0, condition=IsBuilding(name=["BLD_MILITARY_COMMAND"]) & OwnedBy(empire=Source.Owner))
     ),
     enqueuelocation=ENQUEUE_BUILD_ONE_PER_PLANET,
     effectsgroups=[
