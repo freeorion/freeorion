@@ -28,7 +28,7 @@ Hull
                 Object id = Source.SystemID
                 System
                 Star type = [Blue White Yellow Orange Red]
-                Not Number low = 2 condition = And [
+                Number high = 1 condition = And [
                     Ship
                     Monster
                     InSystem id = Source.SystemID

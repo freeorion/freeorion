@@ -73,7 +73,7 @@ ADVANCED_FOCUS_EFFECTS = [
         scope=Planet()
         & OwnedBy(affiliation=EnemyOf, empire=Source.Owner)
         & WithinStarlaneJumps(jumps=4, condition=IsSource)
-        & ~Number(low=1, condition=IsBuilding(name=["BLD_GENOME_BANK"]) & OwnedBy(empire=RootCandidate.Owner)),
+        & Number(high=1, condition=IsBuilding(name=["BLD_GENOME_BANK"]) & OwnedBy(empire=RootCandidate.Owner)),
         activation=Focus(type=["FOCUS_BIOTERROR"]),
         priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
         effects=SetTargetPopulation(value=Value - 4),
