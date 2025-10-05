@@ -41,9 +41,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         # can't enqueue if already have an enqueued stockpiling_center anywhere
         & Number(
             high=0,
-            condition=(
-                Planet() & Enqueued(type=BuildBuilding, name="BLD_STOCKPILING_CENTER", empire=Source.Owner)
-            ),
+            condition=(Planet() & Enqueued(type=BuildBuilding, name="BLD_STOCKPILING_CENTER", empire=Source.Owner)),
         )
     ),
     effectsgroups=[
