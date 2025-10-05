@@ -2945,7 +2945,7 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 namespace StaticTests {
-#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || (_MSC_VER >= 1942 && _MSC_VER != 1944)) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
+#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || (_MSC_VER >= 1942 && _MSC_FULL_VER <= 194434810)) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
     struct ContainerTestObj : public UniverseObjectCXBase {
         std::vector<int> contained_ids;
         constexpr explicit ContainerTestObj(std::vector<int> contained_ids_ = {}, int this_id = 2) :
