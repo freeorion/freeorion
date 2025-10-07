@@ -7,9 +7,9 @@ on:
         type: boolean
         default: false
 jobs:
-  windows-2022:
-    name: MSVS 2022 on Windows
-    runs-on: windows-2022
+  windows-2025:
+    name: MSVS 2022
+    runs-on: windows-2025
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
