@@ -20,7 +20,7 @@ jobs:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v16/FreeOrionSDK_16_MSVC-v143-x64.zip
           target: ../
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-msbuild@v2
         with:
             vs-prerelease: true
       - name: Prepare
