@@ -8,7 +8,7 @@ on:
         default: false
 jobs:
   windows-2022:
-    name: MSVS 2022 on Windows
+    name: MSVS 2022 on Windows 2022
     runs-on: windows-2022
     steps:
       - name: Checkout sources
@@ -66,3 +66,54 @@ jobs:
           path: FreeOrion_*_Test_Win32_Setup.exe
           if-no-files-found: error
           retention-days: 1
+  windows-2025:
+    name: MSVS 2022 on Windows 2025
+    runs-on: windows-2025
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Download SDK
+        id: download-sdk
+        uses: suisei-cn/actions-download-file@v1.4.0
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v16/FreeOrionSDK_16_MSVC-v143-x64.zip
+          target: ../
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+            vs-prerelease: true
+      - name: Prepare
+        run: |
+          Remove-Item -LiteralPath "C:/hostedtoolcache/windows/Python/" -Force -Recurse # Ensure that system Python is not used
+          unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          cp ../bin/* ./
+      - name: Build
+        run: |
+          cd msvc2022
+          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v143 /property:Configuration=Release /verbosity:minimal
+      - name: Cache NSIS
+        uses: actions/cache@v3
+        with:
+          key: scoop-cache
+          path: scoop_cache
+      - name: Install NSIS
+        env:
+          SCOOP_CACHE: scoop_cache
+        run: |
+          irm get.scoop.sh -outfile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          scoop bucket add extras
+          scoop install nsis
+      - name: Download vcredist
+        id: download-vcredist
+        uses: suisei-cn/actions-download-file@v1.4.0
+        with:
+          url: https://github.com/freeorion/freeorion/files/9733497/vcredist_x86.exe.zip
+          target: ../
+      - name: Prepare vcredist
+        run: |
+          unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
+      - name: Generate installer
+        run: |
+          & "$env:USERPROFILE\scoop\apps\nsis\current\makensis.exe" packaging/windows_installer.nsi
+          mv ../FreeOrion_*_Test_Win32_Setup.exe .
