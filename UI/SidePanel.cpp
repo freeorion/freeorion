@@ -792,6 +792,8 @@ private:
     std::shared_ptr<BuildingsPanel>         m_buildings_panel;              ///< contains icons representing buildings
     std::shared_ptr<SpecialsPanel>          m_specials_panel;               ///< contains icons representing specials
     boost::signals2::scoped_connection      m_planet_connection;
+    GG::GL2DVertexBuffer                    m_verts;
+    GG::GLRGBAColorBuffer                   m_colours;
     GG::Clr                                 m_empire_colour = GG::CLR_ZERO; ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     StarType                                m_star_type = StarType::INVALID_STAR_TYPE;
     bool                                    m_selected = false;             ///< is this planet panel selected
@@ -1235,6 +1237,9 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
     Refresh(planet_context, app.EmpireID());
 
     RequirePreRender();
+
+    m_verts.reserve(3*8+4);
+    m_colours.reserve(3*8+4);
 }
 
 void SidePanel::PlanetPanel::DoLayout(PlanetType type, PlanetSize size) {
@@ -2556,60 +2561,75 @@ void SidePanel::PlanetPanel::Render() {
     const GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
 
 
-    static constexpr int OFFSET = 15;   // size of corners cut off sticky-out bit of background around planet render
-
-    GG::GL2DVertexBuffer verts;
-    verts.reserve(12);
-
-    // title box background
-    verts.store(name_lr.x,              name_ul.y);
-    verts.store(name_ul.x,              name_ul.y);
-    verts.store(name_ul.x,              name_lr.y);
-    verts.store(name_lr.x,              name_lr.y);
+    m_verts.clear();
+    m_colours.clear();
 
     // main border / background
-    verts.store(lr.x,                   ul.y);                      // top right corner
-    if (show_planet_box) {
-        verts.store(ul.x + OFFSET,      ul.y);                      // top left, offset right to cut off corner
-        verts.store(ul.x,               ul.y + OFFSET);             // top left, offset down to cut off corner
-        verts.store(ul.x,               planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-        verts.store(ul.x + OFFSET,      planet_box_lr.y);           // bottom left, offset right to cut off corner
-        verts.store(planet_box_lr.x,    planet_box_lr.y);           // inner corner between planet box and rest of panel
-    } else {
-        verts.store(planet_box_lr.x,    ul.y);                      // top left of main panel, excluding planet box
-    }
-    verts.store(planet_box_lr.x,        lr.y);                      // bottom left of main panel
-    verts.store(lr.x,                   lr.y);                      // bottom right
+    const auto store_main_border_fan = [&](GG::Clr clr) {
+        m_verts.store(lr.x,                 ul.y);                      // top right corner
+        if (show_planet_box) {
+            static constexpr int OFFSET = 15;                           // size of corners cut off sticky-out bit of background around planet render
 
-    verts.activate();
-    const auto szm4 = verts.size() - 4;
+            m_verts.store(ul.x + OFFSET,    ul.y);                      // top left, offset right to cut off corner
+            m_verts.store(ul.x,             ul.y + OFFSET);             // top left, offset down to cut off corner
+            m_verts.store(ul.x,             planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
+            m_verts.store(ul.x + OFFSET,    planet_box_lr.y);           // bottom left, offset right to cut off corner
+            m_verts.store(planet_box_lr.x,  planet_box_lr.y);           // inner corner between planet box and rest of panel
+        } else {
+            m_verts.store(planet_box_lr.x,  ul.y);                      // top left of main panel, excluding planet box
+        }
+        m_verts.store(planet_box_lr.x,      lr.y);                      // bottom left of main panel
+        m_verts.store(lr.x,                 lr.y);                      // bottom right
+
+        m_colours.store(show_planet_box ? 8u : 4u, clr);
+    };
+
+    const auto background_start_idx = m_verts.size();
+    store_main_border_fan(background_colour);
+    const auto main_border_sz = m_verts.size();
+
+    const auto disable_greyover_start_idx = main_border_sz;
+    static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
+    store_main_border_fan(HALF_GREY);
+
+    const auto border_line_start_idx = m_verts.size();
+    store_main_border_fan(border_colour);
+
+    const auto title_box_start_idx = m_verts.size();
+    const std::size_t title_box_sz = 4u;
+    m_verts.store(name_lr.x, name_ul.y);
+    m_verts.store(name_ul.x, name_ul.y);
+    m_verts.store(name_ul.x, name_lr.y);
+    m_verts.store(name_lr.x, name_lr.y);
+    m_colours.store(title_box_sz, title_background_colour);
+
+
+    m_verts.activate();
+    m_colours.activate();
+
 
     glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-    // standard WndColor background for whole panel
-    glColor(background_colour);
-    glDrawArrays(GL_TRIANGLE_FAN, 4, szm4);
+
+    // background for whole panel
+    glDrawArrays(GL_TRIANGLE_FAN, background_start_idx, main_border_sz);
 
     // title background box
-    glColor(title_background_colour);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-
-    // border
-    glColor(border_colour);
-    glLineWidth(1.5f);
-    glDrawArrays(GL_LINE_LOOP, 4, szm4);
-    glLineWidth(1.0f);
+    glDrawArrays(GL_TRIANGLE_FAN, title_box_start_idx, title_box_sz);
 
     // disable greyover
-    if (Disabled()) {
-        static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
-        glColor(HALF_GREY);
-        glDrawArrays(GL_TRIANGLE_FAN, 4, szm4);
-    }
+    if (Disabled())
+        glDrawArrays(GL_TRIANGLE_FAN, disable_greyover_start_idx, main_border_sz);
+
+    // border
+    glLineWidth(1.5f);
+    glDrawArrays(GL_LINE_LOOP, border_line_start_idx, main_border_sz);
+    glLineWidth(1.0f);
+
 
     glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
