@@ -29,7 +29,6 @@ BuildingType(  # type: ignore[reportUnboundVariable]
         & LOCATION_ALLOW_ENQUEUE_IF_PREREQ_ENQUEUED("BLD_SHIPYARD_BASE")
         & Number(
             low=1,
-            high=999,
             condition=(
                 OwnedBy(empire=Source.Owner) & IsBuilding(name=["BLD_NEUTRONIUM_EXTRACTOR", "BLD_NEUTRONIUM_SYNTH"])
             ),

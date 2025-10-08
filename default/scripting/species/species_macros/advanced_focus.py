@@ -53,11 +53,7 @@ PLANETARY_DRIVE_ACTIVATION = (
         & Contains(
             (
                 IsBuilding(name=["BLD_PLANET_BEACON"])
-                | (
-                    Ship
-                    & DesignHasPart(low=1, high=999, name="SP_PLANET_BEACON")
-                    & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
-                )
+                | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
             )
             & OwnedBy(empire=Source.Owner)
         )
@@ -114,11 +110,7 @@ ADVANCED_FOCUS_EFFECTS = [
                 & Contains(
                     (
                         IsBuilding(name=["BLD_PLANET_BEACON"])
-                        | (
-                            Ship
-                            & DesignHasPart(low=1, high=999, name="SP_PLANET_BEACON")
-                            & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
-                        )
+                        | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
                     )
                     & OwnedBy(empire=Source.Owner)
                 )
@@ -145,11 +137,7 @@ ADVANCED_FOCUS_EFFECTS = [
             & Contains(
                 (
                     IsBuilding(name=["BLD_PLANET_BEACON"])
-                    | (
-                        Ship
-                        & DesignHasPart(low=1, high=999, name="SP_PLANET_BEACON")
-                        & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
-                    )
+                    | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
                 )
                 & OwnedBy(empire=Source.Owner)
             )
