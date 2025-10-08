@@ -5336,7 +5336,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     }
 
     int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
-    int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
+    int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
     // if no range specified, require at least one
     if (!m_low && !m_high)
         low = 1;
