@@ -56,7 +56,7 @@ jobs:
           unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
       - name: Generate installer
         run: |
-          makensis packaging/windows_installer.nsi
+          & "$env:USERPROFILE\scoop\apps\nsis\current\makensis.exe" packaging/windows_installer.nsi
           mv ../FreeOrion_*_Test_Win32_Setup.exe .
       - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4
