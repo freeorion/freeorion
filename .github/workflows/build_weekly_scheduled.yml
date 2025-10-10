@@ -54,7 +54,7 @@ jobs:
     needs: check-run
     uses: ./.github/workflows/_build-macos.yml
     with:
-      os: 'macos-14'
+      os: 'macos-15'
       weekly-deploy: true
   windows:
     needs: check-run
