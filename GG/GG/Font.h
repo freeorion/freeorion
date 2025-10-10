@@ -264,7 +264,8 @@ public:
         CONSTEXPR_FONT explicit TextElement(TextElementType type_) noexcept :
             type(type_)
         {}
-        CONSTEXPR_FONT explicit TextElement(Substring text_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+        CONSTEXPR_FONT explicit TextElement(Substring text_)
+            noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             type(TextElementType::TEXT)
         {}
@@ -274,19 +275,25 @@ public:
             text(text_),
             type(type_)
         {}
-        CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_,
-                    TextElementType type_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+        CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, TextElementType type_)
+            noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             tag_name(tag_name_),
             type(type_)
         {}
         CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, std::vector<Substring> params_,
-                    TextElementType type_) noexcept(noexcept(Substring{std::declval<Substring>()})) :
+                                   TextElementType type_)
+            noexcept(noexcept(Substring{std::declval<Substring>()})) :
             text(text_),
             tag_name(tag_name_),
             params(std::move(params_)),
             type(type_)
         {}
+
+        CONSTEXPR_FONT TextElement(const TextElement& rhs)
+            noexcept(noexcept(Substring{std::declval<const Substring&>()}) &&
+                     noexcept(std::vector<uint8_t>{std::declval<const std::vector<uint8_t>&>()}) &&
+                     noexcept(std::vector<Substring>{std::declval<const std::vector<Substring>&>()})) = default;
 
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
@@ -328,14 +335,23 @@ public:
         /** Returns the width of the element. */
         [[nodiscard]] CONSTEXPR_FONT X Width() const
         {
-            if (cached_width == -X1)
-                cached_width = [](const auto& widths) -> X {
-                    X rv = X0;
-                    for (const auto& w : widths)
-                        rv += w;
-                    return rv;
-                }(widths);
-            return cached_width;
+            constexpr auto calc_width = [](const auto& widths) -> X {
+                X rv = X0;
+                for (const auto& w : widths)
+                    rv += w;
+                return rv;
+            };
+
+#if defined(__cpp_lib_is_constant_evaluated)
+            if (std::is_constant_evaluated()) {
+                return calc_width(widths);
+            } else 
+#endif
+            {
+                if (cached_width == -X1)
+                    cached_width = calc_width(widths);
+                return cached_width;
+            }
         }
 
 
