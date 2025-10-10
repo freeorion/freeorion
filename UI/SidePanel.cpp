@@ -792,8 +792,16 @@ private:
     std::shared_ptr<BuildingsPanel>         m_buildings_panel;              ///< contains icons representing buildings
     std::shared_ptr<SpecialsPanel>          m_specials_panel;               ///< contains icons representing specials
     boost::signals2::scoped_connection      m_planet_connection;
+
     GG::GL2DVertexBuffer                    m_verts;
     GG::GLRGBAColorBuffer                   m_colours;
+    static constexpr std::size_t            s_background_start_idx = 0;
+    std::size_t                             m_main_border_sz = 0;
+    std::size_t                             m_disable_greyover_start_idx = 0;
+    std::size_t                             m_border_line_start_idx = 0;
+    std::size_t                             m_title_box_start_idx = 0;
+    static constexpr std::size_t            s_title_box_sz = 4u;
+
     GG::Clr                                 m_empire_colour = GG::CLR_ZERO; ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     StarType                                m_star_type = StarType::INVALID_STAR_TYPE;
     bool                                    m_selected = false;             ///< is this planet panel selected
@@ -2547,7 +2555,7 @@ void SidePanel::PlanetPanel::PreRender() {
 }
 
 void SidePanel::PlanetPanel::Render() {
-    const GG::Pt ul = UpperLeft(), lr = LowerRight();
+    const GG::Pt ul = UpperLeft(), lr = LowerRight() - GG::Pt{GG::X1, GG::Y0};
     const GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
     const GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->Bottom());
 
@@ -2584,24 +2592,22 @@ void SidePanel::PlanetPanel::Render() {
         m_colours.store(show_planet_box ? 8u : 4u, clr);
     };
 
-    const auto background_start_idx = m_verts.size();
     store_main_border_fan(background_colour);
-    const auto main_border_sz = m_verts.size();
+    m_main_border_sz = m_verts.size() - s_background_start_idx;
 
-    const auto disable_greyover_start_idx = main_border_sz;
+    m_disable_greyover_start_idx = m_verts.size();
     static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
     store_main_border_fan(HALF_GREY);
 
-    const auto border_line_start_idx = m_verts.size();
+    m_border_line_start_idx = m_verts.size();
     store_main_border_fan(border_colour);
 
-    const auto title_box_start_idx = m_verts.size();
-    const std::size_t title_box_sz = 4u;
+    m_title_box_start_idx = m_verts.size();
     m_verts.store(name_lr.x, name_ul.y);
     m_verts.store(name_ul.x, name_ul.y);
     m_verts.store(name_ul.x, name_lr.y);
     m_verts.store(name_lr.x, name_lr.y);
-    m_colours.store(title_box_sz, title_background_colour);
+    m_colours.store(s_title_box_sz, title_background_colour);
 
 
     m_verts.activate();
@@ -2616,18 +2622,18 @@ void SidePanel::PlanetPanel::Render() {
 
 
     // background for whole panel
-    glDrawArrays(GL_TRIANGLE_FAN, background_start_idx, main_border_sz);
+    glDrawArrays(GL_TRIANGLE_FAN, s_background_start_idx, m_main_border_sz);
 
     // title background box
-    glDrawArrays(GL_TRIANGLE_FAN, title_box_start_idx, title_box_sz);
+    glDrawArrays(GL_TRIANGLE_FAN, m_title_box_start_idx, s_title_box_sz);
 
     // disable greyover
     if (Disabled())
-        glDrawArrays(GL_TRIANGLE_FAN, disable_greyover_start_idx, main_border_sz);
+        glDrawArrays(GL_TRIANGLE_FAN, m_disable_greyover_start_idx, m_main_border_sz);
 
     // border
     glLineWidth(1.5f);
-    glDrawArrays(GL_LINE_LOOP, border_line_start_idx, main_border_sz);
+    glDrawArrays(GL_LINE_LOOP, m_border_line_start_idx, m_main_border_sz);
     glLineWidth(1.0f);
 
 
