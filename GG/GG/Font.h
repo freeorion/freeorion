@@ -135,6 +135,12 @@ public:
     class GG_API Substring
     {
     public:
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L) && defined(_MSC_VER) && (_MSC_VER >= 1934)
+        static constexpr std::string EMPTY_STRING{};
+#else
+        static const std::string EMPTY_STRING;
+#endif
+
         using IterPair = std::pair<std::string::const_iterator, std::string::const_iterator>;
 
         CONSTEXPR_FONT explicit Substring(const std::string& str_) noexcept :
@@ -232,12 +238,6 @@ public:
         }
 
         CONSTEXPR_FONT Substring() noexcept = default;
-
-#if defined(__cpp_lib_constexpr_string) && defined(_MSC_VER) && (_MSC_VER >= 1934)
-        static constexpr std::string EMPTY_STRING;
-#else
-        static const std::string EMPTY_STRING;
-#endif
 
     private:
         const std::string* str = std::addressof(EMPTY_STRING);

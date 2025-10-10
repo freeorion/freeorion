@@ -347,11 +347,11 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::Substring
 ///////////////////////////////////////
-#if !(defined(__cpp_lib_constexpr_string) && defined(_MSC_VER) && (_MSC_VER >= 1934))
-const std::string Font::Substring::EMPTY_STRING{};
-#else
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L) && defined(_MSC_VER) && (_MSC_VER >= 1934)
 static_assert(Font::Substring(Font::Substring::EMPTY_STRING).empty());
 static_assert(Font::Substring(Font::Substring::EMPTY_STRING).data() == Font::Substring::EMPTY_STRING.data());
+#else
+const std::string Font::Substring::EMPTY_STRING{};
 #endif
 
 
@@ -848,7 +848,7 @@ namespace {
     }
 
 
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
     constexpr struct DummyNextFn {
         static constexpr uint32_t cont_byte(uint8_t c) noexcept
         { return c & 0b00111111; };
@@ -1425,7 +1425,7 @@ namespace {
     }
 
 
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 
 #  if defined(__cpp_lib_constexpr_vector)
     // tests getting string index from glyph index in text with newlines
@@ -1614,7 +1614,7 @@ namespace {
         return {start_str_idx, last_str_idx + last_str_size};
     }
 
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 #  if defined(__cpp_lib_constexpr_vector)
     // tests getting a range pair of string indices from a range pair of glyph indices into text with tags,
     // where the second value should be just after the previous character in the text, which is not the same as
@@ -1802,7 +1802,7 @@ namespace {
 ///////////////////////////////////////
 // class GG::Font::TextElement
 ///////////////////////////////////////
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 namespace {
     constexpr std::string_view TEST_TEXT_WITH_TAGS = "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line<i><sup>is";
 
@@ -1937,7 +1937,7 @@ namespace {
         return {glyph_idx, cp_idx};
     }
 
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 #  if defined(__cpp_lib_constexpr_vector)
 
     constexpr auto x_glyph_cp = []() {            //  01234567890123    // code points
@@ -2833,7 +2833,7 @@ void Font::ChangeTemplatedText(std::string& text, std::vector<TextElement>& text
 }
 
 
-#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 namespace {
 #  if defined(__cpp_lib_constexpr_vector)
     constexpr auto lines_and_lengths = []() {
