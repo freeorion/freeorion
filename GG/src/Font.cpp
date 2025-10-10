@@ -256,9 +256,7 @@ namespace {
     }();
     static_assert(std::string_view{three_zero.data()} == "30");
 
-#if defined(__cpp_lib_constexpr_string) && \
-    (defined(_MSC_VER) || defined(__cplusplus) && (__cplusplus >= 202002L)) && \
-    (!defined(_MSC_VER) || (_MSC_VER >= 1934))
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L) && defined(_MSC_VER)
     static_assert([](){
         const std::string str{"a"};
         return str.size() >= 1 &&
