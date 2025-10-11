@@ -1467,17 +1467,18 @@ namespace {
         return StringIndexAndLengthOfLineAndGlyphInLines(0u, CPSize(idx), line_data);
     };
 
-    constexpr std::pair<std::size_t, std::size_t> Value(std::pair<StrSize, StrSize> szs)
+    using SzP = std::pair<std::size_t, std::size_t>;
+    constexpr SzP Value(std::pair<StrSize, StrSize> szs)
     { return {Value(szs.first), Value(szs.second)}; };
 
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(0u)) == std::pair{0, 1});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(1u)) == std::pair{1, 1});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(2u)) == std::pair{5, 1});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(3u)) == std::pair{6, 1});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(4u)) == std::pair{11, 1});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(5u)) == std::pair{12, 1});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(6u)) == std::pair{13, 0});
-    static_assert(Value(test_tagged_glyph_idx_to_str_idx(999u)) == std::pair{13, 0});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(0u)) == SzP{0u, 1u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(1u)) == SzP{1u, 1u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(2u)) == SzP{5u, 1u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(3u)) == SzP{6u, 1u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(4u)) == SzP{11u, 1u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(5u)) == SzP{12u, 1u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(6u)) == SzP{13u, 0u});
+    static_assert(Value(test_tagged_glyph_idx_to_str_idx(999u)) == SzP{13u, 0u});
 
 
     // tests getting string index and code point string length from glyph index in text with multi-byte characters
@@ -1491,13 +1492,13 @@ namespace {
         return StringIndexAndLengthOfLineAndGlyphInLines(line_idx, cp_in_line_idx, line_data);
     };
 
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(0u)) == std::pair{0, 2});
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(1u)) == std::pair{2, 1});
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(2u)) == std::pair{3, 2});
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(3u)) == std::pair{5, 3});
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(4u)) == std::pair{8, 4});
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(5u)) == std::pair{12, 2});
-    static_assert(Value(test_multibyte_glyph_to_str_idx_len(6u)) == std::pair{14, 0});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(0u)) == SzP{0u, 2u});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(1u)) == SzP{2u, 1u});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(2u)) == SzP{3u, 2u});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(3u)) == SzP{5u, 3u});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(4u)) == SzP{8u, 4u});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(5u)) == SzP{12u, 2u});
+    static_assert(Value(test_multibyte_glyph_to_str_idx_len(6u)) == SzP{14u, 0u});
 
 
     // tests getting the code point from line and glyph index in text with a
