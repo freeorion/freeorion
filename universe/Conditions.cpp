@@ -6706,19 +6706,6 @@ std::unique_ptr<Condition> EmpireStockpileValue::Clone() const {
 ///////////////////////////////////////////////////////////
 // EmpireHasAdoptedPolicy                                //
 ///////////////////////////////////////////////////////////
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(CondsRTSI(empire_id, name)),
-    m_name(std::move(name)),
-    m_empire_id(std::move(empire_id))
-{}
-
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    EmpireHasAdoptedPolicy(nullptr, std::move(name))
-{}
-
-EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy() = default;
-
 bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
     if (this == std::addressof(rhs))
         return true;
