@@ -36,9 +36,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     buildtime=12,
     location=(
         Planet()
-        & ~Contains(IsBuilding(name=["BLD_ART_PLANET"]))
-        & ~Contains(IsBuilding(name=["BLD_ART_FACTORY_PLANET"]))
-        & ~Contains(IsBuilding(name=["BLD_ART_PARADISE_PLANET"]))
+        & ~Contains(IsBuilding(name=["BLD_ART_PLANET", "BLD_ART_FACTORY_PLANET", "BLD_ART_PARADISE_PLANET"]))
         & OwnedBy(empire=Source.Owner)
         & Planet(type=[AsteroidsType, GasGiantType])
         & OwnerHasTech(name="PRO_EXOBOTS")

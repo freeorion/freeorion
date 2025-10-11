@@ -30,14 +30,10 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     location=(
         Planet()
         & OwnedBy(empire=Source.Owner)
-        & ~Contains(IsBuilding(name=["BLD_IMPERIAL_PALACE"]))
-        & ~Contains(IsBuilding(name=["BLD_REGIONAL_ADMIN"]))
+        & ~Contains(IsBuilding(name=["BLD_IMPERIAL_PALACE", "BLD_REGIONAL_ADMIN"]))
         & ~WithinStarlaneJumps(
             jumps=5,
-            condition=(
-                (IsBuilding(name=["BLD_IMPERIAL_PALACE"]) | IsBuilding(name=["BLD_REGIONAL_ADMIN"]))
-                & OwnedBy(empire=Source.Owner)
-            ),
+            condition=(IsBuilding(name=["BLD_IMPERIAL_PALACE", "BLD_REGIONAL_ADMIN"]) & OwnedBy(empire=Source.Owner)),
         )
     ),
     enqueuelocation=ENQUEUE_BUILD_ONE_PER_PLANET,

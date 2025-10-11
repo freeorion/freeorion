@@ -13,9 +13,7 @@ ENQUEUE_BUILD_ONE_PER_PLANET = (
 )
 
 ENQUEUE_ARTIFICIAL_PLANET_EXCLUSION = (
-    ~Contains(IsBuilding(name=["BLD_ART_PLANET"]))
-    & ~Contains(IsBuilding(name=["BLD_ART_FACTORY_PLANET"]))
-    & ~Contains(IsBuilding(name=["BLD_ART_PARADISE_PLANET"]))
+    ~Contains(IsBuilding(name=["BLD_ART_PLANET", "BLD_ART_FACTORY_PLANET", "BLD_ART_PARADISE_PLANET"]))
     & ~Enqueued(type=BuildBuilding, name="BLD_ART_PLANET")
     & ~Enqueued(type=BuildBuilding, name="BLD_ART_FACTORY_PLANET")
     & ~Enqueued(type=BuildBuilding, name="BLD_ART_PARADISE_PLANET")
@@ -36,15 +34,16 @@ def DO_NOT_CONTAIN_FOR_ALL_TERRAFORM_PLANET_TYPES():
         "BARREN",
     ]
 
-    expressions = []
-
+    names = []
     for planet_type in planet_types:
-        expressions.append(~Contains(IsBuilding(name=[f"BLD_TERRAFORM_{planet_type}"])))
+        names.append(f"BLD_TERRAFORM_{planet_type}")
+
+    expressions = [~Contains(IsBuilding(name=names))]
 
     # We add enqueue check in the second loop, because we want to preserve the same order of checks for better diff
     # Once conversion of building is done, we should refactor this code.
-    for planet_type in planet_types:
-        expressions.append(~Enqueued(type=BuildBuilding, name=f"BLD_TERRAFORM_{planet_type}"))
+    for building in names:
+        expressions.append(~Enqueued(type=BuildBuilding, name=building))
 
     return reduce(lambda x, y: x & y, expressions)
 

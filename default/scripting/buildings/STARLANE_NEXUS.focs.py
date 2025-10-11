@@ -32,8 +32,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     buildtime=8,
     location=(
         Planet()
-        & ~Contains(IsBuilding(name=["BLD_STARLANE_NEXUS"]))
-        & ~Contains(IsBuilding(name=["BLD_STARLANE_BORE"]))
+        & ~Contains(IsBuilding(name=["BLD_STARLANE_NEXUS", "BLD_STARLANE_BORE"]))
         & ~Enqueued(type=BuildBuilding, name="BLD_STARLANE_BORE")
     ),
     enqueuelocation=ENQUEUE_BUILD_ONE_PER_PLANET,
