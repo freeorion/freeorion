@@ -1626,11 +1626,18 @@ namespace {
         return GlyphIndicesRangeToStringSizeIndicesInLines(CPSize{low_idx}, CPSize{high_idx}, line_data);
     };
 
+    static_assert(test_tagged_glyph_to_str_idx_range(0u, 999u) == std::pair(StrSize{0u}, StrSize{13u}));
+    static_assert(test_tagged_glyph_to_str_idx_range(1u, 2u) == std::pair(StrSize{1u}, StrSize{2u}));
+    static_assert(test_tagged_glyph_to_str_idx_range(0u, 4u) == std::pair(StrSize{0u}, StrSize{7u}));
+    static_assert(test_tagged_glyph_to_str_idx_range(2u, 4u) == std::pair(StrSize{5u}, StrSize{7u}));
+
 
     constexpr auto to_chars = [](std::pair<StrSize, StrSize> idx) -> std::pair<char, char>
-    { return std::pair(tagged_test_text[Value(idx.first)], tagged_test_text[Value(idx.second)]); };
+    { return {tagged_test_text[Value(idx.first)], tagged_test_text[Value(idx.second)]}; };
 
+#    if defined(_MSC_VER)
     static_assert(to_chars(test_tagged_glyph_to_str_idx_range(0u, 999u)) == std::pair('a', 0));
+#    endif
     static_assert(to_chars(test_tagged_glyph_to_str_idx_range(1u, 2u)) == std::pair('b', '<'));
     static_assert(to_chars(test_tagged_glyph_to_str_idx_range(0u, 4u)) == std::pair('a', '<'));
     static_assert(to_chars(test_tagged_glyph_to_str_idx_range(2u, 4u)) == std::pair('c', '<'));
