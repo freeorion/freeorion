@@ -57,7 +57,11 @@ class GG_API StyleFactory
 public:
 #if defined(__cpp_constexpr) && (__cpp_constexpr >= 201907L)
     constexpr StyleFactory() = default;
+#  if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr virtual ~StyleFactory() {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#  else
     constexpr virtual ~StyleFactory() = default;
+#  endif
 #else
     StyleFactory() = default;
     virtual ~StyleFactory() = default;
