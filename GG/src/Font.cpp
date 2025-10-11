@@ -1870,12 +1870,13 @@ namespace {
 
         for (std::size_t idx = 0; idx < std::min(widths.size(), text_elems.size()); ++idx) {
             widths[idx] = Value(text_elems[idx].Width());
-            widths_sizes[idx++] = text_elems[idx].widths.size();
+            widths_sizes[idx] = text_elems[idx].widths.size();
         }
         return std::pair{widths, widths_sizes};
     }().first;
 
-    constexpr decltype(element_widths) element_widths_expected{{28,0,16,0,28,0,12,0, 16,0,24,0,16,0,20,0}};
+    constexpr decltype(element_widths) element_widths_expected{{28,12,16,12,28,16,12,36,
+                                                                16, 0,24, 4,16,12,20, 8}};
     namespace{
         static_assert(element_widths.size() == element_widths_expected.size());
         static_assert(element_widths[0] == element_widths_expected[0]);
