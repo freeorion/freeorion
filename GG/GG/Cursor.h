@@ -34,7 +34,11 @@ class GG_API Cursor
 public:
 #if defined(__cpp_constexpr) && (__cpp_constexpr >= 201907L)
     constexpr Cursor() = default;
+#  if defined(__GNUC__) && (__GNUC__ < 13)
+    constexpr virtual ~Cursor() {} // see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=93413
+#  else
     constexpr virtual ~Cursor() = default;
+#  endif
 #else
     Cursor() = default;
     virtual ~Cursor() = default;
