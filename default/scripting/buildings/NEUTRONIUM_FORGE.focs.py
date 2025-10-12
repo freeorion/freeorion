@@ -31,8 +31,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
             low=1,
             high=999,
             condition=(
-                OwnedBy(empire=Source.Owner)
-                & (IsBuilding(name=["BLD_NEUTRONIUM_EXTRACTOR"]) | IsBuilding(name=["BLD_NEUTRONIUM_SYNTH"]))
+                OwnedBy(empire=Source.Owner) & IsBuilding(name=["BLD_NEUTRONIUM_EXTRACTOR", "BLD_NEUTRONIUM_SYNTH"])
             ),
         )
         & TargetPopulation(low=1)

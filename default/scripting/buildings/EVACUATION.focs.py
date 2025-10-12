@@ -47,8 +47,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     location=(
         Planet()
         & OwnedBy(empire=Source.Owner)
-        & ~Contains(IsBuilding(name=["BLD_EVACUATION"]))
-        & ~Contains(IsBuilding(name=["BLD_CONC_CAMP"]))
+        & ~Contains(IsBuilding(name=["BLD_EVACUATION", "BLD_CONC_CAMP"]))
         & ~HasSpecial(name="CONC_CAMP_SLAVE_SPECIAL")
         & ~Enqueued(type=BuildBuilding, name="BLD_CONC_CAMP")
         & HasSpecies()
@@ -56,8 +55,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     enqueuelocation=(
         Planet()
         & OwnedBy(empire=Source.Owner)
-        & ~Contains(IsBuilding(name=["BLD_EVACUATION"]))
-        & ~Contains(IsBuilding(name=["BLD_CONC_CAMP"]))
+        & ~Contains(IsBuilding(name=["BLD_EVACUATION", "BLD_CONC_CAMP"]))
         & ~HasSpecial(name="CONC_CAMP_SLAVE_SPECIAL")
         & ~Enqueued(type=BuildBuilding, name="BLD_EVACUATION")
         & ~Enqueued(type=BuildBuilding, name="BLD_CONC_CAMP")
@@ -74,8 +72,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
                     & ~Object(id=Source.PlanetID)
                     & ResourceSupplyConnected(empire=Source.Owner, condition=IsSource)
                     & Population(low=1, high=LocalCandidate.TargetPopulation - 1)
-                    & ~Contains(IsBuilding(name=["BLD_EVACUATION"]))
-                    & ~Contains(IsBuilding(name=["BLD_CONC_CAMP"]))
+                    & ~Contains(IsBuilding(name=["BLD_EVACUATION", "BLD_CONC_CAMP"]))
                 ),
             ),
             activation=(
