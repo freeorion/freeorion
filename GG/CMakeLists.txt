@@ -28,12 +28,6 @@ include(UseCodeCoverage)
 include(Util)
 
 set(GIGI_VERSION 0.8.0)
-if(WIN32)
-    set(CMAKE_CXX_STANDARD 20)
-else()
-    set(CMAKE_CXX_STANDARD 17)
-endif()
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
 option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
@@ -67,6 +61,21 @@ endif()
 set(MINIMUM_BOOST_VERSION 1.69.0)
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex REQUIRED)
+
+message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
+message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "Boost version: ${Boost_VERSION}")
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13 AND Boost_VERSION LESS 108000)
+    set(CMAKE_CXX_STANDARD 17)
+    message(STATUS "Using C++17 for GG for compatability with GCC <= 12 and Boost < 1.80")
+else()
+    set(CMAKE_CXX_STANDARD 20)
+    message(STATUS "Using C++20 for GG")
+endif()
+
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
