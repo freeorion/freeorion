@@ -7,9 +7,9 @@ on:
         type: boolean
         default: false
 jobs:
-  windows-2022:
-    name: MSVS 2022 on Windows
-    runs-on: windows-2022
+  windows-2025:
+    name: MSVS 2022
+    runs-on: windows-2025
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
@@ -20,7 +20,7 @@ jobs:
           url: https://github.com/freeorion/freeorion-sdk/releases/download/v16/FreeOrionSDK_16_MSVC-v143-x64.zip
           target: ../
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-msbuild@v2
         with:
             vs-prerelease: true
       - name: Prepare
@@ -56,7 +56,7 @@ jobs:
           unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
       - name: Generate installer
         run: |
-          makensis packaging/windows_installer.nsi
+          & "$env:USERPROFILE\scoop\apps\nsis\current\makensis.exe" packaging/windows_installer.nsi
           mv ../FreeOrion_*_Test_Win32_Setup.exe .
       - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4

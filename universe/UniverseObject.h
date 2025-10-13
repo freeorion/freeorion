@@ -19,6 +19,7 @@
 #include "../util/Enum.h"
 #include "../util/Export.h"
 
+// temp: provoke test builds
 
 class System;
 class SitRepEntry;
