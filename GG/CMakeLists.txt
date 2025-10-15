@@ -64,11 +64,24 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex REQUIRED
 
 message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "Boost version: ${Boost_VERSION}")
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 13 AND Boost_VERSION LESS 108000)
+# Normalize Boost_VERSION to a string like "1.81.0"
+if (Boost_VERSION MATCHES "^[0-9]+$")
+    message(STATUS "Boost version number: ${Boost_VERSION}")
+    math(EXPR Boost_MAJOR "${Boost_VERSION} / 100000")
+    math(EXPR Boost_MINOR "(${Boost_VERSION} / 100) % 1000")
+    math(EXPR Boost_PATCH "${Boost_VERSION} % 100")
+    set(Boost_VERSION_STRING "${Boost_MAJOR}.${Boost_MINOR}.${Boost_PATCH}")
+else()
+    set(Boost_VERSION_STRING "${Boost_VERSION}")
+endif()
+
+message(STATUS "Boost version string: ${Boost_VERSION_STRING}")
+
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND Boost_VERSION_STRING VERSION_LESS "1.80.0")
     set(CMAKE_CXX_STANDARD 17)
-    message(STATUS "Using C++17 for GG for compatability with GCC <= 12 and Boost < 1.80")
+    message(STATUS "Using C++17 for GG for compatability Boost < 1.80")
 else()
     set(CMAKE_CXX_STANDARD 20)
     message(STATUS "Using C++20 for GG")
