@@ -1966,11 +1966,8 @@ Pt ListBox::ClientSizeExcludingScrolls() const
 }
 
 std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequired(
-    std::pair<bool, bool> force_hv, boost::optional<Pt> maybe_client_size) const
+    std::pair<bool, bool> force_hv, Pt client_size) const
 {
-    // Use the precalculated client size if possible.
-    auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
-
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
     Y total_y_extent(Y0);
     for (auto& row : m_rows)
@@ -1979,15 +1976,15 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
     bool vertical_needed =
         force_hv.second ||
         m_first_row_shown != m_rows.begin() ||
-        (m_rows.size() && (cl_sz.y < total_y_extent ||
-                           (cl_sz.y < total_y_extent - SCROLL_WIDTH &&
-                            cl_sz.x < total_x_extent - SCROLL_WIDTH)));
+        (m_rows.size() && (client_size.y < total_y_extent ||
+                           (client_size.y < total_y_extent - SCROLL_WIDTH &&
+                            client_size.x < total_x_extent - SCROLL_WIDTH)));
     bool horizontal_needed =
         force_hv.first ||
         m_first_col_shown ||
-        (m_rows.size() && (cl_sz.x < total_x_extent ||
-                           (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
-                            cl_sz.y < total_y_extent - SCROLL_WIDTH)));
+        (m_rows.size() && (client_size.x < total_x_extent ||
+                           (client_size.x < total_x_extent - SCROLL_WIDTH &&
+                            client_size.y < total_y_extent - SCROLL_WIDTH)));
 
     if (m_add_padding_at_end) {
         // This probably looks a little odd. We only want to show scrolls if they
@@ -1997,10 +1994,10 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
         // rows/columns. This is necessary since otherwise the bottom row may get
         // cut off. Dead space after the last row/column is the result, even if it
         // may look slightly ugly.
-        if (!m_col_widths.empty() && m_col_widths.back() < cl_sz.x)
-            total_x_extent += cl_sz.x - m_col_widths.back();
-        if (!m_rows.empty() && m_rows.back()->Height() < cl_sz.y)
-            total_y_extent += cl_sz.y - m_rows.back()->Height();
+        if (!m_col_widths.empty() && m_col_widths.back() < client_size.x)
+            total_x_extent += client_size.x - m_col_widths.back();
+        if (!m_rows.empty() && m_rows.back()->Height() < client_size.y)
+            total_y_extent += client_size.y - m_rows.back()->Height();
     }
 
     boost::optional<X> x_retval = horizontal_needed ? boost::optional<X>(total_x_extent) : boost::none;
@@ -2010,12 +2007,8 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
 }
 
 std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
-    std::pair<boost::optional<X>, boost::optional<Y>> required_total_extents,
-    boost::optional<Pt> maybe_client_size)
+    std::pair<boost::optional<X>, boost::optional<Y>> required_total_extents, Pt client_size)
 {
-    // Use the precalculated client size if possible.
-    auto cl_sz = maybe_client_size ? *maybe_client_size : ClientSizeExcludingScrolls();
-
     const auto& style = GetStyleFactory();
 
     bool horizontal_needed = (required_total_extents.first ? true : false);
@@ -2039,8 +2032,8 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         vscroll_added_or_removed = true;
         m_vscroll = style.NewListBoxVScroll(m_color, CLR_SHADOW);
         m_vscroll->NonClientChild(true);
-        m_vscroll->MoveTo(Pt(cl_sz.x - SCROLL_WIDTH, Y0));
-        m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+        m_vscroll->MoveTo(Pt(client_size.x - SCROLL_WIDTH, Y0));
+        m_vscroll->Resize(Pt(X(SCROLL_WIDTH), client_size.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
         AttachChild(m_vscroll);
         m_vscroll_connection = m_vscroll->ScrolledSignal.connect(
@@ -2054,7 +2047,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
             line_size = Value(row->Height());
         }
 
-        unsigned int page_size = std::abs(Value(cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
+        unsigned int page_size = std::abs(Value(client_size.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
         m_vscroll->SizeScroll(0, Value(*required_total_extents.second - 1),
                               line_size, std::max(line_size, page_size));
@@ -2088,8 +2081,8 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         hscroll_added_or_removed = true;
         m_hscroll = style.NewListBoxHScroll(m_color, CLR_SHADOW);
         m_hscroll->NonClientChild(true);
-        m_hscroll->MoveTo(Pt(X0, cl_sz.y - SCROLL_WIDTH));
-        m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
+        m_hscroll->MoveTo(Pt(X0, client_size.y - SCROLL_WIDTH));
+        m_hscroll->Resize(Pt(client_size.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
         AttachChild(m_hscroll);
         m_hscroll_connection = m_hscroll->ScrolledSignal.connect(
@@ -2103,7 +2096,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
             line_size = static_cast<unsigned int>(Value(row->Height()));
         }
 
-        unsigned int page_size = std::abs(Value(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0)));
+        unsigned int page_size = std::abs(Value(client_size.x - (vertical_needed ? SCROLL_WIDTH : 0)));
 
         m_hscroll->SizeScroll(0, Value(*required_total_extents.first - 1),
                               line_size, std::max(line_size, page_size));
@@ -2121,8 +2114,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_
     // The size of the underlying list box, indicating if scrolls are required.
     const auto required_total_extents = CheckIfScrollsRequired(force_hv, cl_sz);
 
-    bool vscroll_added_or_removed;
-    std::tie(std::ignore,  vscroll_added_or_removed) = AddOrRemoveScrolls(required_total_extents, cl_sz);
+    const bool vscroll_added_or_removed = AddOrRemoveScrolls(required_total_extents, cl_sz).second;
 
     if (!adjust_for_resize)
         return;
@@ -2146,7 +2138,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, std::pair<bool, bool> force_
     // Resize rows to fit client area.
     if (vscroll_added_or_removed || adjust_for_resize) {
         RequirePreRender();
-        X row_width(std::max(ClientWidth(), X(1)));
+        X row_width(std::max(ClientWidth(), X1));
         for (auto& row : m_rows)
             row->Resize(Pt(row_width, row->Height()));
     }
