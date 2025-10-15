@@ -497,11 +497,11 @@ void ListBox::AllowDrops(bool allow)
 void ListBox::AllowAllDropTypes(bool allow) {
     // If all types are allow use boost::none as a sentinel
     if (allow)
-        m_allowed_drop_types = boost::none;
+        m_allowed_drop_types = std::nullopt;
 
     // Otherwise hold each allowed type in a set.
     else if (!m_allowed_drop_types)
-        m_allowed_drop_types = std::unordered_set<std::string>();
+        m_allowed_drop_types.emplace();
 }
 
 void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -1965,7 +1965,7 @@ Pt ListBox::ClientSizeExcludingScrolls() const
     return cl_sz;
 }
 
-std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequired(
+std::pair<std::optional<X>, std::optional<Y>> ListBox::CheckIfScrollsRequired(
     std::pair<bool, bool> force_hv, Pt client_size) const
 {
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
@@ -2000,14 +2000,14 @@ std::pair<boost::optional<X>, boost::optional<Y>> ListBox::CheckIfScrollsRequire
             total_y_extent += client_size.y - m_rows.back()->Height();
     }
 
-    boost::optional<X> x_retval = horizontal_needed ? boost::optional<X>(total_x_extent) : boost::none;
-    boost::optional<Y> y_retval = vertical_needed   ? boost::optional<Y>(total_y_extent) : boost::none;
+    std::optional<X> x_retval = horizontal_needed ? std::optional<X>(total_x_extent) : std::nullopt;
+    std::optional<Y> y_retval = vertical_needed   ? std::optional<Y>(total_y_extent) : std::nullopt;
 
     return {x_retval, y_retval};
 }
 
 std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
-    std::pair<boost::optional<X>, boost::optional<Y>> required_total_extents, Pt client_size)
+    std::pair<std::optional<X>, std::optional<Y>> required_total_extents, Pt client_size)
 {
     const auto& style = GetStyleFactory();
 
