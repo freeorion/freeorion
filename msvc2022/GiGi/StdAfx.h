@@ -24,6 +24,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <sstream>
 #include <stack>
@@ -40,7 +41,6 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/mpl/assert.hpp>
-#include <boost/optional/optional.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/signals2/trackable.hpp>
 

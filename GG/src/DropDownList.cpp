@@ -9,7 +9,7 @@
 
 #include <iterator>
 #include <memory>
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <GG/DrawUtil.h>
 #include <GG/DropDownList.h>
 #include <GG/GUI.h>
@@ -57,19 +57,19 @@ public:
 
     /** If \p it is not none then select \p it in the LB().  Return the newly selected iterator or none if
         the selection did not change.*/
-    boost::optional<DropDownList::iterator> Select(boost::optional<DropDownList::iterator> it);
+    std::optional<DropDownList::iterator> Select(std::optional<DropDownList::iterator> it);
 
     /** Call SelChangedSignal if \p it is not none. */
-    void SignalChanged(boost::optional<DropDownList::iterator> it);
+    void SignalChanged(std::optional<DropDownList::iterator> it);
 
     /** A common KeyPress() for both ModalListPicker and its DropDownList.
         Examine \p key and return the new list iterator or none.*/
-    [[nodiscard]] boost::optional<DropDownList::iterator> KeyPressCommon(
+    [[nodiscard]] std::optional<DropDownList::iterator> KeyPressCommon(
         Key key, uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** A common MouseWheel() for both ModalListPicker and its DropDownList.
         Examine \p pt and \p move and then return the new list iterator or none.*/
-    [[nodiscard]] boost::optional<DropDownList::iterator> MouseWheelCommon(
+    [[nodiscard]] std::optional<DropDownList::iterator> MouseWheelCommon(
         Pt pt, int move, Flags<ModKey> mod_keys);
 
     /** Set the drop down list to only mouse scroll if it is dropped. */
@@ -254,22 +254,22 @@ DropDownList::iterator ModalListPicker::CurrentItem() noexcept
     return end;
 }
 
-boost::optional<DropDownList::iterator> ModalListPicker::Select(boost::optional<DropDownList::iterator> it)
+std::optional<DropDownList::iterator> ModalListPicker::Select(std::optional<DropDownList::iterator> it)
 {
     if (!it)
-        return boost::none;
+        return std::nullopt;
 
     auto old_m_current_item = CurrentItem();
-    if (*it == LB()->end()) {
+    if (*it == LB()->end())
         LB()->DeselectAll();
-    } else {
+    else
         LB()->SelectRow(*it);
-    }
 
-    return (CurrentItem() != old_m_current_item) ? boost::optional<DropDownList::iterator>(CurrentItem()) : boost::none;
+    return (CurrentItem() != old_m_current_item) ?
+        std::optional(CurrentItem()) : std::nullopt;
 }
 
-void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
+void ModalListPicker::SignalChanged(std::optional<DropDownList::iterator> it)
 {
     if (!it)
         return;
@@ -371,7 +371,7 @@ void ModalListPicker::CorrectListSize() {
     lb->Hide();
 }
 
-boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
+std::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     const bool numlock_on = mod_keys & MOD_KEY_NUM;
@@ -450,28 +450,28 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     case Key::GGK_KP_ENTER:
     case Key::GGK_ESCAPE:
         EndRun();
-        return boost::none;
+        return std::nullopt;
         break;
     default:
-        return boost::none;
+        return std::nullopt;
     }
-    return boost::none;
+    return std::nullopt;
 }
 
 void ModalListPicker::SetOnlyMouseScrollWhenDropped(bool enable)
 { m_only_mouse_scroll_when_dropped = enable; }
 
-boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
+std::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     Pt pt, int move, Flags<ModKey> mod_keys)
 {
     if (m_only_mouse_scroll_when_dropped && !Dropped())
-        return boost::none;
+        return std::nullopt;
 
     auto cur_it = CurrentItem();
     if (cur_it == LB()->end())
-        return boost::none;
+        return std::nullopt;
     if (move == 0)
-        return boost::none;
+        return std::nullopt;
 
     if (move > 0) {
         auto dist_to_last = std::distance(cur_it, LB()->end()) - 1; // end is one past last valid item
@@ -487,7 +487,7 @@ boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
         LB()->BringRowIntoView(cur_it);
         return cur_it;
     }
-    return boost::none;
+    return std::nullopt;
 }
 
 bool ModalListPicker::EventFilter(Wnd* w, const WndEvent& event) {
@@ -910,7 +910,7 @@ void DropDownList::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
 void DropDownList::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
-        boost::optional<DropDownList::iterator> key_selected = m_modal_picker->KeyPressCommon(key, key_code_point, mod_keys);
+        const auto key_selected = m_modal_picker->KeyPressCommon(key, key_code_point, mod_keys);
         if (key_selected)
             m_modal_picker->SignalChanged(m_modal_picker->Select(key_selected));
         else
