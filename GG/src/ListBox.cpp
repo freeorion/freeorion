@@ -495,7 +495,7 @@ void ListBox::AllowDrops(bool allow)
 { m_allow_drops = allow; }
 
 void ListBox::AllowAllDropTypes(bool allow) {
-    // If all types are allow use boost::none as a sentinel
+    // If all types are allowed, use std::nullopt as a sentinel
     if (allow)
         m_allowed_drop_types = std::nullopt;
 

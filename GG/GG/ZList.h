@@ -19,9 +19,9 @@
 #include <functional>
 #include <list>
 #include <memory>
+#include <optional>
 #include <set>
 #include <vector>
-#include <boost/optional/optional.hpp>
 #include <GG/Base.h>
 
 
