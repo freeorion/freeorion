@@ -245,6 +245,9 @@ public:
         uint32_t second = 0;
     };
 
+    static_assert(noexcept(Substring(std::declval<Substring&&>())));
+    static_assert(noexcept(Substring(std::declval<const Substring&>())));
+
     /** \brief Describes a token-like piece of text to be rendered. */
     struct GG_API TextElement
     {
@@ -261,39 +264,84 @@ public:
             NEWLINE
         };
 
+        static_assert(noexcept(Substring{std::declval<Substring&&>()}) &&
+                      noexcept(Substring{std::declval<Substring>()}) &&
+                      noexcept(std::vector<Substring>{std::declval<std::vector<Substring>&&>()}) &&
+                      noexcept(std::vector<uint8_t>{std::declval<std::vector<uint8_t>&&>()}) &&
+                      noexcept(std::vector<uint8_t>{std::declval<std::vector<uint8_t>>()}));
+
+
         CONSTEXPR_FONT explicit TextElement(TextElementType type_) noexcept :
             type(type_)
         {}
-        CONSTEXPR_FONT explicit TextElement(Substring text_)
-            noexcept(noexcept(Substring{std::declval<Substring>()})) :
+        CONSTEXPR_FONT explicit TextElement(Substring text_) noexcept :
             text(text_),
             type(TextElementType::TEXT)
         {}
 
-        CONSTEXPR_FONT TextElement(Substring text_, TextElementType type_)
-            noexcept(noexcept(Substring{std::declval<Substring>()})) :
+        CONSTEXPR_FONT TextElement(Substring text_, TextElementType type_) noexcept :
             text(text_),
             type(type_)
         {}
-        CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, TextElementType type_)
-            noexcept(noexcept(Substring{std::declval<Substring>()})) :
+        CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, TextElementType type_) noexcept :
             text(text_),
             tag_name(tag_name_),
             type(type_)
         {}
         CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, std::vector<Substring> params_,
-                                   TextElementType type_)
-            noexcept(noexcept(Substring{std::declval<Substring>()})) :
+                                   TextElementType type_) noexcept :
             text(text_),
             tag_name(tag_name_),
             params(std::move(params_)),
             type(type_)
         {}
 
-        CONSTEXPR_FONT TextElement(const TextElement& rhs)
-            noexcept(noexcept(Substring{std::declval<const Substring&>()}) &&
-                     noexcept(std::vector<uint8_t>{std::declval<const std::vector<uint8_t>&>()}) &&
-                     noexcept(std::vector<Substring>{std::declval<const std::vector<Substring>&>()})) = default;
+
+#if (defined(__GNUC__) && (__GNUC__ < 13))
+        CONSTEXPR_FONT TextElement(TextElement&& rhs) noexcept :
+            text(rhs.text),
+            tag_name(rhs.tag_name),
+            widths(std::move(rhs.widths)),
+            params(std::move(rhs.params)),
+            type(rhs.type)
+            // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
+        {}
+
+        CONSTEXPR_FONT TextElement& operator=(TextElement&& rhs) noexcept
+        {
+            if (this != std::addressof(rhs)) {
+                text = rhs.text;
+                tag_name = rhs.tag_name;
+                widths = std::move(rhs.widths);
+                params = std::move(rhs.params);
+                type = rhs.type;
+                // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
+            }
+            return *this;
+        }
+
+        CONSTEXPR_FONT TextElement(const TextElement& rhs) :
+            text(rhs.text),
+            tag_name(rhs.tag_name),
+            widths(rhs.widths),
+            params(rhs.params),
+            type(rhs.type)
+            // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
+        {}
+
+        CONSTEXPR_FONT TextElement& operator=(const TextElement& rhs)
+        {
+            if (this != std::addressof(rhs)) {
+                text = rhs.text;
+                tag_name = rhs.tag_name;
+                widths = rhs.widths;
+                params = rhs.params;
+                type = rhs.type;
+                // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
+            }
+            return *this;
+        }
+#endif
 
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
