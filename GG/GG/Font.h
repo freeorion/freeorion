@@ -413,7 +413,7 @@ public:
         [[nodiscard]] CONSTEXPR_FONT CPSize CodePointSize() const noexcept
         { return CPSize(widths.size()); }
 
-        bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
+        [[nodiscard]] CONSTEXPR_FONT bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
         {
             return (type == rhs.type) &&
                    (text == rhs.text) &&
