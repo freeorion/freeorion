@@ -139,12 +139,14 @@ void PopupMenu::Render()
             const Clr clr = (menu.next_level[j].disabled) ? DisabledColor(m_text_color) : m_text_color;
 
             if (!menu.next_level[j].separator) {
+                const auto& next_label = menu.next_level[j].label;
                 // TODO cache line data v expensive calculation
-                const auto element_data = m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
-                const auto line_data = m_font->DetermineLines(menu.next_level[j].label, fmt, X0, element_data);
+                const auto element_data = m_font->ExpensiveParseFromTextToTextElements(next_label, fmt);
+                const auto line_data = m_font->DetermineLines(next_label, fmt, X0, element_data);
 
                 rs.PushColor(clr);
-                m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt, line_data, rs);
+                m_font->RenderText(line_rect.ul, line_rect.lr, next_label,
+                                   FORMAT_LEFT | FORMAT_TOP, line_data, rs);
                 rs.PopColor();
 
             } else {
