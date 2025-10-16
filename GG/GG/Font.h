@@ -521,6 +521,19 @@ public:
                         tags.push_back(tag);
             }
 
+            CONSTEXPR_FONT CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
+                                    std::vector<TextElement>&& tags_) :
+                extent(extent_),
+                string_index(str_index),
+                string_size(str_size),
+                code_point_index(cp_index)
+            {
+                tags.reserve(tags_.size());
+                for (auto& tag : tags_)
+                    if (tag.IsTag())
+                        tags.push_back(std::move(tag));
+            }
+
             /** The furthest-right extent of this glyph as it appears on the line. */
             X extent = X0;
 
