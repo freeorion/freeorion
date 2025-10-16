@@ -1823,32 +1823,43 @@ namespace {
 namespace {
     constexpr std::string_view TEST_TEXT_WITH_TAGS = "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line<i><sup>is";
 
+    static_assert([]() {
+        const std::string text{TEST_TEXT_WITH_TAGS};
+        return Font::Substring(text, 7u, 10u) == "<i>" &&
+               Font::Substring(text, 8u, 9u) == "i";
+    }());
+
 #  if defined(__cpp_lib_constexpr_vector)
+
+    static_assert([]() {
+        const std::string text(TEST_TEXT_WITH_TAGS);
+        Font::TextElement te_open{Font::Substring(text, 7u, 10u), Font::Substring(text, 8u, 9u),
+                                  Font::TextElement::TextElementType::OPEN_TAG};
+        return te_open.IsOpenTag() && te_open.text == "<i>" && te_open.tag_name == "i" &&
+               te_open.text.offsets() == std::pair(7u, 10u);
+     }());
+
     constexpr auto TestTextElems(const std::string& text)
     {
+        using TET = Font::TextElement::TextElementType;
+        using Substring = Font::Substring;
         std::vector<Font::TextElement> text_elems;
-        text_elems.emplace_back(Font::Substring(text, 0u, 7u));
-        text_elems.emplace_back(Font::Substring(text, 7u, 10u), Font::Substring(text, 8u, 9u),
-                                Font::TextElement::TextElementType::OPEN_TAG);
-        text_elems.emplace_back(Font::Substring(text, 10u, 14u));
-        text_elems.emplace_back(Font::Substring(text, 14u, 17u), Font::Substring(text, 15u, 16u),
-                                Font::TextElement::TextElementType::OPEN_TAG);
-        text_elems.emplace_back(Font::Substring(text, 17u, 24u));
-        text_elems.emplace_back(Font::Substring(text, 24u, 28u), Font::Substring(text, 26u, 27u),
-                                Font::TextElement::TextElementType::CLOSE_TAG);
-        text_elems.emplace_back(Font::Substring(text, 28u, 31u), Font::TextElement::TextElementType::WHITESPACE);
-        text_elems.emplace_back(Font::Substring(text, 31u, 40u));
-        text_elems.emplace_back(Font::Substring(text, 40u, 44u), Font::Substring(text, 42u, 43u),
-                                Font::TextElement::TextElementType::CLOSE_TAG);
-        text_elems.emplace_back(Font::Substring(text, 44u, 45u), Font::TextElement::TextElementType::NEWLINE);
-        text_elems.emplace_back(Font::Substring(text, 45u, 51u));
-        text_elems.emplace_back(Font::Substring(text, 51u, 52u), Font::TextElement::TextElementType::WHITESPACE);
-        text_elems.emplace_back(Font::Substring(text, 52u, 56u));
-        text_elems.emplace_back(Font::Substring(text, 56u, 59u), Font::Substring(text, 57u, 58u),
-                                Font::TextElement::TextElementType::OPEN_TAG);
-        text_elems.emplace_back(Font::Substring(text, 59u, 64u), Font::Substring(text, 60u, 63u),
-                                Font::TextElement::TextElementType::OPEN_TAG);
-        text_elems.emplace_back(Font::Substring(text, 64u, 66u));
+        text_elems.emplace_back(Substring(text, 0u, 7u));
+        text_elems.emplace_back(Substring(text, 7u, 10u), Substring(text, 8u, 9u), TET::OPEN_TAG);
+        text_elems.emplace_back(Substring(text, 10u, 14u));
+        text_elems.emplace_back(Substring(text, 14u, 17u), Substring(text, 15u, 16u), TET::OPEN_TAG);
+        text_elems.emplace_back(Substring(text, 17u, 24u));
+        text_elems.emplace_back(Substring(text, 24u, 28u), Substring(text, 26u, 27u), TET::CLOSE_TAG);
+        text_elems.emplace_back(Substring(text, 28u, 31u), TET::WHITESPACE);
+        text_elems.emplace_back(Substring(text, 31u, 40u));
+        text_elems.emplace_back(Substring(text, 40u, 44u), Substring(text, 42u, 43u), TET::CLOSE_TAG);
+        text_elems.emplace_back(Substring(text, 44u, 45u), TET::NEWLINE);
+        text_elems.emplace_back(Substring(text, 45u, 51u));
+        text_elems.emplace_back(Substring(text, 51u, 52u), TET::WHITESPACE);
+        text_elems.emplace_back(Substring(text, 52u, 56u));
+        text_elems.emplace_back(Substring(text, 56u, 59u), Substring(text, 57u, 58u), TET::OPEN_TAG);
+        text_elems.emplace_back(Substring(text, 59u, 64u), Substring(text, 60u, 63u), TET::OPEN_TAG);
+        text_elems.emplace_back(Substring(text, 64u, 66u));
 
         SetTextElementWidths(text, text_elems, dummy_glyph_map, 4, dummy_next_fn);
 
@@ -1860,22 +1871,22 @@ namespace {
         const auto text_elems = TestTextElems(test_text);
 
         return text_elems.size() == 16 &&
-            std::string_view{text_elems[0].text} == "default" &&
-            text_elems[1].IsOpenTag() && std::string_view{text_elems[1].tag_name} == "i" && Value(text_elems[1].StringSize()) == 3 &&
-            std::string_view{text_elems[2].text} == "ital" &&
-            text_elems[3].IsOpenTag() && std::string_view{text_elems[3].tag_name} == "u" && Value(text_elems[3].StringSize()) == 3 &&
-            std::string_view{text_elems[4].text} == "_ul_it_" &&
-            text_elems[5].IsCloseTag() && std::string_view{text_elems[5].tag_name} == "i" && Value(text_elems[5].StringSize()) == 4 &&
-            text_elems[6].IsWhiteSpace() && std::string_view{text_elems[6].text} == "   " &&
-            std::string_view{text_elems[7].text} == "_just_ul_" &&
-            text_elems[8].IsCloseTag() && std::string_view{text_elems[8].tag_name} == "u" && Value(text_elems[8].StringSize()) == 4 &&
-            text_elems[9].IsNewline() && std::string_view{text_elems[9].text} == "\n" &&
-            std::string_view{text_elems[10].text} == "second" &&
+            text_elems[0].text == "default" &&
+            text_elems[1].IsOpenTag() && text_elems[1].tag_name == "i" && Value(text_elems[1].StringSize()) == 3 &&
+            text_elems[2].text == "ital" &&
+            text_elems[3].IsOpenTag() && text_elems[3].tag_name == "u" && Value(text_elems[3].StringSize()) == 3 &&
+            text_elems[4].text == "_ul_it_" &&
+            text_elems[5].IsCloseTag() && text_elems[5].tag_name == "i" && Value(text_elems[5].StringSize()) == 4 &&
+            text_elems[6].IsWhiteSpace() && text_elems[6].text == "   " &&
+            text_elems[7].text == "_just_ul_" &&
+            text_elems[8].IsCloseTag() && text_elems[8].tag_name == "u" && Value(text_elems[8].StringSize()) == 4 &&
+            text_elems[9].IsNewline() && text_elems[9].text == "\n" &&
+            text_elems[10].text == "second" &&
             text_elems[11].IsWhiteSpace() &&
-            std::string_view{text_elems[12].text} == "line" &&
+            text_elems[12].text == "line" &&
             text_elems[13].IsOpenTag() &&
             text_elems[14].IsOpenTag() &&
-            std::string_view{text_elems[15].text} == "is";
+            text_elems[15].text == "is";
     }());
 
     constexpr auto element_widths = []() {
