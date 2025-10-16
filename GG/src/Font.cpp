@@ -371,15 +371,18 @@ namespace {
             // For each character in the TextElement.
             auto text_it = elem.text.begin();
             const auto end_it = elem.text.end();
+            elem.widths.reserve(std::distance(text_it, end_it));
+
             while (text_it != end_it) {
                 // Find and set the width of the character glyph.
-                elem.widths.push_back(0);
                 uint32_t c = text_next_fn(text_it, end_it);
                 if (c != WIDE_NEWLINE) {
                     auto it = glyphs.find(c);
                     // use a space when an unrendered glyph is requested (the
                     // space chararacter is always renderable)
-                    elem.widths.back() = (it != glyphs.end()) ? it->second.advance : space_width;
+                    elem.widths.push_back((it != glyphs.end()) ? it->second.advance : space_width);
+                } else {
+                    elem.widths.push_back(0);
                 }
             }
         }
