@@ -218,11 +218,14 @@ public:
         [[nodiscard]] CONSTEXPR_FONT operator std::string_view() const noexcept(op_sv_nox) { return {data(), size()}; }
 
         /** Comparison with std::string. */
-        CONSTEXPR_FONT bool operator==(const std::string& rhs) const
+        CONSTEXPR_FONT bool operator==(const std::string& rhs) const noexcept(noexcept(std::string_view(*this)))
         { return size() == rhs.size() && std::string_view(*this) == rhs; }
 
-        CONSTEXPR_FONT bool operator==(std::string_view rhs) const
+        CONSTEXPR_FONT bool operator==(std::string_view rhs) const noexcept(noexcept(std::string_view(*this)))
         { return size() == rhs.size() && std::string_view(*this) == rhs; }
+
+        CONSTEXPR_FONT bool operator==(const char* rhs) const
+        { return std::string_view(*this) == std::string_view(rhs); }
 
         CONSTEXPR_FONT bool operator==(const Substring& rhs) const
         { return size() == rhs.size() && std::string_view(*this) == std::string_view(rhs); }
