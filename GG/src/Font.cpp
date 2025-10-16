@@ -355,7 +355,7 @@ const std::string Font::Substring::EMPTY_STRING{};
 
 namespace {
     constexpr struct U8NextFn {
-        uint32_t operator()(std::string::const_iterator& text_it, const std::string::const_iterator& end_it) const
+        uint32_t operator()(std::string::const_iterator& text_it, std::string::const_iterator end_it) const
         { return utf8::next(text_it, end_it); }
     } u8next_fn;
 
@@ -848,6 +848,7 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
     constexpr struct DummyNextFn {
+        // masks \a c to its lower 6 bits
         static constexpr uint32_t cont_byte(uint8_t c) noexcept
         { return c & 0b00111111; };
 
@@ -864,8 +865,10 @@ namespace {
         // constexpr OK alternative to utf8::next
         // does not validate utf8 continuation bytes, but just increments
         // based on initial byte-determined utf8 sequence length
+        // returns character starting at \a text_it and then advances \a text_it to the next char
+        // based on how many bytes are in the sequence length indicated by the byte at \a text_it
         template <typename char_iterator_t>
-        constexpr uint32_t operator()(char_iterator_t& text_it, const char_iterator_t& end_it) const
+        constexpr uint32_t operator()(char_iterator_t& text_it, const char_iterator_t end_it) const
         {
             static_assert(std::is_same_v<std::decay_t<decltype(*text_it)>, char>);
             if (text_it == end_it)
@@ -918,18 +921,23 @@ namespace {
             }
         }
 
+        // returns character starting at \a text_it and the length of that character in bytes,
+        // without modifying \a text_it
         template <typename char_iterator_t>
-        constexpr std::pair<uint32_t, std::ptrdiff_t> operator()(const char_iterator_t&& text_it, const char_iterator_t&& end_it) const
+        constexpr std::pair<uint32_t, std::ptrdiff_t>
+        operator()(const char_iterator_t& text_it, const char_iterator_t end_it) const
         {
             char_iterator_t local_it(text_it);
-            const char_iterator_t local_end_it(end_it);
-            return {operator()(local_it, local_end_it), std::distance(text_it, local_it)};
+            uint32_t c = operator()(local_it, end_it);
+            return {c, std::distance(text_it, local_it)};
         }
 
-        constexpr std::pair<uint32_t, std::ptrdiff_t> operator()(const std::string_view sv) const
+        constexpr std::pair<uint32_t, std::ptrdiff_t>
+        operator()(const std::string_view sv) const
         { return operator()(sv.begin(), sv.end()); }
 
-        constexpr std::pair<uint32_t, std::ptrdiff_t> operator()(const std::string_view sv, std::size_t offset) const
+        constexpr std::pair<uint32_t, std::ptrdiff_t>
+        operator()(const std::string_view sv, std::size_t offset) const
         { return operator()(sv.substr(offset)); }
     } dummy_next_fn;
 
