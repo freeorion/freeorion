@@ -2394,70 +2394,68 @@ namespace {
         return {retval, true};
     }
 
-    void HandleTag(const Font::TextElement& tag, Font::RenderState& render_state)
+    void HandleTag(Font::Substring tag_name, bool is_close_tag, const std::vector<Font::Substring>& params,
+                   Font::RenderState& render_state)
     {
-        if (tag.tag_name == Font::ITALIC_TAG) {
-            if (tag.IsCloseTag()) {
+        if (tag_name == Font::ITALIC_TAG) {
+            if (is_close_tag) {
                 if (render_state.use_italics)
                     --render_state.use_italics;
             } else {
                 ++render_state.use_italics;
             }
-        } else if (tag.tag_name == Font::UNDERLINE_TAG) {
-            if (tag.IsCloseTag()) {
+        } else if (tag_name == Font::UNDERLINE_TAG) {
+            if (is_close_tag) {
                 if (render_state.draw_underline)
                     --render_state.draw_underline;
             } else {
                 ++render_state.draw_underline;
             }
-        } else if (tag.tag_name == Font::SHADOW_TAG) {
-            if (tag.IsCloseTag()) {
+        } else if (tag_name == Font::SHADOW_TAG) {
+            if (is_close_tag) {
                 if (render_state.use_shadow)
                     --render_state.use_shadow;
             } else {
                 ++render_state.use_shadow;
             }
-        } else if (tag.tag_name == Font::SUPERSCRIPT_TAG) {
-            if (tag.IsCloseTag())
+        } else if (tag_name == Font::SUPERSCRIPT_TAG) {
+            if (is_close_tag)
                 --render_state.super_sub_shift;
             else
                 ++render_state.super_sub_shift;
 
-        } else if (tag.tag_name == Font::SUBSCRIPT_TAG) {
-            if (tag.IsCloseTag())
+        } else if (tag_name == Font::SUBSCRIPT_TAG) {
+            if (is_close_tag)
                 ++render_state.super_sub_shift;
             else
                 --render_state.super_sub_shift;
 
-        } else if (tag.tag_name == Font::RGBA_TAG) {
-            if (tag.IsCloseTag()) {
+        } else if (tag_name == Font::RGBA_TAG) {
+            if (is_close_tag) {
                 // Popping is ok also for an empty color stack.
                 render_state.PopColor();
 
             } else {
-                auto [color, well_formed_tag] = TagParamsToColor(tag.params);
+                auto [color, well_formed_tag] = TagParamsToColor(params);
                 if (well_formed_tag) {
                     glColor4ubv(color.data());
                     render_state.PushColor(color[0], color[1], color[2], color[3]);
                 }
                 /*else {
                     std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag from text";
-                    if (tag.text.IsDefaultEmpty())
-                        std::cerr << ": (default EMPTY Substring)";
-                    else if (tag.text.empty())
-                        std::cerr << ": (empty Substring)";
-                    else
-                        std::cerr << " (" << tag.text.size() << "): " << tag.text;
-                    std::cerr << " ... tag_name: " << tag.tag_name << " ... params (" << tag.params.size() << ") :";
-                    for (const auto& p : tag.params)
+                    std::cerr << " ... tag_name: " << tag_name << " ... params (" << params.size() << ") :";
+                    for (const auto& p : params)
                         std::cerr << " (" << p.size() << "):" << p;
                     std::cerr << std::endl;
                 }*/
             }
-        } else if (tag.tag_name == Font::RESET_TAG) {
+        } else if (tag_name == Font::RESET_TAG) {
             render_state.Reset();
         }
     }
+
+    void HandleTag(const Font::TextElement& tag, Font::RenderState& render_state)
+    { HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state); }
 }
 
 
