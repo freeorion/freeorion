@@ -345,48 +345,6 @@ public:
             text(text_)
         {}
 
-#if (defined(__GNUC__) && (__GNUC__ < 13))
-        CONSTEXPR_FONT TextElement(TextElement&& rhs) noexcept :
-            TextTag(rhs.type, rhs.tag_name, std::move(rhs.params)),
-            text(rhs.text),
-            widths(std::move(rhs.widths))
-            // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
-        {}
-
-        CONSTEXPR_FONT TextElement& operator=(TextElement&& rhs) noexcept
-        {
-            if (this != std::addressof(rhs)) {
-                text = rhs.text;
-                tag_name = rhs.tag_name;
-                widths = std::move(rhs.widths);
-                params = std::move(rhs.params);
-                type = rhs.type;
-                // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
-            }
-            return *this;
-        }
-
-        CONSTEXPR_FONT TextElement(const TextElement& rhs) :
-            TextTag(rhs.type, rhs.tag_name, rhs.params),
-            text(rhs.text),
-            widths(rhs.widths),
-            // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
-        {}
-
-        CONSTEXPR_FONT TextElement& operator=(const TextElement& rhs)
-        {
-            if (this != std::addressof(rhs)) {
-                text = rhs.text;
-                tag_name = rhs.tag_name;
-                widths = rhs.widths;
-                params = rhs.params;
-                type = rhs.type;
-                // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
-            }
-            return *this;
-        }
-#endif
-
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
 
@@ -417,34 +375,12 @@ public:
         }
 
 
-        /** Returns the width of the element. */
-        [[nodiscard]] CONSTEXPR_FONT X Width() const
-        {
-            constexpr auto calc_width = [](const auto& widths) -> X {
-                X rv = X0;
-                for (const auto& w : widths)
-                    rv += w;
-                return rv;
-            };
-
-#if defined(__cpp_lib_is_constant_evaluated)
-            if (std::is_constant_evaluated()) {
-                return calc_width(widths);
-            } else 
-#endif
-            {
-                if (cached_width == -X1)
-                    cached_width = calc_width(widths);
-                return cached_width;
-            }
-        }
-
         /** Returns the number of code points in the original string that the
             element represents. */
         [[nodiscard]] CONSTEXPR_FONT CPSize CodePointSize() const noexcept
         { return CPSize(widths.size()); }
 
-        [[nodiscard]] CONSTEXPR_FONT bool operator==(const TextElement &rhs) const noexcept // ignores cached_width
+        [[nodiscard]] CONSTEXPR_FONT bool operator==(const TextElement &rhs) const noexcept
         {
             return (type == rhs.type) &&
                    (text == rhs.text) &&
@@ -461,9 +397,6 @@ public:
 
     protected:
         CONSTEXPR_FONT TextElement() = default;
-
-    private:
-        mutable X cached_width{-X1};
     };
 
     /** \brief TextAndElementsAssembler is used to assemble a matched pair of text and a vector of
