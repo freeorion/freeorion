@@ -507,86 +507,104 @@ namespace {
         }
     }
 
+    constexpr auto sum = [](const auto& widths) -> X {
+        X rv = X0;
+        for (const auto& w : widths)
+            rv += w;
+        return rv;
+    };;
+
     template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddTextWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
-                                         const X box_width, Font::LineVec& line_data,
+    CONSTEXPR_FONT void AddTextWordbreak(X& x, Font::Substring element_text,
+                                         const std::vector<int8_t>& element_widths,
+                                         const Flags<TextFormat> format, const X box_width,
+                                         Font::LineVec& line_data,
                                          bool& last_line_of_curr_just, const Alignment orig_just,
                                          const StrSize original_string_offset, CPSize& code_point_offset,
                                          std::vector<Font::TextElement>& pending_formatting_tags,
                                          const TextNextFn& text_next_fn)
     {
         // if the text "word" overruns this line, and isn't alone on
-        // this line, move it down to the next line
-        if (box_width < x + elem.Width() && x != X0) {
-            line_data.emplace_back();
+        // this line, move it down to the next line.
+        // or if there is no line yet, ensure there is one
+        if (line_data.empty() || (x != X0 && box_width < x + sum(element_widths))) {
+            const Alignment prev_justification = line_data.empty() ?
+                ALIGN_NONE : line_data.back().justification;
+            auto& new_last_line_data = line_data.emplace_back();
             x = X0;
-            SetJustification(last_line_of_curr_just,
-                             line_data.back(),
-                             orig_just,
-                             line_data.at(line_data.size() - 2).justification);
+            SetJustification(last_line_of_curr_just, new_last_line_data, orig_just, prev_justification);
         }
-        auto it = elem.text.begin();
-        const auto end_it = elem.text.end();
+        auto& last_char_data = line_data.back().char_data;
+
+        const auto start_it = element_text.begin();
+        auto it = start_it;
+        const auto end_it = element_text.end();
+
         std::size_t j = 0;
         while (it != end_it) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
+            const StrSize char_index{static_cast<std::size_t>(std::distance(start_it, it))};
             text_next_fn(it, end_it);
-            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
-            x += elem.widths[j];
-            line_data.back().char_data.emplace_back(
-                x,
-                original_string_offset + char_index,
-                char_size,
-                code_point_offset,
-                pending_formatting_tags);
+            const StrSize char_size{std::distance(start_it, it) - Value(char_index)};
+
+            if (j < element_widths.size())
+                x += element_widths[j]; // x is the furthest-right extent of the text element
+
+            last_char_data.emplace_back(x, original_string_offset + char_index, char_size,
+                                        code_point_offset, std::move(pending_formatting_tags));
             pending_formatting_tags.clear();
+
             ++j;
             ++code_point_offset;
         }
     }
 
     template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddTextNoWordbreak(X& x, const Font::TextElement& elem, const Flags<TextFormat> format,
+    CONSTEXPR_FONT void AddTextNoWordbreak(X& x, Font::Substring element_text,
+                                           const std::vector<int8_t>& element_widths,
+                                           const Flags<TextFormat> format,
                                            const X box_width, Font::LineVec& line_data,
                                            bool& last_line_of_curr_just, const Alignment orig_just,
                                            const StrSize original_string_offset, CPSize& code_point_offset,
                                            std::vector<Font::TextElement>& pending_formatting_tags,
                                            const TextNextFn& text_next_fn)
     {
-        auto it = elem.text.begin();
-        const auto end_it = elem.text.end();
-        std::size_t j = 0;
+        const Alignment prev_justification = line_data.empty() ?
+            ALIGN_NONE : line_data.back().justification;
+
+        // ensure there is a line to add text into
+        if (line_data.empty()) {
+            x = X0;
+            auto& new_last_line_data = line_data.emplace_back();
+            SetJustification(last_line_of_curr_just, new_last_line_data, orig_just, prev_justification);
+        }
+        // get vector of char data to insert into
+        auto& last_line_data = line_data.back();
+        auto& last_char_data = last_line_data.char_data;
+
+        const auto start_it = element_text.begin();
+        auto it = start_it;
+        const auto end_it = element_text.end();
+
+        std::size_t j = 0u;
         while (it != end_it) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(elem.text.begin(), it))};
+            // get string index and size of next text element
+            const StrSize char_index{static_cast<std::size_t>(std::distance(start_it, it))};
             text_next_fn(it, end_it);
-            const StrSize char_size{std::distance(elem.text.begin(), it) - Value(char_index)};
+            const StrSize char_size{std::distance(start_it, it) - Value(char_index)};
+
             // if the char overruns this line, and isn't alone on this
             // line, move it down to the next line
-            if ((format & FORMAT_LINEWRAP) && box_width < x + elem.widths[j] && x != X0) {
-                line_data.emplace_back();
-                x = X{elem.widths[j]};
-                line_data.back().char_data.emplace_back(
-                    x,
-                    original_string_offset + char_index,
-                    char_size,
-                    code_point_offset,
-                    pending_formatting_tags);
-                pending_formatting_tags.clear();
-                SetJustification(last_line_of_curr_just,
-                                 line_data.back(),
-                                 orig_just,
-                                 line_data.at(line_data.size() - 2).justification);
-            } else {
-                // there's room for this char on this line, or there's no wrapping in use
-                x += elem.widths[j];
-                line_data.back().char_data.emplace_back(
-                    x,
-                    original_string_offset + char_index,
-                    char_size,
-                    code_point_offset,
-                    pending_formatting_tags);
-                pending_formatting_tags.clear();
-            }
+            const int8_t width_j = (j < element_widths.size() ? element_widths[j] : 0);
+            const bool move_down = (format & FORMAT_LINEWRAP) && (box_width < x + width_j) && (x != X0);
+            x = move_down ? X{width_j} : (x + width_j); // x is the furthest-right extent of the text element
+
+            last_char_data.emplace_back(x, original_string_offset + char_index, char_size,
+                                        code_point_offset, std::move(pending_formatting_tags));
+            pending_formatting_tags.clear();
+
+            if (move_down)
+                SetJustification(last_line_of_curr_just, last_line_data, orig_just, prev_justification);
+
             ++j;
             ++code_point_offset;
         }
@@ -601,11 +619,13 @@ namespace {
                                 const TextNextFn& text_next_fn)
     {
         if (format & FORMAT_WORDBREAK) {
-            AddTextWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
+            AddTextWordbreak(x, elem.text, elem.widths,
+                             format, box_width, line_data, last_line_of_curr_just,
                              orig_just, original_string_offset, code_point_offset,
                              pending_formatting_tags, text_next_fn);
         } else {
-            AddTextNoWordbreak(x, elem, format, box_width, line_data, last_line_of_curr_just,
+            AddTextNoWordbreak(x, elem.text, elem.widths,
+                               format, box_width, line_data, last_line_of_curr_just,
                                orig_just, original_string_offset, code_point_offset,
                                pending_formatting_tags, text_next_fn);
         }
@@ -1899,15 +1919,11 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto text_elems = TestTextElems(test_text);
 
-        std::array<int, 16> widths{0};
-        std::array<std::size_t, 16> widths_sizes{0};
-
-        for (std::size_t idx = 0; idx < std::min(widths.size(), text_elems.size()); ++idx) {
-            widths[idx] = Value(text_elems[idx].Width());
-            widths_sizes[idx] = text_elems[idx].widths.size();
-        }
-        return std::pair{widths, widths_sizes};
-    }().first;
+        std::array<int32_t, 16> widths{0};
+        for (std::size_t idx = 0; idx < std::min(widths.size(), text_elems.size()); ++idx)
+            widths[idx] = Value(sum(text_elems[idx].widths));
+        return widths;
+    }();
 
     constexpr decltype(element_widths) element_widths_expected{{28,12,16,12,28,16,12,36,
                                                                 16, 0,24, 4,16,12,20, 8}};
@@ -2701,6 +2717,7 @@ namespace DebugOutput {
 
             for (std::size_t j = 0; j < char_data.size(); ++j) {
                 for (auto& tag_elem : char_data.at(j).tags) {
+                    std::cout << "FormattingTag @" << j;
                     std::cout << "\n    whitespace=" << tag_elem.IsWhiteSpace()
                               << "\n    newline=" << tag_elem.IsNewline() << "\n    params=\n";
                     for (const auto& param : tag_elem.params)
