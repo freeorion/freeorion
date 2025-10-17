@@ -1833,6 +1833,12 @@ namespace {
 
     static_assert([]() {
         const std::string text(TEST_TEXT_WITH_TAGS);
+        Font::TextTag tt{Font::TextElement::TextElementType::OPEN_TAG, Font::Substring(text, 8u, 9u), 3u};
+        return tt.IsOpenTag() && tt.tag_name == "i";
+     }());
+
+    static_assert([]() {
+        const std::string text(TEST_TEXT_WITH_TAGS);
         Font::TextElement te_open{Font::Substring(text, 7u, 10u), Font::Substring(text, 8u, 9u),
                                   Font::TextElement::TextElementType::OPEN_TAG};
         return te_open.IsOpenTag() && te_open.text == "<i>" && te_open.tag_name == "i" &&
@@ -2454,7 +2460,7 @@ namespace {
         }
     }
 
-    void HandleTag(const Font::TextElement& tag, Font::RenderState& render_state)
+    void HandleTag(const Font::TextTag& tag, Font::RenderState& render_state)
     { HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state); }
 }
 
@@ -2695,9 +2701,6 @@ namespace DebugOutput {
 
             for (std::size_t j = 0; j < char_data.size(); ++j) {
                 for (auto& tag_elem : char_data.at(j).tags) {
-                    std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem.text << "\"\n    widths=";
-                    for (const auto width : tag_elem.widths)
-                        std::cout << width << " ";
                     std::cout << "\n    whitespace=" << tag_elem.IsWhiteSpace()
                               << "\n    newline=" << tag_elem.IsNewline() << "\n    params=\n";
                     for (const auto& param : tag_elem.params)

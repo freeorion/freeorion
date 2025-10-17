@@ -131,7 +131,10 @@ public:
 
         Substring is bound to a particular instance of a std::string.  If
         that particular std::string goes out of scope or is deleted then
-        behavior is undefined, but may seg fault with the next access. */
+        behavior is undefined, but may seg fault with the next access.
+        However, the pointed-to string may have its buffer moved without
+        invalidating Substring due to double-indirection, unlike a
+        string_view which points to the buffer, not the owning string object. */
     class GG_API Substring
     {
     public:
@@ -251,9 +254,13 @@ public:
     static_assert(noexcept(Substring(std::declval<Substring&&>())));
     static_assert(noexcept(Substring(std::declval<const Substring&>())));
 
-    /** \brief Describes a token-like piece of text to be rendered. */
-    struct GG_API TextElement
+    struct GG_API TextTag
     {
+        static_assert(noexcept(Substring{std::declval<Substring&&>()}) &&
+                      noexcept(Substring{std::declval<Substring>()}) &&
+                      noexcept(std::vector<Substring>{std::declval<std::vector<Substring>&&>()}) &&
+                      noexcept(std::vector<Substring>{}));
+
         /** The types of token-like entities that can be represented by a TextElement. */
         enum class TextElementType : uint8_t {
             OPEN_TAG,   ///< An opening text formatting tag (e.g. "<rgba 0 0 0 255>").
@@ -267,46 +274,82 @@ public:
             NEWLINE
         };
 
-        static_assert(noexcept(Substring{std::declval<Substring&&>()}) &&
-                      noexcept(Substring{std::declval<Substring>()}) &&
-                      noexcept(std::vector<Substring>{std::declval<std::vector<Substring>&&>()}) &&
-                      noexcept(std::vector<uint8_t>{std::declval<std::vector<uint8_t>&&>()}) &&
+        /** For a formatting tag, contains the tag name, eg. "rgba" for the tag "<rgba 0 0 0 255>". */
+        Substring tag_name;
+
+        /** The parameter strings within the tag, eg. "0", "0", "0", and "255"
+            for the tag "<rgba 0 0 0 255>". */
+        std::vector<Substring> params;
+
+        uint32_t text_size = 0u;
+
+        TextElementType type = TextElementType::TEXT;
+
+        CONSTEXPR_FONT TextTag(TextElementType type_, Substring tag_name_, uint32_t text_size_) noexcept :
+            tag_name(tag_name_),
+            text_size(text_size_),
+            type(type_)
+        {}
+        CONSTEXPR_FONT TextTag(TextElementType type_, Substring tag_name_, std::vector<Substring> params_,
+                               uint32_t text_size_) noexcept :
+            tag_name(tag_name_),
+            params(std::move(params_)),
+            text_size(text_size_),
+            type(type_)
+        {}
+
+        /** Returns the TextElementType of the element. */
+        [[nodiscard]] constexpr StrSize StringSize() const noexcept { return StrSize(text_size); };
+        [[nodiscard]] constexpr TextElementType Type() const noexcept { return type; };
+        [[nodiscard]] constexpr bool IsCloseTag() const noexcept { return type == TextElementType::CLOSE_TAG; }
+        [[nodiscard]] constexpr bool IsOpenTag() const noexcept { return type == TextElementType::OPEN_TAG; }
+        [[nodiscard]] constexpr bool IsTag() const noexcept { return IsCloseTag() || IsOpenTag(); }
+        [[nodiscard]] constexpr bool IsWhiteSpace() const noexcept { return type == TextElementType::WHITESPACE; }
+        [[nodiscard]] constexpr bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
+
+    protected:
+        CONSTEXPR_FONT TextTag() noexcept = default;
+
+        CONSTEXPR_FONT explicit TextTag(TextElementType type_, uint32_t text_size_) noexcept :
+            type(type_),
+            text_size(text_size_)
+        {}
+    };
+
+    /** \brief Describes a token-like piece of text to be rendered. */
+    struct GG_API TextElement : public TextTag
+    {
+        static_assert(noexcept(std::vector<uint8_t>{std::declval<std::vector<uint8_t>&&>()}) &&
                       noexcept(std::vector<uint8_t>{std::declval<std::vector<uint8_t>>()}));
 
 
         CONSTEXPR_FONT explicit TextElement(TextElementType type_) noexcept :
-            type(type_)
+            TextTag(type_, 0u)
         {}
         CONSTEXPR_FONT explicit TextElement(Substring text_) noexcept :
-            text(text_),
-            type(TextElementType::TEXT)
+            TextTag(TextElementType::TEXT, static_cast<uint32_t>(text_.size())),
+            text(text_)
         {}
 
         CONSTEXPR_FONT TextElement(Substring text_, TextElementType type_) noexcept :
-            text(text_),
-            type(type_)
+            TextTag(type_, static_cast<uint32_t>(text_.size())),
+            text(text_)
         {}
         CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, TextElementType type_) noexcept :
-            text(text_),
-            tag_name(tag_name_),
-            type(type_)
+            TextTag(type_, tag_name_, static_cast<uint32_t>(text_.size())),
+            text(text_)
         {}
         CONSTEXPR_FONT TextElement(Substring text_, Substring tag_name_, std::vector<Substring> params_,
                                    TextElementType type_) noexcept :
-            text(text_),
-            tag_name(tag_name_),
-            params(std::move(params_)),
-            type(type_)
+            TextTag(type_, tag_name_, std::move(params_), static_cast<uint32_t>(text_.size())),
+            text(text_)
         {}
-
 
 #if (defined(__GNUC__) && (__GNUC__ < 13))
         CONSTEXPR_FONT TextElement(TextElement&& rhs) noexcept :
+            TextTag(rhs.type, rhs.tag_name, std::move(rhs.params)),
             text(rhs.text),
-            tag_name(rhs.tag_name),
-            widths(std::move(rhs.widths)),
-            params(std::move(rhs.params)),
-            type(rhs.type)
+            widths(std::move(rhs.widths))
             // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
         {}
 
@@ -324,11 +367,9 @@ public:
         }
 
         CONSTEXPR_FONT TextElement(const TextElement& rhs) :
+            TextTag(rhs.type, rhs.tag_name, rhs.params),
             text(rhs.text),
-            tag_name(rhs.tag_name),
             widths(rhs.widths),
-            params(rhs.params),
-            type(rhs.type)
             // don't copy cached_width due to GCC < 13 error with constexpr accessing mutable members of const object
         {}
 
@@ -375,13 +416,6 @@ public:
                 substring.Bind(whole_text);
         }
 
-        /** Returns the TextElementType of the element. */
-        [[nodiscard]] CONSTEXPR_FONT TextElementType Type() const noexcept { return type; };
-        [[nodiscard]] CONSTEXPR_FONT bool IsCloseTag() const noexcept { return type == TextElementType::CLOSE_TAG; }
-        [[nodiscard]] CONSTEXPR_FONT bool IsOpenTag() const noexcept { return type == TextElementType::OPEN_TAG; }
-        [[nodiscard]] CONSTEXPR_FONT bool IsTag() const noexcept { return IsCloseTag() || IsOpenTag(); }
-        [[nodiscard]] CONSTEXPR_FONT bool IsWhiteSpace() const noexcept { return type == TextElementType::WHITESPACE; }
-        [[nodiscard]] CONSTEXPR_FONT bool IsNewline() const noexcept { return type == TextElementType::NEWLINE; }
 
         /** Returns the width of the element. */
         [[nodiscard]] CONSTEXPR_FONT X Width() const
@@ -405,12 +439,6 @@ public:
             }
         }
 
-
-        /* Returns the number of characters in the original string that the
-           element represents. */
-        [[nodiscard]] CONSTEXPR_FONT StrSize StringSize() const noexcept
-        { return StrSize(text.size()); }
-
         /** Returns the number of code points in the original string that the
             element represents. */
         [[nodiscard]] CONSTEXPR_FONT CPSize CodePointSize() const noexcept
@@ -428,17 +456,8 @@ public:
         /** The text from the original string represented by the element. */
         Substring text;
 
-        /** For a formatting tag, contains the tag name, eg. "rgba" for the tag "<rgba 0 0 0 255>". */
-        Substring tag_name;
-
         /** The widths of the glyphs in \a text. */
         std::vector<int8_t> widths;
-
-        /** The parameter strings within the tag, eg. "0", "0", "0", and "255"
-            for the tag "<rgba 0 0 0 255>". */
-        std::vector<Substring> params;
-
-        TextElementType type = TextElementType::TEXT;
 
     protected:
         CONSTEXPR_FONT TextElement() = default;
@@ -550,7 +569,7 @@ public:
             CPSize code_point_index = CP0;
 
             /** The text formatting tags that should be applied before rendering this glyph. */
-            std::vector<TextElement> tags;
+            std::vector<TextTag> tags;
         };
 
         CONSTEXPR_FONT X    Width() const noexcept { return char_data.empty() ? X0 : char_data.back().extent; }
