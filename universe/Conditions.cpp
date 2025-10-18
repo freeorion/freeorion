@@ -365,18 +365,20 @@ void Number::Eval(const ScriptingContext& parent_context,
 }
 
 bool Number::Match(const ScriptingContext& local_context) const {
+    // get acceptable range of subcondition matches for candidate
+    const int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    if (low == 1 && !m_high) // require at least one, don't care if more
+        return m_condition->EvalAny(local_context);
+    const int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
+    if (high == 0 && (!m_low || low == 0)) // require none, don't care how many if not none
+        return !m_condition->EvalAny(local_context);
+
     // get set of all UniverseObjects that satisfy m_condition
-    ObjectSet condition_matches = m_condition->Eval(local_context);
+    const ObjectSet condition_matches = m_condition->Eval(local_context);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     const int matched = condition_matches.size();
-
-    // get acceptable range of subcondition matches for candidate
-    const int low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
-    if (low > matched)
-        return false;
-    const int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
-    return matched <= high;
+    return (low >= matched && matched <= high);
 }
 
 void Number::SetTopLevelContent(const std::string& content_name) {
@@ -2942,7 +2944,7 @@ std::unique_ptr<Condition> CreatedOnTurn::Clone() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 namespace StaticTests {
-#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || (_MSC_VER >= 1942 && _MSC_VER != 1944)) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
+#if defined(__cpp_lib_constexpr_vector) && (!defined(_MSC_VER) || (_MSC_VER >= 1942 && _MSC_FULL_VER <= 194434810)) && (!defined(__clang_major__) || (__clang_major__ >= 15)) && (!defined(__GNUC__) || (__GNUC__ > 12))
     struct ContainerTestObj : public UniverseObjectCXBase {
         std::vector<int> contained_ids;
         constexpr explicit ContainerTestObj(std::vector<int> contained_ids_ = {}, int this_id = 2) :
@@ -5334,7 +5336,7 @@ bool DesignHasPart::Match(const ScriptingContext& local_context) const {
     }
 
     int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
-    int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
+    int high = (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
     // if no range specified, require at least one
     if (!m_low && !m_high)
         low = 1;
@@ -6704,19 +6706,6 @@ std::unique_ptr<Condition> EmpireStockpileValue::Clone() const {
 ///////////////////////////////////////////////////////////
 // EmpireHasAdoptedPolicy                                //
 ///////////////////////////////////////////////////////////
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                                               std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Condition(CondsRTSI(empire_id, name)),
-    m_name(std::move(name)),
-    m_empire_id(std::move(empire_id))
-{}
-
-EmpireHasAdoptedPolicy::EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    EmpireHasAdoptedPolicy(nullptr, std::move(name))
-{}
-
-EmpireHasAdoptedPolicy::~EmpireHasAdoptedPolicy() = default;
-
 bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
     if (this == std::addressof(rhs))
         return true;

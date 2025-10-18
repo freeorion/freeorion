@@ -2532,9 +2532,15 @@ private:
   * imperial policy with name \a name */
 struct FO_COMMON_API EmpireHasAdoptedPolicy final : public Condition {
     EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
-                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    virtual ~EmpireHasAdoptedPolicy();
+                           std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+        Condition(CondsRTSI(empire_id, name)),
+        m_name(std::move(name)),
+        m_empire_id(std::move(empire_id))
+    {}
+
+    explicit EmpireHasAdoptedPolicy(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+        EmpireHasAdoptedPolicy(nullptr, std::move(name))
+    {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
 

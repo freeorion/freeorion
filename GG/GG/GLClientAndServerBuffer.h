@@ -48,13 +48,13 @@ class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
 public:
     GLClientAndServerBufferBase() = default;
-    [[nodiscard]] std::size_t size() const noexcept { return b_data.size() / b_elements_per_item; }
-    [[nodiscard]] bool        empty() const noexcept { return b_data.empty(); }
+    [[nodiscard]] auto size() const noexcept { return b_data.size() / b_elements_per_item; }
+    [[nodiscard]] bool empty() const noexcept { return b_data.empty(); }
+    [[nodiscard]] auto capacity() const noexcept { return b_data.capacity(); };
+    [[nodiscard]] auto raw_size() const noexcept { return b_data.size(); };
 
     // pre-allocate space for item data
     void reserve(std::size_t num_items) { b_data.reserve(num_items * b_elements_per_item); }
-    auto capacity() noexcept { return b_data.capacity(); };
-    auto raw_size() noexcept { return b_data.size(); };
 
 protected:
     // store items, buffers usually store tuples, convenience functions
@@ -163,7 +163,6 @@ public:
     // same colour N times
     void store(std::size_t N, Clr clr)
     {
-        base_t::reserve(base_t::size() + N);
         for (std::size_t n = 0; n < N; ++n)
             base_t::store(clr.r, clr.g, clr.b, clr.a);
     }

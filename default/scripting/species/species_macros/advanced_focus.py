@@ -53,11 +53,7 @@ PLANETARY_DRIVE_ACTIVATION = (
         & Contains(
             (
                 IsBuilding(name=["BLD_PLANET_BEACON"])
-                | (
-                    Ship
-                    & DesignHasPart(low=1, high=999, name="SP_PLANET_BEACON")
-                    & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
-                )
+                | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
             )
             & OwnedBy(empire=Source.Owner)
         )
@@ -73,7 +69,7 @@ ADVANCED_FOCUS_EFFECTS = [
         scope=Planet()
         & OwnedBy(affiliation=EnemyOf, empire=Source.Owner)
         & WithinStarlaneJumps(jumps=4, condition=IsSource)
-        & ~Number(low=1, condition=IsBuilding(name=["BLD_GENOME_BANK"]) & OwnedBy(empire=RootCandidate.Owner)),
+        & Number(high=1, condition=IsBuilding(name=["BLD_GENOME_BANK"]) & OwnedBy(empire=RootCandidate.Owner)),
         activation=Focus(type=["FOCUS_BIOTERROR"]),
         priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
         effects=SetTargetPopulation(value=Value - 4),
@@ -114,11 +110,7 @@ ADVANCED_FOCUS_EFFECTS = [
                 & Contains(
                     (
                         IsBuilding(name=["BLD_PLANET_BEACON"])
-                        | (
-                            Ship
-                            & DesignHasPart(low=1, high=999, name="SP_PLANET_BEACON")
-                            & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
-                        )
+                        | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
                     )
                     & OwnedBy(empire=Source.Owner)
                 )
@@ -145,11 +137,7 @@ ADVANCED_FOCUS_EFFECTS = [
             & Contains(
                 (
                     IsBuilding(name=["BLD_PLANET_BEACON"])
-                    | (
-                        Ship
-                        & DesignHasPart(low=1, high=999, name="SP_PLANET_BEACON")
-                        & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
-                    )
+                    | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
                 )
                 & OwnedBy(empire=Source.Owner)
             )
