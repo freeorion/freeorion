@@ -466,7 +466,7 @@ namespace {
                 std::string_view colour_string = star_definition.Attribute("color");
                 if (colour_string.size() != 6 && colour_string.size() != 8)
                     continue;
-                const GG::Clr color = GG::Clr(colour_string);
+                const GG::Clr color = GG::Clr::HexClr(colour_string);
                 retval.emplace(star_type, std::array{color.r / 255.0f, color.g / 255.0f,
                                                      color.b / 255.0f, color.a / 255.0f});
             }
