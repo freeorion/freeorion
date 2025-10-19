@@ -378,15 +378,6 @@ public:
         [[nodiscard]] CONSTEXPR_FONT CPSize CodePointSize() const noexcept
         { return CPSize(widths.size()); }
 
-        [[nodiscard]] CONSTEXPR_FONT bool operator==(const TextElement &rhs) const noexcept
-        {
-            return (type == rhs.type) &&
-                   (text == rhs.text) &&
-                   (tag_name == rhs.tag_name) &&
-                   (widths == rhs.widths) &&
-                   (params == rhs.params);
-        }
-
         /** The text from the original string represented by the element. */
         Substring text;
 
