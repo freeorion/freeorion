@@ -177,9 +177,7 @@ public:
         CONSTEXPR_FONT Substring(const std::string& str_,
                                  std::string::const_iterator first_,
                                  std::string::const_iterator second_) :
-            Substring(str_,
-                      static_cast<uint32_t>(std::distance(str_.begin(), first_)),
-                      static_cast<uint32_t>(std::distance(str_.begin(), second_)))
+            Substring(str_, std::distance(str_.begin(), first_), std::distance(str_.begin(), second_))
         {}
         CONSTEXPR_FONT Substring(const std::string& str_, const IterPair& pair) :
             Substring(str_, pair.first, pair.second)
