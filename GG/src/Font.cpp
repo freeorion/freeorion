@@ -2366,31 +2366,6 @@ namespace {
 
 
 namespace {
-    constexpr uint8_t CharsToUInt8(std::string_view txt) {
-        if (txt.empty())
-            return 0u;
-
-        uint32_t retval = 0u;
-        for (auto c : txt) {
-            if (c > '9' || c < '0')
-                break;
-            retval *= 10;
-            retval += (c - '0');
-        }
-
-        return static_cast<uint8_t>(retval);
-    }
-    static_assert(CharsToUInt8("") == 0);
-    static_assert(CharsToUInt8("abcdefgh") == 0);
-    static_assert(CharsToUInt8("0") == 0);
-    static_assert(CharsToUInt8("-25") == 0);
-    static_assert(CharsToUInt8("25") == 25);
-    static_assert(CharsToUInt8("00001") == 1);
-    static_assert(CharsToUInt8("888") == 888-3*256);
-    static_assert(CharsToUInt8(std::string_view{one_zero_nine.data()}) == 109);
-    static_assert(CharsToUInt8(std::string_view{three_zero.data()}) == 30);
-
-
     std::pair<std::array<GLubyte, 4u>, bool> TagParamsToColor(const std::vector<Font::Substring>& params) {
         std::array<GLubyte, 4u> retval{0, 0, 0, 255};
         const auto param_count = std::min(retval.size(), params.size());
@@ -2409,7 +2384,7 @@ namespace {
             const auto& param{params[n]};
             if (param.empty())
                 return {retval, false};
-            retval[n] = CharsToUInt8(param);
+            retval[n] = Clr::CharsToUInt8(param);
         }
 #endif
 

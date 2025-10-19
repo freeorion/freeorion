@@ -45,12 +45,11 @@ struct Clr
         Clr(clr[0], clr[1], clr[2], clr[3])
     {}
 
-    /** ctor that constructs a Clr from a string that represents the color
-        channels in the format 'RRGGBB', 'RRGGBBAA' where each channel value
-        ranges from 00 to FF. When the alpha component is left out, the alpha
-        value FF is assumed. When characters out of the range 0-9 and A-F are
-        passed, results are undefined.
-    */
+    /** constructs a Clr from a string that represents the color channels in
+        the format 'RRGGBB', 'RRGGBBAA' where each channel value ranges from
+        00 to FF. When the alpha component is left out, the alpha value FF
+        is assumed. When characters out of the range 0-9 and A-F are passed,
+        results are undefined. */
     [[nodiscard]] static constexpr Clr HexClr(std::string_view hex_colour) noexcept
     {
         const auto sz = hex_colour.size();
@@ -60,6 +59,51 @@ struct Clr
             (sz >= 6u) ? HexCharsToUInt8(hex_colour.substr(4, 2)) : uint8_t{0u},
             (sz >= 8u) ? HexCharsToUInt8(hex_colour.substr(6, 2)) : uint8_t{255u}};
     }
+
+    [[nodiscard]] static constexpr std::pair<std::string_view, std::string_view>
+        NextSpaceDelimChunkAndRest(std::string_view txt) noexcept
+    {
+        const auto start_idx = txt.find_first_not_of(' ');
+        if (start_idx == std::string::npos)
+            return {};
+        auto trimmed_txt = txt.substr(start_idx);
+        auto end_idx = trimmed_txt.find_first_of(' ');
+        auto chunk = trimmed_txt.substr(0u, end_idx);
+        auto rest = (end_idx < trimmed_txt.size()) ? trimmed_txt.substr(end_idx) : std::string_view{};
+        return {chunk, rest};
+    };
+
+    /** constructs a Clr from a string that represents the color channels.
+        The format is 'RRR GGG BBB AAA', or 'RRR GGG BBB', where channel
+        values range from "0" to "255" and channels are separated by
+        at least one space character(s).
+        When the alpha component is left out, the alpha value 255 is assumed.
+        When characters out of the range 0-9 and A-F are passed, results are undefined.
+        When numbers > 255 are passed, results are undefined.
+        Additional channel values beyonf AAA are ignored. */
+    [[nodiscard]] static constexpr Clr RGBAClr(std::string_view rgba)
+    {
+        auto [r_sv, r_rest] = NextSpaceDelimChunkAndRest(rgba);
+        auto [g_sv, g_rest] = NextSpaceDelimChunkAndRest(r_rest);
+        auto [b_sv, b_rest] = NextSpaceDelimChunkAndRest(g_rest);
+        auto a_sv = NextSpaceDelimChunkAndRest(b_rest).first;
+
+        return RGBAClr(r_sv, g_sv, b_sv, a_sv);
+    }
+
+    [[nodiscard]] static constexpr Clr RGBAClr(std::string_view r_sv, std::string_view g_sv,
+                                               std::string_view b_sv, std::string_view a_sv) noexcept
+    {
+        return Clr{
+            r_sv.empty() ? uint8_t{0u} : CharsToUInt8(r_sv),
+            g_sv.empty() ? uint8_t{0u} : CharsToUInt8(g_sv),
+            b_sv.empty() ? uint8_t{0u} : CharsToUInt8(b_sv),
+            a_sv.empty() ? uint8_t{255u} : CharsToUInt8(a_sv),
+        };
+    }
+
+    [[nodiscard]] static constexpr Clr RGBAClr(std::string_view r_sv, std::string_view g_sv, std::string_view b_sv) noexcept
+    { return RGBAClr(r_sv, g_sv, b_sv, std::string_view{}); }
 
     [[nodiscard]] explicit constexpr operator uint32_t() const noexcept
     { return (uint32_t{r} << 24u) + (uint32_t{g} << 16u) + (uint32_t{b} << 8u) + uint32_t{a}; }
@@ -163,6 +207,17 @@ struct Clr
         UInt8ToChars(buf.data(), num);
         return buf;
     };
+
+    [[nodiscard]] static constexpr uint8_t CharsToUInt8(std::string_view txt) noexcept {
+        uint32_t retval = 0u;
+        for (auto c : txt) {
+            if (c > '9' || c < '0')
+                break;
+            retval *= 10;
+            retval += (c - '0');
+        }
+        return static_cast<uint8_t>(retval);
+    }
 };
 
 inline std::ostream& operator<<(std::ostream& os, Clr clr)

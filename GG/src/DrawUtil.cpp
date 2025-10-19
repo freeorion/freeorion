@@ -110,6 +110,37 @@ namespace {
     static_assert(TestUint8ToCharArray(201, sva4{"201"}));
     static_assert(TestUint8ToCharArray(255, sva4{"255"}));
 
+    static_assert(Clr::CharsToUInt8("") == 0);
+    static_assert(Clr::CharsToUInt8("abcdefgh") == 0);
+    static_assert(Clr::CharsToUInt8("0") == 0);
+    static_assert(Clr::CharsToUInt8("\0") == 0);
+    static_assert(Clr::CharsToUInt8("-25") == 0);
+    static_assert(Clr::CharsToUInt8("25") == 25);
+    static_assert(Clr::CharsToUInt8("00001") == 1);
+    static_assert(Clr::CharsToUInt8("888") == 888-3*256);
+    static_assert(Clr::CharsToUInt8("109") == 109);
+    static_assert(Clr::CharsToUInt8("30") == 30);
+
+    static_assert(Clr::RGBAClr("", "0", "000001") == Clr{0,0,1,255});
+    static_assert(Clr::RGBAClr("1", "-2", "", "") == Clr{1,0,0,255});
+
+    static_assert(std::string_view("  345 ").find_first_not_of(' ') == 2u);
+    static_assert(std::string_view("  345 ").find_first_of(' ') == 0u);
+    static_assert(std::string_view("").find_first_of(' ') == std::string_view::npos);
+    static_assert(std::string_view("").find_first_not_of(' ') == std::string_view::npos);
+    static_assert(std::string_view("   ").find_first_not_of(' ') == std::string_view::npos);
+    static_assert(std::string_view("345 ").substr(0u, std::string_view::npos) == "345 ");
+    static_assert(std::string_view("345").substr(3u).empty());
+
+    using svpair = std::pair<std::string_view, std::string_view>;
+    static_assert(Clr::NextSpaceDelimChunkAndRest("") == svpair{});
+    static_assert(Clr::NextSpaceDelimChunkAndRest("   ") == svpair{});
+    static_assert(Clr::NextSpaceDelimChunkAndRest("1  ") == svpair{"1", "  "});
+    static_assert(Clr::NextSpaceDelimChunkAndRest("  1") == svpair{"1", ""});
+    static_assert(Clr::NextSpaceDelimChunkAndRest(" 1   2 ") == svpair{"1", "   2 "});
+
+    static_assert(Clr::RGBAClr("1 2 3 4 5 6 a b c \0") == Clr{1,2,3,4});
+    static_assert(Clr::RGBAClr(" 001  255 3 ") == Clr{1,255,3});
 
     static_assert(LightenClr(CLR_DARK_GRAY, 3.0f) == CLR_LIGHT_GRAY);
     static_assert(LightenClr(CLR_DARK_GRAY, 100.0f) == CLR_WHITE);
@@ -400,7 +431,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     fan_vert_buf.activate();
-    glDrawArrays(GL_TRIANGLE_FAN, 0u, fan_vert_buf.size());
+    glDrawArrays(GL_TRIANGLE_FAN, 0, fan_vert_buf.size());
 
 
 
@@ -440,7 +471,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
 
     quads_vert_buf.activate();
     quads_colour_buf.activate();
-    glDrawArrays(GL_QUAD_STRIP, 0u, quads_vert_buf.size());
+    glDrawArrays(GL_QUAD_STRIP, 0, quads_vert_buf.size());
 
     glPopClientAttrib();
     glPopMatrix();
