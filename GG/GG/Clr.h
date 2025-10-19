@@ -51,13 +51,14 @@ struct Clr
         value FF is assumed. When characters out of the range 0-9 and A-F are
         passed, results are undefined.
     */
-    [[nodiscard]] constexpr Clr(std::string_view hex_colour)
+    [[nodiscard]] static constexpr Clr HexClr(std::string_view hex_colour) noexcept
     {
         const auto sz = hex_colour.size();
-        r = (sz >= 2u) ? HexCharsToUInt8(hex_colour.substr(0, 2)) : 0u;
-        g = (sz >= 4u) ? HexCharsToUInt8(hex_colour.substr(2, 2)) : 0u;
-        b = (sz >= 6u) ? HexCharsToUInt8(hex_colour.substr(4, 2)) : 0u;
-        a = (sz >= 8u) ? HexCharsToUInt8(hex_colour.substr(6, 2)) : 255u;
+        return Clr{
+            (sz >= 2u) ? HexCharsToUInt8(hex_colour.substr(0, 2)) : uint8_t{0u},
+            (sz >= 4u) ? HexCharsToUInt8(hex_colour.substr(2, 2)) : uint8_t{0u},
+            (sz >= 6u) ? HexCharsToUInt8(hex_colour.substr(4, 2)) : uint8_t{0u},
+            (sz >= 8u) ? HexCharsToUInt8(hex_colour.substr(6, 2)) : uint8_t{255u}};
     }
 
     [[nodiscard]] explicit constexpr operator uint32_t() const noexcept

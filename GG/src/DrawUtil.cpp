@@ -56,8 +56,8 @@ namespace {
     static_assert(uint32_t{Clr{0,0,2,3}} == 2*256u + 3u);
     static_assert(uint32_t{Clr{255,1,0,0}} == 256*256*256*255u + 256*256*1u);
 
-    static_assert(Clr("A0FF01") == Clr{160, 255, 1, 255});
-    static_assert(Clr("12345678") == Clr{16*1+2, 16*3+4, 16*5+6, 16*7+8});
+    static_assert(Clr::HexClr("A0FF01") == Clr{160, 255, 1, 255});
+    static_assert(Clr::HexClr("12345678") == Clr{16*1+2, 16*3+4, 16*5+6, 16*7+8});
 
     // workaround for operator==(array, array) not being constexpr in C++17
     template <std::size_t N>
@@ -69,7 +69,7 @@ namespace {
                 return false;
         return true;
     }
-    static_assert(ArrEq(Clr("A0FF01BB").Hex(), "A0FF01BB"));
+    static_assert(ArrEq(Clr::HexClr("A0FF01BB").Hex(), "A0FF01BB"));
 
     static_assert(Clr::HexCharToUint8('0') == 0u);
     static_assert(Clr::HexCharToUint8('9') == 9u);
