@@ -516,10 +516,12 @@ public:
     struct GG_API RenderState
     {
         explicit RenderState(Clr color) : //< Takes default text color as parameter
-            color_stack{std::stack<Clr>::container_type{color}}
+            color_stack{color}
         {}
 
-        RenderState() : RenderState(Clr{0, 0, 0, 0}) {}
+        static constexpr Clr ZERO{0,0,0,0};
+
+        RenderState() : RenderState(ZERO) {}
 
         /** The count of open \<i> tags seen since the last \</i> seen. */
         uint8_t use_italics = 0;
@@ -534,31 +536,33 @@ public:
         int8_t super_sub_shift = 0;
 
         /** The stack of text color indexes (as set by previous tags). */
-        std::stack<Clr> color_stack;
+    private:
+        std::vector<Clr> color_stack;
 
+    public:
         /// Add color to stack and remember it has been used
         void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
         {
             // The same color may end up being stored multiple times, but the cost of
             // deduplication is greater than the cost of just letting it be so.
-            color_stack.emplace(r, g, b, a);
+            color_stack.emplace_back(r, g, b, a);
         }
-        void PushColor(Clr clr) { color_stack.push(std::move(clr)); };
+        void PushColor(Clr clr) { color_stack.push_back(clr); };
 
         /// Return to the previous used color, or remain as default
-        void PopColor() noexcept(noexcept(color_stack.size()) && noexcept(color_stack.pop()))
+        void PopColor() noexcept(noexcept(color_stack.size()) && noexcept(color_stack.pop_back()))
         {
             // Never remove the initial color from the stack
             if (color_stack.size() > 1)
-                color_stack.pop();
+                color_stack.pop_back();
         }
 
         // Revert to no tags and initial color
-        void Reset() noexcept(noexcept(color_stack.size()) && noexcept(color_stack.pop()))
+        void Reset() noexcept(noexcept(color_stack.size()) && noexcept(Clr{} = Clr{}))
         {
             // remove all but initial color
-            while (color_stack.size() > 1)
-                color_stack.pop();
+            auto front_clr = color_stack.empty() ? ZERO : color_stack.front();
+            color_stack.resize(1, front_clr);
             // remove all tags
             use_italics = 0;
             use_shadow = 0;
@@ -566,7 +570,8 @@ public:
             super_sub_shift = 0;
         }
 
-        Clr CurrentColor() const noexcept(noexcept(color_stack.top())) { return color_stack.top(); }
+        Clr CurrentColor() const noexcept(noexcept(color_stack.back()) && noexcept(color_stack.empty()))
+        { return color_stack.empty() ? ZERO : color_stack.back(); }
     };
 
     /** \brief Holds precomputed glyph position information for rendering. */
