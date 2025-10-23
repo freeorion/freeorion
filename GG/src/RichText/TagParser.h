@@ -26,12 +26,21 @@ struct RichTextTag {
     std::string content; //!< The text between the tags.
 
     //!< The parameters as a string of key value pairs key="value".
-    RichTextTag(std::string tag_, std::string params_string_, std::string content_);
-    RichTextTag(std::string_view tag_, std::string params_string_, std::string content_);
+    RichTextTag(std::string tag_, std::string params_string_, std::string content_) :
+        tag(std::move(tag_)),
+        tag_params(std::move(params_string_)),
+        content(std::move(content_))
+    {}
+
+    RichTextTag(std::string_view tag_, std::string params_string_, std::string content_) :
+        RichTextTag(std::string{tag_}, std::move(params_string_), std::move(content_))
+    {}
+
     RichTextTag(RichTextTag&& rhs) = default;
 
     //! Return the tag as a string that parses back to itself.
-    std::string ToString() const;
+    std::string ToString() const
+    { return "<" + tag + (!tag_params.empty() ? (" " + tag_params) : "") + ">" + content + "</" + tag + ">"; }
 };
 
 
