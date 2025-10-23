@@ -520,6 +520,23 @@ public:
             color_stack{color}
         {}
 
+        enum class TagType : uint8_t { ITALICS, SHADOW, UNDERLINE, SUPER, SUB };
+        enum class IncDir : bool { MORE = true, LESS = false };
+        [[nodiscard]] constexpr IncDir InvertIncDir(IncDir dir) noexcept
+        { return dir == IncDir::MORE ? IncDir::LESS : IncDir::MORE; }
+
+        constexpr void HandleTag(TagType feature, IncDir inc_dir) noexcept
+        {
+            switch (feature) {
+            case TagType::ITALICS: UIntInc(use_italics, inc_dir); break;
+            case TagType::SHADOW: UIntInc(use_shadow, inc_dir); break;
+            case TagType::UNDERLINE: UIntInc(draw_underline, inc_dir); break;
+            case TagType::SUPER: IntInc(super_sub_shift, inc_dir); break;
+            case TagType::SUB: IntInc(super_sub_shift, InvertIncDir(inc_dir)); break;
+            }
+        }
+
+    private:
         // net counts of <i>, <s>, or <u> tags seen
         uint8_t use_italics = 0;
         uint8_t use_shadow = 0;
@@ -528,7 +545,22 @@ public:
         // net count of <sup> tags seen minus <sub> tags seen
         int8_t super_sub_shift = 0;
 
-    private:
+        static constexpr void UIntInc(uint8_t& ui, IncDir inc_dir) noexcept
+        {
+            if (inc_dir == IncDir::MORE && ui < UINT8_MAX)
+                ++ui;
+            else if (ui > 0u)
+                --ui;
+        }
+
+        static constexpr void IntInc(int8_t& ui, IncDir inc_dir) noexcept
+        {
+            if (inc_dir == IncDir::MORE && ui < INT8_MAX)
+                ++ui;
+            else if (ui > INT8_MIN)
+                --ui;
+        }
+
         /** Sack of text colors. Beyond capacity, pushes and pops
             are counted but colours are ignored. */
         struct ClrStack {
@@ -595,6 +627,11 @@ public:
 
         constexpr Clr CurrentColor() const noexcept
         { return color_stack.current(); }
+
+        constexpr bool UseItalics() const noexcept { return use_italics > 0u; }
+        constexpr bool UseShadow() const noexcept { return use_shadow > 0u; }
+        constexpr bool DrawUnderline() const noexcept { return draw_underline > 0u; }
+        constexpr int8_t SuperSubShift() const noexcept { return super_sub_shift; }
     };
 
     /** \brief Holds precomputed glyph position information for rendering. */

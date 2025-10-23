@@ -2394,38 +2394,23 @@ namespace {
     void HandleTag(Font::Substring tag_name, bool is_close_tag, const std::vector<Font::Substring>& params,
                    Font::RenderState& render_state)
     {
+        using RS = Font::RenderState;
+        const auto open_close = is_close_tag ? RS::IncDir::LESS : RS::IncDir::MORE;
+
         if (tag_name == Font::ITALIC_TAG) {
-            if (is_close_tag) {
-                if (render_state.use_italics)
-                    --render_state.use_italics;
-            } else {
-                ++render_state.use_italics;
-            }
+            render_state.HandleTag(RS::TagType::ITALICS, open_close);
+
         } else if (tag_name == Font::UNDERLINE_TAG) {
-            if (is_close_tag) {
-                if (render_state.draw_underline)
-                    --render_state.draw_underline;
-            } else {
-                ++render_state.draw_underline;
-            }
+            render_state.HandleTag(RS::TagType::UNDERLINE, open_close);
+
         } else if (tag_name == Font::SHADOW_TAG) {
-            if (is_close_tag) {
-                if (render_state.use_shadow)
-                    --render_state.use_shadow;
-            } else {
-                ++render_state.use_shadow;
-            }
+            render_state.HandleTag(RS::TagType::SHADOW, open_close);
+
         } else if (tag_name == Font::SUPERSCRIPT_TAG) {
-            if (is_close_tag)
-                --render_state.super_sub_shift;
-            else
-                ++render_state.super_sub_shift;
+            render_state.HandleTag(RS::TagType::SUPER, open_close);
 
         } else if (tag_name == Font::SUBSCRIPT_TAG) {
-            if (is_close_tag)
-                ++render_state.super_sub_shift;
-            else
-                --render_state.super_sub_shift;
+            render_state.HandleTag(RS::TagType::SUB, open_close);
 
         } else if (tag_name == Font::RGBA_TAG) {
             if (is_close_tag) {
@@ -3272,11 +3257,11 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_st
     int shadow_offset = 0;
     int super_sub_offset = 0;
 
-    if (render_state.use_italics) // Should we enable sub pixel italics offsets?
+    if (render_state.UseItalics()) // Should we enable sub pixel italics offsets?
         italic_top_offset = static_cast<int>(m_italics_offset);
-    if (render_state.use_shadow)
+    if (render_state.UseShadow())
         shadow_offset = static_cast<int>(m_shadow_offset);
-    super_sub_offset = -static_cast<int>(render_state.super_sub_shift * m_super_sub_offset);
+    super_sub_offset = -static_cast<int>(render_state.SuperSubShift() * m_super_sub_offset);
 
     // render shadows?
     if (shadow_offset > 0) {
@@ -3284,7 +3269,7 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_st
         StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
         StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
         StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
-        if (render_state.draw_underline) {
+        if (render_state.DrawUnderline()) {
             StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, m_descent,
                                m_height, Y(m_underline_height), Y(m_underline_offset));
             StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, m_descent,
@@ -3294,7 +3279,7 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_st
 
     // render main text
     StoreGlyphImpl(cache, render_state.CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
-    if (render_state.draw_underline) {
+    if (render_state.DrawUnderline()) {
         StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, glyph, m_descent,
                            m_height, Y(m_underline_height), Y(m_underline_offset));
     }
