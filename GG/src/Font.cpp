@@ -2453,6 +2453,13 @@ namespace {
 
     void HandleTag(const Font::TextTag& tag, Font::RenderState& render_state)
     { HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state); }
+
+    template <typename TagsVec>
+    void HandleTags(const TagsVec& tags, Font::RenderState& render_state)
+    {
+        for (const auto& tag : tags)
+            HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state);
+    }
 }
 
 
@@ -2512,8 +2519,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
 
         for (CPSize j = start; j < end; ++j) {
             const auto& glyph = line_char_data.at(Value(j));
-            for (const auto& tag : glyph.tags)
-                HandleTag(tag, render_state);
+            HandleTags(glyph.tags, render_state);
             const uint32_t c = get_next_char(Value(glyph.string_index));
 
             if (c == WIDE_NEWLINE)
@@ -2562,8 +2568,7 @@ void Font::ProcessLineTagsBefore(const LineData::CharVec& char_data,
 {
     const auto end_char_idx = std::min(Value(end_char), char_data.size());
     for (std::size_t j = 0; j < end_char_idx; ++j)
-        for (auto& tag : char_data.at(j).tags)
-            HandleTag(tag, render_state);
+        HandleTags(char_data.at(j).tags, render_state);
 }
 
 void Font::ProcessLineTags(const LineData::CharVec& char_data, RenderState& render_state)
