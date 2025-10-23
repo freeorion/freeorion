@@ -515,54 +515,77 @@ public:
         if present. */
     struct GG_API RenderState
     {
-        explicit RenderState(Clr color) : //< Takes default text color as parameter
+        //< default text color as parameter
+        constexpr explicit RenderState(Clr color) noexcept :
             color_stack{color}
         {}
 
-        static constexpr Clr ZERO{0,0,0,0};
-
-        RenderState() : RenderState(ZERO) {}
-
-        /** The count of open \<i> tags seen since the last \</i> seen. */
+        // net counts of <i>, <s>, or <u> tags seen
         uint8_t use_italics = 0;
-
-        /** The count of open \<s> tags seen since the last \</s> seen. */
         uint8_t use_shadow = 0;
-
-        /** The count of open \<u> tags seen since the last \</u> seen. */
         uint8_t draw_underline = 0;
 
-        /** The count of open \<super> (positive) minus \<sub> tags seen. */
+        // net count of <sup> tags seen minus <sub> tags seen
         int8_t super_sub_shift = 0;
 
-        /** The stack of text color indexes (as set by previous tags). */
     private:
-        std::vector<Clr> color_stack;
+        /** Sack of text colors. Beyond capacity, pushes and pops
+            are counted but colours are ignored. */
+        struct ClrStack {
+            static constexpr uint8_t capacity = 6u;
+            static constexpr uint8_t last_slot_idx = capacity - 1u;
+
+        private:
+            std::array<Clr, capacity> colours{};
+            uint8_t cur_idx = 0u;
+
+            static constexpr Clr ZERO{};
+            static_assert(std::array<Clr, capacity>{}.front() == ZERO);
+            static_assert(std::array<Clr, capacity>{Clr{1,2,3,4}}[last_slot_idx] == ZERO);
+
+        public:
+            [[nodiscard]] constexpr explicit ClrStack(Clr clr) noexcept :
+                colours{clr}
+            {}
+
+            [[nodiscard]] constexpr Clr current() const noexcept
+            { return colours[std::min(cur_idx, last_slot_idx)]; }
+
+            [[nodiscard]] constexpr bool full() const noexcept
+            { return cur_idx >= last_slot_idx; }
+
+            constexpr void reset() noexcept
+            { cur_idx = 0u; }
+
+            constexpr void pop() noexcept
+            { if (cur_idx > 0u) --cur_idx; }
+
+            constexpr void push(Clr clr) noexcept
+            {
+                ++cur_idx;
+                if (!full())
+                    colours[cur_idx] = clr;
+            }
+
+            constexpr void push(std::array<uint8_t, 4> clr) noexcept
+            { push(Clr{clr}); }
+
+        } color_stack;
 
     public:
         /// Add color to stack and remember it has been used
-        void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
-        {
-            // The same color may end up being stored multiple times, but the cost of
-            // deduplication is greater than the cost of just letting it be so.
-            color_stack.emplace_back(r, g, b, a);
-        }
-        void PushColor(Clr clr) { color_stack.push_back(clr); };
+        constexpr void PushColor(Clr clr) noexcept { color_stack.push(clr); };
+        constexpr void PushColor(std::array<uint8_t, 4> clr) noexcept { color_stack.push(clr); };
 
         /// Return to the previous used color, or remain as default
-        void PopColor() noexcept(noexcept(color_stack.size()) && noexcept(color_stack.pop_back()))
-        {
-            // Never remove the initial color from the stack
-            if (color_stack.size() > 1)
-                color_stack.pop_back();
-        }
+        constexpr void PopColor() noexcept
+        { color_stack.pop(); }
 
         // Revert to no tags and initial color
-        void Reset() noexcept(noexcept(color_stack.size()) && noexcept(Clr{} = Clr{}))
+        constexpr void Reset() noexcept
         {
             // remove all but initial color
-            auto front_clr = color_stack.empty() ? ZERO : color_stack.front();
-            color_stack.resize(1, front_clr);
+            color_stack.reset();
             // remove all tags
             use_italics = 0;
             use_shadow = 0;
@@ -570,8 +593,8 @@ public:
             super_sub_shift = 0;
         }
 
-        Clr CurrentColor() const noexcept(noexcept(color_stack.back()) && noexcept(color_stack.empty()))
-        { return color_stack.empty() ? ZERO : color_stack.back(); }
+        constexpr Clr CurrentColor() const noexcept
+        { return color_stack.current(); }
     };
 
     /** \brief Holds precomputed glyph position information for rendering. */

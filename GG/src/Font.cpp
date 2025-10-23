@@ -2436,7 +2436,7 @@ namespace {
                 auto [color, well_formed_tag] = TagParamsToColor(params);
                 if (well_formed_tag) {
                     glColor4ubv(color.data());
-                    render_state.PushColor(color[0], color[1], color[2], color[3]);
+                    render_state.PushColor(color);
                 }
                 /*else {
                     std::cerr << "GG::Font : Encountered malformed <rgba> formatting tag from text";
