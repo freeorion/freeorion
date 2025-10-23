@@ -24,7 +24,7 @@ namespace ParseTagsImpl {
     // Helper. Return true if str is a prefix of the string (start..end) or vice versa.
     bool StartsWith(const std::string::const_iterator start,
                     const std::string::const_iterator end,
-                    const std::string& str) noexcept
+                    std::string_view str) noexcept
     {
         auto current = start;
         auto str_current = str.begin();
@@ -41,7 +41,10 @@ namespace ParseTagsImpl {
         return true;
     }
 
-    /** @brief Parses until finds an end tag for \a tag.
+    constexpr std::string_view reset_tag{"<reset>"};
+    static_assert(reset_tag.substr(1u, 5u) == Font::RESET_TAG);
+
+    /** @brief Parses until an end tag for \a tag
       * @return The position just after the end tag. Throws if not found. */
     std::basic_string<char>::const_iterator FinishTag(
         std::string tag,
@@ -65,18 +68,26 @@ namespace ParseTagsImpl {
         if (StartsWith(current, end, end_tag)) {
             // A tag was successfully fully read. Add it to tags, if we got one.
             if (tags)
-                tags->emplace_back(std::move(tag), std::move(parameters), std::string(start, current));
+                tags->emplace_back(std::move(tag), std::move(parameters),
+                                   std::string(start, current));
 
             // Continue after the tag.
             return current + end_tag.length();
 
-        } else {
+        } else if (StartsWith(current, end, reset_tag)) {
+            if (tags)
+                tags->emplace_back(std::move(tag), "", std::string(start, current));
+
+            // Continue without advancing
+            return current;
+
+        } else [[unlikely]] {
             // The end tag eas not the expected end tag.
             std::string rest_prefix(current, std::min(current + 20, end));
             // The rest prefix is likely to be a wrong end tag, but no worries, the rendering
             // tag interpreter ignores unpaired end tags so it will display fine.
-            std::string error = "Error parsing rich text tags: expected end tag:" + tag +
-                " got: \"" + rest_prefix + "...\"";
+            std::string error = "Error parsing rich text tags: expected end tag: </" + tag +
+                "> but instead got: \"" + rest_prefix + "...\"";
             throw std::runtime_error(error);
         }
     }
@@ -91,7 +102,8 @@ namespace ParseTagsImpl {
         boost::match_results<std::string::const_iterator> match;
         boost::match_flag_type flags = boost::match_default;
 
-        // The regular expression for matching begin and end tags. Also extracts parameters from start tags.
+        // The regular expression for matching begin and end tags.
+        // Also extracts parameters from start tags.
         typedef boost::basic_regex<char, boost::regex_traits<char>> regex;
         const static regex tag("<(?<begin_tag>\\w+)( "
                                 "(?<params>[^>]+))?>|</"
@@ -103,20 +115,30 @@ namespace ParseTagsImpl {
             const boost::ssub_match& begin_match = match["begin_tag"];
             const boost::ssub_match& end_match = match["end_tag"];
 
-            if (begin_match.matched) {
+            if (end_match.matched) {
+                //std::cout << "end: " << std::string_view{end_match.first, end_match.second} << std::endl;
+                // An end tag encountered. Stop parsing here.
+                return current + match.position();
+
+            } else if (begin_match.matched) {
+                //std::cout << "beg: " << std::string_view{begin_match.first, begin_match.second} << std::endl;
                 // A new tag begins. Finish current plaintext tag if it is non-empty.
                 if (tags && current != current + match.position()) {
                     tags->emplace_back(RichText::PLAINTEXT_TAG, "",
                                        std::string(current, current + match.position()));
                 }
 
-                // Recurse to the next nesting level.
-                current = FinishTag(begin_match, match["params"],
-                                    current + match.position() + match.length(), end, tags);
+                if (std::string_view{begin_match.first, begin_match.second} == Font::RESET_TAG) [[unlikely]] {
+                    if (!tags)
+                        return current + match.position();
+                    else
+                        current += match.position() + match.length();
 
-            } else if (end_match.matched) {
-                // An end tag encountered. Stop parsing here.
-                return current + match.position();
+                } else {
+                    // Recurse to the next nesting level.
+                    current = FinishTag(begin_match, match["params"],
+                                        current + match.position() + match.length(), end, tags);
+                }
 
             } else {
                 // This really shouldn't happen.
