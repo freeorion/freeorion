@@ -92,7 +92,7 @@ namespace ParseTagsImpl {
         }
     }
 
-    constexpr auto ToSV(std::pair<std::string::const_iterator, std::string::const_iterator> its)
+    auto ToSV(std::pair<std::string::const_iterator, std::string::const_iterator> its)
     { return std::string_view{std::addressof(*its.first), static_cast<std::size_t>(std::distance(its.first, its.second))}; };
 
     //! Parses tags until the first unmatched close tag, or the end.
