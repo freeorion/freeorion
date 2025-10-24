@@ -62,28 +62,30 @@ namespace ParseTagsImpl {
             std::string error = "Error parsing rich text tags: expected end tag:" + tag + " got end of string.";
             throw std::runtime_error(error);
         }
+
         // ParseTagsImpl should have dropped us off just before the end of our tag.
         const std::string end_tag = "</" + tag + ">";
 
         if (StartsWith(current, end, end_tag)) {
             // A tag was successfully fully read. Add it to tags, if we got one.
             if (tags)
-                tags->emplace_back(std::move(tag), std::move(parameters),
-                                   std::string(start, current));
+                tags->emplace_back(std::move(tag), std::move(parameters), std::string(start, current));
 
             // Continue after the tag.
-            return current + end_tag.length();
+            return std::next(current, end_tag.length());
 
         } else if (StartsWith(current, end, reset_tag)) {
             if (tags)
                 tags->emplace_back(std::move(tag), "", std::string(start, current));
 
-            // Continue without advancing
+            // Continue without advancing, as a reset tag closes all open tags, not just the inner-most tag
             return current;
 
         } else [[unlikely]] {
-            // The end tag eas not the expected end tag.
-            std::string rest_prefix(current, std::min(current + 20, end));
+            // The end tag was not the expected end tag.
+            const auto end_or_20_later_offset =
+                std::min<decltype(std::distance(current, end))>(std::distance(current, end), 20);
+            std::string rest_prefix(current, std::next(current, end_or_20_later_offset));
             // The rest prefix is likely to be a wrong end tag, but no worries, the rendering
             // tag interpreter ignores unpaired end tags so it will display fine.
             std::string error = "Error parsing rich text tags: expected end tag: </" + tag +
@@ -121,27 +123,23 @@ namespace ParseTagsImpl {
             if (end_match.matched) {
                 //std::cout << "end: " << std::string_view{end_match.first, end_match.second} << std::endl;
                 // An end tag encountered. Stop parsing here.
-                return current + match.position();
+                return std::next(current, match.position());
 
             } else if (begin_match.matched) {
+                const auto match_start = std::next(current, match.position());
+
                 //std::cout << "beg: " << std::string_view{begin_match.first, begin_match.second} << std::endl;
                 // A new tag begins. Finish current plaintext tag if it is non-empty.
-                if (tags && current != current + match.position()) {
-                    tags->emplace_back(RichText::PLAINTEXT_TAG, "",
-                                       std::string(current, current + match.position()));
-                }
+                if (tags && current != match_start)
+                    tags->emplace_back(RichText::PLAINTEXT_TAG, "", std::string(current, match_start));
 
-                if (ToSV(begin_match) == Font::RESET_TAG) [[unlikely]] {
-                    if (!tags)
-                        return current + match.position();
-                    else
-                        current += match.position() + match.length();
+                // new tag is actually a reset tag. abort up the call chain to excape all open tags
+                if (!tags && ToSV(begin_match) == Font::RESET_TAG) [[unlikely]]
+                    return match_start;
 
-                } else {
-                    // Recurse to the next nesting level.
-                    current = FinishTag(begin_match, match["params"],
-                                        current + match.position() + match.length(), end, tags);
-                }
+                // Recurse to the next nesting level.
+                auto match_end = std::next(match_start, match.length());
+                current = FinishTag(begin_match, match["params"], match_end, end, tags);
 
             } else {
                 // This really shouldn't happen.
