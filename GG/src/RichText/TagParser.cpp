@@ -92,6 +92,9 @@ namespace ParseTagsImpl {
         }
     }
 
+    constexpr auto ToSV(std::pair<std::string::const_iterator, std::string::const_iterator> its)
+    { return std::string_view{std::addressof(*its.first), static_cast<std::size_t>(std::distance(its.first, its.second))}; };
+
     //! Parses tags until the first unmatched close tag, or the end.
     //! \return The position before the first unmatched closing tag or the end.
     std::string::const_iterator ParseTagsImpl(const std::string::const_iterator start,
@@ -128,7 +131,7 @@ namespace ParseTagsImpl {
                                        std::string(current, current + match.position()));
                 }
 
-                if (std::string_view{begin_match.first, begin_match.second} == Font::RESET_TAG) [[unlikely]] {
+                if (ToSV(begin_match) == Font::RESET_TAG) [[unlikely]] {
                     if (!tags)
                         return current + match.position();
                     else
