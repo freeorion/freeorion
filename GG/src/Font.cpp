@@ -451,63 +451,47 @@ namespace {
                                       CPSize& code_point_offset, std::vector<Font::TextElement>& pending_formatting_tags,
                                       const TextNextFn& text_next_fn)
     {
-        auto it = elem_text.begin();
-        const auto end_it = elem_text.end();
-        while (it != end_it) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(elem_text.begin(), it))};
-            const uint32_t c = text_next_fn(it, end_it);
-            if (c == WIDE_CR || c == WIDE_FF)  {
-                ++code_point_offset;
-                continue;
+        const auto get_dest_char_data =
+            [&line_data,
+             &last_line_of_curr_just,
+             orig_just,
+             chars_per_box_width{std::max<int32_t>(1, Value(box_width)) / std::max<int8_t>(1, space_width)}]
+            (bool on_new_line) -> auto&
+        {
+
+            if (on_new_line || line_data.empty()) {
+                const auto new_just = (last_line_of_curr_just || line_data.empty()) ?
+                    orig_just : line_data.back().justification;
+                line_data.emplace_back(new_just).char_data.reserve(chars_per_box_width);
+                last_line_of_curr_just = false;
             }
-            const StrSize char_size{std::distance(elem_text.begin(), it) - Value(char_index)};
+            return line_data.back().char_data;
+        };
+
+        const auto begin_it = elem_text.begin();
+        const auto end_it = elem_text.end();
+        for (auto it = begin_it; it != end_it; ++code_point_offset) {
+            const StrSize char_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
+            const uint32_t c = text_next_fn(it, end_it);
+
+            if (c == WIDE_CR || c == WIDE_FF)
+                continue;
+
+            const StrSize next_char_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of next glyph
+            const StrSize char_size{next_char_index - char_index}; // char-bytes for glyph
 
             const X advance_position =
                 (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
                 (c == WIDE_NEWLINE) ? x : (x + space_width);
-            const X advance = advance_position - x;
+            const X glyph_width = advance_position - x;
 
-            // if we're using linewrap and this space won't fit on this line
-            if ((format & FORMAT_LINEWRAP) && (box_width < advance_position)) {
-                if (x == X0 && box_width < advance) {
-                    // if the space is larger than the line and alone
-                    // on the line, let the space overrun this line
-                    // and then start a new one
-                    line_data.emplace_back();
-                    x = X0; // reset the x-position to 0
-                    SetJustification(last_line_of_curr_just,
-                                     line_data.back(),
-                                     orig_just,
-                                     line_data.at(line_data.size() - 2).justification);
-                } else {
-                    // otherwise start a new line and put the space there
-                    line_data.emplace_back();
-                    x = advance;
-                    line_data.back().char_data.emplace_back(
-                        x,
-                        original_string_offset + char_index,
-                        char_size,
-                        code_point_offset,
-                        pending_formatting_tags);
+            const bool move_down = (format & FORMAT_LINEWRAP) && (box_width < advance_position) && (x != X0);
+            x = move_down ? glyph_width : advance_position; // x is the furthest-right extent of the text element
 
-                    pending_formatting_tags.clear();
-                    SetJustification(last_line_of_curr_just,
-                                     line_data.back(),
-                                     orig_just,
-                                     line_data.at(line_data.size() - 2).justification);
-                }
-            } else { // there's room for the space, or we're not using linewrap
-                x += advance;
-                line_data.back().char_data.emplace_back(
-                    x,
-                    original_string_offset + char_index,
-                    char_size,
-                    code_point_offset,
-                    pending_formatting_tags);
-                pending_formatting_tags.clear();
-            }
-
-            ++code_point_offset;
+            auto& dest_char_data = get_dest_char_data(move_down);
+            dest_char_data.emplace_back(x, original_string_offset + char_index, char_size,
+                                        code_point_offset, std::move(pending_formatting_tags));
+            pending_formatting_tags.clear();
         }
     }
 
@@ -516,7 +500,7 @@ namespace {
         for (const auto& w : widths)
             rv += w;
         return rv;
-    };;
+    };
 
     template <typename TextNextFn = U8NextFn>
     CONSTEXPR_FONT void AddTextWordbreak(X& x, Font::Substring element_text,
@@ -694,7 +678,7 @@ namespace {
             line_data.emplace_back(orig_just);
         }
 
-        X x = X0;
+        X x = X0; // right extent of previously-added glyph, and potential x-position of next glyph or space
         // the position within the original string of the current TextElement
         StrSize original_string_offset(S0);
         // the index of the first code point of the current TextElement
