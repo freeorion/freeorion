@@ -36,8 +36,6 @@ struct RichTextTag {
         RichTextTag(std::string{tag_}, std::move(params_string_), std::move(content_))
     {}
 
-    RichTextTag(RichTextTag&& rhs) = default;
-
     //! Return the tag as a string that parses back to itself.
     std::string ToString() const
     { return "<" + tag + (!tag_params.empty() ? (" " + tag_params) : "") + ">" + content + "</" + tag + ">"; }
