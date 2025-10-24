@@ -309,8 +309,8 @@ public:
         CONSTEXPR_FONT TextTag() noexcept = default;
 
         CONSTEXPR_FONT explicit TextTag(TextElementType type_, uint32_t text_size_) noexcept :
-            type(type_),
-            text_size(text_size_)
+            text_size(text_size_),
+            type(type_)
         {}
     };
 
