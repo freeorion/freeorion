@@ -535,6 +535,7 @@ namespace {
             SetJustification(last_line_of_curr_just, new_last_line_data, orig_just, prev_justification);
         }
         auto& last_char_data = line_data.back().char_data;
+        last_char_data.reserve(element_text.size());
 
         const auto start_it = element_text.begin();
         auto it = start_it;
@@ -580,6 +581,7 @@ namespace {
         // get vector of char data to insert into
         auto& last_line_data = line_data.back();
         auto& last_char_data = last_line_data.char_data;
+        last_char_data.reserve(element_text.size());
 
         const auto start_it = element_text.begin();
         auto it = start_it;
@@ -683,8 +685,10 @@ namespace {
         bool last_line_of_curr_just = false; // is this the last line of the current justification? (for instance when a </right> tag is encountered)
 
         Font::LineVec line_data;
-        if (!text_elements.empty())
+        if (!text_elements.empty()) {
+            line_data.reserve(text_elements.size()); // probably an overallocation
             line_data.emplace_back(orig_just);
+        }
 
         X x = X0;
         // the position within the original string of the current TextElement
