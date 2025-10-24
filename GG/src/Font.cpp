@@ -456,53 +456,57 @@ namespace {
         while (it != end_it) {
             const StrSize char_index{static_cast<std::size_t>(std::distance(elem_text.begin(), it))};
             const uint32_t c = text_next_fn(it, end_it);
+            if (c == WIDE_CR || c == WIDE_FF)  {
+                ++code_point_offset;
+                continue;
+            }
             const StrSize char_size{std::distance(elem_text.begin(), it) - Value(char_index)};
-            if (c != WIDE_CR && c != WIDE_FF) {
-                const X advance_position =
-                    (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
-                    (c == WIDE_NEWLINE) ? x : (x + space_width);
-                const X advance = advance_position - x;
 
-                // if we're using linewrap and this space won't fit on this line
-                if ((format & FORMAT_LINEWRAP) && (box_width < advance_position)) {
-                    if (x == X0 && box_width < advance) {
-                        // if the space is larger than the line and alone
-                        // on the line, let the space overrun this line
-                        // and then start a new one
-                        line_data.emplace_back();
-                        x = X0; // reset the x-position to 0
-                        SetJustification(last_line_of_curr_just,
-                                         line_data.back(),
-                                         orig_just,
-                                         line_data.at(line_data.size() - 2).justification);
-                    } else {
-                        // otherwise start a new line and put the space there
-                        line_data.emplace_back();
-                        x = advance;
-                        line_data.back().char_data.emplace_back(
-                            x,
-                            original_string_offset + char_index,
-                            char_size,
-                            code_point_offset,
-                            pending_formatting_tags);
+            const X advance_position =
+                (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
+                (c == WIDE_NEWLINE) ? x : (x + space_width);
+            const X advance = advance_position - x;
 
-                        pending_formatting_tags.clear();
-                        SetJustification(last_line_of_curr_just,
-                                         line_data.back(),
-                                         orig_just,
-                                         line_data.at(line_data.size() - 2).justification);
-                    }
-                } else { // there's room for the space, or we're not using linewrap
-                    x += advance;
+            // if we're using linewrap and this space won't fit on this line
+            if ((format & FORMAT_LINEWRAP) && (box_width < advance_position)) {
+                if (x == X0 && box_width < advance) {
+                    // if the space is larger than the line and alone
+                    // on the line, let the space overrun this line
+                    // and then start a new one
+                    line_data.emplace_back();
+                    x = X0; // reset the x-position to 0
+                    SetJustification(last_line_of_curr_just,
+                                     line_data.back(),
+                                     orig_just,
+                                     line_data.at(line_data.size() - 2).justification);
+                } else {
+                    // otherwise start a new line and put the space there
+                    line_data.emplace_back();
+                    x = advance;
                     line_data.back().char_data.emplace_back(
                         x,
                         original_string_offset + char_index,
                         char_size,
                         code_point_offset,
                         pending_formatting_tags);
+
                     pending_formatting_tags.clear();
+                    SetJustification(last_line_of_curr_just,
+                                     line_data.back(),
+                                     orig_just,
+                                     line_data.at(line_data.size() - 2).justification);
                 }
+            } else { // there's room for the space, or we're not using linewrap
+                x += advance;
+                line_data.back().char_data.emplace_back(
+                    x,
+                    original_string_offset + char_index,
+                    char_size,
+                    code_point_offset,
+                    pending_formatting_tags);
+                pending_formatting_tags.clear();
             }
+
             ++code_point_offset;
         }
     }
