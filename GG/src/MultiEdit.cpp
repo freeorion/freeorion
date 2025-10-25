@@ -367,28 +367,35 @@ void MultiEdit::SetText(std::string str)
     m_preserve_text_position_on_next_set_text = false;
 }
 
+namespace {
+    constexpr Flags<TextFormat> StyleToTextFormat(Flags<MultiEditStyle> style)
+    {
+        Flags<TextFormat> format;
+        if (style & MULTI_WORDBREAK)
+            format |= FORMAT_WORDBREAK;
+        if (style & MULTI_LINEWRAP)
+            format |= FORMAT_LINEWRAP;
+        if (style & MULTI_VCENTER)
+            format |= FORMAT_VCENTER;
+        if (style & MULTI_TOP)
+            format |= FORMAT_TOP;
+        if (style & MULTI_BOTTOM)
+            format |= FORMAT_BOTTOM;
+        if (style & MULTI_CENTER)
+            format |= FORMAT_CENTER;
+        if (style & MULTI_LEFT)
+            format |= FORMAT_LEFT;
+        if (style & MULTI_RIGHT)
+            format |= FORMAT_RIGHT;
+        return format;
+    }
+}
+
 void MultiEdit::SetStyle(Flags<MultiEditStyle> style)
 {
     m_style = style;
     ValidateStyle();
-    Flags<TextFormat> format;
-    if (m_style & MULTI_WORDBREAK)
-        format |= FORMAT_WORDBREAK;
-    if (m_style & MULTI_LINEWRAP)
-        format |= FORMAT_LINEWRAP;
-    if (m_style & MULTI_VCENTER)
-        format |= FORMAT_VCENTER;
-    if (m_style & MULTI_TOP)
-        format |= FORMAT_TOP;
-    if (m_style & MULTI_BOTTOM)
-        format |= FORMAT_BOTTOM;
-    if (m_style & MULTI_CENTER)
-        format |= FORMAT_CENTER;
-    if (m_style & MULTI_LEFT)
-        format |= FORMAT_LEFT;
-    if (m_style & MULTI_RIGHT)
-        format |= FORMAT_RIGHT;
-    SetTextFormat(format);
+    SetTextFormat(StyleToTextFormat(m_style));
     SetText(Text());
 }
 
