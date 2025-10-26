@@ -93,7 +93,7 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
 
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
 
-    [[nodiscard]] virtual bool FlattenSubEvents() const override
+    [[nodiscard]] virtual bool FlattenSubEvents() const noexcept override
     { return true; }
 
 protected:
