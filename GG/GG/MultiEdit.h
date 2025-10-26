@@ -50,7 +50,6 @@ public:
               Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP,
               Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
-    ~MultiEdit() = default;
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const noexcept override;

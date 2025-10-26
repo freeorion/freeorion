@@ -67,8 +67,6 @@ public:
          Clr color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
-    ~Spin() = default;
-
     Pt      MinUsableSize() const override;
 
     T       Value() const;              ///< returns the current value of the control's text

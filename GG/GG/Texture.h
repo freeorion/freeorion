@@ -154,7 +154,7 @@ private:
 
 /** \brief This class is a convenient way to store the info needed to use a
     portion of an OpenGL texture. */
-class GG_API SubTexture
+class GG_API SubTexture final
 {
 public:
     SubTexture() = default;
@@ -173,8 +173,6 @@ public:
 
     SubTexture& operator=(const SubTexture& rhs);
     SubTexture& operator=(SubTexture&& rhs) noexcept;
-
-    virtual ~SubTexture() = default;
 
     bool                    Empty() const noexcept { return !m_texture; }           ///< true if this object has no associated GG::Texture
     std::array<GLfloat, 4>  TexCoords() const noexcept { return m_tex_coords; }     ///< texture coordinates to use when blitting this sub-texture

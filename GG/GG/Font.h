@@ -679,8 +679,6 @@ public:
     Font(std::string font_filename, unsigned int pts, const std::vector<uint8_t>& file_contents,
          CharSetIter first, CharSetIter last);
 
-    ~Font() = default;
-
     /** Returns the name of the file from which this font was created. */
     const auto& FontName() const noexcept { return m_font_filename; }
 

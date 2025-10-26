@@ -37,7 +37,6 @@ public:
         Wnd(x, y, w, h, INTERACTIVE),
         m_content(std::move(content))
     {}
-    ~ScrollPanel() = default;
     void CompleteConstruction() override;
 
     void SizeMove(Pt ul, Pt lr) override;

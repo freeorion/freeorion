@@ -115,7 +115,6 @@ public:
 
         Row() : Row(ListBox::DEFAULT_ROW_WIDTH, ListBox::DEFAULT_ROW_HEIGHT) {}
         Row(X w, Y h);
-        ~Row() = default;
 
         void CompleteConstruction() override;
 
@@ -205,7 +204,6 @@ public:
     static constexpr unsigned int BORDER_THICK = 2; ///< the thickness with which to render the border of the control
 
     ListBox(Clr color, Clr interior = CLR_ZERO);
-    ~ListBox() = default;
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const noexcept override;
