@@ -133,14 +133,12 @@ auto ExtractParameters(std::string_view params_string)
 }
 
 /**
-    * \brief Private implementation class for rich text control.
-    */
+ * \brief Private implementation class for rich text control.
+ */
 class GG::RichTextPrivate {
 public:
-    RichTextPrivate(RichText& q, const std::string& content,
-                    std::shared_ptr<Font> font, Clr color,
-                    Flags<TextFormat> format = FORMAT_NONE);
-    virtual ~RichTextPrivate() = default;
+    RichTextPrivate(RichText& q, const std::string& content, std::shared_ptr<Font> font,
+                    Clr color, Flags<TextFormat> format = FORMAT_NONE);
 
     const auto BlockCount() noexcept { return m_blocks.size(); }
 
@@ -226,20 +224,6 @@ void RichTextPrivate::SizeMove(Pt ul, Pt lr)
     // Redo layout if necessary.
     if (m_owner.Size() != original_size)
         DoLayout();
-}
-
-namespace {
-    // Get the set of keys from a map.
-    template <typename T, typename V, typename C>
-    std::set<T> MapKeys(const std::map<T, V, C>& arg_map)
-    {
-        std::set<T> keys;
-        for ([[maybe_unused]] auto& [key, val] : arg_map) {
-            (void)val;  // quiet unused varianle warning
-            keys.insert(key);
-        }
-        return keys;
-    }
 }
 
 std::vector<RichTextTag> RichTextPrivate::ParseTags(const std::string& content)
