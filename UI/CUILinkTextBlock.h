@@ -15,9 +15,7 @@ public:
     void CompleteConstruction() override;
     GG::Pt SetMaxWidth(GG::X width) override;
 
-    void Render() override {}
-
-    const auto& Text() const noexcept { return *m_link_text; }
+    void Render() noexcept override {}
 
     class Factory final : public GG::RichText::IBlockControlFactory {
     public:
