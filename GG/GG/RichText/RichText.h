@@ -46,7 +46,7 @@ public:
     // Allows you to register a custom control for displaying plaintext.
     static constexpr std::string_view PLAINTEXT_TAG = "GG_RICH_PLAIN";
 
-    RichText(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font,
+    RichText(X x, Y y, X w, Y h, const std::string& str, std::shared_ptr<Font> font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
              Flags<WndFlag> flags = NO_WND_FLAGS);
 
