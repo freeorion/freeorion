@@ -56,7 +56,7 @@ struct FO_COMMON_API CombatEvent {
     { return true; }
 
     /** Return true if sub events are to be flattened on display; */
-    virtual bool FlattenSubEvents() const
+    virtual bool FlattenSubEvents() const noexcept
     { return false; }
 
     /** Return principal faction.

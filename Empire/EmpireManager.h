@@ -29,7 +29,6 @@ public:
 
     EmpireManager() = default;
     EmpireManager& operator=(EmpireManager&& other) noexcept;
-    ~EmpireManager() = default;
 
     [[nodiscard]] const auto&                           EmpireIDs() const noexcept { return m_empire_ids; }
     [[nodiscard]] const const_container_type&           GetEmpires() const noexcept { return m_const_empire_map; }

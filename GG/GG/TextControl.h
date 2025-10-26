@@ -87,8 +87,6 @@ public:
     */
     explicit TextControl(const TextControl& that);
 
-    ~TextControl() = default;
-
     /** Assignment operator.
 
         Text Control requires an assignment operator because m_text_elements
