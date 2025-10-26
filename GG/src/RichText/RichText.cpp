@@ -291,10 +291,10 @@ void RichTextPrivate::DoLayout()
 /// RichText public interface //
 ///////////////////////////////
 RichText::RichText(X x, Y y, X w, Y h, const std::string& str,
-                    const std::shared_ptr<Font>& font, Clr color,
-                    Flags<TextFormat> format, Flags<WndFlag> flags) :
+                   std::shared_ptr<Font> font, Clr color,
+                   Flags<TextFormat> format, Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
-    m_self(std::make_unique<RichTextPrivate>(*this, str, font, color, format))
+    m_self(std::make_unique<RichTextPrivate>(*this, str, std::move(font), color, format))
 {
     SetName("RichText (" + std::to_string(str.size()) + "): \"" + str.substr(0, 16)
             + "\" blocks: " + std::to_string(m_self->BlockCount()));
