@@ -16,10 +16,6 @@
 
 using namespace GG;
 
-BlockControl::BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags):
-    Control(x, y, w, Y0, flags)
-{}
-
 void BlockControl::SizeMove(Pt ul, Pt lr)
 {
     Pt previous_ul = UpperLeft();
@@ -33,7 +29,6 @@ void BlockControl::SizeMove(Pt ul, Pt lr)
     // Recalculate size if width changed.
     // Block controls only listen to width setting from outside
     // and decide their own height.
-    if (new_width != previous_width) {
+    if (new_width != previous_width)
         SetMaxWidth(lr.x - ul.x);
-    }
 }
