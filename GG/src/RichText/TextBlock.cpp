@@ -37,14 +37,19 @@ void TextBlock::CompleteConstruction()
 
 Pt TextBlock::SetMaxWidth(X width)
 {
+    const auto previous_width = Width();
+
     // Reflow the text to the given width. Height is ignored.
     m_text->Resize(GG::Pt(width, Y0));
 
     // Use the size the text requires.
-    Pt text_size = m_text->MinUsableSize();
-    Resize(text_size);
+    const Pt text_size = m_text->MinUsableSize();
+    const Pt ul = UpperLeft();
+    Control::SizeMove(ul, ul + text_size);
+
     return text_size;
 }
+
 
 // A factory for creating text blocks from tags.
 class TextBlockFactory: public RichText::IBlockControlFactory {
