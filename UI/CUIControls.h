@@ -323,7 +323,7 @@ public:
 /** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
 class CUILinkTextMultiEdit final : public CUIMultiEdit, public TextLinker {
 public:
-    CUILinkTextMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
+    explicit CUILinkTextMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
     const GG::Font::LineVec& GetLineData() const noexcept override { return CUIMultiEdit::GetLineData(); }
@@ -358,7 +358,7 @@ private:
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down
   * lists, such as the ones used in the game setup dialogs. */
 struct CUISimpleDropDownListRow final : public GG::ListBox::Row {
-    CUISimpleDropDownListRow(std::string row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
+    explicit CUISimpleDropDownListRow(std::string row_text, GG::Y row_height = DEFAULT_ROW_HEIGHT);
     void CompleteConstruction() override;
     static constexpr GG::Y DEFAULT_ROW_HEIGHT{22};
 private:
@@ -377,8 +377,8 @@ private:
   */
 class StatisticIcon final : public GG::Control {
 public:
-    StatisticIcon(std::shared_ptr<GG::Texture> texture,
-                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
+    explicit StatisticIcon(std::shared_ptr<GG::Texture> texture,
+                           GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
     StatisticIcon(std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
