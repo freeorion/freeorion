@@ -25,7 +25,9 @@ class GG_API BlockControl : public Control
 {
 public:
     //! Create a block control.
-    BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
+    BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags) :
+        Control(x, y, w, Y0, flags)
+    {}
 
     //! Set the maximum width of the block control. Returns the size based on the width.
     virtual Pt SetMaxWidth(X width) = 0;
