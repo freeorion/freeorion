@@ -272,14 +272,13 @@ public:
     void CompleteConstruction() override;
 
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void KeyPress(GG::Key key, uint32_t key_code_point,
-                  GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void AcceptPastedText(const std::string& text) override;
     void GainingFocus() override;
     void LosingFocus() override;
     void Render() override;
     virtual bool AutoComplete() { return false; };
-    void DisallowChars(std::string_view chars) { m_disallowed_chars = chars; }
+    void DisallowChars(std::string_view chars) noexcept { m_disallowed_chars = chars; }
 
     mutable boost::signals2::signal<void ()> GainingFocusSignal;
     mutable boost::signals2::signal<void ()> LosingFocusSignal;
@@ -312,8 +311,7 @@ private:
 /** a FreeOrion MultiEdit control */
 class CUIMultiEdit : public GG::MultiEdit {
 public:
-    explicit CUIMultiEdit(std::string str,
-                          GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
+    explicit CUIMultiEdit(std::string str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     void CompleteConstruction() override;
 
     void Render() override;
