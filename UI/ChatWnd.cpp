@@ -76,7 +76,7 @@ namespace {
 
 class MessageWndEdit : public CUIEdit {
 public:
-    MessageWndEdit();
+    MessageWndEdit() : CUIEdit("") {}
 
     void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     bool AutoComplete() override;   //!< Autocomplete current word
@@ -98,19 +98,15 @@ private:
     std::set<std::string>       m_game_words;
 
     // Repeated autocomplete variables
-     std::vector<std::string>   m_auto_complete_choices;
-     unsigned int               m_repeated_tab_count = 0;
-     std::string                m_last_line_read;
-     std::string                m_last_game_word;
+    std::vector<std::string>    m_auto_complete_choices;
+    unsigned int                m_repeated_tab_count = 0;
+    std::string                 m_last_line_read;
+    std::string                 m_last_game_word;
 };
 
 ////////////////////
 // MessageWndEdit //
 ////////////////////
-MessageWndEdit::MessageWndEdit() :
-    CUIEdit("")
-{}
-
 void MessageWndEdit::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     switch (key) {
     case GG::Key::GGK_RETURN:
