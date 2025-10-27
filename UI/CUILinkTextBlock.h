@@ -9,8 +9,7 @@ class CUILinkTextMultiEdit;
 
 class CUILinkTextBlock final : public GG::BlockControl {
 public:
-    CUILinkTextBlock(std::string str, GG::Flags<GG::TextFormat> format,
-                     GG::Clr color, GG::Flags<GG::WndFlag> flags);
+    CUILinkTextBlock(std::string str, GG::Clr color, GG::Flags<GG::WndFlag> flags);
 
     void CompleteConstruction() override;
     GG::Pt SetMaxWidth(GG::X width) override;

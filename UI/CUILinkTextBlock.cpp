@@ -3,8 +3,7 @@
 #include "../util/VarText.h"
 #include "CUIControls.h"
 
-CUILinkTextBlock::CUILinkTextBlock(std::string str, GG::Flags<GG::TextFormat> format, GG::Clr color,
-                                   GG::Flags<GG::WndFlag> flags) :
+CUILinkTextBlock::CUILinkTextBlock(std::string str, GG::Clr color, GG::Flags<GG::WndFlag> flags) :
     GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
     m_link_text(GG::Wnd::Create<CUILinkTextMultiEdit>(
         std::move(str),
@@ -40,9 +39,9 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
 
 std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
     const GG::RichText::TAG_PARAMS&, std::string content,
-    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat> format) const
+    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat>) const
 {
-    auto block = GG::Wnd::Create<CUILinkTextBlock>(std::move(content), format, color, GG::NO_WND_FLAGS);
+    auto block = GG::Wnd::Create<CUILinkTextBlock>(std::move(content), color, GG::NO_WND_FLAGS);
 
     // Wire the block's signals to come through us.
     block->m_link_text->LinkClickedSignal.connect(this->LinkClickedSignal);
