@@ -254,15 +254,17 @@ void RichTextPrivate::CreateBlocks(std::vector<RichTextTag> tags)
 
     // Create blocks using factories.
     for (RichTextTag& tag : tags) {
-        const auto params = ExtractParameters(tag.tag_params);
-        const auto it = std::find_if(m_block_factory_map.begin(), m_block_factory_map.end(),
-                                     [tag = std::string_view{tag.tag}](const auto& key_fac)
-                                     { return key_fac.first == tag; });
+        const auto is_tag_factory = [tag = std::string_view{tag.tag}](const auto& key_fac) noexcept
+        { return key_fac.first == tag; };
+
+        const auto it = std::find_if(m_block_factory_map.begin(), m_block_factory_map.end(), is_tag_factory);
         if (it == m_block_factory_map.end())
             continue;
         const auto* fac = it->second.get();
         if (!fac)
             continue;
+
+        const auto params = ExtractParameters(tag.tag_params);
         if (auto block = fac->CreateFromTag(params, std::move(tag.content), m_font, m_color, m_format))
             m_blocks.push_back(std::move(block));
     }
