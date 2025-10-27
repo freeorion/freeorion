@@ -27,7 +27,7 @@ public:
               Flags<TextFormat> format, Flags<WndFlag> flags);
 
     void CompleteConstruction() override;
-    void Render() override {}
+    void Render() noexcept override {}
 
     //! Calculate the size based on the width it should take.
     Pt SetMaxWidth(X width) override;
