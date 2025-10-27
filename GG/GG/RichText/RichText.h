@@ -23,9 +23,8 @@ namespace GG {
 
 class RichTextPrivate;
 
-/** \brief A control for showing text and images.
- */
-class GG_API RichText: public Control
+/** \brief A control for showing text and images. */
+class GG_API RichText final : public Control
 {
 public:
     using TAG_PARAMS = std::vector<std::pair<std::string_view, std::string_view>>;
@@ -42,9 +41,10 @@ public:
                                                             Flags<TextFormat>) const = 0;
     };
 
-    //! The special tag that is used to represent plaintext.
-    // Allows you to register a custom control for displaying plaintext.
+    //! Special tag that are used to represent plaintext (formatted) or unformatted text
+    // Allows registration of custom controls for displaying plaintext or unformatted text.
     static constexpr std::string_view PLAINTEXT_TAG = "GG_RICH_PLAIN";
+    static constexpr std::string_view UNFORMATTED_TEXT_TAG = "GG_POOR";
 
     RichText(X x, Y y, X w, Y h, const std::string& str, std::shared_ptr<Font> font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
@@ -55,7 +55,8 @@ public:
     ~RichText(); // needed due to unique_ptr
 
     /** Set the text content. */
-    virtual void SetText(const std::string& str);
+    void SetText(const std::string& str);
+    void SetUnformattedText(std::string str);
 
     /**
      * @brief Set the whitespace around the content.
