@@ -488,7 +488,7 @@ std::pair<std::size_t, CPSize> MultiEdit::GlyphAt(CPSize idx) const
     return retval;
 }
 
-Pt MultiEdit::ScrollPosition() const
+Pt MultiEdit::ScrollPosition() const noexcept
 {
     return {m_hscroll ? X{m_hscroll->PosnRange().first} : X0,
             m_vscroll ? Y{m_vscroll->PosnRange().first} : Y0};

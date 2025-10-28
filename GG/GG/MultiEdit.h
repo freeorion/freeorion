@@ -68,7 +68,7 @@ public:
     auto MaxLinesOfHistory() const noexcept { return m_max_lines_history; }
 
     /** Returns the positions of the scrollbars. */
-    Pt ScrollPosition() const;
+    Pt ScrollPosition() const noexcept;
 
     void Render() override;
 
