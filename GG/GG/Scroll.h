@@ -66,13 +66,13 @@ public:
 
     Pt MinUsableSize() const override;
 
-    std::pair<int, int>  PosnRange() const;         ///< range currently being viewed
-    std::pair<int, int>  ScrollRange() const;       ///< defined possible range of control
-    unsigned int         LineSize() const;          ///< returns the current line size
-    unsigned int         PageSize() const;          ///< returns the current page size
+    std::pair<int, int>  PosnRange() const noexcept { return std::pair<int, int>(m_posn, m_posn + m_page_sz); } ///< range currently being viewed
+    std::pair<int, int>  ScrollRange() const noexcept { return std::pair<int, int>(m_range_min, m_range_max); } ///< defined possible range of control
+    unsigned int         LineSize() const noexcept { return m_line_sz; }
+    unsigned int         PageSize() const noexcept { return m_page_sz; }
 
-    Clr                  InteriorColor() const;     ///< returns the color used to render the interior of the Scroll
-    Orientation          ScrollOrientation() const; ///< returns the orientation of the Scroll
+    Clr                  InteriorColor() const noexcept { return m_int_color; } ///< color used to render the interior of the Scroll
+    Orientation          ScrollOrientation() const noexcept { return m_orientation; }
 
     mutable ScrolledSignalType           ScrolledSignal;           ///< the scrolled signal object for this Scroll
     mutable ScrolledAndStoppedSignalType ScrolledAndStoppedSignal; ///< the scrolled-and-stopped signal object for this Scroll

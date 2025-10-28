@@ -105,24 +105,6 @@ Pt Scroll::MinUsableSize() const
     return retval;
 }
 
-std::pair<int, int> Scroll::PosnRange() const
-{ return std::pair<int, int>(m_posn, m_posn + m_page_sz); }
-
-std::pair<int, int> Scroll::ScrollRange() const
-{ return std::pair<int, int>(m_range_min, m_range_max); }
-
-unsigned int Scroll::LineSize() const
-{ return m_line_sz; }
-
-unsigned int Scroll::PageSize() const
-{ return m_page_sz; }
-
-Clr Scroll::InteriorColor() const
-{ return m_int_color; }
-
-Orientation Scroll::ScrollOrientation() const
-{ return m_orientation; }
-
 void Scroll::InitBuffer()
 {
     const auto sz = Size();
