@@ -327,8 +327,8 @@ public:
     const GG::Font::LineVec& GetLineData() const noexcept override { return CUIMultiEdit::GetLineData(); }
     const std::shared_ptr<GG::Font>& GetFont() const noexcept override { return CUIMultiEdit::GetFont(); }
 
-    GG::Pt TextUpperLeft() const override;
-    GG::Pt TextLowerRight() const override;
+    GG::Pt TextUpperLeft() const noexcept override;
+    GG::Pt TextLowerRight() const noexcept override;
     const std::string& RawText() const noexcept override { return m_raw_text; }
 
     void Render() override;

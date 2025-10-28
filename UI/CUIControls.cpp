@@ -1168,10 +1168,10 @@ void CUILinkTextMultiEdit::CompleteConstruction() {
     SetName("CUILinkTextMultiEdit: " + m_raw_text.substr(0, 16));
 }
 
-GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
+GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const noexcept
 { return CUIMultiEdit::TextUpperLeft() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5)); }
 
-GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
+GG::Pt CUILinkTextMultiEdit::TextLowerRight() const noexcept
 { return CUIMultiEdit::TextLowerRight() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5)); }
 
 void CUILinkTextMultiEdit::Render() {
