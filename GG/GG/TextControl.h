@@ -171,11 +171,11 @@ public:
 
     /** Returns the upper-left corner of the text as it is would be rendered
         if it were not bound to the dimensions of this control. */
-    Pt TextUpperLeft() const noexcept;
+    Pt TextUpperLeft() const noexcept { return UpperLeft() + m_text_ul; }
 
     /** Returns the lower-right corner of the text as it is would be rendered
         if it were not bound to the dimensions of this control. */
-    Pt TextLowerRight() const noexcept;
+    Pt TextLowerRight() const noexcept { return UpperLeft() + m_text_lr; }
 
     void Render() override;
 
