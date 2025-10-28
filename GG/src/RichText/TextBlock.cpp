@@ -14,10 +14,8 @@
 
 using namespace GG;
 
-TextBlock::TextBlock(X x, Y y, X w, std::string str,
-                     std::shared_ptr<Font> font,
-                     Clr color, Flags<TextFormat> format,
-                     Flags<WndFlag> flags) :
+TextBlock::TextBlock(X x, Y y, X w, std::string str, std::shared_ptr<Font> font,
+                     Clr color, Flags<TextFormat> format, Flags<WndFlag> flags) :
     BlockControl(x, y, w, flags)
 {
     SetName("TextBlock: " + str.substr(0, 16));
