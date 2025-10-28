@@ -900,6 +900,10 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
 
     namespace ph = boost::placeholders;
 
+    // make copy of default block factories map
+    auto custom_block_factory_map{GG::RichText::DefaultBlockFactoryMap()};
+
+
     // Create a block factory that handles link clicks via this panel
     auto factory = std::make_shared<CUILinkTextBlock::Factory>();
     factory->LinkClickedSignal.connect(
@@ -909,9 +913,6 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     factory->LinkRightClickedSignal.connect(
         boost::bind(&EncyclopediaDetailPanel::HandleLinkDoubleClick, this, ph::_1, ph::_2));
 
-    // make copy of default block factories map
-    auto custom_block_factory_map{GG::RichText::DefaultBlockFactoryMap()};
-
     // insert or replace plain text factory with one made above
     static constexpr auto is_plaintext = [](const auto& fac) noexcept { return fac.first == GG::RichText::PLAINTEXT_TAG; };
     auto plain_text_it = range_find_if(custom_block_factory_map, is_plaintext);
@@ -919,6 +920,18 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
         custom_block_factory_map.emplace_back(GG::RichText::PLAINTEXT_TAG, std::move(factory));
     else
         plain_text_it->second = std::move(factory);
+
+
+    // insert or replace unformatted text factory
+    static constexpr auto is_unformatted_text = [](const auto& fac) noexcept { return fac.first == GG::RichText::UNFORMATTED_TEXT_TAG; };
+    plain_text_it = range_find_if(custom_block_factory_map, is_unformatted_text);
+    if (plain_text_it == custom_block_factory_map.end()) {
+        custom_block_factory_map.emplace_back(GG::RichText::UNFORMATTED_TEXT_TAG,
+                                              std::make_shared<CUITextBlock::Factory>());
+    } else {
+        plain_text_it->second = std::make_shared<CUITextBlock::Factory>();
+    }
+
 
     // use block factory map modified copy for this control
     m_description_rich_text->SetBlockFactoryMap(std::move(custom_block_factory_map));
@@ -4369,8 +4382,12 @@ void EncyclopediaDetailPanel::RefreshImpl() {
             % cost_units));
     }
 
-    if (!detailed_description.empty())
-        m_description_rich_text->SetText(std::move(detailed_description));
+    if (!detailed_description.empty()) {
+        if (m_items_it->second == "ENC_STRINGS")
+            m_description_rich_text->SetUnformattedText(std::move(detailed_description));
+        else
+            m_description_rich_text->SetText(detailed_description);
+    }
 
     m_scroll_panel->ScrollTo(GG::Y0);
 }
