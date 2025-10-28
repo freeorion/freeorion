@@ -153,12 +153,6 @@ std::string_view TextControl::Text(CPSize from, CPSize to) const
     }
 }
 
-Pt TextControl::TextUpperLeft() const noexcept
-{ return UpperLeft() + m_text_ul; }
-
-Pt TextControl::TextLowerRight() const noexcept
-{ return UpperLeft() + m_text_lr; }
-
 void TextControl::Render()
 {
     if (!m_font)
