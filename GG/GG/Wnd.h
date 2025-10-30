@@ -669,7 +669,7 @@ public:
     virtual void PreRender();
 
     /** Require that PreRender() be called to update layout before the next Render(). */
-    virtual void RequirePreRender() noexcept { m_needs_prerender = true; }
+    void RequirePreRender() noexcept { m_needs_prerender = true; }
 
     /** Draws this Wnd.  Note that Wnds being dragged for a drag-and-drop
         operation are rendered twice -- once in-place as normal, once in the
