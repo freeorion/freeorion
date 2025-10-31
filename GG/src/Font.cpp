@@ -390,7 +390,8 @@ namespace {
 
     template <typename GlyphMap, typename TextNextFn = U8NextFn>
     CONSTEXPR_FONT void SetTextElementWidths(const std::string& text, std::vector<Font::TextElement>& text_elements,
-                                             const GlyphMap& glyphs, int8_t space_width, const TextNextFn& text_next_fn = u8next_fn)
+                                             const GlyphMap& glyphs, int8_t space_width,
+                                             const TextNextFn& text_next_fn = u8next_fn)
     { return SetTextElementWidths(text, text_elements, text_elements.begin(), glyphs, space_width, text_next_fn); }
 }
 
@@ -960,14 +961,6 @@ namespace {
     static_assert('A' > 0b00111111 && DummyNextFn::cont_byte('A') == (uint8_t('A') & 0b00111111));
 
 
-    // text with all single-byte chars
-    constexpr std::string_view all_ascii_sv = "!Ascii";
-    using cdp = std::pair<uint32_t, std::ptrdiff_t>;
-    static_assert(dummy_next_fn(all_ascii_sv) == cdp('!', 1));
-    static_assert(dummy_next_fn(all_ascii_sv, 1) == cdp('A', 1));
-    static_assert(dummy_next_fn(all_ascii_sv.end(), all_ascii_sv.end()) == cdp(0, 0));
-
-
     // for constexpr test purposes
     struct DummyPair {
         uint32_t first = 0;
@@ -980,6 +973,85 @@ namespace {
     } dummy_glyph_map;
 
     static_assert(dummy_glyph_map.find(0)->second.advance == 4);
+
+
+    // text with all single-byte chars including whitespace
+    constexpr std::string_view all_ascii_sv = "!Ascii\tX   Y";
+    using cdp = std::pair<uint32_t, std::ptrdiff_t>;
+    static_assert(dummy_next_fn(all_ascii_sv) == cdp('!', 1));
+    static_assert(dummy_next_fn(all_ascii_sv, 1) == cdp('A', 1));
+    static_assert(dummy_next_fn(all_ascii_sv.end(), all_ascii_sv.end()) == cdp(0, 0));
+
+#  if defined(__cpp_lib_constexpr_vector)
+    CONSTEXPR_FONT std::vector<Font::TextElement> ElementsForASCIIText(const std::string& text)
+    {
+        std::vector<Font::TextElement> elems;
+        elems.emplace_back(Font::Substring(text, 0u, 6u));
+        elems.emplace_back(Font::Substring(text, 6u, 7u), Font::TextElement::TextElementType::WHITESPACE);
+        elems.emplace_back(Font::Substring(text, 7u, 8u));
+        elems.emplace_back(Font::Substring(text, 8u, 11u), Font::TextElement::TextElementType::WHITESPACE);
+        elems.emplace_back(Font::Substring(text, 11u, 12u));
+
+        SetTextElementWidths(text, elems, dummy_glyph_map, 4, dummy_next_fn);
+        return elems;
+    }
+
+    // tests line data for ascii text with whitespace
+    constexpr auto test_ascii_whitespace_line_data = [](X box_width) {
+        const std::string text(all_ascii_sv);
+        const auto elems = ElementsForASCIIText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK  | FORMAT_IGNORETAGS;
+        return AssembleLineData(fmt, box_width, elems, 4u, dummy_next_fn);
+    };
+    // different horizontal line widths require different numbers of lines to lay out
+    static_assert(test_ascii_whitespace_line_data(X{9999}).size() == 1u);
+    static_assert(test_ascii_whitespace_line_data(X{32}).size() == 2u);
+    static_assert(test_ascii_whitespace_line_data(X1).size() == 3u);
+    static_assert(test_ascii_whitespace_line_data(X1)[0].char_data.size() == 7u);
+
+    // compares length and contents
+    constexpr auto check_eq = [](const auto& lhs, const auto& rhs) -> bool {
+        if (lhs.size() != rhs.size())
+            return false;
+        for (std::size_t idx = 0; idx < lhs.size(); ++idx)
+            if (lhs[idx] != static_cast<std::decay_t<decltype(lhs[0])>>(rhs[idx]))
+                return false;
+        return true;
+    };
+
+    // extracts char_data string indices from one line stores as chars in an oversized array
+    template <std::size_t line_idx, X box_width>
+    constexpr auto get_ascii_line_arr = []() {
+        std::array<std::string_view::value_type, 16u> arr{};
+        const auto char_data = test_ascii_whitespace_line_data(box_width)[line_idx].char_data;
+        for (std::size_t i = 0; i < char_data.size(); ++i)
+            arr[i] = all_ascii_sv[Value(char_data[i].string_index)];
+        return arr;
+    };
+
+    // layout with 9999 horizontal line width
+    constexpr auto arr0x9999 = get_ascii_line_arr<0, X{9999}>(); // !Ascii\tX   Y
+    static_assert(check_eq(std::string_view{arr0x9999.data()}, all_ascii_sv));
+
+    // layout with 32 horizontal line width
+    constexpr auto arr0x32 = get_ascii_line_arr<0, X{8*4}>(); // !Ascii\t
+    constexpr std::string_view arr0x32sv{arr0x32.data()};
+    static_assert(arr0x32sv.size() == 7u && check_eq(arr0x32sv, std::string_view{"!Ascii\t"}));
+    constexpr auto arr1x32 = get_ascii_line_arr<1, X{8*4}>(); // X   Y
+    constexpr std::string_view arr1x32sv{arr1x32.data()};
+    static_assert(arr1x32sv.size() == 5u && check_eq(arr1x32sv, std::string_view{"X   Y"}));
+
+    // layout with 1 horizontal line width
+    constexpr auto arr0x1 = get_ascii_line_arr<0, X1>();
+    constexpr std::string_view arr0x1sv{arr0x1.data()};
+    static_assert(arr0x1sv.size() == 7u && check_eq(arr0x1sv, std::string_view{"!Ascii\t"}));
+    constexpr auto arr1x1 = get_ascii_line_arr<1, X1>();
+    constexpr std::string_view arr1x1sv{arr1x1.data()};
+    static_assert(arr1x1sv.size() == 4u && check_eq(arr1x1sv, std::string_view{"X   "}));
+    constexpr auto arr2x1 = get_ascii_line_arr<2, X1>();
+    constexpr std::string_view arr2x1sv{arr2x1.data()};
+    static_assert(arr2x1sv.size() == 1u && arr2x1sv.front() == 'Y');
+#  endif
 
 
     // text with multi-byte chars
@@ -1015,14 +1087,6 @@ namespace {
     constexpr std::array<uint8_t, 14> long_chars_as_uint8_expected{
         0xCE, 0xB1,   'b',   0xC3, 0xA5,   0xE3, 0x82, 0xAA,   0xF0, 0x9F, 0xA0, 0x9E,   0xD9, 0x88};
 
-    constexpr auto check_eq = [](const auto& lhs, const auto& rhs) -> bool {
-        if (lhs.size() != rhs.size())
-            return false;
-        for (std::size_t idx = 0; idx < lhs.size(); ++idx)
-            if (lhs[idx] != static_cast<std::decay_t<decltype(lhs[0])>>(rhs[idx]))
-                return false;
-        return true;
-    };
     static_assert(check_eq(long_chars_arr, long_chars_as_uint8_expected));
 
     constexpr std::array<cdp, 6> long_chars_as_uint32_t_and_length_expected{{
@@ -1225,12 +1289,9 @@ namespace {
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
-            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}),
-            c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
-            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}),
-            c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7}),
-            c_to_l_and_c(CPSize{8}), c_to_l_and_c(CPSize{9}),
-            c_to_l_and_c(CPSize{10}), c_to_l_and_c(CPSize{11}),
+            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}), c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
+            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}), c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7}),
+            c_to_l_and_c(CPSize{8}), c_to_l_and_c(CPSize{9}), c_to_l_and_c(CPSize{10}), c_to_l_and_c(CPSize{11}),
             c_to_l_and_c(CPSize{12}), c_to_l_and_c(CPSize{13})
         };
     }();
@@ -1243,6 +1304,26 @@ namespace {
     }};
 
     static_assert(test_tagged_cpidx_to_line_and_cp == test_tagged_line_and_cp_expected);
+
+
+    // tests ignoring tags
+    constexpr auto test_ignored_tags_cpidx_to_line_and_cp = []() {
+        const std::string text(tagged_test_text);
+        const auto elems = ElementsForTaggedText(text);
+
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK  | FORMAT_IGNORETAGS;
+        const auto line_data = AssembleLineData(fmt, GG::X(888), elems, 4u, dummy_next_fn);
+        const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
+
+        return std::array{
+            c_to_l_and_c(CPSize{0}), c_to_l_and_c(CPSize{1}), c_to_l_and_c(CPSize{2}), c_to_l_and_c(CPSize{3}),
+            c_to_l_and_c(CPSize{4}), c_to_l_and_c(CPSize{5}), c_to_l_and_c(CPSize{6}), c_to_l_and_c(CPSize{7}),
+            c_to_l_and_c(CPSize{8}), c_to_l_and_c(CPSize{9}), c_to_l_and_c(CPSize{10}), c_to_l_and_c(CPSize{11}),
+            c_to_l_and_c(CPSize{12}), c_to_l_and_c(CPSize{13})
+        };
+    }();
+
+    static_assert(test_ignored_tags_cpidx_to_line_and_cp[0] == std::pair<std::size_t, CPSize>{0u, CPSize{0}});
 
 
     // tests getting code point index after previous glyph in text with newlines
