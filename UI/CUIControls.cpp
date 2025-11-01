@@ -2207,10 +2207,15 @@ FPSIndicator::FPSIndicator() :
 }
 
 void FPSIndicator::UpdateTextWithFPS(int fps) {
+    const auto& font = this->GetFont();
+    if (!font)
+        return;
     // Keep the ss width uniform (3) to prevent re-layout when size changes cause ChildSizeOrMinSizeOrMaxSizeChanged()
     std::stringstream ss;
     ss << std::setw(3) << std::right << std::to_string(fps);
-    SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % ss.str()));
+    auto str = boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % ss.str());
+    auto [text, elems] = GG::Font::TextAndElementsAssembler{*font}.AddText(std::move(str)).Extract();
+    SetText(std::move(text), std::move(elems));
 }
 
 void FPSIndicator::Render() {
