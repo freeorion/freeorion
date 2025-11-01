@@ -516,11 +516,11 @@ namespace {
         /** Updates the text displayed for the value of each label */
         void UpdateLabels() {
             UpdateValues();
-            for (const auto& value : m_values) {
-                auto label_it = m_labels.find(value.first);
+            for (const auto& [label, value] : m_values) {
+                auto label_it = m_labels.find(label);
                 if (label_it == m_labels.end())
                     continue;
-                label_it->second.second->ChangeTemplatedText(std::to_string(value.second), 0);
+                label_it->second.second->ChangeTemplatedText(std::to_string(value), 0);
             }
         }
 
@@ -573,10 +573,8 @@ namespace {
 
         /** Resize/Move controls for row @p descr
          *  and then advance sizes by @p row_advance */
-        void LayoutRow(const std::string& descr,
-                       GG::Pt& descr_ul, GG::Pt& descr_lr,
-                       GG::Pt& value_ul, GG::Pt& value_lr,
-                       const GG::Pt row_advance)
+        void LayoutRow(const std::string& descr, GG::Pt& descr_ul, GG::Pt& descr_lr,
+                       GG::Pt& value_ul, GG::Pt& value_lr, const GG::Pt row_advance)
         {
             if (!m_labels.contains(descr)) {
                 ErrorLogger() << "Unable to find expected label key " << descr;
@@ -629,9 +627,11 @@ namespace {
                         m_col_widths.at(1) - (m_margin * 2), height)
                 );
             }
-            std::sort(m_ship_design_labels.begin(), m_ship_design_labels.end(),
-                [](LabelValueType a, LabelValueType b) { return a.first->Text() < b.first->Text(); }
-            );
+
+            static constexpr auto label_text_less = [](LabelValueType a, LabelValueType b)
+            { return a.first->Text() < b.first->Text(); };
+            std::sort(m_ship_design_labels.begin(), m_ship_design_labels.end(), label_text_less);
+
             for (auto& [label, value] : m_ship_design_labels) {
                 AttachChild(label);
                 AttachChild(value);
