@@ -2112,208 +2112,125 @@ CPSize GG::CodePointIndexOfXOnLine0(const Font::LineVec& line_data, X x, X offse
 ///////////////////////////////////////
 // class GG::Font::TextAndElementsAssembler
 ///////////////////////////////////////
-class Font::TextAndElementsAssembler::Impl
-{
-public:
-    explicit Impl(const Font& font) :
-        m_font(font)
-    {}
-    Impl(const Font& font, std::size_t text_capacity, std::size_t elements_capacity) :
-        m_font(font)
-    {
-        m_text.reserve(text_capacity);
-        m_text_elements.reserve(elements_capacity);
-    }
-
-    /** Return the constructed text.*/
-    const auto& Text() const noexcept
-    { return m_text; }
-
-    auto Extract()
-    {
-        SetTextElementWidths(m_text, m_text_elements, m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
-        return std::pair(std::move(m_text), std::move(m_text_elements));
-    }
-
-    /** Return the constructed TextElements.*/
-    const auto& Elements()
-    {
-        SetTextElementWidths(m_text, m_text_elements, m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
-        return m_text_elements;
-    }
-
-    /** Add an open tag iff it exists as a recognized tag.*/
-    void AddOpenTag(std::string_view tag)
-    {
-        if (!MatchesKnownTagStr(tag))
-            return;
-
-        // Create open tag like "<tag>" with no parameters
-        const auto tag_begin = m_text.size();
-        const auto tag_name_begin = m_text.append("<").size();
-        const auto tag_name_end = m_text.append(tag).size();
-        const auto tag_end = m_text.append(">").size();
-
-        Substring text{m_text, tag_begin, tag_end};
-        Substring tag_name{m_text, tag_name_begin, tag_name_end};
-        m_text_elements.emplace_back(text, tag_name, Font::TextElement::TextElementType::OPEN_TAG);
-    }
-
-    /** Add an open tag iff it exists as a recognized tag.*/
-    void AddOpenTag(std::string_view tag, const std::vector<std::string>& params)
-    {
-        if (!MatchesKnownTagStr(tag))
-            return;
-
-        const auto tag_begin = m_text.size();
-
-        // Create the opening part of an open tag, like "<tag"
-        const auto tag_name_begin = m_text.append("<").size();
-        const auto tag_name_end = m_text.append(tag).size();
-        Substring tag_name{m_text, tag_name_begin, tag_name_end};
-
-        std::vector<Substring> pass_params;
-        pass_params.reserve(params.size());
-        // add params, like: "... param1 param2 ..."
-        for (const auto& param : params) {
-            m_text.append(" ");
-            const auto param_begin = m_text.size();
-            const auto param_end = m_text.append(param).size();
-            pass_params.emplace_back(m_text, param_begin, param_end);
-        }
-
-        // Create the close part of an open tag to complete the tag, like ">"
-        auto tag_end = m_text.append(">").size();
-        Substring text{m_text, tag_begin, tag_end};
-
-        m_text_elements.emplace_back(text, tag_name, std::move(pass_params), TextElement::TextElementType::OPEN_TAG);
-    }
-
-    /** Add a close tag iff it exists as a recognized tag.*/
-    void AddCloseTag(std::string_view tag)
-    {
-        if (!MatchesKnownTagStr(tag))
-            return;
-
-        // Create a close tag that looks like "</tag>"
-        const auto tag_begin = m_text.size();
-        const auto tag_name_begin = m_text.append("</").size();
-        const auto tag_name_end = m_text.append(tag).size();
-        const auto tag_end = m_text.append(">").size();
-
-        Substring text{m_text, tag_begin, tag_end};
-        Substring tag_name{m_text, tag_name_begin, tag_name_end};
-        m_text_elements.emplace_back(text, tag_name, TextElement::TextElementType::CLOSE_TAG);
-    }
-
-    /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
-    template <typename S>
-    void AddText(S&& text)
-    {
-        const auto begin = m_text.size();
-        const auto end = m_text.append(text).size();
-        m_text_elements.emplace_back(Substring{m_text, begin, end});
-    }
-
-    /** Add a white space element.*/
-    void AddWhitespace(std::string_view whitespace)
-    {
-        auto begin = m_text.size();
-        auto end = m_text.append(whitespace).size();
-        m_text_elements.emplace_back(Substring(m_text, begin, end),
-                                     Font::TextElement::TextElementType::WHITESPACE);
-    }
-
-    /** Add a newline element.*/
-    void AddNewline()
-    { m_text_elements.emplace_back(Font::TextElement::TextElementType::NEWLINE); }
-
-    /** Add open color tag.*/
-    void AddOpenTag(Clr color)
-    {
-        std::vector<std::string> params = { std::to_string(color.r),
-                                            std::to_string(color.g),
-                                            std::to_string(color.b),
-                                            std::to_string(color.a) };
-
-        AddOpenTag("rgba", params);
-    }
-
-private:
-    const Font& m_font;
-    std::string m_text;
-    std::vector<TextElement> m_text_elements;
-};
-
-Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
-    m_impl(std::make_unique<Impl>(font))
+GG::Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font) :
+    m_font(font)
 {}
 
-Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font, std::size_t text_capacity,
-                                                         std::size_t elements_capacity) :
-    m_impl(std::make_unique<Impl>(font, text_capacity, elements_capacity))
-{}
-
-// Required because Impl is defined here
-Font::TextAndElementsAssembler::~TextAndElementsAssembler() = default;
-
-const std::string& Font::TextAndElementsAssembler::Text() const noexcept
-{ return m_impl->Text(); }
-
-const std::vector<Font::TextElement>& Font::TextAndElementsAssembler::Elements() const
-{ return m_impl->Elements(); }
-
-std::pair<std::string, std::vector<Font::TextElement>> Font::TextAndElementsAssembler::Extract()
-{ return m_impl->Extract(); }
-
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(std::string_view tag)
+GG::Font::TextAndElementsAssembler::TextAndElementsAssembler(const Font& font, std::size_t text_capacity,
+                                                             std::size_t elements_capacity) :
+    m_font(font)
 {
-    m_impl->AddOpenTag(tag);
+    m_text.reserve(text_capacity);
+    m_text_elements.reserve(elements_capacity);
+}
+
+std::pair<std::string, std::vector<GG::Font::TextElement>> GG::Font::TextAndElementsAssembler::Extract()
+{
+    SetTextElementWidths(m_text, m_text_elements, m_font.GetGlyphs(), Value(m_font.SpaceWidth()));
+    return std::pair(std::move(m_text), std::move(m_text_elements));
+}
+
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenTag(std::string_view tag)
+{
+    if (!MatchesKnownTagStr(tag))
+        return *this;
+
+    // Create open tag like "<tag>" with no parameters
+    const auto tag_begin = m_text.size();
+    const auto tag_name_begin = m_text.append("<").size();
+    const auto tag_name_end = m_text.append(tag).size();
+    const auto tag_end = m_text.append(">").size();
+
+    Substring text{m_text, tag_begin, tag_end};
+    Substring tag_name{m_text, tag_name_begin, tag_name_end};
+    m_text_elements.emplace_back(text, tag_name, Font::TextElement::TextElementType::OPEN_TAG);
+
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenTag(
     std::string_view tag, const std::vector<std::string>& params)
 {
-    m_impl->AddOpenTag(tag, params);
+    if (!MatchesKnownTagStr(tag))
+        return *this;
+
+    const auto tag_begin = m_text.size();
+
+    // Create the opening part of an open tag, like "<tag"
+    const auto tag_name_begin = m_text.append("<").size();
+    const auto tag_name_end = m_text.append(tag).size();
+    Substring tag_name{m_text, tag_name_begin, tag_name_end};
+
+    std::vector<Substring> pass_params;
+    pass_params.reserve(params.size());
+    // add params, like: "... param1 param2 ..."
+    for (const auto& param : params) {
+        m_text.append(" ");
+        const auto param_begin = m_text.size();
+        const auto param_end = m_text.append(param).size();
+        pass_params.emplace_back(m_text, param_begin, param_end);
+    }
+
+    // Create the close part of an open tag to complete the tag, like ">"
+    auto tag_end = m_text.append(">").size();
+    Substring text{m_text, tag_begin, tag_end};
+
+    m_text_elements.emplace_back(text, tag_name, std::move(pass_params), TextElement::TextElementType::OPEN_TAG);
+
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddCloseTag(std::string_view tag)
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddCloseTag(std::string_view tag)
 {
-    m_impl->AddCloseTag(tag);
+    if (!MatchesKnownTagStr(tag))
+        return *this;
+
+    // Create a close tag that looks like "</tag>"
+    const auto tag_begin = m_text.size();
+    const auto tag_name_begin = m_text.append("</").size();
+    const auto tag_name_end = m_text.append(tag).size();
+    const auto tag_end = m_text.append(">").size();
+
+    Substring text{m_text, tag_begin, tag_end};
+    Substring tag_name{m_text, tag_name_begin, tag_name_end};
+    m_text_elements.emplace_back(text, tag_name, TextElement::TextElementType::CLOSE_TAG);
+
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(std::string_view text)
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddText(std::string_view text)
 {
-    m_impl->AddText(text);
+    const auto begin = m_text.size();
+    const auto end = m_text.append(text).size();
+    m_text_elements.emplace_back(Substring{m_text, begin, end});
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddText(std::string&& text)
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddWhitespace(std::string_view whitespace)
 {
-    m_impl->AddText(std::move(text));
+    auto begin = m_text.size();
+    auto end = m_text.append(whitespace).size();
+    m_text_elements.emplace_back(Substring(m_text, begin, end),
+                                 Font::TextElement::TextElementType::WHITESPACE);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddWhitespace(std::string_view whitespace)
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddNewline()
 {
-    m_impl->AddWhitespace(whitespace);
+    m_text_elements.emplace_back(Font::TextElement::TextElementType::NEWLINE);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddNewline()
+GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenTag(Clr color)
 {
-    m_impl->AddNewline();
+    std::vector<std::string> params = { std::to_string(color.r),
+                                        std::to_string(color.g),
+                                        std::to_string(color.b),
+                                        std::to_string(color.a) };
+    AddOpenTag("rgba", params);
     return *this;
 }
 
-Font::TextAndElementsAssembler& Font::TextAndElementsAssembler::AddOpenTag(Clr color)
-{
-    m_impl->AddOpenTag(color);
-    return *this;
-}
 
 
 ///////////////////////////////////////
@@ -2839,7 +2756,7 @@ namespace {
         }
 
         // fill in the widths of code points in each TextElement
-        SetTextElementWidths(text, text_elements, glyphs, space_width);
+        SetTextElementWidths(text, text_elements, glyphs, space_width/*, format, X0*/);
 
 #if DEBUG_DETERMINELINES
         DebugOutput::PrintParseResults(text_elements);
