@@ -218,12 +218,6 @@ void TextControl::SetText(std::string str, std::vector<Font::TextElement> text_e
     RecomputeLineData();
 }
 
-void TextControl::ChangeTemplatedText(const std::string& new_text, std::size_t targ_offset) {
-    if (m_font)
-        m_font->ChangeTemplatedText(m_text, m_text_elements, new_text, targ_offset);
-    RecomputeLineData();
-}
-
 void TextControl::RecomputeLineData() {
     if (!m_font)
         return;
