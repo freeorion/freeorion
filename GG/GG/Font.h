@@ -773,10 +773,11 @@ public:
         it from tight loops.  Do not call it from within Render().  Do not
         call it repeatedly on a known text. */
     static std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
-        const std::string& text, const Flags<TextFormat> format, const GlyphMap& glyphs, int8_t space_width);
+        const std::string& text, const Flags<TextFormat> format, const GlyphMap& glyphs,
+        int8_t space_width, int8_t tab_width);
     std::vector<Font::TextElement> ExpensiveParseFromTextToTextElements(
         const std::string& text, const Flags<TextFormat> format) const
-    { return ExpensiveParseFromTextToTextElements(text, format, m_glyphs, m_space_width); }
+    { return ExpensiveParseFromTextToTextElements(text, format, m_glyphs, m_space_width, m_space_width * 8); }
 
     /** returns the \p line_data resulting from adding the necessary line breaks to
         the \p text formatted with \p format and parsed into \p text_elements, to fit
