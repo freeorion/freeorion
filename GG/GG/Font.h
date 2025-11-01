@@ -392,7 +392,7 @@ public:
         TextElement, without incurring the computational cost of parsing the text with
         ExpensiveParseFromTextToTextElements().
 
-        The pair of string and vector returned by Text() and Elements() are consistent with each
+        The pair of string and vector returned by Extract() are consistent with each
         other and can be used with the fast constructor or the fast SetText variant of TextControl.
     */
     class GG_API TextAndElementsAssembler
@@ -400,14 +400,11 @@ public:
     public:
         explicit TextAndElementsAssembler(const Font& font);
         TextAndElementsAssembler(const Font& font, std::size_t text_capacity, std::size_t elements_capacity);
-        ~TextAndElementsAssembler(); // needed for unique_ptr<Impl>
 
         /** Return the constructed text.*/
-        [[nodiscard]] const std::string& Text() const noexcept;
-        /** Return the constructed TextElements.*/
-        [[nodiscard]] const std::vector<TextElement>& Elements() const;
+        [[nodiscard]] const std::string& Text() const noexcept { return m_text; }
 
-        /** Destructively extract and return the constructed text and elements */
+        /** Destructively extract and return the constructed text and elements.*/
         [[nodiscard]] std::pair<std::string, std::vector<TextElement>> Extract();
 
         /** Add an open tag iff it exists as a recognized tag.*/
@@ -418,8 +415,6 @@ public:
         TextAndElementsAssembler& AddCloseTag(std::string_view tag);
         /** Add a text element.  Any whitespace in this text element will be non-breaking.*/
         TextAndElementsAssembler& AddText(std::string_view text);
-        TextAndElementsAssembler& AddText(const char* text) { return AddText(std::string_view(text)); }
-        TextAndElementsAssembler& AddText(std::string&& text);
         /** Add a white space element.*/
         TextAndElementsAssembler& AddWhitespace(std::string_view whitespace);
         /** Add a new line element.*/
@@ -429,8 +424,9 @@ public:
         TextAndElementsAssembler& AddOpenTag(Clr color);
 
     private:
-        class Impl;
-        std::unique_ptr<Impl> const m_impl;
+        const Font& m_font;
+        std::string m_text;
+        std::vector<TextElement> m_text_elements;
     };
 
     /** \brief Holds the essential data on each line that a string occupies when
