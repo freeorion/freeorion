@@ -574,12 +574,11 @@ public:
     FPSIndicator();
 
     void Render() override;
-    void PreRender() override;
 
 private:
+    void UpdateTextWithFPS(int fps = 999);
     void UpdateEnabled();
     bool m_enabled = false;
-    int m_displayed_FPS = 0;
 };
 
 /** Functions like a StaticGraphic, except can have multiple textures rendered

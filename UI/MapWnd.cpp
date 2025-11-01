@@ -520,7 +520,7 @@ namespace {
                 auto label_it = m_labels.find(label);
                 if (label_it == m_labels.end())
                     continue;
-                label_it->second.second->ChangeTemplatedText(std::to_string(value), 0);
+                label_it->second.second->SetText(std::to_string(value));
             }
         }
 
@@ -568,7 +568,6 @@ namespace {
                         m_values[FLEET_DETAIL_PART_COUNT]++;
                 }
             }
-
         }
 
         /** Resize/Move controls for row @p descr

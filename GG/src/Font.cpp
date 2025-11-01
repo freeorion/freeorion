@@ -664,7 +664,7 @@ namespace {
 
         using TextElement = Font::TextElement;
 
-        constexpr int tab_width = 8; // default tab width
+        constexpr int tab_width = 8; // default tab spacing (in space characters)
         const X tab_pixel_width = X{tab_width * space_width}; // get the length of a tab stop
         const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
         const Alignment orig_just =
@@ -2861,62 +2861,6 @@ Font::ExpensiveParseFromTextToTextElements(const std::string& text, const Flags<
     return EPFTTTE(text, format, glyphs, space_width, it);
 }
 
-void Font::ChangeTemplatedText(std::string& text, std::vector<TextElement>& text_elements,
-                               const std::string& new_text, std::size_t targ_offset,
-                               const GlyphMap& glyphs, uint8_t space_width)
-{
-    if (targ_offset >= text_elements.size())
-        return;
-
-    if (new_text.empty())
-        return;
-
-    int change_of_len = 0;
-
-    // Find the target text element.
-    std::size_t curr_offset = 0;
-    auto te_it = text_elements.begin();
-    while (te_it != text_elements.end()) {
-        if (te_it->Type() == Font::TextElement::TextElementType::TEXT) {
-            // Change the target text element
-            if (targ_offset == curr_offset) {
-                // Change text
-                auto ii_sub_begin = static_cast<std::size_t>(te_it->text.begin() - text.begin());
-                auto sub_len = static_cast<std::size_t>(te_it->text.end() - te_it->text.begin());
-                text.erase(ii_sub_begin, sub_len);
-                text.insert(ii_sub_begin, new_text); // C++20 constexpr
-
-                change_of_len = static_cast<decltype(change_of_len)>(new_text.size() - sub_len);
-                te_it->text = Font::Substring(text, ii_sub_begin, ii_sub_begin + new_text.size());
-                break;
-            }
-            ++curr_offset;
-        }
-        ++te_it;
-    }
-
-    if (te_it == text_elements.end())
-        return;
-
-    auto start_of_reflow = te_it;
-
-    if (change_of_len != 0) {
-        ++te_it;
-        // Adjust the offset of each subsequent text_element
-        while (te_it != text_elements.end())
-        {
-            auto ii_sub_begin = te_it->text.begin() - text.begin();
-            auto ii_sub_end = te_it->text.end() - text.begin();
-            te_it->text = Font::Substring(text, ii_sub_begin + change_of_len, ii_sub_end + change_of_len);
-
-            ++te_it;
-        }
-    }
-
-    SetTextElementWidths(text, text_elements, start_of_reflow, glyphs, space_width);
-}
-
-
 #if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 namespace {
 #  if defined(__cpp_lib_constexpr_vector)
@@ -3118,8 +3062,8 @@ void Font::Init(FT_Face& face)
         PRINTABLE_ASCII_NONALPHA_RANGES.begin(),
         PRINTABLE_ASCII_NONALPHA_RANGES.end());
 
-    // add ASCII letter characters or user-specified scripts to them, if the user specifies a specific set of
-    // characters
+    // add ASCII letter characters or user-specified scripts to them,
+    // if the user specifies a specific set of characters
     if (m_charsets.empty()) {
         range_vec.insert(range_vec.end(),
                          PRINTABLE_ASCII_ALPHA_RANGES.begin(),
