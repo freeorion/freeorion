@@ -423,20 +423,53 @@ constexpr auto operator^(FlagType lhs, FlagType rhs)
 { return Flags<FlagType>(lhs) ^ Flags<FlagType>(rhs); }
 
 template <typename FlagType>
-constexpr auto operator~(Flags<FlagType> flags)
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+constexpr
+#endif
+auto operator~(Flags<FlagType> flags)
 {
     Flags<FlagType> retval;
-    for (FlagType flag : FlagSpec<FlagType>::instance()) {
-        if (!(flag & flags))
-            retval |= flag;
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+    if (std::is_constant_evaluated()) {
+        // don't depend on specific flags having been inserted and just set all possible bits
+        using IT = typename Flags<FlagType>::InternalType;
+        static_assert(std::is_unsigned_v<IT>);
+        static_assert(sizeof(IT) <= 8u);
+        constexpr uint8_t NUM_BITS = sizeof(IT)*CHAR_BIT;
+
+        for (uint8_t bit = 0; bit < NUM_BITS; ++bit) {
+            const auto bit_flag = FlagType(IT(1) << bit);
+            if (!(bit_flag & flags))
+                retval |= bit_flag;
+        }
+    }
+    else
+#endif
+    {
+        for (FlagType flag : FlagSpec<FlagType>::instance())
+            if (!(flag & flags))
+                retval |= flag;
     }
     return retval;
 }
 
-/** Returns a Flags object that consists of all the flags known to
-    FlagSpec<FlagType>::instance() except \a flag. */
 template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
-constexpr auto operator~(FlagType flag)
+constexpr auto operator,(FlagType, FlagType) = delete;
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator,(FlagType, Flags<FlagType>) = delete;
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator,(Flags<FlagType>, FlagType) = delete;
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+constexpr auto operator,(Flags<FlagType>, Flags<FlagType>) = delete;
+
+/** Returns a Flags object that,
+    at runtime: consists of all the flags known to FlagSpec<FlagType>::instance() except \a flag.
+    at compile time: Flags with all bits 1 except for any 1 bit in \a flag. */
+template <typename FlagType, std::enable_if_t<is_flag_type_v<FlagType>>* = nullptr>
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+constexpr
+#endif
+auto operator~(FlagType flag)
 { return ~Flags<FlagType>(flag); }
 
 }
