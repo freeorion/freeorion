@@ -322,6 +322,28 @@ GG_FLAGSPEC_IMPL(TextFormat);
 }
 
 namespace {
+    constexpr auto one_bits = [](Flags<TextFormat> fmt) {
+        using IT = Flags<TextFormat>::InternalType;
+        static_assert(std::is_unsigned_v<IT>);
+        static_assert(sizeof(IT) <= 8u);
+        constexpr uint8_t NUM_BITS = sizeof(IT)*CHAR_BIT;
+
+        uint8_t count = 0u;
+        for (uint8_t bit = 0; bit < NUM_BITS; ++bit) {
+            const auto bit_flag = TextFormat(IT(1) << bit);
+            count += !!(fmt & bit_flag);
+        }
+        return count;
+    };
+
+    static_assert(one_bits(FORMAT_NONE) == 0u);
+    static_assert(one_bits(FORMAT_LEFT) == 1u);
+    static_assert(one_bits(FORMAT_LEFT | FORMAT_WORDBREAK) == 2u);
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+    static_assert(one_bits(~FORMAT_LEFT) == 15u);
+    static_assert(one_bits(~FORMAT_NONE) == 16u);
+#endif
+
     bool RegisterTextFormats()
     {
         FlagSpec<TextFormat>& spec = FlagSpec<TextFormat>::instance();
@@ -419,25 +441,19 @@ namespace {
 
 
 namespace {
-    [[nodiscard]] constexpr Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
+    [[nodiscard]]
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+    constexpr
+#endif
+    Flags<TextFormat> ValidateFormat(Flags<TextFormat> format) noexcept
     {
-        constexpr auto all_but = [](TextFormat one, TextFormat two = FORMAT_NONE) {
-            using IT = Flags<TextFormat>::InternalType;
-            static_assert(std::is_unsigned_v<IT>);
-
-            Flags<TextFormat> all_flags = FORMAT_NONE;
-            for (uint8_t bit = 0; bit < sizeof(IT)*CHAR_BIT; ++bit)
-                all_flags |= TextFormat(IT(1) << bit);
-            return all_flags ^ one ^ two;
-        };
-
         // correct any disagreements in the format flags
         uint8_t dup_ct = 0;   // duplication count
         if (format & FORMAT_LEFT) ++dup_ct;
         if (format & FORMAT_RIGHT) ++dup_ct;
         if (format & FORMAT_CENTER) ++dup_ct;
         if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_LEFT by default
-            format &= all_but(FORMAT_RIGHT, FORMAT_CENTER);
+            format &= ~(FORMAT_RIGHT | FORMAT_CENTER);
             format |= FORMAT_LEFT;
         }
         uint8_t dup_ct2 = 0;
@@ -445,7 +461,7 @@ namespace {
         if (format & FORMAT_BOTTOM) ++dup_ct2;
         if (format & FORMAT_VCENTER) ++dup_ct2;
         if (dup_ct2 != 1) {   // exactly one must be picked; when none or multiples are picked, use FORMAT_TOP by default
-            format &= all_but(FORMAT_BOTTOM, FORMAT_VCENTER);
+            format &= ~(FORMAT_BOTTOM | FORMAT_VCENTER);
             format |= FORMAT_TOP;
         }
         if ((format & FORMAT_WORDBREAK) && (format & FORMAT_LINEWRAP))   // only one of these can be picked; FORMAT_WORDBREAK overrides FORMAT_LINEWRAP
@@ -453,6 +469,13 @@ namespace {
 
         return format;
     }
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+    static_assert(ValidateFormat(FORMAT_NONE) == (FORMAT_LEFT | FORMAT_TOP));
+    static_assert(ValidateFormat(FORMAT_LEFT) == (FORMAT_LEFT | FORMAT_TOP));
+    static_assert(ValidateFormat(FORMAT_LEFT | FORMAT_WORDBREAK) == (FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK));
+    static_assert(ValidateFormat(FORMAT_RIGHT | FORMAT_CENTER | FORMAT_VCENTER) == (FORMAT_LEFT | FORMAT_VCENTER));
+    static_assert(ValidateFormat(FORMAT_WORDBREAK | FORMAT_LINEWRAP) == (FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK));
+#endif
 
     CONSTEXPR_FONT void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
                                          Alignment orig_just, Alignment prev_just) noexcept
