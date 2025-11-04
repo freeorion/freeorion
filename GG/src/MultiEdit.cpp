@@ -178,20 +178,13 @@ void MultiEdit::Render()
                 // idx0 to idx1 is unhighlighted, idx1 to idx2 is hilited, and
                 // idx2 to idx3 is unhighlighted; each range may be empty
                 const CPSize idx0{0};
-                const CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
+                const CPSize idx1 = (low_cursor_pos.first == row) ? std::max(idx0, low_cursor_pos.second) : idx0;
                 const bool ends_with_newline = LineEndsWithEndlineCharacter(lines, row, text);
                 // TODO: review if the following adjustment to idx3 is truly necessary; tests suggest it is not. if it is determined necessary, please comment why
                 const CPSize idx3{cd_size - (ends_with_newline ? CP1 : CP0)};
-                const CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
+                const CPSize idx2 = (high_cursor_pos.first == row) ? std::min(high_cursor_pos.second, idx3) : idx3;
 
                 // TODO just one RenderText call needed
-
-                // draw text before highlighting
-                if (idx0 != idx1) {
-                    //std::cout << "pre hl text\n";
-                    font->RenderText(line_text_ul, line_text_lr, text_format,
-                                     lines, rs, row, idx0, row + 1, idx1);
-                }
 
                 if (idx1 != idx2) {
                     // draw highlighting background box
@@ -202,21 +195,11 @@ void MultiEdit::Render()
 
                     FlatRectangle(hl_ul, hl_lr, hilite_color_to_use, CLR_ZERO, 0);
                     //std::cout << "hl rect: " << hl_ul << " - " << hl_lr << "\n";
-
-                    // draw highlighted text
-                    //std::cout << "hl text\n";
-                    font->RenderText(line_text_ul, line_text_lr, text_format,
-                                     lines, rs, row, idx1, row + 1, idx2);
                 }
 
-                if (idx2 != idx3) {
-                    // render the text after the highlighted text, all the way through to the end
-                    // of the line, even if ends with newline, so that any tags associated with that
-                    // final character will be processed.
-                    //std::cout << "post hl text\n";
-                    font->RenderText(line_text_ul, line_text_lr, text_format,
-                                     lines, rs, row, idx2, row + 1, cd_size);
-                }
+                // draw text 
+                font->RenderText(line_text_ul, line_text_lr, text_format,
+                                 lines, rs, row, idx0, row + 1, cd_size);
             }
         }
 
