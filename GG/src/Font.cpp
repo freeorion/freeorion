@@ -2342,7 +2342,15 @@ GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenT
     return *this;
 }
 
-
+namespace {
+    constexpr int8_t ClampedWidth(Pt ul, Pt lr)
+    {
+        using under_t = std::decay_t<decltype(Value(ul.x))>;
+        static constexpr under_t max = std::numeric_limits<int8_t>::max();
+        static_assert(max == 127);
+        return static_cast<int8_t>(std::min<under_t>(Value(lr.x - ul.x), max));
+    }
+}
 
 ///////////////////////////////////////
 // struct GG::Font::Glyph
@@ -2352,8 +2360,12 @@ Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs,
     y_offset(y_ofs),
     left_bearing(lb),
     advance(adv),
-    width(std::min<int8_t>(std::numeric_limits<int8_t>::max(), Value(ul.x - lr.x)))
-{}
+    width(ClampedWidth(ul, lr))
+{
+    if (width != Value(sub_texture.Width()))
+        std::cerr << "Glyph subtexture width " << sub_texture.Width()
+                  << " and own width " << width << " are inconsistent!";
+}
 
 ///////////////////////////////////////
 // class GG::Font
@@ -3264,16 +3276,16 @@ void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
     const auto tc = glyph.sub_texture.TexCoords();
-    const auto l = static_cast<GLfloat>(pt.x + glyph.left_bearing);
-    const auto w = static_cast<GLfloat>(glyph.sub_texture.Width());
+    const auto lb = static_cast<GLfloat>(pt.x + glyph.left_bearing);
+    const auto w = static_cast<GLfloat>(glyph.width);
     const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
 
     cache.coordinates.store(std::array{tc[0], tc[1], tc[2], tc[1], tc[2], tc[3], tc[0], tc[3]});
 
-    cache.vertices.store(std::array{l + x_top_offset,      t + y_shift,
-                                    l + w + x_top_offset,  t + y_shift,
-                                    l + w - x_top_offset,  t + glyph.sub_texture.Height() + y_shift,
-                                    l - x_top_offset,      t + glyph.sub_texture.Height() + y_shift});
+    cache.vertices.store(std::array{lb + x_top_offset,     t + y_shift,
+                                    lb + w + x_top_offset, t + y_shift,
+                                    lb + w - x_top_offset, t + glyph.sub_texture.Height() + y_shift,
+                                    lb - x_top_offset,     t + glyph.sub_texture.Height() + y_shift});
 
     cache.colors.store<4>(color);
 }
