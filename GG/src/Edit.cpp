@@ -19,16 +19,17 @@ using namespace GG;
 namespace {
     Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin) noexcept
     { return font->Height() + 2 * static_cast<int>(pixel_margin); }
+
+    constexpr auto fmt = FORMAT_LEFT | FORMAT_IGNORETAGS;
 }
 
 ////////////////////////////////////////////////
 // GG::Edit
 ////////////////////////////////////////////////
 
-Edit::Edit(std::string str, std::shared_ptr<Font> font,
-           Clr color, Clr text_color, Clr interior) :
+Edit::Edit(std::string str, std::shared_ptr<Font> font, Clr color, Clr text_color, Clr interior) :
     TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), "", font,
-                text_color, FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
+                text_color, fmt, INTERACTIVE | REPEAT_KEY_PRESS),
     m_int_color(interior)
 {
     Edit::SetColor(color);
@@ -72,7 +73,8 @@ void Edit::Render()
     const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
     Font::RenderState rs{text_color_to_use};
 
-    const auto text_sv = std::string_view(Text()).substr(Value(INDEX_0), Value(INDEX_END - INDEX_0));
+    const Pt font_render_ul{client_ul.x, text_y_pos};
+    const Pt font_render_lr{client_lr.x, text_y_pos + font->Height()};
 
     if (!line_data.empty() && MultiSelected()) {
         const auto& char_data = line_data.front().char_data;
@@ -87,10 +89,11 @@ void Edit::Render()
         FlatRectangle(hilite_ul, hilite_lr, hilite_color_to_use, CLR_ZERO, 0);
 
         // draw text
-        font->RenderText(Pt(client_ul.x, text_y_pos), text_sv, rs);
+        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
 
     } else { // no selected text
-        font->RenderText(Pt(client_ul.x, text_y_pos), text_sv, rs);
+        // draw text
+        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
 
         if (GUI::GetGUI()->FocusWnd().get() == this) {
             // if we have focus, draw the caret as a simple vertical line

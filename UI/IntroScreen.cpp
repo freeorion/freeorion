@@ -164,7 +164,7 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2) {
     GG::Font::RenderState rs{GG::CLR_WHITE};
     const auto text_elements = m_font->ExpensiveParseFromTextToTextElements(m_credits, format);
     const auto lines = m_font->DetermineLines(m_credits, format, x2 - x1, text_elements);
-    m_font->RenderText(GG::Pt(x1, y1), GG::Pt(x2, y2), m_credits, format, lines, rs);
+    m_font->RenderText(GG::Pt(x1, y1), GG::Pt(x2, y2), format, lines, rs);
     const auto offset = m_font->TextExtent(lines).y;
     //store complete height for self destruction
     m_credits_height = Value(offset);
