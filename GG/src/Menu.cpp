@@ -145,8 +145,7 @@ void PopupMenu::Render()
                 const auto line_data = m_font->DetermineLines(next_label, fmt, X0, element_data);
 
                 rs.PushColor(clr);
-                m_font->RenderText(line_rect.ul, line_rect.lr, next_label,
-                                   FORMAT_LEFT | FORMAT_TOP, line_data, rs);
+                m_font->RenderText(line_rect.ul, line_rect.lr, fmt, line_data, rs);
                 rs.PopColor();
 
             } else {

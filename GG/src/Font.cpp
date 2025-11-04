@@ -403,13 +403,22 @@ namespace {
             while (text_it != end_it) {
                 // Find and set the width of the character glyph.
                 const uint32_t c = text_next_fn(text_it, end_it);
-                if (c == WIDE_TAB) [[unlikely]] {
-                    const int8_t this_tab_width = static_cast<int8_t>(Value(expand_tabs ? 
-                        (((x / tab_pixel_width) + 1) * tab_pixel_width - x) : space_width));
+                switch (c) {
+                case WIDE_NEWLINE:
+                case WIDE_CR:
+                case WIDE_FF: {
+                    elem.widths.push_back(0);
+                    break;
+                }
+                case WIDE_TAB: {
+                    const int8_t this_tab_width = static_cast<int8_t>(Value(
+                        expand_tabs ? (((x / tab_pixel_width) + 1) * tab_pixel_width - x) : space_width
+                    ));
                     elem.widths.push_back(this_tab_width);
                     x += this_tab_width;
-
-                } else if (c != WIDE_NEWLINE) [[likely]] {
+                    break;
+                }
+                default: [[likely]] {
                     auto it = glyphs.find(c);
                     // use a space when an unrendered glyph is requested (the
                     // space chararacter is always renderable)
@@ -417,9 +426,7 @@ namespace {
                         it->second.advance : static_cast<int8_t>(Value(space_width));
                     elem.widths.push_back(this_glyph_width);
                     x += this_glyph_width;
-
-                } else {
-                    elem.widths.push_back(0);
+                }
                 }
             }
         }
@@ -500,26 +507,26 @@ namespace {
     }
 
     template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT void AddWhitespace(X& x, const Font::Substring elem_text, const int8_t space_width,
-                                      const X box_width, const bool expand_tabs, const int8_t tab_pixel_width,
-                                      const Flags<TextFormat> format, Font::LineVec& line_data,
+    CONSTEXPR_FONT void AddWhitespace(X& x,
+                                      const Font::Substring elem_text,
+                                      const std::vector<int8_t>& elem_widths,
+                                      const X box_width, const bool linewrap,
+                                      const std::size_t glyphs_per_line_estimate,
+                                      Font::LineVec& line_data,
                                       bool& last_line_of_curr_just, const Alignment orig_just,
                                       const StrSize original_string_offset, CPSize& code_point_offset,
                                       std::vector<Font::TextElement>& pending_formatting_tags,
                                       const TextNextFn& text_next_fn)
     {
         const auto get_dest_char_data =
-            [&line_data,
-             &last_line_of_curr_just,
-             orig_just,
-             chars_per_box_width{std::max<int32_t>(1, Value(box_width)) / std::max<int8_t>(1, space_width)}]
+            [&line_data, &last_line_of_curr_just, orig_just, glyphs_per_line_estimate]
             (bool on_new_line) -> auto&
         {
 
             if (on_new_line || line_data.empty()) {
                 const auto new_just = (last_line_of_curr_just || line_data.empty()) ?
                     orig_just : line_data.back().justification;
-                line_data.emplace_back(new_just).char_data.reserve(chars_per_box_width);
+                line_data.emplace_back(new_just).char_data.reserve(glyphs_per_line_estimate);
                 last_line_of_curr_just = false;
             }
             return line_data.back().char_data;
@@ -527,26 +534,23 @@ namespace {
 
         const auto begin_it = elem_text.begin();
         const auto end_it = elem_text.end();
-        for (auto it = begin_it; it != end_it; ++code_point_offset) {
-            const StrSize char_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
-            const uint32_t c = text_next_fn(it, end_it);
+        auto it = begin_it;
 
-            if (c == WIDE_CR || c == WIDE_FF) [[unlikely]]
-                continue;
+        for (std::size_t idx = 0u; idx < elem_widths.size(); ++idx) {
+            const StrSize char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
+            const uint32_t c = text_next_fn(it, end_it); // advances it to next glyph
+            const StrSize next_char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of next glyph
+            const StrSize char_str_size{next_char_str_index - char_str_index}; // char-bytes for glyph
 
-            const StrSize next_char_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of next glyph
-            const StrSize char_size{next_char_index - char_index}; // char-bytes for glyph
+            const auto& glyph_width = elem_widths[idx];
+            const auto next_x = x + glyph_width;
+            const bool move_down = linewrap && (box_width < next_x) && (x != X0);
+            x = move_down ? X{glyph_width} : next_x; // x is the furthest-right extent of the text element
 
-            const X advance_position =
-                (c == WIDE_TAB && expand_tabs) ? (((x / tab_pixel_width) + 1) * tab_pixel_width) :
-                (c == WIDE_NEWLINE) ? x : (x + space_width);
-            const X glyph_width = advance_position - x;
-
-            const bool move_down = (format & FORMAT_LINEWRAP) && (box_width < advance_position) && (x != X0);
-            x = move_down ? glyph_width : advance_position; // x is the furthest-right extent of the text element
+            ++code_point_offset;
 
             auto& dest_char_data = get_dest_char_data(move_down);
-            dest_char_data.emplace_back(x, original_string_offset + char_index, char_size,
+            dest_char_data.emplace_back(c, x, original_string_offset + char_str_index, char_str_size,
                                         code_point_offset, std::move(pending_formatting_tags));
             pending_formatting_tags.clear();
         }
@@ -589,13 +593,13 @@ namespace {
         std::size_t j = 0;
         while (it != end_it) {
             const StrSize char_index{static_cast<std::size_t>(std::distance(start_it, it))};
-            text_next_fn(it, end_it);
+            const uint32_t c = text_next_fn(it, end_it);
             const StrSize char_size{std::distance(start_it, it) - Value(char_index)};
 
             if (j < element_widths.size())
                 x += element_widths[j]; // x is the furthest-right extent of the text element
 
-            last_char_data.emplace_back(x, original_string_offset + char_index, char_size,
+            last_char_data.emplace_back(c, x, original_string_offset + char_index, char_size,
                                         code_point_offset, std::move(pending_formatting_tags));
             pending_formatting_tags.clear();
 
@@ -636,7 +640,7 @@ namespace {
         while (it != end_it) {
             // get string index and size of next text element
             const StrSize char_index{static_cast<std::size_t>(std::distance(start_it, it))};
-            text_next_fn(it, end_it);
+            const uint32_t c = text_next_fn(it, end_it);
             const StrSize char_size{std::distance(start_it, it) - Value(char_index)};
 
             // if the char overruns this line, and isn't alone on this
@@ -645,7 +649,7 @@ namespace {
             const bool move_down = (format & FORMAT_LINEWRAP) && (box_width < x + width_j) && (x != X0);
             x = move_down ? X{width_j} : (x + width_j); // x is the furthest-right extent of the text element
 
-            last_char_data.emplace_back(x, original_string_offset + char_index, char_size,
+            last_char_data.emplace_back(c, x, original_string_offset + char_index, char_size,
                                         code_point_offset, std::move(pending_formatting_tags));
             pending_formatting_tags.clear();
 
@@ -712,16 +716,17 @@ namespace {
     }
 
     template <typename TextNextFn = U8NextFn>
-    CONSTEXPR_FONT auto AssembleLineData(Flags<TextFormat> format, X box_width,
+    CONSTEXPR_FONT auto AssembleLineData(Flags<TextFormat> format, X box_width, int8_t space_width,
                                          const std::vector<Font::TextElement>& text_elements,
-                                         int8_t space_width, int8_t tab_pixel_width,
                                          const TextNextFn& text_next_fn = u8next_fn)
     {
         format = ValidateFormat(format); // may modify format
 
         using TextElement = Font::TextElement;
 
-        const bool expand_tabs = format & FORMAT_LEFT; // tab expansion only takes place when the lines are left-justified (otherwise, tabs are just spaces)
+        const std::size_t glyphs_per_line_estimate = static_cast<std::size_t>(
+            std::max<int32_t>(1, Value(box_width)) / std::max<int8_t>(1, space_width));
+
         const Alignment orig_just =
             (format & FORMAT_LEFT) ? ALIGN_LEFT :
             (format & FORMAT_CENTER) ? ALIGN_CENTER :
@@ -747,7 +752,8 @@ namespace {
                 AddNewline(x, last_line_of_curr_just, line_data, orig_just);
                 break;
             case TextElement::TextElementType::WHITESPACE:
-                AddWhitespace(x, elem.text, space_width, box_width, expand_tabs, tab_pixel_width, format,
+                AddWhitespace(x, elem.text, elem.widths, box_width, format & FORMAT_LINEWRAP,
+                              glyphs_per_line_estimate,
                               line_data, last_line_of_curr_just, orig_just, original_string_offset,
                               code_point_offset, pending_formatting_tags, text_next_fn);
                 break;
@@ -1089,7 +1095,7 @@ namespace {
     {
         const std::string text(all_ascii_sv);
         const auto elems = ElementsForASCIIText(text, fmt & FORMAT_LEFT);
-        return AssembleLineData(fmt, box_width, elems, 4u, 8u*4u, dummy_next_fn);
+        return AssembleLineData(fmt, box_width, 4u, elems, dummy_next_fn);
     };
     // different horizontal line widths require different numbers of lines to lay out
     static_assert(test_ascii_whitespace_line_data(X{9999}, FORMAT_LEFT | FORMAT_WORDBREAK).size() == 1u);
@@ -1123,9 +1129,8 @@ namespace {
     static_assert(check_eq(line0_w9999_left_widths, std::array<int32_t, 12>{4,4,4,4, 4,4,8,4, 4,4,4,4}));
 
     // all characters should be same size
-    //constexpr auto line0_w9999_widths = get_ascii_line_widths<>(FORMAT_NONE);
-    //static_assert(check_eq(line0_w9999_widths, std::array<int32_t, 12>{4,4,4,4, 4,4,4,4, 4,4,4,4}));
-    // probably if using FORMAT_NONE, it takes the width from the elements rather than calculating in AssembleLineData...
+    constexpr auto line0_w9999_widths = get_ascii_line_widths<>(FORMAT_NONE);
+    static_assert(check_eq(line0_w9999_widths, std::array<int32_t, 12>{4,4,4,4, 4,4,4,4, 4,4,4,4}));
 
     // extracts char_data string indices from one line stores as chars in an oversized array
     template <std::size_t line_idx, X box_width>
@@ -1211,7 +1216,7 @@ namespace {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
@@ -1258,7 +1263,7 @@ namespace {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        return AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        return AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
     };
     static_assert(test_multline_line_data().size() == 4);
     static_assert(test_multline_line_data()[0].char_data.size() == 2);
@@ -1294,7 +1299,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
@@ -1323,7 +1328,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return Value(GlyphIndexInLines(line_idx, CPSize(glyph_idx), line_data));
     };
@@ -1394,7 +1399,7 @@ namespace {
         const auto elems = ElementsForTaggedText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
@@ -1421,7 +1426,7 @@ namespace {
         const auto elems = ElementsForTaggedText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK  | FORMAT_IGNORETAGS;
-        const auto line_data = AssembleLineData(fmt, GG::X(888), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(888), 4u, elems, dummy_next_fn);
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
@@ -1441,7 +1446,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
         return Value(CodePointIndexAfterPreviousGlyphInLines(line_idx, CPSize{glyph_idx}, line_data));
     };
 
@@ -1469,7 +1474,7 @@ namespace {
         const auto elems = ElementsForTaggedText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
         return Value(CodePointIndexAfterPreviousGlyphInLines(0u, CPSize{glyph_idx}, line_data));
     };
 
@@ -1645,7 +1650,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
         const auto c_to_s = [line_data](std::size_t line_idx, CPSize c_idx)
         { return StringIndexFromLineAndGlyphInLines(line_idx, c_idx, line_data).first; };
         const CPSize CP2{2u}, CP3{3u};
@@ -1675,7 +1680,7 @@ namespace {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return StringIndexAndLengthOfLineAndGlyphInLines(0u, CPSize(idx), line_data);
     };
@@ -1699,7 +1704,7 @@ namespace {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexFromGlyphInLines(glyph_idx, line_data);
         return StringIndexAndLengthOfLineAndGlyphInLines(line_idx, cp_in_line_idx, line_data);
@@ -1721,7 +1726,7 @@ namespace {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
@@ -1741,7 +1746,7 @@ namespace {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
@@ -1763,7 +1768,7 @@ namespace {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
@@ -1835,7 +1840,7 @@ namespace {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return GlyphIndicesRangeToStringSizeIndicesInLines(CPSize{low_idx}, CPSize{high_idx}, line_data);
     };
@@ -2177,7 +2182,7 @@ namespace {
                                                   //  01   23    45     // glyphs
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
         const auto& cd0 = line_data.front().char_data;
 
         const auto get_gly_cp = [&cd0](uint8_t x) {
@@ -2409,10 +2414,12 @@ X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render
     for (auto text_it = text.begin(); text_it != text.end();) {
         const uint32_t c = utf8::next(text_it, text.end());
         const auto it = m_glyphs.find(c);
-        if (it == m_glyphs.end())
+        if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
-        else
-            pt.x += StoreGlyph(pt, it->second, render_state, shared_cache);
+        } else {
+            StoreGlyph(pt, it->second, render_state, shared_cache);
+            pt.x += it->second.advance; // TODO: pass in format, maybe do tab stuff here?
+        }
     }
 
     shared_cache.vertices.createServerBuffer();
@@ -2423,28 +2430,28 @@ X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render
     return pt.x - orig_x;
 }
 
-void Font::RenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
+void Font::RenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
                       const LineVec& line_data, RenderState& render_state) const
 {
-    RenderText(ul, lr, text, format, line_data, render_state, 0, CP0, line_data.size(),
+    RenderText(ul, lr, format, line_data, render_state, 0, CP0, line_data.size(),
                line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()));
 }
 
-void Font::RenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
+void Font::RenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
                       const LineVec& line_data, RenderState& render_state,
                       std::size_t begin_line, CPSize begin_char,
                       std::size_t end_line, CPSize end_char) const
 {
-    PreRenderText(ul, lr, text, format, line_data, render_state,
+    PreRenderText(ul, lr, format, line_data, render_state,
                   begin_line, begin_char, end_line, end_char, shared_cache);
     RenderCachedText(shared_cache);
 }
 
-void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
+void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
                          RenderCache& cache, const LineVec& line_data,
                          RenderState& render_state) const
 {
-    PreRenderText(ul, lr, text, format, line_data, render_state, 0, CP0, line_data.size(),
+    PreRenderText(ul, lr, format, line_data, render_state, 0, CP0, line_data.size(),
                   line_data.empty() ? CP0 : CPSize(line_data.back().char_data.size()), cache);
 }
 
@@ -2561,7 +2568,7 @@ namespace {
 }
 
 
-void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
+void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
                          const LineVec& line_data, RenderState& render_state,
                          std::size_t begin_line, CPSize begin_char,
                          std::size_t end_line, CPSize end_char,
@@ -2569,65 +2576,73 @@ void Font::PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<Text
 {
     const Y y_origin = LineOriginY(ul.y, lr.y, format, m_lineskip, m_height, end_line, begin_line);
 
+    static constexpr auto to_char_data_size = [](const auto& line) noexcept { return line.char_data.size(); };
     std::size_t glyph_count = std::transform_reduce(std::next(line_data.begin(), begin_line),
                                                     std::next(line_data.begin(), end_line),
-                                                    0, std::plus{},
-                                                    [](const auto& line) { return line.char_data.size(); });
+                                                    0u, std::plus{}, to_char_data_size);
     cache.clear();
 
-    //std::cout << "glyphs: " << glyph_count << ": lines " << begin_line << " to " << end_line << ": ";
-    //for (std::size_t i = begin_line; i < end_line; ++i) {
-    //    const LineData& line = line_data[i];
-    //    for (auto& c : line.char_data)
-    //        std::cout << static_cast<char>(c.code_point_index);
+    //if (line_data.size() > 1) {
+    //    std::cout << "\nPreRenderText lines " << begin_line << " to " << end_line << "...\n";
+    //    for (std::size_t i = begin_line; i < end_line; ++i) {
+    //        const LineData& line = line_data[i];
+    //        const CPSize line_start_glyph_idx = (i == begin_line) ? begin_char : CP0;
+    //        const CPSize line_end_glyph_idx = (i + 1 == end_line) ? end_char : CPSize(line.char_data.size());
+
+    //        std::cout << "  line: " << i << " glyphs: " << Value(line_start_glyph_idx)
+    //                  << " to " << Value(line_end_glyph_idx) << " : ";
+    //        for (CPSize idx = line_start_glyph_idx; idx < line_end_glyph_idx; ++idx) {
+    //            const auto cp = line.char_data[Value(idx)].code_point;
+    //            std::cout << (cp < 128 ? static_cast<char>(cp) : '~');
+    //        }
+    //        std::cout << "\n";
+    //    }
     //}
-    //std::cout << std::endl;
 
     cache.coordinates.reserve(glyph_count*4);
     cache.vertices.reserve(glyph_count*4);
     cache.colors.reserve(glyph_count*4);
 
-    const auto get_next_char = [&text, string_end_it = text.end()](std::size_t string_index) -> uint32_t {
-        const auto text_next_it = std::next(text.begin(), string_index);
-        try {
-            const uint32_t c = utf8::peek_next(text_next_it, string_end_it);
-            assert((text[string_index] == '\n') == (c == WIDE_NEWLINE));
-            return c;
-        } catch (...) {
-            return WIDE_NEWLINE;
-        }
-    };
-
-
     for (std::size_t i = begin_line; i < end_line; ++i) {
         const auto& line = line_data.at(i);
         if (line.Empty())
             continue;
+
         const auto& line_char_data = line.char_data;
         const CPSize cd_size{line_char_data.size()};
 
-        const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
-        X x = x_origin;
-
         const Y y = LinePosY(y_origin, i, begin_line, m_lineskip);
 
+        const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
         const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
         const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
+        X x = x_origin;
 
+        //std::cout << "PreRender line " << i << " from CPSize: " << Value(start)
+        //          << " to " << Value(end) << " at:";
 
-        for (CPSize j = start; j < end; ++j) {
-            const auto& glyph = line_char_data.at(Value(j));
-            HandleTags(glyph.tags, render_state);
-            const uint32_t c = get_next_char(Value(glyph.string_index));
+        for (auto cp_idx = start; cp_idx < end; ++cp_idx) {
+            const auto& line_char = line_char_data[Value(cp_idx)];
+            HandleTags(line_char.tags, render_state);
 
-            if (c == WIDE_NEWLINE)
-                continue;
-            const auto it = m_glyphs.find(c);
-            if (it == m_glyphs.end())
-                x = x_origin + glyph.extent; // move forward to the right-side extent of the character when a whitespace or unprintable glyph is requested
-            else
-                x += StoreGlyph(Pt(x, y), it->second, render_state, cache);
+            if (line_char.code_point == WIDE_NEWLINE ||
+                line_char.code_point == WIDE_CR ||
+                line_char.code_point == WIDE_FF) [[unlikely]]
+            { continue; }
+
+            const auto it = m_glyphs.find(line_char.code_point);
+            if (it != m_glyphs.end()) {
+                const X prev_extent = (cp_idx == CP0) ? X0 : line_char_data[Value(cp_idx - CP1)].extent;
+                const X x = x_origin + prev_extent;
+                const auto& glyph = it->second;
+
+                StoreGlyph(Pt(x, y), glyph, render_state, cache);
+
+                //std::cout << " " << Value(x);
+            }
+            //x = x_origin + glyph.extent; // position for next character is right extent of current character
         }
+        //std::cout << "\n";
     }
 
     cache.vertices.createServerBuffer();
@@ -2909,7 +2924,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         return std::array<std::size_t, 3>{line_data.size(), line_data.at(0).char_data.size(), line_data.at(1).char_data.size()};
     }();
@@ -2919,7 +2934,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         const auto& cd0 = line_data.front().char_data;
         std::array<char, 30> tag_names0{0};
@@ -2939,7 +2954,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         const auto& cd1 = line_data.at(1).char_data;
         std::array<std::array<char, 2>, 13> tag_names1{{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}}};
@@ -2966,7 +2981,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), elems, 4u, 8u*4u, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
 
         const auto& cd0 = line_data.at(0).char_data;
         const auto& cd1 = line_data.at(1).char_data;
@@ -3028,11 +3043,11 @@ Font::LineVec Font::DetermineLines(
     }
 
  #if DEBUG_DETERMINELINES
-    auto line_data = AssembleLineData(format, box_width, text_elements, m_space_width);
+    auto line_data = AssembleLineData(format, box_width, m_space_width, text_elements);
     DebugOutput::PrintLineBreakdown(text, format, box_width, line_data);
     return line_data;
 #else
-    return AssembleLineData(format, box_width, text_elements, m_space_width, m_space_width * 8);
+    return AssembleLineData(format, box_width, m_space_width, text_elements);
 #endif
 }
 
@@ -3308,8 +3323,8 @@ void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, Pt pt, const 
     cache.underline_colors.store(color);
 }
 
-X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_state,
-                   Font::RenderCache& cache) const
+void Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_state,
+                      Font::RenderCache& cache) const
 {
     int italic_top_offset = 0;
     int shadow_offset = 0;
@@ -3341,8 +3356,6 @@ X Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_st
         StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, glyph, m_descent,
                            m_height, Y(m_underline_height), Y(m_underline_offset));
     }
-
-    return X{glyph.advance};
 }
 
 bool Font::IsDefaultFont() const noexcept

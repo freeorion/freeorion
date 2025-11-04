@@ -2453,7 +2453,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         // TODO cache the text_elements
         const auto text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
         const auto lines = font->DetermineLines(text, flags, lr.x - ul.x, text_elements);
-        font->RenderText(ul, lr, text, flags, lines, rs);
+        font->RenderText(ul, lr, flags, lines, rs);
     }
     glPopMatrix();
 }

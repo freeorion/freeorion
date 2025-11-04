@@ -140,6 +140,10 @@ void MultiEdit::Render()
     const std::size_t caret_row = (!multiselected && focus_wnd == this && !(m_style & MULTI_READ_ONLY))
         ? m_cursor_begin.first : std::numeric_limits<std::size_t>::max();
 
+    //std::cout << "text: " << text << "\n";
+    //std::cout << "low  cursor: " << low_cursor_pos.first << " " << Value(low_cursor_pos.second) << "\n";
+    //std::cout << "high cursor: " << high_cursor_pos.first << " " << Value(high_cursor_pos.second) << "\n";
+
     // process tags
     Font::RenderState rs(text_color_to_use);
     font->ProcessTagsBefore(lines, rs, first_visible_row, CP0);
@@ -153,18 +157,20 @@ void MultiEdit::Render()
             cl_lr.y - static_cast<int>(lines.size() - row) * LINESKIP -
                 m_first_row_shown_y_from_top_of_text + (m_vscroll && m_hscroll ? BottomMargin() : Y0);
 
-        Pt text_pos(cl_ul.x + RowStartX(row), row_y_pos);
-        const X initial_text_x_pos = text_pos.x;
+        const Pt line_text_ul(cl_ul.x + RowStartX(row), row_y_pos);
 
         const auto& line = lines.at(row);
+
         if (!line.Empty()) {
             const auto& line_char_data = line.char_data;
             const CPSize cd_size{line_char_data.size()};
 
+            const Pt line_text_lr = line_text_ul + Pt{line_char_data.back().extent, HEIGHT};
+
             if (!multiselected || low_cursor_pos.first > row || row > high_cursor_pos.first) {
                 // just draw normal text on this line
-                Pt text_lr = text_pos + Pt(line_char_data.back().extent, HEIGHT);
-                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, CP0, row + 1, cd_size);
+                font->RenderText(line_text_ul, line_text_lr, text_format,
+                                 lines, rs, row, CP0, row + 1, cd_size);
 
             } else {
                 // one or more chars of this row are selected, so highlight, then draw the range in the selected-text color
@@ -178,30 +184,38 @@ void MultiEdit::Render()
                 const CPSize idx3{cd_size - (ends_with_newline ? CP1 : CP0)};
                 const CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
 
-                // draw text
-                const X text_l = (idx0 == idx1) ? text_pos.x :
-                                                  initial_text_x_pos + line_char_data.at(Value(idx1 - CP1)).extent;
-                Pt text_lr{text_l, text_pos.y + HEIGHT};
-                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx0, row + 1, idx1);
-                text_pos.x = text_lr.x;
+                // TODO just one RenderText call needed
 
-                // draw highlighting
-                if (idx1 != idx2)
-                    text_lr.x = initial_text_x_pos + line_char_data.at(Value(idx2 - CP1)).extent;
-                FlatRectangle(text_pos, Pt(text_lr.x, text_pos.y + LINESKIP), hilite_color_to_use, CLR_ZERO, 0);
+                // draw text before highlighting
+                if (idx0 != idx1) {
+                    //std::cout << "pre hl text\n";
+                    font->RenderText(line_text_ul, line_text_lr, text_format,
+                                     lines, rs, row, idx0, row + 1, idx1);
+                }
 
-                // draw highlighted text
-                font->RenderText(text_pos, text_lr, text, text_format, lines, rs, row, idx1, row + 1, idx2);
-                text_pos.x = text_lr.x;
+                if (idx1 != idx2) {
+                    // draw highlighting background box
+                    const Pt hl_ul = line_text_ul +
+                        Pt{(idx1 == CP0) ? X0 : line_char_data.at(Value(idx1 - CP1)).extent, Y0};
+                    const Pt hl_lr = line_text_ul +
+                        Pt{(idx2 == CP0) ? X0 : line_char_data.at(Value(idx2 - CP1)).extent, HEIGHT};
+
+                    FlatRectangle(hl_ul, hl_lr, hilite_color_to_use, CLR_ZERO, 0);
+                    //std::cout << "hl rect: " << hl_ul << " - " << hl_lr << "\n";
+
+                    // draw highlighted text
+                    //std::cout << "hl text\n";
+                    font->RenderText(line_text_ul, line_text_lr, text_format,
+                                     lines, rs, row, idx1, row + 1, idx2);
+                }
 
                 if (idx2 != idx3) {
-                    text_lr.x = initial_text_x_pos + line.char_data.at(Value(idx3 - CP1)).extent;
-
                     // render the text after the highlighted text, all the way through to the end
                     // of the line, even if ends with newline, so that any tags associated with that
                     // final character will be processed.
-                    font->RenderText(text_pos, text_lr, text, text_format, lines, rs,
-                                     row, idx2, row + 1, cd_size);
+                    //std::cout << "post hl text\n";
+                    font->RenderText(line_text_ul, line_text_lr, text_format,
+                                     lines, rs, row, idx2, row + 1, cd_size);
                 }
             }
         }
@@ -209,7 +223,7 @@ void MultiEdit::Render()
         // if there's no selected text, but this row contains the caret (and
         // MULTI_READ_ONLY is not in effect)
         if (is_caret_row) {
-            X caret_x = initial_text_x_pos;
+            X caret_x = line_text_ul.x;
             if (!line.Empty() && m_cursor_begin.second > CP0) {
                 const auto caret_char_idx = Value(m_cursor_begin.second - CP1);
                 caret_x += line.char_data.at(caret_char_idx).extent;

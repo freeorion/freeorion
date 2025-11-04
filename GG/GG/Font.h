@@ -448,8 +448,9 @@ public:
         {
             CONSTEXPR_FONT CharData() = default;
 
-            CONSTEXPR_FONT CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
-                                    const std::vector<TextElement>& tags_) :
+            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index, StrSize str_size,
+                                    CPSize cp_index, const std::vector<TextElement>& tags_) :
+                code_point(code_point_),
                 extent(extent_),
                 string_index(str_index),
                 string_size(str_size),
@@ -461,8 +462,9 @@ public:
                         tags.push_back(tag);
             }
 
-            CONSTEXPR_FONT CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
-                                    std::vector<TextElement>&& tags_) :
+            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index, StrSize str_size,
+                                    CPSize cp_index, std::vector<TextElement>&& tags_) :
+                code_point(code_point_),
                 extent(extent_),
                 string_index(str_index),
                 string_size(str_size),
@@ -473,6 +475,9 @@ public:
                     if (tag.IsTag())
                         tags.push_back(std::move(tag));
             }
+
+            /** The UTF-8 code point for this glyph */
+            uint32_t code_point = 0;
 
             /** The furthest-right extent of this glyph as it appears on the line. */
             X extent = X0;
@@ -710,26 +715,25 @@ public:
     X    RenderText(Pt pt, const std::string_view text, const RenderState& render_state) const;
 
     /** Formatted text rendering. */
-    void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
+    void RenderText(Pt pt1, Pt pt2, const Flags<TextFormat> format,
                     const LineVec& line_data, RenderState& render_state) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
         <i>begin_char</i>, <i>line_data</i>), CodePointIndexOf(<i>end_line</i> -
         1, <i>end_char</i>, <i>line_data</i>)). */
-    void RenderText(Pt pt1, Pt pt2, const std::string& text, const Flags<TextFormat> format,
+    void RenderText(Pt pt1, Pt pt2, const Flags<TextFormat> format,
                     const LineVec& line_data, RenderState& render_state,
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
 
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
-    void PreRenderText(Pt ul, Pt lr, const std::string& text, const Flags<TextFormat> format,
+    void PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
                        RenderCache& cache, const LineVec& line_data,
                        RenderState& render_state) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
-    void PreRenderText(Pt pt1, Pt pt2, const std::string& text,
-                       const Flags<TextFormat> format, const LineVec& line_data,
+    void PreRenderText(Pt pt1, Pt pt2, const Flags<TextFormat> format, const LineVec& line_data,
                        RenderState& render_state, std::size_t begin_line, CPSize begin_char,
                        std::size_t end_line, CPSize end_char, RenderCache& cache) const;
 
@@ -846,7 +850,7 @@ private:
 
     bool              GenerateGlyph(FT_Face font, uint32_t ch);
 
-    X                 StoreGlyph(Pt pt, const Glyph& glyph, const RenderState& render_state,
+    void              StoreGlyph(Pt pt, const Glyph& glyph, const RenderState& render_state,
                                  RenderCache& cache) const;
     void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, Pt pt,
                                      const Glyph& glyph, int x_top_offset,
