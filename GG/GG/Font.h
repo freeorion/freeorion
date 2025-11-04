@@ -656,20 +656,20 @@ public:
     /** Construct a font using only the printable ASCII characters.
         \throw Font::Exception Throws a subclass of Font::Exception if the
         condition specified for the subclass is met. */
-    Font(std::string font_filename, unsigned int pts);
+    Font(std::string font_filename, uint16_t pts);
 
     /** Construct a font using only the printable ASCII characters,
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
-    Font(std::string font_filename, unsigned int pts, const std::vector<uint8_t>& file_contents);
+    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents);
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
     template <typename CharSetIter>
-    Font(std::string font_filename, unsigned int pts, CharSetIter first, CharSetIter last);
+    Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last);
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last), from the in-memory
@@ -677,7 +677,7 @@ public:
         of Font::Exception if the condition specified for the subclass is
         met. */
     template <typename CharSetIter>
-    Font(std::string font_filename, unsigned int pts, const std::vector<uint8_t>& file_contents,
+    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents,
          CharSetIter first, CharSetIter last);
 
     /** Returns the name of the file from which this font was created. */
@@ -685,7 +685,7 @@ public:
 
     /** Returns the point size in which the characters in the font object are
         rendered. */
-    unsigned int PointSize() const noexcept { return m_pt_sz; }
+    uint16_t PointSize() const noexcept { return m_pt_sz; }
 
     const auto& GetTexture() const noexcept { return m_texture; }
 
@@ -757,14 +757,30 @@ public:
         from the OpenGL texture(s) created at GG::Font creation time. */
     struct Glyph
     {
-        Glyph() = default;
-        Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv);
+        constexpr Glyph() noexcept = default;
+        template <typename HasWidthHeight>
+        constexpr Glyph(Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv, const HasWidthHeight& t) noexcept :
+            Glyph(ul, lr, y_ofs, lb, adv, t ? t->Width() : X1, t ? t->Height() : Y1)
+        {}
+        constexpr Glyph(Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv, X tex_width, Y tex_height) noexcept :
+            tex_coords{{static_cast<GLfloat>(Value(ul.x)) / Value(tex_width),
+                        static_cast<GLfloat>(Value(ul.y)) / Value(tex_height),
+                        static_cast<GLfloat>(Value(lr.x)) / Value(tex_width),
+                        static_cast<GLfloat>(Value(lr.y)) / Value(tex_height)}},
+            y_offset(y_ofs),
+            left_bearing(lb),
+            advance(adv),
+            width(static_cast<uint8_t>(std::min(int32_t{255u}, Value(lr.x - ul.x)))),
+            height(static_cast<uint8_t>(std::min(int32_t{255u}, Value(lr.y - ul.y))))
+        {}
+        static_assert(std::numeric_limits<uint8_t>::max() == 255);
 
-        SubTexture  sub_texture;      ///< The subtexture containing just this glyph
-        int8_t      y_offset = 0;     ///< The vertical offset to draw this glyph (may be negative!)
-        int8_t      left_bearing = 0; ///< The space that should remain before the glyph
-        int8_t      advance = 0;      ///< The amount of space the glyph should occupy, including glyph graphic and inter-glyph spacing
-        int8_t      width = 0;        ///< The width of the glyph only
+        std::array<GLfloat, 4> tex_coords = {0.0f, 0.0f, 1.0f, 1.0f}; ///< Glyph texture coordinates
+        int8_t  y_offset = 0;     ///< vertical offset to draw this glyph (may be negative!)
+        int8_t  left_bearing = 0; ///< horizontal space that should remain before the glyph
+        int8_t  advance = 0;      ///< horizontal space the glyph should occupy, including glyph graphic and inter-glyph spacing
+        uint8_t width = 0;
+        uint8_t height = 0;
     };
 
     using GlyphMap = boost::unordered_map<uint32_t, Glyph>;
@@ -861,10 +877,10 @@ private:
 
     bool              IsDefaultFont() const noexcept;
 
-    static std::shared_ptr<Font> GetDefaultFont(unsigned int pts);
+    static std::shared_ptr<Font> GetDefaultFont(uint16_t pts);
 
     std::string                 m_font_filename;
-    unsigned int                m_pt_sz = 0;
+    uint16_t                    m_pt_sz = 0u;
     std::vector<UnicodeCharset> m_charsets; ///< The sets of glyphs that are covered by this font object
 
     Y        m_ascent = Y0;            ///< Maximum amount above the baseline the text can go
@@ -972,7 +988,7 @@ private:
     struct GG_API FontKey
     {
         template <typename S>
-        FontKey(S&& str, unsigned int pts) :
+        FontKey(S&& str, uint16_t pts) :
             filename(std::forward<S>(str)),
             points(pts)
         {}
@@ -980,37 +996,37 @@ private:
         [[nodiscard]] bool operator<(const FontKey& rhs) const noexcept
         { return (filename < rhs.filename || (filename == rhs.filename && points < rhs.points)); }
 
-        std::string  filename; ///< The name of the file from which this font was created.
-        unsigned int points;   ///< The point size in which this font was rendered.
+        std::string filename; ///< The name of the file from which this font was created.
+        uint16_t    points;   ///< The point size in which this font was rendered.
     };
 
 public:
     /** Returns true iff this manager contains a font with the given filename
         and point size, regardless of charsets. */
-    bool HasFont(std::string_view font_filename, unsigned int pts) const noexcept;
+    bool HasFont(std::string_view font_filename, uint16_t pts) const noexcept;
 
     /** Returns true iff this manager contains a font with the given filename
         and point size, containing the given charsets. */
     template <typename CharSetIter>
-    bool HasFont(std::string_view font_filename, unsigned int pts,
+    bool HasFont(std::string_view font_filename, uint16_t pts,
                  CharSetIter first, CharSetIter last) const;
 
     /** Returns a shared_ptr to the requested font, supporting all printable
         ASCII characters.  \note May load font if unavailable at time of
         request. */
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts);
+    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts);
 
     /** Returns a shared_ptr to the requested font, supporting all printable
         ASCII characters, from the in-memory contents \a file_contents.  \note
         May load font if unavailable at time of request. */
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
+    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
                                   const std::vector<uint8_t>& file_contents);
 
     /** Returns a shared_ptr to the requested font, supporting all the
         code points in the UnicodeCharsets in the range [first, last).  \note
         May load font if unavailable at time of request. */
     template <typename CharSetIter>
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
+    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
                                   CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to the requested font, supporting all the code
@@ -1018,26 +1034,26 @@ public:
         in-memory contents \a file_contents.  \note May load font if
         unavailable at time of request. */
     template <typename CharSetIter>
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
+    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
                                   const std::vector<uint8_t>& file_contents,
                                   CharSetIter first, CharSetIter last);
 
     /** Removes the indicated font from the font manager.  Due to shared_ptr
         semantics, the font may not be deleted until much later. */
-    void FreeFont(std::string_view font_filename, unsigned int pts);
+    void FreeFont(std::string_view font_filename, uint16_t pts);
 
 private:
     FontManager() = default;
 
     template <typename CharSetIter>
-    std::shared_ptr<Font> GetFontImpl(std::string_view font_filename, unsigned int pts,
+    std::shared_ptr<Font> GetFontImpl(std::string_view font_filename, uint16_t pts,
                                       const std::vector<uint8_t>* file_contents,
                                       CharSetIter first, CharSetIter last);
 
     using FontContainer = std::vector<std::pair<FontKey, std::shared_ptr<Font>>>;
     using FontContainerIt = FontContainer::const_iterator;
 
-    FontContainerIt FontLookup(std::string_view font_filename, unsigned int pts) const noexcept
+    FontContainerIt FontLookup(std::string_view font_filename, uint16_t pts) const noexcept
     {
         return std::find_if(m_rendered_fonts.begin(), m_rendered_fonts.end(),
                             [font_filename, pts](const auto& key_font) {
@@ -1071,8 +1087,7 @@ namespace detail {
 
 
 template <typename CharSetIter>
-GG::Font::Font(std::string font_filename, unsigned int pts,
-               CharSetIter first, CharSetIter last) :
+GG::Font::Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
     m_charsets(first, last)
@@ -1086,8 +1101,7 @@ GG::Font::Font(std::string font_filename, unsigned int pts,
 }
 
 template <typename CharSetIter>
-GG::Font::Font(std::string font_filename, unsigned int pts,
-               const std::vector<uint8_t>& file_contents,
+GG::Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents,
                CharSetIter first, CharSetIter last) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts),
@@ -1101,7 +1115,7 @@ GG::Font::Font(std::string font_filename, unsigned int pts,
 }
 
 template <typename CharSetIter>
-bool GG::FontManager::HasFont(std::string_view font_filename, unsigned int pts,
+bool GG::FontManager::HasFont(std::string_view font_filename, uint16_t pts,
                               CharSetIter first, CharSetIter last) const
 {
     const auto it = FontLookup(font_filename, pts);
@@ -1118,13 +1132,13 @@ bool GG::FontManager::HasFont(std::string_view font_filename, unsigned int pts,
 
 template <typename CharSetIter>
 std::shared_ptr<GG::Font>
-GG::FontManager::GetFont(std::string_view font_filename, unsigned int pts,
+GG::FontManager::GetFont(std::string_view font_filename, uint16_t pts,
                          CharSetIter first, CharSetIter last)
 { return GetFontImpl(font_filename, pts, nullptr, first, last); }
 
 template <typename CharSetIter>
 std::shared_ptr<GG::Font>
-GG::FontManager::GetFont(std::string_view font_filename, unsigned int pts,
+GG::FontManager::GetFont(std::string_view font_filename, uint16_t pts,
                          const std::vector<uint8_t>& file_contents,
                          CharSetIter first, CharSetIter last)
 { return GetFontImpl(font_filename, pts, std::addressof(file_contents), first, last); }
@@ -1132,7 +1146,7 @@ GG::FontManager::GetFont(std::string_view font_filename, unsigned int pts,
 
 template <typename CharSetIter>
 std::shared_ptr<GG::Font>
-GG::FontManager::GetFontImpl(std::string_view font_filename, unsigned int pts,
+GG::FontManager::GetFontImpl(std::string_view font_filename, uint16_t pts,
                              const std::vector<uint8_t>* file_contents,
                              CharSetIter first, CharSetIter last)
 {

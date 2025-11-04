@@ -2347,31 +2347,6 @@ GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenT
     return *this;
 }
 
-namespace {
-    constexpr int8_t ClampedWidth(Pt ul, Pt lr)
-    {
-        using under_t = std::decay_t<decltype(Value(ul.x))>;
-        static constexpr under_t max = std::numeric_limits<int8_t>::max();
-        static_assert(max == 127);
-        return static_cast<int8_t>(std::min<under_t>(Value(lr.x - ul.x), max));
-    }
-}
-
-///////////////////////////////////////
-// struct GG::Font::Glyph
-///////////////////////////////////////
-Font::Glyph::Glyph(std::shared_ptr<Texture> texture, Pt ul, Pt lr, int8_t y_ofs, int8_t lb, int8_t adv) :
-    sub_texture(std::move(texture), ul.x, ul.y, lr.x, lr.y),
-    y_offset(y_ofs),
-    left_bearing(lb),
-    advance(adv),
-    width(ClampedWidth(ul, lr))
-{
-    if (width != Value(sub_texture.Width()))
-        std::cerr << "Glyph subtexture width " << sub_texture.Width()
-                  << " and own width " << width << " are inconsistent!";
-}
-
 ///////////////////////////////////////
 // class GG::Font
 ///////////////////////////////////////
@@ -2379,7 +2354,7 @@ namespace {
     Font::RenderCache shared_cache{};
 }
 
-Font::Font(std::string font_filename, unsigned int pts) :
+Font::Font(std::string font_filename, uint16_t pts) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts)
 {
@@ -2391,8 +2366,7 @@ Font::Font(std::string font_filename, unsigned int pts) :
     }
 }
 
-Font::Font(std::string font_filename, unsigned int pts,
-           const std::vector<uint8_t>& file_contents) :
+Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents) :
     m_font_filename(std::move(font_filename)),
     m_pt_sz(pts)
 {
@@ -3091,7 +3065,7 @@ void Font::Init(FT_Face& face)
         throw InvalidPointSize("Attempted to create font \"" + m_font_filename + "\" with 0 point size");
 
     // Set the character size and use default 72 DPI
-    if (FT_Set_Char_Size(face, 0, m_pt_sz * 64, 0, 0)) // if error is returned
+    if (FT_Set_Char_Size(face, 0, static_cast<signed long>(m_pt_sz * 64), 0, 0)) // if error is returned
         throw BadPointSize("Could not set font size while attempting to create font \"" + m_font_filename + "\"");
 
     // Get the scalable font metrics for this font
@@ -3247,14 +3221,13 @@ void Font::Init(FT_Face& face)
 
     // create Glyph objects from temp glyph data
     for (const auto& [codepoint, glyph_data] : temp_glyph_data) {
-        m_glyphs[codepoint] = Glyph(m_texture, glyph_data.ul, glyph_data.lr, glyph_data.y_offset,
-                                    glyph_data.left_b, glyph_data.adv);
+        m_glyphs[codepoint] = Glyph(glyph_data.ul, glyph_data.lr, glyph_data.y_offset,
+                                    glyph_data.left_b, glyph_data.adv, m_texture);
     }
 
     // record the width of the space character
-    auto glyph_it = m_glyphs.find(WIDE_SPACE);
-    assert(glyph_it != m_glyphs.end());
-    m_space_width = glyph_it->second.advance;
+    const auto glyph_it = m_glyphs.find(WIDE_SPACE);
+    m_space_width = (glyph_it != m_glyphs.end()) ? glyph_it->second.advance : m_pt_sz;
 }
 
 bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
@@ -3290,7 +3263,7 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
 void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
-    const auto tc = glyph.sub_texture.TexCoords();
+    const auto& tc = glyph.tex_coords;
     const auto lb = static_cast<GLfloat>(pt.x + glyph.left_bearing);
     const auto w = static_cast<GLfloat>(glyph.width);
     const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
@@ -3299,8 +3272,8 @@ void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
 
     cache.vertices.store(std::array{lb + x_top_offset,     t + y_shift,
                                     lb + w + x_top_offset, t + y_shift,
-                                    lb + w - x_top_offset, t + glyph.sub_texture.Height() + y_shift,
-                                    lb - x_top_offset,     t + glyph.sub_texture.Height() + y_shift});
+                                    lb + w - x_top_offset, t + glyph.height + y_shift,
+                                    lb - x_top_offset,     t + glyph.height + y_shift});
 
     cache.colors.store<4>(color);
 }
@@ -3361,7 +3334,7 @@ void Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render
 bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
-std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
+std::shared_ptr<Font> Font::GetDefaultFont(uint16_t pts)
 { return GUI::GetGUI()->GetStyleFactory().DefaultFont(pts); }
 
 
@@ -3370,7 +3343,7 @@ std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
 ///////////////////////////////////////
 const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
 
-bool FontManager::HasFont(std::string_view font_filename, unsigned int pts) const noexcept
+bool FontManager::HasFont(std::string_view font_filename, uint16_t pts) const noexcept
 { return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
 namespace {
@@ -3378,14 +3351,14 @@ namespace {
     const auto empty_it = empty_charsets.end();
 }
 
-std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, unsigned int pts)
+std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts)
 { return GetFont(font_filename, pts, empty_it, empty_it); }
 
-std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, unsigned int pts,
+std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts,
                                            const std::vector<uint8_t>& file_contents)
 { return GetFont(font_filename, pts, file_contents, empty_it, empty_it); }
 
-void FontManager::FreeFont(std::string_view font_filename, unsigned int pts)
+void FontManager::FreeFont(std::string_view font_filename, uint16_t pts)
 {
     auto it = FontLookup(font_filename, pts);
     if (it != m_rendered_fonts.end())
