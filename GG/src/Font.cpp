@@ -484,25 +484,14 @@ namespace {
     static_assert(ValidateFormat(FORMAT_WORDBREAK | FORMAT_LINEWRAP) == (FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK));
 #endif
 
-    CONSTEXPR_FONT void SetJustification(bool& last_line_of_curr_just, Font::LineData& line_data,
-                                         Alignment orig_just, Alignment prev_just) noexcept
-    {
-        if (last_line_of_curr_just) {
-            line_data.justification = orig_just;
-            last_line_of_curr_just = false;
-        } else {
-            line_data.justification = prev_just;
-        }
-    }
 
     CONSTEXPR_FONT void AddNewline(X& x, bool& last_line_of_curr_just, Font::LineVec& line_data,
                                    const Alignment orig_just)
     {
-        line_data.emplace_back();
-        SetJustification(last_line_of_curr_just,
-                         line_data.back(),
-                         orig_just,
-                         line_data.at(line_data.size() - 2).justification);
+        const auto new_just = (last_line_of_curr_just || line_data.empty()) ?
+            orig_just : line_data.back().justification;
+        line_data.emplace_back(new_just);
+        last_line_of_curr_just = false;
         x = X0;
     }
 
@@ -577,11 +566,11 @@ namespace {
         // this line, move it down to the next line.
         // or if there is no line yet, ensure there is one
         if (line_data.empty() || (x != X0 && box_width < x + sum(element_widths))) {
-            const Alignment prev_justification = line_data.empty() ?
-                ALIGN_NONE : line_data.back().justification;
-            auto& new_last_line_data = line_data.emplace_back();
+            const auto new_just = (last_line_of_curr_just || line_data.empty()) ?
+                orig_just : line_data.back().justification;
+            line_data.emplace_back(new_just);
+            last_line_of_curr_just = false;
             x = X0;
-            SetJustification(last_line_of_curr_just, new_last_line_data, orig_just, prev_justification);
         }
         auto& last_char_data = line_data.back().char_data;
         last_char_data.reserve(element_text.size());
@@ -618,14 +607,11 @@ namespace {
                                            std::vector<Font::TextElement>& pending_formatting_tags,
                                            const TextNextFn& text_next_fn)
     {
-        const Alignment prev_justification = line_data.empty() ?
-            ALIGN_NONE : line_data.back().justification;
-
         // ensure there is a line to add text into
         if (line_data.empty()) {
             x = X0;
-            auto& new_last_line_data = line_data.emplace_back();
-            SetJustification(last_line_of_curr_just, new_last_line_data, orig_just, prev_justification);
+            auto& new_last_line_data = line_data.emplace_back(orig_just);
+            last_line_of_curr_just = false;
         }
         // get vector of char data to insert into
         auto& last_line_data = line_data.back();
@@ -653,8 +639,10 @@ namespace {
                                         code_point_offset, std::move(pending_formatting_tags));
             pending_formatting_tags.clear();
 
-            if (move_down)
-                SetJustification(last_line_of_curr_just, last_line_data, orig_just, prev_justification);
+            if (move_down && last_line_of_curr_just) {
+                last_line_data.justification = orig_just;
+                last_line_of_curr_just = false;
+            }
 
             ++j;
             ++code_point_offset;
