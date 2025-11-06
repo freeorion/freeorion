@@ -71,14 +71,14 @@ namespace {
 
 
     // fallback stringtable to look up key in if entry is not found in currently configured stringtable
-    boost::filesystem::path DevDefaultEnglishStringtablePath()
+    std::filesystem::path DevDefaultEnglishStringtablePath()
     { return GetResourceDir() / "stringtables/en.txt"; }
 
     // filename to use as default value for stringtable filename option.
     // based on the system's locale. not necessarily the same as the
     // "dev default" (english) stringtable filename for fallback lookup
     // includes "<resource-dir>/stringtables/" directory part of path
-    boost::filesystem::path GetDefaultStringTableFileName() {
+    std::filesystem::path GetDefaultStringTableFileName() {
         std::string lang;
 
 #if defined(FREEORION_ANDROID)
@@ -102,8 +102,8 @@ namespace {
             DebugLogger() << "Detected locale language: " << lang;
         }
 
-        boost::filesystem::path lang_filename{ lang + ".txt" };
-        boost::filesystem::path default_stringtable_path{ GetResourceDir() / "stringtables" / lang_filename };
+        std::filesystem::path lang_filename{ lang + ".txt" };
+        std::filesystem::path default_stringtable_path{ GetResourceDir() / "stringtables" / lang_filename };
 
         // default to english if locale-derived filename not present
         if (!IsExistingFile(default_stringtable_path)) {
@@ -140,7 +140,7 @@ namespace {
         // or this may have been overridden from one of the config XML files or from
         // a command line argument.
         std::string option_path = GetOptionsDB().Get<std::string>("resource.stringtable.path");
-        boost::filesystem::path stringtable_path = FilenameToPath(option_path);
+        std::filesystem::path stringtable_path = FilenameToPath(option_path);
 
         // verify that option-derived stringtable file exists, with fallbacks
         DebugLogger() << "Stringtable option path: " << option_path;
@@ -244,9 +244,9 @@ namespace {
     }
 
     std::shared_mutex path_LUT_mutex;
-    std::map<boost::filesystem::path, std::string> path_to_string_LUT;
+    std::map<std::filesystem::path, std::string> path_to_string_LUT;
 
-    StringTable& GetStringTable(const boost::filesystem::path& stringtable_path,
+    StringTable& GetStringTable(const std::filesystem::path& stringtable_path,
                                 std::shared_lock<std::shared_mutex>& access_lock)
     {
         {

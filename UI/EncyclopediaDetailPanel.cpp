@@ -866,7 +866,7 @@ void EncyclopediaDetailPanel::CompleteConstruction() {
     m_name_text->SetFont(ui.GetBoldFont(NAME_PTS));
     m_summary_text->SetFont(ui.GetFont(SUMMARY_PTS));
 
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     m_index_button = Wnd::Create<CUIButton>(
         GG::SubTexture(ui.GetTexture(button_texture_dir / "uparrownormal.png")),
@@ -3389,7 +3389,7 @@ namespace {
                 auto& planet_type_str = lower_names_by_type[pt_idx];
 
                 // get and retain the filenames of each path for this type
-                auto pe_type_func = [planet_type_str, &pe_path](const boost::filesystem::path& path) {
+                auto pe_type_func = [planet_type_str, &pe_path](const std::filesystem::path& path) {
                     return IsExistingFile(path)
                         && (pe_path == path.parent_path())
                         && boost::algorithm::starts_with(PathToString(path.filename()), planet_type_str);

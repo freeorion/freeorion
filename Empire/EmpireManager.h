@@ -6,7 +6,7 @@
 #include "../util/AppInterface.h"
 #include "../util/Export.h"
 
-#include <boost/filesystem.hpp>
+#include <fstream>
 #include <boost/signals2/signal.hpp>
 
 #include <map>
@@ -117,7 +117,7 @@ private:
 [[nodiscard]] FO_COMMON_API const std::vector<std::array<uint8_t, 4>>& EmpireColors();
 
 /** Initialize empire colors from \p path */
-FO_COMMON_API void InitEmpireColors(const boost::filesystem::path& path);
+FO_COMMON_API void InitEmpireColors(const std::filesystem::path& path);
 
 
 #endif

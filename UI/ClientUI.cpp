@@ -48,14 +48,15 @@
 #include <boost/phoenix/operator.hpp>
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
 #include <boost/date_time/posix_time/posix_time_io.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
 
-#include <string>
 #include <algorithm>
+#include <filesystem>
+#include <fstream>
+#include <string>
+
 #include <boost/locale/formatting.hpp>
 #include <boost/locale/date_time.hpp>
 
@@ -69,7 +70,7 @@ bool TextureFileNameCompare(const std::shared_ptr<GG::Texture>& t1,
                             const std::shared_ptr<GG::Texture>& t2)
 { return t1 && t2 && t1->Path() < t2->Path(); }
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 
 fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "data" / "art"; }
@@ -425,7 +426,7 @@ namespace {
             {
                 std::string file_name = GetOptionsDB().Get<std::string>("resource.stringtable.path");
                 std::string stringtable_str;
-                boost::filesystem::ifstream ifs(FilenameToPath(file_name));
+                std::ifstream ifs(FilenameToPath(file_name));
                 while (ifs) {
                     std::string line;
                     std::getline(ifs, line);
@@ -441,7 +442,7 @@ namespace {
                 DebugLogger() << "Non-default stringtable!";
                 std::string file_name = GetOptionsDB().GetDefault<std::string>("resource.stringtable.path");
                 std::string stringtable_str;
-                boost::filesystem::ifstream ifs(FilenameToPath(file_name));
+                std::ifstream ifs(FilenameToPath(file_name));
                 while (ifs) {
                     std::string line;
                     std::getline(ifs, line);
@@ -1058,7 +1059,7 @@ void ClientUI::HandleFullscreenSwitch() const {
         m_app.RepositionWindowsSignal();
 }
 
-std::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
+std::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const std::filesystem::path& dir,
                                                         std::string_view prefix, bool mipmap)
 {
     const auto& prefixed_textures = GetPrefixedTextures(dir, prefix, mipmap);
@@ -1067,7 +1068,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem:
     return prefixed_textures.at(RandInt(0, prefixed_textures.size()));
 }
 
-std::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir,
+std::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const std::filesystem::path& dir,
                                                         std::string_view prefix, int n, bool mipmap)
 {
     assert(0 <= n);
@@ -1093,7 +1094,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
     dlg->Run();
 }
 
-std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap) {
+std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& path, bool mipmap) {
     std::shared_ptr<GG::Texture> retval;
     try {
         retval = m_app.GetTexture(path, mipmap);
@@ -1167,9 +1168,9 @@ std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts) const {
 }
 
 const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
-    const boost::filesystem::path& dir, std::string_view prefix, bool mipmap)
+    const std::filesystem::path& dir, std::string_view prefix, bool mipmap)
 {
-    namespace fs = boost::filesystem;
+    namespace fs = std::filesystem;
     if (!fs::is_directory(dir)) {
         ErrorLogger() << "GetPrefixedTextures passed invalid dir: " << dir;
         static CONSTEXPR_VEC const std::vector<std::shared_ptr<GG::Texture>> EMPTY_VEC;
@@ -1192,7 +1193,7 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
             { textures.push_back(m_app.GetTexture(*it, mipmap)); }
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
-            if (e.code() != boost::system::errc::permission_denied)
+            if (e.code() != std::errc::permission_denied)
                 throw;
         }
     }

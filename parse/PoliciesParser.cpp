@@ -219,7 +219,7 @@ namespace {
 
 namespace parse {
     template <typename P>
-    P policies(const boost::filesystem::path& path) {
+    P policies(const std::filesystem::path& path) {
         static_assert(std::is_same_v<P, std::vector<Policy>>);
         std::vector<Policy> policies_;
 
@@ -236,5 +236,5 @@ namespace parse {
 // This allows Tech.h to only be included in this .cpp file and not Parse.h
 // which recompiles all parsers if Tech.h changes.
 template FO_PARSE_API std::vector<Policy> parse::policies<std::vector<Policy>>(
-    const boost::filesystem::path& path);
+    const std::filesystem::path& path);
 

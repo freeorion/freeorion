@@ -10,8 +10,8 @@
 #include "util/MultiplayerCommon.h"
 #include "util/PythonCommon.h"
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/path.hpp>
+#include <fstream>
+#include <filesystem>
 
 class ParserAppFixture : public IApp {
 public:
@@ -41,8 +41,8 @@ public:
     [[nodiscard]] const ScriptingContext& GetContext() const noexcept override { return m_context; };
 
 protected:
-    boost::filesystem::path m_test_scripting_dir;
-    boost::filesystem::path m_default_scripting_dir;
+    std::filesystem::path m_test_scripting_dir;
+    std::filesystem::path m_default_scripting_dir;
     PythonCommon            m_python;
 
     // Gamestate...

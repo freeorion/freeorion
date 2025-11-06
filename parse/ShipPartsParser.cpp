@@ -179,7 +179,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload ship_parts(const boost::filesystem::path& path) {
+    start_rule_payload ship_parts(const std::filesystem::path& path) {
         start_rule_payload parts;
 
         for (const auto& file : ListDir(path, IsFOCScript))

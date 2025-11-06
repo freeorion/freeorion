@@ -37,7 +37,7 @@ public:
     void SetPreviewList(PreviewInformation&& preview_info);
 
     /// Get the chosen save files full path
-    [[nodiscard]] boost::filesystem::path ResultPath() const;
+    [[nodiscard]] std::filesystem::path ResultPath() const;
     [[nodiscard]] std::string ResultString() const;
 
 protected:
@@ -57,7 +57,7 @@ private:
         server for save preview information*/
     void UpdatePreviewList();
     /** Update the preview list from a local save directory*/
-    void SetPreviewList(const boost::filesystem::path& path);
+    void SetPreviewList(const std::filesystem::path& path);
     /** Update the previews with preview info set by \p setup_preview_info*/
     void SetPreviewListCore(const std::function<void ()>& setup_preview_info);
 

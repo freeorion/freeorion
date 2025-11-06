@@ -22,9 +22,10 @@
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/python/scope.hpp>
-#include <boost/filesystem.hpp>
 
-namespace fs = boost::filesystem;
+#include <fstream>
+
+namespace fs = std::filesystem;
 namespace py = boost::python;
 
 namespace {

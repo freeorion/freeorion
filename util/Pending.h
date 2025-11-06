@@ -4,7 +4,7 @@
 #include "Export.h"
 #include "Logger.h"
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <boost/optional/optional.hpp>
 
 #include <future>
@@ -120,7 +120,7 @@ namespace Pending {
 
     /** Return a Pending<T> constructed with \p parser and \p path*/
     template <typename Func>
-    [[nodiscard]] auto StartAsyncParsing(const Func& parser, const boost::filesystem::path& path)
+    [[nodiscard]] auto StartAsyncParsing(const Func& parser, const std::filesystem::path& path)
         -> Pending<decltype(parser(path))>
     {
         return Pending<decltype(parser(path))>(
@@ -129,7 +129,7 @@ namespace Pending {
 
     /** Return a Pending<T> constructed with \p parser, \p arg1, and \p path*/
     template <typename Func, typename Arg1>
-    [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const boost::filesystem::path& path)
+    [[nodiscard]] auto ParseSynchronously(const Func& parser, const Arg1& arg1, const std::filesystem::path& path)
         -> Pending<decltype(parser(arg1, path, std::declval<bool&>()))>
     {
         bool success = true;
@@ -146,7 +146,7 @@ namespace Pending {
       * executes the parser in the calling thread and stores the result
       * before returning. */
     template <typename Func>
-    [[nodiscard]] auto ParseSynchronously(const Func& parser, const boost::filesystem::path& path)
+    [[nodiscard]] auto ParseSynchronously(const Func& parser, const std::filesystem::path& path)
         -> Pending<decltype(parser(path))>
     {
         auto retval = std::async(std::launch::deferred, parser, path);

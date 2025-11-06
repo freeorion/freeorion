@@ -432,7 +432,7 @@ void CUIWnd::PositionButtons() {
 }
 
 void CUIWnd::InitButtons() {
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // create the close button
     if (m_closable) {

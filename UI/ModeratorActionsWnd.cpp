@@ -40,7 +40,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     auto& ui = app.GetUI();
     GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // button for no action
     m_no_action_button = Wnd::Create<CUIButton>(

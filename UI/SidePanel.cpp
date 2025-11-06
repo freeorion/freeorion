@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <numeric>
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/range/irange.hpp>
@@ -123,7 +123,7 @@ namespace {
             ScopedTimer timer("GetRotatingPlanetData initialization", true);
             XMLDoc doc;
             try {
-                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+                std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
                 doc.ReadDoc(ifs);
                 ifs.close();
             } catch (const std::exception& e) {
@@ -147,7 +147,7 @@ namespace {
     const auto& GetPlanetAtmosphereData() {
         static const auto data = []() {
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
+            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "atmospheres.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -171,7 +171,7 @@ namespace {
     double GetAsteroidsFPS() {
         static const double retval = []() {
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -187,7 +187,7 @@ namespace {
     double GetRotatingPlanetAmbientIntensity() {
         static const double retval = []() {
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -206,7 +206,7 @@ namespace {
     double GetRotatingPlanetDiffuseIntensity() {
         static const double retval = []() {
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -426,7 +426,7 @@ namespace {
             std::array<GLfloat, 4> retval{0.0f, 0.0f, 0.0f, 0.0f};
 
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
             const auto& lpos = doc.root_node.Child("GLPlanets").Child("light_pos");
@@ -443,7 +443,7 @@ namespace {
     const auto& GetStarLightColors() {
         static const auto light_colors{[]() -> std::map<StarType, std::array<float, 4>> {
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
             doc.ReadDoc(ifs);
             ifs.close();
 
@@ -3392,7 +3392,7 @@ void SidePanel::CompleteConstruction() {
     m_planet_panel_container = GG::Wnd::Create<PlanetPanelContainer>();
     AttachChild(m_planet_panel_container);
 
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     m_button_prev = Wnd::Create<CUIButton>(
         GG::SubTexture(GetApp().GetUI().GetTexture(button_texture_dir / "leftarrownormal.png")),

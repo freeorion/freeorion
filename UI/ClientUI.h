@@ -4,7 +4,7 @@
 
 #include <GG/GGFwd.h>
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/container/flat_map.hpp>
 
@@ -101,21 +101,21 @@ public:
 
     /** Loads a texture at random from the set of files starting with \a prefix
         in directory \a dir. */
-    std::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir,
+    std::shared_ptr<GG::Texture> GetRandomTexture(const std::filesystem::path& dir,
                                                   std::string_view prefix,
                                                   bool mipmap = false);
 
     /** Loads texture \a n % N from the set of files starting with \a prefix in
         directory \a dir, where N is the number of files found in \a dir with
         prefix \a prefix. */
-    std::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir,
+    std::shared_ptr<GG::Texture> GetModuloTexture(const std::filesystem::path& dir,
                                                   std::string_view prefix, int n,
                                                   bool mipmap = false);
 
     /** Returns all textures in the set of files starting with \a prefix in
         directory \a dir. */
     const std::vector<std::shared_ptr<GG::Texture>>& GetPrefixedTextures(
-        const boost::filesystem::path& dir, std::string_view prefix, bool mipmap = false);
+        const std::filesystem::path& dir, std::string_view prefix, bool mipmap = false);
 
     /** Shows a message dialog box with the given message; if
       * \a play_alert_sound is true, and UI sound effects are currently enabled,
@@ -125,7 +125,7 @@ public:
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true; loads default missing.png if name isn't
       * found. */
-    std::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+    std::shared_ptr<GG::Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
 
     /** Returns the default font in the specified point size. Uses "ui.font.path"
       * option setting as the font filename, and provides Unicode character sets
@@ -147,8 +147,8 @@ public:
     static std::string FormatTimestamp(boost::posix_time::ptime timestamp);
 
     //!@{
-    static boost::filesystem::path ArtDir();    //!< directory holding artwork
-    static boost::filesystem::path SoundDir();  //!< directory holding sound and music
+    static std::filesystem::path ArtDir();      //!< directory holding artwork
+    static std::filesystem::path SoundDir();    //!< directory holding sound and music
 
     static int      Pts();                      //!< default point size
     static int      TitlePts();                 //!< default point size to use for window title

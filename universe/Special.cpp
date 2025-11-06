@@ -1,6 +1,6 @@
 #include "Special.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include "Condition.h"
 #include "Effect.h"
 #include "UniverseObject.h"

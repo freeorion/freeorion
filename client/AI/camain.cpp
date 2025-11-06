@@ -6,7 +6,7 @@
 #include "../../util/Version.h"
 #include "../../util/i18n.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 
 #if defined(FREEORION_LINUX)
 /* Freeorion aims to have exceptions handled and operation continue normally.

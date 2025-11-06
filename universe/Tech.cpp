@@ -1,6 +1,6 @@
 #include "Tech.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include "CommonParams.h"
 #include "Effect.h"
 #include "ObjectMap.h"

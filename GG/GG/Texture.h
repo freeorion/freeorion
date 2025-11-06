@@ -18,7 +18,7 @@
 #define _GG_Texture_h_
 
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <GG/Base.h>
 #include <GG/Exception.h>
 #include <mutex>
@@ -98,7 +98,7 @@ public:
     /** Frees any currently-held memory and loads a texture from file \a
         path.  \throw GG::Texture::BadFile Throws if the texture creation
         fails. */
-    void Load(const boost::filesystem::path& path, bool mipmap = false);
+    void Load(const std::filesystem::path& path, bool mipmap = false);
 
     /** Frees any currently-held memory and creates a texture from supplied
         array \a image.  \throw GG::Texture::Exception Throws applicable
@@ -130,7 +130,7 @@ private:
                          unsigned int bytes_per_pixel, bool mipmap);
     [[nodiscard]] std::vector<uint8_t> GetRawBytes();
 
-    boost::filesystem::path m_path;     ///< file path from which this Texture was constructed
+    std::filesystem::path m_path;     ///< file path from which this Texture was constructed
 
     unsigned int m_bytes_pp = 0;
     X            m_width = GG::X0;
@@ -237,12 +237,12 @@ public:
     /** Returns a shared_ptr to the texture created from image file \a path.
         If the texture is not present in the manager's pool, it will be loaded
         from disk. */
-    std::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+    std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
 
     /** Removes the manager's shared_ptr to the texture created from image
         file \a path, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */
-    void                     FreeTexture(const boost::filesystem::path& path);
+    void                     FreeTexture(const std::filesystem::path& path);
 
     /** Removes the manager's shared_ptr to the texture stored with the name
         \a name, if it exists.  \note Due to shared_ptr semantics, the
@@ -251,7 +251,7 @@ public:
 
 private:
     TextureManager() = default;
-    std::shared_ptr<Texture> LoadTexture(const boost::filesystem::path& path, bool mipmap);
+    std::shared_ptr<Texture> LoadTexture(const std::filesystem::path& path, bool mipmap);
 
     /** Indexed by string, not path, because some textures may be stored by a
         name and not loaded from a path. */

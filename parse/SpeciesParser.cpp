@@ -189,11 +189,11 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload species(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+    start_rule_payload species(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload retval;
         auto& [species_, ordering] = retval;
 
-        boost::filesystem::path manifest_file;
+        std::filesystem::path manifest_file;
 
         ScopedTimer timer("Species Parsing");
 

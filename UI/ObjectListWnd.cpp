@@ -1566,7 +1566,7 @@ private:
         const auto& objects = app.GetContext().ContextObjects();
 
         if (m_has_contents) {
-            boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+            std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
             if (m_expanded) {
                 m_expand_button = Wnd::Create<CUIButton>(

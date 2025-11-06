@@ -8,7 +8,7 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <algorithm>
-#include <boost/filesystem.hpp>
+#include <fstream>
 #include <GG/dialogs/FileDlg.h>
 #include <GG/DrawUtil.h>
 #include <GG/RichText/ImageBlock.h>
@@ -20,7 +20,7 @@
 
 using namespace GG;
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
                         GG::Flags<GG::WndFlag> flags) :

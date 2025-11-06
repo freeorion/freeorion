@@ -124,9 +124,9 @@ Rect StaticGraphic::RenderedArea() const
     return Rect(pt1, pt2);
 }
 
-const boost::filesystem::path& StaticGraphic::GetTexturePath() const
+const std::filesystem::path& StaticGraphic::GetTexturePath() const
 {
-    static const boost::filesystem::path EMPTY_PATH;
+    static const std::filesystem::path EMPTY_PATH;
 
     if (const Texture* texture = m_graphic.GetTexture())
         return texture->Path();

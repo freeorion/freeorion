@@ -28,16 +28,17 @@
 #include <GG/TabWnd.h>
 
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
 
 #include <algorithm>
+#include <filesystem>
+#include <fstream>
 #include <iterator>
-#include <unordered_set>
 #include <unordered_map>
+#include <unordered_set>
+
 #include <functional>
 
 struct Availability {
@@ -146,40 +147,40 @@ namespace {
     constexpr std::string_view DESIGN_FILENAME_PREFIX = "ShipDesign-";
     constexpr std::string_view DESIGN_FILENAME_EXTENSION = ".focs.txt";
     constexpr std::string_view DESIGN_MANIFEST_PREFIX = "ShipDesignOrdering";
-    boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
+    std::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
-    void ReportFileError(const boost::filesystem::path& file) {
+    void ReportFileError(const std::filesystem::path& file) {
         std::string msg = boost::io::str(FlexibleFormat(UserString("ERROR_UNABLE_TO_WRITE_FILE"))
                                          % PathToString(file));
         ErrorLogger() << msg;
         GetApp().GetUI().MessageBox(msg, true);
     }
 
-    void WriteToFile(const boost::filesystem::path& file, const std::string& ss) {
+    void WriteToFile(const std::filesystem::path& file, const std::string& ss) {
         try {
-            boost::filesystem::ofstream ofs(file);
+            std::ofstream ofs(file);
             if (!ofs)
                 return ReportFileError(file);
 
             ofs << ss;
             TraceLogger() << "Wrote to " << PathToString(file);
 
-        } catch (const boost::filesystem::filesystem_error& e) {
+        } catch (const std::filesystem::filesystem_error& e) {
             ErrorLogger() << "Error writing to file.  Exception: " << ": " << e.what();
             ReportFileError(file);
         }
     }
 
-    boost::filesystem::path GetDesignsDir() {
+    std::filesystem::path GetDesignsDir() {
         // ensure directory present
-        boost::filesystem::path designs_dir_path(SavedDesignsDir());
+        std::filesystem::path designs_dir_path(SavedDesignsDir());
         if (!exists(designs_dir_path))
-            boost::filesystem::create_directories(designs_dir_path);
+            std::filesystem::create_directories(designs_dir_path);
         return designs_dir_path;
     }
 
-    boost::filesystem::path CreateSavePathForDesign(const ShipDesign& design) {
-        boost::filesystem::path designs_dir_path = GetDesignsDir();
+    std::filesystem::path CreateSavePathForDesign(const ShipDesign& design) {
+        std::filesystem::path designs_dir_path = GetDesignsDir();
 
         // Since there is no easy way to guarantee that an arbitrary design name with possibly
         // embedded decorator code is a safe file name, use the UUID. The users will never interact
@@ -187,7 +188,7 @@ namespace {
         const auto file_name{std::string(DESIGN_FILENAME_PREFIX)
             .append(boost::uuids::to_string(design.UUID())).append(DESIGN_FILENAME_EXTENSION)};
 
-        return boost::filesystem::absolute(designs_dir_path / file_name);
+        return std::filesystem::absolute(designs_dir_path / file_name);
     }
 
 
@@ -314,7 +315,7 @@ namespace {
         /// Saved designs with filename
         mutable std::unordered_map<boost::uuids::uuid,
                                    std::pair<std::unique_ptr<ShipDesign>,
-                                             boost::filesystem::path>,
+                                             std::filesystem::path>,
                                    boost::hash<boost::uuids::uuid>> m_saved_designs;
 
         mutable bool m_is_new_game = false;
@@ -551,10 +552,10 @@ namespace {
 
     void SavedDesignsManager::SaveManifestConst() const {
         CheckPendingDesigns();
-        boost::filesystem::path designs_dir_path = GetDesignsDir();
+        std::filesystem::path designs_dir_path = GetDesignsDir();
 
         const auto file_name{std::string{DESIGN_MANIFEST_PREFIX}.append(DESIGN_FILENAME_EXTENSION)};
-        auto file = boost::filesystem::absolute(PathToString(designs_dir_path / file_name));
+        auto file = std::filesystem::absolute(PathToString(designs_dir_path / file_name));
 
         std::stringstream ss;
         ss << DESIGN_MANIFEST_PREFIX << "\n";
@@ -631,7 +632,7 @@ namespace {
         const auto& saved_design_it = m_saved_designs.find(erased_uuid);
         if (saved_design_it != m_saved_designs.end()) {
             const auto& file = saved_design_it->second.second;
-            boost::filesystem::remove(file);
+            std::filesystem::remove(file);
             m_saved_designs.erase(erased_uuid);
         }
 

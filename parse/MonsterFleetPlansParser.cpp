@@ -123,7 +123,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload monster_fleet_plans(const boost::filesystem::path& path) {
+    start_rule_payload monster_fleet_plans(const std::filesystem::path& path) {
         start_rule_payload monster_fleet_plans_;
         detail::parse_file<grammar, start_rule_payload>(GetLexer(), path, monster_fleet_plans_);
         return monster_fleet_plans_;

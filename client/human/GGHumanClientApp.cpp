@@ -43,8 +43,6 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/algorithm/string.hpp>
@@ -53,6 +51,8 @@
 #include <boost/uuid/string_generator.hpp>
 
 #include <chrono>
+#include <filesystem>
+#include <fstream>
 #include <thread>
 #include <sstream>
 #include <utility>
@@ -63,7 +63,7 @@ namespace std {
 #endif
 
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 #ifdef ENABLE_CRASH_BACKTRACE
 # include <signal.h>
@@ -1257,17 +1257,15 @@ void GGHumanClientApp::UpdateCombatLogManager() {
 
 namespace {
     boost::optional<std::string> NewestSinglePlayerSavegame() {
-        using namespace boost::filesystem;
+        using namespace std::filesystem;
         try {
-            std::multimap<std::time_t, path> files_by_write_time;
+            std::multimap<file_time_type, path> files_by_write_time;
 
             auto add_all_savegames_in = [&files_by_write_time](const path& path) {
                 if (!is_directory(path))
                     return;
 
-                for (directory_iterator dir_it(path);
-                     dir_it != directory_iterator(); ++dir_it)
-                {
+                for (directory_iterator dir_it(path); dir_it != directory_iterator(); ++dir_it) {
                     const auto& file_path = dir_it->path();
                     if (!is_regular_file(file_path))
                         continue;
@@ -1297,21 +1295,21 @@ namespace {
 
             return boost::none;
 
-        } catch (const boost::filesystem::filesystem_error& e) {
+        } catch (const std::filesystem::filesystem_error& e) {
             ErrorLogger() << "File system error " << e.what() << " while finding newest autosave";
             return boost::none;
         }
     }
 
-    void RemoveOldestFiles(int files_limit, boost::filesystem::path& p) {
-        using namespace boost::filesystem;
+    void RemoveOldestFiles(int files_limit, std::filesystem::path& p) {
+        using namespace std::filesystem;
         try {
             if (!is_directory(p))
                 return;
             if (files_limit < 0)
                 return;
 
-            std::multimap<std::time_t, path> files_by_write_time;
+            std::multimap<file_time_type, path> files_by_write_time;
 
             for (directory_iterator dir_it(p); dir_it != directory_iterator(); ++dir_it) {
                 const path& file_path = dir_it->path();
@@ -1344,8 +1342,8 @@ namespace {
         }
     }
 
-    boost::filesystem::path CreateNewAutosaveFilePath(int client_empire_id, bool is_single_player,
-                                                      const EmpireManager& empires, int turn)
+    std::filesystem::path CreateNewAutosaveFilePath(int client_empire_id, bool is_single_player,
+                                                    const EmpireManager& empires, int turn)
     {
         static constexpr const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-";
 
@@ -1378,18 +1376,18 @@ namespace {
         // Add timestamp to autosave generated files
         auto datetime_str = FilenameTimestamp();
 
-        boost::filesystem::path autosave_dir_path(
+        std::filesystem::path autosave_dir_path(
             (is_single_player ? GetSaveDir() : GetServerSaveDir()) / "auto");
 
         auto save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d_%s%s")
                                             % player_name % empire_name % turn
                                             % datetime_str % extension);
-        boost::filesystem::path save_path(autosave_dir_path / save_filename);
+        std::filesystem::path save_path(autosave_dir_path / save_filename);
 
         try {
             // ensure autosave directory exists
             if (!exists(autosave_dir_path))
-                boost::filesystem::create_directories(autosave_dir_path);
+                std::filesystem::create_directories(autosave_dir_path);
         } catch (const std::exception& e) {
             ErrorLogger() << "Autosave unable to check / create autosave directory: " << e.what();
         }
@@ -1437,7 +1435,7 @@ void GGHumanClientApp::Autosave() {
                                                         m_empires, m_current_turn);
 
     // check for and remove excess oldest autosaves.
-    boost::filesystem::path autosave_dir_path(
+    std::filesystem::path autosave_dir_path(
         (m_single_player_game ? GetSaveDir() : GetServerSaveDir()) / "auto");
     int max_turns = std::max(1, GetOptionsDB().Get<int>("save.auto.file.limit"));
     bool is_two_saves_per_turn =
@@ -1708,17 +1706,17 @@ void GGHumanClientApp::OpenURL(const std::string& url) {
         ErrorLogger() << "GGHumanClientApp::OpenURL `" << command << "` returned a non-zero exit code: " << rv;
 }
 
-void GGHumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
+void GGHumanClientApp::BrowsePath(const std::filesystem::path& browse_path) {
     if (browse_path.empty() || browse_path == "/") {
         ErrorLogger() << "Invalid path: " << PathToString(browse_path);
         return;
     }
 
-    boost::filesystem::path full_path(browse_path);
+    std::filesystem::path full_path(browse_path);
 
     try {
-        boost::filesystem::file_status status = boost::filesystem::status(full_path);
-        if (!boost::filesystem::exists(status)) {
+        std::filesystem::file_status status = std::filesystem::status(full_path);
+        if (!std::filesystem::exists(status)) {
             std::string exists_debug_msg("Non-existant path: " + PathToString(full_path));
             if (full_path.has_parent_path()) {
                 DebugLogger() << exists_debug_msg << ", trying parent directory";
@@ -1730,22 +1728,22 @@ void GGHumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
         }
 
         // Validate as a canonical path
-        if (boost::filesystem::is_directory(status)) {
-            full_path = boost::filesystem::canonical(full_path);
+        if (std::filesystem::is_directory(status)) {
+            full_path = std::filesystem::canonical(full_path);
         } else {
             // If given a file, use the files containing directory
             DebugLogger() << "Non-directory target: " << PathToString(full_path) << ", using parent directory";
-            full_path = boost::filesystem::canonical(full_path.parent_path());
+            full_path = std::filesystem::canonical(full_path.parent_path());
         }
 
         // Verify not a regular file
-        if (boost::filesystem::is_regular_file(full_path)) {
+        if (std::filesystem::is_regular_file(full_path)) {
             ErrorLogger() << "Target directory " << PathToString(full_path) << " is a regular file, given path argument: "
                           << PathToString(browse_path);
             return;
         }
 
-    } catch (const boost::filesystem::filesystem_error& ec) {
+    } catch (const std::filesystem::filesystem_error& ec) {
         ErrorLogger() << "Filesystem error when attempting to browse directory " << PathToString(full_path)
                       << ": " << ec.what();
         return;
@@ -1758,7 +1756,7 @@ void GGHumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
 
     full_path.make_preferred();
     // Trailing slash post-fixed to prevent executing a file with same name(minus extension) as folder
-    full_path += boost::filesystem::path::preferred_separator;
+    full_path += std::filesystem::path::preferred_separator;
     auto target(full_path.native());
     decltype(target) command;
 

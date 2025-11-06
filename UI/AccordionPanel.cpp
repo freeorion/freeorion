@@ -16,7 +16,7 @@ AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left) :
 
 void AccordionPanel::CompleteConstruction() {
     GG::Control::CompleteConstruction();
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     auto& ui = GetApp().GetUI();
 
@@ -99,7 +99,7 @@ void AccordionPanel::SetCollapsed(bool collapsed) {
     if (collapsed == m_collapsed)
         return;
 
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     m_collapsed = collapsed;
 

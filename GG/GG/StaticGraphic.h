@@ -64,7 +64,7 @@ public:
 
     const auto& GetTexture() const noexcept { return m_graphic; }
 
-    const boost::filesystem::path& GetTexturePath() const;
+    const std::filesystem::path& GetTexturePath() const;
 
     void Render() override;
 

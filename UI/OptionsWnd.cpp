@@ -21,11 +21,12 @@
 
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/operations.hpp>
+
+#include <filesystem>
 #include <regex>
 
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace {
     constexpr GG::X PAGE_WIDTH{400};
@@ -123,7 +124,7 @@ namespace {
 
     bool ValidStringtableFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
-        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
@@ -135,7 +136,7 @@ namespace {
 
     bool ValidFontFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
-        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
@@ -147,7 +148,7 @@ namespace {
 
     bool ValidMusicFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
-        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
@@ -159,7 +160,7 @@ namespace {
 
     bool ValidSoundFile(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
-        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
@@ -171,7 +172,7 @@ namespace {
 
     bool ValidDirectory(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
-        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
             return fs::exists(path) && fs::is_directory(path);
@@ -182,7 +183,7 @@ namespace {
 
     bool ValidExecutableBinary(const std::string& file) {
         // putting this in try-catch block prevents crash with error output along the lines of:
-        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        // main() caught exception(std::exception): filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
             fs::path path = FilenameToPath(file);
 #ifdef FREEORION_WIN32
@@ -1129,7 +1130,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, std::str
 }
 
 void OptionsWnd::PathDisplay(GG::ListBox* page, int indentation_level, std::string text,
-                             boost::filesystem::path path)
+                             std::filesystem::path path)
 {
     auto text_control = GG::Wnd::Create<CUILabel>(std::move(text), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     auto edit = GG::Wnd::Create<CUIEdit>(PathToString(path));
@@ -1210,14 +1211,14 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, std::s
 }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
-                            std::string text, boost::filesystem::path path,
+                            std::string text, std::filesystem::path path,
                             std::function<bool (const std::string&)> string_validator)
 {
     FileOption(page, indentation_level, std::move(option_name), std::move(text), std::move(path),
                std::vector<std::pair<std::string, std::string>>(), std::move(string_validator)); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
-                            std::string text, boost::filesystem::path path,
+                            std::string text, std::filesystem::path path,
                             std::pair<std::string, std::string> filter,
                             std::function<bool (const std::string&)> string_validator)
 {
@@ -1226,7 +1227,7 @@ void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::strin
 }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, std::string option_name,
-                            std::string text, boost::filesystem::path path,
+                            std::string text, std::filesystem::path path,
                             std::vector<std::pair<std::string, std::string>> filters,
                             std::function<bool (const std::string&)> string_validator)
 {

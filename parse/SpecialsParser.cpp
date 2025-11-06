@@ -141,7 +141,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload specials(const boost::filesystem::path& path) {
+    start_rule_payload specials(const std::filesystem::path& path) {
         start_rule_payload specials_;
 
         for (const auto& file : ListDir(path, IsFOCScript))

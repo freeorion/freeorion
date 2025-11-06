@@ -15,7 +15,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 
 namespace {
     #define UserStringNop(key) key

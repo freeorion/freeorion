@@ -15,7 +15,7 @@
 #define _GG_dialogs_FileDlg_h_
 
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <GG/DropDownList.h>
 
 
@@ -45,12 +45,12 @@ public:
         directory and filename to the dialog, if desired (such as when "Save
         As..." is selected in an app, and there is a current filename).  If \a
         directory is specified, it is taken as-is if it is absolute, or
-        relative to boost::filesystem::initial_path() if it is relative.  If
-        \a directory is "", the initial directory is WorkingDirectory().  \a
-        save indicates whether this is a save or load dialog; \a multi
-        indicates whether multiple file selections are allowed.  \throw
-        GG::FileDlg::BadInitialDirectory Throws when \a directory is
-        invalid. */
+        relative to the filesystem::current_path() during static initialization
+        if it is relative.  If \a directory is "", the initial directory is
+        WorkingDirectory().
+        \a save indicates whether this is a save or load dialog;
+        \a multi indicates whether multiple file selections are allowed.
+        \throw GG::FileDlg::BadInitialDirectory Throws when \a directory is invalid. */
     FileDlg(const std::string& directory, const std::string& filename,
             bool save, bool multi, const std::shared_ptr<Font>& font,
             Clr color, Clr border_color, Clr text_color = CLR_BLACK);
@@ -102,7 +102,7 @@ public:
     static const auto& WorkingDirectory() noexcept { return s_working_dir; }
 
     /** Converts a string to a path in a cross platform safe manner. */
-    static const boost::filesystem::path StringToPath(const std::string& str);
+    static const std::filesystem::path StringToPath(const std::string& str);
 
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);
@@ -119,7 +119,7 @@ private:
     void FileDoubleClicked(DropDownList::iterator it, GG::Pt pt, Flags<ModKey> modkeys);
     void FilesEditChanged(const std::string& str);
     void FilterChanged(DropDownList::iterator it);
-    void SetWorkingDirectory(const boost::filesystem::path& p);
+    void SetWorkingDirectory(const std::filesystem::path& p);
     void PopulateFilters();
     void UpdateList();
     void UpdateDirectoryText();
@@ -156,7 +156,7 @@ private:
     std::string      m_init_directory; ///< directory passed to constructor
     std::string      m_init_filename; ///< filename passed to constructor
 
-    static boost::filesystem::path s_working_dir; ///< declared static so each instance of FileDlg opens up the same directory
+    static std::filesystem::path s_working_dir; ///< declared static so each instance of FileDlg opens up the same directory
 };
 
 }

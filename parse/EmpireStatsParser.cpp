@@ -165,7 +165,7 @@ BOOST_PYTHON_MODULE(_empire_statistics) {
 }
 
 namespace parse {
-    start_rule_payload statistics(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+    start_rule_payload statistics(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload all_stats;
 
         for (const auto& file : ListDir(path, IsFOCScript)) {

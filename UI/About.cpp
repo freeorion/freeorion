@@ -9,14 +9,14 @@
 #include <GG/GUI.h>
 
 #include <boost/optional.hpp>
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <filesystem>
+#include <fstream>
 
 
 namespace {
 
-boost::optional<std::string> ReadFile(const boost::filesystem::path& file_path) {
-    boost::filesystem::ifstream fin(file_path);
+boost::optional<std::string> ReadFile(const std::filesystem::path& file_path) {
+    std::ifstream fin(file_path);
     if (!fin.is_open())
         return boost::none;
 

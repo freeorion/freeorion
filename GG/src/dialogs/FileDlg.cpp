@@ -8,7 +8,7 @@
 //! SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem.hpp>
+#include <fstream>
 #include <boost/format.hpp>
 // boost::spirit::classic pulls in windows.h which in turn defines macro
 // versions of min and max.  Defining NOMINMAX disables the creation of those
@@ -135,8 +135,10 @@ struct IndexedStringEnd
 bool WindowsRoot(const std::string& root_name)
 { return root_name.size() == 2 && std::isalpha(root_name[0]) && root_name[1] == ':'; }
 
+const auto initial_path_root_string = std::filesystem::current_path().root_name().string();
+
 bool Win32Paths()
-{ return WindowsRoot(boost::filesystem::initial_path().root_name().string()); }
+{ return WindowsRoot(initial_path_root_string); }
 
 constexpr X H_SPACING{10};
 constexpr Y V_SPACING{10};
@@ -145,7 +147,7 @@ constexpr Y DEFAULT_HEIGHT{450}; ///< default height for the dialog
 
 }
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 // static member definition(s)
 fs::path FileDlg::s_working_dir = fs::current_path();
@@ -203,11 +205,11 @@ void FileDlg::CompleteConstruction()
     if (!m_init_directory.empty()) {
 #if defined(_WIN32)
         // convert UTF-8 file name to UTF-16
-        boost::filesystem::path::string_type directory_native;
+        std::filesystem::path::string_type directory_native;
         utf8::utf8to16(m_init_directory.begin(), m_init_directory.end(), std::back_inserter(directory_native));
-        fs::path dir_path = fs::system_complete(fs::path(directory_native));
+        fs::path dir_path = fs::absolute(fs::path(directory_native));
 #else
-        fs::path dir_path = fs::system_complete(fs::path(m_init_directory));
+        fs::path dir_path = fs::absolute(fs::path(m_init_directory));
 #endif
         if (!fs::exists(dir_path))
             throw BadInitialDirectory("FileDlg::FileDlg() : Initial directory \"" + dir_path.string() + "\" does not exist.");
@@ -228,7 +230,7 @@ void FileDlg::CompleteConstruction()
     m_connections[5] = m_filter_list->SelChangedSignal.connect([this](auto it) { FilterChanged(it); });
 
     if (!m_init_filename.empty()) {
-        fs::path filename_path = fs::system_complete(fs::path(m_init_filename));
+        fs::path filename_path = fs::absolute(fs::path(m_init_filename));
         m_files_edit->SetText(filename_path.filename().string());
     }
 }
@@ -273,7 +275,7 @@ void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::strin
     UpdateList();
 }
 
-const boost::filesystem::path FileDlg::StringToPath(const std::string& str) {
+const std::filesystem::path FileDlg::StringToPath(const std::string& str) {
 #if defined(_WIN32)
     // convert UTF-8 path string to UTF-16
     fs::path::string_type str_native;
@@ -351,7 +353,7 @@ void FileDlg::OkHandler(bool double_click)
             }
 #if defined(_WIN32)
             // convert UTF-8 file name to UTF-16
-            boost::filesystem::path::string_type file_name_native;
+            std::filesystem::path::string_type file_name_native;
             utf8::utf8to16(save_file.begin(), save_file.end(), std::back_inserter(file_name_native));
             fs::path p = s_working_dir / fs::path(file_name_native);
 #else
@@ -360,7 +362,7 @@ void FileDlg::OkHandler(bool double_click)
 
 #if defined (_WIN32)
             // convert UTF-16 path back to UTF-8 for storage
-            boost::filesystem::path::string_type path_native = p.native();
+            std::filesystem::path::string_type path_native = p.native();
             std::string path_string;
             utf8::utf16to8(path_native.begin(), path_native.end(), std::back_inserter(path_string));
             m_result.emplace(path_string);
@@ -384,7 +386,7 @@ void FileDlg::OkHandler(bool double_click)
             for (const std::string& file_name : files) {
 #if defined(_WIN32)
                 // convert UTF-8 file name to UTF-16
-                boost::filesystem::path::string_type file_name_native;
+                std::filesystem::path::string_type file_name_native;
                 utf8::utf8to16(file_name.begin(), file_name.end(), std::back_inserter(file_name_native));
                 fs::path p = s_working_dir / fs::path(file_name_native);
 #else
@@ -403,7 +405,7 @@ void FileDlg::OkHandler(bool double_click)
                     }
 #if defined(_WIN32)
                     // convert UTF-16 path string to UTF-8
-                    boost::filesystem::path::string_type file_name_native2 = p.native();
+                    std::filesystem::path::string_type file_name_native2 = p.native();
                     std::string temp;
                     temp.reserve(file_name_native2.size());
                     utf8::utf16to8(file_name_native2.begin(), file_name_native2.end(), std::back_inserter(temp));
@@ -602,7 +604,7 @@ void FileDlg::UpdateList()
 
 #if defined(_WIN32)
                     // convert UTF-16 path to UTF-8 for display
-                    boost::filesystem::path::string_type file_name_native = it->path().filename().native();
+                    std::filesystem::path::string_type file_name_native = it->path().filename().native();
                     std::string row_text{"["};
                     row_text.reserve(file_name_native.size()*2 + 3);
                     utf8::utf16to8(file_name_native.begin(), file_name_native.end(), std::back_inserter(row_text));
@@ -666,7 +668,7 @@ void FileDlg::UpdateDirectoryText()
 {
 #if defined(_WIN32)
     // convert UTF-16 path to UTF-8 for display
-    boost::filesystem::path::string_type working_dir_native = s_working_dir.native();
+    std::filesystem::path::string_type working_dir_native = s_working_dir.native();
     std::string str;
     str.reserve(working_dir_native.size());
     utf8::utf16to8(working_dir_native.begin(), working_dir_native.end(), std::back_inserter(str));
@@ -746,7 +748,7 @@ void FileDlg::OpenDirectory()
         if (!m_in_win32_drive_selection) {
 #if defined(_WIN32)
             // convert UTF-8 file name to UTF-16
-            boost::filesystem::path::string_type directory_native;
+            std::filesystem::path::string_type directory_native;
             utf8::utf8to16(directory_sv.begin(), directory_sv.end(), std::back_inserter(directory_native));
             SetWorkingDirectory(s_working_dir / fs::path(directory_native));
 #else
@@ -758,7 +760,7 @@ void FileDlg::OpenDirectory()
             try {
                 SetWorkingDirectory(fs::path(std::string{directory_sv} + "\\"));
             } catch (const fs::filesystem_error& e) {
-                if (e.code() != boost::system::errc::io_error)
+                if (e.code() != std::errc::io_error)
                     throw;
 
                 m_in_win32_drive_selection = true;

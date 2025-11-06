@@ -6,7 +6,7 @@
 #include <boost/optional.hpp>
 #include <boost/python/dict.hpp>
 #include <boost/python/object_fwd.hpp>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 
 class PythonCommon;
 
@@ -14,7 +14,7 @@ struct module_spec;
 
 class FO_PARSE_API PythonParser {
 public:
-    PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir);
+    PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir);
     ~PythonParser();
 
     PythonParser(const PythonParser&) = delete;
@@ -28,7 +28,7 @@ public:
     /** Parses content file \a path using predefined \a globals,
       * puts file name from path to \a filename and file content to \a file_contents,
       * return true if parsing was successfull. */
-    [[nodiscard]] bool ParseFileCommon(const boost::filesystem::path& path,
+    [[nodiscard]] bool ParseFileCommon(const std::filesystem::path& path,
                          const boost::python::dict& globals,
                          std::string& filename, std::string& file_contents) const;
 
@@ -45,7 +45,7 @@ private:
     boost::python::object exec_module(boost::python::object& module);
 
     PythonCommon&                  m_python;
-    const boost::filesystem::path& m_scripting_dir;
+    const std::filesystem::path& m_scripting_dir;
     boost::optional<boost::python::list>            m_meta_path;
     int                            m_meta_path_len;
     PyThreadState*                 m_parser_thread_state = nullptr;

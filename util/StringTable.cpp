@@ -5,7 +5,7 @@
 #include "../parse/Parse.h"
 #include "ranges.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>
 

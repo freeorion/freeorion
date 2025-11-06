@@ -3,7 +3,7 @@
 #include "util/Directories.h"
 #include <boost/test/unit_test.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 ParserAppFixture::ParserAppFixture() :
     m_context(*this)
@@ -18,7 +18,7 @@ ParserAppFixture::ParserAppFixture() :
 #if defined(FREEORION_MACOSX)
     m_test_scripting_dir = GetRootDataDir() / "test-scripting";
 #else
-    m_test_scripting_dir = fs::system_complete(GetBinDir() / "test-scripting");
+    m_test_scripting_dir = fs::absolute(GetBinDir() / "test-scripting");
 #endif
     BOOST_TEST_MESSAGE("Test scripting directory: " << m_test_scripting_dir);
     BOOST_REQUIRE(m_test_scripting_dir.is_absolute());
@@ -26,9 +26,9 @@ ParserAppFixture::ParserAppFixture() :
     BOOST_REQUIRE(fs::is_directory(m_test_scripting_dir));
 
 #if defined(FREEORION_MACOSX)
-    boost::filesystem::path resource_dir = GetRootDataDir() / "default";
+    std::filesystem::path resource_dir = GetRootDataDir() / "default";
 #else
-    boost::filesystem::path resource_dir = GetBinDir() / "default";
+    std::filesystem::path resource_dir = GetBinDir() / "default";
 #endif
 
     GetOptionsDB().Set<std::string>("resource.path", PathToString(resource_dir));

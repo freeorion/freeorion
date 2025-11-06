@@ -139,7 +139,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload buildings(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+    start_rule_payload buildings(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload building_types;
 
         ScopedTimer timer("Buildings Parsing");

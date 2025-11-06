@@ -327,11 +327,11 @@ public:
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true. */
-    std::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+    std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
 
     /** Removes the desired texture from the managed pool; since shared_ptr
       * are used, the texture may be deleted much later. */
-    void FreeTexture(const boost::filesystem::path& path);
+    void FreeTexture(const std::filesystem::path& path);
 
     /** Sets the currently-installed style factory. */
     void SetStyleFactory(std::unique_ptr<StyleFactory>&& factory) noexcept;

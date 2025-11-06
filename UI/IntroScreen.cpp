@@ -19,7 +19,7 @@
 #include <GG/Texture.h>
 #include <GG/Layout.h>
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 
 #include <cstdlib>
 #include <string>
@@ -88,7 +88,7 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int c
     GetApp().WindowResizedSignal.connect(boost::bind(&CreditsWnd::OnExit, this));
 
     XMLDoc doc;
-    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
+    std::ifstream ifs(GetResourceDir() / "credits.xml");
     doc.ReadDoc(ifs);
     ifs.close();
 

@@ -10,7 +10,7 @@
 #define _GG_RichText_ImageBlock_h_
 
 
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <GG/RichText/BlockControl.h>
 #include <GG/RichText/RichText.h>
 #include <GG/StaticGraphic.h>
@@ -42,7 +42,7 @@ public:
      *
      * @param image_path The path to the image.
      */
-    ImageBlock(const boost::filesystem::path& path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
+    ImageBlock(const std::filesystem::path& path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
     void CompleteConstruction() override;
 
     //! Implement from BlockControl sets the maximum width, returns the actual size based on that.
@@ -52,10 +52,10 @@ public:
 
     //! Set the root path from which to look for images with the factory.
     static bool SetImagePath(RichText::IBlockControlFactory* factory,   //!< The factory to set the path for. Should be an image block factory.
-                             boost::filesystem::path path);             //!< The base path to look for images from.
+                             std::filesystem::path path);             //!< The base path to look for images from.
 
     //! Set the root path from which to look for images with the factory.
-    static bool SetDefaultImagePath(boost::filesystem::path path);      //!< The base path to look for images from.
+    static bool SetDefaultImagePath(std::filesystem::path path);      //!< The base path to look for images from.
 
 private:
     std::shared_ptr<StaticGraphic> m_graphic; //! The StaticGraphic used to render the image.
