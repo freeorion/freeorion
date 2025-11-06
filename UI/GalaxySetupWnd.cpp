@@ -11,7 +11,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 
 #include <GG/StaticGraphic.h>
 #include <GG/Layout.h>
@@ -572,7 +572,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     }
     m_seed_edit->DisallowChars(formatting_chars);
 
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // random seed button
     m_random = Wnd::Create<CUIButton>(

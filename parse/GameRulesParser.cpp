@@ -99,7 +99,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
 }
 
 namespace parse {
-    GameRulesTypeMap game_rules(const PythonParser& parser, const boost::filesystem::path& path, bool& success) {
+    GameRulesTypeMap game_rules(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         GameRulesTypeMap game_rules;
         success = py_parse::detail::parse_file<grammar, GameRulesTypeMap>(parser, path, grammar(parser), game_rules);
         return game_rules;

@@ -8,9 +8,6 @@
 #include "Serialize.ipp"
 #include "ScopedTimer.h"
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
@@ -19,10 +16,11 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/stream.hpp>
 
-
+#include <filesystem>
 #include <fstream>
 
-namespace fs = boost::filesystem;
+
+namespace fs = std::filesystem;
 
 namespace {
     constexpr std::string_view UNABLE_TO_OPEN_FILE("Unable to open file");
@@ -47,7 +45,7 @@ namespace {
             return false;
         }
 
-        fs::ifstream ifs(path, std::ios_base::binary);
+        std::ifstream ifs(path, std::ios_base::binary);
 
         full.filename = PathToString(path.filename());
 
@@ -117,11 +115,11 @@ void SaveGamePreviewData::SetBinary(bool bin)
 { description = bin ? BIN_SAVE_FILE_DESCRIPTION : XML_SAVE_FILE_DESCRIPTION; }
 
 
-bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
+bool SaveFileWithValidHeader(const std::filesystem::path& path) {
     if (!fs::exists(path))
         return false;
 
-    fs::ifstream ifs(path, std::ios_base::binary);
+    std::ifstream ifs(path, std::ios_base::binary);
     if (!ifs)
         return false;
 
@@ -139,7 +137,7 @@ bool SaveFileWithValidHeader(const boost::filesystem::path& path) {
         ifs.read(xxx5.data(), xxx5.size());
         static constexpr std::array<std::string::value_type, 5> xml5{'<', '?', 'x', 'm', 'l'};
         // reset to start of stream 
-        boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+        ifs.seekg(0, std::ios_base::beg);
         // binary deserialization iff document is not xml
         if (xml5 != xxx5) {
             ScopedTimer timer("SaveFileWithValidHeader (binary): " + path.string(), true);

@@ -5,7 +5,7 @@
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/filesystem.hpp>
+#include <fstream>
 
 #include <cstdlib>
 #include <mutex>
@@ -31,7 +31,7 @@
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
 #  include "binreloc.h"
 #  include <unistd.h>
-#  include <boost/filesystem/fstream.hpp>
+#  include <fstream>
 
 #  if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
 #    include <sys/sysctl.h>
@@ -50,11 +50,12 @@
 #  include <windows.h>
 #endif
 
-namespace fs = ::boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace {
     bool g_initialized = false;
-    fs::path bin_dir = fs::initial_path();
+    const auto initial_path = fs::current_path();
+    fs::path bin_dir = fs::current_path();
 
 #if defined(FREEORION_MACOSX)
     fs::path       s_user_dir;
@@ -104,7 +105,7 @@ void CopyInitialResourceAndroid(const std::string& rel_path)
 
     char buf[4096];
     int nb_read = 0;
-    fs::ofstream ofs(s_python_home / rel_path, std::ios::binary);
+    std::ofstream ofs(s_python_home / rel_path, std::ios::binary);
     while ((nb_read = AAsset_read(asset, buf, 4096)) > 0) {
         ofs.write(buf, nb_read);
     }
@@ -186,11 +187,11 @@ void CopyInitialResourceAndroid(const std::string& rel_path)
             //Start update of save.path in config file and complete it in CompleteXDGMigration()
             fs::path sentinel = GetUserDataDir() / "MIGRATION_TO_XDG_IN_PROGRESS";
             if (!exists(sentinel)) {
-                fs::ofstream touchfile(sentinel);
+                std::ofstream touchfile(sentinel);
                 touchfile << " ";
             }
 
-            fs::ofstream msg_file(old_path / "MIGRATION.README");
+            std::ofstream msg_file(old_path / "MIGRATION.README");
             msg_file << msg.str() << "\n"
                      << "You can delete this file it is a one time message.\n\n";
 
@@ -264,10 +265,10 @@ void InitBinDir(std::string const& argv0)
 {
 #if defined(FREEORION_WIN32)
     try {
-        fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
+        fs::path binary_file = fs::absolute(FilenameToPath(argv0));
         bin_dir = binary_file.parent_path();
     } catch (const fs::filesystem_error &) {
-        bin_dir = fs::initial_path();
+        bin_dir = initial_path;
     }
 #elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
     bool problem = false;
@@ -313,7 +314,7 @@ void InitBinDir(std::string const& argv0)
             buf[sizeof(buf) - 1] = '\0';              // to be safe, else initializing an std::string with a non-null-terminated string could read invalid data outside the buffer range
             std::string path_text(buf);
 
-            fs::path binary_file = fs::system_complete(fs::path(path_text));
+            fs::path binary_file = fs::absolute(fs::path(path_text));
             bin_dir = binary_file.parent_path();
 
             // check that a "freeoriond" file (hopefully the freeorion server binary) exists in the found directory
@@ -335,7 +336,7 @@ void InitBinDir(std::string const& argv0)
 
         // if the path does not exist, fall back to the working directory
         if (!exists(p)) {
-            bin_dir = fs::initial_path();
+            bin_dir = initial_path;
         } else {
             bin_dir = p;
         }
@@ -351,8 +352,6 @@ void InitDirs(std::string const& argv0, bool test)
         return;
 
 #if defined(FREEORION_MACOSX)
-    // store working dir
-    fs::initial_path();
     fs::path bundle_path;
     fs::path app_path;
 
@@ -411,13 +410,6 @@ void InitDirs(std::string const& argv0, bool test)
     // The server save dir is publically accessible and should not be
     // automatically created for the user.
 #elif defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU)
-    /* store working dir.  some implimentations get the value of initial_path
-     * from the value of current_path the first time initial_path is called,
-     * so it is necessary to call initial_path as soon as possible after
-     * starting the program, so that current_path doesn't have a chance to
-     * change before initial_path is initialized. */
-    fs::initial_path();
-
     br_init(nullptr);
 
     MigrateOldConfigDirsToXDGLocation();
@@ -575,12 +567,12 @@ auto GetRootDataDir() -> fs::path const
     p /= "freeorion";
     // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
-        return fs::initial_path();
+        return initial_path;
     } else {
         return p;
     }
 #elif defined(FREEORION_WIN32)
-    return fs::initial_path();
+    return initial_path;
 #elif defined(FREEORION_ANDROID)
     return fs::path(".");
 #endif
@@ -758,7 +750,7 @@ auto FilenameToPath(std::string const& path_str) -> fs::path
     if (utf16_sz > 0)
         MultiByteToWideChar(CP_UTF8, 0, path_str.data(), path_str.size(), utf16_string.data(), utf16_sz);
     static_assert(std::is_same_v<fs::path::string_type, std::wstring>);
-    return fs::path(utf16_string).generic_path();
+    return fs::path(utf16_string);
 #else
     return fs::path(path_str);
 #endif
@@ -767,7 +759,7 @@ auto FilenameToPath(std::string const& path_str) -> fs::path
 auto PathToString(fs::path const& path) -> std::string
 {
 #if defined(FREEORION_WIN32)
-    fs::path::string_type native_string = path.generic_wstring();
+    auto native_string = path.generic_wstring();
     // convert UTF-16 native path to UTF-8
     int utf8_sz = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS,
                                       native_string.data(), native_string.size(),
@@ -974,7 +966,7 @@ auto IsExistingFile(const fs::path& path) -> bool
 #endif
 }
 
-auto IsExistingDir(boost::filesystem::path const& path) -> bool
+auto IsExistingDir(std::filesystem::path const& path) -> bool
 {
 #if defined(FREEORION_ANDROID)
     DebugLogger() << "IsExistingDir: check file " << path.string();
@@ -1014,7 +1006,7 @@ auto IsExistingDir(boost::filesystem::path const& path) -> bool
 #endif
 }
 
-auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -> bool
+auto ReadFile(std::filesystem::path const& path, std::string& file_contents) -> bool
 {
 #if defined(FREEORION_ANDROID)
     DebugLogger() << "ReadFile: check file " << path.string();
@@ -1029,7 +1021,7 @@ auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -
     file_contents = std::string(reinterpret_cast<const char*>(AAsset_getBuffer(asset)), asset_length);
     AAsset_close(asset);
 #else
-    boost::filesystem::ifstream ifs(path);
+    std::ifstream ifs(path);
     if (!ifs)
         return false;
 

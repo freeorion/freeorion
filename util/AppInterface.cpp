@@ -18,13 +18,13 @@
 #include "GameRules.h"
 #include "Pending.h"
 
-#include <boost/filesystem.hpp>
+#include <fstream>
 
 #include <exception>
 #include <future>
 #include <stdexcept>
 
-extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const boost::filesystem::path& path, bool& success);
+extern template TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const PythonParser& parser, const std::filesystem::path& path, bool& success);
 
 IApp* IApp::s_app = nullptr;
 
@@ -49,7 +49,7 @@ int IApp::MAX_AI_PLAYERS() noexcept {
 }
 
 void IApp::StartBackgroundParsing(const PythonParser& python) {
-    namespace fs = boost::filesystem;
+    namespace fs = std::filesystem;
 
     const auto& rdir = GetResourceDir();
     if (!IsExistingDir(rdir)) {

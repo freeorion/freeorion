@@ -942,7 +942,7 @@ PredefinedShipDesignManager& GetPredefinedShipDesignManager()
 std::tuple<
     bool,
     std::unordered_map<boost::uuids::uuid,
-                       std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
+                       std::pair<std::unique_ptr<ShipDesign>, std::filesystem::path>,
                        boost::hash<boost::uuids::uuid>>,
     std::vector<boost::uuids::uuid>>
 LoadShipDesignsAndManifestOrderFromParseResults(
@@ -950,7 +950,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
 {
     std::unordered_map<boost::uuids::uuid,
                        std::pair<std::unique_ptr<ShipDesign>,
-                                 boost::filesystem::path>,
+                                 std::filesystem::path>,
                        boost::hash<boost::uuids::uuid>> saved_designs;
 
     auto& designs_and_paths = designs_paths_and_ordering.first;

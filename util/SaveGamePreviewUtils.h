@@ -55,7 +55,7 @@ struct FO_COMMON_API PreviewInformation {
 /// Attempts to load headers of a save file.
 /// Returns true on success, false if header data could not be loaded
 /// @param path Filename to load headers of
-FO_COMMON_API bool SaveFileWithValidHeader(const boost::filesystem::path& path);
+FO_COMMON_API bool SaveFileWithValidHeader(const std::filesystem::path& path);
 
 /// Get the value of column name in this preview
 /// @param full FullPreview to match for column @p name
@@ -67,7 +67,7 @@ FO_COMMON_API std::string ColumnInPreview(const FullPreview& full, const std::st
 /// \param path Directory where to look for files
 /// \param extension File name extension to filter by
 /// \param [out] previews The previews will be put here
-FO_COMMON_API void LoadSaveGamePreviews(const boost::filesystem::path& path, const std::string& extension,
+FO_COMMON_API void LoadSaveGamePreviews(const std::filesystem::path& path, const std::string& extension,
                                         std::vector<FullPreview>& previews);
 
 

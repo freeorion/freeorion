@@ -18,8 +18,8 @@
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <filesystem>
+#include <fstream>
 #include <boost/lexical_cast.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 #include <boost/functional/hash.hpp>
@@ -163,17 +163,17 @@ namespace {
 
     std::string GetAutoSaveFileName(int current_turn, const GalaxySetupData& gsd) {
         const auto& subdir = gsd.GetGameUID();
-        boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
+        std::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
         const auto& extension = MP_SAVE_FILE_EXTENSION;
         // Add timestamp to autosave generated files
         std::string datetime_str = FilenameTimestamp();
 
         std::string save_filename = boost::io::str(boost::format("FreeOrion_%04d_%s%s") % current_turn % datetime_str % extension);
-        boost::filesystem::path save_path(autosave_dir_path / save_filename);
+        std::filesystem::path save_path(autosave_dir_path / save_filename);
         return PathToString(save_path);
     }
 
-    bool IsMultiplayerSaveFile(const boost::filesystem::path& path)
+    bool IsMultiplayerSaveFile(const std::filesystem::path& path)
     { return IsExistingFile(path) && MP_SAVE_FILE_EXTENSION == path.extension(); }
 
     constexpr auto to_empire_colour = [](const auto& entry) noexcept {
@@ -704,7 +704,7 @@ sc::result Idle::react(const Hostless&) {
         // Search save games in a subfolder with game UID or "auto" formed in
         // `GetAutoSaveFileName`.
         std::string subdir = server.m_galaxy_setup_data.GetGameUID();
-        boost::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
+        std::filesystem::path autosave_dir_path = GetServerSaveDir() / (subdir.empty() ? "auto" : subdir);
         if (IsExistingDir(autosave_dir_path)) {
             auto saves = ListDir(autosave_dir_path, IsMultiplayerSaveFile);
             for (const auto& save : saves) {
@@ -1693,7 +1693,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
 
         // refresh save game empire data
-        boost::filesystem::path save_dir(GetServerSaveDir());
+        std::filesystem::path save_dir(GetServerSaveDir());
         std::vector<PlayerSaveHeaderData> player_save_header_data;
         try {
             LoadEmpireSaveGameData((save_dir / m_lobby_data->save_game).string(),

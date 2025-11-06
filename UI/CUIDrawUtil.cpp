@@ -486,7 +486,7 @@ public:
             return;
 
         if (!m_scanline_shader) {
-            boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
+            std::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
             std::string shader_text;
             if (!ReadFile(shader_path, shader_text)) {
                 ErrorLogger() << "ScanlineRenderer failed to read shader at path " << shader_path.string();

@@ -1461,10 +1461,10 @@ void GUI::StoreTexture(Texture* texture, std::string texture_name)
 void GUI::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
 { GetTextureManager().StoreTexture(std::move(texture), std::move(texture_name)); }
 
-std::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap)
+std::shared_ptr<Texture> GUI::GetTexture(const std::filesystem::path& path, bool mipmap)
 { return GetTextureManager().GetTexture(path, mipmap); }
 
-void GUI::FreeTexture(const boost::filesystem::path& path)
+void GUI::FreeTexture(const std::filesystem::path& path)
 { GetTextureManager().FreeTexture(path); }
 
 void GUI::SetStyleFactory(std::unique_ptr<StyleFactory>&& factory) noexcept

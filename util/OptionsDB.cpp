@@ -22,7 +22,7 @@ namespace std {
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/container/flat_map.hpp>
-#include <boost/filesystem.hpp>
+#include <fstream>
 #include <boost/range/algorithm_ext/erase.hpp>
 #include <boost/tokenizer.hpp>
 
@@ -179,7 +179,7 @@ bool OptionsDB::Option::ValueIsDefault() const
 bool OptionsDB::Commit(bool only_if_dirty, bool only_non_default) {
     if (only_if_dirty && !m_dirty)
         return true;
-    boost::filesystem::ofstream ofs(GetConfigPath());
+    std::ofstream ofs(GetConfigPath());
     if (ofs) {
         XMLDoc doc;
         GetOptionsDB().GetXML(doc, only_non_default, true);
@@ -202,9 +202,9 @@ bool OptionsDB::CommitPersistent() {
     GetOptionsDB().GetXML(doc, true, false);   // only output non-default options
     try {
         // Remove any previously existing file
-        boost::filesystem::remove(config_file);
+        std::filesystem::remove(config_file);
 
-        boost::filesystem::ofstream ofs(GetPersistentConfigPath());
+        std::ofstream ofs(GetPersistentConfigPath());
         if (ofs) {
             doc.WriteDoc(ofs);
             retval = true;
@@ -213,7 +213,7 @@ bool OptionsDB::CommitPersistent() {
             ErrorLogger() << err_msg;
             std::cerr << err_msg << std::endl;
         }
-    } catch (const boost::filesystem::filesystem_error& ec) {
+    } catch (const std::filesystem::filesystem_error& ec) {
         ErrorLogger() << "Error during file operations when creating persistent config : " << ec.what();
     } catch (...) {
         std::string err_msg = "Unknown exception during persistent config creation";
@@ -800,10 +800,10 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     }
 }
 
-void OptionsDB::SetFromFile(const boost::filesystem::path& file_path, std::string_view version) {
+void OptionsDB::SetFromFile(const std::filesystem::path& file_path, std::string_view version) {
     XMLDoc doc;
     try {
-        boost::filesystem::ifstream ifs(file_path);
+        std::ifstream ifs(file_path);
         if (ifs) {
             doc.ReadDoc(ifs);
             if (version.empty() || (doc.root_node.ContainsChild("version") &&

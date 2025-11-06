@@ -12,10 +12,12 @@
 
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/phoenix.hpp>
 #include <boost/algorithm/string/find_iterator.hpp>
+
+#include <filesystem>
+#include <fstream>
+
 
 #define DEBUG_PARSERS 0
 
@@ -126,7 +128,7 @@ namespace parse {
 
     void replace_macro_references(std::string& text,
                                   const std::map<std::string, std::string>& macros,
-                                  const boost::filesystem::path& file_path)
+                                  const std::filesystem::path& file_path)
     {
         try {
             std::size_t position = 0; // position in the text, past the already processed part
@@ -174,7 +176,7 @@ namespace parse {
         }
     }
 
-    void macro_substitution(std::string& text, const boost::filesystem::path& file_path) {
+    void macro_substitution(std::string& text, const std::filesystem::path& file_path) {
         //DebugLogger() << "macro_substitution for text:" << text;
         std::map<std::string, std::string> macros;
 
@@ -206,7 +208,7 @@ namespace parse {
      * @param[in] file_search_path base path of content
      */
     void file_substitution(std::string& text,
-                           const boost::filesystem::path& file_search_path,
+                           const std::filesystem::path& file_search_path,
                            const std::string& filename)
     {
         if (!IsExistingDir(file_search_path)) {
@@ -215,7 +217,7 @@ namespace parse {
             return;
         }
         try {
-            std::set<boost::filesystem::path> files_included;
+            std::set<std::filesystem::path> files_included;
             process_include_substitutions(text, file_search_path, files_included);
         } catch (const std::exception& e) {
             ErrorLogger() << "Exception caught regex parsing script file " << filename
@@ -238,8 +240,8 @@ namespace parse {
      * @param[in] file_search_path base path of content
      * @param[in,out] files_included canonical path of any files previously included
      * */
-    void process_include_substitutions(std::string& text, const boost::filesystem::path& file_search_path,
-                                       std::set<boost::filesystem::path>& files_included)
+    void process_include_substitutions(std::string& text, const std::filesystem::path& file_search_path,
+                                       std::set<std::filesystem::path>& files_included)
     {
         smatch match;
         while (regex_search(text.begin(), text.end(), match, FILENAME_INSERTION, regex_constants::match_default)) {
@@ -248,38 +250,38 @@ namespace parse {
                 continue;
             }
             const sregex INCL_ONCE_SEARCH = bol >> "#include" >> *space >> "\"" >> fn_match >> "\"" >> *space >> _n;
-            boost::filesystem::path base_path;
-            boost::filesystem::path match_path;
+            std::filesystem::path base_path;
+            std::filesystem::path match_path;
             // check for base path
             if (fn_match.substr(0, 1) == "/") {
                 base_path = GetResourceDir();
-                match_path = boost::filesystem::weakly_canonical(base_path / fn_match.substr(1));
+                match_path = std::filesystem::weakly_canonical(base_path / fn_match.substr(1));
             } else {
                 base_path = file_search_path;
-                match_path = boost::filesystem::weakly_canonical(base_path / fn_match);
+                match_path = std::filesystem::weakly_canonical(base_path / fn_match);
             }
-            std::string fn_str = boost::filesystem::path(fn_match).filename().string();
+            std::string fn_str = std::filesystem::path(fn_match).filename().string();
             if (fn_str.substr(0, 1) == "*") {
                 if (match_path.parent_path().empty()) {
                     DebugLogger() << "Parse: " << match_path.parent_path().string() << " is empty, skipping.";
                     continue;
                 }
                 fn_str = fn_str.substr(1, fn_str.size() - 1);
-                std::set<boost::filesystem::path> match_list;
+                std::set<std::filesystem::path> match_list;
                 // filter results
-                for (const boost::filesystem::path& file : ListDir(match_path.parent_path())) {
+                for (const std::filesystem::path& file : ListDir(match_path.parent_path())) {
                     std::string it_str = file.filename().string();
                     std::size_t it_len = it_str.length();
                     std::size_t match_len = fn_str.length();
                     if (it_len > match_len) {
                         if (it_str.substr(it_len - match_len, match_len) == fn_str) {
-                            match_list.insert(boost::filesystem::weakly_canonical(file));
+                            match_list.insert(std::filesystem::weakly_canonical(file));
                         }
                     }
                 }
                 // read in results
                 std::string dir_text;
-                for (const boost::filesystem::path& file : match_list) {
+                for (const std::filesystem::path& file : match_list) {
                     if (files_included.insert(file).second) {
                         std::string new_text;
                         if (ReadFile(file, new_text)) {
@@ -482,7 +484,7 @@ namespace parse {
         * @param[out] first content iterator
         * @param[out] it lexer iterator
         */
-    void parse_file_common(const boost::filesystem::path& path, const parse::lexer& lexer,
+    void parse_file_common(const std::filesystem::path& path, const parse::lexer& lexer,
                            std::string& filename, std::string& file_contents,
                            parse::text_iterator& first, parse::text_iterator& last, parse::token_iterator& it)
     {
@@ -507,7 +509,7 @@ namespace parse {
     }
 
 
-    bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
+    bool parse_file_end_of_file_warnings(const std::filesystem::path& path,
                                          bool parser_success,
                                          const std::string& file_contents,
                                          const text_iterator first,

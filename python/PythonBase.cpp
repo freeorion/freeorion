@@ -4,13 +4,13 @@
 #include "../util/Logger.h"
 #include "CommonWrappers.h"
 
-#include <boost/filesystem.hpp>
+#include <fstream>
 #include <boost/python/tuple.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
 #include <boost/python/docstring_options.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 namespace py = boost::python;
 
 // Python module for logging functions

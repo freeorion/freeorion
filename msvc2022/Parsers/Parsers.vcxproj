@@ -315,6 +315,7 @@
     <ClInclude Include="..\..\parse\MovableEnvelope.h" />
     <ClInclude Include="..\..\parse\Parse.h" />
     <ClInclude Include="..\..\parse\ParseImpl.h" />
+    <ClInclude Include="..\..\parse\PythonParserImpl.h" />
     <ClInclude Include="..\..\parse\ReportParseError.h" />
     <ClInclude Include="..\..\parse\Tokens.h" />
     <ClInclude Include="..\..\parse\ValueRefParser.h" />

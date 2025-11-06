@@ -1,8 +1,10 @@
 #ifndef _Directories_h_
 #define _Directories_h_
 
+#include <filesystem>
+#include <functional>
 #include <string>
-#include <boost/filesystem/path.hpp>
+#include <vector>
 #include "Enum.h"
 #include "Export.h"
 
@@ -83,7 +85,7 @@ FO_COMMON_API void InitDirs(std::string const& argv0, bool test = false);
 //! @note
 //! * If the directory does not exist, it will be created.
 //! * This directory can be considered writable!
-FO_COMMON_API auto GetUserConfigDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetUserConfigDir() -> std::filesystem::path const;
 
 //! Returns the directory where FreeOrion store user cache files.
 //!
@@ -98,7 +100,7 @@ FO_COMMON_API auto GetUserConfigDir() -> boost::filesystem::path const;
 //! @note
 //! * If the directory does not exist, it will be created.
 //! * This directory can be considered writable!
-FO_COMMON_API auto GetUserCacheDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetUserCacheDir() -> std::filesystem::path const;
 
 //! Returns the directory where FreeOrion stores user specific data.
 //!
@@ -114,11 +116,11 @@ FO_COMMON_API auto GetUserCacheDir() -> boost::filesystem::path const;
 //! @note
 //! * If the directory does not exist, it will be created.
 //! * This directory can be considered writable!
-FO_COMMON_API auto GetUserDataDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetUserDataDir() -> std::filesystem::path const;
 
 //! Converts UTF-8 string into a path, doing any required wide-character
 //! conversions as determined by the operating system / filesystem.
-FO_COMMON_API auto FilenameToPath(std::string const& path_str) -> boost::filesystem::path;
+FO_COMMON_API auto FilenameToPath(std::string const& path_str) -> std::filesystem::path;
 
 //! Returns the directory that contains all game resources.
 //!
@@ -126,7 +128,7 @@ FO_COMMON_API auto FilenameToPath(std::string const& path_str) -> boost::filesys
 //! * game entity defintions
 //! * graphics
 //! * Translations
-FO_COMMON_API auto GetResourceDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetResourceDir() -> std::filesystem::path const;
 
 //! Returns the root data directory of FreeOrion.
 //!
@@ -136,7 +138,7 @@ FO_COMMON_API auto GetResourceDir() -> boost::filesystem::path const;
 //! * UNIX-like: Path to `<installation prefix>/share/freeorion`.
 //!
 //! @note This directory and everything in it should be assumed read-only!
-FO_COMMON_API auto GetRootDataDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetRootDataDir() -> std::filesystem::path const;
 
 //! Returns the directory where the binaries are located.
 //!
@@ -146,11 +148,11 @@ FO_COMMON_API auto GetRootDataDir() -> boost::filesystem::path const;
 //! * UNIX-like: Path to `<installation prefix>/bin`.
 //
 //! @note This directory and everything in it should be assumed read-only!
-FO_COMMON_API auto GetBinDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetBinDir() -> std::filesystem::path const;
 
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
 //! Returns the Python home directory on platform where Python is embedded.
-FO_COMMON_API auto GetPythonHome() -> boost::filesystem::path const;
+FO_COMMON_API auto GetPythonHome() -> std::filesystem::path const;
 #endif
 
 #if defined(FREEORION_ANDROID)
@@ -162,23 +164,23 @@ FO_COMMON_API std::string GetAndroidLang();
 #endif
 
 //! Returns the full path to the configfile.
-FO_COMMON_API auto GetConfigPath() -> boost::filesystem::path const;
+FO_COMMON_API auto GetConfigPath() -> std::filesystem::path const;
 
 //! Returns the full path to the configfile.
-FO_COMMON_API auto GetPersistentConfigPath() -> boost::filesystem::path const;
+FO_COMMON_API auto GetPersistentConfigPath() -> std::filesystem::path const;
 
 //! Returns the directory where save files are located.
 //!
 //! This is typically the directory "save" within the user directory.
-FO_COMMON_API auto GetSaveDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetSaveDir() -> std::filesystem::path const;
 
 //! Returns the directory where server save files are located.
 //!
 //! This is typically the directory "save" within the user directory.
-FO_COMMON_API auto GetServerSaveDir() -> boost::filesystem::path const;
+FO_COMMON_API auto GetServerSaveDir() -> std::filesystem::path const;
 
 //! Returns an utf-8 encoded string from the given filesystem path.
-FO_COMMON_API auto PathToString(boost::filesystem::path const& path) -> std::string;
+FO_COMMON_API auto PathToString(std::filesystem::path const& path) -> std::string;
 
 #if !defined(FREEORION_ANDROID)
 //! Returns current timestamp in a form that can be used in file names
@@ -186,36 +188,36 @@ FO_COMMON_API auto FilenameTimestamp() -> std::string;
 #endif
 
 //! Returns the path to @p to, as it appears from @p from.
-FO_COMMON_API auto RelativePath(boost::filesystem::path const& from, boost::filesystem::path const& to) -> boost::filesystem::path;
+FO_COMMON_API auto RelativePath(std::filesystem::path const& from, std::filesystem::path const& to) -> std::filesystem::path;
 
 //! Returns true if the given @p path referrs to a FO content script and false
 //! otherwise.
-FO_COMMON_API auto IsFOCScript(boost::filesystem::path const& path) -> bool;
+FO_COMMON_API auto IsFOCScript(std::filesystem::path const& path) -> bool;
 
 //! Returns true if the given @p path referrs to a FO content Python script and false
 //! otherwise.
-FO_COMMON_API auto IsFOCPyScript(boost::filesystem::path const& path) -> bool;
+FO_COMMON_API auto IsFOCPyScript(std::filesystem::path const& path) -> bool;
 
 //! Returns a vector of pathes within @p path including a recursive search
 //! though sub-dirs.
 //!
 //! When passing a @p predicate, the pathes need to match this predicate.  If
 //! no predicate is given pathes need to refer to files.
-FO_COMMON_API auto ListDir(boost::filesystem::path const& path, std::function<bool (boost::filesystem::path const&)> predicate=nullptr) -> std::vector<boost::filesystem::path>;
+FO_COMMON_API auto ListDir(std::filesystem::path const& path, std::function<bool (std::filesystem::path const&)> predicate=nullptr) -> std::vector<std::filesystem::path>;
 
 //! Returns true iff the @p test_dir is in @p dir and @p dir
 //! is existing directory.
-FO_COMMON_API auto IsInDir(boost::filesystem::path const& dir, boost::filesystem::path const& test_dir) -> bool;
+FO_COMMON_API auto IsInDir(std::filesystem::path const& dir, std::filesystem::path const& test_dir) -> bool;
 
 //! Returns path currently defined for @p path_type
-FO_COMMON_API auto GetPath(PathType path_type) -> boost::filesystem::path;
+FO_COMMON_API auto GetPath(PathType path_type) -> std::filesystem::path;
 
 //! Returns true iff path exists and is a regular file
-FO_COMMON_API auto IsExistingFile(boost::filesystem::path const& path) -> bool;
+FO_COMMON_API auto IsExistingFile(std::filesystem::path const& path) -> bool;
 
 //! Returns true iff path exists and is a directory
-FO_COMMON_API auto IsExistingDir(boost::filesystem::path const& path) -> bool;
+FO_COMMON_API auto IsExistingDir(std::filesystem::path const& path) -> bool;
 
 //! Reads text file content from @p path and returs true if success
-FO_COMMON_API auto ReadFile(boost::filesystem::path const& path, std::string& file_contents) -> bool;
+FO_COMMON_API auto ReadFile(std::filesystem::path const& path, std::string& file_contents) -> bool;
 #endif

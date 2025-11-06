@@ -9,7 +9,7 @@
 #include "i18n.h"
 
 #include <boost/serialization/export.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 
 // Some of the moderator actions are very similar to effects, the result of
 // completing a build, and certain orders such as creating a new fleet.

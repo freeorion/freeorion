@@ -274,7 +274,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(std::string_view config_name) :
 
 void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
-    const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
+    const std::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
     auto& ui = GetApp().GetUI();
 

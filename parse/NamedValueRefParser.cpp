@@ -127,7 +127,7 @@ namespace parse {
 }
 
 namespace parse {
-    start_rule_payload named_value_refs(const boost::filesystem::path& path) {
+    start_rule_payload named_value_refs(const std::filesystem::path& path) {
         start_rule_payload named_value_refs;
 
         ScopedTimer timer("Named ValueRef Parsing");

@@ -16,7 +16,7 @@ namespace py = boost::python;
 
 namespace {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
-wchar_t* GetFilePath(const boost::filesystem::path& path)
+wchar_t* GetFilePath(const std::filesystem::path& path)
 {
 #if defined(FREEORION_WIN32)
     const std::wstring_view native_path = path.native();

@@ -300,10 +300,10 @@ bool ClientAppFixture::HandleMessage(Message& msg) {
 void ClientAppFixture::SaveGame() {
     std::string save_filename = boost::io::str(boost::format("FreeOrionTestGame_%04d_%s%s")
                                                % m_current_turn % FilenameTimestamp() % SP_SAVE_FILE_EXTENSION);
-    boost::filesystem::path save_dir_path(GetSaveDir() / "test");
-    boost::filesystem::path save_path(save_dir_path / save_filename);
+    std::filesystem::path save_dir_path(GetSaveDir() / "test");
+    std::filesystem::path save_path(save_dir_path / save_filename);
     if (!exists(save_dir_path))
-        boost::filesystem::create_directories(save_dir_path);
+        std::filesystem::create_directories(save_dir_path);
 
     auto path_string = PathToString(save_path);
     m_save_completed = false;

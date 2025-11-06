@@ -16,6 +16,8 @@
 #include <cmath>
 #include <ctime>
 #include <deque>
+#include <fstream>
+#include <filesystem>
 #include <future>
 #include <iostream>
 #include <iterator>
@@ -40,10 +42,6 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/format.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/iterator/filter_iterator.hpp>

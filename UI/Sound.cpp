@@ -36,7 +36,7 @@ public:
 
     /** Plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a
         loops + 1 times otherwise. */
-    void PlayMusic(const boost::filesystem::path& path, int loops = 0);
+    void PlayMusic(const std::filesystem::path& path, int loops = 0);
 
     /** Pauses music play, to be continued from the same position */
     void PauseMusic();
@@ -48,10 +48,10 @@ public:
     void StopMusic();
 
     /** Plays a sound file. */
-    void PlaySound(const boost::filesystem::path& path, bool is_ui_sound = false);
+    void PlaySound(const std::filesystem::path& path, bool is_ui_sound = false);
 
     /** Frees the cached sound data associated with the filename. */
-    void FreeSound(const boost::filesystem::path& path);
+    void FreeSound(const std::filesystem::path& path);
 
     /** Frees all cached sound data. */
     void FreeAllSounds();
@@ -217,7 +217,7 @@ void Sound::Enable()
 void Sound::Disable()
 { m_impl->Disable(); }
 
-void Sound::PlayMusic(const boost::filesystem::path& path, int loops)
+void Sound::PlayMusic(const std::filesystem::path& path, int loops)
 { m_impl->PlayMusic(path, loops); }
 
 void Sound::PauseMusic()
@@ -229,10 +229,10 @@ void Sound::ResumeMusic()
 void Sound::StopMusic()
 { m_impl->StopMusic(); }
 
-void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound)
+void Sound::PlaySound(const std::filesystem::path& path, bool is_ui_sound)
 { m_impl->PlaySound(path, is_ui_sound); }
 
-void Sound::FreeSound(const boost::filesystem::path& path)
+void Sound::FreeSound(const std::filesystem::path& path)
 { m_impl->FreeSound(path); }
 
 void Sound::FreeAllSounds()
@@ -474,7 +474,7 @@ namespace {
     }
 }
 
-void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops) {
+void Sound::Impl::PlayMusic(const std::filesystem::path& path, int loops) {
     if (!m_initialized)
         return;
     if (!alcGetCurrentContext())
@@ -573,7 +573,7 @@ void Sound::Impl::StopMusic() {
     alSourcei(m_sources[0], AL_BUFFER, 0);
 }
 
-void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound) {
+void Sound::Impl::PlaySound(const std::filesystem::path& path, bool is_ui_sound) {
     if (!m_initialized || !GetOptionsDB().Get<bool>("audio.effects.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
@@ -612,7 +612,7 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
         ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(source_state);
 }
 
-void Sound::Impl::FreeSound(const boost::filesystem::path& path) {
+void Sound::Impl::FreeSound(const std::filesystem::path& path) {
     if (!m_initialized)
         return;
     std::string filename = PathToString(path);

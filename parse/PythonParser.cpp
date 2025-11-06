@@ -18,7 +18,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <boost/core/ref.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/import.hpp>
@@ -27,6 +26,8 @@
 #include <boost/python/raw_function.hpp>
 #include <boost/python/stl_iterator.hpp>
 #include <boost/operators.hpp>
+
+#include <filesystem>
 #include <memory>
 #include <string>
 
@@ -86,7 +87,7 @@ struct module_spec {
     const PythonParser& parser;
 };
 
-PythonParser::PythonParser(PythonCommon& _python, const boost::filesystem::path& scripting_dir) :
+PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir) :
     m_python(_python),
     m_scripting_dir(scripting_dir)
 {
@@ -420,7 +421,7 @@ PythonParser::~PythonParser() {
     PyThreadState_Swap(m_main_thread_state);
 }
 
-bool PythonParser::ParseFileCommon(const boost::filesystem::path& path,
+bool PythonParser::ParseFileCommon(const std::filesystem::path& path,
                                    const boost::python::dict& globals,
                                    std::string& filename, std::string& file_contents) const
 {

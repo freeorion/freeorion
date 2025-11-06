@@ -10,7 +10,7 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/container/flat_map.hpp>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <boost/spirit/include/qi.hpp>
 
 
@@ -177,7 +177,7 @@ namespace parse::detail {
         color_rule_type start;
     };
 
-    void parse_file_common(const boost::filesystem::path& path,
+    void parse_file_common(const std::filesystem::path& path,
                            const lexer& lexer,
                            std::string& filename,
                            std::string& file_contents,
@@ -187,14 +187,14 @@ namespace parse::detail {
 
     /** Report warnings about unparsed end of file and return true for a good
         parse. */
-    bool parse_file_end_of_file_warnings(const boost::filesystem::path& path,
+    bool parse_file_end_of_file_warnings(const std::filesystem::path& path,
                                          bool parser_success,
                                          const std::string& file_contents,
                                          const text_iterator first,
                                          const text_iterator last);
 
     template <typename Grammar, typename Arg1>
-    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1) {
+    bool parse_file(const lexer& lexer, const std::filesystem::path& path, Arg1& arg1) {
         ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(100));
 
         std::string filename;
@@ -218,7 +218,7 @@ namespace parse::detail {
     }
 
     template <typename Grammar, typename Arg1, typename Arg2>
-    bool parse_file(const lexer& lexer, const boost::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
+    bool parse_file(const lexer& lexer, const std::filesystem::path& path, Arg1& arg1, Arg2& arg2) {
         ScopedTimer timer("parse_file \"" + path.filename().string()  + "\"", std::chrono::milliseconds(10));
 
         std::string filename;

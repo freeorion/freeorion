@@ -25,7 +25,7 @@
 #include "../../parse/PythonParser.h"
 
 #include <boost/lexical_cast.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include <boost/functional/hash.hpp>
 #include <boost/uuid/nil_generator.hpp>
 

@@ -17,14 +17,13 @@
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/utf8/checked.h>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/format.hpp>
 
+#include <filesystem>
 #include <memory>
 #include <string>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace {
     constexpr GG::X SAVE_FILE_DIALOG_WIDTH{600};

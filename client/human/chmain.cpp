@@ -10,8 +10,8 @@
 #include <GG/utf8/checked.h>
 
 #include <boost/format.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
+#include <filesystem>
+#include <fstream>
 
 #include <thread>
 #include <chrono>
@@ -199,18 +199,18 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // gracefully by resetting it to the standard path into the
         // application bundle.  This may happen if a previous installed
         // version of FreeOrion was residing in a different directory.
-        if (!boost::filesystem::exists(GetResourceDir()) ||
-            !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
-            !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+        if (!std::filesystem::exists(GetResourceDir()) ||
+            !std::filesystem::exists(GetResourceDir() / "credits.xml") ||
+            !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
         {
             DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
             db.Set<std::string>("resource.path", "");
 
             // double-check that resetting actually fixed things...
-            if (!boost::filesystem::exists(GetResourceDir()) ||
-                !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
-                !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+            if (!std::filesystem::exists(GetResourceDir()) ||
+                !std::filesystem::exists(GetResourceDir() / "credits.xml") ||
+                !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
             {
                 DebugLogger() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
                 throw std::runtime_error("Unable to load game resources at default location: " +

@@ -1,18 +1,20 @@
 #include "ServerApp.h"
 
 #include <ctime>
+#include <fstream>
+#include <filesystem>
 #include <numeric>
 #include <stdexcept>
 #include <thread>
+
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/filesystem/exception.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
 #include "SaveLoad.h"
 #include "UniverseGenerator.h"
 #include "../combat/CombatEvents.h"
@@ -52,7 +54,7 @@
 #include "../util/ThreadPool.h"
 #include "../util/Version.h"
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace {
     DeclareThreadSafeLogger(effects);

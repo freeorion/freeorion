@@ -16,7 +16,7 @@
 #include <GG/Clr.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
-#include <boost/filesystem/operations.hpp>
+#include <filesystem>
 
 InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),

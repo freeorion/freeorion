@@ -27,7 +27,8 @@ TextureCursor::TextureCursor(std::shared_ptr<Texture> texture, Pt hotspot) :
 
 void TextureCursor::Render(Pt pt) const
 {
-    assert(m_texture);
+    if (!m_texture)
+        return;
     Pt ul = pt - m_hotspot;
     if constexpr (OUTLINE_CURSOR) {
         Pt lr = ul + Pt(m_texture->DefaultWidth(), m_texture->DefaultHeight());

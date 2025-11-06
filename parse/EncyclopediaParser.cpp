@@ -84,7 +84,7 @@ namespace {
 }
 
 namespace parse {
-    ArticleMap encyclopedia_articles(const boost::filesystem::path& path) {
+    ArticleMap encyclopedia_articles(const std::filesystem::path& path) {
         ArticleMap articles;
 
         ScopedTimer timer("Encyclopedia Parsing");

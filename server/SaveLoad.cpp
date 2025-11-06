@@ -17,7 +17,7 @@
 #include "../util/ScopedTimer.h"
 #include "../combat/CombatLogManager.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
@@ -35,7 +35,7 @@
 #include <boost/serialization/shared_ptr.hpp>
 
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace {
     void CompileSaveGamePreviewData(const ServerSaveGameData& server_save_game_data,
@@ -159,7 +159,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     // ensure save directory exists
                     if (!exists(path.parent_path())) {
                         WarnLogger() << "Creating save directories " << path.parent_path().string();
-                        boost::filesystem::create_directories(path.parent_path());
+                        std::filesystem::create_directories(path.parent_path());
                     }
                 } catch (const std::exception& e) {
                     ErrorLogger() << "Server unable to check / create save directory: " << e.what();
@@ -170,7 +170,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
 
         // set up output archive / stream for saving
-        fs::ofstream ofs(path, std::ios_base::binary);
+        std::ofstream ofs(path, std::ios_base::binary);
         if (!ofs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         pos_before_writing = ofs.tellp();
@@ -354,7 +354,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     try {
         // set up input archive / stream for loading
         const fs::path path = FilenameToPath(filename);
-        fs::ifstream ifs(path, std::ios_base::binary);
+        std::ifstream ifs(path, std::ios_base::binary);
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
@@ -477,7 +477,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
 
     try {
         fs::path path = FilenameToPath(filename);
-        fs::ifstream ifs(path, std::ios_base::binary);
+        std::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
@@ -520,7 +520,7 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
     try {
         DebugLogger() << "Reading player save game data from: " << filename;
         fs::path path = FilenameToPath(filename);
-        fs::ifstream ifs(path, std::ios_base::binary);
+        std::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
@@ -572,7 +572,7 @@ void LoadEmpireSaveGameData(const std::string& filename,
     try {
         fs::path path = FilenameToPath(filename);
         DebugLogger() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
-        fs::ifstream ifs(path, std::ios_base::binary);
+        std::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);

@@ -1,7 +1,7 @@
 #include "Species.h"
 
 #include <iterator>
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include "Conditions.h"
 #include "CommonParams.h"
 #include "Effect.h"

@@ -7,7 +7,7 @@
 #include "../util/Logger.h"
 #include "../util/XMLDoc.h"
 
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 
 namespace {
     // sorted pair, so order of empire IDs specified doesn't matter
@@ -427,7 +427,7 @@ const std::vector<EmpireColor>& EmpireColors() {
     return empire_colors;
 }
 
-void InitEmpireColors(const boost::filesystem::path& path) {
+void InitEmpireColors(const std::filesystem::path& path) {
     XMLDoc doc;
 
     std::string empire_colors_content;

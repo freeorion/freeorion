@@ -282,5 +282,8 @@
     <ClInclude Include="..\..\parse\SourcePythonParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\parse\PythonParserImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

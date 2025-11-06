@@ -2,7 +2,7 @@
 
 #include <cctype>
 #include <iterator>
-#include <boost/filesystem/fstream.hpp>
+#include <fstream>
 #include "BuildingType.h"
 #include "Building.h"
 #include "Condition.h"

@@ -207,7 +207,7 @@ struct ShipHullStats {
 }
 
 namespace parse {
-    start_rule_payload ship_hulls(const boost::filesystem::path& path) {
+    start_rule_payload ship_hulls(const std::filesystem::path& path) {
         start_rule_payload hulls;
 
         for (const auto& file : ListDir(path, IsFOCScript))

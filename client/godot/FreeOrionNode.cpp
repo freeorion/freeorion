@@ -145,18 +145,18 @@ void FreeOrionNode::_init() {
     // gracefully by resetting it to the standard path into the
     // application bundle.  This may happen if a previous installed
     // version of FreeOrion was residing in a different directory.
-    if (!boost::filesystem::exists(GetResourceDir()) ||
-        !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
-        !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+    if (!std::filesystem::exists(GetResourceDir()) ||
+        !std::filesystem::exists(GetResourceDir() / "credits.xml") ||
+        !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
     {
         DebugLogger() << "Resources directory " << PathToString(GetResourceDir()) << " from config.xml missing or does not contain expected files. Resetting to default.";
 
-        GetOptionsDB().Set<std::string>("resource.path", PathToString(boost::filesystem::canonical("../default"))); // Temporary default for Godot client prototype development
+        GetOptionsDB().Set<std::string>("resource.path", PathToString(std::filesystem::canonical("../default"))); // Temporary default for Godot client prototype development
 
         // double-check that resetting actually fixed things...
-        if (!boost::filesystem::exists(GetResourceDir()) ||
-            !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
-            !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
+        if (!std::filesystem::exists(GetResourceDir()) ||
+            !std::filesystem::exists(GetResourceDir() / "credits.xml") ||
+            !std::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
         {
             DebugLogger() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
             throw std::runtime_error("Unable to load game resources at default location: " +

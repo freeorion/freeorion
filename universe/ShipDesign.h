@@ -249,7 +249,7 @@ private:
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
     using ParsedShipDesignsType = std::pair<
-        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>, boost::filesystem::path>>, // designs_and_paths,
+        std::vector<std::pair<std::unique_ptr<ParsedShipDesign>, std::filesystem::path>>, // designs_and_paths,
         std::vector<boost::uuids::uuid> // ordering
     >;
 
@@ -319,7 +319,7 @@ private:
 [[nodiscard]] FO_COMMON_API std::tuple<
     bool,
     std::unordered_map<boost::uuids::uuid,
-                       std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>,
+                       std::pair<std::unique_ptr<ShipDesign>, std::filesystem::path>,
                        boost::hash<boost::uuids::uuid>>,
     std::vector<boost::uuids::uuid>>
 LoadShipDesignsAndManifestOrderFromParseResults(PredefinedShipDesignManager::ParsedShipDesignsType& parsed);

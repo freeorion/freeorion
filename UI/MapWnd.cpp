@@ -1042,7 +1042,7 @@ void MapWnd::CompleteConstruction() {
 
     RefreshTurnButtonTooltip();
 
-    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+    std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
     // auto turn button
     m_btn_auto_turn = Wnd::Create<CUIButton>(
@@ -6894,7 +6894,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     if (total_PP_wasted > 0.05 || (total_PP_excess > std::min(3.0 * stockpile_use_capacity, 0.8 * total_PP_output))) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
                        << total_PP_spent << " and Industry Production: " << total_PP_output << ", wasting " << total_PP_wasted;
-        boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+        std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
         m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "wasted_resource.png", false)));
         m_industry_wasted->SetPressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
@@ -6911,7 +6911,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
             UserString("MAP_PROD_CLICK_TO_OPEN")));
     } else if (total_PP_to_stockpile > 0.05 && (expected_stockpile > (10 * stockpile_use_capacity) ||
                                                 total_PP_excess > 0.2 * total_PP_output)) {
-        boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+        std::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
         m_industry_wasted->SetUnpressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /
                                                                 "warned_resource.png", false)));
         m_industry_wasted->SetPressedGraphic(GG::SubTexture(ui.GetTexture(button_texture_dir /

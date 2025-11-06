@@ -9,7 +9,7 @@
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
 
-#include <boost/filesystem.hpp>
+#include <fstream>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
@@ -18,7 +18,7 @@
 
 #include <stdexcept>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 namespace py = boost::python;
 
 

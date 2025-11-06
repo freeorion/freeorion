@@ -111,7 +111,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload fields(const boost::filesystem::path& path) {
+    start_rule_payload fields(const std::filesystem::path& path) {
         start_rule_payload field_types;
 
         ScopedTimer timer("Fields Parsing");

@@ -44,16 +44,16 @@ private:
 };
 
 // Returns folder containing the Python universe generator scripts
-boost::filesystem::path GetPythonUniverseGeneratorDir();
+std::filesystem::path GetPythonUniverseGeneratorDir();
 
 // Returns folder containing the Python turn events scripts
-boost::filesystem::path GetPythonTurnEventsDir();
+std::filesystem::path GetPythonTurnEventsDir();
 
 // Returns folder containing the Python auth scripts
-boost::filesystem::path GetPythonAuthDir();
+std::filesystem::path GetPythonAuthDir();
 
 // Returns folder containing the Python chat scripts
-boost::filesystem::path GetPythonChatDir();
+std::filesystem::path GetPythonChatDir();
 
 
 #endif

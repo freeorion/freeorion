@@ -36,7 +36,7 @@
 #include <GL/glew.h>
 
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <boost/functional/hash.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/lexical_cast.hpp>
