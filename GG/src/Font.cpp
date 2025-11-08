@@ -525,6 +525,8 @@ namespace {
         const auto end_it = elem_text.end();
         auto it = begin_it;
 
+        bool have_tags_to_pass = !pending_formatting_tags.empty();
+
         for (std::size_t idx = 0u; idx < elem_widths.size(); ++idx) {
             const StrSize char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
             const uint32_t c = text_next_fn(it, end_it); // advances it to next glyph
@@ -539,9 +541,17 @@ namespace {
             ++code_point_offset;
 
             auto& dest_char_data = get_dest_char_data(move_down);
-            dest_char_data.emplace_back(c, x, original_string_offset + char_str_index, char_str_size,
-                                        code_point_offset, std::move(pending_formatting_tags));
-            pending_formatting_tags.clear();
+            if (have_tags_to_pass) {
+                // add any passed-in tags to first added CharData
+                have_tags_to_pass = false;
+                dest_char_data.emplace_back(c, x, original_string_offset + char_str_index, char_str_size,
+                                            code_point_offset, std::move(pending_formatting_tags));
+                pending_formatting_tags.clear();
+
+            } else [[likely]] {
+                dest_char_data.emplace_back(c, x, original_string_offset + char_str_index,
+                                            char_str_size, code_point_offset);
+            }
         }
     }
 
@@ -574,6 +584,7 @@ namespace {
         }
         auto& last_char_data = line_data.back().char_data;
         last_char_data.reserve(element_text.size());
+        const auto first_added_char_idx = last_char_data.size();
 
         const auto start_it = element_text.begin();
         auto it = start_it;
@@ -588,12 +599,17 @@ namespace {
             if (j < element_widths.size())
                 x += element_widths[j]; // x is the furthest-right extent of the text element
 
-            last_char_data.emplace_back(c, x, original_string_offset + char_index, char_size,
-                                        code_point_offset, std::move(pending_formatting_tags));
-            pending_formatting_tags.clear();
+            last_char_data.emplace_back(c, x, original_string_offset + char_index,
+                                        char_size, code_point_offset);
 
             ++j;
             ++code_point_offset;
+        }
+
+        if (!pending_formatting_tags.empty() && first_added_char_idx < last_char_data.size()) {
+            // put passed-in tags onto first added CharData
+            last_char_data[first_added_char_idx].SetTags(std::move(pending_formatting_tags));
+            pending_formatting_tags.clear();
         }
     }
 
@@ -617,6 +633,7 @@ namespace {
         auto& last_line_data = line_data.back();
         auto& last_char_data = last_line_data.char_data;
         last_char_data.reserve(element_text.size());
+        const auto first_added_char_idx = last_char_data.size();
 
         const auto start_it = element_text.begin();
         auto it = start_it;
@@ -635,9 +652,8 @@ namespace {
             const bool move_down = (format & FORMAT_LINEWRAP) && (box_width < x + width_j) && (x != X0);
             x = move_down ? X{width_j} : (x + width_j); // x is the furthest-right extent of the text element
 
-            last_char_data.emplace_back(c, x, original_string_offset + char_index, char_size,
-                                        code_point_offset, std::move(pending_formatting_tags));
-            pending_formatting_tags.clear();
+            last_char_data.emplace_back(c, x, original_string_offset + char_index,
+                                        char_size, code_point_offset);
 
             if (move_down && last_line_of_curr_just) {
                 last_line_data.justification = orig_just;
@@ -646,6 +662,12 @@ namespace {
 
             ++j;
             ++code_point_offset;
+        }
+
+        if (!pending_formatting_tags.empty() && first_added_char_idx < last_char_data.size()) {
+            // put passed-in tags onto first added CharData
+            last_char_data[first_added_char_idx].SetTags(std::move(pending_formatting_tags));
+            pending_formatting_tags.clear();
         }
     }
 
@@ -733,6 +755,7 @@ namespace {
         // the index of the first code point of the current TextElement
         CPSize code_point_offset(CP0);
         std::vector<TextElement> pending_formatting_tags;
+        pending_formatting_tags.reserve(2);
 
         for (const auto& elem : text_elements) {
             switch (elem.Type()) {

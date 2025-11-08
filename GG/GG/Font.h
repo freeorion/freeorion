@@ -448,32 +448,41 @@ public:
         {
             CONSTEXPR_FONT CharData() = default;
 
-            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index, StrSize str_size,
-                                    CPSize cp_index, const std::vector<TextElement>& tags_) :
+            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index,
+                                    StrSize str_size, CPSize cp_index) noexcept :
                 code_point(code_point_),
                 extent(extent_),
                 string_index(str_index),
                 string_size(str_size),
                 code_point_index(cp_index)
             {
-                tags.reserve(tags_.size());
-                for (auto& tag : tags_)
-                    if (tag.IsTag())
-                        tags.push_back(tag);
+                static_assert(noexcept(std::vector<TextTag>{}));
             }
 
-            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index, StrSize str_size,
-                                    CPSize cp_index, std::vector<TextElement>&& tags_) :
+            template <typename TagVec>
+            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index,
+                                    StrSize str_size, CPSize cp_index, TagVec&& tags_) :
                 code_point(code_point_),
                 extent(extent_),
                 string_index(str_index),
                 string_size(str_size),
                 code_point_index(cp_index)
+            { SetTags(std::forward<TagVec>(tags_)); }
+
+            CONSTEXPR_FONT void SetTags(std::vector<TextElement>&& tags_)
             {
                 tags.reserve(tags_.size());
                 for (auto& tag : tags_)
                     if (tag.IsTag())
                         tags.push_back(std::move(tag));
+            }
+
+            CONSTEXPR_FONT void SetTags(const std::vector<TextElement>& tags_)
+            {
+                tags.reserve(tags_.size());
+                for (auto& tag : tags_)
+                    if (tag.IsTag())
+                        tags.push_back(tag);
             }
 
             /** The UTF-8 code point for this glyph */
