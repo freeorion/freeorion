@@ -119,15 +119,18 @@ namespace {
  *  If the tag content is empty or @p add_explanation is true,
  *  the value ref description gets added as explanation instead. */
 std::string ValueRefLinkText(std::string text, const bool add_explanation) {
-    static const std::string FOCS_VALUE_TAG_CLOSE{std::string{"</"}.append(VarText::FOCS_VALUE_TAG).append(">")};
+    static constexpr std::string_view FOCS_VALUE_TAG_OPEN_START = "<value";
+    static constexpr std::string_view FOCS_TAG_END_BRACKET = ">";
+    static constexpr std::string_view FOCS_VALUE_TAG_CLOSE = "</value>";
+    static_assert(FOCS_VALUE_TAG_CLOSE.substr(2, 5) == VarText::FOCS_VALUE_TAG);
     if (!boost::contains(text, FOCS_VALUE_TAG_CLOSE))
         return text;
 
     auto text_it = text.begin();
     xpr::smatch match;
     const xpr::sregex FOCS_VALUE_SEARCH =
-        (std::string{"<"}.append(VarText::FOCS_VALUE_TAG)) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> ">" >>
-        (xpr::s2 = REGEX_NON_BRACKET) >> (std::string{"</"}.append(VarText::FOCS_VALUE_TAG).append(">"));
+        (FOCS_VALUE_TAG_OPEN_START) >> xpr::_s >> (xpr::s1 = REGEX_NON_BRACKET) >> FOCS_TAG_END_BRACKET >>
+        (xpr::s2 = REGEX_NON_BRACKET) >> (FOCS_VALUE_TAG_CLOSE);
 
     while (true) {
         if (!xpr::regex_search(text_it, text.end(), match, FOCS_VALUE_SEARCH, xpr::regex_constants::match_default))
@@ -143,9 +146,10 @@ std::string ValueRefLinkText(std::string text, const bool add_explanation) {
             ? " (" + ((match[2].length()==0 || !UserStringExists(value_ref_name)) ? "" : match[2] + ": ") + value_ref->Description() + ")"
             : ""};
 
-        auto resolved_tooltip = std::string{"<"}.append(VarText::FOCS_VALUE_TAG).append(" ")
-                               .append(value_ref_name).append(">").append(value_str).append(explanation_str)
-                               .append("</").append(VarText::FOCS_VALUE_TAG).append(">");
+        auto resolved_tooltip = std::string{FOCS_VALUE_TAG_OPEN_START}.append(" ")
+                               .append(value_ref_name).append(">")
+                               .append(value_str).append(explanation_str)
+                               .append(FOCS_VALUE_TAG_CLOSE);
 
         text.replace(text_it + match.position(), text_it + match.position() + match.length(), resolved_tooltip);
 
@@ -161,7 +165,6 @@ std::string ValueRefLinkText(std::string text, const bool add_explanation) {
 LinkText::LinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<GG::Font> font,
                    GG::Flags<GG::TextFormat> format, GG::Clr color) :
     GG::TextControl(x, y, w, GG::Y1, str, std::move(font), color, format, GG::INTERACTIVE),
-    TextLinker(),
     m_raw_text(std::move(str))
 {
     Resize(TextLowerRight() - TextUpperLeft());
@@ -171,7 +174,6 @@ LinkText::LinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<G
 
 LinkText::LinkText(GG::X x, GG::Y y, std::string str, std::shared_ptr<GG::Font> font, GG::Clr color) :
     GG::TextControl(x, y, GG::X1, GG::Y1, str, std::move(font), color, GG::FORMAT_NOWRAP, GG::INTERACTIVE),
-    TextLinker(),
     m_raw_text(std::move(str))
 {
     FindLinks();
