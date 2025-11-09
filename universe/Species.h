@@ -267,8 +267,8 @@ public:
 
     /** returns the number of species stored in this manager. */
     [[nodiscard]] int NumSpecies() const { return static_cast<int>(AllSpecies().size()); }
-    [[nodiscard]] int NumPlayableSpecies() const { return range_count_if(AllSpecies(), is_playable); } 
-    [[nodiscard]] int NumNativeSpecies() const { return range_count_if(AllSpecies(), is_native); } 
+    [[nodiscard]] int NumPlayableSpecies() const { return static_cast<int>(range_count_if(AllSpecies(), is_playable)); } 
+    [[nodiscard]] int NumNativeSpecies() const { return static_cast<int>(range_count_if(AllSpecies(), is_native)); } 
 
     /** returns the name of a species in this manager, or an empty string if
       * this manager is empty. */
