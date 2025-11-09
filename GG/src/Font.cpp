@@ -504,7 +504,7 @@ namespace {
                                       Font::LineVec& line_data,
                                       bool& last_line_of_curr_just, const Alignment orig_just,
                                       const StrSize original_string_offset, CPSize& code_point_offset,
-                                      std::vector<Font::TextElement>& pending_formatting_tags,
+                                      std::vector<Font::TextTag>& pending_formatting_tags,
                                       const TextNextFn& text_next_fn)
     {
         const auto get_dest_char_data =
@@ -569,7 +569,7 @@ namespace {
                                          Font::LineVec& line_data,
                                          bool& last_line_of_curr_just, const Alignment orig_just,
                                          const StrSize original_string_offset, CPSize& code_point_offset,
-                                         std::vector<Font::TextElement>& pending_formatting_tags,
+                                         std::vector<Font::TextTag>& pending_formatting_tags,
                                          const TextNextFn& text_next_fn)
     {
         // if the text "word" overruns this line, and isn't alone on
@@ -620,7 +620,7 @@ namespace {
                                            const X box_width, Font::LineVec& line_data,
                                            bool& last_line_of_curr_just, const Alignment orig_just,
                                            const StrSize original_string_offset, CPSize& code_point_offset,
-                                           std::vector<Font::TextElement>& pending_formatting_tags,
+                                           std::vector<Font::TextTag>& pending_formatting_tags,
                                            const TextNextFn& text_next_fn)
     {
         // ensure there is a line to add text into
@@ -676,7 +676,7 @@ namespace {
                                 const X box_width, Font::LineVec& line_data,
                                 bool& last_line_of_curr_just, const Alignment orig_just,
                                 const StrSize original_string_offset, CPSize& code_point_offset,
-                                std::vector<Font::TextElement>& pending_formatting_tags,
+                                std::vector<Font::TextTag>& pending_formatting_tags,
                                 const TextNextFn& text_next_fn)
     {
         if (format & FORMAT_WORDBREAK) {
@@ -695,7 +695,7 @@ namespace {
     template <typename TextNextFn = U8NextFn>
     CONSTEXPR_FONT void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
                                    bool& last_line_of_curr_just, CPSize& code_point_offset,
-                                   std::vector<Font::TextElement>& pending_formatting_tags)
+                                   std::vector<Font::TextTag>& pending_formatting_tags)
     {
         if (elem.tag_name == Font::ALIGN_LEFT_TAG)
             justification = ALIGN_LEFT;
@@ -712,7 +712,7 @@ namespace {
     template <typename TextNextFn = U8NextFn>
     CONSTEXPR_FONT void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
                                     bool& last_line_of_curr_just, CPSize& code_point_offset,
-                                    std::vector<Font::TextElement>& pending_formatting_tags)
+                                    std::vector<Font::TextTag>& pending_formatting_tags)
     {
         if ((elem.tag_name == Font::ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
             (elem.tag_name == Font::ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
@@ -732,7 +732,7 @@ namespace {
     {
         format = ValidateFormat(format); // may modify format
 
-        using TextElement = Font::TextElement;
+        using TextTag = Font::TextTag;
 
         const std::size_t glyphs_per_line_estimate = static_cast<std::size_t>(
             std::max<int32_t>(1, Value(box_width)) / std::max<int8_t>(1, space_width));
@@ -754,29 +754,29 @@ namespace {
         StrSize original_string_offset(S0);
         // the index of the first code point of the current TextElement
         CPSize code_point_offset(CP0);
-        std::vector<TextElement> pending_formatting_tags;
+        std::vector<TextTag> pending_formatting_tags;
         pending_formatting_tags.reserve(2);
 
         for (const auto& elem : text_elements) {
             switch (elem.Type()) {
-            case TextElement::TextElementType::NEWLINE:
+            case TextTag::TextElementType::NEWLINE:
                 AddNewline(x, last_line_of_curr_just, line_data, orig_just);
                 break;
-            case TextElement::TextElementType::WHITESPACE:
+            case TextTag::TextElementType::WHITESPACE:
                 AddWhitespace(x, elem.text, elem.widths, box_width, format & FORMAT_LINEWRAP,
                               glyphs_per_line_estimate,
                               line_data, last_line_of_curr_just, orig_just, original_string_offset,
                               code_point_offset, pending_formatting_tags, text_next_fn);
                 break;
-            case TextElement::TextElementType::TEXT:
+            case TextTag::TextElementType::TEXT:
                 AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
                         original_string_offset, code_point_offset, pending_formatting_tags, text_next_fn);
                 break;
-            case TextElement::TextElementType::OPEN_TAG:
+            case TextTag::TextElementType::OPEN_TAG:
                 AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
                            code_point_offset, pending_formatting_tags);
                 break;
-            case TextElement::TextElementType::CLOSE_TAG:
+            case TextTag::TextElementType::CLOSE_TAG:
                 AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
                             code_point_offset, pending_formatting_tags);
                 break;
