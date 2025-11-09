@@ -469,7 +469,7 @@ public:
                 code_point_index(cp_index)
             { SetTags(std::forward<TagVec>(tags_)); }
 
-            CONSTEXPR_FONT void SetTags(std::vector<TextElement>&& tags_)
+            CONSTEXPR_FONT void SetTags(std::vector<TextTag>&& tags_)
             {
                 tags.reserve(tags_.size());
                 for (auto& tag : tags_)
@@ -477,7 +477,7 @@ public:
                         tags.push_back(std::move(tag));
             }
 
-            CONSTEXPR_FONT void SetTags(const std::vector<TextElement>& tags_)
+            CONSTEXPR_FONT void SetTags(const std::vector<TextTag>& tags_)
             {
                 tags.reserve(tags_.size());
                 for (auto& tag : tags_)
