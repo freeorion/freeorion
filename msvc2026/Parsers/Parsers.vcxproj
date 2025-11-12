@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9925F25C-A72E-42AE-B2E3-6657255BF293}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Parsers</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\cpp.lang.props" />
+    <Import Project="..\warnings.props" />
+    <Import Project="..\win32.dependency.props" />
+    <Import Project="..\boost.dependency.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../</OutDir>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_USRDLL;PARSERS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_USRDLL;PARSERS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;BOOST_ALLOW_DEPRECATED_HEADERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.10/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ShowIncludes>false</ShowIncludes>
+      <DisableSpecificWarnings>4244; 4251; 4275</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFile>../../Parsers.dll</OutputFile>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+    </Link>
+    <Lib>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MinSpace</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_USRDLL;PARSERS_EXPORTS;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.10/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ConformanceMode>true</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <OutputFile>../../Parsers.dll</OutputFile>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+    </Link>
+    <Lib>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\parse\ArithmeticRules.cpp" />
+    <ClCompile Include="..\..\parse\BuildingsParser.cpp" />
+    <ClCompile Include="..\..\parse\CommonParamsParser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionParser.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser1.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser2.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser3.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser4.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser5.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser6.cpp" />
+    <ClCompile Include="..\..\parse\ConditionParser7.cpp" />
+    <ClCompile Include="..\..\parse\DoubleComplexValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996;4018</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996;4018</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\EffectParser.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser1.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser2.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser3.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser4.cpp" />
+    <ClCompile Include="..\..\parse\EffectParser5.cpp" />
+    <ClCompile Include="..\..\parse\EffectPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\EmpireStatsParser.cpp" />
+    <ClCompile Include="..\..\parse\EncyclopediaParser.cpp" />
+    <ClCompile Include="..\..\parse\EnumParser.cpp" />
+    <ClCompile Include="..\..\parse\EnumPythonParser.cpp" />
+    <ClCompile Include="..\..\parse\FieldsParser.cpp" />
+    <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
+    <ClCompile Include="..\..\parse\GameRulesParser.cpp" />
+    <ClCompile Include="..\..\parse\IntComplexValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\ItemsParser.cpp" />
+    <ClCompile Include="..\..\parse\Lexer.cpp" />
+    <ClCompile Include="..\..\parse\MonsterFleetPlansParser.cpp" />
+    <ClCompile Include="..\..\parse\NamedValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\Parse.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996;4018</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996;4018</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\PlanetEnvironmentValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\PlanetSizeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\PoliciesParser.cpp" />
+    <ClCompile Include="..\..\parse\PythonParser.cpp" />
+    <ClCompile Include="..\..\parse\ReportParseError.cpp" />
+    <ClCompile Include="..\..\parse\ShipDesignsParser.cpp" />
+    <ClCompile Include="..\..\parse\ShipHullsParser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ShipPartsParser.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\SpecialsParser.cpp" />
+    <ClCompile Include="..\..\parse\SpeciesParser.cpp" />
+    <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\StringComplexValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\TechsParser.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionPythonParser.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\SourcePythonParser.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\parse\CommonParamsParser.h" />
+    <ClInclude Include="..\..\parse\ConditionParser.h" />
+    <ClInclude Include="..\..\parse\ConditionParser1.h" />
+    <ClInclude Include="..\..\parse\ConditionParser2.h" />
+    <ClInclude Include="..\..\parse\ConditionParser3.h" />
+    <ClInclude Include="..\..\parse\ConditionParser4.h" />
+    <ClInclude Include="..\..\parse\ConditionParser5.h" />
+    <ClInclude Include="..\..\parse\ConditionParser6.h" />
+    <ClInclude Include="..\..\parse\ConditionParser7.h" />
+    <ClInclude Include="..\..\parse\ConditionParserImpl.h" />
+    <ClInclude Include="..\..\parse\EffectParser.h" />
+    <ClInclude Include="..\..\parse\EffectParser1.h" />
+    <ClInclude Include="..\..\parse\EffectParser2.h" />
+    <ClInclude Include="..\..\parse\EffectParser3.h" />
+    <ClInclude Include="..\..\parse\EffectParser4.h" />
+    <ClInclude Include="..\..\parse\EffectParser5.h" />
+    <ClInclude Include="..\..\parse\EffectParserImpl.h" />
+    <ClInclude Include="..\..\parse\EnumParser.h" />
+    <ClInclude Include="..\..\parse\EnumValueRefRules.h" />
+    <ClInclude Include="..\..\parse\Lexer.h" />
+    <ClInclude Include="..\..\parse\MovableEnvelope.h" />
+    <ClInclude Include="..\..\parse\Parse.h" />
+    <ClInclude Include="..\..\parse\ParseImpl.h" />
+    <ClInclude Include="..\..\parse\ReportParseError.h" />
+    <ClInclude Include="..\..\parse\Tokens.h" />
+    <ClInclude Include="..\..\parse\ValueRefParser.h" />
+    <ClInclude Include="..\..\parse\PythonParser.h" />
+    <ClInclude Include="..\..\parse\ValueRefPythonParser.h" />
+    <ClInclude Include="..\..\parse\ConditionPythonParser.h" />
+    <ClInclude Include="..\..\parse\EffectPythonParser.h" />
+    <ClInclude Include="..\..\parse\EnumPythonParser.h" />
+    <ClInclude Include="..\..\parse\SourcePythonParser.h" />
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+      <CharacterSet>Unicode</CharacterSet>
+      <PlatformToolset>v143</PlatformToolset>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+      <CharacterSet>Unicode</CharacterSet>
+      <PlatformToolset>v143</PlatformToolset>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>FreeOrion</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\cpp.lang.props" />
+    <Import Project="..\warnings.props" />
+    <Import Project="..\win32.dependency.props" />
+    <Import Project="..\boost.dependency.props" />
+    <Import Project="..\libpng.dependency.props" />
+    <Import Project="..\zlib.dependency.props" />
+    <Import Project="..\freetype.dependency.props" />
+    <Import Project="..\sdl.dependency.props" />
+    <Import Project="..\opengl.dependency.props" />
+    <Import Project="..\glew.dependency.props" />
+    <Import Project="..\openal.dependency.props" />
+    <Import Project="..\vorbis.dependency.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../</OutDir>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.10/;../../GG/;../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <DisableSpecificWarnings>4244; 4251; 4275</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../../FreeOrion.exe</OutputFile>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_HUMAN;FREEORION_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.10/;../../GG/;../include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ConformanceMode>true</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Common.lib;Parsers.lib;GiGi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>../../FreeOrion.exe</OutputFile>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\client\ClientApp.h" />
+    <ClInclude Include="..\..\client\ClientNetworking.h" />
+    <ClInclude Include="..\..\client\human\GGHumanClientApp.h" />
+    <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
+    <ClInclude Include="..\..\client\human\ClientFSMEvents.h" />
+    <ClInclude Include="..\..\Empire\Empire.h" />
+    <ClInclude Include="..\..\Empire\ResearchQueue.h" />
+    <ClInclude Include="..\..\Empire\ProductionQueue.h" />
+    <ClInclude Include="..\..\Empire\EmpireManager.h" />
+    <ClInclude Include="..\..\Empire\ResourcePool.h" />
+    <ClInclude Include="..\..\Empire\PopulationPool.h" />
+    <ClInclude Include="..\..\network\Message.h" />
+    <ClInclude Include="..\..\network\MessageQueue.h" />
+    <ClInclude Include="..\..\network\Networking.h" />
+    <ClInclude Include="..\..\UI\About.h" />
+    <ClInclude Include="..\..\UI\BuildDesignatorWnd.h" />
+    <ClInclude Include="..\..\UI\AccordionPanel.h" />
+    <ClInclude Include="..\..\UI\BuildingsPanel.h" />
+    <ClInclude Include="..\..\UI\CensusBrowseWnd.h" />
+    <ClInclude Include="..\..\UI\ChatWnd.h" />
+    <ClInclude Include="..\..\UI\ClientUI.h" />
+    <ClInclude Include="..\..\UI\CombatReport\CombatLogWnd.h" />
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportData.h" />
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportWnd.h" />
+    <ClInclude Include="..\..\UI\CombatReport\GraphicalSummary.h" />
+    <ClInclude Include="..\..\UI\CUIControls.h" />
+    <ClInclude Include="..\..\UI\CUIDrawUtil.h" />
+    <ClInclude Include="..\..\UI\CUISlider.h" />
+    <ClInclude Include="..\..\UI\CUISpin.h" />
+    <ClInclude Include="..\..\UI\CUIStyle.h" />
+    <ClInclude Include="..\..\UI\CUIWnd.h" />
+    <ClInclude Include="..\..\UI\DesignWnd.h" />
+    <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h" />
+    <ClInclude Include="..\..\UI\FieldIcon.h" />
+    <ClInclude Include="..\..\UI\FleetButton.h" />
+    <ClInclude Include="..\..\UI\FleetWnd.h" />
+    <ClInclude Include="..\..\UI\GalaxySetupWnd.h" />
+    <ClInclude Include="..\..\UI\GovernmentWnd.h" />
+    <ClInclude Include="..\..\UI\GraphControl.h" />
+    <ClInclude Include="..\..\UI\Hotkeys.h" />
+    <ClInclude Include="..\..\UI\IconTextBrowseWnd.h" />
+    <ClInclude Include="..\..\UI\InGameMenu.h" />
+    <ClInclude Include="..\..\UI\IntroScreen.h" />
+    <ClInclude Include="..\..\UI\LinkText.h" />
+    <ClInclude Include="..\..\UI\MapWnd.h" />
+    <ClInclude Include="..\..\UI\MeterBrowseWnd.h" />
+    <ClInclude Include="..\..\UI\MilitaryPanel.h" />
+    <ClInclude Include="..\..\UI\ModeratorActionsWnd.h" />
+    <ClInclude Include="..\..\UI\MultiIconValueIndicator.h" />
+    <ClInclude Include="..\..\UI\MultiMeterStatusBar.h" />
+    <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h" />
+    <ClInclude Include="..\..\UI\ObjectListWnd.h" />
+    <ClInclude Include="..\..\UI\OptionsWnd.h" />
+    <ClInclude Include="..\..\UI\PasswordEnterWnd.h" />
+    <ClInclude Include="..\..\UI\PlayerListWnd.h" />
+    <ClInclude Include="..\..\UI\PopulationPanel.h" />
+    <ClInclude Include="..\..\UI\ProductionWnd.h" />
+    <ClInclude Include="..\..\UI\QueueListBox.h" />
+    <ClInclude Include="..\..\UI\ResearchWnd.h" />
+    <ClInclude Include="..\..\UI\ResourceBrowseWnd.h" />
+    <ClInclude Include="..\..\UI\ResourcePanel.h" />
+    <ClInclude Include="..\..\UI\SDLGUI.h" />
+    <ClInclude Include="..\..\UI\ServerConnectWnd.h" />
+    <ClInclude Include="..\..\UI\ShaderProgram.h" />
+    <ClInclude Include="..\..\UI\SidePanel.h" />
+    <ClInclude Include="..\..\UI\SitRepPanel.h" />
+    <ClInclude Include="..\..\UI\Sound.h" />
+    <ClInclude Include="..\..\UI\SpecialsPanel.h" />
+    <ClInclude Include="..\..\UI\SystemIcon.h" />
+    <ClInclude Include="..\..\UI\SystemResourceSummaryBrowseWnd.h" />
+    <ClInclude Include="..\..\UI\TechTreeArcs.h" />
+    <ClInclude Include="..\..\UI\TechTreeLayout.h" />
+    <ClInclude Include="..\..\UI\TechTreeWnd.h" />
+    <ClInclude Include="..\..\UI\TextBrowseWnd.h" />
+    <ClInclude Include="..\..\universe\Building.h" />
+    <ClInclude Include="..\..\universe\Conditions.h" />
+    <ClInclude Include="..\..\universe\Effects.h" />
+    <ClInclude Include="..\..\universe\Effect.h" />
+    <ClInclude Include="..\..\universe\Enums.h" />
+    <ClInclude Include="..\..\universe\Field.h" />
+    <ClInclude Include="..\..\universe\FieldType.h" />
+    <ClInclude Include="..\..\universe\Fleet.h" />
+    <ClInclude Include="..\..\universe\IDAllocator.h" />
+    <ClInclude Include="..\..\util\blocking_combiner.h" />
+    <ClInclude Include="..\..\universe\Meter.h" />
+    <ClInclude Include="..\..\universe\ObjectMap.h" />
+    <ClInclude Include="..\..\universe\Planet.h" />
+    <ClInclude Include="..\..\universe\Ship.h" />
+    <ClInclude Include="..\..\universe\ShipDesign.h" />
+    <ClInclude Include="..\..\universe\Special.h" />
+    <ClInclude Include="..\..\universe\Species.h" />
+    <ClInclude Include="..\..\universe\System.h" />
+    <ClInclude Include="..\..\universe\Tech.h" />
+    <ClInclude Include="..\..\universe\Universe.h" />
+    <ClInclude Include="..\..\universe\UniverseObject.h" />
+    <ClInclude Include="..\..\universe\ValueRefs.h" />
+    <ClInclude Include="..\..\util\AppInterface.h" />
+    <ClInclude Include="..\..\util\binreloc.h" />
+    <ClInclude Include="..\..\util\MultiplayerCommon.h" />
+    <ClInclude Include="..\..\util\GameRules.h" />
+    <ClInclude Include="..\..\util\i18n.h" />
+    <ClInclude Include="..\..\util\Logger.h" />
+    <ClInclude Include="..\..\util\OptionsDB.h" />
+    <ClInclude Include="..\..\util\OptionValidators.h" />
+    <ClInclude Include="..\..\util\Order.h" />
+    <ClInclude Include="..\..\util\OrderSet.h" />
+    <ClInclude Include="..\..\util\Process.h" />
+    <ClInclude Include="..\..\util\Random.h" />
+    <ClInclude Include="..\..\util\SaveGamePreviewUtils.h" />
+    <ClInclude Include="..\..\util\SitRepEntry.h" />
+    <ClInclude Include="..\..\util\VarText.h" />
+    <ClInclude Include="..\..\util\Version.h" />
+    <ClInclude Include="..\..\util\XMLDoc.h" />
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\client\human\FreeOrion.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\client\ClientApp.cpp" />
+    <ClCompile Include="..\..\client\ClientNetworking.cpp" />
+    <ClCompile Include="..\..\client\human\chmain.cpp" />
+    <ClCompile Include="..\..\client\human\GGHumanClientApp.cpp" />
+    <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
+    <ClCompile Include="..\..\client\human\ClientFSMEvents.cpp" />
+    <ClCompile Include="..\..\UI\About.cpp" />
+    <ClCompile Include="..\..\UI\AccordionPanel.cpp" />
+    <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
+    <ClCompile Include="..\..\UI\BuildingsPanel.cpp" />
+    <ClCompile Include="..\..\UI\CensusBrowseWnd.cpp" />
+    <ClCompile Include="..\..\UI\ChatWnd.cpp" />
+    <ClCompile Include="..\..\UI\ClientUI.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\CombatLogWnd.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportData.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportWnd.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp" />
+    <ClCompile Include="..\..\UI\CUIControls.cpp" />
+    <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
+    <ClCompile Include="..\..\UI\CUILinkTextBlock.cpp" />
+    <ClCompile Include="..\..\UI\GovernmentWnd.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClInclude Include="..\..\UI\CUILinkTextBlock.h" />
+    <ClCompile Include="..\..\UI\CUIStyle.cpp" />
+    <ClCompile Include="..\..\UI\CUIWnd.cpp" />
+    <ClCompile Include="..\..\UI\DesignWnd.cpp" />
+    <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp" />
+    <ClCompile Include="..\..\UI\FieldIcon.cpp" />
+    <ClCompile Include="..\..\UI\FleetButton.cpp" />
+    <ClCompile Include="..\..\UI\FleetWnd.cpp" />
+    <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp" />
+    <ClCompile Include="..\..\UI\GraphControl.cpp" />
+    <ClCompile Include="..\..\UI\Hotkeys.cpp" />
+    <ClCompile Include="..\..\UI\IconTextBrowseWnd.cpp" />
+    <ClCompile Include="..\..\UI\InGameMenu.cpp" />
+    <ClCompile Include="..\..\UI\IntroScreen.cpp" />
+    <ClCompile Include="..\..\UI\LinkText.cpp" />
+    <ClCompile Include="..\..\UI\MapWnd.cpp" />
+    <ClCompile Include="..\..\UI\MeterBrowseWnd.cpp" />
+    <ClCompile Include="..\..\UI\MilitaryPanel.cpp" />
+    <ClCompile Include="..\..\UI\ModeratorActionsWnd.cpp" />
+    <ClCompile Include="..\..\UI\MultiIconValueIndicator.cpp" />
+    <ClCompile Include="..\..\UI\MultiMeterStatusBar.cpp" />
+    <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp" />
+    <ClCompile Include="..\..\UI\ObjectListWnd.cpp" />
+    <ClCompile Include="..\..\UI\OptionsWnd.cpp" />
+    <ClCompile Include="..\..\UI\PasswordEnterWnd.cpp" />
+    <ClCompile Include="..\..\UI\PlayerListWnd.cpp" />
+    <ClCompile Include="..\..\UI\PopulationPanel.cpp" />
+    <ClCompile Include="..\..\UI\ProductionWnd.cpp" />
+    <ClCompile Include="..\..\UI\QueueListBox.cpp" />
+    <ClCompile Include="..\..\UI\ResearchWnd.cpp" />
+    <ClCompile Include="..\..\UI\ResourceBrowseWnd.cpp" />
+    <ClCompile Include="..\..\UI\ResourcePanel.cpp" />
+    <ClCompile Include="..\..\UI\SaveFileDialog.cpp" />
+    <ClCompile Include="..\..\UI\SDLGUI.cpp" />
+    <ClCompile Include="..\..\UI\ServerConnectWnd.cpp" />
+    <ClCompile Include="..\..\UI\ShaderProgram.cpp" />
+    <ClCompile Include="..\..\UI\SidePanel.cpp" />
+    <ClCompile Include="..\..\UI\SitRepPanel.cpp" />
+    <ClCompile Include="..\..\UI\Sound.cpp" />
+    <ClCompile Include="..\..\UI\SpecialsPanel.cpp" />
+    <ClCompile Include="..\..\UI\SystemIcon.cpp" />
+    <ClCompile Include="..\..\UI\SystemResourceSummaryBrowseWnd.cpp" />
+    <ClCompile Include="..\..\UI\TechTreeArcs.cpp" />
+    <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
+    <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
+    <ClCompile Include="..\..\UI\TextBrowseWnd.cpp" />
+    <ClCompile Include="..\..\util\Process.cpp" />
+    <ClCompile Include="..\..\util\DependencyVersions.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\client\human\FreeOrion.rc">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IDI_ICON1=101</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">IDI_ICON1=101</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
