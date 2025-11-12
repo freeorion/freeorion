@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B9808A04-CE5E-4660-99CB-B8C8C4E64402}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>FreeOrionD</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v145</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\cpp.lang.props" />
+    <Import Project="..\warnings.props" />
+    <Import Project="..\win32.dependency.props" />
+    <Import Project="..\boost.dependency.props" />
+    <Import Project="..\zlib.dependency.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>../../</OutDir>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_SERVER;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.10/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ShowIncludes>false</ShowIncludes>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <DisableSpecificWarnings>4244; 4251; 4275</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>../../FreeOrionD.exe</OutputFile>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Common.lib;Parsers.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;FREEORION_BUILD_SERVER;FREEORION_WIN32;_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../include/python3.10/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ShowIncludes>false</ShowIncludes>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ConformanceMode>true</ConformanceMode>
+      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <OutputFile>../../FreeOrionD.exe</OutputFile>
+      <AdditionalLibraryDirectories>../../../lib/;../../;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Common.lib;Parsers.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\combat\CombatSystem.h" />
+    <ClInclude Include="..\..\Empire\Empire.h" />
+    <ClInclude Include="..\..\Empire\ResearchQueue.h" />
+    <ClInclude Include="..\..\Empire\ProductionQueue.h" />
+    <ClInclude Include="..\..\Empire\EmpireManager.h" />
+    <ClInclude Include="..\..\Empire\ResourcePool.h" />
+    <ClInclude Include="..\..\Empire\PopulationPool.h" />
+    <ClInclude Include="..\..\network\Message.h" />
+    <ClInclude Include="..\..\network\Networking.h" />
+    <ClInclude Include="..\..\python\PythonBase.h" />
+    <ClInclude Include="..\..\python\SetWrapper.h" />
+    <ClInclude Include="..\..\server\SaveLoad.h" />
+    <ClInclude Include="..\..\server\ServerApp.h" />
+    <ClInclude Include="..\..\server\ServerFramework.h" />
+    <ClInclude Include="..\..\server\ServerFSM.h" />
+    <ClInclude Include="..\..\server\ServerNetworking.h" />
+    <ClInclude Include="..\..\server\ServerWrapper.h" />
+    <ClInclude Include="..\..\server\UniverseGenerator.h" />
+    <ClInclude Include="..\..\universe\Building.h" />
+    <ClInclude Include="..\..\universe\Conditions.h" />
+    <ClInclude Include="..\..\universe\Effects.h" />
+    <ClInclude Include="..\..\universe\Effect.h" />
+    <ClInclude Include="..\..\universe\Enums.h" />
+    <ClInclude Include="..\..\universe\Fleet.h" />
+    <ClInclude Include="..\..\util\blocking_combiner.h" />
+    <ClInclude Include="..\..\universe\IDAllocator.h" />
+    <ClInclude Include="..\..\universe\Meter.h" />
+    <ClInclude Include="..\..\universe\ObjectMap.h" />
+    <ClInclude Include="..\..\universe\Planet.h" />
+    <ClInclude Include="..\..\universe\Ship.h" />
+    <ClInclude Include="..\..\universe\ShipDesign.h" />
+    <ClInclude Include="..\..\universe\Special.h" />
+    <ClInclude Include="..\..\universe\Species.h" />
+    <ClInclude Include="..\..\universe\System.h" />
+    <ClInclude Include="..\..\universe\Tech.h" />
+    <ClInclude Include="..\..\universe\Universe.h" />
+    <ClInclude Include="..\..\universe\UniverseObject.h" />
+    <ClInclude Include="..\..\universe\ValueRefs.h" />
+    <ClInclude Include="..\..\util\AppInterface.h" />
+    <ClInclude Include="..\..\util\binreloc.h" />
+    <ClInclude Include="..\..\util\MultiplayerCommon.h" />
+    <ClInclude Include="..\..\util\GameRules.h" />
+    <ClInclude Include="..\..\util\i18n.h" />
+    <ClInclude Include="..\..\util\Logger.h" />
+    <ClInclude Include="..\..\util\OptionsDB.h" />
+    <ClInclude Include="..\..\util\OptionValidators.h" />
+    <ClInclude Include="..\..\util\Order.h" />
+    <ClInclude Include="..\..\util\OrderSet.h" />
+    <ClInclude Include="..\..\util\Process.h" />
+    <ClInclude Include="..\..\util\Random.h" />
+    <ClInclude Include="..\..\util\SitRepEntry.h" />
+    <ClInclude Include="..\..\util\VarText.h" />
+    <ClInclude Include="..\..\util\Version.h" />
+    <ClInclude Include="..\..\util\XMLDoc.h" />
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\combat\CombatSystem.cpp" />
+    <ClCompile Include="..\..\python\PythonBase.cpp" />
+    <ClCompile Include="..\..\python\ConfigWrapper.cpp" />
+    <ClCompile Include="..\..\python\EmpireWrapper.cpp" />
+    <ClCompile Include="..\..\python\EnumWrapper.cpp" />
+    <ClCompile Include="..\..\python\LoggingWrapper.cpp" />
+    <ClCompile Include="..\..\python\UniverseWrapper.cpp" />
+    <ClCompile Include="..\..\server\dmain.cpp" />
+    <ClCompile Include="..\..\server\SaveLoad.cpp" />
+    <ClCompile Include="..\..\server\ServerApp.cpp" />
+    <ClCompile Include="..\..\server\ServerFramework.cpp" />
+    <ClCompile Include="..\..\server\ServerFSM.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4244;4251;4267;4275;4996;4646</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\server\ServerNetworking.cpp" />
+    <ClCompile Include="..\..\server\ServerWrapper.cpp" />
+    <ClCompile Include="..\..\server\UniverseGenerator.cpp" />
+    <ClCompile Include="..\..\util\Process.cpp" />
+    <ClCompile Include="..\..\util\DependencyVersions.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

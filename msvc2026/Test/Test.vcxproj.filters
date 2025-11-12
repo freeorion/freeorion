@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Test">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Test\system">
+      <UniqueIdentifier>{d0950dad-8588-4509-b45d-9567695ce7b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test\client">
+      <UniqueIdentifier>{6ac4aa21-c800-4d11-9c41-cf3ac21e4134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test\util">
+      <UniqueIdentifier>{a48f3fc8-8874-4ad8-a826-0a9fd9339cfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test\parse">
+      <UniqueIdentifier>{78c25d16-31b7-4d39-87c1-8c3201a4918e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\test\system\ClientAppFixture.h">
+      <Filter>Test\system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\parse\CommonTest.h">
+      <Filter>Test\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\test\parse\ParserAppFixture.h">
+      <Filter>Test\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\test\system\SmokeTestGame.cpp">
+      <Filter>Test\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\system\ClientAppFixture.cpp">
+      <Filter>Test\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientApp.cpp">
+      <Filter>Test\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientNetworking.cpp">
+      <Filter>Test\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\DependencyVersions.cpp">
+      <Filter>Test\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Process.cpp">
+      <Filter>Test\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\system\SmokeTestHostless.cpp">
+      <Filter>Test\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\main.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\TestEnumParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\TestScriptParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\ParserAppFixture.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\CommonTest.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\test\parse\TestPythonParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\system\TestChecksum.cpp">
+      <Filter>Test\system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\parse\TestDefaultPythonParser.cpp">
+      <Filter>Test\parse</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

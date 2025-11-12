@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\client">
+      <UniqueIdentifier>{0e8f8032-78e0-4fb0-8880-386704b27db3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Empire">
+      <UniqueIdentifier>{5803563c-6e51-45f6-a92c-6c92b4c8d7dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{30e38b6e-c2c3-438a-b48e-01114c5df836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\python">
+      <UniqueIdentifier>{c557a17d-9943-4611-b855-9107a2eb8cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\universe">
+      <UniqueIdentifier>{f4507b16-fead-4c05-8cd7-5d33bc56a5ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{a57baa84-d150-40c9-b8c2-bf5299858234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\client\AI">
+      <UniqueIdentifier>{2b260b85-270a-432d-8d6c-94ec7c922589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client">
+      <UniqueIdentifier>{9b9fafb5-5938-4a70-a059-e2ac800bb473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client\AI">
+      <UniqueIdentifier>{7ce8eac8-615b-4c78-b206-3bf5fb2ab6bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\python">
+      <UniqueIdentifier>{2ab2cfda-27b9-4be9-a9ce-9e5b1cec2e28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{03b7dbd3-a99a-4b9a-a838-acc16244db37}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\client\ClientApp.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\ClientNetworking.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIClientApp.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIFramework.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIWrapper.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Empire.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResearchQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ProductionQueue.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\EmpireManager.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResourcePool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\PopulationPool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Networking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Message.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\MessageQueue.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Version.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLDoc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\binreloc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\MultiplayerCommon.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GameRules.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\i18n.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Logger.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionValidators.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Order.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OrderSet.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Process.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\SitRepEntry.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\VarText.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\blocking_combiner.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\IDAllocator.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Enums.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effects.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Conditions.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Building.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefs.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Universe.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Tech.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\System.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Species.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Special.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipDesign.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Ship.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Planet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Meter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ObjectMap.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effect.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\CommonWrappers.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\SetWrapper.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="..\..\python\PythonBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\client\ClientApp.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientNetworking.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\AI\camain.cpp">
+      <Filter>Source Files\client\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\AI\AIClientApp.cpp">
+      <Filter>Source Files\client\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\AI\AIFramework.cpp">
+      <Filter>Source Files\client\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\AI\AIWrapper.cpp">
+      <Filter>Source Files\client\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\EmpireWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\EnumWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\LoggingWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\UniverseWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\DependencyVersions.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\ConfigWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp" />
+    <ClCompile Include="..\..\python\PythonBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
