@@ -83,6 +83,7 @@ libpython.py
 *.res
 /msvc*/*/release/
 /msvc*/*/debug/
+x64
 
 # Incremental build files
 *.ipdb
@@ -115,3 +116,4 @@ htmlcov
 
 # Godot
 *.import
+
