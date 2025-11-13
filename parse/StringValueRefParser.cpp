@@ -72,11 +72,10 @@ namespace parse {
         named_string_valueref
             = (   (tok.Named_ >> tok.String_ >> label(tok.name_))
                  > tok.string > label(tok.value_) > expr
-              ) [
+              ) [ (
                  // Register the value ref under the given name by lazy invoking RegisterValueRef
                  parse::detail::open_and_register_as_string_(_2, _3, _pass),
-
-                 _val = construct_movable_(new_<ValueRef::NamedRef<std::string>>(_2))
+                 _val = construct_movable_(new_<ValueRef::NamedRef<std::string>>(_2)) )
               ] | ((tok.Named_ >> tok.String_ >> tok.Lookup_)
                  >  label(tok.name_) > tok.string
               ) [

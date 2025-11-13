@@ -1,4 +1,4 @@
-#include "Parse.h"
+﻿#include "Parse.h"
 
 #include "ParseImpl.h"
 #include "EffectParser.h"
@@ -54,7 +54,6 @@ namespace {
             tags_parser(tok, label),
             double_rule(tok)
         {
-            namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
             qi::_1_type _1;
@@ -76,8 +75,8 @@ namespace {
                 >   tags_parser
                 > -(label(tok.effectsgroups_)       > effects_group_grammar )
                 >   label(tok.graphic_)             > tok.string )
-                [ _pass = is_unique_(_r1, _1, _2),
-                  insert_fieldtype_(_r1, _2, _3, _4, _5, _6, _7, _pass) ]
+                [ ( _pass = is_unique_(_r1, _1, _2),
+                    insert_fieldtype_(_r1, _2, _3, _4, _5, _6, _7, _pass) ) ];
                 ;
 
             start
