@@ -116,12 +116,12 @@ namespace parse::detail {
                 functional_expr [ _a = _1 ]
                 >>
                 -( '^'
-                      >> functional_expr [
+                      >> functional_expr [ (
                           _b = construct_movable_(new_<ValueRef::Operation<T>>(
                               ValueRef::OpType::EXPONENTIATE,
                               deconstruct_movable_(_a, _pass),
-                              deconstruct_movable_(_1, _pass) )) ,
-                          _a = _b]
+                              deconstruct_movable_(_1, _pass) )),
+                          _a = _b ) ]
                 )
             ) [ _val = _a ]
             ;

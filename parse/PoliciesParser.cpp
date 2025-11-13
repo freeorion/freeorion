@@ -158,8 +158,8 @@ namespace {
                 >    label(tok.description_)        > tok.string            // _3
                 >    label(tok.short_description_)  > tok.string            // _4
                 >    label(tok.category_)           > tok.string            // _5
-                  ) [   _pass = is_unique_(_r1, _1, _2),
-                        _val = construct<PolicyStrings>(_2, _3, _4, _5) ]
+                  ) [ ( _pass = is_unique_(_r1, _1, _2),
+                        _val = construct<PolicyStrings>(_2, _3, _4, _5) ) ]
                 ;
 
             policy
@@ -172,8 +172,7 @@ namespace {
                 >    label(tok.graphic_)            > tok.string)                   // _7
                 [   insert_policy_(
                         _r1,
-                        phoenix::construct<policy_pod>(
-                            _1, _2, _3, _4, _6, _5, _7),
+                        phoenix::construct<policy_pod>(_1, _2, _3, _4, _6, _5, _7),
                         _pass
                     ) ]
                 ;
