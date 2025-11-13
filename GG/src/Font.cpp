@@ -626,7 +626,7 @@ namespace {
         // ensure there is a line to add text into
         if (line_data.empty()) {
             x = X0;
-            auto& new_last_line_data = line_data.emplace_back(orig_just);
+            line_data.emplace_back(orig_just);
             last_line_of_curr_just = false;
         }
         // get vector of char data to insert into
@@ -1555,8 +1555,8 @@ namespace {
         }
 
         // glyph not found, return past end of last glyph by searching backwards from end for a line with a glyph
-        for (std::size_t loop_line_idx = line_data.size()-1u; loop_line_idx >= 0u; --loop_line_idx) {
-            const auto& line = line_data.at(loop_line_idx);
+        for (auto line_rit = line_data.rbegin(); line_rit != line_data.rend(); ++line_rit) {
+            const auto& line = *line_rit;
             if (line.Empty())
                 continue;
             const auto& last_glyph = line.char_data.back();
@@ -1578,8 +1578,8 @@ namespace {
             // no such line, return string index after last glyph
 
             // find last glyph by searching backwards from end for a line with a glyph
-            for (std::size_t loop_line_idx = line_data.size()-1u; loop_line_idx >= 0u; --loop_line_idx) {
-                const auto& line = line_data.at(loop_line_idx);
+            for (auto line_rit = line_data.rbegin(); line_rit != line_data.rend(); ++line_rit) {
+                const auto& line = *line_rit;
                 if (line.Empty())
                     continue;
                 const auto& last_glyph = line.char_data.back();
@@ -2541,9 +2541,6 @@ namespace {
         }
     }
 
-    void HandleTag(const Font::TextTag& tag, Font::RenderState& render_state)
-    { HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state); }
-
     template <typename TagsVec>
     void HandleTags(const TagsVec& tags, Font::RenderState& render_state)
     {
@@ -2601,7 +2598,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
         const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
         const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
         const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
-        X x = x_origin;
+        //X x = x_origin;
 
         //std::cout << "PreRender line " << i << " from CPSize: " << Value(start)
         //          << " to " << Value(end) << " at:";
@@ -2971,20 +2968,24 @@ namespace {
         const auto& cd0 = line_data.at(0).char_data;
         const auto& cd1 = line_data.at(1).char_data;
 
-        std::array<StrSize, 30 + 13> test_text_str_idxs{S0};
-        std::array<char, 30 + 13 + 1> test_text_chars{0};
+        constexpr std::size_t out_lim = 30u + 13u;
+        std::array<StrSize, out_lim> test_text_str_idxs{S0};
+        std::array<char, out_lim + 1u> test_text_chars{0};
+
         std::size_t out_idx = 0;
 
-        for (std::size_t char_data_idx = 0u; char_data_idx < cd0.size(); ++char_data_idx) {
+        const auto lim0 = cd0.size();
+        for (std::size_t char_data_idx = 0u; char_data_idx < lim0 && out_idx < out_lim; ++char_data_idx, ++out_idx) {
             const auto str_idx = cd0.at(char_data_idx).string_index;
             test_text_str_idxs[out_idx] = str_idx;
-            test_text_chars[out_idx++] = test_text.at(Value(str_idx));
+            test_text_chars[out_idx] = test_text.at(Value(str_idx));
         }
 
-        for (std::size_t char_data_idx = 0u; char_data_idx < cd1.size(); ++char_data_idx) {
+        const auto lim1 = cd1.size();
+        for (std::size_t char_data_idx = 0u; char_data_idx < lim1 && out_idx < out_lim; ++char_data_idx, ++out_idx) {
             const auto str_idx = cd1.at(char_data_idx).string_index;
             test_text_str_idxs[out_idx] = str_idx;
-            test_text_chars[out_idx++] = test_text.at(Value(str_idx));
+            test_text_chars[out_idx] = test_text.at(Value(str_idx));
         }
 
         return std::pair(test_text_str_idxs, test_text_chars);
