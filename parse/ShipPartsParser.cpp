@@ -139,11 +139,11 @@ namespace {
                 > -(label(tok.mountableSlotTypes_)  > one_or_more_slots)// _10
                 >   common_rules.common                                 // _11
                 >   label(tok.icon_)        > tok.string                // _12
-                  ) [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
-                      insert_shippart_(
-                          _r1, _3,
-                          construct<parse::detail::OptCap_OptStat2_OptMovTargets_OptMovFighterDam_OptMovShipDam>(_4, _5, _9, _7, _8),
-                          _11, _2, _10, _12, _6, _pass) ]
+                  ) [ ( _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
+                        insert_shippart_(
+                            _r1, _3,
+                            construct<parse::detail::OptCap_OptStat2_OptMovTargets_OptMovFighterDam_OptMovShipDam>(_4, _5, _9, _7, _8),
+                            _11, _2, _10, _12, _6, _pass) ) ]
                 ;
 
             start
