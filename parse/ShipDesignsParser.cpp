@@ -101,7 +101,7 @@ namespace {
                 =    tok.ShipDesign_
                 >    label(tok.name_) > tok.string [ _r1 = _1 ]
                 >    ((label(tok.uuid_)
-                       > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
+                       > tok.string [ (_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1)) ])
                       | eps [ _r5 = boost::uuids::nil_generator()() ]
                      )
                 >    label(tok.description_) > tok.string [ _r2 = _1 ]
