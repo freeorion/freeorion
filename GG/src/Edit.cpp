@@ -69,8 +69,8 @@ void Edit::Render()
     X first_char_offset = FirstCharOffset();
     Y text_y_pos = ToY(ul.y + ((lr.y - ul.y) - font->Height()) / 2.0);
     CPSize last_visible_char = LastVisibleChar();
-    const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, line_data);
-    const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
+    //const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, line_data);
+    //const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
     Font::RenderState rs{text_color_to_use};
 
     const Pt font_render_ul{client_ul.x, text_y_pos};
