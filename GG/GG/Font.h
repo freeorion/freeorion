@@ -584,6 +584,7 @@ public:
             static constexpr Clr ZERO{};
             static_assert(std::array<Clr, capacity>{}.front() == ZERO);
             static_assert(std::array<Clr, capacity>{Clr{1,2,3,4}}[last_slot_idx] == ZERO);
+            static_assert(std::array<Clr, capacity>{Clr{1,2,3,4}}.front().r == 1);
 
         public:
             [[nodiscard]] constexpr explicit ClrStack(Clr clr) noexcept :
