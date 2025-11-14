@@ -44,7 +44,6 @@ RUN apt-get install --assume-yes \
         mesa-common-dev \
         libpng-dev \
 	libboost-all-dev \
-	godot3-server \
 	libjpeg-dev \
 	libtiff-dev \
     && rm -rf \
