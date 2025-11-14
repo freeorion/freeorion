@@ -17,13 +17,14 @@ jobs:
           - debian-oldstable
           - debian-stable
           - debian-sid
-          - debian-sid-i386
           - fedora-rawhide
         godot3: [true]
         include:
           - image: manjaro
             godot3: false
           - image: void-musl
+            godot3: false
+          - image: debian-sid-i386
             godot3: false
     env:
       CACHE_NAME: linux
