@@ -50,6 +50,9 @@ public:
     virtual ~GLClientAndServerBufferBase() { dropServerBuffer(); }
 
 protected:
+    template <typename friend_vtype, std::size_t friend_N>
+    friend class GLClientAndServerBufferBase;
+
     GLClientAndServerBufferBase() noexcept(noexcept(std::vector<vtype>{})) = default;
 
     // drops the server buffer if one exists
