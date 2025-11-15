@@ -159,8 +159,8 @@ struct ShipHullStats {
                 >   common_rules.common                     // _5
                 >   label(tok.icon_)    > tok.string        // _6
                 >   label(tok.graphic_) > tok.string)       // _7
-                [ _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
-                  insert_shiphull_(_r1, _3, _5, _2, _4, _6, _7, _pass) ]
+                [ ( _pass = is_unique_(_r1, _1, phoenix::bind(&parse::detail::MoreCommonParams::name, _2)),
+                    insert_shiphull_(_r1, _3, _5, _2, _4, _6, _7, _pass) ) ]
                 ;
 
             start

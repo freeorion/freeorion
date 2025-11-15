@@ -18,36 +18,13 @@
 namespace GG {
 
 ///////////////////////////////////////////////////////////////////////////
-// GLBufferBase common base class for Buffer classes
-///////////////////////////////////////////////////////////////////////////
-class GG_API GLBufferBase
-{
-public:
-    GLBufferBase() = default;
-
-    /** Required to automatically drop server buffer in case of delete. */
-    virtual ~GLBufferBase() { dropServerBuffer(); }
-
-    // use this if you want to make sure that two buffers both
-    // have server buffers or not, drops the buffer for mixed cases
-    void harmonizeBufferType(GLBufferBase& other);
-
-protected:
-    // drops the server buffer if one exists
-    void dropServerBuffer();
-
-    GLuint b_name = 0;
-};
-
-///////////////////////////////////////////////////////////////////////////
 // GLClientAndServerBufferBase
 // template class for buffers with different types of content
 ///////////////////////////////////////////////////////////////////////////
 template <typename vtype, std::size_t N>
-class GG_API GLClientAndServerBufferBase : public GLBufferBase
+class GG_API GLClientAndServerBufferBase
 {
 public:
-    GLClientAndServerBufferBase() = default;
     [[nodiscard]] auto size() const noexcept { return b_data.size() / b_elements_per_item; }
     [[nodiscard]] bool empty() const noexcept { return b_data.empty(); }
     [[nodiscard]] auto capacity() const noexcept { return b_data.capacity(); };
@@ -56,7 +33,37 @@ public:
     // pre-allocate space for item data
     void reserve(std::size_t num_items) { b_data.reserve(num_items * b_elements_per_item); }
 
+    // use this if you want to make sure that two buffers both
+    // have server buffers or not, drops the buffer for mixed cases
+    template <typename rhs_vtype, std::size_t rhs_N>
+    void harmonizeBufferType(GLClientAndServerBufferBase<rhs_vtype, rhs_N>& other)
+    {
+        if (b_name && other.b_name) return; // OK, both have server buffer
+
+        if (b_name || other.b_name) {       // NOT OK, only one has server buffer, drop buffer
+            dropServerBuffer();
+            other.dropServerBuffer();
+        }
+    }
+
+    /** Required to automatically drop server buffer in case of delete. */
+    virtual ~GLClientAndServerBufferBase() { dropServerBuffer(); }
+
 protected:
+    template <typename friend_vtype, std::size_t friend_N>
+    friend class GLClientAndServerBufferBase;
+
+    GLClientAndServerBufferBase() noexcept(noexcept(std::vector<vtype>{})) = default;
+
+    // drops the server buffer if one exists
+    void dropServerBuffer()
+    {
+        if (b_name) {
+            glDeleteBuffers(1, std::addressof(b_name));
+            b_name = 0;
+        }
+    }
+
     // store items, buffers usually store tuples, convenience functions
     // do not use while server buffer exists
     template <std::size_t ArrN>
@@ -112,6 +119,7 @@ public:
 
 protected:
     std::vector<vtype>           b_data;
+    GLuint                       b_name = 0;
     static constexpr std::size_t b_elements_per_item = N;
 
     // used in derived classes to activate the buffer
