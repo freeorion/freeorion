@@ -2968,10 +2968,11 @@ namespace {
         const auto& cd0 = line_data.at(0).char_data;
         const auto& cd1 = line_data.at(1).char_data;
 
-        std::array<StrSize, 30 + 13> test_text_str_idxs{S0};
-        std::array<char, 30 + 13 + 1> test_text_chars{0};
+        constexpr std::size_t out_lim = 30u + 13u;
+        std::array<StrSize, out_lim> test_text_str_idxs{S0};
+        std::array<char, out_lim + 1u> test_text_chars{0};
+
         std::size_t out_idx = 0;
-        static constexpr auto out_lim = test_text_str_idxs.size();
 
         const auto lim0 = cd0.size();
         for (std::size_t char_data_idx = 0u; char_data_idx < lim0 && out_idx < out_lim; ++char_data_idx, ++out_idx) {
