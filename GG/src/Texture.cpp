@@ -503,14 +503,20 @@ void TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string 
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& path, bool mipmap)
 {
+    if (auto tex_maybe = GetTextureByName(path.generic_string()))
+        return tex_maybe;
+
     std::scoped_lock lock(m_texture_access_guard);
-    auto it = m_textures.find(path.generic_string());
-    if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
-        //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
-        return LoadTexture(path, mipmap);
-    } else { // otherwise, just return the found texture
-        return it->second;
-    }
+    // if no such texture was found, attempt to load it now, using name as the filename
+    //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
+    return LoadTexture(path, mipmap);
+}
+
+std::shared_ptr<Texture> TextureManager::GetTextureByName(const std::string& texture_name) const
+{
+    std::scoped_lock lock(m_texture_access_guard);
+    auto it = m_textures.find(texture_name);
+    return it == m_textures.end() ? nullptr : it->second;
 }
 
 void TextureManager::FreeTexture(const std::filesystem::path& path)
