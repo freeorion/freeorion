@@ -42,7 +42,7 @@ public:
      *
      * @param image_path The path to the image.
      */
-    ImageBlock(const std::filesystem::path& path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
+    ImageBlock(std::shared_ptr<Texture> tex, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
     void CompleteConstruction() override;
 
     //! Implement from BlockControl sets the maximum width, returns the actual size based on that.

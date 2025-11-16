@@ -22,18 +22,12 @@ using namespace GG;
 
 namespace fs = std::filesystem;
 
-ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
-                        GG::Flags<GG::WndFlag> flags) :
-    BlockControl(x, y, w, flags)
-{
-    try {
-        m_graphic = Wnd::Create<StaticGraphic>(
-            GetTextureManager().GetTexture(path),
-            GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
-    } catch (const GG::Texture::BadFile&) {
-        // :(
-    }
-}
+
+ImageBlock::ImageBlock(std::shared_ptr<Texture> tex, X x, Y y, X w, GG::Flags<GG::WndFlag> flags) :
+    BlockControl(x, y, w, flags),
+    m_graphic(Wnd::Create<StaticGraphic>(std::move(tex),
+                                         GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER))
+{}
 
 void ImageBlock::CompleteConstruction()
 {
@@ -91,15 +85,25 @@ public:
     std::shared_ptr<BlockControl> CreateFromTag(const RichText::TAG_PARAMS& params, std::string,
                                                 std::shared_ptr<Font>, Clr, Flags<TextFormat>) const override
     {
-        // Get the path from the parameters.
-        fs::path param_path = ExtractPath(params);
-        fs::path combined_path = fs::exists(param_path) ? param_path : (m_root_path / param_path);
-
-        if (!fs::exists(combined_path))
+        // Get texture name from parameters
+        auto tex_name = ExtractTextureName(params);
+        if (tex_name.empty())
             return nullptr;
 
-        // Create a new image block, basing the path on the root path.
-        return Wnd::Create<ImageBlock>(combined_path, X0, Y0, X1, Flags<WndFlag>());
+        if (auto tex = GetTextureManager().GetTextureByName(std::string{tex_name})) // TODO: avoid string construction
+            return Wnd::Create<ImageBlock>(std::move(tex), X0, Y0, X1, Flags<WndFlag>());
+
+        // if not stored by name, interpet as a path
+
+        // Get the path from the parameters, with or without prepending root path
+        fs::path param_path = NameToPath(tex_name);
+        fs::path combined_path = fs::exists(param_path) ? param_path : (m_root_path / param_path);
+
+        if (auto tex = GetTextureManager().GetTexture(combined_path, true))
+            return Wnd::Create<ImageBlock>(std::move(tex), X0, Y0, X1, Flags<WndFlag>());
+
+        // no such texture found :(
+        return nullptr;
     }
 
     // Sets the root of image search path.
@@ -109,29 +113,28 @@ public:
 private:
     fs::path m_root_path;
 
-    // Extracts the path from the given params.
-    static fs::path ExtractPath(const RichText::TAG_PARAMS& params)
+    // Extracts a texture name from the given params.
+    static std::string_view ExtractTextureName(const RichText::TAG_PARAMS& params)
     {
         // Find the src.
         const auto src_param_it = std::find_if(params.begin(), params.end(),
-                                               [](const auto p) { return p.first == "src"; });
+                                               [](const auto p) noexcept { return p.first == "src"; });
+        return (src_param_it == params.end()) ? "" : src_param_it->second;
+    }
 
-        // If src not found, error out.
-        if (src_param_it == params.end()) {
-            return fs::path();
-
-        } else {
+    // converts string to path
+    static fs::path NameToPath(std::string_view name)
+    {
 #if defined(_WIN32)
-            const auto src_param = src_param_it->second;
-            // convert UTF-8 path string to UTF-16
-            fs::path::string_type str_native;
-            str_native.reserve(src_param.size());
-            utf8::utf8to16(src_param.begin(), src_param.end(), std::back_inserter(str_native));
-            return fs::path(str_native);
+        // convert UTF-8 path string to UTF-16
+        fs::path::string_type str_native;
+        str_native.reserve(name.size());
+        utf8::utf8to16(name.begin(), name.end(), std::back_inserter(str_native));
+        return fs::path(str_native);
 #else
-            return fs::path(std::string{src_param_it->second});
+        return fs::path(std::string{name});
 #endif
-        }
+
     }
 };
 
