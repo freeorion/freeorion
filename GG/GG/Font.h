@@ -283,6 +283,18 @@ public:
 
         TextElementType type = TextElementType::TEXT;
 
+        [[nodiscard]] constexpr std::string_view TypeString() const noexcept
+        {
+            switch (type) {
+            case Font::TextTag::TextElementType::OPEN_TAG:   return "opentag"; break;
+            case Font::TextTag::TextElementType::CLOSE_TAG:  return "closetag"; break;
+            case Font::TextTag::TextElementType::TEXT:       return "text"; break;
+            case Font::TextTag::TextElementType::WHITESPACE: return "whitespace"; break;
+            case Font::TextTag::TextElementType::NEWLINE:    return "newline"; break;
+            }
+            return "???";
+        }
+
         CONSTEXPR_FONT TextTag(TextElementType type_, Substring tag_name_, uint32_t text_size_) noexcept :
             tag_name(tag_name_),
             text_size(text_size_),
