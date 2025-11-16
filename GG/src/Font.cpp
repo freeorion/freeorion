@@ -527,13 +527,12 @@ namespace {
 
         bool have_tags_to_pass = !pending_formatting_tags.empty();
 
-        for (std::size_t idx = 0u; idx < elem_widths.size(); ++idx) {
+        for (const auto& glyph_width : elem_widths) {
             const StrSize char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
             const uint32_t c = text_next_fn(it, end_it); // advances it to next glyph
             const StrSize next_char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of next glyph
             const StrSize char_str_size{next_char_str_index - char_str_index}; // char-bytes for glyph
 
-            const auto& glyph_width = elem_widths[idx];
             const auto next_x = x + glyph_width;
             const bool move_down = linewrap && (box_width < next_x) && (x != X0);
             x = move_down ? X{glyph_width} : next_x; // x is the furthest-right extent of the text element
@@ -3115,10 +3114,10 @@ void Font::Init(FT_Face& face)
             range_vec.emplace_back(m_charsets[i].m_first_char, m_charsets[i].m_last_char);
     }
 
-    //Get maximum texture size
+    // Get maximum texture size, limited to 1024 wide (just for font texture)
     GLint GL_TEX_MAX_SIZE;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
-    const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
+    const std::size_t TEX_MAX_SIZE = std::min<GLint>(2 << 9, GL_TEX_MAX_SIZE);
 
     std::vector<std::pair<uint32_t, TempGlyphData>> temp_glyph_data;
     temp_glyph_data.reserve(1000); // rough guesstimate
@@ -3138,7 +3137,7 @@ void Font::Init(FT_Face& face)
         for (uint32_t c = low; c < high; ++c) {
             // skip already-existing glphys
             if (std::any_of(temp_glyph_data.begin(), temp_glyph_data.end(),
-                            [c](const auto& tgd) { return tgd.first == c; }))
+                            [c](const auto& tgd) noexcept { return tgd.first == c; }))
             { continue; }
             const auto generated = GenerateGlyph(face, c);
             if (!generated)
@@ -3230,6 +3229,8 @@ void Font::Init(FT_Face& face)
     m_texture = std::make_shared<Texture>();
     m_texture->Init(buffer.BufferWidth(), buffer.BufferHeight(),
                     (uint8_t*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
+
+    GetTextureManager().StoreTexture(m_texture, m_font_filename + " " + std::to_string(m_pt_sz) + " pts");
 
     // create Glyph objects from temp glyph data
     for (const auto& [codepoint, glyph_data] : temp_glyph_data) {
