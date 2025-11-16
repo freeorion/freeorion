@@ -528,6 +528,18 @@ namespace {
         bool have_tags_to_pass = !pending_formatting_tags.empty();
 
         for (const auto& glyph_width : elem_widths) {
+            if (it == end_it) [[unlikely]] {
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+                if (!std::is_constant_evaluated()) {
+                    std::cerr << "reached end of text before end of widths...\ntext: \"" << elem_text
+                              << "\" widths:";
+                    for (const auto& width : elem_widths)
+                        std::cout << " " << static_cast<int16_t>(width);
+                    std::cerr << "\n";
+                }
+#endif
+                break;
+            }
             const StrSize char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
             const uint32_t c = text_next_fn(it, end_it); // advances it to next glyph
             const StrSize next_char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of next glyph
@@ -2569,7 +2581,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
     //        const LineData& line = line_data[i];
     //        const CPSize line_start_glyph_idx = (i == begin_line) ? begin_char : CP0;
     //        const CPSize line_end_glyph_idx = (i + 1 == end_line) ? end_char : CPSize(line.char_data.size());
-
+    //
     //        std::cout << "  line: " << i << " glyphs: " << Value(line_start_glyph_idx)
     //                  << " to " << Value(line_end_glyph_idx) << " : ";
     //        for (CPSize idx = line_start_glyph_idx; idx < line_end_glyph_idx; ++idx) {
