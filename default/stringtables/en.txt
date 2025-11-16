@@ -3148,9 +3148,6 @@ Bold text
 OPTIONS_FONT_TITLE
 Window titles
 
-SHOW_FONT_TEXTURES
-Show Font Textures
-
 OPTIONS_RESEARCH_WND
 Research Window
 

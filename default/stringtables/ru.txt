@@ -2444,9 +2444,6 @@ OPTIONS_FONT_TEXT
 OPTIONS_FONT_TITLE
 Заголовки
 
-SHOW_FONT_TEXTURES
-Показать структуру шрифта
-
 OPTIONS_RESEARCH_WND
 Окно исследований
 

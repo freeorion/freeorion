@@ -3139,9 +3139,6 @@ Texte gras
 OPTIONS_FONT_TITLE
 Titres des fenêtres
 
-SHOW_FONT_TEXTURES
-Afficher les Polices de Caractères
-
 OPTIONS_RESEARCH_WND
 Fenêtre Recherche
 
