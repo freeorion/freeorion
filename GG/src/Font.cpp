@@ -1412,9 +1412,8 @@ namespace {
 
         return elems;
     }
-#  endif
 
-#  if defined(__cpp_lib_constexpr_vector)
+
     // tests getting line and code point index in line from overall code point index text with tags
     constexpr auto test_tagged_cpidx_to_line_and_cp = []() {
         const std::string text(tagged_test_text);
