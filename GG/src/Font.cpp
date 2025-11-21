@@ -2398,6 +2398,215 @@ Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& 
     Init(wrapper.m_face);
 }
 
+namespace {
+    template <typename RenderCacheType>
+    constexpr void StoreGlyphImpl(RenderCacheType& cache, Clr color, Pt pt,
+                                  const Font::Glyph& glyph, int x_top_offset, int y_shift)
+    {
+        const auto& tc = glyph.tex_coords;
+        const auto lb = static_cast<GLfloat>(pt.x + glyph.left_bearing);
+        const auto w = static_cast<GLfloat>(glyph.width);
+        const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
+
+        cache.coordinates.store(std::array{tc[0], tc[1], tc[2], tc[1], tc[2], tc[3], tc[0], tc[3]});
+
+        cache.vertices.store(std::array{lb + x_top_offset,     t + y_shift,
+                             lb + w + x_top_offset, t + y_shift,
+                             lb + w - x_top_offset, t + glyph.height + y_shift,
+                             lb - x_top_offset,     t + glyph.height + y_shift});
+
+        cache.colors.template store<4>(color);
+    }
+
+    struct [[nodiscard]] GlyphOffsets {
+        constexpr GlyphOffsets() noexcept = default;
+        constexpr GlyphOffsets(int i, int s, int ss) noexcept :
+            italics_offset(i), shadow_offset(s), super_sub_offset(ss)
+        {}
+        constexpr GlyphOffsets(double i, double s, double ss) noexcept :
+            GlyphOffsets(static_cast<int>(i), static_cast<int>(s), static_cast<int>(ss))
+        {}
+
+        int italics_offset = 0;
+        int shadow_offset = 0;
+        int super_sub_offset = 0;
+    };
+    struct [[nodiscard]] GlyphSizesDescent {
+        Y descent = Y0;
+        Y height = Y0;
+        Y underline_height = Y0;
+        Y underline_offset = Y0;
+    };
+
+    template <typename RenderCacheType>
+    constexpr void StoreUnderlineImpl(RenderCacheType& cache, Clr color, Pt pt, X advance,
+                                      GlyphSizesDescent gsd)
+    {
+        X x1 = pt.x;
+        Y y1(pt.y + gsd.height + gsd.descent - gsd.underline_offset);
+        X x2 = x1 + advance;
+        Y y2(y1 + gsd.underline_height);
+
+        cache.underline_vertices.store(x1, y1);
+        cache.underline_colors.store(color);
+        cache.underline_vertices.store(x2, y1);
+        cache.underline_colors.store(color);
+        cache.underline_vertices.store(x2, y2);
+        cache.underline_colors.store(color);
+        cache.underline_vertices.store(x1, y2);
+        cache.underline_colors.store(color);
+    }
+
+    template <typename RenderCacheType>
+    constexpr void StoreGlyph(Pt pt, const Font::Glyph& glyph,
+                              GlyphOffsets go, GlyphSizesDescent gsd,
+                              const Font::RenderState& render_state, RenderCacheType& cache)
+    {
+        const int italic_offset = render_state.UseItalics() ? go.italics_offset : 0;
+        const int shadow_offset = render_state.UseShadow() ? go.shadow_offset : 0;
+        const int super_sub_offset = -render_state.SuperSubShift() * go.super_sub_offset;
+
+        // render shadows?
+        if (shadow_offset > 0) {
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X1, Y0), glyph, italic_offset, super_sub_offset);
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_offset, super_sub_offset);
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_offset, super_sub_offset);
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_offset, super_sub_offset);
+            if (render_state.DrawUnderline()) {
+                StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), X{glyph.advance}, gsd);
+                StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), X{glyph.advance}, gsd);
+            }
+        }
+
+        // render main text
+        StoreGlyphImpl(cache, render_state.CurrentColor(), pt, glyph, italic_offset, super_sub_offset);
+        if (render_state.DrawUnderline())
+            StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, X{glyph.advance}, gsd);
+    }
+
+
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string)
+    struct CxRenderCache {
+        struct CxBufferFloat2
+        {
+            std::vector<float>           b_data;
+            static constexpr std::size_t b_elements_per_item = 2;
+
+            [[nodiscard]] constexpr CxBufferFloat2() noexcept = default;
+
+            [[nodiscard]] constexpr auto size() const noexcept { return b_data.size() / b_elements_per_item; }
+            [[nodiscard]] constexpr bool empty() const noexcept { return b_data.empty(); }
+            [[nodiscard]] constexpr auto capacity() const noexcept { return b_data.capacity(); };
+            [[nodiscard]] constexpr auto raw_size() const noexcept { return b_data.size(); };
+
+            constexpr void reserve(std::size_t) noexcept {}
+            constexpr void harmonizeBufferType(auto&&) noexcept {}
+            constexpr void dropServerBuffer() noexcept {}
+
+            template <std::size_t ArrN>
+            constexpr void store(std::array<float, ArrN> items)
+            {
+                static_assert(ArrN % b_elements_per_item == 0);
+                b_data.insert(b_data.end(), items.begin(), items.end());
+            }
+
+            constexpr void store(float item1, float item2) { b_data.insert(b_data.end(), {item1, item2}); }
+
+            constexpr void store(const Pt pt) { store(pt.x, pt.y); }
+            constexpr void store(X x, Y y) { store(static_cast<float>(Value(x)), static_cast<float>(Value(y))); }
+            constexpr void store(X x, float y) { store(static_cast<float>(Value(x)), y); }
+            constexpr void store(float x, Y y) { store(x, static_cast<float>(Value(y))); }
+
+            constexpr void createServerBuffer(GLenum) {}
+
+            constexpr void clear() noexcept { b_data.clear(); }
+        };
+
+        struct CxBufferClr
+        {
+            std::vector<uint8_t>         b_data;
+            static constexpr std::size_t b_elements_per_item = 4;
+
+            [[nodiscard]] constexpr CxBufferClr() noexcept = default;
+
+            [[nodiscard]] constexpr auto size() const noexcept { return b_data.size() / b_elements_per_item; }
+            [[nodiscard]] constexpr bool empty() const noexcept { return b_data.empty(); }
+            [[nodiscard]] constexpr auto capacity() const noexcept { return b_data.capacity(); };
+            [[nodiscard]] constexpr auto raw_size() const noexcept { return b_data.size(); };
+
+            constexpr void reserve(std::size_t) noexcept {}
+            constexpr void harmonizeBufferType(auto&&) noexcept {}
+            constexpr void dropServerBuffer() noexcept {}
+
+        private:
+            constexpr void store(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+            { b_data.insert(b_data.end(), {r, g, b, a}); }
+
+        public:
+            constexpr void store(const Clr color)
+            { store(color.r, color.g, color.b, color.a); }
+
+            template <std::size_t ArrN>
+            constexpr void store(std::array<Clr, ArrN> clrs)
+            {
+                std::array<uint8_t, ArrN*4> data{};
+                auto data_it = data.begin();
+                for (auto clr : clrs) {
+                    *data_it++ = clr.r;
+                    *data_it++ = clr.g;
+                    *data_it++ = clr.b;
+                    *data_it++ = clr.a;
+                }
+                b_data.insert(b_data.end(), data.begin(), data.end());
+            }
+
+            template <std::size_t ArrN>
+            constexpr void store(Clr clr)
+            {
+                std::array<uint8_t, ArrN*4> data{};
+                auto data_it = data.begin();
+                for (std::size_t n = 0; n < ArrN; ++n) {
+                    *data_it++ = clr.r;
+                    *data_it++ = clr.g;
+                    *data_it++ = clr.b;
+                    *data_it++ = clr.a;
+                }
+                b_data.insert(b_data.end(), data.begin(), data.end());
+            }
+
+            constexpr void createServerBuffer(GLenum) {}
+
+            constexpr void clear() noexcept { b_data.clear(); }
+        };
+
+        CxBufferFloat2 vertices, coordinates, underline_vertices;
+        CxBufferClr colors, underline_colors;
+
+        [[nodiscard]] constexpr CxRenderCache() noexcept = default;
+
+        constexpr void clear() noexcept {
+            vertices.clear();
+            coordinates.clear();
+            colors.clear();
+            underline_vertices.clear();
+            underline_colors.clear();
+        }
+    };
+
+    static_assert([]() {
+        CxRenderCache cache;
+        Font::RenderState state{CLR_WHITE};
+        const GlyphOffsets go;
+        const GlyphSizesDescent gsd;
+        const Font::Glyph glyph;
+
+        StoreGlyph(Pt0, glyph, go, gsd, state, cache);
+
+        return !cache.vertices.empty();
+    }());
+#endif
+}
+
 X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render_state) const
 {
     const X orig_x = pt.x;
@@ -2406,13 +2615,17 @@ X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render
 
     shared_cache.clear();
 
+    const GlyphOffsets go{m_italics_offset, m_shadow_offset, m_super_sub_offset};
+    const GlyphSizesDescent gsd{m_descent, m_height, Y{static_cast<int>(m_underline_height)},
+                                Y{static_cast<int>(m_underline_offset)}};
+
     for (auto text_it = text.begin(); text_it != text.end();) {
         const uint32_t c = utf8::next(text_it, text.end());
         const auto it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
         } else {
-            StoreGlyph(pt, it->second, render_state, shared_cache);
+            StoreGlyph(pt, it->second, go, gsd, render_state, shared_cache);
             pt.x += it->second.advance; // TODO: pass in format, maybe do tab stuff here?
         }
     }
@@ -2506,8 +2719,9 @@ namespace {
         return {retval, true};
     }
 
-    void HandleTag(Font::Substring tag_name, bool is_close_tag, const std::vector<Font::Substring>& params,
-                   Font::RenderState& render_state)
+    CONSTEXPR_FONT void HandleTag(Font::Substring tag_name, bool is_close_tag,
+                                  const std::vector<Font::Substring>& params,
+                                  Font::RenderState& render_state)
     {
         using RS = Font::RenderState;
         const auto open_close = is_close_tag ? RS::IncDir::LESS : RS::IncDir::MORE;
@@ -2535,7 +2749,10 @@ namespace {
             } else {
                 auto [color, well_formed_tag] = TagParamsToColor(params);
                 if (well_formed_tag) {
-                    glColor4ubv(color.data());
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+                    if (!std::is_constant_evaluated())
+#endif
+                        glColor4ubv(color.data());
                     render_state.PushColor(color);
                 }
                 /*else {
@@ -2552,10 +2769,57 @@ namespace {
     }
 
     template <typename TagsVec>
-    void HandleTags(const TagsVec& tags, Font::RenderState& render_state)
+    CONSTEXPR_FONT void HandleTags(const TagsVec& tags, Font::RenderState& render_state)
     {
         for (const auto& tag : tags)
             HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state);
+    }
+
+    template <typename RenderCacheType, typename GlyphMap>
+    CONSTEXPR_FONT void PreRenderImpl(const Y y_origin, const Y lineskip, const X left, const X right,
+                                      const GlyphOffsets go, const GlyphSizesDescent gsd,
+                                      const Font::LineVec& lines, const GlyphMap& glyphs,
+                                      const std::size_t begin_line, const CPSize begin_char,
+                                      const std::size_t end_line, const CPSize end_char,
+                                      RenderCacheType& cache, Font::RenderState& render_state)
+    {
+        for (std::size_t i = begin_line; i < std::min(lines.size(), end_line); ++i) {
+            const auto& line = lines[i];
+            if (line.Empty())
+                continue;
+
+            const auto& line_char_data = line.char_data;
+            const CPSize cd_size{line_char_data.size()};
+
+            const Y y = LinePosY(y_origin, i, begin_line, lineskip);
+
+            const X x_origin = LineOriginX(left, right, line.Width(), line.justification);
+            const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
+            const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
+            //X x = x_origin;
+
+            //std::cout << "PreRender line " << i << " from CPSize: " << Value(start)
+            //          << " to " << Value(end) << " at:";
+
+            for (auto cp_idx = start; cp_idx < end; ++cp_idx) {
+                const auto& line_char = line_char_data[Value(cp_idx)];
+                HandleTags(line_char.tags, render_state);
+
+                if (line_char.code_point == WIDE_NEWLINE ||
+                    line_char.code_point == WIDE_CR ||
+                    line_char.code_point == WIDE_FF) [[unlikely]]
+                { continue; }
+
+                const auto it = glyphs.find(line_char.code_point);
+                if (it != glyphs.end()) {
+                    const X prev_extent = (cp_idx == CP0) ? X0 : line_char_data[Value(cp_idx - CP1)].extent;
+                    const X x = x_origin + prev_extent;
+                    const auto& glyph = it->second;
+
+                    StoreGlyph(Pt(x, y), glyph, go, gsd, render_state, cache);
+                }
+            }
+        }
     }
 }
 
@@ -2595,47 +2859,13 @@ void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
     cache.vertices.reserve(glyph_count*4);
     cache.colors.reserve(glyph_count*4);
 
-    for (std::size_t i = begin_line; i < end_line; ++i) {
-        const auto& line = line_data.at(i);
-        if (line.Empty())
-            continue;
 
-        const auto& line_char_data = line.char_data;
-        const CPSize cd_size{line_char_data.size()};
+    const GlyphOffsets go{m_italics_offset, m_shadow_offset, m_super_sub_offset};
+    const GlyphSizesDescent gsd{m_descent, m_height, Y{static_cast<int>(m_underline_height)},
+                                Y{static_cast<int>(m_underline_offset)}};
 
-        const Y y = LinePosY(y_origin, i, begin_line, m_lineskip);
-
-        const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
-        const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
-        const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
-        //X x = x_origin;
-
-        //std::cout << "PreRender line " << i << " from CPSize: " << Value(start)
-        //          << " to " << Value(end) << " at:";
-
-        for (auto cp_idx = start; cp_idx < end; ++cp_idx) {
-            const auto& line_char = line_char_data[Value(cp_idx)];
-            HandleTags(line_char.tags, render_state);
-
-            if (line_char.code_point == WIDE_NEWLINE ||
-                line_char.code_point == WIDE_CR ||
-                line_char.code_point == WIDE_FF) [[unlikely]]
-            { continue; }
-
-            const auto it = m_glyphs.find(line_char.code_point);
-            if (it != m_glyphs.end()) {
-                const X prev_extent = (cp_idx == CP0) ? X0 : line_char_data[Value(cp_idx - CP1)].extent;
-                const X x = x_origin + prev_extent;
-                const auto& glyph = it->second;
-
-                StoreGlyph(Pt(x, y), glyph, render_state, cache);
-
-                //std::cout << " " << Value(x);
-            }
-            //x = x_origin + glyph.extent; // position for next character is right extent of current character
-        }
-        //std::cout << "\n";
-    }
+    PreRenderImpl(y_origin, m_lineskip, ul.x, lr.x, go, gsd, line_data, m_glyphs,
+                  begin_line, begin_char, end_line, end_char, cache, render_state);
 
     cache.vertices.createServerBuffer();
     cache.coordinates.createServerBuffer();
@@ -2892,6 +3122,7 @@ namespace {
 #if DEBUG_DETERMINELINES
         DebugOutput::PrintParseResults(text_elements);
 #endif
+
         return text_elements;
     }
 }
@@ -3284,77 +3515,6 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
     return retval;
 }
 
-void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
-                          const Glyph& glyph, int x_top_offset, int y_shift) const
-{
-    const auto& tc = glyph.tex_coords;
-    const auto lb = static_cast<GLfloat>(pt.x + glyph.left_bearing);
-    const auto w = static_cast<GLfloat>(glyph.width);
-    const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
-
-    cache.coordinates.store(std::array{tc[0], tc[1], tc[2], tc[1], tc[2], tc[3], tc[0], tc[3]});
-
-    cache.vertices.store(std::array{lb + x_top_offset,     t + y_shift,
-                                    lb + w + x_top_offset, t + y_shift,
-                                    lb + w - x_top_offset, t + glyph.height + y_shift,
-                                    lb - x_top_offset,     t + glyph.height + y_shift});
-
-    cache.colors.store<4>(color);
-}
-
-void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, Pt pt, const Glyph& glyph,
-                              Y descent, Y height, Y underline_height, Y underline_offset) const
-{
-    X x1 = pt.x;
-    Y y1(pt.y + height + descent - underline_offset);
-    X x2 = x1 + glyph.advance;
-    Y y2(y1 + underline_height);
-
-    cache.underline_vertices.store(x1, y1);
-    cache.underline_colors.store(color);
-    cache.underline_vertices.store(x2, y1);
-    cache.underline_colors.store(color);
-    cache.underline_vertices.store(x2, y2);
-    cache.underline_colors.store(color);
-    cache.underline_vertices.store(x1, y2);
-    cache.underline_colors.store(color);
-}
-
-void Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_state,
-                      Font::RenderCache& cache) const
-{
-    int italic_top_offset = 0;
-    int shadow_offset = 0;
-    int super_sub_offset = 0;
-
-    if (render_state.UseItalics()) // Should we enable sub pixel italics offsets?
-        italic_top_offset = static_cast<int>(m_italics_offset);
-    if (render_state.UseShadow())
-        shadow_offset = static_cast<int>(m_shadow_offset);
-    super_sub_offset = -static_cast<int>(render_state.SuperSubShift() * m_super_sub_offset);
-
-    // render shadows?
-    if (shadow_offset > 0) {
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X1, Y0), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
-        if (render_state.DrawUnderline()) {
-            StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, m_descent,
-                               m_height, Y(m_underline_height), Y(m_underline_offset));
-            StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, m_descent,
-                               m_height, Y(m_underline_height), Y(m_underline_offset));
-        }
-    }
-
-    // render main text
-    StoreGlyphImpl(cache, render_state.CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
-    if (render_state.DrawUnderline()) {
-        StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, glyph, m_descent,
-                           m_height, Y(m_underline_height), Y(m_underline_offset));
-    }
-}
-
 bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
@@ -3371,8 +3531,13 @@ bool FontManager::HasFont(std::string_view font_filename, uint16_t pts) const no
 { return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
 namespace {
+#if defined(__cpp_lib_constexpr_vector)
+    constexpr std::vector<UnicodeCharset> empty_charsets;
+    constexpr auto empty_it = empty_charsets.end();
+#else
     const std::vector<UnicodeCharset> empty_charsets;
     const auto empty_it = empty_charsets.end();
+#endif
 }
 
 std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts)

@@ -888,15 +888,6 @@ private:
 
     bool              GenerateGlyph(FT_Face font, uint32_t ch);
 
-    void              StoreGlyph(Pt pt, const Glyph& glyph, const RenderState& render_state,
-                                 RenderCache& cache) const;
-    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, Pt pt,
-                                     const Glyph& glyph, int x_top_offset,
-                                     int y_shift) const;
-    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, Pt pt,
-                                         const Glyph& glyph, Y descent, Y height,
-                                         Y underline_height, Y underline_offset) const;
-
     bool              IsDefaultFont() const noexcept;
 
     static std::shared_ptr<Font> GetDefaultFont(uint16_t pts);
