@@ -75,7 +75,7 @@ namespace {
       * for use in creating Glyph objects at the end of Font's constructor.*/
     struct TempGlyphData
     {
-        constexpr TempGlyphData() = default;
+        constexpr TempGlyphData() noexcept = default;
         constexpr TempGlyphData(Pt ul_, Pt lr_, int8_t y_ofs, int8_t lb, int8_t a) noexcept :
             ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
         Pt       ul, lr;        ///< area of glyph subtexture within texture
@@ -98,13 +98,13 @@ namespace {
         /// \param initial_width Initial width to allocate
         /// \param initial_height Initial height to allocate
         /// \param default_value The value to fill empty space with whenever it appears
-        Buffer2d(X initial_width, Y initial_height, const T& default_value):
+        Buffer2d(X initial_width, Y initial_height, T default_value):
             m_capacity_width(abs(initial_width)),
             m_capacity_height(abs(initial_height)),
             m_data(to_sz_t(abs(initial_width))*to_sz_t(abs(initial_height)), default_value),
             m_current_width(abs(initial_width)),
             m_current_height(abs(initial_height)),
-            m_default_value(default_value)
+            m_default_value(std::move(default_value))
         {}
 
         /// Access point \x,\y, expanding the buffer if it does not exist yet
@@ -2372,6 +2372,9 @@ GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenT
 // class GG::Font
 ///////////////////////////////////////
 namespace {
+#if defined(__cpp_constinit)
+    constinit
+#endif
     Font::RenderCache shared_cache{};
 }
 
@@ -3056,6 +3059,7 @@ namespace {
                                      sregex_iterator it, X x)
     {
         std::vector<TextElement> text_elements;
+        text_elements.reserve(text.size() * ((text.size() < 500u) ? 10u : 4u));
 
 #if defined(__cpp_using_enum)
         using enum TextElement::TextElementType;
