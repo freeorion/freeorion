@@ -35,7 +35,7 @@ void TextBlock::CompleteConstruction()
 
 Pt TextBlock::SetMaxWidth(X width)
 {
-    const auto previous_width = Width();
+    //const auto previous_width = Width();
 
     // Reflow the text to the given width. Height is ignored.
     m_text->Resize(GG::Pt(width, Y0));
