@@ -2598,13 +2598,14 @@ namespace {
 
     static_assert([]() {
         CxRenderCache cache;
-        Font::RenderState state{CLR_WHITE};
-        const GlyphOffsets go;
-        const GlyphSizesDescent gsd;
-        const Font::Glyph glyph;
+        StoreGlyphImpl(cache, CLR_WHITE, Pt0, Font::Glyph{}, 0, 0);
+        return !cache.colors.empty();
+    }());
 
-        StoreGlyph(Pt0, glyph, go, gsd, state, cache);
-
+    static_assert([]() {
+        CxRenderCache cache;
+        StoreGlyph(Pt0, Font::Glyph{}, GlyphOffsets{}, GlyphSizesDescent{},
+                   Font::RenderState{CLR_WHITE}, cache);
         return !cache.vertices.empty();
     }());
 #endif
