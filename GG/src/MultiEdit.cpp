@@ -148,7 +148,7 @@ void MultiEdit::Render()
     Font::RenderState rs(text_color_to_use);
     font->ProcessTagsBefore(lines, rs, first_visible_row, CP0);
 
-    auto text_format = (TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
+    auto text_format = (GetTextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM)) | FORMAT_VCENTER;
     for (std::size_t row = first_visible_row; row <= last_visible_row && row < lines.size(); ++row) {
         const bool is_caret_row = (caret_row == row);
 

@@ -425,7 +425,7 @@ namespace parse {
         qi::_val_type _val;
         qi::eps_type eps;
 
-        channel = tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ];
+        channel = tok.int_ [ ( _val = _1, _pass = 0 <= _1 && _1 <= 255 ) ];
         alpha   = (',' > channel) [ _val = _1 ] | eps [ _val = 255 ];
         start
             =  ( ('(' >> channel )

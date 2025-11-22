@@ -107,9 +107,9 @@ namespace {
                 >  -(label(tok.location_)       > condition_parser)         // _8
                 >  -(label(tok.effectsgroups_)  > effects_group_grammar)    // _9
                 >    label(tok.graphic_)        > tok.string)               // _10
-                [  _pass = is_unique_(_r1, _1, _2),
-                   insert_special_(_r1, phoenix::construct<special_data>(_5, _6, _10),
-                                   _2, _3, _4, _9, _7, _8, _pass) ]
+                [ ( _pass = is_unique_(_r1, _1, _2),
+                    insert_special_(_r1, phoenix::construct<special_data>(_5, _6, _10),
+                                    _2, _3, _4, _9, _7, _8, _pass) ) ]
                 ;
 
             start

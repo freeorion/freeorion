@@ -75,7 +75,7 @@ namespace {
       * for use in creating Glyph objects at the end of Font's constructor.*/
     struct TempGlyphData
     {
-        constexpr TempGlyphData() = default;
+        constexpr TempGlyphData() noexcept = default;
         constexpr TempGlyphData(Pt ul_, Pt lr_, int8_t y_ofs, int8_t lb, int8_t a) noexcept :
             ul(ul_), lr(lr_), y_offset(y_ofs), left_b(lb), adv(a) {}
         Pt       ul, lr;        ///< area of glyph subtexture within texture
@@ -98,13 +98,13 @@ namespace {
         /// \param initial_width Initial width to allocate
         /// \param initial_height Initial height to allocate
         /// \param default_value The value to fill empty space with whenever it appears
-        Buffer2d(X initial_width, Y initial_height, const T& default_value):
+        Buffer2d(X initial_width, Y initial_height, T default_value):
             m_capacity_width(abs(initial_width)),
             m_capacity_height(abs(initial_height)),
             m_data(to_sz_t(abs(initial_width))*to_sz_t(abs(initial_height)), default_value),
             m_current_width(abs(initial_width)),
             m_current_height(abs(initial_height)),
-            m_default_value(default_value)
+            m_default_value(std::move(default_value))
         {}
 
         /// Access point \x,\y, expanding the buffer if it does not exist yet
@@ -504,7 +504,7 @@ namespace {
                                       Font::LineVec& line_data,
                                       bool& last_line_of_curr_just, const Alignment orig_just,
                                       const StrSize original_string_offset, CPSize& code_point_offset,
-                                      std::vector<Font::TextElement>& pending_formatting_tags,
+                                      std::vector<Font::TextTag>& pending_formatting_tags,
                                       const TextNextFn& text_next_fn)
     {
         const auto get_dest_char_data =
@@ -525,13 +525,26 @@ namespace {
         const auto end_it = elem_text.end();
         auto it = begin_it;
 
-        for (std::size_t idx = 0u; idx < elem_widths.size(); ++idx) {
+        bool have_tags_to_pass = !pending_formatting_tags.empty();
+
+        for (const auto& glyph_width : elem_widths) {
+            if (it == end_it) [[unlikely]] {
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+                if (!std::is_constant_evaluated()) {
+                    std::cerr << "reached end of text before end of widths...\ntext: \"" << elem_text
+                              << "\" widths:";
+                    for (const auto& width : elem_widths)
+                        std::cout << " " << static_cast<int16_t>(width);
+                    std::cerr << "\n";
+                }
+#endif
+                break;
+            }
             const StrSize char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of glyph
             const uint32_t c = text_next_fn(it, end_it); // advances it to next glyph
             const StrSize next_char_str_index{static_cast<std::size_t>(std::distance(begin_it, it))}; // char-byte index for start of next glyph
             const StrSize char_str_size{next_char_str_index - char_str_index}; // char-bytes for glyph
 
-            const auto& glyph_width = elem_widths[idx];
             const auto next_x = x + glyph_width;
             const bool move_down = linewrap && (box_width < next_x) && (x != X0);
             x = move_down ? X{glyph_width} : next_x; // x is the furthest-right extent of the text element
@@ -539,9 +552,17 @@ namespace {
             ++code_point_offset;
 
             auto& dest_char_data = get_dest_char_data(move_down);
-            dest_char_data.emplace_back(c, x, original_string_offset + char_str_index, char_str_size,
-                                        code_point_offset, std::move(pending_formatting_tags));
-            pending_formatting_tags.clear();
+            if (have_tags_to_pass) {
+                // add any passed-in tags to first added CharData
+                have_tags_to_pass = false;
+                dest_char_data.emplace_back(c, x, original_string_offset + char_str_index, char_str_size,
+                                            code_point_offset, std::move(pending_formatting_tags));
+                pending_formatting_tags.clear();
+
+            } else [[likely]] {
+                dest_char_data.emplace_back(c, x, original_string_offset + char_str_index,
+                                            char_str_size, code_point_offset);
+            }
         }
     }
 
@@ -559,7 +580,7 @@ namespace {
                                          Font::LineVec& line_data,
                                          bool& last_line_of_curr_just, const Alignment orig_just,
                                          const StrSize original_string_offset, CPSize& code_point_offset,
-                                         std::vector<Font::TextElement>& pending_formatting_tags,
+                                         std::vector<Font::TextTag>& pending_formatting_tags,
                                          const TextNextFn& text_next_fn)
     {
         // if the text "word" overruns this line, and isn't alone on
@@ -574,6 +595,7 @@ namespace {
         }
         auto& last_char_data = line_data.back().char_data;
         last_char_data.reserve(element_text.size());
+        const auto first_added_char_idx = last_char_data.size();
 
         const auto start_it = element_text.begin();
         auto it = start_it;
@@ -588,12 +610,17 @@ namespace {
             if (j < element_widths.size())
                 x += element_widths[j]; // x is the furthest-right extent of the text element
 
-            last_char_data.emplace_back(c, x, original_string_offset + char_index, char_size,
-                                        code_point_offset, std::move(pending_formatting_tags));
-            pending_formatting_tags.clear();
+            last_char_data.emplace_back(c, x, original_string_offset + char_index,
+                                        char_size, code_point_offset);
 
             ++j;
             ++code_point_offset;
+        }
+
+        if (!pending_formatting_tags.empty() && first_added_char_idx < last_char_data.size()) {
+            // put passed-in tags onto first added CharData
+            last_char_data[first_added_char_idx].SetTags(std::move(pending_formatting_tags));
+            pending_formatting_tags.clear();
         }
     }
 
@@ -604,19 +631,20 @@ namespace {
                                            const X box_width, Font::LineVec& line_data,
                                            bool& last_line_of_curr_just, const Alignment orig_just,
                                            const StrSize original_string_offset, CPSize& code_point_offset,
-                                           std::vector<Font::TextElement>& pending_formatting_tags,
+                                           std::vector<Font::TextTag>& pending_formatting_tags,
                                            const TextNextFn& text_next_fn)
     {
         // ensure there is a line to add text into
         if (line_data.empty()) {
             x = X0;
-            auto& new_last_line_data = line_data.emplace_back(orig_just);
+            line_data.emplace_back(orig_just);
             last_line_of_curr_just = false;
         }
         // get vector of char data to insert into
         auto& last_line_data = line_data.back();
         auto& last_char_data = last_line_data.char_data;
         last_char_data.reserve(element_text.size());
+        const auto first_added_char_idx = last_char_data.size();
 
         const auto start_it = element_text.begin();
         auto it = start_it;
@@ -635,9 +663,8 @@ namespace {
             const bool move_down = (format & FORMAT_LINEWRAP) && (box_width < x + width_j) && (x != X0);
             x = move_down ? X{width_j} : (x + width_j); // x is the furthest-right extent of the text element
 
-            last_char_data.emplace_back(c, x, original_string_offset + char_index, char_size,
-                                        code_point_offset, std::move(pending_formatting_tags));
-            pending_formatting_tags.clear();
+            last_char_data.emplace_back(c, x, original_string_offset + char_index,
+                                        char_size, code_point_offset);
 
             if (move_down && last_line_of_curr_just) {
                 last_line_data.justification = orig_just;
@@ -647,6 +674,12 @@ namespace {
             ++j;
             ++code_point_offset;
         }
+
+        if (!pending_formatting_tags.empty() && first_added_char_idx < last_char_data.size()) {
+            // put passed-in tags onto first added CharData
+            last_char_data[first_added_char_idx].SetTags(std::move(pending_formatting_tags));
+            pending_formatting_tags.clear();
+        }
     }
 
     template <typename TextNextFn = U8NextFn>
@@ -654,7 +687,7 @@ namespace {
                                 const X box_width, Font::LineVec& line_data,
                                 bool& last_line_of_curr_just, const Alignment orig_just,
                                 const StrSize original_string_offset, CPSize& code_point_offset,
-                                std::vector<Font::TextElement>& pending_formatting_tags,
+                                std::vector<Font::TextTag>& pending_formatting_tags,
                                 const TextNextFn& text_next_fn)
     {
         if (format & FORMAT_WORDBREAK) {
@@ -673,7 +706,7 @@ namespace {
     template <typename TextNextFn = U8NextFn>
     CONSTEXPR_FONT void AddOpenTag(const Font::TextElement& elem, Alignment& justification,
                                    bool& last_line_of_curr_just, CPSize& code_point_offset,
-                                   std::vector<Font::TextElement>& pending_formatting_tags)
+                                   std::vector<Font::TextTag>& pending_formatting_tags)
     {
         if (elem.tag_name == Font::ALIGN_LEFT_TAG)
             justification = ALIGN_LEFT;
@@ -690,7 +723,7 @@ namespace {
     template <typename TextNextFn = U8NextFn>
     CONSTEXPR_FONT void AddCloseTag(const Font::TextElement& elem, const Alignment justification,
                                     bool& last_line_of_curr_just, CPSize& code_point_offset,
-                                    std::vector<Font::TextElement>& pending_formatting_tags)
+                                    std::vector<Font::TextTag>& pending_formatting_tags)
     {
         if ((elem.tag_name == Font::ALIGN_LEFT_TAG && justification == ALIGN_LEFT) ||
             (elem.tag_name == Font::ALIGN_CENTER_TAG && justification == ALIGN_CENTER) ||
@@ -710,7 +743,7 @@ namespace {
     {
         format = ValidateFormat(format); // may modify format
 
-        using TextElement = Font::TextElement;
+        using TextTag = Font::TextTag;
 
         const std::size_t glyphs_per_line_estimate = static_cast<std::size_t>(
             std::max<int32_t>(1, Value(box_width)) / std::max<int8_t>(1, space_width));
@@ -732,28 +765,29 @@ namespace {
         StrSize original_string_offset(S0);
         // the index of the first code point of the current TextElement
         CPSize code_point_offset(CP0);
-        std::vector<TextElement> pending_formatting_tags;
+        std::vector<TextTag> pending_formatting_tags;
+        pending_formatting_tags.reserve(2);
 
         for (const auto& elem : text_elements) {
             switch (elem.Type()) {
-            case TextElement::TextElementType::NEWLINE:
+            case TextTag::TextElementType::NEWLINE:
                 AddNewline(x, last_line_of_curr_just, line_data, orig_just);
                 break;
-            case TextElement::TextElementType::WHITESPACE:
+            case TextTag::TextElementType::WHITESPACE:
                 AddWhitespace(x, elem.text, elem.widths, box_width, format & FORMAT_LINEWRAP,
                               glyphs_per_line_estimate,
                               line_data, last_line_of_curr_just, orig_just, original_string_offset,
                               code_point_offset, pending_formatting_tags, text_next_fn);
                 break;
-            case TextElement::TextElementType::TEXT:
+            case TextTag::TextElementType::TEXT:
                 AddText(x, elem, format, box_width, line_data, last_line_of_curr_just, orig_just,
                         original_string_offset, code_point_offset, pending_formatting_tags, text_next_fn);
                 break;
-            case TextElement::TextElementType::OPEN_TAG:
+            case TextTag::TextElementType::OPEN_TAG:
                 AddOpenTag(elem, line_data.back().justification, last_line_of_curr_just,
                            code_point_offset, pending_formatting_tags);
                 break;
-            case TextElement::TextElementType::CLOSE_TAG:
+            case TextTag::TextElementType::CLOSE_TAG:
                 AddCloseTag(elem, line_data.back().justification, last_line_of_curr_just,
                             code_point_offset, pending_formatting_tags);
                 break;
@@ -1378,9 +1412,8 @@ namespace {
 
         return elems;
     }
-#  endif
 
-#  if defined(__cpp_lib_constexpr_vector)
+
     // tests getting line and code point index in line from overall code point index text with tags
     constexpr auto test_tagged_cpidx_to_line_and_cp = []() {
         const std::string text(tagged_test_text);
@@ -1532,8 +1565,8 @@ namespace {
         }
 
         // glyph not found, return past end of last glyph by searching backwards from end for a line with a glyph
-        for (std::size_t loop_line_idx = line_data.size()-1u; loop_line_idx >= 0u; --loop_line_idx) {
-            const auto& line = line_data.at(loop_line_idx);
+        for (auto line_rit = line_data.rbegin(); line_rit != line_data.rend(); ++line_rit) {
+            const auto& line = *line_rit;
             if (line.Empty())
                 continue;
             const auto& last_glyph = line.char_data.back();
@@ -1555,8 +1588,8 @@ namespace {
             // no such line, return string index after last glyph
 
             // find last glyph by searching backwards from end for a line with a glyph
-            for (std::size_t loop_line_idx = line_data.size()-1u; loop_line_idx >= 0u; --loop_line_idx) {
-                const auto& line = line_data.at(loop_line_idx);
+            for (auto line_rit = line_data.rbegin(); line_rit != line_data.rend(); ++line_rit) {
+                const auto& line = *line_rit;
                 if (line.Empty())
                     continue;
                 const auto& last_glyph = line.char_data.back();
@@ -2339,6 +2372,9 @@ GG::Font::TextAndElementsAssembler& GG::Font::TextAndElementsAssembler::AddOpenT
 // class GG::Font
 ///////////////////////////////////////
 namespace {
+#if defined(__cpp_constinit)
+    constinit
+#endif
     Font::RenderCache shared_cache{};
 }
 
@@ -2365,6 +2401,216 @@ Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& 
     Init(wrapper.m_face);
 }
 
+namespace {
+    template <typename RenderCacheType>
+    constexpr void StoreGlyphImpl(RenderCacheType& cache, Clr color, Pt pt,
+                                  const Font::Glyph& glyph, int x_top_offset, int y_shift)
+    {
+        const auto& tc = glyph.tex_coords;
+        const auto lb = static_cast<GLfloat>(pt.x + glyph.left_bearing);
+        const auto w = static_cast<GLfloat>(glyph.width);
+        const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
+
+        cache.coordinates.store(std::array{tc[0], tc[1], tc[2], tc[1], tc[2], tc[3], tc[0], tc[3]});
+
+        cache.vertices.store(std::array{lb + x_top_offset,     t + y_shift,
+                             lb + w + x_top_offset, t + y_shift,
+                             lb + w - x_top_offset, t + glyph.height + y_shift,
+                             lb - x_top_offset,     t + glyph.height + y_shift});
+
+        cache.colors.template store<4>(color);
+    }
+
+    struct [[nodiscard]] GlyphOffsets {
+        constexpr GlyphOffsets() noexcept = default;
+        constexpr GlyphOffsets(int i, int s, int ss) noexcept :
+            italics_offset(i), shadow_offset(s), super_sub_offset(ss)
+        {}
+        constexpr GlyphOffsets(double i, double s, double ss) noexcept :
+            GlyphOffsets(static_cast<int>(i), static_cast<int>(s), static_cast<int>(ss))
+        {}
+
+        int italics_offset = 0;
+        int shadow_offset = 0;
+        int super_sub_offset = 0;
+    };
+    struct [[nodiscard]] GlyphSizesDescent {
+        Y descent = Y0;
+        Y height = Y0;
+        Y underline_height = Y0;
+        Y underline_offset = Y0;
+    };
+
+    template <typename RenderCacheType>
+    constexpr void StoreUnderlineImpl(RenderCacheType& cache, Clr color, Pt pt, X advance,
+                                      GlyphSizesDescent gsd)
+    {
+        X x1 = pt.x;
+        Y y1(pt.y + gsd.height + gsd.descent - gsd.underline_offset);
+        X x2 = x1 + advance;
+        Y y2(y1 + gsd.underline_height);
+
+        cache.underline_vertices.store(x1, y1);
+        cache.underline_colors.store(color);
+        cache.underline_vertices.store(x2, y1);
+        cache.underline_colors.store(color);
+        cache.underline_vertices.store(x2, y2);
+        cache.underline_colors.store(color);
+        cache.underline_vertices.store(x1, y2);
+        cache.underline_colors.store(color);
+    }
+
+    template <typename RenderCacheType>
+    constexpr void StoreGlyph(Pt pt, const Font::Glyph& glyph,
+                              GlyphOffsets go, GlyphSizesDescent gsd,
+                              const Font::RenderState& render_state, RenderCacheType& cache)
+    {
+        const int italic_offset = render_state.UseItalics() ? go.italics_offset : 0;
+        const int shadow_offset = render_state.UseShadow() ? go.shadow_offset : 0;
+        const int super_sub_offset = -render_state.SuperSubShift() * go.super_sub_offset;
+
+        // render shadows?
+        if (shadow_offset > 0) {
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X1, Y0), glyph, italic_offset, super_sub_offset);
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_offset, super_sub_offset);
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_offset, super_sub_offset);
+            StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_offset, super_sub_offset);
+            if (render_state.DrawUnderline()) {
+                StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), X{glyph.advance}, gsd);
+                StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), X{glyph.advance}, gsd);
+            }
+        }
+
+        // render main text
+        StoreGlyphImpl(cache, render_state.CurrentColor(), pt, glyph, italic_offset, super_sub_offset);
+        if (render_state.DrawUnderline())
+            StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, X{glyph.advance}, gsd);
+    }
+
+
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string)
+    struct CxRenderCache {
+        struct CxBufferFloat2
+        {
+            std::vector<float>           b_data;
+            static constexpr std::size_t b_elements_per_item = 2;
+
+            [[nodiscard]] constexpr CxBufferFloat2() noexcept = default;
+
+            [[nodiscard]] constexpr auto size() const noexcept { return b_data.size() / b_elements_per_item; }
+            [[nodiscard]] constexpr bool empty() const noexcept { return b_data.empty(); }
+            [[nodiscard]] constexpr auto capacity() const noexcept { return b_data.capacity(); };
+            [[nodiscard]] constexpr auto raw_size() const noexcept { return b_data.size(); };
+
+            constexpr void reserve(std::size_t) noexcept {}
+            constexpr void harmonizeBufferType(auto&&) noexcept {}
+            constexpr void dropServerBuffer() noexcept {}
+
+            template <std::size_t ArrN>
+            constexpr void store(std::array<float, ArrN> items)
+            {
+                static_assert(ArrN % b_elements_per_item == 0);
+                b_data.insert(b_data.end(), items.begin(), items.end());
+            }
+
+            constexpr void store(float item1, float item2) { b_data.insert(b_data.end(), {item1, item2}); }
+
+            constexpr void store(const Pt pt) { store(pt.x, pt.y); }
+            constexpr void store(X x, Y y) { store(static_cast<float>(Value(x)), static_cast<float>(Value(y))); }
+            constexpr void store(X x, float y) { store(static_cast<float>(Value(x)), y); }
+            constexpr void store(float x, Y y) { store(x, static_cast<float>(Value(y))); }
+
+            constexpr void createServerBuffer(GLenum) {}
+
+            constexpr void clear() noexcept { b_data.clear(); }
+        };
+
+        struct CxBufferClr
+        {
+            std::vector<uint8_t>         b_data;
+            static constexpr std::size_t b_elements_per_item = 4;
+
+            [[nodiscard]] constexpr CxBufferClr() noexcept = default;
+
+            [[nodiscard]] constexpr auto size() const noexcept { return b_data.size() / b_elements_per_item; }
+            [[nodiscard]] constexpr bool empty() const noexcept { return b_data.empty(); }
+            [[nodiscard]] constexpr auto capacity() const noexcept { return b_data.capacity(); };
+            [[nodiscard]] constexpr auto raw_size() const noexcept { return b_data.size(); };
+
+            constexpr void reserve(std::size_t) noexcept {}
+            constexpr void harmonizeBufferType(auto&&) noexcept {}
+            constexpr void dropServerBuffer() noexcept {}
+
+        private:
+            constexpr void store(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+            { b_data.insert(b_data.end(), {r, g, b, a}); }
+
+        public:
+            constexpr void store(const Clr color)
+            { store(color.r, color.g, color.b, color.a); }
+
+            template <std::size_t ArrN>
+            constexpr void store(std::array<Clr, ArrN> clrs)
+            {
+                std::array<uint8_t, ArrN*4> data{};
+                auto data_it = data.begin();
+                for (auto clr : clrs) {
+                    *data_it++ = clr.r;
+                    *data_it++ = clr.g;
+                    *data_it++ = clr.b;
+                    *data_it++ = clr.a;
+                }
+                b_data.insert(b_data.end(), data.begin(), data.end());
+            }
+
+            template <std::size_t ArrN>
+            constexpr void store(Clr clr)
+            {
+                std::array<uint8_t, ArrN*4> data{};
+                auto data_it = data.begin();
+                for (std::size_t n = 0; n < ArrN; ++n) {
+                    *data_it++ = clr.r;
+                    *data_it++ = clr.g;
+                    *data_it++ = clr.b;
+                    *data_it++ = clr.a;
+                }
+                b_data.insert(b_data.end(), data.begin(), data.end());
+            }
+
+            constexpr void createServerBuffer(GLenum) {}
+
+            constexpr void clear() noexcept { b_data.clear(); }
+        };
+
+        CxBufferFloat2 vertices, coordinates, underline_vertices;
+        CxBufferClr colors, underline_colors;
+
+        [[nodiscard]] constexpr CxRenderCache() noexcept = default;
+
+        constexpr void clear() noexcept {
+            vertices.clear();
+            coordinates.clear();
+            colors.clear();
+            underline_vertices.clear();
+            underline_colors.clear();
+        }
+    };
+
+    static_assert([]() {
+        CxRenderCache cache;
+        StoreGlyphImpl(cache, CLR_WHITE, Pt0, Font::Glyph{}, 0, 0);
+        return !cache.colors.empty();
+    }());
+
+    static_assert([]() {
+        CxRenderCache cache;
+        StoreGlyph(Pt0, Font::Glyph{}, GlyphOffsets{}, GlyphSizesDescent{},
+                   Font::RenderState{CLR_WHITE}, cache);
+        return !cache.vertices.empty();
+    }());
+#endif
+}
+
 X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render_state) const
 {
     const X orig_x = pt.x;
@@ -2373,13 +2619,17 @@ X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render
 
     shared_cache.clear();
 
+    const GlyphOffsets go{m_italics_offset, m_shadow_offset, m_super_sub_offset};
+    const GlyphSizesDescent gsd{m_descent, m_height, Y{static_cast<int>(m_underline_height)},
+                                Y{static_cast<int>(m_underline_offset)}};
+
     for (auto text_it = text.begin(); text_it != text.end();) {
         const uint32_t c = utf8::next(text_it, text.end());
         const auto it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
         } else {
-            StoreGlyph(pt, it->second, render_state, shared_cache);
+            StoreGlyph(pt, it->second, go, gsd, render_state, shared_cache);
             pt.x += it->second.advance; // TODO: pass in format, maybe do tab stuff here?
         }
     }
@@ -2473,8 +2723,9 @@ namespace {
         return {retval, true};
     }
 
-    void HandleTag(Font::Substring tag_name, bool is_close_tag, const std::vector<Font::Substring>& params,
-                   Font::RenderState& render_state)
+    CONSTEXPR_FONT void HandleTag(Font::Substring tag_name, bool is_close_tag,
+                                  const std::vector<Font::Substring>& params,
+                                  Font::RenderState& render_state)
     {
         using RS = Font::RenderState;
         const auto open_close = is_close_tag ? RS::IncDir::LESS : RS::IncDir::MORE;
@@ -2502,7 +2753,10 @@ namespace {
             } else {
                 auto [color, well_formed_tag] = TagParamsToColor(params);
                 if (well_formed_tag) {
-                    glColor4ubv(color.data());
+#if defined(__cpp_lib_is_constant_evaluated) && (!defined(__clang_major__) || (__clang_major__ >= 14))
+                    if (!std::is_constant_evaluated())
+#endif
+                        glColor4ubv(color.data());
                     render_state.PushColor(color);
                 }
                 /*else {
@@ -2518,14 +2772,58 @@ namespace {
         }
     }
 
-    void HandleTag(const Font::TextTag& tag, Font::RenderState& render_state)
-    { HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state); }
-
     template <typename TagsVec>
-    void HandleTags(const TagsVec& tags, Font::RenderState& render_state)
+    CONSTEXPR_FONT void HandleTags(const TagsVec& tags, Font::RenderState& render_state)
     {
         for (const auto& tag : tags)
             HandleTag(tag.tag_name, tag.IsCloseTag(), tag.params, render_state);
+    }
+
+    template <typename RenderCacheType, typename GlyphMap>
+    CONSTEXPR_FONT void PreRenderImpl(const Y y_origin, const Y lineskip, const X left, const X right,
+                                      const GlyphOffsets go, const GlyphSizesDescent gsd,
+                                      const Font::LineVec& lines, const GlyphMap& glyphs,
+                                      const std::size_t begin_line, const CPSize begin_char,
+                                      const std::size_t end_line, const CPSize end_char,
+                                      RenderCacheType& cache, Font::RenderState& render_state)
+    {
+        for (std::size_t i = begin_line; i < std::min(lines.size(), end_line); ++i) {
+            const auto& line = lines[i];
+            if (line.Empty())
+                continue;
+
+            const auto& line_char_data = line.char_data;
+            const CPSize cd_size{line_char_data.size()};
+
+            const Y y = LinePosY(y_origin, i, begin_line, lineskip);
+
+            const X x_origin = LineOriginX(left, right, line.Width(), line.justification);
+            const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
+            const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
+            //X x = x_origin;
+
+            //std::cout << "PreRender line " << i << " from CPSize: " << Value(start)
+            //          << " to " << Value(end) << " at:";
+
+            for (auto cp_idx = start; cp_idx < end; ++cp_idx) {
+                const auto& line_char = line_char_data[Value(cp_idx)];
+                HandleTags(line_char.tags, render_state);
+
+                if (line_char.code_point == WIDE_NEWLINE ||
+                    line_char.code_point == WIDE_CR ||
+                    line_char.code_point == WIDE_FF) [[unlikely]]
+                { continue; }
+
+                const auto it = glyphs.find(line_char.code_point);
+                if (it != glyphs.end()) {
+                    const X prev_extent = (cp_idx == CP0) ? X0 : line_char_data[Value(cp_idx - CP1)].extent;
+                    const X x = x_origin + prev_extent;
+                    const auto& glyph = it->second;
+
+                    StoreGlyph(Pt(x, y), glyph, go, gsd, render_state, cache);
+                }
+            }
+        }
     }
 }
 
@@ -2550,7 +2848,7 @@ void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
     //        const LineData& line = line_data[i];
     //        const CPSize line_start_glyph_idx = (i == begin_line) ? begin_char : CP0;
     //        const CPSize line_end_glyph_idx = (i + 1 == end_line) ? end_char : CPSize(line.char_data.size());
-
+    //
     //        std::cout << "  line: " << i << " glyphs: " << Value(line_start_glyph_idx)
     //                  << " to " << Value(line_end_glyph_idx) << " : ";
     //        for (CPSize idx = line_start_glyph_idx; idx < line_end_glyph_idx; ++idx) {
@@ -2565,47 +2863,13 @@ void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
     cache.vertices.reserve(glyph_count*4);
     cache.colors.reserve(glyph_count*4);
 
-    for (std::size_t i = begin_line; i < end_line; ++i) {
-        const auto& line = line_data.at(i);
-        if (line.Empty())
-            continue;
 
-        const auto& line_char_data = line.char_data;
-        const CPSize cd_size{line_char_data.size()};
+    const GlyphOffsets go{m_italics_offset, m_shadow_offset, m_super_sub_offset};
+    const GlyphSizesDescent gsd{m_descent, m_height, Y{static_cast<int>(m_underline_height)},
+                                Y{static_cast<int>(m_underline_offset)}};
 
-        const Y y = LinePosY(y_origin, i, begin_line, m_lineskip);
-
-        const X x_origin = LineOriginX(ul.x, lr.x, line.Width(), line.justification);
-        const CPSize start = (i != begin_line) ? CP0 : std::min(begin_char, cd_size - CP1);
-        const CPSize end = (i != end_line - 1) ? cd_size : std::min(end_char, cd_size);
-        X x = x_origin;
-
-        //std::cout << "PreRender line " << i << " from CPSize: " << Value(start)
-        //          << " to " << Value(end) << " at:";
-
-        for (auto cp_idx = start; cp_idx < end; ++cp_idx) {
-            const auto& line_char = line_char_data[Value(cp_idx)];
-            HandleTags(line_char.tags, render_state);
-
-            if (line_char.code_point == WIDE_NEWLINE ||
-                line_char.code_point == WIDE_CR ||
-                line_char.code_point == WIDE_FF) [[unlikely]]
-            { continue; }
-
-            const auto it = m_glyphs.find(line_char.code_point);
-            if (it != m_glyphs.end()) {
-                const X prev_extent = (cp_idx == CP0) ? X0 : line_char_data[Value(cp_idx - CP1)].extent;
-                const X x = x_origin + prev_extent;
-                const auto& glyph = it->second;
-
-                StoreGlyph(Pt(x, y), glyph, render_state, cache);
-
-                //std::cout << " " << Value(x);
-            }
-            //x = x_origin + glyph.extent; // position for next character is right extent of current character
-        }
-        //std::cout << "\n";
-    }
+    PreRenderImpl(y_origin, m_lineskip, ul.x, lr.x, go, gsd, line_data, m_glyphs,
+                  begin_line, begin_char, end_line, end_char, cache, render_state);
 
     cache.vertices.createServerBuffer();
     cache.coordinates.createServerBuffer();
@@ -2796,6 +3060,7 @@ namespace {
                                      sregex_iterator it, X x)
     {
         std::vector<TextElement> text_elements;
+        text_elements.reserve(text.size() * ((text.size() < 500u) ? 10u : 4u));
 
 #if defined(__cpp_using_enum)
         using enum TextElement::TextElementType;
@@ -2862,6 +3127,7 @@ namespace {
 #if DEBUG_DETERMINELINES
         DebugOutput::PrintParseResults(text_elements);
 #endif
+
         return text_elements;
     }
 }
@@ -2948,20 +3214,24 @@ namespace {
         const auto& cd0 = line_data.at(0).char_data;
         const auto& cd1 = line_data.at(1).char_data;
 
-        std::array<StrSize, 30 + 13> test_text_str_idxs{S0};
-        std::array<char, 30 + 13 + 1> test_text_chars{0};
+        constexpr std::size_t out_lim = 30u + 13u;
+        std::array<StrSize, out_lim> test_text_str_idxs{S0};
+        std::array<char, out_lim + 1u> test_text_chars{0};
+
         std::size_t out_idx = 0;
 
-        for (std::size_t char_data_idx = 0u; char_data_idx < cd0.size(); ++char_data_idx) {
+        const auto lim0 = cd0.size();
+        for (std::size_t char_data_idx = 0u; char_data_idx < lim0 && out_idx < out_lim; ++char_data_idx, ++out_idx) {
             const auto str_idx = cd0.at(char_data_idx).string_index;
             test_text_str_idxs[out_idx] = str_idx;
-            test_text_chars[out_idx++] = test_text.at(Value(str_idx));
+            test_text_chars[out_idx] = test_text.at(Value(str_idx));
         }
 
-        for (std::size_t char_data_idx = 0u; char_data_idx < cd1.size(); ++char_data_idx) {
+        const auto lim1 = cd1.size();
+        for (std::size_t char_data_idx = 0u; char_data_idx < lim1 && out_idx < out_lim; ++char_data_idx, ++out_idx) {
             const auto str_idx = cd1.at(char_data_idx).string_index;
             test_text_str_idxs[out_idx] = str_idx;
-            test_text_chars[out_idx++] = test_text.at(Value(str_idx));
+            test_text_chars[out_idx] = test_text.at(Value(str_idx));
         }
 
         return std::pair(test_text_str_idxs, test_text_chars);
@@ -3091,10 +3361,10 @@ void Font::Init(FT_Face& face)
             range_vec.emplace_back(m_charsets[i].m_first_char, m_charsets[i].m_last_char);
     }
 
-    //Get maximum texture size
+    // Get maximum texture size, limited to 1024 wide (just for font texture)
     GLint GL_TEX_MAX_SIZE;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
-    const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
+    const std::size_t TEX_MAX_SIZE = std::min<GLint>(2 << 9, GL_TEX_MAX_SIZE);
 
     std::vector<std::pair<uint32_t, TempGlyphData>> temp_glyph_data;
     temp_glyph_data.reserve(1000); // rough guesstimate
@@ -3114,7 +3384,7 @@ void Font::Init(FT_Face& face)
         for (uint32_t c = low; c < high; ++c) {
             // skip already-existing glphys
             if (std::any_of(temp_glyph_data.begin(), temp_glyph_data.end(),
-                            [c](const auto& tgd) { return tgd.first == c; }))
+                            [c](const auto& tgd) noexcept { return tgd.first == c; }))
             { continue; }
             const auto generated = GenerateGlyph(face, c);
             if (!generated)
@@ -3207,6 +3477,8 @@ void Font::Init(FT_Face& face)
     m_texture->Init(buffer.BufferWidth(), buffer.BufferHeight(),
                     (uint8_t*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
+    GetTextureManager().StoreTexture(m_texture, m_font_filename + " " + std::to_string(m_pt_sz) + " pts");
+
     // create Glyph objects from temp glyph data
     for (const auto& [codepoint, glyph_data] : temp_glyph_data) {
         m_glyphs[codepoint] = Glyph(glyph_data.ul, glyph_data.lr, glyph_data.y_offset,
@@ -3248,77 +3520,6 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
     return retval;
 }
 
-void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, Pt pt,
-                          const Glyph& glyph, int x_top_offset, int y_shift) const
-{
-    const auto& tc = glyph.tex_coords;
-    const auto lb = static_cast<GLfloat>(pt.x + glyph.left_bearing);
-    const auto w = static_cast<GLfloat>(glyph.width);
-    const auto t = static_cast<GLfloat>(pt.y + glyph.y_offset);
-
-    cache.coordinates.store(std::array{tc[0], tc[1], tc[2], tc[1], tc[2], tc[3], tc[0], tc[3]});
-
-    cache.vertices.store(std::array{lb + x_top_offset,     t + y_shift,
-                                    lb + w + x_top_offset, t + y_shift,
-                                    lb + w - x_top_offset, t + glyph.height + y_shift,
-                                    lb - x_top_offset,     t + glyph.height + y_shift});
-
-    cache.colors.store<4>(color);
-}
-
-void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, Pt pt, const Glyph& glyph,
-                              Y descent, Y height, Y underline_height, Y underline_offset) const
-{
-    X x1 = pt.x;
-    Y y1(pt.y + height + descent - underline_offset);
-    X x2 = x1 + glyph.advance;
-    Y y2(y1 + underline_height);
-
-    cache.underline_vertices.store(x1, y1);
-    cache.underline_colors.store(color);
-    cache.underline_vertices.store(x2, y1);
-    cache.underline_colors.store(color);
-    cache.underline_vertices.store(x2, y2);
-    cache.underline_colors.store(color);
-    cache.underline_vertices.store(x1, y2);
-    cache.underline_colors.store(color);
-}
-
-void Font::StoreGlyph(Pt pt, const Glyph& glyph, const Font::RenderState& render_state,
-                      Font::RenderCache& cache) const
-{
-    int italic_top_offset = 0;
-    int shadow_offset = 0;
-    int super_sub_offset = 0;
-
-    if (render_state.UseItalics()) // Should we enable sub pixel italics offsets?
-        italic_top_offset = static_cast<int>(m_italics_offset);
-    if (render_state.UseShadow())
-        shadow_offset = static_cast<int>(m_shadow_offset);
-    super_sub_offset = -static_cast<int>(render_state.SuperSubShift() * m_super_sub_offset);
-
-    // render shadows?
-    if (shadow_offset > 0) {
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X1, Y0), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
-        if (render_state.DrawUnderline()) {
-            StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, m_descent,
-                               m_height, Y(m_underline_height), Y(m_underline_offset));
-            StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, m_descent,
-                               m_height, Y(m_underline_height), Y(m_underline_offset));
-        }
-    }
-
-    // render main text
-    StoreGlyphImpl(cache, render_state.CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
-    if (render_state.DrawUnderline()) {
-        StoreUnderlineImpl(cache, render_state.CurrentColor(), pt, glyph, m_descent,
-                           m_height, Y(m_underline_height), Y(m_underline_offset));
-    }
-}
-
 bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
@@ -3335,8 +3536,13 @@ bool FontManager::HasFont(std::string_view font_filename, uint16_t pts) const no
 { return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
 namespace {
+#if defined(__cpp_lib_constexpr_vector)
+    constexpr std::vector<UnicodeCharset> empty_charsets;
+    constexpr auto empty_it = empty_charsets.end();
+#else
     const std::vector<UnicodeCharset> empty_charsets;
     const auto empty_it = empty_charsets.end();
+#endif
 }
 
 std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts)

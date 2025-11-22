@@ -96,8 +96,7 @@ void TextBoxBrowseInfoWnd::SetText(std::string str)
     bool str_empty = str.empty();
     const auto fmt = GetTextFormat();
     auto text_elements = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
-    auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins),
-                                        text_elements);
+    auto lines = m_font->DetermineLines(str, fmt, m_preferred_width - X(margins), text_elements);
     Pt extent = m_font->TextExtent(lines);
     SetMinSize(extent + Pt(X(margins), Y(margins)));
     m_text_control->SetText(std::move(str));

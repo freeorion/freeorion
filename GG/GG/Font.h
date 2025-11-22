@@ -283,6 +283,18 @@ public:
 
         TextElementType type = TextElementType::TEXT;
 
+        [[nodiscard]] constexpr std::string_view TypeString() const noexcept
+        {
+            switch (type) {
+            case Font::TextTag::TextElementType::OPEN_TAG:   return "opentag"; break;
+            case Font::TextTag::TextElementType::CLOSE_TAG:  return "closetag"; break;
+            case Font::TextTag::TextElementType::TEXT:       return "text"; break;
+            case Font::TextTag::TextElementType::WHITESPACE: return "whitespace"; break;
+            case Font::TextTag::TextElementType::NEWLINE:    return "newline"; break;
+            }
+            return "???";
+        }
+
         CONSTEXPR_FONT TextTag(TextElementType type_, Substring tag_name_, uint32_t text_size_) noexcept :
             tag_name(tag_name_),
             text_size(text_size_),
@@ -448,32 +460,41 @@ public:
         {
             CONSTEXPR_FONT CharData() = default;
 
-            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index, StrSize str_size,
-                                    CPSize cp_index, const std::vector<TextElement>& tags_) :
+            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index,
+                                    StrSize str_size, CPSize cp_index) noexcept :
                 code_point(code_point_),
                 extent(extent_),
                 string_index(str_index),
                 string_size(str_size),
                 code_point_index(cp_index)
             {
-                tags.reserve(tags_.size());
-                for (auto& tag : tags_)
-                    if (tag.IsTag())
-                        tags.push_back(tag);
+                static_assert(noexcept(std::vector<TextTag>{}));
             }
 
-            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index, StrSize str_size,
-                                    CPSize cp_index, std::vector<TextElement>&& tags_) :
+            template <typename TagVec>
+            CONSTEXPR_FONT CharData(uint32_t code_point_, X extent_, StrSize str_index,
+                                    StrSize str_size, CPSize cp_index, TagVec&& tags_) :
                 code_point(code_point_),
                 extent(extent_),
                 string_index(str_index),
                 string_size(str_size),
                 code_point_index(cp_index)
+            { SetTags(std::forward<TagVec>(tags_)); }
+
+            CONSTEXPR_FONT void SetTags(std::vector<TextTag>&& tags_)
             {
                 tags.reserve(tags_.size());
                 for (auto& tag : tags_)
                     if (tag.IsTag())
                         tags.push_back(std::move(tag));
+            }
+
+            CONSTEXPR_FONT void SetTags(const std::vector<TextTag>& tags_)
+            {
+                tags.reserve(tags_.size());
+                for (auto& tag : tags_)
+                    if (tag.IsTag())
+                        tags.push_back(tag);
             }
 
             /** The UTF-8 code point for this glyph */
@@ -575,6 +596,7 @@ public:
             static constexpr Clr ZERO{};
             static_assert(std::array<Clr, capacity>{}.front() == ZERO);
             static_assert(std::array<Clr, capacity>{Clr{1,2,3,4}}[last_slot_idx] == ZERO);
+            static_assert(std::array<Clr, capacity>{Clr{1,2,3,4}}.front().r == 1);
 
         public:
             [[nodiscard]] constexpr explicit ClrStack(Clr clr) noexcept :
@@ -865,15 +887,6 @@ private:
     void              Init(FT_Face& font);
 
     bool              GenerateGlyph(FT_Face font, uint32_t ch);
-
-    void              StoreGlyph(Pt pt, const Glyph& glyph, const RenderState& render_state,
-                                 RenderCache& cache) const;
-    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, Pt pt,
-                                     const Glyph& glyph, int x_top_offset,
-                                     int y_shift) const;
-    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, Pt pt,
-                                         const Glyph& glyph, Y descent, Y height,
-                                         Y underline_height, Y underline_offset) const;
 
     bool              IsDefaultFont() const noexcept;
 

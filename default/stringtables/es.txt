@@ -2768,9 +2768,6 @@ Texto en negrita
 OPTIONS_FONT_TITLE
 Títulos de Ventana
 
-SHOW_FONT_TEXTURES
-Mostrar texturas de fuentes
-
 OPTIONS_RESEARCH_WND
 Ventana de investigación
 

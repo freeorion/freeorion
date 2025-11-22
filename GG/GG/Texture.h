@@ -239,6 +239,10 @@ public:
         from disk. */
     std::shared_ptr<Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
 
+    /** Returns a shared_ptr to the texture created/stored with name \a texture_name
+        or nullptr if not present in the manager's pool. */
+    std::shared_ptr<Texture> GetTextureByName(const std::string& texture_name) const;
+
     /** Removes the manager's shared_ptr to the texture created from image
         file \a path, if it exists.  \note Due to shared_ptr semantics, the
         texture may not be deleted until much later. */

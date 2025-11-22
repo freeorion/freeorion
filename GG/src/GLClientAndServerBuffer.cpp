@@ -12,29 +12,6 @@
 
 using namespace GG;
 
-///////////////////////////////////////////////////////////////////////////
-// GLBufferBase
-///////////////////////////////////////////////////////////////////////////
-
-void GLBufferBase::dropServerBuffer()
-{
-    if (b_name) {
-        glDeleteBuffers(1, std::addressof(b_name));
-        b_name = 0;
-    }
-}
-
-void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
-{
-    if (b_name && other.b_name) return; // OK, both have server buffer
-
-    if (b_name || other.b_name) {       // NOT OK, only one has server buffer, drop buffer
-        dropServerBuffer();
-        other.dropServerBuffer();
-    }
-}
-
-
 template class GG::GLClientAndServerBufferBase<uint8_t, 4>;
 template class GG::GLClientAndServerBufferBase<float, 2>;
 template class GG::GLClientAndServerBufferBase<float, 3>;
