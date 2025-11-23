@@ -1045,12 +1045,11 @@ namespace {
 
 
     // for constexpr test purposes
-    struct DummyPair {
-        uint32_t first = 0;
-        struct { int8_t advance = 4; } second;
-    };
     constexpr struct DummyGlyphMap {
-        static constexpr DummyPair value{};
+        const struct {
+            uint32_t first = 0;
+            Font::Glyph second{Pt0, Pt{X{3}, Y{6}}, 0, 0, 4, X{6}, Y{8}};
+        } value{};
         constexpr auto* find(uint32_t) const noexcept { return std::addressof(value); }
         constexpr decltype(value)* end() const noexcept { return nullptr; }
     } dummy_glyph_map;
@@ -1663,7 +1662,6 @@ namespace {
 
 
 #if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
-
 #  if defined(__cpp_lib_constexpr_vector)
     // tests getting string index from glyph index in text with newlines
     constexpr auto test_line_glyph_to_str_idx = []() {
@@ -2596,12 +2594,14 @@ namespace {
         }
     };
 
+    // tests that StoreGlyphImpl does something
     static_assert([]() {
         CxRenderCache cache;
         StoreGlyphImpl(cache, CLR_WHITE, Pt0, Font::Glyph{}, 0, 0);
         return !cache.colors.empty();
     }());
 
+    // tests that StoreGlyph does something
     static_assert([]() {
         CxRenderCache cache;
         StoreGlyph(Pt0, Font::Glyph{}, GlyphOffsets{}, GlyphSizesDescent{},
@@ -2826,6 +2826,28 @@ namespace {
         }
     }
 }
+
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
+namespace {
+    // tests glyph layout with multiple lines into render cache
+    constexpr auto test_multiline_prerender_colours_count = []() {
+        const std::string text(multi_line_text);
+        const auto elems = ElementsForMultiLineText(text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto lines = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+
+        CxRenderCache cache;
+        Font::RenderState state{CLR_WHITE};
+        PreRenderImpl(Y0, Y{8}, X0, X{80}, GlyphOffsets{}, GlyphSizesDescent{},
+                      lines, dummy_glyph_map, 0u, CP0, lines.size(), CPSize(lines.back().char_data.size()),
+                      cache, state);
+
+        return cache.colors.size();
+    }();
+    static_assert(test_multiline_prerender_colours_count == 6u*4u); // 6 glyphs with 4 verts each
+}
+#endif
+
 
 
 void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
