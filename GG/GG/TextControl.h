@@ -266,7 +266,7 @@ public:
 
 protected:
     /** Returns the line data for the text in this TextControl. */
-    virtual const Font::LineVec& GetLineData() const noexcept { return m_line_data; }
+    [[nodiscard]] const Font::LineVec& GetLineData() const noexcept { return m_line_data; }
 
     Font::RenderCache m_render_cache;///< Cache much of text rendering.
 
