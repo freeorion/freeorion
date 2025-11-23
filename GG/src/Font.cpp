@@ -2829,6 +2829,25 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
 namespace {
+    // tests HandleTags via RenderState after processing text with unclosed tags
+    constexpr auto test_handletags = []() {
+        const std::string test_text(TEST_TEXT_WITH_TAGS);
+        const auto elems = TestTextElems(test_text);
+        const auto fmt = FORMAT_LEFT | FORMAT_TOP;
+        const auto lines = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+
+        CxRenderCache cache;
+        Font::RenderState state{CLR_WHITE};
+        PreRenderImpl(Y0, Y{8}, X0, X{80}, GlyphOffsets{}, GlyphSizesDescent{},
+                      lines, dummy_glyph_map, 0u, CP0, lines.size(), CPSize(lines.back().char_data.size()),
+                      cache, state);
+
+        return (test_text == "default<i>ital<u>_ul_it_</i>   _just_ul_</u>\nsecond line<i><sup>is") &&
+               state.CurrentColor() == CLR_WHITE && state.UseItalics() && !state.UseShadow() &&
+               !state.DrawUnderline() && state.SuperSubShift() == 1;
+    };
+    static_assert(test_handletags());
+
     // tests glyph layout with multiple lines into render cache
     constexpr auto test_multiline_prerender_colours_count = []() {
         const std::string text(multi_line_text);
