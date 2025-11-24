@@ -21,6 +21,7 @@ Tech(
     researchcost=8 * TECH_COST_MULTIPLIER,
     researchturns=2,
     tags=["PEDIA_GROWTH_CATEGORY"],
+    unlock=Item(type=UnlockBuilding, name="BLD_NEST_RESERVE"),
     effectsgroups=[
         EffectsGroup(
             scope=Planet()
