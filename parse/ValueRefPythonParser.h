@@ -82,6 +82,19 @@ std::unique_ptr<ValueRef::ValueRef<T>> pyobject_to_vref(const boost::python::obj
     return std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(obj)());
 }
 
+template<typename T, typename U>
+std::unique_ptr<ValueRef::ValueRef<T>> pyobject_to_vref_or_cast(const boost::python::object& obj) {
+    auto arg = boost::python::extract<value_ref_wrapper<T>>(obj);
+    if (arg.check()) {
+        return ValueRef::CloneUnique(arg().value_ref);
+    }
+    auto arg_cast = boost::python::extract<value_ref_wrapper<U>>(obj);
+    if (arg_cast.check()) {
+        return std::make_unique<ValueRef::StaticCast<U, T>>(ValueRef::CloneUnique(arg_cast().value_ref));
+    }
+    return std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(obj)());
+}
+
 value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs);
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, double rhs);
 value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs);

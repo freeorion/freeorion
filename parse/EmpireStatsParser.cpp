@@ -125,6 +125,8 @@ namespace {
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
+            parser.LoadValueRefsModule();
+
             module = parser.LoadModule(&PyInit__empire_statistics);
 
             module.attr("__stats") = boost::cref(*this);
@@ -142,7 +144,7 @@ namespace {
     {
         auto name = boost::python::extract<std::string>(kw["name"])();
 
-        auto value = pyobject_to_vref<double>(kw["value"]);
+        auto value = pyobject_to_vref_or_cast<double, int>(kw["value"]);
 
         py_grammar& p = boost::python::extract<py_grammar&>(scope.attr("__stats"))();
 

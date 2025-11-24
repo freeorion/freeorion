@@ -87,11 +87,13 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/PythonParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/SourcePythonParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ConditionPythonParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/ValueRefsPythonModuleParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/ConditionPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EffectPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EnumPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/SourcePythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefPythonParser.h
+            ${CMAKE_CURRENT_LIST_DIR}/ValueRefsPythonModuleParser.h
     )
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         target_compile_options(freeorionparseobj PRIVATE -Wno-comma-subscript -Wno-maybe-uninitialized)
