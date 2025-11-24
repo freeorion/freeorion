@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
 
     BOOST_CHECK(!buildings.empty());
 
-    BOOST_REQUIRE_EQUAL(108, buildings.size());
+    BOOST_REQUIRE_EQUAL(109, buildings.size());
 
     if (const char *buildings_name = std::getenv("FO_CHECKSUM_BUILDINGS_NAME")) {
         const auto buildings_it = buildings.find(buildings_name);

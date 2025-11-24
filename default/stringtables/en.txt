@@ -15601,6 +15601,12 @@ Nest Eradicator
 BLD_NEST_ERADICATOR_DESC
 Eradicates a [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] from the planet it is built on. [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
 
+BLD_NEST_RESERVE
+Mega-Fauna Sanctuary
+
+BLD_NEST_RESERVE_DESC
+A place to keep most native space-faring specimen from wandering off planet. Specimen from [[encyclopedia KRAKEN_NEST_SPECIAL]], [[encyclopedia SNOWFLAKE_NEST_SPECIAL]], or [[encyclopedia JUGGERNAUT_NEST_SPECIAL]] on the planet will hatch into space less often (x[[value BLD_NEST_RESERVE_WILD_SPAWN_FACTOR]]). [[BUILDING_AVAILABLE_ON_OUTPOSTS]].
+
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
 

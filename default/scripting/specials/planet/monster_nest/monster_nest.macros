@@ -29,16 +29,15 @@ MONSTER_NEST
                     ]
                     empire = Source.Owner
             ]
+
+        // if no tame monster can spawn, usually spawn wild monsters
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Turn low = 10
-                Or [
-                    Unowned
-                    ((GameRule name = "RULE_NESTS_ALWAYS_SPAWN_WILD") > 0)
-                ]
                 Random probability = 0.12 * (GameRule name = "RULE_WILD_NEST_MONSTER_SPAWN_FACTOR") * GalaxyMonsterFrequency / 2.0
+		   * ((NamedRealLookup name="BLD_NEST_RESERVE_WILD_SPAWN_FACTOR")^(Statistic If condition = And [ Object id = RootCandidate.ID Contains Building name = "BLD_NEST_RESERVE" ]))
                 Not Contains And [ Building name = "BLD_NEST_ERADICATOR" OwnedBy empire = Source.Owner ]
             ]
             stackinggroup = "@1@_NEST_STACK"  // groups with BLD_NEST_ERADICATOR
