@@ -3,11 +3,13 @@ from macros.base_prod import TECH_COST_MULTIPLIER
 from techs.ship_weapons.ship_weapons import (
     WEAPON_BASE_EFFECTS,
     WEAPON_UPGRADE_CAPACITY_EFFECTS,
+    WEAPON_UPGRADE_SECONDARY_STAT_EFFECTS,
 )
 
 AD_2_upgrade = 2
 AD_3_upgrade = 3
 AD_2_plus_3_upgrade = AD_2_upgrade + AD_3_upgrade
+AD_4_shots_upgrade = 1
 
 # In absense of shields this weapon can get almost as good as Plasma. Against shields its pretty useless
 Tech(
@@ -43,7 +45,7 @@ Tech(
     description="SHP_WEAPON_ARC_DISRUPTOR_3_DESC",
     short_description="SHIP_WEAPON_IMPROVE_SHORT_DESC",
     category="SHIP_WEAPONS_CATEGORY",
-    researchcost=600 * TECH_COST_MULTIPLIER,
+    researchcost=240 * TECH_COST_MULTIPLIER,
     researchturns=12,
     tags=["PEDIA_SR_WEAPON_TECHS"],
     prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_2"],
@@ -51,4 +53,19 @@ Tech(
         "SHP_WEAPON_ARC_DISRUPTOR_3", "SR_ARC_DISRUPTOR", AD_3_upgrade, upgraded_damage_override=AD_2_plus_3_upgrade
     ),
     graphic="icons/ship_parts/pulse-laser-3.png",
+)
+
+Tech(
+    name="SHP_WEAPON_ARC_DISRUPTOR_4",
+    description="SHP_WEAPON_ARC_DISRUPTOR_4_DESC",
+    short_description="SHIP_WEAPON_IMPROVE_SHORT_DESC",
+    category="SHIP_WEAPONS_CATEGORY",
+    researchcost=360 * TECH_COST_MULTIPLIER,
+    researchturns=12,
+    tags=["PEDIA_SR_WEAPON_TECHS"],
+    prerequisites=["SHP_WEAPON_ARC_DISRUPTOR_3"],
+    effectsgroups=WEAPON_UPGRADE_SECONDARY_STAT_EFFECTS(
+        "SHP_WEAPON_ARC_DISRUPTOR_4", "SR_ARC_DISRUPTOR", AD_4_shots_upgrade
+    ),
+    graphic="icons/ship_parts/pulse-laser-4.png",
 )
