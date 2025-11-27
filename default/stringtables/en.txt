@@ -14624,6 +14624,12 @@ Arc Disruptor 3
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
 Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_ARC_DISRUPTOR_3_UPGRADED_DAMAGE]].
 
+SHP_WEAPON_ARC_DISRUPTOR_4
+Arc Disruptor 4
+
+SHP_WEAPON_ARC_DISRUPTOR_4_DESC
+Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part gets [[value SHP_WEAPON_ARC_DISRUPTOR_4_UPGRADE_SHOTS]] extra shots.
+
 SHP_ION_CANNON
 Ion Cannon
 

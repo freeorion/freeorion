@@ -424,7 +424,7 @@ WEAPON_ROF_UPGRADE_DICT = {
     "SR_WEAPON_2_1": (),
     "SR_WEAPON_3_1": (),
     "SR_WEAPON_4_1": (),
-    "SR_ARC_DISRUPTOR": (),
+    "SR_ARC_DISRUPTOR": (("SHP_WEAPON_ARC_DISRUPTOR_4", 1),),
     SR_FLUX_LANCE: (),
     "SR_SPINAL_ANTIMATTER": (),
     "SR_GRAV_PULSE": (),
