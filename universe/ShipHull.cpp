@@ -37,7 +37,7 @@ namespace {
                           RangedValidator<double>(0.1, 60.0));
         rules.Add<double>(UserStringNop("RULE_FIGHTER_DAMAGE_FACTOR"),
                           UserStringNop("RULE_FIGHTER_DAMAGE_FACTOR_DESC"),
-                          GameRuleCategories::GameRuleCategory::BALANCE, 6.0, true,
+                          GameRuleCategories::GameRuleCategory::BALANCE, 4.0, true,
                           GameRuleRanks::RULE_FIGHTER_DAMAGE_FACTOR_RANK,
                           RangedValidator<double>(0.1, 60.0));
     }
