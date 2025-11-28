@@ -1441,15 +1441,12 @@ std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int 
 
 std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned int pts) const
 {
-    std::shared_ptr<Font> retval;
-    if (font->FontName() == StyleFactory::DefaultFontName()) {
-        retval = GetStyleFactory().DefaultFont(pts);
+    if (!font || font->FontName() == StyleFactory::DefaultFontName()) {
+        return GetStyleFactory().DefaultFont(pts);
     } else {
-        retval = GetFont(font->FontName(), font->PointSize(),
-                         font->UnicodeCharsets().begin(),
-                         font->UnicodeCharsets().end());
+        const auto& fcs = font->UnicodeCharsets();
+        return GetFont(font->FontName(), font->PointSize(), fcs.begin(), fcs.end());
     }
-    return retval;
 }
 
 void GUI::FreeFont(std::string_view font_filename, unsigned int pts)
