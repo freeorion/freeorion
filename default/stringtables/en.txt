@@ -17,6 +17,25 @@ English
 # یای مجهو
 
 
+SITREP_SR_ARC_SYPHON_DEBUG
+Bookkeep Syphoner: %shipdesign% %ship% (%rawtext:ship%)  Syphoned: %rawtext:syphoned% Fleet: %fleet%
+#(current special capacity: %rawtext:specialcapacity%
+
+SITREP_SR_ARC_SYPHON_DEBUG_LABEL
+Debug Info Arc Syphon Step
+
+SITREP_SR_ARC_SYPHON_BOOST
+Extra Shots: %rawtext:upgrade%  Syphoner:  %shipdesign% %ship% Charge: %rawtext:charge%  Fleet: %fleet% has %rawtext:count% syphoners
+
+SITREP_SR_ARC_SYPHON_BOOST_LABEL
+Syphoners Get Extra Shots from Last Turn Charge
+
+SITREP_SR_ARC_SYPHON_NULLIFY
+%rawtext:pre%Arc Disruptor got syphoned on %shipdesign% %ship% Fleet: %fleet%  cur2nd: %rawtext:currentSecondaryStat% curMax2nd: %rawtext:currentMaxSecondaryStat%  ini2nd: %rawtext:initialSecondaryStat%  iniMax2nd: %rawtext:initialMaxSecondaryStat%
+
+SITREP_SR_ARC_SYPHON_NULLIFY_LABEL
+Arc Syphon nullifies Arc Disruptor
+
 ##
 ## Common phrases
 ##
@@ -16182,6 +16201,18 @@ Charged polaron capacitors generate a molecular disruption flux wave that arcs t
 Upgrading the weapon technology will increase the shot damage.
 
 The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage. The Arc Disruptor has [[value SR_ARC_DISRUPTOR_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_ARC_DISRUPTOR_2]] increases this by [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADE_DAMAGE]].'''
+
+SR_ARC_SYPHON
+Arc Syphon
+
+SR_ARC_SYPHON_DESC
+'''The Arc Syphon, a close combat range multi-shot ship weapon which transforms [[shippart SR_ARC_DISRUPTOR]] shots to be more effective against shielded targets.
+
+The syphon collects and concentrates the molecular disruption flux waves of [[shippart SR_ARC_DISRUPTOR]]s. Doubling the shot damage of arc disruptors shots, the concentrated disruption flux is prone to being deflected around ship shields.
+
+Upgrading the arc disruptor weapon technology will strongly increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage. The Arc Syphon has [[value SR_ARC_SYPHON_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_ARC_DISRUPTOR_2]] increases this by [[value SHP_WEAPON_ARC_DISRUPTOR_2_SYPHON_UPGRADE_DAMAGE]].'''
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon

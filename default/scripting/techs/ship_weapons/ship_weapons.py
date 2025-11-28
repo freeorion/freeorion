@@ -70,8 +70,10 @@ def WEAPON_BASE_EFFECTS(part_name: str):
 # @3@ unscaled_upgrade gets added to max capacity after scaling it with SHIP_WEAPON_DAMAGE_FACTOR
 # @4@ upgraded_damage_override if given overrides the total sum over the researched techs shown in the upgrade info sitrep
 def WEAPON_UPGRADE_CAPACITY_EFFECTS(
-    tech_name: str, part_name: str, unscaled_upgrade: int, upgraded_damage_override: int = -1
+    tech_name: str, part_name: str, unscaled_upgrade: int, upgraded_damage_override: int = -1, stringtable_prefix = None
 ):
+    if stringtable_prefix is None:
+        stringtable_prefix = tech_name
     # the following recursive lookup works, but is not acceptable because of delays. as long as the parser is sequential, the parallel waiting feature is kind of a bug
     # previous_upgrade_effect = PartCapacity(name=part_name) if (tech_name[-1] == "2") else NamedRealLookup(name = tech_name[0:-1] + "2_UPGRADED_DAMAGE")  # + str(int(tech_name[-1]) - 1))
     upgraded_damage = (
@@ -97,10 +99,10 @@ def WEAPON_UPGRADE_CAPACITY_EFFECTS(
                     "tech": CurrentContent,
                     # str(CurrentContent) -> <ValueRefString object at 0x...>
                     "dam": NamedReal(
-                        name=tech_name + "_UPGRADE_DAMAGE", value=unscaled_upgrade * SHIP_WEAPON_DAMAGE_FACTOR
+                        name=stringtable_prefix +  "_UPGRADE_DAMAGE", value=unscaled_upgrade * SHIP_WEAPON_DAMAGE_FACTOR
                     ),
                     "sum": NamedReal(
-                        name=tech_name + "_UPGRADED_DAMAGE",
+                        name=stringtable_prefix + "_UPGRADED_DAMAGE",
                         value=PartCapacity(name=part_name) + (SHIP_WEAPON_DAMAGE_FACTOR * upgraded_damage),
                     ),
                 },

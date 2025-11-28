@@ -1,0 +1,8 @@
+Special
+    name = "SR_ARC_SYPHON_CHARGE_SPECIAL"
+    description = "SR_ARC_SYPHON_CHARGE_SPECIAL_DESC"
+    spawnrate = 0.0
+    // NB: the associated effectsgroups are in the SR_ARC_SYPHON part
+    graphic = "icons/ship_parts/pulse-laser.png"
+
+#include "/scripting/macros/priorities.macros"
