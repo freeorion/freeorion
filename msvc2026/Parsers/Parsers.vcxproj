@@ -275,6 +275,7 @@
     </ClCompile>
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -325,6 +326,7 @@
     <ClInclude Include="..\..\parse\EffectPythonParser.h" />
     <ClInclude Include="..\..\parse\EnumPythonParser.h" />
     <ClInclude Include="..\..\parse\SourcePythonParser.h" />
+    <ClInclude Include="..\..\parse\ValueRefsPythonModuleParser.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
