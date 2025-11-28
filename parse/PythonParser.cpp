@@ -470,9 +470,8 @@ void PythonParser::UnloadModule(py::object module) const {
     py::import("sys").attr("modules").attr("pop")(std::string{"focs."} + module_name);
 }
 
-void PythonParser::LoadValueRefsModule() const {
-    LoadModule(&PyInit__value_refs);
-}
+void PythonParser::LoadValueRefsModule() const
+{ (void)LoadModule(&PyInit__value_refs); } // marked [[nodiscard]] but result not needed in this case
 
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     auto module_path(m_scripting_dir);
