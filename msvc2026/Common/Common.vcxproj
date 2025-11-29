@@ -173,14 +173,14 @@
     </None>
     <CustomBuild Include="..\..\util\Version.cpp.in">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python3.10.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2022 Win32"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(SolutionDir)..\python3.10.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2022 x64"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(SolutionDir)..\python3.10.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2026 Win32"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(SolutionDir)..\python3.10.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2026 x64"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\.git\index;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\.git\index;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python3.5.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2019 Debug"</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(SolutionDir)..\python3.5.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2019 Debug"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(SolutionDir)..\python3.10.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2026 Win32 Debug"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(SolutionDir)..\python3.10.exe" "$(SolutionDir)..\cmake\make_versioncpp.py" "$(SolutionDir).." "MSVC 2026 x64 Debug"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\util\Version.cpp;%(Outputs)</Outputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\.git\index;%(AdditionalInputs)</AdditionalInputs>
