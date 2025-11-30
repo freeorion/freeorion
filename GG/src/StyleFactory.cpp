@@ -81,7 +81,7 @@ std::shared_ptr<Slider<int>> StyleFactory::NewIntSlider(
 { return Wnd::Create<Slider<int>>(min, max, orientation, color, tab_width, line_width, INTERACTIVE); }
 
 std::shared_ptr<TextControl> StyleFactory::NewTextControl(
-    std::string str, const std::shared_ptr<Font>& font,
+    std::string str, const std::shared_ptr<const Font>& font,
     Clr color, Flags<TextFormat> format) const
 { return Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font, color, format, NO_WND_FLAGS); }
 

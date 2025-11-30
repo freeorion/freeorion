@@ -49,11 +49,10 @@ void BrowseInfoWnd::Update(std::size_t mode, const Wnd* target)
 ////////////////////////////////////////////////
 // GG::TextBoxBrowseInfoWnd
 ////////////////////////////////////////////////
-TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color,
+TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const std::shared_ptr<const Font>& font, Clr color,
                                            Clr border_color, Clr text_color, Flags<TextFormat> format,
                                            unsigned int border_width, unsigned int text_margin) :
     BrowseInfoWnd(X0, Y0, w, Y(100)),
-    m_text_from_target(true),
     m_font(font),
     m_color(color),
     m_border_color(border_color),
@@ -154,7 +153,7 @@ void TextBoxBrowseInfoWnd::Render()
 void TextBoxBrowseInfoWnd::SetTextFromTarget(bool b)
 { m_text_from_target = b; }
 
-void TextBoxBrowseInfoWnd::SetFont(std::shared_ptr<Font> font)
+void TextBoxBrowseInfoWnd::SetFont(std::shared_ptr<const Font> font)
 { m_font = std::move(font); }
 
 void TextBoxBrowseInfoWnd::SetColor(Clr color)

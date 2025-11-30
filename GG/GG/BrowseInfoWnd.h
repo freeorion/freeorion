@@ -83,7 +83,7 @@ private:
 class GG_API TextBoxBrowseInfoWnd : public BrowseInfoWnd
 {
 public:
-    TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
+    TextBoxBrowseInfoWnd(X w, const std::shared_ptr<const Font>& font, Clr color, Clr border_color, Clr text_color,
                          Flags<TextFormat> format = FORMAT_LEFT | FORMAT_WORDBREAK,
                          unsigned int border_width = 2, unsigned int text_margin = 4);
     void CompleteConstruction() override;
@@ -109,9 +109,7 @@ public:
 
     void SetTextFromTarget(bool b);                    ///< sets the text display mode to static (\a b == true) or dynamic (read from the target Wnd, \a b == false)
 
-    /** Sets the Font used to display text. */
-    void SetFont(std::shared_ptr<Font> font);
-
+    void SetFont(std::shared_ptr<const Font> font);    ///< sets the Font used to display text
     void SetColor(Clr color);                          ///< sets the color used to render the text box
     void SetBorderColor(Clr border_color);             ///< sets the color used to render the text box border
     void SetTextColor(Clr text_color);                 ///< sets the color used to render the text
@@ -124,14 +122,14 @@ private:
     void UpdateImpl(std::size_t mode, const Wnd* target) override;
 
     GG::GL2DVertexBuffer            m_buffer;
-    bool                            m_text_from_target;
-    std::shared_ptr<Font>           m_font;
+    std::shared_ptr<const Font>     m_font;
     Clr                             m_color;
     Clr                             m_border_color;
     unsigned int                    m_border_width;
     X                               m_preferred_width;
     std::shared_ptr<TextControl>    m_text_control;
     unsigned int                    m_text_margin;
+    bool                            m_text_from_target = true;
 };
 
 }
