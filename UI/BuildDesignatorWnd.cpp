@@ -1050,7 +1050,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
     m_buildable_items->Clear(); // the list of items to be populated
 
-    auto default_font = app.GetUI().GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
     timer.EnterSection("fixed projects");
