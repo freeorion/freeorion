@@ -114,7 +114,7 @@ public:
 
     /** Returns a new GG TextControl. */
     virtual std::shared_ptr<TextControl> NewTextControl(
-        std::string str, const std::shared_ptr<Font>& font,
+        std::string str, const std::shared_ptr<const Font>& font,
         Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE) const;
 
     /** Returns a new ListBox, to be used in a DropDownList. */
