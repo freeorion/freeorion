@@ -325,7 +325,7 @@ public:
     void CompleteConstruction() override;
 
     const GG::Font::LineVec& GetLineData() const noexcept override { return CUIMultiEdit::GetLineData(); }
-    const std::shared_ptr<GG::Font>& GetFont() const noexcept override { return CUIMultiEdit::GetFont(); }
+    const std::shared_ptr<const GG::Font>& GetFont() const noexcept override { return CUIMultiEdit::GetFont(); }
 
     GG::Pt TextUpperLeft() const noexcept override;
     GG::Pt TextLowerRight() const noexcept override;

@@ -42,8 +42,8 @@ protected:
     void MouseHere_(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys);
     void MouseLeave_();
 
-    virtual const GG::Font::LineVec&         GetLineData() const noexcept = 0;
-    virtual const std::shared_ptr<GG::Font>& GetFont() const noexcept = 0;
+    virtual const GG::Font::LineVec& GetLineData() const noexcept = 0;
+    virtual const std::shared_ptr<const GG::Font>& GetFont() const noexcept = 0;
 
     virtual GG::Pt              TextUpperLeft() const = 0;
     virtual GG::Pt              TextLowerRight() const = 0;
@@ -113,7 +113,7 @@ public:
     GG::Pt TextLowerRight() const override;
 
     const GG::Font::LineVec& GetLineData() const noexcept override { return GG::TextControl::GetLineData(); }
-    const std::shared_ptr<GG::Font>& GetFont() const noexcept override { return GG::TextControl::GetFont(); }
+    const std::shared_ptr<const GG::Font>& GetFont() const noexcept override { return GG::TextControl::GetFont(); }
 
     /** Returns text displayed before link formatting is added. */
     const std::string& RawText() const noexcept override { return m_raw_text; }

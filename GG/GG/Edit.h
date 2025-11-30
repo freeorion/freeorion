@@ -54,7 +54,7 @@ public:
     typedef boost::signals2::signal<void (const std::string&)> FocusUpdateSignalType;
 
     /** Ctor. Height is determined from the font and point size used. */
-    Edit(std::string str, std::shared_ptr<Font> font, Clr color,
+    Edit(std::string str, std::shared_ptr<const Font> font, Clr color,
          Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 
     Pt MinUsableSize() const noexcept override;
