@@ -881,16 +881,16 @@ protected:
     Font() = default;
 
 private:
-    FT_Error          GetFace(FT_Face& face);
-    FT_Error          GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
-    void              CheckFace(FT_Face font, FT_Error error);
-    void              Init(FT_Face& font);
+    FT_Error        GetFace(FT_Face& face);
+    static FT_Error GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
+    void            CheckFace(FT_Face font, FT_Error error);
+    void            Init(FT_Face& font);
 
-    bool              GenerateGlyph(FT_Face font, uint32_t ch);
+    static bool     GenerateGlyph(FT_Face font, uint32_t ch);
 
-    bool              IsDefaultFont() const noexcept;
+    bool            IsDefaultFont() const noexcept;
 
-    static std::shared_ptr<Font> GetDefaultFont(uint16_t pts);
+    static std::shared_ptr<const Font> GetDefaultFont(uint16_t pts);
 
     std::string                 m_font_filename;
     uint16_t                    m_pt_sz = 0u;

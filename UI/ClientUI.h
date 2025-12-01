@@ -130,18 +130,18 @@ public:
     /** Returns the default font in the specified point size. Uses "ui.font.path"
       * option setting as the font filename, and provides Unicode character sets
       * based on the contents of the stringtable in use. */
-    std::shared_ptr<GG::Font> GetFont(int pts = Pts()) const;
+    std::shared_ptr<const GG::Font> GetFont(int pts = Pts()) const;
 
     /** Returns the default font in the specified point size.  Uses
       * "ui.font.bold.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use.
       * */
-    std::shared_ptr<GG::Font> GetBoldFont(int pts = Pts()) const;
+    std::shared_ptr<const GG::Font> GetBoldFont(int pts = Pts()) const;
 
     /** Returns the default font in the specified point size.  Uses
       * "ui.font.title.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use. */
-    std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts()) const;
+    std::shared_ptr<const GG::Font> GetTitleFont(int pts = TitlePts()) const;
 
     /** Returns formatted POSIX UTC-time in local timezone. */
     static std::string FormatTimestamp(boost::posix_time::ptime timestamp);

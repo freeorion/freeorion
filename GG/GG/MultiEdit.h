@@ -46,7 +46,7 @@ class Scroll;
 class GG_API MultiEdit : public Edit
 {
 public:
-    MultiEdit(std::string str, const std::shared_ptr<Font>& font,
+    MultiEdit(std::string str, const std::shared_ptr<const Font>& font,
               Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP,
               Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO);
 

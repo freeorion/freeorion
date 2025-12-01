@@ -30,7 +30,7 @@
 
 using namespace GG;
 
-std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts) const
+std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts)) {
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>());
@@ -41,9 +41,9 @@ std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts) const
     }
 }
 
-std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
-                                                const UnicodeCharset* first,
-                                                const UnicodeCharset* last) const
+std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts,
+                                                      const UnicodeCharset* first,
+                                                      const UnicodeCharset* last) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts, first, last)) {
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>(), first, last);
@@ -54,7 +54,7 @@ std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
     }
 }
 
-std::shared_ptr<Button> StyleFactory::NewButton(std::string str, const std::shared_ptr<Font>& font,
+std::shared_ptr<Button> StyleFactory::NewButton(std::string str, const std::shared_ptr<const Font>& font,
                                                 Clr color, Clr text_color,
                                                 Flags<WndFlag> flags) const
 { return Wnd::Create<Button>(std::move(str), font, color, text_color, flags); }
@@ -66,7 +66,7 @@ std::shared_ptr<DropDownList> StyleFactory::NewDropDownList(std::size_t num_show
 { return Wnd::Create<DropDownList>(num_shown_elements, color); }
 
 std::shared_ptr<Edit> StyleFactory::NewEdit(
-    std::string str, const std::shared_ptr<Font>& font,
+    std::string str, const std::shared_ptr<const Font>& font,
     Clr color, Clr text_color, Clr interior) const
 { return Wnd::Create<Edit>(std::move(str), font, color, text_color, interior); }
 
@@ -85,7 +85,7 @@ std::shared_ptr<TextControl> StyleFactory::NewTextControl(
     Clr color, Flags<TextFormat> format) const
 { return Wnd::Create<TextControl>(X0, Y0, X1, Y1, std::move(str), font, color, format, NO_WND_FLAGS); }
 
-std::shared_ptr<TabBar> StyleFactory::NewTabBar(std::shared_ptr<Font> font, Clr color, Clr text_color) const
+std::shared_ptr<TabBar> StyleFactory::NewTabBar(std::shared_ptr<const Font> font, Clr color, Clr text_color) const
 { return Wnd::Create<TabBar>(std::move(font), color, text_color, INTERACTIVE); }
 
 std::shared_ptr<ListBox> StyleFactory::NewDropDownListListBox(Clr color, Clr interior) const
@@ -134,19 +134,19 @@ std::shared_ptr<Button> StyleFactory::NewVSliderTabButton(Clr color) const
 std::shared_ptr<Button> StyleFactory::NewHSliderTabButton(Clr color) const
 { return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE); }
 
-std::shared_ptr<Button> StyleFactory::NewSpinIncrButton(const std::shared_ptr<Font>& font, Clr color) const
+std::shared_ptr<Button> StyleFactory::NewSpinIncrButton(const std::shared_ptr<const Font>& font, Clr color) const
 { return NewButton("+", font, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-std::shared_ptr<Button> StyleFactory::NewSpinDecrButton(const std::shared_ptr<Font>& font, Clr color) const
+std::shared_ptr<Button> StyleFactory::NewSpinDecrButton(const std::shared_ptr<const Font>& font, Clr color) const
 { return NewButton("-", font, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 std::shared_ptr<Edit> StyleFactory::NewSpinEdit(
-    std::string str, const std::shared_ptr<Font>& font,
+    std::string str, const std::shared_ptr<const Font>& font,
     Clr color, Clr text_color, Clr interior) const
 { return NewEdit(std::move(str), font, color, text_color, interior); }
 
 std::shared_ptr<StateButton> StyleFactory::NewTabBarTab(
-    std::string str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
+    std::string str, const std::shared_ptr<const Font>& font, Flags<TextFormat> format,
     Clr color, Clr text_color) const
 {
     auto retval = Wnd::Create<StateButton>(
@@ -156,15 +156,15 @@ std::shared_ptr<StateButton> StyleFactory::NewTabBarTab(
 }
 
 std::shared_ptr<Button> StyleFactory::NewTabBarLeftButton(
-    const std::shared_ptr<Font>& font, Clr color, Clr text_color) const
+    const std::shared_ptr<const Font>& font, Clr color, Clr text_color) const
 { return NewButton("<", font, color, text_color, INTERACTIVE); }
 
 std::shared_ptr<Button> StyleFactory::NewTabBarRightButton(
-    const std::shared_ptr<Font>& font, Clr color, Clr text_color) const
+    const std::shared_ptr<const Font>& font, Clr color, Clr text_color) const
 { return NewButton(">", font, color, text_color, INTERACTIVE); }
 
 std::shared_ptr<ThreeButtonDlg> StyleFactory::NewThreeButtonDlg(
-    X w, Y h, std::string msg, const std::shared_ptr<Font>& font,
+    X w, Y h, std::string msg, const std::shared_ptr<const Font>& font,
     Clr color, Clr border_color, Clr button_color, Clr text_color,
     int buttons, std::string zero, std::string one, std::string two) const
 {

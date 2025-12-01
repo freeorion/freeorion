@@ -96,7 +96,7 @@ namespace {
     constexpr int CUIBUTTON_ANGLE_OFFSET = 5;
 }
 
-CUIButton::CUIButton(std::string str, std::shared_ptr<GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr) :
+CUIButton::CUIButton(std::string str, std::shared_ptr<const GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr) :
     Button(std::move(str), std::move(font), ctrl_clr, text_clr, GG::INTERACTIVE)
 {
     SetName("CUIButton " + this->m_label->Text());
@@ -614,7 +614,7 @@ void CUISpin<double>::SetEditTextFromValue()
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color) :
+CUITabBar::CUITabBar(std::shared_ptr<const GG::Font> font, GG::Clr color, GG::Clr text_color) :
     GG::TabBar(std::move(font), color, text_color)
 { SetName("CUITabBar"); }
 
