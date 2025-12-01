@@ -1436,7 +1436,7 @@ std::shared_ptr<const Font> GUI::GetFont(std::string_view font_filename, unsigne
 { return GetFontManager().GetFont(font_filename, pts); }
 
 std::shared_ptr<const Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
-                                   const std::vector<uint8_t>& file_contents)
+                                         const std::vector<uint8_t>& file_contents)
 { return GetFontManager().GetFont(font_filename, pts, file_contents); }
 
 std::shared_ptr<const Font> GUI::GetFont(const std::shared_ptr<const Font>& font, unsigned int pts) const
