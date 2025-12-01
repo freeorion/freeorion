@@ -1727,8 +1727,8 @@ void ColorSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void ColorSelector::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     const auto& app = GetApp();
-    GG::X x = std::min(pt.x, app.AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
-    GG::Y y = std::min(pt.y, app.AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
+    GG::X x = std::min(pt.x, app.AppWidth() - GG::ColorDlg::DEFAULT_WIDTH);
+    GG::Y y = std::min(pt.y, app.AppHeight() - GG::ColorDlg::DEFAULT_HEIGHT);
     auto dlg = GG::Wnd::Create<GG::ColorDlg>(x, y, Color(), app.GetUI().GetFont(),
                                              ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(),
                                              ClientUI::TextColor());
