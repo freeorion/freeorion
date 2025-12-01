@@ -16,6 +16,7 @@
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
+#include <array>
 
 using namespace GG;
 
@@ -351,7 +352,10 @@ namespace {
     constexpr std::size_t COLOR_BUTTON_ROWS = 4;
     constexpr std::size_t COLOR_BUTTON_COLS = 5;
 
-    std::vector<Clr> custom_colors = {
+#if defined(__cpp_constinit)
+    constinit
+#endif
+    std::array<Clr, COLOR_BUTTON_ROWS*COLOR_BUTTON_COLS> custom_colors = {
         GG::CLR_WHITE,      GG::CLR_LIGHT_GRAY, GG::CLR_GRAY,       GG::CLR_DARK_GRAY,  GG::CLR_BLACK,
         GG::CLR_PINK,       GG::CLR_RED,        GG::CLR_DARK_RED,   GG::CLR_MAGENTA,    GG::CLR_PURPLE,
         GG::CLR_BLUE,       GG::CLR_DARK_BLUE,  GG::CLR_TEAL,       GG::CLR_CYAN,       GG::CLR_GREEN,
