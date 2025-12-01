@@ -57,7 +57,7 @@ public:
 /** a FreeOrion Button control */
 class CUIButton : public GG::Button {
 public:
-    CUIButton(std::string str, std::shared_ptr<GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr);
+    CUIButton(std::string str, std::shared_ptr<const GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr);
     explicit CUIButton(std::string str);
     CUIButton(std::string str, const ClientUI& ui);
     CUIButton(GG::SubTexture unpressed, GG::SubTexture pressed, GG::SubTexture rollover);
@@ -192,7 +192,7 @@ public:
 /** Tab bar with buttons for selecting tabbed windows. */
 class CUITabBar final : public GG::TabBar {
 public:
-    CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color);
+    CUITabBar(std::shared_ptr<const GG::Font> font, GG::Clr color, GG::Clr text_color);
 
 private:
     void DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) override;

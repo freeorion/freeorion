@@ -358,7 +358,7 @@ namespace {
         GG::CLR_DARK_GREEN, GG::CLR_OLIVE,      GG::CLR_YELLOW,     GG::CLR_ORANGE,     GG::CLR_GRAY};
 }
 
-ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
+ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<const Font>& font,
                    Clr dialog_color, Clr border_color, Clr text_color) :
     Wnd(x, y, X(315), Y(300), INTERACTIVE | DRAGABLE | MODAL),
     m_original_color(original_color),

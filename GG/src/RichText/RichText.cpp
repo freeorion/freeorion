@@ -137,7 +137,7 @@ auto ExtractParameters(std::string_view params_string)
  */
 class GG::RichTextPrivate {
 public:
-    RichTextPrivate(RichText& q, const std::string& content, std::shared_ptr<Font> font,
+    RichTextPrivate(RichText& q, const std::string& content, std::shared_ptr<const Font> font,
                     Clr color, Flags<TextFormat> format = FORMAT_NONE);
 
     const auto BlockCount() noexcept { return m_blocks.size(); }
@@ -173,9 +173,9 @@ private:
     void DoLayout();
 
     RichText&                   m_owner;                    //!< The public control.
-    std::shared_ptr<Font>       m_font;                     //!< The font to use for text.
+    std::shared_ptr<const Font> m_font;                     //!< The font to use for text.
     RichText::BlockFactoryMap   m_block_factory_map;        //!< A map that tells us how to generate block controls from tags.
-    std::vector<std::shared_ptr<BlockControl>>  m_blocks;   //!< The blocks generated from our content.
+    std::vector<std::shared_ptr<BlockControl>> m_blocks;    //!< The blocks generated from our content.
     int                         m_padding = 0;
     Clr                         m_color;                    //! < The color to use for text.
     Flags<TextFormat>           m_format;                   //!< Text format.
@@ -184,7 +184,7 @@ private:
 };
 
 RichTextPrivate::RichTextPrivate(RichText& q, const std::string& content,
-                                 std::shared_ptr<Font> font,
+                                 std::shared_ptr<const Font> font,
                                  Clr color, Flags<TextFormat> format) :
     m_owner(q),
     m_font(std::move(font)),
@@ -302,7 +302,7 @@ void RichTextPrivate::DoLayout()
 /// RichText public interface //
 ///////////////////////////////
 RichText::RichText(X x, Y y, X w, Y h, const std::string& str,
-                   std::shared_ptr<Font> font, Clr color,
+                   std::shared_ptr<const Font> font, Clr color,
                    Flags<TextFormat> format, Flags<WndFlag> flags) :
     Control(x, y, w, h, flags),
     m_self(std::make_unique<RichTextPrivate>(*this, str, std::move(font), color, format))

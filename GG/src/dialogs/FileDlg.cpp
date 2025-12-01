@@ -154,7 +154,7 @@ fs::path FileDlg::s_working_dir = fs::current_path();
 
 
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-                 const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color) :
+                 const std::shared_ptr<const Font>& font, Clr color, Clr border_color, Clr text_color) :
     Wnd((GUI::GetGUI()->AppWidth() - DEFAULT_WIDTH) / 2,
         (GUI::GetGUI()->AppHeight() - DEFAULT_HEIGHT) / 2,
         DEFAULT_WIDTH, DEFAULT_HEIGHT, INTERACTIVE | DRAGABLE | MODAL),

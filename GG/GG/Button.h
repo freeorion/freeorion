@@ -46,7 +46,7 @@ public:
     /** Emitted when the button is clicked by the user */
     typedef boost::signals2::signal<void ()> ClickedSignalType;
 
-    Button(std::string str, std::shared_ptr<Font> font, Clr color,
+    Button(std::string str, std::shared_ptr<const Font> font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 
@@ -148,7 +148,7 @@ public:
         unchecked status is indicated by the bool parameter */
     typedef boost::signals2::signal<void (bool)> CheckedSignalType;
 
-    StateButton(std::string str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
+    StateButton(std::string str, const std::shared_ptr<const Font>& font, Flags<TextFormat> format,
                 Clr color, std::shared_ptr<StateButtonRepresenter> representer,
                 Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
