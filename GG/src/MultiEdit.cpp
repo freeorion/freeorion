@@ -73,7 +73,7 @@ namespace {
 ////////////////////////////////////////////////
 // GG::MultiEdit
 ////////////////////////////////////////////////
-MultiEdit::MultiEdit(std::string str, const std::shared_ptr<Font>& font, Clr color,
+MultiEdit::MultiEdit(std::string str, const std::shared_ptr<const Font>& font, Clr color,
                      Flags<MultiEditStyle> style, Clr text_color, Clr interior) :
     Edit("", font, color, text_color, interior),
     m_style(style),

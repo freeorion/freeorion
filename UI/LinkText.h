@@ -101,13 +101,13 @@ private:
   * is fine. */
 class LinkText : public GG::TextControl, public TextLinker {
 public:
-    LinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<GG::Font> font,
+    LinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<const GG::Font> font,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK);
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered,
         and no larger.  \see DynamicText::DynamicText() */
-    LinkText(GG::X x, GG::Y y, std::string str, std::shared_ptr<GG::Font> font, GG::Clr color = GG::CLR_BLACK);
+    LinkText(GG::X x, GG::Y y, std::string str, std::shared_ptr<const GG::Font> font, GG::Clr color = GG::CLR_BLACK);
 
     GG::Pt TextUpperLeft() const override;
     GG::Pt TextLowerRight() const override;

@@ -3564,7 +3564,7 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
 bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
-std::shared_ptr<Font> Font::GetDefaultFont(uint16_t pts)
+std::shared_ptr<const Font> Font::GetDefaultFont(uint16_t pts)
 { return GUI::GetGUI()->GetStyleFactory().DefaultFont(pts); }
 
 

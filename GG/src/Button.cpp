@@ -32,7 +32,7 @@ namespace {
 ////////////////////////////////////////////////
 // GG::Button
 ////////////////////////////////////////////////
-Button::Button(std::string str, std::shared_ptr<Font> font, Clr color,
+Button::Button(std::string str, std::shared_ptr<const Font> font, Clr color,
                Clr text_color, Flags<WndFlag> flags) :
     Control(X0, Y0, X1, Y1, flags),
     m_label(Wnd::Create<TextControl>(X0, Y0, X1, Y1, str, font,
@@ -226,7 +226,7 @@ void Button::RenderDefault()
 ////////////////////////////////////////////////
 // GG::StateButton
 ////////////////////////////////////////////////
-StateButton::StateButton(std::string str, const std::shared_ptr<Font>& font,
+StateButton::StateButton(std::string str, const std::shared_ptr<const Font>& font,
                          Flags<TextFormat> format, Clr color,
                          std::shared_ptr<StateButtonRepresenter> representer,
                          Clr text_color) :

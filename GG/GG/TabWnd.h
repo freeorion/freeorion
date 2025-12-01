@@ -90,7 +90,7 @@ public:
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
 
-    TabWnd(X x, Y y, X w, Y h, std::shared_ptr<Font> font, Clr color, Clr text_color = CLR_BLACK);
+    TabWnd(X x, Y y, X w, Y h, std::shared_ptr<const Font> font, Clr color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const override;
@@ -163,7 +163,7 @@ public:
         currently selected). */
     typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
 
-    TabBar(std::shared_ptr<Font> font, Clr color, Clr text_color = CLR_BLACK,
+    TabBar(std::shared_ptr<const Font> font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
     void CompleteConstruction() override;
 
@@ -241,7 +241,7 @@ private:
     std::shared_ptr<RadioButtonGroup>           m_tabs;
     boost::signals2::scoped_connection          m_tabs_connection;
     std::vector<std::shared_ptr<StateButton>>   m_tab_buttons;
-    std::shared_ptr<Font>                       m_font;
+    std::shared_ptr<const Font>                 m_font;
     std::shared_ptr<Button>                     m_left_button;
     boost::signals2::scoped_connection          m_left_button_connection;
     std::shared_ptr<Button>                     m_right_button;

@@ -25,7 +25,7 @@ struct TabChangedEcho
     const std::string m_name;
 };
 
-Y TabHeightFromFont(const std::shared_ptr<Font>& font)
+Y TabHeightFromFont(const std::shared_ptr<const Font>& font)
 { return font ? font->Lineskip() + 10 : Y{10}; }
 
 }
@@ -134,7 +134,7 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 ////////////////////////////////////////////////
 // GG::TabWnd
 ////////////////////////////////////////////////
-TabWnd::TabWnd(X x, Y y, X w, Y h, std::shared_ptr<Font> font, Clr color, Clr text_color) :
+TabWnd::TabWnd(X x, Y y, X w, Y h, std::shared_ptr<const Font> font, Clr color, Clr text_color) :
     Wnd(x, y, w, h, INTERACTIVE),
     m_tab_bar(GetStyleFactory().NewTabBar(std::move(font), color, text_color)),
     m_overlay(Wnd::Create<OverlayWnd>(X0, Y0, X1, Y1))
@@ -229,7 +229,7 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 ////////////////////////////////////////////////
 // GG::TabBar
 ////////////////////////////////////////////////
-TabBar::TabBar(std::shared_ptr<Font> font, Clr color, Clr text_color, Flags<WndFlag> flags) :
+TabBar::TabBar(std::shared_ptr<const Font> font, Clr color, Clr text_color, Flags<WndFlag> flags) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
     m_font(std::move(font)),
     m_left_right_button_layout(Wnd::Create<Layout>(X0, Y0, X1, TabHeightFromFont(m_font), 1, 3)),

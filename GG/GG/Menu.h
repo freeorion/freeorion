@@ -73,7 +73,7 @@ class GG_API PopupMenu : public Wnd
 public:
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    PopupMenu(X x, Y y, std::shared_ptr<Font> font,
+    PopupMenu(X x, Y y, std::shared_ptr<const Font> font,
               Clr text_color = CLR_WHITE, Clr border_color = CLR_BLACK,
               Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
 
@@ -108,7 +108,7 @@ public:
 
 protected:
     /** Returns the font used to render text in the control. */
-    const std::shared_ptr<Font>& GetFont() const;
+    const std::shared_ptr<const Font>& GetFont() const;
 
     const MenuItem&                 MenuData() const;     ///< returns a const reference to the MenuItem that contains all the menu contents
     const std::vector<Rect>&        OpenLevels() const;   ///< returns the bounding rectangles for each open submenu, used to detect clicks in them
@@ -117,7 +117,7 @@ protected:
 
 private:
     /** The font used to render the text in the control. */
-    std::shared_ptr<Font> m_font;
+    std::shared_ptr<const Font> m_font;
 
     Clr               m_border_color;   ///< the color of the menu's border
     Clr               m_int_color;      ///< color painted into the client area of the control

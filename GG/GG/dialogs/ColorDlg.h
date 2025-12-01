@@ -249,7 +249,7 @@ public:
         void Render() override;
     };
 
-    ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
+    ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<const Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
