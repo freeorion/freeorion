@@ -932,7 +932,8 @@ protected:
 
 private:
     FT_Error        GetFace(FT_Face& face);
-    static FT_Error GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
+    static FT_Error GetFace(const uint8_t* file_contents, const std::size_t file_sz, FT_Face& face);
+    static FT_Error GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face) { return GetFace(file_contents.data(), file_contents.size(), face); }
     void            CheckFace(FT_Face font, FT_Error error);
     void            Init(FT_Face& font);
 

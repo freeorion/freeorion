@@ -3339,10 +3339,10 @@ FT_Error Font::GetFace(FT_Face& face)
     return FT_New_Face(GetFreeTypeLibrary(), m_font_filename.c_str(), 0, std::addressof(face));
 }
 
-FT_Error Font::GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face)
+FT_Error Font::GetFace(const uint8_t* file_contents, const std::size_t file_sz, FT_Face& face)
 {
     std::scoped_lock ft_lock{freetype_mutex};
-    return FT_New_Memory_Face(GetFreeTypeLibrary(), file_contents.data(), file_contents.size(), 0, std::addressof(face));
+    return FT_New_Memory_Face(GetFreeTypeLibrary(), file_contents, file_sz, 0, std::addressof(face));
 }
 
 void Font::CheckFace(FT_Face face, FT_Error error)
