@@ -675,23 +675,62 @@ public:
         }
     };
 
+private:
+    struct GG_API FTFaceWrapper
+    {
+        FTFaceWrapper() = default;
+        ~FTFaceWrapper();
+        FT_Face m_face = nullptr;
+    };
+
+public:
     /** Construct a font using only the printable ASCII characters.
         \throw Font::Exception Throws a subclass of Font::Exception if the
         condition specified for the subclass is met. */
-    Font(std::string font_filename, uint16_t pts);
+    Font(std::string font_filename, uint16_t pts) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts)
+    {
+        if (!m_font_filename.empty()) {
+            FTFaceWrapper wrapper;
+            FT_Error error = GetFace(wrapper.m_face);
+            CheckFace(wrapper.m_face, error);
+            Init(wrapper.m_face);
+        }
+    }
 
     /** Construct a font using only the printable ASCII characters,
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
-    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents);
+    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts)
+    {
+        assert(!file_contents.empty());
+        FTFaceWrapper wrapper;
+        FT_Error error = GetFace(file_contents, wrapper.m_face);
+        CheckFace(wrapper.m_face, error);
+        Init(wrapper.m_face);
+    }
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
     template <typename CharSetIter>
-    Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last);
+    Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts),
+        m_charsets(first, last)
+    {
+        if (!m_font_filename.empty()) {
+            FTFaceWrapper wrapper;
+            FT_Error error = GetFace(wrapper.m_face);
+            CheckFace(wrapper.m_face, error);
+            Init(wrapper.m_face);
+        }
+    }
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last), from the in-memory
@@ -700,7 +739,17 @@ public:
         met. */
     template <typename CharSetIter>
     Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents,
-         CharSetIter first, CharSetIter last);
+         CharSetIter first, CharSetIter last) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts),
+        m_charsets(first, last)
+    {
+        assert(!file_contents.empty());
+        FTFaceWrapper wrapper;
+        FT_Error error = GetFace(file_contents, wrapper.m_face);
+        CheckFace(wrapper.m_face, error);
+        Init(wrapper.m_face);
+    }
 
     /** Returns the name of the file from which this font was created. */
     const auto& FontName() const noexcept { return m_font_filename; }
@@ -836,7 +885,8 @@ public:
                            const std::vector<TextElement>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
-    Pt TextExtent(const LineVec& line_data) const noexcept;
+    static Pt TextExtent(const LineVec& line_data, Y lineskip, Y height) noexcept;
+    Pt TextExtent(const LineVec& line_data) const noexcept { return TextExtent(line_data, m_lineskip, m_height); }
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
@@ -1087,44 +1137,6 @@ GG_API FontManager& GetFontManager();
 
 /** Thrown when initialization of the FreeType library fails. */
 GG_EXCEPTION(FailedFTLibraryInit);
-
-namespace detail {
-    struct GG_API FTFaceWrapper
-    {
-        FTFaceWrapper() = default;
-        ~FTFaceWrapper();
-        FT_Face m_face = nullptr;
-    };
-}
-}
-
-
-template <typename CharSetIter>
-GG::Font::Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts),
-    m_charsets(first, last)
-{
-    if (!m_font_filename.empty()) {
-        detail::FTFaceWrapper wrapper;
-        FT_Error error = GetFace(wrapper.m_face);
-        CheckFace(wrapper.m_face, error);
-        Init(wrapper.m_face);
-    }
-}
-
-template <typename CharSetIter>
-GG::Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents,
-               CharSetIter first, CharSetIter last) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts),
-    m_charsets(first, last)
-{
-    assert(!file_contents.empty());
-    detail::FTFaceWrapper wrapper;
-    FT_Error error = GetFace(file_contents, wrapper.m_face);
-    CheckFace(wrapper.m_face, error);
-    Init(wrapper.m_face);
 }
 
 template <typename CharSetIter>
