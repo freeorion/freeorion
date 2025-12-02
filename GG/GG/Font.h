@@ -1067,13 +1067,25 @@ private:
 public:
     /** Returns true iff this manager contains a font with the given filename
         and point size, regardless of charsets. */
-    bool HasFont(std::string_view font_filename, uint16_t pts) const noexcept;
+    bool HasFont(std::string_view font_filename, uint16_t pts) const noexcept
+    { return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
     /** Returns true iff this manager contains a font with the given filename
         and point size, containing the given charsets. */
-    template <typename CharSetIter>
-    bool HasFont(std::string_view font_filename, uint16_t pts,
-                 CharSetIter first, CharSetIter last) const;
+    template <typename CharSets>
+    bool HasFont(std::string_view font_filename, uint16_t pts, CharSets&& charsets) const
+    {
+        const auto it = FontLookup(font_filename, pts);
+        if (it == m_rendered_fonts.end())
+            return false;
+
+        std::vector<UnicodeCharset> requested_charsets(std::forward<CharSets>(charsets));
+        std::sort(requested_charsets.begin(), requested_charsets.end());
+        std::vector<UnicodeCharset> found_charsets(it->second->UnicodeCharsets());
+        std::sort(found_charsets.begin(), found_charsets.end());
+
+        return (requested_charsets == found_charsets);
+    }
 
     /** Returns a shared_ptr to the requested font, supporting all printable
         ASCII characters.  \note May load font if unavailable at time of
@@ -1138,22 +1150,6 @@ GG_API FontManager& GetFontManager();
 
 /** Thrown when initialization of the FreeType library fails. */
 GG_EXCEPTION(FailedFTLibraryInit);
-}
-
-template <typename CharSetIter>
-bool GG::FontManager::HasFont(std::string_view font_filename, uint16_t pts,
-                              CharSetIter first, CharSetIter last) const
-{
-    const auto it = FontLookup(font_filename, pts);
-    if (it == m_rendered_fonts.end())
-        return false;
-
-    std::vector<UnicodeCharset> requested_charsets(first, last);
-    std::sort(requested_charsets.begin(), requested_charsets.end());
-    std::vector<UnicodeCharset> found_charsets(it->second->UnicodeCharsets());
-    std::sort(found_charsets.begin(), found_charsets.end());
-
-    return (requested_charsets == found_charsets);
 }
 
 template <typename CharSetIter>
