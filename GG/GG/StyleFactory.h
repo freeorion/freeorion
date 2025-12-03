@@ -71,13 +71,6 @@ public:
         supporting all printable ASCII characters. */
     virtual std::shared_ptr<const Font> DefaultFont(unsigned int pts = 12) const;
 
-    /** Returns the default font for this style, in the size \a pts,
-        supporting all the characters in the UnicodeCharsets in the range
-        [first, last). */
-    virtual std::shared_ptr<const Font> DefaultFont(unsigned int pts,
-                                                    const UnicodeCharset* first,
-                                                    const UnicodeCharset* last) const;
-
     /** Returns translations for common phrases used in the different
         dialoges provided by GiGi. */
     virtual std::string Translate(const std::string& key) const { return key; }

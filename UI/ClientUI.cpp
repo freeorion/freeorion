@@ -1123,14 +1123,13 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
 }
 
 std::shared_ptr<const GG::Font> ClientUI::GetFont(int pts) const {
-    const auto& rqcs = RequiredCharsets();
     try {
        return m_app.GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), // GetFont not actually a member of m_app (but rather static) but . disambiguates with free function GetFont
-                            pts, rqcs.begin(), rqcs.end());
+                            pts, RequiredCharsets());
     } catch (...) {
         try {
             return m_app.GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
-                                 pts, rqcs.begin(), rqcs.end());
+                                 pts, RequiredCharsets());
         } catch (...) {
              return m_app.GetStyleFactory().DefaultFont(pts);
         }
@@ -1138,14 +1137,13 @@ std::shared_ptr<const GG::Font> ClientUI::GetFont(int pts) const {
 }
 
 std::shared_ptr<const GG::Font> ClientUI::GetBoldFont(int pts) const {
-    const auto& rqcs = RequiredCharsets();
     try {
         return m_app.GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"),
-                             pts, rqcs.begin(), rqcs.end());
+                             pts, RequiredCharsets());
     } catch (...) {
         try {
              return m_app.GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
-                                  pts, rqcs.begin(), rqcs.end());
+                                  pts, RequiredCharsets());
         } catch (...) {
              return m_app.GetStyleFactory().DefaultFont(pts);
         }
@@ -1153,14 +1151,13 @@ std::shared_ptr<const GG::Font> ClientUI::GetBoldFont(int pts) const {
 }
 
 std::shared_ptr<const GG::Font> ClientUI::GetTitleFont(int pts) const {
-    const auto& rqcs = RequiredCharsets();
     try {
         return m_app.GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"),
-                             pts, rqcs.begin(), rqcs.end());
+                             pts, RequiredCharsets());
     } catch (...) {
         try {
             return m_app.GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
-                                 pts, rqcs.begin(), rqcs.end());
+                                 pts, RequiredCharsets());
         } catch (...) {
              return m_app.GetStyleFactory().DefaultFont(pts);
         }
