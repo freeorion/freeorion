@@ -33,7 +33,7 @@ using namespace GG;
 std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts)) {
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>());
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts);
     } else {
         std::vector<uint8_t> bytes;
         VeraTTFBytes(bytes);
@@ -41,22 +41,19 @@ std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
     }
 }
 
-std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts,
-                                                      const UnicodeCharset* first,
-                                                      const UnicodeCharset* last) const
+std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts, const std::vector<UnicodeCharset>& charsets) const
 {
-    if (GetFontManager().HasFont(DefaultFontName(), pts, first, last)) {
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>(), first, last);
+    if (GetFontManager().HasFont(DefaultFontName(), pts, charsets)) {
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, charsets);
     } else {
         std::vector<uint8_t> bytes;
         VeraTTFBytes(bytes);
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes, first, last);
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes, charsets);
     }
 }
 
 std::shared_ptr<Button> StyleFactory::NewButton(std::string str, const std::shared_ptr<const Font>& font,
-                                                Clr color, Clr text_color,
-                                                Flags<WndFlag> flags) const
+                                                Clr color, Clr text_color, Flags<WndFlag> flags) const
 { return Wnd::Create<Button>(std::move(str), font, color, text_color, flags); }
 
 std::shared_ptr<RadioButtonGroup> StyleFactory::NewRadioButtonGroup(Orientation orientation) const

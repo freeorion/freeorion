@@ -3570,23 +3570,6 @@ std::shared_ptr<const Font> Font::GetDefaultFont(uint16_t pts)
 ///////////////////////////////////////
 const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
 
-namespace {
-#if defined(__cpp_lib_constexpr_vector)
-    constexpr std::vector<UnicodeCharset> empty_charsets;
-    constexpr auto empty_it = empty_charsets.end();
-#else
-    const std::vector<UnicodeCharset> empty_charsets;
-    const auto empty_it = empty_charsets.end();
-#endif
-}
-
-std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts)
-{ return GetFont(font_filename, pts, empty_it, empty_it); }
-
-std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts,
-                                           const std::vector<uint8_t>& file_contents)
-{ return GetFont(font_filename, pts, file_contents, empty_it, empty_it); }
-
 void FontManager::FreeFont(std::string_view font_filename, uint16_t pts)
 {
     auto it = FontLookup(font_filename, pts);
