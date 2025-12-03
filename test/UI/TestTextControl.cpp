@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     const std::string message = "Are <i>we</i> Готово yet?"; // That Russian word means "Done", ha.
     const auto charsets = GG::UnicodeCharsetsToRender(message);
 
-    const auto font = GG::GUI::GetGUI()->GetStyleFactory().DefaultFont(12, charsets.data(), charsets.data() + charsets.size());
+    const auto font = GG::GUI::GetGUI()->GetStyleFactory().DefaultFont(12, charsets);
 
     auto quit_dlg = GG::Wnd::Create<GG::ThreeButtonDlg>(GG::X(10), GG::Y(10), message, font, GG::CLR_SHADOW,
                                                         GG::CLR_SHADOW, GG::CLR_SHADOW, GG::CLR_WHITE, 1);
