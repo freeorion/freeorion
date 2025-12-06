@@ -30,26 +30,28 @@
 
 using namespace GG;
 
-std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
-{
-    if (GetFontManager().HasFont(DefaultFontName(), pts)) {
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts);
-    } else {
+namespace {
+    const auto vera_bytes = []() {
         std::vector<uint8_t> bytes;
         VeraTTFBytes(bytes);
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes);
-    }
+        return bytes;
+    }();
+}
+
+std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
+{
+    if (GetFontManager().HasFont(DefaultFontName(), pts))
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts);
+    else
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, vera_bytes);
 }
 
 std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts, const std::vector<UnicodeCharset>& charsets) const
 {
-    if (GetFontManager().HasFont(DefaultFontName(), pts, charsets)) {
+    if (GetFontManager().HasFont(DefaultFontName(), pts, charsets))
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, charsets);
-    } else {
-        std::vector<uint8_t> bytes;
-        VeraTTFBytes(bytes);
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes, charsets);
-    }
+    else
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, vera_bytes, charsets);
 }
 
 std::shared_ptr<Button> StyleFactory::NewButton(std::string str, const std::shared_ptr<const Font>& font,
