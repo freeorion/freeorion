@@ -30,15 +30,20 @@
 
 using namespace GG;
 
-std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
-{
-    if (GetFontManager().HasFont(DefaultFontName(), pts)) {
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>());
-    } else {
+namespace {
+    const auto vera_bytes = []() {
         std::vector<uint8_t> bytes;
         VeraTTFBytes(bytes);
-        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, bytes);
-    }
+        return bytes;
+    }();
+}
+
+std::shared_ptr<const Font> StyleFactory::DefaultFont(unsigned int pts) const
+{
+    if (GetFontManager().HasFont(DefaultFontName(), pts))
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<uint8_t>());
+    else
+        return GUI::GetGUI()->GetFont(DefaultFontName(), pts, vera_bytes);
 }
 
 std::shared_ptr<Button> StyleFactory::NewButton(std::string str, const std::shared_ptr<const Font>& font,

@@ -16087,28 +16087,26 @@ void DecodeBase64(std::vector<uint8_t>& data, std::string_view str) {
     const std::size_t groups = str.length() / 4;
     data.resize(groups * 3);
 
+    const auto set_data = [&data](uint32_t group_value, std::size_t data_posn) {
+        const auto offset = data.size() - data_posn;
+        switch (offset) {
+        default: { data[data_posn + 2] = group_value << 24 >> 24; }
+        case 2:  { data[data_posn + 1] = group_value << 16 >> 24; }
+        case 1:  { data[data_posn + 0] = group_value << 8 >> 24; }
+        case 0: break;
+        };
+    };
+
+
     std::size_t data_posn = 0;
     std::size_t str_posn = 0;
     for (std::size_t i = 0; i < groups - 1; ++i) {
-        const uint32_t group_value = get_group_value(str_posn, str);
-        data[data_posn + 0] = group_value << 8 >> 24;
-        data[data_posn + 1] = group_value << 16 >> 24;
-        data[data_posn + 2] = group_value << 24 >> 24;
+        set_data(get_group_value(str_posn, str), data_posn);
         data_posn += 3;
         str_posn += 4;
     }
 
-    const uint32_t group_value = get_group_value(str_posn, str);
-    if (data.size() - data_posn == 3) {
-        data[data_posn + 0] = group_value << 8 >> 24;
-        data[data_posn + 1] = group_value << 16 >> 24;
-        data[data_posn + 2] = group_value << 24 >> 24;
-    } else if (data.size() - data_posn == 2) {
-        data[data_posn + 0] = group_value << 8 >> 24;
-        data[data_posn + 1] = group_value << 16 >> 24;
-    } else if (data.size() - data_posn == 1) {
-        data[data_posn + 0] = group_value << 8 >> 24;
-    }
+    set_data(get_group_value(str_posn, str), data_posn);
 }
 
 void VeraTTFBytes(std::vector<uint8_t>& result)
