@@ -16062,45 +16062,43 @@ inline constexpr std::string_view VERA_TTF =
     "KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr"
     "KysrKysrKysrKysd";
 
-void DecodeBase64(std::vector<unsigned char>& data, std::string_view str) {
-    static std::vector<unsigned int> table(256, 0);
 
-    if (!table['A']) {
-        for (unsigned char c = 'A'; c <= 'Z'; ++c) {
-            table[c] = c - 'A';
-        }
-        for (unsigned char c = 'a'; c <= 'z'; ++c) {
-            table[c] = 26 + c - 'a';
-        }
-        for (unsigned char c = '0'; c <= '9'; ++c) {
-            table[c] = 52 + c - '0';
-        }
-        table['+'] = 62;
-        table['/'] = 63;
-    }
+void DecodeBase64(std::vector<uint8_t>& data, std::string_view str) {
+    constexpr auto LUT = [](std::string_view::value_type c) noexcept -> uint32_t {
+        if (c >= 'A' && c <= 'Z')
+            return c - 'A';
+        else if (c >= 'a' && c <= 'z')
+            return 26 + c - 'a';
+        else if (c >= '0' && c <= '9')
+            return 52 + c - '0';
+        else if (c == '+')
+            return 62;
+        else if (c == '/')
+            return 63;
+        else
+            return 0;
+    };
 
-    std::size_t groups = str.length() / 4;
+    constexpr auto get_group_value = [](std::size_t str_posn, std::string_view str) -> uint32_t {
+        return (LUT(str[str_posn + 0]) << 18) | (LUT(str[str_posn + 1]) << 12) |
+               (LUT(str[str_posn + 2]) << 6)  | (LUT(str[str_posn + 3]) << 0);
+    };
+
+    const std::size_t groups = str.length() / 4;
     data.resize(groups * 3);
 
     std::size_t data_posn = 0;
     std::size_t str_posn = 0;
     for (std::size_t i = 0; i < groups - 1; ++i) {
-        std::uint32_t group_value =
-              (table[str[str_posn + 0]] << 18)
-            | (table[str[str_posn + 1]] << 12)
-            | (table[str[str_posn + 2]] << 6)
-            | (table[str[str_posn + 3]] << 0);
+        const uint32_t group_value = get_group_value(str_posn, str);
         data[data_posn + 0] = group_value << 8 >> 24;
         data[data_posn + 1] = group_value << 16 >> 24;
         data[data_posn + 2] = group_value << 24 >> 24;
         data_posn += 3;
         str_posn += 4;
     }
-    std::uint32_t group_value =
-          (table[str[str_posn + 0]] << 18)
-        | (table[str[str_posn + 1]] << 12)
-        | (table[str[str_posn + 2]] << 6)
-        | (table[str[str_posn + 3]] << 0);
+
+    const uint32_t group_value = get_group_value(str_posn, str);
     if (data.size() - data_posn == 3) {
         data[data_posn + 0] = group_value << 8 >> 24;
         data[data_posn + 1] = group_value << 16 >> 24;
@@ -16113,7 +16111,7 @@ void DecodeBase64(std::vector<unsigned char>& data, std::string_view str) {
     }
 }
 
-void VeraTTFBytes(std::vector<unsigned char>& result)
+void VeraTTFBytes(std::vector<uint8_t>& result)
 { DecodeBase64(result, VERA_TTF); }
 
 inline constexpr std::string_view DEFAULT_FONT_NAME = "HopefullyUniqueDefaultFontName!!!!!!!!!!!!!!11111eleven";
