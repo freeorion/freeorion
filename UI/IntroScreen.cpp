@@ -64,14 +64,14 @@ private:
     void DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2);
     void OnExit();
 
-    std::string                 m_credits;
-    int                         m_cx, m_cy, m_cw, m_ch, m_co;
-    int                         m_start_time;
-    int                         m_scroll_offset = 0;
-    int                         m_render = true;
-    int                         m_display_list_id = 0;
-    int                         m_credits_height = 0;
-    std::shared_ptr<GG::Font>   m_font;
+    std::string m_credits;
+    int m_cx, m_cy, m_cw, m_ch, m_co;
+    int m_start_time;
+    int m_scroll_offset = 0;
+    bool m_render = true;
+    int m_display_list_id = 0;
+    int m_credits_height = 0;
+    std::shared_ptr<const GG::Font> m_font;
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, int cx, int cy, int cw, int ch, int co) :

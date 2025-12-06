@@ -1432,24 +1432,19 @@ void GUI::EnableModalAcceleratorSignals(bool allow)
 void GUI::SetMouseLRSwapped(bool swapped)
 { m_impl->m_mouse_lr_swap = swapped; }
 
-std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int pts)
+std::shared_ptr<const Font> GUI::GetFont(std::string_view font_filename, unsigned int pts)
 { return GetFontManager().GetFont(font_filename, pts); }
 
-std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
-                                   const std::vector<uint8_t>& file_contents)
+std::shared_ptr<const Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
+                                         const std::vector<uint8_t>& file_contents)
 { return GetFontManager().GetFont(font_filename, pts, file_contents); }
 
-std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned int pts) const
+std::shared_ptr<const Font> GUI::GetFont(const std::shared_ptr<const Font>& font, unsigned int pts) const
 {
-    std::shared_ptr<Font> retval;
-    if (font->FontName() == StyleFactory::DefaultFontName()) {
-        retval = GetStyleFactory().DefaultFont(pts);
-    } else {
-        retval = GetFont(font->FontName(), font->PointSize(),
-                         font->UnicodeCharsets().begin(),
-                         font->UnicodeCharsets().end());
-    }
-    return retval;
+    if (!font || font->FontName() == StyleFactory::DefaultFontName())
+        return GetStyleFactory().DefaultFont(pts);
+    else
+        return GetFontManager().GetFont(font->FontName(), pts, font->UnicodeCharsets());
 }
 
 void GUI::FreeFont(std::string_view font_filename, unsigned int pts)

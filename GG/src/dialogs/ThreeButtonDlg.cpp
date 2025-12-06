@@ -19,7 +19,7 @@
 
 using namespace GG;
 
-ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<Font>& font,
+ThreeButtonDlg::ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<const Font>& font,
                                Clr color, Clr border_color, Clr button_color, Clr text_color,
                                std::size_t buttons, std::string zero, std::string one, std::string two) :
     Wnd((GUI::GetGUI()->AppWidth() - w) / 2, (GUI::GetGUI()->AppHeight() - h) / 2,

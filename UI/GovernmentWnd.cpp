@@ -301,7 +301,7 @@ void PolicyControl::Resize(GG::Pt sz, const int pts) {
     m_background->Resize(sz);
     m_icon->Resize(GG::Pt(sz.x, sz.y * 2/3));
 
-    std::shared_ptr<GG::Font> font = GetApp().GetUI().GetBoldFont(pts);
+    auto font = GetApp().GetUI().GetBoldFont(pts);
 
     m_name_label->SetFont(font);
     m_cost_label->SetFont(std::move(font));

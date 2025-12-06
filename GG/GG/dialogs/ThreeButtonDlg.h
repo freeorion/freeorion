@@ -43,7 +43,7 @@ class GG_API ThreeButtonDlg : public Wnd
 {
 public:
     /** Ctor that automatically centers the dialog in the app's area*/
-    ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<Font>& font, Clr color,
+    ThreeButtonDlg(X w, Y h, std::string msg, const std::shared_ptr<const Font>& font, Clr color,
                    Clr border_color, Clr button_color, Clr text_color, std::size_t buttons,
                    std::string zero = "",  std::string one = "", std::string two = "");
     void CompleteConstruction() override;

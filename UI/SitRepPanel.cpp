@@ -195,7 +195,7 @@ namespace {
     //////////////////////////////////
     class SitRepLinkText final : public LinkText {
     public:
-        SitRepLinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<GG::Font> font,
+        SitRepLinkText(GG::X x, GG::Y y, GG::X w, std::string str, std::shared_ptr<const GG::Font> font,
                        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, w, std::move(str), std::move(font), format, color)
         {}

@@ -42,7 +42,7 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
 
 std::shared_ptr<GG::BlockControl> CUILinkTextBlock::Factory::CreateFromTag(
     const GG::RichText::TAG_PARAMS&, std::string content,
-    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat>) const
+    std::shared_ptr<const GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat>) const
 {
     auto block = GG::Wnd::Create<CUILinkTextBlock>(std::move(content), color, GG::NO_WND_FLAGS);
 
@@ -100,7 +100,7 @@ GG::Pt CUITextBlock::SetMaxWidth(GG::X width) {
 
 std::shared_ptr<GG::BlockControl> CUITextBlock::Factory::CreateFromTag(
     const GG::RichText::TAG_PARAMS&, std::string content,
-    std::shared_ptr<GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat>) const
+    std::shared_ptr<const GG::Font>, GG::Clr color, GG::Flags<GG::TextFormat>) const
 {
     return GG::Wnd::Create<CUITextBlock>(std::move(content), color, GG::NO_WND_FLAGS);
 }

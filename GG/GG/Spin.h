@@ -63,7 +63,7 @@ public:
 
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
-    Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font,
+    Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<const Font>& font,
          Clr color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
@@ -142,9 +142,9 @@ private:
 
 
 template <typename T>
-Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
-              Clr text_color) :
-    Control(X0, Y0, X1, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
+Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<const Font>& font,
+              Clr color, Clr text_color) :
+    Control(X0, Y0, X1, (font ? font->Height() : Y0)+ 2 * PIXEL_MARGIN, INTERACTIVE),
     m_value(value),
     m_step_size(step),
     m_min_value(min),
@@ -154,7 +154,9 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
     const auto& style = GetStyleFactory();
     Control::SetColor(color);
     m_edit = style.NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
-    auto small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
+    const auto* gui = GUI::GetGUI();
+    const int small_pts = static_cast<int>((font ? font->PointSize() : 8u) * 3 / 4);
+    auto small_font = gui->GetFont(font, small_pts);
     m_up_button = style.NewSpinIncrButton(small_font, color);
     m_down_button = style.NewSpinDecrButton(small_font, color);
 

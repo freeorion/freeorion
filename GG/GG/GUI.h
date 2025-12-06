@@ -289,29 +289,29 @@ public:
 
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters. */
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts);
+    std::shared_ptr<const Font> GetFont(std::string_view font_filename, unsigned int pts);
 
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters, from the in-memory contents \a file_contents. */
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
-                                  const std::vector<uint8_t>& file_contents);
+    std::shared_ptr<const Font> GetFont(std::string_view font_filename, unsigned int pts,
+                                        const std::vector<uint8_t>& file_contents);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last). */
-    template <typename CharSetIter>
-    static std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
-                                         CharSetIter first, CharSetIter last);
+    template <typename CharSets, std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
+    std::shared_ptr<const Font> GetFont(std::string_view font_filename, unsigned int pts, CharSets&& charsets)
+    { return GetFontManager().GetFont(font_filename, pts, std::forward<CharSets>(charsets)); }
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last), from the
         in-memory contents \a file_contents. */
-    template <typename CharSetIter>
-    static std::shared_ptr<Font> GetFont(std::string_view font_filename, unsigned int pts,
-                                         const std::vector<uint8_t>& file_contents,
-                                         CharSetIter first, CharSetIter last);
+    template <typename CharSets, std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
+    std::shared_ptr<const Font> GetFont(std::string_view font_filename, unsigned int pts,
+                                        const std::vector<uint8_t>& file_contents, CharSets&& charsets)
+    { return GetFontManager().GetFont(font_filename, pts, file_contents, std::forward<CharSets>(charsets)); }
 
     /** Returns a shared_ptr to existing font \a font in a new size, \a pts. */
-    std::shared_ptr<Font> GetFont(const std::shared_ptr<Font>& font, unsigned int pts) const;
+    std::shared_ptr<const Font> GetFont(const std::shared_ptr<const Font>& font, unsigned int pts) const;
 
     /** Removes the desired font from the managed pool; since shared_ptr's are
         used, the font may be deleted much later. */
@@ -453,17 +453,6 @@ bool GUI::OrCombiner::operator()(InIt first, const InIt last) const
     //    retval |= static_cast<bool>(*first++);
     //return retval;
 }
-
-template <typename CharSetIter>
-std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
-                                   CharSetIter first, CharSetIter last)
-{ return GetFontManager().GetFont(font_filename, pts, first, last); }
-
-template <typename CharSetIter>
-std::shared_ptr<Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
-                                   const std::vector<uint8_t>& file_contents,
-                                   CharSetIter first, CharSetIter last)
-{ return GetFontManager().GetFont(font_filename, pts, file_contents, first, last); }
 
 }
 

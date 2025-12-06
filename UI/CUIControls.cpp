@@ -96,7 +96,7 @@ namespace {
     constexpr int CUIBUTTON_ANGLE_OFFSET = 5;
 }
 
-CUIButton::CUIButton(std::string str, std::shared_ptr<GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr) :
+CUIButton::CUIButton(std::string str, std::shared_ptr<const GG::Font> font, GG::Clr ctrl_clr, GG::Clr text_clr) :
     Button(std::move(str), std::move(font), ctrl_clr, text_clr, GG::INTERACTIVE)
 {
     SetName("CUIButton " + this->m_label->Text());
@@ -614,7 +614,7 @@ void CUISpin<double>::SetEditTextFromValue()
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(std::shared_ptr<GG::Font> font, GG::Clr color, GG::Clr text_color) :
+CUITabBar::CUITabBar(std::shared_ptr<const GG::Font> font, GG::Clr color, GG::Clr text_color) :
     GG::TabBar(std::move(font), color, text_color)
 { SetName("CUITabBar"); }
 
@@ -1727,8 +1727,8 @@ void ColorSelector::SizeMove(GG::Pt ul, GG::Pt lr) {
 
 void ColorSelector::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     const auto& app = GetApp();
-    GG::X x = std::min(pt.x, app.AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
-    GG::Y y = std::min(pt.y, app.AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
+    GG::X x = std::min(pt.x, app.AppWidth() - GG::ColorDlg::DEFAULT_WIDTH);
+    GG::Y y = std::min(pt.y, app.AppHeight() - GG::ColorDlg::DEFAULT_HEIGHT);
     auto dlg = GG::Wnd::Create<GG::ColorDlg>(x, y, Color(), app.GetUI().GetFont(),
                                              ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(),
                                              ClientUI::TextColor());

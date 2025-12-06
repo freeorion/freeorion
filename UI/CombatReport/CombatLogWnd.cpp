@@ -414,7 +414,7 @@ namespace {
 
         LazyScrollerLinkText(
             const GG::Wnd& parent, GG::X x, GG::Y y, std::string str,
-            std::shared_ptr<GG::Font> font, GG::Clr color = GG::CLR_BLACK) :
+            std::shared_ptr<const GG::Font> font, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, UserString("ELLIPSIS"), std::move(font), color),
             m_text(std::make_unique<std::string>(std::move(str)))
         {
