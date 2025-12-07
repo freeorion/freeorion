@@ -17,8 +17,12 @@
 using namespace GG;
 
 namespace {
-    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin) noexcept
-    { return font->Height() + 2 * static_cast<int>(pixel_margin); }
+    Y HeightFromFont(const Font* font) noexcept
+    { return (font ? font->Height() : Y0) + 2 * static_cast<int>(GG::Edit::PIXEL_MARGIN); }
+
+    template <typename F>
+    Y HeightFromFont(const F& font) noexcept
+    { return HeightFromFont(font.get()); }
 
     constexpr auto fmt = FORMAT_LEFT | FORMAT_IGNORETAGS;
 }
@@ -27,8 +31,8 @@ namespace {
 // GG::Edit
 ////////////////////////////////////////////////
 
-Edit::Edit(std::string str, std::shared_ptr<Font> font, Clr color, Clr text_color, Clr interior) :
-    TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), "", font,
+Edit::Edit(std::string str, std::shared_ptr<const Font> font, Clr color, Clr text_color, Clr interior) :
+    TextControl(X0, Y0, X1, HeightFromFont(font), "", font,
                 text_color, fmt, INTERACTIVE | REPEAT_KEY_PRESS),
     m_int_color(interior)
 {
@@ -42,7 +46,7 @@ Edit::Edit(std::string str, std::shared_ptr<Font> font, Clr color, Clr text_colo
 }
 
 Pt Edit::MinUsableSize() const noexcept
-{ return Pt(X(4 * PIXEL_MARGIN), HeightFromFont(GetFont(), PIXEL_MARGIN)); }
+{ return Pt(X(4 * PIXEL_MARGIN), HeightFromFont(GetFont())); }
 
 std::string_view Edit::SelectedText() const
 {
@@ -63,7 +67,9 @@ void Edit::Render()
 
     BeginScissorClipping(Pt(client_ul.x - 1, client_ul.y), client_lr);
 
-    const auto& font = GetFont();
+    const auto* font = GetFont().get();
+    if (!font)
+        return;
     const auto& line_data = GetLineData();
 
     X first_char_offset = FirstCharOffset();

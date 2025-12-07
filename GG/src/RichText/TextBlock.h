@@ -23,7 +23,7 @@ class TextBlock : public GG::BlockControl
 {
 public:
     //! Create a new TextBlock.
-    TextBlock(X x, Y y, X w, std::string str, std::shared_ptr<Font> font, Clr color,
+    TextBlock(X x, Y y, X w, std::string str, std::shared_ptr<const Font> font, Clr color,
               Flags<TextFormat> format, Flags<WndFlag> flags);
 
     void CompleteConstruction() override;

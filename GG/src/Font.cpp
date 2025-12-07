@@ -30,15 +30,15 @@
 
 #define DEBUG_DETERMINELINES 0
 
-namespace GG::detail {
+namespace {
     std::mutex freetype_mutex;
+}
 
-    FTFaceWrapper::~FTFaceWrapper()
-    {
-        std::scoped_lock ft_lock{freetype_mutex};
-        if (m_face)
-            FT_Done_Face(m_face);
-    }
+GG::Font::FTFaceWrapper::~FTFaceWrapper()
+{
+    std::scoped_lock ft_lock{freetype_mutex};
+    if (m_face)
+        FT_Done_Face(m_face);
 }
 
 using namespace GG;
@@ -2156,6 +2156,33 @@ namespace {
 }
 #endif
 
+namespace {
+    CONSTEXPR_FONT GG::Pt GetExtent(const auto& line_data, Y lineskip, Y height) {
+        X x = X0;
+        for (const auto& line : line_data)
+            x = std::max(x, line.Width());
+
+        const auto ld_size = static_cast<int>(line_data.size());
+        const bool is_empty = line_data.empty() || (ld_size == 1 && line_data.front().Empty());
+        Y y = is_empty ? Y0 : ((ld_size - 1) * lineskip + height);
+        return {x, y};
+    };
+
+#if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L) && defined(__cpp_lib_constexpr_vector)
+    constexpr auto test_getting_extent = []() {
+        const auto extent =
+            GetExtent(AssembleLineData(FORMAT_LEFT | FORMAT_TOP, GG::X(99999), 4u,
+                                       TestTextElems(std::string{TEST_TEXT_WITH_TAGS}), dummy_next_fn),
+                      Y{8}, Y{8});
+        return extent;
+    };
+
+    constexpr auto test_extent_x = Value(test_getting_extent().x);
+    constexpr auto test_extent_y = Value(test_getting_extent().y);
+    static_assert(test_extent_x == 120);
+    static_assert(test_extent_y == 16);
+#endif
+}
 
 namespace {
     CONSTEXPR_FONT std::pair<CPSize, CPSize> GlyphAndCPIndicesOfXInLine(const Font::LineData::CharVec& char_data, X x)
@@ -2376,28 +2403,7 @@ namespace {
     Font::RenderCache shared_cache{};
 }
 
-Font::Font(std::string font_filename, uint16_t pts) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts)
-{
-    if (!m_font_filename.empty()) {
-        detail::FTFaceWrapper wrapper;
-        FT_Error error = GetFace(wrapper.m_face);
-        CheckFace(wrapper.m_face, error);
-        Init(wrapper.m_face);
-    }
-}
 
-Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts)
-{
-    assert(!file_contents.empty());
-    detail::FTFaceWrapper wrapper;
-    FT_Error error = GetFace(file_contents, wrapper.m_face);
-    CheckFace(wrapper.m_face, error);
-    Init(wrapper.m_face);
-}
 
 namespace {
     template <typename RenderCacheType>
@@ -3000,17 +3006,8 @@ std::string Font::StripTags(std::string_view text)
     return retval;
 }
 
-Pt Font::TextExtent(const LineVec& line_data) const noexcept
-{
-    X x = X0;
-    for (const LineData& line : line_data)
-        x = std::max(x, line.Width());
-
-    const auto ld_size = static_cast<int>(line_data.size());
-    const bool is_empty = line_data.empty() || (ld_size == 1 && line_data.front().Empty());
-    Y y = is_empty ? Y0 : ((ld_size - 1) * m_lineskip + m_height);
-    return {x, y};
-}
+Pt Font::TextExtent(const LineVec& line_data, Y lineskip, Y height) noexcept
+{ return GetExtent(line_data, lineskip, height); }
 
 void Font::RegisterKnownTags(std::vector<std::string_view> tags)
 { tag_handler.Insert(std::move(tags)); }
@@ -3338,14 +3335,14 @@ StrSize GG::StringIndexOfCodePoint(CPSize index, const Font::LineVec& line_data)
 
 FT_Error Font::GetFace(FT_Face& face)
 {
-    std::scoped_lock ft_lock{detail::freetype_mutex};
+    std::scoped_lock ft_lock{freetype_mutex};
     return FT_New_Face(GetFreeTypeLibrary(), m_font_filename.c_str(), 0, std::addressof(face));
 }
 
-FT_Error Font::GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face)
+FT_Error Font::GetFace(const uint8_t* file_contents, const std::size_t file_sz, FT_Face& face)
 {
-    std::scoped_lock ft_lock{detail::freetype_mutex};
-    return FT_New_Memory_Face(GetFreeTypeLibrary(), file_contents.data(), file_contents.size(), 0, std::addressof(face));
+    std::scoped_lock ft_lock{freetype_mutex};
+    return FT_New_Memory_Face(GetFreeTypeLibrary(), file_contents, file_sz, 0, std::addressof(face));
 }
 
 void Font::CheckFace(FT_Face face, FT_Error error)
@@ -3564,7 +3561,7 @@ bool Font::GenerateGlyph(FT_Face face, uint32_t ch)
 bool Font::IsDefaultFont() const noexcept
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
-std::shared_ptr<Font> Font::GetDefaultFont(uint16_t pts)
+std::shared_ptr<const Font> Font::GetDefaultFont(uint16_t pts)
 { return GUI::GetGUI()->GetStyleFactory().DefaultFont(pts); }
 
 
@@ -3572,26 +3569,6 @@ std::shared_ptr<Font> Font::GetDefaultFont(uint16_t pts)
 // class GG::FontManager
 ///////////////////////////////////////
 const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
-
-bool FontManager::HasFont(std::string_view font_filename, uint16_t pts) const noexcept
-{ return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
-
-namespace {
-#if defined(__cpp_lib_constexpr_vector)
-    constexpr std::vector<UnicodeCharset> empty_charsets;
-    constexpr auto empty_it = empty_charsets.end();
-#else
-    const std::vector<UnicodeCharset> empty_charsets;
-    const auto empty_it = empty_charsets.end();
-#endif
-}
-
-std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts)
-{ return GetFont(font_filename, pts, empty_it, empty_it); }
-
-std::shared_ptr<Font> FontManager::GetFont(std::string_view font_filename, uint16_t pts,
-                                           const std::vector<uint8_t>& file_contents)
-{ return GetFont(font_filename, pts, file_contents, empty_it, empty_it); }
 
 void FontManager::FreeFont(std::string_view font_filename, uint16_t pts)
 {

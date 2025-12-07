@@ -48,6 +48,10 @@ GG_API std::string RgbaTag(Clr c);
 #  define CONSTEXPR_FONT
 #endif
 
+
+template <typename T>
+inline constexpr bool is_charset_container = std::is_same_v<typename std::decay_t<T>::value_type, UnicodeCharset>;
+
 /** \brief A bitmapped font rendering class.
 
     Font creates one or more 16-bits-per-pixel OpenGL textures that contain
@@ -675,32 +679,88 @@ public:
         }
     };
 
+private:
+    struct GG_API FTFaceWrapper
+    {
+        FTFaceWrapper() = default;
+        ~FTFaceWrapper();
+        FT_Face m_face = nullptr;
+    };
+
+public:
     /** Construct a font using only the printable ASCII characters.
         \throw Font::Exception Throws a subclass of Font::Exception if the
         condition specified for the subclass is met. */
-    Font(std::string font_filename, uint16_t pts);
+    Font(std::string font_filename, uint16_t pts) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts)
+    {
+        if (!m_font_filename.empty()) {
+            FTFaceWrapper wrapper;
+            FT_Error error = GetFace(wrapper.m_face);
+            CheckFace(wrapper.m_face, error);
+            Init(wrapper.m_face);
+        }
+    }
 
     /** Construct a font using only the printable ASCII characters,
         from the in-memory contents \a file_contents.  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
-    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents);
+    Font(std::string font_filename, uint16_t pts, const uint8_t* data, std::size_t data_size) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts)
+    {
+        assert(!file_contents.empty());
+        FTFaceWrapper wrapper;
+        FT_Error error = GetFace(data, data_size, wrapper.m_face);
+        CheckFace(wrapper.m_face, error);
+        Init(wrapper.m_face);
+    }
+
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last).  \throw Font::Exception
         Throws a subclass of Font::Exception if the condition specified for
         the subclass is met. */
-    template <typename CharSetIter>
-    Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last);
+    template <typename CharSets = std::vector<UnicodeCharset>,
+              std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
+    Font(std::string font_filename, uint16_t pts, CharSets&& charsets) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts),
+        m_charsets(std::forward<CharSets>(charsets))
+    {
+        if (!m_font_filename.empty()) {
+            FTFaceWrapper wrapper;
+            FT_Error error = GetFace(wrapper.m_face);
+            CheckFace(wrapper.m_face, error);
+            Init(wrapper.m_face);
+        }
+    }
 
     /** Construct a font using all the code points in the
         UnicodeCharsets in the range [first, last), from the in-memory
         contents \a file_contents.  \throw Font::Exception Throws a subclass
         of Font::Exception if the condition specified for the subclass is
         met. */
-    template <typename CharSetIter>
-    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents,
-         CharSetIter first, CharSetIter last);
+    template <typename CharSets = std::vector<UnicodeCharset>,
+              std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
+    Font(std::string font_filename, uint16_t pts, const uint8_t* data, std::size_t data_size, CharSets&& charsets) :
+        m_font_filename(std::move(font_filename)),
+        m_pt_sz(pts),
+        m_charsets(std::forward<CharSets>(charsets))
+    {
+        assert(!file_contents.empty());
+        FTFaceWrapper wrapper;
+        FT_Error error = GetFace(data, data_size, wrapper.m_face);
+        CheckFace(wrapper.m_face, error);
+        Init(wrapper.m_face);
+    }
+    template <typename CharSets = std::vector<UnicodeCharset>,
+              std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
+    Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents, CharSets&& charsets) :
+        Font(std::move(font_filename), pts, file_contents.data(), file_contents.size(), std::forward<CharSets>(charsets))
+    {}
 
     /** Returns the name of the file from which this font was created. */
     const auto& FontName() const noexcept { return m_font_filename; }
@@ -836,7 +896,8 @@ public:
                            const std::vector<TextElement>& text_elements) const;
 
     /** Returns the maximum dimensions of the text in x and y. */
-    Pt TextExtent(const LineVec& line_data) const noexcept;
+    static Pt TextExtent(const LineVec& line_data, Y lineskip, Y height) noexcept;
+    Pt TextExtent(const LineVec& line_data) const noexcept { return TextExtent(line_data, m_lineskip, m_height); }
 
     /** Adds \a tag to the list of embedded tags that Font should not print
         when rendering text.  Passing "foo" will cause Font to treat "<foo>",
@@ -881,16 +942,17 @@ protected:
     Font() = default;
 
 private:
-    FT_Error          GetFace(FT_Face& face);
-    FT_Error          GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face);
-    void              CheckFace(FT_Face font, FT_Error error);
-    void              Init(FT_Face& font);
+    FT_Error        GetFace(FT_Face& face);
+    static FT_Error GetFace(const uint8_t* file_contents, const std::size_t file_sz, FT_Face& face);
+    static FT_Error GetFace(const std::vector<uint8_t>& file_contents, FT_Face& face) { return GetFace(file_contents.data(), file_contents.size(), face); }
+    void            CheckFace(FT_Face font, FT_Error error);
+    void            Init(FT_Face& font);
 
-    bool              GenerateGlyph(FT_Face font, uint32_t ch);
+    static bool     GenerateGlyph(FT_Face font, uint32_t ch);
 
-    bool              IsDefaultFont() const noexcept;
+    bool            IsDefaultFont() const noexcept;
 
-    static std::shared_ptr<Font> GetDefaultFont(uint16_t pts);
+    static std::shared_ptr<const Font> GetDefaultFont(uint16_t pts);
 
     std::string                 m_font_filename;
     uint16_t                    m_pt_sz = 0u;
@@ -1016,40 +1078,46 @@ private:
 public:
     /** Returns true iff this manager contains a font with the given filename
         and point size, regardless of charsets. */
-    bool HasFont(std::string_view font_filename, uint16_t pts) const noexcept;
+    bool HasFont(std::string_view font_filename, uint16_t pts) const noexcept
+    { return FontLookup(font_filename, pts) != m_rendered_fonts.end(); }
 
     /** Returns true iff this manager contains a font with the given filename
         and point size, containing the given charsets. */
-    template <typename CharSetIter>
-    bool HasFont(std::string_view font_filename, uint16_t pts,
-                 CharSetIter first, CharSetIter last) const;
+    template <typename CharSets>
+    bool HasFont(std::string_view font_filename, uint16_t pts, CharSets&& charsets) const
+    {
+        const auto it = FontLookup(font_filename, pts);
+        if (it == m_rendered_fonts.end())
+            return false;
 
-    /** Returns a shared_ptr to the requested font, supporting all printable
-        ASCII characters.  \note May load font if unavailable at time of
-        request. */
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts);
+        std::vector<UnicodeCharset> requested_charsets(std::forward<CharSets>(charsets));
+        std::sort(requested_charsets.begin(), requested_charsets.end());
+        std::vector<UnicodeCharset> found_charsets(it->second->UnicodeCharsets());
+        std::sort(found_charsets.begin(), found_charsets.end());
 
-    /** Returns a shared_ptr to the requested font, supporting all printable
-        ASCII characters, from the in-memory contents \a file_contents.  \note
-        May load font if unavailable at time of request. */
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
-                                  const std::vector<uint8_t>& file_contents);
+        return (requested_charsets == found_charsets);
+    }
+
 
     /** Returns a shared_ptr to the requested font, supporting all the
-        code points in the UnicodeCharsets in the range [first, last).  \note
-        May load font if unavailable at time of request. */
-    template <typename CharSetIter>
+        code points in \a charsets 
+        \note May load the font if not yet available. */
+    template <typename CharSets = std::vector<UnicodeCharset>,
+              std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
     std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
-                                  CharSetIter first, CharSetIter last);
+                                  CharSets&& charsets = CharSets{})
+    { return GetFontImpl(font_filename, pts, nullptr, 0u, std::forward<CharSets>(charsets)); }
 
     /** Returns a shared_ptr to the requested font, supporting all the code
-        points in the UnicodeCharsets in the range [first, last), from the
-        in-memory contents \a file_contents.  \note May load font if
-        unavailable at time of request. */
-    template <typename CharSetIter>
+        points in t\a charsets, from the in-memory contents \a file_contents.
+        \note May load font if not yet available. */
+    template <typename CharSets = std::vector<UnicodeCharset>,
+              std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
     std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
                                   const std::vector<uint8_t>& file_contents,
-                                  CharSetIter first, CharSetIter last);
+                                  CharSets&& charsets = CharSets{})
+    { return GetFontImpl(font_filename, pts, file_contents.data(), file_contents.size(), std::forward<CharSets>(charsets)); }
+
 
     /** Removes the indicated font from the font manager.  Due to shared_ptr
         semantics, the font may not be deleted until much later. */
@@ -1058,10 +1126,52 @@ public:
 private:
     FontManager() = default;
 
-    template <typename CharSetIter>
+    template <typename CharSets, std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
     std::shared_ptr<Font> GetFontImpl(std::string_view font_filename, uint16_t pts,
-                                      const std::vector<uint8_t>* file_contents,
-                                      CharSetIter first, CharSetIter last);
+                                      const uint8_t* data, std::size_t data_size, CharSets&& charsets)
+    {
+        const auto it = FontLookup(font_filename, pts);
+        if (it == m_rendered_fonts.end()) {
+            // no such font has been created, so create it
+
+            if (font_filename.empty()) {
+                // keeps this function from throwing; "" is the only invalid font
+                // filename that shouldn't throw
+                return EMPTY_FONT;
+            } else {
+                auto font = data ?
+                    std::make_shared<Font>(std::string(font_filename), pts, data, data_size, std::forward<CharSets>(charsets)) :
+                    std::make_shared<Font>(std::string(font_filename), pts, std::forward<CharSets>(charsets));
+                return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
+            }
+
+        } else {
+            // If a font with this name and size has been created, but it doesn't have all the right
+            // glyphs, release it and create a new one
+
+            std::vector<UnicodeCharset> requested_charsets(std::forward<CharSets>(charsets));
+            std::sort(requested_charsets.begin(), requested_charsets.end());
+            const auto requested_unique_it = std::unique(requested_charsets.begin(), requested_charsets.end());
+            std::vector<UnicodeCharset> found_charsets(it->second->UnicodeCharsets());
+            std::sort(found_charsets.begin(), found_charsets.end());
+            const auto found_unique_it = std::unique(found_charsets.begin(), found_charsets.end());
+
+            if (requested_charsets == found_charsets)
+                return it->second;
+
+            std::vector<UnicodeCharset> united_charsets;
+            united_charsets.reserve(std::max(requested_charsets.size(), found_charsets.size()));
+
+            std::set_union(requested_charsets.begin(), requested_unique_it,
+                           found_charsets.begin(), found_unique_it,
+                           std::back_inserter(united_charsets));
+            m_rendered_fonts.erase(it);
+            auto font = data ?
+                std::make_shared<Font>(std::string(font_filename), pts, data, data_size, std::move(united_charsets)) :
+                std::make_shared<Font>(std::string(font_filename), pts, std::move(united_charsets));
+            return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
+        }
+    }
 
     using FontContainer = std::vector<std::pair<FontKey, std::shared_ptr<Font>>>;
     using FontContainerIt = FontContainer::const_iterator;
@@ -1087,123 +1197,6 @@ GG_API FontManager& GetFontManager();
 
 /** Thrown when initialization of the FreeType library fails. */
 GG_EXCEPTION(FailedFTLibraryInit);
-
-namespace detail {
-    struct GG_API FTFaceWrapper
-    {
-        FTFaceWrapper() = default;
-        ~FTFaceWrapper();
-        FT_Face m_face = nullptr;
-    };
 }
-}
-
-
-template <typename CharSetIter>
-GG::Font::Font(std::string font_filename, uint16_t pts, CharSetIter first, CharSetIter last) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts),
-    m_charsets(first, last)
-{
-    if (!m_font_filename.empty()) {
-        detail::FTFaceWrapper wrapper;
-        FT_Error error = GetFace(wrapper.m_face);
-        CheckFace(wrapper.m_face, error);
-        Init(wrapper.m_face);
-    }
-}
-
-template <typename CharSetIter>
-GG::Font::Font(std::string font_filename, uint16_t pts, const std::vector<uint8_t>& file_contents,
-               CharSetIter first, CharSetIter last) :
-    m_font_filename(std::move(font_filename)),
-    m_pt_sz(pts),
-    m_charsets(first, last)
-{
-    assert(!file_contents.empty());
-    detail::FTFaceWrapper wrapper;
-    FT_Error error = GetFace(file_contents, wrapper.m_face);
-    CheckFace(wrapper.m_face, error);
-    Init(wrapper.m_face);
-}
-
-template <typename CharSetIter>
-bool GG::FontManager::HasFont(std::string_view font_filename, uint16_t pts,
-                              CharSetIter first, CharSetIter last) const
-{
-    const auto it = FontLookup(font_filename, pts);
-    if (it == m_rendered_fonts.end())
-        return false;
-
-    std::vector<UnicodeCharset> requested_charsets(first, last);
-    std::sort(requested_charsets.begin(), requested_charsets.end());
-    std::vector<UnicodeCharset> found_charsets(it->second->UnicodeCharsets());
-    std::sort(found_charsets.begin(), found_charsets.end());
-
-    return (requested_charsets == found_charsets);
-}
-
-template <typename CharSetIter>
-std::shared_ptr<GG::Font>
-GG::FontManager::GetFont(std::string_view font_filename, uint16_t pts,
-                         CharSetIter first, CharSetIter last)
-{ return GetFontImpl(font_filename, pts, nullptr, first, last); }
-
-template <typename CharSetIter>
-std::shared_ptr<GG::Font>
-GG::FontManager::GetFont(std::string_view font_filename, uint16_t pts,
-                         const std::vector<uint8_t>& file_contents,
-                         CharSetIter first, CharSetIter last)
-{ return GetFontImpl(font_filename, pts, std::addressof(file_contents), first, last); }
-
-
-template <typename CharSetIter>
-std::shared_ptr<GG::Font>
-GG::FontManager::GetFontImpl(std::string_view font_filename, uint16_t pts,
-                             const std::vector<uint8_t>* file_contents,
-                             CharSetIter first, CharSetIter last)
-{
-    const auto it = FontLookup(font_filename, pts);
-    if (it == m_rendered_fonts.end()) { // if no such font has been created, create it now
-        if (font_filename.empty()) {
-            // keeps this function from throwing; "" is the only invalid font
-            // filename that shouldn't throw
-            return EMPTY_FONT;
-        } else {
-            auto font = file_contents ?
-                std::make_shared<Font>(std::string(font_filename), pts, *file_contents, first, last) :
-                std::make_shared<Font>(std::string(font_filename), pts, first, last);
-            return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
-        }
-
-    // if a font like this has been created, but it doesn't have all the right
-    // glyphs, release it and create a new one
-    } else {
-        std::vector<UnicodeCharset> requested_charsets(first, last);
-        std::sort(requested_charsets.begin(), requested_charsets.end());
-        const auto requested_unique_it = std::unique(requested_charsets.begin(), requested_charsets.end());
-        std::vector<UnicodeCharset> found_charsets(it->second->UnicodeCharsets());
-        std::sort(found_charsets.begin(), found_charsets.end());
-        const auto found_unique_it = std::unique(found_charsets.begin(), found_charsets.end());
-
-        if (requested_charsets == found_charsets)
-            return it->second;
-
-        std::vector<UnicodeCharset> united_charsets;
-        united_charsets.reserve(std::max(requested_charsets.size(), found_charsets.size()));
-
-        std::set_union(requested_charsets.begin(), requested_unique_it,
-                       found_charsets.begin(), found_unique_it,
-                       std::back_inserter(united_charsets));
-        m_rendered_fonts.erase(it);
-        auto font = file_contents ?
-            std::make_shared<Font>(std::string(font_filename), pts, *file_contents,
-                                   united_charsets.begin(), united_charsets.end()) :
-            std::make_shared<Font>(std::string(font_filename), pts,
-                                   united_charsets.begin(), united_charsets.end());
-        return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
-    }
-}
-
 
 #endif

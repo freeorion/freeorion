@@ -52,7 +52,7 @@ public:
         \a multi indicates whether multiple file selections are allowed.
         \throw GG::FileDlg::BadInitialDirectory Throws when \a directory is invalid. */
     FileDlg(const std::string& directory, const std::string& filename,
-            bool save, bool multi, const std::shared_ptr<Font>& font,
+            bool save, bool multi, const std::shared_ptr<const Font>& font,
             Clr color, Clr border_color, Clr text_color = CLR_BLACK);
     void CompleteConstruction() override;
 
@@ -128,7 +128,7 @@ private:
     Clr              m_color;
     Clr              m_border_color;
     Clr              m_text_color;
-    std::shared_ptr<Font> m_font;
+    std::shared_ptr<const Font> m_font;
 
     bool             m_save = false;
     std::vector<std::pair<std::string, std::string>>

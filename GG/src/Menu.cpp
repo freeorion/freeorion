@@ -37,7 +37,7 @@ namespace {
     constexpr X HORIZONTAL_MARGIN{3};
 }
 
-PopupMenu::PopupMenu(X x, Y y, std::shared_ptr<Font> font, Clr text_color,
+PopupMenu::PopupMenu(X x, Y y, std::shared_ptr<const Font> font, Clr text_color,
                      Clr border_color, Clr interior_color, Clr hilite_color) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
     m_font(std::move(font)),
@@ -274,7 +274,7 @@ void PopupMenu::SetTextColor(Clr clr)
 void PopupMenu::SetHiliteColor(Clr clr)
 { m_hilite_color = clr; }
 
-const std::shared_ptr<Font>& PopupMenu::GetFont() const
+const std::shared_ptr<const Font>& PopupMenu::GetFont() const
 { return m_font; }
 
 const MenuItem& PopupMenu::MenuData() const

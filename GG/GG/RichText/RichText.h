@@ -37,7 +37,7 @@ public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
         virtual std::shared_ptr<BlockControl> CreateFromTag(const TAG_PARAMS&, std::string,
-                                                            std::shared_ptr<Font>, Clr,
+                                                            std::shared_ptr<const Font>, Clr,
                                                             Flags<TextFormat>) const = 0;
     };
 
@@ -46,7 +46,7 @@ public:
     static constexpr std::string_view PLAINTEXT_TAG = "GG_RICH_PLAIN";
     static constexpr std::string_view UNFORMATTED_TEXT_TAG = "GG_POOR";
 
-    RichText(X x, Y y, X w, Y h, const std::string& str, std::shared_ptr<Font> font,
+    RichText(X x, Y y, X w, Y h, const std::string& str, std::shared_ptr<const Font> font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
              Flags<WndFlag> flags = NO_WND_FLAGS);
 

@@ -16,6 +16,7 @@
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
+#include <array>
 
 using namespace GG;
 
@@ -351,18 +352,20 @@ namespace {
     constexpr std::size_t COLOR_BUTTON_ROWS = 4;
     constexpr std::size_t COLOR_BUTTON_COLS = 5;
 
-    std::vector<Clr> custom_colors = {
+#if defined(__cpp_constinit)
+    constinit
+#endif
+    std::array<Clr, COLOR_BUTTON_ROWS*COLOR_BUTTON_COLS> custom_colors = {
         GG::CLR_WHITE,      GG::CLR_LIGHT_GRAY, GG::CLR_GRAY,       GG::CLR_DARK_GRAY,  GG::CLR_BLACK,
         GG::CLR_PINK,       GG::CLR_RED,        GG::CLR_DARK_RED,   GG::CLR_MAGENTA,    GG::CLR_PURPLE,
         GG::CLR_BLUE,       GG::CLR_DARK_BLUE,  GG::CLR_TEAL,       GG::CLR_CYAN,       GG::CLR_GREEN,
         GG::CLR_DARK_GREEN, GG::CLR_OLIVE,      GG::CLR_YELLOW,     GG::CLR_ORANGE,     GG::CLR_GRAY};
 }
 
-ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
+ColorDlg::ColorDlg(X x, Y y, X w, Y h, Clr original_color, const std::shared_ptr<const Font>& font,
                    Clr dialog_color, Clr border_color, Clr text_color) :
-    Wnd(x, y, X(315), Y(300), INTERACTIVE | DRAGABLE | MODAL),
+    Wnd(x, y, w, h, INTERACTIVE | DRAGABLE | MODAL),
     m_original_color(original_color),
-    m_current_color_button(INVALID_COLOR_BUTTON),
     m_color(dialog_color),
     m_border_color(border_color),
     m_text_color(text_color)
