@@ -1,2 +1,0 @@
-Statistic name = "IP_OUTPUT" value =
-    Statistic Sum value = LocalCandidate.Influence condition = OwnedBy empire = Source.Owner
