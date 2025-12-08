@@ -1,1 +1,0 @@
-Statistic name = "IP_STOCKPILE" value = EmpireStockpile empire = Source.Owner resource = Influence
