@@ -1,6 +1,6 @@
 # For long term changes - Do not modify this definition directly
 #                     Instead modify and execute col_bld_gen.py and use the result.
-
+from focs._effects import LocalCandidate, MaxOf, Min, Planet, Statistic, Target
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
 from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR
