@@ -1,3 +1,0 @@
-Statistic name = "RP_OUTPUT" value =
-    Statistic Sum value = LocalCandidate.Research condition = OwnedBy empire = Source.Owner
-    
