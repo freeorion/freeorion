@@ -125,6 +125,7 @@ exclude = [
     '^cmake',
     '^msvc',
     '^scripting/common',
+    'scripting/buildings/colonies', # autogenerted
 ]
 
 explicit_package_bases = true

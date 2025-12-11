@@ -1,10 +1,13 @@
 from focs._effects import (
+    AddSpecial,
     BlackHole,
     EffectsGroup,
     InGame,
     InSystem,
+    IsTarget,
     LocalCandidate,
     Min,
+    MinOf,
     NamedReal,
     Neutron,
     NoOpValue,

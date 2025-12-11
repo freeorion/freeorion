@@ -1,6 +1,7 @@
 from focs._effects import (
     AllyOf,
     Capital,
+    Destroy,
     EffectsGroup,
     GenerateSitRepMessage,
     IsBuilding,

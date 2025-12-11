@@ -1,3 +1,20 @@
+from focs._effects import (
+    AddSpecial,
+    Blue,
+    Conditional,
+    CreateShip,
+    EffectsGroup,
+    GalaxyMaxAIAggression,
+    GalaxyMonsterFrequency,
+    IsSource,
+    Orange,
+    Planet,
+    Red,
+    Star,
+    Turn,
+    White,
+    Yellow,
+)
 from focs._species import *
 from macros.misc import MINIMUM_DISTANCE_EMPIRE_CHECK
 from species.species_macros.empire_opinions import COMMON_OPINION_EFFECTS
