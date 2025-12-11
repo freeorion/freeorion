@@ -1,4 +1,4 @@
 def EmpireStatistic(
     name: str,
-    value: float,
+    value: int | float,
 ): ...
