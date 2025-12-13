@@ -1,24 +1,24 @@
-// the following entries are to help highlight/evaluate current limitations with statistics parsing
-// Tests 1 and 2 currently work, test 3 does not.
+# the following entries are to help highlight/evaluate current limitations with statistics parsing
+# Tests 1 and 2 currently work, test 3 does not.
 
-/*
+"""
 Statistic name = "STATISTICS_TEST_1" value =
-    1.0 + JumpsBetween object = source.SystemID object = MAX value = LocalCandidate.SystemID 
+    1.0 + JumpsBetween object = source.SystemID object = MAX value = LocalCandidate.SystemID
                             condition = And [
                                             Planet
                                             OwnedBy empire = Source.Owner
                                         ]
 
 Statistic name = "STATISTICS_TEST_2" value =
-    1.0 + JumpsBetween object = source.SystemID object = MIN value = LocalCandidate.SystemID 
+    1.0 + JumpsBetween object = source.SystemID object = MIN value = LocalCandidate.SystemID
                             condition = And [
                                             Planet
                                             OwnedBy empire = Source.Owner
                                         ]
-*/
+"""
 
-// The following is not correctly parsed, and generates a warning in the log file
-/*
+# The following is not correctly parsed, and generates a warning in the log file
+"""
 Statistic name = "STATISTICS_TEST_3" value =
     1.0 + MAX value =
         JumpsBetween
@@ -28,4 +28,4 @@ Statistic name = "STATISTICS_TEST_3" value =
                 Planet
                 OwnedBy empire = Source.Owner
             ]
-*/
+"""

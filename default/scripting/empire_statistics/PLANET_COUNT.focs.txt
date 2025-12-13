@@ -1,5 +1,0 @@
-Statistic name = "PLANET_COUNT" value =
-    Statistic Count condition = And [
-        Planet
-        OwnedBy empire = Source.Owner
-    ]
