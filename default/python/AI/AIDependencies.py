@@ -404,12 +404,15 @@ WEAPON_UPGRADE_DICT = {
     for part_name, techs_damage in {
         # Output "PARTNAME": tuple((tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ...)
         #  Input "PARTNAME": {tech_name: dmg_upgrade, tech_name2, dmg_upgrade2, ...}
+        # FIXME:  the damage boost for weapons which do not shoot each bout has to be wrong
+        #         note the concentrator claims half the boost
         "SR_WEAPON_0_1": {},
         "SR_WEAPON_1_1": {"SHP_WEAPON_1_%d" % i: 1 for i in [2, 3, 4]},
         "SR_WEAPON_2_1": {"SHP_WEAPON_2_%d" % i: 2 for i in [2, 3, 4]},
         "SR_WEAPON_3_1": {"SHP_WEAPON_3_%d" % i: 3 for i in [2, 3, 4]},
         "SR_WEAPON_4_1": {"SHP_WEAPON_4_%d" % i: 5 for i in [2, 3, 4]},
         "SR_ARC_DISRUPTOR": {"SHP_WEAPON_ARC_DISRUPTOR_%d" % i: i for i in [2, 3]},
+        "SR_ARC_CONCENTRATOR": {"SHP_WEAPON_ARC_DISRUPTOR_2": 4 / 2, "SHP_WEAPON_ARC_DISRUPTOR_2": 6 / 2},
         SR_FLUX_LANCE: {},
         "SR_SPINAL_ANTIMATTER": {},
         "SR_GRAV_PULSE": {},
@@ -419,12 +422,15 @@ WEAPON_UPGRADE_DICT = {
 # ROF == rate of fire == weapon shots
 WEAPON_ROF_UPGRADE_DICT = {
     # "PARTNAME": tuple((tech_name, rof_upgrade), (tech_name2, rof_upgrade2), ...)
+    # FIXME:  the shot boost for weapons which do not shoot each bout has to be wrong
+    #         note that the concentrator boost should be halved, but there are no half shots
     "SR_WEAPON_0_1": (("SHP_WEAPON_1_3", 1), ("SHP_WEAPON_2_3", 1), ("SHP_WEAPON_3_3", 1), ("SHP_WEAPON_4_3", 1)),
     "SR_WEAPON_1_1": (),
     "SR_WEAPON_2_1": (),
     "SR_WEAPON_3_1": (),
     "SR_WEAPON_4_1": (),
     "SR_ARC_DISRUPTOR": (("SHP_WEAPON_ARC_DISRUPTOR_4", 1),),
+    "SR_ARC_CONCENTRATOR": (("SHP_WEAPON_ARC_DISRUPTOR_4", 1),),
     SR_FLUX_LANCE: (),
     "SR_SPINAL_ANTIMATTER": (),
     "SR_GRAV_PULSE": (),
@@ -633,6 +639,7 @@ class CombatTarget:
         "SR_WEAPON_2_1": SHIP | PLANET,
         "SR_WEAPON_3_1": SHIP | PLANET,
         "SR_WEAPON_4_1": SHIP | PLANET,
+        "SR_ARC_CONCENTRATOR": ANY,
         "SR_ARC_DISRUPTOR": ANY,
         SR_FLUX_LANCE: SHIP | PLANET,
         "SR_SPINAL_ANTIMATTER": SHIP | PLANET,
