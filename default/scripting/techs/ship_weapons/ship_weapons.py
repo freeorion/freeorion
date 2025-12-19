@@ -1,3 +1,5 @@
+from typing import Literal
+
 from focs._effects import (
     CurrentContent,
     CurrentTurn,
@@ -74,7 +76,7 @@ def WEAPON_UPGRADE_CAPACITY_EFFECTS(
     part_name: str,
     unscaled_upgrade: int,
     upgraded_damage_override: int = -1,
-    override_named_prefix=False,
+    override_named_prefix: str | Literal[False] = False,
 ):
     # the following recursive lookup works, but is not acceptable because of delays. as long as the parser is sequential, the parallel waiting feature is kind of a bug
     # previous_upgrade_effect = PartCapacity(name=part_name) if (tech_name[-1] == "2") else NamedRealLookup(name = tech_name[0:-1] + "2_UPGRADED_DAMAGE")  # + str(int(tech_name[-1]) - 1))
