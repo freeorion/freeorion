@@ -76,7 +76,7 @@ void IApp::StartBackgroundParsing(const PythonParser& python) {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/policies").string();
 
     if (IsExistingDir(rdir / "scripting/encyclopedia"))
-        GetEncyclopedia().SetArticles(Pending::StartAsyncParsing(parse::encyclopedia_articles, rdir / "scripting/encyclopedia"));
+        GetEncyclopedia().SetArticles(Pending::ParseSynchronously(parse::encyclopedia_articles, python, rdir / "scripting/encyclopedia"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/encyclopedia").string();
 

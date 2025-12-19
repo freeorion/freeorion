@@ -84,7 +84,7 @@ namespace {
 }
 
 namespace parse {
-    ArticleMap encyclopedia_articles(const std::filesystem::path& path) {
+    ArticleMap encyclopedia_articles(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         ArticleMap articles;
 
         ScopedTimer timer("Encyclopedia Parsing");
@@ -92,6 +92,7 @@ namespace parse {
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, ArticleMap>(GetLexer(), file, articles);
 
+        success = true;
         return articles;
     }
 }

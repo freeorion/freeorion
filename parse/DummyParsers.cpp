@@ -72,8 +72,11 @@ namespace parse {
         return {};
     }
 
-    std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const std::filesystem::path& path)
-    { return {}; }
+    std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const PythonParser& parser, const std::filesystem::path& path, bool& success)
+    {
+        success = true;
+        return {};
+    }
 
     GameRulesTypeMap game_rules(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         success = true;

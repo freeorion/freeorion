@@ -82,7 +82,7 @@ namespace parse {
     FO_PARSE_API std::vector<std::unique_ptr<FleetPlan>> fleet_plans(const std::filesystem::path& path);
     FO_PARSE_API std::vector<std::unique_ptr<MonsterFleetPlan>> monster_fleet_plans(const std::filesystem::path& path);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRef<double>>> statistics(const PythonParser& parser, const std::filesystem::path& path, bool& success);
-    FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const std::filesystem::path& path);
+    FO_PARSE_API std::map<std::string, std::vector<EncyclopediaArticle>, std::less<>> encyclopedia_articles(const PythonParser& parser, const std::filesystem::path& path, bool& success);
     FO_PARSE_API std::unordered_map<std::string, GameRule> game_rules(const PythonParser& parser, const std::filesystem::path& path, bool& success);
 
     FO_PARSE_API void file_substitution(std::string& text, const std::filesystem::path& file_search_path, const std::string& filename);
