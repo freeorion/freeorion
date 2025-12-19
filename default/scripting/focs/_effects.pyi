@@ -113,6 +113,7 @@ class Source:
     CreationTurn: int
 
 class LocalCandidate:
+    LastTurnAnnexed: int
     LastTurnConquered: int
     LastTurnActiveInBattle: int
     LastTurnColonized: int
