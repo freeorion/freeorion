@@ -7,7 +7,7 @@ from techs.ship_weapons.ship_weapons import (
 )
 
 AD_2_upgrade = 2
-AD_3_upgrade = 3
+AD_3_upgrade = 2
 AD_2_plus_3_upgrade = AD_2_upgrade + AD_3_upgrade
 AD_4_shots_upgrade = 1
 
