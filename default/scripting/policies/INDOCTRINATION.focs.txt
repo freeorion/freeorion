@@ -11,20 +11,17 @@ Policy
 
         // makes all planets more stable over time at the cost of influence
         // First variant: Current population was colonized.
-        // Planet was never conquered or it was conquered, emptied and re-colonised.
+        // Planet was never conquered or it was conquered, emptied and re-colonised (and maybe annexed).
         // Bonus is based on only how long indoctrination has been adapted.
         EffectsGroup
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Species
-                Or [
-		    (LocalCandidate.TurnsSinceLastConquered == 0)
-                    And [
-		        (LocalCandidate.TurnsSinceLastConquered > LocalCandidate.TurnsSinceColonization)
-		        (LocalCandidate.TurnsSinceLastConquered > LocalCandidate.TurnsSinceAnnexation)
-		    ]
-		]
+                And [
+                    (LocalCandidate.LastTurnConquered <= LocalCandidate.LastTurnColonized)
+                    (LocalCandidate.LastTurnConquered <= LocalCandidate.LastTurnAnnexed)
+                ]
             ]
             priority = [[TARGET_LATE_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
@@ -41,9 +38,10 @@ Policy
                 Planet
                 OwnedBy empire = Source.Owner
                 Species
-                (LocalCandidate.TurnsSinceLastConquered != 0)
-                // Note: TurnsSinceColonization cannot be equal to TurnsSinceLastConquered
-                (LocalCandidate.TurnsSinceLastConquered < LocalCandidate.TurnsSinceColonization)
+                And [
+                    (LocalCandidate.LastTurnConquered > LocalCandidate.LastTurnColonized)
+                    (LocalCandidate.LastTurnConquered > LocalCandidate.LastTurnAnnexed)
+                ]
             ]
             priority = [[TARGET_LATE_AFTER_2ND_SCALING_PRIORITY]]
             effects = [
