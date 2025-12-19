@@ -412,7 +412,7 @@ WEAPON_UPGRADE_DICT = {
         "SR_WEAPON_3_1": {"SHP_WEAPON_3_%d" % i: 3 for i in [2, 3, 4]},
         "SR_WEAPON_4_1": {"SHP_WEAPON_4_%d" % i: 5 for i in [2, 3, 4]},
         "SR_ARC_DISRUPTOR": {"SHP_WEAPON_ARC_DISRUPTOR_%d" % 2: i for i in [2, 3]},
-        "SR_ARC_CONCENTRATOR": {"SHP_WEAPON_ARC_DISRUPTOR_2": 4 / 2, "SHP_WEAPON_ARC_DISRUPTOR_2": 4 / 2},
+        "SR_ARC_CONCENTRATOR": {"SHP_WEAPON_ARC_DISRUPTOR_2": 4 / 2, "SHP_WEAPON_ARC_DISRUPTOR_3": 4 / 2},
         SR_FLUX_LANCE: {},
         "SR_SPINAL_ANTIMATTER": {},
         "SR_GRAV_PULSE": {},
