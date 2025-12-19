@@ -127,6 +127,7 @@ class _Planet(_Object):
     PlanetType: _PlanetType
     OriginalType: _PlanetType
     NextBestPlanetType: _PlanetType
+    LastTurnAnnexed: int
     LastTurnConquered: int
     LastInvadedByEmpire: _Empire
     LastTurnColonized: int
