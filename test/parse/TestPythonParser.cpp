@@ -5,6 +5,7 @@
 #include "universe/BuildingType.h"
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
+#include "universe/Encyclopedia.h"
 #include "universe/Planet.h"
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
@@ -755,6 +756,30 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
     BOOST_CHECK_EQUAL(1813, condition->OperandsRaw()[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(1556, condition->OperandsRaw()[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(2830, condition->OperandsRaw()[3]->GetCheckSum());
+}
+
+BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles) {
+    PythonParser parser(m_python, m_test_scripting_dir);
+
+    auto encyclopedia_articles_p = Pending::ParseSynchronously(parse::encyclopedia_articles, parser, m_test_scripting_dir / "encyclopedia");
+    auto encyclopedia_articles_opt = Pending::WaitForPendingUnlocked(std::move(encyclopedia_articles_p));
+
+    BOOST_REQUIRE(encyclopedia_articles_opt);
+
+    const auto encyclopedia_articles = *std::move(encyclopedia_articles_opt);
+    BOOST_REQUIRE_EQUAL(1, encyclopedia_articles.size());
+
+    const auto articles_it = encyclopedia_articles.find("ENC_SPECIES");
+    BOOST_REQUIRE(articles_it != encyclopedia_articles.end());
+
+    BOOST_REQUIRE_EQUAL(1, articles_it->second.size());
+    const auto article = articles_it->second[0];
+
+    BOOST_CHECK_EQUAL("ENC_SPECIES", article.name);
+    BOOST_CHECK_EQUAL("ENC_SPECIES", article.category);
+    BOOST_CHECK_EQUAL("", article.short_description);
+    BOOST_CHECK_EQUAL("ENC_SPECIES_DESC", article.description);
+    BOOST_CHECK_EQUAL("icons/species/humanoid-01.png", article.icon);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
