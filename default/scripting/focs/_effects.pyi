@@ -167,6 +167,9 @@ class _Ship(_Object):
     MaxStructure: float
     MaxShield: float
     MaxTroops: float
+    Structure: float
+    DestroyFightersPerBattleMax: float
+    DamageStructurePerBattleMax: float
 
 class _Fleet(_Object):
     PreviousSystemID: _SystemID
