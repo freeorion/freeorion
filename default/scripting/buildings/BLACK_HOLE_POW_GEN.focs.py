@@ -9,6 +9,7 @@ from focs._effects import (
     IsBuilding,
     IsSource,
     NamedReal,
+    NamedRealLookup,
     OwnedBy,
     Planet,
     ResourceSupplyConnected,
