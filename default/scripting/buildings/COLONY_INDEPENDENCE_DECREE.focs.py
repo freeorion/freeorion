@@ -36,7 +36,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
     captureresult=DestroyOnCapture,  # type: ignore[reportUnboundVariable]
     buildcost=20,
     buildtime=1,
-    location=(Planet() & OwnedBy(empire=Source.Owner) & Population() & Capital),
+    location=(Planet() & OwnedBy(empire=Source.Owner) & Population() & ~Capital),
     effectsgroups=[
         # TODO: implement SetFocus effect
         # switch independent colony focus to defense so the independent colony can have the highest defense values
