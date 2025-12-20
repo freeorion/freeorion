@@ -87,8 +87,14 @@ namespace CheckSums {
             if (exp == 0) return 1;
             if (exp == 1) return base;
             B accum = 1;
-            while (exp-->0)
-                accum *= base;
+            while (true) {
+                if (exp & 1)
+                    accum *= base;
+                exp >>= 1;
+                if (exp == 0)
+                    break;
+                base *= base;
+            }
             return accum;
         }
     }
