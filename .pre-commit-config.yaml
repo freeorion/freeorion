@@ -1,5 +1,5 @@
 default_stages:
-  - commit
+  - pre-commit
   - manual
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -28,9 +28,10 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.399
+  - repo: https://github.com/facebook/pyrefly-pre-commit
+    rev: 0.46.0  # Note: this is the version of the pre-commit hook, NOT the pyrefly version used for type checking
     hooks:
-      - id: pyright
-        name: focs.py type checks with pyright
-        files: "(default/scripting/.*.py)|(check/check_file_changed/.*.py)"
+      - id: pyrefly-check
+        name: Pyrefly (type checking)
+        pass_filenames: false  # Recommended to do full repo checks. However, you can change this to `true` to only check changed files
+        language: system  # Use system-installed pyrefly

@@ -1,5 +1,5 @@
 pytest==7.4.3
 pytest-github-actions-annotate-failures==0.2.0
 ruff==0.11.4
-pyright==1.1.399
+pyrefly==0.46.0
 ty==0.0.5

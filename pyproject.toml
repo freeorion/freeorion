@@ -32,6 +32,9 @@ exclude = [
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
+[tool.pyrefly.errors]
+unknown-name = "ignore"
+
 [tool.ruff.lint.per-file-ignores]
 "*auth/auth.py" = ["E402"]
 "*chat/chat.py" = ["E402"]
@@ -134,12 +137,19 @@ include = [
 invalid-return-type = "ignore"
 unsupported-operator = "ignore"
 
-[tool.pyright]
-include = ["default/scripting/", "check/check_file_changed"]
-exclude=[]
-pythonVersion = "3.10"
-strictListInference = true
-strictDictionaryInference = true
-strictSetInference = true
-reportUndefinedVariable = false
+[tool.pyrefly]
+project-includes = [
+    "default/scripting/",
+    "check/check_file_changed",
+]
+python-version = "3.10.0"
+infer-with-first-use = false
+search-path = ["default/scripting/"]
 
+[[tool.pyrefly.sub-config]]
+# apply this config to all files in `sub/project`
+matches = "default/scripting/focs/_effects.py"
+
+# enable `assert-type` errors in `sub/project`
+[tool.pyrefly.sub-config.errors]
+missing-module-attribute = false
