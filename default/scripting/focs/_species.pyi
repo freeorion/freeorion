@@ -28,10 +28,9 @@ def Species(
     playable: bool = False,
     can_colonize: bool = False,
     native: bool = False,
-    annexation_condition=None,
     spawnrate: int | None = None,
     spawnlimit: int | None = None,
-    annexationcondition: _Condition | None = None,
-    annexationcost: float = 0.0,
+    annexation_condition: _Condition | None = None,
+    annexation_cost: float = 0.0,
 ): ...
 def SpeciesCensusOrdering(order: list[str]): ...
