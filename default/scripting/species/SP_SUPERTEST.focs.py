@@ -101,9 +101,9 @@ Species(
         ),  # Omniscient Detection
     ],
     environments=VERY_TOLERANT_EP,
-    annexationcondition=Unowned
+    annexation_condition=Unowned
     & Population(low=0.001)
     & ResourceSupplyConnected(empire=Source.Owner, condition=Planet() & OwnedBy(empire=Source.Owner)),
-    annexationcost=5.0 * LocalCandidate.Population,
+    annexation_cost=5.0 * LocalCandidate.Population,
     graphic="icons/species/other-04.png",
 )
