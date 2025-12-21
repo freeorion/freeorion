@@ -111,29 +111,28 @@ line-length=120
 
 builtins = []
 
+[tool.ty.rules]
+unresolved-reference = "ignore"
 
-[tool.mypy]
+[tool.ty.environment]
+root = ["default/scripting"]
+python-version = "3.10"
+
+[tool.ty.src]
+include = ["default/scripting"]
 exclude = [
-    # Temp and tech dirs
-    "^(venv|venv_)",
-    # Not scripting directories
-    '^default/data',
-    '^default.python',
-    '^test-scripting',
-    '^check',
-    '^doc',
-    '^cmake',
-    '^msvc',
-    '^scripting/common',
-    'scripting/buildings/colonies', # autogenerted
+  "doc"
 ]
 
-explicit_package_bases = true
-no_site_packages = true
+[[tool.ty.overrides]]
+include = [
+    "default/scripting/focs/_types.py",
+    "default/scripting/focs/_effects.py"
+]
 
-mypy_path = "default/scripting"
-disable_error_code = ['name-defined', 'var-annotated']
-fast_module_lookup = true
+[tool.ty.overrides.rules]
+invalid-return-type = "ignore"
+unsupported-operator = "ignore"
 
 [tool.pyright]
 include = ["default/scripting/", "check/check_file_changed"]

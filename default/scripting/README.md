@@ -259,8 +259,8 @@ Also, you could just run each tools that are used in pre-commit hooks manually.
 ```shell
 ruff check .  # will remove unused imports, sort import and fix/report code warnings
 ruff format .  # reformat code
-mypy .  # report typing errors
-pyright  # report typing errors, similar to mypy, but have some missed and extra checks.
+ty check .  # report typing errors
+pyright  # report typing errors, similar to ty, but have some missed and extra checks.
 ```
 
 ### Developing FOCS API
@@ -270,5 +270,5 @@ There are 2 types of files:
 - `.py` these are actual Python file which are executed during the game. Often they should be empty. Game wil populate `globals()` in runtime, so it's pretty safe to import object form it. `_types.py` is a bit special, it contains type declaration, that could be used in macroses and `.pyi` files.
 - `.pyi` this is a typing stub, it's never executed.
   - These files are written with a more modern Python version that py files (they are not executed, we use the latest versions of linter, which support it)
-  - It should match the name of `.py`. When you do a static analysis with IDE, mypy or pyright, it will take the type information from this file.
+  - It should match the name of `.py`. When you do a static analysis with IDE, ty or pyright, it will take the type information from this file.
   - When you use import in this file, it will execute `.py`,  so the value you import should be in `.py`, not to `.pyi`, that's why we have `_types.py`
