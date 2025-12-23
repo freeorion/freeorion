@@ -133,7 +133,7 @@ class _Planet(_Object):
     LastTurnColonized: int
     LastColonizedByEmpire: _Empire
     TurnsSinceColonization: int
-    Construction: Any
+    Construction: float
     TargetConstruction: float
     Happiness: float
     TargetHappiness: float

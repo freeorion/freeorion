@@ -5,7 +5,6 @@
 # Python do not have typing library included in FOCS parsing environment.
 # See discussion here: https://github.com/freeorion/freeorion/issues/4844
 
-# mypy: disable-error-code="empty-body"
 try:
     from typing import TypeVar
 

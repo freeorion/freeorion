@@ -12,7 +12,7 @@ jobs:
           python-version: '3.10'
       - name: Install development dependencies
         run: pip install -r default/python/requirements-dev.txt
-      - name: Lint Python FOCS files with mypy
-        run: mypy .
+      - name: Lint Python FOCS files with ty
+        run: ty check .
       - name: Lint Python FOCS files with pyright
         run: pyright
