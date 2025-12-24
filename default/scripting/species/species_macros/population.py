@@ -196,10 +196,10 @@ _BASIC_POPULATION = [
         priority=POPULATION_FIRST_PRIORITY,
         effects=SetPopulation(
             # growth is GROWTH_RATE_FACTOR * population * (maximum + 1 - population) / maximum
-            # which gives factor for population 1, best growth around half full and aproaching
+            # which gives factor for population 1, best growth around half full and approaching
             # factor again when almost full
             value=(
-                (Value < Value(Target.TargetPopulation))
+                (Value < Value(Target.TargetPopulation))  # pyrefly: ignore[unsupported-operation]
                 * MinOf(
                     float,
                     Value(Target.TargetPopulation),
@@ -208,7 +208,7 @@ _BASIC_POPULATION = [
             )
             # shrink if overpopulated
             + (
-                (Value >= Value(Target.TargetPopulation))
+                (Value >= Value(Target.TargetPopulation))  # pyrefly: ignore[unsupported-operation]
                 * MaxOf(float, Value(Target.TargetPopulation), Value - 0.1 * (Value - Value(Target.TargetPopulation)))
             )
         ),

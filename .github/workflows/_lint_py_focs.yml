@@ -14,5 +14,5 @@ jobs:
         run: pip install -r default/python/requirements-dev.txt
       - name: Lint Python FOCS files with ty
         run: ty check .
-      - name: Lint Python FOCS files with pyright
-        run: pyright
+      - name: Lint Python FOCS files with pyrefly
+        run: pyrefly check --summarize-errors
