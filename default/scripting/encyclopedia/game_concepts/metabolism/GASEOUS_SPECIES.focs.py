@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="GASEOUS_SPECIES_TITLE",
+    category="METABOLISM_TITLE",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="GASEOUS_SPECIES_TEXT",
+    icon="icons/species/amorphous-05.png",
+)

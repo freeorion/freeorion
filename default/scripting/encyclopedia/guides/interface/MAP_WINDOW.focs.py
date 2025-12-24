@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="MAP_WINDOW_ARTICLE_TITLE",
+    category="INTERFACE_TITLE",
+    short_description="MAP_WINDOW_ARTICLE_TITLE",
+    description="MAP_WINDOW_ARTICLE_TEXT",
+    icon="icons/tech/galactic_exploration.png",
+)

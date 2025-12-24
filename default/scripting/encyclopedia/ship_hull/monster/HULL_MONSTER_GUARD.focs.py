@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_MONSTER_GUARD",
+    category="HULL_MONSTER",
+    short_description="HULL_MONSTER_GUARD",
+    description="HULL_MONSTER_GUARD_DESC",
+    icon="icons/monsters/sentry.png",
+)

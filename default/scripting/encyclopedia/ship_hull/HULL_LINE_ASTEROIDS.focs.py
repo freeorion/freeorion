@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_LINE_ASTEROIDS",
+    category="ENC_SHIP_HULL",
+    short_description="HULL_LINE_ASTEROIDS",
+    description="HULL_LINE_ASTEROIDS_DESC",
+    icon="icons/ship_hulls/asteroid_hull_small.png",
+)

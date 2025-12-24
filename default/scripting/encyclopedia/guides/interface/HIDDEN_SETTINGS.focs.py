@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HIDDEN_SETTINGS_ARTICLE_TITLE",
+    category="INTERFACE_TITLE",
+    short_description="HIDDEN_SETTINGS_ARTICLE_TITLE",
+    description="HIDDEN_SETTINGS__ARTICLE_TEXT",
+    icon="icons/buttons/menu_mouseover.png",
+)

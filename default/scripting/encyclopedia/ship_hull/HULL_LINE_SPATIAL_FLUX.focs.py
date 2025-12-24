@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_LINE_SPATIAL_FLUX",
+    category="ENC_SHIP_HULL",
+    short_description="HULL_LINE_SPATIAL_FLUX",
+    description="HULL_LINE_SPATIAL_FLUX_DESC",
+    icon="icons/ship_hulls/bulk_freighter_hull_small.png",
+)

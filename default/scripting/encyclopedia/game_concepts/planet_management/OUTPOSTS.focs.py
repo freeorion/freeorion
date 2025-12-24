@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="OUTPOSTS_TITLE",
+    category="PLANET_MANAGEMENT_TITLE",
+    short_description="OUTPOSTS_ARTICLE_SHORT_DESC",
+    description="OUTPOSTS_TEXT",
+    icon="icons/ship_parts/habitation_domes.png",
+)

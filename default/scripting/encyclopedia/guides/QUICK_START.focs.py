@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="QUICK_START_GUIDE_TITLE",
+    category="CATEGORY_GUIDES",
+    short_description="QUICK_START_GUIDE_TITLE",
+    description="QUICK_START_GUIDE_TEXT",
+    icon="icons/buttons/pedia_mouseover.png",
+)

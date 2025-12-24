@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="INFLUENCE_FOCUS_TITLE",
+    category="PLANETARY_FOCUS_TITLE",
+    short_description="PRODUCTION_ARTICLE_SHORT_DESC",
+    description="INFLUENCE_FOCUS_TEXT",
+    icon="icons/focus/influence.png",
+)

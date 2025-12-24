@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PC_DIRECT_WEAPON",
+    category="ENC_SHIP_PART",
+    short_description="PC_DIRECT_WEAPON",
+    description="PC_DIRECT_WEAPON_DESC",
+    icon="icons/ship_parts/mass-driver.png",
+)

@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ROBOTIC_SPECIES_TITLE",
+    category="METABOLISM_TITLE",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="ROBOTIC_SPECIES_TEXT",
+    icon="icons/species/robotic-01.png",
+)

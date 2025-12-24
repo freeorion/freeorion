@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_MONSTER_TREE",
+    category="HULL_MONSTER",
+    short_description="HULL_MONSTER_TREE",
+    description="HULL_MONSTER_TREE_DESC",
+    icon="icons/monsters/tree.png",
+)

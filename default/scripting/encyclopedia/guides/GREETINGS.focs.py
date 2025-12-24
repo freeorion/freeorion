@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="GREETINGS_GUIDE_TITLE",
+    category="CATEGORY_GUIDES",
+    short_description="GREETINGS_GUIDE_TITLE",
+    description="GREETINGS_GUIDE_TEXT",
+    icon="icons/FO_Icon_64x64.png",
+)

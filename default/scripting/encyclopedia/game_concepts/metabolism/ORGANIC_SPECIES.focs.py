@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ORGANIC_SPECIES_TITLE",
+    category="METABOLISM_TITLE",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="ORGANIC_SPECIES_TEXT",
+    icon="icons/species/human.png",
+)

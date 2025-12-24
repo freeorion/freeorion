@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="SLOT_TITLE",
+    category="SHIP_MANAGEMENT_TITLE",
+    short_description="SLOT_TITLE",
+    description="SLOT_TEXT",
+    icon="icons/ship_parts/external_slot.png",
+)

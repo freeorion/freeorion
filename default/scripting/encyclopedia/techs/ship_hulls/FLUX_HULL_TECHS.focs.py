@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="FLUX_HULL_TECHS",
+    category="SHIP_HULLS_CATEGORY",
+    short_description="FLUX_HULL_TECHS",
+    description="FLUX_HULL_TECHS_DESC",
+    icon="icons//ship_hulls/bulk_freighter_hull_small.png",
+)

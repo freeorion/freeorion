@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_MONSTER_KRAKEN",
+    category="HULL_MONSTER",
+    short_description="HULL_MONSTER_KRAKEN",
+    description="HULL_MONSTER_KRAKEN_DESC",
+    icon="icons/monsters/kraken-3.png",
+)

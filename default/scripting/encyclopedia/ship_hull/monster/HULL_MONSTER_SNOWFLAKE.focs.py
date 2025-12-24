@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_MONSTER_SNOWFLAKE",
+    category="HULL_MONSTER",
+    short_description="HULL_MONSTER_SNOWFLAKE",
+    description="HULL_MONSTER_SNOWFLAKE_DESC",
+    icon="icons/monsters/snowflake-3.png",
+)

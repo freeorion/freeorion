@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PC_TROOPS",
+    category="ENC_SHIP_PART",
+    short_description="PC_TROOPS",
+    description="PC_TROOPS_DESC",
+    icon="icons/ship_parts/troops.png",
+)

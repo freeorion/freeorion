@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ENERGY_HULL_TECHS",
+    category="SHIP_HULLS_CATEGORY",
+    short_description="ENERGY_HULL_TECHS",
+    description="ENERGY_HULL_TECHS_DESC",
+    icon="icons//ship_hulls/energy_frigate_hull_small.png",
+)

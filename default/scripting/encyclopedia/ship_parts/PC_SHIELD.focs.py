@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PC_SHIELD",
+    category="ENC_SHIP_PART",
+    short_description="PC_SHIELD",
+    description="PC_SHIELD_DESC",
+    icon="icons/ship_parts/deflector_shield.png",
+)

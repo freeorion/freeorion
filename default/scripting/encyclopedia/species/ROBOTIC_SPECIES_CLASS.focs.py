@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ROBOTIC_SPECIES_CLASS",
+    category="ENC_SPECIES",
+    short_description="ROBOTIC_SPECIES_CLASS",
+    description="ROBOTIC_SPECIES_CLASS_DESC",
+    icon="icons/species/robotic-01.png",
+)

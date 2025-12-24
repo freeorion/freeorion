@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PHOTOTROPHIC_SPECIES_CLASS",
+    category="ENC_SPECIES",
+    short_description="PHOTOTROPHIC_SPECIES_CLASS",
+    description="PHOTOTROPHIC_SPECIES_CLASS_DESC",
+    icon="icons/species/flora-07.png",
+)

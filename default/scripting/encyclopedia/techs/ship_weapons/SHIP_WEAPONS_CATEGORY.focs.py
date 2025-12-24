@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="SHIP_WEAPONS_CATEGORY",
+    category="ENC_TECH",
+    short_description="SHIP_WEAPONS_CATEGORY",
+    description="SHIP_WEAPONS_CATEGORY_DESC",
+    icon="icons/tech/categories/ship_weapons.png",
+)

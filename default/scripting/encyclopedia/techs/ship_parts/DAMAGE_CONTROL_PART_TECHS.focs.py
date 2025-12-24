@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="DAMAGE_CONTROL_PART_TECHS",
+    category="SHIP_PARTS_CATEGORY",
+    short_description="DAMAGE_CONTROL_PART_TECHS",
+    description="DAMAGE_CONTROL_PART_TECHS_DESC",
+    icon="icons/tech/structural_integrity_fields.png",
+)

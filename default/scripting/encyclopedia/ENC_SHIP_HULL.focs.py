@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ENC_SHIP_HULL",
+    category="ENC_SHIP_HULL",
+    short_description="",
+    description="ENC_SHIP_HULL_DESC",
+    icon="icons/ship_hulls/generic_hull.png",
+)

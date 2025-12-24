@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PLANET_MANAGEMENT_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="MANAGEMENT_TITLE_SHORT_DESC",
+    description="PLANET_MANAGEMENT_TEXT",
+    icon="icons/tech/planetary_ecology.png",
+)

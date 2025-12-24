@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PLANETARY_FOCUS_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="MANAGEMENT_TITLE_SHORT_DESC",
+    description="PLANETARY_FOCUS_TEXT",
+    icon="icons/meter/construction.png",
+)

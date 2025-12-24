@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HULL_LINE_ORGANIC",
+    category="ENC_SHIP_HULL",
+    short_description="HULL_LINE_ORGANIC",
+    description="HULL_LINE_ORGANIC_DESC",
+    icon="icons/ship_hulls/organic_hull_small.png",
+)

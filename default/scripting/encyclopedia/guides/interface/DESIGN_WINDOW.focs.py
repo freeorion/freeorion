@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="DESIGN_WINDOW_ARTICLE_TITLE",
+    category="INTERFACE_TITLE",
+    short_description="DESIGN_WINDOW_ARTICLE_TITLE",
+    description="DESIGN_WINDOW_ARTICLE_TEXT",
+    icon="icons/buttons/design_mouseover.png",
+)

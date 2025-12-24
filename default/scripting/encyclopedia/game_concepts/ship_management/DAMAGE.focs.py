@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="DAMAGE_TITLE",
+    category="SHIP_MANAGEMENT_TITLE",
+    short_description="DAMAGE_TITLE",
+    description="DAMAGE_TEXT",
+    icon="icons/meter/damage.png",
+)

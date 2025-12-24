@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="DIPLOMACY_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="DIPLOMACY_ARTICLE_SHORT_DESC",
+    description="DIPLOMACY_TEXT",
+    icon="icons/ai.png",
+)

@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PC_ARMOUR",
+    category="ENC_SHIP_PART",
+    short_description="PC_ARMOUR",
+    description="PC_ARMOUR_DESC",
+    icon="icons/ship_parts/std_armor_plating.png",
+)
