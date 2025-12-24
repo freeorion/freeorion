@@ -51,7 +51,7 @@ FieldType
             ]
             stackinggroup = "NEBULA_SHIP_EFFECTS"
             effects = [
-                SetSpeed value = max(5, Value - NamedRealLookup name = "FLD_NEBULA_SPEED_MALUS")
+                SetSpeed value = max(min(Value, 5), Value - NamedRealLookup name = "FLD_NEBULA_SPEED_MALUS")
                 SetStealth value = Value + NamedRealLookup name = "FLD_NEBULA_STEALTH_BONUS"
                 SetDetection value = Value - NamedRealLookup name = "FLD_NEBULA_DETECTION_MALUS"
             ]
