@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="GROWTH_CATEGORY",
+    category="ENC_TECH",
+    short_description="GROWTH_CATEGORY",
+    description="GROWTH_CATEGORY_DESC",
+    icon="icons/tech/categories/growth.png",
+)

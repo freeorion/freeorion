@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PRODUCTION_WINDOW_ARTICLE_TITLE",
+    category="INTERFACE_TITLE",
+    short_description="PRODUCTION_WINDOW_ARTICLE_TITLE",
+    description="PRODUCTION_WINDOW_ARTICLE_TEXT",
+    icon="icons/meter/industry.png",
+)

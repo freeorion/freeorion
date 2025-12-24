@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="SELF_SUSTAINING_SPECIES_CLASS",
+    category="ENC_SPECIES",
+    short_description="SELF_SUSTAINING_SPECIES_CLASS",
+    description="SELF_SUSTAINING_SPECIES_CLASS_DESC",
+    icon="icons/species/acirema.png",
+)

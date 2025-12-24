@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="HOMEWORLDS_TITLE",
+    category="PLANET_MANAGEMENT_TITLE",
+    short_description="HOMEWORLDS_ARTICLE_SHORT_DESC",
+    description="HOMEWORLDS_TEXT",
+    icon="icons/specials_large/homeworld.png",
+)

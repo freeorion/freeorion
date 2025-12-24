@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PC_FIGHTER_BAY",
+    category="ENC_SHIP_PART",
+    short_description="PC_FIGHTER_BAY",
+    description="PC_FIGHTER_BAY_DESC",
+    icon="icons/ship_parts/fighters-1.png",
+)

@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ORGANIC_SPECIES_CLASS",
+    category="ENC_SPECIES",
+    short_description="ORGANIC_SPECIES_CLASS",
+    description="ORGANIC_SPECIES_CLASS_DESC",
+    icon="icons/species/human.png",
+)

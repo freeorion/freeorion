@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="GASEOUS_SPECIES_CLASS",
+    category="ENC_SPECIES",
+    short_description="GASEOUS_SPECIES_CLASS",
+    description="GASEOUS_SPECIES_CLASS_DESC",
+    icon="icons/species/amorphous-05.png",
+)

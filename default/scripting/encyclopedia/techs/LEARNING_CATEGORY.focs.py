@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="LEARNING_CATEGORY",
+    category="ENC_TECH",
+    short_description="LEARNING_CATEGORY",
+    description="LEARNING_CATEGORY_DESC",
+    icon="icons/tech/categories/learning.png",
+)

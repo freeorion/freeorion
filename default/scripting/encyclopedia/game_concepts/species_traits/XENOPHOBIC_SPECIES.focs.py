@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="XENOPHOBIC_SPECIES_TITLE",
+    category="SPECIES_TRAITS_TITLE",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="XENOPHOBIC_SPECIES_TEXT",
+    icon="icons/sitrep/riot.png",
+)

@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="SPECIES_TRAITS_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="SPECIES_TRAITS_TEXT",
+    icon="icons/tech/psionics.png",
+)

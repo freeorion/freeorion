@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ENC_POLICY_SLOTS",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="",
+    description="ENC_POLICY_SLOTS_DESC",
+    icon="icons/meter/influence.png",
+)

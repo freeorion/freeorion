@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="SNEAKY_TITLE",
+    category="SPECIES_TRAITS_TITLE",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="SNEAKY_TEXT",
+    icon="icons/specials_huge/cloud_cover.png",
+)

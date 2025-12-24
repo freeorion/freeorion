@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ROBOTIC_HULL_TECHS",
+    category="SHIP_HULLS_CATEGORY",
+    short_description="ROBOTIC_HULL_TECHS",
+    description="ROBOTIC_HULL_TECHS_DESC",
+    icon="icons//ship_hulls/robotic_hull_small.png",
+)

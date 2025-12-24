@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ARMOR_PART_TECHS",
+    category="SHIP_PARTS_CATEGORY",
+    short_description="ARMOR_PART_TECHS",
+    description="ARMOR_PART_TECHS_DESC",
+    icon="icons/ship_parts/std_armor_plating.png",
+)

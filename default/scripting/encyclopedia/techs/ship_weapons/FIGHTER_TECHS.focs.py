@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="FIGHTER_TECHS",
+    category="SHIP_WEAPONS_CATEGORY",
+    short_description="FIGHTER_TECHS",
+    description="FIGHTER_TECHS_DESC",
+    icon="icons/ship_parts/fighter02.png",
+)

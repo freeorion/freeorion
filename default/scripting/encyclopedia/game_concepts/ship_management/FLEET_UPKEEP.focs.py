@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="FLEET_UPKEEP_TITLE",
+    category="SHIP_MANAGEMENT_TITLE",
+    short_description="PRODUCTION_ARTICLE_SHORT_DESC",
+    description="FLEET_UPKEEP_TEXT",
+    icon="icons/ship_hulls/fractal_energy_hull_small.png",
+)

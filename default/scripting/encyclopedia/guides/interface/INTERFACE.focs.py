@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="INTERFACE_TITLE",
+    category="CATEGORY_GUIDES",
+    short_description="INTERFACE_TITLE",
+    description="INTERFACE_TEXT",
+    icon="icons/FO_Icon_64x64.png",
+)

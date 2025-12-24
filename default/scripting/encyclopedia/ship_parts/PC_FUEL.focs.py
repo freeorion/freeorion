@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="PC_FUEL",
+    category="ENC_SHIP_PART",
+    short_description="PC_FUEL",
+    description="PC_FUEL_DESC",
+    icon="icons/ship_parts/basic-tank.png",
+)

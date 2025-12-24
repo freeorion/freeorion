@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="LITHIC_SPECIES_CLASS",
+    category="ENC_SPECIES",
+    short_description="LITHIC_SPECIES_CLASS",
+    description="LITHIC_SPECIES_CLASS_DESC",
+    icon="icons/species/egassem.png",
+)

@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="DETECTION_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="METER_ARTICLE_SHORT_DESC",
+    description="DETECTION_TEXT",
+    icon="icons/meter/detection.png",
+)

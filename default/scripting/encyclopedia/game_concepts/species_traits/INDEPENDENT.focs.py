@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="INDEPENDENT",
+    category="SPECIES_TRAITS_TITLE",
+    short_description="SPECIES_ARTICLE_SHORT_DESC",
+    description="INDEPENDENT_SPECIES_TRAIT_TEXT",
+    icon="icons/policies/social_isolation.png",
+)

@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="FLEET_MOVEMENT_ARTICLE_TITLE",
+    category="INTERFACE_TITLE",
+    short_description="FLEET_MOVEMENT_ARTICLE_TITLE",
+    description="FLEET_MOVEMENT_ARTICLE_TEXT",
+    icon="icons/sitrep/fleet_arrived.png",
+)

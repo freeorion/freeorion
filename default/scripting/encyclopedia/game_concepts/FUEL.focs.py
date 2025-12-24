@@ -1,0 +1,16 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="FUEL_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="METER_ARTICLE_SHORT_DESC",
+    description="FUEL_REFUEL_EFFICIENCY_TEXT",
+    icon="icons/meter/fuel.png",
+)
+Article(
+    name="FUEL_EFFICIENCY_TITLE",
+    category="CATEGORY_GAME_CONCEPTS",
+    short_description="METER_ARTICLE_SHORT_DESC",
+    description="FUEL_REFUEL_EFFICIENCY_TEXT",
+    icon="icons/meter/fuel.png",
+)

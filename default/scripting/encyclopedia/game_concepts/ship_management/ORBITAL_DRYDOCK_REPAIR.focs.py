@@ -1,0 +1,9 @@
+from focs._encyclopedia_articles import Article
+
+Article(
+    name="ORBITAL_DRYDOCK_REPAIR_TITLE",
+    category="SHIP_MANAGEMENT_TITLE",
+    short_description="ORBITAL_DRYDOCK_REPAIR_TITLE",
+    description="ORBITAL_DRYDOCK_REPAIR_TEXT",
+    icon="icons/building/shipyard-1.png",
+)
