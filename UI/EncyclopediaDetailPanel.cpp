@@ -84,31 +84,23 @@ namespace {
 
     // Checks content \a tags for any custom pedia categories, which are tags
     // that have the TAG_PEDIA_PREFIX as their first few chars
-    bool HasCustomCategory(const auto& tags) {
-        return std::any_of(tags.begin(), tags.end(), [](std::string_view sv)
-                           { return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX; });
-    }
+    bool HasCustomCategory(const auto& tags)
+    { return range_any_of(tags, [](std::string_view sv) { return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX; }); }
 
     // Checks content \a tags for custom defined pedia category \a cat
     bool HasCustomCategory(const std::vector<std::string_view>& tags, const std::string_view cat) {
-        return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv) {
-            return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX &&
-                sv.substr(prefix_len) == cat;
-        });
+        return range_any_of(tags, [cat](std::string_view sv)
+                                  { return sv.substr(0, prefix_len) == TAG_PEDIA_PREFIX && sv.substr(prefix_len) == cat; });
     }
 
     // checks \a tags for entries whose substring after the length of the pedia
     // prefix matches \a cat but does not check the portion before that
-    bool HasCustomCategoryNoPrefixCheck(const std::vector<std::string_view>& tags, const std::string_view cat) {
-        return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
-                           { return sv.substr(prefix_len) == cat; });
-    }
+    bool HasCustomCategoryNoPrefixCheck(const std::vector<std::string_view>& tags, const std::string_view cat)
+    { return range_any_of(tags, [cat](std::string_view sv) { return sv.substr(prefix_len) == cat; }); }
 
     // checks \a tags for entries that match \a cat
-    bool HasCustomCategoryNoPrefixes(const std::vector<std::string_view>& tags, const std::string_view cat) {
-        return std::any_of(tags.begin(), tags.end(), [cat](std::string_view sv)
-                           { return sv == cat; });
-    }
+    bool HasCustomCategoryNoPrefixes(const std::vector<std::string_view>& tags, const std::string_view cat)
+    { return range_contains(tags, cat); }
 }
 
 #if !defined(CONSTEXPR_FROM_CHARS)
@@ -4036,9 +4028,7 @@ namespace {
         // search for full word matches in title
         auto title_words{ExtractWords(article_name)};
         for (const auto& title_word : title_words) {
-            if (std::any_of(words_in_search_text.begin(), words_in_search_text.end(),
-                            [title_word](const auto& wist) { return wist == title_word; }))
-            {
+            if (range_contains(words_in_search_text, title_word)) {
                 word_match = std::move(article_name_link);
                 return;
             }

@@ -2463,14 +2463,12 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (liked_or_disliked_content_name.empty())
             return 0.0;
 
-        if (std::any_of(species->Likes().begin(), species->Likes().end(),
-                        [&liked_or_disliked_content_name](const auto& l) { return l == liked_or_disliked_content_name; }))
-        { return 1.0; }
-        else if (std::any_of(species->Dislikes().begin(), species->Dislikes().end(),
-                             [&liked_or_disliked_content_name](const auto& d) { return d == liked_or_disliked_content_name; }))
-        { return -1.0; }
+        if (range_contains(species->Likes(), liked_or_disliked_content_name))
+            return 1.0;
+        else if (range_contains(species->Dislikes(), liked_or_disliked_content_name))
+            return -1.0;
         else
-        { return 0.0; }
+            return 0.0;
 
     }
     else if (m_property_name == "SpeciesEmpireOpinion" || m_property_name == "SpeciesEmpireTargetOpinion") {
