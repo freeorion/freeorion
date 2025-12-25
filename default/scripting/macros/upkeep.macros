@@ -41,9 +41,51 @@ MARINE_RECRUITMENT_POLICY_MULTIPLIER
 '''
 
 DESIGN_SIMPLICITY_POLICY_MULTIPLIER
-'''(1 - 0.2*(Statistic If condition = And [
-    Source
-    EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_DESIGN_SIMPLICITY"
-    ((PartsInShipDesign design = UsedInDesignID) <= 6)  // Used in part or hull cost expressions, in which "UsedInDesignID" will contain the ID of the ship design in which the part is being used
-]))
+'''(1.0 - (
+   Statistic If condition = And [
+         Source
+         EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_DESIGN_SIMPLICITY"
+      ] * (1.0 - [[DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF([[DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF]])]])
+  )
+)
 '''
+
+// Note: colony part class increases complexity by 2; every other classe by 1
+DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF
+'''( Statistic        If condition = And [ Source  DesignHasPartClass low = 1 class = ShortRange ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = FighterBay ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = FighterHangar ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Shield ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Armour ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Troops ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Fuel ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Speed ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Stealth ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Detection ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = General ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Bombard ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Research ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Industry ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Influence ]
+          + Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = ProductionLocation ]
+          + (4 * Statistic If condition = And [ Source  DesignHasPartClass low = 1 class = Colony ])
+)
+'''
+
+// The formula defining the cost factor depending on the complexity
+// note this gets calculated every time complexity is checked
+// should return 1.0 for values higher than DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A
+DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF
+'''
+(@1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A]] ? 1.0 :
+ ( @1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA]] ? 0.95 :
+   ( @1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA]] ? 0.9 : 0.8 )
+ )
+)
+'''
+DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA
+'''2'''
+DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA
+'''3'''
+DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A
+'''4'''
