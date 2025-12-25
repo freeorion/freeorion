@@ -13103,7 +13103,7 @@ PLC_FLANKING_DESC
 
 Also ships flying a pincer attack do that additional structural damage. A pincer attack happens when ships of the adopting empire are in flight arriving next turn in a system via different starlanes.
 
-• Weapon damage for ship weapons is increased by [[value PLC_FLANKING_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], or [[shippart SR_WEAPON_4_1]])
+• Weapon damage for ship weapons is increased by [[value PLC_FLANKING_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], [[shippart SR_WEAPON_4_1]], or [[shippart SR_ARC_CONCENTRATOR]])
 • Weapon damage for strikers, bombers and heavy bombers is increased by [[value PLC_FLANKING_FIGHTER_DAMAGE_BOOST]] (i.e. for [[shippart FT_HANGAR_2]], [[shippart FT_HANGAR_3]], or [[shippart FT_HANGAR_4]])
 • Number of interceptors launched per [[FT_BAY_1]] is increased by [[value PLC_FLANKING_BAY_LAUNCH_BONUS]] (see [[shippart FT_HANGAR_1]])
 • Number of shots for [[shippart SR_ARC_DISRUPTOR]] is increased by [[value PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS]] '''
@@ -13116,7 +13116,7 @@ Charge
 
 PLC_CHARGE_DESC
 '''For armed ships with at least [[value PLC_CHARGE_MINIMUM_SPEED]] [[metertype METER_SPEED]]:
-• Weapon damage for ship weapons is increased by [[value PLC_CHARGE_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], or [[shippart SR_WEAPON_4_1]])
+• Weapon damage for ship weapons is increased by [[value PLC_CHARGE_DAMAGE_BOOST]] (i.e. for [[shippart SR_WEAPON_1_1]], [[shippart SR_WEAPON_2_1]], [[shippart SR_WEAPON_3_1]], [[shippart SR_WEAPON_4_1]]), or [[shippart SR_ARC_CONCENTRATOR]])
 • Number of fighters launched per [[FT_BAY_1]] is increased by [[value PLC_CHARGE_BAY_LAUNCH_BONUS]]
 • Number of shots for [[shippart SR_ARC_DISRUPTOR]] is increased by [[value PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS]]
 • A charging [[shippart SR_FLUX_LANCE]] can attack ships starting one combat round earlier
@@ -14607,25 +14607,25 @@ SHP_WEAPON_ARC_DISRUPTOR_1
 Arc Disruptors
 
 SHP_WEAPON_ARC_DISRUPTOR_1_DESC
-Unlocks the [[shippart SR_ARC_DISRUPTOR]], an automated weapon system doing low damage to multiple targets. The base weapon part has shot damage [[value SR_ARC_DISRUPTOR_PART_CAPACITY]].
+Unlocks the [[shippart SR_ARC_DISRUPTOR]] and the [[shippart SR_ARC_CONCENTRATOR]]. The disruptor is an automated weapon system doing low damage to multiple targets with shot damage [[value SR_ARC_DISRUPTOR_PART_CAPACITY]]. The concentrator is a more heavy and restricted variant with shot damage [[value SR_ARC_CONCENTRATOR_PART_CAPACITY]], designed to be more effective against shields.
 
 SHP_WEAPON_ARC_DISRUPTOR_2
 Arc Disruptor 2
 
 SHP_WEAPON_ARC_DISRUPTOR_2_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADED_DAMAGE]].
+Upgrades [[shippart SR_ARC_DISRUPTOR]] and [[shippart SR_ARC_CONCENTRATOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADE_DAMAGE]] extra shot damage, resulting in [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADED_DAMAGE]] and [[value SHP_WEAPON_ARC_DISRUPTOR_2_SR_CONCENTRATOR_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_ARC_DISRUPTOR_3
 Arc Disruptor 3
 
 SHP_WEAPON_ARC_DISRUPTOR_3_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of [[value SHP_WEAPON_ARC_DISRUPTOR_3_UPGRADED_DAMAGE]].
+Upgrades [[shippart SR_ARC_DISRUPTOR]] and [[shippart SR_ARC_CONCENTRATOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has [[value SHP_WEAPON_ARC_DISRUPTOR_3_UPGRADE_DAMAGE]] extra shot damage, resulting in [[value SHP_WEAPON_ARC_DISRUPTOR_3_UPGRADED_DAMAGE]] and [[value SHP_WEAPON_ARC_DISRUPTOR_3_SR_CONCENTRATOR_UPGRADED_DAMAGE]].
 
 SHP_WEAPON_ARC_DISRUPTOR_4
 Arc Disruptor 4
 
 SHP_WEAPON_ARC_DISRUPTOR_4_DESC
-Upgrades [[shippart SR_ARC_DISRUPTOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part gets [[value SHP_WEAPON_ARC_DISRUPTOR_4_UPGRADE_SHOTS]] extra shots.
+Upgrades [[shippart SR_ARC_DISRUPTOR]] and [[shippart SR_ARC_CONCENTRATOR]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part gets [[value SHP_WEAPON_ARC_DISRUPTOR_4_UPGRADE_SHOTS]] extra shots.
 
 SHP_ION_CANNON
 Ion Cannon
@@ -16185,6 +16185,18 @@ Charged polaron capacitors generate a molecular disruption flux wave that arcs t
 Upgrading the weapon technology will increase the shot damage.
 
 The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage. The Arc Disruptor has [[value SR_ARC_DISRUPTOR_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_ARC_DISRUPTOR_2]] increases this by [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADE_DAMAGE]].'''
+
+SR_ARC_CONCENTRATOR
+Arc Concentrator
+
+SR_ARC_CONCENTRATOR_DESC
+'''The Arc Concentrator, a heavy close combat range multi-shot ship weapon similar to [[shippart SR_ARC_DISRUPTOR]] but more effective against shielded targets. Installs in a core slot.
+
+The weapon concentrates molecular disruption flux waves. The concentrated wave can only unleashed at close range. The wave dissolves faster than unconcentrated waves but inflicts much stronger structural damage.
+
+Upgrading the arc disruptor weapon technology will increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Piloting trait does not affect damage. The Arc Concentrator has [[value SR_ARC_CONCENTRATOR_PART_CAPACITY]] basic shot damage. Upgrade tech [[tech SHP_WEAPON_ARC_DISRUPTOR_2]] increases this by [[value SHP_WEAPON_ARC_DISRUPTOR_2_UPGRADE_DAMAGE]].'''
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon

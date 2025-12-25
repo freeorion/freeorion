@@ -69,6 +69,7 @@ Policy
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
+                SetMaxDamage partname = "SR_ARC_CONCENTRATOR" value = Value + NamedRealLookup name = "PLC_FLANKING_DAMAGE_BOOST"
                 SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = Value + NamedReal name = "PLC_FLANKING_ARC_DISRUPTOR_SHOT_BONUS" value = 1.0
                 SetMaxSecondaryStat partname = "FT_HANGAR_2" value = Value + (NamedReal name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST" value = 2.0 * [[FIGHTER_DAMAGE_FACTOR]] )
                 SetMaxSecondaryStat partname = "FT_HANGAR_3" value = Value + NamedRealLookup name = "PLC_FLANKING_FIGHTER_DAMAGE_BOOST"

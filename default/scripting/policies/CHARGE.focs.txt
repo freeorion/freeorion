@@ -24,6 +24,7 @@ Policy
                 SetMaxDamage partname = "SR_WEAPON_2_1" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_3_1" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
                 SetMaxDamage partname = "SR_WEAPON_4_1" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
+                SetMaxDamage partname = "SR_ARC_CONCENTRATOR" value = Value + NamedRealLookup name = "PLC_CHARGE_DAMAGE_BOOST"
                 SetMaxSecondaryStat partname = "SR_ARC_DISRUPTOR" value = (Value + NamedReal name = "PLC_CHARGE_ARC_DISRUPTOR_SHOT_BONUS" value = 1.0)
                 // TODO check monster weapons
                 // fluff-wise: Fighters should not get a charge bonus for fighters from carriers as the carrier speed does not give combat advantage to the fighters.

@@ -1,0 +1,38 @@
+Part
+    name = "SR_ARC_CONCENTRATOR"
+    description = "SR_ARC_CONCENTRATOR_DESC"
+    class = ShortRange
+    damage = 8
+    shots = 3
+    destroyFightersPerBattleMax =
+        ShipPartMeter part = "SR_ARC_CONCENTRATOR" meter = SecondaryStat object = Source.ID
+        * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"
+    damageStructurePerBattleMax =
+        max(0,ShipPartMeter part = "SR_ARC_CONCENTRATOR" meter = Capacity object = Source.ID - Value(Target.Shield))
+        * ShipPartMeter part = "SR_ARC_CONCENTRATOR" meter = SecondaryStat object = Source.ID
+        * NamedRealLookup name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE"
+    combatTargets = And [
+        (CombatBout >= NamedIntegerLookup name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
+        [[COMBAT_TARGETS_VISIBLE_ENEMY]]
+        Or [
+           Fighter
+           [[COMBAT_TARGETS_NOT_DESTROYED_SHIP]]
+           [[COMBAT_TARGETS_PLANET_WITH_DEFENSE]]
+        ]
+    ]
+    mountableSlotTypes = Core
+    buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+    ]
+    icon = "icons/ship_parts/pulse-laser.png"
+
+
+#include "shortrange.macros"
+
+#include "/scripting/macros/upkeep.macros"
+#include "/scripting/ship_parts/targeting.macros"
+#include "/scripting/macros/priorities.macros"
