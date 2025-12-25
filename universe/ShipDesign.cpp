@@ -503,9 +503,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
         if (!ship_part)
             continue; // shouldn't happen...
         const auto& part_exclusions = ship_part->Exclusions();
-        if (std::any_of(part_exclusions.begin(), part_exclusions.end(),
-                        [&hull](const auto& x) { return hull == x; }))
-        {
+        if (range_contains(part_exclusions, hull)) {
             is_valid = false;
             if (produce_log)
                 WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes hull \""
@@ -532,7 +530,7 @@ ShipDesign::MaybeInvalidDesign(std::string hull, std::vector<std::string> parts,
                 }
             } else {
                 // part excludes another part if both are present
-                if (std::any_of(parts.begin(), parts.end(), [&x](const auto& p) { return x == p; })) {
+                if (range_contains(parts, x)) {
                     is_valid = false;
                     if (produce_log)
                         WarnLogger() << "Invalid ShipDesign part \"" << part_name << "\" excludes other part \""
@@ -1007,10 +1005,7 @@ LoadShipDesignsAndManifestOrderFromParseResults(
         std::vector<std::pair<std::string_view, boost::uuids::uuid>> names_and_missing_uuids;
         names_and_missing_uuids.reserve(saved_designs.size());
 
-        const auto in_ordering = [&ordering](const auto& uuid) {
-            return std::any_of(ordering.begin(), ordering.end(),
-                               [uuid](const auto uuid_in_order) noexcept { return uuid == uuid_in_order; });
-        };
+        const auto in_ordering = [&ordering](const auto& uuid) { return range_contains(ordering, uuid); };
 
         for (auto& [uuid, design_and_filename] : saved_designs) {
             if (!in_ordering(uuid)) // using range_filter above may cause an internal compiler error in MSVC

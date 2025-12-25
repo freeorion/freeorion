@@ -1784,18 +1784,36 @@ namespace {
         return ConditionDescription(std::vector{annexation_condition}, source_context, candidate);
     }
 
-    bool FlexibleContains(const auto& container, const auto num) {
+    constexpr auto to_id = [](const auto& o) noexcept {
+        if constexpr (requires { o->ID(); })
+            return o->ID();
+        else if constexpr ( requires { o.ID(); })
+            return o.ID();
+    };
+
+    constexpr bool FlexibleContains(const auto& container, const auto num) {
         if constexpr (requires { container.contains(num); })
             return container.contains(num);
         else if constexpr (requires { container.find(num); container.end(); })
             return container.find(num) != container.end();
         else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val; });
-        else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val->ID(); });
+            return range_contains(container, num);
+        else if constexpr (requires { container.begin(); container.end(); to_id(*container.begin()) == num; })
+            return range_contains(container | range_transform(to_id), num);
         else
             return false;
     }
+
+    static_assert(FlexibleContains(std::array{1,2,3}, 2));
+#if defined(USING_STD_RANGES) && USING_STD_RANGES
+    static_assert([](){
+        constexpr struct { constexpr int ID() const { return 42; } } thing;
+        return FlexibleContains(std::array{&thing}, thing.ID());
+    }());
+#endif
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(FlexibleContains(std::vector{1,2,3}, 2));
+#endif
 }
 
 void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id) {
