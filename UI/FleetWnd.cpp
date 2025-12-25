@@ -168,9 +168,8 @@ namespace {
     { return Networking::is_mod(GetApp()); }
 
     bool CanDamageShips(const std::vector<int>& ship_ids, const ScriptingContext& context) {
-        const auto ships = context.ContextObjects().findRaw<Ship>(ship_ids);
-        return std::any_of(ships.begin(), ships.end(), [&context](const auto* ship)
-                           { return ship && ship->CanDamageShips(context); });
+        const auto can_damage_ships = [&context](const Ship* ship) { return ship && ship->CanDamageShips(context); };
+        return context.ContextObjects().check_if_any<Ship>(can_damage_ships, ship_ids);
     }
 
     FleetAggression AggressionForFleet(FleetAggression aggression_mode, const std::vector<int>& ship_ids,
