@@ -10906,9 +10906,9 @@ bool And::EvalAny(const ScriptingContext& parent_context,
     if constexpr (random_pick) {
         const auto picker_val = RandInt(1, 15000);
         if (picker_val <= 5000) {
-            return std::any_of(candidates.begin(), candidates.end(),
+            return range_any_of(candidates,
                                [&parent_context, this](const auto* candidate) {
-                                   return std::all_of(m_operands.begin(), m_operands.end(),
+                                   return range_all_of(m_operands,
                                                       [&parent_context, candidate](const auto& op)
                                                       { return op->EvalOne(parent_context, candidate); });
                                });
