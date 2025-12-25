@@ -21,7 +21,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_PLANET_BEACON",
     description="BLD_PLANET_BEACON_DESC",
     buildcost=1,

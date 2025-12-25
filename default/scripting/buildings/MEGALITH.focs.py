@@ -33,7 +33,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_MEGALITH",
     description="BLD_MEGALITH_DESC",
     buildcost=250 * BUILDING_COST_MULTIPLIER,

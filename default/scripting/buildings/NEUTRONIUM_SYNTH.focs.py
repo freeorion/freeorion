@@ -13,7 +13,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_NEUTRONIUM_SYNTH",
     description="BLD_NEUTRONIUM_SYNTH_DESC",
     buildcost=1200 * BUILDING_COST_MULTIPLIER,

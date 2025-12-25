@@ -37,13 +37,14 @@ try:
     class _Aggregator: ...
 
     _T = TypeVar("_T", str, int, float)
+    _N = TypeVar("_N", int, float)
     # For some generic functions like Statistic
     # we need to specify type of processed argument
     # and type of output separately
     _T_IN = TypeVar("_T_IN", str, int, float)
     _T_OUT = TypeVar("_T_OUT", str, int, float)
 
-    class _Condition(bool):  # type: ignore
+    class _Condition:
         """
         This value represent an expression that is resolved to boolean.
 
@@ -51,37 +52,49 @@ try:
         which return int type, that breaks linter logic.
         """
 
-        def __and__(self, other) -> "_Condition": ...
+        def __and__(self, other) -> "_Condition": ...  # type: ignore
 
-        def __or__(self, other) -> "_Condition": ...
+        def __or__(self, other) -> "_Condition": ...  # type: ignore
 
-        def __invert__(self) -> "_Condition": ...
+        def __invert__(self) -> "_Condition": ...  # type: ignore
+        def __gt__(self, other) -> "_Condition": ...  # type: ignore
+        def __ge__(self, other) -> "_Condition": ...  # type: ignore
+        def __lt__(self, other) -> "_Condition": ...  # type: ignore
+        def __le__(self, other) -> "_Condition": ...  # type: ignore
+        def __mul__(self, other) -> int:
+            return 0
+
+        def __rmul__(self, other) -> int:
+            return 0
+
+        def __eq__(self, other) -> "_Condition": ...  # type: ignore
+        def __ne__(self, other) -> "_Condition": ...  # type: ignore
 
     class _ConditionalComposition:
         """
         Base class to type that return conditions when used in comparison operations.
         """
 
-        def __eq__(self, other) -> _Condition:  # type: ignore[override]
+        def __eq__(self, other) -> _Condition:  # type: ignore
             ...
 
-        def __ne__(self, other) -> _Condition:  # type: ignore[override]
+        def __ne__(self, other) -> _Condition:  # type: ignore
             ...
 
-        def __lt__(self, other) -> _Condition: ...
+        def __lt__(self, other) -> _Condition: ...  # type: ignore[invalid-return-type]
 
-        def __gt__(self, other) -> _Condition: ...
+        def __gt__(self, other) -> _Condition: ...  # type: ignore[invalid-return-type]
 
-        def __le__(self, other) -> _Condition: ...
+        def __le__(self, other) -> _Condition: ...  # type: ignore[invalid-return-type]
 
-        def __ge__(self, other) -> _Condition: ...
+        def __ge__(self, other) -> _Condition: ...  # type: ignore[invalid-return-type]
 
     class _ID:
         ...
 
-        def __eq__(self, other) -> _Condition: ...
+        def __eq__(self, other) -> _Condition: ...  # type: ignore
 
-        def __ne__(self, other) -> _Condition: ...
+        def __ne__(self, other) -> _Condition: ...  # type: ignore
 
     class _FleetID(_ID): ...
 

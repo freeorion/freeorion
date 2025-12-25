@@ -28,7 +28,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GAS_GIANT_GEN",
     description="BLD_GAS_GIANT_GEN_DESC",
     buildcost=25 * BUILDING_COST_MULTIPLIER,

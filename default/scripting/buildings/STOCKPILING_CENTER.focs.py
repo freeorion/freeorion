@@ -23,10 +23,10 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_STOCKPILING_CENTER",
     description="BLD_STOCKPILING_CENTER_DESC",
-    captureresult=DestroyOnCapture,  # type: ignore[reportUnboundVariable]
+    captureresult=DestroyOnCapture,  # pyrefly: ignore[unbound-name]
     buildcost=100 * BUILDING_COST_MULTIPLIER,
     buildtime=5,
     location=(

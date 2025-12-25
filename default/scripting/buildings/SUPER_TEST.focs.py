@@ -19,7 +19,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SUPER_TEST",
     description="BLD_SUPER_TEST_DESC",
     buildcost=1,

@@ -21,10 +21,10 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_REGIONAL_ADMIN",
     description="BLD_REGIONAL_ADMIN_DESC",
-    captureresult=DestroyOnCapture,  # type: ignore[reportUnboundVariable]
+    captureresult=DestroyOnCapture,  # pyrefly: ignore[unbound-name]
     buildcost=12 * BUILDING_COST_MULTIPLIER * StatisticCount(float, condition=Planet() & OwnedBy(empire=Source.Owner)),
     buildtime=6,
     location=(

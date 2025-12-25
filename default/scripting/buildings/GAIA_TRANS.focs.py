@@ -26,7 +26,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GAIA_TRANS",
     description="BLD_GAIA_TRANS_DESC",
     buildcost=200 * Target.HabitableSize * BUILDING_COST_MULTIPLIER,

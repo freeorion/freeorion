@@ -83,7 +83,7 @@ EXPERIMENTOR_ADD_STARLANE = AddStarlanes(
     ),
 )
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_EXPERIMENTOR_OUTPOST",
     description="BLD_EXPERIMENTOR_OUTPOST_DESC",
     buildcost=1,

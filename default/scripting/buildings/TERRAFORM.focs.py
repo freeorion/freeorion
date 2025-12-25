@@ -99,7 +99,7 @@ def TARGET_TERRAFORMING(*, current_type):
     pre_before_source = get_related(current_type, -2)
     post_target = get_related(current_type, +2)
 
-    BuildingType(  # type: ignore[reportUnboundVariable]
+    BuildingType(  # pyrefly: ignore[unbound-name]
         name=_get_name(current_type),
         description=f"{_get_name(current_type)}_DESC",
         buildcost=(
@@ -258,7 +258,7 @@ _build_time = (
     / 100
 )  # end build time
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_TERRAFORM_BEST",
     description="BLD_TERRAFORM_BEST_DESC",
     buildcost=_build_cost,

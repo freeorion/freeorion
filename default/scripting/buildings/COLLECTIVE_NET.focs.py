@@ -28,7 +28,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_COLLECTIVE_NET",
     description="BLD_COLLECTIVE_NET_DESC",
     buildcost=250 * BUILDING_COST_MULTIPLIER,

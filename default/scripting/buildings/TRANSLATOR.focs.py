@@ -31,7 +31,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_TRANSLATOR",
     description="BLD_TRANSLATOR_DESC",
     buildcost=320 * BUILDING_COST_MULTIPLIER,
@@ -68,7 +68,7 @@ BuildingType(  # type: ignore[reportUnboundVariable]
                             condition=Planet() & HasSpecies() & OwnedBy(empire=Source.Owner),
                         )
                     )
-                    ** 0.5  # type: ignore[reportOperatorIssue, operator]
+                    ** 0.5
                 )
             ],
         ),

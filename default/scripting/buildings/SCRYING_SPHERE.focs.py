@@ -25,7 +25,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SCRYING_SPHERE",
     description="BLD_SCRYING_SPHERE_DESC",
     buildcost=150 * BUILDING_COST_MULTIPLIER,

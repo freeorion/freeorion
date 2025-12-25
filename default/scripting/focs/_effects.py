@@ -2,8 +2,8 @@
 from typing import cast
 
 from focs._effects import (
-    LocalCandidate,
-    StatisticIf,
+    LocalCandidate,  # pyrefly: ignore  # import from self
+    StatisticIf,  # pyrefly: ignore  # import from self
 )
 
 

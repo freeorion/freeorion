@@ -15,7 +15,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_GENOME_BANK",
     description="BLD_GENOME_BANK_DESC",
     buildcost=15 * BUILDING_COST_MULTIPLIER,

@@ -14,7 +14,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SPATIAL_DISTORT_GEN",
     description="BLD_SPATIAL_DISTORT_GEN_DESC",
     buildcost=500 * BUILDING_COST_MULTIPLIER,

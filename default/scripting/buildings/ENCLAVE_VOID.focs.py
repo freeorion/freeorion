@@ -21,7 +21,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_ENCLAVE_VOID",
     description="BLD_ENCLAVE_VOID_DESC",
     buildcost=300 * BUILDING_COST_MULTIPLIER,
