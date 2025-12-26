@@ -167,7 +167,7 @@ struct range_drop {
     const std::size_t drop = 1u;
     [[nodiscard]] constexpr explicit range_drop(std::size_t drop_) noexcept : drop(drop_) {}
 };
-inline auto operator|(auto&& r, range_drop drop) {
+inline auto constexpr operator|(auto&& r, range_drop drop) {
     auto begin_it = r.begin();
     const auto end_it = r.end();
     const auto sz = static_cast<std::size_t>(boost::distance(r));
@@ -181,7 +181,7 @@ inline auto operator|(auto&& r, range_drop drop) {
 inline constexpr auto& range_contains = std::ranges::contains;
 #else
 template <typename Rng, typename... Args>
-inline auto range_contains(Rng&& rng, Args&&... args)
+inline constexpr auto range_contains(Rng&& rng, Args&&... args)
 {
     if constexpr (requires { rng.contains(std::forward<Args>(args)...); })
         return rng.contains(std::forward<Args>(args)...);
