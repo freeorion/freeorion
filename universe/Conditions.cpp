@@ -1755,7 +1755,7 @@ std::string Capital::Dump(uint8_t ntabs) const
 
 bool Capital::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    return candidate && FlexibleContains(local_context.Empires().CapitalIDs(), candidate->ID());
+    return candidate && range_contains(local_context.Empires().CapitalIDs(), candidate->ID());
 }
 
 ObjectSet Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const {
@@ -1828,7 +1828,7 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
     } else {
         // check if candidates are capitals of any empire
         const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
-        { return FlexibleContains(capitals, obj->ID()); };
+        { return range_contains(capitals, obj->ID()); };
 
         const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
         if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
@@ -1862,7 +1862,7 @@ namespace {
         if (!empire_id) {
             // check if candidates / candidate IDs are capitals of any empire
             auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto obj)
-            { return FlexibleContains(capitals, obj); };
+            { return obj && FlexibleContains(capitals, obj); };
             return range_any_of(candidates, is_capital);
 
         } else {

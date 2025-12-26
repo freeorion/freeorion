@@ -772,7 +772,7 @@ namespace {
     }
 
     [[nodiscard]] bool DisplayedShipDesignManager::IsKnown(const int id) const
-    { return FlexibleContains(m_id_to_obsolete_and_loc, id); };
+    { return range_contains(m_id_to_obsolete_and_loc | range_keys, id); };
 
     boost::optional<bool> DisplayedShipDesignManager::IsObsolete(const int id, const Universe& universe) const {
         // A non boost::none value for a specific design overrides the hull and part values
@@ -874,7 +874,7 @@ namespace {
         m_id_to_obsolete_and_loc.clear();
         m_ordered_design_ids.clear();
         for (const auto& [id, obsolete] : design_ids_and_obsoletes) {
-            if (FlexibleContains(m_id_to_obsolete_and_loc, id)) {
+            if (range_contains(m_id_to_obsolete_and_loc | range_keys, id)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate design id = " << id;
                 continue;
             }
@@ -896,7 +896,7 @@ namespace {
         m_hull_to_obsolete_and_loc.clear();
         m_ordered_hulls.clear();
         for (const auto& [name, obsolete] : hulls_and_obsoletes) {
-            if (FlexibleContains(m_hull_to_obsolete_and_loc, name)) {
+            if (range_contains(m_hull_to_obsolete_and_loc | range_keys, name)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate hull name = " << name;
                 continue;
             }

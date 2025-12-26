@@ -1783,7 +1783,10 @@ namespace {
             return EMPTY_STRING;
         return ConditionDescription(std::vector{annexation_condition}, source_context, candidate);
     }
+}
 
+namespace {
+    // this here because there used to be a FlexibleContains implementation here, but it was moved elsewhere
     static_assert(FlexibleContains(std::array{1,2,3}, 2));
 #if defined(USING_STD_RANGES) && USING_STD_RANGES
     static_assert([](){
@@ -1829,7 +1832,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id
     //    Underline for shipyard(s)
 
     const bool is_homeworld = range_any_of(sm.GetSpeciesHomeworldsMap() | range_values,
-                                           [this](const auto& ids) { return FlexibleContains(ids, m_planet_id); });
+                                           [this](const auto& ids) { return range_contains(ids, m_planet_id); });
 
     const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(empire_id);
     const auto not_destroyed_is_shipyard_tag = [&known_destroyed_object_ids](const Building* building) {

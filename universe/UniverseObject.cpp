@@ -93,10 +93,8 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
     }
 }
 
-bool UniverseObject::HasSpecial(std::string_view name) const {
-    return std::any_of(m_specials.begin(), m_specials.end(),
-                       [name](const auto& s) { return name == s.first; });
-}
+bool UniverseObject::HasSpecial(std::string_view name) const
+{ return range_contains(m_specials | range_keys, name); }
 
 int UniverseObject::SpecialAddedOnTurn(std::string_view name) const {
     auto it = range_find_if(m_specials, [name](const auto& s) noexcept { return name == s.first; });
