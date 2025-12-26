@@ -771,17 +771,6 @@ namespace {
         m_hull_to_obsolete_and_loc[hull] = {std::pair{false, NextUIObsoleteEvent()}, inserted_it};
     }
 
-    [[nodiscard]] bool FlexibleContains(const auto& container, const auto& val) {
-        if constexpr (requires { container.contains(val); })
-            return container.contains(val);
-        else if constexpr (requires { container.count(val); })
-            return container.count(val) > 0;
-        else if constexpr (requires { container.find(val) != container.end(); })
-            return container.find(val) != container.end();
-        else
-            return range_contains(container, val);
-    }
-
     [[nodiscard]] bool DisplayedShipDesignManager::IsKnown(const int id) const
     { return FlexibleContains(m_id_to_obsolete_and_loc, id); };
 

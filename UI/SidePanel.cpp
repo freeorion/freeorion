@@ -1784,26 +1784,6 @@ namespace {
         return ConditionDescription(std::vector{annexation_condition}, source_context, candidate);
     }
 
-    constexpr auto to_id = [](const auto& o) noexcept {
-        if constexpr (requires { o->ID(); })
-            return o->ID();
-        else if constexpr ( requires { o.ID(); })
-            return o.ID();
-    };
-
-    constexpr bool FlexibleContains(const auto& container, const auto num) {
-        if constexpr (requires { container.contains(num); })
-            return container.contains(num);
-        else if constexpr (requires { container.find(num); container.end(); })
-            return container.find(num) != container.end();
-        else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
-            return range_contains(container, num);
-        else if constexpr (requires { container.begin(); container.end(); to_id(*container.begin()) == num; })
-            return range_contains(container | range_transform(to_id), num);
-        else
-            return false;
-    }
-
     static_assert(FlexibleContains(std::array{1,2,3}, 2));
 #if defined(USING_STD_RANGES) && USING_STD_RANGES
     static_assert([](){
