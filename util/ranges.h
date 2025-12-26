@@ -224,5 +224,29 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
     return range_to<std::vector<ValT>>(std::forward<decltype(r)>(r));
 }
 
+[[nodiscard]] inline constexpr bool FlexibleContains(const auto& container, const auto val) {
+    if constexpr (requires { container.contains(val); }) {
+        return container.contains(val);
+    } else if constexpr (requires { container.find(val); container.end(); }) {
+        return container.find(val) != container.end();
+    } else if constexpr (requires { container.begin(); container.end(); }) {
+        if constexpr (requires { *container.begin() == val; }) {
+            return range_contains(container, val);
+        } else { 
+            constexpr auto to_id = [](const auto& o) noexcept {
+                if constexpr (requires { o->ID(); })
+                    return o->ID();
+                else if constexpr ( requires { o.ID(); })
+                    return o.ID();
+            };
+
+            if constexpr (requires { to_id(*container.begin()) == val; })
+                return range_contains(container | range_transform(to_id), val);
+            else if constexpr (requires { to_id(val) == *container.begin(); })
+                return range_contains(container, to_id(val));
+        }
+    }
+}
+
 
 #endif

@@ -1707,21 +1707,6 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-namespace {
-    constexpr bool FlexibleContains(const auto& container, const auto num) {
-        if constexpr (requires { container.contains(num); })
-            return container.contains(num);
-        else if constexpr (requires { container.find(num); container.end(); })
-            return container.find(num) != container.end();
-        else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
-            return range_contains(container, num);
-        else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
-            return range_any_of(container, [num](const auto& val) noexcept { return val && num == val->ID(); });
-        else
-            return false;
-    }
-}
-
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
