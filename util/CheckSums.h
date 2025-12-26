@@ -1,18 +1,17 @@
 #ifndef _CheckSums_h_
 #define _CheckSums_h_
 
-#include "Export.h"
-
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 #include <limits.h>
-#include <memory>
 #include <numeric>
 #include <utility>
 #include <stdexcept>
 #include <string_view>
+#include <tuple>
 #include <type_traits>
 
 namespace CheckSums {
