@@ -39,7 +39,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_INTERSPECIES_ACADEMY",
     description="BLD_INTERSPECIES_ACADEMY_DESC",
     buildcost=50 * BUILDING_COST_MULTIPLIER,

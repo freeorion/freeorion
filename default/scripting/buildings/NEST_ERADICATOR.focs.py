@@ -49,7 +49,7 @@ def EG_NEST_REMOVAL(monster_name):
     )
 
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_NEST_ERADICATOR",
     description="BLD_NEST_ERADICATOR_DESC",
     buildcost=80,

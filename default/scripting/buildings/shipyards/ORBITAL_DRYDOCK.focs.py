@@ -93,7 +93,7 @@ PLANET_OWNED_DRYDOCK_HIGHEST_HAPPINESS = MaximumNumberOf(
 )
 
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_SHIPYARD_ORBITAL_DRYDOCK",
     description="BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC",
     buildcost=20 * BUILDING_COST_MULTIPLIER,

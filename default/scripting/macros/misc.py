@@ -51,7 +51,7 @@ SYSTEM_MINES_DAMAGE_FACTOR = GameRule(type=float, name="RULE_SHIP_STRUCTURE_FACT
 SUPPLY_DISCONNECTED_INFLUENCE_MALUS = 1
 
 # empire id used for unowned planets/ships - as defined in Universe.cpp(?)
-UNOWNED_EMPIRE_ID = -1  # type: ignore[assignment]
+UNOWNED_EMPIRE_ID = -1
 
 
 MINIMUM_DISTANCE_EMPIRE_CHECK = ~WithinStarlaneJumps(

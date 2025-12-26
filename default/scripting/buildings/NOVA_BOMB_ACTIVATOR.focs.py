@@ -11,7 +11,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_NOVA_BOMB_ACTIVATOR",
     description="BLD_NOVA_BOMB_ACTIVATOR_DESC",
     buildcost=25 * BUILDING_COST_MULTIPLIER,

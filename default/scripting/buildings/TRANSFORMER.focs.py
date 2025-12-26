@@ -13,7 +13,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_TRANSFORMER",
     description="BLD_TRANSFORMER_DESC",
     buildcost=600 * BUILDING_COST_MULTIPLIER,

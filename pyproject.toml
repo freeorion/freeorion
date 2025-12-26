@@ -116,6 +116,7 @@ builtins = []
 
 [tool.ty.rules]
 unresolved-reference = "ignore"
+unused-ignore-comment = "error"
 
 [tool.ty.environment]
 root = ["default/scripting"]
@@ -127,15 +128,7 @@ exclude = [
   "doc"
 ]
 
-[[tool.ty.overrides]]
-include = [
-    "default/scripting/focs/_types.py",
-    "default/scripting/focs/_effects.py"
-]
 
-[tool.ty.overrides.rules]
-invalid-return-type = "ignore"
-unsupported-operator = "ignore"
 
 [tool.pyrefly]
 project-includes = [
@@ -146,10 +139,3 @@ python-version = "3.10.0"
 infer-with-first-use = false
 search-path = ["default/scripting/"]
 
-[[tool.pyrefly.sub-config]]
-# apply this config to all files in `sub/project`
-matches = "default/scripting/focs/_effects.py"
-
-# enable `assert-type` errors in `sub/project`
-[tool.pyrefly.sub-config.errors]
-missing-module-attribute = false

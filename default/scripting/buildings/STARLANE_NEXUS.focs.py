@@ -25,7 +25,7 @@ try:
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # type: ignore[reportUnboundVariable]
+BuildingType(  # pyrefly: ignore[unbound-name]
     name="BLD_STARLANE_NEXUS",
     description="BLD_STARLANE_NEXUS_DESC",
     buildcost=1000 * BUILDING_COST_MULTIPLIER,
