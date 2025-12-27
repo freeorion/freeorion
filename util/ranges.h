@@ -195,7 +195,7 @@ inline constexpr auto range_contains(Rng&& rng, Args&&... args)
 }
 #endif
 
-#if 0 && defined(__cpp_lib_ranges_to_container)
+#if defined(__cpp_lib_ranges_to_container)
 template <typename OutT, typename... Args>
 inline constexpr OutT range_to(Args&&... args) { return std::ranges::to<OutT>(std::forward<Args>(args)...); }
 #else
