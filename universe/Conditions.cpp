@@ -1707,21 +1707,6 @@ std::unique_ptr<Condition> Homeworld::Clone() const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-namespace {
-    constexpr bool FlexibleContains(const auto& container, const auto num) {
-        if constexpr (requires { container.contains(num); })
-            return container.contains(num);
-        else if constexpr (requires { container.find(num); container.end(); })
-            return container.find(num) != container.end();
-        else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
-            return range_contains(container, num);
-        else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
-            return range_any_of(container, [num](const auto& val) noexcept { return val && num == val->ID(); });
-        else
-            return false;
-    }
-}
-
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
@@ -10906,9 +10891,9 @@ bool And::EvalAny(const ScriptingContext& parent_context,
     if constexpr (random_pick) {
         const auto picker_val = RandInt(1, 15000);
         if (picker_val <= 5000) {
-            return std::any_of(candidates.begin(), candidates.end(),
+            return range_any_of(candidates,
                                [&parent_context, this](const auto* candidate) {
-                                   return std::all_of(m_operands.begin(), m_operands.end(),
+                                   return range_all_of(m_operands,
                                                       [&parent_context, candidate](const auto& op)
                                                       { return op->EvalOne(parent_context, candidate); });
                                });
