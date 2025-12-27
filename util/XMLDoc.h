@@ -158,15 +158,15 @@ public:
     //!
     //! @return
     //!     The tag-name of this XMLElement.  Can be an empty string.
-    const auto& Tag() const noexcept { return m_tag; }
+    [[nodiscard]] const auto& Tag() const noexcept { return m_tag; }
 
     //! Returns the text body of this XMLElement.
     //!
     //! @return
     //!     The text content of this XMLElement.  Can be an empty string.
-    const auto& Text() const noexcept { return m_text; }
+    [[nodiscard]] const auto& Text() const noexcept { return m_text; }
 
-    const auto& Children() const noexcept { return children; }
+    [[nodiscard]] const auto& Children() const noexcept { return children; }
 
     //! Returns if this XMLElement contains a child with @p tag as tag-name.
     //!
@@ -175,7 +175,7 @@ public:
     //! @return
     //!     True if there is at least one child with a @p tag tag-name, false if
     //!     not.
-    bool ContainsChild(const std::string& tag) const;
+    [[nodiscard]] bool ContainsChild(const std::string& tag) const;
 
     //! Returns the first XMLElement child that has @p tag as tag-name.
     //!
@@ -186,7 +186,7 @@ public:
     //!     @p tag.
     //! @throw std::out_of_range
     //!     When no child with a tag-name @p tag exists.
-    const XMLElement& Child(const std::string& tag) const;
+    [[nodiscard]] const XMLElement& Child(const std::string& tag) const;
 
     //! Write this XMLElement XML formatted into the given output stream @p os
     //! with indentation level @p indent when @p whitespace is set.
@@ -216,10 +216,10 @@ public:
     std::string WriteElement(int indent = 0, bool whitespace = true) const;
 
     //! @see  XMLElement::Child(const std::string&) const
-    XMLElement& Child(const std::string& tag);
+    [[nodiscard]] XMLElement& Child(const std::string& tag);
 
-    const std::string& Attribute(const std::string& name) const;
-    bool HasAttribute(const std::string& name) const noexcept;
+    [[nodiscard]] const std::string& Attribute(const std::string& name) const;
+    [[nodiscard]] bool HasAttribute(const std::string& name) const noexcept;
 
     //! Sets the tag-name of this XMLElement to @p tag.
     //!
@@ -290,18 +290,9 @@ public:
     //!
     //! @param[in] root_tag
     //!     The tag-name of the created root XMLElement.
-    XMLDoc(std::string root_tag = "XMLDoc");
-
-    //! Construct a document from the given input stream @p is.
-    //!
-    //! @param[in] is
-    //!     An input stream that provides an XML markup document once read.
-    //!
-    //! @bug
-    //!     @p is isn't actually read but ignored and an empty (and maybe
-    //!     invalid) document is created.  Use XMLDoc::ReadDoc(std::istream&)
-    //!     instead.
-    XMLDoc(const std::istream& is);
+    explicit XMLDoc(std::string root_tag = "XMLDoc") noexcept :
+        root_node{std::move(root_tag), true}
+    {}
 
     //! Write the contents of the XMLDoc into the given output stream @p os
     //! with optional @p indent.
@@ -334,7 +325,7 @@ public:
 
     //! The root element that contains the parsed document, which is represented
     //! by XMLElement%s.
-    XMLElement root_node;
+    XMLElement root_node{};
 
 private:
     static void SetElemName(const char* first, const char* last);
