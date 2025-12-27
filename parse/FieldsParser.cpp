@@ -110,7 +110,7 @@ namespace {
 }
 
 namespace parse {
-    start_rule_payload fields(const std::filesystem::path& path) {
+    start_rule_payload fields(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload field_types;
 
         ScopedTimer timer("Fields Parsing");
@@ -118,6 +118,7 @@ namespace parse {
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, field_types);
 
+        success = true;
         return field_types;
     }
 }
