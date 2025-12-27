@@ -6,6 +6,7 @@
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
 #include "universe/Encyclopedia.h"
+#include "universe/FieldType.h"
 #include "universe/Planet.h"
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
@@ -780,6 +781,34 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles) {
     BOOST_CHECK_EQUAL("", article.short_description);
     BOOST_CHECK_EQUAL("ENC_SPECIES_DESC", article.description);
     BOOST_CHECK_EQUAL("icons/species/humanoid-01.png", article.icon);
+}
+
+BOOST_AUTO_TEST_CASE(parse_fields) {
+    PythonParser parser(m_python, m_test_scripting_dir);
+
+    auto fields_p = Pending::ParseSynchronously(parse::fields, parser, m_test_scripting_dir / "fields");
+    auto fields_opt = Pending::WaitForPendingUnlocked(std::move(fields_p));
+
+    BOOST_REQUIRE(fields_opt);
+
+    const auto fields = *std::move(fields_opt);
+    BOOST_CHECK_EQUAL(1, fields.size());
+
+    const auto fields_it = fields.find("FLD_SUBSPACE_RIFT");
+    BOOST_REQUIRE(fields_it != fields.end());
+    
+    const auto& field = fields_it->second;
+    BOOST_CHECK_EQUAL("FLD_SUBSPACE_RIFT", field->Name());
+    BOOST_CHECK_EQUAL("FLD_SUBSPACE_RIFT_DESC", field->Description());
+    BOOST_CHECK_EQUAL(0.0, field->Stealth());
+    BOOST_CHECK_EQUAL("nebulae/nebula9.png", field->Graphic());
+
+    const auto& effects = field->Effects();
+    BOOST_REQUIRE_EQUAL(4, effects.size());
+    BOOST_CHECK_EQUAL(4028904, effects[0].GetCheckSum());
+    BOOST_CHECK_EQUAL(4027442, effects[1].GetCheckSum());
+    BOOST_CHECK_EQUAL(4016711, effects[2].GetCheckSum());
+    BOOST_CHECK_EQUAL(4014678, effects[3].GetCheckSum());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
