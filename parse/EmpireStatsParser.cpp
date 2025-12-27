@@ -27,12 +27,13 @@ namespace {
     struct py_grammar {
         boost::python::dict globals;
         const PythonParser& parser;
-        start_rule_payload& stats;
         boost::python::object module;
+        start_rule_payload& stats;
 
         py_grammar(const PythonParser& parser_, start_rule_payload& stats_) :
             globals(boost::python::import("builtins").attr("__dict__")),
             parser(parser_),
+            module(parser_.LoadModule(&PyInit__empire_statistics)),
             stats(stats_)
         {
             RegisterGlobalsConditions(globals);
@@ -41,8 +42,6 @@ namespace {
             RegisterGlobalsEnums(globals);
 
             parser.LoadValueRefsModule();
-
-            module = parser.LoadModule(&PyInit__empire_statistics);
 
             module.attr("__stats") = boost::cref(*this);
         }
