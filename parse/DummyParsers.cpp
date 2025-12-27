@@ -22,8 +22,10 @@ namespace parse {
         return {};
     }
 
-    std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const std::filesystem::path& path)
-    { return {}; }
+    std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
+        success = true;
+        return {};
+    }
 
     std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>> named_value_refs(const std::filesystem::path& path)
     { return {}; }

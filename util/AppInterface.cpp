@@ -81,7 +81,7 @@ void IApp::StartBackgroundParsing(const PythonParser& python) {
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/encyclopedia").string();
 
     if (IsExistingDir(rdir / "scripting/fields"))
-        GetFieldTypeManager().SetFieldTypes(Pending::StartAsyncParsing(parse::fields, rdir / "scripting/fields"));
+        GetFieldTypeManager().SetFieldTypes(Pending::ParseSynchronously(parse::fields, python, rdir / "scripting/fields"));
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/fields").string();
 
