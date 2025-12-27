@@ -6,6 +6,7 @@
 #include "universe/Conditions.h"
 #include "universe/Effects.h"
 #include "universe/Encyclopedia.h"
+#include "universe/FieldType.h"
 #include "universe/Planet.h"
 #include "universe/Tech.h"
 #include "universe/UnlockableItem.h"
@@ -211,6 +212,41 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
             BOOST_CHECK_EQUAL(encyclopedia_category_count, encyclopedia_category_it->second.size());
         }
     }
+}
+
+/**
+ * Checks count of field in real scripts
+ * FO_CHECKSUM_FIELD_NAME determines field name to be check for FO_CHECKSUM_FIELD_VALUE checksum
+ */
+
+BOOST_AUTO_TEST_CASE(parse_fields_full) {
+    PythonParser parser(m_python, m_default_scripting_dir);
+
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+
+    auto fields_p = Pending::ParseSynchronously(parse::fields, parser, m_default_scripting_dir / "fields");
+    auto fields_opt = Pending::WaitForPendingUnlocked(std::move(fields_p));
+
+    BOOST_REQUIRE(fields_opt);
+
+    const auto fields = *std::move(fields_opt);
+    BOOST_CHECK_EQUAL(10, fields.size());
+
+    if (const char *field_name = std::getenv("FO_CHECKSUM_FIELD_NAME")) {
+        const auto field_it = fields.find(field_name);
+        BOOST_REQUIRE(fields.end() != field_it);
+
+        BOOST_TEST_MESSAGE("Dump " << field_name << ":");
+        BOOST_TEST_MESSAGE(field_it->second->Dump(0));
+
+        if (const char *field_checksum_str = std::getenv("FO_CHECKSUM_FIELD_VALUE")) {
+            uint32_t field_checksum = boost::lexical_cast<uint32_t>(field_checksum_str);
+            uint32_t value{0};
+            CheckSums::CheckSumCombine(value, field_it->second);
+            BOOST_REQUIRE_EQUAL(field_checksum, value);
+        }
+    }
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
