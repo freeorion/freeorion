@@ -41,6 +41,7 @@ inline constexpr auto& range_distance = std::ranges::distance;
 # include <boost/range/begin.hpp>
 # include <boost/range/end.hpp>
 # include <boost/range/empty.hpp>
+# include <boost/range/algorithm/find.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
 # include <boost/algorithm/cxx11/all_of.hpp>
 # include <boost/algorithm/cxx11/none_of.hpp>
