@@ -1,4 +1,4 @@
-from focs._types import _Condition, _EffectGroup
+from focs._types import _Condition, _EffectGroup, _FloatParam
 
 class _CaptureResult: ...
 
@@ -9,8 +9,8 @@ def BuildingType(
     *,
     name: str,
     description: str,
-    buildcost: int | float,
-    buildtime: int | float,  # https://github.com/freeorion/freeorion/pull/5160#discussion_r2020142743
+    buildcost: _FloatParam,
+    buildtime: _FloatParam,  # https://github.com/freeorion/freeorion/pull/5160#discussion_r2020142743
     location: _Condition,
     effectsgroups: list[_EffectGroup],
     icon: str,
