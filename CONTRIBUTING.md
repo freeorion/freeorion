@@ -69,13 +69,13 @@ You need to install them once, pre-commit will track config file and update itse
 
 - install git
 - install Python
-- [Install pre-commit](https://pre-commit.com/#install)
+- [Install prek](https://github.com/j178/prek?tab=readme-ov-file#installation)
    ```shell
-    pip install pre-commit
+    pip install prek
     ```
 - install hooks from the project root
     ```sh
-    pre-commit install
+    prek install
     ```
 
 Notes:
@@ -85,7 +85,7 @@ Notes:
 
 When you commit, hooks are run only on the changed files, if you want to run an all files:
 ```shell
-pre-commit run --all-files
+prek run --all-files
 ```
 
 
