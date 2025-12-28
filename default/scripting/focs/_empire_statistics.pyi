@@ -1,4 +1,6 @@
+from focs._types import _FloatParam
+
 def EmpireStatistic(
     name: str,
-    value: int | float,
+    value: _FloatParam,
 ): ...

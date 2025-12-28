@@ -1,6 +1,6 @@
 # This module should be imported with *, that means we should not import other things in it, otherwise things that should be imported from other modules will be imported from here.
 
-from focs._types import _Condition, _EffectGroup, _PlanetEnvironment, _PlanetType
+from focs._types import _Condition, _EffectGroup, _FloatParam, _IntParam, _PlanetEnvironment, _PlanetType
 
 class _FocusType: ...
 
@@ -28,9 +28,9 @@ def Species(
     playable: bool = False,
     can_colonize: bool = False,
     native: bool = False,
-    spawnrate: int | None = None,
-    spawnlimit: int | None = None,
+    spawnrate: _IntParam | None = None,
+    spawnlimit: _IntParam | None = None,
     annexation_condition: _Condition | None = None,
-    annexation_cost: float = 0.0,
+    annexation_cost: _FloatParam = 0.0,
 ): ...
 def SpeciesCensusOrdering(order: list[str]): ...
