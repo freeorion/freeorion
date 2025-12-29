@@ -184,18 +184,28 @@ inline auto constexpr operator|(auto&& r, range_drop drop) {
 #if defined(__cpp_lib_ranges_contains)
 inline constexpr auto& range_contains = std::ranges::contains;
 #else
-template <typename Rng, typename... Args>
-inline constexpr auto range_contains(Rng&& rng, Args&&... args)
+template <typename Rng, typename ValT>
+    requires (
+        requires (Rng rng, ValT val) { rng.contains(val); } ||
+        requires (Rng rng, ValT val) { rng.find(val) != rng.end(); } ||
+        requires (Rng rng, ValT val) { *rng.begin() == val; std::find(std::begin(rng), std::end(rng), val) != std::end(rng); }
+    )
+inline constexpr auto range_contains(Rng&& rng, ValT&& val)
 {
-    if constexpr (requires { rng.contains(std::forward<Args>(args)...); }) {
-        return rng.contains(std::forward<Args>(args)...);
+    if constexpr (requires { rng.contains(std::forward<ValT>(val)); }) {
+        return rng.contains(std::forward<ValT>(val));
+
+    } else if constexpr (requires { rng.find(std::forward<ValT>(val)); }) {
+        return rng.find(std::forward<ValT>(val)) != rng.end();
+
     } else {
-        return range_find(range_begin(rng), range_end(rng), std::forward<Args>(args)...) != range_end(rng);
+        return std::find(std::begin(rng), std::end(rng), std::forward<ValT>(val)) != std::end(rng);
     }
 }
 #endif
 
 #if defined(__cpp_lib_ranges_to_container)
+# include <ranges>
 template <typename OutT, typename... Args>
 inline constexpr OutT range_to(Args&&... args) { return std::ranges::to<OutT>(std::forward<Args>(args)...); }
 #else
@@ -227,17 +237,11 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
 }
 
 [[nodiscard]] inline constexpr bool FlexibleContains(const auto& container, const auto val) {
-    if constexpr (requires { range_contains(container, val); }) {
+    if constexpr (requires { *std::begin(container) == val; }) {
         return range_contains(container, val);
 
-    } else if constexpr (requires { container.find(val); container.end(); }) {
-        return container.find(val) != container.end();
-
-    } else if constexpr (requires { range_find(container, val); range_end(container);}) {
-        return range_find(container, val) != range_end(container);
-
-    } else if constexpr (requires { FlexibleContains(container | range_keys, val); }) {
-        return FlexibleContains(container | range_keys, val);
+    } else if constexpr (requires { std::begin(container)->first == val; }) {
+        return range_contains(container | range_keys, val);
 
     } else {
         constexpr auto to_id = [](const auto& o) noexcept {
@@ -247,11 +251,17 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
                 return o.ID();
         };
 
-        if constexpr (requires { FlexibleContains(container, to_id(val)); }) {
-            return FlexibleContains(container, to_id(val));
+        if constexpr (requires { *std::begin(container) == to_id(val); }) {
+            return range_contains(container, to_id(val));
 
-        } else if constexpr (requires { to_id(*container.begin()) == val; }) {
-            return FlexibleContains(container | range_transform(to_id), val);
+        } else if constexpr (requires { std::begin(container)->first == to_id(val); }) {
+            return range_contains(container | range_keys, to_id(val));
+
+        } else if constexpr (requires { to_id(*std::begin(container)) == val; }) {
+            return range_contains(container | range_transform(to_id), val);
+
+        } else if constexpr (requires { to_id(std::begin(container)->first) == val; }) {
+            return range_contains(container | range_keys | range_transform(to_id), val);
 
         }
     }

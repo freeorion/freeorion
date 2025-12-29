@@ -1788,14 +1788,28 @@ namespace {
 namespace {
     // this here because there used to be a FlexibleContains implementation here, but it was moved elsewhere
     static_assert(FlexibleContains(std::array{1,2,3}, 2));
-#if defined(USING_STD_RANGES) && USING_STD_RANGES
-    static_assert([](){
-        constexpr struct { constexpr int ID() const { return 42; } } thing;
-        return FlexibleContains(std::array{&thing}, thing.ID());
-    }());
-#endif
 #if defined(__cpp_lib_constexpr_vector)
     static_assert(FlexibleContains(std::vector{1,2,3}, 2));
+#endif
+
+#if (USING_STD_RANGES) // boost::adaptors::transformed and ::keys are not constexpr
+    static_assert(FlexibleContains(std::array<std::pair<int, std::string_view>,3>{{{1,"one"},{2,"two"},{3,"tre"}}}, 2));
+    static_assert(!FlexibleContains(std::array<std::pair<int, std::string_view>,3>{{{1,"one"},{2,"two"},{3,"tre"}}}, -1));
+
+    static_assert([](){
+        const struct { constexpr int ID() const { return 42; } } thing;
+        using int_thing_pair = std::pair<int, decltype(thing)>;
+        const std::array<int_thing_pair, 2> int_things_arr{{{0, thing}, {-1, thing}}};
+        using pthing_int_pair = std::pair<decltype(&thing), int>;
+        const std::array<pthing_int_pair, 2> thing_ints_arr{{{&thing,0}, {nullptr, -1}}};
+
+        return FlexibleContains(std::array{&thing}, thing.ID()) &&
+               FlexibleContains(int_things_arr, -1) &&
+               !FlexibleContains(thing_ints_arr, -1) &&
+               range_contains(thing_ints_arr, thing_ints_arr.front()) &&
+               FlexibleContains(std::array{0, 1, 42}, thing) &&
+               FlexibleContains(thing_ints_arr, &thing);
+    }());
 #endif
 }
 
