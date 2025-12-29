@@ -3,12 +3,12 @@ default_stages:
   - manual
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: check-yaml
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.11.4'
+    rev: 'v0.14.10'
     hooks:
       - id: ruff
         args: [ --fix, --exit-non-zero-on-fix ]
@@ -29,7 +29,7 @@ repos:
         pass_filenames: false
         always_run: true
   - repo: https://github.com/facebook/pyrefly-pre-commit
-    rev: 0.46.0  # Note: this is the version of the pre-commit hook, NOT the pyrefly version used for type checking
+    rev: 0.46.1  # Note: this is the version of the pre-commit hook, NOT the pyrefly version used for type checking
     hooks:
       - id: pyrefly-check
         name: Pyrefly (type checking)
