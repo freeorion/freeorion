@@ -1,0 +1,5 @@
+from focs._fields import FieldType
+
+FieldType(
+    name="FLD_ACCRETION_DISC", description="FLD_ACCRETION_DISC_DESC", stealth=0.01, graphic="fields/accretion_disc.png"
+)
