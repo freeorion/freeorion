@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\EffectsPythonModuleParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h">
@@ -286,6 +289,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefsPythonModuleParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectsPythonModuleParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
