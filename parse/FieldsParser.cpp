@@ -144,6 +144,7 @@ namespace {
             RegisterGlobalsEnums(globals);
 
             parser.LoadValueRefsModule();
+            parser.LoadEffectsModule();
 
             module.attr("__grammar") = boost::cref(*this);
         }

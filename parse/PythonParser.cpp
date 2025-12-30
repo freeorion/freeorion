@@ -14,6 +14,7 @@
 #include "EffectPythonParser.h"
 #include "EnumPythonParser.h"
 #include "SourcePythonParser.h"
+#include "EffectsPythonModuleParser.h"
 #include "ValueRefsPythonModuleParser.h"
 
 #include <boost/algorithm/string.hpp>
@@ -472,6 +473,9 @@ void PythonParser::UnloadModule(py::object module) const {
 
 void PythonParser::LoadValueRefsModule() const
 { (void)LoadModule(&PyInit__value_refs); } // marked [[nodiscard]] but result not needed in this case
+
+void PythonParser::LoadEffectsModule() const
+{ (void)LoadModule(&PyInit__effects_new); } // marked [[nodiscard]] but result not needed in this case
 
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
     auto module_path(m_scripting_dir);
