@@ -195,7 +195,7 @@ inline constexpr auto range_contains(Rng&& rng, ValT&& val)
     if constexpr (requires { rng.contains(std::forward<ValT>(val)); }) {
         return rng.contains(std::forward<ValT>(val));
 
-    } else if constexpr (requires { rng.find(std::forward<ValT>(val)); }) {
+    } else if constexpr (requires { rng.find(std::forward<ValT>(val)) != rng.end(); }) {
         return rng.find(std::forward<ValT>(val)) != rng.end();
 
     } else {
