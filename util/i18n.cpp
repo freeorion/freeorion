@@ -280,7 +280,7 @@ const std::locale& GetLocale(std::string_view name) {
         locale_gen.locale_cache_enabled(true);
         try {
             auto retval2 = locale_gen.generate(name_str);
-            std::use_facet<boost::locale::info>(retval2);
+            [[maybe_unused]] const auto& dummy = std::use_facet<boost::locale::info>(retval2);
             return retval2;
         } catch (...) {
             return std::locale::classic();
