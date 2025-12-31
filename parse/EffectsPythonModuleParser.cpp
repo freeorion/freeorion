@@ -28,7 +28,8 @@ namespace {
                 std::move(y)));
         }
 
-        throw std::runtime_error(std::string("Not implemented in ") + __func__);
+        auto error_str = std::string{"Either focus or x, y should be set for MoveInOrbit ("} + __func__ + ")";
+        throw std::runtime_error(error_str);
     }
 }
 
