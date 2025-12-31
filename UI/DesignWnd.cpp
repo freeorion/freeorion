@@ -143,6 +143,7 @@ namespace {
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>, std::vector<const ShipPart*>> PartGroupsType;
 
     constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
+    static_assert(range_contains(formatting_chars, '\n'));
 
     constexpr std::string_view DESIGN_FILENAME_PREFIX = "ShipDesign-";
     constexpr std::string_view DESIGN_FILENAME_EXTENSION = ".focs.txt";
