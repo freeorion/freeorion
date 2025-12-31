@@ -312,6 +312,15 @@ value_ref_wrapper<double> operator<=(const value_ref_wrapper<double>& lhs, const
     ));
 }
 
+value_ref_wrapper<double> operator<=(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            ValueRef::CloneUnique(rhs.value_ref)
+    ));
+}
+
 value_ref_wrapper<double> operator<=(double lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
@@ -344,6 +353,15 @@ value_ref_wrapper<double> operator>=(const value_ref_wrapper<double>& lhs, const
         std::make_shared<ValueRef::Operation<double>>(
             ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL,
             ValueRef::CloneUnique(lhs.value_ref),
+            ValueRef::CloneUnique(rhs.value_ref))
+    );
+}
+
+value_ref_wrapper<double> operator>=(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<double>& rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
             ValueRef::CloneUnique(rhs.value_ref))
     );
 }

@@ -81,6 +81,9 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
 condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs)
 { return lhs & rhs.operator condition_wrapper(); }
 
+condition_wrapper operator&(const value_ref_wrapper<double>& lhs, const condition_wrapper& rhs)
+{ return lhs.operator condition_wrapper() & rhs; }
+
 condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
 { return lhs & rhs.operator condition_wrapper(); }
 
@@ -341,13 +344,15 @@ namespace {
 
     condition_wrapper insert_is_field_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> names;
-        boost::python::stl_input_iterator<boost::python::object> it_begin(kw["name"]), it_end;
-        for (auto it = it_begin; it != it_end; ++it) {
-            auto name_arg = extract<value_ref_wrapper<std::string>>(*it);
-            if (name_arg.check()) {
-                names.push_back(CloneUnique(name_arg().value_ref));
-            } else {
-                names.push_back(make_constant<std::string>(extract<std::string>(*it)()));
+        if (kw.has_key("name")) {
+            boost::python::stl_input_iterator<boost::python::object> it_begin(kw["name"]), it_end;
+            for (auto it = it_begin; it != it_end; ++it) {
+                auto name_arg = extract<value_ref_wrapper<std::string>>(*it);
+                if (name_arg.check()) {
+                    names.push_back(CloneUnique(name_arg().value_ref));
+                } else {
+                    names.push_back(make_constant<std::string>(extract<std::string>(*it)()));
+                }
             }
         }
         return make_wrapped<Condition::Field>(std::move(names));
