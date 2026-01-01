@@ -241,7 +241,8 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
         return range_contains(container, val);
 
     } else if constexpr (requires { std::begin(container)->first == val; }) {
-        return range_contains(container | range_keys, val);
+        auto tx_rng = container | range_keys;
+        return range_contains(tx_rng, val);
 
     } else {
         constexpr auto to_id = [](const auto& o) noexcept {
@@ -252,17 +253,40 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
         };
 
         if constexpr (requires { *std::begin(container) == to_id(val); }) {
+            if constexpr (requires { nullptr == val; })
+                if (!val) return false;
             return range_contains(container, to_id(val));
 
         } else if constexpr (requires { std::begin(container)->first == to_id(val); }) {
-            return range_contains(container | range_keys, to_id(val));
+            if constexpr (requires { nullptr == val; })
+                if (!val) return false;
+            auto tx_rng = container | range_keys;
+            return range_contains(tx_rng, to_id(val));
 
-        } else if constexpr (requires { to_id(*std::begin(container)) == val; }) {
-            return range_contains(container | range_transform(to_id), val);
+        } else {
+            constexpr auto not_null = [](const auto& o) noexcept(noexcept(bool(o))) -> bool { return bool(o); };
 
-        } else if constexpr (requires { to_id(std::begin(container)->first) == val; }) {
-            return range_contains(container | range_keys | range_transform(to_id), val);
+            if constexpr (requires { nullptr == *std::begin(container); } ) {
+                if constexpr (requires { to_id(*std::begin(container)) == val; }) {
+                    auto flt_tx_rng = container | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
 
+                } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                    auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+
+                }
+            } else {
+                if constexpr (requires { to_id(std::begin(container)) == val; }) {
+                    auto tx_rng = container | range_transform(to_id);
+                    return range_contains(tx_rng, val);
+
+                } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                    auto tx_rng = container | range_keys | range_transform(to_id);
+                    return range_contains(tx_rng, val);
+
+                }
+            }
         }
     }
 }
