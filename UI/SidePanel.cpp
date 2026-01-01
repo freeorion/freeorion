@@ -1812,6 +1812,10 @@ namespace {
                                     range_filter([](auto& o) { return bool(o); }) |
                                     range_transform([](auto& o) { return o->ID(); }),
                                  thing.ID()));
+    static_assert(!range_contains(thing_ints_arr | range_keys |
+                                    range_filter([](auto& o) { return bool(o); }) |
+                                    range_transform([](auto& o) { return o->ID(); }),
+                                  -1));
     static_assert(!FlexibleContains(thing_ints_arr, -1));
     static_assert(FlexibleContains(std::array{0, 1, 42}, thing));
     static_assert(FlexibleContains(thing_ints_arr, &thing));
