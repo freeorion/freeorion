@@ -1796,13 +1796,17 @@ namespace {
     static_assert(FlexibleContains(std::array<std::pair<int, std::string_view>,3>{{{1,"one"},{2,"two"},{3,"tre"}}}, 2));
     static_assert(!FlexibleContains(std::array<std::pair<int, std::string_view>,3>{{{1,"one"},{2,"two"},{3,"tre"}}}, -1));
 
-    constexpr struct { constexpr int ID() const { return 42; } } thing{};
+    constexpr struct { constexpr int ID() const { return 42; } } thing;
     constexpr decltype(thing) thing2{};
+
+    static_assert(FlexibleContains(std::array{thing2, thing}, thing.ID()));
+    static_assert(FlexibleContains(std::array<decltype(&thing), 3>{nullptr, &thing2, &thing}, thing.ID()));
+
     using int_thing_pair = std::pair<int, decltype(thing)>;
     constexpr std::array<int_thing_pair, 2> int_things_arr{{{0, thing}, {-1, thing2}}};
     using pthing_int_pair = std::pair<decltype(&thing), int>;
     constexpr std::array<pthing_int_pair, 2> thing_ints_arr{{{&thing,0}, {nullptr, -1}}};
-    static_assert(FlexibleContains(std::array{&thing}, thing.ID()));
+
     static_assert(FlexibleContains(int_things_arr, -1));
     static_assert(!range_contains(thing_ints_arr, pthing_int_pair{&thing2, 0}));
     static_assert(range_contains(thing_ints_arr, thing_ints_arr.front()));

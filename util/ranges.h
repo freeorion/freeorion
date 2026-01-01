@@ -267,11 +267,27 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
             constexpr auto not_null = [](const auto& o) noexcept(noexcept(bool(o))) -> bool { return bool(o); };
 
             if constexpr (requires { nullptr == std::begin(container); }) {
-                if (std::is_constant_evaluated())
-                    throw "don't know how to handle pointers as iterators";
+                // container where iterator is a pointer
+                if constexpr (requires { nullptr == *std::begin(container); to_id(*std::begin(container)) == val; }) {
+                    // pointer to a pointer to something with an ID function
+                    constexpr auto not_pointer_to_null = [](const auto* o)
+                        noexcept(noexcept(not_null(o) && not_null(*o))) -> bool { return not_null(o) && not_null(*o); };
+                    auto flt_tx_rng = container | range_filter(not_pointer_to_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+
+                } else if constexpr (requires { to_id(std::begin(container)) == val; }) {
+                    // pointer to object with ID function
+                    auto flt_tx_rng = container | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+
+                } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                    // pointer to pair containing objet with ID function
+                    auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+                }
 
             } else if constexpr (requires { nullptr == *std::begin(container); }) {
-                // container of pointers
+                // container of pointers where iterator is not a pointer type
                 if constexpr (requires { to_id(*std::begin(container)) == val; }) {
                     // pointer to object with ID function
                     auto flt_tx_rng = container | range_filter(not_null) | range_transform(to_id);
