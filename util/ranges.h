@@ -237,7 +237,7 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
 }
 
 [[nodiscard]] inline constexpr bool FlexibleContains(const auto& container, const auto val) {
-    if constexpr (requires { *std::begin(container) == val; }) {
+    if constexpr (requires { *std::begin(container) == val; } || requires { container.contains(val); }) {
         return range_contains(container, val);
 
     } else if constexpr (requires { std::begin(container)->first == val; }) {
@@ -266,26 +266,38 @@ inline constexpr auto operator|(auto&& r, range_to_vec_t) {
         } else {
             constexpr auto not_null = [](const auto& o) noexcept(noexcept(bool(o))) -> bool { return bool(o); };
 
-            if constexpr (requires { nullptr == *std::begin(container); } ) {
+            if constexpr (requires { nullptr == std::begin(container); }) {
+                if (std::is_constant_evaluated())
+                    throw "don't know how to handle pointers as iterators";
+
+            } else if constexpr (requires { nullptr == *std::begin(container); }) {
+                // container of pointers
                 if constexpr (requires { to_id(*std::begin(container)) == val; }) {
+                    // pointer to object with ID function
                     auto flt_tx_rng = container | range_filter(not_null) | range_transform(to_id);
                     return range_contains(flt_tx_rng, val);
 
                 } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                    // pointer to pair containing objet with ID function
                     auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
                     return range_contains(flt_tx_rng, val);
-
                 }
-            } else {
-                if constexpr (requires { to_id(std::begin(container)) == val; }) {
-                    auto tx_rng = container | range_transform(to_id);
-                    return range_contains(tx_rng, val);
 
-                } else if (requires { to_id(std::begin(container)->first) == val; }) {
-                    auto tx_rng = container | range_keys | range_transform(to_id);
-                    return range_contains(tx_rng, val);
+            } else if constexpr (requires { nullptr == std::begin(container)->first; to_id(std::begin(container)->first) == val; }) {
+                // container of pairs containing pointers to object with ID function
+                auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
+                return range_contains(flt_tx_rng, val);
+                    
+            } else if constexpr (requires { to_id(std::begin(container)) == val; }) {
+                // container of objects with ID function
+                auto tx_rng = container | range_transform(to_id);
+                return range_contains(tx_rng, val);
 
-                }
+            } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                // container of pairs containing objects with ID function
+                auto tx_rng = container | range_keys | range_transform(to_id);
+                return range_contains(tx_rng, val);
+
             }
         }
     }
