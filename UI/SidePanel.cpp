@@ -1804,8 +1804,15 @@ namespace {
     constexpr std::array<pthing_int_pair, 2> thing_ints_arr{{{&thing,0}, {nullptr, -1}}};
     static_assert(FlexibleContains(std::array{&thing}, thing.ID()));
     static_assert(FlexibleContains(int_things_arr, -1));
-    static_assert(!FlexibleContains(thing_ints_arr, -1));
+    static_assert(!range_contains(thing_ints_arr, pthing_int_pair{&thing2, 0}));
     static_assert(range_contains(thing_ints_arr, thing_ints_arr.front()));
+    static_assert(range_contains(thing_ints_arr, pthing_int_pair{&thing, 0}));
+    static_assert(range_contains(thing_ints_arr, pthing_int_pair{nullptr, -1}));
+    static_assert(range_contains(thing_ints_arr | range_keys |
+                                    range_filter([](auto& o) { return bool(o); }) |
+                                    range_transform([](auto& o) { return o->ID(); }),
+                                 thing.ID()));
+    static_assert(!FlexibleContains(thing_ints_arr, -1));
     static_assert(FlexibleContains(std::array{0, 1, 42}, thing));
     static_assert(FlexibleContains(thing_ints_arr, &thing));
     static_assert(FlexibleContains(thing_ints_arr, nullptr));
