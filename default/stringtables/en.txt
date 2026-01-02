@@ -15351,7 +15351,7 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Gives the planet on which it is built the Bioterror focus, which decreases [[metertype METER_POPULATION]] on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
+'''Gives the planet on which it is built the Bioterror focus, which decreases [[metertype METER_POPULATION]] on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a [[buildingtype BLD_GENOME_BANK]].
 
 This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. [[BUILDING_AVAILABLE_ON_OUTPOSTS]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
 
@@ -15427,7 +15427,7 @@ BLD_GENOME_BANK
 Genome Bank
 
 BLD_GENOME_BANK_DESC
-'''Provides the empire with immunity from bioterror.
+'''Provides the empire with immunity from [[buildingtype BLD_BIOTERROR_PROJECTOR]].
 
 The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease.'''
 
