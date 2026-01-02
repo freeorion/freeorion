@@ -341,8 +341,7 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent, bool whites
 }
 
 XMLElement& XMLElement::Child(const std::string& tag) {
-    auto match = std::find_if(children.begin(), children.end(),
-                              [&tag] (const XMLElement& e) { return e.m_tag == tag; });
+    auto match = range_find_if(children, [&tag](const XMLElement& e) { return e.m_tag == tag; });
 
     if (match == children.end())
         throw std::out_of_range("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
@@ -357,8 +356,7 @@ void XMLElement::SetText(std::string text)
 { m_text = std::move(text); }
 
 const std::string& XMLElement::Attribute(const std::string& name) const {
-    auto match = std::find_if(attributes.begin(), attributes.end(),
-                              [&name] (const auto& p) { return p.first == name; });
+    auto match = range_find_if(attributes, [&name](const auto& p) { return p.first == name; });
 
     if (match == attributes.end())
         throw std::out_of_range("XMLElement::Attribute(): The XMLElement \"" + Tag() + "\" contains no attribute \"" + name + "\".");
@@ -366,18 +364,8 @@ const std::string& XMLElement::Attribute(const std::string& name) const {
     return match->second;
 }
 
-bool XMLElement::HasAttribute(const std::string& name) const noexcept {
-    return std::any_of(attributes.begin(), attributes.end(),
-                       [&name](const auto& a) { return a.first == name; });
-}
-
-XMLDoc::XMLDoc(std::string root_tag) :
-    root_node(XMLElement(std::move(root_tag), true))
-{}
-
-XMLDoc::XMLDoc(const std::istream& is) :
-    root_node(XMLElement())
-{}
+bool XMLElement::HasAttribute(const std::string& name) const noexcept
+{ return range_contains(attributes | range_keys, name); }
 
 std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace) const {
     os << "<?xml version=\"1.0\"?>";
@@ -391,7 +379,7 @@ void XMLDoc::ReadDoc(const std::string& s) {
 }
 
 std::istream& XMLDoc::ReadDoc(std::istream& is) {
-    root_node = XMLElement(); // clear doc contents
+    root_node = XMLElement{}; // clear doc contents
     s_element_stack.clear();  // clear this to start a fresh read
     s_curr_parsing_doc = this;  // indicate where to add elements
     std::string parse_str;
@@ -413,8 +401,7 @@ void XMLDoc::SetAttributeName(const char* first, const char* last)
 
 void XMLDoc::AddAttribute(const char* first, const char* last) {
     auto& attribs = s_temp_elem.attributes;
-    auto it = std::find_if(attribs.begin(), attribs.end(),
-                           [](const auto& a) { return a.first == s_temp_attr_name; });
+    auto it = range_find_if(attribs, [](const auto& a) { return a.first == s_temp_attr_name; });
     if (it == attribs.end())
         attribs.emplace_back(s_temp_attr_name, std::string{first, last});
     else

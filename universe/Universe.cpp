@@ -329,9 +329,9 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireMana
 
     // check each object's visibility by the requested empire / all empires
     const auto is_visible_to_an_empire = [&empire_ids, this](const auto obj_id) {
-        return std::any_of(empire_ids.begin(), empire_ids.end(),
-                           [obj_id, this](auto e_id)
-                           { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; });
+        const auto vis_to_empire_id = [obj_id, this](auto e_id)
+        { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+        return range_any_of(empire_ids, vis_to_empire_id);
     };
 
     auto ids_rng = m_objects.allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);

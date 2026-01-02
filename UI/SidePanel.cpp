@@ -1783,19 +1783,49 @@ namespace {
             return EMPTY_STRING;
         return ConditionDescription(std::vector{annexation_condition}, source_context, candidate);
     }
+}
 
-    bool FlexibleContains(const auto& container, const auto num) {
-        if constexpr (requires { container.contains(num); })
-            return container.contains(num);
-        else if constexpr (requires { container.find(num); container.end(); })
-            return container.find(num) != container.end();
-        else if constexpr (requires { container.begin(); container.end(); *container.begin() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val; });
-        else if constexpr (requires { container.begin(); container.end(); *container.begin()->ID() == num; })
-            return std::any_of(container.begin(), container.end(), [num](const auto& val) noexcept { return num == val->ID(); });
-        else
-            return false;
-    }
+namespace {
+    // this here because there used to be a FlexibleContains implementation here, but it was moved elsewhere
+    static_assert(FlexibleContains(std::array{1,2,3}, 2));
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert(FlexibleContains(std::vector{1,2,3}, 2));
+#endif
+
+#if (USING_STD_RANGES) // boost::adaptors::transformed and ::keys are not constexpr
+    static_assert(FlexibleContains(std::array<std::pair<int, std::string_view>,3>{{{1,"one"},{2,"two"},{3,"tre"}}}, 2));
+    static_assert(!FlexibleContains(std::array<std::pair<int, std::string_view>,3>{{{1,"one"},{2,"two"},{3,"tre"}}}, -1));
+
+    constexpr struct { constexpr int ID() const { return 42; } } thing;
+    constexpr decltype(thing) thing2{};
+
+    static_assert(FlexibleContains(std::array{thing2, thing}, thing.ID()));
+    static_assert(FlexibleContains(std::array<decltype(&thing), 3>{nullptr, &thing2, &thing}, thing.ID()));
+
+    using int_thing_pair = std::pair<int, decltype(thing)>;
+    constexpr std::array<int_thing_pair, 2> int_things_arr{{{0, thing}, {-1, thing2}}};
+    using pthing_int_pair = std::pair<decltype(&thing), int>;
+    constexpr std::array<pthing_int_pair, 2> thing_ints_arr{{{&thing,0}, {nullptr, -1}}};
+
+    static_assert(FlexibleContains(int_things_arr, -1));
+    static_assert(!range_contains(thing_ints_arr, pthing_int_pair{&thing2, 0}));
+    static_assert(range_contains(thing_ints_arr, thing_ints_arr.front()));
+    static_assert(range_contains(thing_ints_arr, pthing_int_pair{&thing, 0}));
+    static_assert(range_contains(thing_ints_arr, pthing_int_pair{nullptr, -1}));
+    static_assert(range_contains(thing_ints_arr | range_keys |
+                                    range_filter([](auto& o) { return bool(o); }) |
+                                    range_transform([](auto& o) { return o->ID(); }),
+                                 thing.ID()));
+    static_assert(!range_contains(thing_ints_arr | range_keys |
+                                    range_filter([](auto& o) { return bool(o); }) |
+                                    range_transform([](auto& o) { return o->ID(); }),
+                                  -1));
+    static_assert(!FlexibleContains(thing_ints_arr, -1));
+    static_assert(FlexibleContains(std::array{0, 1, 42}, thing));
+    static_assert(FlexibleContains(thing_ints_arr, &thing));
+    static_assert(FlexibleContains(thing_ints_arr, nullptr));
+    static_assert(!FlexibleContains(thing_ints_arr, &thing2));
+#endif
 }
 
 void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id) {
@@ -1831,7 +1861,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id
     //    Underline for shipyard(s)
 
     const bool is_homeworld = range_any_of(sm.GetSpeciesHomeworldsMap() | range_values,
-                                           [this](const auto& ids) { return FlexibleContains(ids, m_planet_id); });
+                                           [this](const auto& ids) { return range_contains(ids, m_planet_id); });
 
     const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(empire_id);
     const auto not_destroyed_is_shipyard_tag = [&known_destroyed_object_ids](const Building* building) {

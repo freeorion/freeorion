@@ -981,8 +981,7 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatLike(std::string_view c
     std::vector<std::string_view> retval;
     retval.reserve(m_species.size());
     std::for_each(m_species.begin(), m_species.end(), [&retval, content_name](const auto& s) {
-        const auto& likes = s.second.Likes();
-        if (std::any_of(likes.begin(), likes.end(), [content_name](const auto& l) { return l == content_name; }))
+        if (range_contains(s.second.Likes(), content_name))
             retval.emplace_back(s.first);
     });
     return retval;
@@ -993,8 +992,7 @@ std::vector<std::string_view> SpeciesManager::SpeciesThatDislike(std::string_vie
     std::vector<std::string_view> retval;
     retval.reserve(m_species.size());
     std::for_each(m_species.begin(), m_species.end(), [&retval, content_name](const auto& s) {
-        const auto& dislikes = s.second.Dislikes();
-        if (std::any_of(dislikes.begin(), dislikes.end(), [content_name](const auto& l) { return l == content_name; }))
+        if (range_contains(s.second.Dislikes(), content_name))
             retval.emplace_back(s.first);
     });
     return retval;

@@ -29,6 +29,7 @@ inline constexpr auto& range_copy_if = std::ranges::copy_if;
 inline constexpr auto& range_max_element = std::ranges::max_element;
 inline constexpr auto& range_min_element = std::ranges::min_element;
 inline constexpr auto& range_equal = std::ranges::equal_range;
+inline constexpr auto& range_begin = std::ranges::begin;
 inline constexpr auto& range_end = std::ranges::end;
 inline constexpr auto& range_count_if = std::ranges::count_if;
 inline constexpr auto& range_count = std::ranges::count;
@@ -40,6 +41,7 @@ inline constexpr auto& range_distance = std::ranges::distance;
 # include <boost/range/begin.hpp>
 # include <boost/range/end.hpp>
 # include <boost/range/empty.hpp>
+# include <boost/range/algorithm/find.hpp>
 # include <boost/algorithm/cxx11/any_of.hpp>
 # include <boost/algorithm/cxx11/all_of.hpp>
 # include <boost/algorithm/cxx11/none_of.hpp>
@@ -155,6 +157,8 @@ inline auto range_min_element(Args&&... args) { return boost::range::min_element
 template <typename... Args>
 inline auto range_equal(Args&&... args) { return boost::range::equal_range(std::forward<Args>(args)...); }
 template <typename... Args>
+inline auto range_begin(Args&&... args) { return boost::begin(std::forward<Args>(args)...); }
+template <typename... Args>
 inline auto range_end(Args&&... args) { return boost::end(std::forward<Args>(args)...); }
 template <typename... Args>
 inline auto range_count_if(Args&&... args) { return boost::count_if(std::forward<Args>(args)...); }
@@ -167,9 +171,9 @@ struct range_drop {
     const std::size_t drop = 1u;
     [[nodiscard]] constexpr explicit range_drop(std::size_t drop_) noexcept : drop(drop_) {}
 };
-inline auto operator|(auto&& r, range_drop drop) {
-    auto begin_it = r.begin();
-    const auto end_it = r.end();
+inline auto constexpr operator|(auto&& r, range_drop drop) {
+    auto begin_it = range_begin(r);
+    const auto end_it = range_end(r);
     const auto sz = static_cast<std::size_t>(boost::distance(r));
     std::advance(begin_it, std::min(sz, drop.drop));
     using it_t = std::decay_t<decltype(begin_it)>;
@@ -180,29 +184,38 @@ inline auto operator|(auto&& r, range_drop drop) {
 #if defined(__cpp_lib_ranges_contains)
 inline constexpr auto& range_contains = std::ranges::contains;
 #else
-template <typename Rng, typename... Args>
-inline auto range_contains(Rng&& rng, Args&&... args)
+template <typename Rng, typename ValT>
+    requires (
+        requires (Rng rng, ValT val) { rng.contains(val); } ||
+        requires (Rng rng, ValT val) { rng.find(val) != rng.end(); } ||
+        requires (Rng rng, ValT val) { *rng.begin() == val; std::find(std::begin(rng), std::end(rng), val) != std::end(rng); }
+    )
+inline constexpr auto range_contains(Rng&& rng, ValT&& val)
 {
-    if constexpr (requires { rng.contains(std::forward<Args>(args)...); })
-        return rng.contains(std::forward<Args>(args)...);
-    else
-        return std::find(std::begin(rng), std::end(rng), std::forward<Args>(args)...) != std::end(rng);
+    if constexpr (requires { rng.contains(std::forward<ValT>(val)); }) {
+        return rng.contains(std::forward<ValT>(val));
+
+    } else if constexpr (requires { rng.find(std::forward<ValT>(val)) != rng.end(); }) {
+        return rng.find(std::forward<ValT>(val)) != rng.end();
+
+    } else {
+        return std::find(std::begin(rng), std::end(rng), std::forward<ValT>(val)) != std::end(rng);
+    }
 }
 #endif
 
-#if 0 && defined(__cpp_lib_ranges_to_container)
+#if defined(__cpp_lib_ranges_to_container)
+# include <ranges>
 template <typename OutT, typename... Args>
 inline constexpr OutT range_to(Args&&... args) { return std::ranges::to<OutT>(std::forward<Args>(args)...); }
 #else
 template <typename OutT, typename R>
 inline constexpr OutT range_to(R&& r)
 {
-    using std::begin;
-    using std::end;
     if constexpr (std::is_rvalue_reference_v<R>)
-        return {std::make_move_iterator(begin(r)), std::make_move_iterator(end(r))};
+        return {std::make_move_iterator(range_begin(r)), std::make_move_iterator(range_end(r))};
     else
-        return {begin(r), end(r)};
+        return {range_begin(r), range_end(r)};
 }
 #endif
 
@@ -219,9 +232,91 @@ inline constexpr OutT operator|(auto&& r, range_to_t<OutT>)
 constexpr struct range_to_vec_t {} range_to_vec{};
 
 inline constexpr auto operator|(auto&& r, range_to_vec_t) {
-    using std::begin;
-    using ValT = std::remove_cvref_t<decltype(*begin(r))>;
+    using ValT = std::remove_cvref_t<decltype(*range_begin(r))>;
     return range_to<std::vector<ValT>>(std::forward<decltype(r)>(r));
+}
+
+[[nodiscard]] inline constexpr bool FlexibleContains(const auto& container, const auto val) {
+    if constexpr (requires { *std::begin(container) == val; } || requires { container.contains(val); }) {
+        return range_contains(container, val);
+
+    } else if constexpr (requires { std::begin(container)->first == val; }) {
+        auto tx_rng = container | range_keys;
+        return range_contains(tx_rng, val);
+
+    } else {
+        constexpr auto to_id = [](const auto& o) noexcept {
+            if constexpr (requires { o->ID(); })
+                return o->ID();
+            else if constexpr ( requires { o.ID(); })
+                return o.ID();
+        };
+
+        if constexpr (requires { *std::begin(container) == to_id(val); }) {
+            if constexpr (requires { nullptr == val; })
+                if (!val) return false;
+            return range_contains(container, to_id(val));
+
+        } else if constexpr (requires { std::begin(container)->first == to_id(val); }) {
+            if constexpr (requires { nullptr == val; })
+                if (!val) return false;
+            auto tx_rng = container | range_keys;
+            return range_contains(tx_rng, to_id(val));
+
+        } else {
+            constexpr auto not_null = [](const auto& o) noexcept(noexcept(bool(o))) -> bool { return bool(o); };
+
+            if constexpr (requires { nullptr == std::begin(container); }) {
+                // container where iterator is a pointer
+                if constexpr (requires { nullptr == *std::begin(container); to_id(*std::begin(container)) == val; }) {
+                    // pointer to a pointer to something with an ID function
+                    constexpr auto not_pointer_to_null = [](const auto* o)
+                        noexcept(noexcept(not_null(o) && not_null(*o))) -> bool { return not_null(o) && not_null(*o); };
+                    auto flt_tx_rng = container | range_filter(not_pointer_to_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+
+                } else if constexpr (requires { to_id(std::begin(container)) == val; }) {
+                    // pointer to object with ID function
+                    auto flt_tx_rng = container | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+
+                } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                    // pointer to pair containing objet with ID function
+                    auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+                }
+
+            } else if constexpr (requires { nullptr == *std::begin(container); }) {
+                // container of pointers where iterator is not a pointer type
+                if constexpr (requires { to_id(*std::begin(container)) == val; }) {
+                    // pointer to object with ID function
+                    auto flt_tx_rng = container | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+
+                } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                    // pointer to pair containing objet with ID function
+                    auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
+                    return range_contains(flt_tx_rng, val);
+                }
+
+            } else if constexpr (requires { nullptr == std::begin(container)->first; to_id(std::begin(container)->first) == val; }) {
+                // container of pairs containing pointers to object with ID function
+                auto flt_tx_rng = container | range_keys | range_filter(not_null) | range_transform(to_id);
+                return range_contains(flt_tx_rng, val);
+                    
+            } else if constexpr (requires { to_id(std::begin(container)) == val; }) {
+                // container of objects with ID function
+                auto tx_rng = container | range_transform(to_id);
+                return range_contains(tx_rng, val);
+
+            } else if (requires { to_id(std::begin(container)->first) == val; }) {
+                // container of pairs containing objects with ID function
+                auto tx_rng = container | range_keys | range_transform(to_id);
+                return range_contains(tx_rng, val);
+
+            }
+        }
+    }
 }
 
 

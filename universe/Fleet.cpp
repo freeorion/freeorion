@@ -311,9 +311,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         // check if fuel limits movement or current system refuels passing fleet
         if (cur_system) {
             // check if current system has fuel supply available
-            if (std::any_of(fleet_supplied_systems.begin(), fleet_supplied_systems.end(),
-                            [csid{cur_system->ID()}](const auto fss) { return csid == fss; }))
-            {
+            if (range_contains(fleet_supplied_systems, cur_system->ID())) {
                 // current system has fuel supply.  replenish fleet's supply and don't restrict movement
                 fuel = max_fuel;
                 //DebugLogger() << " ... at system with fuel supply.  replenishing and continuing movement";
@@ -593,7 +591,7 @@ namespace {
     bool HasXShips(const ShipPredicate& pred, const IDContainer& ship_ids, const ObjectMap& objects) {
         // Searching for each Ship one at a time is possibly faster than find(ship_ids),
         // because an early exit avoids searching the remaining ids.
-        return std::any_of(ship_ids.begin(), ship_ids.end(),
+        return range_any_of(ship_ids,
                            [&pred, &objects](const int ship_id) {
                                const auto ship = objects.getRaw<const Ship>(ship_id);
                                return ship && pred(ship);

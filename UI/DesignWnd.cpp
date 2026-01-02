@@ -143,6 +143,7 @@ namespace {
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>, std::vector<const ShipPart*>> PartGroupsType;
 
     constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
+    static_assert(range_contains(formatting_chars, '\n'));
 
     constexpr std::string_view DESIGN_FILENAME_PREFIX = "ShipDesign-";
     constexpr std::string_view DESIGN_FILENAME_EXTENSION = ".focs.txt";
@@ -771,19 +772,8 @@ namespace {
         m_hull_to_obsolete_and_loc[hull] = {std::pair{false, NextUIObsoleteEvent()}, inserted_it};
     }
 
-    [[nodiscard]] bool FlexibleContains(const auto& container, const auto& val) {
-        if constexpr (requires { container.contains(val); })
-            return container.contains(val);
-        else if constexpr (requires { container.count(val); })
-            return container.count(val) > 0;
-        else if constexpr (requires { container.find(val) != container.end(); })
-            return container.find(val) != container.end();
-        else
-            return std::any_of(container.begin(), container.end(), [&val](const auto& cv) { return val == cv; });
-    }
-
     [[nodiscard]] bool DisplayedShipDesignManager::IsKnown(const int id) const
-    { return FlexibleContains(m_id_to_obsolete_and_loc, id); };
+    { return range_contains(m_id_to_obsolete_and_loc | range_keys, id); };
 
     boost::optional<bool> DisplayedShipDesignManager::IsObsolete(const int id, const Universe& universe) const {
         // A non boost::none value for a specific design overrides the hull and part values
@@ -885,7 +875,7 @@ namespace {
         m_id_to_obsolete_and_loc.clear();
         m_ordered_design_ids.clear();
         for (const auto& [id, obsolete] : design_ids_and_obsoletes) {
-            if (FlexibleContains(m_id_to_obsolete_and_loc, id)) {
+            if (range_contains(m_id_to_obsolete_and_loc | range_keys, id)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate design id = " << id;
                 continue;
             }
@@ -907,7 +897,7 @@ namespace {
         m_hull_to_obsolete_and_loc.clear();
         m_ordered_hulls.clear();
         for (const auto& [name, obsolete] : hulls_and_obsoletes) {
-            if (FlexibleContains(m_hull_to_obsolete_and_loc, name)) {
+            if (range_contains(m_hull_to_obsolete_and_loc | range_keys, name)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate hull name = " << name;
                 continue;
             }
@@ -1811,12 +1801,9 @@ void DesignWnd::PartPalette::CompleteConstruction() {
          part_class = ShipPartClass(int(part_class) + 1))
     {
         // are there any parts of this class?
-        bool part_of_this_class_exists = std::any_of(part_manager.begin(), part_manager.end(),
-                                                     [part_class](auto& name_part) {
-                                                         return name_part.second &&
-                                                             name_part.second->Class() == part_class;
-                                                     });
-        if (!part_of_this_class_exists)
+        const auto is_name_and_class = [part_class](auto& name_part)
+        { return name_part.second && name_part.second->Class() == part_class; };
+        if (range_none_of(part_manager, is_name_and_class))
             continue;
 
         m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(
@@ -4075,12 +4062,9 @@ bool DesignWnd::MainPanel::IsDesignNameValid() const {
         return false;
 
     // disallow formatting characters
-    if (std::any_of(name.begin(), name.end(),
-                    [](const auto c) {
-                        return std::any_of(formatting_chars.begin(), formatting_chars.end(),
-                                           [c](const auto f) { return f == c; });
-                    }))
-    { return false; }
+    static constexpr auto formatting_contains_char = [](const auto c) { return range_contains(formatting_chars, c); };
+    if (range_any_of(name, formatting_contains_char))
+        return false;
 
     // disallow leading and trailing spaces
     if (name.front() == ' ' || name.back() == ' ')
