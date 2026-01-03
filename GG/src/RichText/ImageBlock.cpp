@@ -90,7 +90,9 @@ public:
         if (tex_name.empty())
             return nullptr;
 
-        if (auto tex = GetTextureManager().GetTextureByName(std::string{tex_name})) // TODO: avoid string construction
+        auto& tm = GetTextureManager();
+
+        if (auto tex = tm.GetTextureByName(std::string{tex_name})) // TODO: avoid string construction
             return Wnd::Create<ImageBlock>(std::move(tex), X0, Y0, X1, Flags<WndFlag>());
 
         // if not stored by name, interpet as a path
@@ -99,8 +101,10 @@ public:
         fs::path param_path = NameToPath(tex_name);
         fs::path combined_path = fs::exists(param_path) ? param_path : (m_root_path / param_path);
 
-        if (auto tex = GetTextureManager().GetTexture(combined_path, true))
-            return Wnd::Create<ImageBlock>(std::move(tex), X0, Y0, X1, Flags<WndFlag>());
+        try {
+            if (auto tex = tm.GetTexture(combined_path, true)) // throws if texture not loaded and path doesn't exist or is invalid
+                return Wnd::Create<ImageBlock>(std::move(tex), X0, Y0, X1, Flags<WndFlag>());
+        } catch (...) {}
 
         // no such texture found :(
         return nullptr;
