@@ -401,8 +401,7 @@ void GGHumanClientApp::Initialize() {
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
     auto cursor_texture = m_ui.GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture),
-                                                  GG::Pt(GG::X(6), GG::Y(3))));
+    SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture), GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
