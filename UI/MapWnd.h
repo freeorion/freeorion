@@ -202,7 +202,7 @@ public:
     void RegisterPopup(std::shared_ptr<MapWndPopup>&& popup);   //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void RemovePopup(MapWndPopup* popup);        //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Sanitize();                             //!< sanitizes the MapWnd after a game
-    void ResetTimeoutClock(int timeout);         //!< start count down \a timeout seconds
+    void ResetTimeoutClock(int timeout_seconds); //!< start count down \a timeout_seconds seconds
 
     void SetFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id);
     void StopFleetExploring(const int fleet_id, ScriptingContext& context, int empire_id);
