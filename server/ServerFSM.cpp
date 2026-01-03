@@ -2510,6 +2510,32 @@ sc::result WaitingForMPGameJoiners::react(const Error& msg) {
     return discard_event();
 }
 
+namespace {
+    std::pair<std::chrono::system_clock::time_point, bool> ParseTime(const std::string& str) {
+        using std::chrono::system_clock;
+#if (!defined(__GNUC__) || __GNUC__ >= 14) && (!defined(__clang_major__) || __clang_major__ >= 19)
+        // This format is based on the previous implementation using boost::posix_time::time_from_string
+        // equivalent to "%F %T" -> "2002-01-20 23:59:59.000"
+        static constexpr std::string_view fmt = "%Y-%m-%d %H:%M:%S";
+
+        std::istringstream is{str};
+        is.imbue(std::locale("en_US.utf-8"));
+
+        system_clock::time_point str_time{};
+        is >> parse(fmt.data(), str_time);
+        if (!is.fail())
+            return {str_time, true};
+#else
+        try {
+            const auto posix_time_since_epoch = boost::posix_time::time_from_string(str) - boost::posix_time::from_time_t(0);
+            return {system_clock::from_time_t(posix_time_since_epoch.total_seconds()), true};
+        } catch (...) {}
+#endif
+
+        return {system_clock::time_point{}, false};
+    }
+}
+
 ////////////////////////////////////////////////////////////
 // PlayingGame
 ////////////////////////////////////////////////////////////
@@ -2520,23 +2546,29 @@ PlayingGame::PlayingGame(my_context c) :
 {
     TraceLogger(FSM) << "(ServerFSM) PlayingGame";
 
-    if (!GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time").empty()) {
+    const auto deadline_str = GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time");
+    if (!deadline_str.empty()) {
         // Set first turn advance to absolute time point
         try {
-            m_turn_timeout.expires_at(boost::posix_time::time_from_string(GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time")));
-            m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
-                                                  this,
-                                                  boost::asio::placeholders::error));
-            return;
-        } catch (...) {
-            WarnLogger(FSM) << "(ServerFSM) PlayingGame: Cann't parse first turn time: "
-                            << GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time");
+            auto [deadline_time, success] = ParseTime(deadline_str);
+            if (success) {
+                m_turn_timeout.expires_at(deadline_time);
+                m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                      this,
+                                                      boost::asio::placeholders::error));
+                return;
+            } else {
+                ErrorLogger(FSM) << "(ServerFSM) PlayingGame: Couldn't parse first turn deadline time: " << deadline_str;
+            }
+        } catch (const std::exception& e) {
+            ErrorLogger(FSM) << "(ServerFSM) PlayingGame: Caught exctption setting deadline time: " << e.what();
         }
     }
 
-    if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
+    const auto duration_seconds = std::chrono::seconds{GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")};
+    if (duration_seconds > std::chrono::seconds{0} && !Server().IsHaveWinner()) {
         // Set turn advance after time interval
-        m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
+        m_turn_timeout.expires_after(duration_seconds);
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                               this,
                                               boost::asio::placeholders::error));
@@ -2732,8 +2764,9 @@ void PlayingGame::EstablishPlayer(PlayerConnectionPtr player_connection, std::st
             if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 &&
                 !Server().IsHaveWinner())
             {
-                const auto remaining = m_turn_timeout.expires_from_now();
-                player_connection->SendMessage(TurnTimeoutMessage(static_cast<int>(remaining.total_seconds())));
+                const auto remaining_ticks = m_turn_timeout.expiry() - std::chrono::system_clock::now();
+                const auto remaining_secs = std::chrono::duration_cast<std::chrono::seconds>(remaining_ticks);
+                player_connection->SendMessage(TurnTimeoutMessage(static_cast<int>(remaining_secs.count())));
             } else {
                 player_connection->SendMessage(TurnTimeoutMessage(0));
             }
@@ -3010,8 +3043,8 @@ void PlayingGame::TurnTimedoutHandler(boost::system::error_code error) {
         GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 &&
         !Server().IsHaveWinner())
     {
-        auto turn_expired_time = m_turn_timeout.expires_at();
-        turn_expired_time += boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
+        auto turn_expired_time = m_turn_timeout.expiry();
+        turn_expired_time += std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
         m_turn_timeout.expires_at(turn_expired_time);
         m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
                                               this,
@@ -3039,17 +3072,21 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     }
 
     auto& playing_game = context<PlayingGame>();
+    auto& game_timeout = playing_game.m_turn_timeout;
 
     // reset turn timer if there no fixed interval and no first turn time set
-    if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval")
-        && GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time").empty())
+    if (!GetOptionsDB().Get<bool>("network.server.turn-timeout.fixed-interval") &&
+        GetOptionsDB().Get<std::string>("network.server.turn-timeout.first-turn-time").empty())
     {
-        playing_game.m_turn_timeout.cancel();
-        if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
-            playing_game.m_turn_timeout.expires_from_now(boost::posix_time::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval")));
-            playing_game.m_turn_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
-                                                               &playing_game,
-                                                               boost::asio::placeholders::error));
+        game_timeout.cancel();
+        if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 &&
+            !Server().IsHaveWinner())
+        {
+            auto timeout_max_interval = std::chrono::seconds(GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval"));
+            game_timeout.expires_after(timeout_max_interval);
+            game_timeout.async_wait(boost::bind(&PlayingGame::TurnTimedoutHandler,
+                                                &playing_game,
+                                                boost::asio::placeholders::error));
         }
     } else {
         // Cleanup time of first turn so it won't be applied second time
@@ -3057,8 +3094,9 @@ WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     }
 
     if (GetOptionsDB().Get<int>("network.server.turn-timeout.max-interval") > 0 && !Server().IsHaveWinner()) {
-        auto remaining = playing_game.m_turn_timeout.expires_from_now();
-        Server().Networking().SendMessageAll(TurnTimeoutMessage(static_cast<int>(remaining.total_seconds())));
+        const auto remaining_ticks = game_timeout.expiry() - std::chrono::system_clock::now();
+        const auto remaining_secs = std::chrono::duration_cast<std::chrono::seconds>(remaining_ticks);
+        Server().Networking().SendMessageAll(TurnTimeoutMessage(static_cast<int>(remaining_secs.count())));
     } else {
         Server().Networking().SendMessageAll(TurnTimeoutMessage(0));
     }
