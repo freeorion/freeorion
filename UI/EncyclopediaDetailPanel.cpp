@@ -4383,10 +4383,14 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     }
 
     if (!detailed_description.empty()) {
-        if (m_items_it->second == "ENC_STRINGS")
-            m_description_rich_text->SetUnformattedText(std::move(detailed_description));
-        else
-            m_description_rich_text->SetText(detailed_description);
+        try {
+            if (m_items_it->second == "ENC_STRINGS")
+                m_description_rich_text->SetUnformattedText(std::move(detailed_description));
+            else
+                m_description_rich_text->SetText(detailed_description);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Exception setting rich text: " << e.what();
+        }
     }
 
     m_scroll_panel->ScrollTo(GG::Y0);
