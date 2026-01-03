@@ -503,10 +503,12 @@ void TextureManager::StoreTexture(std::shared_ptr<Texture> texture, std::string 
 
 std::shared_ptr<Texture> TextureManager::GetTexture(const std::filesystem::path& path, bool mipmap)
 {
-    if (auto tex_maybe = GetTextureByName(path.generic_string()))
-        return tex_maybe;
-
     std::scoped_lock lock(m_texture_access_guard);
+
+    auto it = m_textures.find(path.generic_string());
+    if (it != m_textures.end())
+        return it->second;
+
     // if no such texture was found, attempt to load it now, using name as the filename
     //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
     return LoadTexture(path, mipmap);
