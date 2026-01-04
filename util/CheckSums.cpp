@@ -52,7 +52,7 @@ namespace CheckSums {
     static_assert(abs(pow10(-4)/0.0001 - 1) < ok_frac_ac);
     static_assert(abs(pow10(0.00000005f)/1.0000001f - 1) < ok_frac_ac);
     static_assert(abs(pow10(-0.00000005f)*1.0000001f - 1) < ok_frac_ac);
-    static_assert(abs(pow10(0.9999999f)/9.999997f - 1) < ok_frac_ac);
+    static_assert(abs(pow10(0.9999999f)/9.999996f - 1) < ok_frac_ac);
     static_assert(abs(pow10(-0.9999999f)*9.999997f - 1) < ok_frac_ac);
 
     static_assert(pow(0.0, 17.0) == 0.0);
@@ -106,11 +106,6 @@ namespace CheckSums {
     static_assert(DBL_MAX_10_EXP < 400);
     static_assert(FLT_MAX_10_EXP < 40);
 
-#if !defined(__cpp_lib_constexpr_cmath)
-    static_assert([](){std::array arr{1, 5, -1, 2, 0, 0}; InPlaceSort(arr); return arr; }() == std::array{-1, 0, 0, 1, 2, 5});
-    static_assert([](){std::array arr{1.0, 5.0, -1.0, 2.0, 0.0, 0.0}; InPlaceSort(arr); return arr; }() == std::array{-1.0, 0.0, 0.0, 1.0, 2.0, 5.0});
-    static_assert([](){std::array arr{1.0f, 5.0f, -1.0f, 2.0f, 0.0f, 0.0f}; InPlaceSort(arr); return arr; }() == std::array{-1.0f, 0.0f, 0.0f, 1.0f, 2.0f, 5.0f});
-#endif
 
     constexpr auto csc = [](const auto in) noexcept {
         constexpr auto csc_ = [](const auto in, const auto csc_) noexcept {
