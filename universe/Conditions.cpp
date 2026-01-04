@@ -8073,7 +8073,7 @@ namespace {
             return retval;
         }
         [[nodiscard]] inline operator std::string() const
-        { return "(" + std::to_string(x) + ", " + std::to_string(y) + ")"; }
+        { return std::string{"("} + std::to_string(x) + ", " + std::to_string(y) + ")"; }
     };
     std::ostream& operator<<(std::ostream& os, const vec2 v2) {
         os << std::string{v2};
@@ -8783,7 +8783,7 @@ namespace {
         static_assert( LineSegmentIsCloseToPoint(seg6, seg5.e, 1.0));
     }
 
-    [[nosdiscard]] constexpr bool LaneWouldBeCloseToOtherObject(
+    [[nodiscard]] constexpr bool LaneWouldBeCloseToOtherObject(
         const auto* obj1, const auto* obj2, const auto& close_objects, const double max_distance)
     {
         if (!obj1 || !obj2 || close_objects.empty())
