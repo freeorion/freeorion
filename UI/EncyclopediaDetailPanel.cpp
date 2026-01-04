@@ -2778,6 +2778,18 @@ namespace {
             % (typical_strength / cost)).str();
     }
 
+    struct UniverseObjectSignalInhibitor {
+        explicit UniverseObjectSignalInhibitor(Universe& universe) noexcept : u{universe}, inhibited(true) { u.InhibitUniverseObjectSignals(true); }
+        ~UniverseObjectSignalInhibitor() noexcept { Disinhibit(); }
+        bool Inhibited() const noexcept { return inhibited; }
+        void Disinhibit() noexcept {
+            if (inhibited) u.InhibitUniverseObjectSignals(false);
+            inhibited = false;
+        }
+        Universe& u;
+        bool inhibited = true;
+    };
+
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
@@ -2800,7 +2812,7 @@ namespace {
         }
         const auto& design = *design_ptr;
 
-        universe.InhibitUniverseObjectSignals(true);
+        const UniverseObjectSignalInhibitor scoped_signal_inhibitor{universe};
 
 
         // Ship Designs
@@ -2906,7 +2918,6 @@ namespace {
             }
 
             universe.Delete(temp->ID());
-            universe.InhibitUniverseObjectSignals(false);
         }
 
 
@@ -2950,7 +2961,7 @@ namespace {
         ObjectMap& objects = context.ContextObjects();
         const SpeciesManager& species_manager = context.species;
 
-        universe.InhibitUniverseObjectSignals(true);
+        const UniverseObjectSignalInhibitor scoped_signal_inhibitor{universe};
 
 
         // incomplete design.  not yet in game universe; being created on design screen
@@ -3042,7 +3053,6 @@ namespace {
 
         universe.Delete(temp->ID());
         universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
-        universe.InhibitUniverseObjectSignals(false);
     }
 
     void RefreshDetailPanelObjectTag(       const std::string& item_type, const std::string& item_name,
@@ -3160,7 +3170,7 @@ namespace {
         const auto empire_id = app.EmpireID();
         ScriptingContext& context = app.GetContext();
         Universe& universe = context.ContextUniverse();
-        universe.InhibitUniverseObjectSignals(true);
+        UniverseObjectSignalInhibitor scoped_signal_inhibitor{universe};
 
         for (const auto species_name : species_names) { // TODO: parallelize somehow? tricky since an existing planet is being modified, rather than adding a test planet...
             // Setting the planet's species allows all of it meters to reflect
@@ -3203,7 +3213,7 @@ namespace {
         }
 
         try {
-            universe.InhibitUniverseObjectSignals(false);
+            scoped_signal_inhibitor.Disinhibit();
             universe.ApplyMeterEffectsAndUpdateMeters(planet_id_vec, context, false);
         } catch (const std::exception& e) {
             ErrorLogger() << "Caught exception re-applying meter effects to planet after temporary species / owner : " << e.what();
