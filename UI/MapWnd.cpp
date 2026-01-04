@@ -6002,10 +6002,10 @@ void MapWnd::Sanitize() {
     DetachChildren();
 }
 
-void MapWnd::ResetTimeoutClock(int timeout) {
-    m_timeout_time = timeout <= 0 ?
+void MapWnd::ResetTimeoutClock(int timeout_seconds) {
+    m_timeout_time = timeout_seconds <= 0 ?
                      std::chrono::time_point<std::chrono::high_resolution_clock>() :
-                     std::chrono::high_resolution_clock::now() + std::chrono::high_resolution_clock::duration(std::chrono::seconds(timeout));
+                     std::chrono::high_resolution_clock::now() + std::chrono::high_resolution_clock::duration(std::chrono::seconds(timeout_seconds));
 
     TimerFiring(0, &m_timeout_clock);
 }
