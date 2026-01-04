@@ -8804,8 +8804,12 @@ namespace {
 
             return retval;
         };
-
-        return range_any_of(close_objects, lane_would_be_close_to_object);
+#if !defined(USING_STD_RANGES) || !USING_STD_RANGES
+        if (std::is_constant_evaluated())
+            return std::any_of(close_objects.begin(), close_objects.end(), lane_would_be_close_to_object);
+        else
+#endif
+            return range_any_of(close_objects, lane_would_be_close_to_object);
     }
 
     namespace StaticTests {
