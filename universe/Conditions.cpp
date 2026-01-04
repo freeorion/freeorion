@@ -8051,7 +8051,7 @@ namespace {
 
     struct vec2 {
         [[nodiscard]] constexpr vec2(double x_, double y_) noexcept : x(x_), y(y_) {}
-        [[nodiscard]] vec2(const UniverseObjectCXBase& obj) noexcept : x(obj.X()), y(obj.Y()) {}
+        [[nodiscard]] constexpr vec2(const UniverseObjectCXBase& obj) noexcept : x(obj.X()), y(obj.Y()) {}
         double x = 0.0, y = 0.0;
         [[nodiscard]] constexpr auto operator-() const noexcept { return vec2{-x, -y}; };
         [[nodiscard]] constexpr auto operator-(const vec2& rhs) const noexcept { return vec2{x - rhs.x, y - rhs.y}; }
@@ -8783,8 +8783,8 @@ namespace {
         static_assert( LineSegmentIsCloseToPoint(seg6, seg5.e, 1.0));
     }
 
-    bool LaneWouldBeCloseToOtherObject(const auto* obj1, const auto* obj2,
-                                       const ObjectSet& close_objects, const double max_distance)
+    [[nosdiscard]] constexpr bool LaneWouldBeCloseToOtherObject(
+        const auto* obj1, const auto* obj2, const auto& close_objects, const double max_distance)
     {
         if (!obj1 || !obj2 || close_objects.empty())
             return false;
@@ -8797,10 +8797,10 @@ namespace {
 
             const auto retval = LineSegmentIsCloseToPoint(pt1, pt2, vec2{*close_obj}, max_distance);
 
-            TraceLogger(conditions) << close_obj->Name() << " @ " << vec2{*close_obj}
-                                    << " is " << (retval ? "close to" : "far from")
-                                    <<" lane from "<< obj1->Name() << " to " << obj2->Name()
-                                    << vec2{*obj1} << " - " << vec2{*obj2};
+            //TraceLogger(conditions) << close_obj->Name() << " @ " << vec2{*close_obj}
+            //                        << " is " << (retval ? "close to" : "far from")
+            //                        <<" lane from "<< obj1->Name() << " to " << obj2->Name()
+            //                        << vec2{*obj1} << " - " << vec2{*obj2};
 
             return retval;
         };
@@ -8808,6 +8808,20 @@ namespace {
         return range_any_of(close_objects, lane_would_be_close_to_object);
     }
 
+    namespace StaticTests {
+        struct PositionalTestObj : public UniverseObjectCXBase {
+            constexpr explicit PositionalTestObj(double x = 0.0, double y = 0.0, int this_id = 2) :
+                UniverseObjectCXBase(UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE,
+                                     ALL_EMPIRES, INVALID_GAME_TURN, x, y)
+            { this->SetID(this_id); }
+        };
+
+        constexpr std::array pos_objs{PositionalTestObj{0.0, 0.0, 0},     PositionalTestObj(-10.0, 10.0, 1),
+                                      PositionalTestObj(100.0, 100.0, 2), PositionalTestObj(0.0, 3.0, 3)};
+
+        static_assert( LaneWouldBeCloseToOtherObject(&pos_objs[0], &pos_objs[2], std::array{&pos_objs[1], &pos_objs[3]}, 8.0));
+        static_assert(!LaneWouldBeCloseToOtherObject(&pos_objs[0], &pos_objs[2], std::array{&pos_objs[1], &pos_objs[3]}, 1.0));
+    }
 
     struct StarlaneToWouldBeCloseToObjectSimpleMatch {
         [[nodiscard]] StarlaneToWouldBeCloseToObjectSimpleMatch(
@@ -8830,8 +8844,8 @@ namespace {
             // angularly close to an existing lane on either end
             const auto retval = range_any_of(m_to_objects, lane_to_close_to_other_object);
 
-            TraceLogger(conditions) << "lane from an object to " << candidate->Name()
-                                    << " would " << (retval ? "" : "not ") << "be close to another object...";
+            //TraceLogger(conditions) << "lane from an object to " << candidate->Name()
+            //                        << " would " << (retval ? "" : "not ") << "be close to another object...";
 
             return retval;
         }
