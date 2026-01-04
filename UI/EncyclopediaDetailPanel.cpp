@@ -2785,9 +2785,9 @@ namespace {
                                             std::string& specific_type, std::string& detailed_description,
                                             GG::Clr& color, bool only_description = false)
     {
-        int design_id = ToInt(item_name, INVALID_DESIGN_ID);
+        const int design_id = ToInt(item_name, INVALID_DESIGN_ID);
         auto& app = GetApp();
-        int client_empire_id = app.EmpireID();
+        const int client_empire_id = app.EmpireID();
         ScriptingContext& context = app.GetContext();
         Universe& universe = context.ContextUniverse();
         ObjectMap& objects = context.ContextObjects();
