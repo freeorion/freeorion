@@ -204,10 +204,18 @@ protected:
     uint32_t m_return_immediate_value : 1 = false;
 };
 
+
+template <class N>
+struct is_vector { static const int value = 0; };
+
+template <class N, class A>
+struct is_vector<std::vector<N, A> > { static const int value = 1; };
+
 template<typename T>
-decltype(auto) FlexibleToString(T&& t)
+decltype(auto) FlexibleToString(const T& t)
 {
     static_assert(!std::is_enum_v<T>);
+    static_assert(!is_vector<T>::value);
 
     if constexpr (std::is_floating_point_v<std::decay_t<T>>) {
         return DoubleToString(t, 3, false);
@@ -218,28 +226,55 @@ decltype(auto) FlexibleToString(T&& t)
     } else if constexpr (std::is_same_v<std::decay_t<T>, std::string_view>) {
         return std::string{t};
 
-    } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
-        std::size_t total_size = 0;
-        for (auto& ts : t)
-            total_size += ts.size();
-        std::string retval;
-        retval.reserve(total_size);
-        for (auto& ts: t)
-            retval.append(ts);
-        return retval;
-
     } else {
         return std::to_string(t);
     }
 }
 
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(StarType t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetEnvironment t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetType t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetSize t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(Visibility t);
-[[nodiscard]] FO_COMMON_API std::string FlexibleToString(UniverseObjectType t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const StarType& t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const PlanetEnvironment& t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const PlanetType& t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const PlanetSize& t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const ShipPartClass& t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const Visibility& t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(const UniverseObjectType& t);
 
+template <typename EnumT>
+std::string EnumToString(EnumT t);
+
+// after declarations of specialization of FlexibleToString for enums
+template<typename T>
+decltype(auto) FlexibleToString(const std::vector<T>& tv)
+{
+    if constexpr (std::is_same_v<T, int> || std::is_same_v<T, double>) {
+        std::string retval;
+        for (auto& ts: tv)
+            retval.append(std::to_string(ts));
+        return retval;
+
+    } else if constexpr (std::is_same_v<T, std::string>) {
+        std::size_t total_size = 0;
+        for (auto& ts : tv)
+            total_size += ts.size();
+        std::string retval;
+        retval.reserve(total_size);
+        for (auto& ts: tv)
+            retval.append(ts);
+        return retval;
+
+    } else if constexpr (std::is_enum_v<T>) {
+        std::string retval;
+        for (auto& ts: tv)
+            retval.append(EnumToString(ts));
+        return retval;
+
+    } else {
+        std::string retval;
+        for (auto& ts: tv)
+          retval.append(FlexibleToString<T>(ts));
+        return retval;
+    }
+}
 
 //! The base class for all ValueRef classes returning type T. This class
 //! provides the public interface for a ValueRef expression tree.
