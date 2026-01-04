@@ -238,6 +238,23 @@ namespace Impl {
             out.push_back(o);
     }
 
+    constexpr void InPlaceSort(auto& arr) {
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(arr.begin(), arr.end());
+#else
+        if (!std::is_constant_evaluated()) {
+            std::sort(arr.begin(), arr.end());
+        } else {
+            for (auto it = arr.begin(); it != arr.end(); ++it)
+                std::swap(*it, *std::min_element(it, arr.end()));
+        }
+#endif
+    }
+#if !defined(__cpp_lib_constexpr_cmath)
+    static_assert([](){std::array arr{1, 5, -1, 2, 0, 0}; InPlaceSort(arr); return arr; }() == std::array{-1, 0, 0, 1, 2, 5});
+    static_assert([](){std::array arr{1.0, 5.0, -1.0, 2.0, 0.0, 0.0}; InPlaceSort(arr); return arr; }() == std::array{-1.0, 0.0, 0.0, 1.0, 2.0, 5.0});
+    static_assert([](){std::array arr{1.0f, 5.0f, -1.0f, 2.0f, 0.0f, 0.0f}; InPlaceSort(arr); return arr; }() == std::array{-1.0f, 0.0f, 0.0f, 1.0f, 2.0f, 5.0f});
+#endif
 
     // Returns an ObjectSet containing at least the union of types and context objects in \a matches_types
     // but possibly more objects, without any duplicates.
@@ -1116,7 +1133,7 @@ struct ContainsSimpleMatch {
             // subcondition_matches with the set of objects contained in some
             // candidate object.
             if (!subcondition_matches_ids.empty())
-                CheckSums::InPlaceSort(subcondition_matches_ids);
+                Impl::InPlaceSort(subcondition_matches_ids);
             return subcondition_matches_ids;
         }())
     {}
@@ -1371,7 +1388,7 @@ struct ContainedBySimpleMatch {
             // subcondition_matches with the set of objects contained in some
             // candidate object.
             if (!subcondition_matches_ids.empty())
-                CheckSums::InPlaceSort(subcondition_matches_ids);
+                Impl::InPlaceSort(subcondition_matches_ids);
             return subcondition_matches_ids;
         }())
     {}
@@ -3371,7 +3388,7 @@ private:
         using namespace Impl::MatchesType;
         using namespace Impl;
 
-        CheckSums::InPlaceSort(ops_matched_types);
+        Impl::InPlaceSort(ops_matched_types);
         const auto unique_it = std::unique(ops_matched_types.begin(), ops_matched_types.end());
 
         if (std::any_of(ops_matched_types.begin(), unique_it, matches_nothing)) {

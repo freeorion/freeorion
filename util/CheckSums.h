@@ -103,19 +103,6 @@ namespace CheckSums {
     constexpr T pow(E exp) noexcept
     { return pow(static_cast<T>(natural_log_base), exp); }
 
-    constexpr void InPlaceSort(auto& arr) {
-#if defined(__cpp_lib_constexpr_algorithms)
-        std::sort(arr.begin(), arr.end());
-#else
-        if (!std::is_constant_evaluated()) {
-            std::sort(arr.begin(), arr.end());
-        } else {
-            for (auto it = arr.begin(); it != arr.end(); ++it)
-                std::swap(*it, *std::min_element(it, arr.end()));
-        }
-#endif
-    }
-
     template <typename E = double> requires std::is_floating_point_v<std::decay_t<E>>
     constexpr E PowTaylorSeries(const E exp)
     {
@@ -133,7 +120,6 @@ namespace CheckSums {
             accum *= (exp/n);
             scratch[n] = accum;
         }
-        InPlaceSort(scratch);
 #if defined(__cpp_lib_constexpr_numeric)
         return std::accumulate(scratch.begin(), scratch.end(), E{0});
 #else
