@@ -2734,7 +2734,7 @@ namespace {
     }
 
     std::string GetDetailedDescriptionStats(const std::shared_ptr<Ship>& ship,
-                                            float enemy_DR, std::set<float> enemy_shots, float cost)
+                                            float enemy_DR, const std::set<float>& enemy_shots, float cost)
     {
         //The strength of a fleet is approximately weapons * armor, or
         //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
@@ -2776,6 +2776,108 @@ namespace {
             % enemy_DR
             % typical_strength
             % (typical_strength / cost)).str();
+    }
+
+    constexpr auto is_empty = [](const auto& e) noexcept {
+        if constexpr (requires { e.first.empty() && e.second.empty(); })
+            return e.first.empty() && e.second.empty();
+        else if constexpr (requires { e.empty();})
+            return e.empty();
+        else
+            return false;
+    };
+
+    // removes empties, sorts, and retains only one of each value of input
+    constexpr void Uniquify(auto& vec) {
+        if (vec.empty())
+            return;
+        auto end_it = std::remove_if(vec.begin(), vec.end(), is_empty); // push empties to end
+        std::sort(vec.begin(), end_it);                                 // sort non-empties
+        const auto unique_it = std::unique(vec.begin(), end_it);        // push duplicates to end
+        vec.erase(unique_it, vec.end());                                // erase everything after unique non-empties
+    }
+#if defined(__cpp_lib_constexpr_vector)
+    static_assert([]() { std::vector vec{std::array<int,0>{}, std::array<int,0>{}}; Uniquify(vec); return vec.empty(); }());
+    static_assert([]() { std::vector vec{4, 2, 1, 3, 1, 1}; Uniquify(vec); return vec.size() == 4 && vec.front() == 1; }());
+#endif
+
+
+    auto GetShotsAndSpeciesAndDR(const ScriptingContext& context, const ObjectMap& objects, const ClientUI& ui, int client_empire_id) {
+        const double tech_level = boost::algorithm::clamp(context.current_turn / 400.0, 0.0, 1.0);
+        const double scaling = GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
+        const float typical_shot = (3 + 27 * tech_level) * scaling;
+
+        std::tuple<double, std::set<float>, std::vector<std::string>> retval{20 * tech_level * scaling, std::set<float>{typical_shot}, std::vector<std::string>{}};
+        auto& [enemy_DR, enemy_shots, species_list] = retval;
+
+        TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: " << tech_level
+                      << "   DR: " << enemy_DR << "   attack: " << typical_shot << "  incl.scaling: " << scaling;
+
+
+        // select which species to show info for
+
+        // TODO: can species_list contain string_view ?
+        if (auto map_wnd = ui.GetMapWndConst()) {
+            if (const auto* planet = objects.getRaw<const Planet>(map_wnd->SelectedPlanetID())) {
+                if (!planet->SpeciesName().empty())
+                    species_list.push_back(planet->SpeciesName());
+            }
+        }
+
+        FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
+        int selected_ship = fleet_manager.SelectedShipID();
+        const FleetWnd* fleet_wnd = fleet_manager.ActiveFleetWnd();
+        if ((selected_ship == INVALID_OBJECT_ID) && fleet_wnd) {
+            const auto selected_fleets = fleet_wnd->SelectedFleetIDs();
+            const auto selected_ships = fleet_wnd->SelectedShipIDs();
+            if (!selected_ships.empty()) {
+                selected_ship = *selected_ships.begin();
+            } else {
+                int selected_fleet_id = INVALID_OBJECT_ID;
+                if (selected_fleets.size() == 1) 
+                    selected_fleet_id = *selected_fleets.begin();
+                else if (!fleet_wnd->FleetIDs().empty())
+                    selected_fleet_id = *fleet_wnd->FleetIDs().begin();
+
+                if (const auto* selected_fleet = objects.getRaw<const Fleet>(selected_fleet_id))
+                    if (!selected_fleet->ShipIDs().empty())
+                        selected_ship = *selected_fleet->ShipIDs().begin();
+            }
+        }
+
+        std::vector<int> chosen_ships;
+        if (selected_ship != INVALID_OBJECT_ID) {
+            chosen_ships.push_back(selected_ship);
+            if (const auto* this_ship = objects.getRaw<const Ship>(selected_ship)) {
+                if (!this_ship->SpeciesName().empty())
+                    species_list.push_back(this_ship->SpeciesName());
+                if (!this_ship->OwnedBy(client_empire_id)) {
+                    enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
+                    DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
+                    enemy_shots.clear();
+                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(context); // FIXME: FighterDamage
+                    for (float shot : this_damage)
+                        DebugLogger() << "Weapons Dmg " << shot;
+                    enemy_shots.insert(this_damage.begin(), this_damage.end());
+                }
+            }
+        } else if (fleet_manager.ActiveFleetWnd()) {
+            const auto selected_fleets = fleet_manager.ActiveFleetWnd()->SelectedFleetIDs();
+            for (const auto* fleet : objects.findRaw<const Fleet>(selected_fleets)) {
+                if (fleet)
+                    chosen_ships.insert(chosen_ships.end(), fleet->ShipIDs().begin(), fleet->ShipIDs().end());
+            }
+        }
+        Uniquify(chosen_ships);
+
+        species_list.reserve(species_list.size() + chosen_ships.size());
+        for (const auto* this_ship : objects.findRaw<const Ship>(chosen_ships)) {
+            if (this_ship && this_ship->SpeciesName().empty())
+                species_list.push_back(this_ship->SpeciesName());
+        }
+        Uniquify(species_list);
+
+        return retval;
     }
 
     struct UniverseObjectSignalInhibitor {
@@ -2826,79 +2928,13 @@ namespace {
             general_type = design.IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
         }
 
-        const float tech_level = boost::algorithm::clamp(context.current_turn / 400.0f, 0.0f, 1.0f);
-        const double scaling = GetGameRules().Get<double>("RULE_SHIP_WEAPON_DAMAGE_FACTOR");
-        const float typical_shot = (3 + 27 * tech_level) * scaling;
-        float enemy_DR = 20 * tech_level * scaling;
-        TraceLogger() << "RefreshDetailPanelShipDesignTag default enemy stats:: tech_level: " << tech_level
-                      << "   DR: " << enemy_DR << "   attack: " << typical_shot << "  incl.scaling: " << scaling;
-        std::set<float> enemy_shots{typical_shot};
 
-
-        // select which species to show info for
-
-        // TODO: can this be a vector of string_view ?
-        std::set<std::string> additional_species; // from currently selected planet and fleets, if any
-        if (auto map_wnd = app.GetUI().GetMapWndConst()) {
-            if (const auto planet = objects.get<Planet>(map_wnd->SelectedPlanetID())) {
-                if (!planet->SpeciesName().empty())
-                    additional_species.insert(planet->SpeciesName());
-            }
-        }
-
-        FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
-        std::set<int> chosen_ships;
-        int selected_ship = fleet_manager.SelectedShipID();
-        const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd();
-        if ((selected_ship == INVALID_OBJECT_ID) && fleet_wnd) {
-            auto selected_fleets = fleet_wnd->SelectedFleetIDs();
-            auto selected_ships = fleet_wnd->SelectedShipIDs();
-            if (selected_ships.size() > 0)
-                selected_ship = *selected_ships.begin();
-            else {
-                int selected_fleet_id = INVALID_OBJECT_ID;
-                if (selected_fleets.size() == 1)
-                    selected_fleet_id = *selected_fleets.begin();
-                else if (fleet_wnd->FleetIDs().size() > 0)
-                    selected_fleet_id = *fleet_wnd->FleetIDs().begin();
-                if (auto selected_fleet = objects.get<Fleet>(selected_fleet_id))
-                    if (!selected_fleet->ShipIDs().empty())
-                        selected_ship = *selected_fleet->ShipIDs().begin();
-            }
-        }
-
-        if (selected_ship != INVALID_OBJECT_ID) {
-            chosen_ships.insert(selected_ship);
-            if (const auto this_ship = objects.get<const Ship>(selected_ship)) {
-                if (!this_ship->SpeciesName().empty())
-                    additional_species.insert(this_ship->SpeciesName());
-                if (!this_ship->OwnedBy(client_empire_id)) {
-                    enemy_DR = this_ship->GetMeter(MeterType::METER_MAX_SHIELD)->Initial();
-                    DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
-                    enemy_shots.clear();
-                    auto this_damage = this_ship->AllWeaponsMaxShipDamage(context); // FIXME: FighterDamage
-                    for (float shot : this_damage)
-                        DebugLogger() << "Weapons Dmg " << shot;
-                    enemy_shots.insert(this_damage.begin(), this_damage.end());
-                }
-            }
-        } else if (fleet_manager.ActiveFleetWnd()) {
-            for (const auto* fleet : objects.findRaw<Fleet>(fleet_manager.ActiveFleetWnd()->SelectedFleetIDs())) {
-                if (!fleet)
-                    continue;
-                chosen_ships.insert(fleet->ShipIDs().begin(), fleet->ShipIDs().end());
-            }
-        }
-        for (const auto& this_ship : objects.find<const Ship>(chosen_ships)) {
-            if (!this_ship || !this_ship->SpeciesName().empty())
-                continue;
-            additional_species.emplace(this_ship->SpeciesName());
-        }
-        std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
         detailed_description = GetDetailedDescriptionBase(design);
 
 
         if (!only_description) { // don't generate detailed stat description involving adding / removing temporary ship from universe
+            auto [enemy_DR, enemy_shots, species_list] = GetShotsAndSpeciesAndDR(context, objects, app.GetUI(), client_empire_id);
+
             // temporary ship to use for estimating design's meter values
             auto temp = universe.InsertTemp<Ship>(client_empire_id, design_id, "", universe,
                                                   species_manager, client_empire_id,
@@ -4113,17 +4149,6 @@ namespace {
             if (boost::contains(detagged, search_text))
                 article_match = std::move(article_name_link);
         }
-    }
-
-    // removes empties, sorts, and retains only one of each value of input
-    void Uniquify(auto& vec) {
-        if (vec.empty())
-            return;
-        static constexpr auto is_empty = [](const auto& e) noexcept { return e.first.empty() && e.second.empty(); };
-        auto end_it = std::remove_if(vec.begin(), vec.end(), is_empty); // push empties to end
-        std::sort(vec.begin(), end_it);                                 // sort non-empties
-        const auto unique_it = std::unique(vec.begin(), end_it);        // push duplicates to end
-        vec.erase(unique_it, vec.end());                                // erase everything after unique non-empties
     }
 }
 
