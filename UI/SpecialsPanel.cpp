@@ -30,10 +30,8 @@ void SpecialsPanel::CompleteConstruction() {
     Update();
 }
 
-bool SpecialsPanel::InWindow(GG::Pt pt) const {
-    return std::any_of(m_icons.begin(), m_icons.end(),
-                       [pt](const auto& icon) { return icon->InWindow(pt); });
-}
+bool SpecialsPanel::InWindow(GG::Pt pt) const
+{ return range_any_of(m_icons, [pt](const auto& icon) { return icon->InWindow(pt); }); }
 
 void SpecialsPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
