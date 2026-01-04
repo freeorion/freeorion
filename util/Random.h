@@ -51,7 +51,9 @@ namespace RandomImpl {
         val *= m2;
         val ^= val >> 15;
 
-        static_assert(noexcept(val ^= 0x5A5C3AF5) && noexcept(val ^= val >> 16) && noexcept(val *= m1));
+        static_assert(noexcept(std::declval<uint32_t&>() ^= 0x5A5C3AF5) &&
+                      noexcept(std::declval<uint32_t&>() ^= val >> 16) &&
+                      noexcept(std::declval<uint32_t&>() *= m1));
 
         return val;
     }
