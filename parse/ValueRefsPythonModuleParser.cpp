@@ -12,6 +12,26 @@
 namespace py = boost::python;
 
 namespace {
+    value_ref_wrapper<std::vector<std::string>> insert_empire_adopted_policies_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+        return value_ref_wrapper<std::vector<std::string>>(std::make_shared<ValueRef::ComplexVariable<std::vector<std::string>>>(
+            "EmpireAdoptedPolicies",
+            std::move(empire),
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr
+        ));
+    }
+
   value_ref_wrapper<int> insert_complex_i1(std::string&& vname, const boost::python::tuple& args, const boost::python::dict& kw, const std::string& keyint1) {
         std::unique_ptr<ValueRef::ValueRef<int>> int1;
         auto int1_args = boost::python::extract<value_ref_wrapper<int>>(kw[keyint1]);
@@ -70,6 +90,28 @@ namespace {
         auto error_str = std::string{"Unsupported type for RandomNumber: "} + py::extract<std::string>(py::str(type))() + " (" + __func__ + ")";
         throw std::runtime_error(error_str);
     }
+
+    template <typename T>
+    boost::python::object insert_reduce_vector_(const py::object& type_int, const py::object& type_float, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto vector = boost::python::extract<value_ref_wrapper<std::vector<T>>>(args[1]);
+        if (!vector.check()) {
+            ErrorLogger() << "No vector vref in ReduceVector";
+        }
+        if (args[0] == type_int) {
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ReduceVector<int,T>>(ValueRef::CloneUnique(vector().value_ref), type)));
+        } else if (args[0] == type_float) {
+            ErrorLogger() << "insert_reduce_vector_(parser.type_float) using untested functionality - remove this log entry after test";
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ReduceVector<double,T>>(ValueRef::CloneUnique(vector().value_ref), type)));
+        //} else if (args[0] == type_str) { // only supporting arithmetic T currently
+        //    return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::ReduceVector<std::string,T>>(nullptr, type)));
+        } else {
+            ErrorLogger() << "Unsupported type for ReduceVector : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return boost::python::object();
+    }
 }
 
 BOOST_PYTHON_MODULE(_value_refs) {
@@ -106,9 +148,14 @@ BOOST_PYTHON_MODULE(_value_refs) {
     const auto type_int = py::import("builtins").attr("int");
     const auto type_float = py::import("builtins").attr("float");
 
+    py::def("EmpireAdoptedPolicies", boost::python::raw_function(insert_empire_adopted_policies_));
+
     py::def("RandomNumber", py::make_function(
         [type_int, type_float](const py::object& type, const py::object& min, const py::object& max) { return insert_random_number_operation(type_int, type_float, type, min, max); },
         py::default_call_policies(),
         boost::mpl::vector<py::object, const py::object&, const py::object&, const py::object&>()));
+
+    const auto f_insert_vector_count = [type_int, type_float](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_reduce_vector_<std::string>(type_int, type_float, ValueRef::StatisticType::COUNT, args, kw); };
+    py::def("VectorCount", boost::python::raw_function(f_insert_vector_count, 1));
 }
 
