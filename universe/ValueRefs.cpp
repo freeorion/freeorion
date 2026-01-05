@@ -592,7 +592,7 @@ std::string StatisticDescription(StatisticType stat_type, std::string_view value
         return boost::io::str(formatter);
     }
 
-    return UserString("DESC_VAR_STATISITIC");
+    return UserString("DESC_VAR_STATISTIC");
 }
 
 ///////////////////////////////////////////////////////////
