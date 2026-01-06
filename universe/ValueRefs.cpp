@@ -1981,6 +1981,20 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         };
         return static_cast<int>(range_count_if(design->Parts(), part_of_class));
     }
+    else if (m_property_name == "NumPartClassesInShipDesign") {
+        if (!m_int_ref1)
+            return 0;
+
+        const int design_id = m_int_ref1->Eval(context);
+        if (design_id == INVALID_DESIGN_ID)
+            return 0;
+
+        const ShipDesign* design = context.ContextUniverse().GetShipDesign(design_id);
+        if (!design)
+            return 0;
+
+        return design->PartClassCount().size();
+    }
     else if (m_property_name == "JumpsBetween") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)

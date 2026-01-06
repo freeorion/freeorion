@@ -11503,6 +11503,9 @@ last colonized by empire
 DESC_VAR_JUMPSBETWEEN
 starlane jumps between systems containing objects with ids %1% and %2%
 
+DESC_VAR_NUMPARTCLASSESINSHIPDESIGN
+number of classes of parts in ship design with id %1%
+
 DESC_VAR_STATISTIC
 Statistic
 
