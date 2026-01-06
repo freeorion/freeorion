@@ -401,8 +401,7 @@ void GGHumanClientApp::Initialize() {
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
     auto cursor_texture = m_ui.GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture),
-                                                  GG::Pt(GG::X(6), GG::Y(3))));
+    SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture), GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
@@ -1052,10 +1051,10 @@ void GGHumanClientApp::HandleMessage(Message&& msg) {
         case Message::MessageType::END_GAME:                m_fsm.process_event(::EndGame(msg));               break;
 
         case Message::MessageType::DISPATCH_COMBAT_LOGS:    m_fsm.process_event(DispatchCombatLogs(msg));      break;
-        case Message::MessageType::DISPATCH_SAVE_PREVIEWS:  HandleSaveGamePreviews(msg);                        break;
+        case Message::MessageType::DISPATCH_SAVE_PREVIEWS:  HandleSaveGamePreviews(msg);                       break;
         case Message::MessageType::AUTH_REQUEST:            m_fsm.process_event(AuthRequest(msg));             break;
         case Message::MessageType::CHAT_HISTORY:            m_fsm.process_event(ChatHistory(msg));             break;
-        case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                            break;
+        case Message::MessageType::SET_AUTH_ROLES:          HandleSetAuthRoles(msg);                           break;
         case Message::MessageType::TURN_TIMEOUT:            m_fsm.process_event(TurnTimeout(msg));             break;
         case Message::MessageType::PLAYER_INFO:             m_fsm.process_event(PlayerInfoMsg(msg));           break;
         default:
