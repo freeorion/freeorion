@@ -304,6 +304,7 @@
     (number)                                    \
     (Number)                                    \
     (NumberOf)                                  \
+    (NumPartClassesInShipDesign)                \
     (NumPoliciesAdopted)                        \
     (NumShips)                                  \
     (NumStarlanes)
