@@ -4,7 +4,7 @@
 // We include all external headers used in any of the header files,
 // plus external headers used in at least five .cpp files.
 
-// https://hownot2code.com/2016/08/16/stdafx-h/
+// https://hownot2code.wordpress.com/2016/08/16/stdafx-h/
 
 // ----------------
 // includes from .h
