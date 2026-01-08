@@ -1554,8 +1554,8 @@ private:
             return;
         m_initialized = true;
 
-        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
-                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
+        static constexpr GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
+                                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
         DetachChildAndReset(m_dot);
         DetachChildAndReset(m_expand_button);
