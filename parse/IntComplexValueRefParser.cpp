@@ -104,11 +104,13 @@ namespace parse {
             ;
 
          empire_ships_destroyed
-            =   (
+            = (
                     tok.EmpireShipsDestroyed_
                 >-( label(tok.empire_) > int_rules.expr )
                 >-( label(tok.empire_) > int_rules.expr )
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                        _1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr))
+                ]
             ;
 
         jumps_between
@@ -122,7 +124,9 @@ namespace parse {
                > label(tok.object_)
                > (int_rules.expr
                   | qi::as<parse::detail::MovableEnvelope<ValueRef::ValueRef<int>>>()[int_rules.statistic_expr])
-              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr)) ]
+              ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                        _1, deconstruct_movable_(_2, _pass), deconstruct_movable_(_3, _pass), nullptr, nullptr, nullptr))
+                ]
             ;
 
         //jumps_between_by_empire_supply
@@ -138,14 +142,18 @@ namespace parse {
             =   (
                     tok.NumPartClassesInShipDesign_
                 > ( label(tok.design_) > int_rules.expr )
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                          _1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr))
+                  ]
             ;
 
         outposts_owned
             =   (
                     tok.OutpostsOwned_
                 >-( label(tok.empire_) > int_rules.expr )
-                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr)) ]
+                ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                          _1, deconstruct_movable_(_2, _pass), nullptr, nullptr, nullptr, nullptr))
+                  ]
             ;
 
         parts_in_ship_design
@@ -153,7 +161,9 @@ namespace parse {
                     tok.PartsInShipDesign_
                 >-( label(tok.name_)   > string_grammar )
                 > ( label(tok.design_) > int_rules.expr )
-            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(_1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr)) ]
+            ) [ _val = construct_movable_(new_<ValueRef::ComplexVariable<int>>(
+                      _1, deconstruct_movable_(_3, _pass), nullptr, nullptr, deconstruct_movable_(_2, _pass), nullptr))
+              ]
             ;
 
         part_class_in_ship_design
