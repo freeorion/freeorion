@@ -2115,6 +2115,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    bool m_names_local_invariant = false;
 };
 
 /** Matches objects if the specified species' opinion of the specified content
