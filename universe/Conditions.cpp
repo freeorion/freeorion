@@ -331,6 +331,8 @@ void Number::Eval(const ScriptingContext& parent_context,
 {
     // Number does not have a single valid local candidate to be matched, as it
     // will match anything if the proper number of objects match the subcondition.
+    // TODO: rethink this... why can't high and low and subcondition matches
+    //       be different for each candidate being matched?
 
     if (!m_high_low_local_invariant) {
         ErrorLogger(conditions) << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
@@ -346,6 +348,9 @@ void Number::Eval(const ScriptingContext& parent_context,
         Condition::Eval(parent_context, matches, non_matches, search_domain);
 
     } else {
+        if (std::addressof(matches) == std::addressof(non_matches))
+            return;
+
         // Matching for this condition doesn't need to check each candidate object against
         // the number of subcondition matches, so don't need to use EvalImpl
         const bool in_range = Match(parent_context);
@@ -1725,6 +1730,8 @@ namespace {
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
+    if (std::addressof(matches) == std::addressof(non_matches))
+        return;
     const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
     if (sz == 1) {
         // in testing, this was faster for a single candidate than setting up the loop stuff
@@ -1741,7 +1748,7 @@ void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     } else {
         // check if candidates are capitals of any empire
         const auto is_capital = [capitals{parent_context.Empires().CapitalIDs()}](const auto* obj)
-        { return FlexibleContains(capitals, obj->ID()); };
+        { return range_contains(capitals, obj->ID()); };
         EvalImpl(matches, non_matches, search_domain, is_capital);
     }
 }
@@ -1818,7 +1825,7 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
             const auto empire = parent_context.GetEmpire(m_empire_id->Eval(parent_context));
             if (!empire) {
                 // no such empire, match nothing
-                if (search_domain == SearchDomain::MATCHES) {
+                if (search_domain == SearchDomain::MATCHES && (std::addressof(matches) != std::addressof(non_matches))) {
                     // move all objects from matches to non_matches
                     non_matches.insert(non_matches.end(), matches.begin(), matches.end());
                     matches.clear();
@@ -1847,6 +1854,8 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
 
         const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
         if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
+            if (std::addressof(matches) == std::addressof(non_matches))
+                return;
             const bool test_val = search_domain == SearchDomain::MATCHES;
             auto& from = test_val ? matches : non_matches;
             auto& to = test_val ? non_matches : matches;
@@ -2767,7 +2776,7 @@ void HasTag::Eval(const ScriptingContext& parent_context,
         if (!m_name) {
             EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(parent_context));
         } else {
-            std::string name = boost::to_upper_copy<std::string>(m_name->Eval(parent_context));
+            const std::string name = boost::to_upper_copy<std::string>(m_name->Eval(parent_context));
             EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name, parent_context));
         }
     } else {
@@ -3497,7 +3506,7 @@ ObjectSet ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
 
 bool ObjectID::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
-    if (!candidate)
+    if (!candidate || !m_object_id)
         return false;
 
     return ObjectIDSimpleMatch(m_object_id->Eval(local_context))(candidate);
