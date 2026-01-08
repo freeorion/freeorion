@@ -7466,6 +7466,12 @@ Planets
 FLEETS_SUBMENU
 Fleet / Ships
 
+POSITION_SUBMENU
+Position / System
+
+EMPIRE_SUPPLY_SUBMENU
+Empire / Supply
+
 PLANET_ENVIRONMENTS_SUBMENU
 Environment For Species
 
@@ -7540,6 +7546,18 @@ Dist. to Sel. System
 
 DISTANCE_TO_SELECTED_FLEET
 Dist. to Sel. Fleet
+
+SHORTEST_PATH_DISTANCE_TO_SELECTED_SYSTEM
+Shorest Path Dist. to Sel. System
+
+SHORTEST_PATH_DISTANCE_TO_SELECTED_FLEET
+Shorest Path Dist. to Sel. Fleet
+
+JUMPS_TO_SELECTED_SYSTEM
+Jumps to Sel. System
+
+JUMPS_TO_SELECTED_FLEET
+Jumps to Sel. Fleet
 
 PROPAGATED_SUPPLY_RANGE
 Propagated Supply Range

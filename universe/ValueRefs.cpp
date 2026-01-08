@@ -526,6 +526,9 @@ std::string ComplexVariableDescription(std::string_view property_name,
     if (property_name.empty()) {
         ErrorLogger() << "ComplexVariableDescription passed empty property name?!";
         return "";
+
+    } else if (property_name == "GameRule") {
+        // TODO: look up game rule description
     }
 
     std::string PROP{property_name};
@@ -2441,7 +2444,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return static_cast<float>(std::sqrt(dx*dx + dy*dy));
 
     }
-    else if (m_property_name == "ShortestPath") {
+    else if (m_property_name == "ShortestPath" || m_property_name == "ShortestPathDistance") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
@@ -2876,7 +2879,8 @@ std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
 
     }
     else if (m_property_name == "DirectDistanceBetween" ||
-             m_property_name == "ShortestPath")
+             m_property_name == "ShortestPath" ||
+             m_property_name == "ShortestPathDistance")
     {
         if (m_int_ref1)
             retval += " object = " + m_int_ref1->Dump(ntabs);
@@ -3004,12 +3008,15 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
         return Stringify(result);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (property == "X" || property == "Y" || property == "DirectDistanceBetween") {
+    if (property == "X" || property == "Y" ||
+        property == "DirectDistanceBetween" ||
+        property == "ShortestPathDistance")
+    {
         if (result == UniverseObject::INVALID_POSITION)
             return UserString("INVALID_POSITION");
 
         std::stringstream ss;
-        ss << std::setprecision(6) << result;
+        ss << std::setprecision(5) << result;
         return ss.str();
     }
 
