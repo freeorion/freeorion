@@ -1684,7 +1684,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     using boost::container::flat_map;
     // empire properties indexed by strings
     std::function<const std::map<std::string, int>& (const Empire&)> empire_property_string_key {nullptr};
-    std::function<const std::map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key2{nullptr};
     std::function<const flat_map<std::string, int, std::less<>>& (const Empire&)> empire_property_string_key3{nullptr};
 
     if (m_property_name == "TurnTechResearched")
@@ -1723,7 +1722,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
     else if (m_property_name == "LatestTurnPolicyAdopted")
         empire_property_string_key = &Empire::PolicyLatestTurnsAdopted;
 
-    if (empire_property_string_key || empire_property_string_key2 || empire_property_string_key3) {
+    if (empire_property_string_key || empire_property_string_key3) {
         std::shared_ptr<const Empire> empire;
         if (m_int_ref1) {
             int empire_id = m_int_ref1->Eval(context);
@@ -1773,10 +1772,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 auto filtered_values = empire_property_string_key(*empire) | range_filter(key_filter) | range_values;
                 return std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
 
-            } else if (empire_property_string_key2) {
-                auto filtered_values = empire_property_string_key2(*empire) | range_filter(key_filter) | range_values;
-                return std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
-
             } else if (empire_property_string_key3) {
                 auto filtered_values = empire_property_string_key3(*empire) | range_filter(key_filter) | range_values;
                 return std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
@@ -1787,10 +1782,6 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         for (const auto& loop_empire : context.Empires() | range_values) {
             if (empire_property_string_key) {
                 auto filtered_values = empire_property_string_key(*loop_empire) | range_filter(key_filter) | range_values;
-                sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
-
-            } else if (empire_property_string_key2) {
-                auto filtered_values = empire_property_string_key2(*loop_empire) | range_filter(key_filter) | range_values;
                 sum += std::accumulate(filtered_values.begin(), filtered_values.end(), 0);
 
             } else if (empire_property_string_key3) {
