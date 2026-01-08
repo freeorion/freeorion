@@ -3877,7 +3877,8 @@ std::unique_ptr<Condition> PlanetEnvironment::Clone() const {
 ///////////////////////////////////////////////////////////
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
-    m_names(std::move(names))
+    m_names(std::move(names)),
+    m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
 Species::Species() :
@@ -3950,16 +3951,8 @@ void Species::Eval(const ScriptingContext& parent_context,
                    ObjectSet& matches, ObjectSet& non_matches,
                    SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& name : m_names) {
-            if (!name->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
+    bool simple_eval_safe = m_names_local_invariant &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         std::vector<std::string> names;
