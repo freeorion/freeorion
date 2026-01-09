@@ -47,36 +47,36 @@ NamedValueRefManager::NamedValueRefManager() {
 
 template <>
 const ValueRef::ValueRef<int>* NamedValueRefManager::GetValueRef(std::string_view name,
-                                                                 bool wait_for_named_value_focs_txt_parse) const
+                                                                 bool wait_for_named_value_focs_parse) const
 {
-    if (wait_for_named_value_focs_txt_parse)
+    if (wait_for_named_value_focs_parse)
         CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_int, "int", name);
 }
 
 template <>
 const ValueRef::ValueRef<double>* NamedValueRefManager::GetValueRef(std::string_view name,
-                                                                    bool wait_for_named_value_focs_txt_parse) const
+                                                                    bool wait_for_named_value_focs_parse) const
 {
-    if (wait_for_named_value_focs_txt_parse)
+    if (wait_for_named_value_focs_parse)
         CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_double, "double", name);
 }
 
 template <>
 ValueRef::ValueRef<int>* NamedValueRefManager::GetMutableValueRef(std::string_view name,
-                                                                  bool wait_for_named_value_focs_txt_parse)
+                                                                  bool wait_for_named_value_focs_parse)
 {
-    if (wait_for_named_value_focs_txt_parse)
+    if (wait_for_named_value_focs_parse)
         CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_int, "int", name);
 }
 
 template <>
 ValueRef::ValueRef<double>* NamedValueRefManager::GetMutableValueRef(std::string_view name,
-                                                                     bool wait_for_named_value_focs_txt_parse)
+                                                                     bool wait_for_named_value_focs_parse)
 {
-    if (wait_for_named_value_focs_txt_parse)
+    if (wait_for_named_value_focs_parse)
         CheckPendingNamedValueRefs();
     return GetValueRefImpl(m_value_refs_double, "double", name);
 }
@@ -217,8 +217,8 @@ const ValueRef::ValueRefBase* GetValueRefBase(std::string_view name) {
 
 
 // trigger instantiations
-template const ValueRef::ValueRef<int>* GetValueRef(std::string_view name, const bool wait_for_named_value_focs_txt_parse);
-template const ValueRef::ValueRef<double>* GetValueRef(std::string_view name, const bool wait_for_named_value_focs_txt_parse);
+template const ValueRef::ValueRef<int>* GetValueRef(std::string_view name, const bool wait_for_named_value_focs_parse);
+template const ValueRef::ValueRef<double>* GetValueRef(std::string_view name, const bool wait_for_named_value_focs_parse);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<int>>&& vref);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<double>>&& vref);
 template void RegisterValueRef(std::string name, std::unique_ptr<ValueRef::ValueRef<PlanetEnvironment>>&& vref);
