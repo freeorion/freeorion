@@ -1107,7 +1107,7 @@ public:
         \note May load the font if not yet available. */
     template <typename CharSets = std::vector<UnicodeCharset>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr>
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts, CharSets&& charsets = CharSets{})
+    std::shared_ptr<const Font> GetFont(std::string_view font_filename, uint16_t pts, CharSets&& charsets = CharSets{})
     { return GetFontImpl(font_filename, pts, std::array<uint8_t, 0>{}, std::forward<CharSets>(charsets)); }
 
     /** Returns a shared_ptr to the requested font, supporting all the code
@@ -1117,8 +1117,8 @@ public:
               typename FontData = std::vector<uint8_t>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr,
               std::enable_if_t<is_uint8_container<FontData>>* = nullptr>
-    std::shared_ptr<Font> GetFont(std::string_view font_filename, uint16_t pts,
-                                  const FontData& file_contents, CharSets&& charsets = CharSets{})
+    std::shared_ptr<const Font> GetFont(std::string_view font_filename, uint16_t pts,
+                                        const FontData& file_contents, CharSets&& charsets = CharSets{})
     { return GetFontImpl(font_filename, pts, file_contents, std::forward<CharSets>(charsets)); }
 
 
@@ -1132,8 +1132,8 @@ private:
     template <typename CharSets, typename FontData = std::array<uint8_t, 0>,
               std::enable_if_t<is_charset_container<CharSets>>* = nullptr,
               std::enable_if_t<is_uint8_container<FontData>>* = nullptr>
-    std::shared_ptr<Font> GetFontImpl(std::string_view font_filename, uint16_t pts,
-                                      const FontData& data, CharSets&& charsets)
+    std::shared_ptr<const Font> GetFontImpl(std::string_view font_filename, uint16_t pts,
+                                            const FontData& data, CharSets&& charsets)
     {
         const auto it = FontLookup(font_filename, pts);
         if (it == m_rendered_fonts.end()) {
@@ -1145,8 +1145,8 @@ private:
                 return EMPTY_FONT;
             } else {
                 auto font = !data.empty() ?
-                    std::make_shared<Font>(std::string(font_filename), pts, data, std::forward<CharSets>(charsets)) :
-                    std::make_shared<Font>(std::string(font_filename), pts, std::forward<CharSets>(charsets));
+                    std::make_shared<const Font>(std::string(font_filename), pts, data, std::forward<CharSets>(charsets)) :
+                    std::make_shared<const Font>(std::string(font_filename), pts, std::forward<CharSets>(charsets));
                 return m_rendered_fonts.emplace_back(FontKey{font_filename, pts}, std::move(font)).second;
             }
 
@@ -1178,7 +1178,7 @@ private:
         }
     }
 
-    using FontContainer = std::vector<std::pair<FontKey, std::shared_ptr<Font>>>;
+    using FontContainer = std::vector<std::pair<FontKey, std::shared_ptr<const Font>>>;
     using FontContainerIt = FontContainer::const_iterator;
 
     FontContainerIt FontLookup(std::string_view font_filename, uint16_t pts) const noexcept
@@ -1192,7 +1192,7 @@ private:
 
     FontContainer m_rendered_fonts;
 
-    static const std::shared_ptr<Font> EMPTY_FONT;
+    static const std::shared_ptr<const Font> EMPTY_FONT;
 
     friend GG_API FontManager& GetFontManager();
 };

@@ -3568,7 +3568,7 @@ std::shared_ptr<const Font> Font::GetDefaultFont(uint16_t pts)
 ///////////////////////////////////////
 // class GG::FontManager
 ///////////////////////////////////////
-const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
+const std::shared_ptr<const Font> FontManager::EMPTY_FONT{std::make_shared<const Font>("", 0)};
 
 void FontManager::FreeFont(std::string_view font_filename, uint16_t pts)
 {
