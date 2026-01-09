@@ -73,9 +73,6 @@ NamedReal name = "FLD_NEBULA_SPEED_MALUS" value = 20
 NamedReal name = "FLD_NEBULA_STEALTH_BONUS" value = 20
 NamedReal name = "FLD_NEBULA_DETECTION_MALUS" value = 20
 
-NamedInteger name = "XENOPHOBIC_MAX_JUMPS" value = 4
-
-NamedReal name = "PROTECION_FOCUS_STABILITY_BONUS" value = (GameRule name = "RULE_PROTECTION_FOCUS_STABILITY")
 NamedReal name = "SHP_LIVING_HULL_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]])
 NamedReal name = "SHP_LIVING_HULL_FUEL_REGEN" value = 0.3
 NamedReal name = "SHP_ROBOTIC_REPAIR" value = (2 * [[SHIP_STRUCTURE_FACTOR]])
@@ -84,10 +81,6 @@ NamedReal name = "FORTRESS_SPECIAL_SYSTEM_MINES" value = 3 * [[SYSTEM_MINES_DAMA
 NamedReal name = "DEF_SYST_DEF_MINE_1_DAMAGE" value = 2 * [[SYSTEM_MINES_DAMAGE_FACTOR]]
 NamedReal name = "DEF_SYST_DEF_MINE_2_DAMAGE" value = 6 * [[SYSTEM_MINES_DAMAGE_FACTOR]]
 NamedReal name = "DEF_SYST_DEF_MINE_3_DAMAGE" value = 14 * [[SYSTEM_MINES_DAMAGE_FACTOR]]
-
-NamedReal name = "FU_RAMSCOOP_REFUEL" value = 0.4
-
-NamedReal name = "BLD_NEST_RESERVE_WILD_SPAWN_FACTOR" value = 0.3
 
 #include "/scripting/ship_hulls/hull_structures.macros"
 #include "/scripting/macros/misc.macros"
