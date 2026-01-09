@@ -275,6 +275,7 @@
     </ClCompile>
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\NamedValueRefPythonParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\EffectsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\VisibilityValueRefParser.cpp" />
@@ -328,6 +329,7 @@
     <ClInclude Include="..\..\parse\EnumPythonParser.h" />
     <ClInclude Include="..\..\parse\SourcePythonParser.h" />
     <ClInclude Include="..\..\parse\ValueRefsPythonModuleParser.h" />
+    <ClInclude Include="..\..\parse\NamedValueRefPythonParser.h" />
     <ClInclude Include="..\..\parse\EffectsPythonModuleParser.h" />
     <ClInclude Include="StdAfx.h" />
   </ItemGroup>
