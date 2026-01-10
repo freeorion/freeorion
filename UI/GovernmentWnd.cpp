@@ -220,6 +220,29 @@ namespace {
 }
 
 
+class PolicySlotControl;
+
+namespace {
+    void PoliciesListBoxDropsAcceptable(auto first, auto last) {
+        for (auto it = first; it != last; ++it)
+            it->second = false;
+
+        // if more than one control dropped somehow, reject all
+        if (std::distance(first, last) != 1)
+            return;
+
+        if (first->first->DragDropDataType() == POLICY_CONTROL_DROP_TYPE_STRING) {
+            if (const auto parent = first->first->Parent()) {
+                if (dynamic_cast<const PolicySlotControl*>(parent.get())) {
+                    // accepts policies that are being removed from a PolicySlotControl
+                    first->second = true;
+                }
+            }
+        }
+    }
+}
+
+
 //////////////////////////////////////////////////
 // PolicyControl                                //
 //////////////////////////////////////////////////
@@ -230,15 +253,21 @@ public:
     explicit PolicyControl(const Policy* policy);
     void CompleteConstruction() override;
 
-    const std::string&  PolicyName() const  { return m_policy ? m_policy->Name() : EMPTY_STRING; }
-    const Policy*       GetPolicy() const   { return m_policy; }
+    const std::string& PolicyName() const noexcept { return m_policy ? m_policy->Name() : EMPTY_STRING; }
+    const Policy*      GetPolicy() const noexcept  { return m_policy; }
 
     void Resize(GG::Pt sz, const int pts = ClientUI::Pts());
-    void Render() override;
+    void Render() noexcept override {}
 
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
+    { ForwardEventToParent(); }
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         GG::Pt, GG::Flags<GG::ModKey>) const override
+    { PoliciesListBoxDropsAcceptable(first, last); }
 
     mutable boost::signals2::signal<void (const Policy*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const Policy*, GG::Pt pt)> RightClickedSignal;
@@ -313,8 +342,6 @@ void PolicyControl::Resize(GG::Pt sz, const int pts) {
     GG::Control::Resize(sz);
 }
 
-void PolicyControl::Render() {}
-
 void PolicyControl::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ClickedSignal(m_policy, mod_keys); }
 
@@ -334,8 +361,16 @@ public:
     class PoliciesListBoxRow : public CUIListBox::Row {
     public:
         PoliciesListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
-        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
-                                 const GG::Wnd* destination) override;
+
+        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+
+        void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
+        { ForwardEventToParent(); }
+
+        void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                             GG::Pt, GG::Flags<GG::ModKey>) const override
+        { PoliciesListBoxDropsAcceptable(first, last); }
+
     private:
         const AvailabilityManager& m_availabilities_state;
     };
@@ -469,6 +504,10 @@ void PoliciesListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> 
 
     ClearPolicySignal(policy_type->Name());
 }
+
+void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                      GG::Pt, GG::Flags<GG::ModKey>) const
+{ PoliciesListBoxDropsAcceptable(first, last); }
 
 std::map<std::string, std::vector<const Policy*>>
 PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
@@ -1137,26 +1176,6 @@ void PolicySlotControl::SetPolicy(const Policy* policy) {
         UserString(policy->Name()) + " (" + UserString(policy->Category()) + ")",
         UserString(policy->Description())
     ));
-}
-
-/** PoliciesListBox accepts policies that are being removed from a PolicySlotControl.*/
-void PoliciesListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                      GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
-
-    // if more than one control dropped somehow, reject all
-    if (std::distance(first, last) != 1)
-        return;
-
-    const auto parent = first->first->Parent();
-    if (first->first->DragDropDataType() == POLICY_CONTROL_DROP_TYPE_STRING
-        && parent
-        && dynamic_cast<const PolicySlotControl*>(parent.get()))
-    {
-        first->second = true;
-    }
 }
 
 
