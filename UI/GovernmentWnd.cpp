@@ -424,7 +424,6 @@ void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
 }
 
 PoliciesListBox::PoliciesListBox(const AvailabilityManager& availabilities_state) :
-    CUIListBox(),
     m_availabilities_state(availabilities_state)
 {
     ManuallyManageColProps();
@@ -477,7 +476,7 @@ PoliciesListBox::GroupAvailableDisplayablePolicies(const Empire*) const {
     static constexpr auto to_policy_and_cat = [](const Policy& p) -> PolicyAndCat { return {&p, p.Category()}; };
     const auto cat_shown_policy_displayed = [this](const PolicyAndCat& p_c) {
         return m_policy_categories_shown.contains(p_c.second) &&
-            m_availabilities_state.PolicyDisplayed(*p_c.first);
+               m_availabilities_state.PolicyDisplayed(*p_c.first);
     };
 
     // loop through all possible policies, outputting those shown
@@ -752,14 +751,14 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     // place category buttons
     int col = CATEGORY_BUTTONS_PER_ROW;
     int row = -1;
-    for (auto& entry : m_category_buttons) {
+    for (auto& entry : m_category_buttons | range_values) {
         if (col >= static_cast<int>(CATEGORY_BUTTONS_PER_ROW)) {
             col = 0;
             ++row;
         }
         GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        entry.second->SizeMove(ul, lr);
+        entry->SizeMove(ul, lr);
         ++col;
     }
     const auto NUM_CATEGORY_BUTTON_ROWS = row;
@@ -800,17 +799,13 @@ void GovernmentWnd::PolicyPalette::DoLayout() {
     m_policies_list->ResizePolicies(slot_size, text_pts);
 }
 
-void GovernmentWnd::PolicyPalette::HandlePolicyClicked(const Policy* policy_type,
-                                                       GG::Flags<GG::ModKey> modkeys)
+void GovernmentWnd::PolicyPalette::HandlePolicyClicked(const Policy* policy_type, GG::Flags<GG::ModKey> modkeys)
 { PolicyClickedSignal(policy_type, modkeys); }
 
-void GovernmentWnd::PolicyPalette::HandlePolicyRightClicked(const Policy* policy_type,
-                                                            GG::Pt pt)
+void GovernmentWnd::PolicyPalette::HandlePolicyRightClicked(const Policy* policy_type, GG::Pt pt)
 { PolicyRightClickedSignal(policy_type, pt); }
 
-void GovernmentWnd::PolicyPalette::ShowCategory(const std::string& category,
-                                                bool refresh_list)
-{
+void GovernmentWnd::PolicyPalette::ShowCategory(const std::string& category, bool refresh_list) {
     if (!m_category_buttons.contains(category)) {
         ErrorLogger() << "PolicyPalette::ShowCategory was passed an invalid category name: " << category;
         return;
@@ -822,14 +817,12 @@ void GovernmentWnd::PolicyPalette::ShowCategory(const std::string& category,
 
 void GovernmentWnd::PolicyPalette::ShowAllCategories(bool refresh_list) {
     m_policies_list->ShowAllCategories(refresh_list);
-    for (auto& entry : m_category_buttons)
-        entry.second->SetCheck();
+    for (auto& entry : m_category_buttons | range_values)
+        entry->SetCheck();
     DoLayout();
 }
 
-void GovernmentWnd::PolicyPalette::HideCategory(const std::string& category,
-                                                bool refresh_list)
-{
+void GovernmentWnd::PolicyPalette::HideCategory(const std::string& category, bool refresh_list) {
     if (!m_category_buttons.contains(category)) {
         ErrorLogger() << "PolicyPalette::HideCategory was passed an invalid category name: " << category;
         return;
@@ -841,8 +834,8 @@ void GovernmentWnd::PolicyPalette::HideCategory(const std::string& category,
 
 void GovernmentWnd::PolicyPalette::HideAllCategories(bool refresh_list) {
     m_policies_list->HideAllCategories(refresh_list);
-    for (auto& entry : m_category_buttons)
-        entry.second->SetCheck(false);
+    for (auto& entry : m_category_buttons | range_values)
+        entry->SetCheck(false);
     DoLayout();
 }
 
@@ -912,7 +905,7 @@ public:
                        GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropLeave() override;
     void Resize(GG::Pt sz, const int pts = ClientUI::Pts());
-    void Render() override;
+    void Render() noexcept override {};
 
     void Highlight(bool actually = true);
 
@@ -1113,9 +1106,6 @@ void PolicySlotControl::Resize(GG::Pt sz, const int pts) {
     GG::Control::Resize(sz);
 }
 
-void PolicySlotControl::Render()
-{}
-
 void PolicySlotControl::Highlight(bool actually)
 { m_highlighted = actually; }
 
@@ -1290,9 +1280,7 @@ namespace {
     }
 }
 
-void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot,
-                                         bool update_empire_and_refresh)
-{
+void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot, bool update_empire_and_refresh) {
     DebugLogger() << "GovernmentWnd::MainPanel::SetPolicy(" << (policy ? policy->Name() : "no policy") << ", slot " << slot << ")";
 
     if (slot >= m_slots.size()) {
