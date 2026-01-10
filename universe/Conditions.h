@@ -485,7 +485,9 @@ struct FO_COMMON_API Turn final : public Condition {
                   std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr) :
         Condition(CondsRTSI(low, high), CheckSums::GetCheckSum("Condition::Turn", low, high)),
         m_low(std::move(low)),
-        m_high(std::move(high))
+        m_high(std::move(high)),
+        m_low_high_local_invariant((!m_low || m_low->LocalCandidateInvariant()) &&
+                                   (!m_high || m_high->LocalCandidateInvariant()))
     {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
@@ -517,6 +519,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    const bool m_low_high_local_invariant;
 };
 
 /** Matches a specified \a number of objects that match Condition \a condition
@@ -1121,6 +1124,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    const bool m_low_high_local_invariant;
 };
 
 /** Matches all objects that contain an object that matches Condition \a condition.
@@ -2115,7 +2119,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
-    bool m_names_local_invariant = false;
+    const bool m_names_local_invariant;
 };
 
 /** Matches objects if the specified species' opinion of the specified content
@@ -2185,6 +2189,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
+    const bool m_refs_local_invariant;
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
