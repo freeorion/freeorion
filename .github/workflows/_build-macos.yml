@@ -66,8 +66,6 @@ jobs:
           cd build
           cmake --build . --config Release -- -parallelizeTargets
       - name: Test
-        # Tests don't find dynamic libraries in build/Release on Macos 12
-        if: inputs.os == 'macos-13'
         run: |
           cd build
           export PATH="$(pwd)/Release:/usr/local/opt/ccache/libexec:$PATH"
@@ -91,7 +89,7 @@ jobs:
           ccache --show-stats || true
       - name: Upload binaries only
         uses: actions/upload-artifact@v4
-        if: inputs.os == 'macos-13' 
+        if: inputs.os == 'macos-14' 
         with:
           name: weekly-artifacts-sf-macos-${{ github.run_number }}
           path: build/FreeOrion_*_MacOSX_*.dmg

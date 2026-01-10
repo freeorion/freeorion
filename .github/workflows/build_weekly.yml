@@ -6,7 +6,7 @@ jobs:
   macos:
     uses: ./.github/workflows/_build-macos.yml
     with:
-      os: 'macos-13'
+      os: 'macos-14'
       weekly-deploy: true
     secrets:
       DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
