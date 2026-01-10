@@ -4,6 +4,7 @@
 #include "Export.h"
 
 #include <cmath>
+#include <cstdint>
 #include <limits.h>
 #include <memory>
 #include <utility>

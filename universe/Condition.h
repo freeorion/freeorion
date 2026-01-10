@@ -2,6 +2,7 @@
 #define _Condition_h_
 
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
