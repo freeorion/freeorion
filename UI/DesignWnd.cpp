@@ -1182,6 +1182,29 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
 }
 
 
+class SlotControl;
+
+namespace {
+    void PartsListBoxDropsAcceptable(auto first, auto last) {
+        for (auto it = first; it != last; ++it)
+            it->second = false;
+
+        // if more than one control dropped somehow, reject all
+        if (std::distance(first, last) != 1)
+            return;
+
+        if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
+            if (const auto parent = first->first->Parent()) {
+                if (dynamic_cast<const SlotControl*>(parent.get())) {
+                    // only accepts parts that are being removed from a SlotControl
+                    first->second = true;
+                }
+            }
+        }
+    }
+}
+
+
 //////////////////////////////////////////////////
 // PartControl                                  //
 //////////////////////////////////////////////////
@@ -1192,14 +1215,20 @@ public:
     PartControl(const ShipPart* part);
     void CompleteConstruction() override;
 
-    const ShipPart*     Part() const { return m_part; }
-    const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
+    const ShipPart*     Part() const noexcept { return m_part; }
+    const std::string&  PartName() const noexcept { return m_part ? m_part->Name() : EMPTY_STRING; }
 
     void Render() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
+
+    void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
+    { ForwardEventToParent(); }
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         GG::Pt, GG::Flags<GG::ModKey>) const override
+    { PartsListBoxDropsAcceptable(first, last); }
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)> RightClickedSignal;
@@ -1271,6 +1300,7 @@ void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabili
     m_background->Disable(disabled);
 }
 
+
 //////////////////////////////////////////////////
 // PartsListBox                                 //
 //////////////////////////////////////////////////
@@ -1280,8 +1310,16 @@ public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
         PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
-        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
-                                 const GG::Wnd* destination) override;
+
+        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+
+        void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
+        { ForwardEventToParent(); }
+
+        void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                             GG::Pt, GG::Flags<GG::ModKey>) const override
+        { PartsListBoxDropsAcceptable(first, last); }
+
     private:
         const AvailabilityManager& m_availabilities_state;
     };
@@ -1293,8 +1331,6 @@ public:
     bool  GetShowingSuperfluous() const noexcept { return m_show_superfluous_parts; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
-                     GG::Flags<GG::ModKey> mod_keys) override;
     void Populate();
 
     void ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -1309,7 +1345,9 @@ public:
     mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)>              ShipPartRightClickedSignal;
     mutable boost::signals2::signal<void (const std::string&)>                      ClearPartSignal;
 
-protected:
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                     GG::Flags<GG::ModKey> mod_keys) override;
+
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
@@ -1721,6 +1759,10 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
     if (refresh_list)
         Populate();
 }
+
+void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                   GG::Pt, GG::Flags<GG::ModKey>) const
+{ PartsListBoxDropsAcceptable(first, last); }
 
 
 //////////////////////////////////////////////////
@@ -3736,30 +3778,6 @@ void SlotControl::SetPart(const ShipPart* part) {
         UserString(part->Name()) + " (" + title_text + ")",
         UserString(part->Description())
     ));
-}
-
-void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    // PartsListBox accepts parts that are being removed from a SlotControl
-
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
-
-    // if more than one control dropped somehow, reject all
-    if (std::distance(first, last) != 1)
-        return;
-
-    if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING)
-    {
-        if (const auto parent = first->first->Parent())
-        {
-            if (dynamic_cast<const SlotControl*>(parent.get()))
-            {
-                first->second = true;
-            }
-        }
-    }
 }
 
 
