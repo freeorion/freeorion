@@ -3010,11 +3010,6 @@ namespace {
             texture = ui.GetTexture(ClientUI::ArtDir() / design_icon, true);
 
         const int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
-        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
-        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id, context);
-        cost_units = UserString("ENC_PP");
-
-
         universe.InsertShipDesignID(*incomplete_design, client_empire_id, incomplete_design->ID());
         detailed_description = GetDetailedDescriptionBase(*incomplete_design);
 
@@ -3068,7 +3063,6 @@ namespace {
             if (this_ship && !this_ship->SpeciesName().empty())
                 additional_species.insert(this_ship->SpeciesName());
         }
-
         // temporary ship to use for estimating design's meter values
         auto temp = universe.InsertTemp<Ship>(client_empire_id, incomplete_design->ID(), "",
                                               universe, species_manager, client_empire_id,
@@ -3077,6 +3071,11 @@ namespace {
         // apply empty species for 'Generic' entry
         universe.UpdateMeterEstimates(temp->ID(), context);
         temp->Resupply(context.current_turn);
+
+        turns = incomplete_design->ProductionTime(client_empire_id, default_location_id, context);
+        cost = incomplete_design->ProductionCost(client_empire_id, default_location_id, context);
+        cost_units = UserString("ENC_PP");
+
         detailed_description.append(GetDetailedDescriptionStats(temp, enemy_DR, enemy_shots, cost));
 
         // apply various species to ship, re-calculating the meter values for each
