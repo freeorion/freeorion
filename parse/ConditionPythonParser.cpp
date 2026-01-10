@@ -72,10 +72,7 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
         }
     }
 
-    return make_wrapped<Condition::And>(
-        lhs.condition->Clone(),
-        rhs.condition->Clone()
-    );
+    return make_wrapped<Condition::And>(lhs.condition->Clone(), rhs.condition->Clone());
 }
 
 condition_wrapper operator&(const condition_wrapper& lhs, const value_ref_wrapper<double>& rhs)
@@ -97,12 +94,8 @@ condition_wrapper operator&(const value_ref_wrapper<int>& lhs, const condition_w
 { return lhs.operator condition_wrapper() & rhs; }
 
 
-condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs) {
-    return make_wrapped<Condition::Or>(
-        lhs.condition->Clone(),
-        rhs.condition->Clone()
-    );
-}
+condition_wrapper operator|(const condition_wrapper& lhs, const condition_wrapper& rhs)
+{ return make_wrapped<Condition::Or>(lhs.condition->Clone(), rhs.condition->Clone()); }
 
 condition_wrapper operator|(const condition_wrapper& lhs, const value_ref_wrapper<int>& rhs)
 { return lhs | rhs.operator condition_wrapper(); }
@@ -372,7 +365,7 @@ namespace {
     }
 
     condition_wrapper insert_has_starlane_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<Condition::Condition> from = CloneUnique(extract<condition_wrapper>(kw["from_"])().condition);
+        auto from = CloneUnique(extract<condition_wrapper>(kw["from_"])().condition);
         return make_wrapped<Condition::HasStarlaneTo>(std::move(from));
     }
 
