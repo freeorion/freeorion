@@ -379,13 +379,13 @@ namespace {
     }
 
     effect_wrapper insert_add_starlanes_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<Condition::Condition> endpoint = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["endpoint"])().condition);
+        auto endpoint = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["endpoint"])().condition);
 
         return effect_wrapper(std::make_shared<Effect::AddStarlanes>(std::move(endpoint)));
     }
 
     effect_wrapper insert_remove_starlanes_(const boost::python::tuple& args, const boost::python::dict& kw) {
-        std::unique_ptr<Condition::Condition> endpoint = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["endpoint"])().condition);
+        auto endpoint = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["endpoint"])().condition);
 
         return effect_wrapper(std::make_shared<Effect::RemoveStarlanes>(std::move(endpoint)));
     }
