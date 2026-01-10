@@ -11,18 +11,19 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - ubuntu-24.10
+          - ubuntu-25.04
           - fedora-33
           - debian-oldstable
           - debian-stable
           - debian-sid
-          - debian-sid-i386
           - fedora-rawhide
         godot3: [true]
         include:
           - image: manjaro
             godot3: false
           - image: void-musl
+            godot3: false
+          - image: debian-sid-i386
             godot3: false
     env:
       CACHE_NAME: linux
@@ -81,15 +82,15 @@ jobs:
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/xvfb-run /freeorion/build/godot --no-window --disable-render-loop --video-driver GLES2 --gdnative-generate-json-api /freeorion/build/godot-api.json
       - name: Configure freeorion
-        if: ${{ matrix.image == 'ubuntu-24.10' }}
+        if: ${{ matrix.image == 'ubuntu-25.04' }}
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_CLIENT_GODOT=ON -DGODOT_CUSTOM_API_FILE=/freeorion/build/godot-api.json -DBUILD_TESTING=ON -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 ..
       - name: Configure freeorion
-        if: ${{ matrix.image != 'ubuntu-24.10' && !matrix.godot3 }}
+        if: ${{ matrix.image != 'ubuntu-25.04' && !matrix.godot3 }}
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_CLIENT_GODOT=Off -DBUILD_TESTING=ON ..
       - name: Configure freeorion
-        if: ${{ matrix.image != 'ubuntu-24.10' && matrix.godot3 }}
+        if: ${{ matrix.image != 'ubuntu-25.04' && matrix.godot3 }}
         run: |
           docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake -DBUILD_CLIENT_GODOT=ON -DGODOT_CUSTOM_API_FILE=/freeorion/build/godot-api.json -DBUILD_TESTING=ON ..
       - name: Build freeorion

@@ -1,4 +1,4 @@
-FROM docker.io/ubuntu:oracular
+FROM docker.io/ubuntu:plucky
 
 ENV DEBIAN_FRONTEND=noninteractive
 
