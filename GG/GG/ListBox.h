@@ -203,7 +203,7 @@ public:
     static constexpr Y DEFAULT_ROW_HEIGHT{22};
     static constexpr unsigned int BORDER_THICK = 2; ///< the thickness with which to render the border of the control
 
-    ListBox(Clr color, Clr interior = CLR_ZERO);
+    explicit ListBox(Clr color, Clr interior = CLR_ZERO);
     void CompleteConstruction() override;
 
     Pt MinUsableSize() const noexcept override;
