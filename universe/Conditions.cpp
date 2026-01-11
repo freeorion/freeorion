@@ -3431,22 +3431,6 @@ bool ObjectID::operator==(const ObjectID& rhs_) const {
     return true;
 }
 
-namespace {
-    struct ObjectIDSimpleMatch {
-        ObjectIDSimpleMatch(int object_id) :
-            m_object_id(object_id)
-        {}
-
-        bool operator()(const auto* candidate) const noexcept {
-            return candidate &&
-                m_object_id != INVALID_OBJECT_ID &&
-                candidate->ID() == m_object_id;
-        }
-
-        const int m_object_id;
-    };
-}
-
 void ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain) const
 {
@@ -3456,7 +3440,9 @@ void ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet& matches, 
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         int object_id = (m_object_id ? m_object_id->Eval(parent_context) : INVALID_OBJECT_ID);
-        EvalImpl(matches, non_matches, search_domain, ObjectIDSimpleMatch(object_id));
+        const auto is_id = [object_id](const UniverseObjectCXBase* candidate) noexcept
+        { return candidate && object_id != INVALID_OBJECT_ID && candidate->ID() == object_id; };
+        EvalImpl(matches, non_matches, search_domain, is_id);
     } else {
         // re-evaluate empire id for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -3506,8 +3492,8 @@ bool ObjectID::Match(const ScriptingContext& local_context) const {
     const auto* candidate = local_context.condition_local_candidate;
     if (!candidate || !m_object_id)
         return false;
-
-    return ObjectIDSimpleMatch(m_object_id->Eval(local_context))(candidate);
+    const int object_id = m_object_id->Eval(local_context);
+    return object_id != INVALID_OBJECT_ID && candidate->ID() == object_id;
 }
 
 void ObjectID::SetTopLevelContent(const std::string& content_name) {
@@ -3902,9 +3888,7 @@ bool Species::operator==(const Species& rhs_) const {
 }
 
 namespace {
-    const std::string& GetCandidateSpecies(const auto* candidate,
-                                           const ObjectMap& objects)
-    {
+    const std::string& GetCandidateSpecies(const auto* candidate, const ObjectMap& objects) {
         // is it a population centre?
         auto obj_type = candidate->ObjectType();
         if (obj_type == UniverseObjectType::OBJ_PLANET) {
@@ -3934,8 +3918,8 @@ namespace {
             if (!candidate)
                 return false;
 
-            auto& species_name{GetCandidateSpecies(candidate, m_objects)};
-            return !species_name.empty() && (m_names.empty() || std::count(m_names.begin(), m_names.end(), species_name));
+            const auto& species_name{GetCandidateSpecies(candidate, m_objects)};
+            return !species_name.empty() && (m_names.empty() || range_contains(m_names, species_name));
         }
 
         const std::vector<std::string>& m_names;
@@ -3950,11 +3934,8 @@ void Species::Eval(const ScriptingContext& parent_context, ObjectSet& matches, O
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
-        std::vector<std::string> names;
-        names.reserve(m_names.size());
-        // get all names from valuerefs
-        for (auto& name : m_names)
-            names.push_back(name->Eval(parent_context));
+        const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+        const auto names = m_names | range_transform(eval_ref) | range_to_vec;
         EvalImpl(matches, non_matches, search_domain, SpeciesSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed building types range for each candidate object
