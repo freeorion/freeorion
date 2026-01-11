@@ -7,7 +7,7 @@
 # Some Rights Reserved.  See COPYING file or https://www.gnu.org/licenses/lgpl-2.1.txt
 # SPDX-License-Identifier: LGPL-2.1-or-later
 
-cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW)
