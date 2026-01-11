@@ -131,7 +131,7 @@ if system() == "Windows":
 if system() == "Darwin":
     generators.append(Generator("packaging/Info.plist.in", "packaging/Info.plist"))
 
-version = "0.5.1.1"
+version = "0.5.1.2"
 branch = ""
 build_no = INVALID_BUILD_NO
 version_file_name = version
