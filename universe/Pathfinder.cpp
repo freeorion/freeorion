@@ -1283,7 +1283,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
         others(_others)
     {}
 
-    bool operator()(std::nullptr_t) const { return false; }
+    bool operator()(std::nullptr_t) const noexcept { return false; }
     bool operator()(int sys_id) const
     { return pf.WithinJumpsOfOthers(jumps, sys_id, objects, others); }
     bool operator()(std::pair<int, int> prev_next) const {
@@ -1412,10 +1412,9 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     bool within_jumps(false);
     distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
     cache.examine_row(system_index,
-        [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); }, // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
+        [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); },
         [this, &within_jumps, jumps, &objects, &others](size_t ii, row_ref row)
-        { WithinJumpsOfOthersCacheHit(within_jumps, jumps, objects, others, ii, row); }); // boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
-                                                                                          //             std::ref(within_jumps), jumps, std::ref(objects), std::ref(others), ph::_1, ph::_2));
+        { WithinJumpsOfOthersCacheHit(within_jumps, jumps, objects, others, ii, row); });
 
     return within_jumps;
 }
