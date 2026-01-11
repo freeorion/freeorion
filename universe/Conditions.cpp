@@ -2391,14 +2391,14 @@ namespace {
             // is it a field?
             if (candidate->ObjectType() != UniverseObjectType::OBJ_FIELD)
                 return false;
-            auto* field = static_cast<const ::Field*>(candidate);
+            const auto* field = static_cast<const ::Field*>(candidate);
 
             // if no name supplied, match any field
             if (m_names.empty())
-                return true;
+                return true; // any field
 
             // is it one of the specified field types?
-            return std::count(m_names.begin(), m_names.end(), field->FieldTypeName());
+            return range_contains(m_names, field->FieldTypeName());
         }
 
         const std::vector<std::string>& m_names;
@@ -2466,19 +2466,15 @@ bool Field::Match(const ScriptingContext& local_context) const {
     // is it a field?
     if (candidate->ObjectType() != UniverseObjectType::OBJ_FIELD)
         return false;
-    auto* field = static_cast<const ::Field*>(candidate);
+    const auto* field = static_cast<const ::Field*>(candidate);
 
     // match any field type?
     if (m_names.empty())
-        return true;
+        return true; // any field
 
     // match one of the specified field names
-    for (auto& name : m_names) {
-        if (name->Eval(local_context) == field->FieldTypeName())
-            return true;
-    }
-
-    return false;
+    const auto eval_ref = [&local_context](const auto& ref) { return ref->Eval(local_context); };
+    return range_contains(m_names | range_transform(eval_ref), field->FieldTypeName());
 }
 
 void Field::SetTopLevelContent(const std::string& content_name) {
