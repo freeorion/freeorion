@@ -1515,8 +1515,8 @@ namespace {
 
 Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
-    m_names(std::move(names)), // TODO: remove any nullptr names?
-    m_names_local_invariant(range_all_of(m_names, lc_invariant))
+    m_names(ExcludeNullsIntoVector(std::move(names))),
+    m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
 Homeworld::Homeworld(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -3527,7 +3527,7 @@ std::unique_ptr<Condition> ObjectID::Clone() const
 ///////////////////////////////////////////////////////////
 PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
     Condition(CondsRTSI(sizes)),
-    m_sizes(std::move(sizes))
+    m_sizes(ExcludeNullsIntoVector(std::move(sizes)))
 {}
 
 bool PlanetSize::operator==(const Condition& rhs) const {
@@ -3681,7 +3681,7 @@ std::unique_ptr<Condition> PlanetSize::Clone() const
 PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
                                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref) :
     Condition(CondsRTSI(environments, species_name_ref)),
-    m_environments(std::move(environments)),
+    m_environments(ExcludeNullsIntoVector(std::move(environments))),
     m_species_name(std::move(species_name_ref))
 {}
 
@@ -3867,7 +3867,7 @@ std::unique_ptr<Condition> PlanetEnvironment::Clone() const {
 ///////////////////////////////////////////////////////////
 Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
-    m_names(std::move(names)),
+    m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
@@ -4715,7 +4715,8 @@ std::unique_ptr<Condition> Enqueued::Clone() const
 ///////////////////////////////////////////////////////////
 FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
-    m_names(std::move(names))
+    m_names(ExcludeNullsIntoVector(std::move(names))),
+    m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
 bool FocusType::operator==(const Condition& rhs) const {
@@ -4781,16 +4782,8 @@ namespace {
 void FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
 {
-    const bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
-    if (simple_eval_safe) {
-        // check each valueref for invariance to local candidate
-        for (auto& name : m_names) {
-            if (!name->LocalCandidateInvariant()) {
-                simple_eval_safe = false;
-                break;
-            }
-        }
-    }
+    const bool simple_eval_safe = m_names_local_invariant &&
+                                  parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
@@ -4886,7 +4879,7 @@ std::unique_ptr<Condition> FocusType::Clone() const
 ///////////////////////////////////////////////////////////
 StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
     Condition(CondsRTSI(types)),
-    m_types(std::move(types))
+    m_types(ExcludeNullsIntoVector(std::move(types)))
 {}
 
 StarType::StarType(std::unique_ptr<ValueRef::ValueRef<::StarType>>&& type) :
@@ -4939,8 +4932,7 @@ namespace {
     };
 }
 
-void StarType::Eval(const ScriptingContext& parent_context,
-                    ObjectSet& matches, ObjectSet& non_matches,
+void StarType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -5097,8 +5089,7 @@ namespace {
     };
 }
 
-void DesignHasHull::Eval(const ScriptingContext& parent_context,
-                         ObjectSet& matches, ObjectSet& non_matches,
+void DesignHasHull::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                          SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
@@ -5429,8 +5420,7 @@ namespace {
     };
 }
 
-void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
-                              ObjectSet& matches, ObjectSet& non_matches,
+void DesignHasPartClass::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                               SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_low || m_low->LocalCandidateInvariant()) &&
@@ -5596,8 +5586,7 @@ namespace {
     };
 }
 
-void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
-                                ObjectSet& matches, ObjectSet& non_matches,
+void PredefinedShipDesign::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                                 SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
@@ -5715,8 +5704,7 @@ namespace {
     };
 }
 
-void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
-                              ObjectSet& matches, ObjectSet& non_matches,
+void NumberedShipDesign::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                               SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_design_id->ConstantExpr() ||
@@ -5816,8 +5804,7 @@ namespace {
     };
 }
 
-void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
-                            ObjectSet& matches, ObjectSet& non_matches,
+void ProducedByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                             SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
@@ -5914,8 +5901,7 @@ namespace {
     };
 }
 
-void Chance::Eval(const ScriptingContext& parent_context,
-                  ObjectSet& matches, ObjectSet& non_matches,
+void Chance::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                   SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_chance->ConstantExpr() ||
@@ -6067,8 +6053,7 @@ namespace {
     }
 }
 
-void MeterValue::Eval(const ScriptingContext& parent_context,
-                      ObjectSet& matches, ObjectSet& non_matches,
+void MeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                       SearchDomain search_domain) const
 {
     const bool simple_eval_safe = m_low_high_local_invariant &&
@@ -6225,8 +6210,7 @@ namespace {
     };
 }
 
-void ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
-                              ObjectSet& matches, ObjectSet& non_matches,
+void ShipPartMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                               SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_part_name || m_part_name->LocalCandidateInvariant()) &&
@@ -6367,8 +6351,7 @@ bool EmpireMeterValue::operator==(const Condition& rhs) const {
     return true;
 }
 
-void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
-                            ObjectSet& matches, ObjectSet& non_matches,
+void EmpireMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                             SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
@@ -6376,6 +6359,9 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
+        if (std::addressof(matches) == std::addressof(non_matches))
+            return;
+
         // If m_empire_id is specified (not null), and all parameters are
         // local-candidate-invariant, then matching for this condition doesn't
         // need to check each candidate object separately for matching, so
@@ -6551,8 +6537,7 @@ bool EmpireStockpileValue::operator==(const Condition& rhs) const {
     return true;
 }
 
-void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
-                                ObjectSet& matches, ObjectSet& non_matches,
+void EmpireStockpileValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                                 SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
@@ -6560,6 +6545,9 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
         (parent_context.condition_root_candidate || RootCandidateInvariant());
 
     if (simple_eval_safe) {
+        if (std::addressof(matches) == std::addressof(non_matches))
+            return;
+
         // If m_empire_id is specified (not null), and all parameters are
         // local-candidate-invariant, then matching for this condition doesn't
         // need to check each candidate object separately for matching, so
@@ -6704,14 +6692,16 @@ bool EmpireHasAdoptedPolicy::operator==(const Condition& rhs) const {
     return true;
 }
 
-void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context,
-                                  ObjectSet& matches, ObjectSet& non_matches,
+void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                                   SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((m_empire_id && m_empire_id->LocalCandidateInvariant()) &&
                              (!m_name || m_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
+        if (std::addressof(matches) == std::addressof(non_matches))
+            return;
+
         // If m_empire_id is specified (not null), and all parameters are
         // local-candidate-invariant, then matching for this condition doesn't
         // need to check each candidate object separately for matching, so
@@ -6872,8 +6862,7 @@ namespace {
     };
 }
 
-void OwnerHasTech::Eval(const ScriptingContext& parent_context,
-                        ObjectSet& matches, ObjectSet& non_matches,
+void OwnerHasTech::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                         SearchDomain search_domain) const
 {
     // if m_empire_id not set, the local candidate's owner is used, which is not target invariant
@@ -7447,8 +7436,7 @@ namespace {
     };
 }
 
-void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
-                           ObjectSet& matches, ObjectSet& non_matches,
+void VisibleToEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                            SearchDomain search_domain) const
 {
     bool simple_eval_safe = (!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
@@ -7622,8 +7610,7 @@ namespace {
     };
 }
 
-void WithinDistance::Eval(const ScriptingContext& parent_context,
-                          ObjectSet& matches, ObjectSet& non_matches,
+void WithinDistance::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain) const
 {
     // don't need to check if m_condition is local candidate invariant. conditions are
@@ -7780,13 +7767,15 @@ bool WithinStarlaneJumps::operator==(const Condition& rhs) const {
     return true;
 }
 
-void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
-                               ObjectSet& matches, ObjectSet& non_matches,
+void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                                SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_jumps->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
+        if (std::addressof(matches) == std::addressof(non_matches))
+            return;
+
         // evaluate contained objects and jumps limit once and check for all candidates
 
         // get subcondition matches
