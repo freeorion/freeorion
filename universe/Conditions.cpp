@@ -346,7 +346,7 @@ void Number::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Ob
         Condition::Eval(parent_context, matches, non_matches, search_domain);
 
     } else {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         // Matching for this condition doesn't need to check each candidate object against
@@ -429,7 +429,7 @@ void Turn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, Obje
                                   (parent_context.condition_root_candidate || RootCandidateInvariant());
 
     if (simple_eval_safe) {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         // Matching for this condition doesn't need to check each candidate object against
@@ -785,7 +785,7 @@ namespace {
 void SortedNumberOf::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain) const
 {
-    if (std::addressof(matches) == std::addressof(non_matches))
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
 
     // Most conditions match objects independently of the other objects being
@@ -1074,7 +1074,7 @@ std::unique_ptr<Condition> SortedNumberOf::Clone() const {
 void All::Eval(const ScriptingContext&, ObjectSet& matches, ObjectSet& non_matches,
                SearchDomain search_domain) const
 {
-    if (std::addressof(matches) == std::addressof(non_matches))
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
 
     if (search_domain == SearchDomain::NON_MATCHES) {
@@ -1113,7 +1113,7 @@ std::unique_ptr<Condition> All::Clone() const
 void None::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain) const
 {
-    if (std::addressof(matches) == std::addressof(non_matches))
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
 
     if (search_domain == SearchDomain::MATCHES) {
@@ -1746,8 +1746,9 @@ namespace {
 void Capital::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                    ObjectSet& non_matches, SearchDomain search_domain) const
 {
-    if (std::addressof(matches) == std::addressof(non_matches))
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
+
     const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
     if (sz == 1) {
         // in testing, this was faster for a single candidate than setting up the loop stuff
@@ -1832,7 +1833,7 @@ bool CapitalWithID::operator==(const CapitalWithID& rhs_) const {
 void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                          ObjectSet& non_matches, SearchDomain search_domain) const
 {
-    if (std::addressof(matches) == std::addressof(non_matches))
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
 
     if (m_empire_id) {
@@ -1873,7 +1874,7 @@ void CapitalWithID::Eval(const ScriptingContext& parent_context, ObjectSet& matc
 
         const auto sz = (search_domain == SearchDomain::MATCHES) ? matches.size() : non_matches.size();
         if (sz == 1) { // in testing, this was faster for a single candidate than setting up the loop stuff
-            if (std::addressof(matches) == std::addressof(non_matches))
+            if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
                 return;
             const bool test_val = search_domain == SearchDomain::MATCHES;
             auto& from = test_val ? matches : non_matches;
@@ -2264,7 +2265,7 @@ void Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, 
                                   (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         if (m_names.size() == 1) {
-             auto match_name = m_names.front()->Eval(parent_context);
+            auto match_name = m_names.front()->Eval(parent_context);
             EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::string>(match_name));
         } else {
             // evaluate names once, and use to check all candidate objects
@@ -3094,7 +3095,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context, ObjectSet& matche
         // don't need to evaluate anything...
 
     } else if (search_domain_size == 1) {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         // evaluate subcondition on objects that contain the candidate
@@ -4161,7 +4162,7 @@ namespace {
 void SpeciesOpinion::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                           SearchDomain search_domain) const
 {
-    if (std::addressof(matches) == std::addressof(non_matches))
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
 
     bool simple_eval_safe = ((m_species && m_species->LocalCandidateInvariant()) &&
@@ -6355,7 +6356,7 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& m
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         // If m_empire_id is specified (not null), and all parameters are
@@ -6541,7 +6542,7 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context, ObjectSe
         (parent_context.condition_root_candidate || RootCandidateInvariant());
 
     if (simple_eval_safe) {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         // If m_empire_id is specified (not null), and all parameters are
@@ -6695,7 +6696,7 @@ void EmpireHasAdoptedPolicy::Eval(const ScriptingContext& parent_context, Object
                              (!m_name || m_name->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         // If m_empire_id is specified (not null), and all parameters are
@@ -7769,7 +7770,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context, ObjectSet
     bool simple_eval_safe = m_jumps->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
-        if (std::addressof(matches) == std::addressof(non_matches))
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
             return;
 
         const auto& pf = parent_context.ContextUniverse().GetPathfinder();
@@ -7930,16 +7931,15 @@ namespace {
     };
 }
 
-void HasStarlaneTo::Eval(const ScriptingContext& parent_context,
-                         ObjectSet& matches, ObjectSet& non_matches,
+void HasStarlaneTo::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                          SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    const bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
         // get subcondition matches
-        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+        const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
                  HasStarlaneToSimpleMatch(subcondition_matches, parent_context.ContextObjects()));
@@ -8298,7 +8298,7 @@ void StarlaneToWouldCrossExistingStarlane::Eval(const ScriptingContext& parent_c
                                                 ObjectSet& matches, ObjectSet& non_matches,
                                                 SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    const bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
@@ -8487,19 +8487,19 @@ namespace {
 }
 
 void StarlaneToWouldBeAngularlyCloseToExistingStarlane::Eval(const ScriptingContext& parent_context,
-    ObjectSet& matches, ObjectSet& non_matches,
-    SearchDomain search_domain) const
+                                                             ObjectSet& matches, ObjectSet& non_matches,
+                                                             SearchDomain search_domain) const
 {
     TraceLogger(conditions) << "StarlaneToWouldBeAngularlyCloseToExistingStarlane considering " << matches.size()
                             << " matches and " << non_matches.size() << " non matches. Looking in "
                             << (search_domain == SearchDomain::MATCHES ? "MATCHES" : "NON_MATCHES");
 
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    const bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
         // get subcondition matches
-        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+        const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
             StarlaneToWouldBeAngularlyCloseToExistingStarlaneSimpleMatch(
@@ -8564,8 +8564,7 @@ std::unique_ptr<Condition> StarlaneToWouldBeAngularlyCloseToExistingStarlane::Cl
 // StarlaneToWouldBeCloseToObject                        //
 ///////////////////////////////////////////////////////////
 StarlaneToWouldBeCloseToObject::StarlaneToWouldBeCloseToObject(
-    std::unique_ptr<Condition>&& lane_end_condition,
-    std::unique_ptr<Condition>&& close_object_condition,
+    std::unique_ptr<Condition>&& lane_end_condition, std::unique_ptr<Condition>&& close_object_condition,
     double max_distance) :
     Condition(CondsRTSI(lane_end_condition, close_object_condition)),
     m_lane_end_condition(std::move(lane_end_condition)),
@@ -8845,14 +8844,14 @@ namespace {
 }
 
 void StarlaneToWouldBeCloseToObject::Eval(const ScriptingContext& parent_context,
-    ObjectSet& matches, ObjectSet& non_matches,
-    SearchDomain search_domain) const
+                                          ObjectSet& matches, ObjectSet& non_matches,
+                                          SearchDomain search_domain) const
 {
     TraceLogger(conditions) << "StarlaneToWouldBeCloseToObject considering " << matches.size()
                             << " matches and " << non_matches.size() << " non matches. Looking in "
                             << (search_domain == SearchDomain::MATCHES ? "MATCHES" : "NON_MATCHES");
 
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    const bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
@@ -8961,9 +8960,7 @@ namespace {
                 return false;
 
             auto empire = m_context.GetEmpire(m_empire_id);
-            if (!empire)
-                return false;
-            return empire->HasExploredSystem(candidate->ID());
+            return empire && empire->HasExploredSystem(candidate->ID());
         }
 
         int                     m_empire_id = ALL_EMPIRES;
@@ -8971,8 +8968,7 @@ namespace {
     };
 }
 
-void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
-                            ObjectSet& matches, ObjectSet& non_matches,
+void ExploredByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                             SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
@@ -8980,7 +8976,7 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        int empire_id = m_empire_id->Eval(parent_context);
+        const int empire_id = m_empire_id->Eval(parent_context);
 
         // need to check each candidate separately to test if it has been explored
         EvalImpl(matches, non_matches, search_domain, ExploredByEmpireSimpleMatch(empire_id, parent_context));
@@ -9164,8 +9160,7 @@ namespace {
     };
 }
 
-void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
-                                   ObjectSet& matches, ObjectSet& non_matches,
+void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                                    SearchDomain search_domain) const
 {
     bool simple_eval_safe = m_empire_id->ConstantExpr() ||
@@ -9335,8 +9330,8 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
         // evaluate contained objects once and check for all candidates
 
         // get objects to be considering for matching against subcondition
-        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
-        int empire_id = m_empire_id->Eval(parent_context);
+        const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+        const int empire_id = m_empire_id->Eval(parent_context);
 
         EvalImpl(matches, non_matches, search_domain,
                  ResourceSupplySimpleMatch(empire_id, subcondition_matches, parent_context.ContextObjects(),
@@ -9566,8 +9561,7 @@ namespace {
     };
 }
 
-void OrderedBombarded::Eval(const ScriptingContext& parent_context,
-                            ObjectSet& matches, ObjectSet& non_matches,
+void OrderedBombarded::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                             SearchDomain search_domain) const
 {
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
@@ -9907,6 +9901,9 @@ bool ValueTest::operator==(const ValueTest& rhs_) const {
 void ValueTest::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
 {
+    if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
+        return;
+
     // not-defined and local candidate invariant refs can be evaluated just once for all candidates
     const bool simple_eval_safe = (m_refs_local_invariant &&
         (parent_context.condition_root_candidate || RootCandidateInvariant())) ||
@@ -10410,8 +10407,7 @@ bool Location::operator==(const Condition& rhs) const {
     return true;
 }
 
-void Location::Eval(const ScriptingContext& parent_context,
-                    ObjectSet& matches, ObjectSet& non_matches,
+void Location::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                     SearchDomain search_domain) const
 {
     bool simple_eval_safe = ((!m_name1 || m_name1->LocalCandidateInvariant()) &&
@@ -10428,7 +10424,9 @@ void Location::Eval(const ScriptingContext& parent_context,
         const auto condition = GetLocationCondition(m_content_type, name1, name2, parent_context.species);
         if (condition && condition != this) {
             condition->Eval(parent_context, matches, non_matches, search_domain);
-        } else {
+
+        } else if (std::addressof(matches) != std::addressof(non_matches)) {
+
             // if somehow in a cyclical loop because some content's location
             // was defined as Location or if there is no location
             // condition, match nothing
@@ -10588,13 +10586,14 @@ void CombatTarget::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
 
-        std::string name = (m_name ? m_name->Eval(parent_context) : "");
+        const std::string name = (m_name ? m_name->Eval(parent_context) : "");
 
         // get condition from content, apply to matches / non_matches
         const auto condition = GetCombatTargetCondition(m_content_type, name, parent_context.species);
         if (condition && condition != this) {
             condition->Eval(parent_context, matches, non_matches, search_domain);
-        } else {
+
+        } else if (std::addressof(matches) != std::addressof(non_matches)) {
             // if somehow in a cyclical loop because some content's location
             // was defined as CombatTarget or if there is no available combat
             // targetting condition (eg. in valid content type, or name of
@@ -11223,11 +11222,10 @@ bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
     return true;
 }
 
-void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context,
-                                 ObjectSet& matches, ObjectSet& non_matches,
+void OrderedAlternativesOf::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain) const
 {
-    if (m_operands.empty())
+    if (m_operands.empty() || std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
         return;
 
     // OrderedAlternativesOf [ A B C ] matches all candidates which match the topmost condition.
