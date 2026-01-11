@@ -7776,15 +7776,30 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context, ObjectSet
         if (std::addressof(matches) == std::addressof(non_matches))
             return;
 
-        // evaluate contained objects and jumps limit once and check for all candidates
+        const auto& pf = parent_context.ContextUniverse().GetPathfinder();
+        const ObjectSet subcondition_matches = m_condition->Eval(parent_context);
+        const int jump_limit = m_jumps->Eval(parent_context);
 
-        // get subcondition matches
-        ObjectSet subcondition_matches = m_condition->Eval(parent_context);
-        int jump_limit = m_jumps->Eval(parent_context);
-        ObjectSet& from_set(search_domain == SearchDomain::MATCHES ? matches : non_matches);
+        // are we checking matches and moving not-matching stuff into non_matches, or
+        // are we checking non_matches and moving matching stuff into matches?
+        if (search_domain == ::Condition::SearchDomain::MATCHES) {
+            // partition contents of matches into stuff that is close or far from things in subcondition_matches
+            auto [matches_near, matches_far] = pf.WithinJumpsOfOthers(
+                jump_limit, parent_context.ContextObjects(), std::as_const(matches), subcondition_matches);
+            // matches that are far move into non_matches
+            non_matches.insert(non_matches.end(), matches_far.begin(), matches_far.end());
+            // matches that are near stay in matches
+            matches = std::move(matches_near);
 
-        std::tie(matches, non_matches) = parent_context.ContextUniverse().GetPathfinder().WithinJumpsOfOthers(
-            jump_limit, parent_context.ContextObjects(), from_set, subcondition_matches);
+        } else {
+            // partition contents of non_matches into stuff that is close or far from things in subcondition_matches
+            auto [non_matches_near, non_matches_far] = pf.WithinJumpsOfOthers(
+                jump_limit, parent_context.ContextObjects(), std::as_const(non_matches), subcondition_matches);
+            // non_matches that are near move into matches
+            matches.insert(matches.end(), non_matches_near.begin(), non_matches_near.end());
+            // non_matches that are far stay in non_matches
+            non_matches = std::move(non_matches_far);
+        }
 
     } else {
         // re-evaluate contained objects for each candidate object
