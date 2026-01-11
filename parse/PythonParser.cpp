@@ -235,6 +235,7 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
             .def("__hash__", py::make_function(std::hash<enum_wrapper<PlanetType>>{},
                 py::default_call_policies(),
                 boost::mpl::vector<std::size_t, const enum_wrapper<PlanetType>&>()));
+        py::class_<enum_wrapper<ShipPartClass>>("__ShipPartClass", py::no_init);
         py::class_<enum_wrapper< ::StarType>>("__StarType", py::no_init);
         py::class_<enum_wrapper<ValueRef::StatisticType>>("__StatisticType", py::no_init);
         py::class_<enum_wrapper<Condition::ContentType>>("__LocationContentType", py::no_init);
