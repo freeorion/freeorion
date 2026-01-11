@@ -1491,9 +1491,24 @@ std::unique_ptr<Condition> Target::Clone() const
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
 namespace {
-    auto Enveculate(auto&& thing) {
-        std::vector<std::decay_t<decltype(thing)>> retval;
-        retval.push_back(std::forward<decltype(thing)>(thing));
+    CONSTEXPR_VEC auto ExcludeNullsIntoVector(auto&& in) {
+        auto flt_in = in | range_filter(not_null);
+        return std::vector(std::make_move_iterator(std::begin(flt_in)), std::make_move_iterator(std::end(flt_in)));
+    }
+
+    template<typename T> struct is_vector : std::false_type {};
+    template<typename T> struct is_vector<std::vector<T>> : std::true_type {};
+    template<typename T> constexpr bool is_vector_v = is_vector<T>::value;
+
+    static_assert(!is_vector_v<int>);
+    static_assert(is_vector_v<std::vector<int>>);
+    static_assert(is_vector_v<std::vector<std::vector<int>>>);
+    static_assert(!is_vector_v<std::string>);
+
+    template <typename T> requires (!is_vector_v<T>)
+    CONSTEXPR_VEC auto Enveculate(T&& thing) {
+        std::vector<std::decay_t<T>> retval;
+        retval.push_back(std::forward<T>(thing));
         return retval;
     }
 }
@@ -1606,13 +1621,12 @@ void Homeworld::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                      SearchDomain search_domain) const
 {
     const bool simple_eval_safe = m_names_local_invariant &&
-        (parent_context.condition_root_candidate || RootCandidateInvariant());
+                                  (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         if (!m_names.empty()) {
             // evaluate names once, and use to check all candidate objects
-            const auto eval_name = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
-            auto evaluated_names_rng = m_names | range_transform(eval_name);
-            const std::vector<std::string> names(evaluated_names_rng.begin(), evaluated_names_rng.end());
+            const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+            const auto names = m_names | range_transform(eval_ref) | range_to_vec;
             // TODO: try passing range instead of putting into vector first?
             const HomeworldSimpleMatch hsm{names, parent_context.ContextObjects(), parent_context.species};
             EvalImpl(matches, non_matches, search_domain, hsm);
@@ -2159,8 +2173,8 @@ std::unique_ptr<Condition> Type::Clone() const
 ///////////////////////////////////////////////////////////
 Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names), CheckSums::GetCheckSum("Condition::Building", names)),
-    m_names(std::move(names)),
-    m_names_local_invariant(range_all_of(m_names, lc_invariant))
+    m_names(ExcludeNullsIntoVector(std::move(names))),
+    m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
 Building::Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -2247,18 +2261,15 @@ void Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, 
                     SearchDomain search_domain) const
 {
     const bool simple_eval_safe = m_names_local_invariant &&
-        (parent_context.condition_root_candidate || RootCandidateInvariant());
+                                  (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         if (m_names.size() == 1) {
-            auto match_name = m_names.front()->Eval(parent_context);
+             auto match_name = m_names.front()->Eval(parent_context);
             EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::string>(match_name));
         } else {
             // evaluate names once, and use to check all candidate objects
-            std::vector<std::string> names;
-            names.reserve(m_names.size());
-            // get all names from valuerefs
-            for (auto& name : m_names)
-                names.push_back(name->Eval(parent_context));
+            const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+            const auto names = m_names | range_transform(eval_ref) | range_to_vec;
             EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::vector<std::string>>(names));
         }
     } else {
@@ -2336,8 +2347,8 @@ std::unique_ptr<Condition> Building::Clone() const
 ///////////////////////////////////////////////////////////
 Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
     Condition(CondsRTSI(names)),
-    m_names(std::move(names)),
-    m_names_local_invariant(range_all_of(m_names, lc_invariant))
+    m_names(ExcludeNullsIntoVector(std::move(names))),
+    m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
 Field::Field(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
@@ -2397,15 +2408,12 @@ namespace {
 void Field::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                  SearchDomain search_domain) const
 {
-    bool simple_eval_safe = m_names_local_invariant &&
+    const bool simple_eval_safe = m_names_local_invariant &&
         (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
-        std::vector<std::string> names;
-        names.reserve(m_names.size());
-        // get all names from valuerefs
-        for (auto& name : m_names)
-            names.push_back(name->Eval(parent_context));
+        const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+        const auto names = m_names | range_transform(eval_ref) | range_to_vec;
         EvalImpl(matches, non_matches, search_domain, FieldSimpleMatch(names));
     } else {
         // re-evaluate allowed field types range for each candidate object
@@ -3930,8 +3938,8 @@ namespace {
 void Species::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                    SearchDomain search_domain) const
 {
-    bool simple_eval_safe = m_names_local_invariant &&
-                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    const bool simple_eval_safe = m_names_local_invariant &&
+                                  (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
@@ -4773,7 +4781,7 @@ namespace {
 void FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    const bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
         for (auto& name : m_names) {
@@ -4785,11 +4793,8 @@ void FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
     }
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
-        std::vector<std::string> names;
-        names.reserve(m_names.size());
-        // get all names from valuerefs TODO: could lazy evaluate names rather than evaluating all and passing...
-        for (auto& name : m_names)
-            names.push_back(name->Eval(parent_context));
+        const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+        const auto names = m_names | range_transform(eval_ref) | range_to_vec;
         EvalImpl(matches, non_matches, search_domain, FocusTypeSimpleMatch(names, parent_context.ContextObjects()));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -11194,20 +11199,11 @@ namespace {
         to_set.insert(to_set.end(), from_set.begin(), from_set.end());
         from_set.clear();
     }
-
-    auto ExcludeNulls(auto&& in) {
-        std::vector<std::decay_t<decltype(in.front())>> retval;
-        retval.reserve(in.size());
-        for (auto& op : in)
-            if (op)
-                retval.push_back(std::move(op));
-        return retval;
-    }
 }
 
 OrderedAlternativesOf::OrderedAlternativesOf(std::vector<std::unique_ptr<Condition>>&& operands) :
     Condition(CondsRTSI(operands)),
-    m_operands(ExcludeNulls(std::move(operands)))
+    m_operands(ExcludeNullsIntoVector(std::move(operands)))
 {}
 
 bool OrderedAlternativesOf::operator==(const Condition& rhs) const {
