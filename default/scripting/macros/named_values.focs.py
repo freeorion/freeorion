@@ -2,7 +2,9 @@ from focs._effects import (
     GameRule,
     NamedInteger,
     NamedReal,
+    UsedInDesignID,
 )
+from focs._value_refs import NumPartClassesInShipDesign, PartOfClassInShipDesign
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
 # Examples:
@@ -19,3 +21,13 @@ NamedReal(name="PROTECION_FOCUS_STABILITY_BONUS", value=GameRule(type=float, nam
 NamedReal(name="FU_RAMSCOOP_REFUEL", value=0.4)
 NamedReal(name="BLD_NEST_RESERVE_WILD_SPAWN_FACTOR", value=0.3)
 
+# For reduced/increased ship cost
+# value is used in upkeep.focs.txt, can be migrated to upkeep.focs.py as soon as that gets used when parsing ships
+# Note: colony part class increases complexity by 4; every other classe by 1
+colony_extra_complexity = 3
+NamedInteger(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_PC_COLONY", value=1 + colony_extra_complexity)
+NamedInteger(
+    name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF",
+    value=NumPartClassesInShipDesign(design=UsedInDesignID)
+    + PartOfClassInShipDesign(name="PC_COLONY", design=UsedInDesignID),
+)
