@@ -260,6 +260,7 @@ enum class ValueToReturn : bool { Initial = false, Immediate = true };
 
 FO_ENUM_BIG(
     (Property),
+    ((MeterType, -2))
     ((Unknown, -1))
     ((None, 0))
     ((Age))
@@ -459,6 +460,8 @@ constexpr Property StringToPropertyWithEmptyNone(std::string_view str) noexcept 
     static_assert(noexcept(PropertyFromString(std::string_view{}, Property::Unknown)));
     if (str.empty())
         return Property::None;
+    if (NameToMeter(str) != MeterType::INVALID_METER_TYPE)
+        return Property::MeterType;
     return PropertyFromString(str, Property::Unknown);
 }
 
@@ -481,7 +484,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     CheckSums::GetCheckSum("ValueRef::Variable", property_name, ref_type,
                                            container_type, static_cast<bool>(retval_type))),
         m_property_name(std::move(property_name)),
-        m_property(StringToPropertyWithEmptyNone(m_property_name))
+        m_property(StringToPropertyWithEmptyNone(m_property_name)),
+        m_meter_type(NameToMeter(m_property_name))
     {}
 
     CONSTEXPR_STRING explicit Variable(ReferenceType ref_type, ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
@@ -555,7 +559,8 @@ protected:
         ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
                     ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
         m_property_name(std::move(property_name)),
-        m_property(StringToPropertyWithEmptyNone(m_property_name))
+        m_property(StringToPropertyWithEmptyNone(m_property_name)),
+        m_meter_type(NameToMeter(m_property_name))
     {}
 
     CONSTEXPR_STRING Variable(std::array<bool, 4> rtsli, std::string property_name,
@@ -564,7 +569,8 @@ protected:
         ValueRef<T>(false, rtsli[0], rtsli[3], rtsli[1], rtsli[2], static_cast<bool>(return_immediate),
                     ref_type, ContainerType::NONE, checksum),
         m_property_name(std::move(property_name)),
-        m_property(StringToPropertyWithEmptyNone(m_property_name))
+        m_property(StringToPropertyWithEmptyNone(m_property_name)),
+        m_meter_type(NameToMeter(m_property_name))
     {}
 
     CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, std::string property_name,
@@ -573,7 +579,8 @@ protected:
         ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2],
                     static_cast<bool>(return_immediate), ref_type, ContainerType::NONE, checksum),
         m_property_name(std::move(property_name)),
-        m_property(StringToPropertyWithEmptyNone(m_property_name))
+        m_property(StringToPropertyWithEmptyNone(m_property_name)),
+        m_meter_type(NameToMeter(m_property_name))
     {}
     CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, ReferenceType ref_type, uint32_t checksum)
         noexcept(noexcept(std::string{})) :
@@ -586,11 +593,13 @@ protected:
         ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2],
                     false, ref_type, container, checksum),
         m_property_name(std::move(property_name)),
-        m_property(StringToPropertyWithEmptyNone(m_property_name))
+        m_property(StringToPropertyWithEmptyNone(m_property_name)),
+        m_meter_type(NameToMeter(m_property_name))
     {}
 
     const std::string m_property_name;
     const ::ValueRef::Property m_property = ::ValueRef::Property::None;
+    const MeterType m_meter_type = MeterType::INVALID_METER_TYPE;
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -1022,11 +1031,6 @@ private:
     const std::vector<uptrref_t> m_operands;
     const T                      m_cached_const_value = T();
 };
-
-/* Convert between names and MeterType. Names are scripting token, like Population
- * and not the MeterType string representations like METER_POPULATION */
-[[nodiscard]] FO_COMMON_API MeterType        NameToMeter(std::string_view name) noexcept;
-[[nodiscard]] FO_COMMON_API std::string_view MeterToName(MeterType meter) noexcept;
 
 [[nodiscard]] FO_COMMON_API std::string_view PlanetTypeToString(PlanetType type) noexcept;
 [[nodiscard]] FO_COMMON_API std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept;

@@ -8,7 +8,7 @@
 namespace parse {
 
     std::string MeterToNameWrapper(MeterType meter) {
-        return std::string{ValueRef::MeterToName(meter)};
+        return std::string{MeterToName(meter)};
     }
 
     BOOST_PHOENIX_ADAPT_FUNCTION(std::string, MeterToName_, MeterToNameWrapper, 1)
