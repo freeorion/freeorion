@@ -134,6 +134,7 @@ FO_ENUM(
 )
 
 namespace {
+    // mapping between active and target/max meters
     constexpr inline std::array<std::pair<MeterType, MeterType>, 13> assoc_meters{{
         {MeterType::METER_POPULATION,   MeterType::METER_TARGET_POPULATION},
         {MeterType::METER_INDUSTRY,     MeterType::METER_TARGET_INDUSTRY},
@@ -148,6 +149,68 @@ namespace {
         {MeterType::METER_TROOPS,       MeterType::METER_MAX_TROOPS},
         {MeterType::METER_SUPPLY,       MeterType::METER_MAX_SUPPLY},
         {MeterType::METER_STOCKPILE,    MeterType::METER_MAX_STOCKPILE}}};
+
+    // Array of meter names enumerated by MeterType with INVALID_METER_TYPE as first element
+    constexpr std::array<std::string_view, static_cast<std::size_t>(MeterType::NUM_METER_TYPES) + 1> NAME_BY_METER = {
+        "",
+        "TargetPopulation",
+        "TargetIndustry",
+        "TargetResearch",
+        "TargetInfluence",
+        "TargetConstruction",
+        "TargetHappiness",
+
+        "MaxCapacity",
+        "MaxSecondaryStat",
+
+        "MaxFuel",
+        "MaxShield",
+        "MaxStructure",
+        "MaxDefense",
+        "MaxSupply",
+        "MaxStockpile",
+        "MaxTroops",
+
+        "Population",
+        "Industry",
+        "Research",
+        "Influence",
+        "Construction",
+        "Happiness",
+
+        "Capacity",
+        "SecondaryStat",
+
+        "Fuel",
+        "Shield",
+        "Structure",
+        "Defense",
+        "Supply",
+        "Stockpile",
+        "Troops",
+
+        "RebelTroops",
+        "Size",
+        "Stealth",
+        "Detection",
+        "Speed"
+    };
+
+    constexpr MeterType NameToMeter(std::string_view name) noexcept {
+        for (std::size_t i = 0; i < NAME_BY_METER.size(); i++) {
+            if (NAME_BY_METER[i] == name)
+                return static_cast<MeterType>(static_cast<std::underlying_type_t<MeterType>>(i) - 1);
+        }
+        return MeterType::INVALID_METER_TYPE;
+    }
+    static_assert(NameToMeter("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
+    static_assert(NameToMeter("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
+    static_assert(NameToMeter("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
+
+    constexpr std::string_view MeterToName(MeterType meter) noexcept {
+        // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
+        return NAME_BY_METER[static_cast<std::size_t>(static_cast<std::underlying_type_t<MeterType>>(meter)) + 1u];
+    }
 }
 
 /** Returns mapping from active to target or max meter types that correspond.

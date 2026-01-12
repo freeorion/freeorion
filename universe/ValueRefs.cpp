@@ -284,52 +284,6 @@ namespace {
         return retval;
     }
 
-    // Array of meter names enumerated by MeterType with INVALID_METER_TYPE as first element
-    constexpr std::array<std::string_view, static_cast<std::size_t>(MeterType::NUM_METER_TYPES) + 1> NAME_BY_METER = {
-        "",
-        "TargetPopulation",
-        "TargetIndustry",
-        "TargetResearch",
-        "TargetInfluence",
-        "TargetConstruction",
-        "TargetHappiness",
-
-        "MaxCapacity",
-        "MaxSecondaryStat",
-
-        "MaxFuel",
-        "MaxShield",
-        "MaxStructure",
-        "MaxDefense",
-        "MaxSupply",
-        "MaxStockpile",
-        "MaxTroops",
-
-        "Population",
-        "Industry",
-        "Research",
-        "Influence",
-        "Construction",
-        "Happiness",
-
-        "Capacity",
-        "SecondaryStat",
-
-        "Fuel",
-        "Shield",
-        "Structure",
-        "Defense",
-        "Supply",
-        "Stockpile",
-        "Troops",
-
-        "RebelTroops",
-        "Size",
-        "Stealth",
-        "Detection",
-        "Speed"
-    };
-
     // Array of planet types enumerated by PlanetType with INVALID_PLANET_TYPE as first element
     constexpr std::array<std::string_view, static_cast<std::size_t>(PlanetType::NUM_PLANET_TYPES) + 1> NAME_BY_PLANET = {
         "?",
@@ -379,31 +333,6 @@ std::string ValueRefBase::InvariancePattern() const {
         .append(SimpleIncrement()               ? "I" : "i")
         .append(ConstantExpr()                  ? "C" : "c");
 }
-
-namespace {
-    constexpr MeterType NameToMeterCX(std::string_view name) noexcept {
-        for (int i = 0; std::cmp_less(i, NAME_BY_METER.size()); i++) {
-            if (NAME_BY_METER[i] == name)
-                return static_cast<MeterType>(i - 1);
-        }
-
-        return MeterType::INVALID_METER_TYPE;
-    }
-    static_assert(NameToMeterCX("not a meter") == MeterType::INVALID_METER_TYPE, "Name to Meter conversion failed for invalid meter type!");
-    static_assert(NameToMeterCX("Population") == MeterType::METER_POPULATION, "Name to Meter conversion failed for 'Population' meter!");
-    static_assert(NameToMeterCX("Speed") == MeterType::METER_SPEED, "Name to Meter conversion failed for 'Speed' meter!");
-}
-
-MeterType NameToMeter(std::string_view name) noexcept { return NameToMeterCX(name); }
-
-namespace {
-    constexpr std::string_view MeterToNameCX(MeterType meter) noexcept {
-        // NOTE: INVALID_METER_TYPE (enum's -1 position) <= meter < NUM_METER_TYPES (enum's final position)
-        return NAME_BY_METER[static_cast<std::size_t>(static_cast<std::underlying_type_t<MeterType>>(meter)) + 1u];
-    }
-}
-
-std::string_view MeterToName(MeterType meter) noexcept { return MeterToNameCX(meter); }
 
 namespace {
     constexpr std::string_view PlanetTypeToStringCX(PlanetType planet) noexcept {
@@ -944,7 +873,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    const MeterType meter_type = NameToMeterCX(m_property_name);
+    const MeterType meter_type = NameToMeter(m_property_name);
     if (object && meter_type != MeterType::INVALID_METER_TYPE) {
         if (auto* m = object->GetMeter(meter_type))
             return m_return_immediate_value ? m->Current() : m->Initial();
@@ -2270,8 +2199,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         ResourceType res_type = ResourceType::INVALID_RESOURCE_TYPE;
         if (m_string_ref1) {
             const std::string res_name = m_string_ref1->Eval(context);
-            const auto meter_type = NameToMeterCX(res_name);
-            res_type = MeterToResource(meter_type);
+            res_type = MeterToResource(NameToMeter(res_name));
         }
         if (res_type == ResourceType::INVALID_RESOURCE_TYPE)
             return 0;
