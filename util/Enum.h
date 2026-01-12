@@ -30,6 +30,14 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
             BOOST_PP_TUPLE_ELEM(0, typeName))
 
 /** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_BIGENUM(typeName, values) \
+enum class \
+FO_ENUM_NAME_FROM_TYPENAME(typeName) \
+: int16_t { \
+    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_VALUE, _, values) \
+};
+
+/** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM(typeName, values) \
 enum class \
 FO_ENUM_NAME_FROM_TYPENAME(typeName) \
@@ -61,61 +69,15 @@ value) noexcept { \
             return ""; \
             break; \
     } \
-}
-
-
-/** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_OSTREAM_CASE(r, data, elem) \
-    case data::BOOST_PP_TUPLE_ELEM(0, elem): \
-        stream << BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)); \
-        break;
-
-/** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_OSTREAM(typeName, values) \
+} \
 inline \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
         friend, \
         BOOST_PP_EMPTY()) \
 std::ostream& operator <<(std::ostream& stream, \
-FO_ENUM_NAME_FROM_TYPENAME(typeName) value) { \
-    switch(value) { \
-        BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_OSTREAM_CASE, \
-            FO_ENUM_NAME_FROM_TYPENAME(typeName), \
-            values) \
-        default: \
-            stream.setstate(std::ios::failbit); \
-            break; \
-    } \
- \
-    return stream; \
-}
+FO_ENUM_NAME_FROM_TYPENAME(typeName) value) \
+{ stream << to_string(value); return stream; }
 
-/** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_ISTREAM_CASE(r, data, elem) \
-    else if( \
-BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) == token) \
-        value = data::BOOST_PP_TUPLE_ELEM(0, elem);
-
-/** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_ISTREAM(typeName, values) \
-inline \
-BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
-        friend, \
-        BOOST_PP_EMPTY()) \
-std::istream& operator >>(std::istream& stream, \
-FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
-{ \
-    std::string token; \
-    stream >> token; \
-    if (false); \
-    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ISTREAM_CASE, \
-        BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
-            BOOST_PP_TUPLE_ELEM(1, typeName), \
-            BOOST_PP_TUPLE_ELEM(0, typeName)), values) \
-    else \
-        stream.setstate(std::ios::failbit); \
-    return stream; \
-}
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ITERATE_VALUE(r, data, elem) \
@@ -146,17 +108,32 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), FromString)( \
     std::string_view sv, \
     FO_ENUM_NAME_FROM_TYPENAME(typeName) not_found_result = FO_ENUM_NAME_FROM_TYPENAME(typeName)(0) \
 ) noexcept { \
-    constexpr auto vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
+    static constexpr auto vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
     for (const auto& [val, val_sv] : vals) \
         if (val_sv == sv) return val; \
     return not_found_result; \
+} \
+inline \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+        friend, \
+        BOOST_PP_EMPTY()) \
+std::istream& operator >>(std::istream& stream, \
+FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
+{ \
+    std::string token; \
+    stream >> token; \
+    static constexpr auto vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
+    for (const auto& [val, val_sv] : vals) { if (val_sv == token) { value = val; return stream; } } \
+    stream.setstate(std::ios::failbit); \
+    return stream; \
 }
+
 
 /** @brief Define an enumeration
  *
  * Defines an enumeration named @p typeName with the enumeration @p values in
  * the namespace where this macro is used. Also defines << and >> operators for
- * iostream usage.
+ * iostream usage. Underlying type of the enum is int8_t.
  *
  * Use a tuple containing only the enumeration name when the enum is located
  * outside of a class as @p typeName.  Prepend the class name to the @p typeName
@@ -221,9 +198,15 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), FromString)( \
 #define FO_ENUM(typeName, values) \
     FO_DEF_ENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_TOSTRING(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_OSTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_ISTREAM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
     FO_DEF_ENUM_FROM_STRING(typeName)
-#endif
 
+// Defines an enum as above, except the underlying type of the enum is int16_t,
+// and omits FO_DEF_ENUM_ISTREAM due to resulting compile error
+#define FO_ENUM_BIG(typeName, values) \
+    FO_DEF_BIGENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_TOSTRING(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
+    FO_DEF_ENUM_FROM_STRING(typeName)
+
+#endif
