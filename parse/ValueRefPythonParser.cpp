@@ -1072,7 +1072,7 @@ namespace {
             }
         }
 
-        auto meter_name = ValueRef::MeterToName(boost::python::extract<enum_wrapper<MeterType>>(kw["meter"])().value);
+        auto meter_name = MeterToName(boost::python::extract<enum_wrapper<MeterType>>(kw["meter"])().value);
         auto meter_type = std::make_unique<ValueRef::Constant<std::string>>(std::string{meter_name});
 
         std::unique_ptr<ValueRef::ValueRef<int>> ship_id;
