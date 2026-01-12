@@ -708,11 +708,11 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 
     std::function<PlanetSize (const Planet&)> planet_property{nullptr};
 
-    if (m_property_name == "PlanetSize")
+    if (m_property == Property::PlanetSize)
         planet_property = &Planet::Size;
-    else if (m_property_name == "NextLargerPlanetSize")
+    else if (m_property == Property::NextLargerPlanetSize)
         planet_property = &Planet::NextLargerPlanetSize;
-    else if (m_property_name == "NextSmallerPlanetSize")
+    else if (m_property == Property::NextSmallerPlanetSize)
         planet_property = &Planet::NextSmallerPlanetSize;
 
     if (planet_property) {
@@ -740,19 +740,19 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 
     std::function<PlanetType (const Planet&)> planet_property{nullptr};
 
-    if (m_property_name == "PlanetType")
+    if (m_property == Property::PlanetType)
         planet_property = &Planet::Type;
-    else if (m_property_name == "OriginalType")
+    else if (m_property == Property::OriginalType)
         planet_property = &Planet::OriginalType;
-    else if (m_property_name == "NextCloserToOriginalPlanetType")
+    else if (m_property == Property::NextCloserToOriginalPlanetType)
         planet_property = &Planet::NextCloserToOriginalPlanetType;
-    else if (m_property_name == "NextBestPlanetType")
+    else if (m_property == Property::NextBestPlanetType)
         planet_property = [&context](const Planet& p) { return p.NextBestPlanetTypeForSpecies(context); };
-    else if (m_property_name == "NextBetterPlanetType")
+    else if (m_property == Property::NextBetterPlanetType)
         planet_property = [&context](const Planet& p) { return p.NextBetterPlanetTypeForSpecies(context); };
-    else if (m_property_name == "ClockwiseNextPlanetType")
+    else if (m_property == Property::ClockwiseNextPlanetType)
         planet_property = &Planet::ClockwiseNextPlanetType;
-    else if (m_property_name == "CounterClockwiseNextPlanetType")
+    else if (m_property == Property::CounterClockwiseNextPlanetType)
         planet_property = &Planet::CounterClockwiseNextPlanetType;
 
     if (planet_property) {
@@ -771,7 +771,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
 {
     IF_CURRENT_VALUE(PlanetEnvironment)
 
-    if (m_property_name == "PlanetEnvironment") {
+    if (m_property == Property::PlanetEnvironment) {
         auto object = FollowReference(m_container_type, m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<PlanetEnvironment>::Eval unable to follow reference: "
@@ -794,7 +794,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
 {
     IF_CURRENT_VALUE(UniverseObjectType)
 
-    if (m_property_name == "ObjectType") {
+    if (m_property == Property::ObjectType) {
         auto object = FollowReference(m_container_type, m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<UniverseObjectType>::Eval unable to follow reference: "
@@ -823,11 +823,11 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 
     std::function<StarType (const System&)> system_property{nullptr};
 
-    if (m_property_name == "StarType")
+    if (m_property == Property::StarType)
         system_property = &System::GetStarType;
-    else if (m_property_name == "NextOlderStarType")
+    else if (m_property == Property::NextOlderStarType)
         system_property = &System::NextOlderStarType;
-    else if (m_property_name == "NextYoungerStarType")
+    else if (m_property == Property::NextYoungerStarType)
         system_property = &System::NextYoungerStarType;
 
     if (system_property) {
@@ -862,9 +862,9 @@ double Variable<double>::Eval(const ScriptingContext& context) const
     IF_CURRENT_VALUE(double)
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if ((m_property_name == "UniverseCentreX") || (m_property_name == "UniverseCentreY"))
+        if ((m_property == Property::UniverseCentreX) || (m_property == Property::UniverseCentreY))
             return context.ContextUniverse().UniverseWidth() / 2;
-        else if (m_property_name == "UniverseWidth")
+        else if (m_property == Property::UniverseWidth)
             return context.ContextUniverse().UniverseWidth();
 
         // add more non-object reference double functions here
@@ -881,27 +881,26 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    const auto meter_type = NameToMeter(m_property_name);
-    if (object && meter_type != MeterType::INVALID_METER_TYPE) {
-        if (auto* m = object->GetMeter(meter_type))
+    if (object && m_meter_type != MeterType::INVALID_METER_TYPE) {
+        if (auto* m = object->GetMeter(m_meter_type))
             return m_return_immediate_value ? m->Current() : m->Initial();
         return 0.0;
 
-    } else if (m_property_name == "X") {
+    } else if (m_property == Property::X) {
         return object->X();
 
-    } else if (m_property_name == "Y") {
+    } else if (m_property == Property::Y) {
         return object->Y();
 
     }
 
     std::function<double (const Planet&)> planet_property{nullptr};
 
-    if (m_property_name == "SizeAsDouble")
+    if (m_property == Property::SizeAsDouble)
         planet_property = [](const Planet& planet) noexcept -> double { return static_cast<double>(planet.Size()); };
-    else if (m_property_name == "HabitableSize")
+    else if (m_property == Property::HabitableSize)
         planet_property = &Planet::HabitableSize;
-    else if (m_property_name == "DistanceFromOriginalType")
+    else if (m_property == Property::DistanceFromOriginalType)
         planet_property = &Planet::DistanceFromOriginalType;
 
     if (planet_property) {
@@ -911,13 +910,13 @@ double Variable<double>::Eval(const ScriptingContext& context) const
 
     }
 
-    if (m_property_name == "CombatBout") {
+    if (m_property == Property::CombatBout) {
         return context.combat_bout;
 
-    } else if (m_property_name == "CurrentTurn") {
+    } else if (m_property == Property::CurrentTurn) {
         return context.current_turn;
 
-    } else if (m_property_name == "DestroyFightersPerBattleMax") {
+    } else if (m_property == Property::DestroyFightersPerBattleMax) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             auto retval = ship->TotalWeaponsFighterDamage(context);
@@ -927,7 +926,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         }
         return 0.0;
 
-    } else if (m_property_name == "DamageStructurePerBattleMax") {
+    } else if (m_property == Property::DamageStructurePerBattleMax) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             // TODO: prevent recursion; disallowing the ValueRef inside of damageStructurePerBattleMax via parsers would be best.
@@ -937,14 +936,14 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         }
         return 0.0;
 
-    } else if (m_property_name == "PropagatedSupplyRange") {
+    } else if (m_property == Property::PropagatedSupplyRange) {
         const auto& ranges = context.supply.PropagatedSupplyRanges();
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
 
-    } else if (m_property_name == "PropagatedSupplyDistance") {
+    } else if (m_property == Property::PropagatedSupplyDistance) {
         const auto& ranges = context.supply.PropagatedSupplyDistances();
         auto range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
@@ -963,39 +962,39 @@ int Variable<int>::Eval(const ScriptingContext& context) const
     IF_CURRENT_VALUE(int)
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if (m_property_name == "CombatBout")
+        if (m_property == Property::CombatBout)
             return context.combat_bout;
-        if (m_property_name == "CurrentTurn")
+        if (m_property == Property::CurrentTurn)
             return context.current_turn;
-        if (m_property_name == "GalaxySize")
+        if (m_property == Property::GalaxySize)
             return context.galaxy_setup_data.GetSize();
-        if (m_property_name == "GalaxyShape")
+        if (m_property == Property::GalaxyShape)
             return static_cast<int>(context.galaxy_setup_data.GetShape());
-        if (m_property_name == "GalaxyAge")
+        if (m_property == Property::GalaxyAge)
             return static_cast<int>(context.galaxy_setup_data.GetAge());
-        if (m_property_name == "GalaxyStarlaneFrequency")
+        if (m_property == Property::GalaxyStarlaneFrequency)
             return static_cast<int>(context.galaxy_setup_data.GetStarlaneFreq());
-        if (m_property_name == "GalaxyPlanetDensity")
+        if (m_property == Property::GalaxyPlanetDensity)
             return static_cast<int>(context.galaxy_setup_data.GetPlanetDensity());
-        if (m_property_name == "GalaxySpecialFrequency")
+        if (m_property == Property::GalaxySpecialFrequency)
             return static_cast<int>(context.galaxy_setup_data.GetSpecialsFreq());
-        if (m_property_name == "GalaxyMonsterFrequency")
+        if (m_property == Property::GalaxyMonsterFrequency)
             return static_cast<int>(context.galaxy_setup_data.GetMonsterFreq());
-        if (m_property_name == "GalaxyNativeFrequency")
+        if (m_property == Property::GalaxyNativeFrequency)
             return static_cast<int>(context.galaxy_setup_data.GetNativeFreq());
-        if (m_property_name == "GalaxyMaxAIAggression")
+        if (m_property == Property::GalaxyMaxAIAggression)
             return static_cast<int>(context.galaxy_setup_data.GetAggression());
-        if (m_property_name == "UsedInDesignID")
+        if (m_property == Property::UsedInDesignID)
             return context.in_design_id;
-        if (m_property_name == "SelectedSystemID")
+        if (m_property == Property::SelectedSystemID)
             return IApp::GetApp()->SelectedSystemID();
-        if (m_property_name == "SelectedPlanetID")
+        if (m_property == Property::SelectedPlanetID)
             return IApp::GetApp()->SelectedPlanetID();
-        if (m_property_name == "SelectedFleetID")
+        if (m_property == Property::SelectedFleetID)
             return IApp::GetApp()->SelectedFleetID();
-        if (m_property_name == "SelectedPlanetID")
+        if (m_property == Property::SelectedPlanetID)
             return IApp::GetApp()->SelectedPlanetID();
-        if (m_property_name == "ThisClientEmpireID")
+        if (m_property == Property::ThisClientEmpireID)
             return IApp::GetApp()->EmpireID();
 
         // add more non-object reference int functions here
@@ -1012,31 +1011,31 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
     }
 
-    if (m_property_name == "Owner")
+    if (m_property == Property::Owner)
         return object->Owner();
-    else if (m_property_name == "SystemID")
+    else if (m_property == Property::SystemID)
         return object->SystemID();
-    else if (m_property_name == "ContainerID")
+    else if (m_property == Property::ContainerID)
         return object->ContainerObjectID();
-    else if (m_property_name == "SupplyingEmpire")
+    else if (m_property == Property::SupplyingEmpire)
         return context.supply.EmpireThatCanSupplyAt(object->SystemID());
-    else if (m_property_name == "ID")
+    else if (m_property == Property::ID)
         return object->ID();
-    else if (m_property_name == "CreationTurn")
+    else if (m_property == Property::CreationTurn)
         return object->CreationTurn();
-    else if (m_property_name == "Age")
+    else if (m_property == Property::Age)
         return object->AgeInTurns(context.current_turn);
 
 
     std::function<int (const Ship&)> ship_property{nullptr};
 
-    if (m_property_name == "ArrivedOnTurn")
+    if (m_property == Property::ArrivedOnTurn)
         ship_property = &Ship::ArrivedOnTurn;
-    else if (m_property_name == "LastTurnActiveInBattle")
+    else if (m_property == Property::LastTurnActiveInBattle)
         ship_property = &Ship::LastTurnActiveInCombat;
-    else if (m_property_name == "LastTurnResupplied")
+    else if (m_property == Property::LastTurnResupplied)
         ship_property = &Ship::LastResuppliedOnTurn;
-    else if (m_property_name == "OrderedColonizePlanetID")
+    else if (m_property == Property::OrderedColonizePlanetID)
         ship_property = &Ship::OrderedColonizePlanet;
 
     if (ship_property) {
@@ -1049,17 +1048,17 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     std::function<int (const Fleet&)> fleet_property{nullptr};
 
-    if (m_property_name == "FinalDestinationID")
+    if (m_property == Property::FinalDestinationID)
         fleet_property = &Fleet::FinalDestinationID;
-    else if (m_property_name == "NextSystemID")
+    else if (m_property == Property::NextSystemID)
         fleet_property = &Fleet::NextSystemID;
-    else if (m_property_name == "PreviousSystemID")
+    else if (m_property == Property::PreviousSystemID)
         fleet_property = &Fleet::PreviousSystemID;
-    else if (m_property_name == "PreviousToFinalDestinationID")
+    else if (m_property == Property::PreviousToFinalDestinationID)
         fleet_property = &Fleet::PreviousToFinalDestinationID;
-    else if (m_property_name == "ArrivalStarlaneID")
+    else if (m_property == Property::ArrivalStarlaneID)
         fleet_property = &Fleet::ArrivalStarlane;
-    else if (m_property_name == "LastTurnMoveOrdered")
+    else if (m_property == Property::LastTurnMoveOrdered)
         fleet_property = &Fleet::LastTurnMoveOrdered;
 
     if (fleet_property) {
@@ -1075,21 +1074,21 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     std::function<int (const Planet&)> planet_property{nullptr};
 
-    if (m_property_name == "LastTurnAttackedByShip")
+    if (m_property == Property::LastTurnAttackedByShip)
         planet_property = &Planet::LastTurnAttackedByShip;
-    else if (m_property_name == "LastTurnColonized")
+    else if (m_property == Property::LastTurnColonized)
         planet_property = &Planet::LastTurnColonized;
-    else if (m_property_name == "LastTurnConquered")
+    else if (m_property == Property::LastTurnConquered)
         planet_property = &Planet::LastTurnConquered;
-    else if (m_property_name == "LastTurnAnnexed")
+    else if (m_property == Property::LastTurnAnnexed)
         planet_property = &Planet::LastTurnAnnexed;
-    else if (m_property_name == "OrderedGivenToEmpire")
+    else if (m_property == Property::OrderedGivenToEmpire)
         planet_property = &Planet::OrderedGivenToEmpire;
-    else if (m_property_name == "OwnerBeforeLastConquered")
+    else if (m_property == Property::OwnerBeforeLastConquered)
         planet_property = &Planet::OwnerBeforeLastConquered;
-    else if (m_property_name == "LastInvadedByEmpire")
+    else if (m_property == Property::LastInvadedByEmpire)
         planet_property = &Planet::LastInvadedByEmpire;
-    else if (m_property_name == "LastColonizedByEmpire")
+    else if (m_property == Property::LastColonizedByEmpire)
         planet_property = &Planet::LastColonizedByEmpire;
 
     if (planet_property) {
@@ -1100,35 +1099,35 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_GAME_TURN;
     }
 
-    if (m_property_name == "TurnsSinceFocusChange") {
+    if (m_property == Property::TurnsSinceFocusChange) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceFocusChange(context.current_turn);
         }
         return 0; // here, not using planet_property, so that fallback is 0
     }
-    else if (m_property_name == "TurnsSinceAnnexation") {
+    else if (m_property == Property::TurnsSinceAnnexation) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceLastAnnexed(context.current_turn);
         }
         return 0;
     }
-    else if (m_property_name == "TurnsSinceColonization") {
+    else if (m_property == Property::TurnsSinceColonization) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceColonization(context.current_turn);
         }
         return 0;
     }
-    else if (m_property_name == "TurnsSinceLastConquered") {
+    else if (m_property == Property::TurnsSinceLastConquered) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->TurnsSinceLastConquered(context.current_turn);
         }
         return 0;
     }
-    else if (m_property_name == "ProducedByEmpireID") {
+    else if (m_property == Property::ProducedByEmpireID) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             return ship->ProducedByEmpireID();
@@ -1140,7 +1139,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return ALL_EMPIRES;
 
     }
-    else if (m_property_name == "DesignID") {
+    else if (m_property == Property::DesignID) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             return ship->DesignID();
@@ -1148,7 +1147,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_DESIGN_ID;
 
     }
-    else if (m_property_name == "FleetID") {
+    else if (m_property == Property::FleetID) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             return ship->FleetID();
@@ -1160,7 +1159,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_OBJECT_ID;
 
     }
-    else if (m_property_name == "PlanetID") {
+    else if (m_property == Property::PlanetID) {
         if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             auto building = static_cast<const Building*>(object);
             return building->PlanetID();
@@ -1172,14 +1171,14 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_OBJECT_ID;
 
     }
-    else if (m_property_name == "NearestSystemID") {
+    else if (m_property == Property::NearestSystemID) {
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
         return context.ContextUniverse().GetPathfinder().NearestSystemTo(
             object->X(), object->Y(), context.ContextObjects());
 
     }
-    else if (m_property_name == "NumShips") {
+    else if (m_property == Property::NumShips) {
         if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             auto fleet = static_cast<const Fleet*>(object);
             return static_cast<int>(fleet->NumShips());
@@ -1187,7 +1186,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
 
     }
-    else if (m_property_name == "NumStarlanes") {
+    else if (m_property == Property::NumStarlanes) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto system = static_cast<const System*>(object);
             return system->NumStarlanes();
@@ -1195,7 +1194,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
 
     }
-    else if (m_property_name == "LastTurnBattleHere") {
+    else if (m_property == Property::LastTurnBattleHere) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SYSTEM) {
             auto system = static_cast<const System*>(object);
             return system->LastTurnBattleHere();
@@ -1206,13 +1205,13 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return INVALID_GAME_TURN;
 
     }
-    else if (m_property_name == "Orbit") {
+    else if (m_property == Property::Orbit) {
         if (auto system = context.ContextObjects().getRaw<System>(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 
     }
-    else if (m_property_name == "ETA") {
+    else if (m_property == Property::ETA) {
         if (object->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             auto fleet = static_cast<const Fleet*>(object);
             return fleet->ETA(context).first;
@@ -1220,11 +1219,11 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
 
     }
-    else if (m_property_name == "NumSpecials") {
+    else if (m_property == Property::NumSpecials) {
         return static_cast<int>(object->Specials().size());
 
     }
-    else if (m_property_name == "LaunchedFrom") {
+    else if (m_property == Property::LaunchedFrom) {
         if (object->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
             auto fighter = static_cast<const Fighter*>(object);
             return fighter->LaunchedFrom();
@@ -1256,7 +1255,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(const Scriptin
         return {};
     }
 
-    if (m_property_name == "Tags") {
+    if (m_property == Property::Tags) {
         std::vector<std::string> retval;
         auto tags = object->Tags(context);
         retval.reserve(tags.size());
@@ -1264,11 +1263,11 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(const Scriptin
         std::transform(tags.second.begin(), tags.second.end(), std::back_inserter(retval), [](auto sv) { return std::string{sv}; });
         return retval;
     }
-    else if (m_property_name == "Specials") {
+    else if (m_property == Property::Specials) {
         const auto obj_special_names_range = object->Specials() | range_keys;
         return {obj_special_names_range.begin(), obj_special_names_range.end()};
     }
-    else if (m_property_name == "AvailableFoci") {
+    else if (m_property == Property::AvailableFoci) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             auto foci_views = planet->AvailableFoci(context);
@@ -1276,7 +1275,7 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(const Scriptin
         }
         return {};
     }
-    else if (m_property_name == "Parts") {
+    else if (m_property == Property::Parts) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
@@ -1296,7 +1295,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     IF_CURRENT_VALUE(std::string)
 
     if (m_ref_type == ReferenceType::NON_OBJECT_REFERENCE) {
-        if (m_property_name == "GalaxySeed")
+        if (m_property == Property::GalaxySeed)
             return context.galaxy_setup_data.GetSeed();
 
         // add more non-object reference string functions here
@@ -1312,31 +1311,31 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
     }
 
-    if (m_property_name == "Name") {
+    if (m_property == Property::Name) {
         return object->Name();
 
-    } else if (m_property_name == "OwnerName") {
+    } else if (m_property == Property::OwnerName) {
         int owner_empire_id = object->Owner();
         if (auto empire = context.GetEmpire(owner_empire_id))
             return empire->Name();
         return "";
 
-    } else if (m_property_name == "TypeName") {
+    } else if (m_property == Property::TypeName) {
         return std::string{to_string(object->ObjectType())};
 
     }
 
     std::function<std::string (const Empire&)> empire_property{nullptr};
 
-    if (m_property_name == "OwnerLeastExpensiveEnqueuedTech")
+    if (m_property == Property::OwnerLeastExpensiveEnqueuedTech)
         empire_property = [&context](const auto& empire) { return empire.LeastExpensiveEnqueuedTech(context); };
-    else if (m_property_name == "OwnerMostExpensiveEnqueuedTech")
+    else if (m_property == Property::OwnerMostExpensiveEnqueuedTech)
         empire_property = [&context](const auto& empire) { return empire.MostExpensiveEnqueuedTech(context); };
-    else if (m_property_name == "OwnerMostRPCostLeftEnqueuedTech")
+    else if (m_property == Property::OwnerMostRPCostLeftEnqueuedTech)
         empire_property = [&context](const auto& empire) { return empire.MostRPCostLeftEnqueuedTech(context); };
-    else if (m_property_name == "OwnerMostRPSpentEnqueuedTech")
+    else if (m_property == Property::OwnerMostRPSpentEnqueuedTech)
         empire_property = &Empire::MostRPSpentEnqueuedTech;
-    else if (m_property_name == "OwnerTopPriorityEnqueuedTech")
+    else if (m_property == Property::OwnerTopPriorityEnqueuedTech)
         empire_property = &Empire::TopPriorityEnqueuedTech;
 
     if (empire_property) {
@@ -1346,7 +1345,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return empire_property(*empire);
     }
 
-    if (m_property_name == "Species") {
+    if (m_property == Property::Species) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->SpeciesName();
@@ -1361,7 +1360,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         }
         return "";
 
-    } else if (m_property_name == "Hull") {
+    } else if (m_property == Property::Hull) {
         if (object->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             auto ship = static_cast<const Ship*>(object);
             if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(ship->DesignID()))
@@ -1369,28 +1368,28 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         }
         return "";
 
-    } else if (m_property_name == "FieldType") {
+    } else if (m_property == Property::FieldType) {
         if (object->ObjectType() == UniverseObjectType::OBJ_FIELD) {
             auto field = static_cast<const Field*>(object);
             return field->FieldTypeName();
         }
         return "";
 
-    } else if (m_property_name == "BuildingType") {
+    } else if (m_property == Property::BuildingType) {
         if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             auto building = static_cast<const Building*>(object);
             return building->BuildingTypeName();
         }
         return "";
 
-    } else if (m_property_name == "Focus") {
+    } else if (m_property == Property::Focus) {
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
             return planet->Focus();
         }
         return "";
 
-    } else if (m_property_name == "DefaultFocus") {
+    } else if (m_property == Property::DefaultFocus) {
         const Species* species = nullptr;
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             auto planet = static_cast<const Planet*>(object);
