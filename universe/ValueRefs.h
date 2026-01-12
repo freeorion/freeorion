@@ -526,6 +526,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] constexpr auto& PropertyName() const noexcept { return m_property_name; }
     [[nodiscard]] constexpr auto Property() const noexcept { return m_property; }
+    [[nodiscard]] constexpr auto MeterType() const noexcept { return m_meter_type; }
     [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
@@ -599,7 +600,7 @@ protected:
 
     const std::string m_property_name;
     const ::ValueRef::Property m_property = ::ValueRef::Property::None;
-    const MeterType m_meter_type = MeterType::INVALID_METER_TYPE;
+    const ::MeterType m_meter_type = ::MeterType::INVALID_METER_TYPE;
 };
 
 /** The variable statistic class.   The value returned by this node is
