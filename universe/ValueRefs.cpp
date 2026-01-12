@@ -636,26 +636,34 @@ namespace StaticTests {
     static_assert(visrvr == visrvr_copy);
 
 #  if !defined(__GNUC__) || (__GNUC__ > 13) || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3)
-    static_assert(VRVI_t(SOURCE_REFERENCE, "Property") != visrvr);
+    static_assert(VRVI_t(SOURCE_REFERENCE, "ID") != visrvr);
     static_assert(VRVI_t(SOURCE_REFERENCE, "", NONE) == visrvr);
-    static_assert(VRVI_t(SOURCE_REFERENCE, "Something", SYSTEM) == VRVI_t(SOURCE_REFERENCE, "Something", SYSTEM));
+    static_assert(VRVI_t(SOURCE_REFERENCE, "ID", SYSTEM) == VRVI_t(SOURCE_REFERENCE, "ID", SYSTEM));
 
     static_assert([]() {
-        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property", PLANET);
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "ID", PLANET);
         return (visrprop.GetContainerType() == PLANET) &&
-               (visrprop.PropertyName() == "Property");
+               (visrprop.PropertyName() == "ID") &&
+               (visrprop.Property() == Property::ID) &&
+               (visrprop.MeterType() == ::MeterType::INVALID_METER_TYPE);
     }());
 
     static_assert([]() {
-        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property");
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "ID");
         const auto visrprop_copy(visrprop);
         return visrprop == visrprop_copy;
     }());
 
     static_assert([]() {
-        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Property");
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "ID");
         const ::ValueRef::ValueRef<int>& vri_ref{visrprop};
         return (vri_ref == visrprop) && (visrprop == vri_ref);
+    }());
+
+    static_assert([]() {
+        const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "Stealth");
+        return (visrprop.Property() == Property::MeterType) &&
+               (visrprop.MeterType() == ::MeterType::METER_STEALTH);
     }());
 #  endif
 
@@ -873,7 +881,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    const MeterType meter_type = NameToMeter(m_property_name);
+    const auto meter_type = NameToMeter(m_property_name);
     if (object && meter_type != MeterType::INVALID_METER_TYPE) {
         if (auto* m = object->GetMeter(meter_type))
             return m_return_immediate_value ? m->Current() : m->Initial();
@@ -2467,7 +2475,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (meter_name.empty())
             return 0.0;
 
-        MeterType meter_type = NameToMeter(meter_name);
+        const auto meter_type = NameToMeter(meter_name);
         if (meter_type != MeterType::INVALID_METER_TYPE) {
             if (m_return_immediate_value)
                 return ship->CurrentPartMeterValue(meter_type, part_name);
