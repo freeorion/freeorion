@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
                             static_cast<int16_t>(ValueRef::ContainerType::NONE));
         BOOST_REQUIRE_EQUAL(static_cast<int16_t>(op0->GetReferenceType()),
                             static_cast<int16_t>(ValueRef::ReferenceType::INVALID_REFERENCE_TYPE));
-        BOOST_REQUIRE_EQUAL(op0->PropertyName(), "GameRule");
+        BOOST_REQUIRE_EQUAL(op0->Property(), ValueRef::Property::GameRule);
         BOOST_REQUIRE_EQUAL(op0->IntRef1(), nullptr);
         BOOST_REQUIRE_EQUAL(op0->IntRef2(), nullptr);
         BOOST_REQUIRE_EQUAL(op0->IntRef3(), nullptr);
