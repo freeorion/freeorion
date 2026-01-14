@@ -414,8 +414,8 @@ std::string ReconstructName(std::string_view property_name, ContainerType contai
 std::string FormatedDescriptionPropertyNames(ReferenceType ref_type, std::string_view property_name,
                                              ContainerType container_type, bool return_immediate_value)
 {
-    const std::size_t bits_count = (container_type != ContainerType::NONE ? 1u : 0u) +
-        ((ref_type != NON_OBJECT_REFERENCE && ref_type != INVALID_REFERENCE_TYPE) ? 1u : 0u);
+    const uint8_t bits_count = uint8_t(container_type != ContainerType::NONE ? 1u : 0u) +
+        uint8_t((ref_type != NON_OBJECT_REFERENCE && ref_type != INVALID_REFERENCE_TYPE) ? 1u : 0u);
 
     const auto& format_string =
         (bits_count == 0u) ? UserString("DESC_VALUE_REF_MULTIPART_VARIABLE0") :
