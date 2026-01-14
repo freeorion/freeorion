@@ -631,6 +631,8 @@ namespace StaticTests {
     constexpr VRVI_t visrvr(SOURCE_REFERENCE);
     static_assert(visrvr != VRVI_t(SOURCE_REFERENCE, ::ValueRef::ValueToReturn::Immediate));
     static_assert(visrvr != VRVI_t(NON_OBJECT_REFERENCE));
+    static_assert(visrvr.Property() == ::ValueRef::Property::None);
+    static_assert(visrvr.MeterType() == ::MeterType::INVALID_METER_TYPE);
 
     constexpr auto visrvr_copy(visrvr);
     static_assert(visrvr == visrvr_copy);
@@ -643,7 +645,6 @@ namespace StaticTests {
     static_assert([]() {
         const VRVI_t visrprop(ReferenceType::SOURCE_REFERENCE, "ID", PLANET);
         return (visrprop.GetContainerType() == PLANET) &&
-               (visrprop.PropertyName() == "ID") &&
                (visrprop.Property() == Property::ID) &&
                (visrprop.MeterType() == ::MeterType::INVALID_METER_TYPE);
     }());
@@ -683,15 +684,15 @@ if (m_ref_type == ReferenceType::EFFECT_TARGET_VALUE_REFERENCE) {      \
     }                                                                  \
 }
 
-#define LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(T)                                           \
-ErrorLogger() << "Variable<" #T ">::Eval unrecognized object "                           \
-                 "property: "                                                            \
-              << TraceReference(m_property_name, m_container_type, m_ref_type, context); \
-if (context.source)                                                                      \
-    ErrorLogger() << "source: " << context.source->ObjectType() << " "                   \
-                  << context.source->ID() << " ( "                                       \
-                  << context.source->Name() << " ) ";                                    \
-else                                                                                     \
+#define LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE(T)                                                 \
+ErrorLogger() << "Variable<" #T ">::Eval unrecognized object "                                 \
+                 "property: "                                                                  \
+              << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context); \
+if (context.source)                                                                            \
+    ErrorLogger() << "source: " << context.source->ObjectType() << " "                         \
+                  << context.source->ID() << " ( "                                             \
+                  << context.source->Name() << " ) ";                                          \
+else                                                                                           \
     ErrorLogger() << "source (none)";
 
 template <>
@@ -702,7 +703,7 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
     const auto* const object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<PlanetSize>::Eval unable to follow reference: "
-                      << TraceReference(m_property_name, m_container_type, m_ref_type, context);
+                      << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context);
         return PlanetSize::INVALID_PLANET_SIZE;
     }
 
@@ -734,7 +735,7 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<PlanetType>::Eval unable to follow reference: "
-                      << TraceReference(m_property_name, m_container_type, m_ref_type, context);
+                      << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context);
         return PlanetType::INVALID_PLANET_TYPE;
     }
 
@@ -775,7 +776,7 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
         auto object = FollowReference(m_container_type, m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<PlanetEnvironment>::Eval unable to follow reference: "
-                          << TraceReference(m_property_name, m_container_type, m_ref_type, context);
+                          << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context);
             return PlanetEnvironment::INVALID_PLANET_ENVIRONMENT;
         }
         if (object->ObjectType() == UniverseObjectType::OBJ_PLANET)
@@ -798,7 +799,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
         auto object = FollowReference(m_container_type, m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<UniverseObjectType>::Eval unable to follow reference: "
-                          << TraceReference(m_property_name, m_container_type, m_ref_type, context);
+                          << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context);
             return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE;
         }
         return object->ObjectType();
@@ -817,7 +818,7 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
     auto object = FollowReference(m_container_type, m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<StarType>::Eval unable to follow reference: "
-                      << TraceReference(m_property_name, m_container_type, m_ref_type, context);
+                      << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context);
         return StarType::INVALID_STAR_TYPE;
     }
 
@@ -851,7 +852,7 @@ Visibility Variable<Visibility>::Eval(const ScriptingContext& context) const
     // particular empire
 
     ErrorLogger() << "Variable<Visibility>::Eval unrecognized object property: "
-                  << TraceReference(m_property_name, m_container_type, m_ref_type, context);
+                  << TraceReference(GetPropertyAsString(), m_container_type, m_ref_type, context);
 
     return Visibility::INVALID_VISIBILITY;
 }
@@ -2766,7 +2767,7 @@ std::vector<std::string> ComplexVariable<std::vector<std::string>>::Eval(
 template <>
 std::string ComplexVariable<Visibility>::Dump(uint8_t ntabs) const
 {
-    std::string retval = m_property_name;
+    std::string retval{this->GetPropertyAsString()};
 
     if (m_property == Property::EmpireObjectVisibility) {
         if (m_int_ref1)
@@ -2781,7 +2782,7 @@ std::string ComplexVariable<Visibility>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
 {
-    std::string retval = m_property_name;
+    std::string retval{this->GetPropertyAsString()};
 
     // empire properties indexed by integers
     if (m_property == Property::PropagatedSystemSupplyRange ||
@@ -2868,7 +2869,7 @@ std::string ComplexVariable<double>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<int>::Dump(uint8_t ntabs) const
 {
-    std::string retval = m_property_name;
+    std::string retval{this->GetPropertyAsString()};
     // todo: implement like <double> case
     if (m_property == Property::GameRule) {
         if (m_string_ref1)
@@ -2881,7 +2882,7 @@ std::string ComplexVariable<int>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) const
 {
-    std::string retval = m_property_name;
+    std::string retval{this->GetPropertyAsString()};
     // TODO: implement like <double> case
     if (m_property == Property::GameRule) {
         if (m_string_ref1)
@@ -2894,7 +2895,7 @@ std::string ComplexVariable<std::string>::Dump(uint8_t ntabs) const
 template <>
 std::string ComplexVariable<std::vector<std::string>>::Dump(uint8_t ntabs) const
 {
-    std::string retval = m_property_name;
+    std::string retval{this->GetPropertyAsString()};
     // todo: implement like <double> case
     if (m_property == Property::GameRule) {
         if (m_string_ref1)

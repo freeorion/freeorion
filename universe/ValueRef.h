@@ -246,6 +246,8 @@ decltype(auto) FlexibleToString(T&& t)
 template <typename T>
 struct FO_COMMON_API ValueRef : public ValueRefBase
 {
+    using ResultT = T;
+
     /** Evaluates the expression tree with no input context.  Useful for
       * evaluating expressions that do not depend on source, target, or
       * candidate objects. */
