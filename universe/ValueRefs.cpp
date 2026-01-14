@@ -2951,12 +2951,8 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     if (!ref)
         return Stringify(result);
 
-    // special case for a few sub-value-refs to help with UI representation
+    // special case for position / distance related sub-value-refs, to improve with UI representation
     const auto property = ref->Property();
-    //if (property == Propery::None || propery == Property::Unknown)
-    //    return Stringify(result);
-
-    // special case for a few sub-value-refs to help with UI representation
     if (property == Property::X || property == Property::Y ||
         property == Property::DirectDistanceBetween ||
         property == Property::ShortestPathDistance)
