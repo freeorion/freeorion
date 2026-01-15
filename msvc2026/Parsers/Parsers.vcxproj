@@ -287,6 +287,7 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4180;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\SourcePythonParser.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -328,6 +329,7 @@
     <ClInclude Include="..\..\parse\EffectPythonParser.h" />
     <ClInclude Include="..\..\parse\EnumPythonParser.h" />
     <ClInclude Include="..\..\parse\SourcePythonParser.h" />
+    <ClInclude Include="..\..\parse\ConditionsPythonModuleParser.h" />
     <ClInclude Include="..\..\parse\ValueRefsPythonModuleParser.h" />
     <ClInclude Include="..\..\parse\NamedValueRefPythonParser.h" />
     <ClInclude Include="..\..\parse\EffectsPythonModuleParser.h" />
