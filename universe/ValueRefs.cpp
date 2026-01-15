@@ -348,6 +348,11 @@ namespace {
 }
 
 namespace ValueRef {
+static_assert(to_string(Property::PlanetSize) == "PlanetSize");
+static_assert(StringToPropertyWithEmptyNone("GameRule") == Property::GameRule);
+static_assert(StringToPropertyWithEmptyNone("Invalid!!!") == Property::Unknown);
+static_assert(StringToPropertyWithEmptyNone("") == Property::None);
+
 template <typename EnumT>
 std::string EnumToString(EnumT t)
 {

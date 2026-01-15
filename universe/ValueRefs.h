@@ -258,6 +258,210 @@ private:
 
 enum class ValueToReturn : bool { Initial = false, Immediate = true };
 
+FO_ENUM_BIG(
+    (Property),
+    ((Unknown, -1))
+    ((None, 0))
+    ((Age))
+    ((ArrivalStarlaneID))
+    ((ArrivedOnTurn))
+    ((AvailableFoci))
+    ((BuildingType))
+    ((BuildingTypeCost))
+    ((BuildingTypesOwned))
+    ((BuildingTypesProduced))
+    ((BuildingTypesScrapped))
+    ((ClockwiseNextPlanetType))
+    ((CombatBout))
+    ((ContainerID))
+    ((CounterClockwiseNextPlanetType))
+    ((CreationTurn))
+    ((CurrentTurn))
+    ((CumulativeTurnsPolicyAdopted))
+    ((DamageStructurePerBattleMax))
+    ((DefaultFocus))
+    ((DesignID))
+    ((DestroyFightersPerBattleMax))
+    ((DirectDistanceBetween))
+    ((DistanceFromOriginalType))
+    ((EmpireAdoptedPolices))
+    ((EmpireAnnexationCost))
+    ((EmpireAvailablePolices))
+    ((EmpireMeterValue))
+    ((EmpireObjectVisibility))
+    ((EmpireObjectVisibilityTurn))
+    ((EmpireShipsDestroyed))
+    ((EmpireStockpile))
+    ((ETA))
+    ((FieldType))
+    ((FinalDestinationID))
+    ((FleetID))
+    ((Focus))
+    ((GalaxyAge))
+    ((GalaxyMaxAIAggression))
+    ((GalaxyMonsterFrequency))
+    ((GalaxyNativeFrequency))
+    ((GalaxyPlanetDensity))
+    ((GalaxySeed))
+    ((GalaxyShape))
+    ((GalaxySize))
+    ((GalaxySpecialFrequency))
+    ((GalaxyStarlaneFrequency))
+    ((GameRule))
+    ((HabitableSize))
+    ((HighestCostEnqueuedTech))
+    ((HighestCostResearchableTech))
+    ((HighestCostTransferrableTech))
+    ((Hull))
+    ((HullFuel))
+    ((HullSpeed))
+    ((HullStealth))
+    ((HullStructure))
+    ((ID))
+    ((JumpsBetween))
+    ((JumpsBetweenByEmpireSupplyConnections))
+    ((LaunchedFrom))
+    ((LastColonizedByEmpire))
+    ((LastInvadedByEmpire))
+    ((LastTurnActiveInBattle))
+    ((LastTurnAnnexed))
+    ((LastTurnAttackedByShip))
+    ((LastTurnBattleHere))
+    ((LastTurnColonized))
+    ((LastTurnConquered))
+    ((LastTurnMoveOrdered))
+    ((LastTurnResupplied))
+    ((LatestTurnPolicyAdopted))
+    ((LeastHappySpecies))
+    ((LowestCostEnqueuedTech))
+    ((LowestCostResearchableTech))
+    ((LowestCostTransferrableTech))
+    ((MostHappySpecies))
+    ((MostPopulousSpecies))
+    ((MostSpentEnqueuedTech))
+    ((MostSpentResearchableTech))
+    ((MostSpentTransferrableTech))
+    ((Name))
+    ((NearestSystemID))
+    ((NextBetterPlanetType))
+    ((NextBestPlanetType))
+    ((NextCloserToOriginalPlanetType))
+    ((NextLargerPlanetSize))
+    ((NextOlderStarType))
+    ((NextSmallerPlanetSize))
+    ((NextSystemID))
+    ((NextYoungerStarType))
+    ((NumPartClassesInShipDesign))
+    ((NumPoliciesAdopted))
+    ((NumShips))
+    ((NumSpecials))
+    ((NumStarlanes))
+    ((ObjectType))
+    ((OrderedColonizePlanetID))
+    ((OrderedGivenToEmpire))
+    ((Orbit))
+    ((OriginalType))
+    ((OutpostsOwned))
+    ((Owner))
+    ((OwnerBeforeLastConquered))
+    ((OwnerLeastExpensiveEnqueuedTech))
+    ((OwnerMostExpensiveEnqueuedTech))
+    ((OwnerMostRPCostLeftEnqueuedTech))
+    ((OwnerMostRPSpentEnqueuedTech))
+    ((OwnerName))
+    ((OwnerTopPriorityEnqueuedTech))
+    ((PartCapacity))
+    ((PartOfClassInShipDesign))
+    ((PartSecondaryStat))
+    ((Parts))
+    ((PartsInShipDesign))
+    ((PlanetEnvironment))
+    ((PlanetEnvironmentForSpecies))
+    ((PlanetID))
+    ((PlanetSize))
+    ((PlanetType))
+    ((PlanetTypeDifference))
+    ((PreviousSystemID))
+    ((PreviousToFinalDestinationID))
+    ((ProducedByEmpireID))
+    ((PropagatedSupplyDistance))
+    ((PropagatedSupplyRange))
+    ((PropagatedSystemSupplyDistance))
+    ((PropagatedSystemSupplyRange))
+    ((RandomColonizableSpecies))
+    ((RandomCompleteTech))
+    ((RandomControlledSpecies))
+    ((RandomEnqueuedTech))
+    ((RandomResearchableTech))
+    ((RandomTransferrableTech))
+    ((SelectedFleetID))
+    ((SelectedPlanetID))
+    ((SelectedSystemID))
+    ((ShipDesignCost))
+    ((ShipDesignsDestroyed))
+    ((ShipDesignsInProduction))
+    ((ShipDesignsLost))
+    ((ShipDesignsOwned))
+    ((ShipDesignsProduced))
+    ((ShipDesignsScrapped))
+    ((ShipPartMeter))
+    ((ShipPartsOwned))
+    ((ShortestPath))
+    ((ShortestPathDistance))
+    ((SizeAsDouble))
+    ((SlotsInHull))
+    ((SlotsInShipDesign))
+    ((SpecialAddedOnTurn))
+    ((SpecialCapacity))
+    ((Specials))
+    ((Species))
+    ((SpeciesColoniesOwned))
+    ((SpeciesContentOpinion))
+    ((SpeciesEmpireOpinion))
+    ((SpeciesEmpireTargetOpinion))
+    ((SpeciesPlanetsBombed))
+    ((SpeciesPlanetsDepoped))
+    ((SpeciesPlanetsInvaded))
+    ((SpeciesShipsDestroyed))
+    ((SpeciesShipsLost))
+    ((SpeciesShipsOwned))
+    ((SpeciesShipsProduced))
+    ((SpeciesShipsScrapped))
+    ((SpeciesSpeciesOpinion))
+    ((SpeciesSpeciesTargetOpinion))
+    ((StarType))
+    ((SupplyingEmpire))
+    ((SystemID))
+    ((SystemSupplyRange))
+    ((Tags))
+    ((ThisClientEmpireID))
+    ((TopPriorityEnqueuedTech))
+    ((TopPriorityResearchableTech))
+    ((TopPriorityTransferrableTech))
+    ((TurnPolicyAdopted))
+    ((TurnSystemExplored))
+    ((TurnsSinceAnnexation))
+    ((TurnsSinceColonization))
+    ((TurnsSinceFocusChange))
+    ((TurnsSinceLastConquered))
+    ((TurnsSincePolicyAdopted))
+    ((TurnTechResearched))
+    ((TypeName))
+    ((UniverseCentreX))
+    ((UniverseCentreY))
+    ((UniverseWidth))
+    ((UsedInDesignID))
+    ((X))
+    ((Y))
+)
+
+constexpr Property StringToPropertyWithEmptyNone(std::string_view str) noexcept {
+    static_assert(noexcept(PropertyFromString(std::string_view{}, Property::Unknown)));
+    if (str.empty())
+        return Property::None;
+    return PropertyFromString(str, Property::Unknown);
+}
+
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <typename T>
@@ -276,7 +480,8 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     container_type,
                     CheckSums::GetCheckSum("ValueRef::Variable", property_name, ref_type,
                                            container_type, static_cast<bool>(retval_type))),
-        m_property_name(std::move(property_name))
+        m_property_name(std::move(property_name)),
+        m_property(StringToPropertyWithEmptyNone(m_property_name))
     {}
 
     CONSTEXPR_STRING explicit Variable(ReferenceType ref_type, ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
@@ -316,6 +521,7 @@ struct FO_COMMON_API Variable : public ValueRef<T>
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] constexpr auto& PropertyName() const noexcept { return m_property_name; }
+    [[nodiscard]] constexpr auto Property() const noexcept { return m_property; }
     [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
@@ -348,7 +554,8 @@ protected:
         noexcept(noexcept(std::string(std::move(property_name)))) :
         ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
                     ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
-        m_property_name(std::move(property_name))
+        m_property_name(std::move(property_name)),
+        m_property(StringToPropertyWithEmptyNone(m_property_name))
     {}
 
     CONSTEXPR_STRING Variable(std::array<bool, 4> rtsli, std::string property_name,
@@ -356,7 +563,8 @@ protected:
         noexcept(noexcept(std::string(std::move(property_name)))) :
         ValueRef<T>(false, rtsli[0], rtsli[3], rtsli[1], rtsli[2], static_cast<bool>(return_immediate),
                     ref_type, ContainerType::NONE, checksum),
-        m_property_name(std::move(property_name))
+        m_property_name(std::move(property_name)),
+        m_property(StringToPropertyWithEmptyNone(m_property_name))
     {}
 
     CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, std::string property_name,
@@ -364,7 +572,8 @@ protected:
         noexcept(noexcept(std::string(std::move(property_name)))) :
         ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2],
                     static_cast<bool>(return_immediate), ref_type, ContainerType::NONE, checksum),
-        m_property_name(std::move(property_name))
+        m_property_name(std::move(property_name)),
+        m_property(StringToPropertyWithEmptyNone(m_property_name))
     {}
     CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, ReferenceType ref_type, uint32_t checksum)
         noexcept(noexcept(std::string{})) :
@@ -376,10 +585,12 @@ protected:
         noexcept(noexcept(std::string(std::move(property_name)))) :
         ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2],
                     false, ref_type, container, checksum),
-        m_property_name(std::move(property_name))
+        m_property_name(std::move(property_name)),
+        m_property(StringToPropertyWithEmptyNone(m_property_name))
     {}
 
     const std::string m_property_name;
+    const ::ValueRef::Property m_property = ::ValueRef::Property::None;
 };
 
 /** The variable statistic class.   The value returned by this node is
