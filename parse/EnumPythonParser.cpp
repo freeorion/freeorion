@@ -2,6 +2,7 @@
 
 #include <boost/python/dict.hpp>
 
+#include "../universe/Condition.h"
 #include "../universe/BuildingType.h"
 #include "../universe/Enums.h"
 #include "../universe/Planet.h"
