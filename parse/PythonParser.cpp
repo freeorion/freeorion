@@ -14,6 +14,7 @@
 #include "EffectPythonParser.h"
 #include "EnumPythonParser.h"
 #include "SourcePythonParser.h"
+#include "ConditionsPythonModuleParser.h"
 #include "EffectsPythonModuleParser.h"
 #include "ValueRefsPythonModuleParser.h"
 #include "NamedValueRefPythonParser.h"
@@ -476,6 +477,9 @@ void PythonParser::UnloadModule(py::object module) const {
     const char* module_name = PyModule_GetName(module.ptr());
     py::import("sys").attr("modules").attr("pop")(std::string{"focs."} + module_name);
 }
+
+void PythonParser::LoadConditionsModule() const
+{ (void)LoadModule(&PyInit__conditions); } // marked [[nodiscard]] but result not needed in this case
 
 void PythonParser::LoadValueRefsModule() const
 { (void)LoadModule(&PyInit__value_refs); } // marked [[nodiscard]] but result not needed in this case

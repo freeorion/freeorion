@@ -183,15 +183,18 @@
     <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionsPythonModuleParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\parse\NamedValueRefPythonParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp">
+    <ClInclude Include="..\..\parse\EffectsPythonModuleParser.cpp">
       <Filter>Source Files\parse</Filter>
-    </ClCompile>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\parse\ConditionParser.h">
@@ -277,6 +280,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefPythonParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionsPythonModuleParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\ValueRefsPythonModuleParser.h">

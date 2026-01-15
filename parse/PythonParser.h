@@ -34,6 +34,7 @@ public:
 
     [[nodiscard]] boost::python::object LoadModule(PyObject* (*)()) const;
     void UnloadModule(boost::python::object module) const;
+    void LoadConditionsModule() const;
     void LoadValueRefsModule() const;
     void LoadEffectsModule() const;
 
