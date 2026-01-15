@@ -54,7 +54,13 @@ jobs:
     needs: check-run
     uses: ./.github/workflows/_build-macos.yml
     with:
-      os: 'macos-15'
+      os: 'macos-15-intel'
+      weekly-deploy: true
+  macos-26-arm64:
+    needs: check-run
+    uses: ./.github/workflows/_build-macos.yml
+    with:
+      os: 'macos-26'
       weekly-deploy: true
   windows:
     needs: check-run
@@ -72,7 +78,7 @@ jobs:
   merge-binaries-to-sf:
     name: Merge binaries and publish to SourceForge
     runs-on: ubuntu-latest
-    needs: [macos, windows, windows-msvs, linux-snap]
+    needs: [macos, macos-26-arm64, windows, windows-msvs, linux-snap]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
