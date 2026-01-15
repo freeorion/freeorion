@@ -47,7 +47,7 @@ jobs:
           mkdir build
           cd build
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
-          cmake -GXcode -DBUILD_TESTING=ON -DBUILD_CLIENT_GODOT=ON -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
+          cmake -GXcode -DBUILD_TESTING=ON -DBUILD_CLIENT_GODOT=ON -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON -DCMAKE_OSX_ARCHITECTURES=${{ inputs.os == 'macos-15-intel' && 'x86_64' || 'arm64' }} ..
       - name: Build
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
