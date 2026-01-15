@@ -85,17 +85,21 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName) value) \
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ITERATE(typeName, values) \
+struct BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Impl) { \
+    static constexpr std::size_t values_count = BOOST_PP_SEQ_SIZE(values); \
+    using values_array_t = std::array<std::pair<FO_ENUM_NAME_FROM_TYPENAME(typeName), std::string_view>, values_count>; \
+    static constexpr values_array_t vals {{ \
+    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, \
+        FO_ENUM_NAME_FROM_TYPENAME(typeName), values) \
+    }}; \
+}; \
 inline \
 BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
         static, \
         BOOST_PP_EMPTY()) \
-constexpr auto \
-BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)() noexcept {\
-    return std::array<std::pair<FO_ENUM_NAME_FROM_TYPENAME(typeName), std::string_view>, BOOST_PP_SEQ_SIZE(values)> {{ \
-    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, \
-        FO_ENUM_NAME_FROM_TYPENAME(typeName), values) \
-    }}; \
-};
+constexpr auto& \
+BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)() noexcept \
+{ return BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Impl) ::vals; }
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
@@ -108,7 +112,7 @@ BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), FromString)( \
     std::string_view sv, \
     FO_ENUM_NAME_FROM_TYPENAME(typeName) not_found_result = FO_ENUM_NAME_FROM_TYPENAME(typeName)(0) \
 ) noexcept { \
-    static constexpr auto vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
+    const auto& vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
     for (const auto& [val, val_sv] : vals) \
         if (val_sv == sv) return val; \
     return not_found_result; \
@@ -122,7 +126,7 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
 { \
     std::string token; \
     stream >> token; \
-    static constexpr auto vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
+    const auto& vals = BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)(); \
     for (const auto& [val, val_sv] : vals) { if (val_sv == token) { value = val; return stream; } } \
     stream.setstate(std::ios::failbit); \
     return stream; \
@@ -166,7 +170,7 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
  *
  * Iterate over values:
  * @code
- * for (const auto& [val, string_view] : AnimalValues) {
+ * for (const auto& [val, string_view] : AnimalValues()) {
  *    ...
  * }
  * @endcode
