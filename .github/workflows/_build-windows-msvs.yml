@@ -2,31 +2,25 @@ name: "Windows MS VS"
 
 on:
   workflow_call:
-    secrets:
-      DEPLOY_SSH_PASSWORD:
+    inputs:
+      weekly-deploy:
+        type: boolean
+        default: false
 jobs:
   windows-2022:
-    name: MSVS 2022 on Windows
+    name: MSVS 2022 on Windows 2022
     runs-on: windows-2022
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Decrypt deploy SSH key
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash .github/pre-deploy.sh
-        env:
-          DEPLOY_SSH_PASSWORD: ${{ secrets.DEPLOY_SSH_PASSWORD }}
-      - name: Validate upload target
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
-        run: bash -c 'scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 CMakeLists.txt o01eg@frs.sourceforge.net:/dev/null'
       - name: Download SDK
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v14/FreeOrionSDK_14_MSVC-v143-Win32.zip
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-x64.zip
           target: ../
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.3.1
+        uses: microsoft/setup-msbuild@v2
         with:
             vs-prerelease: true
       - name: Prepare
@@ -37,14 +31,13 @@ jobs:
       - name: Build
         run: |
           cd msvc2022
-          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v142 /property:Configuration=Release /verbosity:minimal
+          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v143 /property:Configuration=Release /verbosity:minimal
       - name: Cache NSIS
         uses: actions/cache@v3
         with:
           key: scoop-cache
           path: scoop_cache
       - name: Install NSIS
-        if: github.ref == 'refs/heads/weekly-test-builds' && github.event_name == 'push'
         env:
           SCOOP_CACHE: scoop_cache
         run: |
@@ -64,11 +57,63 @@ jobs:
       - name: Generate installer
         run: |
           makensis packaging/windows_installer.nsi
-          mv ../FreeOrion_*_Win32_Setup.exe .
+          mv ../FreeOrion_*_Test_Win32_Setup.exe .
       - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4
+        if: ${{ inputs.weekly-deploy }}
         with:
           name: weekly-artifacts-sf-windows-msvs-${{ github.run_number }}
-          path: FreeOrion_*_Win32_Setup.exe
+          path: FreeOrion_*_Test_Win32_Setup.exe
           if-no-files-found: error
           retention-days: 1
+  windows-2025:
+    name: MSVS 2022 on Windows 2025
+    runs-on: windows-2025
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Download SDK
+        id: download-sdk
+        uses: suisei-cn/actions-download-file@v1.4.0
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-x64.zip
+          target: ../
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+            vs-prerelease: true
+      - name: Prepare
+        run: |
+          Remove-Item -LiteralPath "C:/hostedtoolcache/windows/Python/" -Force -Recurse # Ensure that system Python is not used
+          unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
+          cp ../bin/* ./
+      - name: Build
+        run: |
+          cd msvc2022
+          msbuild FreeOrion.sln /maxcpucount /property:BuildInParallel=true /property:CL_MPCount=2 /property:PlatformToolset=v143 /property:Configuration=Release /verbosity:minimal
+      - name: Cache NSIS
+        uses: actions/cache@v3
+        with:
+          key: scoop-cache
+          path: scoop_cache
+      - name: Install NSIS
+        env:
+          SCOOP_CACHE: scoop_cache
+        run: |
+          irm get.scoop.sh -outfile 'install.ps1'
+          .\install.ps1 -RunAsAdmin
+          scoop bucket add extras
+          scoop install nsis
+      - name: Download vcredist
+        id: download-vcredist
+        uses: suisei-cn/actions-download-file@v1.4.0
+        with:
+          url: https://github.com/freeorion/freeorion/files/9733497/vcredist_x86.exe.zip
+          target: ../
+      - name: Prepare vcredist
+        run: |
+          unzip -q ../${{ steps.download-vcredist.outputs.filename }} -d ..
+      - name: Generate installer
+        run: |
+          & "$env:USERPROFILE\scoop\apps\nsis\current\makensis.exe" packaging/windows_installer.nsi
+          mv ../FreeOrion_*_Test_Win32_Setup.exe .

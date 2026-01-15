@@ -13,7 +13,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v14/FreeOrionSDK_14_MSVC-v143-Win32.zip
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-Win32.zip
           target: ../
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.3.1
@@ -69,6 +69,14 @@ jobs:
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
           .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-test-logs-${{ github.run_number }}
+          path: C:\Users\runneradmin\AppData\Roaming\FreeOrion\*.log
+          if-no-files-found: error
+          retention-days: 1
       - name: Generate binaries only
         run: |
           pushd build

@@ -32,7 +32,7 @@ jobs:
     if: ${{ needs.detect_changed_files.outputs.build_macos == 'true' }}
     strategy:
       matrix:
-        os: [ macos-15, macos-14 ]
+        os: [ macos-15-intel, macos-26 ]
     uses: ./.github/workflows/_build-macos.yml
     with:
       os: ${{ matrix.os }}
