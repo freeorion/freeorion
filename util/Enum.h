@@ -23,12 +23,6 @@
         BOOST_PP_TUPLE_ELEM(0, elem) = BOOST_PP_TUPLE_ELEM(1, elem), \
         BOOST_PP_TUPLE_ELEM(0, elem)),
 
-/** @brief Extracts EnumName from (EnumName) or (ClassName, EnumName) */
-#define FO_ENUM_NAME_FROM_TYPENAME(typeName) \
-BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
-            BOOST_PP_TUPLE_ELEM(1, typeName), \
-            BOOST_PP_TUPLE_ELEM(0, typeName))
-
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM(enumName, underlyingType, values) \
 enum class enumName : underlyingType { \
@@ -124,6 +118,12 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
 
 #define FO_ENUM_VALUES_WITH_STRINGS(values) \
     BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)
+
+/** @brief Extracts EnumName from (EnumName) or (ClassName, EnumName) */
+#define FO_ENUM_NAME_FROM_TYPENAME(typeName) \
+BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
+            BOOST_PP_TUPLE_ELEM(1, typeName), \
+            BOOST_PP_TUPLE_ELEM(0, typeName))
 
 /** @brief Implementation detail for FO_ENUM. */
 #define FO_DEF_ENUM_IMPL(typeName, underlyingType, values) \
