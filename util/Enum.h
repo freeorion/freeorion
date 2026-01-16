@@ -101,12 +101,21 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
     return stream; \
 }
 
-/** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_IMPL(typeName, underlyingType, valuesStrings) \
-    FO_DEF_ENUM(FO_ENUM_NAME_FROM_TYPENAME(typeName), underlyingType, valuesStrings) \
-    FO_DEF_ENUM_TOSTRING(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName), valuesStrings) \
-    FO_DEF_ENUM_ITERATE(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName), valuesStrings) \
-    FO_DEF_ENUM_FROM_STRING(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName))
+/** @brief Implementation detail for FO_ENUM.
+  * tupleSize is expected to be 2 for a non-class enum and 3 for an enum defined in a class. */
+#define FO_DEF_ENUM_IMPL_IMPL(enumName, underlyingType, tupleSize, valuesStrings) \
+    FO_DEF_ENUM(enumName, underlyingType, valuesStrings) \
+    FO_DEF_ENUM_TOSTRING(enumName, tupleSize, valuesStrings) \
+    FO_DEF_ENUM_ITERATE(enumName, tupleSize, valuesStrings) \
+    FO_DEF_ENUM_FROM_STRING(enumName, tupleSize)
+
+#define FO_DEF_ENUM_IMPL(typeName, underlyingType, values) \
+    FO_DEF_ENUM_IMPL_IMPL( \
+        FO_ENUM_NAME_FROM_TYPENAME(typeName), \
+        underlyingType, \
+        BOOST_PP_TUPLE_SIZE(typeName), \
+        BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values) \
+    )
 
 /** @brief Define an enumeration
  *
@@ -175,12 +184,10 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
  * @endcode
  */
 #define FO_ENUM(typeName, values) \
-    FO_DEF_ENUM_IMPL(typeName, int8_t, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
+    FO_DEF_ENUM_IMPL(typeName, int8_t, values)
 
-/* Defines an enum as above, except the underlying type of the enum is int16_t,
- * and omits FO_DEF_ENUM_ISTREAM due to resulting compile error.
- */
+/* Defines an enum as above, except the underlying type of the enum is int16_t */
 #define FO_ENUM_BIG(typeName, values) \
-    FO_DEF_ENUM_IMPL(typeName, int16_t, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
+    FO_DEF_ENUM_IMPL(typeName, int16_t, values)
 
 #endif
