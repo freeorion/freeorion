@@ -46,10 +46,11 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName) \
 };
 
 /** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, data, elem) \
+    case data:: elem: return BOOST_PP_STRINGIZE(elem); break;
+
 #define FO_DEF_ENUM_TOSTRING_CASE(r, data, elem) \
-    case data::BOOST_PP_TUPLE_ELEM(0, elem): \
-        return BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)); \
-        break;
+    FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, data, BOOST_PP_TUPLE_ELEM(0, elem))
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_TOSTRING(enumName, tupleSize, values) \
