@@ -42,7 +42,7 @@ enum class enumName : underlyingType { \
 #define FO_DEF_ENUM_TOSTRING_CASE(r, data, elem) \
     FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, data, BOOST_PP_TUPLE_ELEM(0, elem))
 
-/** @brief Implementation detail for FO_ENUM */
+/** Defines to_string(enumName) and ostream& operator<<(ostream&, enumName) */
 #define FO_DEF_ENUM_TOSTRING(enumName, tupleSize, values) \
 constexpr BOOST_PP_IF(BOOST_PP_EQUAL(tupleSize, 2), friend, BOOST_PP_EMPTY()) \
 std::string_view to_string(enumName value) noexcept { \
@@ -58,13 +58,20 @@ std::ostream& operator <<(std::ostream& stream, enumName value) \
 { stream << to_string(value); return stream; }
 
 
-/** @brief Implementation detail for FO_ENUM */
+/** Assembles one initializer list pair of {enumName::elem, "elem"} */
 #define FO_DEF_ENUM_ITERATE_ELEM(r, enumName, elem) \
         {enumName:: elem, BOOST_PP_STRINGIZE(elem) },
 
+/** @brief Implementation detail for FO_ENUM.
+  * elem may be a single enumeration value (enum_value) or may be
+  * an enumeration value and underly type representation (enum_value = N).
+  * This extracts just the enumeration value and passes that along. */
 #define FO_DEF_ENUM_ITERATE_VALUE(r, enumName, elem) \
     FO_DEF_ENUM_ITERATE_ELEM(r, enumName, BOOST_PP_TUPLE_ELEM(0, elem))
 
+/** Assemables an array of pair<enumName, std::string_vew> where the
+  * string_view are the text representations of the enumName.
+  * Also defines a getter for that array as enumNameValues(). */
 #define FO_DEF_ENUM_ITERATE(enumName, tupleSize, values) \
 struct BOOST_PP_CAT(enumName, Impl) { \
     static constexpr std::size_t values_count = BOOST_PP_SEQ_SIZE(values); \
@@ -82,13 +89,15 @@ constexpr auto& BOOST_PP_CAT(enumName, Values)() noexcept \
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
     BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
 
-/** @brief Implementation detail for FO_ENUM */
+/** Defines enumName enumNameFromString(string_view sv, enumName not_found_result)
+  * Return enumName::value that has string representation matching sv or,
+  * if no such string representation exists, returns not_found_result. 
+  * Also defines stream operator>> for enumName. */
 #define FO_DEF_ENUM_FROM_STRING(enumName, tupleSize) \
 constexpr auto BOOST_PP_CAT(enumName, FromString)( \
     std::string_view sv, enumName not_found_result = enumName(0)) noexcept { \
     const auto& vals = BOOST_PP_CAT(enumName, Values)(); \
-    for (const auto& [val, val_sv] : vals) \
-        if (val_sv == sv) return val; \
+    for (const auto& [val, val_sv] : vals) { if (val_sv == sv) return val; } \
     return not_found_result; \
 } \
 inline BOOST_PP_IF(BOOST_PP_EQUAL(tupleSize, 2), friend, BOOST_PP_EMPTY()) \
@@ -109,6 +118,7 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
     FO_DEF_ENUM_ITERATE(enumName, tupleSize, valuesStrings) \
     FO_DEF_ENUM_FROM_STRING(enumName, tupleSize)
 
+/** @brief Implementation detail for FO_ENUM. */
 #define FO_DEF_ENUM_IMPL(typeName, underlyingType, values) \
     FO_DEF_ENUM_IMPL_IMPL( \
         FO_ENUM_NAME_FROM_TYPENAME(typeName), \
@@ -186,7 +196,7 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
 #define FO_ENUM(typeName, values) \
     FO_DEF_ENUM_IMPL(typeName, int8_t, values)
 
-/* Defines an enum as above, except the underlying type of the enum is int16_t */
+/* Defines an enum as above, except the underlying type is int16_t */
 #define FO_ENUM_BIG(typeName, values) \
     FO_DEF_ENUM_IMPL(typeName, int16_t, values)
 
