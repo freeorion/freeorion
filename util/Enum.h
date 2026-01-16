@@ -132,6 +132,19 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
     return stream; \
 }
 
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_IMPL(typeName, valuesStrings) \
+    FO_DEF_ENUM(typeName, valuesStrings) \
+    FO_DEF_ENUM_TOSTRING(typeName, valuesStrings) \
+    FO_DEF_ENUM_ITERATE(typeName, valuesStrings) \
+    FO_DEF_ENUM_FROM_STRING(typeName)
+
+#define FO_DEF_BIGENUM_IMPL(typeName, valuesStrings) \
+    FO_DEF_BIGENUM(typeName, valuesStrings) \
+    FO_DEF_ENUM_TOSTRING(typeName, valuesStrings) \
+    FO_DEF_ENUM_ITERATE(typeName, valuesStrings) \
+    FO_DEF_ENUM_FROM_STRING(typeName)
+
 
 /** @brief Define an enumeration
  *
@@ -200,17 +213,12 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName)& value) \
  * @endcode
  */
 #define FO_ENUM(typeName, values) \
-    FO_DEF_ENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_TOSTRING(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_FROM_STRING(typeName)
+    FO_DEF_ENUM_IMPL(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
 
-// Defines an enum as above, except the underlying type of the enum is int16_t,
-// and omits FO_DEF_ENUM_ISTREAM due to resulting compile error
+/* Defines an enum as above, except the underlying type of the enum is int16_t,
+ * and omits FO_DEF_ENUM_ISTREAM due to resulting compile error.
+ */
 #define FO_ENUM_BIG(typeName, values) \
-    FO_DEF_BIGENUM(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_TOSTRING(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_ITERATE(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)) \
-    FO_DEF_ENUM_FROM_STRING(typeName)
+    FO_DEF_BIGENUM_IMPL(typeName, BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values))
 
 #endif
