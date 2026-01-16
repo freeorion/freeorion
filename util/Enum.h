@@ -36,11 +36,11 @@ enum class enumName : underlyingType { \
 };
 
 /** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, data, elem) \
-    case data:: elem: return BOOST_PP_STRINGIZE(elem); break;
+#define FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, enumName, elemName) \
+    case enumName :: elemName: return BOOST_PP_STRINGIZE(elemName); break;
 
-#define FO_DEF_ENUM_TOSTRING_CASE(r, data, elem) \
-    FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, data, BOOST_PP_TUPLE_ELEM(0, elem))
+#define FO_DEF_ENUM_TOSTRING_CASE(r, enumName, elem) \
+    FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, enumName, BOOST_PP_TUPLE_ELEM(0, elem))
 
 /** Defines to_string(enumName) and ostream& operator<<(ostream&, enumName) */
 #define FO_DEF_ENUM_TOSTRING(enumName, tupleSize, values) \
@@ -60,7 +60,7 @@ std::ostream& operator <<(std::ostream& stream, enumName value) \
 
 /** Assembles one initializer list pair of {enumName::elem, "elem"} */
 #define FO_DEF_ENUM_ITERATE_ELEM(r, enumName, elem) \
-        {enumName:: elem, BOOST_PP_STRINGIZE(elem) },
+        {enumName :: elem, BOOST_PP_STRINGIZE(elem) },
 
 /** @brief Implementation detail for FO_ENUM.
   * elem may be a single enumeration value (enum_value) or may be
