@@ -18,7 +18,7 @@
 
 
 /** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_VALUE(r, data, elem) \
+#define FO_DEF_ENUM_VALUE(r, _, elem) \
     BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(elem), 3), \
         BOOST_PP_TUPLE_ELEM(0, elem) = BOOST_PP_TUPLE_ELEM(1, elem), \
         BOOST_PP_TUPLE_ELEM(0, elem)),
@@ -34,6 +34,7 @@ BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
 enum class enumName : underlyingType { \
     BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_VALUE, _, values) \
 };
+
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_TOSTRING_CASE_ELEM(r, enumName, elemName) \
@@ -85,9 +86,6 @@ BOOST_PP_IF(BOOST_PP_EQUAL(tupleSize, 2), static, BOOST_PP_EMPTY()) \
 constexpr auto& BOOST_PP_CAT(enumName, Values)() noexcept \
 { return BOOST_PP_CAT(enumName, Impl) ::vals; }
 
-/** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
-    BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
 
 /** Defines enumName enumNameFromString(string_view sv, enumName not_found_result)
   * Return enumName::value that has string representation matching sv or,
@@ -110,6 +108,7 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
     return stream; \
 }
 
+
 /** @brief Implementation detail for FO_ENUM.
   * tupleSize is expected to be 2 for a non-class enum and 3 for an enum defined in a class. */
 #define FO_DEF_ENUM_IMPL_IMPL(enumName, underlyingType, tupleSize, valuesStrings) \
@@ -117,6 +116,11 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
     FO_DEF_ENUM_TOSTRING(enumName, tupleSize, valuesStrings) \
     FO_DEF_ENUM_ITERATE(enumName, tupleSize, valuesStrings) \
     FO_DEF_ENUM_FROM_STRING(enumName, tupleSize)
+
+
+/** @brief Implementation detail for FO_ENUM */
+#define FO_DEF_ENUM_ADD_STRING_REPR(s, _, elem) \
+    BOOST_PP_TUPLE_PUSH_BACK(elem, BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)))
 
 #define FO_ENUM_VALUES_WITH_STRINGS(values) \
     BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)
