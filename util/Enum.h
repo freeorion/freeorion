@@ -118,13 +118,16 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
     FO_DEF_ENUM_ITERATE(enumName, tupleSize, valuesStrings) \
     FO_DEF_ENUM_FROM_STRING(enumName, tupleSize)
 
+#define FO_ENUM_VALUES_WITH_STRINGS(values) \
+    BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values)
+
 /** @brief Implementation detail for FO_ENUM. */
 #define FO_DEF_ENUM_IMPL(typeName, underlyingType, values) \
     FO_DEF_ENUM_IMPL_IMPL( \
         FO_ENUM_NAME_FROM_TYPENAME(typeName), \
         underlyingType, \
         BOOST_PP_TUPLE_SIZE(typeName), \
-        BOOST_PP_SEQ_TRANSFORM(FO_DEF_ENUM_ADD_STRING_REPR, _, values) \
+        FO_ENUM_VALUES_WITH_STRINGS(values) \
     )
 
 /** @brief Define an enumeration
