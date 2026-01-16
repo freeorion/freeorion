@@ -80,8 +80,11 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName) value) \
 
 
 /** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_ITERATE_VALUE(r, data, elem) \
-    {data::BOOST_PP_TUPLE_ELEM(0, elem), BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) },
+#define FO_DEF_ENUM_ITERATE_ELEM(r, enumName, elem) \
+        {enumName:: elem, BOOST_PP_STRINGIZE(elem) },
+
+#define FO_DEF_ENUM_ITERATE_VALUE(r, enumName, elem) \
+    FO_DEF_ENUM_ITERATE_ELEM(r, enumName, BOOST_PP_TUPLE_ELEM(0, elem))
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ITERATE(enumName, tupleSize, values) \
