@@ -84,22 +84,18 @@ FO_ENUM_NAME_FROM_TYPENAME(typeName) value) \
     {data::BOOST_PP_TUPLE_ELEM(0, elem), BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0, elem)) },
 
 /** @brief Implementation detail for FO_ENUM */
-#define FO_DEF_ENUM_ITERATE(typeName, values) \
-struct BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Impl) { \
+#define FO_DEF_ENUM_ITERATE(enumName, tupleSize, values) \
+struct BOOST_PP_CAT(enumName, Impl) { \
     static constexpr std::size_t values_count = BOOST_PP_SEQ_SIZE(values); \
-    using values_array_t = std::array<std::pair<FO_ENUM_NAME_FROM_TYPENAME(typeName), std::string_view>, values_count>; \
+    using values_array_t = std::array<std::pair<enumName, std::string_view>, values_count>; \
     static constexpr values_array_t vals {{ \
-    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, \
-        FO_ENUM_NAME_FROM_TYPENAME(typeName), values) \
+    BOOST_PP_SEQ_FOR_EACH(FO_DEF_ENUM_ITERATE_VALUE, enumName, values) \
     }}; \
 }; \
 inline \
-BOOST_PP_IF(BOOST_PP_EQUAL(BOOST_PP_TUPLE_SIZE(typeName), 2), \
-        static, \
-        BOOST_PP_EMPTY()) \
-constexpr auto& \
-BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Values)() noexcept \
-{ return BOOST_PP_CAT(FO_ENUM_NAME_FROM_TYPENAME(typeName), Impl) ::vals; }
+BOOST_PP_IF(BOOST_PP_EQUAL(tupleSize, 2), static, BOOST_PP_EMPTY()) \
+constexpr auto& BOOST_PP_CAT(enumName, Values)() noexcept \
+{ return BOOST_PP_CAT(enumName, Impl) ::vals; }
 
 /** @brief Implementation detail for FO_ENUM */
 #define FO_DEF_ENUM_ADD_STRING_REPR(s, data, elem) \
@@ -128,13 +124,13 @@ std::istream& operator >>(std::istream& stream, enumName & value) { \
 #define FO_DEF_ENUM_IMPL(typeName, valuesStrings) \
     FO_DEF_ENUM(typeName, valuesStrings) \
     FO_DEF_ENUM_TOSTRING(typeName, valuesStrings) \
-    FO_DEF_ENUM_ITERATE(typeName, valuesStrings) \
+    FO_DEF_ENUM_ITERATE(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName), valuesStrings) \
     FO_DEF_ENUM_FROM_STRING(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName))
 
 #define FO_DEF_BIGENUM_IMPL(typeName, valuesStrings) \
     FO_DEF_BIGENUM(typeName, valuesStrings) \
     FO_DEF_ENUM_TOSTRING(typeName, valuesStrings) \
-    FO_DEF_ENUM_ITERATE(typeName, valuesStrings) \
+    FO_DEF_ENUM_ITERATE(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName), valuesStrings) \
     FO_DEF_ENUM_FROM_STRING(FO_ENUM_NAME_FROM_TYPENAME(typeName), BOOST_PP_TUPLE_SIZE(typeName))
 
 
