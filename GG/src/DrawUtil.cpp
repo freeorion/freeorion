@@ -124,13 +124,15 @@ namespace {
     static_assert(Clr::RGBAClr("", "0", "000001") == Clr{0,0,1,255});
     static_assert(Clr::RGBAClr("1", "-2", "", "") == Clr{1,0,0,255});
 
-    static_assert(std::string_view("  345 ").find_first_not_of(' ') == 2u);
-    static_assert(std::string_view("  345 ").find_first_of(' ') == 0u);
-    static_assert(std::string_view("").find_first_of(' ') == std::string_view::npos);
-    static_assert(std::string_view("").find_first_not_of(' ') == std::string_view::npos);
-    static_assert(std::string_view("   ").find_first_not_of(' ') == std::string_view::npos);
-    static_assert(std::string_view("345 ").substr(0u, std::string_view::npos) == "345 ");
-    static_assert(std::string_view("345").substr(3u).empty());
+    using namespace std::literals;
+
+    static_assert("  345 "sv.find_first_not_of(' ') == 2u);
+    static_assert("  345 "sv.find_first_of(' ') == 0u);
+    static_assert(""sv.find_first_of(' ') == std::string_view::npos);
+    static_assert(""sv.find_first_not_of(' ') == std::string_view::npos);
+    static_assert("   "sv.find_first_not_of(' ') == std::string_view::npos);
+    static_assert("345 "sv.substr(0u, std::string_view::npos) == "345 ");
+    static_assert("345"sv.substr(3u).empty());
 
     using svpair = std::pair<std::string_view, std::string_view>;
     static_assert(Clr::NextSpaceDelimChunkAndRest("") == svpair{});
