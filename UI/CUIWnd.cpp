@@ -109,7 +109,7 @@ namespace {
     bool dummy = RegisterWndFlags();
 
     std::string_view WindowNameFromOption(std::string_view option_name) {
-        std::string::size_type prefix_len { std::string_view("ui.").length() };
+        static constexpr std::string::size_type prefix_len { std::string_view("ui.").length() };
 
         // Determine end of window name from start of window mode
         std::string::size_type mode_substr_pos { option_name.find(".fullscreen", prefix_len + 1) };
