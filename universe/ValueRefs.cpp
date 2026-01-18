@@ -2976,6 +2976,10 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     auto Stringify = [](double num) -> std::string {
         if (std::isnan(num))
             return "";
+        else if (std::isinf(num))
+            return num > 0 ? "∞" : "-∞";
+        else if (!std::isfinite(num))
+            return "";
 
         const auto abs_num = std::abs(num);
         if (abs_num < 0.1 || abs_num >= 1000)
