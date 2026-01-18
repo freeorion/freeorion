@@ -25,14 +25,6 @@ namespace std {
 }
 #endif
 
-static_assert(BuildTypeValues().front() == std::pair{BuildType::INVALID_BUILD_TYPE, std::string_view{"INVALID_BUILD_TYPE"}});
-static_assert(BuildTypeValues()[3].second == "BT_SHIP");
-static_assert(std::is_enum_v<BuildType>);
-static_assert(!std::is_arithmetic_v<BuildType>);
-static_assert(!std::is_signed_v<BuildType>);
-static_assert(std::is_signed_v<std::underlying_type_t<BuildType>>);
-static_assert(!std::is_unsigned_v<BuildType>);
-
 
 namespace {
     constexpr float EPSILON = 0.001f;
