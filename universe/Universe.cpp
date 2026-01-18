@@ -853,11 +853,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     // when iterating over the list in the following code
     auto object_ptrs = m_objects.find(objects_vec);
     if (objects_vec.empty()) {
-        object_ptrs.reserve(m_objects.allExisting().size());
-        std::transform(m_objects.allExisting().begin(), m_objects.allExisting().end(),
-                       std::back_inserter(object_ptrs), [](const auto& p) {
-            return std::const_pointer_cast<UniverseObject>(p.second);
-        });
+        static constexpr auto deconst_second = [](const auto& p) { return std::const_pointer_cast<UniverseObject>(p.second); };
+        auto& all_objs{m_objects.allExisting()};
+        object_ptrs.reserve(all_objs.size());
+        std::transform(all_objs.begin(), all_objs.end(), std::back_inserter(object_ptrs), deconst_second);
     }
 
     DebugLogger() << "UpdateMeterEstimatesImpl on " << object_ptrs.size() << " objects";
