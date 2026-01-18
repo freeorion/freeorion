@@ -68,4 +68,67 @@ inline constexpr std::pair<std::string_view, int> neg_one {
 static_assert( neg_one == std::pair{"NEG_ONE"sv, -1});
 
 
+/** types of diplomatic empire affiliations to another empire*/
+FO_ENUM(
+    (TestEnum),
+    ((INVALID, -1))((ZERO, 0))((ONE, 1))
+    ((TWO))((THREE))((FOUR))((FIVE))((SIX))
+    ((SEVEN))((EIGHT))((NINE))((TEN))
+    ((ELEVEN))((TWELVE))((THIRTEEN))((FOURTEEN))
+    ((FIFTEEN))((SIXTEEN))((SEVENTEEN))((EIGHTEEN))
+    ((NINETEEN))((TWENTY))((NUM_TEST))
+)
+
+static_assert(TestEnum{-1} == TestEnum::INVALID);
+static_assert(TestEnum{} == TestEnum::ZERO);
+static_assert(TestEnum{12} == TestEnum::TWELVE);
+static_assert(TestEnum{20} == TestEnum::TWENTY);
+
+static_assert(TestEnumFromString("ZERO", TestEnum::INVALID) == TestEnum{});
+static_assert(TestEnumFromString("TWO", TestEnum::INVALID) == TestEnum::TWO);
+static_assert(TestEnumFromString("TWENTY", TestEnum::NINE) == TestEnum::TWENTY);
+
+static_assert(TestEnumFromString("", TestEnum::INVALID) == TestEnum::INVALID);
+static_assert(TestEnumFromString("ZERO", TestEnum::INVALID) == TestEnum{});
+static_assert(TestEnumFromString("TWO", TestEnum::INVALID) == TestEnum::TWO);
+static_assert(TestEnumFromString("TWENTY", TestEnum::NINE) == TestEnum::TWENTY);
+
+static_assert(to_string(TestEnum::INVALID) == "INVALID");
+static_assert(to_string(TestEnum::ONE) == "ONE");
+static_assert(to_string(TestEnum::NINETEEN) == "NINETEEN");
+
+static_assert(TestEnumImpl::vals.size());
+
+constexpr auto test_enum_vals = TestEnumValues();
+static_assert(std::find_if(test_enum_vals.begin(), test_enum_vals.end(),
+                           [](const auto& val_str) { return val_str.first == TestEnum::NINE; })->second == "NINE");
+
+constexpr auto test_arr = []() {
+    std::array<std::string_view, static_cast<std::size_t>(TestEnum::NUM_TEST)> arr{};
+    for (std::size_t idx = 0u; idx < arr.size(); ++idx)
+        arr[idx] = test_enum_vals[idx].second;
+    return arr;
+}();
+static_assert(test_arr[4] == "THREE");
+
+static_assert(test_enum_vals.front() == std::pair{TestEnum::INVALID, std::string_view{"INVALID"}});
+static_assert(test_enum_vals[3].second == "TWO");
+static_assert(std::is_enum_v<TestEnum>);
+static_assert(!std::is_arithmetic_v<TestEnum>);
+static_assert(!std::is_signed_v<TestEnum>);
+static_assert(std::is_signed_v<std::underlying_type_t<TestEnum>>);
+static_assert(!std::is_unsigned_v<TestEnum>);
+
+struct Encloses {
+    FO_ENUM_BIG(
+        (Encloses, Enclosed),
+        ((INVALID, -1))
+        ((ZERO, 0))
+        ((ONE, 1))
+        ((TWO_HUNDRED, 200))
+        ((THOUSAND, 1000))
+    )
+};
+
 }
+
