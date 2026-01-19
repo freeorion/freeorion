@@ -61,7 +61,7 @@ public:
     [[nodiscard]] bool Contains(int object_id) const override
     { return object_id != INVALID_OBJECT_ID && m_objects.contains(object_id); }
 
-    [[nodiscard]] bool ContainedBy(int object_id) const noexcept override { return false; }
+    [[nodiscard]] bool ContainedBy(int) const noexcept override { return false; }
 
     /** returns the name to display for players for this system.  While all
       * systems may have a proper name assigned, if they contain no planets or
@@ -117,7 +117,7 @@ public:
         UniverseObject::SetID(id);
     }
 
-    void SetOwner(int id) override {} // no-op for systems
+    void SetOwner(int) override {} // no-op for systems
 
     void ResetTargetMaxUnpairedMeters() override;
 

@@ -22,7 +22,7 @@ namespace {
         float RPs, const std::map<std::string, float>& research_progress, // TODO: make flat_map<std::string_view, float> ?
         const std::map<std::string, TechStatus>& research_status,
         ResearchQueue::QueueType& queue, float& total_RPs_spent,
-        int& projects_in_progress, int empire_id,
+        int& projects_in_progress,
         const std::vector<std::tuple<std::string_view, double, int>>& costs_times,
         const ScriptingContext& context)
     {
@@ -154,7 +154,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     auto sim_tech_status_map = tm | range_transform(to_name_status) | range_to<SimTechStatusMap>();
 
     SetTechQueueElementSpending(RPs, research_progress, sim_tech_status_map, m_queue,
-                                m_total_RPs_spent, m_projects_in_progress, m_empire_id,
+                                m_total_RPs_spent, m_projects_in_progress,
                                 costs_times, context);
 
     if (m_queue.empty()) {
