@@ -26,7 +26,7 @@ struct FO_COMMON_API All final : public Condition {
     { return context.ContextObjects().check_if_any(candidate_ids); }
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) override {}
+    void SetTopLevelContent(const std::string&) override {}
     [[nodiscard]] uint32_t GetCheckSum() const override;
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;

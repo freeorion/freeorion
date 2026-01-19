@@ -285,7 +285,7 @@ namespace CheckSums {
     { CheckSumCombine(sum, static_cast<int>(t) + 10); }
 
     // nullptr
-    constexpr void CheckSumCombine(uint32_t& sum, std::nullptr_t) noexcept {}
+    constexpr void CheckSumCombine(uint32_t&, std::nullptr_t) noexcept {}
 
     // misc
     constexpr void CheckSumCombine(uint32_t& sum, const auto& v)
