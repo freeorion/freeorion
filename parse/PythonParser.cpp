@@ -50,7 +50,7 @@ namespace {
     template<typename T>
     void compile_eval(const char* content, const std::basic_string<T>& filename, const py::object& globals) {
         TraceLogger() << "Trying to convert path to bytes...";
-        PyObject *filename_str;
+        PyObject* filename_str;
         if constexpr (std::is_same_v<T, wchar_t>) {
             filename_str = PyUnicode_FromWideChar(filename.c_str(), filename.size());
         } else {
