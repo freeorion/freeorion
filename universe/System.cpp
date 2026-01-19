@@ -184,13 +184,6 @@ std::string System::Dump(uint8_t ntabs) const {
 }
 
 std::string System::ApparentName(int empire_id, const Universe& u, bool blank_unexplored_and_none) const {
-    // this one line requires a higher __GNUC__ version to compile for several Docker / Fedora test builds. No idea why it's different from the other similar cases.
-#if defined(__cpp_lib_constexpr_string) && (!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNU_MINOR__ >= 2)) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 10)))
-    static constexpr std::string EMPTY_STRING;
-#else
-    static const std::string EMPTY_STRING;
-#endif
-
     const ObjectMap& o = u.Objects();
 
     if (empire_id == ALL_EMPIRES)
