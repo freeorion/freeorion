@@ -40,7 +40,7 @@ BOOST_CLASS_VERSION(Universe, 3)
 
 
 template <typename Archive>
-void serialize(Archive& ar, ObjectMap& objmap, unsigned int const version)
+void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
 {
     ar & boost::serialization::make_nvp("m_objects", objmap.m_objects);
 
@@ -392,7 +392,7 @@ namespace {
 
 
     template <typename Archive>
-    void Serialize(Archive& ar, UniverseObject::MeterMap& meters, unsigned int const version)
+    void Serialize(Archive& ar, UniverseObject::MeterMap& meters, unsigned int const)
     { ar & boost::serialization::make_nvp("m_meters", meters); }
 
     template <>
@@ -471,7 +471,7 @@ namespace {
 
 
     template <typename Archive>
-    void Serialize(Archive& ar, Ship::PartMeterMap& meters, unsigned int const version)
+    void Serialize(Archive& ar, Ship::PartMeterMap& meters, unsigned int const)
     { ar & boost::serialization::make_nvp("m_part_meters", meters); }
 
     template <>
@@ -772,7 +772,7 @@ namespace {
 }
 
 template <typename Archive>
-void load_construct_data(Archive& ar, System* obj, unsigned int const version)
+void load_construct_data(Archive&, System* obj, unsigned int const)
 { ::new(obj)System(); }
 
 template <typename Archive>
@@ -828,11 +828,11 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, Syst
 
 
 template <typename Archive>
-void load_construct_data(Archive& ar, Field* obj, unsigned int const version)
+void load_construct_data(Archive&, Field* obj, unsigned int const)
 { ::new(obj)Field(); }
 
 template <typename Archive>
-void serialize(Archive& ar, Field& obj, unsigned int const version)
+void serialize(Archive& ar, Field& obj, unsigned int const)
 {
     using namespace boost::serialization;
 
@@ -842,7 +842,7 @@ void serialize(Archive& ar, Field& obj, unsigned int const version)
 
 
 template <typename Archive>
-void load_construct_data(Archive& ar, Planet* obj, unsigned int const version)
+void load_construct_data(Archive&, Planet* obj, unsigned int const)
 { ::new(obj)Planet(); }
 
 namespace {
@@ -850,7 +850,7 @@ namespace {
     struct PopCenter { std::string m_species_name; };
 
     template <typename Archive>
-    void serialize(Archive& ar, PopCenter& pop, unsigned int const version)
+    void serialize(Archive& ar, PopCenter& pop, unsigned int const)
     { ar & boost::serialization::make_nvp("m_species_name", pop.m_species_name); }
 
     struct ResourceCenter {
@@ -861,7 +861,7 @@ namespace {
     };
 
     template <typename Archive>
-    void serialize(Archive& ar, ResourceCenter& rs, unsigned int const version)
+    void serialize(Archive& ar, ResourceCenter& rs, unsigned int const)
     {
         using namespace boost::serialization;
 
@@ -966,11 +966,11 @@ BOOST_CLASS_VERSION(Planet, 10)
 
 
 template <typename Archive>
-void load_construct_data(Archive& ar, Building* obj, unsigned int const version)
+void load_construct_data(Archive&, Building* obj, unsigned int const)
 { ::new(obj)Building(); }
 
 template <typename Archive>
-void serialize(Archive& ar, Building& obj, unsigned int const version)
+void serialize(Archive& ar, Building& obj, unsigned int const)
 {
     using namespace boost::serialization;
 
@@ -985,7 +985,7 @@ BOOST_CLASS_EXPORT(Building)
 
 
 template <typename Archive>
-void load_construct_data(Archive& ar, Fleet* obj, unsigned int const version)
+void load_construct_data(Archive&, Fleet* obj, unsigned int const)
 { ::new(obj)Fleet(); }
 
 template <typename Archive>
