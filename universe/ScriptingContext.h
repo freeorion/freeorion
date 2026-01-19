@@ -287,8 +287,6 @@ struct [[nodiscard]] ScriptingContext final {
         return object_it->second;
     }
 
-    [[nodiscard]] const std::string& GetVisibleObjectName(int id) const noexcept { return EMPTY_STRING; }
-
     // mutable empire not thread safe to modify
     [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id) {
         if (!empires) {
