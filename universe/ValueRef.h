@@ -218,6 +218,12 @@ decltype(auto) FlexibleToString(T&& t)
     } else if constexpr (std::is_same_v<std::decay_t<T>, std::string_view>) {
         return std::string{t};
 
+    } else if constexpr (std::is_same_v<T, std::vector<int>> || std::is_same_v<T, std::vector<double>>) {
+        std::string retval;
+        for (auto& ts: t)
+            retval.append(std::to_string(ts));
+        return retval;
+
     } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
         std::size_t total_size = 0;
         for (auto& ts : t)

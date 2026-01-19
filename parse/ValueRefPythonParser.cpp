@@ -731,6 +731,26 @@ namespace {
         return boost::python::object();
     }
 
+    template <typename T>
+    boost::python::object insert_reduce_vector_(const PythonParser& parser, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
+        // XXX argument checks
+        auto vector = boost::python::extract<value_ref_wrapper<std::vector<T>>>(args[1]);
+        if (args[0] == parser.type_int) {
+            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ReduceVector<int,T>>(ValueRef::CloneUnique(vector().value_ref), type)));
+        } else if (args[0] == parser.type_float) {
+            ErrorLogger() << "insert_reduce_vector_(parser.type_float) using untested functionality - remove this log entry after test";
+            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ReduceVector<double,T>>(ValueRef::CloneUnique(vector().value_ref), type)));
+        //} else if (args[0] == parser.type_str) { // only supporting arithmetic T currently
+        //    return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::ReduceVector<std::string,T>>(nullptr, type)));
+        } else {
+            ErrorLogger() << "Unsupported type for ReduceVector : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+
+        return boost::python::object();
+    }
+
     boost::python::object insert_statistic_(const PythonParser& parser, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto condition = boost::python::extract<condition_wrapper>(kw["condition"])();
         if (args[0] == parser.type_int) {
@@ -1114,6 +1134,26 @@ namespace {
         ));
     }
 
+    value_ref_wrapper<std::vector<std::string>> insert_empire_adopted_policies_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        std::unique_ptr<ValueRef::ValueRef<int>> empire;
+        if (kw.has_key("empire")) {
+            auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
+            if (empire_args.check()) {
+                empire = ValueRef::CloneUnique(empire_args().value_ref);
+            } else {
+                empire = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["empire"])());
+            }
+        }
+        return value_ref_wrapper<std::vector<std::string>>(std::make_shared<ValueRef::ComplexVariable<std::vector<std::string>>>(
+            "EmpireAdoptedPolicies",
+            std::move(empire),
+            nullptr,
+            nullptr,
+            nullptr,
+            nullptr
+        ));
+    }
+
     value_ref_wrapper<double> insert_empire_stockpile_(const boost::python::tuple& args, const boost::python::dict& kw) {
         std::unique_ptr<ValueRef::ValueRef<int>> empire;
         auto empire_args = boost::python::extract<value_ref_wrapper<int>>(kw["empire"]);
@@ -1314,6 +1354,9 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     const auto noop = ValueRef::OpType::NOOP;
     const auto xf = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_1arg_(parser, noop, args, kw); };
     globals["NoOpValue"] = boost::python::raw_function(xf, 2); // needs type and value like NoOpValue(int, 1)
+    const auto f_insert_vector_count = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_reduce_vector_<std::string>(parser, ValueRef::StatisticType::COUNT, args, kw); };
+    globals["VectorCount"] = boost::python::raw_function(f_insert_vector_count, 1);
+
     const auto f_insert_statistic_if = [&parser](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_statistic_(parser, ValueRef::StatisticType::IF, args, kw); };
     globals["StatisticIf"] = boost::python::raw_function(f_insert_statistic_if, 1);
 
@@ -1330,6 +1373,7 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals, const PythonParser& 
     globals["PartsInShipDesign"] = boost::python::raw_function(insert_parts_in_ship_design_);
     globals["ShipPartMeter"] = boost::python::raw_function(insert_ship_part_meter_);
     globals["EmpireMeterValue"] = boost::python::raw_function(insert_empire_meter_value_);
+    globals["EmpireAdoptedPolicies"] = boost::python::raw_function(insert_empire_adopted_policies_);
     globals["EmpireStockpile"] = boost::python::raw_function(insert_empire_stockpile_);
     globals["PlanetTypeDifference"] = boost::python::raw_function(insert_planet_type_difference_);
     globals["Const"] = boost::python::make_function([&parser](const boost::python::object& type, const boost::python::object& value) { return insert_const_(parser, type, value); },
