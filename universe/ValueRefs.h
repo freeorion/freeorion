@@ -700,7 +700,7 @@ struct FO_COMMON_API TotalFighterShots final : public Variable<int>
                                std::unique_ptr<Condition::Condition>&& sampling_condition = nullptr) :
         Variable<int>(CalcRTSLI(carrier_id, sampling_condition),
                       ReferenceType::NON_OBJECT_REFERENCE,
-                      CheckSums::GetCheckSum("ValueRef::TotalFighterShots", m_carrier_id, m_sampling_condition)),
+                      CheckSums::GetCheckSum("ValueRef::TotalFighterShots", carrier_id, sampling_condition)),
         m_carrier_id(std::move(carrier_id)),
         m_sampling_condition(std::move(sampling_condition))
     {}
