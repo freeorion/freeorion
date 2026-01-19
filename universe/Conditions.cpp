@@ -4780,7 +4780,7 @@ void FocusType::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                      SearchDomain search_domain) const
 {
     const bool simple_eval_safe = m_names_local_invariant &&
-                                  parent_context.condition_root_candidate || RootCandidateInvariant();
+                                 (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate names once, and use to check all candidate objects
         const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
