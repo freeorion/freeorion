@@ -1318,9 +1318,10 @@ namespace {
     };
 
     enum class MinMax : uint8_t { Min, Max, Spread, Mode };
+
     static constexpr auto second_less = [](const auto& p1, const auto& p2)
         noexcept(noexcept(p1.second < p2.second))
-        { return p1.second < p2.second; };
+    { return p1.second < p2.second; };
 
     template <typename T, MinMax min_or_max = MinMax::Min, typename C, typename V = decayed_value_t<C>>
     constexpr T HistoMinMax(C&& opv)
