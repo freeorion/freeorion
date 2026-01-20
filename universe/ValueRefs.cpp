@@ -412,7 +412,7 @@ std::string ReconstructName(std::string_view property_name, ContainerType contai
 }
 
 std::string FormatedDescriptionPropertyNames(ReferenceType ref_type, std::string_view property_name,
-                                             ContainerType container_type, bool return_immediate_value)
+                                             ContainerType container_type, bool)
 {
     const uint8_t bits_count = uint8_t(container_type != ContainerType::NONE ? 1u : 0u) +
         uint8_t((ref_type != NON_OBJECT_REFERENCE && ref_type != INVALID_REFERENCE_TYPE) ? 1u : 0u);
@@ -1449,8 +1449,6 @@ std::string Statistic<std::string, std::string>::Eval(const ScriptingContext& co
     for (auto& entry : object_property_values)
         observed_values[std::move(entry)]++;
 
-    static constexpr auto second_less = [](const auto& p1, const auto& p2) -> bool
-    { return p1.second < p2.second; };
     auto max = range_max_element(observed_values, second_less);
 
     return max->first;
