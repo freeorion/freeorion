@@ -17,7 +17,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-x64.zip
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-Win32.zip
           target: ../
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
@@ -76,7 +76,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-x64.zip
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-Win32.zip
           target: ../
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
