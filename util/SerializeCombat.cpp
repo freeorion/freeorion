@@ -287,7 +287,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Weapons
 
 
 template <typename Archive>
-void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int version)
+void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int/* version*/)
 {
     using namespace boost::serialization;
 
@@ -297,7 +297,7 @@ void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int vers
 
 
 template <typename Archive>
-void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
+void serialize(Archive& ar, CombatLog& obj, const unsigned int/* version*/)
 {
     using namespace boost::serialization;
 
@@ -337,7 +337,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatL
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLog&, const unsigned int);
 
 template <typename Archive>
-void serialize(Archive& ar, CombatLogManager& obj, const unsigned int version)
+void serialize(Archive& ar, CombatLogManager& obj, const unsigned int/* version*/)
 {
     using namespace boost::serialization;
 
@@ -372,7 +372,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatL
 
 
 template <typename Archive>
-void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned int version)
+void SerializeIncompleteLogs(Archive& ar, CombatLogManager& obj, const unsigned int/* version*/)
 {
     using namespace boost::serialization;
 
