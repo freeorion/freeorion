@@ -264,7 +264,7 @@ std::size_t Edit::NumLines() const noexcept
     return (ldsz > 0) ? (ldsz - 1) : 0;
 }
 
-void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void Edit::LButtonDown(Pt pt, Flags<ModKey>)
 {
     if (Disabled())
         return;
@@ -280,7 +280,7 @@ void Edit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
         m_cursor_pos = {idx, idx};
 }
 
-void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
+void Edit::LDrag(Pt pt, Pt, Flags<ModKey>)
 {
     if (Disabled())
         return;
@@ -324,10 +324,10 @@ void Edit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     //          << " to cp idx: " << Value(m_cursor_pos.second) << std::endl;
 }
 
-void Edit::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
+void Edit::LButtonUp(Pt, Flags<ModKey>)
 { ClearDoubleButtonDownMode(); }
 
-void Edit::LClick(Pt pt, Flags<ModKey> mod_keys)
+void Edit::LClick(Pt, Flags<ModKey>)
 { ClearDoubleButtonDownMode(); }
 
 void Edit::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
@@ -506,9 +506,6 @@ void Edit::TextInput(const std::string& text) {
         AdjustView();
 }
 
-void Edit::GainingFocus()
-{ m_recently_edited = false; }
-
 void Edit::LosingFocus()
 {
     if (m_recently_edited)
@@ -536,9 +533,6 @@ std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordCPIndices(CPSize cp_i
                                  [cp_index](auto word) { return word.first < cp_index && cp_index < word.second; });
     return (it != words_cp_indices.end()) ? *it : std::pair<CPSize, CPSize>{cp_index, cp_index};
 }
-
-void Edit::ClearDoubleButtonDownMode()
-{ m_in_double_click_mode = false; }
 
 void Edit::ClearSelected()
 {
@@ -615,7 +609,7 @@ void Edit::AdjustView()
 ////////////////////////////////////////////////////////////
 // Free Functions
 ////////////////////////////////////////////////////////////
-void GG::GetTranslatedCodePoint(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys,
+void GG::GetTranslatedCodePoint(Key, uint32_t key_code_point, Flags<ModKey>,
                                 std::string& translated_code_point)
 {
     // only process it if it's a valid code point or a known printable

@@ -62,7 +62,7 @@ public:
     Pt ClientLowerRight() const noexcept override { return LowerRight() - Pt(X(PIXEL_MARGIN), Y(PIXEL_MARGIN)); }
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
-    Pt MinUsableSize(X width) const override { return MinUsableSize(); }
+    Pt MinUsableSize(X) const override { return MinUsableSize(); }
 
     /** Returns the current position of the cursor (first selected character
         to one past the last selected one). */
@@ -168,7 +168,7 @@ protected:
     void LClick(Pt pt, Flags<ModKey> mod_keys) override;
     void KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void TextInput(const std::string& text) override;
-    void GainingFocus() override;
+    void GainingFocus() override { m_recently_edited = false; }
     void LosingFocus() override;
 
     /** Does a bit more than its name suggests.  Records the current time, and
@@ -189,7 +189,7 @@ protected:
 
     /** Sets the value of InDoubleButtonDownMode() to false.  This should be
         called in LClick() and LButtonUp() overrides. */
-    void ClearDoubleButtonDownMode();
+    void ClearDoubleButtonDownMode() noexcept { m_in_double_click_mode = false; }
 
     /** Code point indices (not glyphs) of cursor.
         If .first == .second, the caret is drawn before character at
