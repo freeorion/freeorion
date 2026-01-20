@@ -362,8 +362,6 @@ namespace {
     const auto unit_vertices = []() {
         std::array<double, 2u*(SLICES+1u)> verts{};
 
-        const double HORZ_THETA = twoPI / SLICES;
-
         // calculate x,y values for each point on a unit circle divided into SLICES arcs
         double theta = 0.0f;
         for (std::size_t j = 0; j <= SLICES; theta += HORZ_THETA, ++j) {
@@ -413,7 +411,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
     const double inner_radius = (std::min(wd, ht) - 2.0*bevel_thick) / std::min(wd, ht);
 
     GL2DVertexBuffer fan_vert_buf;
-    fan_vert_buf.reserve(3u + last_slice_idx - first_slice_idx);
+    fan_vert_buf.reserve(static_cast<std::size_t>(std::abs(3 + last_slice_idx - first_slice_idx)));
     fan_vert_buf.store(X0, Y0);
     fan_vert_buf.store(theta1_x * inner_radius, theta1_y * inner_radius);
     // angles in between theta1 and theta2, if any
@@ -438,7 +436,7 @@ void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
 
 
     GL2DVertexBuffer quads_vert_buf;
-    quads_vert_buf.reserve(4u + 2u*(last_slice_idx - first_slice_idx));
+    quads_vert_buf.reserve(static_cast<std::size_t>(4 + 2*(last_slice_idx - first_slice_idx)));
 
     GLRGBAColorBuffer quads_colour_buf;
     quads_colour_buf.reserve(quads_vert_buf.size());
