@@ -135,19 +135,19 @@ IntroMenu::IntroMenu(my_context ctx) :
 IntroMenu::~IntroMenu()
 { TraceLogger(FSM) << "(HumanClientFSM) ~IntroMenu"; }
 
-boost::statechart::result IntroMenu::react(const HostSPGameRequested& a) {
+boost::statechart::result IntroMenu::react(const HostSPGameRequested&) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
     Client().Remove(Client().GetUI().GetIntroScreen());
     return transit<WaitingForSPHostAck>();
 }
 
-boost::statechart::result IntroMenu::react(const HostMPGameRequested& a) {
+boost::statechart::result IntroMenu::react(const HostMPGameRequested&) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.HostMPGameRequested";
     Client().Remove(Client().GetUI().GetIntroScreen());
     return transit<WaitingForMPHostAck>();
 }
 
-boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a) {
+boost::statechart::result IntroMenu::react(const JoinMPGameRequested&) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.JoinMPGameRequested";
     Client().Remove(Client().GetUI().GetIntroScreen());
     return transit<WaitingForMPJoinAck>();
@@ -209,7 +209,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
     }
 }
 
-boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
+boost::statechart::result WaitingForSPHostAck::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 
     // See reaction_transition_note.
@@ -291,7 +291,7 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     }
 }
 
-boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
+boost::statechart::result WaitingForMPHostAck::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 
     // See reaction_transition_note.
@@ -404,7 +404,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const AuthRequest& msg) {
     return discard_event();
 }
 
-boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
+boost::statechart::result WaitingForMPJoinAck::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 
     // See reaction_transition_note.
@@ -449,7 +449,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const StartQuittingGame& e)
     return transit<QuittingGame>();
 }
 
-boost::statechart::result WaitingForMPJoinAck::react(const CancelMPGameClicked& a) {
+boost::statechart::result WaitingForMPJoinAck::react(const CancelMPGameClicked&) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForMPJoinAck.CancelMPGameClicked";
 
     // See reaction_transition_note.
@@ -474,7 +474,7 @@ MPLobby::MPLobby(my_context ctx) :
 MPLobby::~MPLobby()
 { TraceLogger(FSM) << "(HumanClientFSM) ~MPLobby"; }
 
-boost::statechart::result MPLobby::react(const Disconnection& d) {
+boost::statechart::result MPLobby::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.Disconnection";
 
     // See reaction_transition_note.
@@ -527,7 +527,7 @@ boost::statechart::result MPLobby::react(const PlayerChat& msg) {
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
+boost::statechart::result MPLobby::react(const CancelMPGameClicked&)
 {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
 
@@ -537,7 +537,7 @@ boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
     return retval;
 }
 
-boost::statechart::result MPLobby::react(const StartMPGameClicked& a) {
+boost::statechart::result MPLobby::react(const StartMPGameClicked&) {
     TraceLogger(FSM) << "(HumanClientFSM) MPLobby.StartMPGameClicked";
 
     if (Client().Networking().PlayerIsHost(Client().Networking().PlayerID()))
@@ -632,14 +632,14 @@ boost::statechart::result MPLobby::react(const ChatHistory& msg) {
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const PlayerStatus& msg) {
+boost::statechart::result MPLobby::react(const PlayerStatus&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayerStatus.";
     // ToDo: show it in player ready status
 
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const SaveGameComplete& msg) {
+boost::statechart::result MPLobby::react(const SaveGameComplete&) {
     TraceLogger(FSM) << "(HumanClientFSM) SaveGameComplete.";
     // ignore it
 
@@ -733,7 +733,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const Disconnection& d) {
+boost::statechart::result PlayingGame::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 
     // See reaction_transition_note.
@@ -1158,7 +1158,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnDataUnpackedNotifi
 boost::statechart::result WaitingForTurnData::react(const UnpackFailedNotification&)
 { return discard_event(); }
 
-boost::statechart::result WaitingForTurnData::react(const TurnRevoked& msg) {
+boost::statechart::result WaitingForTurnData::react(const TurnRevoked&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnRevoked";
 
     // Allow player to change orders
@@ -1262,7 +1262,7 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     return discard_event();
 }
 
-boost::statechart::result PlayingTurn::react(const AdvanceTurn& d) {
+boost::statechart::result PlayingTurn::react(const AdvanceTurn&) {
     SaveGameUIData ui_data;
     Client().GetUI().GetSaveGameUIData(ui_data);
     Client().StartTurn(ui_data);
@@ -1281,7 +1281,7 @@ boost::statechart::result PlayingTurn::react(const TurnUpdate& msg) {
     return transit<WaitingForTurnData>();
 }
 
-boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
+boost::statechart::result PlayingTurn::react(const TurnEnded&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingTurn.TurnEnded";
     return transit<WaitingForTurnData>();
 }
@@ -1344,7 +1344,7 @@ boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
     return discard_event();
 }
 
-boost::statechart::result QuittingGame::react(const ShutdownServer& u) {
+boost::statechart::result QuittingGame::react(const ShutdownServer&) {
     TraceLogger(FSM) << "(HumanClientFSM) QuittingGame.ShutdownServer";
 
     if (!m_server_process) {
@@ -1377,7 +1377,7 @@ boost::statechart::result QuittingGame::react(const ShutdownServer& u) {
 constexpr auto QUITTING_TIMEOUT =          std::chrono::milliseconds(5000);
 constexpr auto QUITTING_POLLING_INTERVAL = std::chrono::milliseconds(10);
 
-boost::statechart::result QuittingGame::react(const WaitForDisconnect& u) {
+boost::statechart::result QuittingGame::react(const WaitForDisconnect&) {
     TraceLogger(FSM) << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
 
     if (!Client().Networking().IsConnected()) {
@@ -1399,7 +1399,7 @@ boost::statechart::result QuittingGame::react(const WaitForDisconnect& u) {
     return discard_event();
  }
 
-boost::statechart::result QuittingGame::react(const Disconnection& d) {
+boost::statechart::result QuittingGame::react(const Disconnection&) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.Disconnection";
 
     if (m_server_process) {
@@ -1414,7 +1414,7 @@ boost::statechart::result QuittingGame::react(const Disconnection& d) {
     return discard_event();
 }
 
-boost::statechart::result QuittingGame::react(const TerminateServer& u) {
+boost::statechart::result QuittingGame::react(const TerminateServer&) {
     TraceLogger(FSM) << "(HumanClientFSM) QuittingGame.TerminateServer";
 
     if (m_server_process && !m_server_process->Empty()) {

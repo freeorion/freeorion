@@ -178,7 +178,7 @@ namespace {
 std::string BoutBeginEvent::DebugString(const ScriptingContext&) const
 { return std::string{"Bout "}.append(std::to_string(bout)).append(" begins."); }
 
-std::string BoutBeginEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext&) const
+std::string BoutBeginEvent::CombatLogDescription(int, const ScriptingContext&) const
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
 
@@ -191,10 +191,10 @@ std::string BoutEvent::DebugString(const ScriptingContext&) const {
     return ss.str();
 }
 
-std::string BoutEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext&) const
+std::string BoutEvent::CombatLogDescription(int, const ScriptingContext&) const
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
-std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int viewing_empire_id) const
+std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int) const
 { return std::vector<ConstCombatEventPtr>{events.begin(), events.end()}; }
 
 
@@ -398,7 +398,7 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id, cons
     return desc;
 }
 
-std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int viewing_empire_id) const {
+std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int) const {
     std::vector<ConstCombatEventPtr> all_events;
     all_events.reserve(events.size());  // underestimate probably
     for (const auto& target : events)
@@ -433,7 +433,7 @@ std::string WeaponFireEvent::CombatLogDescription(int viewing_empire_id, const S
                % round);
 }
 
-std::string WeaponFireEvent::CombatLogDetails(int viewing_empire_id) const {
+std::string WeaponFireEvent::CombatLogDetails(int) const {
     const std::string& template_str = UserString("ENC_COMBAT_ATTACK_DETAILS");
 
     if (shield >= 0)
@@ -491,7 +491,7 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id, con
     return str(FlexibleFormat(template_str) % owner_string % object_link);
 }
 
-boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id) const
+boost::optional<int> IncapacitationEvent::PrincipalFaction(int) const
 { return object_owner_id; }
 
 
@@ -593,7 +593,7 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id,
               % std::abs(number_launched));
 }
 
-boost::optional<int> FighterLaunchEvent::PrincipalFaction(int viewing_empire_id) const
+boost::optional<int> FighterLaunchEvent::PrincipalFaction(int) const
 { return fighter_owner_empire_id; }
 
 
@@ -738,7 +738,7 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
     return desc;
 }
 
-std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_empire_id) const {
+std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int) const {
     std::vector<ConstCombatEventPtr> all_events;
     all_events.reserve(events.size());  // underestimate probably
     for (const auto& target : events)
@@ -747,5 +747,5 @@ std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int viewing_emp
     return all_events;
 }
 
-boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int viewing_empire_id) const
+boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int) const
 { return attacker_owner_id; }

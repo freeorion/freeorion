@@ -4,7 +4,7 @@
 #include "../util/Logger.h"
 
 
-std::string UnlockableItem::Dump(uint8_t ntabs) const {
+std::string UnlockableItem::Dump(uint8_t) const {
     std::string retval = "Item type = ";
     switch (type) {
     case UnlockableItemType::UIT_BUILDING:    retval += "Building";   break;
