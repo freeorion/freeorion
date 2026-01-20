@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ inputs.weekly-deploy }}
         with:
-          name: weekly-artifacts-sf-macos-${{ github.run_number }}
+          name: weekly-artifacts-sf-${{ inputs.os }}-${{ github.run_number }}
           path: build/FreeOrion_*_Test_MacOSX_*.dmg
           if-no-files-found: error
           retention-days: 1
