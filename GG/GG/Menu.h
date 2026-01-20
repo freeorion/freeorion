@@ -37,7 +37,7 @@ struct GG_API MenuItem
 {
     MenuItem() = default;
 
-    explicit MenuItem(bool separator) :
+    explicit MenuItem(bool) :
         disabled(true),
         separator(true)
     {}

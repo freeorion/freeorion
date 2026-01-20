@@ -290,7 +290,7 @@ T Slider<T>::PtToPosn(Pt pt) const
 }
 
 template <typename T>
-void Slider<T>::LClick(Pt pt, Flags<ModKey> mod_keys)
+void Slider<T>::LClick(Pt pt, Flags<ModKey>)
 { SlideToImpl(m_posn < PtToPosn(pt) ? m_posn + PageSize() : m_posn - PageSize(), true); }
 
 template <typename T>

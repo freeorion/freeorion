@@ -16,11 +16,11 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::Control
 ////////////////////////////////////////////////
-void Control::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
+void Control::MouseWheel(Pt, int, Flags<ModKey>)
 { ForwardEventToParent(); }
 
-void Control::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Control::KeyPress(Key, uint32_t, Flags<ModKey>)
 { ForwardEventToParent(); }
 
-void Control::KeyRelease(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Control::KeyRelease(Key, uint32_t, Flags<ModKey>)
 { ForwardEventToParent(); }

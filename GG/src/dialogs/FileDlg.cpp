@@ -247,7 +247,7 @@ void FileDlg::Render()
     }
 }
 
-void FileDlg::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
+void FileDlg::KeyPress(Key key, uint32_t, Flags<ModKey>)
 {
     if (key == Key::GGK_RETURN || key == Key::GGK_KP_ENTER)
         OkHandler(false);
@@ -482,7 +482,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& file_rows)
         m_ok_button->SetText(m_open_str);
 }
 
-void FileDlg::FileDoubleClicked(DropDownList::iterator it, GG::Pt pt, Flags<ModKey> modkeys)
+void FileDlg::FileDoubleClicked(DropDownList::iterator it, GG::Pt, Flags<ModKey>)
 {
     m_files_list->DeselectAll();
     m_files_list->SelectRow(it);
@@ -490,13 +490,13 @@ void FileDlg::FileDoubleClicked(DropDownList::iterator it, GG::Pt pt, Flags<ModK
     OkHandler(true);
 }
 
-void FileDlg::FilesEditChanged(const std::string& str)
+void FileDlg::FilesEditChanged(const std::string&)
 {
     if (m_save && m_ok_button->Text() != m_save_str)
         m_ok_button->SetText(m_save_str);
 }
 
-void FileDlg::FilterChanged(DropDownList::iterator it)
+void FileDlg::FilterChanged(DropDownList::iterator)
 { UpdateList(); }
 
 void FileDlg::SetWorkingDirectory(const fs::path& p)
