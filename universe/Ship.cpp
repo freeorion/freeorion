@@ -533,9 +533,7 @@ std::vector<float> Ship::AllWeaponsShipDamage(const ScriptingContext& context, f
                                     Combat::InclFightersWD{launch_fighters}, Combat::TargetShipsWD::TargetShips);
 }
 
-std::vector<float> Ship::AllWeaponsMaxShipDamage(const ScriptingContext& context, float shield_DR,
-                                                 bool launch_fighters) const
-{
+std::vector<float> Ship::AllWeaponsMaxShipDamage(const ScriptingContext& context, float shield_DR, bool) const {
     if (context.ContextUniverse().GetShipDesign(m_design_id))
         return Combat::WeaponDamageImpl(context, *this, shield_DR, Combat::MaxWD::MAX, Combat::InclFightersWD::WITH);
     return {};

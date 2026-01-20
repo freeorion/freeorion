@@ -257,9 +257,9 @@ namespace SystemPathing {
               m_levels_remaining(max_depth)
         {}
 
-        void initialize_vertex(const Vertex& v, const Graph& g) {}
+        void initialize_vertex(const Vertex&, const Graph&) {}
 
-        void discover_vertex(const Vertex& v, const Graph& g) {
+        void discover_vertex(const Vertex& v, const Graph&) {
             m_predecessors[static_cast<int>(v)] = m_source;
 
             if (v == m_stop)
@@ -271,7 +271,7 @@ namespace SystemPathing {
             }
         }
 
-        void examine_vertex(const Vertex& v, const Graph& g) {
+        void examine_vertex(const Vertex& v, const Graph&) {
             if (v == m_marker) {
                 if (!m_levels_remaining)
                     throw ReachedDepthLimit();
@@ -282,14 +282,14 @@ namespace SystemPathing {
             m_source = v; // avoid re-calculating source from edge
         }
 
-        void examine_edge(const Edge& e, const Graph& g) {}
-        void tree_edge(const Edge& e, const Graph& g) {}    // wait till target is calculated
+        void examine_edge(const Edge&, const Graph&) {}
+        void tree_edge(const Edge&, const Graph&) {}    // wait till target is calculated
 
 
-        void non_tree_edge(const Edge& e, const Graph& g) {}
-        void gray_target(const Edge& e, const Graph& g) {}
-        void black_target(const Edge& e, const Graph& g) {}
-        void finish_vertex(const Vertex& e, const Graph& g) {}
+        void non_tree_edge(const Edge&, const Graph&) {}
+        void gray_target(const Edge&, const Graph&) {}
+        void black_target(const Edge&, const Graph&) {}
+        void finish_vertex(const Vertex&, const Graph&) {}
     };
 
     ////////////////////////////////////////////////////////////////
@@ -1335,7 +1335,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     bool& answer, int jumps,
     const ObjectMap& objects,
     const Condition::ObjectSet& others,
-    std::size_t ii, distance_matrix_storage<int16_t>::row_ref row) const
+    std::size_t, distance_matrix_storage<int16_t>::row_ref row) const
 {
     const bool trace_log = LoggerThresholdEnabled(LogLevel::trace);
     // Check if any of the others are within jumps of candidate, by looping
@@ -1515,9 +1515,7 @@ void Pathfinder::UpdateEmpireVisibilityFilteredSystemGraphs(const EmpireManager&
 { pimpl->UpdateEmpireVisibilityFilteredSystemGraphs(empires, empire_object_maps); }
 
 
-void Pathfinder::PathfinderImpl::UpdateCommonFilteredSystemGraphs(
-    const EmpireManager& empires, const ObjectMap& objects)
-{
+void Pathfinder::PathfinderImpl::UpdateCommonFilteredSystemGraphs(const EmpireManager&, const ObjectMap& objects) {
     // empires all use the same filtered graph, stored at index ALL_EMPIRES
     m_graph_impl.empire_system_graph_views.clear();
 

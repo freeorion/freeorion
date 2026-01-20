@@ -586,11 +586,11 @@ struct FO_COMMON_API None final : public Condition {
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override;
     [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const UniverseObjectCXBase*>) const noexcept override { return false; }
     [[nodiscard]] bool EvalAny(const ScriptingContext&, std::span<const int>) const noexcept override { return false; }
-    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override
+    [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext&) const override
     { return {}; /* efficient rejection of everything. */ }
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
     [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
     { return CheckSums::GetCheckSum("Condition::None"); }
 
@@ -617,7 +617,7 @@ struct FO_COMMON_API NoOp final : public Condition {
     { return UserString("DESC_NOOP"); }
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return DumpIndent(ntabs) + "NoOp\n"; }
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
 
     [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
     { return CheckSums::GetCheckSum("Condition::NoOp"); }
@@ -683,7 +683,7 @@ struct FO_COMMON_API RootCandidate final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
 
     [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
     { return CheckSums::GetCheckSum("Condition::RootCandidate"); }
@@ -719,7 +719,7 @@ struct FO_COMMON_API Target final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
 
     [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
     { return CheckSums::GetCheckSum("Condition::Target"); }
@@ -842,7 +842,7 @@ struct FO_COMMON_API Monster final : public Condition {
     [[nodiscard]] ObjectSet GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const override;
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
 
     [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
     { return CheckSums::GetCheckSum("Condition::Monster"); }
@@ -871,7 +871,7 @@ struct FO_COMMON_API Armed final : public Condition {
     { return (!negated) ? UserString("DESC_ARMED") : UserString("DESC_ARMED_NOT"); }
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override
     { return DumpIndent(ntabs) + "Armed\n"; }
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
 
     [[nodiscard]] constexpr uint32_t GetCheckSum() const noexcept(noexcept(CheckSums::GetCheckSum(""))) override
     { return CheckSums::GetCheckSum("Condition::Armed"); }
@@ -2957,7 +2957,7 @@ struct FO_COMMON_API Stationary final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
 
     [[nodiscard]] std::unique_ptr<Condition> Clone() const override;
 
@@ -2985,7 +2985,7 @@ struct FO_COMMON_API Aggressive final : public Condition {
 
     [[nodiscard]] std::string Description(bool negated = false) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    void SetTopLevelContent(const std::string& content_name) noexcept override {}
+    void SetTopLevelContent(const std::string&) noexcept override {}
     [[nodiscard]] constexpr bool GetAggressive() const noexcept { return m_aggressive; }
     [[nodiscard]] constexpr uint32_t GetCheckSum() const override
     { return CheckSums::GetCheckSum("Condition::Aggressive", m_aggressive); }

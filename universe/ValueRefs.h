@@ -1152,7 +1152,7 @@ std::string Variable<T>::Description() const
 }
 
 template <typename T>
-std::string Variable<T>::Dump(uint8_t ntabs) const
+std::string Variable<T>::Dump(uint8_t) const
 { return ReconstructName(this->GetPropertyAsString(), this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
 
 template <>
@@ -1250,7 +1250,7 @@ std::string Statistic<T, V>::Description() const
 }
 
 template <typename T, typename V>
-std::string Statistic<T, V>::Dump(uint8_t ntabs) const
+std::string Statistic<T, V>::Dump(uint8_t) const
 {
     std::string retval = "Statistic ";
 
@@ -1763,7 +1763,7 @@ std::string ComplexVariable<T>::Description() const
 }
 
 template <typename T>
-std::string ComplexVariable<T>::Dump(uint8_t ntabs) const
+std::string ComplexVariable<T>::Dump(uint8_t) const
 {
     return ComplexVariableDump(this->GetPropertyAsString(),
                                m_int_ref1 ? m_int_ref1.get() : nullptr,
@@ -2577,7 +2577,7 @@ CONSTEXPR_VEC auto OperateConstantValueRefs(OpType op_type, D&& refs)
 
 template <typename T>
 auto OperateValueRefs(OpType op_type, const std::vector<std::unique_ptr<ValueRef<T>>>& refs,
-                      const ScriptingContext& context, auto rand_int, auto rand_double)
+                      const ScriptingContext& context, auto rand_int, auto)
 {
     if (refs.empty())
         return T();

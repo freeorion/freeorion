@@ -569,35 +569,35 @@ std::string Constant<double>::Description() const
 { return DoubleToString(m_value, 3, false); }
 
 template <>
-std::string Constant<PlanetSize>::Dump(uint8_t ntabs) const
+std::string Constant<PlanetSize>::Dump(uint8_t) const
 { return std::string{DumpEnum(m_value)}; }
 
 template <>
-std::string Constant<PlanetType>::Dump(uint8_t ntabs) const
+std::string Constant<PlanetType>::Dump(uint8_t) const
 { return std::string{DumpEnum(m_value)}; }
 
 template <>
-std::string Constant<PlanetEnvironment>::Dump(uint8_t ntabs) const
+std::string Constant<PlanetEnvironment>::Dump(uint8_t) const
 { return std::string{DumpEnum(m_value)}; }
 
 template <>
-std::string Constant<UniverseObjectType>::Dump(uint8_t ntabs) const
+std::string Constant<UniverseObjectType>::Dump(uint8_t) const
 { return std::string{DumpEnum(m_value)}; }
 
 template <>
-std::string Constant<StarType>::Dump(uint8_t ntabs) const
+std::string Constant<StarType>::Dump(uint8_t) const
 { return std::string{DumpEnum(m_value)}; }
 
 template <>
-std::string Constant<Visibility>::Dump(uint8_t ntabs) const
+std::string Constant<Visibility>::Dump(uint8_t) const
 { return std::string{DumpEnum(m_value)}; }
 
 template <>
-std::string Constant<int>::Dump(uint8_t ntabs) const
+std::string Constant<int>::Dump(uint8_t) const
 { return std::to_string(m_value); }
 
 template <>
-std::string Constant<double>::Dump(uint8_t ntabs) const
+std::string Constant<double>::Dump(uint8_t) const
 { return std::to_string(m_value); }
 
 namespace StaticTests {
@@ -1536,7 +1536,7 @@ std::string TotalFighterShots::Description() const {
     return retval;
 }
 
-std::string TotalFighterShots::Dump(uint8_t ntabs) const {
+std::string TotalFighterShots::Dump(uint8_t) const {
     std::string retval = "TotalFighterShots";
     if (m_carrier_id)
         retval += " carrier = " + m_carrier_id->Dump();
@@ -1568,11 +1568,11 @@ int TotalFighterShots::Eval(const ScriptingContext& context) const {
 // ComplexVariable                                       //
 ///////////////////////////////////////////////////////////
 template <>
-PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const
+PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext&) const
 { return PlanetSize::INVALID_PLANET_SIZE; }
 
 template <>
-PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const
+PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext&) const
 { return PlanetType::INVALID_PLANET_TYPE; } // TODO: Species favourite planet type?
 
 template <>
@@ -1592,11 +1592,11 @@ PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContex
 }
 
 template <>
-UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const
+UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext&) const
 { return UniverseObjectType::INVALID_UNIVERSE_OBJECT_TYPE; }
 
 template <>
-StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
+StarType ComplexVariable<StarType>::Eval(const ScriptingContext&) const
 { return StarType::INVALID_STAR_TYPE; }
 
 template <>
@@ -1677,7 +1677,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         std::function<bool(const std::map<std::string, int>::value_type&)> key_filter{nullptr};
-        key_filter = [](auto e) -> bool { return true; };
+        key_filter = [](auto) -> bool { return true; };
 
         if (m_string_ref1) {
             std::string key_string = m_string_ref1->Eval(context);
@@ -1768,7 +1768,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         std::function<bool(const std::map<int, int>::value_type&)> key_filter{nullptr};
-        key_filter = [](auto e) -> bool { return true; };
+        key_filter = [](auto) -> bool { return true; };
 
         // if a key integer specified, get just that entry (for single empire or sum of all empires)
         if (m_int_ref2)

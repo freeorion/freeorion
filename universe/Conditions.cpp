@@ -1110,7 +1110,7 @@ std::unique_ptr<Condition> All::Clone() const
 ///////////////////////////////////////////////////////////
 // None                                                  //
 ///////////////////////////////////////////////////////////
-void None::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+void None::Eval(const ScriptingContext&, ObjectSet& matches, ObjectSet& non_matches,
                 SearchDomain search_domain) const
 {
     if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
@@ -1149,7 +1149,7 @@ bool NoOp::EvalAny(const ScriptingContext&, std::span<const UniverseObjectCXBase
     return !candidates.empty();
 }
 
-bool NoOp::EvalOne(const ScriptingContext& parent_context, const UniverseObjectCXBase* candidate) const {
+bool NoOp::EvalOne(const ScriptingContext&, const UniverseObjectCXBase* candidate) const {
     DebugLogger(conditions) << "NoOp::EvalOne(" << candidate << ")";
     return candidate;
 }
