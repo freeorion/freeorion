@@ -623,7 +623,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                 float range_after_one_more_jump = range - 1.0f; // what to set adjacent systems' ranges to (at least)
 
                 TraceLogger(supply) <<
-                    [](const auto distance_to_supply_source, const auto range, const auto empire_id,
+                    [](const auto distance_to_supply_source, const auto range,
                        const auto system_id, const auto system_lanes_rng)
                 {
                     std::string retval = "Propagating from system " + std::to_string(system_id) + " to ";
@@ -632,7 +632,7 @@ void SupplyManager::Update(const ScriptingContext& context) {
                     retval.append("range: ").append(std::to_string(range))
                           .append(" and distance: ").append(std::to_string(distance_to_supply_source));
                     return retval;
-                }(distance_to_supply_source, range, empire_id, system_id, system_lanes_rng);
+                }(distance_to_supply_source, range, system_id, system_lanes_rng);
 
 
                 // attempt to propagate to all adjacent systems...
