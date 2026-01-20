@@ -109,10 +109,10 @@ void HueSaturationPicker::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void HueSaturationPicker::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void HueSaturationPicker::LButtonDown(Pt pt, Flags<ModKey>)
 { SetHueSaturationFromPt(pt); }
 
-void HueSaturationPicker::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
+void HueSaturationPicker::LDrag(Pt pt, Pt, Flags<ModKey>)
 { SetHueSaturationFromPt(pt); }
 
 void HueSaturationPicker::SetHueSaturation(double hue, double saturation)
@@ -212,10 +212,10 @@ void ValuePicker::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void ValuePicker::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void ValuePicker::LButtonDown(Pt pt, Flags<ModKey>)
 { SetValueFromPt(pt); }
 
-void ValuePicker::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
+void ValuePicker::LDrag(Pt pt, Pt, Flags<ModKey>)
 { SetValueFromPt(pt); }
 
 void ValuePicker::SetHueSaturation(double hue, double saturation)
@@ -502,7 +502,7 @@ void ColorDlg::Render()
     }
 }
 
-void ColorDlg::KeyPress(Key key, uint32_t key_code_point, Flags<ModKey> mod_keys)
+void ColorDlg::KeyPress(Key key, uint32_t, Flags<ModKey>)
 {
     if (key == Key::GGK_RETURN || key == Key::GGK_KP_ENTER)
         OkClicked();
@@ -583,7 +583,7 @@ void ColorDlg::ColorButtonClicked(std::size_t i)
     ColorChanged(m_current_color);
 }
 
-void ColorDlg::RedSliderChanged(int value, int low, int high)
+void ColorDlg::RedSliderChanged(int value, int, int)
 {
     Clr color = m_current_color;
     color.r = value;
@@ -592,7 +592,7 @@ void ColorDlg::RedSliderChanged(int value, int low, int high)
     *m_slider_values[R] << value;
 }
 
-void ColorDlg::GreenSliderChanged(int value, int low, int high)
+void ColorDlg::GreenSliderChanged(int value, int, int)
 {
     Clr color = m_current_color;
     color.g = value;
@@ -601,7 +601,7 @@ void ColorDlg::GreenSliderChanged(int value, int low, int high)
     *m_slider_values[G] << value;
 }
 
-void ColorDlg::BlueSliderChanged(int value, int low, int high)
+void ColorDlg::BlueSliderChanged(int value, int, int)
 {
     Clr color = m_current_color;
     color.b = value;
@@ -610,7 +610,7 @@ void ColorDlg::BlueSliderChanged(int value, int low, int high)
     *m_slider_values[B] << value;
 }
 
-void ColorDlg::AlphaSliderChanged(int value, int low, int high)
+void ColorDlg::AlphaSliderChanged(int value, int, int)
 {
     Clr color = m_current_color;
     color.a = value;

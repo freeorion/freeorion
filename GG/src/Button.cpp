@@ -88,7 +88,7 @@ void Button::SetText(std::string text)
     m_label_shadow->SetText(std::move(text));
 }
 
-void Button::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void Button::LButtonDown(Pt, Flags<ModKey>)
 {
     if (Disabled())
         return;
@@ -108,13 +108,13 @@ void Button::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     Wnd::LDrag(pt, move, mod_keys);
 }
 
-void Button::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
+void Button::LButtonUp(Pt, Flags<ModKey>)
 {
     if (!Disabled())
         m_state = ButtonState::BN_UNPRESSED;
 }
 
-void Button::LClick(Pt pt, Flags<ModKey> mod_keys)
+void Button::LClick(Pt, Flags<ModKey>)
 {
     if (!Disabled()) {
         m_state = ButtonState::BN_ROLLOVER;
@@ -122,7 +122,7 @@ void Button::LClick(Pt pt, Flags<ModKey> mod_keys)
     }
 }
 
-void Button::RButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void Button::RButtonDown(Pt, Flags<ModKey>)
 {
     if (Disabled())
         return;
@@ -142,13 +142,13 @@ void Button::RDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     Wnd::LDrag(pt, move, mod_keys);
 }
 
-void Button::RButtonUp(Pt pt, Flags<ModKey> mod_keys)
+void Button::RButtonUp(Pt, Flags<ModKey>)
 {
     if (!Disabled())
         m_state = ButtonState::BN_UNPRESSED;
 }
 
-void Button::RClick(Pt pt, Flags<ModKey> mod_keys)
+void Button::RClick(Pt, Flags<ModKey>)
 {
     if (!Disabled()) {
         m_state = ButtonState::BN_ROLLOVER;
@@ -156,13 +156,13 @@ void Button::RClick(Pt pt, Flags<ModKey> mod_keys)
     }
 }
 
-void Button::MouseEnter(Pt pt, Flags<ModKey> mod_keys)
+void Button::MouseEnter(Pt, Flags<ModKey>)
 {
     if (!Disabled())
         m_state = ButtonState::BN_ROLLOVER;
 }
 
-void Button::MouseHere(Pt pt, Flags<ModKey> mod_keys)
+void Button::MouseHere(Pt, Flags<ModKey>)
 {
     if (!Disabled())
         m_state = ButtonState::BN_ROLLOVER;
@@ -265,7 +265,7 @@ void StateButton::Show()
     m_label->Hide();
 }
 
-void StateButton::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void StateButton::LButtonDown(Pt, Flags<ModKey>)
 { SetState(ButtonState::BN_PRESSED); }
 
 void StateButton::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
@@ -274,10 +274,10 @@ void StateButton::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     Wnd::LDrag(pt, move, mod_keys);
 }
 
-void StateButton::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
+void StateButton::LButtonUp(Pt, Flags<ModKey>)
 { SetState(ButtonState::BN_UNPRESSED); }
 
-void StateButton::LClick(Pt pt, Flags<ModKey> mod_keys)
+void StateButton::LClick(Pt, Flags<ModKey>)
 {
     if (!Disabled()) {
         SetCheck(!m_checked);
@@ -287,7 +287,7 @@ void StateButton::LClick(Pt pt, Flags<ModKey> mod_keys)
     }
 }
 
-void StateButton::MouseHere(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void StateButton::MouseHere(GG::Pt, GG::Flags<GG::ModKey>)
 { SetState(ButtonState::BN_ROLLOVER); }
 
 void StateButton::MouseLeave()
