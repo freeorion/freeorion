@@ -895,7 +895,7 @@ uint32_t ShipDesign::GetCheckSum() const {
 /////////////////////////////////////
 namespace {
     void AddDesignToUniverse(Universe& universe, std::unordered_map<std::string, int>& design_generic_ids,
-                             const std::unique_ptr<ShipDesign>& design, bool monster)
+                             const std::unique_ptr<ShipDesign>& design, bool)
     {
         if (!design)
             return;

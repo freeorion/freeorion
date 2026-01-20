@@ -742,7 +742,7 @@ PlanetType Species::NextBestPlanetType(PlanetType initial_planet_type) const {
 
 PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const {
     return TheNextBestPlanetTypeApply(initial_planet_type,
-        [initial_planet_type](PlanetType best_planet_type, int forward_steps_to_best, int backward_steps_to_best) noexcept
+        [initial_planet_type](PlanetType, int forward_steps_to_best, int backward_steps_to_best) noexcept
     {
         if (forward_steps_to_best <= backward_steps_to_best)
             return RingNextPlanetType(initial_planet_type);

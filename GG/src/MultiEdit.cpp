@@ -687,7 +687,7 @@ std::pair<CPSize, CPSize> MultiEdit::GetDoubleButtonDownWordIndices(CPSize char_
     return this->m_double_click_cursor_pos;
 }
 
-void MultiEdit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
+void MultiEdit::LButtonDown(Pt pt, Flags<ModKey>)
 {
     if (Disabled())
         return;
@@ -710,7 +710,7 @@ void MultiEdit::LButtonDown(Pt pt, Flags<ModKey> mod_keys)
     //    this->m_cursor_pos = word_indices;
 }
 
-void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
+void MultiEdit::LDrag(Pt pt, Pt, Flags<ModKey>)
 {
     if (Disabled())
         return;
@@ -777,7 +777,7 @@ void MultiEdit::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
     { AdjustView(); }
 }
 
-void MultiEdit::MouseWheel(Pt pt, int move, Flags<ModKey> mod_keys)
+void MultiEdit::MouseWheel(Pt, int move, Flags<ModKey>)
 {
     if (Disabled() || !m_vscroll) {
         ForwardEventToParent();
@@ -1335,10 +1335,10 @@ void MultiEdit::AdjustScrolls()
     }
 }
 
-void MultiEdit::VScrolled(int upper, int lower, int range_upper, int range_lower)
+void MultiEdit::VScrolled(int upper, int, int, int)
 { m_first_row_shown_y_from_top_of_text = Y(upper); }
 
-void MultiEdit::HScrolled(int upper, int lower, int range_upper, int range_lower)
+void MultiEdit::HScrolled(int upper, int, int, int)
 { m_first_col_shown_x_from_left_of_text = X(upper); }
 
 void MultiEdit::AcceptPastedText(const std::string& text)

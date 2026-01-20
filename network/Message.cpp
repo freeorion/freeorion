@@ -609,7 +609,7 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     return Message{Message::MessageType::DISPATCH_COMBAT_LOGS, std::move(os).str()};
 }
 
-Message LoggerConfigMessage(int sender, const std::vector<std::tuple<std::string, std::string, LogLevel>>& options) {
+Message LoggerConfigMessage(int, const std::vector<std::tuple<std::string, std::string, LogLevel>>& options) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);

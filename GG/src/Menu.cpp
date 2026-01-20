@@ -176,7 +176,7 @@ void PopupMenu::Render()
     }
 }
 
-void PopupMenu::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
+void PopupMenu::LButtonUp(Pt, Flags<ModKey>)
 {
     if (m_caret[0] != INVALID_CARET) {
         MenuItem* menu_ptr = std::addressof(m_menu_data);
@@ -196,7 +196,7 @@ void PopupMenu::LButtonUp(Pt pt, Flags<ModKey> mod_keys)
 void PopupMenu::LClick(Pt pt, Flags<ModKey> mod_keys)
 { LButtonUp(pt, mod_keys); }
 
-void PopupMenu::LDrag(Pt pt, Pt move, Flags<ModKey> mod_keys)
+void PopupMenu::LDrag(Pt pt, Pt, Flags<ModKey>)
 {
     bool cursor_is_in_menu = false;
     for (int i = static_cast<int>(m_open_levels.size()) - 1; i >= 0; --i) {
