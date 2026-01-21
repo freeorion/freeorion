@@ -1285,13 +1285,13 @@ void PartControl::CompleteConstruction() {
 
 void PartControl::Render() {}
 
-void PartControl::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void PartControl::LClick(GG::Pt, GG::Flags<GG::ModKey> mod_keys)
 { ClickedSignal(m_part, mod_keys); }
 
-void PartControl::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void PartControl::LDoubleClick(GG::Pt, GG::Flags<GG::ModKey>)
 { DoubleClickedSignal(m_part); }
 
-void PartControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void PartControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey>)
 { RightClickedSignal(m_part, pt); }
 
 void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type) {
@@ -1353,8 +1353,7 @@ public:
 
 private:
     PartGroupsType GroupAvailableDisplayableParts(const Empire* empire) const;
-    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group,
-                              ShipPartClass part_class, int empire_id, int loc_id) const;
+    void CullSuperfluousParts(std::vector<const ShipPart*>& this_group, int empire_id, int loc_id) const;
 
     std::set<ShipPartClass>     m_part_classes_shown;   // which part classes should be shown
     bool                        m_show_superfluous_parts = true;
@@ -1367,7 +1366,7 @@ PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h, const Availabil
     m_availabilities_state(availabilities_state)
 {}
 
-void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd*) {
     if (wnds.empty())
         return;
     // should only be one wnd in list because PartControls doesn't allow selection, so dragging is
@@ -1457,7 +1456,7 @@ void PartsListBox::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> wnd
             ClearPartSignal(part->Name());
 }
 
-PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) const {
+PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire*) const {
     PartGroupsType part_groups;
 
     // loop through all possible parts
@@ -1525,10 +1524,7 @@ namespace {
     }
 }
 
-void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group,
-                                        ShipPartClass part_class, int empire_id,
-                                        int loc_id) const
-{
+void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group, int empire_id, int loc_id) const {
     // This is not merely a check for obsolescence; see PartsListBox::Populate
     // for more info
     static float min_bargain_ratio = -1.0;
@@ -1651,12 +1647,9 @@ void PartsListBox::Populate() {
     }
 
     // if showing parts for a particular empire, cull redundant parts (if enabled)
-    if (empire) {
-        for (auto& [part_class_slot, parts] : part_groups) {
-            ShipPartClass part_class = part_class_slot.first;
-            if (!m_show_superfluous_parts)
-                CullSuperfluousParts(parts, part_class, empire_id, loc_id);
-        }
+    if (empire && !m_show_superfluous_parts) {
+        for (auto& [part_class_slot, parts] : part_groups)
+            CullSuperfluousParts(parts, empire_id, loc_id);
     }
 
     // now sort the parts within each group according to main stat, via weak
@@ -2849,9 +2842,7 @@ void EmptyHullsListBox::EnableOrderIssuing(bool enable)
 void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
 
-void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                          GG::Flags<GG::ModKey> modkeys)
-{
+void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
     const auto hp_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hp_row)
         return;
@@ -2860,9 +2851,7 @@ void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
         DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
 }
 
-void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                                GG::Flags<GG::ModKey> modkeys)
-{
+void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
@@ -2870,19 +2859,12 @@ void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                            GG::Flags<GG::ModKey> modkeys)
-{
-    const auto sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
-
-    if (!sd_row)
-        return;
-    SavedDesignSelectedSignal(sd_row->DesignUUID());
+void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
+    if (const auto* sd_row = dynamic_cast<SavedDesignListBoxRow*>(it->get()))
+        SavedDesignSelectedSignal(sd_row->DesignUUID());
 }
 
-void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                        GG::Flags<GG::ModKey> modkeys)
-{
+void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
@@ -2890,9 +2872,7 @@ void MonstersListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                          GG::Flags<GG::ModKey> modkeys)
-{
+void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
     const auto cd_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
         return;
@@ -2900,9 +2880,7 @@ void AllDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, GG::Pt pt,
     DesignSelectedSignal(cd_row->DesignID());
 }
 
-void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                        GG::Flags<GG::ModKey> modkeys)
-{
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey> modkeys) {
     const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
         return;
@@ -2921,9 +2899,7 @@ void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
         HullClickedSignal(ship_hull);
 }
 
-void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                              GG::Flags<GG::ModKey> modkeys)
-{
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey> modkeys) {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
@@ -2947,9 +2923,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt p
     }
 }
 
-void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                          GG::Flags<GG::ModKey> modkeys)
-{
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey> modkeys) {
     const auto saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!saved_design_row)
         return;
@@ -2964,9 +2938,7 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
         DesignClickedSignal(design);
 }
 
-void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                      GG::Flags<GG::ModKey> modkeys)
-{
+void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
@@ -2974,9 +2946,7 @@ void MonstersListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
         DesignClickedSignal(design);
 }
 
-void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                        GG::Flags<GG::ModKey> modkeys)
-{
+void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt, GG::Flags<GG::ModKey>) {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
@@ -2984,9 +2954,7 @@ void AllDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, GG::Pt pt,
         DesignClickedSignal(design);
 }
 
-void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                         GG::Flags<GG::ModKey> modkeys)
-{
+void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey>) {
     const auto hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(it->get());
     if (!hull_parts_row)
         return;
@@ -3014,9 +2982,7 @@ void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     popup->Run();
 }
 
-void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                               GG::Flags<GG::ModKey> modkeys)
-{
+void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey>) {
     const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
@@ -3121,9 +3087,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt 
     popup->Run();
 }
 
-void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
-                                           GG::Flags<GG::ModKey> modkeys)
-{
+void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<GG::ModKey>) {
     const auto design_row = dynamic_cast<SavedDesignListBoxRow*>(it->get());
     if (!design_row)
         return;
@@ -3195,9 +3159,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt,
     popup->Run();
 }
 
-void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator row_it,
-                                       const GG::ListBox::iterator original_position_it)
-{
+void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator) {
     const auto control = dynamic_cast<HullAndPartsListBoxRow*>(row_it->get());
     if (!control || !GetEmpire(EmpireID()))
         return;
@@ -3215,9 +3177,7 @@ void EmptyHullsListBox::QueueItemMoved(const GG::ListBox::iterator row_it,
     GetDisplayedDesignsManager().InsertHullBefore(hull_name, insert_before_hull);
 }
 
-void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator row_it,
-                                             const GG::ListBox::iterator original_position_it)
-{
+void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator) {
     const auto control = dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(row_it->get());
     if (!control || !GetEmpire(EmpireID()))
         return;
@@ -3236,21 +3196,19 @@ void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator row_it,
     GetDisplayedDesignsManager().MoveBefore(design_id, insert_before_id);
 }
 
-void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator row_it,
-                                         const GG::ListBox::iterator original_position_it)
-{
+void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator row_it, const GG::ListBox::iterator) {
     const auto control = dynamic_cast<SavedDesignsListBox::SavedDesignListBoxRow*>(row_it->get());
     if (!control)
         return;
 
-    const auto& uuid = control->DesignUUID();
+    const auto uuid = control->DesignUUID();
 
     iterator insert_before_row = std::next(row_it);
 
     const auto insert_before_control = (insert_before_row == end()) ? nullptr :
         dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(insert_before_row->get());
-    const auto next_uuid = insert_before_control
-        ? insert_before_control->DesignUUID() : boost::uuids::nil_generator()();
+    const auto next_uuid = insert_before_control ?
+        insert_before_control->DesignUUID() : boost::uuids::nil_generator()();
 
     if (GetSavedDesignsManager().MoveBefore(uuid, next_uuid))
         control->Resize(ListRowSize());
@@ -3623,7 +3581,7 @@ bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                  GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
+                                  GG::Pt, GG::Flags<GG::ModKey>) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -3663,7 +3621,7 @@ const ShipPart* SlotControl::GetPart() const {
         return nullptr;
 }
 
-void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) {
+void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt) {
     if (!m_part_control)
         return;
 
@@ -3689,9 +3647,7 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
     }
 }
 
-void SlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
-                              GG::Flags<GG::ModKey> mod_keys)
-{
+void SlotControl::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.size() != 1)
         ErrorLogger() << "SlotControl::AcceptDrops given multiple wnds unexpectedly...";
 
@@ -3700,9 +3656,7 @@ void SlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> w
             SlotContentsAlteredSignal(part, mod_keys & GG::MOD_KEY_CTRL);
 }
 
-void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
-                                      const GG::Wnd* destination)
-{
+void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd*) {
     if (wnds.empty())
         return;
     const GG::Wnd* wnd = wnds.front();
@@ -4285,8 +4239,8 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const ShipPart* part) {
     return -1; // no suitable slot was empty
 }
 
-void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
-    DesignNameChanged();  // Check whether the confirmation button should be enabled or disabled each time the name changes.
+void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string&) {
+    DesignNameChanged(); // Check whether the confirmation button should be enabled or disabled each time the name changes.
 }
 
 std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const ShipPart* part) {
@@ -4789,7 +4743,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 }
 
 void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                           GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
+                                           GG::Pt, GG::Flags<GG::ModKey>) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
@@ -4802,8 +4756,8 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAccep
         first->second = true;
 }
 
-void DesignWnd::MainPanel::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
-                                       GG::Flags<GG::ModKey> mod_keys)
+void DesignWnd::MainPanel::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                                       GG::Flags<GG::ModKey>)
 {
     if (wnds.size() != 1)
         ErrorLogger() << "DesignWnd::MainPanel::AcceptDrops given multiple wnds unexpectedly...";
@@ -4986,7 +4940,7 @@ void DesignWnd::CompleteConstruction() {
 
     AttachChild(m_base_selector);
     m_base_selector->DesignSelectedSignal.connect([this](int id) { m_main_panel->SetDesign(id); });
-    m_base_selector->DesignUpdatedSignal.connect([this](int id) { m_main_panel->DesignChanged(); });
+    m_base_selector->DesignUpdatedSignal.connect([this](int) { m_main_panel->DesignChanged(); });
     m_base_selector->DesignComponentsSelectedSignal.connect(
         [this](auto& hull, auto& parts) { m_main_panel->SetDesignComponents(hull, parts); });
     m_base_selector->SavedDesignSelectedSignal.connect(
