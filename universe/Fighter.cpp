@@ -36,7 +36,7 @@ std::shared_ptr<UniverseObject> Fighter::Clone(const Universe& universe, int emp
     return retval;
 }
 
-void Fighter::Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id) {
+void Fighter::Copy(const UniverseObject& copied_object, const Universe& universe, int) {
     if (std::addressof(copied_object) == this)
         return;
     if (copied_object.ObjectType() != UniverseObjectType::OBJ_FIGHTER) {
@@ -44,10 +44,10 @@ void Fighter::Copy(const UniverseObject& copied_object, const Universe& universe
         return;
     }
 
-    Copy(static_cast<const Fighter&>(copied_object), universe, empire_id);
+    Copy(static_cast<const Fighter&>(copied_object), universe);
 }
 
-void Fighter::Copy(const Fighter& copied_fighter, const Universe& universe, int empire_id) {
+void Fighter::Copy(const Fighter& copied_fighter, const Universe& universe) {
     if (&copied_fighter == this)
         return;
     UniverseObject::Copy(copied_fighter, Visibility::VIS_FULL_VISIBILITY, {}, universe);
