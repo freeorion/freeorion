@@ -156,7 +156,7 @@ namespace {
                 if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
                     try {
                         PlanetAtmosphereData current_data{atmosphere_definition};
-                        auto filename = current_data.planet_filename;
+                        auto filename{current_data.planet_filename}; // copy due to moving from on next line
                         data.emplace(std::move(filename), std::move(current_data));
                     } catch (const std::exception& e) {
                         ErrorLogger() << "GetPlanetAtmosphereData: " << e.what();
@@ -233,6 +233,7 @@ namespace {
     using cxsin = std::sin;
     using cxcos = std::cos;
 #else
+    constexpr std::array<uint8_t, 7> cxsin_factor_increments{3u*2u, 5u*4u, 7u*6u, 9u*8u, 11u*10u, 13u*12u, 15u*14u};
     constexpr GLfloat cxsin(GLfloat a) {
         if (a == 0 || a == PI) return 0.0;
         if (a == PI/2) return 1.0;
@@ -242,14 +243,12 @@ namespace {
 
         GLfloat apow = a;
         GLfloat sum = a;
-        uint64_t factorial = 1;
+        uint64_t factorial = 1u;
         int8_t signpart = 1;
         const GLfloat a2 = a*a;
-
-        static_assert(15*14 < std::numeric_limits<uint8_t>::max());
-        for (uint8_t pow = 3; pow <= 15; pow += 2) {
+        for (uint8_t pow : cxsin_factor_increments) {
             apow *= a2;
-            factorial *= (pow * (pow - 1));
+            factorial *= pow;
             signpart = -signpart;
             sum += (apow / factorial * signpart);
         }
@@ -257,6 +256,7 @@ namespace {
         return sum;
     }
 
+    constexpr std::array<uint8_t, 7> cxcos_factor_increments{1u*2u, 3u*4u, 5u*6u, 7u*8u, 9u*10u, 11u*12u, 13u*14u};
     constexpr GLfloat cxcos(GLfloat a) {
         if (a == 0) return 1.0;
         if (a == PI/2) return 0.0;
@@ -270,10 +270,9 @@ namespace {
         int8_t signpart = 1;
         const GLfloat a2 = a*a;
 
-        static_assert(14*13 < std::numeric_limits<uint8_t>::max());
-        for (uint8_t pow = 2; pow <= 14u; pow += 2u) {
+        for (uint8_t pow : cxcos_factor_increments) {
             apow *= a2;
-            factorial *= (pow * (pow - 1));
+            factorial *= pow;
             signpart = -signpart;
             sum += (apow / factorial * signpart);
         }
@@ -422,61 +421,67 @@ namespace {
     }
 
     const GLfloat* GetLightPosition() {
-        static const auto retval = []() {
-            std::array<GLfloat, 4> retval{0.0f, 0.0f, 0.0f, 0.0f};
+        static const auto retval = []() -> std::array<GLfloat, 4> {
+            try {
+                XMLDoc doc;
+                std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+                doc.ReadDoc(ifs);
+                ifs.close();
+                const auto& lpos = doc.root_node.Child("GLPlanets").Child("light_pos");
 
-            XMLDoc doc;
-            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
-            const auto& lpos = doc.root_node.Child("GLPlanets").Child("light_pos");
-
-            retval[0] = boost::lexical_cast<GLfloat>(lpos.Child("x").Text());
-            retval[1] = boost::lexical_cast<GLfloat>(lpos.Child("y").Text());
-            retval[2] = boost::lexical_cast<GLfloat>(lpos.Child("z").Text());
-
-            return retval;
+                return {boost::lexical_cast<GLfloat>(lpos.Child("x").Text()),
+                        boost::lexical_cast<GLfloat>(lpos.Child("y").Text()),
+                        boost::lexical_cast<GLfloat>(lpos.Child("z").Text()),
+                        0.0f};
+            } catch (...) {
+                return {10.0f, -7.0f, 8.0f, 0.0f};
+            }
         }();
         return retval.data();
     }
 
+    // output should be float RGBA ranging 0f to 1.0f
     const auto& GetStarLightColors() {
         static const auto light_colors{[]() -> std::map<StarType, std::array<float, 4>> {
-            XMLDoc doc;
-            std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
-
             std::map<StarType, std::array<float, 4>> retval;
+            // pre-fill with defaults
+            for (StarType i = StarType::STAR_BLUE; i < StarType::NUM_STAR_TYPES; i = StarType(int(i) + 1))
+                retval[i] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-            if (!doc.root_node.ContainsChild("GLStars") || doc.root_node.Child("GLStars").Children().empty()) {
-                for (StarType i = StarType::STAR_BLUE; i < StarType::NUM_STAR_TYPES;
-                     i = StarType(int(i) + 1))
-                { retval[i] = {1.0f, 1.0f, 1.0f, 1.0f}; }
-                return retval;
-            }
+            // replace from config file where specified
+            try {
+                XMLDoc doc;
+                std::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+                doc.ReadDoc(ifs);
+                ifs.close();
 
-            for (const XMLElement& star_definition : doc.root_node.Child("GLStars").Children()) {
-                if (!star_definition.HasAttribute("star_type") || !star_definition.HasAttribute("color"))
-                    continue;
-                const auto& star_type_name = star_definition.Attribute("star_type");
-                const auto star_type = StarTypeFromString(star_type_name, StarType::INVALID_STAR_TYPE);
-                if (star_type == StarType::INVALID_STAR_TYPE)
-                    continue;
-                std::string_view colour_string = star_definition.Attribute("color");
-                if (colour_string.size() != 6 && colour_string.size() != 8)
-                    continue;
-                const GG::Clr color = GG::Clr::HexClr(colour_string);
-                retval.emplace(star_type, std::array{color.r / 255.0f, color.g / 255.0f,
-                                                     color.b / 255.0f, color.a / 255.0f});
-            }
+                if (!doc.root_node.ContainsChild("GLStars") || doc.root_node.Child("GLStars").Children().empty())
+                    throw std::runtime_error("no GLStars in planets.xml");
+
+                for (const XMLElement& star_definition : doc.root_node.Child("GLStars").Children()) {
+                    if (!star_definition.HasAttribute("star_type") || !star_definition.HasAttribute("color"))
+                        continue;
+                    const auto& star_type_name = star_definition.Attribute("star_type");
+                    const auto star_type = StarTypeFromString(star_type_name, StarType::INVALID_STAR_TYPE);
+                    if (star_type < StarType::STAR_BLUE || star_type >= StarType::NUM_STAR_TYPES)
+                        continue;
+                    static_assert(StarType::STAR_BLUE == StarType{0} && StarType::INVALID_STAR_TYPE == StarType{-1});
+
+                    std::string_view colour_string = star_definition.Attribute("color");
+                    if (colour_string.size() != 6 && colour_string.size() != 8)
+                        continue;
+                    const GG::Clr color = GG::Clr::HexClr(colour_string);
+                    retval.insert_or_assign(star_type, std::array{color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f});
+                }
+            } catch (...) { }
+
             return retval;
         }()};
 
         return light_colors;
     }
 
-    const std::array<float, 4>& StarLightColour(StarType star_type) {
+    std::array<float, 4> StarLightColour(StarType star_type) {
         static constexpr std::array<float, 4> white{1.0f, 1.0f, 1.0f, 1.0f};
         const auto& colour_map = GetStarLightColors();
         auto it = colour_map.find(star_type);
@@ -517,9 +522,9 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, colour.data());
         glEnable(GL_TEXTURE_2D);
 
-        glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));// relocate to locatin on screen where planet is to be rendered
-        glRotated(95.0, -1.0, 0.0, 0.0);                                    // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
-        glRotated(axial_tilt, 0.0, 1.0, 0.0);                               // axial tilt
+        glTranslated(Value(center.x), Value(center.y), GLdouble(-(diameter / 2 + 1)));// relocate to location on screen where planet is to be rendered
+        glRotated(95.0, -1.0, 0.0, 0.0);                                              // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
+        glRotated(axial_tilt, 0.0, 1.0, 0.0);                                         // axial tilt
 
         float intensity = static_cast<float>(GetRotatingPlanetAmbientIntensity());
         GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0f);
@@ -591,10 +596,10 @@ namespace {
 
     /** Returns map from planet ID to issued annex orders affecting it. There
       * should be only one ship colonzing each planet for this client. */
-    auto PendingAnnexationOrders(const ScriptingContext& context) {
+    auto PendingAnnexationOrders(const ClientApp& app) {
         std::vector<std::pair<int, int>> retval;
 
-        for (const auto& [order_id, order] : GetApp().Orders()) {
+        for (const auto& [order_id, order] : app.Orders()) {
             if (auto annex_order = std::dynamic_pointer_cast<AnnexOrder>(order)) {
                 const auto planet_id = annex_order->PlanetID();
                 retval.emplace_back(planet_id, order_id);
@@ -631,7 +636,7 @@ namespace {
     }
 
     /** Returns map from planet ID to cost to annex. */
-    auto PendingAnnexationPlanetsCosts(const UniverseObject* source_for_empire, const ScriptingContext& context) {
+    auto PendingAnnexationPlanetsCosts(const UniverseObject* source_for_empire, const ScriptingContext& context) { // TODO: pass in app?
         std::vector<std::pair<int, double>> retval;
 
         const auto& app = GetApp();
@@ -950,7 +955,7 @@ public:
             const auto& atmosphere_data = GetPlanetAtmosphereData();
             const auto it = atmosphere_data.find(rpd.filename);
             if (it != atmosphere_data.end()) {
-                const auto& atmosphere = it->second.atmospheres[RandInt(0, it->second.atmospheres.size() - 1)];
+                const auto& atmosphere = it->second.atmospheres[static_cast<std::size_t>(RandInt(0, it->second.atmospheres.size() - 1))];
                 m_atmosphere_texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
                 m_atmosphere_alpha = atmosphere.alpha;
                 m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
@@ -2735,7 +2740,7 @@ void SidePanel::PlanetPanel::ClickAnnex() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    const auto pending_annex_orders = PendingAnnexationOrders(context);
+    const auto pending_annex_orders = PendingAnnexationOrders(app);
     const auto it = std::find_if(pending_annex_orders.begin(), pending_annex_orders.end(),
                                  [this](const auto& order_id_planet_id)
                                  { return m_planet_id == order_id_planet_id.first; });
