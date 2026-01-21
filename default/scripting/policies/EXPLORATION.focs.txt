@@ -47,7 +47,15 @@ Policy
                         Ship
                         OwnedBy empire = Source.Owner
                     ])
-        
+
+                // FIXME the research boost needs to be temporary/removed after resource creation/next turn
+                //       else it is like a super-charged research growth
+                //       or better add directly to the empire research without tinkering on meters
+                //       current workaround would be to add this after resource growth and
+                //       * add a special to remember how much this added and then
+                //       * remove that from research at the beginning of next turn
+                // FIXME parser does not want this as data for GenerateSitrepMessage:
+                //       data = (Statistic·Count·condition·=·[ [ NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET ] ] )
         EffectsGroup
             scope = And [
                 System
@@ -62,10 +70,61 @@ Policy
                     message = "SITREP_FIELD_RESEARCH"
                     label = "SITREP_FIELD_RESEARCH_LABEL"
                     icon = "icons/tech/environmental_encapsulation.png"
-                    parameters = tag = "system" data = Target.SystemID
+                    parameters = [
+                        tag = "system" data = Target.SystemID
+                        tag = "policy" data = "PLC_EXPLORATION"
+                    ]
                     empire = Source.Owner
+
+        EffectsGroup
+            scope = And [ Source (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] > 0) ]
+            activation = ((CurrentTurn % 2) == 0)
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                SetSpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL"
+                    capacity = (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] * NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL")
+           ]
+
+        EffectsGroup
+            scope = And [ Source (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] > 0) ]
+            activation = ((CurrentTurn % 2) == 1)
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                SetSpecialCapacity name = "NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_ODD"
+                    capacity = (Statistic Count condition = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]] * NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL")
+           ]
+
+        EffectsGroup
+            scope = [[NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET]]
+            activation = Source
+            priority = [[END_CLEANUP_PRIORITY]]
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_FIELD_RESEARCH_KILLED_SYSTEM"
+                    label = "SITREP_FIELD_RESEARCH_KILLED_SYSTEM_LABEL"
+                    icon = "icons/tech/environmental_encapsulation.png"
+                    parameters = [
+                        tag = "system" data = Target.SystemID
+                        tag = "target" data = Source.SystemID
+                        tag = "rpbonus" data = NamedRealLookup name = "EXPLORATION_RESEARCH_BONUS_TOTAL"
+                        tag = "turn" data = CurrentTurn
+                    ]
+                    empire = Source.Owner
+           ]
     ]
     graphic = "icons/policies/military_exploration.png"
+
+NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET
+'''
+             And [
+                System
+                (CurrentTurn == TurnSystemExplored empire = Source.Owner id = LocalCandidate.ID)
+                Not Contains And [
+                    Fleet
+                    OwnedBy empire = Source.Owner
+                ]
+            ]
+'''
 
 #include "/scripting/policies/policies.macros"
 #include "/scripting/macros/priorities.macros"
