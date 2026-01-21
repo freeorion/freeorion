@@ -1137,7 +1137,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         // Remove the default designs from the empire's current designs.
         // Purpose and logic of this is unclear... author didn't comment upon inquiry, but having this here reportedly fixes some issues...
         DebugLogger() << "Remove default designs from empire";
-        const auto empire_design_ids = empire->ShipDesigns();
+        const auto empire_design_ids{empire->ShipDesigns()}; // copy to avoid modifying while iterating
         for (const auto design_id : empire_design_ids)
             app.Orders().IssueOrder<ShipDesignOrder>(context, empire_id, design_id, true);
     }
@@ -2636,7 +2636,7 @@ void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
     DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
 
-    const auto availability = AvailabilityState();
+    const auto availability{AvailabilityState()};
     const bool showing_available = availability.GetAvailability(Availability::Available);
     const GG::Pt row_size = ListRowSize();
 
@@ -4258,32 +4258,31 @@ bool DesignWnd::MainPanel::AddPartWithSwapping(const ShipPart* part,
 }
 
 int DesignWnd::MainPanel::FindEmptySlotForPart(const ShipPart* part) {
-    int result = -1;
     if (!part)
-        return result;
+        return -1;
 
     if (part->Class() == ShipPartClass::PC_FIGHTER_HANGAR) {
-        // give up if part is a hangar and there is already a hangar of another type
-        std::string already_seen_hangar_name;
-        for (const auto& slot : m_slots) {
-            const ShipPart* part = slot->GetPart();
-            if (!part || part->Class() != ShipPartClass::PC_FIGHTER_HANGAR)
-                continue;
-            if (part->Name() != part->Name())
-                return result;
+        // can have only one part name of hanger, but can have multiples of that name.
+        // So, reject new part if it is a hangar and there is already a hangar of another type
+        for (const auto& slot : m_slots) { // TODO: range_any_of
+            const ShipPart* slot_part = slot->GetPart();
+            if (slot_part &&
+                slot_part->Class() == ShipPartClass::PC_FIGHTER_HANGAR &&
+                slot_part->Name() != part->Name())
+            { return -1; } // already have a different hangar part in design, so cannot add input hangar part
         }
     }
 
-    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find one that can mount part
+    // scan through slots to find one that can mount part
+    for (std::size_t i = 0u; i < m_slots.size(); ++i) {
         const ShipSlotType slot_type = m_slots[i]->SlotType();
         const ShipPart* slotted_part = m_slots[i]->GetPart();
 
-        if (!slotted_part && part->CanMountInSlotType(slot_type)) {
-            result = i;
-            return result;
-        }
+        if (!slotted_part && part->CanMountInSlotType(slot_type))
+            return static_cast<int>(i);
     }
-    return result;
+
+    return -1; // no suitable slot was empty
 }
 
 void DesignWnd::MainPanel::DesignNameEditedSlot(const std::string& new_name) {
@@ -4483,38 +4482,38 @@ void DesignWnd::MainPanel::DoLayout() {
     // position labels and text edit boxes for name and description and buttons to clear and confirm design
 
     const int PTS = ClientUI::Pts();
-    static constexpr int PAD = 6;
+    static constexpr int MAIN_PAD = 6;
 
     const auto cl_sz = ClientSize();
 
-    auto lr = cl_sz - GG::Pt(GG::X{PAD}, GG::Y{PAD});
+    auto lr = cl_sz - GG::Pt(GG::X{MAIN_PAD}, GG::Y{MAIN_PAD});
     m_confirm_button->SizeMove(lr - m_confirm_button->MinUsableSize(), lr);
 
     auto mus = m_replace_button->MinUsableSize();
-    auto ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+PAD, GG::Y0);
+    auto ul = m_confirm_button->RelativeUpperLeft() - GG::Pt(mus.x+MAIN_PAD, GG::Y0);
     m_replace_button->SizeMove(ul, ul+mus);
 
-    const auto ll = GG::Pt(GG::X(PAD), cl_sz.y - PAD);
+    const auto ll = GG::Pt(GG::X(MAIN_PAD), cl_sz.y - MAIN_PAD);
     mus = m_clear_button->MinUsableSize();
     ul = ll - GG::Pt(GG::X0, mus.y);
     m_clear_button->SizeMove(ul, ul + mus);
 
-    ul = GG::Pt(GG::X(PAD), GG::Y(PAD));
+    ul = GG::Pt(GG::X(MAIN_PAD), GG::Y(MAIN_PAD));
     // adjust based on the (bigger) height of the edit bar 
     lr = ul + GG::Pt(m_design_name_label->MinUsableSize().x, m_design_name->MinUsableSize().y);
     m_design_name_label->SizeMove(ul, lr);
 
-    ul = GG::Pt(m_design_name_label->RelativeLowerRight().x+PAD, GG::Y(PAD));
-    m_design_name->SizeMove(ul, GG::Pt(cl_sz.x-PAD, ul.y+m_design_name->MinUsableSize().y));
+    ul = GG::Pt(m_design_name_label->RelativeLowerRight().x+MAIN_PAD, GG::Y(MAIN_PAD));
+    m_design_name->SizeMove(ul, GG::Pt(cl_sz.x-MAIN_PAD, ul.y+m_design_name->MinUsableSize().y));
 
-    ul = GG::Pt(GG::X(PAD), GG::Y(m_design_name->RelativeLowerRight().y+PAD));
+    ul = GG::Pt(GG::X(MAIN_PAD), GG::Y(m_design_name->RelativeLowerRight().y+MAIN_PAD));
     // Apparently calling minuseablesize on the button itself doesn't work
     lr = ul + GG::Pt(m_design_description_toggle->GetLabel()->MinUsableSize().x + 10,
                      m_design_name->MinUsableSize().y);
     m_design_description_toggle->SizeMove(ul, lr);
 
-    ul.x = m_design_description_toggle->RelativeLowerRight().x + PAD;
-    m_design_description_edit->SizeMove(ul, GG::Pt(cl_sz.x-PAD, ul.y+PTS*4+8));
+    ul.x = m_design_description_toggle->RelativeLowerRight().x + MAIN_PAD;
+    m_design_description_edit->SizeMove(ul, GG::Pt(cl_sz.x-MAIN_PAD, ul.y+PTS*4+8));
     if (m_design_description_toggle->Checked())
         m_design_description_edit->Show();
     else
