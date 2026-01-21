@@ -5514,7 +5514,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        auto route = universe.GetPathfinder().ShortestPath(start_system, system_id, objects).first;
+        auto route = universe.GetPathfinder().ShortestPath(start_system, system_id).first;
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
             auto old_route(fleet->TravelRoute());
@@ -7413,7 +7413,7 @@ namespace {
         }
 
         auto [system_list, path_length] =
-            context.ContextUniverse().GetPathfinder().ShortestPath(start_id, destination_id, empire_id, objects);
+            context.ContextUniverse().GetPathfinder().ShortestPath(start_id, destination_id, empire_id);
 
         if (!system_list.empty() && path_length > 0.0)
             return {path_length, system_list};

@@ -94,8 +94,7 @@ namespace {
 
     auto ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) -> std::vector<int>
     {
-        auto path{universe.GetPathfinder().ShortestPath(
-            start_sys, end_sys, empire_id, universe.EmpireKnownObjects(empire_id)).first};
+        auto path{universe.GetPathfinder().ShortestPath(start_sys, end_sys, empire_id).first};
         static_assert(std::is_same_v<std::vector<int>, decltype(path)>);
         return path;
     }

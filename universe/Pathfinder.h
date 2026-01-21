@@ -51,10 +51,7 @@ public:
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range, or if the empire ID is not known. */
-    std::pair<std::vector<int>, double> ShortestPath(
-        int system1_id, int system2_id, int empire_id, const ObjectMap& objects) const;
-    auto ShortestPath(int system1_id, int system2_id, const ObjectMap& objects) const
-    { return ShortestPath(system1_id, system2_id, ALL_EMPIRES, objects); }
+    std::pair<std::vector<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** Shortest path known to an empire between two systems, excluding routes
      *  for systems containing objects for @p system_predicate.

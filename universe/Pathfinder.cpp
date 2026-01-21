@@ -220,7 +220,7 @@ namespace SystemPathing {
 
         PathFindingShortCircuitingVisitor(int dest_system) : destination_system(dest_system) {}
         template <typename Vertex, typename Graph>
-        void operator()(Vertex u, Graph& g)
+        void operator()(Vertex u, Graph&)
         {
             if (static_cast<int>(u) == destination_system)
                 throw FoundDestination();
@@ -249,15 +249,15 @@ namespace SystemPathing {
         bool m_level_complete = false;
 
     public:
-        BFSVisitorImpl(const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth)
-            : m_marker(start),
-              m_stop(stop),
-              m_source(start),
-              m_predecessors(predecessors),
-              m_levels_remaining(max_depth)
+        BFSVisitorImpl(const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth) :
+            m_marker(start),
+            m_stop(stop),
+            m_source(start),
+            m_predecessors(predecessors),
+            m_levels_remaining(max_depth)
         {}
 
-        void initialize_vertex(const Vertex&, const Graph&) {}
+        void initialize_vertex(const Vertex&, const Graph&) noexcept {}
 
         void discover_vertex(const Vertex& v, const Graph&) {
             m_predecessors[static_cast<int>(v)] = m_source;
@@ -282,14 +282,14 @@ namespace SystemPathing {
             m_source = v; // avoid re-calculating source from edge
         }
 
-        void examine_edge(const Edge&, const Graph&) {}
-        void tree_edge(const Edge&, const Graph&) {}    // wait till target is calculated
+        void examine_edge(const Edge&, const Graph&) noexcept {}
+        void tree_edge(const Edge&, const Graph&) noexcept {}    // wait till target is calculated
 
 
-        void non_tree_edge(const Edge&, const Graph&) {}
-        void gray_target(const Edge&, const Graph&) {}
-        void black_target(const Edge&, const Graph&) {}
-        void finish_vertex(const Vertex&, const Graph&) {}
+        void non_tree_edge(const Edge&, const Graph&) noexcept {}
+        void gray_target(const Edge&, const Graph&) noexcept {}
+        void black_target(const Edge&, const Graph&) noexcept {}
+        void finish_vertex(const Vertex&, const Graph&) noexcept {}
     };
 
     ////////////////////////////////////////////////////////////////
@@ -640,7 +640,7 @@ public:
     int JumpDistanceBetweenObjects(int object1_id, int object2_id, const ObjectMap& objects) const;
 
     std::pair<std::vector<int>, double> ShortestPath(
-        int system1_id, int system2_id, const ObjectMap& objects, int empire_id = ALL_EMPIRES) const;
+        int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     std::pair<std::vector<int>, double> ShortestPath(
         int system1_id, int system2_id, const ObjectMap& objects,
         const Pathfinder::SystemExclusionPredicateType& sys_pred) const;
@@ -959,11 +959,11 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
 }
 
 std::pair<std::vector<int>, double> Pathfinder::ShortestPath(
-    int system1_id, int system2_id, int empire_id, const ObjectMap& objects) const
-{ return pimpl->ShortestPath(system1_id, system2_id, objects, empire_id); }
+    int system1_id, int system2_id, int empire_id) const
+{ return pimpl->ShortestPath(system1_id, system2_id, empire_id); }
 
 std::pair<std::vector<int>, double> Pathfinder::PathfinderImpl::ShortestPath(
-    int system1_id, int system2_id, const ObjectMap& objects, int empire_id) const
+    int system1_id, int system2_id, int empire_id) const
 {
     const auto get_path = [system1_id, system2_id, this](const auto& graph)
     { return ShortestPathImpl(graph, system1_id, system2_id, m_system_id_to_graph_index); };
@@ -1077,7 +1077,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     }
 
     try {
-        auto path_len_pair = ShortestPath(system_one->ID(), system_two->ID(), objects);
+        auto path_len_pair = ShortestPath(system_one->ID(), system_two->ID());
         return path_len_pair.second + dist;
     } catch (...) {
         ErrorLogger() << "ShortestPathDistance caught exception when calling ShortestPath";
@@ -1444,7 +1444,7 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y, const Object
 void Pathfinder::InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires)
 { return pimpl->InitializeSystemGraph(objects, empires); }
 
-void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects, const EmpireManager& empires) {
+void Pathfinder::PathfinderImpl::InitializeSystemGraph(const ObjectMap& objects, const EmpireManager&) {
     if (!m_graph_impl.system_graph) [[unlikely]]
         DebugLogger() << "GraphImpl had null system graph in InitializeSystemGraph...?";
 
