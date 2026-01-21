@@ -22,7 +22,7 @@ public:
     [[nodiscard]] std::string        Dump(uint8_t ntabs = 0) const override;
 
     void Copy(const UniverseObject& copied_object, const Universe& universe, int empire_id = ALL_EMPIRES) override;
-    void Copy(const Fighter& copied_fighter, const Universe& universe, int empire_id = ALL_EMPIRES);
+    void Copy(const Fighter& copied_fighter, const Universe& universe);
 
     [[nodiscard]] auto* CombatTargets() const noexcept { return m_combat_targets; }
     [[nodiscard]] float Damage() const noexcept { return m_damage; }
