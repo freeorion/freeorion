@@ -342,13 +342,13 @@ void PolicyControl::Resize(GG::Pt sz, const int pts) {
     GG::Control::Resize(sz);
 }
 
-void PolicyControl::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void PolicyControl::LClick(GG::Pt, GG::Flags<GG::ModKey> mod_keys)
 { ClickedSignal(m_policy, mod_keys); }
 
-void PolicyControl::LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void PolicyControl::LDoubleClick(GG::Pt, GG::Flags<GG::ModKey>)
 { DoubleClickedSignal(m_policy); }
 
-void PolicyControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void PolicyControl::RClick(GG::Pt pt, GG::Flags<GG::ModKey>)
 { RightClickedSignal(m_policy, pt); }
 
 
@@ -362,7 +362,7 @@ public:
     public:
         PoliciesListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
 
-        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+        void ChildrenDraggedAway(const std::vector<GG::Wnd*>&, const GG::Wnd*) noexcept override {}
 
         void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
         { ForwardEventToParent(); }
@@ -416,47 +416,6 @@ PoliciesListBox::PoliciesListBoxRow::PoliciesListBoxRow(
     CUIListBox::Row(w, h),
     m_availabilities_state(availabilities_state)
 {}
-
-void PoliciesListBox::PoliciesListBoxRow::ChildrenDraggedAway(
-    const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination)
-{
-    if (wnds.empty())
-        return;
-    // should only be one wnd in list because PolicyControls doesn't allow selection, so dragging is
-    // only one-at-a-time
-    auto control = dynamic_cast<GG::Control*>(wnds.front());
-    if (!control || empty())
-        return;
-
-    // find control in row
-    unsigned int ii = 0;
-    for (; ii < size(); ++ii) {
-        if (at(ii) != control)
-            continue;
-    }
-
-    if (ii == size())
-        return;
-
-    RemoveCell(ii);  // Wnd that accepts drop takes ownership of dragged-away control
-
-    const auto* policy_control = dynamic_cast<PolicyControl*>(control);
-    if (!policy_control)
-        return;
-
-    const auto* policy_type = policy_control->GetPolicy();
-    if (!policy_type)
-        return;
-
-    auto new_policy_control = GG::Wnd::Create<PolicyControl>(policy_type);
-    if (auto parent = std::dynamic_pointer_cast<const PoliciesListBox>(Parent())) {
-        new_policy_control->ClickedSignal.connect(parent->PolicyClickedSignal);
-        new_policy_control->DoubleClickedSignal.connect(parent->PolicyDoubleClickedSignal);
-        new_policy_control->RightClickedSignal.connect(parent->PolicyRightClickedSignal);
-    }
-
-    SetCell(ii, new_policy_control);
-}
 
 PoliciesListBox::PoliciesListBox(const AvailabilityManager& availabilities_state) :
     m_availabilities_state(availabilities_state)
@@ -1020,13 +979,16 @@ bool PolicySlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void PolicySlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                        GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
+                                        GG::Pt, GG::Flags<GG::ModKey>) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
 
     // if more than one control dropped somehow, reject all
     if (std::distance(first, last) != 1)
+        return;
+    // currently don't support dropping over full slots
+    if (m_policy_control)
         return;
 
     auto& app = GetApp();
@@ -1060,7 +1022,7 @@ const Policy* PolicySlotControl::GetPolicy() const {
         return nullptr;
 }
 
-void PolicySlotControl::StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt offset) {
+void PolicySlotControl::StartingChildDragDrop(const GG::Wnd* wnd, GG::Pt) {
     if (!m_policy_control)
         return;
 
@@ -1086,7 +1048,7 @@ void PolicySlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*
     }
 }
 
-void PolicySlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+void PolicySlotControl::AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
                                     GG::Flags<GG::ModKey> mod_keys)
 {
     if (wnds.size() != 1)
@@ -1098,9 +1060,7 @@ void PolicySlotControl::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::W
         SlotContentsAlteredSignal(policy_type, mod_keys & GG::MOD_KEY_CTRL);
 }
 
-void PolicySlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
-                                            const GG::Wnd* destination)
-{
+void PolicySlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd*) {
     if (wnds.empty())
         return;
     const GG::Wnd* wnd = wnds.front();
@@ -1190,7 +1150,7 @@ public:
     std::vector<std::string> Policies() const; //!< returns vector of names of policies in slots of current shown design.  empty slots are represented with empty string
 
     //void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
-    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) noexcept override {}
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
     void Sanitize();
     void Refresh();
@@ -1365,7 +1325,7 @@ void GovernmentWnd::MainPanel::SetPolicy(const Policy* policy, unsigned int slot
     // issue order to adopt or revoke
     if (adopt)
         app.Orders().IssueOrder<PolicyOrder>(context, empire_id, std::move(order_policy_name),
-                                              std::string{adopt_in_category}, adopt_in_category_slot);
+                                             std::string{adopt_in_category}, adopt_in_category_slot);
     else
         app.Orders().IssueOrder<PolicyOrder>(context, empire_id, std::move(order_policy_name));
 
@@ -1563,19 +1523,11 @@ void GovernmentWnd::MainPanel::DoLayout() {
 }
 
 void GovernmentWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                               GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
+                                               GG::Pt, GG::Flags<GG::ModKey>) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it)
         it->second = false;
-
-    // if multiple things dropped simultaneously somehow, reject all
-    if (std::distance(first, last) != 1)
-        return;
 }
-
-void GovernmentWnd::MainPanel::AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
-                                           GG::Flags<GG::ModKey> mod_keys)
-{}
 
 
 //////////////////////////////////////////////////
@@ -1623,7 +1575,7 @@ void GovernmentWnd::CompleteConstruction() {
     m_revert_button = GG::Wnd::Create<CUIButton>(UserString("GOVERNMENT_WND_REVERT"));
     AttachChild(m_revert_button);
 
-    auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey> modkeys) { GetApp().GetUI().ZoomToPolicy(policy->Name()); };
+    static constexpr auto zoom_to_policy_action = [](const Policy* policy, GG::Flags<GG::ModKey>) { if (policy) GetApp().GetUI().ZoomToPolicy(policy->Name()); };
     //m_main_panel->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_palette->PolicyClickedSignal.connect(zoom_to_policy_action);
     m_policy_size_buttons->ButtonChangedSignal.connect(boost::bind(&GovernmentWnd::PolicySizeButtonClicked, this, _1));
@@ -1709,12 +1661,9 @@ void GovernmentWnd::DoLayout() {
     m_revert_button->SizeMove(revert_button_ul, revert_button_lr);
 }
 
-void GovernmentWnd::PolicySizeButtonClicked(std::size_t idx)
-{ Refresh(); }
+void GovernmentWnd::PolicySizeButtonClicked(std::size_t) { Refresh(); }
 
-void GovernmentWnd::EnableOrderIssuing(bool enable)
-{}
+void GovernmentWnd::EnableOrderIssuing(bool) {}
 
-void GovernmentWnd::CloseClicked()
-{ ClosingSignal(); }
+void GovernmentWnd::CloseClicked() { ClosingSignal(); }
 
