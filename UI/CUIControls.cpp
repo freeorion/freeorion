@@ -951,7 +951,7 @@ void CUIEdit::KeyPress(GG::Key key, uint32_t key_code_point,
 void CUIEdit::AcceptPastedText(const std::string& text) {
     std::string text_copy;
     std::copy_if(text.begin(), text.end(), std::back_inserter(text_copy),
-                 [this](char c){ return m_disallowed_chars.find(c) == std::string::npos; });
+                 [this](char c) noexcept { return m_disallowed_chars.find(c) == std::string::npos; });
     GG::Edit::AcceptPastedText(text_copy);
 }
 
