@@ -1407,12 +1407,12 @@ namespace {
     };
 
 
-    void RefreshDetailPanelPediaTag(        const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelPediaTag(        const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                            float&/* cost*/, std::string&/* cost_units*/, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color)
+                                            GG::Clr&/* color*/)
     {
         name = UserString(item_name);
 
@@ -1459,8 +1459,8 @@ namespace {
             if (it == articles.end())
                 continue;
 
-            const auto& [name, cat, brief, desc, icon] = *it;
-            (void)name;
+            const auto& [name_, cat, brief, desc, icon] = *it;
+            (void)name_;
             
             detailed_description = UserString(desc);
 
@@ -1489,12 +1489,12 @@ namespace {
         }
     }
 
-    void RefreshDetailPanelShipPartTag(     const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelShipPartTag(     const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const ShipPart* part = GetShipPart(item_name);
         if (!part) {
@@ -1569,12 +1569,12 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelShipHullTag(     const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelShipHullTag(     const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const ShipHull* hull = GetShipHull(item_name);
         if (!hull) {
@@ -1657,7 +1657,7 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelTechTag(         const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelTechTag(         const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
                                             std::shared_ptr<GG::Texture>& other_texture, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
@@ -1741,12 +1741,12 @@ namespace {
             detailed_description += "\n" + Dump(tech->Effects());
     }
 
-    void RefreshDetailPanelPolicyTag(       const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelPolicyTag(       const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
                                             float& cost, std::string& cost_units, std::string& general_type,
                                             std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const Policy* policy = GetPolicy(item_name);
         if (!policy) {
@@ -1835,12 +1835,12 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelBuildingTypeTag( const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelBuildingTypeTag( const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const BuildingType* building_type = GetBuildingType(item_name);
         if (!building_type) {
@@ -1930,12 +1930,12 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelSpecialTag(      const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelSpecialTag(      const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                            float&/* cost*/, std::string&/* cost_units*/, std::string& general_type,
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const Special* special = GetSpecial(item_name);
         if (!special) {
@@ -2017,12 +2017,12 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelEmpireTag(       const std::string& item_type, const std::string& item_name,
-                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+    void RefreshDetailPanelEmpireTag(       const std::string&/* item_type*/, const std::string& item_name,
+                                            std::string& name, std::shared_ptr<GG::Texture>&/* texture*/,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                            float&/* cost*/, std::string&/* cost_units*/, std::string&/* general_type*/,
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const int empire_id = ToInt(item_name, ALL_EMPIRES);
         const auto& app = GetApp();
@@ -2248,11 +2248,11 @@ namespace {
         const auto& empire_ships_destroyed = empire->EmpireShipsDestroyed();
         if (!empire_ships_destroyed.empty())
             detailed_description.append("\n\n").append(UserString("EMPIRE_SHIPS_DESTROYED"));
-        for (const auto& [empire_id, num] : empire_ships_destroyed) {
-            const Empire* target_empire = GetEmpire(empire_id);
+        for (const auto& [target_empire_id, num] : empire_ships_destroyed) {
+            const Empire* target_empire = GetEmpire(target_empire_id);
             detailed_description.append("\n");
             if (target_empire)
-                detailed_description.append(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, empire_id, target_empire->Name()));
+                detailed_description.append(LinkTaggedIDText(VarText::EMPIRE_ID_TAG, target_empire_id, target_empire->Name()));
             else
                 detailed_description.append(UserString("UNOWNED"));
             detailed_description.append(" : ").append(ToChars(num));
@@ -2408,12 +2408,12 @@ namespace {
         detailed_description += "\n";
     }
 
-    void RefreshDetailPanelSpeciesTag(      const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelSpeciesTag(      const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                            float&/* cost*/, std::string&/* cost_units*/, std::string& general_type,
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         auto& app = GetApp();
         const SpeciesManager& sm = app.GetSpeciesManager();
@@ -2595,18 +2595,18 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelFieldTypeTag(const std::string&                  item_type,
+    void RefreshDetailPanelFieldTypeTag(const std::string&                  /*item_type*/,
                                         const std::string&                  item_name,
                                               std::string&                  name,
                                               std::shared_ptr<GG::Texture>& texture,
-                                              std::shared_ptr<GG::Texture>& other_texture,
-                                              int&                          turns,
-                                              float&                        cost,
-                                              std::string&                  cost_units,
+                                              std::shared_ptr<GG::Texture>& /*other_texture*/,
+                                              int&                          /*turns*/,
+                                              float&                        /*cost*/,
+                                              std::string&                  /*cost_units*/,
                                               std::string&                  general_type,
-                                              std::string&                  specific_type,
+                                              std::string&                  /*specific_type*/,
                                               std::string&                  detailed_description,
-                                              GG::Clr&                      color,
+                                              GG::Clr&                      /*color*/,
                                               bool                          only_description = false
     ) {
         // DONE: list current known occurances of the fieldtype with id / galactic coordinates to be clickable like instances of ship designs
@@ -2679,12 +2679,12 @@ namespace {
         detailed_description.append("\n");
     }
 
-    void RefreshDetailPanelMeterTypeTag(    const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelMeterTypeTag(    const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                            float&/*cost*/, std::string&/*cost_units*/, std::string& general_type,
+                                            std::string&/*specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/*color*/, bool only_description = false)
     {
         // TODO: don't need to go back and forth to MeterType and string_view.
         //       can concatenate and look up input item_name
@@ -2892,12 +2892,12 @@ namespace {
         bool inhibited = true;
     };
 
-    void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelShipDesignTag(   const std::string&/* item_type*/, const std::string& item_name,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         const int design_id = ToInt(item_name, INVALID_DESIGN_ID);
         auto& app = GetApp();
@@ -2971,12 +2971,12 @@ namespace {
         }
     }
 
-    void RefreshDetailPanelIncomplDesignTag(const std::string& item_type, const std::string& item_name,
+    void RefreshDetailPanelIncomplDesignTag(const std::string&/* item_type*/, const std::string&/* item_name*/,
                                             std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int& turns,
                                             float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, std::weak_ptr<const ShipDesign>& inc_design,
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, std::weak_ptr<const ShipDesign>& inc_design,
                                             bool only_description = false)
     {
         int client_empire_id = GetApp().EmpireID();
@@ -3090,12 +3090,12 @@ namespace {
         universe.DeleteShipDesign(TEMPORARY_OBJECT_ID);
     }
 
-    void RefreshDetailPanelObjectTag(       const std::string& item_type, const std::string& item_name,
-                                            std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                            std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                            float& cost, std::string& cost_units, std::string& general_type,
-                                            std::string& specific_type, std::string& detailed_description,
-                                            GG::Clr& color, bool only_description = false)
+    void RefreshDetailPanelObjectTag(       const std::string&/* item_type*/, const std::string& item_name,
+                                            std::string& name, std::shared_ptr<GG::Texture>&/* texture*/,
+                                            std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                            float&/* cost*/, std::string&/* cost_units*/, std::string& general_type,
+                                            std::string&/* specific_type*/, std::string& detailed_description,
+                                            GG::Clr&/* color*/, bool only_description = false)
     {
         int object_id = ToInt(item_name, INVALID_OBJECT_ID);
         const auto& app = GetApp();
@@ -3466,12 +3466,12 @@ namespace {
         return "";
     }
 
-    void RefreshDetailPanelSuitabilityTag(const std::string& item_type, const std::string& item_name,
-                                          std::string& name, std::shared_ptr<GG::Texture>& texture,
-                                          std::shared_ptr<GG::Texture>& other_texture, int& turns,
-                                          float& cost, std::string& cost_units, std::string& general_type,
-                                          std::string& specific_type, std::string& detailed_description,
-                                          GG::Clr& color)
+    void RefreshDetailPanelSuitabilityTag(const std::string&/* item_type*/, const std::string& item_name,
+                                          std::string& name, std::shared_ptr<GG::Texture>&/* texture*/,
+                                          std::shared_ptr<GG::Texture>&/* other_texture*/, int&/* turns*/,
+                                          float&/* cost*/, std::string&/* cost_units*/, std::string& general_type,
+                                          std::string&/* specific_type*/, std::string& detailed_description,
+                                          GG::Clr&/* color*/)
     {
         ScopedTimer suitability_timer{"RefreshDetailPanelSuitabilityTag"};
 
@@ -4055,7 +4055,6 @@ namespace {
                                             std::pair<std::string, std::string>& article_match,
                                             const std::string& search_text,
                                             const std::vector<std::string_view>& words_in_search_text,
-                                            std::size_t idx,
                                             bool search_article_text)
     {
         //std::cout << "start scanning article " << idx << ": " << article_name_link.first << std::endl;
@@ -4193,7 +4192,9 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
     timer.EnterSection("search subdirs dispatch");
     // assemble link text to all pedia entries, indexed by name
-    std::size_t idx = -1;
+    static constexpr std::size_t neg1 = std::size_t(0u) - std::size_t(1u);
+    static_assert(neg1 + 1u == 0u);
+    std::size_t idx = neg1;
     for (auto& [article_key_directory, article_name_link] : pedia_entries) {
         if (!utf8::is_valid(article_key_directory.first.begin(), article_key_directory.first.end())) {
             ErrorLogger() << "Invalid key UTF8: " << article_key_directory.first
@@ -4223,7 +4224,6 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
                 &emr, &wmr, &pmr, &amr,
                 &search_text,
                 &words_in_search_text,
-                idx,
                 search_desc
             ]() mutable {
                 SearchPediaArticleForWords(article_key,
@@ -4232,7 +4232,6 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
                                            emr, wmr, pmr, amr,
                                            search_text,
                                            words_in_search_text,
-                                           idx,
                                            search_desc);
             });
     }
