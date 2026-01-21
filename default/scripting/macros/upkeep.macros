@@ -59,19 +59,12 @@ DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF
 
 // The formula defining the cost factor depending on the complexity
 // note this gets calculated every time complexity is checked
-// should return 1.0 for values higher than DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A
 DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF
 '''
-(@1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A]] ? 1.0 :
- ( @1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA]] ? 0.95 :
-   ( @1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA]] ? 0.9 : 0.8 )
+(@1@ > 4 ? 1.0 :
+ ( @1@ > 3 ? 0.95 :
+   ( @1@ > 2 ? 0.9 : 0.8 )
  )
 )
 '''
-DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA
-'''2'''
-DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA
-'''3'''
-DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A
-'''4'''
 ///////////////////////////
