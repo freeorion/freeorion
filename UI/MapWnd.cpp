@@ -402,10 +402,7 @@ namespace {
         typedef std::pair<std::shared_ptr<CUILabel>,
                           std::shared_ptr<CUILabel>> LabelValueType;
 
-        bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override {
-            assert(mode <= wnd->BrowseModes().size());
-            return true;
-        }
+        bool WndHasBrowseInfo(const Wnd*, std::size_t) const noexcept override { return true; }
 
         void Render() override {
             const GG::Y row_height{ClientUI::Pts() + (m_margin * 2)};
@@ -638,7 +635,7 @@ namespace {
         }
 
     private:
-        void UpdateImpl(std::size_t mode, const Wnd* target) override {
+        void UpdateImpl(std::size_t, const Wnd*) override {
             UpdateLabels();
             ResetShipDesignLabels();
             DoLayout();
@@ -1877,7 +1874,7 @@ namespace {
     std::shared_ptr<GG::Texture> GetGasTexture() {
         static std::shared_ptr<GG::Texture> gas_texture;
         if (!gas_texture) {
-            if (gas_texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png")) {
+            if ((gas_texture = GetApp().GetUI().GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png"))) {
                 gas_texture->SetFilters(GL_NEAREST, GL_NEAREST);
                 glBindTexture(GL_TEXTURE_2D, gas_texture->OpenGLId());
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -2658,10 +2655,10 @@ bool MapWnd::PanY(GG::Y y) {
     return true;
 }
 
-void MapWnd::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::LButtonDown(GG::Pt pt, GG::Flags<GG::ModKey>)
 { m_drag_offset = pt - ClientUpperLeft(); }
 
-void MapWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LDrag(GG::Pt pt, GG::Pt, GG::Flags<GG::ModKey>) {
     if (GetOptionsDB().Get<bool>("ui.map.lock"))
         return;
 
@@ -2672,12 +2669,12 @@ void MapWnd::LDrag(GG::Pt pt, GG::Pt move, GG::Flags<GG::ModKey> mod_keys) {
     m_dragged = true;
 }
 
-void MapWnd::LButtonUp(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LButtonUp(GG::Pt, GG::Flags<GG::ModKey>) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     m_dragged = false;
 }
 
-void MapWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::LClick(GG::Pt, GG::Flags<GG::ModKey>) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
     const auto fleet_wnd = manager.ActiveFleetWnd();
@@ -2693,7 +2690,7 @@ void MapWnd::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     m_dragged = false;
 }
 
-void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey>) {
     // if in moderator mode, treat as moderator action click
     if (ClientPlayerIsModerator()) {
         // only supported action on empty map location at present is creating a system
@@ -2749,17 +2746,17 @@ void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
-void MapWnd::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey>) {
     if (move)
         Zoom(move, pt);
 }
 
-void MapWnd::KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::KeyPress(GG::Key key, uint32_t, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT)
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
 }
 
-void MapWnd::KeyRelease(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void MapWnd::KeyRelease(GG::Key key, uint32_t, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::Key::GGK_LSHIFT || key == GG::Key::GGK_RSHIFT)
         ReplotProjectedFleetMovement(mod_keys & GG::MOD_KEY_SHIFT);
 }
@@ -3707,8 +3704,8 @@ namespace {
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-                for (const auto& [empire_id, empire] : empires) {
-                    const auto& resource_supply_lanes = sm.SupplyStarlaneTraversals(empire_id);
+                for (const auto& [loop_empire_id, empire] : empires) {
+                    const auto& resource_supply_lanes = sm.SupplyStarlaneTraversals(loop_empire_id);
 
                     std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                     std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
@@ -4901,7 +4898,7 @@ namespace {
     using StarlaneToFleetsMap = KeyToFleetsMap<std::pair<int, int>>;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
-    std::shared_ptr<const Fleet> IsQualifiedFleet(auto&& fleet, int empire_id,
+    std::shared_ptr<const Fleet> IsQualifiedFleet(const auto& fleet,
                                                   const auto& known_destroyed_objects,
                                                   const auto& stale_object_info)
     {
@@ -5031,8 +5028,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
     LocationXEmpireToFleetsMap offroad_fleets;
 
     for (auto& [fleet_id, cfleet] : objects.allExisting<Fleet>()) {
-        auto fleet = IsQualifiedFleet(cfleet, client_empire_id,
-                                      this_client_known_destroyed_objects,
+        auto fleet = IsQualifiedFleet(cfleet, this_client_known_destroyed_objects,
                                       this_client_stale_object_info);
         if (!fleet)
             continue;
@@ -5401,7 +5397,7 @@ void MapWnd::MouseEnteringSystem(int system_id, GG::Flags<GG::ModKey> mod_keys) 
     SystemBrowsedSignal(system_id);
 }
 
-void MapWnd::MouseLeavingSystem(int system_id)
+void MapWnd::MouseLeavingSystem(int)
 { MouseEnteringSystem(INVALID_OBJECT_ID, GG::Flags<GG::ModKey>()); }
 
 void MapWnd::PlanetDoubleClicked(int planet_id) {
@@ -6010,7 +6006,7 @@ void MapWnd::ResetTimeoutClock(int timeout_seconds) {
     TimerFiring(0, &m_timeout_clock);
 }
 
-void MapWnd::TimerFiring(unsigned int ticks, GG::Timer* timer) {
+void MapWnd::TimerFiring(unsigned int, GG::Timer*) {
     const auto remaining = m_timeout_time - std::chrono::high_resolution_clock::now();
     const auto remaining_sec = std::chrono::duration_cast<std::chrono::seconds>(remaining);
     if (remaining_sec.count() <= 0) {
