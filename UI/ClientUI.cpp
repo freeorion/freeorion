@@ -476,7 +476,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("video.fps.shown",                          UserStringNop("OPTIONS_DB_SHOW_FPS"),                       false);
         db.Add("video.fps.max.enabled",                    UserStringNop("OPTIONS_DB_LIMIT_FPS"),                      true);
-        db.Add("video.fps.max",                            UserStringNop("OPTIONS_DB_MAX_FPS"),                        60.0,                           RangedStepValidator<double>(1.0, 0.0, 240.0));
+        db.Add("video.fps.max",                            UserStringNop("OPTIONS_DB_MAX_FPS"),                        60.0,                           RangedStepValidator<double>(1.0, 0.0, 5000.0));
         db.Add("video.fps.unfocused.enabled",              UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"),             true);
         db.Add("video.fps.unfocused",                      UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),               15.0,                           RangedStepValidator<double>(0.125, 0.125, 30.0));
 
