@@ -157,7 +157,7 @@ namespace {
         const int dest_system = fleet->FinalDestinationID();
 
         auto route = context.ContextUniverse().GetPathfinder().ShortestPath(
-            start_system, dest_system, fleet->Owner(), objects).first;
+            start_system, dest_system, fleet->Owner()).first;
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
@@ -385,7 +385,7 @@ bool Effect::operator==(const Effect& rhs) const {
 
 void Effect::Execute(ScriptingContext& context,
                      const TargetSet& targets,
-                     AccountingMap* accounting_map,
+                     AccountingMap*,
                      const EffectCause&,
                      bool only_meter_effects,
                      bool only_appearance_effects,
@@ -506,9 +506,9 @@ void SetMeter::Execute(ScriptingContext& context,
                        const TargetSet& targets,
                        AccountingMap* accounting_map,
                        const EffectCause& effect_cause,
-                       bool only_meter_effects,
+                       bool,
                        bool only_appearance_effects,
-                       bool include_empire_meter_effects,
+                       bool,
                        bool only_generate_sitrep_effects) const
 {
     if (only_appearance_effects || only_generate_sitrep_effects)
@@ -744,11 +744,11 @@ void SetShipPartMeter::Execute(ScriptingContext& context) const {
 
 void SetShipPartMeter::Execute(ScriptingContext& context,
                                const TargetSet& targets,
-                               AccountingMap* accounting_map,
+                               AccountingMap*,
                                const EffectCause&,
-                               bool only_meter_effects,
+                               bool,
                                bool only_appearance_effects,
-                               bool include_empire_meter_effects,
+                               bool,
                                bool only_generate_sitrep_effects) const
 {
     if (only_appearance_effects || only_generate_sitrep_effects)
@@ -1026,9 +1026,9 @@ void SetEmpireMeter::Execute(ScriptingContext& context) const {
 
 void SetEmpireMeter::Execute(ScriptingContext& context,
                              const TargetSet& targets,
-                             AccountingMap* accounting_map,
+                             AccountingMap*,
                              const EffectCause&,
-                             bool only_meter_effects,
+                             bool,
                              bool only_appearance_effects,
                              bool include_empire_meter_effects,
                              bool only_generate_sitrep_effects) const
@@ -3556,7 +3556,7 @@ void SetDestination::Execute(ScriptingContext& context) const {
 
     // find shortest path for fleet's owner
     auto route_list = context.ContextUniverse().GetPathfinder().ShortestPath(
-        start_system_id, destination_system_id, target_fleet->Owner(), context.ContextObjects()).first;
+        start_system_id, destination_system_id, target_fleet->Owner()).first;
 
     // reject empty move paths (no path exists).
     if (route_list.empty())
