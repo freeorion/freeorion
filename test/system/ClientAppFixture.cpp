@@ -18,7 +18,7 @@
 ClientAppFixture::ClientAppFixture() :
     m_cookie(boost::uuids::nil_uuid())
 {
-    InitDirs(boost::unit_test::framework::master_test_suite().argv[0]);
+    InitDirs(boost::unit_test::framework::master_test_suite().argv[0], true);
 
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.

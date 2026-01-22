@@ -28,16 +28,19 @@ unroll and hide the stack trace, print a message and still crash anyways. */
 
 #ifndef FREEORION_WIN32
 int main(int argc, char* argv[]) {
-    InitDirs(argv[0]);
     std::vector<std::string> args;
-    for (int i = 0; i < argc; ++i)
+    bool testing = false;
+    for (int i = 0; i < argc; ++i) {
         args.push_back(argv[i]);
+        testing = testing || (args.back() == "--testing");
+    }
 
 #else
 
 int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     // copy UTF-16 command line arguments to UTF-8 vector
     std::vector<std::string> args;
+    bool testing = false;
     for (int i = 0; i < argc; ++i) {
         std::wstring argi16(argv[i]);
 
@@ -51,13 +54,15 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
             WideCharToMultiByte(CP_UTF8, 0, argi16.data(), argi16.size(),
                                 argi8.data(), utf8_sz, NULL, NULL);
             args.push_back(argi8);
+            testing = testing || (args.back() == "--testing");
         } else {
             ErrorLogger() << "main() couldn't convert argument to UTF8: " << argi16;
             std::cerr << "main() couldn't convert argument to UTF8" << std::endl;
         }
     }
-    InitDirs((args.empty() ? "" : args.front()));
+
 #endif
+    InitDirs((args.empty() ? "" : args.front()), testing);
 
     GetOptionsDB().AddFlag("testing", UserStringNop("OPTIONS_DB_TESTING"), OptionsDB::Storable::UNSTORABLE);
     GetOptionsDB().Add<std::string>('h', "help", UserStringNop("OPTIONS_DB_HELP"), "NOOP",
