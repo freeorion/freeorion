@@ -244,7 +244,9 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     // Otherwise the dynamic linker will look for a correct python lib in system
     // paths, and if it can't find it, throw an error and terminate!
     // Setting environment variable here, spawned child processes will inherit it.
-    setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
+    const char* old_library_path = getenv("DYLD_LIBRARY_PATH");
+    const auto library_path = (old_library_path != nullptr) ? (GetPythonHome().string() + ":" + old_library_path) : GetPythonHome().string();
+    setenv("DYLD_LIBRARY_PATH", library_path.c_str(), 1);
 #endif
 
     // binary / executable to run for AI clients

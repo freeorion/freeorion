@@ -42,15 +42,6 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
     BOOST_TEST_MESSAGE(SERVER_CLIENT_EXE);
 
-#ifdef FREEORION_MACOSX
-    // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
-    // bundled with app, so the dynamic linker uses the bundled python library.
-    // Otherwise the dynamic linker will look for a correct python lib in system
-    // paths, and if it can't find it, throw an error and terminate!
-    // Setting environment variable here, spawned child processes will inherit it.
-    setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
-#endif
-
     std::vector<std::string> args{
         "\"" + SERVER_CLIENT_EXE + "\"",
         "--singleplayer",
