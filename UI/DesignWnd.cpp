@@ -55,6 +55,22 @@ struct Availability {
 class CUIEdit;
 
 namespace {
+    void AddOptions(OptionsDB& db) {
+        db.Add<bool>("ui.design.pedia.title.dynamic.enabled",
+                     UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),
+                     false);
+        db.Add<double>("ui.design.functional.cost.ratio",
+                       UserStringNop("OPTIONS_DB_DESIGN_FUNCTIONAL_MAX_COST_RATIO"),
+                       1.0, RangedStepValidator<double>(0.1, 1.0, 4.0));
+        db.Add<double>("ui.design.functional.bargain.ratio",
+                       UserStringNop("OPTIONS_DB_DESIGN_FUNCTIONAL_MIN_BARGAIN_RATIO"),
+                       1.0, RangedStepValidator<double>(0.1, 1.0, 4.0));
+        db.Add<double>("ui.design.functional.time.ratio",
+                       UserStringNop("OPTIONS_DB_DESIGN_FUNCTIONAL_MAX_TIME_RATIO"),
+                       1.0, RangedStepValidator<double>(0.1, 1.0, 4.0));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
 #if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
     constexpr std::string EMPTY_STRING;
 #else
@@ -1525,44 +1541,11 @@ namespace {
 }
 
 void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group, int empire_id, int loc_id) const {
-    // This is not merely a check for obsolescence; see PartsListBox::Populate
-    // for more info
-    static float min_bargain_ratio = -1.0;
-    static float max_cost_ratio = -1.0;
-    static float max_time_ratio = -1.0;
-
-    if (min_bargain_ratio == -1.0) {
-        min_bargain_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MIN_BARGAIN_RATIO")) {
-                float new_bargain_ratio = std::atof(UserString("FUNCTIONAL_MIN_BARGAIN_RATIO").c_str());
-                if (new_bargain_ratio > 1.0f)
-                    min_bargain_ratio = new_bargain_ratio;
-            }
-        } catch (...) {}
-    }
-
-    if (max_cost_ratio == -1.0) {
-        max_cost_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MAX_COST_RATIO")) {
-                float new_cost_ratio = std::atof(UserString("FUNCTIONAL_MAX_COST_RATIO").c_str());
-                if (new_cost_ratio > 1.0f)
-                    max_cost_ratio = new_cost_ratio;
-            }
-        } catch (...) {}
-    }
-
-    if (max_time_ratio == -1.0) {
-        max_time_ratio = 1.0;
-        try {
-            if (UserStringExists("FUNCTIONAL_MAX_TIME_RATIO")) {
-                float new_time_ratio = std::atof(UserString("FUNCTIONAL_MAX_TIME_RATIO").c_str());
-                if (new_time_ratio > 1.0f)
-                    max_time_ratio = new_time_ratio;
-            }
-        } catch (...) {}
-    }
+    // This is not merely a check for obsolescence;
+    // see PartsListBox::Populate for more info
+    const float min_bargain_ratio = GetOptionsDB().Get<double>("ui.design.functional.bargain.ratio");
+    const float max_cost_ratio = GetOptionsDB().Get<double>("ui.design.functional.cost.ratio");
+    const float max_time_ratio = GetOptionsDB().Get<double>("ui.design.functional.time.ratio");
 
     const ScriptingContext& context = GetApp().GetContext();
 
@@ -1583,19 +1566,20 @@ void PartsListBox::CullSuperfluousParts(std::vector<const ShipPart*>& this_group
             float time_ratio = float(std::max(1, ref_part->ProductionTime(empire_id, loc_id, context))) /
                                std::max(1, checkPart->ProductionTime(empire_id, loc_id, context));
             // adjusting the max cost ratio to 1.4 or higher, will allow, for example, for
-            // Zortium armor to make Standard armor redundant.  Setting a min_bargain_ratio higher than one can keep
-            // trivial bargains from blocking lower valued parts.
-            // TODO: move these values into default/customizations/common_user_customizations.txt  once that is supported
+            // Zortium armor to make Standard armor redundant.
+            // Setting a min_bargain_ratio higher than one can keep trivial bargains from blocking lower valued parts.
 
-            if ((cap_ratio > 1.0) && ((cost_ratio <= 1.0) || ((bargain_ratio >= min_bargain_ratio) && (cost_ratio <= max_cost_ratio))) &&
-                (time_ratio <= max_time_ratio) && PartALocationSubsumesPartB(checkPart, ref_part))
-            {
+            if (cap_ratio <= 1.0 || time_ratio > max_time_ratio)
+                continue;
+            if ((cost_ratio > 1.0) && ((bargain_ratio < min_bargain_ratio) || (cost_ratio > max_cost_ratio)))
+                continue;
+
+            if (PartALocationSubsumesPartB(checkPart, ref_part)) {
                 //DebugLogger() << "Filtering " << checkPart->Name() << " because of " << ref_part->Name();
                 this_group.erase(part_it--);
                 break;
             }
         }
-
     }
 }
 
