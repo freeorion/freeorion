@@ -837,7 +837,7 @@ public:
 
     void Clear();
     void SetPlanets(const std::vector<int>& planet_ids, StarType star_type, 
-                    ScriptingContext& context);
+                    ScriptingContext& context, int empire_id);
     void SelectPlanet(int planet_id); //!< programatically selects a planet with id \a planet_id
     void SetValidSelectionPredicate(std::function<bool(const UniverseObject*)> pred);
     void ClearValidSelectionPedicate();
@@ -3025,7 +3025,7 @@ void SidePanel::PlanetPanelContainer::Clear() {
 
 void SidePanel::PlanetPanelContainer::SetPlanets(
     const std::vector<int>& planet_ids, StarType star_type,
-    ScriptingContext& context)
+    ScriptingContext& context, int empire_id)
 {
     int initial_selected_planet_panel = m_selected_planet_id;
 
@@ -3035,11 +3035,11 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
     const auto& objects = context.ContextObjects();
 
     std::multimap<int, int> orbits_planets;
-    for (const auto& planet : objects.find<Planet>(planet_ids)) {
+    for (const auto* planet : objects.findRaw<const Planet>(planet_ids)) {
         if (!planet)
             continue;
         int system_id = planet->SystemID();
-        auto system = objects.get<System>(system_id).get();
+        const auto* system = objects.getRaw<const System>(system_id);
         if (!system) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
@@ -3075,7 +3075,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(
 
     // redo contents and layout of panels, after enabling or disabling, so
     // they take this into account when doing contents
-    RefreshAllPlanetPanels(context, GetApp().EmpireID());
+    RefreshAllPlanetPanels(context, empire_id);
 
     SelectPlanet(initial_selected_planet_panel);
 
@@ -3256,6 +3256,8 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
     ScriptingContext& context, int empire_id, int excluded_planet_id, bool require_prerender)
 {
     for (auto& panel : m_planet_panels) {
+        if (!panel)
+            continue;
         if (excluded_planet_id > 0 && panel->PlanetID() == INVALID_OBJECT_ID)
             continue;
         panel->Refresh(context, empire_id);
@@ -3580,7 +3582,7 @@ void SidePanel::PreRender() {
 
     // Needs refresh updates all data related to all SizePanels, including system list etc.
     if (s_needs_refresh)
-        RefreshInPreRender(context);
+        RefreshInPreRender(app);
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
@@ -3625,7 +3627,7 @@ void SidePanel::Refresh() {
             panel->RequirePreRender();
 }
 
-void SidePanel::RefreshInPreRender(ScriptingContext& context) {
+void SidePanel::RefreshInPreRender(GGHumanClientApp& app) {
     // disconnect any existing system and fleet signals
     for (const auto& con : s_system_connections)
         con.disconnect();
@@ -3639,11 +3641,13 @@ void SidePanel::RefreshInPreRender(ScriptingContext& context) {
     colony_projections.clear();
     species_colony_projections.clear();
 
+    const auto& context = app.GetContext();
+    const auto& objects = context.ContextObjects();
 
     // refresh individual panels' contents
     for (auto& weak_panel : s_side_panels)
         if (auto panel = weak_panel.lock())
-            panel->RefreshImpl(context);
+            panel->RefreshImpl(app);
 
 
     // early exit if no valid system object to get or connect signals to
@@ -3652,18 +3656,18 @@ void SidePanel::RefreshInPreRender(ScriptingContext& context) {
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    auto system = context.ContextObjects().get<System>(s_system_id);
+    auto* system = objects.getRaw<System>(s_system_id);
     if (!system) {
         ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
     }
 
-    for (auto& planet : context.ContextObjects().find<Planet>(system->PlanetIDs())) {
+    for (auto* planet : objects.findRaw<Planet>(system->PlanetIDs())) {
         s_system_connections.insert(planet->ResourceCenterChangedSignal.connect(
             SidePanel::ResourceCenterChangedSignal));
     }
 
-    for (auto& fleet : context.ContextObjects().find<Fleet>(system->FleetIDs())) {
+    for (auto* fleet : objects.findRaw<Fleet>(system->FleetIDs())) {
         s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
             &SidePanel::Update);
     }
@@ -3739,7 +3743,7 @@ void SidePanel::RefreshSystemNames(const ObjectMap& objects) {
     }
 }
 
-void SidePanel::RefreshImpl(ScriptingContext& context) {
+void SidePanel::RefreshImpl(GGHumanClientApp& app) {
     ScopedTimer sidepanel_refresh_impl_timer("SidePanel::RefreshImpl", true);
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -3749,18 +3753,17 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
     DetachChildAndReset(m_star_graphic);
     DetachChildAndReset(m_system_resource_summary);
 
+    auto& context = app.GetContext();
     const auto& objects = context.ContextObjects();
 
     RefreshSystemNames(objects);
 
     DetachChild(m_star_graphic);
 
-    auto system = objects.get<System>(s_system_id);
+    const auto* system = objects.getRaw<const System>(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
-
-    auto& app = GetApp();
 
     // (re)create top right star graphic
     if (auto graphic = app.GetUI().GetModuloTexture(
@@ -3782,43 +3785,38 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
         MoveChildDown(m_star_graphic);
     }
 
-    // star type
-    m_star_type_text->SetText("<s>" + GetStarTypeName(system.get()) + "</s>");
+    m_star_type_text->SetText("<s>" + GetStarTypeName(system) + "</s>");
 
+    const auto client_empire_id = app.EmpireID();
 
     // configure selection of planet panels in panel container
-    static constexpr auto owned_by_client_empire = [](const UniverseObject* obj) {
-        const auto empire_id = GetApp().EmpireID();
-        return (empire_id != ALL_EMPIRES) && obj && obj->OwnedBy(empire_id);
-    };
+    const auto owned_by_client_empire = [client_empire_id](const UniverseObject* obj) noexcept
+    { return (client_empire_id != ALL_EMPIRES) && obj && obj->OwnedBy(client_empire_id); };
     if (m_selection_enabled)
         m_planet_panel_container->SetValidSelectionPredicate(std::function(owned_by_client_empire));
     else
         m_planet_panel_container->ClearValidSelectionPedicate();
 
-
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
     const std::vector<int> planet_ids = system->PlanetIDs() | range_to_vec;
-    m_planet_panel_container->SetPlanets(planet_ids, system->GetStarType(), context);
+    m_planet_panel_container->SetPlanets(planet_ids, system->GetStarType(), context, client_empire_id);
 
 
     // populate system resource summary
 
-    // for getting just the planets owned by player's empire
-    const auto empire_id = app.EmpireID();
     // If all planets are owned by the same empire, then we show the Shields/Defense/Troops/Supply;
     // regardless, if there are any planets owned by the player in the system, we show
     // Production/Research/Influnce.
     int all_owner_id = ALL_EMPIRES;
     bool all_planets_share_owner = true;
     std::vector<int> all_planets, player_planets;
-    for (const auto& planet : objects.find<const Planet>(planet_ids)) {
+    for (const auto* planet : objects.findRaw<const Planet>(planet_ids)) {
         // If it is neither owned nor populated with natives, it can be ignored.
         if (planet->Unowned() && planet->SpeciesName().empty())
             continue;
 
-        int owner = planet->Owner();
+        const int owner = planet->Owner();
         // If all planets have the same owner as each other, then they must have the same owner
         // as the first planet, so store its owner here when finding the first planet.
         if (all_planets.empty())
@@ -3827,7 +3825,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
             all_planets_share_owner = false;
 
         all_planets.push_back(planet->ID());
-        if (owner == empire_id)
+        if (owner == client_empire_id)
             player_planets.push_back(planet->ID());
     }
 
@@ -3870,7 +3868,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
         for (const auto type : resource_meters | range_keys) {
             m_system_resource_summary->SetToolTip(type,
                 GG::Wnd::Create<SystemResourceSummaryBrowseWnd>(
-                    MeterToResource(type), s_system_id, empire_id));
+                    MeterToResource(type), s_system_id, client_empire_id));
         }
         // and the other meters
         for (const auto type : general_meters | range_keys) {

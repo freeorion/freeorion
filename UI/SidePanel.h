@@ -104,9 +104,9 @@ private:
 
     /** Fully refreshes sidepanel and contents, recreating all contents from
       * stored system id.  All SidePanels are refreshed. */
-    void RefreshInPreRender(ScriptingContext& context);
+    void RefreshInPreRender(GGHumanClientApp& app);
 
-    void RefreshImpl(ScriptingContext& context); ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
+    void RefreshImpl(GGHumanClientApp& app); ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
 
     /**  Insert all known systems into the SystemName drop down list.*/
     void RefreshSystemNames(const ObjectMap& objects);
