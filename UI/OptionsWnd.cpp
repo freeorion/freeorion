@@ -483,6 +483,12 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "ui.research.tree.zoom.scale",        UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
     DoubleOption(current_page, 0, "ui.research.control.graphic.size",   UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
 
+    CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_DESIGN_WND"));
+    BoolOption(current_page, 0, "ui.design.pedia.title.dynamic.enabled",UserString("OPTIONS_DESIGN_PEDIA_DYNAMIC"));
+    DoubleOption(current_page, 0, "ui.design.functional.cost.ratio",    UserString("OPTIONS_DESIGN_FUNCTIONAL_MAX_COST_RATIO"));
+    DoubleOption(current_page, 0, "ui.design.functional.bargain.ratio", UserString("OPTIONS_DESIGN_FUNCTIONAL_MIN_BARGAIN_RATIO"));
+    DoubleOption(current_page, 0, "ui.design.functional.time.ratio",    UserString("OPTIONS_DESIGN_FUNCTIONAL_MAX_TIME_RATIO"));
+
     CreateSectionHeader(current_page, 0,                                UserString("OPTIONS_QUEUES"));
     IntOption(current_page,    0, "ui.queue.width",                     UserString("OPTIONS_UI_QUEUE_WIDTH"));
     BoolOption(current_page,   0, "ui.queue.production_location.shown", UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));

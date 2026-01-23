@@ -2151,7 +2151,14 @@ OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 In the Design Window, dynamically update the pedia detail page while the design name is being edited.
 
 OPTIONS_DB_DESIGN_FUNCTIONAL_MAX_COST_RATIO
-Design window redundant part filtering max cost ratio. By default, parts are only considered redundant if all of (i) more powerful / greater capacity, (2) no more expensive, (iii) no greater minimum production time, and (iv) no additional location restrictions. Increasing max cost ratio above 1.0 allows the filtering to let a stronger / higher capacity part that costs that much more to make a cheaper part redundant.
+'''Design window redundant part filtering max cost ratio. By default, parts are only considered redundant if another part of the same class is all of:
+
+• more powerful / greater capacity
+• no more expensive
+• no greater minimum production time
+• no additional location restrictions
+
+Increasing max cost ratio above 1.0 allows the filtering to let a stronger / higher capacity part that costs that much more to make a cheaper part redundant.'''
 
 OPTIONS_DB_DESIGN_FUNCTIONAL_MIN_BARGAIN_RATIO
 Design window redundant part filtering minimum bargain ratio. Setting this above 1.0 will prevent small bargains (ratio of part strength / capacity) divided by (ratio of part costs) from making a part be redundant.
@@ -3160,6 +3167,9 @@ Window titles
 OPTIONS_RESEARCH_WND
 Research Window
 
+OPTIONS_DESIGN_WND
+Ship Design Window
+
 OPTIONS_QUEUES
 Queues
 
@@ -3174,6 +3184,18 @@ Zoom
 
 OPTIONS_TECH_CTRL_ICON_SIZE
 Icon Size
+
+OPTIONS_DESIGN_PEDIA_DYNAMIC
+Editing dynamic pedia updates
+
+OPTIONS_DESIGN_FUNCTIONAL_MAX_COST_RATIO
+Redundancy maximum cost ratio
+
+OPTIONS_DESIGN_FUNCTIONAL_MIN_BARGAIN_RATIO
+Redundancy minimum bargain ratio
+
+OPTIONS_DESIGN_FUNCTIONAL_MAX_TIME_RATIO
+Redundancy maximum time ratio
 
 OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
