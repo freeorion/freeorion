@@ -99,38 +99,40 @@ public:
 
     bool Run() override;
 
-    void SetBorderColor(Clr clr);       ///< sets the color used to render the border of the control
-    void SetInteriorColor(Clr clr);     ///< sets the color used to render the interior of the control
-    void SetTextColor(Clr clr);         ///< sets the color used to render menu item text
-    void SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
+    void SetBorderColor(Clr clr) noexcept { m_border_color = clr; } ///< sets the color used to render the border of the control
+    void SetInteriorColor(Clr clr) noexcept { m_int_color = clr; }  ///< sets the color used to render the interior of the control
+    void SetTextColor(Clr clr) noexcept { m_text_color = clr; }     ///< sets the color used to render menu item text
+    void SetHiliteColor(Clr clr) noexcept { m_hilite_color = clr; } ///< sets the color used to indicate a hilited menu item
 
     static constexpr std::size_t INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
 protected:
     /** Returns the font used to render text in the control. */
-    const std::shared_ptr<const Font>& GetFont() const;
+    const auto& GetFont() const noexcept { return m_font; }
+    const auto& MenuData() const noexcept { return m_menu_data; }
+    const auto& OpenLevels() const noexcept { return m_open_levels; }
 
-    const MenuItem&                 MenuData() const;     ///< returns a const reference to the MenuItem that contains all the menu contents
-    const std::vector<Rect>&        OpenLevels() const;   ///< returns the bounding rectangles for each open submenu, used to detect clicks in them
-    const std::vector<std::size_t>& Caret() const;        ///< returns the stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
-    const MenuItem*                 ItemSelected() const; ///< returns the menu item selected (0 if none)
+    /** Returns the stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3)
+      * back() is the most recent push */
+    const auto& Caret() const noexcept { return m_caret; }
+    const auto* ItemSelected() const noexcept { return m_item_selected; } // null if nothing selected
 
 private:
     /** The font used to render the text in the control. */
     std::shared_ptr<const Font> m_font;
 
-    Clr               m_border_color;   ///< the color of the menu's border
-    Clr               m_int_color;      ///< color painted into the client area of the control
-    Clr               m_text_color;     ///< color used to paint text in control
-    Clr               m_hilite_color;   ///< color behind selected items
+    Clr m_border_color;   ///< the color of the menu's border
+    Clr m_int_color;      ///< color painted into the client area of the control
+    Clr m_text_color;     ///< color used to paint text in control
+    Clr m_hilite_color;   ///< color behind selected items
 
-    MenuItem          m_menu_data;      ///< this is not just a single menu item; the next_level element represents the entire menu
+    MenuItem m_menu_data; ///< this is not just a single menu item; the next_level element represents the entire menu
 
-    std::vector<Rect>           m_open_levels;      ///< bounding rectangles for each open submenu, used to detect clicks in them
-    std::vector<std::size_t>    m_caret;            ///< stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
+    std::vector<Rect> m_open_levels;    ///< bounding rectangles for each open submenu, used to detect clicks in them
+    std::vector<std::size_t> m_caret;   ///< stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
 
-    const Pt          m_origin;                     ///< the upper left hand corner of the control's visible area
-    MenuItem*         m_item_selected = nullptr;    ///< the menu item selected (0 if none)
+    const Pt m_origin;                  ///< the upper left hand corner of the control's visible area
+    MenuItem* m_item_selected = nullptr;///< the menu item selected (0 if none)
 };
 
 }
