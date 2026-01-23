@@ -143,7 +143,7 @@ void ResourcePanel::Update(const ObjectMap& objects) {
 
     // meter bar displays resource stats
     m_multi_meter_status_bar->Update(objects);
-    m_multi_icon_value_indicator->Update();
+    m_multi_icon_value_indicator->Update(objects);
 
     // tooltips
     for (auto& [meter_type, stat_icon] : m_meter_stats) {

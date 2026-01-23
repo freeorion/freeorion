@@ -6,6 +6,7 @@
 #include "../universe/EnumsFwd.h"
 
 class StatisticIcon;
+class ObjectMap;
 
 /** Display icon and number for various meter-related quantities associated
   * with objects.  Typical use would be to display the resource production
@@ -22,11 +23,11 @@ public:
 
     void CompleteConstruction() override;
 
-    bool Empty() const;
+    [[nodiscard]] bool Empty() const noexcept { return m_object_ids.empty(); }
 
     void Render() override;
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
-    void Update();
+    void Update(const ObjectMap& objects);
     void SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
     void ClearToolTip(MeterType meter_type);
 
