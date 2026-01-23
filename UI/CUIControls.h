@@ -415,11 +415,13 @@ public:
 private:
     void DoLayout();
 
+    enum class ShowSign : bool { HIDE = false, SHOW = true };
+
     /// The value, precision and sign of the statistic value(s)
-    std::shared_ptr<GG::StaticGraphic>           m_icon;
-    std::shared_ptr<GG::Label>                   m_text;
-    std::array<std::tuple<double, int, bool>, 2> m_values{{{0.0, 0, false}, {0.0, 0, false}}};
-    bool                                         m_have_two = false;
+    std::shared_ptr<GG::StaticGraphic>               m_icon;
+    std::shared_ptr<GG::Label>                       m_text;
+    std::array<std::tuple<double, int, ShowSign>, 2> m_values{{{0.0, 0, ShowSign::HIDE}, {0.0, 0, ShowSign::HIDE}}};
+    bool                                             m_have_two = false;
 };
 
 class CUIToolBar final : public GG::Control {
