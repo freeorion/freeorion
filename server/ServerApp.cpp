@@ -4263,7 +4263,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
             retval[empire_id].reserve(tm.size());
 
             const auto should_cache = [empire{empire.get()}](const auto tech_name, const auto& tech) {
-                return (tech.Researchable() &&
+                return (tech->Researchable() &&
                         empire->GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
                     empire->GetResearchQueue().InQueue(tech_name);
             };
@@ -4271,7 +4271,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
             for (const auto& [tech_name, tech] : tm) {
                 if (should_cache(tech_name, tech)) {
                     retval[empire_id].emplace_back(
-                        tech_name, tech.ResearchCost(empire_id, context), tech.ResearchTime(empire_id, context));
+                        tech_name, tech->ResearchCost(empire_id, context), tech->ResearchTime(empire_id, context));
                 }
             }
         }

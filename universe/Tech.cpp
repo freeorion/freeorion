@@ -41,9 +41,9 @@ namespace {
 
         // are prereqs researched but not itself researched
         const auto is_researchable_now = [is_researched](const auto& name_tech) -> bool {
-            if (!name_tech.second.Researchable() || is_researched(name_tech.first))
+            if (!name_tech.second->Researchable() || is_researched(name_tech.first))
                 return false;
-            const auto& prereqs = name_tech.second.Prerequisites();
+            const auto& prereqs = name_tech.second->Prerequisites();
             return std::all_of(prereqs.begin(), prereqs.end(), is_researched);
         };
 
@@ -52,7 +52,7 @@ namespace {
         // transform_if
         for (const auto& name_tech : techs) {
             if (is_researchable_now(name_tech))
-                retval.push_back(&name_tech.second);
+                retval.push_back(name_tech.second.get());
         }
 
         return retval;
@@ -85,27 +85,6 @@ namespace CheckSums {
         CheckSumCombine(sum, cat.colour);
     }
 }
-
-///////////////////////////////////////////////////////////
-// Tech Info                                             //
-///////////////////////////////////////////////////////////
-Tech::TechInfo::TechInfo(std::string& name_, std::string& description_,
-                         std::string& short_description_, std::string& category_,
-                         std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
-                         std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
-                         bool researchable_,
-                         std::set<std::string>& tags_) :
-    name(std::move(name_)),
-    description(std::move(description_)),
-    short_description(std::move(short_description_)),
-    category(std::move(category_)),
-    research_cost(std::move(research_cost_)),
-    research_turns(std::move(research_turns_)),
-    researchable(researchable_),
-    tags(std::move(tags_))
-{}
-
-Tech::TechInfo::~TechInfo() = default;
 
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
@@ -396,7 +375,7 @@ uint32_t Tech::GetCheckSum() const {
 const Tech* TechManager::GetTech(std::string_view name) const {
     CheckPendingTechs();
     const auto it = m_techs.find(name);
-    return it == m_techs.end() ? nullptr : &it->second;
+    return it == m_techs.end() ? nullptr : it->second.get();
 }
 
 const TechCategory* TechManager::GetTechCategory(std::string_view name) const {
@@ -429,7 +408,7 @@ std::vector<std::string_view> TechManager::TechNames(std::string_view name) cons
     retval.reserve(m_techs.size());
     // transform_if
     for (const auto& name_tech : m_techs)
-        if (name_tech.second.Category() == name)
+        if (name_tech.second->Category() == name)
             retval.emplace_back(name_tech.first);
     return retval;
 }
@@ -477,7 +456,7 @@ void TechManager::CheckPendingTechs() const {
 
     // check for missing prerequisites
     for (const auto& [tech_name, tech] : m_techs) {
-        for (const auto& prereq_name : tech.Prerequisites()) {
+        for (const auto& prereq_name : tech->Prerequisites()) {
             if (m_techs.find(prereq_name) != m_techs.end())
                 continue; // prereq exists
 
@@ -490,14 +469,14 @@ void TechManager::CheckPendingTechs() const {
 
     // fill in the unlocked techs data for each tech
     for (auto& [tech_name, tech] : m_techs) {
-        for (auto& prereq_name : tech.Prerequisites()) {
+        for (auto& prereq_name : tech->Prerequisites()) {
             auto prereq_it = m_techs.find(prereq_name);
             if (prereq_it == m_techs.end()) {
                 // shouldn't reach here if previous check for missing prereqs worked
                 ErrorLogger() << "Couldn't find prerequisite tech " << prereq_name << " of tech " << tech_name;
                 continue;
             }
-            prereq_it->second.m_unlocked_techs.push_back(tech_name);
+            prereq_it->second->m_unlocked_techs.push_back(tech_name);
         }
     }
 
@@ -548,12 +527,12 @@ std::string TechManager::FindFirstDependencyCycle() const {
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
     for (const auto& [tech_name, tech] : m_techs) {
-        if (checked_techs.contains(&tech))
+        if (checked_techs.contains(tech.get()))
             continue;
 
         std::vector<const Tech*> stack;
         stack.reserve(m_techs.size());
-        stack.push_back(&tech);
+        stack.push_back(tech.get());
         while (!stack.empty()) {
             // Examine the tech on top of the stack.  If the tech has no prerequisite techs, or if all
             // of its prerequisite techs have already been checked, pop it off the stack and mark it as
@@ -605,7 +584,7 @@ std::string TechManager::FindRedundantDependency() const {
     assert(!m_techs.empty());
 
     for (const auto& [tech_name, tech] : m_techs) {
-        const auto& prereqs = tech.Prerequisites();
+        const auto& prereqs = tech->Prerequisites();
         std::map<std::string, std::string> techs_unlocked_by_prereqs;
         for (const auto& prereq_name : prereqs) {
             const Tech* prereq_tech = GetTech(prereq_name);

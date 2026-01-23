@@ -2271,7 +2271,7 @@ std::vector<std::string> Empire::CheckResearchProgress(
             continue;
         if (this->GetTechStatus(tech_name) != TechStatus::TS_RESEARCHABLE)
             continue;
-        if (!tech.Researchable())
+        if (!tech->Researchable())
             continue;
 
         const auto progress_fraction = [this, tech_name{tech_name}]() { // TODO: avoid copy, make m_research_progess use transparent comparator
@@ -2908,14 +2908,14 @@ std::vector<std::tuple<std::string_view, double, int>> Empire::TechCostsTimes(co
 
     // cache costs for empire for techs on queue an that are researchable, which
     // may be used later when updating the queue
-    const auto should_cache = [this](const auto& tech_name, const Tech& tech) {
-        return (tech.Researchable() && GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
+    const auto should_cache = [this](const auto& tech_name, const std::unique_ptr<Tech>& tech) {
+        return (tech->Researchable() && GetTechStatus(tech_name) == TechStatus::TS_RESEARCHABLE) ||
             m_research_queue.InQueue(tech_name);
     };
 
     for (const auto& [tech_name, tech] : tm) {
         if (should_cache(tech_name, tech))
-            retval.emplace_back(tech_name, tech.ResearchCost(m_id, context), tech.ResearchTime(m_id, context));
+            retval.emplace_back(tech_name, tech->ResearchCost(m_id, context), tech->ResearchTime(m_id, context));
     }
 
     return retval;

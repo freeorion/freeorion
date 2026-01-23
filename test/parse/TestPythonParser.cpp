@@ -83,26 +83,26 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     {
         const auto tech_it = techs.find("LRN_ALGO_ELEGANCE");
         BOOST_REQUIRE(techs.end() != tech_it);
-        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE", tech_it->second.Name());
-        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE_DESC", tech_it->second.Description());
-        BOOST_REQUIRE_EQUAL("RESEARCH_SHORT_DESC", tech_it->second.ShortDescription());
-        BOOST_REQUIRE_EQUAL("LEARNING_CATEGORY", tech_it->second.Category());
-        BOOST_REQUIRE_EQUAL(true, tech_it->second.Researchable());
-        BOOST_REQUIRE_EQUAL("icons/tech/algorithmic_elegance.png", tech_it->second.Graphic());
+        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE", tech_it->second->Name());
+        BOOST_REQUIRE_EQUAL("LRN_ALGO_ELEGANCE_DESC", tech_it->second->Description());
+        BOOST_REQUIRE_EQUAL("RESEARCH_SHORT_DESC", tech_it->second->ShortDescription());
+        BOOST_REQUIRE_EQUAL("LEARNING_CATEGORY", tech_it->second->Category());
+        BOOST_REQUIRE_EQUAL(true, tech_it->second->Researchable());
+        BOOST_REQUIRE_EQUAL("icons/tech/algorithmic_elegance.png", tech_it->second->Graphic());
 
         const ScriptingContext context;
 
-        BOOST_REQUIRE_CLOSE(0.0, tech_it->second.ResearchCost(ALL_EMPIRES, context), 0.1);
-        BOOST_REQUIRE_EQUAL(3, tech_it->second.ResearchTime(ALL_EMPIRES, context));
-        BOOST_REQUIRE_EQUAL(0, tech_it->second.Effects().size());
-        BOOST_REQUIRE_EQUAL(0, tech_it->second.UnlockedTechs().size());
-        BOOST_REQUIRE_EQUAL(0, tech_it->second.Prerequisites().size());
+        BOOST_REQUIRE_CLOSE(0.0, tech_it->second->ResearchCost(ALL_EMPIRES, context), 0.1);
+        BOOST_REQUIRE_EQUAL(3, tech_it->second->ResearchTime(ALL_EMPIRES, context));
+        BOOST_REQUIRE_EQUAL(0, tech_it->second->Effects().size());
+        BOOST_REQUIRE_EQUAL(0, tech_it->second->UnlockedTechs().size());
+        BOOST_REQUIRE_EQUAL(0, tech_it->second->Prerequisites().size());
 
-        const auto& tech_tags = tech_it->second.Tags();
+        const auto& tech_tags = tech_it->second->Tags();
         BOOST_REQUIRE_EQUAL(1, tech_tags.size());
-        BOOST_REQUIRE(tech_it->second.HasTag("PEDIA_LEARNING_CATEGORY"));
+        BOOST_REQUIRE(tech_it->second->HasTag("PEDIA_LEARNING_CATEGORY"));
 
-        const auto& tech_items = tech_it->second.UnlockedItems();
+        const auto& tech_items = tech_it->second->UnlockedItems();
         BOOST_REQUIRE_EQUAL(1, tech_items.size());
         BOOST_REQUIRE_EQUAL(UnlockableItemType::UIT_POLICY, tech_items[0].type);
         BOOST_REQUIRE_EQUAL("PLC_ALGORITHMIC_RESEARCH", tech_items[0].name);
@@ -130,15 +130,15 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             {UnlockableItem{UnlockableItemType::UIT_POLICY, "PLC_ALGORITHMIC_RESEARCH"}},
             "icons/tech/algorithmic_elegance.png"
         };
-        BOOST_REQUIRE(tech == tech_it->second);
+        BOOST_REQUIRE(tech == *tech_it->second);
     }
 
     {
         const auto tech_it = techs.find("CON_ORBITAL_HAB");
         BOOST_REQUIRE(techs.end() != tech_it);
 
-        BOOST_REQUIRE_EQUAL(1, tech_it->second.Effects().size());
-        const auto& tech_effect_gr = tech_it->second.Effects().front();
+        BOOST_REQUIRE_EQUAL(1, tech_it->second->Effects().size());
+        const auto& tech_effect_gr = tech_it->second->Effects().front();
         BOOST_REQUIRE_EQUAL("", tech_effect_gr.StackingGroup());
         BOOST_REQUIRE_EQUAL("", tech_effect_gr.GetDescription());
         BOOST_REQUIRE_EQUAL("", tech_effect_gr.AccountingLabel());
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsSitrepEffect());
         BOOST_REQUIRE_EQUAL(false, tech_effect->IsConditionalEffect());
 
-        const auto& prereqs = tech_it->second.Prerequisites();
+        const auto& prereqs = tech_it->second->Prerequisites();
         BOOST_REQUIRE_EQUAL(1, prereqs.size());
         BOOST_REQUIRE_EQUAL(1, std::count(prereqs.begin(), prereqs.end(), "PRO_MICROGRAV_MAN"));
 
@@ -218,9 +218,9 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             "icons/tech/orbital_gardens.png"
         };
 #if defined(FREEORION_MACOSX)
-        BOOST_WARN(tech == tech_it->second);
+        BOOST_WARN(tech == *tech_it->second);
 #else
-        BOOST_REQUIRE(tech == tech_it->second);
+        BOOST_REQUIRE(tech == *tech_it->second);
 #endif
     }
 

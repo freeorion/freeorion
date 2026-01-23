@@ -1369,7 +1369,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     // create an edge for every prerequisite
     for (const auto& [tech_name, tech] : manager) {
         if (!TechVisible(tech_name, m_categories_shown, m_tech_statuses_shown)) continue;
-        for (const std::string& prereq : tech.Prerequisites()) {
+        for (const std::string& prereq : tech->Prerequisites()) {
             if (!TechVisible(prereq, m_categories_shown, m_tech_statuses_shown)) continue;
             m_graph.AddEdge(prereq, tech_name);
         }

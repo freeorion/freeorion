@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     if (const char* tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
         const auto tech_it = techs.find(tech_name);
         BOOST_REQUIRE(techs.end() != tech_it);
-        BOOST_REQUIRE_EQUAL(tech_name, tech_it->second.Name());
+        BOOST_REQUIRE_EQUAL(tech_name, tech_it->second->Name());
 
         BOOST_TEST_MESSAGE("Dump " << tech_name << ":");
-        BOOST_TEST_MESSAGE(tech_it->second.Dump(0));
+        BOOST_TEST_MESSAGE(tech_it->second->Dump(0));
 
         if (const char *tech_checksum_str = std::getenv("FO_CHECKSUM_TECH_VALUE")) {
             unsigned int tech_checksum = boost::lexical_cast<unsigned int>(tech_checksum_str);

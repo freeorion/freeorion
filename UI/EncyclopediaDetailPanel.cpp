@@ -711,7 +711,7 @@ namespace {
 
             // techs
             for (const auto& [tech_name, tech] : GetTechManager()) {
-                if (HasCustomCategoryNoPrefixCheck(tech.PediaTags(), dir_name))
+                if (HasCustomCategoryNoPrefixCheck(tech->PediaTags(), dir_name))
                     dir_entries.emplace_back(std::piecewise_construct,
                                              std::forward_as_tuple(UserString(tech_name)),
                                              std::forward_as_tuple(VarText::TECH_TAG, tech_name));
@@ -1330,7 +1330,7 @@ namespace {
 
         // transform_if
         for (const auto& [tech_name, tech] : GetTechManager()) {
-            const auto& tech_items = tech.UnlockedItems();
+            const auto& tech_items = tech->UnlockedItems();
             auto it = std::find(tech_items.begin(), tech_items.end(), item);
             if (it != tech_items.end())
                 retval.push_back(tech_name);

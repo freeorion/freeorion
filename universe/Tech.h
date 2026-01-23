@@ -26,27 +26,6 @@ struct ScriptingContext;
 /** encasulates the data for a single FreeOrion technology */
 class FO_COMMON_API Tech {
 public:
-    /** Helper struct for parsing tech definitions */
-    struct TechInfo {
-        TechInfo() = default;
-        TechInfo(std::string& name_, std::string& description_,
-                 std::string& short_description_, std::string& category_,
-                 std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost_,
-                 std::unique_ptr<ValueRef::ValueRef<int>>&& research_turns_,
-                 bool researchable_,
-                 std::set<std::string>& tags_);
-        ~TechInfo();
-
-        std::string             name;
-        std::string             description;
-        std::string             short_description;
-        std::string             category;
-        std::unique_ptr<ValueRef::ValueRef<double>> research_cost;
-        std::unique_ptr<ValueRef::ValueRef<int>>    research_turns;
-        bool                    researchable = false;
-        std::set<std::string>   tags;
-    };
-
     Tech(std::string&& name, std::string&& description,
          std::string&& short_description, std::string&& category,
          std::unique_ptr<ValueRef::ValueRef<double>>&& research_cost,
@@ -69,9 +48,9 @@ public:
 
     bool operator==(const Tech& rhs) const;
     Tech(const Tech&) = delete;
-    Tech(Tech&&) = default;
+    Tech(Tech&&) = delete;
     Tech& operator=(const Tech&) = delete;
-    Tech& operator=(Tech&&) = default;
+    Tech& operator=(Tech&&) = delete;
 
     [[nodiscard]] const auto& Name() const noexcept             { return m_name; }
     [[nodiscard]] const auto& Description() const noexcept      { return m_description; }
@@ -147,7 +126,7 @@ namespace CheckSums {
     given a set of currently-known techs. */
 class FO_COMMON_API TechManager {
 public:
-    using TechContainer = boost::container::flat_map<std::string, Tech, std::less<>>;
+    using TechContainer = boost::container::flat_map<std::string, std::unique_ptr<Tech>, std::less<>>;
     using const_iterator = TechContainer::const_iterator;
     using iterator = TechContainer::const_iterator;
     using TechCategoryContainer = boost::container::flat_map<std::string, TechCategory, std::less<>>;

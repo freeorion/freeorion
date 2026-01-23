@@ -11,18 +11,6 @@
 #include <boost/python/import.hpp>
 #include <boost/python/raw_function.hpp>
 
-#define DEBUG_PARSERS 0
-
-#if DEBUG_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<UnlockableItem>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
-    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<TechCategory>>&) { return os; }
-}
-#endif
-
 namespace {
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, std::unique_ptr<TechCategory>, std::less<>>* g_categories = nullptr;
@@ -150,14 +138,15 @@ namespace {
         g_categories_seen->emplace(category);
 
         auto name_copy{name};
+        auto tech = std::make_unique<Tech>(std::move(name), std::move(description),
+                                           std::move(short_description), std::move(category),
+                                           std::move(researchcost), std::move(researchturns),
+                                           researchable, std::move(tags), std::move(effectsgroups),
+                                           std::move(prerequisites), std::move(unlock),
+                                           std::move(graphic));
         techs.emplace(std::piecewise_construct,
                       std::forward_as_tuple(std::move(name_copy)),
-                      std::forward_as_tuple(std::move(name), std::move(description),
-                                            std::move(short_description), std::move(category),
-                                            std::move(researchcost), std::move(researchturns),
-                                            researchable, std::move(tags), std::move(effectsgroups),
-                                            std::move(prerequisites), std::move(unlock),
-                                            std::move(graphic)));
+                      std::forward_as_tuple(std::move(tech)));
 
         return boost::python::object();
     }
