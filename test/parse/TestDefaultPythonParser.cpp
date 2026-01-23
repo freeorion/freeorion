@@ -44,6 +44,17 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
     BOOST_REQUIRE_EQUAL(9, categories_seen.size());
 
+    // validate tags for having only underscore or uppercase latin letters
+    for (const auto& tech : techs) {
+        for (const auto& tag : tech.second.Tags()) {
+            for (const auto c : tag) {
+                if (c != '_' && (c < 'A' || c > 'Z')) {
+                    BOOST_ERROR("Incorrect symbol \'" << c << "\' in tech " << tech.second.Name() << "\'s tag " << tag);
+                }
+            }
+        }
+    }
+
     if (const char* tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
         const auto tech_it = techs.find(tech_name);
         BOOST_REQUIRE(techs.end() != tech_it);
