@@ -3613,7 +3613,7 @@ void SidePanel::Update() {
 void SidePanel::UpdateImpl(ScriptingContext& context, int empire_id) {
     //std::cout << "SidePanel::UpdateImpl" << std::endl;
     if (m_system_resource_summary)
-        m_system_resource_summary->Update();
+        m_system_resource_summary->Update(std::as_const(context).ContextObjects());
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
     m_planet_panel_container->RefreshAllPlanetPanels(context, empire_id);
 }
@@ -3749,12 +3749,13 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
     DetachChildAndReset(m_star_graphic);
     DetachChildAndReset(m_system_resource_summary);
 
+    const auto& objects = context.ContextObjects();
 
-    RefreshSystemNames(context.ContextObjects());
+    RefreshSystemNames(objects);
 
     DetachChild(m_star_graphic);
 
-    auto system = context.ContextObjects().get<System>(s_system_id);
+    auto system = objects.get<System>(s_system_id);
     // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
@@ -3798,9 +3799,8 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
 
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
-    const auto& planet_ids = system->PlanetIDs();
-    std::vector<int> planet_ids_vec(planet_ids.begin(), planet_ids.end());
-    m_planet_panel_container->SetPlanets(planet_ids_vec, system->GetStarType(), context);
+    const std::vector<int> planet_ids = system->PlanetIDs() | range_to_vec;
+    m_planet_panel_container->SetPlanets(planet_ids, system->GetStarType(), context);
 
 
     // populate system resource summary
@@ -3813,7 +3813,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
     int all_owner_id = ALL_EMPIRES;
     bool all_planets_share_owner = true;
     std::vector<int> all_planets, player_planets;
-    for (const auto& planet : context.ContextObjects().find<const Planet>(planet_ids)) {
+    for (const auto& planet : objects.find<const Planet>(planet_ids)) {
         // If it is neither owned nor populated with natives, it can be ignored.
         if (planet->Unowned() && planet->SpeciesName().empty())
             continue;
@@ -3855,7 +3855,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
     // refresh the system resource summary.
     m_system_resource_summary = GG::Wnd::Create<MultiIconValueIndicator>(
         Width() - MaxPlanetDiameter() - 8,
-        all_planets_share_owner ? all_planets : player_planets,
+        all_planets_share_owner ? std::move(all_planets) : std::move(player_planets),
         std::move(meter_types));
     m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
                                              GG::Y{140} - m_system_resource_summary->Height()));
@@ -3879,7 +3879,7 @@ void SidePanel::RefreshImpl(ScriptingContext& context) {
         }
 
         AttachChild(m_system_resource_summary);
-        m_system_resource_summary->Update();
+        m_system_resource_summary->Update(objects);
     }
 }
 

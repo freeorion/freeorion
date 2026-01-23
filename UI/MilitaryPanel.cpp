@@ -100,7 +100,7 @@ void MilitaryPanel::Update(const ObjectMap& objects) {
 
     // meter bar displays military stats
     m_multi_meter_status_bar->Update(objects);
-    m_multi_icon_value_indicator->Update();
+    m_multi_icon_value_indicator->Update(objects);
 
     // tooltips
     for (auto& [meter_type, stat] : m_meter_stats) {

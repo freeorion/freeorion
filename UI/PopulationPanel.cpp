@@ -135,7 +135,7 @@ void PopulationPanel::Update(const ObjectMap& objects) {
     if (m_multi_meter_status_bar)
         m_multi_meter_status_bar->Update(objects);
     if (m_multi_icon_value_indicator)
-        m_multi_icon_value_indicator->Update();
+        m_multi_icon_value_indicator->Update(objects);
 
     // tooltips
     for (auto& [meter_name, old_stat_icon] : m_meter_stats) {

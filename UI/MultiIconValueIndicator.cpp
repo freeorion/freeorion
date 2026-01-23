@@ -96,13 +96,12 @@ void MultiIconValueIndicator::CompleteConstruction() {
         AttachChild(m_icons.back());
         x += IconWidth() + IconSpacing();
     }
+
     if (!m_icons.empty())
         Resize(GG::Pt(Width(), EDGE_PAD + IconHeight() + ClientUI::Pts()*3/2));
-    Update();
-}
 
-bool MultiIconValueIndicator::Empty() const
-{ return m_object_ids.empty(); }
+    Update(objects);
+}
 
 void MultiIconValueIndicator::Render() {
     GG::Pt ul = UpperLeft();
@@ -115,16 +114,16 @@ void MultiIconValueIndicator::Render() {
 void MultiIconValueIndicator::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void MultiIconValueIndicator::Update() {
+void MultiIconValueIndicator::Update(const ObjectMap& objects) {
     if (m_icons.size() != m_meter_types.size()) {
         ErrorLogger() << "MultiIconValueIndicator::Update has inconsitent numbers of icons and meter types";
         return;
     }
 
-    const auto objs = GetApp().GetContext().ContextObjects().findRaw<UniverseObject>(m_object_ids);
+    const auto objs = objects.findRaw<UniverseObject>(m_object_ids);
     if (objs.empty()) {
         for (auto& icon : m_icons)
-            icon->SetValue(0);
+            if (icon) icon->SetValue(0);
         return;
     }
 
