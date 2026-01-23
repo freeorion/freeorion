@@ -46,8 +46,8 @@ const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
 
 std::string SitRepEntry::Dump() const {
     std::string retval = "SitRep template_string = \"" + m_template_string + "\"";
-    for (const auto& variable : m_variables)
-        retval += " " + variable.first + " = " + variable.second;
+    for (const auto& [tag, value] : m_variables)
+        retval += " " + tag + " = " + value;
     retval += " turn = " + std::to_string(m_turn);
     retval += " icon = " + m_icon;
     retval += " label = " + m_label;
