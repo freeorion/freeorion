@@ -261,30 +261,3 @@ bool PopupMenu::Run()
 
     return retval;
 }
-
-void PopupMenu::SetBorderColor(Clr clr)
-{ m_border_color = clr; }
-
-void PopupMenu::SetInteriorColor(Clr clr)
-{ m_int_color = clr; }
-
-void PopupMenu::SetTextColor(Clr clr)
-{ m_text_color = clr; }
-
-void PopupMenu::SetHiliteColor(Clr clr)
-{ m_hilite_color = clr; }
-
-const std::shared_ptr<const Font>& PopupMenu::GetFont() const
-{ return m_font; }
-
-const MenuItem& PopupMenu::MenuData() const
-{ return m_menu_data; }
-
-const std::vector<Rect>& PopupMenu::OpenLevels() const
-{ return m_open_levels; }
-
-const std::vector<std::size_t>& PopupMenu::Caret() const
-{ return m_caret; }
-
-const MenuItem* PopupMenu::ItemSelected() const
-{ return m_item_selected; }
