@@ -1303,7 +1303,7 @@ StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
                              GG::X w, GG::Y h) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_values({std::tuple<double, int, bool>{value, digits, showsign}, {0.0, 0, false}})
+    m_values({std::tuple<double, int, ShowSign>{value, digits, ShowSign(showsign)}, {0.0, 0, ShowSign::HIDE}})
 { m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC); }
 
 void StatisticIcon::CompleteConstruction() {
@@ -1365,7 +1365,7 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
 
     text_elements
         .AddOpenTag(ClientUI::TextColor())
-        .AddText(DoubleToString(value0, precision0, show_sign0))
+        .AddText(DoubleToString(value0, precision0, show_sign0 == ShowSign::SHOW))
         .AddCloseTag("rgba");
 
     if (m_have_two) {
@@ -1382,7 +1382,7 @@ void StatisticIcon::SetValue(double value, std::size_t index) {
             text_elements.AddText("+");
 
         text_elements
-            .AddText(DoubleToString(value1, precision1, show_sign1))
+            .AddText(DoubleToString(value1, precision1, show_sign1 == ShowSign::SHOW))
             .AddCloseTag("rgba");
     }
 
