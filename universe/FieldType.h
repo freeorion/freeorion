@@ -23,6 +23,10 @@ public:
               float stealth, const std::set<std::string>& tags,
               std::vector<std::unique_ptr<Effect::EffectsGroup>>&& effects,
               std::string&& graphic);
+    FieldType(const FieldType&) = delete;
+    FieldType(FieldType&&) = delete;
+    FieldType& operator=(const FieldType&) = delete;
+    FieldType& operator=(FieldType&&) = delete;
 
     [[nodiscard]] bool operator==(const FieldType& rhs) const;
 
@@ -118,7 +122,7 @@ private:
 //! Returns the singleton field type manager
 [[nodiscard]] FO_COMMON_API auto GetFieldTypeManager() -> FieldTypeManager&;
 
-//! Returns the BuildingType specification object for a field of
+//! Returns the FieldType specification object for a field of
 //! type @p name.  If no such FieldType exists, nullptr is returned instead.
 [[nodiscard]] FO_COMMON_API auto GetFieldType(std::string_view name) -> const FieldType*;
 
