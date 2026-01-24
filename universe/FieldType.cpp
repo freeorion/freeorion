@@ -37,27 +37,27 @@ FieldType::FieldType(std::string&& name, std::string&& description,
     m_tags_concatenated([&tags]() {
         // allocate storage for concatenated tags
         std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
-                                                      [](const auto& tag) { return tag.size(); });
+                                                      [](const auto& tag) noexcept { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
 
         // concatenate tags
-        std::for_each(tags.begin(), tags.end(), [&retval](const auto& t)
-        { retval.append(boost::to_upper_copy<std::string>(t)); });
+        for (const auto& tag : tags)
+            retval.append(boost::to_upper_copy<std::string>(tag));
         return retval;
     }()),
     m_tags([&tags, this]() {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
         retval.reserve(tags.size());
-        std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, sv](const auto& t) {
-            std::string upper_t = boost::to_upper_copy<std::string>(t);
+        for (const auto& tag : tags) {
+            std::string upper_t = boost::to_upper_copy<std::string>(tag);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();
-        });
+        }
         return retval;
     }()),
     m_effects([](auto& effects, const auto& name) {
