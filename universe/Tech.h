@@ -69,9 +69,9 @@ public:
 
     bool operator==(const Tech& rhs) const;
     Tech(const Tech&) = delete;
-    Tech(Tech&&) = default;
+    Tech(Tech&&);
     Tech& operator=(const Tech&) = delete;
-    Tech& operator=(Tech&&) = default;
+    Tech& operator=(Tech&&);
 
     [[nodiscard]] const auto& Name() const noexcept             { return m_name; }
     [[nodiscard]] const auto& Description() const noexcept      { return m_description; }
