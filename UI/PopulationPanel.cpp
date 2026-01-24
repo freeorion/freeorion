@@ -125,7 +125,7 @@ void PopulationPanel::Update(const ObjectMap& objects) {
         m_multi_icon_value_indicator->ClearToolTip(meter_name);
     }
 
-    auto pop = objects.get<Planet>(m_popcenter_id);
+    auto pop = objects.getRaw<Planet>(m_popcenter_id);
     if (!pop) {
         ErrorLogger() << "PopulationPanel::Update couldn't get Planet";
         return;
