@@ -136,6 +136,146 @@ ShipDesign::ShipDesign(const ParsedShipDesign& design) :
                design.m_is_monster, design.m_uuid)
 {}
 
+namespace {
+    auto GetSubstringsFor(const std::string_view sv, const auto& tags) {
+        std::vector<std::string_view> retval;
+        if (sv.empty() || tags.empty())
+            return retval;
+        retval.reserve(tags.size());
+
+        for (const auto& tag : tags) {
+            if (tag.empty()) continue;
+            auto tag_offset = sv.find(tag);
+            if (tag_offset != std::string::npos)
+                retval.push_back(sv.substr(tag_offset, tag.size()));
+        }
+
+        return retval;
+    }
+}
+
+ShipDesign::ShipDesign(const ShipDesign& rhs) :
+    m_id(rhs.m_id),
+    m_name(rhs.m_name),
+    m_description(rhs.m_description),
+    m_uuid(rhs.m_uuid),
+    m_designed_on_turn(rhs.m_designed_on_turn),
+    m_designed_by_empire(rhs.m_designed_by_empire),
+    m_hull(rhs.m_hull),
+    m_parts(rhs.m_parts),
+    m_icon(rhs.m_icon),
+    m_3D_model(rhs.m_3D_model),
+
+    m_tags_concatenated(rhs.m_tags_concatenated),
+    m_tags(GetSubstringsFor(m_tags_concatenated, rhs.m_tags)),
+
+    m_detection(rhs.m_detection),
+    m_colony_capacity(rhs.m_colony_capacity),
+    m_troop_capacity(rhs.m_troop_capacity),
+    m_stealth(rhs.m_stealth),
+    m_fuel(rhs.m_fuel),
+    m_shields(rhs.m_shields),
+    m_structure(rhs.m_structure),
+    m_speed(rhs.m_speed),
+    m_research_generation(rhs.m_research_generation),
+    m_industry_generation(rhs.m_industry_generation),
+    m_influence_generation(rhs.m_influence_generation),
+    m_num_ship_parts(rhs.m_num_ship_parts),
+    m_num_part_classes(rhs.m_num_part_classes),
+    m_is_production_location(rhs.m_is_production_location),
+    m_producible(rhs.m_producible),
+    m_has_direct_weapons(rhs.m_has_direct_weapons),
+    m_has_fighters(rhs.m_has_fighters),
+    m_is_armed(rhs.m_is_armed),
+    m_can_bombard(rhs.m_can_bombard),
+
+    m_is_monster(rhs.m_is_monster),
+    m_name_desc_in_stringtable(m_name_desc_in_stringtable)
+{}
+
+ShipDesign::ShipDesign(ShipDesign&& rhs) :
+    m_id(rhs.m_id),
+    m_name(std::move(rhs.m_name)),
+    m_description(std::move(rhs.m_description)),
+    m_uuid(std::move(rhs.m_uuid)),
+    m_designed_on_turn(rhs.m_designed_on_turn),
+    m_designed_by_empire(rhs.m_designed_by_empire),
+    m_hull(std::move(rhs.m_hull)),
+    m_parts(std::move(rhs.m_parts)),
+    m_icon(std::move(rhs.m_icon)),
+    m_3D_model(std::move(rhs.m_3D_model)),
+
+    m_tags_concatenated(rhs.m_tags_concatenated), // copy, not move, so rhs.m_tags is usable below
+    m_tags(GetSubstringsFor(m_tags_concatenated, rhs.m_tags)),
+
+    m_detection(rhs.m_detection),
+    m_colony_capacity(rhs.m_colony_capacity),
+    m_troop_capacity(rhs.m_troop_capacity),
+    m_stealth(rhs.m_stealth),
+    m_fuel(rhs.m_fuel),
+    m_shields(rhs.m_shields),
+    m_structure(rhs.m_structure),
+    m_speed(rhs.m_speed),
+    m_research_generation(rhs.m_research_generation),
+    m_industry_generation(rhs.m_industry_generation),
+    m_influence_generation(rhs.m_influence_generation),
+    m_num_ship_parts(std::move(rhs.m_num_ship_parts)),
+    m_num_part_classes(std::move(rhs.m_num_part_classes)),
+    m_is_production_location(rhs.m_is_production_location),
+    m_producible(rhs.m_producible),
+    m_has_direct_weapons(rhs.m_has_direct_weapons),
+    m_has_fighters(rhs.m_has_fighters),
+    m_is_armed(rhs.m_is_armed),
+    m_can_bombard(rhs.m_can_bombard),
+
+    m_is_monster(rhs.m_is_monster),
+    m_name_desc_in_stringtable(m_name_desc_in_stringtable)
+{}
+
+ShipDesign& ShipDesign::operator=(ShipDesign&& rhs) {
+    if (this == std::addressof(rhs))
+        return *this;
+
+    m_id = rhs.m_id;
+    m_name = rhs.m_name;
+    m_description = rhs.m_description;
+    m_uuid = rhs.m_uuid;
+    m_designed_on_turn = m_designed_on_turn;
+    m_designed_by_empire = m_designed_by_empire;
+    m_hull = rhs.m_hull;
+    m_parts = rhs.m_parts;
+    m_icon = rhs.m_icon;
+    m_3D_model = rhs.m_3D_model;
+
+    m_tags_concatenated = rhs.m_tags_concatenated;
+    m_tags = GetSubstringsFor(m_tags_concatenated, rhs.m_tags);
+
+    m_detection = rhs.m_detection;
+    m_colony_capacity = rhs.m_colony_capacity;
+    m_troop_capacity = rhs.m_troop_capacity;
+    m_stealth = rhs.m_stealth;
+    m_fuel = rhs.m_fuel;
+    m_shields = rhs.m_shields;
+    m_structure = rhs.m_structure;
+    m_speed = rhs.m_speed;
+    m_research_generation = rhs.m_research_generation;
+    m_industry_generation = rhs.m_industry_generation;
+    m_influence_generation = rhs.m_influence_generation;
+    m_num_ship_parts = rhs.m_num_ship_parts;
+    m_num_part_classes = rhs.m_num_part_classes;
+    m_is_production_location = rhs.m_is_production_location;
+    m_producible = rhs.m_producible;
+    m_has_direct_weapons = rhs.m_has_direct_weapons;
+    m_has_fighters = rhs.m_has_fighters;
+    m_is_armed = rhs.m_is_armed;
+    m_can_bombard = rhs.m_can_bombard;
+
+    m_is_monster = rhs.m_is_monster;
+    m_name_desc_in_stringtable = m_name_desc_in_stringtable;
+
+    return *this;
+}
+
 const std::string& ShipDesign::Name(bool stringtable_lookup) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_name);
@@ -587,7 +727,7 @@ void ShipDesign::BuildStatCaches() {
         return;
     }
 
-    std::vector<std::string_view> tags(hull->Tags().begin(), hull->Tags().end());
+    std::vector<std::string_view> tags = hull->Tags();
 
     m_producible =      hull->Producible();
     m_detection =       hull->Detection();
@@ -694,16 +834,16 @@ void ShipDesign::BuildStatCaches() {
 
     // compile concatenated tags into contiguous storage
     std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
-                                                [](const auto& tag) { return tag.size(); });
+                                                [](const auto& tag) noexcept { return tag.size(); });
     m_tags_concatenated.reserve(tags_sz);
     m_tags.clear();
     m_tags.reserve(tags.size());
 
-    std::for_each(tags.begin(), last, [this](auto str) {
+    for (const auto& tag : tags) {
         auto next_start = m_tags_concatenated.size();
-        m_tags_concatenated.append(str);
+        m_tags_concatenated.append(tag);
         m_tags.push_back(std::string_view{m_tags_concatenated}.substr(next_start));
-    });
+    }
 }
 
 std::string ShipDesign::Dump(uint8_t ntabs) const {
@@ -850,8 +990,11 @@ uint32_t PredefinedShipDesignManager::GetCheckSum() const {
     auto build_checksum = [&retval, this](const std::vector<boost::uuids::uuid>& ordering){
         for (auto const& uuid : ordering) {
             auto it = m_designs.find(uuid);
-            if (it != m_designs.end())
-                CheckSums::CheckSumCombine(retval, std::pair(it->second->Name(false), *it->second));
+            if (it != m_designs.end() && it->second) {
+                CheckSums::CheckSumCombine(retval, it->second->Name(false));
+                CheckSums::CheckSumCombine(retval, *it->second);
+                CheckSums::CheckSumCombine(retval, 2u);
+            }
         }
         CheckSums::CheckSumCombine(retval, ordering.size());
     };
