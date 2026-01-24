@@ -989,8 +989,8 @@ private:
     std::string                       m_name;                     ///< A user-significant name for this Wnd
     std::vector<std::shared_ptr<Wnd>> m_children;                 ///< List of ptrs to child windows kept in order of decreasing area
     std::string                       m_drag_drop_data_type;      ///< The type of drag-and-drop data this Wnd represents, if any. If empty/blank, indicates that this Wnd cannot be drag-dropped.
-    Pt                                m_upperleft{X0, Y0};            ///< Upper left point of window
-    Pt                                m_lowerright{X1, Y1};           ///< Lower right point of window
+    Pt                                m_upperleft{X0, Y0};        ///< Upper left point of window
+    Pt                                m_lowerright{X1, Y1};       ///< Lower right point of window
     Pt                                m_min_size{X0, Y0};                            ///< Minimum window size
     Pt                                m_max_size{X{MAX_WINDOW_SZ},Y{MAX_WINDOW_SZ}}; ///< Maximum window size
 
