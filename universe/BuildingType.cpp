@@ -53,29 +53,27 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_capture_result(capture_result),
     m_tags_concatenated([](auto& tags) {
         // ensure tags are all upper-case
-        std::for_each(tags.begin(), tags.end(),
-                      [](auto& t) { boost::to_upper<std::string>(t); });
-
+        for (auto& tag : tags)
+            boost::to_upper<std::string>(tag);
         // allocate storage for concatenated tags
         std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
-                                                      [](const auto& tag) { return tag.size(); });
+                                                      [](const auto& tag) noexcept { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
-
         // concatenate tags
-        std::for_each(tags.begin(), tags.end(), [&retval](const auto& t) { retval.append(t); });
+        for (const auto& tag : tags)
+            retval.append(tag);
         return retval;
     }(common_params.tags)),
     m_tags([](const auto& tags, const std::string_view tags_concatenated) {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
         retval.reserve(tags.size());
-
         // store views into concatenated tags string
-        std::for_each(tags.begin(), tags.end(), [&next_idx, &retval, tags_concatenated](const auto& t) {
-            retval.push_back(tags_concatenated.substr(next_idx, t.size()));
-            next_idx += t.size();
-        });
+        for (const auto& tag : tags) {
+            retval.push_back(tags_concatenated.substr(next_idx, tag.size()));
+            next_idx += tag.size();
+        }
         return retval;
     }(common_params.tags, m_tags_concatenated)),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
@@ -100,7 +98,7 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
     m_icon(std::move(icon))
 {}
 
-BuildingType::~BuildingType() = default;
+BuildingType::~BuildingType() = default; // here due to unique_ptr use
 
 bool BuildingType::operator==(const BuildingType& rhs) const {
     if (&rhs == this)

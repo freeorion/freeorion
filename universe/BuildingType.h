@@ -49,6 +49,10 @@ public:
     ~BuildingType(); // needed due to forward-declared Condition held in unique_ptr
 
     bool operator==(const BuildingType& rhs) const;
+    BuildingType(const BuildingType&) = delete;
+    BuildingType(BuildingType&&) = delete;
+    BuildingType& operator=(const BuildingType&) = delete;
+    BuildingType& operator=(BuildingType&&) = delete;
 
     //! Returns the unique name for this type of building
     auto& Name() const noexcept { return m_name; }
