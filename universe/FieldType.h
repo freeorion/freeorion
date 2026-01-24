@@ -45,7 +45,7 @@ public:
     const auto& Tags() const noexcept { return m_tags; }
 
     auto HasTag(std::string_view tag) const
-    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) { return t == tag; }); }
+    { return std::any_of(m_tags.begin(), m_tags.end(), [tag](const auto& t) noexcept { return t == tag; }); }
 
     const auto& Effects() const noexcept { return m_effects; }
 
@@ -60,13 +60,13 @@ public:
     auto GetCheckSum() const -> uint32_t;
 
 private:
-    std::string                         m_name;
-    std::string                         m_description;
-    float                               m_stealth;
-    const std::string                   m_tags_concatenated;
-    const std::vector<std::string_view> m_tags;
-    std::vector<Effect::EffectsGroup>   m_effects;
-    std::string                         m_graphic;
+    const std::string                       m_name;
+    const std::string                       m_description;
+    const float                             m_stealth;
+    const std::string                       m_tags_concatenated;
+    const std::vector<std::string_view>     m_tags;
+    const std::vector<Effect::EffectsGroup> m_effects;
+    const std::string                       m_graphic;
 };
 
 
