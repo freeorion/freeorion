@@ -537,7 +537,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     } if (std::isnan(val)) {
         return "";
     } else if (std::isinf(val)) {
-        return val > 0 ? "∞" : "-∞";
+        return (val > 0) ? (always_show_sign ? "+∞" : "∞") : "-∞";
     } else if (!std::isfinite(val)) {
         return "";
     }
