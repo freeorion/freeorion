@@ -60,20 +60,19 @@ FieldType::FieldType(std::string&& name, std::string&& description,
         }
         return retval;
     }()),
-    m_effects([](auto& effects, const auto& name) {
+    m_effects([](auto& effects, const auto& name, float stealth) {
         std::vector<Effect::EffectsGroup> retval;
-        retval.reserve(effects.size());
+        retval.reserve(effects.size() + 1u);
         for (auto& e : effects) {
             e->SetTopLevelContent(name);
             retval.push_back(std::move(*e));
         }
+        if (stealth != 0.0f)
+            retval.push_back(IncreaseMeter(MeterType::METER_STEALTH, stealth));
         return retval;
-    }(effects, name)),
+    }(effects, name, m_stealth)),
     m_graphic(std::move(graphic))
-{
-    if (m_stealth != 0.0f)
-        m_effects.push_back(IncreaseMeter(MeterType::METER_STEALTH, m_stealth));
-}
+{}
 
 bool FieldType::operator==(const FieldType& rhs) const {
     if (std::addressof(rhs) == this)
