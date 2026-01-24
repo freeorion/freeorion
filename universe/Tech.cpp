@@ -154,50 +154,47 @@ Tech::Tech(std::string&& name, std::string&& description,
     }(std::move(research_turns), name)),
     m_researchable(researchable),
     m_tags_concatenated([&tags]() {
-        // allocate storage for concatenated tags
+        // allocate storage for concatenated tags. could be underestimate
+        // if to_upper extends a code point to something with a longer representation
         std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
                                                       [](const auto& tag) noexcept { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
 
         // concatenate tags
-        std::for_each(tags.begin(), tags.end(), [&retval](const auto& t)
-        { retval.append(boost::to_upper_copy<std::string>(t)); });
+        for (const auto& t : tags)
+            retval.append(boost::to_upper_copy<std::string>(t));
         return retval;
     }()),
     m_tags([&tags, this]() {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
         retval.reserve(tags.size());
-        std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(tags.begin(), tags.end(),
-                      [&next_idx, &retval, sv](const auto& t)
-        {
+        for (const auto& t : tags) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();
-        });
+        }
         return retval;
     }()),
     m_pedia_tags([&tags, this]() {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
         retval.reserve(tags.size());
-        std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(tags.begin(), tags.end(),
-                      [&next_idx, &retval, sv](const auto& t)
-        {
+        for (const auto& t : tags) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             auto tag = sv.substr(next_idx, upper_t.size());
             static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             if (tag.substr(0, len) == TAG_PEDIA_PREFIX)
                 retval.push_back(tag);
             next_idx += upper_t.size();
-        });
+        }
         return retval;
     }()),
     m_effects([](auto& effects, const auto& name) {
@@ -215,6 +212,67 @@ Tech::Tech(std::string&& name, std::string&& description,
     }(unlocked_items)),
     m_graphic(std::move(graphic))
 {}
+
+namespace {
+    auto GetSubstringsFor(const std::string_view sv, const auto& tags) {
+        std::vector<std::string_view> retval;
+        if (sv.empty() || tags.empty())
+            return retval;
+        retval.reserve(tags.size());
+
+        for (const auto& tag : tags) {
+            if (tag.empty()) continue;
+            auto tag_offset = sv.find(tag);
+            if (tag_offset != std::string::npos)
+                retval.push_back(sv.substr(tag_offset, tag.size()));
+        }
+
+        return retval;
+    }
+}
+
+Tech::Tech(Tech&& rhs) :
+    m_name(std::move(rhs.m_name)),
+    m_description(std::move(rhs.m_description)),
+    m_short_description(std::move(rhs.m_short_description)),
+    m_category(std::move(rhs.m_category)),
+    m_research_cost(std::move(rhs.m_research_cost)),
+    m_research_turns(std::move(rhs.m_research_turns)),
+    m_researchable(rhs.m_researchable),
+    m_tags_concatenated(rhs.m_tags_concatenated), // copy so tag substring wrangling can still access rhs' concatenated tags string
+    m_tags(GetSubstringsFor(m_tags_concatenated, rhs.m_tags)),
+    m_pedia_tags(GetSubstringsFor(m_tags_concatenated, rhs.m_pedia_tags)),
+    m_effects(std::move(rhs.m_effects)),
+    m_prerequisites(std::move(rhs.m_prerequisites)),
+    m_unlocked_items(std::move(rhs.m_unlocked_items)),
+    m_graphic(std::move(rhs.m_graphic)),
+    m_unlocked_techs(std::move(rhs.m_unlocked_techs))
+{}
+
+Tech& Tech::operator=(Tech&& rhs) {
+    if (this == std::addressof(rhs))
+        return *this;
+
+    m_name = std::move(rhs.m_name);
+    m_description = std::move(rhs.m_description);
+    m_short_description = std::move(rhs.m_short_description);
+    m_category = std::move(rhs.m_category);
+    m_research_cost = std::move(rhs.m_research_cost);
+    m_research_turns = std::move(rhs.m_research_turns);
+    m_researchable = rhs.m_researchable;
+
+    m_tags_concatenated = rhs.m_tags_concatenated; // copy so tag substring wrangling can still access rhs' concatenated tags string
+    m_tags = GetSubstringsFor(m_tags_concatenated, rhs.m_tags);
+    m_pedia_tags = GetSubstringsFor(m_tags_concatenated, rhs.m_pedia_tags);
+
+    m_effects = std::move(rhs.m_effects);
+    m_prerequisites = std::move(rhs.m_prerequisites);
+    m_unlocked_items = std::move(rhs.m_unlocked_items);
+    m_graphic = std::move(rhs.m_graphic);
+    m_unlocked_techs = std::move(rhs.m_unlocked_techs);
+
+    return *this;
+}
 
 bool Tech::operator==(const Tech& rhs) const {
     if (std::addressof(rhs) == this)
