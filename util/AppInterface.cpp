@@ -60,9 +60,10 @@ void IApp::StartBackgroundParsing(const PythonParser& python) {
     DebugLogger() << "Start background parsing...";
 
     // named value ref parsing can be done in parallel as the referencing happens after parsing
-    if (IsExistingDir(rdir / "scripting/macros"))
+    if (IsExistingDir(rdir / "scripting/macros")) {
         GetNamedValueRefManager().SetNamedValueRefParse(Pending::ParseSynchronously(parse::named_value_refs, rdir / "scripting/macros"));
-    else
+        GetNamedValueRefManager().SetNamedValueRefPythonParse(Pending::ParseSynchronously(parse::named_value_refs_py, python, rdir / "scripting/macros"));
+    } else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/macros").string();
 
     if (IsExistingDir(rdir / "scripting/buildings"))

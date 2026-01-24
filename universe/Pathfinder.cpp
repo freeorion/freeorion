@@ -908,8 +908,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     JumpDistanceSysVisitor2 to determines the distance between \p _sys_id2 and
     the GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
-    JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf,
-                            GeneralizedLocationType _sys2_ids) :
+    JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf, GeneralizedLocationType _sys2_ids) :
         pf(_pf), sys2_ids(_sys2_ids)
     {}
 
@@ -1047,10 +1046,10 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
 
     double dist{0.0};
 
-    auto* system_one = obj1->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
+    const auto* system_one = obj1->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
         static_cast<const System*>(obj1) : objects.getRaw<System>(obj1->SystemID());
     if (!system_one) {
-        auto fleet = FleetFromObject(obj1, objects);
+        const auto* fleet = FleetFromObject(obj1, objects);
         if (!fleet)
             return -1.0;
         if (auto next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
@@ -1062,13 +1061,13 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         }
     }
 
-    auto* system_two = obj2->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
+    const auto* system_two = obj2->ObjectType() == UniverseObjectType::OBJ_SYSTEM ?
         static_cast<const System*>(obj2) : objects.getRaw<System>(obj2->SystemID());
     if (!system_two) {
-        auto fleet = FleetFromObject(obj2, objects);
+        const auto* fleet = FleetFromObject(obj2, objects);
         if (!fleet)
             return -1.0;
-        if (auto next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
+        if (const auto* next_sys = objects.getRaw<System>(fleet->NextSystemID())) {
             dist += std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
             system_two = next_sys;
         } else {
@@ -1284,7 +1283,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
         others(_others)
     {}
 
-    bool operator()(std::nullptr_t) const { return false; }
+    bool operator()(std::nullptr_t) const noexcept { return false; }
     bool operator()(int sys_id) const
     { return pf.WithinJumpsOfOthers(jumps, sys_id, objects, others); }
     bool operator()(std::pair<int, int> prev_next) const {
@@ -1413,10 +1412,9 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     bool within_jumps(false);
     distance_matrix_cache<distance_matrix_storage<int16_t>> cache(m_system_jumps);
     cache.examine_row(system_index,
-        [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); }, // boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, ph::_1, ph::_2),
+        [this](size_t ii, row_ref row) { HandleCacheMiss(ii, row); },
         [this, &within_jumps, jumps, &objects, &others](size_t ii, row_ref row)
-        { WithinJumpsOfOthersCacheHit(within_jumps, jumps, objects, others, ii, row); }); // boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
-                                                                                          //             std::ref(within_jumps), jumps, std::ref(objects), std::ref(others), ph::_1, ph::_2));
+        { WithinJumpsOfOthersCacheHit(within_jumps, jumps, objects, others, ii, row); });
 
     return within_jumps;
 }

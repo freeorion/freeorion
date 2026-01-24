@@ -296,11 +296,13 @@ namespace {
         return buffer;
     }
 
+    using namespace std::literals;
+
     constexpr auto chars_from_red{ToRGBATagChars(GG::CLR_RED)};
-    static_assert(std::string_view("<rgba 255 0 0 255>") == std::string_view{chars_from_red.data()});
+    static_assert("<rgba 255 0 0 255>"sv == std::string_view{chars_from_red.data()});
 
     constexpr auto chars_from_white{ToRGBATagChars(GG::CLR_WHITE)};
-    static_assert(std::string_view("<rgba 255 255 255 255>") == std::string_view{chars_from_white.data()});
+    static_assert("<rgba 255 255 255 255>"sv == std::string_view{chars_from_white.data()});
 }
 
 
@@ -3568,7 +3570,7 @@ std::shared_ptr<const Font> Font::GetDefaultFont(uint16_t pts)
 ///////////////////////////////////////
 // class GG::FontManager
 ///////////////////////////////////////
-const std::shared_ptr<Font> FontManager::EMPTY_FONT{std::make_shared<Font>("", 0)};
+const std::shared_ptr<const Font> FontManager::EMPTY_FONT{std::make_shared<const Font>("", 0)};
 
 void FontManager::FreeFont(std::string_view font_filename, uint16_t pts)
 {

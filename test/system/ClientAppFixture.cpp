@@ -18,7 +18,18 @@
 ClientAppFixture::ClientAppFixture() :
     m_cookie(boost::uuids::nil_uuid())
 {
-    InitDirs(boost::unit_test::framework::master_test_suite().argv[0]);
+    InitDirs(boost::unit_test::framework::master_test_suite().argv[0], true);
+
+#ifdef FREEORION_MACOSX
+    // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
+    // bundled with app, so the dynamic linker uses the bundled python library.
+    // Otherwise the dynamic linker will look for a correct python lib in system
+    // paths, and if it can't find it, throw an error and terminate!
+    // Setting environment variable here, spawned child processes will inherit it.
+    const char* old_library_path = getenv("DYLD_LIBRARY_PATH");
+    const auto library_path = (old_library_path != nullptr) ? (GetPythonHome().string() + ":" + old_library_path) : GetPythonHome().string();
+    setenv("DYLD_LIBRARY_PATH", library_path.c_str(), 1);
+#endif
 
 #ifdef FREEORION_LINUX
     // Dirty hack to output log to console.

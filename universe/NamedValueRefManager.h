@@ -231,6 +231,8 @@ public:
     //! when a function needs to access a registry
     FO_COMMON_API void SetNamedValueRefParse(Pending::Pending<NamedValueRefParseMap>&& future)
     { m_pending_named_value_refs_focs_txt = std::move(future); }
+    FO_COMMON_API void SetNamedValueRefPythonParse(Pending::Pending<NamedValueRefParseMap>&& future)
+    { m_pending_named_value_refs_focs_py = std::move(future); }
 
     //! Register the @p value_ref under the evaluated @p name.
     template <typename T>
@@ -250,9 +252,9 @@ private:
     // getter of mutable ValueRef<T>* that can be modified within SetTopLevelContext functions
     template <typename T>
     ValueRef::ValueRef<T>* GetMutableValueRef(std::string_view name,
-                                              bool wait_for_named_value_focs_txt_parse = false)
+                                              bool wait_for_named_value_focs_parse = false)
     {
-        if (wait_for_named_value_focs_txt_parse)
+        if (wait_for_named_value_focs_parse)
             CheckPendingNamedValueRefs();
         return dynamic_cast<ValueRef::ValueRef<T>*>(GetValueRefImpl(m_value_refs, "generic", name));
     }
@@ -274,14 +276,16 @@ private:
 
     //! Waits for parsing of named_value_refs.focs.txt to finish
     void CheckPendingNamedValueRefs() const {
-        if (!m_pending_named_value_refs_focs_txt)
+        if (!m_pending_named_value_refs_focs_txt && !m_pending_named_value_refs_focs_py)
             return;
         // we block on the asynchronous parse
         // throw away the result, the parser already registered the values
         WaitForPending(m_pending_named_value_refs_focs_txt, /*do not care about result*/true);
+        WaitForPending(m_pending_named_value_refs_focs_py, /*do not care about result*/true);
     }
 
     mutable boost::optional<Pending::Pending<NamedValueRefParseMap>> m_pending_named_value_refs_focs_txt = boost::none;
+    mutable boost::optional<Pending::Pending<NamedValueRefParseMap>> m_pending_named_value_refs_focs_py = boost::none;
 
     //! Map of ValueRef%s identified by a name and mutexes for those to allow asynchronous registration
     double_container_type m_value_refs_double; // int value refs
@@ -356,8 +360,8 @@ void ::ValueRef::NamedRef<T>::SetTopLevelContent(const std::string& content_name
 //! @p name in the registry matching the given type T.  If no such ValueRef exists, nullptr is returned instead.
 template <typename T>
 [[nodiscard]] FO_COMMON_API const ValueRef::ValueRef<T>* GetValueRef(
-    std::string_view name, bool wait_for_named_value_focs_txt_parse)
-{ return GetNamedValueRefManager().GetValueRef<T>(name, wait_for_named_value_focs_txt_parse); }
+    std::string_view name, bool wait_for_named_value_focs_parse)
+{ return GetNamedValueRefManager().GetValueRef<T>(name, wait_for_named_value_focs_parse); }
 
 //! Register and take possesion of the ValueRef object @p vref under the given @p name.
 template <typename T>

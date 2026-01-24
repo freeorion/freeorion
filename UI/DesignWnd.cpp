@@ -143,6 +143,7 @@ namespace {
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>, std::vector<const ShipPart*>> PartGroupsType;
 
     constexpr std::string_view formatting_chars = "<>;:,.@#$%&*(){}'\"/?\\`[]|\a\b\f\n\r\t\b";
+    static_assert(range_contains(formatting_chars, '\n'));
 
     constexpr std::string_view DESIGN_FILENAME_PREFIX = "ShipDesign-";
     constexpr std::string_view DESIGN_FILENAME_EXTENSION = ".focs.txt";
@@ -771,19 +772,8 @@ namespace {
         m_hull_to_obsolete_and_loc[hull] = {std::pair{false, NextUIObsoleteEvent()}, inserted_it};
     }
 
-    [[nodiscard]] bool FlexibleContains(const auto& container, const auto& val) {
-        if constexpr (requires { container.contains(val); })
-            return container.contains(val);
-        else if constexpr (requires { container.count(val); })
-            return container.count(val) > 0;
-        else if constexpr (requires { container.find(val) != container.end(); })
-            return container.find(val) != container.end();
-        else
-            return std::any_of(container.begin(), container.end(), [&val](const auto& cv) { return val == cv; });
-    }
-
     [[nodiscard]] bool DisplayedShipDesignManager::IsKnown(const int id) const
-    { return FlexibleContains(m_id_to_obsolete_and_loc, id); };
+    { return range_contains(m_id_to_obsolete_and_loc | range_keys, id); };
 
     boost::optional<bool> DisplayedShipDesignManager::IsObsolete(const int id, const Universe& universe) const {
         // A non boost::none value for a specific design overrides the hull and part values
@@ -885,7 +875,7 @@ namespace {
         m_id_to_obsolete_and_loc.clear();
         m_ordered_design_ids.clear();
         for (const auto& [id, obsolete] : design_ids_and_obsoletes) {
-            if (FlexibleContains(m_id_to_obsolete_and_loc, id)) {
+            if (range_contains(m_id_to_obsolete_and_loc | range_keys, id)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate design id = " << id;
                 continue;
             }
@@ -907,7 +897,7 @@ namespace {
         m_hull_to_obsolete_and_loc.clear();
         m_ordered_hulls.clear();
         for (const auto& [name, obsolete] : hulls_and_obsoletes) {
-            if (FlexibleContains(m_hull_to_obsolete_and_loc, name)) {
+            if (range_contains(m_hull_to_obsolete_and_loc | range_keys, name)) {
                 ErrorLogger() << "DisplayedShipDesignManager::Load duplicate hull name = " << name;
                 continue;
             }
@@ -1192,6 +1182,29 @@ ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
 }
 
 
+class SlotControl;
+
+namespace {
+    void PartsListBoxDropsAcceptable(auto first, auto last) {
+        for (auto it = first; it != last; ++it)
+            it->second = false;
+
+        // if more than one control dropped somehow, reject all
+        if (std::distance(first, last) != 1)
+            return;
+
+        if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
+            if (const auto parent = first->first->Parent()) {
+                if (dynamic_cast<const SlotControl*>(parent.get())) {
+                    // only accepts parts that are being removed from a SlotControl
+                    first->second = true;
+                }
+            }
+        }
+    }
+}
+
+
 //////////////////////////////////////////////////
 // PartControl                                  //
 //////////////////////////////////////////////////
@@ -1202,14 +1215,20 @@ public:
     PartControl(const ShipPart* part);
     void CompleteConstruction() override;
 
-    const ShipPart*     Part() const { return m_part; }
-    const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
+    const ShipPart*     Part() const noexcept { return m_part; }
+    const std::string&  PartName() const noexcept { return m_part ? m_part->Name() : EMPTY_STRING; }
 
     void Render() override;
     void LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void LDoubleClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void SetAvailability(const AvailabilityManager::DisplayedAvailabilies& type);
+
+    void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
+    { ForwardEventToParent(); }
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         GG::Pt, GG::Flags<GG::ModKey>) const override
+    { PartsListBoxDropsAcceptable(first, last); }
 
     mutable boost::signals2::signal<void (const ShipPart*, GG::Flags<GG::ModKey>)> ClickedSignal;
     mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)> RightClickedSignal;
@@ -1281,6 +1300,7 @@ void PartControl::SetAvailability(const AvailabilityManager::DisplayedAvailabili
     m_background->Disable(disabled);
 }
 
+
 //////////////////////////////////////////////////
 // PartsListBox                                 //
 //////////////////////////////////////////////////
@@ -1290,8 +1310,16 @@ public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
         PartsListBoxRow(GG::X w, GG::Y h, const AvailabilityManager& availabilities_state);
-        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds,
-                                 const GG::Wnd* destination) override;
+
+        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+
+        void AcceptDrops(GG::Pt, std::vector<std::shared_ptr<GG::Wnd>>, GG::Flags<GG::ModKey>) override
+        { ForwardEventToParent(); }
+
+        void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                             GG::Pt, GG::Flags<GG::ModKey>) const override
+        { PartsListBoxDropsAcceptable(first, last); }
+
     private:
         const AvailabilityManager& m_availabilities_state;
     };
@@ -1303,8 +1331,6 @@ public:
     bool  GetShowingSuperfluous() const noexcept { return m_show_superfluous_parts; }
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
-    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
-                     GG::Flags<GG::ModKey> mod_keys) override;
     void Populate();
 
     void ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -1319,7 +1345,9 @@ public:
     mutable boost::signals2::signal<void (const ShipPart*, GG::Pt pt)>              ShipPartRightClickedSignal;
     mutable boost::signals2::signal<void (const std::string&)>                      ClearPartSignal;
 
-protected:
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                     GG::Flags<GG::ModKey> mod_keys) override;
+
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
@@ -1732,6 +1760,10 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
         Populate();
 }
 
+void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                   GG::Pt, GG::Flags<GG::ModKey>) const
+{ PartsListBoxDropsAcceptable(first, last); }
+
 
 //////////////////////////////////////////////////
 // DesignWnd::PartPalette                       //
@@ -1811,12 +1843,9 @@ void DesignWnd::PartPalette::CompleteConstruction() {
          part_class = ShipPartClass(int(part_class) + 1))
     {
         // are there any parts of this class?
-        bool part_of_this_class_exists = std::any_of(part_manager.begin(), part_manager.end(),
-                                                     [part_class](auto& name_part) {
-                                                         return name_part.second &&
-                                                             name_part.second->Class() == part_class;
-                                                     });
-        if (!part_of_this_class_exists)
+        const auto is_name_and_class = [part_class](auto& name_part)
+        { return name_part.second && name_part.second->Class() == part_class; };
+        if (range_none_of(part_manager, is_name_and_class))
             continue;
 
         m_class_buttons[part_class] = GG::Wnd::Create<CUIStateButton>(
@@ -3751,30 +3780,6 @@ void SlotControl::SetPart(const ShipPart* part) {
     ));
 }
 
-void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    // PartsListBox accepts parts that are being removed from a SlotControl
-
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
-
-    // if more than one control dropped somehow, reject all
-    if (std::distance(first, last) != 1)
-        return;
-
-    if (first->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING)
-    {
-        if (const auto parent = first->first->Parent())
-        {
-            if (dynamic_cast<const SlotControl*>(parent.get()))
-            {
-                first->second = true;
-            }
-        }
-    }
-}
-
 
 //////////////////////////////////////////////////
 // DesignWnd::MainPanel                         //
@@ -4075,12 +4080,9 @@ bool DesignWnd::MainPanel::IsDesignNameValid() const {
         return false;
 
     // disallow formatting characters
-    if (std::any_of(name.begin(), name.end(),
-                    [](const auto c) {
-                        return std::any_of(formatting_chars.begin(), formatting_chars.end(),
-                                           [c](const auto f) { return f == c; });
-                    }))
-    { return false; }
+    static constexpr auto formatting_contains_char = [](const auto c) { return range_contains(formatting_chars, c); };
+    if (range_any_of(name, formatting_contains_char))
+        return false;
 
     // disallow leading and trailing spaces
     if (name.front() == ' ' || name.back() == ' ')

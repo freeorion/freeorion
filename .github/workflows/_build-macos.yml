@@ -47,7 +47,7 @@ jobs:
           mkdir build
           cd build
           alias cmake="/usr/local/bin/gtimeout 40m /usr/local/bin/cmake"
-          cmake -GXcode -DBUILD_TESTING=ON -DBUILD_CLIENT_GODOT=ON -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON ..
+          cmake -GXcode -DBUILD_TESTING=ON -DBUILD_CLIENT_GODOT=ON -DBoost_NO_BOOST_CMAKE=ON -DGLEW_USE_STATIC_LIBS=ON -DCMAKE_OSX_ARCHITECTURES=${{ inputs.os == 'macos-15-intel' && 'x86_64' || 'arm64' }} ..
       - name: Build
         run: |
           export PATH="/usr/local/opt/ccache/libexec:$PATH"
@@ -80,7 +80,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ inputs.weekly-deploy }}
         with:
-          name: weekly-artifacts-sf-macos-${{ github.run_number }}
+          name: weekly-artifacts-sf-${{ inputs.os }}-${{ github.run_number }}
           path: build/FreeOrion_*_Test_MacOSX_*.dmg
           if-no-files-found: error
           retention-days: 1

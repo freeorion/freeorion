@@ -213,18 +213,12 @@ EffectsGroup::EffectsGroup(std::unique_ptr<Condition::Condition>&& scope,
     m_priority(priority),
     m_description(std::move(description)),
     m_content_name(std::move(content_name)),
-    m_has_meter_effects([this]() {
-        return std::any_of(m_effects.begin(), m_effects.end(),
-                           [](const auto& e) noexcept { return e->IsMeterEffect(); });
-    }()),
-    m_has_appearance_effects([this]() {
-        return std::any_of(m_effects.begin(), m_effects.end(),
-                           [](const auto& e) noexcept { return e->IsAppearanceEffect(); });
-    }()),
-    m_has_sitrep_effects([this]() {
-        return std::any_of(m_effects.begin(), m_effects.end(),
-                           [](const auto& e) noexcept { return e->IsSitrepEffect(); });
-    }())
+    m_has_meter_effects(
+        [this]() { return range_any_of(m_effects, [](const auto& e) noexcept { return e->IsMeterEffect(); }); }()),
+    m_has_appearance_effects(
+        [this]() { return range_any_of(m_effects, [](const auto& e) noexcept { return e->IsAppearanceEffect(); }); }()),
+    m_has_sitrep_effects(
+        [this]() { return range_any_of(m_effects, [](const auto& e) noexcept { return e->IsSitrepEffect(); }); }())
 {}
 
 EffectsGroup::~EffectsGroup() = default;

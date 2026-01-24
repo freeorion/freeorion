@@ -7466,6 +7466,12 @@ Planets
 FLEETS_SUBMENU
 Fleet / Ships
 
+POSITION_SUBMENU
+Position / System
+
+EMPIRE_SUPPLY_SUBMENU
+Empire / Supply
+
 PLANET_ENVIRONMENTS_SUBMENU
 Environment For Species
 
@@ -7540,6 +7546,18 @@ Dist. to Sel. System
 
 DISTANCE_TO_SELECTED_FLEET
 Dist. to Sel. Fleet
+
+SHORTEST_PATH_DISTANCE_TO_SELECTED_SYSTEM
+Shorest Path Dist. to Sel. System
+
+SHORTEST_PATH_DISTANCE_TO_SELECTED_FLEET
+Shorest Path Dist. to Sel. Fleet
+
+JUMPS_TO_SELECTED_SYSTEM
+Jumps to Sel. System
+
+JUMPS_TO_SELECTED_FLEET
+Jumps to Sel. Fleet
 
 PROPAGATED_SUPPLY_RANGE
 Propagated Supply Range
@@ -11500,8 +11518,123 @@ last invaded by empire
 DESC_VAR_LASTCOLONIZEDBYEMPIRE
 last colonized by empire
 
+DESC_VAR_NUMPARTCLASSESINSHIPDESIGN
+number of classes of parts in ship design with id %1%
+
+# returns a large number of not researched, or 0 if no such empire
+DESC_VAR_TURNTECHRESEARCHED
+turn on which empire %1% researched tech %2%
+
+DESC_VAR_BUILDINGTYPESOWNED
+number of buildings of type %2% owned by empire %1%
+
+DESC_VAR_BUILDINGTYPESPRODUCED
+number of buildings of type %2% produced by empire %1%
+
+DESC_VAR_BUILDINGTYPESSCRAPPED
+number of buildings of type %2% scrapped by empire %1%
+
+DESC_VAR_SPECIESCOLONIESOWNED
+number of planets with species %2% owned by empire %1%
+
+DESC_VAR_SPECIESPLANETSBOMBED
+number of planets with species %2% bombed by empire %1%
+
+DESC_VAR_SPECIESPLANETSDEPOPED
+number of planets depopulated of species %2% while owned by empire %1%
+
+DESC_VAR_SPECIESPLANETSINVADED
+number of planets with species %2% invaded by empire %1%
+
+DESC_VAR_SPECIESSHIPSDESTROYED
+number of ships crewed by species %2% destroyed by empire %1%
+
+DESC_VAR_SPECIESSHIPSLOST
+number of ships crewed by species %2% destroyed that were owned by empire %1%
+
+DESC_VAR_SPECIESSHIPSOWNED
+number of ships crewed by species %2% owned by empire %1%
+
+DESC_VAR_SPECIESSHIPSPRODUCED
+number of ships crewed by species %2% produced by empire %1%
+
+DESC_VAR_SPECIESSHIPSSCRAPPED
+number of ships crewed by species %2% scrapped by empire %1%
+
+DESC_VAR_SHIPPARTSOWNED
+number of %2% parts owned by empire %1%
+
+DESC_VAR_TURNSSINCEPOLICYADOPTED
+turns since empire %1% adopted the policy %2%
+
+DESC_VAR_CUMULATIVETURNSPOLICYADOPTED
+cumulative turns empire %1% has had policy %2% adopted
+
+DESC_VAR_LATESTTURNPOLICYADOPTED
+latest turn on which empire %1% had policy %2% adopted
+
+DESC_VAR_EMPIRESHIPSDESTROYED
+number of ships owned by empire %2% destroyed by empire %1%
+
+DESC_VAR_SHIPDESIGNSDESTROYED
+number of ships of design %2% destroyed by empire %1%
+
+DESC_VAR_SHIPDESIGNSLOST
+number of ships of design %2% destroyed while owned by empire %1%
+
+DESC_VAR_SHIPDESIGNSOWNED
+number of ships of design %2% owned by empire %1%
+
+DESC_VAR_SHIPDESIGNSINPRODUCTION
+number of ships of design %2% currently in production by empire %1%
+
+DESC_VAR_SHIPDESIGNSPRODUCED
+number of ships of design %2% produced by empire %1%
+
+DESC_VAR_SHIPDESIGNSSCRAPPED
+number of ships of design %2% scrapped by empire %1%
+
+DESC_VAR_TURNSYSTEMEXPLORED
+turn on which empire %1% explored system %2%
+
+DESC_VAR_OUTPOSTSOWNED
+number of outposts owned by empire %1%
+
+DESC_VAR_GAMERULE
+setting of game rule %1%
+
+DESC_VAR_PARTSINSHIPDESIGN
+number of parts in ship design %1%
+
+DESC_VAR_PARTOFCLASSINSHIPDESIGN
+number of parts of class %2% in ship design %1%
+
 DESC_VAR_JUMPSBETWEEN
-starlane jumps between systems containing objects with ids %1% and %2%
+number of starlane jumps on the least-jumps path between %1% and %2%
+
+DESC_VAR_JUMPSBETWEENBYEMPIRESUPPLYCONNECTIONS
+(unimplemented)
+
+DESC_VAR_SLOTSINHULL
+number of slots in hull %1%
+
+DESC_VAR_SLOTSINSHIPDESIGN
+number of slots in ship design %1%
+
+DESC_VAR_SPECIALADDEDONTURN
+turn on which special %2% was added to %1%
+
+DESC_VAR_TURNPOLICYADOPTED
+turns on which empire %1% adopted the policy %2%
+
+DESC_VAR_NUMPOLICIESADOPTED
+number of policies adopted by empire %1%
+
+DESC_VAR_PLANETTYPEDIFFERENCE
+distance between planet types %1% and %2%
+
+DESC_VAR_EMPIREOBJECTVISIBILITYTURN
+turn on which empire %1% had visibility of %2%
 
 DESC_VAR_STATISTIC
 Statistic
@@ -12628,7 +12761,19 @@ PLC_DESIGN_SIMPLICITY
 Design Simplicity
 
 PLC_DESIGN_SIMPLICITY_DESC
-Reduces production cost by 20% for ship designs with 6 or fewer parts.
+'''
+Reduces production cost up to [[value PLC_DESIGN_SIMPLICITY_MAX_REDUCTION_PERCENT]]% for ships based on the ship design complexity. Not so much for outpost and colony ships.
+
+The final cost is
+• [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AAA]] times the normal cost if there are no more than [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA]] different part classes.
+• [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AA]] times the normal cost if there are no more than [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA]] different part classes.
+• [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_A]] times the normal cost if there are no more than [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A]] different part classes.
+• [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR]] times the normal cost (i.e. full normal cost) if more than [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A]] different part classes.
+
+Design complexity is the sum of all different part classes in a ship. For example a ship design with [[shippart AR_ZORTRIUM_PLATE]], [[shippart SR_WEAPON_1_1]], and [[shippart SR_WEAPON_0_1]] has [[PC_DIRECT_WEAPON]] and [[PC_ARMOUR]] part classes resulting in design complexity 2.
+
+Notice that [[encyclopedia PC_COLONY]] colony part class has an increased complexity, it counts as [[value DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_PC_COLONY]] part classes.
+'''
 
 PLC_DESIGN_SIMPLICITY_SHORT_DESC
 Reduces Cost of Simple Designs

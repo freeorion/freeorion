@@ -51,6 +51,8 @@ constexpr void EvalImpl(auto& matches, auto& non_matches,
                         ::Condition::SearchDomain search_domain, const auto& pred)
     requires requires { non_matches.insert(non_matches.end(), DoPartition(matches, pred), matches.end()); }
 {
+    if (std::addressof(matches) == std::addressof(non_matches))
+        return;
     const bool domain_matches = search_domain == ::Condition::SearchDomain::MATCHES;
     auto& from_set = domain_matches ? matches : non_matches;
     auto& to_set = domain_matches ? non_matches : matches;

@@ -211,13 +211,13 @@ bool RenameOrder::Check(int empire, int object, std::string new_name,
     }
 
     // disallow control characters
-    if (std::any_of(new_name.begin(), new_name.end(), IsControlChar)) {
+    if (range_any_of(new_name, IsControlChar)) {
         ErrorLogger() << "RenameOrder::Check : passed control character in name.";
         return false;
     }
 
     // disallow formatting characters
-    if (std::any_of(new_name.begin(), new_name.end(), IsFormattingChar)) {
+    if (range_any_of(new_name, IsFormattingChar)) {
         ErrorLogger() << "RenameOrder::Check : passed formatting character in name.";
         return false;
     }
@@ -1974,10 +1974,8 @@ bool GiveObjectToEmpireOrder::Check(int empire_id, int object_id, int recipient_
         return false;
     }
 
-    const auto system_objects = objects.findRaw<const UniverseObject>(system->ObjectIDs());
-    if (!std::any_of(system_objects.begin(), system_objects.end(),
-                     [recipient_empire_id](const auto& o){ return o->Owner() == recipient_empire_id; }))
-    {
+    const auto owned_by_recipient = [roi{recipient_empire_id}](const UniverseObject& obj) { return obj.OwnedBy(roi); };
+    if (!objects.check_if_any<const UniverseObject>(owned_by_recipient, system->ObjectIDs())) {
         ErrorLogger() << "IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
         return false;
     }

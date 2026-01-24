@@ -65,6 +65,7 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/Lexer.cpp
             ${CMAKE_CURRENT_LIST_DIR}/MonsterFleetPlansParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/NamedValueRefParser.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/NamedValueRefPythonParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/Parse.cpp
             ${CMAKE_CURRENT_LIST_DIR}/PlanetEnvironmentValueRefParser.cpp
             ${CMAKE_CURRENT_LIST_DIR}/PlanetSizeValueRefParser.cpp
@@ -95,6 +96,7 @@ if(BUILD_PARSERS)
             ${CMAKE_CURRENT_LIST_DIR}/SourcePythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/ValueRefsPythonModuleParser.h
+            ${CMAKE_CURRENT_LIST_DIR}/NamedValueRefPythonParser.h
             ${CMAKE_CURRENT_LIST_DIR}/EffectsPythonModuleParser.h
     )
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")

@@ -40,10 +40,38 @@ MARINE_RECRUITMENT_POLICY_MULTIPLIER
 '''(1 - 0.5*(Statistic If condition = And [Source EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_MARINE_RECRUITMENT"]))
 '''
 
+///////////////////////////
+// PLC_DESIGN_SIMPLICITY //
 DESIGN_SIMPLICITY_POLICY_MULTIPLIER
-'''(1 - 0.2*(Statistic If condition = And [
-    Source
-    EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_DESIGN_SIMPLICITY"
-    ((PartsInShipDesign design = UsedInDesignID) <= 6)  // Used in part or hull cost expressions, in which "UsedInDesignID" will contain the ID of the ship design in which the part is being used
-]))
+'''(1.0 - (
+   Statistic If condition = And [
+         Source
+         EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_DESIGN_SIMPLICITY"
+      ] * (1.0 - [[DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF([[DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF]])]])
+  )
+)
 '''
+
+// gets registered in named_values.py as necessary vrefs are not implemented for the legacy focs.txt parser
+DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF
+'''NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"
+'''
+
+// The formula defining the cost factor depending on the complexity
+// note this gets calculated every time complexity is checked
+// should return 1.0 for values higher than DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A
+DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF
+'''
+(@1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A]] ? 1.0 :
+ ( @1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA]] ? 0.95 :
+   ( @1@ > [[DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA]] ? 0.9 : 0.8 )
+ )
+)
+'''
+DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AAA
+'''2'''
+DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_AA
+'''3'''
+DESIGN_SIMPLICITY_COMPLEXITY_MAX_COUNT_A
+'''4'''
+///////////////////////////

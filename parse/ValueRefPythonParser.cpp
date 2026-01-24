@@ -983,7 +983,7 @@ namespace {
         auto id2 = pyobject_to_vref<int>(arg2);
 
         return value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
-            "ShortestPath",
+            "ShortestPathDistance",
             std::move(id1),
             std::move(id2),
             nullptr,
@@ -1072,7 +1072,7 @@ namespace {
             }
         }
 
-        auto meter_name = ValueRef::MeterToName(boost::python::extract<enum_wrapper<MeterType>>(kw["meter"])().value);
+        auto meter_name = MeterToName(boost::python::extract<enum_wrapper<MeterType>>(kw["meter"])().value);
         auto meter_type = std::make_unique<ValueRef::Constant<std::string>>(std::string{meter_name});
 
         std::unique_ptr<ValueRef::ValueRef<int>> ship_id;

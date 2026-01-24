@@ -16,9 +16,6 @@
 #include "../util/Logger.h"
 #include "../util/i18n.h"
 
-namespace ValueRef {
-    std::string_view MeterToName(const MeterType meter);
-}
 
 UniverseObject::UniverseObject(UniverseObjectType type, std::string name,
                                double x, double y, int owner_id, int creation_turn) :
@@ -93,10 +90,8 @@ void UniverseObject::Copy(const UniverseObject& copied_object,
     }
 }
 
-bool UniverseObject::HasSpecial(std::string_view name) const {
-    return std::any_of(m_specials.begin(), m_specials.end(),
-                       [name](const auto& s) { return name == s.first; });
-}
+bool UniverseObject::HasSpecial(std::string_view name) const
+{ return range_contains(m_specials | range_keys, name); }
 
 int UniverseObject::SpecialAddedOnTurn(std::string_view name) const {
     auto it = range_find_if(m_specials, [name](const auto& s) noexcept { return name == s.first; });
@@ -152,7 +147,7 @@ std::string UniverseObject::Dump(uint8_t ntabs) const {
               .append(std::to_string(turn_amount.second)).append(") ");
     retval.append("  Meters: ");
     for (auto& [meter_type, meter] : m_meters)
-        retval.append(ValueRef::MeterToName(meter_type)).append(": ").append(meter.Dump().data()).append("  ");
+        retval.append(MeterToName(meter_type)).append(": ").append(meter.Dump().data()).append("  ");
     return retval;
 }
 

@@ -280,7 +280,7 @@ const std::locale& GetLocale(std::string_view name) {
         locale_gen.locale_cache_enabled(true);
         try {
             auto retval2 = locale_gen.generate(name_str);
-            std::use_facet<boost::locale::info>(retval2);
+            [[maybe_unused]] const auto& dummy = std::use_facet<boost::locale::info>(retval2);
             return retval2;
         } catch (...) {
             return std::locale::classic();
@@ -532,8 +532,15 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     digits = std::max(digits, 2);
 
     // default result for sentinel value
-    if (val == UNKNOWN_UI_DISPLAY_VALUE)
+    if (val == UNKNOWN_UI_DISPLAY_VALUE) {
         return UserString("UNKNOWN_VALUE_SYMBOL");
+    } if (std::isnan(val)) {
+        return "";
+    } else if (std::isinf(val)) {
+        return val > 0 ? "∞" : "-∞";
+    } else if (!std::isfinite(val)) {
+        return "";
+    }
 
     double mag = std::abs(val);
 

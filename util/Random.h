@@ -38,7 +38,7 @@ namespace RandomImpl {
     { return ((t[7]-'0') + 10*(t[6]-'0')) + 60*((t[4]-'0') + 10*(t[3]-'0')) + 3600*((t[1]-'0') + 10*(t[0]-'0')); }
 
     // shuffle bits in number
-    inline constexpr uint32_t hash(auto val_in) {
+    inline constexpr uint32_t hash(auto val_in) noexcept {
         auto val = static_cast<uint32_t>(val_in);
         val ^= 0x5A5C3AF5;
 
@@ -51,13 +51,17 @@ namespace RandomImpl {
         val *= m2;
         val ^= val >> 15;
 
+        static_assert(noexcept(std::declval<uint32_t&>() ^= 0x5A5C3AF5) &&
+                      noexcept(std::declval<uint32_t&>() ^= val >> 16) &&
+                      noexcept(std::declval<uint32_t&>() *= m1));
+
         return val;
     }
     // generate a compile-time PRNG int.
     // \a seed default varies for each second of the date.
     // \a counter_val indicates which value for the current seed to return.
     inline constexpr uint32_t CxPRNG(int16_t n = counter_val,
-                                     std::array<char, 9> seed = std::array<char, 9>{__TIME__})
+                                     std::array<char, 9> seed = std::array<char, 9>{__TIME__}) noexcept
     {
         uint32_t retval{TimeToInt(seed)};
         for (; n > 0; --n)

@@ -262,6 +262,7 @@ namespace parse {
         detail::complex_variable_rule<int>  empire_ships_destroyed;
         detail::complex_variable_rule<int>  jumps_between;
         //complex_variable_rule<int>          jumps_between_by_empire_supply;
+        detail::complex_variable_rule<int>  num_part_classes_in_ship_design;
         detail::complex_variable_rule<int>  outposts_owned;
         detail::complex_variable_rule<int>  parts_in_ship_design;
         detail::complex_variable_rule<int>  part_class_in_ship_design;

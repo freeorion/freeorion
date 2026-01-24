@@ -529,18 +529,16 @@ namespace {
         if (turns.empty())
             return INVALID_GAME_TURN;
 
-        auto contains_valid_sitrep = [&hidden_templates](const auto& p) {
-            return std::any_of(p.cbegin(), p.cend(),
-                               [&hidden_templates](const auto* s) {
-                                   return s && !IsSitRepInvalid(*s, hidden_templates);
-                               });
+        const auto contains_valid_sitrep = [](const auto& p, const auto& ht) { 
+            const auto is_valid_sirep = [&ht](const auto* s) { return s && !IsSitRepInvalid(*s, ht); };
+            return range_any_of(p, is_valid_sirep);
         };
 
-        auto turn_ok = [=](int t)
+        const auto turn_ok = [=](int t)
         { return forward ? (t > turn) : (t < turn); };
 
-        auto ok_and_contains_valid = [=](const auto& p)
-        { return turn_ok(p.first) && contains_valid_sitrep(p.second); };
+        const auto ok_and_contains_valid = [&](const auto& p)
+        { return turn_ok(p.first) && contains_valid_sitrep(p.second, hidden_templates); };
 
         if (forward) {
             auto found_it = std::find_if(turns.lower_bound(turn), turns.end(), ok_and_contains_valid);

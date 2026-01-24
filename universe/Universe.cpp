@@ -329,9 +329,9 @@ Universe::IDSet Universe::EmpireVisibleObjectIDs(int empire_id, const EmpireMana
 
     // check each object's visibility by the requested empire / all empires
     const auto is_visible_to_an_empire = [&empire_ids, this](const auto obj_id) {
-        return std::any_of(empire_ids.begin(), empire_ids.end(),
-                           [obj_id, this](auto e_id)
-                           { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; });
+        const auto vis_to_empire_id = [obj_id, this](auto e_id)
+        { return GetObjectVisibilityByEmpire(obj_id, e_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+        return range_any_of(empire_ids, vis_to_empire_id);
     };
 
     auto ids_rng = m_objects.allWithIDs() | range_keys | range_filter(is_visible_to_an_empire);
@@ -853,11 +853,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec,
     // when iterating over the list in the following code
     auto object_ptrs = m_objects.find(objects_vec);
     if (objects_vec.empty()) {
-        object_ptrs.reserve(m_objects.allExisting().size());
-        std::transform(m_objects.allExisting().begin(), m_objects.allExisting().end(),
-                       std::back_inserter(object_ptrs), [](const auto& p) {
-            return std::const_pointer_cast<UniverseObject>(p.second);
-        });
+        static constexpr auto deconst_second = [](const auto& p) { return std::const_pointer_cast<UniverseObject>(p.second); };
+        auto& all_objs{m_objects.allExisting()};
+        object_ptrs.reserve(all_objs.size());
+        std::transform(all_objs.begin(), all_objs.end(), std::back_inserter(object_ptrs), deconst_second);
     }
 
     DebugLogger() << "UpdateMeterEstimatesImpl on " << object_ptrs.size() << " objects";
@@ -1373,6 +1372,24 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     GetEffectsAndTargets(source_effects_targets_causes, std::vector<int>(), context, only_meter_effects);
 }
 
+namespace {
+    boost::asio::thread_pool GetThreadPool() {
+        if (errno)
+            DebugLogger() << "GetThreadPool() errno was initially: " << errno;
+        const auto thread_count = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
+        try {
+            errno = 0; // https://github.com/chriskohlhoff/asio/issues/1588
+            return boost::asio::thread_pool(thread_count);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "GetThreadPool() with " << thread_count << " threads pool construction failed: " << e.what();
+        }
+
+        // will produce undefined behaviour, possibly unjoinable thread_pool on Boost 1.87
+        // see: https://github.com/chriskohlhoff/asio/issues/1584
+        return boost::asio::thread_pool();
+    }
+}
+
 void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsAndCausesVec>& source_effects_targets_causes,
                                     const std::vector<int>& target_object_ids,
                                     const ScriptingContext& context,
@@ -1405,9 +1422,7 @@ void Universe::GetEffectsAndTargets(std::map<int, Effect::SourcesEffectsTargetsA
     // source objects, and which should be copied into the paired Vec
     ReorderBufferT source_effects_targets_causes_reorder_buffer;
 
-
-    const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
-    boost::asio::thread_pool thread_pool(num_threads);
+    auto thread_pool{GetThreadPool()};
 
     int n = 0;  // count dispatched condition evaluations
 

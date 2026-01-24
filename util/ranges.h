@@ -167,7 +167,7 @@ struct range_drop {
     const std::size_t drop = 1u;
     [[nodiscard]] constexpr explicit range_drop(std::size_t drop_) noexcept : drop(drop_) {}
 };
-inline auto operator|(auto&& r, range_drop drop) {
+inline auto constexpr operator|(auto&& r, range_drop drop) {
     auto begin_it = r.begin();
     const auto end_it = r.end();
     const auto sz = static_cast<std::size_t>(boost::distance(r));
@@ -181,7 +181,7 @@ inline auto operator|(auto&& r, range_drop drop) {
 inline constexpr auto& range_contains = std::ranges::contains;
 #else
 template <typename Rng, typename... Args>
-inline auto range_contains(Rng&& rng, Args&&... args)
+inline constexpr auto range_contains(Rng&& rng, Args&&... args)
 {
     if constexpr (requires { rng.contains(std::forward<Args>(args)...); })
         return rng.contains(std::forward<Args>(args)...);
@@ -190,16 +190,21 @@ inline auto range_contains(Rng&& rng, Args&&... args)
 }
 #endif
 
-#if 0 && defined(__cpp_lib_ranges_to_container)
-template <typename OutT, typename... Args>
-inline constexpr OutT range_to(Args&&... args) { return std::ranges::to<OutT>(std::forward<Args>(args)...); }
+#if defined(__cpp_lib_ranges_to_container)
+template <typename OutT, typename R>
+inline constexpr OutT range_to(R&& r) { return std::ranges::to<OutT>(std::forward<R>(r)); }
 #else
 template <typename OutT, typename R>
 inline constexpr OutT range_to(R&& r)
 {
     using std::begin;
     using std::end;
-    if constexpr (std::is_rvalue_reference_v<R>)
+
+    using iter_reference_t = decltype(*begin(std::declval<R&>()));
+
+    if constexpr (std::is_constructible_v<OutT, R>) // std::constructible_from is unavailable in Android Clang 14
+        return std::forward<R>(r);
+    else if constexpr (!std::is_lvalue_reference_v<iter_reference_t>)
         return {std::make_move_iterator(begin(r)), std::make_move_iterator(end(r))};
     else
         return {begin(r), end(r)};
@@ -212,16 +217,17 @@ struct range_to_t {};
 template <typename OutT>
 inline consteval range_to_t<OutT> range_to() { return {}; } // makes  rng | range_to<T>()  work
 
-template <typename OutT>
-inline constexpr OutT operator|(auto&& r, range_to_t<OutT>)
-{ return range_to<OutT>(std::forward<decltype(r)>(r)); }
+template <typename OutT, typename R>
+inline constexpr OutT operator|(R&& r, range_to_t<OutT>)
+{ return range_to<OutT>(std::forward<R>(r)); }
 
 constexpr struct range_to_vec_t {} range_to_vec{};
 
-inline constexpr auto operator|(auto&& r, range_to_vec_t) {
+template <typename R>
+inline constexpr auto operator|(R&& r, range_to_vec_t) {
     using std::begin;
     using ValT = std::remove_cvref_t<decltype(*begin(r))>;
-    return range_to<std::vector<ValT>>(std::forward<decltype(r)>(r));
+    return range_to<std::vector<ValT>>(std::forward<R>(r));
 }
 
 

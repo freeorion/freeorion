@@ -258,14 +258,221 @@ private:
 
 enum class ValueToReturn : bool { Initial = false, Immediate = true };
 
+FO_ENUM_BIG(
+    (Property),
+    ((MeterType, -2))
+    ((Unknown, -1))
+    ((None, 0))
+    ((Age))
+    ((ArrivalStarlaneID))
+    ((ArrivedOnTurn))
+    ((AvailableFoci))
+    ((BuildingType))
+    ((BuildingTypeCost))
+    ((BuildingTypesOwned))
+    ((BuildingTypesProduced))
+    ((BuildingTypesScrapped))
+    ((ClockwiseNextPlanetType))
+    ((CombatBout))
+    ((ContainerID))
+    ((CounterClockwiseNextPlanetType))
+    ((CreationTurn))
+    ((CurrentTurn))
+    ((CumulativeTurnsPolicyAdopted))
+    ((DamageStructurePerBattleMax))
+    ((DefaultFocus))
+    ((DesignID))
+    ((DestroyFightersPerBattleMax))
+    ((DirectDistanceBetween))
+    ((DistanceFromOriginalType))
+    ((EmpireAdoptedPolices))
+    ((EmpireAnnexationCost))
+    ((EmpireAvailablePolices))
+    ((EmpireMeterValue))
+    ((EmpireObjectVisibility))
+    ((EmpireObjectVisibilityTurn))
+    ((EmpireShipsDestroyed))
+    ((EmpireStockpile))
+    ((ETA))
+    ((FieldType))
+    ((FinalDestinationID))
+    ((FleetID))
+    ((Focus))
+    ((GalaxyAge))
+    ((GalaxyMaxAIAggression))
+    ((GalaxyMonsterFrequency))
+    ((GalaxyNativeFrequency))
+    ((GalaxyPlanetDensity))
+    ((GalaxySeed))
+    ((GalaxyShape))
+    ((GalaxySize))
+    ((GalaxySpecialFrequency))
+    ((GalaxyStarlaneFrequency))
+    ((GameRule))
+    ((HabitableSize))
+    ((HighestCostEnqueuedTech))
+    ((HighestCostResearchableTech))
+    ((HighestCostTransferrableTech))
+    ((Hull))
+    ((HullFuel))
+    ((HullSpeed))
+    ((HullStealth))
+    ((HullStructure))
+    ((ID))
+    ((JumpsBetween))
+    ((JumpsBetweenByEmpireSupplyConnections))
+    ((LaunchedFrom))
+    ((LastColonizedByEmpire))
+    ((LastInvadedByEmpire))
+    ((LastTurnActiveInBattle))
+    ((LastTurnAnnexed))
+    ((LastTurnAttackedByShip))
+    ((LastTurnBattleHere))
+    ((LastTurnColonized))
+    ((LastTurnConquered))
+    ((LastTurnMoveOrdered))
+    ((LastTurnResupplied))
+    ((LatestTurnPolicyAdopted))
+    ((LeastHappySpecies))
+    ((LowestCostEnqueuedTech))
+    ((LowestCostResearchableTech))
+    ((LowestCostTransferrableTech))
+    ((MostHappySpecies))
+    ((MostPopulousSpecies))
+    ((MostSpentEnqueuedTech))
+    ((MostSpentResearchableTech))
+    ((MostSpentTransferrableTech))
+    ((Name))
+    ((NearestSystemID))
+    ((NextBetterPlanetType))
+    ((NextBestPlanetType))
+    ((NextCloserToOriginalPlanetType))
+    ((NextLargerPlanetSize))
+    ((NextOlderStarType))
+    ((NextSmallerPlanetSize))
+    ((NextSystemID))
+    ((NextYoungerStarType))
+    ((NumPartClassesInShipDesign))
+    ((NumPoliciesAdopted))
+    ((NumShips))
+    ((NumSpecials))
+    ((NumStarlanes))
+    ((ObjectType))
+    ((OrderedColonizePlanetID))
+    ((OrderedGivenToEmpire))
+    ((Orbit))
+    ((OriginalType))
+    ((OutpostsOwned))
+    ((Owner))
+    ((OwnerBeforeLastConquered))
+    ((OwnerLeastExpensiveEnqueuedTech))
+    ((OwnerMostExpensiveEnqueuedTech))
+    ((OwnerMostRPCostLeftEnqueuedTech))
+    ((OwnerMostRPSpentEnqueuedTech))
+    ((OwnerName))
+    ((OwnerTopPriorityEnqueuedTech))
+    ((PartCapacity))
+    ((PartOfClassInShipDesign))
+    ((PartSecondaryStat))
+    ((Parts))
+    ((PartsInShipDesign))
+    ((PlanetEnvironment))
+    ((PlanetEnvironmentForSpecies))
+    ((PlanetID))
+    ((PlanetSize))
+    ((PlanetType))
+    ((PlanetTypeDifference))
+    ((PreviousSystemID))
+    ((PreviousToFinalDestinationID))
+    ((ProducedByEmpireID))
+    ((PropagatedSupplyDistance))
+    ((PropagatedSupplyRange))
+    ((PropagatedSystemSupplyDistance))
+    ((PropagatedSystemSupplyRange))
+    ((RandomColonizableSpecies))
+    ((RandomCompleteTech))
+    ((RandomControlledSpecies))
+    ((RandomEnqueuedTech))
+    ((RandomResearchableTech))
+    ((RandomTransferrableTech))
+    ((SelectedFleetID))
+    ((SelectedPlanetID))
+    ((SelectedSystemID))
+    ((ShipDesignCost))
+    ((ShipDesignsDestroyed))
+    ((ShipDesignsInProduction))
+    ((ShipDesignsLost))
+    ((ShipDesignsOwned))
+    ((ShipDesignsProduced))
+    ((ShipDesignsScrapped))
+    ((ShipPartMeter))
+    ((ShipPartsOwned))
+    ((ShortestPath))
+    ((ShortestPathDistance))
+    ((SizeAsDouble))
+    ((SlotsInHull))
+    ((SlotsInShipDesign))
+    ((SpecialAddedOnTurn))
+    ((SpecialCapacity))
+    ((Specials))
+    ((Species))
+    ((SpeciesColoniesOwned))
+    ((SpeciesContentOpinion))
+    ((SpeciesEmpireOpinion))
+    ((SpeciesEmpireTargetOpinion))
+    ((SpeciesPlanetsBombed))
+    ((SpeciesPlanetsDepoped))
+    ((SpeciesPlanetsInvaded))
+    ((SpeciesShipsDestroyed))
+    ((SpeciesShipsLost))
+    ((SpeciesShipsOwned))
+    ((SpeciesShipsProduced))
+    ((SpeciesShipsScrapped))
+    ((SpeciesSpeciesOpinion))
+    ((SpeciesSpeciesTargetOpinion))
+    ((StarType))
+    ((SupplyingEmpire))
+    ((SystemID))
+    ((SystemSupplyRange))
+    ((Tags))
+    ((ThisClientEmpireID))
+    ((TopPriorityEnqueuedTech))
+    ((TopPriorityResearchableTech))
+    ((TopPriorityTransferrableTech))
+    ((TurnPolicyAdopted))
+    ((TurnSystemExplored))
+    ((TurnsSinceAnnexation))
+    ((TurnsSinceColonization))
+    ((TurnsSinceFocusChange))
+    ((TurnsSinceLastConquered))
+    ((TurnsSincePolicyAdopted))
+    ((TurnTechResearched))
+    ((TypeName))
+    ((UniverseCentreX))
+    ((UniverseCentreY))
+    ((UniverseWidth))
+    ((UsedInDesignID))
+    ((X))
+    ((Y))
+)
+
+constexpr Property StringToPropertyWithEmptyNone(std::string_view str) noexcept {
+    static_assert(noexcept(PropertyFromString(std::string_view{}, Property::Unknown)));
+    if (str.empty())
+        return Property::None;
+    if (NameToMeter(str) != MeterType::INVALID_METER_TYPE)
+        return Property::MeterType;
+    return PropertyFromString(str, Property::Unknown);
+}
+
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <typename T>
 struct FO_COMMON_API Variable : public ValueRef<T>
 {
-    CONSTEXPR_STRING Variable(ReferenceType ref_type, std::string property_name,
-                              ContainerType container_type = ContainerType::NONE,
-                              ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
+    constexpr Variable(ReferenceType ref_type, Property property, ::MeterType meter_type,
+                       ContainerType container_type = ContainerType::NONE,
+                       ValueToReturn retval_type = ValueToReturn::Initial) :
         ValueRef<T>(false,
                     ref_type != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE,
                     ref_type != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
@@ -274,22 +481,41 @@ struct FO_COMMON_API Variable : public ValueRef<T>
                     static_cast<bool>(retval_type),
                     ref_type,
                     container_type,
-                    CheckSums::GetCheckSum("ValueRef::Variable", property_name, ref_type,
-                                           container_type, static_cast<bool>(retval_type))),
-        m_property_name(std::move(property_name))
+                    CheckSums::GetCheckSum("ValueRef::Variable", GetPropertyAsString(property, meter_type),
+                                           ref_type, container_type, static_cast<bool>(retval_type))),
+        m_property(property),
+        m_meter_type(meter_type)
+    {
+        if (property == Property::Unknown)
+            throw std::invalid_argument("Variable initialized with Property::Unknown");
+        if (property != Property::MeterType && meter_type != ::MeterType::INVALID_METER_TYPE)
+            throw std::invalid_argument("Variable initialized with property other than Property::MeterType with a MeterType other than INVALID_METER_TYPE");
+        if (property == Property::MeterType && meter_type == ::MeterType::INVALID_METER_TYPE)
+            throw std::invalid_argument("Variable initialized with MeterType::INVALID_METER_TYPE without Property::MeterType");
+    }
+
+    constexpr Variable(ReferenceType ref_type, Property property,
+                       ContainerType container_type = ContainerType::NONE,
+                       ValueToReturn retval_type = ValueToReturn::Initial) :
+        Variable(ref_type, property, ::MeterType::INVALID_METER_TYPE, container_type, retval_type)
     {}
 
-    CONSTEXPR_STRING explicit Variable(ReferenceType ref_type, ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
-        ValueRef<T>(false,
-                    ref_type != ReferenceType::CONDITION_ROOT_CANDIDATE_REFERENCE,
-                    ref_type != ReferenceType::CONDITION_LOCAL_CANDIDATE_REFERENCE,
-                    ref_type != ReferenceType::EFFECT_TARGET_REFERENCE && ref_type != ReferenceType::EFFECT_TARGET_VALUE_REFERENCE, // not all effect target values are properties of the target object, eg. empire meters, but most are
-                    ref_type != ReferenceType::SOURCE_REFERENCE,
-                    static_cast<bool>(retval_type),
-                    ref_type,
-                    ContainerType::NONE,
-                    CheckSums::GetCheckSum("ValueRef::Variable", std::string_view{}, ref_type,
-                                           ContainerType::NONE, static_cast<bool>(retval_type)))
+    constexpr Variable(ReferenceType ref_type, ::MeterType meter_type,
+                       ContainerType container_type = ContainerType::NONE,
+                       ValueToReturn retval_type = ValueToReturn::Initial) :
+        Variable(ref_type, Property::MeterType, meter_type, container_type, retval_type)
+    {}
+
+
+    constexpr Variable(ReferenceType ref_type, std::string_view property_name,
+                       ContainerType container_type = ContainerType::NONE,
+                       ValueToReturn retval_type = ValueToReturn::Initial) noexcept :
+        Variable(ref_type, StringToPropertyWithEmptyNone(property_name), NameToMeter(property_name),
+                 container_type, retval_type)
+    {}
+
+    constexpr explicit Variable(ReferenceType ref_type, ValueToReturn retval_type = ValueToReturn::Initial) :
+        Variable(ref_type, Property::None, ContainerType::NONE, retval_type)
     {}
 
 #if defined(__GNUC__) && (__GNUC__ == 12)
@@ -309,77 +535,97 @@ struct FO_COMMON_API Variable : public ValueRef<T>
             return true;
         if (!this->ValueRefBase::operator==(static_cast<const ValueRefBase&>(rhs)))
             return false;
-        return m_property_name == rhs.m_property_name;
+        return m_property == rhs.m_property && m_meter_type == rhs.m_meter_type;
     }
 
     [[nodiscard]] T Eval(const ScriptingContext& context) const override;
     [[nodiscard]] std::string Description() const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
-    [[nodiscard]] constexpr auto& PropertyName() const noexcept { return m_property_name; }
+    [[nodiscard]] constexpr auto Property() const noexcept { return m_property; }
+    [[nodiscard]] constexpr auto MeterType() const noexcept { return m_meter_type; }
     [[nodiscard]] constexpr auto GetContainerType() const noexcept { return this->m_container_type; }
 
     [[nodiscard]] std::unique_ptr<ValueRef<T>> Clone() const override {
-        return std::make_unique<Variable<T>>(this->m_ref_type, m_property_name, this->m_container_type,
+        return std::make_unique<Variable<T>>(this->m_ref_type, this->m_property, this->m_meter_type, this->m_container_type,
                                              this->m_return_immediate_value ? ValueToReturn::Immediate : ValueToReturn::Initial);
     }
 
+    [[nodiscard]] static constexpr std::string_view GetPropertyAsString(::ValueRef::Property property,
+                                                                        ::MeterType meter_type) noexcept
+    {
+        if (property == ::ValueRef::Property::MeterType) {
+            if (meter_type == ::MeterType::INVALID_METER_TYPE)
+                return "";
+            else
+                return MeterToName(meter_type);
+        } else if (property == ::ValueRef::Property::None || property == ::ValueRef::Property::Unknown) {
+            return "";
+        } else {
+            return to_string(property);
+        }
+    }
+
+    [[nodiscard]] constexpr std::string_view GetPropertyAsString() const noexcept
+    { return GetPropertyAsString(m_property, m_meter_type); }
+
 protected:
-    CONSTEXPR_STRING Variable(bool root_inv, bool target_inv, bool source_inv,
-                              StatisticType stat_type, uint32_t checksum)
-        noexcept(noexcept(std::string{})) :
+    constexpr Variable(bool root_inv, bool target_inv, bool source_inv,
+                       StatisticType stat_type, uint32_t checksum) :
         ValueRef<T>(false, root_inv, true, target_inv, source_inv, stat_type, checksum)
     {}
-    CONSTEXPR_STRING Variable(std::array<bool, 3> rtsi, StatisticType stat_type, uint32_t checksum)
-        noexcept(noexcept(std::string{})) :
+
+    constexpr Variable(std::array<bool, 3> rtsi, StatisticType stat_type, uint32_t checksum) :
         Variable(rtsi[0], rtsi[1], rtsi[2], stat_type, checksum)
     {}
 
-    CONSTEXPR_STRING Variable(bool root_inv, bool target_inv, bool source_inv, bool local_inv,
-                              ReferenceType ref_type, uint32_t checksum)
-        noexcept(noexcept(std::string{})) :
+    constexpr Variable(bool root_inv, bool target_inv, bool source_inv, bool local_inv,
+                       ReferenceType ref_type, uint32_t checksum) :
         ValueRef<T>(false, root_inv, local_inv, target_inv, source_inv, ref_type, checksum)
     {}
-    CONSTEXPR_STRING Variable(std::array<bool, 4> rtsli, ReferenceType ref_type, uint32_t checksum)
-        noexcept(noexcept(std::string{})) :
+
+    constexpr Variable(std::array<bool, 4> rtsli, ReferenceType ref_type, uint32_t checksum) :
         Variable(rtsli[0], rtsli[1], rtsli[2], rtsli[3], ref_type, checksum)
     {}
 
-    CONSTEXPR_STRING Variable(std::string property_name, ValueToReturn return_immediate, uint32_t checksum)
-        noexcept(noexcept(std::string(std::move(property_name)))) :
+    constexpr Variable(std::string_view property_name, ValueToReturn return_immediate, uint32_t checksum) :
         ValueRef<T>(false, false, false, false, false, static_cast<bool>(return_immediate),
                     ReferenceType::INVALID_REFERENCE_TYPE, ContainerType::NONE, checksum),
-        m_property_name(std::move(property_name))
+        m_property(StringToPropertyWithEmptyNone(property_name)),
+        m_meter_type(NameToMeter(property_name))
     {}
 
-    CONSTEXPR_STRING Variable(std::array<bool, 4> rtsli, std::string property_name,
-                              ValueToReturn return_immediate, ReferenceType ref_type, uint32_t checksum)
-        noexcept(noexcept(std::string(std::move(property_name)))) :
+    constexpr Variable(std::array<bool, 4> rtsli, std::string_view property_name,
+                       ValueToReturn return_immediate, ReferenceType ref_type, uint32_t checksum) :
         ValueRef<T>(false, rtsli[0], rtsli[3], rtsli[1], rtsli[2], static_cast<bool>(return_immediate),
                     ref_type, ContainerType::NONE, checksum),
-        m_property_name(std::move(property_name))
+        m_property(StringToPropertyWithEmptyNone(property_name)),
+        m_meter_type(NameToMeter(property_name))
     {}
 
-    CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, std::string property_name,
-                              ValueToReturn return_immediate, ReferenceType ref_type, uint32_t checksum)
-        noexcept(noexcept(std::string(std::move(property_name)))) :
+    constexpr Variable(std::array<bool, 5> rtslice, std::string_view property_name,
+                       ValueToReturn return_immediate, ReferenceType ref_type, uint32_t checksum) noexcept :
         ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2],
                     static_cast<bool>(return_immediate), ref_type, ContainerType::NONE, checksum),
-        m_property_name(std::move(property_name))
+        m_property(StringToPropertyWithEmptyNone(property_name)),
+        m_meter_type(NameToMeter(property_name))
     {}
-    CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, ReferenceType ref_type, uint32_t checksum)
-        noexcept(noexcept(std::string{})) :
+
+    constexpr Variable(std::array<bool, 5> rtslice, ReferenceType ref_type, uint32_t checksum) :
         ValueRef<T>(rtslice, ref_type, checksum)
     {}
 
-    CONSTEXPR_STRING Variable(std::array<bool, 5> rtslice, ReferenceType ref_type, std::string property_name,
-                              ContainerType container, uint32_t checksum)
-        noexcept(noexcept(std::string(std::move(property_name)))) :
+    constexpr Variable(std::array<bool, 5> rtslice, ReferenceType ref_type, ::ValueRef::Property property,
+                       ::MeterType meter_type, ContainerType container, uint32_t checksum,
+                       ValueToReturn return_immediate = ValueToReturn::Initial) :
         ValueRef<T>(rtslice[4], rtslice[0], rtslice[3], rtslice[1], rtslice[2],
-                    false, ref_type, container, checksum),
-        m_property_name(std::move(property_name))
+                    static_cast<bool>(return_immediate), ref_type, container, checksum),
+        m_property(property),
+        m_meter_type(meter_type)
     {}
 
-    const std::string m_property_name;
+
+    const ::ValueRef::Property m_property = Property::None;
+    const ::MeterType m_meter_type = ::MeterType::INVALID_METER_TYPE;
 };
 
 /** The variable statistic class.   The value returned by this node is
@@ -547,15 +793,63 @@ protected:
     const std::unique_ptr<ValueRef<std::string>> m_string_ref2;
 };
 
+[[nodiscard]] constexpr auto RefToReferenceType(const auto& ref) {
+    if constexpr (requires { ref.GetReferenceType(); }) {
+        return ref.GetReferenceType();
+    } else if constexpr (requires { ref->GetReferenceType(); }) {
+        if (ref) return ref->GetReferenceType();
+    }
+    return ReferenceType::NON_OBJECT_REFERENCE;
+}
+
+[[nodiscard]] constexpr ::ValueRef::Property RefToProperty(const auto& ref) {
+    if constexpr (requires { ref.Property(); }) {
+        return ref.Property();
+    } else if constexpr (requires { ref->Property(); }) {
+        if (ref) return ref->Property();
+    } else if constexpr (requires { typename std::decay_t<decltype(ref)>::ResultT; }) {
+        using ResultT = typename std::decay_t<decltype(ref)>::ResultT;
+        if (const auto* var_ref = dynamic_cast<const Variable<ResultT>*>(std::addressof(ref)))
+            return var_ref->Property();
+    } else if constexpr (requires { *ref; }) {
+        if (ref) return RefToProperty(*ref);
+    }
+    return ::ValueRef::Property::None;
+}
+
+[[nodiscard]] constexpr ::MeterType RefToMeterType(const auto& ref) {
+    if constexpr (requires { ref.MeterType(); }) {
+        return ref.MeterType();
+    } else if constexpr (requires { ref->MeterType(); }) {
+        if (ref) return ref->MeterType();
+    } else if constexpr (requires { typename std::decay_t<decltype(ref)>::ResultT; }) {
+        using ResultT = typename std::decay_t<decltype(ref)>::ResultT;
+        if (const auto* var_ref = dynamic_cast<const Variable<ResultT>*>(std::addressof(ref)))
+            return var_ref->MeterType();
+    } else if constexpr (requires { *ref; }) {
+        if (ref) return RefToMeterType(*ref);
+    }
+    return ::MeterType::INVALID_METER_TYPE;
+}
+
+[[nodiscard]] constexpr auto RefToContainerType(const auto& ref) {
+    if constexpr (requires { ref.GetContainerType(); })
+        return ref.GetContainerType();
+    else if constexpr (requires { ref->GetContainerType(); })
+        if (ref) return ref->GetContainerType();
+    return ContainerType::NONE;
+}
+
 /** The variable static_cast class.  The value returned by this node is taken
   * from the ctor \a value_ref parameter's FromType value, static_cast to ToType. */
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
     explicit StaticCast(auto&& value_ref) requires requires { std::unique_ptr<ValueRef<FromType>>(std::move(value_ref)); } :
-        Variable<ToType>(RefsRTSLICE(value_ref), GetProperty(value_ref),
-                         value_ref->ReturnImmediateValue() ? ValueToReturn::Immediate : ValueToReturn::Initial,
-                         value_ref->GetReferenceType(), CheckSums::GetCheckSum("ValueRef::StaticCast", value_ref)),
+        Variable<ToType>(RefsRTSLICE(value_ref), RefToReferenceType(value_ref), RefToProperty(value_ref),
+                         RefToMeterType(value_ref), RefToContainerType(value_ref),
+                         CheckSums::GetCheckSum("ValueRef::StaticCast", value_ref),
+                         value_ref->ReturnImmediateValue() ? ValueToReturn::Immediate : ValueToReturn::Initial),
         m_value_ref(std::move(value_ref))
     {}
 
@@ -572,16 +866,6 @@ struct FO_COMMON_API StaticCast final : public Variable<ToType>
     { return std::make_unique<StaticCast<FromType, ToType>>(CloneUnique(m_value_ref)); }
 
 private:
-    [[nodiscard]] static CONSTEXPR_STRING std::string GetProperty(const auto& ref) {
-        if constexpr (requires { ref->PropertyName(); }) {
-            if (ref)
-                return ref->PropertyName();
-        } else if constexpr (requires { ref.PropertyName(); }) {
-            return ref.PropertyName();
-        }
-        return {};
-    }
-
     std::unique_ptr<ValueRef<FromType>> m_value_ref;
 };
 
@@ -593,25 +877,8 @@ struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
     explicit StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
         Variable<std::string>(
-            RefsRTSLICE(value_ref),
-            [ref{value_ref.get()}]() -> ReferenceType {
-                if (auto var_ref = dynamic_cast<const Variable<FromType>*>(ref))
-                    return var_ref->GetReferenceType();
-                else
-                    return ReferenceType::NON_OBJECT_REFERENCE;
-            }(),
-            [ref{value_ref.get()}]() -> std::string {
-                if (auto var_ref = dynamic_cast<const Variable<FromType>*>(ref))
-                    return var_ref->PropertyName();
-                else
-                    return {};
-            }(),
-            [ref{value_ref.get()}]() -> ContainerType {
-                if (auto var_ref = dynamic_cast<const Variable<FromType>*>(ref))
-                    return var_ref->GetContainerType();
-                else
-                    return ContainerType::NONE;
-            }(),
+            RefsRTSLICE(value_ref), RefToReferenceType(value_ref), RefToProperty(value_ref),
+            RefToMeterType(value_ref), RefToContainerType(value_ref),
             CheckSums::GetCheckSum("ValueRef::StringCast", value_ref)),
         m_value_ref(std::move(value_ref))
     { /* this->m_simple_increment should always be false for this type */ }
@@ -638,25 +905,8 @@ template <typename FromType>
 struct FO_COMMON_API UserStringLookup final : public Variable<std::string> {
     explicit UserStringLookup(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
         Variable<std::string>(
-            RefsRTSLICE(value_ref),
-            [ref{value_ref.get()}]() -> ReferenceType {
-                if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
-                    return var_ref->GetReferenceType();
-                else
-                    return ReferenceType::NON_OBJECT_REFERENCE;
-            }(),
-            [ref{value_ref.get()}]() -> std::string {
-                if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
-                    return var_ref->PropertyName();
-                else
-                    return {};
-            }(),
-            [ref{value_ref.get()}]() -> ContainerType {
-                if (auto var_ref = dynamic_cast<Variable<FromType>*>(ref))
-                    return var_ref->GetContainerType();
-                else
-                    return ContainerType::NONE;
-            }(),
+            RefsRTSLICE(value_ref), RefToReferenceType(value_ref), RefToProperty(value_ref),
+            RefToMeterType(value_ref), RefToContainerType(value_ref),
             CheckSums::GetCheckSum("ValueRef::UserStringLookup", value_ref)),
         m_value_ref(std::move(value_ref))
     { /* this->m_simple_increment should always be false for this type */ }
@@ -812,11 +1062,6 @@ private:
     const T                      m_cached_const_value = T();
 };
 
-/* Convert between names and MeterType. Names are scripting token, like Population
- * and not the MeterType string representations like METER_POPULATION */
-[[nodiscard]] FO_COMMON_API MeterType        NameToMeter(std::string_view name) noexcept;
-[[nodiscard]] FO_COMMON_API std::string_view MeterToName(MeterType meter) noexcept;
-
 [[nodiscard]] FO_COMMON_API std::string_view PlanetTypeToString(PlanetType type) noexcept;
 [[nodiscard]] FO_COMMON_API std::string_view PlanetEnvironmentToString(PlanetEnvironment env) noexcept;
 [[nodiscard]] FO_COMMON_API std::string      ReconstructName(std::string_view property_name, ContainerType container_type,
@@ -902,13 +1147,13 @@ FO_COMMON_API std::string Constant<int>::Dump(uint8_t ntabs) const;
 template <typename T>
 std::string Variable<T>::Description() const
 {
-    return FormatedDescriptionPropertyNames(this->m_ref_type, m_property_name,
+    return FormatedDescriptionPropertyNames(this->m_ref_type, this->GetPropertyAsString(),
                                             this->m_container_type, this->m_return_immediate_value);
 }
 
 template <typename T>
 std::string Variable<T>::Dump(uint8_t ntabs) const
-{ return ReconstructName(m_property_name, this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
+{ return ReconstructName(this->GetPropertyAsString(), this->m_container_type, this->m_ref_type, this->m_return_immediate_value); }
 
 template <>
 FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
@@ -1452,7 +1697,9 @@ bool ComplexVariable<T>::operator==(const ValueRef<T>& rhs) const
         return false;
     const ComplexVariable<T>& rhs_ = static_cast<const ComplexVariable<T>&>(rhs);
 
-    if (this->m_property_name != rhs_.m_property_name)
+    if (this->m_property != rhs_.m_property)
+        return false;
+    if (this->m_meter_type != rhs_.m_meter_type)
         return false;
     if (this->m_return_immediate_value != rhs_.m_return_immediate_value)
         return false;
@@ -1504,7 +1751,7 @@ template <typename T>
 std::string ComplexVariable<T>::Description() const
 {
     std::string retval = ComplexVariableDescription(
-        this->m_property_name,
+        this->GetPropertyAsString(),
         m_int_ref1 ? m_int_ref1.get() : nullptr,
         m_int_ref2 ? m_int_ref2.get() : nullptr,
         m_int_ref3 ? m_int_ref3.get() : nullptr,
@@ -1518,7 +1765,7 @@ std::string ComplexVariable<T>::Description() const
 template <typename T>
 std::string ComplexVariable<T>::Dump(uint8_t ntabs) const
 {
-    return ComplexVariableDump(this->m_property_name,
+    return ComplexVariableDump(this->GetPropertyAsString(),
                                m_int_ref1 ? m_int_ref1.get() : nullptr,
                                m_int_ref2 ? m_int_ref2.get() : nullptr,
                                m_int_ref3 ? m_int_ref3.get() : nullptr,

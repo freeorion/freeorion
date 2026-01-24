@@ -1,4 +1,10 @@
-from focs._effects import EmpireHasAdoptedPolicy, IsSource, Source, SpeciesColoniesOwned, StatisticIf
+from focs._effects import (
+    EmpireHasAdoptedPolicy,
+    IsSource,
+    Source,
+    SpeciesColoniesOwned,
+    StatisticIf,
+)
 
 COLONY_UPKEEP_MULTIPLICATOR = 1 + 0.06 * SpeciesColoniesOwned(empire=Source.Owner)
 

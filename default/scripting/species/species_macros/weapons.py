@@ -13,6 +13,8 @@ from macros.misc import FIGHTER_DAMAGE_FACTOR, SHIP_WEAPON_DAMAGE_FACTOR
 
 
 def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tier_4: int, hangar: float):
+    pilot_fighter_bonus = FIGHTER_DAMAGE_FACTOR * hangar
+    NamedReal(name=tag + "_PILOT_FIGHTER_DAMAGE_BONUS", value=pilot_fighter_bonus)
     return [
         EffectsGroup(
             description=f"{tag}_WEAPONS_DESC",
@@ -41,15 +43,11 @@ def _weapon(*, tag: str, tier_0: int, tier_1: int, tier_2: int, tier_3: int, tie
                 | DesignHasPart(name="FT_HANGAR_3")
                 | DesignHasPart(name="FT_HANGAR_4")
             ),
-            # TODO leave a comment why value multiplier are the same, but weaporns have different
+            # TODO leave a comment why value multiplier are the same, but weapons have different
             effects=[
-                SetMaxSecondaryStat(
-                    partname="FT_HANGAR_2",
-                    value=Value
-                    + NamedReal(name=tag + "_PILOT_FIGHTER_DAMAGE_BONUS", value=FIGHTER_DAMAGE_FACTOR * hangar),
-                ),
-                SetMaxSecondaryStat(partname="FT_HANGAR_3", value=Value + FIGHTER_DAMAGE_FACTOR * hangar),
-                SetMaxSecondaryStat(partname="FT_HANGAR_4", value=Value + FIGHTER_DAMAGE_FACTOR * hangar),
+                SetMaxSecondaryStat(partname="FT_HANGAR_2", value=Value + pilot_fighter_bonus),
+                SetMaxSecondaryStat(partname="FT_HANGAR_3", value=Value + pilot_fighter_bonus),
+                SetMaxSecondaryStat(partname="FT_HANGAR_4", value=Value + pilot_fighter_bonus),
             ],
         ),
         EffectsGroup(

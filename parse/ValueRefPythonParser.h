@@ -25,8 +25,8 @@ struct value_ref_wrapper {
     value_ref_wrapper<T> call(const value_ref_wrapper<T>& var_) const {
         if (auto var = std::dynamic_pointer_cast<const ValueRef::Variable<T>>(var_.value_ref)) {
             return value_ref_wrapper<T>(std::make_shared<ValueRef::Variable<T>>(
-                var->GetReferenceType(), var->PropertyName(), var->GetContainerType(),
-                ValueRef::ValueToReturn::Immediate));
+                var->GetReferenceType(), var->Property(), var->MeterType(),
+                var->GetContainerType(), ValueRef::ValueToReturn::Immediate));
         } else if(var_.value_ref) {
             throw std::runtime_error(std::string("Unknown type of Value.__call__ ") + typeid(*var_.value_ref).name());
         } else {

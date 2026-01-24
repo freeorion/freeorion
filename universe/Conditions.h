@@ -238,6 +238,23 @@ namespace Impl {
             out.push_back(o);
     }
 
+    constexpr void InPlaceSort(auto& arr) {
+#if defined(__cpp_lib_constexpr_algorithms)
+        std::sort(arr.begin(), arr.end());
+#else
+        if (!std::is_constant_evaluated()) {
+            std::sort(arr.begin(), arr.end());
+        } else {
+            for (auto it = arr.begin(); it != arr.end(); ++it)
+                std::swap(*it, *std::min_element(it, arr.end()));
+        }
+#endif
+    }
+#if !defined(__cpp_lib_constexpr_cmath)
+    static_assert([](){std::array arr{1, 5, -1, 2, 0, 0}; InPlaceSort(arr); return arr; }() == std::array{-1, 0, 0, 1, 2, 5});
+    static_assert([](){std::array arr{1.0, 5.0, -1.0, 2.0, 0.0, 0.0}; InPlaceSort(arr); return arr; }() == std::array{-1.0, 0.0, 0.0, 1.0, 2.0, 5.0});
+    static_assert([](){std::array arr{1.0f, 5.0f, -1.0f, 2.0f, 0.0f, 0.0f}; InPlaceSort(arr); return arr; }() == std::array{-1.0f, 0.0f, 0.0f, 1.0f, 2.0f, 5.0f});
+#endif
 
     // Returns an ObjectSet containing at least the union of types and context objects in \a matches_types
     // but possibly more objects, without any duplicates.
@@ -468,7 +485,9 @@ struct FO_COMMON_API Turn final : public Condition {
                   std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr) :
         Condition(CondsRTSI(low, high), CheckSums::GetCheckSum("Condition::Turn", low, high)),
         m_low(std::move(low)),
-        m_high(std::move(high))
+        m_high(std::move(high)),
+        m_low_high_local_invariant((!m_low || m_low->LocalCandidateInvariant()) &&
+                                   (!m_high || m_high->LocalCandidateInvariant()))
     {}
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
@@ -500,6 +519,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    const bool m_low_high_local_invariant;
 };
 
 /** Matches a specified \a number of objects that match Condition \a condition
@@ -1104,6 +1124,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRef<int>> m_low;
     std::unique_ptr<ValueRef::ValueRef<int>> m_high;
+    const bool m_low_high_local_invariant;
 };
 
 /** Matches all objects that contain an object that matches Condition \a condition.
@@ -1116,7 +1137,7 @@ struct ContainsSimpleMatch {
             // subcondition_matches with the set of objects contained in some
             // candidate object.
             if (!subcondition_matches_ids.empty())
-                CheckSums::InPlaceSort(subcondition_matches_ids);
+                Impl::InPlaceSort(subcondition_matches_ids);
             return subcondition_matches_ids;
         }())
     {}
@@ -1371,7 +1392,7 @@ struct ContainedBySimpleMatch {
             // subcondition_matches with the set of objects contained in some
             // candidate object.
             if (!subcondition_matches_ids.empty())
-                CheckSums::InPlaceSort(subcondition_matches_ids);
+                Impl::InPlaceSort(subcondition_matches_ids);
             return subcondition_matches_ids;
         }())
     {}
@@ -1462,6 +1483,9 @@ struct FO_COMMON_API ContainedBy final : public Impl::NestedCondition<ConditionT
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = SearchDomain::NON_MATCHES) const override
     {
+        if (std::addressof(matches) == std::addressof(non_matches)) [[unlikely]]
+            return;
+
         const auto search_domain_size = (search_domain == SearchDomain::MATCHES ?
                                          matches.size() : non_matches.size());
         const bool simple_eval_safe = parent_context.condition_root_candidate ||
@@ -1859,11 +1883,8 @@ public:
 
             } else if constexpr (requires { m_types.begin(); m_types.end(); }) {
                 // evaluate refs
-                std::vector< ::PlanetType> types; // TODO: array if m_types is array?
-                types.reserve(m_types.size());
-                // get all types from valuerefs
-                for (auto& type : m_types)
-                    types.push_back(type->Eval(parent_context));
+                const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
+                const auto types = m_types | range_transform(eval_ref) | range_to_vec;
                 EvalImpl(matches, non_matches, search_domain,
                          PlanetTypeSimpleMatch<std::dynamic_extent>(types, parent_context.ContextObjects()));
 
@@ -2098,6 +2119,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    const bool m_names_local_invariant;
 };
 
 /** Matches objects if the specified species' opinion of the specified content
@@ -2167,6 +2189,7 @@ private:
     std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
     std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
+    const bool m_refs_local_invariant;
 };
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
@@ -2193,6 +2216,7 @@ private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    const bool m_names_local_invariant;
 };
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
@@ -3371,7 +3395,7 @@ private:
         using namespace Impl::MatchesType;
         using namespace Impl;
 
-        CheckSums::InPlaceSort(ops_matched_types);
+        Impl::InPlaceSort(ops_matched_types);
         const auto unique_it = std::unique(ops_matched_types.begin(), ops_matched_types.end());
 
         if (std::any_of(ops_matched_types.begin(), unique_it, matches_nothing)) {

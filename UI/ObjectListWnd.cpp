@@ -172,19 +172,34 @@ namespace {
         );
     }
 
-    std::unique_ptr<ValueRef::Variable<std::string>> DistanceToSelected(UniverseObjectType uot) {
-        const char* prop = nullptr;
+    std::string SelectedForObjectType(UniverseObjectType uot) {
         if (uot == UniverseObjectType::OBJ_SYSTEM)
-            prop = "SelectedSystemID";
+            return "SelectedSystemID";
         else if (uot == UniverseObjectType::OBJ_FLEET)
-            prop = "SelectedFleetID";
+            return "SelectedFleetID";
         else
-            throw std::invalid_argument("DistanceToSelected pass unsupported UniverseObjectType");
+            throw std::invalid_argument("SelectedForObjectType passed unsupported UniverseObjectType");
+    }
 
+    std::unique_ptr<ValueRef::Variable<std::string>> DistanceToSelected(UniverseObjectType uot) {
         return StringCastedComplexValueRef<double>(
             "DirectDistanceBetween",
             std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "ID"),
-            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, prop));
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, SelectedForObjectType(uot)));
+    }
+
+    std::unique_ptr<ValueRef::Variable<std::string>> ShortestPathDistanceToSelected(UniverseObjectType uot) {
+        return StringCastedComplexValueRef<double>(
+            "ShortestPathDistance",
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "ID"),
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, SelectedForObjectType(uot)));
+    }
+
+    std::unique_ptr<ValueRef::Variable<std::string>> JumpsToSelected(UniverseObjectType uot) {
+        return StringCastedComplexValueRef<int>(
+            "JumpsBetween",
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "ID"),
+            std::make_unique<ValueRef::Variable<int>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, SelectedForObjectType(uot)));
     }
 
     std::unique_ptr<ValueRef::Variable<std::string>> SystemSupplyRangeValueRef(bool propagated = false) {
@@ -290,32 +305,39 @@ namespace {
                               GetSpeciesManager().NumSpecies() + 65); // roughly enough as of this writing
 
             // General
-            col_types[{UserStringNop("NAME"),                        ""}] = StringValueRef("Name");
-            col_types[{UserStringNop("OBJECT_TYPE"),                 ""}] = UserStringValueRef("TypeName");
-            col_types[{UserStringNop("ID"),                          ""}] = StringCastedValueRef<int>("ID");
-            col_types[{UserStringNop("VISIBILITY"),                  ""}] = VisibilityToThisClientEmpire();
-            col_types[{UserStringNop("LAST_VISIBILITY_TURN"),        ""}] = LastTurnVisibileToThisClientEmpire();
-            col_types[{UserStringNop("CREATION_TURN"),               ""}] = StringCastedValueRef<int>("CreationTurn");
-            col_types[{UserStringNop("AGE"),                         ""}] = StringCastedValueRef<int>("Age");
-            col_types[{UserStringNop("SYSTEM"),                      ""}] = ObjectNameValueRef("SystemID");
-            col_types[{UserStringNop("STAR_TYPE"),                   ""}] = UserStringCastedValueRef<StarType>("StarType");
-            col_types[{UserStringNop("BUILDING_TYPE"),               ""}] = UserStringValueRef("BuildingType");
-            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),       ""}] = StringCastedValueRef<int>("LastTurnBattleHere");
-            col_types[{UserStringNop("NUM_SPECIALS"),                ""}] = StringCastedValueRef<int>("NumSpecials");
-            col_types[{UserStringNop("SPECIALS"),                    ""}] = UserStringVecValueRef("Specials");
-            col_types[{UserStringNop("TAGS"),                        ""}] = UserStringVecValueRef("Tags");
-            col_types[{UserStringNop("X"),                           ""}] = StringCastedValueRef<double>("X");
-            col_types[{UserStringNop("Y"),                           ""}] = StringCastedValueRef<double>("Y");
-            col_types[{UserStringNop("DISTANCE_TO_SELECTED_SYSTEM"), ""}] = DistanceToSelected(UniverseObjectType::OBJ_SYSTEM);
-            col_types[{UserStringNop("DISTANCE_TO_SELECTED_FLEET"),  ""}] = DistanceToSelected(UniverseObjectType::OBJ_FLEET);
+            col_types[{UserStringNop("NAME"),                       ""}] = StringValueRef("Name");
+            col_types[{UserStringNop("OBJECT_TYPE"),                ""}] = UserStringValueRef("TypeName");
+            col_types[{UserStringNop("ID"),                         ""}] = StringCastedValueRef<int>("ID");
+            col_types[{UserStringNop("VISIBILITY"),                 ""}] = VisibilityToThisClientEmpire();
+            col_types[{UserStringNop("LAST_VISIBILITY_TURN"),       ""}] = LastTurnVisibileToThisClientEmpire();
+            col_types[{UserStringNop("CREATION_TURN"),              ""}] = StringCastedValueRef<int>("CreationTurn");
+            col_types[{UserStringNop("AGE"),                        ""}] = StringCastedValueRef<int>("Age");
+            col_types[{UserStringNop("BUILDING_TYPE"),              ""}] = UserStringValueRef("BuildingType");
+            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),      ""}] = StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[{UserStringNop("NUM_SPECIALS"),               ""}] = StringCastedValueRef<int>("NumSpecials");
+            col_types[{UserStringNop("SPECIALS"),                   ""}] = UserStringVecValueRef("Specials");
+            col_types[{UserStringNop("TAGS"),                       ""}] = UserStringVecValueRef("Tags");
 
             // empire
-            col_types[{UserStringNop("SUPPLYING_EMPIRE"),       ""}] =  EmpireNameValueRef("SupplyingEmpire");
-            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),    ""}] =  SystemSupplyRangeValueRef(false);
-            col_types[{UserStringNop("PROPAGATED_SUPPLY_RANGE"),""}] =  SystemSupplyRangeValueRef(true);
-            col_types[{UserStringNop("PROPAGATED_SUPPLY_DISTANCE"),""}]=SystemSupplyDistanceValueRef();
-            col_types[{UserStringNop("OWNER"),                  ""}] =  EmpireNameValueRef("Owner");
-            col_types[{UserStringNop("PRODUCED_BY"),            ""}] =  EmpireNameValueRef("ProducedByEmpireID");
+            col_types[{UserStringNop("SUPPLYING_EMPIRE"),           UserStringNop("EMPIRE_SUPPLY_SUBMENU")}] = EmpireNameValueRef("SupplyingEmpire");
+            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),        UserStringNop("EMPIRE_SUPPLY_SUBMENU")}] = SystemSupplyRangeValueRef(false);
+            col_types[{UserStringNop("PROPAGATED_SUPPLY_RANGE"),    UserStringNop("EMPIRE_SUPPLY_SUBMENU")}] = SystemSupplyRangeValueRef(true);
+            col_types[{UserStringNop("PROPAGATED_SUPPLY_DISTANCE"), UserStringNop("EMPIRE_SUPPLY_SUBMENU")}] = SystemSupplyDistanceValueRef();
+            col_types[{UserStringNop("OWNER"),                      UserStringNop("EMPIRE_SUPPLY_SUBMENU")}] = EmpireNameValueRef("Owner");
+            col_types[{UserStringNop("PRODUCED_BY"),                UserStringNop("EMPIRE_SUPPLY_SUBMENU")}] = EmpireNameValueRef("ProducedByEmpireID");
+
+            // position / system
+            col_types[{UserStringNop("X"),                                        UserStringNop("POSITION_SUBMENU")}] = StringCastedValueRef<double>("X");
+            col_types[{UserStringNop("Y"),                                        UserStringNop("POSITION_SUBMENU")}] = StringCastedValueRef<double>("Y");
+            col_types[{UserStringNop("DISTANCE_TO_SELECTED_SYSTEM"),              UserStringNop("POSITION_SUBMENU")}] = DistanceToSelected(UniverseObjectType::OBJ_SYSTEM);
+            col_types[{UserStringNop("DISTANCE_TO_SELECTED_FLEET"),               UserStringNop("POSITION_SUBMENU")}] = DistanceToSelected(UniverseObjectType::OBJ_FLEET);
+            col_types[{UserStringNop("SHORTEST_PATH_DISTANCE_TO_SELECTED_SYSTEM"),UserStringNop("POSITION_SUBMENU")}] = ShortestPathDistanceToSelected(UniverseObjectType::OBJ_SYSTEM);
+            col_types[{UserStringNop("SHORTEST_PATH_DISTANCE_TO_SELECTED_FLEET"), UserStringNop("POSITION_SUBMENU")}] = ShortestPathDistanceToSelected(UniverseObjectType::OBJ_FLEET);
+            col_types[{UserStringNop("JUMPS_TO_SELECTED_SYSTEM"),                 UserStringNop("POSITION_SUBMENU")}] = JumpsToSelected(UniverseObjectType::OBJ_SYSTEM);
+            col_types[{UserStringNop("JUMPS_TO_SELECTED_FLEET"),                  UserStringNop("POSITION_SUBMENU")}] = JumpsToSelected(UniverseObjectType::OBJ_FLEET);
+            col_types[{UserStringNop("SYSTEM"),                                   UserStringNop("POSITION_SUBMENU")}] = ObjectNameValueRef("SystemID");
+            col_types[{UserStringNop("STAR_TYPE"),                                UserStringNop("POSITION_SUBMENU")}] = UserStringCastedValueRef<StarType>("StarType");
+            col_types[{UserStringNop("NEAREST_SYSTEM"),                           UserStringNop("POSITION_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
 
             // planet
             col_types[{UserStringNop("SPECIES"),                    UserStringNop("PLANETS_SUBMENU")}]= ObjectTypeFilteredRef<std::string>({UniverseObjectType::OBJ_PLANET, UniverseObjectType::OBJ_SHIP}, UserStringValueRef("Species"));
@@ -352,11 +374,10 @@ namespace {
             col_types[{UserStringNop("NEXT_SYSTEM"),                UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NextSystemID");
             col_types[{UserStringNop("PREV_SYSTEM"),                UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("PreviousSystemID");
             col_types[{UserStringNop("ARRIVAL_STARLANE"),           UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("ArrivalStarlaneID");
-            col_types[{UserStringNop("NEAREST_SYSTEM"),             UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
             col_types[{UserStringNop("HULL"),                       UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Hull");
             col_types[{UserStringNop("PARTS"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringVecValueRef("Parts");
-            col_types[{UserStringNop("DAMAGE_STRUCTURE_PER_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("DamageStructurePerBattleMax");
-            col_types[{UserStringNop("DESTROY_FIGHTERS_PER_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("DestroyFightersPerBattleMax");
+            col_types[{UserStringNop("DAMAGE_STRUCTURE_PER_BATTLE"),UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("DamageStructurePerBattleMax");
+            col_types[{UserStringNop("DESTROY_FIGHTERS_PER_BATTLE"),UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<double>("DestroyFightersPerBattleMax");
             col_types[{UserStringNop("PRODUCTION_COST"),            UserStringNop("FLEETS_SUBMENU")}] = DesignCostValueRef();
 
             // planet environments species
@@ -366,7 +387,7 @@ namespace {
             // all meters
             for (MeterType meter = MeterType(0); meter <= MeterType::METER_SPEED;  // the meter(s) after MeterType::METER_SPEED are part-specific
                  meter = MeterType(int(meter) + 1))
-            { col_types[{to_string(meter),                        UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(std::string{ValueRef::MeterToName(meter)}); }
+            { col_types[{to_string(meter),                        UserStringNop("METERS_SUBMENU")}] = StringCastedImmediateValueRef(std::string{MeterToName(meter)}); }
 
             DebugLogger() << "col_types.size(): " << col_types.size();
             return col_types;
@@ -1554,8 +1575,8 @@ private:
             return;
         m_initialized = true;
 
-        GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
-                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
+        static constexpr GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
+                                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
         DetachChildAndReset(m_dot);
         DetachChildAndReset(m_expand_button);
@@ -1810,6 +1831,8 @@ private:
         GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"),         false, false);
         GG::MenuItem env_submenu(UserString("PLANET_ENVIRONMENTS_SUBMENU"), false, false);
         GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),           false, false);
+        GG::MenuItem empire_submenu(UserString("EMPIRE_SUPPLY_SUBMENU"),    false, false);
+        GG::MenuItem position_submenu(UserString("POSITION_SUBMENU"),       false, false);
 
         for (auto [new_column_type, submenu] : available_column_types | range_keys) {
             const bool check = (current_column_type == new_column_type);
@@ -1832,11 +1855,17 @@ private:
                 env_submenu.next_level.emplace_back(menu_label, false, check, col_action);
             else if (submenu == "FLEETS_SUBMENU")
                 fleets_submenu.next_level.emplace_back(menu_label, false, check, col_action);
+            else if (submenu == "EMPIRE_SUPPLY_SUBMENU")
+                empire_submenu.next_level.emplace_back(menu_label, false, check, col_action);
+            else if (submenu == "POSITION_SUBMENU")
+                position_submenu.next_level.emplace_back(menu_label, false, check, col_action);
         }
         popup->AddMenuItem(std::move(meters_submenu));
         popup->AddMenuItem(std::move(planets_submenu));
         popup->AddMenuItem(std::move(env_submenu));
         popup->AddMenuItem(std::move(fleets_submenu));
+        popup->AddMenuItem(std::move(empire_submenu));
+        popup->AddMenuItem(std::move(position_submenu));
 
         popup->Run();
     }
