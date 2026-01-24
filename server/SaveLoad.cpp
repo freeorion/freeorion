@@ -24,6 +24,7 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/iostreams/filter/counter.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/copy.hpp>
@@ -215,10 +216,13 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
                     InsertDevice compressed_inserter(compressed_str);
                     boost::iostreams::stream<InsertDevice> c_sink(compressed_inserter);
+                    auto counter = boost::iostreams::counter();
 
                     {
                         // compression-filter gamestate into compressed string
                         boost::iostreams::filtering_ostream o;
+
+                        o.push(boost::ref(counter));
                         o.push(boost::iostreams::zlib_compressor());
                         o.push(boost::iostreams::base64_encoder());
                         o.push(c_sink);
@@ -246,7 +250,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
                     timer.EnterSection("compression");
 
-                    save_preview_data.uncompressed_text_size = compressed_str.size();
+                    save_preview_data.uncompressed_text_size = counter.characters();
                     save_preview_data.compressed_text_size = compressed_str.size();
 
                     timer.EnterSection("headers to xml");
