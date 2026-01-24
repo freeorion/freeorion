@@ -79,6 +79,11 @@ public:
     /** Convert a parsed ship design and do any required verification. */
     ShipDesign(const ParsedShipDesign& design);
 
+    ShipDesign(const ShipDesign&);
+    ShipDesign(ShipDesign&&);
+    ShipDesign& operator=(const ShipDesign&) = delete;
+    ShipDesign& operator=(ShipDesign&&);
+
     [[nodiscard]] int ID() const noexcept { return m_id; }    ///< returns id number of design
     /** returns name of design.  if \a stringtable_lookup is true and the
       * design was constructed specifying name_desc_in_stringtable true,
@@ -212,7 +217,7 @@ private:
     std::string                   m_tags_concatenated;
     std::vector<std::string_view> m_tags;
 
-    float   m_detection = 0.0f; // TODO: const all these?
+    float   m_detection = 0.0f;
     float   m_colony_capacity = 0.0f;
     float   m_troop_capacity = 0.0f;
     float   m_stealth = 0.0f;
