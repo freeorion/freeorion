@@ -813,17 +813,9 @@ Not I didn't try to allow the queueing once the extractor is queued, that wouldn
 * make CompileRegex regex_with_tags uses thread-safe with a mutex.
 
 
-* also search detagged article text for pedia search string
 
 
-* grooming, comments
 
-
-* use range_find_if instead of filter with break
-
-
-* -rangify
--init locals
 
 * [focs][pyi] Cast ID to int to outsmart pyright. Cc NPM delendam esse.
 
@@ -852,8 +844,6 @@ Not I didn't try to allow the queueing once the extractor is queued, that wouldn
 
 Some of these were hinted at in #5262 - but this PR is comments only, though I globally searched for the same typo over all source types. This "Adtoption" line, however, will have to wait.
 
-* [pedia] review changes 01 (geoffthemedio)
-
 
 * [pedia] Add descriptions for bookkeeping specials LOWER_STEALTH_COUNT_SPECIAL and BASE_STEALTH_SPECIAL
 
@@ -864,11 +854,7 @@ Some of these were hinted at in #5262 - but this PR is comments only, though I g
 * lists of main effects to stealth for planets and ships
 * fix missing label
 
-Future stuff (probably make issues out of these):
-* add generated list of effects which affect planetary stealth (technologies, policies, ...)
-* probably using a tag; maybe generating text via content analysis
-* style: do render only the first occurence of METER_STEALTH as prominent link
-* style: do not render METER_STEALTH as prominent link when showing the METER_STEALTH entry
+
 
 * Fix regression - count only ships in current system, not in all systems
 
@@ -895,38 +881,14 @@ Future stuff (probably make issues out of these):
 Add special LOWER_STEALTH_COUNT_SPECIAL
 Add special BASE_STEALTH_SPECIAL
 
-* [focs][py] Add SpecialCapacity valueref (double valueref s1:name i1:object)
 
 
-* [focs][py] Extend parser support for boolean valuerefs
-
-
-* Update docker build ubuntu-24.10 -> ubuntu-25.04
-
-
-* bump gcc/g++ versions to reported latest on each Ubuntu version
-
-
-* -do Ubuntu builds on 22.04 and 24.04 for gcc and clang
--pick clang version with ternary in CC and CXX specifiers for Ubuntu
-
-* -OSX15 instead of OSX13 builds
--do weekly build on OSX14
 
 * -fix ships being moved to a new system but not having a new fleet generated for them due to then already being at the target object location
 -add ships before naming new fleet
 -move get_fleet and get_planet to anonymous namespace
 
-* OSX workaround
 
-
-* remove Boost system dependency. apparently only exists for backwards compatibility in recent Boost versions.
-
-
-* quiet warnings
-
-
-* [focs][py] std::string support for arg1 operators
 
 
 * [focs][py] Add NoOpValue e.g. NoOpValue(float, 1.1)
@@ -936,66 +898,9 @@ currently supported
 * NoOpValue(int, 1)
 * NoOpValue(str, 'strii')
 
-explicit typing is probably a bad idea (besides float/int), but consistent with other operators
-we probably get some troubles as soon enums etc get calculated
 
 * [focs][py] NoOpCondition and NoOpEffect
-
-
 * expose Condition::NoOp as NoOpLog
-
-
-* Postpone Automatic History Analyzer and make it more expensive
-
-https://freeorion.org/forum/viewtopic.php?p=121862&
-
-Behold the brainlessness of building the AHA!
-The automatic history analyzer is very powerful we want to delay it
-hoping some empires will choose to invest into something else before
-
-- Adding LRN_ALGO_ELEGANCE (18RP) as prerequisite to LRN_PHYS_BRAIN.
-- Increase RP cost of LRN_PHYS_BRAIN (maybe 20 RP, +10PP, +100%).
-
-LRN_PHYS_BRAIN also unlocks translinguistics and liberty
-in order not to delay liberty so much:
-- move LIBERTY policy to LRN_ALGO_ELEGANCE
-
-AI: research and policy choices should be looked at
-en: the liberty and algorithmic elegance fluff might need enhancement
-
-This delays building the AHA about 3-4 turns if fully committed to it.
-QA: playtested researching & building the AHA
-Probably needs more delay, but no harm in playtesting it in mainline,
-
-* [focs][pyi] Restructure _effects.pyi for easier scripting
-
-
-
-* [en] Adjust stringtables of fleet unstealthiness
-
-
-* [valrefs] LOG_UNKNOWN_VARIABLE_PROPERTY_TRACE in case of using fleet property on non-fleet object
-
-
-* Make outpost parts cheaper -20%/-10PP
-
-
-* [AI] ShipDesign considers organic growth after expected combat (50 percent discounted)
-
-* [AI][focs][strings] Refactor SH_RAVENOUS to use named values
-
-
-* [focs] Fixup organic to wobblies values
-* [AI][focs][strings] Refactor SH_SYMBIOTIC to use named values
-* [AI][focs][strings] Refactor SH_PROTOPLASMIC and SH_SENTIENT to use named values
-* [AI][focs][strings] Refactor SH_ORGANIC to use named values
-* [AI][focs][strings] Refactor SH_ENDOSYMBIOTIC to use named values
-* [AI][focs][strings] Refactor SH_ENDOMORPHIC to use named values
-
-
-* [AI] Update AIDependencies BIOADAPTIVE growth
-* [AI][focs][strings] Refactor SH_BIOADAPTIVE to named values
-* [AI][focs][strings] Rebalance Organic Growth/Organic Hulls
 
 
 
@@ -1004,13 +909,7 @@ Probably needs more delay, but no harm in playtesting it in mainline,
 
 
 
-* fix bounds check producing junk adoption turns
-
-
-
-
 * Let ShipDesignAI considers flak, estimate distractions for multi-target-class weapons
-
 in case there is no shield:
 * combat rating applies flak factor structure extension depending linear on the ratio of enemy damage of direct weapons and fighters
 * this is the most complex/sophisticated part and it may also be the correct one for the general case - needs review
@@ -1030,134 +929,6 @@ in case there is no shield:
 
 * Tweaking fighter generic_survival_rate (at 0.2 basically no fighters were produced, 0.6 delivers more sensible results)
 
-TODOs
-* check heavy bombers (aka has_bombers)
-* check carrier designer
-
-pyhon 3.9 compatible (if elif else  instead match case)
-
-
-
-
-* -track and expose latest turns policies are/were adopted
--list total and last turns of adoption in empire pedia articles
-
-
-
-* Allow to see and dismiss stale ghost buildings
-
-
-* Rewrite savegame coder, to provide better testing
-* Raise minumum python version to 3.10
-
-
-
-* buildings: colonies: fix exticts species colonies
-
-The format conversion for colony building generation altered the logic
-for colonization. This makes it impossible to colonize planets with
-extinct species like "The Banforo".
-
-For the colonization to be possible it should EITHER be required the
-planet to be colonized has a supply-connection to a planet which:
-
-1. Has already colony of the species
-	1a) Which has sufficient population
-	2b) Is happy enough
-
-OR
-
-2. Has the extict species special + required tech and a Xenoresurrection
-   lab.
-
-The conversion altered this condition to require both, which is not
-possible.
-
-Fix the extinct species resurrection by requiring only one of the above.
-
-
-
-
-* Remove warnings by adding  SR_GRAV_PULSE to upgrade dicts (#5231)
-
-Remove warnings by adding  SR_GRAV_PULSE to WEAPON_UPGRADE_DICT and WEAPON_ROF_UPGRADE_DICT
-
-
-
-* use buffers for CircleArc rendering
-
-
-* fix CircleArc tessellation to 36 slices and make verticies colors single fixed-size arrays
-
-
-* -comment tweak
--use glColor instead of glColor4ub
-
-* -remove GroupBox files from CMakeLists.txt
--delete GroupBox files
-
-
-* render with buffers instead of glBegin / glEnd etc.
-
-
-* render planets with buffers instead of old-style glVertex type calls
-
-
-* restore and tweak planet shininess rendering
-* add Species::BestEnvironmentPlanetType and use instead of temporary map
-
-
-* -check if program or shader has been flagged for deletion before deleting it (again)
-
-
-
-
-* disable uninitialized variable and comma subscript warnings in parsers
-
-* refactor terraform building
-
-
-* Rename building.py to avoid confusions
-
-
-* -change RomanNumber parameter to uint16_t and cast if passed something else
--constrain attempted representations to representable range
--move #include into .cpp
-
-
-* Move SHP_TRANSSPACE out of robotic hull tech folder
-
-
-* Move SH_TRANSPATIAL out of robotic hull line folder
-
-
-* Make Transpatial Hull available early
-
-* split the hull tech from the drive tech (480 PP -> 80PP + 400PP).
-  the hull needs NANOTECH_PROD which is a useful tech on the way to super robo hulls
-  the drive tech has exactly the same in-/direct prereqs like before
-  cheapest hull in PP and RP which offers a core slot
-  as closest alternative the composite line needs about 200PP but is more robust
-* advanced engineering bay only necessary to build the drive
-  ship yard + orbital drydock is enough for the hull
-* make the hull a low fuel good scout (GOOD_HULL_DETECTION),
-  base detection slightly better than protoplasmic hull
-  so it will be nice hidden scout with the drive
-
-
-
-
-
-* Use Boost.Process V1 for Windows and Linux
-* Use Boost.Process V1 for linux
-* Use Boost.Process V1 for MacOS
-
-* Update to SDK v16 with python 3.10.16
-
-* Bump streamlit from 1.30.0 to 1.37.0 in /default/python/charting (#5096)
-* Add requirements for Boost.Container library
-* Add requirements for Boost.Random and Boost.Graph libraries
-* Fix Void missing boost.python library
 
 
 
@@ -1181,7 +952,10 @@ Remove warnings by adding  SR_GRAV_PULSE to WEAPON_UPGRADE_DICT and WEAPON_ROF_U
 
 - Use IP address as name in server list if server name is empty
 - Use 99999 instead of powers of two to represent a large / unknown meter value
-
+- When searching pedia articles, search with and without internal formatting / link tags
+- Restored planet shininess rendering
+- Allow ghost buildings (previously but not now visible) to be dismissed
+- List total and last turns of adoption in empire pedia articles
 
 #### Content and Balance
 
@@ -1190,9 +964,16 @@ Remove warnings by adding  SR_GRAV_PULSE to WEAPON_UPGRADE_DICT and WEAPON_ROF_U
     
 - Ships
     - Added Graviton Pulsar core slot weapon
+    - Made Transpatial Hull available early
+    - Made Transpatial Hull a good low fuel hidden scout
+    - Split Transpatial Hull and Drive techs
+    - Rebalance Organic Growth/Organic Hulls
+    - Make outpost parts cheaper -20%/-10PP
+
 
 - Planets / Buildings
-    - 
+    - Postpone Automatic History Analyzer and make it more expensive
+
 
 - Pedia and Stringtables
     - Translation updates: French
@@ -1255,9 +1036,14 @@ Remove warnings by adding  SR_GRAV_PULSE to WEAPON_UPGRADE_DICT and WEAPON_ROF_U
 - Further transition to Python-based parsing of content scripts
 - Require minimum Boost 1.73
 - Require minimum Windows 10
+- Require minimum Python 3.10
 - Tweak / update MSVC project files
     - Add MSVC 2026 files
     - Remove Win32 configuration
 - Add a function to query Logger thresholds
 - Fix signed / unsigned comparison warnings
 - Tweaked pathfinding system graph fallback to full universe graph if no empire-filtered graph exists
+- Rework various content scripts to use named values in place of hardcoded constants
+- Replace custom process code with Boost Process
+- Replace all use of glBegin/glEnd/glVertex with buffer-based rendering
+- Add tracking and scripting access latest turns policies are/were adopted
