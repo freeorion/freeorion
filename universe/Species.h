@@ -121,7 +121,9 @@ public:
     ~Species();
     Species() = delete;
     Species(const Species&) = delete; // can't shallow copy because likes, dislikes, and tags are stored as string_views into m_tags_concatenated
-    Species(Species&&) = default;
+    Species(Species&&) = delete;
+    Species& operator=(const Species&) = delete;
+    Species& operator=(Species&&) = delete;
 
     bool operator==(const Species& rhs) const;
 
@@ -346,7 +348,8 @@ public:
     void SetSpeciesShipsDestroyed(std::map<std::string, std::map<std::string, int>> ssd);
 
     /** Sets species types to the value of \p future. */
-    void SetSpeciesTypes(Pending::Pending<std::pair<std::map<std::string, Species>, CensusOrder>>&& future);
+    using PendingT = Pending::Pending<std::pair<SpeciesManager::SpeciesTypeMap, SpeciesManager::CensusOrder>>;
+    void SetSpeciesTypes(PendingT&& future);
 
 private:
     /** sets the homeworld ids of species in this SpeciesManager to those
@@ -357,11 +360,9 @@ private:
     void CheckPendingSpeciesTypes() const;
 
     // these are mutable because they may be updated in CheckPendingSpeciesTypes
-    mutable boost::optional<Pending::Pending<
-        std::pair<std::map<std::string, Species>,
-        SpeciesManager::CensusOrder>>>     m_pending_types;
-    mutable SpeciesManager::SpeciesTypeMap m_species;
-    mutable SpeciesManager::CensusOrder    m_census_order;
+    mutable boost::optional<PendingT>       m_pending_types;
+    mutable SpeciesManager::SpeciesTypeMap  m_species;
+    mutable SpeciesManager::CensusOrder     m_census_order;
 
     template <typename K, typename V>
     using flat_map = boost::container::flat_map<K, V, std::less<>>;

@@ -39,7 +39,7 @@ namespace std {
 
 namespace {
     using start_rule_payload = std::pair<
-        std::map<std::string, Species>, // species_by_name
+        std::map<std::string, const Species, std::less<>>, // species_by_name
         std::vector<std::string> // census ordering
     >;
 
@@ -52,12 +52,12 @@ namespace {
     boost::python::object py_insert_species_(start_rule_payload::first_type& species_, const boost::python::tuple& args,
                                              const boost::python::dict& kw)
     {
-        auto name = boost::python::extract<std::string>(kw["name"])();
-        auto description = boost::python::extract<std::string>(kw["description"])();
-        auto gameplay_description = boost::python::extract<std::string>(kw["gameplay_description"])();
+        const auto species_name{boost::python::extract<std::string>(kw["name"])()};
+        auto description{boost::python::extract<std::string>(kw["description"])()};
+        auto gameplay_description{boost::python::extract<std::string>(kw["gameplay_description"])()};
         boost::python::stl_input_iterator<FocusType> foci_begin(kw["foci"]), foci_end;
         std::vector<FocusType> foci(foci_begin, foci_end);
-        auto defaultfocus = boost::python::extract<std::string>(kw["defaultfocus"])();
+        auto defaultfocus{boost::python::extract<std::string>(kw["defaultfocus"])()};
         std::map<PlanetType, PlanetEnvironment> environments;
         auto environments_args = boost::python::extract<boost::python::dict>(kw["environments"])();
         boost::python::stl_input_iterator<enum_wrapper<PlanetType>> environments_begin(environments_args), environments_end;
@@ -81,21 +81,10 @@ namespace {
                 effects_group.TopLevelContent()
             ));
         }
-        bool playable = false;
-        if (kw.has_key("playable"))
-            playable = boost::python::extract<bool>(kw["playable"])();
-
-        bool native = false;
-        if (kw.has_key("native"))
-            native = boost::python::extract<bool>(kw["native"])();
-
-        bool can_colonize = false;
-        if (kw.has_key("can_colonize"))
-            can_colonize = boost::python::extract<bool>(kw["can_colonize"])();
-
-        bool can_produce_ships = false;
-        if (kw.has_key("can_produce_ships"))
-            can_produce_ships = boost::python::extract<bool>(kw["can_produce_ships"])();
+        const bool playable = kw.has_key("playable") && boost::python::extract<bool>(kw["playable"])();
+        const bool native = kw.has_key("native") && boost::python::extract<bool>(kw["native"])();
+        const bool can_colonize = kw.has_key("can_colonize") && boost::python::extract<bool>(kw["can_colonize"])();
+        const bool can_produce_ships = kw.has_key("can_produce_ships") && boost::python::extract<bool>(kw["can_produce_ships"])();
 
         boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), it_end;
         std::set<std::string> tags(tags_begin, it_end);
@@ -109,50 +98,44 @@ namespace {
             boost::python::stl_input_iterator<std::string> dislikes_begin(kw["dislikes"]);
             dislikes = std::set<std::string>(dislikes_begin, it_end);
         }
-        auto graphic = boost::python::extract<std::string>(kw["graphic"])();
-        double spawn_rate = 1.0;
-        if (kw.has_key("spawnrate"))
-            spawn_rate = boost::python::extract<double>(kw["spawnrate"])();
+        auto graphic{boost::python::extract<std::string>(kw["graphic"])()};
+        const double spawn_rate = kw.has_key("spawnrate") ? boost::python::extract<double>(kw["spawnrate"])() : 1.0;
+        const int spawn_limit = kw.has_key("spawnlimit") ? boost::python::extract<int>(kw["spawnlimit"])() : 9999;
 
-        int spawn_limit = 9999;
-        if (kw.has_key("spawnlimit"))
-            spawn_limit = boost::python::extract<int>(kw["spawnlimit"])();
+        std::unique_ptr<Condition::Condition> combat_targets = kw.has_key("combat_targets") ?
+            ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["combat_targets"])().condition) :
+            nullptr;
 
-        std::unique_ptr<Condition::Condition> combat_targets;
-        if (kw.has_key("combat_targets"))
-            combat_targets = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["combat_targets"])().condition);
+        std::unique_ptr<Condition::Condition> annexation_condition = kw.has_key("annexation_condition") ?
+            ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["annexation_condition"])().condition) :
+            nullptr;
 
-        std::unique_ptr<Condition::Condition> annexation_condition;
-        if (kw.has_key("annexation_condition"))
-            annexation_condition = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["annexation_condition"])().condition);
+        std::unique_ptr<ValueRef::ValueRef<double>> annexation_cost = kw.has_key("annexation_cost") ?
+            ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["annexation_cost"])().value_ref) :
+            nullptr;
 
-        std::unique_ptr<ValueRef::ValueRef<double>> annexation_cost;
-        if (kw.has_key("annexation_cost"))
-            annexation_cost = ValueRef::CloneUnique(boost::python::extract<value_ref_wrapper<double>>(kw["annexation_cost"])().value_ref);
-
-
-        auto species_ptr = std::make_unique<Species>(
-            std::move(name), std::move(description), std::move(gameplay_description),
-            std::move(foci),
-            std::move(defaultfocus),
-            std::move(environments),
-            std::move(effectsgroups),
-            std::move(combat_targets),
-            playable,
-            native,
-            can_colonize,
-            can_produce_ships,
-            tags,    // intentionally not moved
-            std::move(likes),
-            std::move(dislikes),
-            std::move(annexation_condition),
-            std::move(annexation_cost),
-            std::move(graphic),
-            spawn_rate,
-            spawn_limit);
-
-        auto species_name{species_ptr->Name()};
-        species_.emplace(std::move(species_name), std::move(*species_ptr));
+        species_.emplace(std::piecewise_construct,
+                         std::forward_as_tuple(species_name),
+                         std::forward_as_tuple(std::string{species_name},
+                                               std::move(description),
+                                               std::move(gameplay_description),
+                                               std::move(foci),
+                                               std::move(defaultfocus),
+                                               std::move(environments),
+                                               std::move(effectsgroups),
+                                               std::move(combat_targets),
+                                               playable,
+                                               native,
+                                               can_colonize,
+                                               can_produce_ships,
+                                               tags,    // intentionally not moved
+                                               std::move(likes),
+                                               std::move(dislikes),
+                                               std::move(annexation_condition),
+                                               std::move(annexation_cost),
+                                               std::move(graphic),
+                                               spawn_rate,
+                                               spawn_limit));
 
         return boost::python::object();
     }

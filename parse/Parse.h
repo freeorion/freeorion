@@ -55,7 +55,7 @@ namespace parse {
         species_by_name. If a file exists called SpeciesCensusOrdering.focs.txt, parse it and
         store the census order in \p ordering. */
     using species_type = std::pair<
-        std::map<std::string, Species>, // species_by_name,
+        std::map<std::string, const Species, std::less<>>, // species_by_name,
         std::vector<std::string> // ordering
     >;
     FO_PARSE_API species_type species(const PythonParser& parser, const boost::filesystem::path& path);

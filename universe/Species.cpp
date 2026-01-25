@@ -446,14 +446,14 @@ Species::Species(std::string&& name, std::string&& desc,
         const std::string_view sv{m_tags_concatenated.data(), m_tags_concatenated.size()};
         std::size_t next_idx = 0;
         // find starting point for first like, after end of tags, within m_tags_concatenated
-        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
+        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) noexcept { next_idx += t.size(); });
 
         // store views into concatenated tags/likes string
-        std::for_each(likes.begin(), likes.end(), [&next_idx, &retval, sv](const auto& t) {
+        for (const auto& t : likes) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();
-        });
+        }
 
         return retval;
     }()),
@@ -464,15 +464,15 @@ Species::Species(std::string&& name, std::string&& desc,
         const std::string_view sv{m_tags_concatenated.data(), m_tags_concatenated.size()};
         std::size_t next_idx = 0;
         // find starting point for first dislike, after end of tags and likes, within m_tags_concatenated
-        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
-        std::for_each(m_likes.begin(), m_likes.end(), [&next_idx](const auto& t) { next_idx += t.size(); });
+        std::for_each(m_tags.begin(), m_tags.end(), [&next_idx](const auto& t) noexcept { next_idx += t.size(); });
+        std::for_each(m_likes.begin(), m_likes.end(), [&next_idx](const auto& t) noexcept { next_idx += t.size(); });
 
         // store views into concatenated tags/likes string
-        std::for_each(dislikes.begin(), dislikes.end(), [&next_idx, &retval, sv](const auto& t) {
+        for (const auto& t : dislikes) {
             std::string upper_t = boost::to_upper_copy<std::string>(t);
             retval.push_back(sv.substr(next_idx, upper_t.size()));
             next_idx += upper_t.size();
-        });
+        }
 
         return retval;
     }()),
@@ -499,10 +499,7 @@ Species::Species(std::string&& name, std::string&& desc,
             std::vector<std::unique_ptr<Effect::EffectsGroup>> retval;
             retval.reserve(effects.size());
             std::transform(effects.begin(), effects.end(), std::back_inserter(retval),
-                           [](auto& e) {
-                               Effect::EffectsGroup&& er = std::move(*e);
-                               return std::make_unique<Effect::EffectsGroup>(std::move(er));
-                           });
+                           [](auto& e) { return std::make_unique<Effect::EffectsGroup>(std::move(*e)); });
             return retval;
         }(),
         std::move(combat_targets), playable, native, can_colonize, can_produce_ships,
@@ -813,7 +810,7 @@ const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const 
     return it != m_species.end() ? &(it->second) : nullptr;
 }
 
-void SpeciesManager::SetSpeciesTypes(Pending::Pending<std::pair<std::map<std::string, Species>, CensusOrder>>&& future) {
+void SpeciesManager::SetSpeciesTypes(SpeciesManager::PendingT&& future) {
     std::scoped_lock lock(m_species_mutex);
     m_pending_types = std::move(future);
 }
@@ -830,9 +827,7 @@ void SpeciesManager::CheckPendingSpeciesTypes() const {
     decltype(m_pending_types)::value_type::result_type container;
     Pending::SwapPending(m_pending_types, container); 
 
-    m_species.clear();
-    m_species.insert(std::make_move_iterator(container.first.begin()),
-                     std::make_move_iterator(container.first.end()));
+    m_species = std::move(container.first);
     m_census_order = std::move(container.second);
 }
 
