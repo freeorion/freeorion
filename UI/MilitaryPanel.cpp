@@ -55,9 +55,11 @@ void MilitaryPanel::CompleteConstruction() {
     for (MeterType meter : {MeterType::METER_SHIELD, MeterType::METER_DEFENSE, MeterType::METER_TROOPS,
                             MeterType::METER_DETECTION, MeterType::METER_STEALTH})
     {
-        auto stat = GG::Wnd::Create<StatisticIcon>(
-            app.GetUI().MeterIcon(meter), planet->GetMeter(meter)->Initial(),
-            3, false, MeterIconSize().x, MeterIconSize().y);
+        auto stat = GG::Wnd::Create<StatisticIcon>(app.GetUI().MeterIcon(meter), app.GetUI().GetFont(),
+                                                   MeterIconSize().x, MeterIconSize().y, 3,
+                                                   StatisticIcon::IndicateChangeColour::INDICATE_FOR_OTHER,
+                                                   StatisticIcon::ShowSign::HIDE_IF_NON_NEGATIVE);
+
         AttachChild(stat);
         m_meter_stats.emplace_back(meter, stat);
         meters.emplace_back(meter, AssociatedMeterType(meter));
@@ -111,7 +113,8 @@ void MilitaryPanel::Update(const ObjectMap& objects) {
             continue;
         }
 
-        stat->SetValue(meter->Initial());
+        stat->SetValue(meter->Initial(), 0);
+        stat->SetValue(meter->Current() - meter->Initial(), 1);
 
         auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_planet_id, meter_type, AssociatedMeterType(meter_type));
         m_multi_icon_value_indicator->SetToolTip(meter_type, browse_wnd);

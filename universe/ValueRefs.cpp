@@ -60,9 +60,6 @@ namespace std {
 #endif
 
 
-std::string DoubleToString(double val, int digits, bool always_show_sign);
-bool UserStringExists(const std::string& str);
-
 namespace {
     void LogStackTrace(const std::string_view what) {
         // only output stack trace some times per minute, as this was very slow on windows
@@ -312,6 +309,7 @@ std::string EnumToString(EnumT t)
 {
     static_assert(std::is_enum_v<EnumT>);
     const auto maybe_retval = to_string(t);
+    static_assert(std::is_same_v<decltype(maybe_retval), const std::string_view>);
     if (UserStringExists(maybe_retval))
         return UserString(maybe_retval);
     else
