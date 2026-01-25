@@ -1327,7 +1327,7 @@ void StatisticIcon::PreRender() {
 }
 
 double StatisticIcon::GetValue(std::size_t index) const {
-    if (index < 0u || (!m_have_two && index > 0) || (m_have_two && index > 1)) {
+    if (index > static_cast<std::size_t>(m_have_two)) [[unlikely]] {
         ErrorLogger() << "StatisticIcon::GetValue passed index out of range index:" << index;
         return 0.0;
     }
@@ -1335,8 +1335,8 @@ double StatisticIcon::GetValue(std::size_t index) const {
 }
 
 void StatisticIcon::SetValue(double value, std::size_t index) {
-    if (index > 1u) {
-        ErrorLogger() << "StatisticIcon::SetValue passed index out of range index:" << index;
+    if (index > 1u) [[unlikely]] {
+        ErrorLogger() << "StatisticIcon::SetValue passed index out of range index: " << index;
         return;
     }
     const auto font = GetApp().GetUI().GetFont();
@@ -1445,9 +1445,6 @@ void StatisticIcon::DoLayout() {
     m_icon->SizeMove(GG::Pt0,
                      GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
 
-    if (m_values.empty())
-        return;
-
     GG::Pt text_ul;
     if (Value(Width()) >= Value(Height())) {
         text_ul.x = GG::X(icon_dim + STAT_ICON_PAD);
@@ -1463,7 +1460,7 @@ GG::Pt StatisticIcon::MinUsableSize() const noexcept {
     if (!m_icon)
         return GG::Pt(GG::X1, GG::Y1);
 
-    if (m_values.empty() || !m_text)
+    if (!m_text)
         return m_icon->Size();
 
     if (Value(Width()) >= Value(Height()))
