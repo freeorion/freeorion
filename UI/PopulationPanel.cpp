@@ -49,27 +49,21 @@ void PopulationPanel::CompleteConstruction() {
     }
     const auto& species_name = planet->SpeciesName();
 
+    const auto make_stat_icon_tex = [font{ui.GetFont()}, sz{MeterIconSize()}](auto tex, std::string name) {
+        auto si = GG::Wnd::Create<StatisticIcon>(std::move(tex), font, sz.x, sz.y, 3,
+                                                 StatisticIcon::IndicateChangeColour::INDICATE_FOR_OTHER,
+                                                 StatisticIcon::ShowSign::HIDE_IF_NON_NEGATIVE);
+        if (si) si->SetName(std::move(name));
+        return si;
+    };
+    const auto make_stat_icon = [&make_stat_icon_tex, &ui](MeterType mt, std::string name)
+    { return make_stat_icon_tex(ui.MeterIcon(mt), std::move(name)); };
+
     // small meter indicators - for use when panel is collapsed
-    m_meter_stats.emplace_back(
-        MeterType::METER_POPULATION,
-        GG::Wnd::Create<StatisticIcon>(ui.SpeciesIcon(species_name),
-                                       planet->GetMeter(MeterType::METER_POPULATION)->Initial(), 3, false,
-                                       MeterIconSize().x, MeterIconSize().y));
-    m_meter_stats.emplace_back(
-        MeterType::METER_HAPPINESS,
-        GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_HAPPINESS),
-                                       planet->GetMeter(MeterType::METER_HAPPINESS)->Initial(), 3, false,
-                                       MeterIconSize().x, MeterIconSize().y));
-    m_meter_stats.emplace_back(
-        MeterType::METER_CONSTRUCTION,
-        GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_CONSTRUCTION),
-                                       planet->GetMeter(MeterType::METER_CONSTRUCTION)->Initial(), 3, false,
-                                       MeterIconSize().x, MeterIconSize().y));
-    m_meter_stats.emplace_back(
-        MeterType::METER_REBEL_TROOPS,
-        GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_REBEL_TROOPS),
-                                       planet->GetMeter(MeterType::METER_REBEL_TROOPS)->Initial(), 3, false,
-                                       MeterIconSize().x, MeterIconSize().y));
+    m_meter_stats.emplace_back(MeterType::METER_POPULATION, make_stat_icon_tex(ui.SpeciesIcon(species_name), "Population StatisticIcon"));
+    m_meter_stats.emplace_back(MeterType::METER_HAPPINESS, make_stat_icon(MeterType::METER_HAPPINESS, "Stability StatisticIcon"));
+    m_meter_stats.emplace_back(MeterType::METER_CONSTRUCTION, make_stat_icon(MeterType::METER_CONSTRUCTION, "Infrastructure StatisticIcon"));
+    m_meter_stats.emplace_back(MeterType::METER_REBEL_TROOPS, make_stat_icon(MeterType::METER_REBEL_TROOPS, "Rebels StatisticIcon"));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
@@ -79,7 +73,8 @@ void PopulationPanel::CompleteConstruction() {
         stat_icon->RightClickedSignal.connect([this, meter_type{meter_type}](GG::Pt pt) {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             if (meter_type == MeterType::METER_POPULATION) {
-                if (const auto* planet = GetApp().GetContext().ContextObjects().getRaw<Planet>(m_popcenter_id)) {
+                const auto& objects = GetApp().GetContext().ContextObjects();
+                if (const auto* planet = objects.getRaw<Planet>(m_popcenter_id)) {
                     const auto& species_name = planet->SpeciesName();
                     if (!species_name.empty()) {
                         auto zoom_species_action = [species_name]() { GetApp().GetUI().ZoomToSpecies(species_name); };
@@ -120,8 +115,8 @@ void PopulationPanel::ExpandCollapse(bool expanded) {
 
 void PopulationPanel::Update(const ObjectMap& objects) {
     // remove any old browse wnds
-    for (auto& [meter_name, old_stat_icon] : m_meter_stats) {
-        old_stat_icon->ClearBrowseInfoWnd();
+    for (auto& [meter_name, stat_icon] : m_meter_stats) {
+        stat_icon->ClearBrowseInfoWnd();
         m_multi_icon_value_indicator->ClearToolTip(meter_name);
     }
 
@@ -138,11 +133,13 @@ void PopulationPanel::Update(const ObjectMap& objects) {
         m_multi_icon_value_indicator->Update(objects);
 
     // tooltips
-    for (auto& [meter_name, old_stat_icon] : m_meter_stats) {
-        old_stat_icon->SetValue(pop->GetMeter(meter_name)->Initial());
+    for (auto& [meter_name, stat_icon] : m_meter_stats) {
+        const auto* meter = pop->GetMeter(meter_name);
+        stat_icon->SetValue(meter->Initial());
+        stat_icon->SetValue(meter->Current() - meter->Initial(), 1);
 
         auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_popcenter_id, meter_name, AssociatedMeterType(meter_name));
-        old_stat_icon->SetBrowseInfoWnd(browse_wnd);
+        stat_icon->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_name, browse_wnd);
     }
 }

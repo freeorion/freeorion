@@ -957,8 +957,9 @@ namespace {
 
         m_stat_icons.reserve(meters_icons.size());
         for (auto& [meter_type, icon_texture] : meters_icons) {
-            auto icon = GG::Wnd::Create<StatisticIcon>(icon_texture, 0, 0, false,
-                                                       StatIconSize().x, StatIconSize().y);
+            auto icon = GG::Wnd::Create<StatisticIcon>(move(icon_texture), ui.GetFont(), StatIconSize().x, StatIconSize().y, 2,
+                                                       StatisticIcon::IndicateChangeColour::NOINDICATE,
+                                                       StatisticIcon::ShowSign::HIDE_IF_NON_NEGATIVE);
             m_stat_icons.emplace_back(meter_type, icon);
 
             icon->RightClickedSignal.connect([meter_type{meter_type}](GG::Pt pt) {
@@ -1758,8 +1759,8 @@ void FleetDataPanel::Init() {
 
         m_stat_icons.reserve(meters_icons_browsetext.size());
         for (auto& [meter_type, icon, text] : meters_icons_browsetext) {
-            auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, 0, 0, false,
-                                                            StatIconSize().x, StatIconSize().y);
+            auto stat_icon = GG::Wnd::Create<StatisticIcon>(icon, ui.GetFont(), StatIconSize().x, StatIconSize().y,
+                                                            2, StatisticIcon::IndicateChangeColour::NOINDICATE);
 
             m_stat_icons.emplace_back(meter_type, stat_icon);
             stat_icon->SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
@@ -2832,7 +2833,8 @@ void FleetWnd::CompleteConstruction() {
             std::make_tuple(MeterType::METER_POPULATION,    ColonyIcon(ui),     UserStringNop("FW_FLEET_COLONY_SUMMARY")),
         })
     {
-        auto stat_icon = GG::Wnd::Create<StatisticIcon>(std::move(icon), 0, 0, false, si_sz.x, si_sz.y);
+        auto stat_icon = GG::Wnd::Create<StatisticIcon>(std::move(icon), ui.GetFont(), si_sz.x, si_sz.y,
+                                                        2, StatisticIcon::IndicateChangeColour::NOINDICATE);
         m_stat_icons.emplace_back(meter_type, stat_icon);
         stat_icon->SetBrowseModeTime(tooltip_delay);
         stat_icon->SetBrowseText(UserString(text));

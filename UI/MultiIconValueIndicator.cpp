@@ -49,7 +49,6 @@ void MultiIconValueIndicator::CompleteConstruction() {
 
     GG::X x{EDGE_PAD};
     for (const auto primary_meter_type : m_meter_types | range_keys) {
-        {
             // get icon texture.
             auto texture = ui.MeterIcon(primary_meter_type);
 
@@ -60,15 +59,13 @@ void MultiIconValueIndicator::CompleteConstruction() {
                     texture = ui.SpeciesIcon(pc->SpeciesName());
             }
 
-            m_icons.push_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), 0.0, 3, false,
-                                                             IconWidth(), IconHeight()));
-        }
+        auto& icon = m_icons.emplace_back(GG::Wnd::Create<StatisticIcon>(std::move(texture), ui.GetFont(),
+                                                                         IconWidth(), IconHeight()));
         const GG::Pt icon_ul(x, GG::Y(EDGE_PAD));
         const GG::Pt icon_lr = icon_ul + GG::Pt(IconWidth(), IconHeight() + ClientUI::Pts()*3/2);
-        m_icons.back()->SizeMove(icon_ul, icon_lr);
+        icon->SizeMove(icon_ul, icon_lr);
 
-        m_icons.back()->RightClickedSignal.connect([this, primary_meter_type](GG::Pt pt) {
-
+        icon->RightClickedSignal.connect([this, primary_meter_type](GG::Pt pt) {
             const auto meter_string = to_string(primary_meter_type);
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
@@ -86,14 +83,14 @@ void MultiIconValueIndicator::CompleteConstruction() {
                 }
             }
 
-
             auto zoom_article_action = [meter_string]() { GetApp().GetUI().ZoomToMeterTypeArticle(std::string{meter_string});}; // TODO: avoid copy
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
             popup->AddMenuItem(std::move(popup_label), false, false, zoom_article_action);
             popup->Run();
         });
-        AttachChild(m_icons.back());
+
+        AttachChild(icon);
         x += IconWidth() + IconSpacing();
     }
 
