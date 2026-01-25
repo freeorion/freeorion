@@ -2000,14 +2000,10 @@ void DesignWnd::PartPalette::HandleShipPartRightClicked(const ShipPart* part, GG
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    const auto empire_id = GetApp().EmpireID();
-    if (empire_id != ALL_EMPIRES)
-        popup->AddMenuItem(GG::MenuItem(
-                               (is_obsolete
-                                ? UserString("DESIGN_WND_UNOBSOLETE_PART")
-                                : UserString("DESIGN_WND_OBSOLETE_PART")),
-                               false, false, toggle_obsolete_design_action));
-
+    if (GetApp().EmpireID() != ALL_EMPIRES) {
+        popup->AddMenuItem(is_obsolete ? UserString("DESIGN_WND_UNOBSOLETE_PART"): UserString("DESIGN_WND_OBSOLETE_PART"),
+                           false, false, toggle_obsolete_design_action);
+    }
     popup->Run();
 
     ShipPartRightClickedSignal(part, pt);
@@ -2956,11 +2952,8 @@ void EmptyHullsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     if (this->EmpireID() != ALL_EMPIRES) {
-        popup->AddMenuItem(GG::MenuItem(
-                               (is_obsolete
-                                ? UserString("DESIGN_WND_UNOBSOLETE_HULL")
-                                : UserString("DESIGN_WND_OBSOLETE_HULL")),
-                               false, false, toggle_obsolete_design_action));
+        popup->AddMenuItem(is_obsolete ? UserString("DESIGN_WND_UNOBSOLETE_HULL") : UserString("DESIGN_WND_OBSOLETE_HULL"),
+                           false, false, toggle_obsolete_design_action);
     }
 
     popup->Run();
@@ -3042,31 +3035,28 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt 
 
     // obsolete design
     if (empire_id != ALL_EMPIRES)
-        popup->AddMenuItem(GG::MenuItem(
-                              (is_obsolete
-                               ? UserString("DESIGN_WND_UNOBSOLETE_DESIGN")
-                               : UserString("DESIGN_WND_OBSOLETE_DESIGN")),
-                              false, false, toggle_obsolete_design_action));
+        popup->AddMenuItem(is_obsolete ? UserString("DESIGN_WND_UNOBSOLETE_DESIGN") : UserString("DESIGN_WND_OBSOLETE_DESIGN"),
+                           false, false, toggle_obsolete_design_action);
 
     // delete design
     if (empire_id != ALL_EMPIRES)
-        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_DESIGN"),     false, false, delete_design_action));
+        popup->AddMenuItem(UserString("DESIGN_WND_DELETE_DESIGN"),     false, false, delete_design_action);
 
     // rename design
     if (design->DesignedByEmpire() == empire_id && empire_id != ALL_EMPIRES)
-        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"),                false, false, rename_design_action));
+        popup->AddMenuItem(UserString("DESIGN_RENAME"),                false, false, rename_design_action);
 
     // save design
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"),                      false, false, save_design_action));
+    popup->AddMenuItem(UserString("DESIGN_SAVE"),                      false, false, save_design_action);
 
     // move design
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_LIST_ITEM"),                false, false, movetotop_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_LIST_ITEM"),              false, false, movetobottom_design_action));
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("MOVE_UP_LIST_ITEM"),                false, false, movetotop_design_action);
+    popup->AddMenuItem(UserString("MOVE_DOWN_LIST_ITEM"),              false, false, movetobottom_design_action);
 
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
-                                    toggle_add_default_designs_at_game_start_action));
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
+                       toggle_add_default_designs_at_game_start_action);
 
     popup->Run();
 }
@@ -3129,16 +3119,15 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, GG::Pt pt, 
     // create popup menu with a commands in it
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (design->Producible() && CanAddDesignToDisplayedDesigns(design))
-        popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),                 false, false, add_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"),        false, false, delete_saved_design_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_LIST_ITEM"),              false, false, movetotop_design_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_LIST_ITEM"),            false, false, movetobottom_design_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
-                                   toggle_add_all_saved_game_start_action));
+        popup->AddMenuItem(UserString("DESIGN_ADD"),                 false, false, add_design_action);
+    popup->AddMenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("DESIGN_WND_DELETE_SAVED"),        false, false, delete_saved_design_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("MOVE_UP_LIST_ITEM"),              false, false, movetotop_design_action);
+    popup->AddMenuItem(UserString("MOVE_DOWN_LIST_ITEM"),            false, false, movetobottom_design_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all, toggle_add_all_saved_game_start_action);
 
     popup->Run();
 }
