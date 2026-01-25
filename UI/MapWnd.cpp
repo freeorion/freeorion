@@ -1211,56 +1211,54 @@ void MapWnd::CompleteConstruction() {
     m_btn_moderator->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC")));
 
+    const auto make_stat_icon_tex = [font{ui.GetFont()}, hi{m_btn_turn->Height()}](auto tex, std::string name, bool two_values = false) {
+        auto num = two_values ? StatisticIcon::NumValuesDisplayed::TWO : StatisticIcon::NumValuesDisplayed::ONE;
+        auto si = GG::Wnd::Create<StatisticIcon>(std::move(tex), font, ICON_SINGLE_WIDTH, hi, num);
+        if (si)
+            si->SetName(std::move(name));
+        return si;
+    };
+    const auto make_stat_icon = [&make_stat_icon_tex, &ui](MeterType mt, std::string name, bool two_values = false)
+    { return make_stat_icon_tex(ui.MeterIcon(mt), std::move(name), two_values); };
 
     // resources
-    m_population = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_POPULATION),
-                                                  0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
-    m_population->SetName("Population StatisticIcon");
+    m_population = make_stat_icon(MeterType::METER_POPULATION, "Population StatisticIcon");
 
-    m_industry = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_INDUSTRY),
-                                                0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
-    m_industry->SetName("Industry StatisticIcon");
+    m_industry = make_stat_icon(MeterType::METER_INDUSTRY, "Industry StatisticIcon");
     m_signal_connections.push_back(m_industry->LeftClickedSignal.connect([this](auto) { ToggleProduction(); }));
 
-    m_stockpile = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_STOCKPILE),
-                                                 0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
-    m_stockpile->SetName("Stockpile StatisticIcon");
+    m_stockpile = make_stat_icon(MeterType::METER_STOCKPILE, "Stockpile StatisticIcon", true);
 
-    m_research = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_RESEARCH),
-                                                0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
-    m_research->SetName("Research StatisticIcon");
+    m_research = make_stat_icon(MeterType::METER_RESEARCH, "Research StatisticIcon");
     m_signal_connections.push_back(m_research->LeftClickedSignal.connect(
         [this](auto) { ToggleResearch(GetApp().GetContext()); }));
 
-    m_influence = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_INFLUENCE),
-                                                 0, 3, false, ICON_DUAL_WIDTH, m_btn_turn->Height());
-    m_influence->SetName("Influence StatisticIcon");
+    m_influence = make_stat_icon(MeterType::METER_INFLUENCE, "Influence StatisticIcon", true);
     m_signal_connections.push_back(m_influence->LeftClickedSignal.connect([this](auto) { ToggleGovernment(); }));
 
-    m_fleet = GG::Wnd::Create<StatisticIcon>(ui.GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
-                                             0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
-    m_fleet->SetName("Fleet StatisticIcon");
+    m_fleet = make_stat_icon_tex(ui.GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
+                                 "Fleet StatisticIcon");
 
-    m_detection = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(MeterType::METER_DETECTION),
-                                                 0, 3, false, ICON_SINGLE_WIDTH, m_btn_turn->Height());
-    m_detection->SetName("Detection StatisticIcon");
+    m_detection = make_stat_icon(MeterType::METER_DETECTION, "Detection StatisticIcon");
 
-    GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(
-        ui.GetTexture(button_texture_dir / "wasted_resource.png", false));
-    GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(
-        ui.GetTexture(button_texture_dir / "wasted_resource_mouseover.png", false));
-    GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(
-        ui.GetTexture(button_texture_dir / "wasted_resource_clicked.png", false));
+    {
+        GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(
+            ui.GetTexture(button_texture_dir / "wasted_resource.png", false));
+        GG::SubTexture wasted_ressource_mouseover_subtexture = GG::SubTexture(
+            ui.GetTexture(button_texture_dir / "wasted_resource_mouseover.png", false));
+        GG::SubTexture wasted_ressource_clicked_subtexture = GG::SubTexture(
+            ui.GetTexture(button_texture_dir / "wasted_resource_clicked.png", false));
 
-    m_industry_wasted = Wnd::Create<CUIButton>(
-        wasted_ressource_subtexture,
-        wasted_ressource_clicked_subtexture,
-        wasted_ressource_mouseover_subtexture);
+        m_industry_wasted = Wnd::Create<CUIButton>(
+            wasted_ressource_subtexture,
+            wasted_ressource_clicked_subtexture,
+            wasted_ressource_mouseover_subtexture);
 
-    m_research_wasted = Wnd::Create<CUIButton>(
-        wasted_ressource_subtexture,
-        wasted_ressource_clicked_subtexture,
-        wasted_ressource_mouseover_subtexture);
+        m_research_wasted = Wnd::Create<CUIButton>(
+            std::move(wasted_ressource_subtexture),
+            std::move(wasted_ressource_clicked_subtexture),
+            std::move(wasted_ressource_mouseover_subtexture));
+    }
 
     m_industry_wasted->Resize(ICON_SIZE);
     m_industry_wasted->SetMinSize(ICON_SIZE);
@@ -1285,27 +1283,27 @@ void MapWnd::CompleteConstruction() {
     // place buttons / icons on toolbar
     /////////////////////////////////////
     {
-    std::vector<GG::X> widths{
-        m_btn_turn->Width(),        ICON_WIDTH,                 ICON_WIDTH,
-        ICON_WIDTH,                 ICON_WIDTH,                 ICON_SINGLE_WIDTH,
-        ICON_DUAL_WIDTH,            ICON_WIDTH,                 ICON_SINGLE_WIDTH,
-        ICON_DUAL_WIDTH,            ICON_SINGLE_WIDTH,          ICON_SINGLE_WIDTH,
-        ICON_SINGLE_WIDTH,          MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
-        MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
-        MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
-        MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,           MENU_ICON_SIZE.x,
-        MENU_ICON_SIZE.x};
+        std::vector<GG::X> widths{
+            m_btn_turn->Width(), ICON_WIDTH,        ICON_WIDTH,
+            ICON_WIDTH,          ICON_WIDTH,        ICON_SINGLE_WIDTH,
+            ICON_DUAL_WIDTH,     ICON_WIDTH,        ICON_SINGLE_WIDTH,
+            ICON_DUAL_WIDTH,     ICON_SINGLE_WIDTH, ICON_SINGLE_WIDTH,
+            ICON_SINGLE_WIDTH,   MENU_ICON_SIZE.x,  MENU_ICON_SIZE.x,
+            MENU_ICON_SIZE.x,    MENU_ICON_SIZE.x,  MENU_ICON_SIZE.x,
+            MENU_ICON_SIZE.x,    MENU_ICON_SIZE.x,  MENU_ICON_SIZE.x,
+            MENU_ICON_SIZE.x,    MENU_ICON_SIZE.x,  MENU_ICON_SIZE.x,
+            MENU_ICON_SIZE.x};
 
-    std::vector<float> stretches{
-        0.0f,                       0.0f,                       0.0f,
-        0.0f,                       0.0f,                       1.0f,
-        2.0f,                       0.0f,                       1.0f,
-        2.0f,                       1.0f,                       1.0f,
-        1.0f,                       0.0f,                       0.0f,
-        0.0f,                       0.0f,                       0.0f,
-        0.0f,                       0.0f,                       0.0f,
-        0.0f,                       0.0f,                       0.0f,
-        0.0f};
+        std::vector<float> stretches{
+            0.0f,                0.0f,              0.0f,
+            0.0f,                0.0f,              1.0f,
+            2.0f,                0.0f,              1.0f,
+            2.0f,                1.0f,              1.0f,
+            1.0f,                0.0f,              0.0f,
+            0.0f,                0.0f,              0.0f,
+            0.0f,                0.0f,              0.0f,
+            0.0f,                0.0f,              0.0f,
+            0.0f};
 
         if (auto layout = GG::Wnd::Create<GG::Layout>(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
                                                       m_toolbar->ClientWidth(),       m_toolbar->ClientHeight(),

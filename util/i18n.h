@@ -1,6 +1,7 @@
 #ifndef _I18N_h_
 #define _I18N_h_
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
@@ -57,9 +58,9 @@ FO_COMMON_API void FlushLoadedStringTables();
     return RomanNumber(static_cast<uint16_t>(n));
 }
 
-/** Converts double to string with \a digits digits.  Represents large numbers
-  * with SI prefixes. */
-[[nodiscard]] FO_COMMON_API std::string DoubleToString(double val, int digits, bool always_show_sign);
+/** Converts double to string with \a digits digits.
+  * Represents large numbers with SI prefixes. */
+[[nodiscard]] FO_COMMON_API std::string DoubleToString(double val, uint8_t digits, bool always_show_sign);
 
 /** Returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for
   * positive values and -1 for negative values if their absolute value is

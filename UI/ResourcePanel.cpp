@@ -43,6 +43,7 @@ void ResourcePanel::CompleteConstruction() {
         ErrorLogger() << "ResourcePanel::CompleteConstruction couldn't get object with id  " << m_rescenter_id;
         return;
     }
+    auto& ui = app.GetUI();
 
     m_expand_button->LeftPressedSignal.connect(boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
 
@@ -69,9 +70,10 @@ void ResourcePanel::CompleteConstruction() {
             continue;
         }
 
-        auto stat = GG::Wnd::Create<StatisticIcon>(
-            app.GetUI().MeterIcon(meter), obj->GetMeter(meter)->Initial(),
-            3, false, MeterIconSize().x, MeterIconSize().y);
+        auto stat = GG::Wnd::Create<StatisticIcon>(ui.MeterIcon(meter), ui.GetFont(),
+                                                   MeterIconSize().x, MeterIconSize().y, 3,
+                                                   StatisticIcon::IndicateChangeColour::INDICATE_FOR_OTHER,
+                                                   StatisticIcon::ShowSign::HIDE_IF_NON_NEGATIVE);
         AttachChild(stat);
         m_meter_stats.emplace_back(meter, stat);
         meters.emplace_back(meter, assoc_meter);
@@ -148,9 +150,10 @@ void ResourcePanel::Update(const ObjectMap& objects) {
     for (auto& [meter_type, stat_icon] : m_meter_stats) {
         if (!stat_icon)
             continue;
-        auto meter = obj->GetMeter(meter_type);
-        auto init = meter ? meter->Initial() : 0.0f;
-        stat_icon->SetValue(init);
+        if (auto meter = obj->GetMeter(meter_type)) {
+            stat_icon->SetValue(meter->Initial(), 0);
+            stat_icon->SetValue(meter->Current() - meter->Initial(), 1);
+        }
 
         auto assoc_meter_type = AssociatedMeterType(meter_type);
         auto browse_wnd = GG::Wnd::Create<MeterBrowseWnd>(m_rescenter_id, meter_type, assoc_meter_type);

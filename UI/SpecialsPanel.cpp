@@ -31,7 +31,7 @@ void SpecialsPanel::CompleteConstruction() {
 }
 
 bool SpecialsPanel::InWindow(GG::Pt pt) const
-{ return range_any_of(m_icons, [pt](const auto& icon) { return icon->InWindow(pt); }); }
+{ return range_any_of(m_icons, [pt](const auto& icon) { return icon && icon->InWindow(pt); }); }
 
 void SpecialsPanel::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
@@ -69,14 +69,7 @@ void SpecialsPanel::Update() {
         const Special* special = GetSpecial(special_name);
         if (!special)
             continue;
-        std::shared_ptr<StatisticIcon> graphic;
-        if (special_capacity > 0.0f)
-            graphic = GG::Wnd::Create<StatisticIcon>(ui.SpecialIcon(special_name), special_capacity, 2, false,
-                                                     SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
-        else
-            graphic = GG::Wnd::Create<StatisticIcon>(ui.SpecialIcon(special_name),
-                                                     SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
-
+        auto graphic = GG::Wnd::Create<StatisticIcon>(ui.SpecialIcon(special_name));
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         std::string desc = special->Description();
@@ -97,7 +90,6 @@ void SpecialsPanel::Update() {
         m_icons.push_back(graphic);
 
         graphic->RightClickedSignal.connect([name{special_name}](GG::Pt pt) {
-
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(name));
 
