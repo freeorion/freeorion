@@ -401,12 +401,10 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_order_issuing_enabled && ScrapOrder::Check(GetApp().EmpireID(), m_building_id, context)) {
         if (!building->OrderedScrapped()) {
             // create popup menu with "Scrap" option
-            popup->AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false,
-                                            scrap_building_action));
+            popup->AddMenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false, scrap_building_action);
         } else {
             // create popup menu with "Cancel Scrap" option
-            popup->AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false,
-                                            un_scrap_building_action));
+            popup->AddMenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false, un_scrap_building_action);
         }
     }
 
@@ -418,8 +416,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     {
         auto forget_building_action = [this, map_wnd]() { map_wnd->ForgetObject(m_building_id); };
 
-        popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false,
-                                        forget_building_action));
+        popup->AddMenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false, forget_building_action);
     }
 
     const std::string& building_type = building->BuildingTypeName();
@@ -427,8 +424,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
         auto pedia_lookup_building_type_action = [building_type]()
         { GetApp().GetUI().ZoomToBuildingType(building_type); };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
-        popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
-                                        pedia_lookup_building_type_action));
+        popup->AddMenuItem(std::move(popup_label), false, false, pedia_lookup_building_type_action);
     }
 
     popup->Run();

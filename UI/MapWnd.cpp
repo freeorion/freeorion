@@ -346,15 +346,15 @@ namespace {
         auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
         if (!popup) return;
 
-        //popup->AddMenuItem(GG::MenuItem(true)); // separator
+        //popup->AddMenuItem(GG::MenuItem::menu_separator);
 
         const bool disable_end_turn = !turn_btn || turn_btn->Disabled();
         auto start_label = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_SEND_AND_START")) % turn % order_count);
-        popup->AddMenuItem(GG::MenuItem(std::move(start_label), disable_end_turn, false, end_turn_action));
+        popup->AddMenuItem(std::move(start_label), disable_end_turn, false, end_turn_action);
 
         const bool disable_revoke = disable_end_turn || order_count < 1;
         auto revoke_label = boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_REVOKE")) % turn % order_count);
-        popup->AddMenuItem(GG::MenuItem(std::move(revoke_label), disable_revoke, false, revoke_orders_action));
+        popup->AddMenuItem(std::move(revoke_label), disable_revoke, false, revoke_orders_action);
 
         popup->Run();
     }
@@ -2730,17 +2730,17 @@ void MapWnd::RClick(GG::Pt pt, GG::Flags<GG::ModKey>) {
         auto detection_range_action = [detectionRange]() { GetOptionsDB().Set<bool>("ui.map.detection.range.shown",        !detectionRange);   };
 
         if (auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y)) {
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),       false, showPlanets,    show_planets_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),            false, systemCircles,  system_circles_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"),  false, resourceColor,  resource_color_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),           false, fleetSupply,    fleet_supply_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),               false, gas,            gas_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),        false, starfields,     starfield_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),        false, scale,          map_scale_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),      false, scaleCircle,    scale_circle_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       false, zoomSlider,     zoom_slider_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   false, detectionRange, detection_range_action));
+            popup->AddMenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action);
+            popup->AddMenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),       false, showPlanets,    show_planets_action);
+            popup->AddMenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),            false, systemCircles,  system_circles_action);
+            popup->AddMenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"),  false, resourceColor,  resource_color_action);
+            popup->AddMenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),           false, fleetSupply,    fleet_supply_action);
+            popup->AddMenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),               false, gas,            gas_action);
+            popup->AddMenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),        false, starfields,     starfield_action);
+            popup->AddMenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),        false, scale,          map_scale_action);
+            popup->AddMenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),      false, scaleCircle,    scale_circle_action);
+            popup->AddMenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       false, zoomSlider,     zoom_slider_action);
+            popup->AddMenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   false, detectionRange, detection_range_action);
             // display popup menu
             popup->Run();
         }
@@ -5766,7 +5766,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
             }
         };
 
-        popup->AddMenuItem(GG::MenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST_ALL"), false, false, forget_fleet_actions));
+        popup->AddMenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST_ALL"), false, false, forget_fleet_actions);
         popup->Run();
 
         // Force a redraw

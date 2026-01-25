@@ -81,7 +81,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
                             boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
                         auto zoom_species_action = [species_name{std::move(species_name)}]()
                         { GetApp().GetUI().ZoomToSpecies(species_name); };
-                        popup->AddMenuItem(GG::MenuItem(std::move(species_label), false, false, zoom_species_action));
+                        popup->AddMenuItem(std::move(species_label), false, false, zoom_species_action);
                     }
                 }
             }
@@ -90,7 +90,7 @@ void MultiIconValueIndicator::CompleteConstruction() {
             auto zoom_article_action = [meter_string]() { GetApp().GetUI().ZoomToMeterTypeArticle(std::string{meter_string});}; // TODO: avoid copy
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
-            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_article_action));
+            popup->AddMenuItem(std::move(popup_label), false, false, zoom_article_action);
             popup->Run();
         });
         AttachChild(m_icons.back());

@@ -84,8 +84,7 @@ void ResourcePanel::CompleteConstruction() {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
-            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false,
-                                            pedia_zoom_to_article_action));
+            popup->AddMenuItem(std::move(popup_label), false, false, pedia_zoom_to_article_action);
             popup->Run();
         });
     }

@@ -85,7 +85,7 @@ void PopulationPanel::CompleteConstruction() {
                         auto zoom_species_action = [species_name]() { GetApp().GetUI().ZoomToSpecies(species_name); };
                         std::string species_label = boost::io::str(
                             FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-                        popup->AddMenuItem(GG::MenuItem(std::move(species_label), false, false, zoom_species_action));
+                        popup->AddMenuItem(std::move(species_label), false, false, zoom_species_action);
                     }
                 }
             }
@@ -93,7 +93,7 @@ void PopulationPanel::CompleteConstruction() {
             auto pedia_meter_type_action = [meter_type]() { GetApp().GetUI().ZoomToMeterTypeArticle(std::string{to_string(meter_type)}); };
             std::string popup_label = boost::io::str(
                 FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(to_string(meter_type)));
-            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_meter_type_action));
+            popup->AddMenuItem(std::move(popup_label), false, false, pedia_meter_type_action);
 
             popup->Run();
         });

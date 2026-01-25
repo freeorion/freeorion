@@ -1201,15 +1201,15 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     if (!((*it)->Disabled())) {
-        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, add_bottom_queue_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),  false, false, add_top_queue_action));
+        popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"), false, false, add_bottom_queue_action);
+        popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false, add_top_queue_action);
     }
 
     if (UserStringExists(item_name))
         item_name = UserString(item_name);
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-    popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_lookup_action));
+    popup->AddMenuItem(std::move(popup_label), false, false, pedia_lookup_action);
     popup->Run();
 }
 

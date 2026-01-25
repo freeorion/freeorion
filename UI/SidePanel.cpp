@@ -1079,7 +1079,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         };
 
         if (m_order_issuing_enabled && system->OwnedBy(app.EmpireID()))
-            popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
+            popup->AddMenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action);
 
         popup->Run();
     }
@@ -2516,19 +2516,19 @@ void SidePanel::PlanetPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
             Refresh(context, empire_id);
         };
-        popup->AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
+        popup->AddMenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action);
     }
 
     auto pedia_to_planet_action = [this]()
     { GetApp().GetUI().ZoomToPlanetPedia(m_planet_id, GetApp().GetContext().ContextObjects()); };
 
-    popup->AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
+    popup->AddMenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action);
 
     if (planet->OwnedBy(empire_id)
         && !peaceful_empires_in_system.empty()
         && !ClientPlayerIsModerator())
     {
-        popup->AddMenuItem(GG::MenuItem(true));
+        popup->AddMenuItem(GG::MenuItem::menu_separator);
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), false, false);
