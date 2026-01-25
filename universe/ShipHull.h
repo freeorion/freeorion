@@ -53,6 +53,11 @@ public:
 
     ~ShipHull();
 
+    ShipHull(const ShipHull&) = delete;
+    ShipHull(ShipHull&&) = delete;
+    ShipHull& operator=(const ShipHull&) = delete;
+    ShipHull& operator=(ShipHull&&) = delete;
+
     [[nodiscard]] bool operator==(const ShipHull& rhs) const;
 
     //! Returns name of hull
