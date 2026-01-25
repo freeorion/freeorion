@@ -35,21 +35,30 @@ class TextControl;
 */
 struct GG_API MenuItem
 {
-    MenuItem() = default;
+    MenuItem() noexcept = default;
 
-    explicit MenuItem(bool) :
+    static inline constexpr struct SeparatorT {} menu_separator{};
+
+    explicit MenuItem(SeparatorT) noexcept :
         disabled(true),
         separator(true)
     {}
 
     template <class S>
-    MenuItem(S&& str, bool disable, bool check,
-             std::function<void()> selected_on_close_callback = std::function<void()>()) :
+    MenuItem(S&& str, bool disable, bool check) :
+        label(std::forward<S>(str)),
+        disabled(disable),
+        checked(check)
+    {}
+
+    template <class S>
+    MenuItem(S&& str, bool disable, bool check, std::function<void()> selected_on_close_callback) :
         label(std::forward<S>(str)),
         disabled(disable),
         checked(check),
         m_selected_on_close_callback{std::move(selected_on_close_callback)}
     {}
+
 
     std::string           label;            ///< text shown for this menu item
     bool                  disabled = false; ///< set to true when this menu item is disabled
@@ -85,9 +94,14 @@ public:
     Clr HiliteColor() const noexcept { return m_hilite_color; }         ///< returns the color used to indicate a hilited menu item
 
     /** Add \p menu_item to the end of the popup menu and store its callback.*/
-    void AddMenuItem(MenuItem&& menu_item);
-    void AddMenuItem(std::string str, bool disable, bool check,
-                     std::function<void()> selected_on_close_callback = std::function<void()>());
+    void AddMenuItem(MenuItem&& menu_item)
+    { m_menu_data.next_level.push_back(std::move(menu_item)); }
+    void AddMenuItem(MenuItem::SeparatorT)
+    { m_menu_data.next_level.emplace_back(MenuItem::menu_separator); }
+    void AddMenuItem(std::string str, bool disable, bool check)
+    { m_menu_data.next_level.emplace_back(std::move(str), disable, check); }
+    void AddMenuItem(std::string str, bool disable, bool check, std::function<void()> selected_on_close_callback)
+    { m_menu_data.next_level.emplace_back(std::move(str), disable, check, std::move(selected_on_close_callback)); }
 
     void Render() override;
     void LButtonUp(Pt pt, Flags<ModKey> mod_keys) override;

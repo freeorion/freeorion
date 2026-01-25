@@ -626,7 +626,7 @@ void SitRepPanel::FilterClicked() {
             m_hidden_sitrep_templates.clear();
         }
     };
-    popup->AddMenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
+    popup->AddMenuItem(all_checked ? UserString("NONE") : UserString("ALL"),
                        false, false, all_templates_action);
 
     filter_click_timer.EnterSection("run menu");

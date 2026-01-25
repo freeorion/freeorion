@@ -731,8 +731,8 @@ namespace {
 
             bool disabled = !OrderIssuingEnabled();
 
-            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it)));
-            popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it)));
+            popup->AddMenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it));
+            popup->AddMenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it));
 
             // inspect clicked item: was it a ship?
             auto& row = *it;
@@ -760,14 +760,14 @@ namespace {
 
 
             if (queue_row && queue_row->elem.to_be_removed)
-                popup->AddMenuItem(GG::MenuItem(UserString("UNDELETE_QUEUE_ITEM"),  disabled, false, mark_undelete_action));
+                popup->AddMenuItem(UserString("UNDELETE_QUEUE_ITEM"),  disabled, false, mark_undelete_action);
             else
-                popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, mark_delete_action));
+                popup->AddMenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, mark_delete_action);
 
 
-            popup->AddMenuItem(GG::MenuItem(UserString("DUPLICATE"), disabled || !location_passes, false, dupe_action));
+            popup->AddMenuItem(UserString("DUPLICATE"), disabled || !location_passes, false, dupe_action);
             if (remaining > 1)
-                popup->AddMenuItem(GG::MenuItem(UserString("SPLIT_INCOMPLETE"), disabled, false, split_action));
+                popup->AddMenuItem(UserString("SPLIT_INCOMPLETE"), disabled, false, split_action);
 
             if (build_type == BuildType::BT_SHIP) {
                 // for ships, add a set rally point command
@@ -775,15 +775,15 @@ namespace {
                     int empire_id = app.EmpireID();
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM"))
                                                               % system->PublicName(empire_id, u));
-                    popup->AddMenuItem(GG::MenuItem(std::move(rally_prompt), disabled, false, rally_to_action));
+                    popup->AddMenuItem(std::move(rally_prompt), disabled, false, rally_to_action);
                 }
             }
 
             // pause / resume commands
             if (queue_row && queue_row->elem.paused) {
-                popup->AddMenuItem(GG::MenuItem(UserString("RESUME"), disabled, false, resume_action));
+                popup->AddMenuItem(UserString("RESUME"), disabled, false, resume_action);
             } else {
-                popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"), disabled, false, pause_action));
+                popup->AddMenuItem(UserString("PAUSE"), disabled, false, pause_action);
             }
 
             // stockpile use allow/disallow commands
@@ -791,9 +791,9 @@ namespace {
             case BuildType::BT_BUILDING:
             case BuildType::BT_SHIP:
                 if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
-                    popup->AddMenuItem(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, disallow_stockpile_action));
+                    popup->AddMenuItem(UserString("DISALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, disallow_stockpile_action);
                 } else {
-                    popup->AddMenuItem(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, allow_stockpile_action));
+                    popup->AddMenuItem(UserString("ALLOW_IMPERIAL_PP_STOCKPILE_USE"), disabled, false, allow_stockpile_action);
                 }
             default:
                 break;
@@ -816,7 +816,7 @@ namespace {
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_action));
+            popup->AddMenuItem(std::move(popup_label), false, false, pedia_action);
 
             popup->Run();
         }

@@ -69,7 +69,7 @@ void MilitaryPanel::CompleteConstruction() {
             auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                     UserString(meter_string));
-            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_action));
+            popup->AddMenuItem(std::move(popup_label), false, false, zoom_action);
             popup->Run();
         });
     }

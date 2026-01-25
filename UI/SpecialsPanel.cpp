@@ -102,7 +102,7 @@ void SpecialsPanel::Update() {
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(name));
 
             auto zoom_action = [name]() { GetApp().GetUI().ZoomToSpecial(name); };
-            popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, zoom_action));
+            popup->AddMenuItem(std::move(popup_label), false, false, zoom_action);
 
             popup->Run();
         });

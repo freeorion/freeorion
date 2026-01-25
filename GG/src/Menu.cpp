@@ -49,12 +49,6 @@ PopupMenu::PopupMenu(X x, Y y, std::shared_ptr<const Font> font, Clr text_color,
     m_origin(x, y)
 { m_open_levels.resize(1); }
 
-void PopupMenu::AddMenuItem(MenuItem&& menu_item)
-{ m_menu_data.next_level.push_back(std::move(menu_item)); }
-
-void PopupMenu::AddMenuItem(std::string str, bool disable, bool check, std::function<void()> selected_on_close_callback)
-{ m_menu_data.next_level.emplace_back(std::move(str), disable, check, selected_on_close_callback); }
-
 void PopupMenu::Render()
 {
     if (m_menu_data.next_level.empty() || !m_font)
