@@ -807,7 +807,7 @@ const Species* SpeciesManager::GetSpecies(std::string_view name) const {
 
 const Species* SpeciesManager::GetSpeciesUnchecked(std::string_view name) const {
     const auto it = m_species.find(name);
-    return it != m_species.end() ? &(it->second) : nullptr;
+    return it != m_species.end() ? std::addressof(it->second) : nullptr;
 }
 
 void SpeciesManager::SetSpeciesTypes(SpeciesManager::PendingT&& future) {

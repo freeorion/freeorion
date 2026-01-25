@@ -380,7 +380,7 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     if (ship_design_id == INVALID_DESIGN_ID)
         return nullptr;
     ship_design_iterator it = m_ship_designs.find(ship_design_id);
-    return (it != m_ship_designs.end() ? &it->second : nullptr);
+    return (it != m_ship_designs.end() ? std::addressof(it->second) : nullptr);
 }
 
 void Universe::RenameShipDesign(int design_id, std::string name, std::string description) {
@@ -1841,7 +1841,7 @@ void Universe::ExecuteEffects(std::map<int, Effect::SourcesEffectsTargetsAndCaus
             ScriptingContext source_context{source, context};
             effects_group->Execute(source_context,
                                    targets_and_cause,
-                                   update_effect_accounting ? &m_effect_accounting_map : nullptr,
+                                   update_effect_accounting ? std::addressof(m_effect_accounting_map) : nullptr,
                                    only_meter_effects,
                                    only_appearance_effects,
                                    include_empire_meter_effects,
