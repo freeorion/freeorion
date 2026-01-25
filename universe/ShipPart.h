@@ -50,6 +50,11 @@ public:
 
     ~ShipPart();
 
+    ShipPart(const ShipPart&) = delete;
+    ShipPart(ShipPart&&) = delete;
+    ShipPart& operator=(const ShipPart&) = delete;
+    ShipPart& operator=(ShipPart&&) = delete;
+
     bool operator==(const ShipPart& rhs) const;
 
     [[nodiscard]] auto& Name() const noexcept { return m_name; }
