@@ -381,7 +381,7 @@ bool Number::Match(const ScriptingContext& local_context) const {
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     const int matched = condition_matches.size();
-    return (low >= matched && matched <= high);
+    return (low <= matched && matched <= high);
 }
 
 void Number::SetTopLevelContent(const std::string& content_name) {
