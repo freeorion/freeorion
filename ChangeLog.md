@@ -3,6 +3,19 @@ Changelog
 
 Notable changes to the FreeOrion project will be documented in this file.
 
+[v0.5.1.2] - 2026-02-11
+
+### Bugfixes / Improvements
+
+- Fix crash generating universe due to iterating through empire designs while modifying them
+- Fix ship movements effects not creating a new fleet for ships moved to the same location
+- Fix build on G++ 16
+- Fix Indocrination policy for planets that were never conquered or colonized
+- Fix / workaround for a bug in some versions of Boost Asio thread_pool that could cause the client to get stuck processing a turn update
+- Provide MacOS Apple Silicone arm64 build.
+- Optimize saving memory usage by removing uncompressed buffer.
+- Fix MacOS crashes caused by moving `string_view` data.
+
 [v0.5.1.1] - 2025-06-22
 ---------------
 
