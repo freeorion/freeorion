@@ -174,6 +174,10 @@ namespace {
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
+            parser.LoadConditionsModule();
+            parser.LoadValueRefsModule();
+            parser.LoadEffectsModule();
+
             globals["Tech"] = boost::python::raw_function(
                 [&techs](const boost::python::tuple& args, const boost::python::dict& kw)
                 { return py_insert_tech_(techs, args, kw); });

@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\parse\ValueRefPythonParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionsPythonModuleParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
