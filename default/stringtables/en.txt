@@ -12768,7 +12768,7 @@ The final cost is
 • [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AAA]] times the normal cost if there are two or fewer different part classes.
 • [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AA]] times the normal cost if there are three different part classes.
 • [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_A]] times the normal cost if there are four different part classes.
-• [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR]] times the normal cost (i.e. full normal cost) if more than four different part classes.
+• [[value PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR]] times the normal cost (i.e. full normal cost) if there are five or more different part classes.
 
 Design complexity is the sum of all different part classes in a ship. For example a ship design with [[shippart AR_ZORTRIUM_PLATE]], [[shippart SR_WEAPON_1_1]], and [[shippart SR_WEAPON_0_1]] has [[PC_DIRECT_WEAPON]] and [[PC_ARMOUR]] part classes resulting in design complexity 2.
 
