@@ -57,13 +57,12 @@ jobs:
       - name: Generate installer
         run: |
           makensis packaging/windows_installer.nsi
-          mv ../FreeOrion_*_Test_Win32_Setup.exe .
+          mv ../FreeOrion_*_Win32_Setup.exe .
       - name: Upload binaries artifacts
         uses: actions/upload-artifact@v4
-        if: ${{ inputs.weekly-deploy }}
         with:
           name: weekly-artifacts-sf-windows-msvs-${{ github.run_number }}
-          path: FreeOrion_*_Test_Win32_Setup.exe
+          path: FreeOrion_*_Win32_Setup.exe
           if-no-files-found: error
           retention-days: 1
   windows-2025:
@@ -116,4 +115,4 @@ jobs:
       - name: Generate installer
         run: |
           & "$env:USERPROFILE\scoop\apps\nsis\current\makensis.exe" packaging/windows_installer.nsi
-          mv ../FreeOrion_*_Test_Win32_Setup.exe .
+          mv ../FreeOrion_*_Win32_Setup.exe .
