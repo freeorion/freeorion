@@ -25,6 +25,8 @@ jobs:
             godot3: false
           - image: debian-sid-i386
             godot3: false
+          - image: alpine
+            godot3: false
     env:
       CACHE_NAME: linux
     steps:
@@ -97,7 +99,7 @@ jobs:
         id: build-docker-build
         timeout-minutes: 50
         run: |
-          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e GIT_SSL_NO_VERIFY=true -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 3
+          docker run -v "$(pwd):/freeorion" -v "${{ runner.temp }}/ccache:/ccache_dir" -e CCACHE_DIR='/ccache_dir' -e GIT_SSL_NO_VERIFY=true -w /freeorion/build ${{ steps.prep.outputs.tagged_image }} /usr/bin/cmake --build . -- -j 4
           echo "exit-code=$?" >> $GITHUB_OUTPUT
       - name: Always save ccache
         if: ${{ always() && (steps.build-docker-build.conclusion == 'success' || steps.build-docker-build.outputs.exit-code == 0 ) }}
