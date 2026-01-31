@@ -56,7 +56,7 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
         for (auto& tag : tags)
             boost::to_upper<std::string>(tag);
         // allocate storage for concatenated tags
-        std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
+        std::size_t params_sz = std::transform_reduce(tags.begin(), tags.end(), std::size_t{0}, std::plus{},
                                                       [](const auto& tag) noexcept { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
