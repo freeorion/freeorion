@@ -831,6 +831,7 @@ void ShipDesign::BuildStatCaches() {
     // collect unique tags
     std::sort(tags.begin(), tags.end());
     auto last = std::unique(tags.begin(), tags.end());
+    tags.erase(last, tags.end());
 
     // compile concatenated tags into contiguous storage
     std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
