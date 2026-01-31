@@ -190,7 +190,7 @@ ShipDesign::ShipDesign(const ShipDesign& rhs) :
     m_can_bombard(rhs.m_can_bombard),
 
     m_is_monster(rhs.m_is_monster),
-    m_name_desc_in_stringtable(m_name_desc_in_stringtable)
+    m_name_desc_in_stringtable(rhs.m_name_desc_in_stringtable)
 {}
 
 ShipDesign::ShipDesign(ShipDesign&& rhs) :
@@ -229,7 +229,7 @@ ShipDesign::ShipDesign(ShipDesign&& rhs) :
     m_can_bombard(rhs.m_can_bombard),
 
     m_is_monster(rhs.m_is_monster),
-    m_name_desc_in_stringtable(m_name_desc_in_stringtable)
+    m_name_desc_in_stringtable(rhs.m_name_desc_in_stringtable)
 {}
 
 ShipDesign& ShipDesign::operator=(ShipDesign&& rhs) {
@@ -271,7 +271,7 @@ ShipDesign& ShipDesign::operator=(ShipDesign&& rhs) {
     m_can_bombard = rhs.m_can_bombard;
 
     m_is_monster = rhs.m_is_monster;
-    m_name_desc_in_stringtable = m_name_desc_in_stringtable;
+    m_name_desc_in_stringtable = rhs.m_name_desc_in_stringtable;
 
     return *this;
 }
