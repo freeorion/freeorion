@@ -212,6 +212,14 @@ struct FO_COMMON_API ServerSaveGameData {
 /** The data structure used to represent a single player's setup options for a
   * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData {
+    PlayerSetupData() = default;
+    PlayerSetupData(std::string name, int empire_id, int player_id_, Networking::ClientType type) :
+        player_name(std::move(name)),
+        save_game_empire_id(empire_id),
+        player_id(player_id_),
+        client_type(type)
+    {}
+
     std::string             player_name;
     std::string             empire_name;
     std::string             starting_species_name;

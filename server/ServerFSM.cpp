@@ -2033,21 +2033,43 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
             return;
         }
 
-        // add player setup data for each player in saved gamed
+        if (player_save_header_data.empty()) {
+            ErrorLogger() << "Save contains no player save header data...";
+            SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+            post_event(LoadSaveFileFailed());
+            return;
+        }
+
+        static constexpr auto is_human = [](const auto& psgd) noexcept
+        { return psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER; };
+        static constexpr auto is_ai = [](const auto& psgd) noexcept
+        { return psgd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER; };
+
+
+        if (range_none_of(player_save_header_data, is_human)) {
+            ErrorLogger() << "Save contains no human player save header data";
+            SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+            post_event(LoadSaveFileFailed());
+            return;
+        }
+
+        bool have_assigned_host_id = false;
+
+
         for (PlayerSaveHeaderData& psgd : player_save_header_data | range_filter(Networking::is_ai_or_human)) {
-            auto& psd = players.emplace_back();
 
-            psd.player_name = std::move(psgd.name);
-            //psd.empire_name // left default
-            //psd.empire_color // left default
-            //psd.starting_species_name // left default
-            psd.save_game_empire_id = psgd.empire_id;
-            psd.client_type = psgd.client_type;
+            if (!have_assigned_host_id && is_human(psgd)) {
+                have_assigned_host_id = true;
 
-            if (Networking::is_human(psd)) {
-                psd.player_id = server.Networking().HostPlayerID();
+                auto& psd = players.emplace_back(std::move(psgd.name), psgd.empire_id,
+                                                 server.Networking().HostPlayerID(),
+                                                 Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER);
+                DebugLogger() << "Assigned host player to setup data entry with name: " << psd.player_name;
             } else {
-                psd.player_id = player_id++;
+                auto& psd = players.emplace_back(std::move(psgd.name), psgd.empire_id,
+                                                 player_id++,
+                                                 Networking::ClientType::CLIENT_TYPE_AI_PLAYER);
+                DebugLogger() << "Assigned AI player to setup data entry with name: " << psd.player_name;
             }
         }
     }
