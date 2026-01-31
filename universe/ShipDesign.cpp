@@ -725,7 +725,7 @@ void ShipDesign::BuildStatCaches() {
         return;
     }
 
-    std::vector<std::string_view> tags = hull->Tags();
+    std::vector<std::string_view> tags{hull->Tags()}; // copy
 
     m_producible =      hull->Producible();
     m_detection =       hull->Detection();
@@ -757,7 +757,7 @@ void ShipDesign::BuildStatCaches() {
         if (!part->Producible())
             m_producible = false;
 
-        ShipPartClass part_class = part->Class();
+        const ShipPartClass part_class = part->Class();
 
         switch (part_class) {
         case ShipPartClass::PC_DIRECT_WEAPON:
@@ -834,6 +834,8 @@ void ShipDesign::BuildStatCaches() {
     // compile concatenated tags into contiguous storage
     std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), std::size_t{0}, std::plus{},
                                                 [](const auto& tag) noexcept { return tag.size(); });
+
+    m_tags_concatenated.clear();
     m_tags_concatenated.reserve(tags_sz);
     m_tags.clear();
     m_tags.reserve(tags.size());
