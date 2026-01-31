@@ -218,6 +218,12 @@ decltype(auto) FlexibleToString(T&& t)
     } else if constexpr (std::is_same_v<std::decay_t<T>, std::string_view>) {
         return std::string{t};
 
+    } else if constexpr (std::is_same_v<T, std::vector<int>> || std::is_same_v<T, std::vector<double>>) {
+        std::string retval;
+        for (auto& ts: t)
+            retval.append(std::to_string(ts));
+        return retval;
+
     } else if constexpr (std::is_same_v<T, std::vector<std::string>>) {
         std::size_t total_size = 0;
         for (auto& ts : t)
@@ -237,6 +243,7 @@ decltype(auto) FlexibleToString(T&& t)
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetEnvironment t);
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetType t);
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(PlanetSize t);
+[[nodiscard]] FO_COMMON_API std::string FlexibleToString(ShipPartClass t);
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(Visibility t);
 [[nodiscard]] FO_COMMON_API std::string FlexibleToString(UniverseObjectType t);
 

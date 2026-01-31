@@ -19,6 +19,7 @@ from focs._effects import (
     LocalCandidate,
     Location,
     Number,
+    NumPoliciesAdopted,
     OneOf,
     OwnedBy,
     OwnerHasTech,
@@ -34,6 +35,10 @@ from focs._effects import (
     Unowned,
     UserString,
     VisibleToEmpire,
+)
+from focs._value_refs import (
+    EmpireAdoptedPolicies,
+    VectorCount,
 )
 from macros.priorities import END_CLEANUP_PRIORITY
 
@@ -58,9 +63,47 @@ debug_starlane_travel = EffectsGroup(
     ),
 )
 
+# This is for exemplifying vector / list types
+debug_empire_adopted_policies = EffectsGroup(
+    scope=IsSource,
+    activation=IsSource,
+    stackinggroup="DEBUG_EMPIRE_ADOPTED_POLICIES",
+    effects=[
+        GenerateSitRepMessage(
+            message="debug_empire_adopted_policies(num): Number of currently adopted policies %rawtext:policies%",
+            label="SITREP_WELCOME_LABEL",
+            NoStringtableLookup=True,
+            icon="icons/tech/categories/spy.png",
+            parameters={
+                "policies": NumPoliciesAdopted(empire=Source.Owner),
+            },
+            empire=Source.Owner,
+        ),
+        GenerateSitRepMessage(
+            message="debug_empire_adopted_policies(vec_count): currently adopted policies %rawtext:policies%",
+            label="SITREP_WELCOME_LABEL",
+            NoStringtableLookup=True,
+            icon="icons/tech/categories/spy.png",
+            parameters={
+                "policies": VectorCount(int, EmpireAdoptedPolicies(empire=Source.Owner)),
+            },
+            empire=Source.Owner,
+        ),
+        # GenerateSitRepMessage(
+        #    message="debug_empire_adopted_policies(names): currently adopted policies %policies%",
+        #    label="SITREP_WELCOME_LABEL",
+        #    NoStringtableLookup=True,
+        #    icon="icons/tech/categories/spy.png",
+        #    parameters={"policies": EmpireAdoptedPolicies(empire=Source.Owner)},
+        #    empire=Source.Owner,
+        # ),
+    ],
+)
+
 
 # Important, the following line "effectsgroups = [" is functional and important, do not change it
 effectsgroups = [
+    debug_empire_adopted_policies,
     # normally, for a custom sitrep the player will write their own message here, and label, and not look them up in the Stringtable.  For this first custom sitrep,
     # however, since it is the primary way we introduce the custom sitrep capability to players, we use stringtable references so that the message and label may be more
     # readily translated into multiple languages as part of our standard distribution.
