@@ -969,28 +969,28 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::
 
 
         if (show_peace_propose)
-            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL"),           false, false, peace_proposal_action));
+            popup->AddMenuItem(UserString("PEACE_PROPOSAL"),           false, false, peace_proposal_action);
         if (show_peace_cancel)
-            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    false, false, proposal_cancel_action));
+            popup->AddMenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    false, false, proposal_cancel_action);
         if (show_peace_accept)
-            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_ACCEPT"),             false, false, peace_accept_action));
+            popup->AddMenuItem(UserString("PEACE_ACCEPT"),             false, false, peace_accept_action);
         if (show_peace_reject)
-            popup->AddMenuItem(GG::MenuItem(UserString("PEACE_REJECT"),             false, false, proposal_reject_action));
+            popup->AddMenuItem(UserString("PEACE_REJECT"),             false, false, proposal_reject_action);
         if (show_allies_end)
-            popup->AddMenuItem(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), false, false, end_alliance_declaration_action));
+            popup->AddMenuItem(UserString("END_ALLIANCE_DECLARATION"), false, false, end_alliance_declaration_action);
         if (show_allies_propose)
-            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          false, false, allies_proposal_action));
+            popup->AddMenuItem(UserString("ALLIES_PROPOSAL"),          false, false, allies_proposal_action);
         if (show_allies_accept)
-            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_ACCEPT"),            false, false, allies_accept_action));
+            popup->AddMenuItem(UserString("ALLIES_ACCEPT"),            false, false, allies_accept_action);
         if (show_allies_cancel)
-            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   false, false, proposal_cancel_action));
+            popup->AddMenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   false, false, proposal_cancel_action);
         if (show_allies_reject)
-            popup->AddMenuItem(GG::MenuItem(UserString("ALLIES_REJECT"),            false, false, proposal_reject_action));
+            popup->AddMenuItem(UserString("ALLIES_REJECT"),            false, false, proposal_reject_action);
         if (show_declare_war)
-            popup->AddMenuItem(GG::MenuItem(UserString("WAR_DECLARATION"),          false, false, war_declaration_action));
+            popup->AddMenuItem(UserString("WAR_DECLARATION"),          false, false, war_declaration_action);
     }
 
-    popup->AddMenuItem(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), false, false, pedia_lookup_action));
+    popup->AddMenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), false, false, pedia_lookup_action);
 
     popup->Run();
 }

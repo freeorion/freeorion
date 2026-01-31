@@ -375,20 +375,80 @@ private:
   */
 class StatisticIcon final : public GG::Control {
 public:
-    explicit StatisticIcon(std::shared_ptr<GG::Texture> texture,
-                           GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
+    enum class ShowSign : uint8_t {
+        HIDE_IF_NON_NEGATIVE = false,
+        SHOW_ALWAYS = true
+    };
 
-    StatisticIcon(std::shared_ptr<GG::Texture> texture,
-                  double value, int digits, bool showsign,
-                  GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
+    enum class IndicateChangeColour : uint8_t {
+        NOINDICATE,         // no text colouration
+        INDICATE_SELF,      // colour text based on sign of value itself
+        INDICATE_FOR_OTHER  // colour text based on sign of other value
+    };
+
+    enum class NumValuesDisplayed : uint8_t { ZERO = 0, ONE = 1, TWO = 2 };
+
+    // create StatisticIcon that shows no numbers. acts as a wrapper of StaticGraphic but provides RightClickedSignal
+    StatisticIcon(std::shared_ptr<GG::Texture> texture, GG::X w, GG::Y h) :
+        GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+        m_icon(GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC)),
+        m_values_shown(NumValuesDisplayed::ZERO)
+    {}
+
+    // create StatisticIcon that shows no numbers, with width and height determined from \a texture
+    explicit StatisticIcon(std::shared_ptr<GG::Texture> texture) :
+        StatisticIcon(texture, texture ? texture->Width() : GG::X1, texture ? texture->Height() : GG::Y1)
+    {}
+
+    // create StatisticIcon that shows one number
+    StatisticIcon(std::shared_ptr<GG::Texture> texture, std::shared_ptr<const GG::Font> font,
+                  GG::X w, GG::Y h, NumValuesDisplayed values_shown) :
+        GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+        m_icon(GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC)),
+        m_font(std::move(font)),
+        m_values_shown(values_shown)
+    {}
+
+    // create StatisticIcon that shows one number
+    StatisticIcon(std::shared_ptr<GG::Texture> texture, std::shared_ptr<const GG::Font> font,
+                  GG::X w, GG::Y h, uint8_t digits = 3,
+                  IndicateChangeColour indicate0 = IndicateChangeColour::NOINDICATE,
+                  ShowSign show_sign0 = ShowSign::HIDE_IF_NON_NEGATIVE,
+                  NumValuesDisplayed values_shown = NumValuesDisplayed::ONE) :
+        GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+        m_icon(GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC)),
+        m_font(std::move(font)),
+        m_digits(digits),
+        m_show_sign0(show_sign0),
+        m_indicate_change0(indicate0),
+        m_values_shown(values_shown)
+    {}
+
+    // create StatisticIcon that shows two numbers
+    StatisticIcon(std::shared_ptr<GG::Texture> texture, std::shared_ptr<const GG::Font> font,
+                  GG::X w, GG::Y h, uint8_t digits,
+                  IndicateChangeColour indicate0, IndicateChangeColour indicate1, 
+                  ShowSign show_sign0 = ShowSign::HIDE_IF_NON_NEGATIVE,
+                  ShowSign show_sign1 = ShowSign::SHOW_ALWAYS,
+                  NumValuesDisplayed values_shown = NumValuesDisplayed::TWO) :
+        GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
+        m_icon(GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC)),
+        m_font(std::move(font)),
+        m_digits(digits),
+        m_show_sign0(show_sign0),
+        m_show_sign1(show_sign1),
+        m_indicate_change0(indicate0),
+        m_indicate_change1(indicate1),
+        m_values_shown(values_shown)
+    {}
 
     void CompleteConstruction() override;
 
-    double GetValue(std::size_t index = 0) const;
-    GG::Pt MinUsableSize() const noexcept override;
+    [[nodiscard]] double GetValue(std::size_t index = 0) const;
+    [[nodiscard]] GG::Pt MinUsableSize() const noexcept override;
 
     void PreRender() override;
-    void Render() override {}
+    void Render() noexcept override {}
 
     void SizeMove(GG::Pt ul, GG::Pt lr) override;
 
@@ -398,7 +458,8 @@ public:
     void RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) override;
     void MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds, GG::Flags<GG::ModKey> mod_keys) override;
+    void AcceptDrops(GG::Pt pt, std::vector<std::shared_ptr<GG::Wnd>> wnds,
+                     GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropEnter(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                        GG::Flags<GG::ModKey> mod_keys) override;
     void DragDropHere(GG::Pt pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
@@ -415,18 +476,25 @@ public:
 private:
     void DoLayout();
 
-    enum class ShowSign : bool { HIDE = false, SHOW = true };
-
     /// The value, precision and sign of the statistic value(s)
-    std::shared_ptr<GG::StaticGraphic>               m_icon;
-    std::shared_ptr<GG::Label>                       m_text;
-    std::array<std::tuple<double, int, ShowSign>, 2> m_values{{{0.0, 0, ShowSign::HIDE}, {0.0, 0, ShowSign::HIDE}}};
-    bool                                             m_have_two = false;
+    std::shared_ptr<GG::StaticGraphic>  m_icon;
+    std::shared_ptr<GG::Label>          m_text;
+    std::shared_ptr<const GG::Font>     m_font;
+    double                              m_value0 = 0.0;
+    double                              m_value1 = 0.0;
+    uint8_t                             m_digits = 3;
+    ShowSign                            m_show_sign0 = ShowSign::HIDE_IF_NON_NEGATIVE;
+    ShowSign                            m_show_sign1 = ShowSign::SHOW_ALWAYS;
+    IndicateChangeColour                m_indicate_change0 = IndicateChangeColour::NOINDICATE;
+    IndicateChangeColour                m_indicate_change1 = IndicateChangeColour::INDICATE_SELF;
+    NumValuesDisplayed                  m_values_shown = NumValuesDisplayed::ONE;
 };
 
 class CUIToolBar final : public GG::Control {
 public:
-    CUIToolBar();
+    CUIToolBar() :
+        GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::ONTOP | GG::INTERACTIVE)
+    {}
 
     bool InWindow(GG::Pt pt) const override;
 

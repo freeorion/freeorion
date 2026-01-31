@@ -211,10 +211,11 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     }
 
 
-    // get iterator pointing to std::shared_ptr<System> on route that is the
-    // first after where this fleet is currently. if this fleet is in a system,
-    // the iterator will point to the system after the current in the route
-    // if this fleet is not in a system, the iterator will point to the first
+    // get iterator pointing to system id on route that is the next after
+    // where this fleet is currently.
+    // if this fleet is in a system, the next system id will be the system
+    // after the current in the route
+    // if this fleet is not in a system, the iterator will point to the next
     // system in the route
     auto route_it = route.begin();
     if (*route_it == SystemID())
@@ -232,9 +233,11 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         return retval;
     }
 
-    TraceLogger() << "Initial cur system: " << (cur_system ? cur_system->Name() : "(none)") << "(" << (cur_system ? cur_system->ID() : -1) << ")"
-                  << "  prev system: " << (prev_system ? prev_system->Name() : "(none)") << "(" << (prev_system ? prev_system->ID() : -1) << ")"
-                  << "  next system: " << (next_system ? next_system->Name() : "(none)") << "(" << (next_system ? next_system->ID() : -1) << ")";
+    static constexpr auto name_and_id = [](const UniverseObjectCXBase* obj) -> std::string
+    { return obj ? (obj->Name() + " (" + std::to_string(obj->ID()) + ")") : (std::string{"(none)"}); };
+    TraceLogger() << "Initial cur system: " << name_and_id(cur_system)
+                  << "  prev system: " << name_and_id(prev_system)
+                  << "  next system: " << name_and_id(next_system);
 
 
     bool blockaded_at_current_location = false;
@@ -277,10 +280,10 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     bool   past_blockade =       blockaded_at_current_location;
 
     // simulate fleet movement given known speed, starting position, fuel limit and systems on route
-    // need to populate retval with MovePathNodes that indicate the correct position, whether this
-    // fleet will end a turn at the node, the turns it will take to reach the node, and (when applicable)
-    // the current (if at a system), previous and next system IDs at which the fleet will be.  the
-    // previous and next system ids are needed to know what starlane a given node is located on, if any.
+    // need to populate retval with MovePathNodes that indicate the position, whether this fleet
+    // will end a turn at the node, the turns it will take to reach the node, and (when applicable)
+    // the current (if at a system), previous, and next system IDs at which the fleet will be.
+    // the previous and next system ids are needed to know what starlane a given node is located on, if any.
     // nodes at systems don't need previous system ids to be valid, but should have next system ids
     // valid so that when rendering starlanes using the returned move path, lines departing a system
     // can be drawn on the correct side of the system icon
@@ -290,7 +293,7 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         // path, and then adds a node at that position.
 
         if (cur_system)
-            TraceLogger() << "Starting iteration at system " << cur_system->Name() << " (" << cur_system->ID() << ")";
+            TraceLogger() << "Starting iteration at system " << name_and_id(cur_system);
         else
             TraceLogger() << "Starting iteration at (" << cur_x << ", " << cur_y << ")";
 
@@ -298,9 +301,9 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         // we are between
         const System* const prev_or_cur = cur_system ? cur_system : prev_system ? prev_system : nullptr;
         if (prev_or_cur && !prev_or_cur->HasStarlaneTo(next_system->ID())) {
-            DebugLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
-                            << ") No starlane connection between systems " << prev_or_cur->Name() << "(" << prev_or_cur->ID()
-                            << ")  and " << next_system->Name() << "(" << next_system->ID()
+            DebugLogger() << "Fleet::MovePath for Fleet " << name_and_id(this)
+                            << ") No starlane connection between systems " << name_and_id(prev_or_cur)
+                            << ")  and " << name_and_id(next_system)
                             << "). Abandoning the rest of the route. Route was: " << route_nums(route);
             return retval;
         } else if (!prev_or_cur) {
@@ -318,9 +321,9 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
 
             } else {
                 // current system has no fuel supply.  require fuel to proceed
-                if (fuel >= 1.0) {
+                if (fuel >= 1.0f) {
                     //DebugLogger() << " ... at system without fuel supply.  consuming unit of fuel to proceed";
-                    fuel -= 1.0;
+                    fuel -= 1.0f;
 
                 } else {
                     //DebugLogger() << " ... at system without fuel supply.  have insufficient fuel to continue moving";
@@ -475,8 +478,8 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
     if (turns_taken == TOO_LONG)
         turns_taken = ETA_NEVER;
     // blockade debug logging
-    TraceLogger() << "Fleet::MovePath for fleet " << this->Name() << " id "<< this->ID()
-                  <<" adding node at sysID " << (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID)
+    TraceLogger() << "Fleet::MovePath for fleet " << name_and_id(this)
+                  <<" adding node at sys " << name_and_id(cur_system)
                   << "  " << (blockaded_at_current_location ? "(blockade here)" : "")
                   << "  " << (past_blockade ? "(past blockade)" : "")
                   << " ETA " << turns_taken;

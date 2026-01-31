@@ -96,7 +96,7 @@ void FieldIcon::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(field_type_name));
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     auto pedia_lookup_field_type_action = [field_type_name]() { GetApp().GetUI().ZoomToFieldType(field_type_name); };
-    popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_lookup_field_type_action));
+    popup->AddMenuItem(std::move(popup_label), false, false, pedia_lookup_field_type_action);
     popup->Run();
 }
 

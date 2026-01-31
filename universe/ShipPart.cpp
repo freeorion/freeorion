@@ -238,52 +238,48 @@ ShipPart::ShipPart(ShipPartClass part_class, double capacity, double stat2,
     m_mountable_slot_types(std::move(mountable_slot_types)),
     m_tags_concatenated([&common_params]() {
         // ensure tags are all upper-case
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [](auto& t) { boost::to_upper<std::string>(t); });
+        for (auto& t : common_params.tags)
+            boost::to_upper<std::string>(t);
 
         // allocate storage for concatenated tags
-        std::size_t params_sz = std::transform_reduce(common_params.tags.begin(), common_params.tags.end(), 0u, std::plus{},
-                                                      [](const auto& tag) { return tag.size(); });
+        std::size_t params_sz = std::transform_reduce(common_params.tags.begin(), common_params.tags.end(), std::size_t{0}, std::plus{},
+                                                      [](const auto& tag) noexcept { return tag.size(); });
         std::string retval;
         retval.reserve(params_sz);
 
         // concatenate tags
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&retval](const auto& t) { retval.append(t); });
+        for (const auto& t : common_params.tags)
+            retval.append(t);
         return retval;
     }()),
     m_tags([&common_params, this]() {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
         retval.reserve(common_params.tags.size());
-        std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&next_idx, &retval, sv](const auto& t)
-        {
+        for (const auto& t : common_params.tags) {
             auto tag = sv.substr(next_idx, t.size());
             retval.push_back(tag);
             next_idx += t.size();
-        });
+        }
         return retval;
     }()),
     m_pedia_tags([&common_params, this]() {
         std::vector<std::string_view> retval;
         std::size_t next_idx = 0;
         retval.reserve(common_params.tags.size());
-        std::string_view sv{m_tags_concatenated};
+        const std::string_view sv{m_tags_concatenated};
 
         // store views into concatenated tags string
-        std::for_each(common_params.tags.begin(), common_params.tags.end(),
-                      [&next_idx, &retval, sv](const auto& t)
-        {
+        for (const auto& t : common_params.tags) {
             auto tag = sv.substr(next_idx, t.size());
             static constexpr auto len{TAG_PEDIA_PREFIX.length()};
             if (tag.substr(0, len) == TAG_PEDIA_PREFIX)
                 retval.push_back(tag);
             next_idx += t.size();
-        });
+        }
         return retval;
     }()),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),

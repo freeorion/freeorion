@@ -190,7 +190,7 @@ ShipDesign::ShipDesign(const ShipDesign& rhs) :
     m_can_bombard(rhs.m_can_bombard),
 
     m_is_monster(rhs.m_is_monster),
-    m_name_desc_in_stringtable(m_name_desc_in_stringtable)
+    m_name_desc_in_stringtable(rhs.m_name_desc_in_stringtable)
 {}
 
 ShipDesign::ShipDesign(ShipDesign&& rhs) :
@@ -229,7 +229,7 @@ ShipDesign::ShipDesign(ShipDesign&& rhs) :
     m_can_bombard(rhs.m_can_bombard),
 
     m_is_monster(rhs.m_is_monster),
-    m_name_desc_in_stringtable(m_name_desc_in_stringtable)
+    m_name_desc_in_stringtable(rhs.m_name_desc_in_stringtable)
 {}
 
 ShipDesign& ShipDesign::operator=(ShipDesign&& rhs) {
@@ -271,7 +271,7 @@ ShipDesign& ShipDesign::operator=(ShipDesign&& rhs) {
     m_can_bombard = rhs.m_can_bombard;
 
     m_is_monster = rhs.m_is_monster;
-    m_name_desc_in_stringtable = m_name_desc_in_stringtable;
+    m_name_desc_in_stringtable = rhs.m_name_desc_in_stringtable;
 
     return *this;
 }
@@ -829,9 +829,10 @@ void ShipDesign::BuildStatCaches() {
     // collect unique tags
     std::stable_sort(tags.begin(), tags.end());
     auto last = std::unique(tags.begin(), tags.end());
+    tags.erase(last, tags.end());
 
     // compile concatenated tags into contiguous storage
-    std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
+    std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), std::size_t{0}, std::plus{},
                                                 [](const auto& tag) noexcept { return tag.size(); });
     m_tags_concatenated.reserve(tags_sz);
     m_tags.clear();

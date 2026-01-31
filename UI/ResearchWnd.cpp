@@ -313,9 +313,9 @@ protected:
 
         bool disabled = !OrderIssuingEnabled();
 
-        popup->AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it)));
-        popup->AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it)));
-        popup->AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, DeleteAction(it)));
+        popup->AddMenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   disabled, false, MoveToTopAction(it));
+        popup->AddMenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), disabled, false, MoveToBottomAction(it));
+        popup->AddMenuItem(UserString("DELETE_QUEUE_ITEM"),    disabled, false, DeleteAction(it));
 
         auto& row = *it;
         QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row.get()) : nullptr;
@@ -324,9 +324,9 @@ protected:
 
         // pause / resume commands
         if (queue_row->elem.paused) {
-            popup->AddMenuItem(GG::MenuItem(UserString("RESUME"), disabled, false, resume_action));
+            popup->AddMenuItem(UserString("RESUME"), disabled, false, resume_action);
         } else {
-            popup->AddMenuItem(GG::MenuItem(UserString("PAUSE"),  disabled, false, pause_action));
+            popup->AddMenuItem(UserString("PAUSE"),  disabled, false, pause_action);
         }
 
         // pedia lookup
@@ -340,7 +340,7 @@ protected:
             tech_name = UserString(queue_row->elem.name);
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
-        popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_action));
+        popup->AddMenuItem(std::move(popup_label), false, false, pedia_action);
 
         popup->Run();
     }

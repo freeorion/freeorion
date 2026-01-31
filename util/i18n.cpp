@@ -526,10 +526,10 @@ namespace {
     }
 }
 
-std::string DoubleToString(double val, int digits, bool always_show_sign) {
+std::string DoubleToString(double val, uint8_t digits, bool always_show_sign) {
     // minimum digits is 2. Fewer than this and things can't be sensibly displayed.
     // eg. 300 with 2 digits is 0.3k. With 1 digits, it would be unrepresentable.
-    digits = std::max(digits, 2);
+    digits = std::max(digits, uint8_t(2u));
 
     // default result for sentinel value
     if (val == UNKNOWN_UI_DISPLAY_VALUE) {
@@ -542,14 +542,6 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         return "";
     }
 
-    double mag = std::abs(val);
-
-    // early termination if magnitude is 0
-    if (mag == 0.0 || RoundMagnitude(mag, digits + 1) == 0.0) {
-        std::string format = "%1." + std::to_string(digits - 1) + "f"; // TODO: avoid extra string here?
-        return (boost::format(format) % mag).str();
-    }
-
     std::string text;
     text.reserve(static_cast<std::size_t>(digits)+3u);
 
@@ -559,6 +551,15 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
         text += "-";
     else if (always_show_sign)
         text += "+";
+    double mag = std::abs(val);
+
+    // early termination if magnitude is 0
+    if (mag == 0.0 || RoundMagnitude(mag, digits + 1) == 0.0) {
+        std::string format = "%1." + std::to_string(digits - 1) + "f"; // TODO: avoid extra string here?
+        return text.append((boost::format(format) % mag).str());
+    }
+
+
 
     // if value is effectively 0, avoid unnecessary later processing
     if (effective_sign == 0) {

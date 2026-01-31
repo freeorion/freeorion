@@ -84,7 +84,7 @@ void CUILabel::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto copy_wnd_action = [this]() { GetApp().CopyWndText(this); };
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
+    popup->AddMenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action);
     popup->Run();
 }
 
@@ -911,12 +911,12 @@ void CUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),        this->Disabled(), false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),      this->Disabled(), false, hotkey_paste_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
+    popup->AddMenuItem(UserString("HOTKEY_CUT"),        this->Disabled(), false, hotkey_cut_action);
+    popup->AddMenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action);
+    popup->AddMenuItem(UserString("HOTKEY_PASTE"),      this->Disabled(), false, hotkey_paste_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action);
+    popup->AddMenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action);
     popup->Run();
 
     // todo: italicize, underline, or colour selected text
@@ -1006,10 +1006,10 @@ void CensoredCUIEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
     // omits copy command from base CUIEdit
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),      this->Disabled(), false, hotkey_paste_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
+    popup->AddMenuItem(UserString("HOTKEY_PASTE"),      this->Disabled(), false, hotkey_paste_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action);
+    popup->AddMenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action);
     popup->Run();
 }
 
@@ -1132,13 +1132,13 @@ void CUIMultiEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action));
+        popup->AddMenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action);
+    popup->AddMenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action);
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
+        popup->AddMenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action);
+    popup->AddMenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action);
     popup->Run();
     // todo: italicize, underline, or colour selected text
 }
@@ -1195,17 +1195,17 @@ void CUILinkTextMultiEdit::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        popup->AddMenuItem(GG::MenuItem(UserString("OPEN"),          false,            false, rclick_action));
-        popup->AddMenuItem(GG::MenuItem(true)); // separator
+        popup->AddMenuItem(UserString("OPEN"),          false,            false, rclick_action);
+        popup->AddMenuItem(GG::MenuItem::menu_separator);
     }
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action));
+        popup->AddMenuItem(UserString("HOTKEY_CUT"),    this->Disabled(), false, hotkey_cut_action);
+    popup->AddMenuItem(UserString("HOTKEY_COPY"),       false,            false, hotkey_copy_action);
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action));
-    popup->AddMenuItem(GG::MenuItem(true)); // separator
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action));
-    popup->AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action));
+        popup->AddMenuItem(UserString("HOTKEY_PASTE"),  this->Disabled(), false, hotkey_paste_action);
+    popup->AddMenuItem(GG::MenuItem::menu_separator);
+    popup->AddMenuItem(UserString("HOTKEY_SELECT_ALL"), this->Disabled(), false, hotkey_select_all_action);
+    popup->AddMenuItem(UserString("HOTKEY_DESELECT"),   this->Disabled(), false, hotkey_deselect_action);
     popup->Run();
 
     // todo: italicize, underline, or colour selected text
@@ -1295,27 +1295,17 @@ namespace {
     constexpr int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture, GG::X w, GG::Y h) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE)
-{ m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC); }
-
-StatisticIcon::StatisticIcon(std::shared_ptr<GG::Texture> texture,
-                             double value, int digits, bool showsign,
-                             GG::X w, GG::Y h) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_values({std::tuple<double, int, ShowSign>{value, digits, ShowSign(showsign)}, {0.0, 0, ShowSign::HIDE}})
-{ m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(texture), GG::GRAPHIC_FITGRAPHIC); }
-
 void StatisticIcon::CompleteConstruction() {
     GG::Control::CompleteConstruction();
 
     SetName("StatisticIcon");
     SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
-    AttachChild(m_icon);    // created in constructor to forward texture
+    AttachChild(m_icon); // created in constructor to forward texture
 
     const auto format = (Value(Width()) >= Value(Height())) ? GG::FORMAT_LEFT : GG::FORMAT_BOTTOM;
-    m_text = GG::Wnd::Create<CUILabel>("    ", format, GG::NO_WND_FLAGS);
+    m_text = GG::Wnd::Create<GG::TextControl>(GG::X0, GG::Y0, GG::X1, GG::Y1, "    ", m_font,
+                                              ClientUI::TextColor(), format, GG::NO_WND_FLAGS);
     AttachChild(m_text);
 
     RequirePreRender();
@@ -1327,64 +1317,67 @@ void StatisticIcon::PreRender() {
 }
 
 double StatisticIcon::GetValue(std::size_t index) const {
-    if (index > static_cast<std::size_t>(m_have_two)) [[unlikely]] {
+    if (index >= static_cast<std::size_t>(m_values_shown)) [[unlikely]] {
         ErrorLogger() << "StatisticIcon::GetValue passed index out of range index:" << index;
         return 0.0;
     }
-    return std::get<0>(m_values[index]);
+    return (index == 0) ? m_value0 : m_value1;
 }
 
 void StatisticIcon::SetValue(double value, std::size_t index) {
-    if (index > 1u) [[unlikely]] {
+    if (index > 1u) {
         ErrorLogger() << "StatisticIcon::SetValue passed index out of range index: " << index;
         return;
-    }
-    const auto font = GetApp().GetUI().GetFont();
-    if (!font) {
-        ErrorLogger() << "StatisticIcon::SetValue couldn't get a font";
+    } else if (index >= 2) {
+        ErrorLogger() << "StatisticIcon::SetValue tried to set too-high index " << index;
         return;
-    }
-
-    auto& [value0, precision0, show_sign0] = m_values[0];
-    auto& [value1, precision1, show_sign1] = m_values[1];
-
-    auto& valuei = index == 0 ? value0 : value1;
-    if (value != valuei) {
-        RequirePreRender();
+    } else if (m_values_shown == NumValuesDisplayed::ZERO) {
+        ErrorLogger() << "StatisticIcon::SetValue called on icon not showing any values?";
+        return;
+    } else if (!m_font)  {
+        ErrorLogger() << "StatisticIcon::SetValue has no font";
+        return;
+    } else [[likely]] {
+        auto& valuei = (index == 0) ? m_value0 : m_value1;
         valuei = value;
     }
 
-    const bool had_two = m_have_two;
-    if (index == 1)
-        m_have_two = true;
-    if (had_two != m_have_two)
-        RequirePreRender();
+    RequirePreRender();
 
     // Compute text elements
-    GG::Font::TextAndElementsAssembler text_elements(*font, 120, 8); // usually 63 chars enough, but might have bigger numbers and don't want to guess from precision...
+    GG::Font::TextAndElementsAssembler text_elements(*m_font, 120, 8); // usually 63 chars enough, but might have bigger numbers and don't want to guess from precision...
 
+    static constexpr auto colour_for_sign = [](int sign)
+    { return (sign > 0) ? ClientUI::StatIncrColor() : (sign < 0) ? ClientUI::StatDecrColor() : ClientUI::TextColor(); };
+
+    const auto clr0 = [this]() {
+        switch (m_indicate_change0) {
+        case IndicateChangeColour::INDICATE_SELF:      return colour_for_sign(EffectiveSign(m_value0)); break;
+        case IndicateChangeColour::INDICATE_FOR_OTHER: return colour_for_sign(EffectiveSign(m_value1)); break;
+        default:                                       return ClientUI::TextColor();
+        }
+    }();
     text_elements
-        .AddOpenTag(ClientUI::TextColor())
-        .AddText(DoubleToString(value0, precision0, show_sign0 == ShowSign::SHOW))
+        .AddOpenTag(clr0)
+        .AddText(DoubleToString(m_value0, m_digits, m_show_sign0 == ShowSign::SHOW_ALWAYS))
         .AddCloseTag("rgba");
 
-    if (m_have_two) {
-        const auto effective_sign = EffectiveSign(value1);
-        const auto clr = (effective_sign == -1) ? ClientUI::StatDecrColor() :
-            (effective_sign == 1) ? ClientUI::StatIncrColor() :
-            ClientUI::TextColor();
 
+    if (m_values_shown >= NumValuesDisplayed::TWO) {
+        const auto clr1 = [this]() {
+            switch (m_indicate_change1) {
+            case IndicateChangeColour::INDICATE_SELF:      return colour_for_sign(EffectiveSign(m_value1)); break;
+            case IndicateChangeColour::INDICATE_FOR_OTHER: return colour_for_sign(EffectiveSign(m_value0)); break;
+            default:                                       return ClientUI::TextColor();
+            }
+        }();
         text_elements
             .AddText(" ")
-            .AddOpenTag(clr);
-
-        if (effective_sign != -1)
-            text_elements.AddText("+");
-
-        text_elements
-            .AddText(DoubleToString(value1, precision1, show_sign1 == ShowSign::SHOW))
+            .AddOpenTag(clr1)
+            .AddText(DoubleToString(m_value1, m_digits, m_show_sign1 == ShowSign::SHOW_ALWAYS))
             .AddCloseTag("rgba");
     }
+
 
     auto [text, elements] = text_elements.Extract();
     m_text->SetText(std::move(text), std::move(elements));
@@ -1408,15 +1401,13 @@ void StatisticIcon::RButtonDown(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
 void StatisticIcon::LClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (Disabled())
-        return;
-    LeftClickedSignal(pt);
+    if (!Disabled())
+        LeftClickedSignal(pt);
 }
 
 void StatisticIcon::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
-    if (Disabled())
-        return;
-    RightClickedSignal(pt);
+    if (!Disabled())
+        RightClickedSignal(pt);
 }
 
 void StatisticIcon::MouseWheel(GG::Pt pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1463,7 +1454,7 @@ GG::Pt StatisticIcon::MinUsableSize() const noexcept {
     if (!m_text)
         return m_icon->Size();
 
-    if (Value(Width()) >= Value(Height()))
+    else if (Value(Width()) >= Value(Height()))
         return GG::Pt(m_text->RelativeUpperLeft().x + m_text->Width(),
                       std::max(m_icon->RelativeLowerRight().y, m_text->Height()));
     else
@@ -1474,10 +1465,6 @@ GG::Pt StatisticIcon::MinUsableSize() const noexcept {
 ///////////////////////////////////////
 // class CUIToolBar
 ///////////////////////////////////////
-CUIToolBar::CUIToolBar() :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::ONTOP | GG::INTERACTIVE)
-{}
-
 bool CUIToolBar::InWindow(GG::Pt pt) const {
     for (auto& wnd : Children())
         if (wnd->InWindow(pt))
@@ -1744,7 +1731,7 @@ void ColorSelector::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     };
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
-    popup->AddMenuItem(GG::MenuItem(UserString("RESET"), false, false, reset_color_action));
+    popup->AddMenuItem(UserString("RESET"), false, false, reset_color_action);
     popup->Run();
 }
 

@@ -923,13 +923,12 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(GG::Pt pt, GG::Flags<GG::ModKey
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
     if (!(m_enqueued) && !(m_status == TechStatus::TS_COMPLETE)) {
-        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
-        popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
-                                        ctrl_dclick_action));
+        popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),        false, false, dclick_action);
+        popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false, ctrl_dclick_action);
     }
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
-    popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_display_action));
+    popup->AddMenuItem(std::move(popup_label), false, false, pedia_display_action);
     popup->Run();
 }
 
@@ -1958,16 +1957,14 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, GG::Pt
         auto tech_ctrl_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::MOD_KEY_CTRL); };
 
         if (!empire->TechResearched(tech_name)) {
-            popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"), false, false,
-                                            tech_dclick_action));
-            popup->AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false,
-                                            tech_ctrl_dclick_action));
+            popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"), false, false, tech_dclick_action);
+            popup->AddMenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"), false, false, tech_ctrl_dclick_action);
         }
     }
 
     auto pedia_display_action = [this, &tech_name]() { TechPediaDisplaySignal(tech_name); };
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
-    popup->AddMenuItem(GG::MenuItem(std::move(popup_label), false, false, pedia_display_action));
+    popup->AddMenuItem(std::move(popup_label), false, false, pedia_display_action);
 
     popup->Run();
 }
