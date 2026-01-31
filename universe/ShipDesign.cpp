@@ -832,7 +832,7 @@ void ShipDesign::BuildStatCaches() {
     tags.erase(last, tags.end());
 
     // compile concatenated tags into contiguous storage
-    std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), 0u, std::plus{},
+    std::size_t tags_sz = std::transform_reduce(tags.begin(), tags.end(), std::size_t{0}, std::plus{},
                                                 [](const auto& tag) noexcept { return tag.size(); });
     m_tags_concatenated.reserve(tags_sz);
     m_tags.clear();
