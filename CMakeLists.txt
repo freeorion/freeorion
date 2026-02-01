@@ -851,6 +851,8 @@ if(APPLE AND BUILD_CLIENT_GG)
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_THREAD_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:SDL::SDL>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
            ${CMAKE_COMMAND} -E remove_directory "$<TARGET_FILE_DIR:freeorion>/../SharedSupport/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
         COMMAND
            cp -R "${CMAKE_BINARY_DIR}/dep/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport/lib/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}"
