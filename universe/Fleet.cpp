@@ -156,6 +156,11 @@ int Fleet::MaxShipAgeInTurns(const ObjectMap& objects, int current_turn) const {
     return retval;
 }
 
+namespace {
+    static constexpr auto name_and_id = [](const UniverseObjectCXBase* obj) -> std::string
+    { return obj ? (obj->Name() + " (" + std::to_string(obj->ID()) + ")") : (std::string{"(none)"}); };
+}
+
 std::vector<MovePathNode> Fleet::MovePath(bool flag_blockades, const ScriptingContext& context) const
 { return MovePath(TravelRoute(), flag_blockades, context); }
 
@@ -189,8 +194,8 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
             retval.append(std::to_string(waypoint)).append(" ");
         return retval;
     };
-    TraceLogger() << "Fleet::MovePath for Fleet " << this->Name() << " (" << this->ID()
-                  << ") fuel: " << fuel << " at sys id: " << this->SystemID() << "  route: "
+    TraceLogger() << "Fleet::MovePath for Fleet " << name_and_id(this)
+                  << " fuel: " << fuel << " at sys id: " << this->SystemID() << "  route: "
                   << route_nums(route);
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
@@ -233,8 +238,6 @@ std::vector<MovePathNode> Fleet::MovePath(const std::vector<int>& route, bool fl
         return retval;
     }
 
-    static constexpr auto name_and_id = [](const UniverseObjectCXBase* obj) -> std::string
-    { return obj ? (obj->Name() + " (" + std::to_string(obj->ID()) + ")") : (std::string{"(none)"}); };
     TraceLogger() << "Initial cur system: " << name_and_id(cur_system)
                   << "  prev system: " << name_and_id(prev_system)
                   << "  next system: " << name_and_id(next_system);
