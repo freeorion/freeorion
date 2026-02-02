@@ -30,14 +30,14 @@ int SaveGame(const std::string& filename,
              bool multiplayer);
 
 /** Loads the indicated data from savefile \a filename. */
-void LoadGame(const std::string& filename,
-              ServerSaveGameData& server_save_game_data,
-              std::vector<PlayerSaveGameData>& player_save_game_data,
-              Universe& universe,
-              EmpireManager& empire_manager,
-              SpeciesManager& species_manager,
-              CombatLogManager& combat_log_manager,
-              GalaxySetupData& galaxy_setup_data);
+[[nodiscard]] bool LoadGame(const std::string& filename,
+                            ServerSaveGameData& server_save_game_data,
+                            std::vector<PlayerSaveGameData>& player_save_game_data,
+                            Universe& universe,
+                            EmpireManager& empire_manager,
+                            SpeciesManager& species_manager,
+                            CombatLogManager& combat_log_manager,
+                            GalaxySetupData& galaxy_setup_data);
 
 /** Loads from a savefile \a filename some basic info about players in the save
   * that is needed when resuming the game. */
