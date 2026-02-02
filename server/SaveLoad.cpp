@@ -325,7 +325,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
     return bytes_written;
 }
 
-void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
+bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data, Universe& universe,
               EmpireManager& empire_manager, SpeciesManager& species_manager,
               CombatLogManager& combat_log_manager, GalaxySetupData& galaxy_setup_data)
@@ -333,6 +333,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     SectionedScopedTimer timer("LoadGame");
 
     // player notifications
+    // ToDo: isolate loading game from networking part
     GetApp().Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
     GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
@@ -458,9 +459,10 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     } catch (const std::exception& err) {
         ErrorLogger() << "LoadGame(...) failed!  Error: " << err.what();
-        return;
+        return false;
     }
     DebugLogger() << "LoadGame : Successfully loaded save file: " + filename;
+    return true;
 }
 
 void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) {
