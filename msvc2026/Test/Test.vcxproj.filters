@@ -17,6 +17,12 @@
     <Filter Include="Test\parse">
       <UniqueIdentifier>{78c25d16-31b7-4d39-87c1-8c3201a4918e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Test\save">
+      <UniqueIdentifier>{b7ab55be-9a9d-4753-98a3-0543612be36a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test\server">
+      <UniqueIdentifier>{f29ee5c1-447b-4d60-8842-bb19c796bdab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\system\ClientAppFixture.h">
@@ -76,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="..\..\test\parse\TestDefaultPythonParser.cpp">
       <Filter>Test\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\save\EmptySave.cpp">
+      <Filter>Test\save</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\server\SaveLoad.cpp">
+      <Filter>Test\server</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

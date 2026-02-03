@@ -191,6 +191,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientNetworking.cpp" />
+    <ClCompile Include="..\..\server\SaveLoad.cpp" />
     <ClCompile Include="..\..\test\parse\CommonTest.cpp" />
     <ClCompile Include="..\..\test\parse\main.cpp" />
     <ClCompile Include="..\..\test\parse\ParserAppFixture.cpp" />
@@ -198,6 +199,7 @@
     <ClCompile Include="..\..\test\parse\TestEnumParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestPythonParser.cpp" />
     <ClCompile Include="..\..\test\parse\TestScriptParser.cpp" />
+    <ClCompile Include="..\..\test\save\EmptySave.cpp" />
     <ClCompile Include="..\..\test\system\ClientAppFixture.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestGame.cpp" />
     <ClCompile Include="..\..\test\system\SmokeTestHostless.cpp" />
