@@ -30,7 +30,6 @@ target_sources(fo_unittest_save
         ${PROJECT_SOURCE_DIR}/server/SaveLoad.h
     PRIVATE
         ${PROJECT_SOURCE_DIR}/server/SaveLoad.cpp
-        ${PROJECT_SOURCE_DIR}/server/ServerNetworking.cpp
 )
 
 set(FO_TEST_SAVE
