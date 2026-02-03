@@ -689,9 +689,8 @@ sc::result Idle::react(const Hostless&) {
     if (!quickstart && !load_or_quickstart && autostart_load_filename.empty())
         return transit<MPLobby>();
 
-    if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0) {
+    if (GetOptionsDB().Get<int>("network.server.conn-human-empire-players.min") > 0)
         throw std::invalid_argument("A save file to load or quickstart and autostart in hostless mode was specified, but the server has a non-zero minimum number of connected players, so cannot be started without a connected player.");
-    }
 
     ServerApp& server = Server();
     auto lobby_data = std::make_shared<MultiplayerLobbyData>(server.m_galaxy_setup_data);
@@ -751,10 +750,16 @@ sc::result Idle::react(const Hostless&) {
     } else {
         DebugLogger(FSM) << "Loading file " << autostart_load_filename;
         try {
-            LoadGame(autostart_load_filename,   *server_save_game_data,
-                     player_save_game_data,     server.GetUniverse(),
-                     server.Empires(),          server.GetSpeciesManager(),
-                     GetCombatLogManager(),     server.m_galaxy_setup_data);
+            // expect no players to send error message to
+
+            bool load_success = LoadGame(autostart_load_filename,   *server_save_game_data,
+                                         player_save_game_data,     server.GetUniverse(),
+                                         server.Empires(),          server.GetSpeciesManager(),
+                                         GetCombatLogManager(),     server.m_galaxy_setup_data);
+
+            if (!load_success)
+                throw std::runtime_error("Loading save returned false");
+
             unsigned int seed = 0;
             try {
                 seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
@@ -780,17 +785,18 @@ sc::result Idle::react(const Hostless&) {
                 lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
             }
         } catch (const std::exception& e) {
+            // expect no players to send error message to
+            ErrorLogger(FSM) << "Failed to load save file: " << e.what();
             throw e;
         }
     }
 
     lobby_data->game_rules = GetGameRules().GetRulesAsStrings();
 
-    // copy locally stored data to common server fsm context so it can be
-    // retreived in WaitingForMPGameJoiners
-    context<ServerFSM>().m_lobby_data = lobby_data;
-    context<ServerFSM>().m_player_save_game_data = player_save_game_data;
-    context<ServerFSM>().m_server_save_game_data = server_save_game_data;
+    // move data to common server fsm context so it can be retreived in WaitingForMPGameJoiners
+    context<ServerFSM>().m_lobby_data = std::move(lobby_data);
+    context<ServerFSM>().m_player_save_game_data = std::move(player_save_game_data);
+    context<ServerFSM>().m_server_save_game_data = std::move(server_save_game_data);
 
     return transit<WaitingForMPGameJoiners>();
 }
@@ -1761,10 +1767,15 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 std::string save_filename = PathToString((GetServerSaveDir() / m_lobby_data->save_game));
 
                 try {
-                    LoadGame(save_filename,             *m_server_save_game_data,
-                             m_player_save_game_data,   server.GetUniverse(),
-                             server.Empires(),          server.GetSpeciesManager(),
-                             GetCombatLogManager(),     server.m_galaxy_setup_data);
+                    server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
+
+                    bool load_success = LoadGame(save_filename,             *m_server_save_game_data,
+                                                 m_player_save_game_data,   server.GetUniverse(),
+                                                 server.Empires(),          server.GetSpeciesManager(),
+                                                 GetCombatLogManager(),     server.m_galaxy_setup_data);
+                    if (!load_success)
+                        throw std::runtime_error("Loading save returned false");
+
                     int seed = 0;
                     try {
                         seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
@@ -1778,8 +1789,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed << "  interpreted as actual seed: " << seed;
                     Seed(seed);
 
-                } catch (...) {
+                } catch (const std::exception& e) {
                     SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+                    ErrorLogger(FSM) << "Failed to load save file: " << e.what();
                     return discard_event();
                 }
             }
@@ -1870,10 +1882,16 @@ sc::result MPLobby::react(const StartMPGame& msg) {
             std::string save_filename = (GetServerSaveDir() / m_lobby_data->save_game).string();
 
             try {
-                LoadGame(save_filename,             *m_server_save_game_data,
-                         m_player_save_game_data,   server.GetUniverse(),
-                         server.Empires(),          server.GetSpeciesManager(),
-                         GetCombatLogManager(),     server.m_galaxy_setup_data);
+                server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
+
+                bool load_success = LoadGame(save_filename,             *m_server_save_game_data,
+                                             m_player_save_game_data,   server.GetUniverse(),
+                                             server.Empires(),          server.GetSpeciesManager(),
+                                             GetCombatLogManager(),     server.m_galaxy_setup_data);
+
+                if (!load_success)
+                    throw std::runtime_error("Loading save returned false");
+
                 int seed = 0;
                 try {
                     seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.seed);
@@ -1887,8 +1905,9 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                 DebugLogger(FSM) << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.seed << "  interpreted as actual seed: " << seed;
                 Seed(seed);
 
-            } catch (...) {
+            } catch (std::exception& e) {
                 SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+                ErrorLogger(FSM) << "Failed to load save file: " << e.what();
                 return discard_event();
             }
 
@@ -2157,12 +2176,18 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
         } else {
             DebugLogger(FSM) << "Loading SP game save file: " << m_single_player_setup_data->filename;
             try {
-                LoadGame(m_single_player_setup_data->filename,                  *m_server_save_game_data,
-                         m_player_save_game_data,       server.GetUniverse(),   server.Empires(),
-                         server.GetSpeciesManager(),    GetCombatLogManager(),  server.m_galaxy_setup_data);
+                server.Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
 
-            } catch (...) {
+                bool load_success = LoadGame(m_single_player_setup_data->filename,                  *m_server_save_game_data,
+                                             m_player_save_game_data,       server.GetUniverse(),   server.Empires(),
+                                             server.GetSpeciesManager(),    GetCombatLogManager(),  server.m_galaxy_setup_data);
+
+                if (!load_success)
+                    throw std::runtime_error("Loading save returned false");
+
+            } catch (const std::exception& e) {
                 SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+                ErrorLogger(FSM) << "Failed to load save file: " << e.what();
                 return transit<Idle>();
             }
 

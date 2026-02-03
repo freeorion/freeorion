@@ -332,10 +332,6 @@ bool LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 {
     SectionedScopedTimer timer("LoadGame");
 
-    // player notifications
-    // ToDo: isolate loading game from networking part
-    GetApp().Networking().SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::LOADING_GAME));
-
     GlobalSerializationEncodingForEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData>   ignored_save_game_empire_data;
