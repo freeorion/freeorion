@@ -628,11 +628,11 @@ protected:
     const ::MeterType m_meter_type = ::MeterType::INVALID_METER_TYPE;
 };
 
-/** The variable statistic class.   The value returned by this node is
-  * computed from the general gamestate; the value of the indicated
-  * \a property_name is computed for each object that matches
-  * \a sampling_condition and the statistic indicated by \a stat_type is
-  * calculated from them and returned. */
+/** The variable statistic class. The value returned by this node is
+  * computed from the general gamestate: The value of \a value_ref
+  * is evaluated for each object that matches \a sampling_condition
+  * with that object as the local candidate in the context. The
+  * statistic indicated by \a stat_type is calculated from those values. */
 template <typename T, typename V = T>
 struct FO_COMMON_API Statistic final : public Variable<T>
 {
