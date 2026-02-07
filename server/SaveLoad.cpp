@@ -326,7 +326,6 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 }
 
 namespace {
-
     bool DeserializeXML(freeorion_xml_iarchive& xia, std::vector<PlayerSaveGameData>& player_save_game_data,
                         Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager,
                         CombatLogManager& combat_log_manager, SectionedScopedTimer& timer)
@@ -346,7 +345,6 @@ namespace {
         return true;
     }
 
-
     bool DeserializeXML(std::istream& is, std::vector<PlayerSaveGameData>& player_save_game_data,
                         Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager,
                         CombatLogManager& combat_log_manager, SectionedScopedTimer& timer)
@@ -358,11 +356,23 @@ namespace {
                               species_manager, combat_log_manager, timer);
     }
 
-    bool DeserializeCompressedXML(freeorion_xml_iarchive& xia, std::vector<PlayerSaveGameData>& player_save_game_data,
+    bool DeserializeCompressedXML(std::string compressed_str, std::vector<PlayerSaveGameData>& player_save_game_data,
                                   Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager,
                                   CombatLogManager& combat_log_manager, SectionedScopedTimer& timer,
-                                  std::string_view format_marker, std::size_t buffer_size = 0u)
+                                  std::string_view format_marker)
     {
+        boost::iostreams::filtering_istream zis;
+        zis.push(boost::iostreams::zlib_decompressor());
+        if (format_marker == XML_COMPRESSED_BASE64_MARKER)
+            zis.push(boost::iostreams::base64_decoder());
+        std::istringstream is(std::move(compressed_str));
+        zis.push(is);
+
+        return DeserializeXML(zis, player_save_game_data, universe, empire_manager,
+                              species_manager, combat_log_manager, timer);
+    }
+
+    std::string ExtractCompressedString(freeorion_xml_iarchive& xia, SectionedScopedTimer& timer, std::size_t buffer_size) {
         timer.EnterSection("decompression");
         // allocate buffer for compressed serialized gamestate
         DebugLogger() << "Allocating buffer for XML deserialization...";
@@ -382,15 +392,7 @@ namespace {
         // extract compressed gamestate info
         xia >> BOOST_SERIALIZATION_NVP(compressed_str);
 
-        boost::iostreams::filtering_istream zis;
-        zis.push(boost::iostreams::zlib_decompressor());
-        if (format_marker == XML_COMPRESSED_BASE64_MARKER)
-            zis.push(boost::iostreams::base64_decoder());
-        std::istringstream is(compressed_str);
-        zis.push(is);
-
-        return DeserializeXML(zis, player_save_game_data, universe, empire_manager,
-                              species_manager, combat_log_manager, timer);
+        return compressed_str;
     }
 
     bool LoadGameXML(std::istream& is, ServerSaveGameData& server_save_game_data,
@@ -419,14 +421,14 @@ namespace {
         xia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
         xia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
 
-
         if (preview_data.save_format_marker == XML_DIRECT_MARKER) {
             return DeserializeXML(xia, player_save_game_data, universe, empire_manager,
                                   species_manager, combat_log_manager, timer);
         } else {
-            return DeserializeCompressedXML(xia, player_save_game_data, universe, empire_manager,
-                                            species_manager, combat_log_manager, timer,
-                                            preview_data.save_format_marker, preview_data.compressed_text_size);
+            auto compressed_str = ExtractCompressedString(xia, timer, preview_data.compressed_text_size);
+            return DeserializeCompressedXML(std::move(compressed_str), player_save_game_data, universe,
+                                            empire_manager, species_manager, combat_log_manager, timer,
+                                            preview_data.save_format_marker);
         }
     }
 
@@ -436,9 +438,9 @@ namespace {
                         CombatLogManager& combat_log_manager, GalaxySetupData& galaxy_setup_data,
                         SectionedScopedTimer& timer)
     {
-        std::map<int, SaveGameEmpireData>   ignored_save_game_empire_data;
-        SaveGamePreviewData                 ignored_save_preview_data;
-        std::vector<PlayerSaveHeaderData>   ignored_player_save_header_data;
+        std::map<int, SaveGameEmpireData> ignored_save_game_empire_data;
+        SaveGamePreviewData               ignored_save_preview_data;
+        std::vector<PlayerSaveHeaderData> ignored_player_save_header_data;
 
         // XML file format signature not found; try as binary
         freeorion_bin_iarchive ia(is);
@@ -524,12 +526,12 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        std::string signature(5, '\0');
+        std::array<std::string::value_type, 6> signature{0};
         if (!ifs.read(signature.data(), 5))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
-        if (strncmp(signature.c_str(), "<?xml", 5)) {
+        if (!std::string_view{signature.data(), 5}.starts_with("<?xml")) {
             // XML file format signature not found; try as binary
             DebugLogger() << "Attempting binary deserialization...";
             freeorion_bin_iarchive ia(ifs);
@@ -567,12 +569,12 @@ void LoadPlayerSaveHeaderData(const std::string& filename, std::vector<PlayerSav
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
-        std::string signature(5, '\0');
+        std::array<std::string::value_type, 6> signature{0};
         if (!ifs.read(signature.data(), 5))
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
-        if (strncmp(signature.c_str(), "<?xml", 5)) {
+        if (!std::string_view{signature.data(), 5}.starts_with("<?xml")) {
             // XML file format signature not found; try as binary
             DebugLogger() << "Attempting binary deserialization...";
             freeorion_bin_iarchive ia(ifs);
@@ -605,9 +607,9 @@ void LoadEmpireSaveGameData(const std::string& filename,
                             GalaxySetupData& galaxy_setup_data,
                             int& current_turn)
 {
-    SaveGamePreviewData                 ignored_save_preview_data;
-    ServerSaveGameData                  saved_server_save_game_data;
-    GalaxySetupData                     saved_galaxy_setup_data;
+    SaveGamePreviewData ignored_save_preview_data;
+    ServerSaveGameData  saved_server_save_game_data;
+    GalaxySetupData     saved_galaxy_setup_data;
 
     ScopedTimer timer("LoadEmpireSaveGameData: " + filename);
 
