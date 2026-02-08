@@ -156,7 +156,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
 
             const auto get_building = [&objects](const auto id) { return objects.getRaw<const Building>(id); };
 
-            static constexpr auto is_shipyard = [](const Building* b) { return b && b->HasTag(TAG_SHIPYARD); };
+            static constexpr auto is_shipyard = [](const Building* b) { return b && b->IsShipYard(); };
 
             has_shipyard = range_any_of(planet->BuildingIDs() | range_filter(not_destroyed) | range_transform(get_building),
                                         is_shipyard);

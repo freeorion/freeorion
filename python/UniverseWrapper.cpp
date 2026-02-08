@@ -654,7 +654,7 @@ namespace FreeOrionPython {
         // BuildingType //
         //////////////////
         py::class_<BuildingType, boost::noncopyable>("buildingType", py::no_init)
-            .add_property("name",               make_function(&BuildingType::Name,          py::return_value_policy<py::copy_const_reference>()))
+            .add_property("name",               make_function(&BuildingType::Name,          py::return_value_policy<py::return_by_value>()))
             .add_property("description",        make_function(&BuildingType::Description,   py::return_value_policy<py::copy_const_reference>()))
             .def("productionCost",              +[](const BuildingType& bt, int empire_id, int location_id) -> float { return bt.ProductionCost(empire_id, location_id, IApp::GetApp()->GetContext()); })
             .def("productionTime",              +[](const BuildingType& bt, int empire_id, int location_id) -> int { return bt.ProductionTime(empire_id, location_id, IApp::GetApp()->GetContext()); })

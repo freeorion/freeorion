@@ -38,7 +38,7 @@ namespace {
 
 BuildingType::BuildingType(std::string&& name, std::string&& description,
                            CommonParams&& common_params, CaptureResult capture_result,
-                           std::string&& icon) :
+                           std::string&& icon, SubType subtype, std::string&& species) :
     m_name(name), // intentional copy so name is usable later in member initializers
     m_description(std::move(description)),
     m_production_cost([](auto&& pc, const auto& name) {
@@ -50,6 +50,7 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
         return std::move(pt);
     }(std::move(common_params.production_time), name)),
     m_producible(common_params.producible),
+    m_subtype(subtype),
     m_capture_result(capture_result),
     m_tags_concatenated([](auto& tags) {
         // ensure tags are all upper-case
@@ -76,6 +77,7 @@ BuildingType::BuildingType(std::string&& name, std::string&& description,
         }
         return retval;
     }(common_params.tags, m_tags_concatenated)),
+    m_species(std::move(species)),
     m_production_meter_consumption(std::move(common_params.production_meter_consumption)),
     m_production_special_consumption(std::move(common_params.production_special_consumption)),
     m_location([](auto&& l, const auto& name) {
@@ -108,7 +110,9 @@ bool BuildingType::operator==(const BuildingType& rhs) const {
         m_description != rhs.m_description ||
         m_producible != rhs.m_producible ||
         m_capture_result != rhs.m_capture_result ||
+        m_subtype != rhs.m_subtype ||
         m_tags != rhs.m_tags ||
+        m_species != rhs.m_species ||
         m_icon != rhs.m_icon)
     { return false; }
 
@@ -350,8 +354,10 @@ uint32_t BuildingType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_production_cost);
     CheckSums::CheckSumCombine(retval, m_production_time);
     CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_subtype);
     CheckSums::CheckSumCombine(retval, m_capture_result);
     CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_species);
     CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
     CheckSums::CheckSumCombine(retval, m_production_special_consumption);
     CheckSums::CheckSumCombine(retval, m_location);

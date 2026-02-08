@@ -2172,18 +2172,18 @@ std::unique_ptr<Condition> Type::Clone() const
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Building::Building(string_vref_ptr_vec&& names) :
-    Condition(CondsRTSI(names), CheckSums::GetCheckSum("Condition::Building", names)),
-    m_names(ExcludeNullsIntoVector(std::move(names))),
-    m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
+Building::Building(string_vref_ptr_vec&& type_names) :
+    Condition(CondsRTSI(type_names), CheckSums::GetCheckSum("Condition::Building", type_names)),
+    m_type_names(ExcludeNullsIntoVector(std::move(type_names))),
+    m_names_local_invariant(m_type_names.empty() || range_all_of(m_type_names, lc_invariant))
 {}
 
-Building::Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
-    Building(Enveculate(std::move(name)))
+Building::Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& type_name) :
+    Building(Enveculate(std::move(type_name)))
 {}
 
-Building::Building(std::string name) :
-    Building(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
+Building::Building(std::string type_name) :
+    Building(std::make_unique<ValueRef::Constant<std::string>>(std::move(type_name)))
 {}
 
 bool Building::operator==(const Condition& rhs) const {
@@ -2196,10 +2196,10 @@ bool Building::operator==(const Condition& rhs) const {
 bool Building::operator==(const Building& rhs_) const {
     if (this == std::addressof(rhs_))
         return true;
-    if (m_names.size() != rhs_.m_names.size())
+    if (m_type_names.size() != rhs_.m_type_names.size())
         return false;
-    for (std::size_t i = 0; i < m_names.size(); ++i) {
-        CHECK_COND_VREF_MEMBER(m_names.at(i))
+    for (std::size_t i = 0; i < m_type_names.size(); ++i) {
+        CHECK_COND_VREF_MEMBER(m_type_names.at(i))
     }
 
     return true;
@@ -2211,8 +2211,8 @@ namespace {
     template<>
     struct BuildingSimpleMatch<std::string>
     {
-        BuildingSimpleMatch(const std::string& name) noexcept :
-            m_name(name)
+        BuildingSimpleMatch(const std::string& type_name) noexcept :
+            m_type_name(type_name)
         {}
 
         bool operator()(const auto* candidate) const noexcept {
@@ -2224,17 +2224,17 @@ namespace {
                 return false;
             auto* building = static_cast<const ::Building*>(candidate);
 
-            return building->BuildingTypeName() == m_name;
+            return building->BuildingTypeName() == m_type_name;
         }
 
-        const std::string& m_name;
+        const std::string& m_type_name;
     };
 
     template<>
     struct BuildingSimpleMatch<std::vector<std::string>>
     {
-        BuildingSimpleMatch(const std::vector<std::string>& names) noexcept :
-            m_names(names)
+        BuildingSimpleMatch(const std::vector<std::string>& type_names) noexcept :
+            m_type_names(type_names)
         {}
 
         bool operator()(const auto* candidate) const {
@@ -2247,14 +2247,14 @@ namespace {
             auto* building = static_cast<const ::Building*>(candidate);
 
             // if no name supplied, match any building
-            if (m_names.empty())
+            if (m_type_names.empty())
                 return true;
 
             // is it one of the specified building types?
-            return range_contains(m_names, building->BuildingTypeName());
+            return range_contains(m_type_names, building->BuildingTypeName());
         }
 
-        const std::vector<std::string>& m_names;
+        const std::vector<std::string>& m_type_names;
     };
 }
 
@@ -2264,14 +2264,14 @@ void Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, 
     const bool simple_eval_safe = m_names_local_invariant &&
                                   (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
-        if (m_names.size() == 1) {
-            auto match_name = m_names.front()->Eval(parent_context);
-            EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::string>(match_name));
+        if (m_type_names.size() == 1) {
+            auto type_name = m_type_names.front()->Eval(parent_context);
+            EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::string>(type_name));
         } else {
             // evaluate names once, and use to check all candidate objects
             const auto eval_ref = [&parent_context](const auto& ref) { return ref->Eval(parent_context); };
-            const auto names = m_names | range_transform(eval_ref) | range_to_vec;
-            EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::vector<std::string>>(names));
+            const auto type_names = m_type_names | range_transform(eval_ref) | range_to_vec;
+            EvalImpl(matches, non_matches, search_domain, BuildingSimpleMatch<std::vector<std::string>>(type_names));
         }
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -2280,11 +2280,11 @@ void Building::Eval(const ScriptingContext& parent_context, ObjectSet& matches, 
 }
 
 std::string Building::Description(bool negated) const {
-    const auto names_sz = m_names.size();
+    const auto names_sz = m_type_names.size();
     std::string values_str;
     values_str.reserve(names_sz*50); // guesstimate
     for (std::size_t i = 0u; i < names_sz; ++i) {
-        auto& n{m_names[i]};
+        auto& n{m_type_names[i]};
         values_str += UserString(n->ConstantExpr() ? n->Eval() : n->Description());
         if (2u <= names_sz && i < names_sz - 2u) {
             values_str += ", ";
@@ -2300,11 +2300,11 @@ std::string Building::Description(bool negated) const {
 
 std::string Building::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "Building name = ";
-    if (m_names.size() == 1) {
-        retval += m_names[0]->Dump(ntabs) + "\n";
+    if (m_type_names.size() == 1) {
+        retval += m_type_names[0]->Dump(ntabs) + "\n";
     } else {
         retval += "[ ";
-        for (auto& name : m_names) {
+        for (auto& name : m_type_names) {
             retval += name->Dump(ntabs) + " ";
         }
         retval += "]\n";
@@ -2326,22 +2326,22 @@ bool Building::Match(const ScriptingContext& local_context) const {
     auto* building = static_cast<const ::Building*>(candidate);
 
     // match any building type?
-    if (m_names.empty())
+    if (m_type_names.empty())
         return true;
 
     // match any of the specified building types
     const auto& btn{building->BuildingTypeName()};
-    const auto is_type = [&local_context, &btn] (const auto& name) { return name->Eval(local_context) == btn; };
-    return range_any_of(m_names, is_type);
+    const auto is_type = [&local_context, &btn] (const auto& type_name) { return type_name->Eval(local_context) == btn; };
+    return range_any_of(m_type_names, is_type);
 }
 
 void Building::SetTopLevelContent(const std::string& content_name) {
-    for (auto& name : m_names | range_filter(not_null))
+    for (auto& name : m_type_names | range_filter(not_null))
         name->SetTopLevelContent(content_name);
 }
 
 std::unique_ptr<Condition> Building::Clone() const
-{ return std::make_unique<Building>(ValueRef::CloneUnique(m_names)); }
+{ return std::make_unique<Building>(ValueRef::CloneUnique(m_type_names)); }
 
 ///////////////////////////////////////////////////////////
 // Field                                                 //

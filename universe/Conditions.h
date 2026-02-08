@@ -961,12 +961,14 @@ private:
     const bool m_type_local_invariant;
 };
 
-/** Matches all Building objects that are one of the building types specified in \a names. */
+/** Matches all Building objects that are one of the building types specified in \a names.
+  * Just checking if an object is a Building, of any BuildingType, can be done with the
+  * Type Condition. */
 struct FO_COMMON_API Building final : public Condition {
     using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
-    explicit Building(string_vref_ptr_vec&& names);
-    explicit Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
-    explicit Building(std::string name);
+    Building(string_vref_ptr_vec&& type_names);
+    Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& type_name);
+    Building(std::string type_name);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Building& rhs) const;
@@ -988,7 +990,7 @@ struct FO_COMMON_API Building final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    string_vref_ptr_vec m_names;
+    string_vref_ptr_vec m_type_names;
     const bool m_names_local_invariant;
 };
 

@@ -661,7 +661,8 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
             )
         },
         CaptureResult::CR_CAPTURE,
-        "icons/building/blackhole.png" 
+        "icons/building/blackhole.png",
+        BuildingType::SubType::NONE
     };
 
     BOOST_CHECK_EQUAL(test_building.Name(), building->Name());

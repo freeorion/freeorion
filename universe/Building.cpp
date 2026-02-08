@@ -73,13 +73,28 @@ bool Building::HostileToEmpire(int empire_id, const EmpireManager& empires) cons
 }
 
 UniverseObject::TagVecs Building::Tags() const {
-    const BuildingType* type = ::GetBuildingType(m_building_type);
+    const BuildingType* type = GetBuildingType(m_building_type);
     return type ? TagVecs{type->Tags()} : TagVecs{};
 }
 
 bool Building::HasTag(std::string_view name) const {
     const BuildingType* type = GetBuildingType(m_building_type);
     return type && type->HasTag(name);
+}
+
+bool Building::IsColony() const {
+    const BuildingType* type = GetBuildingType(m_building_type);
+    return type && type->IsColony();
+}
+
+bool Building::IsShipYard() const {
+    const BuildingType* type = GetBuildingType(m_building_type);
+    return type && type->IsShipYard();
+}
+
+const std::string& Building::SpeciesName() const {
+    const BuildingType* type = GetBuildingType(m_building_type);
+    return type ? type->SpeciesName() : EMPTY_STRING;
 }
 
 bool Building::ContainedBy(int object_id) const noexcept {

@@ -21,11 +21,12 @@ except ModuleNotFoundError:
     pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
+    shipyard=True,
     name="BLD_SHIPYARD_BASE",
     description="BLD_SHIPYARD_BASE_DESC",
     buildcost=10 * BUILDING_COST_MULTIPLIER,
     buildtime=4,
-    tags=["ORBITAL", "CTRL_SHIPYARD"],
+    tags=["ORBITAL"],
     location=(
         Planet()
         & TargetPopulation(low=1)
