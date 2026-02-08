@@ -1513,7 +1513,7 @@ namespace {
     }
 }
 
-Homeworld::Homeworld(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Homeworld::Homeworld(string_vref_ptr_vec&& names) :
     Condition(CondsRTSI(names)),
     m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
@@ -2172,7 +2172,7 @@ std::unique_ptr<Condition> Type::Clone() const
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Building::Building(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Building::Building(string_vref_ptr_vec&& names) :
     Condition(CondsRTSI(names), CheckSums::GetCheckSum("Condition::Building", names)),
     m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
@@ -2346,7 +2346,7 @@ std::unique_ptr<Condition> Building::Clone() const
 ///////////////////////////////////////////////////////////
 // Field                                                 //
 ///////////////////////////////////////////////////////////
-Field::Field(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Field::Field(string_vref_ptr_vec&& names) :
     Condition(CondsRTSI(names)),
     m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
@@ -3522,7 +3522,7 @@ std::unique_ptr<Condition> ObjectID::Clone() const
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-PlanetSize::PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes) :
+PlanetSize::PlanetSize(ptsize_vref_ptr_vec&& sizes) :
     Condition(CondsRTSI(sizes)),
     m_sizes(ExcludeNullsIntoVector(std::move(sizes)))
 {}
@@ -3675,7 +3675,7 @@ std::unique_ptr<Condition> PlanetSize::Clone() const
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-PlanetEnvironment::PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
+PlanetEnvironment::PlanetEnvironment(pe_vref_ptr_vec&& environments,
                                      std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref) :
     Condition(CondsRTSI(environments, species_name_ref)),
     m_environments(ExcludeNullsIntoVector(std::move(environments))),
@@ -3862,14 +3862,14 @@ std::unique_ptr<Condition> PlanetEnvironment::Clone() const {
 ///////////////////////////////////////////////////////////
 // Species                                               //
 ///////////////////////////////////////////////////////////
-Species::Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+Species::Species(string_vref_ptr_vec&& names) :
     Condition(CondsRTSI(names)),
     m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
 {}
 
 Species::Species() :
-    Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>{})
+    Species(string_vref_ptr_vec{})
 {}
 
 bool Species::operator==(const Condition& rhs) const {
@@ -4710,7 +4710,7 @@ std::unique_ptr<Condition> Enqueued::Clone() const
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-FocusType::FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names) :
+FocusType::FocusType(string_vref_ptr_vec&& names) :
     Condition(CondsRTSI(names)),
     m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
@@ -4874,7 +4874,7 @@ std::unique_ptr<Condition> FocusType::Clone() const
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-StarType::StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types) :
+StarType::StarType(startype_vref_ptr_vec&& types) :
     Condition(CondsRTSI(types)),
     m_types(ExcludeNullsIntoVector(std::move(types)))
 {}

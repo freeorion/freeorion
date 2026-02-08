@@ -2038,7 +2038,8 @@ PlanetType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetType>>>) -> P
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API PlanetSize final : public Condition {
-    explicit PlanetSize(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>&& sizes);
+    using ptsize_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetSize>>>;
+    explicit PlanetSize(ptsize_vref_ptr_vec&& sizes);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
@@ -2056,14 +2057,15 @@ struct FO_COMMON_API PlanetSize final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetSize>>> m_sizes;
+    ptsize_vref_ptr_vec m_sizes;
 };
 
 /** Matches all Planet objects that have one of the PlanetEnvironments in
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
 struct FO_COMMON_API PlanetEnvironment final : public Condition {
-    explicit PlanetEnvironment(std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>&& environments,
+    using pe_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef< ::PlanetEnvironment>>>;
+    explicit PlanetEnvironment(pe_vref_ptr_vec&& environments,
                                std::unique_ptr<ValueRef::ValueRef<std::string>>&& species_name_ref = nullptr);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override {
@@ -2089,7 +2091,7 @@ struct FO_COMMON_API PlanetEnvironment final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::PlanetEnvironment>>> m_environments;
+    pe_vref_ptr_vec m_environments;
     std::unique_ptr<ValueRef::ValueRef<std::string>> m_species_name;
 };
 
@@ -2097,7 +2099,8 @@ private:
   * Note that all Building object which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Species final : public Condition {
-    explicit Species(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
+    explicit Species(string_vref_ptr_vec&& names);
     Species();
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
@@ -2118,7 +2121,7 @@ struct FO_COMMON_API Species final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    string_vref_ptr_vec m_names;
     const bool m_names_local_invariant;
 };
 
@@ -2194,7 +2197,8 @@ private:
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API FocusType final : public Condition {
-    explicit FocusType(std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>&& names);
+    using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
+    explicit FocusType(string_vref_ptr_vec&& names);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const FocusType& rhs) const;
@@ -2215,14 +2219,15 @@ struct FO_COMMON_API FocusType final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> m_names;
+    string_vref_ptr_vec m_names;
     const bool m_names_local_invariant;
 };
 
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API StarType final : public Condition {
-    explicit StarType(std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>&& types);
+    using startype_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef< ::StarType>>>;
+    explicit StarType(startype_vref_ptr_vec&& types);
     explicit StarType(std::unique_ptr<ValueRef::ValueRef<::StarType>>&& type);
     explicit StarType(::StarType type);
 
@@ -2244,7 +2249,7 @@ struct FO_COMMON_API StarType final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<std::unique_ptr<ValueRef::ValueRef<::StarType>>> m_types;
+    startype_vref_ptr_vec m_types;
 };
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
