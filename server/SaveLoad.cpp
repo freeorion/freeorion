@@ -129,11 +129,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
 
     // reinterpret save game data as header data for uncompressed header
-    std::vector<PlayerSaveHeaderData> player_save_header_data;
-    player_save_header_data.reserve(player_save_game_data.size());
-    for (const PlayerSaveGameData& psgd : player_save_game_data)
-        player_save_header_data.push_back(psgd);
-
+    const std::vector<PlayerSaveHeaderData> player_save_header_data(player_save_game_data.begin(),
+                                                                    player_save_game_data.end());
 
     int bytes_written = 0;
     std::streampos pos_before_writing;
@@ -379,12 +376,9 @@ namespace {
 
         std::string compressed_str;
         try {
-            if (buffer_size > 0) {
-                DebugLogger() << "Based on header info for compressed state string, attempting to reserve: " << buffer_size << " bytes";
-                compressed_str.reserve(buffer_size);
-            } else {
-                compressed_str.reserve(std::pow(2.0, 26.0));
-            }
+            buffer_size = (buffer_size > 0) ? buffer_size : Pow(2, 26);
+            DebugLogger() << "Based on header info for compressed state string, attempting to reserve: " << buffer_size << " bytes";
+            compressed_str.reserve(buffer_size);
         } catch (...) {
             DebugLogger() << "Unable to preallocate full deserialization buffers. Attempting deserialization with dynamic buffer allocation.";
         }
