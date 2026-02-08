@@ -92,10 +92,12 @@ except ModuleNotFoundError:
     pass
 
 BuildingType( # type: ignore[reportUnboundVariable]
+    colony=True,
     name="BLD_COL_${name}",
     description="BLD_COL_${name}_DESC",
     buildcost=${cost} * COLONY_UPKEEP_MULTIPLICATOR * BUILDING_COST_MULTIPLIER * COLONIZATION_POLICY_MULTIPLIER,
     buildtime=${time},
+    species="${id}",
     tags=[ ${tags} ],
     location =
         Planet() &
@@ -236,8 +238,8 @@ exclude_parallel_colonies = ""
 for species in chain((x[0] for x in species_list), species_extinct_techs.keys()):
     name = species[3:]
     exclude_parallel_colonies += f"""\
-        &~Contains( IsBuilding (name = ["BLD_COL_{name}"]) & OwnedBy (empire = Source.Owner))
-        &~ Enqueued (type = BuildBuilding, name = "BLD_COL_{name}")
+        & ~Contains( IsBuilding (name = ["BLD_COL_{name}"]) & OwnedBy (empire = Source.Owner))
+        & ~Enqueued(type = BuildBuilding, name = "BLD_COL_{name}")
 """
 # remove indent from first line and newline at the end to match format expected by the template
 exclude_parallel_colonies = exclude_parallel_colonies[8:-1]
@@ -279,8 +281,8 @@ for sp_id, sp_graphic in species_list:
             )
         else:
             data["time"] = t_buildtime.substitute(
-                t_factor=species_time_factor.get(sp_id, buildtime_factor_default),
-                stat_condition=t_buildtime_stat_cond.substitute(id=sp_id),
+                t_factor = species_time_factor.get(sp_id, buildtime_factor_default),
+                stat_condition = t_buildtime_stat_cond.substitute(id=sp_id),
             )
             data["species_condition"] = t_species_cond.substitute(id=sp_id)
 

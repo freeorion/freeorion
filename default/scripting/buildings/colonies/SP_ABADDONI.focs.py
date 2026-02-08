@@ -11,6 +11,7 @@ except ModuleNotFoundError:
     pass
 
 BuildingType(  # pyrefly: ignore[unbound-name]
+    colony=True,
     name="BLD_COL_ABADDONI",
     description="BLD_COL_ABADDONI_DESC",
     buildcost=50 * COLONY_UPKEEP_MULTIPLICATOR * BUILDING_COST_MULTIPLIER * COLONIZATION_POLICY_MULTIPLIER,

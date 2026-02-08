@@ -15,6 +15,10 @@ public:
     [[nodiscard]] bool        HasTag(std::string_view name) const;
     [[nodiscard]] bool        HasTag(std::string_view name, const ScriptingContext&) const override { return HasTag(name); }
 
+    [[nodiscard]] bool               IsColony() const;
+    [[nodiscard]] bool               IsShipYard() const;
+    [[nodiscard]] const std::string& SpeciesName() const; // species name of building's type, relevant for colony buildings
+
     [[nodiscard]] bool        HostileToEmpire(int empire_id, const EmpireManager& empires) const override;
     [[nodiscard]] std::string Dump(uint8_t ntabs = 0) const override;
     [[nodiscard]] int         ContainerObjectID() const noexcept override { return m_planet_id; }

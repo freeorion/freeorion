@@ -7,14 +7,6 @@
 #include <boost/signals2/signal.hpp>
 
 
-/** @content_tag{CTRL_SHIPYARD} Building is to be treated as a shipyard when formatting containing objects
- * 
- * For objects containing a building with this tag:
- * * Planets have an underlined name in the sidepanel
- * * Systems have their name underlined on the map and sidepanel
- */
-const std::string TAG_SHIPYARD = "CTRL_SHIPYARD";
-
 class FleetButton;
 class RotatingGraphic;
 

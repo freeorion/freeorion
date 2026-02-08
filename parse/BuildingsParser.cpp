@@ -28,9 +28,8 @@ namespace {
         auto description = boost::python::extract<std::string>(kw["description"])();
 
         auto capture_result = CaptureResult::CR_CAPTURE;
-        if (kw.has_key("captureresult")) {
+        if (kw.has_key("captureresult"))
             capture_result = boost::python::extract<enum_wrapper<CaptureResult>>(kw["captureresult"])().value;
-        }
 
         auto icon = boost::python::extract<std::string>(kw["icon"])();
 
@@ -59,6 +58,16 @@ namespace {
         if (kw.has_key("producible"))
             producible = boost::python::extract<bool>(kw["producible"])();
 
+        BuildingType::SubType subtype = BuildingType::SubType::NONE;
+        if (kw.has_key("colony") && boost::python::extract<bool>(kw["colony"])())
+            subtype = BuildingType::SubType::COLONY;
+        else if (kw.has_key("shipyard") && boost::python::extract<bool>(kw["shipyard"])())
+            subtype = BuildingType::SubType::SHIPYARD;
+
+        std::string species;
+        if (kw.has_key("species"))
+            species =  boost::python::extract<std::string>(kw["species"])();
+
         std::set<std::string> tags;
         if (kw.has_key("tags")) {
             boost::python::stl_input_iterator<std::string> tags_begin(kw["tags"]), tags_end;
@@ -66,18 +75,16 @@ namespace {
         }
 
         std::unique_ptr<Condition::Condition> location;
-        if (kw.has_key("location")) {
+        if (kw.has_key("location"))
             location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["location"])().condition);
-        } else {
+        else
             location = std::make_unique<Condition::All>();
-        }
 
         std::unique_ptr<Condition::Condition> enqueue_location;
-        if (kw.has_key("enqueuelocation")) {
+        if (kw.has_key("enqueuelocation"))
             enqueue_location = ValueRef::CloneUnique(boost::python::extract<condition_wrapper>(kw["enqueuelocation"])().condition);
-        } else {
+        else
             enqueue_location = std::make_unique<Condition::All>();
-        }
 
         std::vector<std::unique_ptr<Effect::EffectsGroup>> effectsgroups;
         boost::python::stl_input_iterator<effect_group_wrapper> effectsgroups_begin(kw["effectsgroups"]), effectsgroups_end;
@@ -110,7 +117,10 @@ namespace {
                 std::move(enqueue_location)
             },
             capture_result,
-            std::move(icon));
+            std::move(icon),
+            subtype,
+            std::move(species)
+        );
 
         buildings_.emplace(std::move(name), std::move(building_type));
 

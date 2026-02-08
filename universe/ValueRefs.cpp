@@ -1353,6 +1353,10 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             auto ship = static_cast<const Ship*>(object);
             return ship->SpeciesName();
 
+        } else if (object->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
+            auto building = static_cast<const Building*>(object);
+            return building->SpeciesName();
+
         } else if (object->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
             auto fighter = static_cast<const Fighter*>(object);
             return fighter->SpeciesName();

@@ -1857,11 +1857,8 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id
                                            [this](const auto& ids) { return FlexibleContains(ids, m_planet_id); });
 
     const auto& known_destroyed_object_ids = u.EmpireKnownDestroyedObjectIDs(empire_id);
-    const auto not_destroyed_is_shipyard_tag = [&known_destroyed_object_ids](const Building* building) {
-        return building &&
-            !known_destroyed_object_ids.contains(building->ID()) &&
-            building->HasTag(TAG_SHIPYARD);
-    };
+    const auto not_destroyed_is_shipyard_tag = [&known_destroyed_object_ids](const Building* building)
+    { return building && building->IsShipYard() && !known_destroyed_object_ids.contains(building->ID()); };
     const bool has_shipyard = range_any_of(objects.findRaw<const Building>(planet->BuildingIDs()),
                                            not_destroyed_is_shipyard_tag);
 
