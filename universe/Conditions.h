@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "Building.h"
+#include "BuildingType.h"
 #include "ConditionAll.h"
 #include "ConditionSource.h"
 #include "Condition.h"
@@ -966,9 +967,12 @@ private:
   * Type Condition. */
 struct FO_COMMON_API Building final : public Condition {
     using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
-    Building(string_vref_ptr_vec&& type_names);
-    Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& type_name);
-    Building(std::string type_name);
+    explicit Building(string_vref_ptr_vec&& type_names,
+                      BuildingType::SubType subtype = BuildingType::SubType::NONE);
+    explicit Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& type_name,
+                      BuildingType::SubType subtype = BuildingType::SubType::NONE);
+    explicit Building(std::string type_name,
+                      BuildingType::SubType subtype = BuildingType::SubType::NONE);
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
     [[nodiscard]] bool operator==(const Building& rhs) const;
@@ -992,6 +996,7 @@ private:
 
     string_vref_ptr_vec m_type_names;
     const bool m_names_local_invariant;
+    const BuildingType::SubType m_subtype_requirement = BuildingType::SubType::NONE;
 };
 
 /** Matches all Field objects that are one of the field types specified in \a names. */

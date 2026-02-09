@@ -429,44 +429,44 @@ BOOST_AUTO_TEST_CASE(parse_species) {
                 {"FOCUS_LOGISTICS", "FOCUS_LOGISTICS_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("SHP_INTSTEL_LOG")), "icons/focus/supply.png"},
                 {"FOCUS_STOCKPILE", "FOCUS_STOCKPILE_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("PRO_GENERIC_SUPPLIES")), "icons/focus/stockpile.png"},
                 {"FOCUS_STEALTH", "FOCUS_STEALTH_DESC", std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_PLANET_CLOAK")}))),
+                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_PLANET_CLOAK")),
                     std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("DEF_PLANET_CLOAK"))
                     )
                 ), "icons/focus/stealth.png"},
                 {"FOCUS_BIOTERROR", "FOCUS_BIOTERROR_DESC", std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_BIOTERROR_PROJECTOR")}))),
+                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_BIOTERROR_PROJECTOR")),
                     std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("GRO_BIOTERROR"))
                     )
                 ), "icons/focus/bioterror.png"},
                 {"FOCUS_STARGATE_SEND", "FOCUS_STARGATE_SEND_DESC", std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_STARGATE")}))),
+                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_STARGATE")),
                     std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
                     )
                 ), "icons/focus/stargate_send.png"},
                 {"FOCUS_STARGATE_RECEIVE", "FOCUS_STARGATE_RECEIVE_DESC", std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_STARGATE")}))),
+                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_STARGATE")),
                     std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
                     )
                 ), "icons/focus/stargate_receive.png"},
                 {"FOCUS_PLANET_DRIVE", "FOCUS_PLANET_DRIVE_DESC", std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_PLANET_DRIVE")}))),
+                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_PLANET_DRIVE")),
                     std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_PLANET_DRIVE"))
                     )
                 ), "icons/building/planetary_stardrive.png"},
                 {"FOCUS_DISTORTION", "FOCUS_DISTORTION_DESC", std::make_unique<Condition::Or>(
-                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_SPATIAL_DISTORT_GEN")}))),
+                    std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_SPATIAL_DISTORT_GEN")),
                     std::make_unique<Condition::And>(
-                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Constant<std::string>>("BLD_TRANSFORMER")}))),
+                        std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("LRN_SPATIAL_DISTORT_GEN"))
                     )
                 ), "icons/focus/distortion.png"},

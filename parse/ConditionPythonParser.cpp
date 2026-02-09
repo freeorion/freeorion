@@ -513,7 +513,16 @@ namespace {
             }
         }
 
-        return make_wrapped<Condition::Building>(std::move(names));
+        BuildingType::SubType subtype = BuildingType::SubType::NONE;
+        if (kw.has_key("subtype")) {
+            const auto subtype_name = extract<std::string>(kw["subtype"])();
+            if (subtype_name == "colony")
+                subtype = BuildingType::SubType::COLONY;
+            else if (subtype_name == "shipyard")
+                subtype = BuildingType::SubType::SHIPYARD;
+        }
+
+        return make_wrapped<Condition::Building>(std::move(names), subtype);
     }
 
     condition_wrapper insert_location_(const boost::python::tuple& args, const boost::python::dict& kw) {
