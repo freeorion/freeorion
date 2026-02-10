@@ -13,7 +13,7 @@ jobs:
         id: download-sdk
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-Win32.zip
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/FreeOrionSDK_17_MSVC-v143-x64.zip
           target: ../
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.3.1
@@ -26,7 +26,7 @@ jobs:
           unzip -q ../${{ steps.download-sdk.outputs.filename }} -d ..
           mkdir build
           pushd build
-          cmake -G "Visual Studio 17 2022" -T "v143" -A Win32 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
+          cmake -G "Visual Studio 17 2022" -T "v143" -A x64 -DBUILD_TESTING=On -DBUILD_CLIENT_GODOT=On -DCMAKE_C_FLAGS=/MP -DCMAKE_CXX_FLAGS=/MP ..
       - name: Build
         shell: pwsh
         run: |
@@ -49,26 +49,26 @@ jobs:
         id: download-godot
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/godotengine/godot-builds/releases/download/3.2.3-stable/Godot_v3.2.3-stable_win32.exe.zip 
+          url: https://github.com/godotengine/godot-builds/releases/download/3.2.3-stable/Godot_v3.2.3-stable_win64.exe.zip 
           target: ../
       - name: Download Mesa
         id: download-mesa
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://downloads.fdossena.com/geth.php?r=mesa-latest
+          url: https://downloads.fdossena.com/geth.php?r=mesa64-latest
           target: ../
       - name: Install Godot and dependencies
         shell: pwsh
         run: |
           unzip -q ../${{ steps.download-godot.outputs.filename }} -d build/Release
-          mkdir build/Release/Godot_v3.2.3-stable_win32.exe.local
-          pushd build/Release/Godot_v3.2.3-stable_win32.exe.local
+          mkdir build/Release/Godot_v3.2.3-stable_win64.exe.local
+          pushd build/Release/Godot_v3.2.3-stable_win64.exe.local
           7z e ../../../../${{ steps.download-mesa.outputs.filename }}
       - name: Test Godot
         shell: pwsh
         run: |
           $env:Path += ";$($pwd.Path)\\build\\Release"
-          .\build\Release\Godot_v3.2.3-stable_win32.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
+          .\build\Release\Godot_v3.2.3-stable_win64.exe --no-window --disable-render-loop --video-driver GLES2 --verbose -s --path godot addons/gut/gut_cmdln.gd -gdir=res://test/ -ginclude_subdirs -gexit
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
