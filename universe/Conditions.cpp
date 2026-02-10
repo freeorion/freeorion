@@ -2187,6 +2187,10 @@ Building::Building(std::string type_name, BuildingType::SubType subtype) :
     Building(std::make_unique<ValueRef::Constant<std::string>>(std::move(type_name)), subtype)
 {}
 
+Building::Building(BuildingType::SubType subtype) : 
+    Building(string_vref_ptr_vec{}, subtype)
+{}
+
 bool Building::operator==(const Condition& rhs) const {
     if (this == std::addressof(rhs))
         return true;
@@ -4431,6 +4435,7 @@ Enqueued::Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
     Condition(CondsRTSI(design_id, empire_id, low, high)),
     m_build_type(BuildType::BT_SHIP),
+    m_building_subtype(BuildingType::SubType::NONE),
     m_design_id(std::move(design_id)),
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
@@ -4452,6 +4457,7 @@ Enqueued::Enqueued(BuildType build_type,
                    std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
     Condition(CondsRTSI(name, empire_id, low, high)),
     m_build_type(build_type),
+    m_building_subtype(BuildingType::SubType::NONE),
     m_name(std::move(name)),
     m_empire_id(std::move(empire_id)),
     m_low(std::move(low)),
@@ -4462,9 +4468,25 @@ Enqueued::Enqueued(BuildType build_type,
                            (!m_high || m_high->LocalCandidateInvariant()))
 {}
 
+Enqueued::Enqueued(BuildingType::SubType subtype,
+         std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id,
+         std::unique_ptr<ValueRef::ValueRef<int>>&& low,
+         std::unique_ptr<ValueRef::ValueRef<int>>&& high) :
+    Condition(CondsRTSI(empire_id, low, high)),
+    m_build_type(BuildType::BT_BUILDING),
+    m_building_subtype(subtype),
+    m_empire_id(std::move(empire_id)),
+    m_low(std::move(low)),
+    m_high(std::move(high)),
+    m_refs_local_invariant((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
+                           (!m_low || m_low->LocalCandidateInvariant()) &&
+                           (!m_high || m_high->LocalCandidateInvariant()))
+{}
+
 Enqueued::Enqueued(const Enqueued& rhs) :
     Condition(rhs),
     m_build_type(rhs.m_build_type),
+    m_building_subtype(rhs.m_building_subtype),
     m_name(ValueRef::CloneUnique(rhs.m_name)),
     m_design_id(ValueRef::CloneUnique(rhs.m_design_id)),
     m_empire_id(ValueRef::CloneUnique(rhs.m_empire_id)),
@@ -4487,18 +4509,19 @@ bool Enqueued::operator==(const Enqueued& rhs_) const {
         return false;
 
     CHECK_COND_VREF_MEMBER(m_name)
-        CHECK_COND_VREF_MEMBER(m_design_id)
-        CHECK_COND_VREF_MEMBER(m_empire_id)
-        CHECK_COND_VREF_MEMBER(m_low)
-        CHECK_COND_VREF_MEMBER(m_high)
+    CHECK_COND_VREF_MEMBER(m_design_id)
+    CHECK_COND_VREF_MEMBER(m_empire_id)
+    CHECK_COND_VREF_MEMBER(m_low)
+    CHECK_COND_VREF_MEMBER(m_high)
 
-        return true;
+    return m_building_subtype == rhs_.m_building_subtype;
 }
 
 namespace {
     [[nodiscard]] int NumberOnQueue(const ProductionQueue& queue, const BuildType build_type,
                                     const int location_id, const Universe& universe,
-                                    const std::string& name = "", const int design_id = INVALID_DESIGN_ID)
+                                    const std::string& name = "", const int design_id = INVALID_DESIGN_ID,
+                                    const BuildingType::SubType sub_type = BuildingType::SubType::NONE)
     {
         int retval = 0;
         for (const auto& element : queue) {
@@ -4513,6 +4536,21 @@ namespace {
                 // or any building if no name specified
                 if (!name.empty() && element.item.name != name)
                     continue;
+
+                // if no subtype specified, any building is OK
+                if (sub_type != BuildingType::SubType::NONE) {
+                    // get subtype of building on queue...
+                    const BuildingType* bt = GetBuildingType(element.item.name);
+                    if (!bt)
+                        continue;
+
+                    // if subtype of building on queue does not match specified subtype, doesn't count
+                    if (sub_type == BuildingType::SubType::COLONY && !bt->IsColony())
+                        continue;
+                    if (sub_type == BuildingType::SubType::SHIPYARD && !bt->IsShipYard())
+                        continue;
+                }
+
             } else if (build_type == BuildType::BT_SHIP) {
                 if (design_id != INVALID_DESIGN_ID) {
                     // if looking for ships, accept design by id number...
@@ -4532,9 +4570,11 @@ namespace {
     }
 
     struct EnqueuedSimpleMatch {
-        EnqueuedSimpleMatch(BuildType build_type, const std::string& name, int design_id,
-                            int empire_id, int low, int high, const ScriptingContext& context) noexcept :
+        EnqueuedSimpleMatch(BuildType build_type, BuildingType::SubType sub_type,
+                            const std::string& name, int design_id, int empire_id,
+                            int low, int high, const ScriptingContext& context) noexcept :
             m_build_type(build_type),
+            m_building_subtype(sub_type),
             m_name(name),
             m_design_id(design_id),
             m_empire_id(empire_id),
@@ -4567,13 +4607,14 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        const BuildType         m_build_type;
-        const std::string&      m_name;
-        const int               m_design_id;
-        const int               m_empire_id;
-        const int               m_low;
-        const int               m_high;
-        const ScriptingContext& m_context;
+        const BuildType             m_build_type;
+        const BuildingType::SubType m_building_subtype;
+        const std::string&          m_name;
+        const int                   m_design_id;
+        const int                   m_empire_id;
+        const int                   m_low;
+        const int                   m_high;
+        const ScriptingContext&     m_context;
     };
 }
 
@@ -4602,7 +4643,8 @@ void Enqueued::Eval(const ScriptingContext& parent_context, ObjectSet& matches, 
         // need to test each candidate separately using EvalImpl and EnqueuedSimpleMatch
         // because the test checks that something is enqueued at the candidate location
         EvalImpl(matches, non_matches, search_domain,
-                 EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high, parent_context));
+                 EnqueuedSimpleMatch(m_build_type, m_building_subtype, name, design_id,
+                                     empire_id, low, high, parent_context));
     } else {
         // re-evaluate allowed building types range for each candidate object
         Condition::Eval(parent_context, matches, non_matches, search_domain);
@@ -4635,6 +4677,7 @@ std::string Enqueued::Description(bool negated) const {
         what_str = m_name->Description();
         if (m_name->ConstantExpr() && UserStringExists(what_str))
             what_str = UserString(what_str);
+        // TODO: include subtype
     } else if (m_design_id) {
         what_str = m_design_id->ConstantExpr() ?
                     std::to_string(m_design_id->Eval()) :
@@ -4669,6 +4712,10 @@ std::string Enqueued::Dump(uint8_t ntabs) const {
         retval += " type = Building";
         if (m_name)
             retval += " name = " + m_name->Dump(ntabs);
+        if (m_building_subtype != BuildingType::SubType::NONE) {
+            retval += " subtype = " + (m_building_subtype == BuildingType::SubType::COLONY) ? "colony" :
+                                      (m_building_subtype == BuildingType::SubType::SHIPYARD) ? "shipyard" : "???";
+        }
     } else if (m_build_type == BuildType::BT_SHIP) {
         retval += " type = Ship";
         if (m_name)
@@ -4700,7 +4747,8 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
     // special case, see Eval comment
     if (!m_low && !m_high)
         low = 1;
-    return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high, local_context)(candidate);
+    return EnqueuedSimpleMatch(m_build_type, m_building_subtype, name, design_id,
+                               empire_id, low, high, local_context)(candidate);
 }
 
 ObjectSet Enqueued::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context) const

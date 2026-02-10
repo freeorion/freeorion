@@ -967,6 +967,7 @@ private:
   * Type Condition. */
 struct FO_COMMON_API Building final : public Condition {
     using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
+    explicit Building(BuildingType::SubType subtype = BuildingType::SubType::NONE);
     explicit Building(string_vref_ptr_vec&& type_names,
                       BuildingType::SubType subtype = BuildingType::SubType::NONE);
     explicit Building(std::unique_ptr<ValueRef::ValueRef<std::string>>&& type_name,
@@ -2168,6 +2169,10 @@ struct FO_COMMON_API Enqueued final : public Condition {
              std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
              std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
              std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
+    explicit Enqueued(BuildingType::SubType subtype,
+                      std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
+                      std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
+                      std::unique_ptr<ValueRef::ValueRef<int>>&& high = nullptr);
     explicit Enqueued(std::unique_ptr<ValueRef::ValueRef<int>>&& design_id,
                       std::unique_ptr<ValueRef::ValueRef<int>>&& empire_id = nullptr,
                       std::unique_ptr<ValueRef::ValueRef<int>>&& low = nullptr,
@@ -2193,12 +2198,13 @@ struct FO_COMMON_API Enqueued final : public Condition {
 private:
     [[nodiscard]] bool Match(const ScriptingContext& local_context) const override;
 
-    BuildType m_build_type;
-    std::unique_ptr<ValueRef::ValueRef<std::string>>    m_name;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_design_id;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_empire_id;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_low;
-    std::unique_ptr<ValueRef::ValueRef<int>>            m_high;
+    const BuildType m_build_type;
+    const BuildingType::SubType                      m_building_subtype;
+    std::unique_ptr<ValueRef::ValueRef<std::string>> m_name;
+    std::unique_ptr<ValueRef::ValueRef<int>>         m_design_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>         m_empire_id;
+    std::unique_ptr<ValueRef::ValueRef<int>>         m_low;
+    std::unique_ptr<ValueRef::ValueRef<int>>         m_high;
     const bool m_refs_local_invariant;
 };
 
