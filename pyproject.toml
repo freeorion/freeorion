@@ -53,6 +53,9 @@ unknown-name = "ignore"
 # Limitations for FOCS skeletons, it would be nice to solve this
 "default/scripting/*" =  ["F403", "F405"]
 
+# one import is used in other species scripts, and don't want to special case the generator script
+"default/scripting/buildings/colonies/SP_EXOBOT.focs.py" = ["F401"]
+
 # Since imports are empty we need to use asterisk import between skeletons
 "default/scripting/focs/*" = ["F405"]
 "default/scripting/game_rules.focs.py"=["F821"]
