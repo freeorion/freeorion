@@ -11,7 +11,6 @@ Run black and ruff to fix formatting.
 import os
 import os.path
 import string
-from itertools import chain
 
 # List of all colonizable species in game: definition key, graphic file(relative to default/data/art)
 from typing import Any
@@ -83,15 +82,21 @@ t_main = string.Template(
 #                     Instead modify and execute col_bld_gen.py and use the result.
 
 from macros.base_prod import BUILDING_COST_MULTIPLIER
-from macros.upkeep import COLONY_UPKEEP_MULTIPLICATOR, COLONIZATION_POLICY_MULTIPLIER
-from macros.misc import MIN_RECOLONIZING_SIZE, LIFECYCLE_MANIP_POPULATION_EFFECTS
+from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
+from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    # Stub for type checker only
+    def BuildingType(*args, **kwargs):
+        pass
 
 try:
     from focs._buildings import *
 except ModuleNotFoundError:
     pass
 
-BuildingType( # type: ignore[reportUnboundVariable]
+BuildingType(  # pyright: ignore[unbound-name]
     colony=True,
     name="BLD_COL_${name}",
     description="BLD_COL_${name}_DESC",
@@ -108,10 +113,11 @@ BuildingType( # type: ignore[reportUnboundVariable]
     ,
     enqueuelocation =
         Planet() &
-        OwnedBy( empire = Source.Owner)&
-        Population (high = 0)&
-        ~Planet (environment = [Uninhabitable], species = "${id}")
-        ${exclude_parallel_colonies}
+        OwnedBy(empire = Source.Owner) &
+        Population(high = 0) &
+        ~Planet(environment = [Uninhabitable], species = "${id}") &
+        ~Contains(IsBuilding(subtype="colony") & OwnedBy(empire=Source.Owner)) &
+        ~Enqueued(subtype="colony")
         ${species_condition}
     ,
     effectsgroups = [
@@ -147,13 +153,13 @@ BuildingType( # type: ignore[reportUnboundVariable]
 
 # Location and Enqueued condition template
 t_species_cond = string.Template(
-    """&ResourceSupplyConnected( empire = Source.Owner, condition =
+    """&ResourceSupplyConnected(empire = Source.Owner, condition =
             Planet()&
             OwnedBy( empire = Source.Owner)&
             HasSpecies( name = ["${id}"])&
-            Population (low = MIN_RECOLONIZING_SIZE)&
-            Happiness (low = 5))
-        """
+            Population( low = MIN_RECOLONIZING_SIZE)&
+            Happiness( low = 5)
+        )"""
 )
 
 # Location and Enqueued condition template for extinct species
@@ -169,11 +175,11 @@ t_species_cond_extinct = string.Template(
                 )|
                 (
                     OwnerHasTech( name = "${tech_name}")&
-                    HasSpecial (name = "EXTINCT_${name}_SPECIAL")&
+                    HasSpecial(name = "EXTINCT_${name}_SPECIAL")&
                     Contains( IsBuilding( name = ["BLD_XENORESURRECTION_LAB"]))
                 )
-            ))
-        """
+            )
+        )"""
 )
 
 # buildtime statistic condition template
@@ -212,8 +218,8 @@ t_buildtime_stat_cond_extinct = string.Template(
 t_buildtime = string.Template(
     """${t_factor} * MaxOf(float, 5.0, 1.0 +
         (Statistic(float, Min, value = ShortestPath( Target.SystemID, LocalCandidate.SystemID),
-            ${stat_condition}
-        )) / (60
+            ${stat_condition})
+        ) / (60
              + 20 * (StatisticIf(int, condition =
                  ( IsSource & OwnerHasTech (name = "SHP_MIL_ROBO_CONT")) |
                  ( IsSource & OwnerHasTech (name = "SHP_SPACE_FLUX_BUBBLE")) |
@@ -234,16 +240,6 @@ t_buildtime = string.Template(
     )"""
 )
 
-exclude_parallel_colonies = ""
-for species in chain((x[0] for x in species_list), species_extinct_techs.keys()):
-    name = species[3:]
-    exclude_parallel_colonies += f"""\
-        & ~Contains( IsBuilding (name = ["BLD_COL_{name}"]) & OwnedBy (empire = Source.Owner))
-        & ~Enqueued(type = BuildBuilding, name = "BLD_COL_{name}")
-"""
-# remove indent from first line and newline at the end to match format expected by the template
-exclude_parallel_colonies = exclude_parallel_colonies[8:-1]
-
 outpath = os.getcwd()
 print("Output folder: %s" % outpath)
 
@@ -261,7 +257,6 @@ for sp_id, sp_graphic in species_list:
         "graphic": sp_graphic,
         "cost": species_buildcost.get(sp_id, buildcost_default),
         "time": "",
-        "exclude_parallel_colonies": exclude_parallel_colonies,
         "species_condition": "",
     }
 
@@ -281,8 +276,8 @@ for sp_id, sp_graphic in species_list:
             )
         else:
             data["time"] = t_buildtime.substitute(
-                t_factor = species_time_factor.get(sp_id, buildtime_factor_default),
-                stat_condition = t_buildtime_stat_cond.substitute(id=sp_id),
+                t_factor=species_time_factor.get(sp_id, buildtime_factor_default),
+                stat_condition=t_buildtime_stat_cond.substitute(id=sp_id),
             )
             data["species_condition"] = t_species_cond.substitute(id=sp_id)
 

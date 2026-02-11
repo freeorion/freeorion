@@ -1,16 +1,25 @@
 # For long term changes - Do not modify this definition directly
 #                     Instead modify and execute col_bld_gen.py and use the result.
 
+from typing import TYPE_CHECKING
+
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
 from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR
+
+if TYPE_CHECKING:
+    # Stub for type checker only
+    def BuildingType(*args, **kwargs):
+        pass
+
 
 try:
     from focs._buildings import *
 except ModuleNotFoundError:
     pass
 
-BuildingType(  # pyrefly: ignore[unbound-name]
+BuildingType(  # pyright: ignore[unbound-name]
+    colony=True,
     name="BLD_COL_HUMAN",
     description="BLD_COL_HUMAN_DESC",
     buildcost=50 * COLONY_UPKEEP_MULTIPLICATOR * BUILDING_COST_MULTIPLIER * COLONIZATION_POLICY_MULTIPLIER,
@@ -60,6 +69,7 @@ BuildingType(  # pyrefly: ignore[unbound-name]
             + 10 * (StatisticIf(int, condition=IsSource & OwnerHasTech(name="SHP_INTSTEL_LOG")))
         ),
     ),
+    species="SP_HUMAN",
     tags=["SP_HUMAN"],
     location=Planet()
     & OwnedBy(empire=Source.Owner)
