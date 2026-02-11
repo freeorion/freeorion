@@ -11,6 +11,9 @@ def BuildingType(
     description: str,
     buildcost: _FloatParam,
     buildtime: _FloatParam,  # https://github.com/freeorion/freeorion/pull/5160#discussion_r2020142743
+    colony: bool = False,
+    shipyard: bool = False,
+    species: str = "",
     location: _Condition,
     effectsgroups: list[_EffectGroup],
     icon: str,
