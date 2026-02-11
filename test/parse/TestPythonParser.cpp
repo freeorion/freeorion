@@ -347,7 +347,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(831, CheckSums::GetCheckSum(species.Name()));
         BOOST_REQUIRE_EQUAL(1218, CheckSums::GetCheckSum(species.Description()));
         BOOST_REQUIRE_EQUAL(53880, CheckSums::GetCheckSum(species.GameplayDescription()));
-        BOOST_REQUIRE_EQUAL(325509, CheckSums::GetCheckSum(species.Foci()));
+        BOOST_REQUIRE_EQUAL(325629, CheckSums::GetCheckSum(species.Foci()));
         BOOST_REQUIRE_EQUAL(1135, CheckSums::GetCheckSum(species.DefaultFocus()));
         BOOST_REQUIRE_EQUAL(16966, CheckSums::GetCheckSum(species.Likes()));
         BOOST_REQUIRE_EQUAL(16450, CheckSums::GetCheckSum(species.Dislikes()));
@@ -387,7 +387,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 
         BOOST_REQUIRE_EQUAL(113801, CheckSums::GetCheckSum(species.AnnexationCost()));
 
-        BOOST_REQUIRE_EQUAL(8239655, CheckSums::GetCheckSum(species.Effects()));
+        BOOST_REQUIRE_EQUAL(8239795, CheckSums::GetCheckSum(species.Effects()));
         BOOST_REQUIRE_EQUAL(14018, CheckSums::GetCheckSum(species.Location()));
         BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.Playable()));
         BOOST_REQUIRE_EQUAL(0, CheckSums::GetCheckSum(species.Native()));
@@ -401,7 +401,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6807904, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(6808164, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -683,9 +683,9 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22510, location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(22520, location_cond->GetCheckSum());
     BOOST_CHECK_EQUAL(3267, location_conds[0]->GetCheckSum());
-    BOOST_CHECK_EQUAL(9108, location_conds[1]->GetCheckSum());
+    BOOST_CHECK_EQUAL(9118, location_conds[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(5108, location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, location_conds[3]->GetCheckSum());
 
@@ -697,9 +697,9 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK(dynamic_cast<const Condition::Not*>(test_location_conds[1]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::EmpireAffiliation*>(test_location_conds[2]) != nullptr);
     BOOST_CHECK(dynamic_cast<const Condition::StarType*>(test_location_conds[3]) != nullptr);
-    BOOST_CHECK_EQUAL(22510, test_location_cond->GetCheckSum());
+    BOOST_CHECK_EQUAL(22520, test_location_cond->GetCheckSum());
     BOOST_CHECK_EQUAL(3267, test_location_conds[0]->GetCheckSum());
-    BOOST_CHECK_EQUAL(9108, test_location_conds[1]->GetCheckSum());
+    BOOST_CHECK_EQUAL(9118, test_location_conds[1]->GetCheckSum());
     BOOST_CHECK_EQUAL(5108, test_location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, test_location_conds[3]->GetCheckSum());
 
