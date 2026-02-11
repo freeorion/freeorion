@@ -4677,32 +4677,33 @@ std::string Enqueued::Description(bool negated) const {
         what_str = m_name->Description();
         if (m_name->ConstantExpr() && UserStringExists(what_str))
             what_str = UserString(what_str);
-        // TODO: include subtype
     } else if (m_design_id) {
         what_str = m_design_id->ConstantExpr() ?
                     std::to_string(m_design_id->Eval()) :
                     m_design_id->Description();
     }
+    std::string subtype_str;
+    if (m_building_subtype == BuildingType::SubType::COLONY)
+        subtype_str = UserString("BLD_SUBTYPE_COLONY");
+    else if (m_building_subtype == BuildingType::SubType::SHIPYARD)
+        subtype_str = UserString("BLD_SUBTYPE_SHIPYARD");
+
     std::string description_str;
-    switch (m_build_type) {
-    case BuildType::BT_BUILDING:    description_str = (!negated)
-                                    ? UserString("DESC_ENQUEUED_BUILDING")
-                                    : UserString("DESC_ENQUEUED_BUILDING_NOT");
-    break;
-    case BuildType::BT_SHIP:        description_str = (!negated)
-                                    ? UserString("DESC_ENQUEUED_DESIGN")
-                                    : UserString("DESC_ENQUEUED_DESIGN_NOT");
-    break;
-    default:                        description_str = (!negated)
-                                    ? UserString("DESC_ENQUEUED")
-                                    : UserString("DESC_ENQUEUED_NOT");
-    break;
-    }
+    if (m_build_type == BuildType::BT_BUILDING && m_building_subtype != BuildingType::SubType::NONE)
+        description_str = (!negated) ? UserString("DESC_ENQUEUED_BUILDING") : UserString("DESC_ENQUEUED_BUILDING_NOT");
+    else if (m_build_type == BuildType::BT_BUILDING && m_building_subtype != BuildingType::SubType::NONE)
+        description_str = (!negated) ? UserString("DESC_ENQUEUED_BUILDING_SUBTYPE") : UserString("DESC_ENQUEUED_BUILDING_SUBTYPE_NOT");
+    else if (m_build_type == BuildType::BT_SHIP)
+        description_str = (!negated) ? UserString("DESC_ENQUEUED_DESIGN") : UserString("DESC_ENQUEUED_DESIGN_NOT");
+    else
+        description_str = (!negated) ? UserString("DESC_ENQUEUED") : UserString("DESC_ENQUEUED_NOT");
+
     return str(FlexibleFormat(description_str)
                % empire_str
                % low_str
                % high_str
-               % what_str);
+               % what_str
+               % subtype_str);
 }
 
 std::string Enqueued::Dump(uint8_t ntabs) const {
@@ -4712,10 +4713,7 @@ std::string Enqueued::Dump(uint8_t ntabs) const {
         retval += " type = Building";
         if (m_name)
             retval += " name = " + m_name->Dump(ntabs);
-        if (m_building_subtype != BuildingType::SubType::NONE) {
-            retval += " subtype = " + (m_building_subtype == BuildingType::SubType::COLONY) ? "colony" :
-                                      (m_building_subtype == BuildingType::SubType::SHIPYARD) ? "shipyard" : "???";
-        }
+
     } else if (m_build_type == BuildType::BT_SHIP) {
         retval += " type = Ship";
         if (m_name)
@@ -4723,6 +4721,12 @@ std::string Enqueued::Dump(uint8_t ntabs) const {
         else if (m_design_id)
             retval += " design = " + m_design_id->Dump(ntabs);
     }
+
+    if (m_building_subtype == BuildingType::SubType::COLONY)
+        retval += " subtype = colony";
+    else if (m_building_subtype == BuildingType::SubType::SHIPYARD)
+        retval += " subtype = shipyard";
+
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
     if (m_low)

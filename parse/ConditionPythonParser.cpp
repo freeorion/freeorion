@@ -555,7 +555,6 @@ namespace {
         if (kw.has_key("type"))
             build_type = extract<enum_wrapper<BuildType>>(kw["type"])().value;
 
-
         std::unique_ptr<ValueRef::ValueRef<int>> low;
         if (kw.has_key("low")) {
             auto low_args = extract<value_ref_wrapper<int>>(kw["low"]);
@@ -617,7 +616,7 @@ namespace {
                 std::move(low),
                 std::move(high));
 
-        } else if (build_type == BuildType::BT_BUILDING && subtype != BuildingType::SubType::NONE) {
+        } else if (subtype != BuildingType::SubType::NONE) {
             return make_wrapped<Condition::Enqueued>(
                 subtype,
                 std::move(empire),
