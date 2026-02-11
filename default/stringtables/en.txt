@@ -12017,35 +12017,49 @@ DESC_ENQUEUED
 # %1% name of the empire that enqueued items.
 # %2% textual description of the lower limit for the number of enqueued items.
 # %3% textual description of the upper limit for the number of enqueued items.
-# %4% textual description fo the items enqueued.
+# %4% textual description of the items enqueued.
 DESC_ENQUEUED_NOT
 ''' where empire %1% does not have between %2% and %3% things on the production queue'''
 
 # %1% name of the empire that enqueued buildings.
 # %2% textual description of the lower limit for the number of enqueued buildings.
 # %3% textual description of the upper limit for the number of enqueued buildings.
-# %4% textual description fo the buildings enqueued.
+# %4% textual description of the buildings enqueued.
 DESC_ENQUEUED_BUILDING
 ''' where empire %1% has between %2% and %3% %4% buildings on the production queue'''
 
 # %1% name of the empire that enqueued buildings.
 # %2% textual description of the lower limit for the number of enqueued buildings.
 # %3% textual description of the upper limit for the number of enqueued buildings.
-# %4% textual description fo the buildings enqueued.
+# %4% textual description of the buildings enqueued.
 DESC_ENQUEUED_BUILDING_NOT
 ''' where empire %1% does not have between %2% and %3% %4% buildings on the production queue'''
+
+# %1% name of the empire that enqueued buildings.
+# %2% textual description of the lower limit for the number of enqueued buildings.
+# %3% textual description of the upper limit for the number of enqueued buildings.
+# %5% textual description of the subtype of buildings enqueued.
+DESC_ENQUEUED_BUILDING_SUBTYPE
+''' where empire %1% has between %2% and %3% %5% buildings on the production queue'''
+
+# %1% name of the empire that enqueued buildings.
+# %2% textual description of the lower limit for the number of enqueued buildings.
+# %3% textual description of the upper limit for the number of enqueued buildings.
+# %5% textual description of the subtype of buildings enqueued.
+DESC_ENQUEUED_BUILDING_SUBTYPE_NOT
+''' where empire %1% does not have between %2% and %3% %5% buildings on the production queue'''
 
 # %1% name of the empire that enqueued ships.
 # %2% textual description of the lower limit for the number of enqueued ships.
 # %3% textual description of the upper limit for the number of enqueued ships.
-# %4% textual description fo the ships enqueued.
+# %4% textual description of the ships enqueued.
 DESC_ENQUEUED_DESIGN
 ''' where empire %1% has between %2% and %3% %4% ships on the production queue'''
 
 # %1% name of the empire that enqueued ships.
 # %2% textual description of the lower limit for the number of enqueued ships.
 # %3% textual description of the upper limit for the number of enqueued ships.
-# %4% textual description fo the ships enqueued.
+# %4% textual description of the ships enqueued.
 DESC_ENQUEUED_DESIGN_NOT
 ''' where empire %1% does not have between %2% and %3% %4% ships on the production queue'''
 
@@ -15330,6 +15344,12 @@ Additional experience and facilities improvements further extend the size of ind
 ##
 ## Buildings
 ##
+
+BLD_SUBTYPE_COLONY
+Colony
+
+BLD_SUBTYPE_SHIPYARD
+Shipyard
 
 BLD_EVACUATION
 Evacuate Planet
