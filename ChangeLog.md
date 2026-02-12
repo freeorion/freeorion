@@ -3,7 +3,7 @@ Changelog
 
 Notable changes to the FreeOrion project will be documented in this file.
 
-[v0.5.1.2] - 2026-02-11
+[v0.5.1.2] - 2026-02-26
 
 ### Bugfixes / Improvements
 
