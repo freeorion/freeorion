@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
                 // check home planet meters
                 bool found_planet = false;
 
-                auto is_owned = [this](const UniverseObject* obj) { return obj->OwnedBy(m_empire_id); };
+                auto is_owned = [eid=m_empire_id](const UniverseObject* obj) { return obj && obj->OwnedBy(eid); };
 
                 for (const auto* planet : m_universe.Objects().findRaw<const Planet>(is_owned)) {
                     BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
