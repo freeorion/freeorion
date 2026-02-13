@@ -175,12 +175,18 @@ bool BuildingType::operator==(const BuildingType& rhs) const {
 
 std::string BuildingType::Dump(uint8_t ntabs) const {
     std::string retval = DumpIndent(ntabs) + "BuildingType\n";
+    if (IsColony())
+        retval += DumpIndent(ntabs+1) + "colony\n";
+    if (IsShipYard())
+        retval += DumpIndent(ntabs+1) + "shipyard\n";
     retval += DumpIndent(ntabs+1) + "name = \"" + m_name + "\"\n";
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
     if (m_production_cost)
         retval += DumpIndent(ntabs+1) + "buildcost = " + m_production_cost->Dump(ntabs+1) + "\n";
     if (m_production_time)
         retval += DumpIndent(ntabs+1) + "buildtime = " + m_production_time->Dump(ntabs+1) + "\n";
+    if (!m_species.empty())
+        retval += DumpIndent(ntabs+1) + "species = \"" + m_species + "\"\n";
     retval += DumpIndent(ntabs+1) + (m_producible ? "Producible" : "Unproducible") + "\n";
     retval += DumpIndent(ntabs+1) + "captureresult = ";
     retval.append(to_string(m_capture_result)).append("\n");
