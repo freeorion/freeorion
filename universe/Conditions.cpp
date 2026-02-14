@@ -2324,20 +2324,21 @@ std::string Building::Description(bool negated) const {
 }
 
 std::string Building::Dump(uint8_t ntabs) const {
-    std::string retval = DumpIndent(ntabs) + "Building name = ";
+    std::string retval = DumpIndent(ntabs) + "Building";
     if (m_type_names.size() == 1) {
-        retval += m_type_names[0]->Dump(ntabs) + "\n";
-    } else {
-        retval += "[ ";
+        retval += " name = " + m_type_names[0]->Dump(ntabs);
+    } else if (!m_type_names.empty()) {
+        retval += " name = [ ";
         for (auto& name : m_type_names)
             retval += name->Dump(ntabs) + " ";
-        retval += "]\n";
+        retval += "]";
     }
     switch (m_subtype_requirement) {
-    case BuildingType::SubType::COLONY:   retval += "subtype = Colony"; break;
-    case BuildingType::SubType::SHIPYARD: retval += "subtype = ShipYard"; break;
+    case BuildingType::SubType::COLONY:   retval += " subtype = Colony"; break;
+    case BuildingType::SubType::SHIPYARD: retval += " subtype = ShipYard"; break;
     default: break;
     }
+    retval += "\n";
     return retval;
 }
 
@@ -4723,9 +4724,9 @@ std::string Enqueued::Dump(uint8_t ntabs) const {
     }
 
     if (m_building_subtype == BuildingType::SubType::COLONY)
-        retval += " subtype = colony";
-    else if (m_building_subtype == BuildingType::SubType::SHIPYARD)
-        retval += " subtype = shipyard";
+        retval += " subtype = Colony";
+    if (m_building_subtype == BuildingType::SubType::SHIPYARD)
+        retval += " subtype = Shipyard";
 
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump(ntabs);
