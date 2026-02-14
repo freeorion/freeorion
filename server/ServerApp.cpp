@@ -8,7 +8,6 @@
 #include <thread>
 
 #include <boost/date_time/posix_time/time_formatters.hpp>
-#include <boost/filesystem/exception.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/lexical_cast.hpp>
