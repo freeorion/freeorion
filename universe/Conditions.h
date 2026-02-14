@@ -2110,6 +2110,8 @@ private:
 struct FO_COMMON_API Species final : public Condition {
     using string_vref_ptr_vec = std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>>;
     explicit Species(string_vref_ptr_vec&& names);
+    explicit Species(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name);
+    explicit Species(std::string name);
     Species();
 
     [[nodiscard]] bool operator==(const Condition& rhs) const override;
