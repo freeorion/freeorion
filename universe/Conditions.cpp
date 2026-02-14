@@ -2713,21 +2713,21 @@ std::string HasSpecial::Description(bool negated) const {
 }
 
 std::string HasSpecial::Dump(uint8_t ntabs) const {
-    std::string name_str = (m_name ? m_name->Dump(ntabs) : "");
+    std::string name_str = (m_name ? (" name = " + m_name->Dump(ntabs)) : "");
 
     if (m_since_turn_low || m_since_turn_high) {
         std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump(ntabs) : std::to_string(BEFORE_FIRST_TURN));
         std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump(ntabs) : std::to_string(IMPOSSIBLY_LARGE_TURN));
-        return DumpIndent(ntabs) + "HasSpecialSinceTurn name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
-    }
+        return DumpIndent(ntabs) + "HasSpecialSinceTurn" + name_str + " low = " + low_dump + " high = " + high_dump + "\n";
+     }
 
     if (m_capacity_low || m_capacity_high) {
         std::string low_dump = (m_capacity_low ? m_capacity_low->Dump(ntabs) : std::to_string(-FLT_MAX));
         std::string high_dump = (m_capacity_high ? m_capacity_high->Dump(ntabs) : std::to_string(FLT_MAX));
-        return DumpIndent(ntabs) + "HasSpecialCapacity name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
+        return DumpIndent(ntabs) + "HasSpecialCapacity" + name_str + " low = " + low_dump + " high = " + high_dump + "\n";
     }
 
-    return DumpIndent(ntabs) + "HasSpecial name = \"" + name_str + "\"\n";
+    return DumpIndent(ntabs) + "HasSpecial" + name_str + "\n";
 }
 
 bool HasSpecial::Match(const ScriptingContext& local_context) const {
@@ -3902,6 +3902,14 @@ Species::Species(string_vref_ptr_vec&& names) :
     Condition(CondsRTSI(names)),
     m_names(ExcludeNullsIntoVector(std::move(names))),
     m_names_local_invariant(m_names.empty() || range_all_of(m_names, lc_invariant))
+{}
+
+Species::Species(std::unique_ptr<ValueRef::ValueRef<std::string>>&& name) :
+    Species(Enveculate(std::move(name)))
+{}
+
+Species::Species(std::string name) :
+    Species(std::make_unique<ValueRef::Constant<std::string>>(std::move(name)))
 {}
 
 Species::Species() :
