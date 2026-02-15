@@ -17,21 +17,6 @@ namespace {
 #endif
 }
 
-SitRepEntry::SitRepEntry(const char* template_string, int turn, const char* icon,
-                         const char* label, bool stringtable_lookup) :
-    SitRepEntry(std::string(template_string), turn, std::string(icon),
-                std::string(label), stringtable_lookup)
-{}
-
-SitRepEntry::SitRepEntry(std::string&& template_string, int turn,
-                         std::string&& icon, std::string&& label,
-                         bool stringtable_lookup) :
-    VarText(std::move(template_string), stringtable_lookup),
-    m_turn(turn),
-    m_icon(std::move(icon)),
-    m_label(std::move(label))
-{}
-
 const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     const auto elem_it = range_find_if(m_variables, [&tag](const auto& elem) noexcept { return elem.first == tag; });
     if (elem_it == m_variables.end())
@@ -69,25 +54,20 @@ std::string SitRepEntry::Dump() const {
 }
 
 SitRepEntry CreateTechResearchedSitRep(std::string tech_name, int current_turn) {
-    SitRepEntry sitrep(
-        UserStringNop("SITREP_TECH_RESEARCHED"),
-        current_turn,
-        "icons/sitrep/tech_researched.png",
-        UserStringNop("SITREP_TECH_RESEARCHED_LABEL"), true);
-    sitrep.AddVariable(VarText::TECH_TAG, std::move(tech_name));
-    return sitrep;
+    return SitRepEntry(UserStringNop("SITREP_TECH_RESEARCHED"), current_turn, "icons/sitrep/tech_researched.png",
+                       UserStringNop("SITREP_TECH_RESEARCHED_LABEL"), true,
+                       std::pair(std::string{VarText::TECH_TAG}, std::move(tech_name)));
 }
 
 SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id, int current_turn) {
-    SitRepEntry sitrep(
-        UserStringNop("SITREP_SHIP_BUILT"),
-        current_turn + 1,
-        "icons/sitrep/ship_produced.png",
-        UserStringNop("SITREP_SHIP_BUILT_LABEL"), true);
-    sitrep.AddVariable(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
-    sitrep.AddVariable(VarText::SHIP_ID_TAG,   std::to_string(ship_id));
-    sitrep.AddVariable(VarText::DESIGN_ID_TAG, std::to_string(shipdesign_id));
-    return sitrep;
+    std::vector<std::pair<std::string, std::string>> params;
+    params.reserve(3);
+    params.emplace_back(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
+    params.emplace_back(VarText::SHIP_ID_TAG,   std::to_string(ship_id));
+    params.emplace_back(VarText::DESIGN_ID_TAG, std::to_string(shipdesign_id));
+    return SitRepEntry(UserStringNop("SITREP_SHIP_BUILT"), current_turn + 1, "icons/sitrep/ship_produced.png",
+                       UserStringNop("SITREP_SHIP_BUILT_LABEL"), true,
+                       std::move(params));
 }
 
 SitRepEntry CreateShipBlockBuiltSitRep(int system_id, int shipdesign_id, int number, int current_turn) {

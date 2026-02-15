@@ -76,6 +76,8 @@ struct ScriptingContext;
 //!     In Balun: "Geat Garmillas Armada" was overrun by "UNCN Special Ops fleet"
 class FO_COMMON_API VarText {
 public:
+    using VariablesVec = std::vector<std::pair<std::string, std::string>>;
+
     //! Create a VarText instance with an empty #m_template_string.
     VarText() noexcept = default;
 
@@ -88,8 +90,7 @@ public:
         m_stringtable_lookup_flag(stringtable_lookup)
     {}
 
-    VarText(std::string template_string, std::vector<std::pair<std::string, std::string>>&& data,
-            bool stringtable_lookup = true) noexcept :
+    VarText(std::string template_string, VariablesVec&& data, bool stringtable_lookup = true) noexcept :
         m_template_string(std::move(template_string)),
         m_variables(std::move(data)),
         m_stringtable_lookup_flag(stringtable_lookup)
@@ -139,7 +140,7 @@ public:
     //!
     //! @param  data
     //!     Tag and Data values of the #m_variables set.
-    void AddVariables(std::vector<std::pair<std::string, std::string>>&& data);
+    void AddVariables(VariablesVec&& data);
 
     //! @name  Variable tags
     //! @anchor variable_tags
@@ -216,7 +217,7 @@ protected:
     std::string m_template_string; // need to hold own copy of this string to support deserialization
 
     //! Maps variable tags into values, which are used during text substitution.
-    std::vector<std::pair<std::string, std::string>> m_variables; // need to hold own copies of strings here to support deserialization
+    VariablesVec m_variables; // need to hold own copies of strings here to support deserialization
 
     //! #m_template_string with applied #m_variables substitute.
     mutable std::string m_text;
