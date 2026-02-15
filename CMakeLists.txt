@@ -289,6 +289,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
 if(APPLE)
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
+        random
         system
     REQUIRED)
 endif()
@@ -844,6 +845,8 @@ if(APPLE AND BUILD_CLIENT_GG)
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_REGEX_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_PYTHON${Boost_PYTHON_SUFFIX}_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "${Boost_RANDOM_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_SERIALIZATION_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
