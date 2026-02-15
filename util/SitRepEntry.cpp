@@ -17,11 +17,6 @@ namespace {
 #endif
 }
 
-
-SitRepEntry::SitRepEntry() :
-    m_icon("/icons/sitrep/generic.png")
-{}
-
 SitRepEntry::SitRepEntry(const char* template_string, int turn, const char* icon,
                          const char* label, bool stringtable_lookup) :
     SitRepEntry(std::string(template_string), turn, std::string(icon),
@@ -33,7 +28,7 @@ SitRepEntry::SitRepEntry(std::string&& template_string, int turn,
                          bool stringtable_lookup) :
     VarText(std::move(template_string), stringtable_lookup),
     m_turn(turn),
-    m_icon(icon.empty() ? "/icons/sitrep/generic.png" : std::move(icon)),
+    m_icon(std::move(icon)),
     m_label(std::move(label))
 {}
 

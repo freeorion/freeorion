@@ -212,6 +212,8 @@ namespace {
         }
     };
 
+    const std::string GENERIC_ICON = "/icons/sitrep/generic.png";
+
     //////////////////////////////////
     // SitRepDataPanel
     //////////////////////////////////
@@ -230,8 +232,8 @@ namespace {
             auto& app = GetApp();
 
             const int icon_dim = GetIconSize();
-            std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
-                "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
+            const auto& entry_icon = m_sitrep_entry.GetIcon();
+            const auto& icon_texture = entry_icon.empty() ? GENERIC_ICON : entry_icon;
             auto icon = app.GetUI().GetTexture(ClientUI::ArtDir() / icon_texture, true);
             m_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);

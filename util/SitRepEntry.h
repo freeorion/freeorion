@@ -19,13 +19,13 @@ struct ScriptingContext;
 //! Represents a situation report entry for a significant game event.
 class FO_COMMON_API SitRepEntry final : public VarText {
 public:
-    SitRepEntry();
+    SitRepEntry() noexcept = default;
 
     SitRepEntry(const char* template_string, int turn, const char* icon,
                 const char* label, bool stringtable_lookup);
 
     SitRepEntry(std::string&& template_string, int turn, std::string&& icon,
-                std::string&& label, bool stringtable_lookup);
+                std::string&& label, bool stringtable_lookup) noexcept;
 
     [[nodiscard]] const std::string& GetDataString(const std::string& tag) const;
     [[nodiscard]] int                GetTurn() const noexcept        { return m_turn; }
