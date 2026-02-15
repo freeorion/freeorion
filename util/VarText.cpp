@@ -286,7 +286,7 @@ namespace {
     }
 
     std::tuple<std::string_view, std::string_view, std::string_view, bool> GetLabelTagViews(
-        const std::map<std::string, std::string, std::less<>>& variables, xpr::smatch const& match)
+        const auto& variables, xpr::smatch const& match)
     {
         // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
         // Use the label value. When missing, use the tag submatch as label instead.
@@ -307,27 +307,24 @@ namespace {
         const std::string_view label(label_start_address, label_sz);
 
         // look up child
-        const auto elem = variables.find(label);
+        const auto elem_it = range_find_if(variables, [label](const auto& elem) noexcept { return elem.first == label; });
         //std::cout << (elem == variables.end() ? "... label not in variables": "found label in variables") << std::endl;
 
-        if (elem == variables.end())
+        if (elem_it == variables.end())
             return {"", "", "", false};
 
         const auto tag_start_address = &*tag_match.first; // std::to_address causes problem on Clang 14.0.1, which I wasn't able to work around with if constexpr (decltype) checks
         const std::size_t tag_sz = static_cast<std::size_t>(std::max(zero, tag_match.length()));
         const std::string_view tag(tag_start_address, tag_sz);
 
-        return {label, elem->second, tag, true};
+        return {label, elem_it->second, tag, true};
     }
 
 
     //! Looks up the given match in the Universe and returns the Universe
     //! entities value. If the lookup or the substitution fails, sets
     //! \a valid to false.
-    std::string Substitute(const std::map<std::string, std::string, std::less<>>& variables,
-                           bool& valid, xpr::smatch const& match,
-                           const ScriptingContext* context)
-    {
+    std::string Substitute(const auto& variables, bool& valid, xpr::smatch const& match, const ScriptingContext* context) {
         // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
         // Use the label value. When missing, use the tag submatch as label instead.
         auto [label, variable_value, tag, label_found] = GetLabelTagViews(variables, match);
@@ -406,12 +403,10 @@ std::vector<std::string_view> VarText::GetVariableTags() const {
 }
 
 void VarText::AddVariable(std::string tag, std::string data)
-{ m_variables[std::move(tag)] = std::move(data); }
+{ m_variables.emplace_back(std::move(tag), std::move(data)); }
 
-void VarText::AddVariables(std::vector<std::pair<std::string, std::string>>&& data) {
-    for (auto& dat : data)
-        m_variables.insert(std::move(dat));
-}
+void VarText::AddVariables(std::vector<std::pair<std::string, std::string>>&& data)
+{ m_variables.insert(m_variables.end(), std::make_move_iterator(data.begin()), std::make_move_iterator(data.end())); }
 
 void VarText::GenerateVarText(const ScriptingContext* context) const {
     // generate a string complete with substituted variables and hyperlinks

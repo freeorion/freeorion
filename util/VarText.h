@@ -10,6 +10,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/version.hpp>
 
 #include "Export.h"
 
@@ -204,7 +205,7 @@ protected:
     std::string m_template_string; // need to hold own copy of this string to support deserialization
 
     //! Maps variable tags into values, which are used during text substitution.
-    std::map<std::string, std::string, std::less<>> m_variables; // need to hold own copies of strings here to support deserialization
+    std::vector<std::pair<std::string, std::string>> m_variables; // need to hold own copies of strings here to support deserialization
 
     //! #m_template_string with applied #m_variables substitute.
     mutable std::string m_text;
@@ -222,12 +223,25 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+BOOST_CLASS_VERSION(VarText, 1)
+
 template <typename Archive>
 void VarText::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_template_string)
-        & BOOST_SERIALIZATION_NVP(m_stringtable_lookup_flag)
-        & BOOST_SERIALIZATION_NVP(m_variables);
+        & BOOST_SERIALIZATION_NVP(m_stringtable_lookup_flag);
+
+    if (Archive::is_loading::value && version < 1) {
+        std::map<std::string, std::string, std::less<>> variables;
+        ar  & boost::serialization::make_nvp("m_variables", variables);
+        m_variables.clear();
+        m_variables.reserve(variables.size());
+        for (auto& var : variables)
+            m_variables.emplace_back(std::move(var));
+
+    } else {
+        ar  & BOOST_SERIALIZATION_NVP(m_variables);
+    }
 }
 
 
