@@ -292,6 +292,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
 if(APPLE)
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
+        random
         system
     REQUIRED)
 endif()
