@@ -21,11 +21,34 @@ class FO_COMMON_API SitRepEntry final : public VarText {
 public:
     SitRepEntry() noexcept = default;
 
-    SitRepEntry(const char* template_string, int turn, const char* icon,
-                const char* label, bool stringtable_lookup);
+    SitRepEntry(std::string template_string, int turn, std::string icon,
+                std::string label, bool stringtable_lookup) noexcept :
+        VarText(std::move(template_string), stringtable_lookup),
+        m_turn(turn),
+        m_icon(std::move(icon)),
+        m_label(std::move(label))
+    {}
 
-    SitRepEntry(std::string&& template_string, int turn, std::string&& icon,
-                std::string&& label, bool stringtable_lookup) noexcept;
+    SitRepEntry(std::string template_string, int turn, std::string icon,
+                std::string label, bool stringtable_lookup,
+                VarText::VariablesVec data) noexcept :
+        VarText(std::move(template_string), std::move(data), stringtable_lookup),
+        m_turn(turn),
+        m_icon(std::move(icon)),
+        m_label(std::move(label))
+    {}
+
+    SitRepEntry(std::string template_string, int turn, std::string icon,
+                std::string label, bool stringtable_lookup,
+                std::pair<std::string, std::string> param_tag_data) noexcept :
+        SitRepEntry(std::move(template_string), turn, std::move(icon),
+                    std::move(label), stringtable_lookup,
+                    [](auto&& param) {
+                        VarText::VariablesVec retval;
+                        retval.push_back(std::move(param));
+                        return retval;
+                    }(std::move(param_tag_data)))
+    {}
 
     [[nodiscard]] const std::string& GetDataString(const std::string& tag) const;
     [[nodiscard]] int                GetTurn() const noexcept        { return m_turn; }

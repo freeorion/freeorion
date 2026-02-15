@@ -399,7 +399,7 @@ std::vector<std::string_view> VarText::GetVariableTags() const {
 void VarText::AddVariable(std::string tag, std::string data)
 { m_variables.emplace_back(std::move(tag), std::move(data)); }
 
-void VarText::AddVariables(std::vector<std::pair<std::string, std::string>>&& data)
+void VarText::AddVariables(VariablesVec&& data)
 { m_variables.insert(m_variables.end(), std::make_move_iterator(data.begin()), std::make_move_iterator(data.end())); }
 
 void VarText::GenerateVarText(const ScriptingContext* context) const {
