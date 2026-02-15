@@ -38,17 +38,17 @@ SitRepEntry::SitRepEntry(std::string&& template_string, int turn,
 {}
 
 const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
-    const auto elem = m_variables.find(tag);
-    if (elem == m_variables.end())
+    const auto elem_it = range_find_if(m_variables, [&tag](const auto& elem) noexcept { return elem.first == tag; });
+    if (elem_it == m_variables.end())
         return EMPTY_STRING;
-    return elem->second;
+    return elem_it->second;
 }
 
 std::size_t SitRepEntry::SizeInMemory() const {
     std::size_t retval = 0;
     retval += sizeof(SitRepEntry);
 
-    retval += (sizeof(decltype(m_variables)::value_type) + sizeof(void*))*m_variables.size();
+    retval += sizeof(decltype(m_variables)::value_type)*m_variables.capacity();
     for (const auto& [tag, val] : m_variables) {
         retval += (sizeof(decltype(tag)::value_type))*tag.capacity();
         retval += (sizeof(decltype(val)::value_type))*val.capacity();
