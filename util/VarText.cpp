@@ -359,12 +359,6 @@ namespace {
     }
 }
 
-
-VarText::VarText(std::string template_string, bool stringtable_lookup) noexcept :
-    m_template_string(std::move(template_string)),
-    m_stringtable_lookup_flag(stringtable_lookup)
-{}
-
 const std::string& VarText::GetText(const ScriptingContext& context) const {
     if (m_text.empty())
         GenerateVarText(&context);
