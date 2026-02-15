@@ -360,7 +360,7 @@ namespace {
 }
 
 
-VarText::VarText(std::string template_string, bool stringtable_lookup) :
+VarText::VarText(std::string template_string, bool stringtable_lookup) noexcept :
     m_template_string(std::move(template_string)),
     m_stringtable_lookup_flag(stringtable_lookup)
 {}
