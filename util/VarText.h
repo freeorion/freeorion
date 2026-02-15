@@ -83,7 +83,18 @@ public:
     //!
     //! @param  template_string  @see #m_template_string.
     //! @param  stringtable_lookup  @see #m_stringtable_lookup_flag
-    explicit VarText(std::string template_string, bool stringtable_lookup = true) noexcept;
+    explicit VarText(std::string template_string, bool stringtable_lookup = true) noexcept :
+        m_template_string(std::move(template_string)),
+        m_stringtable_lookup_flag(stringtable_lookup)
+    {}
+
+    VarText(std::string template_string, std::vector<std::pair<std::string, std::string>>&& data,
+            bool stringtable_lookup = true) noexcept :
+        m_template_string(std::move(template_string)),
+        m_variables(std::move(data)),
+        m_stringtable_lookup_flag(stringtable_lookup)
+    {}
+
 
     //! Return the text generated after substituting all variables, with or without a ScriptingContext
     [[nodiscard]] const std::string& GetText(const ScriptingContext& context) const;
