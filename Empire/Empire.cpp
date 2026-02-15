@@ -1525,7 +1525,8 @@ std::size_t Empire::SizeInMemory() const {
     retval += SizeOfContents(m_available_ship_hulls);
     retval += SizeOfContents(m_explored_systems);
     retval += SizeOfContents(m_known_ship_designs);
-    retval += SizeOfContents(m_sitrep_entries, [](const SitRepEntry& r) { return SizeOfContents(r.GetIcon()) + SizeOfContents(r.GetLabelString()); });
+    constexpr auto soc_sitrep = [](const SitRepEntry& se) { return se.SizeInMemory(); };
+    retval += SizeOfContents(m_sitrep_entries, soc_sitrep);
     constexpr auto soc_rpool = [](const ResourcePool& rp) { return SizeOfContents(rp.ObjectIDs()) + SizeOfContents(rp.Output()) + SizeOfContents(rp.Target()) + SizeOfContents(rp.Groups()); };
     retval += SizeOfContents(m_research_pool, soc_rpool);
     retval += SizeOfContents(m_industry_pool, soc_rpool);
