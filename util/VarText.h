@@ -203,18 +203,17 @@ protected:
     //! @see  #m_stringtable_lookup_flag
     std::string m_template_string; // need to hold own copy of this string to support deserialization
 
-    //! If true the #m_template_string will be looked up in the stringtable
-    //! prior to substitution for variables.
-    bool m_stringtable_lookup_flag = false;
-
     //! Maps variable tags into values, which are used during text substitution.
     std::map<std::string, std::string, std::less<>> m_variables; // need to hold own copies of strings here to support deserialization
 
     //! #m_template_string with applied #m_variables substitute.
     mutable std::string m_text;
 
-    //! True if the #m_template_string stubstitution was executed without
-    //! errors.
+    //! If true the #m_template_string will be looked up in the stringtable
+    //! prior to substitution for variables.
+    bool m_stringtable_lookup_flag = false;
+
+    //! True if the #m_template_string stubstitution was executed without errors.
     mutable bool m_validated = false;
 
 private:
