@@ -33,6 +33,8 @@ public:
     [[nodiscard]] const std::string& GetLabelString() const noexcept { return m_label; }
     [[nodiscard]] std::string        Dump() const;
 
+    [[nodiscard]] std::size_t SizeInMemory() const;
+
 private:
     int         m_turn = INVALID_GAME_TURN;
     std::string m_icon;

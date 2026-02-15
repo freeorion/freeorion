@@ -44,6 +44,25 @@ const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     return elem->second;
 }
 
+std::size_t SitRepEntry::SizeInMemory() const {
+    std::size_t retval = 0;
+    retval += sizeof(SitRepEntry);
+
+    retval += (sizeof(decltype(m_variables)::value_type) + sizeof(void*))*m_variables.size();
+    for (const auto& [tag, val] : m_variables) {
+        retval += (sizeof(decltype(tag)::value_type))*tag.capacity();
+        retval += (sizeof(decltype(val)::value_type))*val.capacity();
+    }
+
+    retval += sizeof(decltype(m_template_string)::value_type)*m_template_string.capacity();
+    retval += sizeof(decltype(m_text)::value_type)*m_text.capacity();
+
+    retval += sizeof(decltype(m_icon)::value_type)*m_icon.capacity();
+    retval += sizeof(decltype(m_label)::value_type)*m_label.capacity();
+
+    return retval;
+}
+
 std::string SitRepEntry::Dump() const {
     std::string retval = "SitRep template_string = \"" + m_template_string + "\"";
     for (const auto& [tag, value] : m_variables)
