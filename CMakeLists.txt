@@ -289,6 +289,8 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
 if(APPLE)
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
+        container
+        graph
         random
         system
     REQUIRED)
@@ -830,9 +832,13 @@ if(APPLE AND BUILD_CLIENT_GG)
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_CHRONO_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "${Boost_CONTAINER_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_DATE_TIME_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_FILESYSTEM_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "${Boost_GRAPH_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
            ${CMAKE_COMMAND} -E copy_if_different "${Boost_IOSTREAMS_LIBRARY}" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
