@@ -100,11 +100,15 @@ public:
     //! Return the text generated after substituting all variables, with or without a ScriptingContext
     [[nodiscard]] std::string GetText(const ScriptingContext& context) const
     { return GenerateVarText(&context).first; }
+    [[nodiscard]] bool GetValidity(const ScriptingContext& context) const
+    { return GenerateVarText(&context).second; }
     [[nodiscard]] std::pair<std::string, bool> GetTextAndValidity(const ScriptingContext& context) const
     { return GenerateVarText(&context); }
 
     [[nodiscard]] std::string GetText() const
     { return GenerateVarText(nullptr).first; }
+    [[nodiscard]] bool GetValidity() const
+    { return GenerateVarText(nullptr).second; }
     [[nodiscard]] std::pair<std::string, bool> GetTextAndValidity() const
     { return GenerateVarText(nullptr); }
 

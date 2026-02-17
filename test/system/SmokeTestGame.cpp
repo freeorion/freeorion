@@ -138,10 +138,16 @@ BOOST_AUTO_TEST_CASE(host_server) {
 
         // output sitreps
         auto my_empire = m_empires.GetEmpire(m_empire_id);
-        BOOST_REQUIRE(my_empire != nullptr);
-        for (const auto& sitrep : my_empire->SitReps()) {
-            if (sitrep.GetTurn() == m_current_turn) {
-                BOOST_TEST_MESSAGE("Sitrep: " << sitrep.Dump());
+        BOOST_REQUIRE(!!my_empire);
+        const auto& fixed_infos = my_empire->SitRepFixedInfos();
+        for (const auto& [turn_idx, params_lists] : my_empire->SitReps()) {
+            const auto& [turn, fixed_idx] = turn_idx;
+            if (turn != m_current_turn || fixed_idx >= fixed_infos.size())
+                continue;
+            const auto& fixed_info = fixed_infos[fixed_idx];
+            for (const auto& params : params_lists) {
+                const SitRepEntry rep(fixed_info, SitRepEntry::UniqueInfo(params, m_current_turn));
+                BOOST_TEST_MESSAGE("Sitrep: " << rep.Dump());
             }
         }
 

@@ -214,6 +214,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         try {
             ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
             ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries);
+
+            CopySitrepsToBlob();
+
             if (Archive::is_loading::value && version < 12) {
                 std::map<ResourceType, std::shared_ptr<ResourcePool>> scratch;
                 ar  & boost::serialization::make_nvp("m_resource_pools", scratch);

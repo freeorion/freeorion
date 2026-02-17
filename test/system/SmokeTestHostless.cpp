@@ -197,9 +197,15 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
             // output sitreps
             const auto my_empire = m_empires.GetEmpire(m_empire_id);
             BOOST_REQUIRE(!!my_empire);
-            for (const auto& sitrep : my_empire->SitReps()) {
-                if (sitrep.GetTurn() == m_current_turn) {
-                    BOOST_TEST_MESSAGE("Sitrep: " << sitrep.Dump());
+            const auto& fixed_infos = my_empire->SitRepFixedInfos();
+            for (const auto& [turn_idx, params_lists] : my_empire->SitReps()) {
+                const auto& [turn, fixed_idx] = turn_idx;
+                if (turn != m_current_turn || fixed_idx >= fixed_infos.size())
+                    continue;
+                const auto& fixed_info = fixed_infos[fixed_idx];
+                for (const auto& params : params_lists) {
+                    const SitRepEntry rep(fixed_info, SitRepEntry::UniqueInfo(params, m_current_turn));
+                    BOOST_TEST_MESSAGE("Sitrep: " << rep.Dump());
                 }
             }
 
@@ -207,7 +213,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
                 // check home planet meters
                 bool found_planet = false;
 
-                auto is_owned = [eid=m_empire_id](const UniverseObject* obj) { return obj && obj->OwnedBy(eid); };
+                const auto is_owned = [eid=m_empire_id](const UniverseObject* obj) { return obj && obj->OwnedBy(eid); };
 
                 for (const auto* planet : m_universe.Objects().findRaw<const Planet>(is_owned)) {
                     BOOST_REQUIRE_LT(0.0, planet->GetMeter(MeterType::METER_POPULATION)->Current());
