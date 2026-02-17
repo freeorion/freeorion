@@ -207,7 +207,8 @@ public:
     [[nodiscard]] int         TurnSystemExplored(int system_id) const;
     [[nodiscard]] LaneSet     KnownStarlanes(const Universe& universe) const;     ///< map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     [[nodiscard]] LaneSet     VisibleStarlanes(const Universe& universe) const;   ///< map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
-    [[nodiscard]] const auto& SitReps() const noexcept { return m_sitrep_entries; }
+    [[nodiscard]] const auto& SitReps() const noexcept { return m_blobbed_sitreps; }
+    [[nodiscard]] const auto& SitRepFixedInfos() const noexcept { return m_blobbed_sitrep_fixed_infos; }
     [[nodiscard]] float       ProductionPoints() const;    ///< Returns the empire's current production point output (this is available industry not including stockpile)
 
     /** Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists. */
@@ -571,6 +572,37 @@ private:
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
 
     std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
+
+    //! Space-optimized storage for sitreps: map from (turn and index into fixed infos) to 
+    //! list of sets of parameters for that fixed info on that turn
+    std::vector<std::pair<std::pair<int32_t, uint32_t>, std::vector<std::vector<std::string>>>> m_blobbed_sitreps;
+
+    std::vector<std::vector<std::string>>& GetParamsListForTurnAndFixedInfoIdx(int32_t turn, uint32_t info_idx) {
+        std::pair key{turn, info_idx};
+        auto it = std::find_if(m_blobbed_sitreps.begin(), m_blobbed_sitreps.end(),
+                               [key](const auto& key_vals) noexcept { return key_vals.first == key; });
+        if (it != m_blobbed_sitreps.end())
+            return it->second;
+        else
+            return m_blobbed_sitreps.emplace_back(std::piecewise_construct, std::forward_as_tuple(key), std::forward_as_tuple()).second;
+    }
+
+    std::vector<SitRepEntry::FixedInfo> m_blobbed_sitrep_fixed_infos;
+
+    //! looks up \a info in fixed infos list. If not present, inserts. Returns index in list to \a info.
+    template <typename SitRepFixedInfo>
+    uint32_t GetFixedInfoIndex(SitRepFixedInfo&& info) {
+        auto it = std::find(m_blobbed_sitrep_fixed_infos.begin(), m_blobbed_sitrep_fixed_infos.end(), info);
+        if (it != m_blobbed_sitrep_fixed_infos.end()) {
+            return static_cast<uint32_t>(std::distance(m_blobbed_sitrep_fixed_infos.begin(), it));
+        } else {
+            auto retval = m_blobbed_sitrep_fixed_infos.size();
+            m_blobbed_sitrep_fixed_infos.push_back(std::forward<SitRepFixedInfo>(info));
+            return static_cast<uint32_t>(retval);
+        }
+    }
+
+    void CopySitrepsToBlob();
 
     ResourcePool                    m_research_pool{ResourceType::RE_RESEARCH};
     ResourcePool                    m_industry_pool{ResourceType::RE_INDUSTRY};

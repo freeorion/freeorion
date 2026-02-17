@@ -19,6 +19,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <iterator>
+#include <numeric>
 
 
 namespace {
@@ -116,25 +117,41 @@ namespace {
     }
 
     std::set<std::string> EmpireSitRepTemplateStrings(int empire_id) {
-        std::set<std::string> template_set;
+        std::set<std::string> retval;
 
         const Empire* empire = GetApp().GetEmpire(empire_id);
         if (!empire)
-            return template_set;
+            return retval;
 
-        for (const auto& sitrep : empire->SitReps()) {
-            std::string label;
-            if (sitrep.GetLabelString().empty()) {
-                label = sitrep.GetTemplateString();
-                label_display_map[label] = UserString(label + "_LABEL");
-            } else {
-                label = sitrep.GetLabelString();
-                label_display_map[label] = sitrep.GetStringtableLookupFlag()? UserString(label) : label;
-            }
-            template_set.insert(std::move(label));
+        using SitRepsEntryT = std::decay_t<decltype(empire->SitReps().front())>;
+        static constexpr auto to_fixed_idx = [](const SitRepsEntryT& entry) noexcept -> uint32_t { return entry.first.second; };
+        auto fixed_idxs = empire->SitReps() | range_transform(to_fixed_idx) | range_to_vec;
+        std::sort(fixed_idxs.begin(), fixed_idxs.end());
+        auto unique_it = std::unique(fixed_idxs.begin(), fixed_idxs.end());
+        fixed_idxs.erase(unique_it, fixed_idxs.end());
+
+        const auto& fixed_infos = empire->SitRepFixedInfos();
+        const auto in_range = [sz{fixed_infos.size()}](uint32_t idx) noexcept { return idx < sz; };
+        const auto to_fixed_info = [&fixed_infos](const uint32_t idx) -> const SitRepEntry::FixedInfo&
+        { return fixed_infos[idx]; };
+
+        static constexpr auto has_empty_label = [](const SitRepEntry::FixedInfo& info) noexcept
+        { return info.m_label.empty(); };
+        static constexpr auto has_nonempty_label = [](const SitRepEntry::FixedInfo& info) noexcept
+        { return !has_empty_label(info); };
+
+        for (const auto& fixed_info : fixed_idxs | range_filter(in_range) | range_transform(to_fixed_info) | range_filter(has_nonempty_label)) {
+            label_display_map.try_emplace(fixed_info.m_label,
+                                          fixed_info.m_stringtable_lookup_flag ? UserString(fixed_info.m_label) : fixed_info.m_label);
+            retval.insert(fixed_info.m_label);
+        }
+        for (const auto& fixed_info : fixed_idxs | range_filter(in_range) | range_transform(to_fixed_info) | range_filter(has_nonempty_label)) {
+            label_display_map.try_emplace(fixed_info.m_template_string,
+                                          UserString(fixed_info.m_template_string + "_LABEL"));
+            retval.insert(fixed_info.m_template_string);
         }
 
-        return template_set;
+        return retval;
     }
 
     std::vector<std::string> AllSitRepTemplateStrings() {
@@ -470,47 +487,14 @@ void SitRepPanel::SizeMove(GG::Pt ul, GG::Pt lr) {
 }
 
 namespace {
-    /* Sort sitreps for each turn.
-     * Note: Validating requires substituting all of the variables which is time
-     * consuming for sitreps that the player will never view. */
-    auto GetUnvalidatedSitRepsSortedByTurn(int empire_id) {
-        std::map<int, std::vector<const SitRepEntry*>> turns;
-
-        auto empire_sitrep_inserter = [&turns](const Empire* e) {
-            const auto& sitreps = e->SitReps();
-            std::for_each(sitreps.begin(), sitreps.end(),
-                          [&turns](const auto& s) { turns[s.GetTurn()].push_back(std::addressof(s)); });
-        };
-        auto empire_pair_sitrep_inserter = [empire_sitrep_inserter](const auto& ep)
-        { empire_sitrep_inserter(ep.second.get()); };
-
-
-        if (const Empire* empire = GetEmpire(empire_id)) {
-            empire_sitrep_inserter(empire);
-
-        } else {
-            // Observer / Moderator mode, sort sitreps from all empires
-            const auto& empires = Empires();
-            std::for_each(empires.begin(), empires.end(), empire_pair_sitrep_inserter);
-        }
-
-        return turns;
-    }
-
-    /** Return true iff the \a sitrep is not hidden, validates and is not snoozed. */
-    bool IsSitRepInvalid(const SitRepEntry& sitrep, const std::set<std::string>& hidden_templates) {
-        auto& label = sitrep.GetLabelString().empty() ? sitrep.GetTemplateString() : sitrep.GetLabelString();
-        if (hidden_templates.contains(label))
-            return true;
-
-        const auto& context = GetApp().GetContext();
-
+    /** Return true iff the \a sitrep validates and is not snoozed. */
+    bool IsSitRepInvalid(const SitRepEntry& sitrep, const ScriptingContext& context, bool show_invalid) {
         const auto [sitrep_text, valid] = sitrep.GetTextAndValidity(context);
 
         // Validation is time consuming because all variables are substituted.
         // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
         // validate. Having it on will skip the validation check.
-        if (!valid && !GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown"))
+        if (!valid && !show_invalid)
             return true;
 
         // Check for snoozing.
@@ -524,37 +508,89 @@ namespace {
         return false;
     }
 
-    /** Search forward (if \a forward is true) or backward from \a turn for the next
-    * turn with one or more valid sitreps (not including \a turn itself). */
-    int GetNextNonEmptySitrepsTurn(const std::map<int, std::vector<const SitRepEntry*>>& turns,
-                                   int turn, bool forward, const std::set<std::string>& hidden_templates)
-    {
-        if (turns.empty())
-            return INVALID_GAME_TURN;
+    using EmpireSitrepsContainer = std::decay_t<decltype(GetEmpire(ALL_EMPIRES)->SitReps())>;
 
-        const auto contains_valid_sitrep = [](const auto& p, const auto& ht) { 
-            const auto is_valid_sirep = [&ht](const auto* s) { return s && !IsSitRepInvalid(*s, ht); };
-            return range_any_of(p, is_valid_sirep);
+    /** Search forward (if \a forward is true) or backward from \a turn (but not including \a turn)
+      * for the next/previous turn with any valid not-hidden sitreps. */
+    int GetNextNonEmptySitrepsTurn(const EmpireSitrepsContainer& sitreps, int turn,
+                                   const std::vector<SitRepEntry::FixedInfo>& fixed_infos,
+                                   bool forward, const std::set<std::string>& hidden_templates)
+    {
+        if (sitreps.empty())
+            return INVALID_GAME_TURN;
+        const auto& context = GetApp().GetContext();
+
+        // checks that fixed info idx is in range in container
+        const auto fixed_info_idx_in_range = [sz{fixed_infos.size()}](const EmpireSitrepsContainer::value_type& x_fixedid_x) noexcept
+        { return x_fixedid_x.first.second < sz; };
+
+        // look up fixed info for id. assumes idx is in range.
+        const auto get_info = [&fixed_infos](const EmpireSitrepsContainer::value_type& x_fixedid_x) -> const SitRepEntry::FixedInfo& {
+            const uint32_t fixed_idx = x_fixedid_x.first.second;
+            return fixed_infos[fixed_idx];
         };
 
-        const auto turn_ok = [=](int t)
-        { return forward ? (t > turn) : (t < turn); };
+        const auto not_hidden = [&hidden_templates, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
+            const auto& fixed_info = get_info(x_fixedid_x);
+            const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
+            return !hidden_templates.contains(label);
+        };
 
-        const auto ok_and_contains_valid = [&](const auto& p)
-        { return turn_ok(p.first) && contains_valid_sitrep(p.second, hidden_templates); };
+        // search only in range of turns before or after \a turn depending on \a forward
+        const auto turn_dir_ok = [forward, turn](const EmpireSitrepsContainer::value_type& turn_x)
+        { return forward ? (turn_x.first.first > turn) : (turn_x.first.first < turn); };
 
-        if (forward) {
-            auto found_it = std::find_if(turns.lower_bound(turn), turns.end(), ok_and_contains_valid);
-            if (found_it != turns.end())
-                return found_it->first;
+        const bool show_invalid = GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown");
+        const auto has_valid_sitrep = [show_invalid, &context, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_params_lists) {
+            const auto& [turn_fixedid, params_lists] = x_fixedid_params_lists;
+            if (params_lists.empty())
+                return false; // there are no parameter sets for this turn, so no possible (valid or otherwise) sitreps
+            if (show_invalid)
+                return true; // there is at least one parameter set for this turn, and don't care if it's valid
 
-        } else {
-            auto found_it = std::find_if(turns.crbegin(), turns.crend(), ok_and_contains_valid);
-            if (found_it != turns.rend())
-                return found_it->first;
-        }
+            const auto& fixed_info = get_info(x_fixedid_params_lists); // assume range checked elsewhere
 
+            using ParamsLists = std::decay_t<decltype(x_fixedid_params_lists.second)>;
+            using ParamSetT = ParamsLists::value_type;
+            
+            // check if any of the parameter sets make a valid sitrep
+            const auto makes_valid_sitrep = [rep_turn{turn_fixedid.first}, &fixed_info, &context](const ParamSetT& params)
+            { return SitRepEntry(fixed_info, SitRepEntry::UniqueInfo(params, rep_turn)).GetValidity(context); };
+
+            return range_any_of(params_lists, makes_valid_sitrep);
+        };
+
+
+        auto rng = sitreps | range_filter(turn_dir_ok) | range_filter(fixed_info_idx_in_range)
+                           | range_filter(not_hidden) | range_filter(has_valid_sitrep);
+
+
+
+        //
+        //    // find and return the next turn on which there is a (valid or any) sitrep
+        //    if (forward) {
+        //        auto turns_with_valid_sitreps_rng = next_nonempty_rng | range_filter(has_valid_sitrep) | range_keys;
+        //        return range_empty(turns_with_valid_sitreps_rng) ? INVALID_GAME_TURN : *turns_with_valid_sitreps_rng.begin();
+        //    } else {
+        //        auto next_nonempty_reversed_rng = next_nonempty_rng | range_reverse | range_filter(has_valid_sitrep) | range_keys;
+        //        return range_empty(next_nonempty_reversed_rng) ? INVALID_GAME_TURN : *next_nonempty_reversed_rng.begin();
+        //    }
+        //};
+        //
+        //// convert all (fixed_info, turns_params) to the next turn with a (valid/any) sitrep
+        //const auto next_turns_with_sitrep = not_hidden_rng | range_transform(to_next_turn_with_sitrep) | range_to_vec;
+        //using TurnsT = std::decay_t<decltype(next_turns_with_sitrep.front())>;
+        //static_assert(std::is_same_v<int, TurnsT>);
+        //
+        //// exclude INVALID_GAME_TURN results...
+        //static constexpr auto not_invalid_turn = [](int turn) noexcept { return turn != INVALID_GAME_TURN; };
+        //auto valid_next_turns_with_sitrep = next_turns_with_sitrep | range_filter(not_invalid_turn);
+        //
+        //const auto next_it = forward ? range_min_element(valid_next_turns_with_sitrep) : range_max_element(valid_next_turns_with_sitrep);
+        //if (next_it == valid_next_turns_with_sitrep.end())
         return INVALID_GAME_TURN;
+        //else
+        //    return *next_it;
     }
 }
 
@@ -562,20 +598,27 @@ void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
 void SitRepPanel::PrevClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false, m_hidden_sitrep_templates));
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    if (!empire)
+        return; // TODO: for all empires?
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn, empire->SitRepFixedInfos(),
+                                                  false, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::NextClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true, m_hidden_sitrep_templates));
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    if (!empire)
+        return; // TODO: for all empires?
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn, empire->SitRepFixedInfos(),
+                                                  true, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::LastClicked() {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
-    // search backwards from current turn for a non-empty sitrep turn
-    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(turns, GetApp().CurrentTurn() + 1,
-                                                  false, m_hidden_sitrep_templates));
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    if (!empire)
+        return; // TODO: for all empires?
+    ShowSitRepsForTurn(GetNextNonEmptySitrepsTurn(empire->SitReps(), GetApp().CurrentTurn() + 1,
+                                                  empire->SitRepFixedInfos(), false, m_hidden_sitrep_templates));
 }
 
 void SitRepPanel::FilterClicked() {
@@ -761,93 +804,91 @@ void SitRepPanel::Update() {
     if (m_showing_turn == INVALID_GAME_TURN)
         m_showing_turn = 1;
 
-    // get sitrep entries for this client's player empire, or for all empires
-    // if this client is an observer or moderator.
-    // todo: double check that no-empire players are actually moderator or
-    //       observers, instead of just passing the client empire id.
-    auto sitreps_by_turn = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
+    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    if (!empire)
+        return;
 
-    m_showing_turn = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn - 1, true, m_hidden_sitrep_templates);
+    m_showing_turn = GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn - 1,
+                                                empire->SitRepFixedInfos(), true, m_hidden_sitrep_templates);
     if (m_showing_turn < 1)
         this->SetName(UserString("SITREP_PANEL_TITLE"));
     else
         this->SetName(boost::io::str(FlexibleFormat(UserString("SITREP_PANEL_TITLE_TURN")) % m_showing_turn));
 
 
-    auto& all_current_turn_sitreps = sitreps_by_turn[m_showing_turn];
+    //auto& all_current_turn_sitreps = sitreps_by_turn[m_showing_turn];
 
 
-    // filter for valid / visible sitreps
-    std::vector<const SitRepEntry*> current_turn_sitreps;
-    current_turn_sitreps.reserve(all_current_turn_sitreps.size());
-    std::copy_if(std::make_move_iterator(all_current_turn_sitreps.begin()),
-                 std::make_move_iterator(all_current_turn_sitreps.end()),
-                 std::back_inserter(current_turn_sitreps),
-                 [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); });
+    //// filter for valid / visible sitreps
+    //std::vector<const SitRepEntry*> current_turn_sitreps;
+    //current_turn_sitreps.reserve(all_current_turn_sitreps.size());
+    //std::copy_if(std::make_move_iterator(all_current_turn_sitreps.begin()),
+    //             std::make_move_iterator(all_current_turn_sitreps.end()),
+    //             std::back_inserter(current_turn_sitreps),
+    //             [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); });
 
-    // order sitreps for display
-    const auto ordered_template_strings = OrderedSitrepTemplateStrings();
-    std::vector<std::vector<const SitRepEntry*>> sorted_sitreps;
-    sorted_sitreps.resize(ordered_template_strings.size());
-    std::vector<const SitRepEntry*> remaining_unordered_sitreps;
-    remaining_unordered_sitreps.reserve(current_turn_sitreps.size());
+    //// order sitreps for display
+    //const auto ordered_template_strings = OrderedSitrepTemplateStrings();
+    //std::vector<std::vector<const SitRepEntry*>> sorted_sitreps;
+    //sorted_sitreps.resize(ordered_template_strings.size());
+    //std::vector<const SitRepEntry*> remaining_unordered_sitreps;
+    //remaining_unordered_sitreps.reserve(current_turn_sitreps.size());
 
-    for (auto* sitrep : current_turn_sitreps) {
-        if (!sitrep)
-            continue;
-        const auto& s{*sitrep};
-        std::string_view label_string = s.GetLabelString().empty() ? s.GetTemplateString() : s.GetLabelString();
-        auto it = std::find_if(ordered_template_strings.begin(), ordered_template_strings.end(),
-                               [label_string](const auto& ts) { return label_string == ts; });
-        if (it == ordered_template_strings.end()) {
-            remaining_unordered_sitreps.push_back(sitrep);
-        } else {
-            auto idx = std::distance(ordered_template_strings.begin(), it);
-            sorted_sitreps[idx].push_back(sitrep);
-        }
-    }
+    //for (auto* sitrep : current_turn_sitreps) {
+    //    if (!sitrep)
+    //        continue;
+    //    const auto& s{*sitrep};
+    //    std::string_view label_string = s.GetLabelString().empty() ? s.GetTemplateString() : s.GetLabelString();
+    //    auto it = std::find_if(ordered_template_strings.begin(), ordered_template_strings.end(),
+    //                           [label_string](const auto& ts) { return label_string == ts; });
+    //    if (it == ordered_template_strings.end()) {
+    //        remaining_unordered_sitreps.push_back(sitrep);
+    //    } else {
+    //        auto idx = std::distance(ordered_template_strings.begin(), it);
+    //        sorted_sitreps[idx].push_back(sitrep);
+    //    }
+    //}
 
-    // flatten vector of vectors to single vector
-    std::vector<const SitRepEntry*> ordered_sitreps;
-    ordered_sitreps.reserve(current_turn_sitreps.size());
-    std::for_each(sorted_sitreps.begin(), sorted_sitreps.end(),
-                  [&ordered_sitreps](auto& sitrep_vec) {
-                      ordered_sitreps.insert(ordered_sitreps.end(), sitrep_vec.begin(), sitrep_vec.end());
-                  });
+    //// flatten vector of vectors to single vector
+    //std::vector<const SitRepEntry*> ordered_sitreps;
+    //ordered_sitreps.reserve(current_turn_sitreps.size());
+    //std::for_each(sorted_sitreps.begin(), sorted_sitreps.end(),
+    //              [&ordered_sitreps](auto& sitrep_vec) {
+    //                  ordered_sitreps.insert(ordered_sitreps.end(), sitrep_vec.begin(), sitrep_vec.end());
+    //              });
 
-    // create UI rows for all sitrps
-    const GG::X width = m_sitreps_lb->ClientWidth();
-    const GG::Y height{ClientUI::Pts()*2};
-    // first the ordered sitreps
-    for (auto* sitrep : ordered_sitreps)
-        m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
-    // then the remaining unordered sitreps
-    for (auto* sitrep : remaining_unordered_sitreps)
-        m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
+    //// create UI rows for all sitrps
+    //const GG::X width = m_sitreps_lb->ClientWidth();
+    //const GG::Y height{ClientUI::Pts()*2};
+    //// first the ordered sitreps
+    //for (auto* sitrep : ordered_sitreps)
+    //    m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
+    //// then the remaining unordered sitreps
+    //for (auto* sitrep : remaining_unordered_sitreps)
+    //    m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
 
 
-    if (m_sitreps_lb->NumRows() > first_visible_row) {
-        m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));
-    } else if (!m_sitreps_lb->Empty()) {
-        m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
-    }
+    //if (m_sitreps_lb->NumRows() > first_visible_row)
+    //    m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));
+    //else if (!m_sitreps_lb->Empty())
+    //    m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
 
-    // if at first turn with visible sitreps, disable back button
-    int prev_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, false, m_hidden_sitrep_templates);
+    //// if at first turn with visible sitreps, disable back button
+    //int prev_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, false, m_hidden_sitrep_templates);
 
-    bool disable_prev_turn = prev_turn_with_sitrep == INVALID_GAME_TURN;
-    m_prev_turn_button->Disable(disable_prev_turn);
+    //bool disable_prev_turn = prev_turn_with_sitrep == INVALID_GAME_TURN;
+    //m_prev_turn_button->Disable(disable_prev_turn);
 
-    // if at last turn with visible sitreps, disable forward button
-    int next_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, true, m_hidden_sitrep_templates);
+    //// if at last turn with visible sitreps, disable forward button
+    //int next_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, true, m_hidden_sitrep_templates);
 
-    bool disable_next_turn = next_turn_with_sitrep == INVALID_GAME_TURN;
-    m_next_turn_button->Disable(disable_next_turn);
-    m_last_turn_button->Disable(disable_next_turn);
+    //bool disable_next_turn = next_turn_with_sitrep == INVALID_GAME_TURN;
+    //m_next_turn_button->Disable(disable_next_turn);
+    //m_last_turn_button->Disable(disable_next_turn);
 }
 
 void SitRepPanel::ShowSitRepsForTurn(int turn) {
-     bool is_different_turn(m_showing_turn != turn);
+     const bool is_different_turn(m_showing_turn != turn);
      m_showing_turn = turn;
      Update();
      if (is_different_turn)
@@ -855,17 +896,56 @@ void SitRepPanel::ShowSitRepsForTurn(int turn) {
 }
 
 void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& templates) {
-    auto old_hidden_sitrep_templates = m_hidden_sitrep_templates;
+    const auto old_hidden_sitrep_templates{m_hidden_sitrep_templates};
     m_hidden_sitrep_templates = templates;
     if (old_hidden_sitrep_templates != m_hidden_sitrep_templates)
         Update();
 }
 
-int SitRepPanel::NumVisibleSitrepsThisTurn() const {
-    auto turns = GetUnvalidatedSitRepsSortedByTurn(GetApp().EmpireID());
-    auto& this_turn_sitreps = turns[GetApp().CurrentTurn()];
-    auto is_valid = [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); };
+std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
+    const auto& app = GetApp();
+    const auto& context = app.GetContext();
+    const auto empire = context.GetEmpire(app.EmpireID());
+    if (!empire)
+        return 0; // TODO: for all empires?
+    const auto current_turn = app.CurrentTurn();
 
-    return std::count_if(this_turn_sitreps.begin(), this_turn_sitreps.end(), is_valid);
+    const auto& sitreps = empire->SitReps();
+    const auto& fixed_infos = empire->SitRepFixedInfos();
+
+    // checks turn of sitrep is current turn
+    const auto is_this_turn = [current_turn](const EmpireSitrepsContainer::value_type& turn_x_x)
+    { return turn_x_x.first.first == current_turn; };
+
+    // checks that fixed info idx is in range in container, gets it, and checks that it is not hidden
+    const auto in_range_not_hidden = [&hidden_templates{m_hidden_sitrep_templates}, &fixed_infos](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
+        const auto fixed_idx = x_fixedid_x.first.second;
+        if (fixed_idx >= fixed_infos.size())
+            return false;
+        const auto& fixed_info = fixed_infos[fixed_idx];
+        const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
+        return !hidden_templates.contains(label);
+    };
+
+    const auto to_this_turn_valid_sitrep_count =
+        [current_turn, &context, &fixed_infos]
+        (const EmpireSitrepsContainer::value_type& turn_fixedid_params_lists) -> std::size_t
+    {
+        const auto& [turn_idx, params_lists] = turn_fixedid_params_lists;
+        const auto& [turn, fixed_idx] = turn_idx;
+        if (fixed_idx >= fixed_infos.size())
+            return 0;
+        const auto& fixed_info = fixed_infos[fixed_idx];
+
+        const auto makes_valid_sitrep = [current_turn, fixed_info{fixed_info}, &context](const std::vector<std::string>& p) -> bool
+        { return SitRepEntry(fixed_info, SitRepEntry::UniqueInfo(p, current_turn)).GetValidity(context); };
+
+        return range_count_if(params_lists, makes_valid_sitrep);
+    };
+
+    auto valid_not_hidden_sitrep_counts_rng = sitreps | range_filter(is_this_turn) | range_filter(in_range_not_hidden) |
+        range_transform(to_this_turn_valid_sitrep_count);
+
+    return std::accumulate(valid_not_hidden_sitrep_counts_rng.begin(), valid_not_hidden_sitrep_counts_rng.end(), std::size_t{0});
 }
 
