@@ -35,8 +35,6 @@ std::size_t SitRepEntry::SizeInMemory() const {
     }
 
     retval += sizeof(decltype(m_template_string)::value_type)*m_template_string.capacity();
-    retval += sizeof(decltype(m_text)::value_type)*m_text.capacity();
-
     retval += sizeof(decltype(m_icon)::value_type)*m_icon.capacity();
     retval += sizeof(decltype(m_label)::value_type)*m_label.capacity();
 

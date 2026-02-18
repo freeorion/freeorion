@@ -98,12 +98,15 @@ public:
 
 
     //! Return the text generated after substituting all variables, with or without a ScriptingContext
-    [[nodiscard]] const std::string& GetText(const ScriptingContext& context) const;
-    [[nodiscard]] const std::string& GetText() const;
+    [[nodiscard]] std::string GetText(const ScriptingContext& context) const
+    { return GenerateVarText(&context).first; }
+    [[nodiscard]] std::pair<std::string, bool> GetTextAndValidity(const ScriptingContext& context) const
+    { return GenerateVarText(&context); }
 
-    //! Return if the text substitution was successful, with or without a ScriptingContext
-    bool Validate(const ScriptingContext& context) const;
-    bool Validate() const;
+    [[nodiscard]] std::string GetText() const
+    { return GenerateVarText(nullptr).first; }
+    [[nodiscard]] std::pair<std::string, bool> GetTextAndValidity() const
+    { return GenerateVarText(nullptr); }
 
     //! Return the #m_template_string
     [[nodiscard]] const std::string& GetTemplateString() const noexcept { return m_template_string; }
@@ -205,10 +208,11 @@ public:
 
 protected:
     //! Combines the template with the variables contained in object to
-    //! create a string with variables replaced with text. If a
-    //! ScriptingContext is provided, then additional variables can be
-    //! substituted.
-    void GenerateVarText(const ScriptingContext* context) const;
+    //! create a string with variables replaced with text.
+    //! If a ScriptingContext is provided, then additional variables can
+    //! be substituted.
+    //! Returns generated stromg and bool true if there were no errors.
+    std::pair<std::string, bool> GenerateVarText(const ScriptingContext* context) const;
 
     //! The template text used by this VarText, into which variables are
     //! substituted to render the text as user-readable.
@@ -219,15 +223,9 @@ protected:
     //! Maps variable tags into values, which are used during text substitution.
     VariablesVec m_variables; // need to hold own copies of strings here to support deserialization
 
-    //! #m_template_string with applied #m_variables substitute.
-    mutable std::string m_text;
-
-    //! If true the #m_template_string will be looked up in the stringtable
+    //! If true the m_template_string will be looked up in the stringtable
     //! prior to substitution for variables.
     bool m_stringtable_lookup_flag = false;
-
-    //! True if the #m_template_string stubstitution was executed without errors.
-    mutable bool m_validated = false;
 
 private:
     friend class boost::serialization::access;

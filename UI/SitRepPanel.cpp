@@ -505,20 +505,21 @@ namespace {
 
         const auto& context = GetApp().GetContext();
 
+        const auto [sitrep_text, valid] = sitrep.GetTextAndValidity(context);
+
         // Validation is time consuming because all variables are substituted.
         // Having ui.map.sitrep.invalid.shown off / disabled will hide sitreps that do not
         // validate. Having it on will skip the validation check.
-        if (!GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown") && !sitrep.Validate(context))
+        if (!valid && !GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown"))
             return true;
 
         // Check for snoozing.
-        if (permanently_snoozed_sitreps.contains(sitrep.GetText(context)))
+        if (permanently_snoozed_sitreps.contains(sitrep_text))
             return true;
 
-        auto sitrep_set_it = snoozed_sitreps.find(sitrep.GetTurn());
-        if (sitrep_set_it != snoozed_sitreps.end()
-            && sitrep_set_it->second.contains(sitrep.GetText(context)))
-        { return true; }
+       const auto sitrep_set_it = snoozed_sitreps.find(sitrep.GetTurn());
+        if (sitrep_set_it != snoozed_sitreps.end() && sitrep_set_it->second.contains(sitrep_text))
+            return true;
 
         return false;
     }

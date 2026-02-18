@@ -322,16 +322,15 @@ namespace {
 
 
     //! Looks up the given match in the Universe and returns the Universe
-    //! entities value. If the lookup or the substitution fails, sets
-    //! \a valid to false.
-    std::string Substitute(const auto& variables, bool& valid, xpr::smatch const& match, const ScriptingContext* context) {
+    //! entity's value. Also returns true on success, or false if the lookup
+    //! or the substitution fails.
+    std::pair<std::string, bool> Substitute(const auto& variables, xpr::smatch const& match, const ScriptingContext* context) {
         // Labelled variables have the form %tag:label%,  unlabelled are just %tag%
         // Use the label value. When missing, use the tag submatch as label instead.
         auto [label, variable_value, tag, label_found] = GetLabelTagViews(variables, match);
         if (!label_found) {
             ErrorLogger() << "Substitute: No substitution function found for label: " << label << "  from token: " << match.str();
-            valid = false;
-            return UserString("ERROR");
+            return {UserString("ERROR"), false};
         }
 
         const auto [sub_opt, sub_found] = [context](std::string_view tag, std::string_view variable_value) {
@@ -346,41 +345,14 @@ namespace {
 
         if (!sub_found) {
             ErrorLogger() << "No substitution found for tag: " << tag << " from token: " << match.str();
-            valid = false;
-            return UserString("ERROR");
+            return {UserString("ERROR"), false};
         } else if (!sub_opt) {
             ErrorLogger() << "Substitution for tag: " << tag << " and value: " << variable_value << " returned empty optional<string>";
-            valid = false;
-            return UserString("ERROR");
+            return {UserString("ERROR"), false};
         } else {
-            valid = true;
-            return *sub_opt;
+            return {*sub_opt, true};
         }
     }
-}
-
-const std::string& VarText::GetText(const ScriptingContext& context) const {
-    if (m_text.empty())
-        GenerateVarText(&context);
-    return m_text;
-}
-
-const std::string& VarText::GetText() const {
-    if (m_text.empty())
-        GenerateVarText(nullptr);
-    return m_text;
-}
-
-bool VarText::Validate(const ScriptingContext& context) const {
-    if (m_text.empty())
-        GenerateVarText(&context);
-    return m_validated;
-}
-
-bool VarText::Validate() const {
-    if (m_text.empty())
-        GenerateVarText(nullptr);
-    return m_validated;
 }
 
 void VarText::SetTemplateString(std::string template_string, bool stringtable_lookup) {
@@ -402,22 +374,25 @@ void VarText::AddVariable(std::string tag, std::string data)
 void VarText::AddVariables(VariablesVec&& data)
 { m_variables.insert(m_variables.end(), std::make_move_iterator(data.begin()), std::make_move_iterator(data.end())); }
 
-void VarText::GenerateVarText(const ScriptingContext* context) const {
+std::pair<std::string, bool> VarText::GenerateVarText(const ScriptingContext* context) const {
     // generate a string complete with substituted variables and hyperlinks
     // the procedure here is to replace any tokens within %% with variables of
     // the same name in the SitRep XML data
-    m_text.clear();
-    m_validated = true;
     if (m_template_string.empty())
-        return;
+        return {"", false};
 
     // get string into which to substitute variables
     const auto& template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
 
-    auto sub = [this, &context](const auto& match) -> std::string
-    { return Substitute(m_variables, m_validated, match, context); };
+    bool valid = false;
 
-    xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -+xpr::_w)) >> '%';
-    m_text = xpr::regex_replace(template_str, var, sub);
+    auto sub = [this, &context, &valid](const auto& match) -> std::string {
+        auto [retval, sub_valid] = Substitute(m_variables, match, context);
+        valid = sub_valid;
+        return retval;
+    };
+
+    static const xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -+xpr::_w)) >> '%';
+    return {xpr::regex_replace(template_str, var, sub), valid};
 }
 
