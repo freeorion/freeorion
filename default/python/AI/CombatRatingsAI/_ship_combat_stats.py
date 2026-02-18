@@ -1,5 +1,5 @@
 import freeOrionAIInterface as fo
-from logging import debug, error, warning
+from logging import error, warning
 
 from AIDependencies import CombatTarget
 from aistate_interface import get_aistate
@@ -130,10 +130,10 @@ class ShipCombatStats:
         launch_rate = enemy_stats._fighter_launch_rate
         damage = enemy_stats._fighter_damage
         if damage <= 0 or capacity < 1 or launch_rate < 1:
-            debug(f"flak factor 1.0 because enemy is not a carrier ({launch_rate}/{capacity} * {damage}d)")
+            # debug(f"flak factor 1.0 because enemy is not a carrier ({launch_rate}/{capacity} * {damage}d)")
             return (1.0, 0.0)
         if enemy_stats._has_interceptors:
-            debug("flak factor 1.0 because enemy is an interceptor carrier / unable to hurt us")
+            # debug("flak factor 1.0 because enemy is an interceptor carrier / unable to hurt us")
             return (1.0, 0.0)
         enemy_fighter_dmg = self._estimate_fighter_damage_vs_flak(capacity, launch_rate, damage, 0.0)
         if my_flak_shots <= 0.0:
