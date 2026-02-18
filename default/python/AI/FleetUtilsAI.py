@@ -256,15 +256,24 @@ def split_ship_from_fleet(fleet_id, ship_id) -> int:
         new_fleet = universe.getFleet(new_fleet_id)
         if not new_fleet:
             warning("Newly split fleet %d not available from universe" % new_fleet_id)
-        debug("Successfully split ship %d from fleet %d into new fleet %d", ship_id, fleet_id, new_fleet_id)
+        debug(
+            "Successfully split ship %d from fleet %d into new fleet %d at system %d",
+            ship_id,
+            fleet_id,
+            new_fleet_id,
+            fleet.systemID,
+        )
         fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
         fo.issueAggressionOrder(new_fleet_id, True)
         aistate.update_fleet_rating(new_fleet_id)
         aistate.newlySplitFleets[new_fleet_id] = True
         # register the new fleets so AI logic is aware of them
         sys_status = aistate.systemStatus.setdefault(fleet.systemID, {})
-        sys_status["myfleets"].append(new_fleet_id)
-        sys_status["myFleetsAccessible"].append(new_fleet_id)
+        try:
+            sys_status["myfleets"].append(new_fleet_id)
+            sys_status["myFleetsAccessible"].append(new_fleet_id)
+        except KeyError:
+            error("KeyError appending new fleet id to sys_status when splitting ship from fleet", exc_info=True)
     else:
         if fleet.systemID == INVALID_ID:
             warning("Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (ship_id, fleet_id))
