@@ -586,6 +586,15 @@ std::vector<std::pair<std::string_view, int>> Empire::EmptyPolicySlots() const {
     return retval;
 }
 
+void Empire::CreateMeter(std::string_view name) {
+    auto it = range_find_if(m_meters, [name](const auto& e) noexcept { return e.first == name; });
+    // XXX probably a bad idea to insert into the map (invalidates all iterators)
+    if (it == m_meters.end())
+        m_meters.emplace(name, Meter());
+    else
+        ErrorLogger() << "Empire::CreateMeter trying to create existing empire meter " << name;
+}
+
 Meter* Empire::GetMeter(std::string_view name) {
     auto it = range_find_if(m_meters, [name](const auto& e) noexcept { return e.first == name; });
     if (it != m_meters.end())

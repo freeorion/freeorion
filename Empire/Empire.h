@@ -125,6 +125,7 @@ public:
     [[nodiscard]] const std::string&           MostRPSpentResearchableTech() const;
     [[nodiscard]] const std::string&           MostRPCostLeftResearchableTech(const ScriptingContext& context) const;
 
+    void                                       CreateMeter(std::string_view name);
     [[nodiscard]] const Meter*                 GetMeter(std::string_view name) const;
     [[nodiscard]] const auto&                  GetMeters() const noexcept { return m_meters; }
 
