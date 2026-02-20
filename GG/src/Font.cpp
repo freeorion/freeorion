@@ -379,8 +379,28 @@ const std::string Font::Substring::EMPTY_STRING{};
 
 namespace {
     constexpr struct U8NextFn {
-        uint32_t operator()(std::string::const_iterator& text_it, std::string::const_iterator end_it) const
+        template <typename char_iterator_t>
+        constexpr uint32_t operator()(char_iterator_t& text_it, char_iterator_t end_it) const
         { return utf8::next(text_it, end_it); }
+
+        // returns character starting at \a text_it and the length of that character in bytes,
+        // without modifying \a text_it
+        template <typename char_iterator_t>
+        constexpr std::pair<uint32_t, std::ptrdiff_t>
+        operator()(const char_iterator_t& text_it, const char_iterator_t end_it) const
+        {
+            char_iterator_t local_it(text_it);
+            uint32_t c = operator()(local_it, end_it);
+            return {c, std::distance(text_it, local_it)};
+        }
+
+        constexpr std::pair<uint32_t, std::ptrdiff_t>
+        operator()(const std::string_view sv) const
+        { return operator()(sv.begin(), sv.end()); }
+
+        constexpr std::pair<uint32_t, std::ptrdiff_t>
+        operator()(const std::string_view sv, std::size_t offset) const
+        { return operator()(sv.substr(offset)); }
     } u8next_fn;
 
     template <typename GlyphMap, typename TextNextFn = U8NextFn>
@@ -948,104 +968,6 @@ namespace {
 
 
 #if defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L)
-    constexpr struct DummyNextFn {
-        // masks \a c to its lower 6 bits
-        static constexpr uint32_t cont_byte(uint8_t c) noexcept
-        { return c & 0b00111111; };
-
-        static constexpr uint32_t cont_byte(char c) noexcept
-        { return cont_byte(static_cast<uint8_t>(c)); };
-
-        template <typename char_iterator_t>
-        static constexpr uint32_t cont_byte(char_iterator_t char_it) noexcept
-        {
-            static_assert(std::is_same_v<std::decay_t<decltype(*char_it)>, char>);
-            return cont_byte(*char_it);
-        };
-
-        // constexpr OK alternative to utf8::next
-        // does not validate utf8 continuation bytes, but just increments
-        // based on initial byte-determined utf8 sequence length
-        // returns character starting at \a text_it and then advances \a text_it to the next char
-        // based on how many bytes are in the sequence length indicated by the byte at \a text_it
-        template <typename char_iterator_t>
-        constexpr uint32_t operator()(char_iterator_t& text_it, const char_iterator_t end_it) const
-        {
-            static_assert(std::is_same_v<std::decay_t<decltype(*text_it)>, char>);
-            if (text_it == end_it)
-                return 0u;
-
-            // first byte determines sequence length
-            uint32_t c0 = static_cast<uint32_t>(static_cast<uint8_t>(*text_it)); // via uint8_t to ensure values map to 0-255
-            const std::ptrdiff_t sequence_length =
-                (c0 <= 0x7F) ? 1 :
-                (c0 >= 0xC2 && c0 <= 0xDF) ? 2 :
-                (c0 >= 0xE0 && c0 <= 0xEF) ? 3 :
-                (c0 >= 0xF0) ? 4 : 0;
-
-            if (sequence_length == 0)
-                throw std::invalid_argument("dummy utf8 next given invalid initial byte");
-            if (sequence_length == 1) {
-                ++text_it;
-                return c0;
-            }
-
-            // verify that there are enough bytes in iterator range for sequence length
-            const std::ptrdiff_t it_length = std::distance(text_it, end_it);
-            if (it_length < sequence_length)
-                throw std::invalid_argument("dummy utf8 next given too short sequence for indicated sequence length");
-
-            // extract, mask, and compile continuation bytes with masked initial byte
-            if (sequence_length == 2) {
-                c0 &= 0b00011111;
-                uint32_t c1 = cont_byte(text_it + 1);
-                text_it += 2;
-                return (c0 << 6) + c1;
-
-            } else if (sequence_length == 3) {
-                c0 &= 0b00001111;
-                uint32_t c1 = cont_byte(text_it + 1);
-                uint32_t c2 = cont_byte(text_it + 2);
-                text_it += 3;
-                return (c0 << 12) + (c1 << 6) + c2;
-
-            } else if (sequence_length == 4) {
-                c0 &= 0b00000111;
-                uint32_t c1 = cont_byte(text_it + 1);
-                uint32_t c2 = cont_byte(text_it + 2);
-                uint32_t c3 = cont_byte(text_it + 3);
-                text_it += 4;
-                return (c0 << 18) + (c1 << 12) + (c2 << 6) + c3;
-
-            } else {
-                throw std::invalid_argument("dummy utf8 next somehow got unexpected sequence length");
-            }
-        }
-
-        // returns character starting at \a text_it and the length of that character in bytes,
-        // without modifying \a text_it
-        template <typename char_iterator_t>
-        constexpr std::pair<uint32_t, std::ptrdiff_t>
-        operator()(const char_iterator_t& text_it, const char_iterator_t end_it) const
-        {
-            char_iterator_t local_it(text_it);
-            uint32_t c = operator()(local_it, end_it);
-            return {c, std::distance(text_it, local_it)};
-        }
-
-        constexpr std::pair<uint32_t, std::ptrdiff_t>
-        operator()(const std::string_view sv) const
-        { return operator()(sv.begin(), sv.end()); }
-
-        constexpr std::pair<uint32_t, std::ptrdiff_t>
-        operator()(const std::string_view sv, std::size_t offset) const
-        { return operator()(sv.substr(offset)); }
-    } dummy_next_fn;
-
-    static_assert('!' < 0b00111111 && DummyNextFn::cont_byte('!') == '!');
-    static_assert('A' > 0b00111111 && DummyNextFn::cont_byte('A') == (uint8_t('A') & 0b00111111));
-
-
     // for constexpr test purposes
     constexpr struct DummyGlyphMap {
         const struct {
@@ -1062,9 +984,8 @@ namespace {
     // text with all single-byte chars including whitespace
     constexpr std::string_view all_ascii_sv = "!Ascii\tX   Y";
     using cdp = std::pair<uint32_t, std::ptrdiff_t>;
-    static_assert(dummy_next_fn(all_ascii_sv) == cdp('!', 1));
-    static_assert(dummy_next_fn(all_ascii_sv, 1) == cdp('A', 1));
-    static_assert(dummy_next_fn(all_ascii_sv.end(), all_ascii_sv.end()) == cdp(0, 0));
+    static_assert(u8next_fn(all_ascii_sv) == cdp('!', 1));
+    static_assert(u8next_fn(all_ascii_sv, 1) == cdp('A', 1));
 
 #  if defined(__cpp_lib_constexpr_vector)
     CONSTEXPR_FONT std::vector<Font::TextElement>
@@ -1077,7 +998,7 @@ namespace {
         elems.emplace_back(Font::Substring(text, 8u, 11u), Font::TextElement::TextElementType::WHITESPACE);
         elems.emplace_back(Font::Substring(text, 11u, 12u));
 
-        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, expand_tabs, dummy_next_fn);
+        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, expand_tabs, u8next_fn);
         return elems;
     }
 
@@ -1118,7 +1039,7 @@ namespace {
     {
         const std::string text(all_ascii_sv);
         const auto elems = ElementsForASCIIText(text, fmt & FORMAT_LEFT);
-        return AssembleLineData(fmt, box_width, 4u, elems, dummy_next_fn);
+        return AssembleLineData(fmt, box_width, 4u, elems, u8next_fn);
     };
     // different horizontal line widths require different numbers of lines to lay out
     static_assert(test_ascii_whitespace_line_data(X{9999}, FORMAT_LEFT | FORMAT_WORDBREAK).size() == 1u);
@@ -1216,7 +1137,7 @@ namespace {
     {
         std::vector<Font::TextElement> elems;
         elems.emplace_back(Font::Substring(text, 0u, 14u));
-        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, false, dummy_next_fn);
+        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, false, u8next_fn);
         return elems;
     }
 #  endif
@@ -1229,8 +1150,8 @@ namespace {
     constexpr std::array<cdp, 6> long_chars_as_uint32_t_and_length_expected{{
         {0x3B1, 2}, {'b', 1}, {0xE5, 2}, {0x30AA, 3}, {0x1F81E, 4}, {0x648, 2}}};
     constexpr std::array<cdp, 6> long_chars_as_uint32_t_and_length_extracted{{
-        dummy_next_fn(long_chars_sv), dummy_next_fn(long_chars_sv.substr(2)), dummy_next_fn(long_chars_sv.substr(3)),
-        dummy_next_fn(long_chars_sv.substr(5)), dummy_next_fn(long_chars_sv.substr(8)), dummy_next_fn(long_chars_sv.substr(12))}};
+        u8next_fn(long_chars_sv), u8next_fn(long_chars_sv.substr(2)), u8next_fn(long_chars_sv.substr(3)),
+        u8next_fn(long_chars_sv.substr(5)), u8next_fn(long_chars_sv.substr(8)), u8next_fn(long_chars_sv.substr(12))}};
     static_assert(check_eq(long_chars_as_uint32_t_and_length_expected, long_chars_as_uint32_t_and_length_extracted));
 
 #  if defined(__cpp_lib_constexpr_vector)
@@ -1239,7 +1160,7 @@ namespace {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
@@ -1274,7 +1195,7 @@ namespace {
         elems.emplace_back(Font::Substring(text, 6u, 7u), Font::TextElement::TextElementType::NEWLINE);
         elems.emplace_back(Font::Substring(text, 7u, 9u));
 
-        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, false, dummy_next_fn);
+        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, false, u8next_fn);
 
         return elems;
     }
@@ -1286,7 +1207,7 @@ namespace {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        return AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        return AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
     };
     static_assert(test_multline_line_data().size() == 4);
     static_assert(test_multline_line_data()[0].char_data.size() == 2);
@@ -1322,7 +1243,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
@@ -1351,7 +1272,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return Value(GlyphIndexInLines(line_idx, CPSize(glyph_idx), line_data));
     };
@@ -1409,7 +1330,7 @@ namespace {
         elems.emplace_back(Font::Substring(text, 7u, 11u), Font::Substring(text, 9u, 10u), Font::TextElement::TextElementType::OPEN_TAG);
         elems.emplace_back(Font::Substring(text, 11u, 13u));
 
-        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, false, dummy_next_fn);
+        SetTextElementWidths(text, elems, dummy_glyph_map, X{4}, X{8*4}, false, u8next_fn);
 
         return elems;
     }
@@ -1421,7 +1342,7 @@ namespace {
         const auto elems = ElementsForTaggedText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
@@ -1448,7 +1369,7 @@ namespace {
         const auto elems = ElementsForTaggedText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP | FORMAT_WORDBREAK  | FORMAT_IGNORETAGS;
-        const auto line_data = AssembleLineData(fmt, GG::X(888), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(888), 4u, elems, u8next_fn);
         const auto c_to_l_and_c = [line_data](CPSize c_idx) { return LineIndexAndCPIndexFromCodePointInLines(c_idx, line_data); };
 
         return std::array{
@@ -1468,7 +1389,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
         return Value(CodePointIndexAfterPreviousGlyphInLines(line_idx, CPSize{glyph_idx}, line_data));
     };
 
@@ -1496,7 +1417,7 @@ namespace {
         const auto elems = ElementsForTaggedText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
         return Value(CodePointIndexAfterPreviousGlyphInLines(0u, CPSize{glyph_idx}, line_data));
     };
 
@@ -1671,7 +1592,7 @@ namespace {
         const auto elems = ElementsForMultiLineText(text);
 
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
         const auto c_to_s = [line_data](std::size_t line_idx, CPSize c_idx)
         { return StringIndexFromLineAndGlyphInLines(line_idx, c_idx, line_data).first; };
         const CPSize CP2{2u}, CP3{3u};
@@ -1701,7 +1622,7 @@ namespace {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return StringIndexAndLengthOfLineAndGlyphInLines(0u, CPSize(idx), line_data);
     };
@@ -1725,7 +1646,7 @@ namespace {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         const auto [line_idx, cp_in_line_idx] = LineIndexAndCPIndexFromGlyphInLines(glyph_idx, line_data);
         return StringIndexAndLengthOfLineAndGlyphInLines(line_idx, cp_in_line_idx, line_data);
@@ -1747,7 +1668,7 @@ namespace {
         const std::string text(long_chars_sv);
         const auto elems = ElementsForLongCharsText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
@@ -1767,7 +1688,7 @@ namespace {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
@@ -1789,7 +1710,7 @@ namespace {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return CodePointIndexFromLineAndGlyphInLines(line_idx, index, line_data);
     };
@@ -1861,7 +1782,7 @@ namespace {
         const std::string text(tagged_test_text);
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return GlyphIndicesRangeToStringSizeIndicesInLines(CPSize{low_idx}, CPSize{high_idx}, line_data);
     };
@@ -2095,7 +2016,7 @@ namespace {
         text_elems.emplace_back(Substring(text, 59u, 64u), Substring(text, 60u, 63u), TET::OPEN_TAG);
         text_elems.emplace_back(Substring(text, 64u, 66u));
 
-        SetTextElementWidths(text, text_elems, dummy_glyph_map, X{4}, X{8*4}, false, dummy_next_fn);
+        SetTextElementWidths(text, text_elems, dummy_glyph_map, X{4}, X{8*4}, false, u8next_fn);
 
         return text_elems;
     }
@@ -2174,7 +2095,7 @@ namespace {
     constexpr auto test_getting_extent = []() {
         const auto extent =
             GetExtent(AssembleLineData(FORMAT_LEFT | FORMAT_TOP, GG::X(99999), 4u,
-                                       TestTextElems(std::string{TEST_TEXT_WITH_TAGS}), dummy_next_fn),
+                                       TestTextElems(std::string{TEST_TEXT_WITH_TAGS}), u8next_fn),
                       Y{8}, Y{8});
         return extent;
     };
@@ -2230,7 +2151,7 @@ namespace {
                                                   //  01   23    45     // glyphs
         const auto elems = ElementsForTaggedText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
         const auto& cd0 = line_data.front().char_data;
 
         const auto get_gly_cp = [&cd0](uint8_t x) {
@@ -2842,7 +2763,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto lines = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto lines = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         CxRenderCache cache;
         Font::RenderState state{CLR_WHITE};
@@ -2861,7 +2782,7 @@ namespace {
         const std::string text(multi_line_text);
         const auto elems = ElementsForMultiLineText(text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto lines = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto lines = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         CxRenderCache cache;
         Font::RenderState state{CLR_WHITE};
@@ -3192,7 +3113,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         return std::array<std::size_t, 3>{line_data.size(), line_data.at(0).char_data.size(), line_data.at(1).char_data.size()};
     }();
@@ -3202,7 +3123,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         const auto& cd0 = line_data.front().char_data;
         std::array<char, 30> tag_names0{0};
@@ -3222,7 +3143,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         const auto& cd1 = line_data.at(1).char_data;
         std::array<std::array<char, 2>, 13> tag_names1{{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}}};
@@ -3249,7 +3170,7 @@ namespace {
         const std::string test_text(TEST_TEXT_WITH_TAGS);
         const auto elems = TestTextElems(test_text);
         const auto fmt = FORMAT_LEFT | FORMAT_TOP;
-        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, dummy_next_fn);
+        const auto line_data = AssembleLineData(fmt, GG::X(99999), 4u, elems, u8next_fn);
 
         const auto& cd0 = line_data.at(0).char_data;
         const auto& cd1 = line_data.at(1).char_data;
