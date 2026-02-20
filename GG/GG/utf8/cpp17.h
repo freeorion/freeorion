@@ -32,60 +32,60 @@ DEALINGS IN THE SOFTWARE.
 
 namespace utf8
 {
-    inline std::string utf16to8(std::u16string_view s)
+    UTF_CPP20_CONSTEXPR inline std::string utf16to8(std::u16string_view s)
     {
         std::string result;
         utf16to8(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::u16string utf8to16(std::string_view s)
+    UTF_CPP20_CONSTEXPR inline std::u16string utf8to16(std::string_view s)
     {
         std::u16string result;
         utf8to16(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::string utf32to8(std::u32string_view s)
+    UTF_CPP20_CONSTEXPR inline std::string utf32to8(std::u32string_view s)
     {
         std::string result;
         utf32to8(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::u32string utf8to32(std::string_view s)
+    UTF_CPP20_CONSTEXPR inline std::u32string utf8to32(std::string_view s)
     {
         std::u32string result;
         utf8to32(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::size_t find_invalid(std::string_view s)
+    constexpr inline std::size_t find_invalid(std::string_view s)
     {
         std::string_view::const_iterator invalid = find_invalid(s.begin(), s.end());
         return (invalid == s.end()) ? std::string_view::npos : static_cast<std::size_t>(invalid - s.begin());
     }
 
-    inline bool is_valid(std::string_view s)
+    constexpr inline bool is_valid(std::string_view s)
     {
         return is_valid(s.begin(), s.end());
     }
 
-    inline std::string replace_invalid(std::string_view s, char32_t replacement)
+    UTF_CPP20_CONSTEXPR inline std::string replace_invalid(std::string_view s, char32_t replacement)
     {
         std::string result;
         replace_invalid(s.begin(), s.end(), std::back_inserter(result), replacement);
         return result;
     }
 
-    inline std::string replace_invalid(std::string_view s)
+    UTF_CPP20_CONSTEXPR inline std::string replace_invalid(std::string_view s)
     {
         std::string result;
         replace_invalid(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline bool starts_with_bom(std::string_view s)
+    constexpr inline bool starts_with_bom(std::string_view s)
     {
         return starts_with_bom(s.begin(), s.end());
     }

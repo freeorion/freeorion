@@ -32,33 +32,33 @@ DEALINGS IN THE SOFTWARE.
 
 namespace utf8
 {
-    inline void append16(utfchar32_t cp, std::u16string& s)
+    UTF_CPP20_CONSTEXPR inline void append16(utfchar32_t cp, std::u16string& s)
     {
         append16(cp, std::back_inserter(s));
     }
 
-    inline std::string utf16to8(const std::u16string& s)
+    UTF_CPP20_CONSTEXPR inline std::string utf16to8(const std::u16string& s)
     {
         std::string result;
         utf16to8(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::u16string utf8to16(const std::string& s)
+    UTF_CPP20_CONSTEXPR inline std::u16string utf8to16(const std::string& s)
     {
         std::u16string result;
         utf8to16(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::string utf32to8(const std::u32string& s)
+    UTF_CPP20_CONSTEXPR inline std::string utf32to8(const std::u32string& s)
     {
         std::string result;
         utf32to8(s.begin(), s.end(), std::back_inserter(result));
         return result;
     }
 
-    inline std::u32string utf8to32(const std::string& s)
+    UTF_CPP20_CONSTEXPR inline std::u32string utf8to32(const std::string& s)
     {
         std::u32string result;
         utf8to32(s.begin(), s.end(), std::back_inserter(result));
