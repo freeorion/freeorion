@@ -71,7 +71,7 @@ namespace utf8
     /// The library API - functions intended to be called by the users
 
     template <typename octet_iterator>
-    octet_iterator append(utfchar32_t cp, octet_iterator result)
+    UTF_CPP17_CONSTEXPR octet_iterator append(utfchar32_t cp, octet_iterator result)
     {
         if (!utf8::internal::is_code_point_valid(cp))
             throw invalid_code_point(cp);
@@ -79,13 +79,13 @@ namespace utf8
         return internal::append(cp, result);
     }
 
-    inline void append(utfchar32_t cp, std::string& s)
+    UTF_CPP20_CONSTEXPR inline void append(utfchar32_t cp, std::string& s)
     {
         append(cp, std::back_inserter(s));
     }
 
     template <typename word_iterator>
-    word_iterator append16(utfchar32_t cp, word_iterator result)
+    UTF_CPP17_CONSTEXPR word_iterator append16(utfchar32_t cp, word_iterator result)
     {
         if (!utf8::internal::is_code_point_valid(cp))
             throw invalid_code_point(cp);
@@ -94,7 +94,7 @@ namespace utf8
     }
 
     template <typename octet_iterator, typename output_iterator>
-    output_iterator replace_invalid(octet_iterator start, octet_iterator end, output_iterator out, utfchar32_t replacement)
+    UTF_CPP17_CONSTEXPR output_iterator replace_invalid(octet_iterator start, octet_iterator end, output_iterator out, utfchar32_t replacement)
     {
         while (start != end) {
             octet_iterator sequence_start = start;
@@ -126,21 +126,25 @@ namespace utf8
         return out;
     }
 
-    template <typename octet_iterator, typename output_iterator>
-    inline output_iterator replace_invalid(octet_iterator start, octet_iterator end, output_iterator out)
+    namespace internal 
     {
-        static const utfchar32_t replacement_marker = static_cast<utfchar32_t>(utf8::internal::mask16(0xfffd));
-        return utf8::replace_invalid(start, end, out, replacement_marker);
+        UTF_CPP11_CONSTEXPR const utfchar32_t replacement_marker = static_cast<utfchar32_t>(utf8::internal::mask16(0xfffd));
     }
 
-    inline std::string replace_invalid(const std::string& s, utfchar32_t replacement)
+    template <typename octet_iterator, typename output_iterator>
+    UTF_CPP17_CONSTEXPR inline output_iterator replace_invalid(octet_iterator start, octet_iterator end, output_iterator out)
+    {
+        return utf8::replace_invalid(start, end, out, internal::replacement_marker);
+    }
+
+    UTF_CPP20_CONSTEXPR inline std::string replace_invalid(const std::string& s, utfchar32_t replacement)
     {
         std::string result;
         replace_invalid(s.begin(), s.end(), std::back_inserter(result), replacement);
         return result;
     }
 
-    inline std::string replace_invalid(const std::string& s)
+    UTF_CPP20_CONSTEXPR inline std::string replace_invalid(const std::string& s)
     {
         std::string result;
         replace_invalid(s.begin(), s.end(), std::back_inserter(result));
@@ -148,7 +152,7 @@ namespace utf8
     }
 
     template <typename octet_iterator>
-    utfchar32_t next(octet_iterator& it, octet_iterator end)
+    UTF_CPP17_CONSTEXPR utfchar32_t next(octet_iterator& it, octet_iterator end)
     {
         utfchar32_t cp = 0;
         internal::utf_error err_code = utf8::internal::validate_next(it, end, cp);
@@ -168,7 +172,7 @@ namespace utf8
     }
 
     template <typename word_iterator>
-    utfchar32_t next16(word_iterator& it, word_iterator end)
+    UTF_CPP17_CONSTEXPR utfchar32_t next16(word_iterator& it, word_iterator end)
     {
         utfchar32_t cp = 0;
         internal::utf_error err_code = utf8::internal::validate_next16(it, end, cp);
@@ -178,13 +182,13 @@ namespace utf8
     }
 
     template <typename octet_iterator>
-    utfchar32_t peek_next(octet_iterator it, octet_iterator end)
+    UTF_CPP17_CONSTEXPR utfchar32_t peek_next(octet_iterator it, octet_iterator end)
     {
         return utf8::next(it, end);
     }
 
     template <typename octet_iterator>
-    utfchar32_t prior(octet_iterator& it, octet_iterator start)
+    UTF_CPP17_CONSTEXPR utfchar32_t prior(octet_iterator& it, octet_iterator start)
     {
         // can't do much if it == start
         if (it == start)
@@ -199,7 +203,7 @@ namespace utf8
     }
 
     template <typename octet_iterator, typename distance_type>
-    void advance (octet_iterator& it, distance_type n, octet_iterator end)
+    UTF_CPP17_CONSTEXPR void advance (octet_iterator& it, distance_type n, octet_iterator end)
     {
         const distance_type zero(0);
         if (n < zero) {
@@ -215,7 +219,7 @@ namespace utf8
 
     template <typename octet_iterator>
     typename std::iterator_traits<octet_iterator>::difference_type
-    distance (octet_iterator first, octet_iterator last)
+    UTF_CPP17_CONSTEXPR distance (octet_iterator first, octet_iterator last)
     {
         typename std::iterator_traits<octet_iterator>::difference_type dist;
         for (dist = 0; first < last; ++dist)
@@ -224,7 +228,7 @@ namespace utf8
     }
 
     template <typename u16bit_iterator, typename octet_iterator>
-    octet_iterator utf16to8 (u16bit_iterator start, u16bit_iterator end, octet_iterator result)
+    UTF_CPP17_CONSTEXPR octet_iterator utf16to8 (u16bit_iterator start, u16bit_iterator end, octet_iterator result)
     {
         while (start != end) {
             utfchar32_t cp = static_cast<utfchar32_t>(utf8::internal::mask16(*start++));
@@ -251,7 +255,7 @@ namespace utf8
     }
 
     template <typename u16bit_iterator, typename octet_iterator>
-    u16bit_iterator utf8to16 (octet_iterator start, octet_iterator end, u16bit_iterator result)
+    UTF_CPP17_CONSTEXPR u16bit_iterator utf8to16 (octet_iterator start, octet_iterator end, u16bit_iterator result)
     {
         while (start < end) {
             const utfchar32_t cp = utf8::next(start, end);
@@ -266,7 +270,7 @@ namespace utf8
     }
 
     template <typename octet_iterator, typename u32bit_iterator>
-    octet_iterator utf32to8 (u32bit_iterator start, u32bit_iterator end, octet_iterator result)
+    UTF_CPP17_CONSTEXPR octet_iterator utf32to8 (u32bit_iterator start, u32bit_iterator end, octet_iterator result)
     {
         while (start != end)
             result = utf8::append(*(start++), result);
@@ -275,7 +279,7 @@ namespace utf8
     }
 
     template <typename octet_iterator, typename u32bit_iterator>
-    u32bit_iterator utf8to32 (octet_iterator start, octet_iterator end, u32bit_iterator result)
+    UTF_CPP17_CONSTEXPR u32bit_iterator utf8to32 (octet_iterator start, octet_iterator end, u32bit_iterator result)
     {
         while (start < end)
             (*result++) = utf8::next(start, end);
@@ -295,49 +299,49 @@ namespace utf8
       typedef utfchar32_t& reference;
       typedef std::ptrdiff_t difference_type;
       typedef std::bidirectional_iterator_tag iterator_category;
-      iterator () {}
-      explicit iterator (const octet_iterator& octet_it,
-                         const octet_iterator& rangestart,
-                         const octet_iterator& rangeend) :
+      UTF_CPP17_CONSTEXPR iterator () {}
+      UTF_CPP17_CONSTEXPR explicit iterator (const octet_iterator& octet_it,
+                                             const octet_iterator& rangestart,
+                                             const octet_iterator& rangeend) :
                it(octet_it), range_start(rangestart), range_end(rangeend)
       {
           if (it < range_start || it > range_end)
               throw std::out_of_range("Invalid utf-8 iterator position");
       }
       // the default "big three" are OK
-      octet_iterator base () const { return it; }
-      utfchar32_t operator * () const
+      UTF_CPP17_CONSTEXPR octet_iterator base () const { return it; }
+      UTF_CPP17_CONSTEXPR utfchar32_t operator * () const
       {
           octet_iterator temp = it;
           return utf8::next(temp, range_end);
       }
-      bool operator == (const iterator& rhs) const
+      UTF_CPP17_CONSTEXPR bool operator == (const iterator& rhs) const
       {
           if (range_start != rhs.range_start || range_end != rhs.range_end)
               throw std::logic_error("Comparing utf-8 iterators defined with different ranges");
           return (it == rhs.it);
       }
-      bool operator != (const iterator& rhs) const
+      UTF_CPP17_CONSTEXPR bool operator != (const iterator& rhs) const
       {
           return !(operator == (rhs));
       }
-      iterator& operator ++ ()
+      UTF_CPP17_CONSTEXPR iterator& operator ++ ()
       {
           utf8::next(it, range_end);
           return *this;
       }
-      iterator operator ++ (int)
+      UTF_CPP17_CONSTEXPR iterator operator ++ (int)
       {
           iterator temp = *this;
           utf8::next(it, range_end);
           return temp;
       }
-      iterator& operator -- ()
+      UTF_CPP17_CONSTEXPR iterator& operator -- ()
       {
           utf8::prior(it, range_start);
           return *this;
       }
-      iterator operator -- (int)
+      UTF_CPP17_CONSTEXPR iterator operator -- (int)
       {
           iterator temp = *this;
           utf8::prior(it, range_start);

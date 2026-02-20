@@ -40,6 +40,22 @@ DEALINGS IN THE SOFTWARE.
     #define UTF_CPP_CPLUSPLUS __cplusplus
 #endif
 
+#if UTF_CPP_CPLUSPLUS >= 201103L
+    #define UTF_CPP11_CONSTEXPR constexpr
+#else
+    #define UTF_CPP11_CONSTEXPR
+#endif
+#if UTF_CPP_CPLUSPLUS >= 201703L
+    #define UTF_CPP17_CONSTEXPR constexpr
+#else
+    #define UTF_CPP17_CONSTEXPR
+#endif
+#if UTF_CPP_CPLUSPLUS >= 202002L
+    #define UTF_CPP20_CONSTEXPR constexpr
+#else
+    #define UTF_CPP20_CONSTEXPR
+#endif
+
 #if UTF_CPP_CPLUSPLUS >= 201103L // C++ 11 or later
     #define UTF_CPP_OVERRIDE override
     #define UTF_CPP_NOEXCEPT noexcept
@@ -75,61 +91,61 @@ namespace internal
     // Unicode constants
     // Leading (high) surrogates: 0xd800 - 0xdbff
     // Trailing (low) surrogates: 0xdc00 - 0xdfff
-    const utfchar16_t LEAD_SURROGATE_MIN  = 0xd800u;
-    const utfchar16_t LEAD_SURROGATE_MAX  = 0xdbffu;
-    const utfchar16_t TRAIL_SURROGATE_MIN = 0xdc00u;
-    const utfchar16_t TRAIL_SURROGATE_MAX = 0xdfffu;
-    const utfchar16_t LEAD_OFFSET         = 0xd7c0u;       // LEAD_SURROGATE_MIN - (0x10000 >> 10)
-    const utfchar32_t SURROGATE_OFFSET    = 0xfca02400u;   // 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN
+    UTF_CPP11_CONSTEXPR const utfchar16_t LEAD_SURROGATE_MIN  = 0xd800u;
+    UTF_CPP11_CONSTEXPR const utfchar16_t LEAD_SURROGATE_MAX  = 0xdbffu;
+    UTF_CPP11_CONSTEXPR const utfchar16_t TRAIL_SURROGATE_MIN = 0xdc00u;
+    UTF_CPP11_CONSTEXPR const utfchar16_t TRAIL_SURROGATE_MAX = 0xdfffu;
+    UTF_CPP11_CONSTEXPR const utfchar16_t LEAD_OFFSET         = 0xd7c0u;       // LEAD_SURROGATE_MIN - (0x10000 >> 10)
+    UTF_CPP11_CONSTEXPR const utfchar32_t SURROGATE_OFFSET    = 0xfca02400u;   // 0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN
 
     // Maximum valid value for a Unicode code point
-    const utfchar32_t CODE_POINT_MAX      = 0x0010ffffu;
+    UTF_CPP11_CONSTEXPR const utfchar32_t CODE_POINT_MAX      = 0x0010ffffu;
 
     template<typename octet_type>
-    inline utfchar8_t mask8(octet_type oc)
+    UTF_CPP11_CONSTEXPR inline utfchar8_t mask8(octet_type oc)
     {
         return static_cast<utfchar8_t>(0xff & oc);
     }
 
     template<typename u16_type>
-    inline utfchar16_t mask16(u16_type oc)
+    UTF_CPP11_CONSTEXPR inline utfchar16_t mask16(u16_type oc)
     {
         return static_cast<utfchar16_t>(0xffff & oc);
     }
 
     template<typename octet_type>
-    inline bool is_trail(octet_type oc)
+    UTF_CPP11_CONSTEXPR inline bool is_trail(octet_type oc)
     {
         return ((utf8::internal::mask8(oc) >> 6) == 0x2);
     }
 
-    inline bool is_lead_surrogate(utfchar32_t cp)
+    UTF_CPP11_CONSTEXPR inline bool is_lead_surrogate(utfchar32_t cp)
     {
         return (cp >= static_cast<utfchar32_t>(LEAD_SURROGATE_MIN) && cp <= static_cast<utfchar32_t>(LEAD_SURROGATE_MAX));
     }
 
-    inline bool is_trail_surrogate(utfchar32_t cp)
+    UTF_CPP11_CONSTEXPR inline bool is_trail_surrogate(utfchar32_t cp)
     {
         return (cp >= static_cast<utfchar32_t>(TRAIL_SURROGATE_MIN) && cp <= static_cast<utfchar32_t>(TRAIL_SURROGATE_MAX));
     }
 
-    inline bool is_surrogate(utfchar32_t cp)
+    UTF_CPP11_CONSTEXPR inline bool is_surrogate(utfchar32_t cp)
     {
         return (cp >= static_cast<utfchar32_t>(LEAD_SURROGATE_MIN) && cp <= static_cast<utfchar32_t>(TRAIL_SURROGATE_MAX));
     }
 
-    inline bool is_code_point_valid(utfchar32_t cp)
+    UTF_CPP11_CONSTEXPR inline bool is_code_point_valid(utfchar32_t cp)
     {
         return (cp <= CODE_POINT_MAX && !utf8::internal::is_surrogate(cp));
     }
 
-    inline bool is_in_bmp(utfchar32_t cp)
+    UTF_CPP11_CONSTEXPR inline bool is_in_bmp(utfchar32_t cp)
     {
         return cp < utfchar32_t(0x10000);
     }
 
     template <typename octet_iterator>
-    int sequence_length(octet_iterator lead_it)
+    UTF_CPP17_CONSTEXPR int sequence_length(octet_iterator lead_it)
     {
         const utfchar8_t lead = utf8::internal::mask8(*lead_it);
         if (lead < 0x80)
@@ -144,7 +160,7 @@ namespace internal
             return 0;
     }
 
-    inline bool is_overlong_sequence(utfchar32_t cp, int length)
+    UTF_CPP17_CONSTEXPR inline bool is_overlong_sequence(utfchar32_t cp, int length)
     {
         if (cp < 0x80) {
             if (length != 1)
@@ -165,7 +181,7 @@ namespace internal
 
     /// Helper for get_sequence_x
     template <typename octet_iterator>
-    utf_error increase_safely(octet_iterator& it, const octet_iterator end)
+    UTF_CPP17_CONSTEXPR utf_error increase_safely(octet_iterator& it, const octet_iterator end)
     {
         if (++it == end)
             return NOT_ENOUGH_ROOM;
@@ -180,7 +196,7 @@ namespace internal
 
     /// get_sequence_x functions decode utf-8 sequences of the length x
     template <typename octet_iterator>
-    utf_error get_sequence_1(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
+    UTF_CPP17_CONSTEXPR  utf_error get_sequence_1(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
@@ -191,7 +207,7 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    utf_error get_sequence_2(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
+    UTF_CPP17_CONSTEXPR utf_error get_sequence_2(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
@@ -206,7 +222,7 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    utf_error get_sequence_3(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
+    UTF_CPP17_CONSTEXPR utf_error get_sequence_3(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
@@ -225,7 +241,7 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    utf_error get_sequence_4(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
+    UTF_CPP17_CONSTEXPR utf_error get_sequence_4(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
     {
         if (it == end)
            return NOT_ENOUGH_ROOM;
@@ -250,7 +266,7 @@ namespace internal
     #undef UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR
 
     template <typename octet_iterator>
-    utf_error validate_next(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
+    UTF_CPP17_CONSTEXPR utf_error validate_next(octet_iterator& it, octet_iterator end, utfchar32_t& code_point)
     {
         if (it == end)
             return NOT_ENOUGH_ROOM;
@@ -304,13 +320,13 @@ namespace internal
     }
 
     template <typename octet_iterator>
-    inline utf_error validate_next(octet_iterator& it, octet_iterator end) {
+    UTF_CPP17_CONSTEXPR inline utf_error validate_next(octet_iterator& it, octet_iterator end) {
         utfchar32_t ignored;
         return utf8::internal::validate_next(it, end, ignored);
     }
 
     template <typename word_iterator>
-    utf_error validate_next16(word_iterator& it, word_iterator end, utfchar32_t& code_point)
+    UTF_CPP17_CONSTEXPR utf_error validate_next16(word_iterator& it, word_iterator end, utfchar32_t& code_point)
     {
         // Make sure the iterator dereferences a large enough type
         typedef typename std::iterator_traits<word_iterator>::value_type word_type;
@@ -353,7 +369,7 @@ namespace internal
     // This function will be invoked by the overloads below, as they will know
     // the octet_type.
     template <typename octet_iterator, typename octet_type>
-    octet_iterator append(utfchar32_t cp, octet_iterator result) {
+    UTF_CPP17_CONSTEXPR octet_iterator append(utfchar32_t cp, octet_iterator result) {
         if (cp < 0x80)                        // one octet
             *(result++) = static_cast<octet_type>(cp);
         else if (cp < 0x800) {                // two octets
@@ -377,14 +393,14 @@ namespace internal
     // One of the following overloads will be invoked from the API calls
 
     // A simple (but dangerous) case: the caller appends byte(s) to a char array
-    inline char* append(utfchar32_t cp, char* result) {
+    UTF_CPP17_CONSTEXPR inline char* append(utfchar32_t cp, char* result) {
         return append<char*, char>(cp, result);
     }
 
     // Hopefully, most common case: the caller uses back_inserter
     // i.e. append(cp, std::back_inserter(str));
     template<typename container_type>
-    std::back_insert_iterator<container_type> append
+    UTF_CPP20_CONSTEXPR std::back_insert_iterator<container_type> append
             (utfchar32_t cp, std::back_insert_iterator<container_type> result) {
         return append<std::back_insert_iterator<container_type>,
             typename container_type::value_type>(cp, result);
@@ -394,7 +410,7 @@ namespace internal
     // Note that in this case we are not able to determine octet_type
     // so we assume it's utfchar8_t; that can cause a conversion warning if we are wrong.
     template <typename octet_iterator>
-    octet_iterator append(utfchar32_t cp, octet_iterator result) {
+    UTF_CPP17_CONSTEXPR octet_iterator append(utfchar32_t cp, octet_iterator result) {
         return append<octet_iterator, utfchar8_t>(cp, result);
     }
 
@@ -402,7 +418,7 @@ namespace internal
     // This function will be invoked by the overloads below, as they will know
     // the word_type.
     template <typename word_iterator, typename word_type>
-    word_iterator append16(utfchar32_t cp, word_iterator result) {
+    UTF_CPP17_CONSTEXPR word_iterator append16(utfchar32_t cp, word_iterator result) {
         UTF_CPP_STATIC_ASSERT(sizeof(word_type) >= sizeof(utfchar16_t));
         if (is_in_bmp(cp))
             *(result++) = static_cast<word_type>(cp);
@@ -417,7 +433,7 @@ namespace internal
     // Hopefully, most common case: the caller uses back_inserter
     // i.e. append16(cp, std::back_inserter(str));
     template<typename container_type>
-    std::back_insert_iterator<container_type> append16
+    UTF_CPP20_CONSTEXPR std::back_insert_iterator<container_type> append16
             (utfchar32_t cp, std::back_insert_iterator<container_type> result) {
         return append16<std::back_insert_iterator<container_type>,
             typename container_type::value_type>(cp, result);
@@ -427,7 +443,7 @@ namespace internal
     // Note that in this case we are not able to determine word_type
     // so we assume it's utfchar16_t; that can cause a conversion warning if we are wrong.
     template <typename word_iterator>
-    word_iterator append16(utfchar32_t cp, word_iterator result) {
+    UTF_CPP20_CONSTEXPR word_iterator append16(utfchar32_t cp, word_iterator result) {
         return append16<word_iterator, utfchar16_t>(cp, result);
     }
 
@@ -436,10 +452,10 @@ namespace internal
     /// The library API - functions intended to be called by the users
 
     // Byte order mark
-    const utfchar8_t bom[] = {0xef, 0xbb, 0xbf};
+    UTF_CPP17_CONSTEXPR const utfchar8_t bom[] = {0xef, 0xbb, 0xbf};
 
     template <typename octet_iterator>
-    octet_iterator find_invalid(octet_iterator start, octet_iterator end)
+    UTF_CPP17_CONSTEXPR octet_iterator find_invalid(octet_iterator start, octet_iterator end)
     {
         octet_iterator result = start;
         while (result != end) {
@@ -450,30 +466,35 @@ namespace internal
         return result;
     }
 
-    inline const char* find_invalid(const char* str)
+    UTF_CPP17_CONSTEXPR inline const char* find_invalid(const char* str)
     {
+#if UTF_CPP_CPLUSPLUS >= 201703L
+        const std::size_t len = std::string_view(str).size();
+        const char* end = str + len;
+#else
         const char* end = str + std::strlen(str);
+#endif  
         return find_invalid(str, end);
     }
 
-    inline std::size_t find_invalid(const std::string& s)
+    UTF_CPP20_CONSTEXPR inline std::size_t find_invalid(const std::string& s)
     {
         std::string::const_iterator invalid = find_invalid(s.begin(), s.end());
         return (invalid == s.end()) ? std::string::npos : static_cast<std::size_t>(invalid - s.begin());
     }
 
     template <typename octet_iterator>
-    inline bool is_valid(octet_iterator start, octet_iterator end)
+    UTF_CPP17_CONSTEXPR inline bool is_valid(octet_iterator start, octet_iterator end)
     {
         return (utf8::find_invalid(start, end) == end);
     }
 
-    inline bool is_valid(const char* str)
+    UTF_CPP17_CONSTEXPR inline bool is_valid(const char* str)
     {
         return (*(utf8::find_invalid(str)) == '\0');
     }
 
-    inline bool is_valid(const std::string& s)
+    UTF_CPP20_CONSTEXPR inline bool is_valid(const std::string& s)
     {
         return is_valid(s.begin(), s.end());
     }
@@ -481,7 +502,7 @@ namespace internal
 
 
     template <typename octet_iterator>
-    inline bool starts_with_bom (octet_iterator it, octet_iterator end)
+    UTF_CPP17_CONSTEXPR inline bool starts_with_bom (octet_iterator it, octet_iterator end)
     {
         return (
             ((it != end) && (utf8::internal::mask8(*it++)) == bom[0]) &&
@@ -490,7 +511,7 @@ namespace internal
            );
     }
 
-    inline bool starts_with_bom(const std::string& s)
+    UTF_CPP20_CONSTEXPR inline bool starts_with_bom(const std::string& s)
     {
         return starts_with_bom(s.begin(), s.end());
     }
