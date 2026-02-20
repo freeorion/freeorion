@@ -4,6 +4,13 @@
 
 #include <boost/algorithm/string/trim.hpp>
 #if BOOST_VERSION >= 108000
+#  ifdef FREEORION_WIN32
+#    define WIN32_LEAN_AND_MEAN
+     // define needed on Windows due to conflict with windows.h and std::min and std::max
+#    ifndef NOMINMAX
+#      define NOMINMAX
+#    endif
+#  endif
 #  include <boost/process/v2/process.hpp>
 #  define PROCESS_ERROR_CODE boost::system::error_code
 #else
