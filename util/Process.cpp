@@ -19,13 +19,6 @@
 #endif
 
 #ifdef FREEORION_WIN32
-#define WIN32_LEAN_AND_MEAN
-// define needed on Windows due to conflict with windows.h and std::min and std::max
-#ifndef NOMINMAX
-#  define NOMINMAX
-#endif
-#include <windows.h>
-
 std::wstring ToWString(const std::string& utf8_string) {
     // convert UTF-8 string to UTF-16
     int utf16_sz = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS,
