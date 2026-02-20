@@ -310,7 +310,7 @@ if(BUILD_TESTING)
     find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 endif()
 
-if("${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" VERSION_GREATER "1.87")
+if("${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" VERSION_GREATER "1.86")
     find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS process REQUIRED)
 endif()
 
@@ -462,7 +462,7 @@ target_link_libraries(freeorioncommon
         Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
-        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.87>:Boost::process>
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.86>:Boost::process>
         ${Python3_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
@@ -876,7 +876,7 @@ if(APPLE AND BUILD_CLIENT_GG)
         COMMAND
            cp -R "${CMAKE_FRAMEWORK_PATH}" "$<TARGET_FILE_DIR:freeorion>/.."
     )
-    if("${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" VERSION_GREATER "1.87")
+    if("${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" VERSION_GREATER "1.86")
         find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS process REQUIRED)
     endif()
 endif()
