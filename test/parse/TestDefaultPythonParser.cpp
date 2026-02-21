@@ -32,6 +32,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     PythonParser parser(m_python, m_default_scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+    auto named_values_py = Pending::ParseSynchronously(parse::named_value_refs_py, parser, m_default_scripting_dir / "macros");
 
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_default_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
@@ -81,6 +82,7 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     PythonParser parser(m_python, m_default_scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+    auto named_values_py = Pending::ParseSynchronously(parse::named_value_refs_py, parser, m_default_scripting_dir / "macros");
 
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_default_scripting_dir / "species");
     const auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
@@ -130,6 +132,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
     PythonParser parser(m_python, m_default_scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+    auto named_values_py = Pending::ParseSynchronously(parse::named_value_refs_py, parser, m_default_scripting_dir / "macros");
 
     auto buildings_p = Pending::ParseSynchronously(parse::buildings, parser, m_default_scripting_dir / "buildings");
     auto buildings_opt = Pending::WaitForPendingUnlocked(std::move(buildings_p));
@@ -168,6 +171,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
     PythonParser parser(m_python, m_default_scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+    auto named_values_py = Pending::ParseSynchronously(parse::named_value_refs_py, parser, m_default_scripting_dir / "macros");
 
     auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_default_scripting_dir / "empire_statistics");
     auto empire_statistics_opt = Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
