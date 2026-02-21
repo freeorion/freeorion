@@ -28,7 +28,7 @@
 #include <GG/ListBox.h>
 #include <GG/StyleFactory.h>
 #include <GG/Timer.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include <GG/ZList.h>
 
 

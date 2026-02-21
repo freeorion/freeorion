@@ -38,7 +38,7 @@
 #include "../client/human/GGHumanClientApp.h"
 
 #include <GG/Clr.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/GUI.h>
 #include <GG/RichText/ImageBlock.h>

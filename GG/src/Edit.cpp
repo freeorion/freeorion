@@ -10,7 +10,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/Edit.h>
 #include <GG/GUI.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include <GG/WndEvent.h>
 
 

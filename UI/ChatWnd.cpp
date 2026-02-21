@@ -21,7 +21,7 @@
 #include "../util/OptionsDB.h"
 
 #include <GG/GUI.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>

@@ -7,7 +7,7 @@
 #include "../../UI/Hotkeys.h"
 
 #include "chmain.h"
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 #include <boost/format.hpp>
 #include <filesystem>

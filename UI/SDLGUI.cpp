@@ -1,7 +1,7 @@
 #include "SDLGUI.h"
 
 #include <GG/WndEvent.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 #include <cctype>
 #include <iostream>

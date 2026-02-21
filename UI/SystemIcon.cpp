@@ -20,8 +20,7 @@
 #include "../Empire/Empire.h"
 
 #include <GG/StaticGraphic.h>
-#include <GG/utf8/checked.h>
-#include <GG/utf8/core.h>
+#include <GG/utf8/utf8.h>
 
 #include <boost/format.hpp>
 
@@ -53,7 +52,7 @@ namespace {
             // We will split the name into pieces.
             // To avoid splitting multi-byte glyphs, we need to convert it to 32-bit form,
             // where a single element always corresponds to a single glyph
-            std::vector<utf8::uint32_t> name;
+            std::vector<utf8::utfchar32_t> name;
             utf8::utf8to32(name_o.begin(), name_o.end(), std::back_inserter(name));
             const auto owner_count = owner_empire_ids.size();
             const auto piece_length = name.size() / owner_count;
