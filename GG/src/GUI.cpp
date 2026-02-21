@@ -87,7 +87,7 @@ namespace {
         {}
 
         constexpr auto base() const noexcept { return it; }
-        value_type operator*() const { auto temp = it; return static_cast<value_type>(utf8::next(temp, range_end)); }
+        constexpr value_type operator*() const { auto temp = it; return static_cast<value_type>(utf8::next(temp, range_end)); }
 
         constexpr bool operator==(const utf8_wchar_iterator& rhs) const {
             if (range_start != rhs.range_start || range_end != rhs.range_end)
@@ -96,14 +96,14 @@ namespace {
         }
         constexpr bool operator!=(const utf8_wchar_iterator& rhs) const { return !(operator==(rhs)); }
 
-        auto& operator++() { utf8::next(it, range_end); return *this; }
-        auto operator++(int) {
+        constexpr auto& operator++() { utf8::next(it, range_end); return *this; }
+        constexpr auto operator++(int) {
             auto temp = *this;
             utf8::next(it, range_end);
             return temp;
         }
-        auto& operator--() { utf8::prior(it, range_start); return *this; }
-        auto operator--(int) {
+        constexpr auto& operator--() { utf8::prior(it, range_start); return *this; }
+        constexpr auto operator--(int) {
             auto temp = *this;
             utf8::prior(it, range_start);
             return temp;
