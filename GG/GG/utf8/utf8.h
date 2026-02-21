@@ -28,8 +28,14 @@ DEALINGS IN THE SOFTWARE.
 #ifndef UTF8_FOR_CPP_2675DCD0_9480_4c0c_B92A_CC14C027B731
 #define UTF8_FOR_CPP_2675DCD0_9480_4c0c_B92A_CC14C027B731
 
-#if !defined(UTF_CPP_CPLUSPLUS) && defined(_MSC_VER) && (__cplusplus == 199711L) && defined(_MSVC_LANG)
-#define UTF_CPP_CPLUSPLUS _MSVC_LANG
+#if !defined(UTF_CPP_CPLUSPLUS)
+#  if defined(_MSC_VER) && (__cplusplus == 199711L) && defined(_MSVC_LANG)
+#    define UTF_CPP_CPLUSPLUS _MSVC_LANG
+#  elif (defined(__GNUC__) && (__GNUC__ < 12) && (__cplusplus == 202002L))   // GCC < 12 has problems with constexpr std::string
+#    define UTF_CPP_CPLUSPLUS 201703L                                       // so fall back to C++17
+#  else
+#    define UTF_CPP_CPLUSPLUS __cplusplus
+#  endif
 #endif
 
 #include "checked.h"
