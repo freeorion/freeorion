@@ -66,7 +66,10 @@
     <ClInclude Include="..\..\GG\GG\UnicodeCharsets.h" />
     <ClInclude Include="..\..\GG\GG\utf8\checked.h" />
     <ClInclude Include="..\..\GG\GG\utf8\core.h" />
-    <ClInclude Include="..\..\GG\GG\utf8\unchecked.h" />
+    <ClInclude Include="..\..\GG\GG\utf8\cpp11.h" />
+    <ClInclude Include="..\..\GG\GG\utf8\cpp17.h" />
+    <ClInclude Include="..\..\GG\GG\utf8\cpp20.h" />
+    <ClInclude Include="..\..\GG\GG\utf8\utf8.h" />
     <ClInclude Include="..\..\GG\GG\Wnd.h" />
     <ClInclude Include="..\..\GG\GG\WndEvent.h" />
     <ClInclude Include="..\..\GG\GG\ZList.h" />
