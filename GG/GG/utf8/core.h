@@ -477,11 +477,13 @@ namespace internal
         return find_invalid(str, end);
     }
 
-    UTF_CPP20_CONSTEXPR inline std::size_t find_invalid(const std::string& s)
+#if UTF_CPP_CPLUSPLUS < 201703L // if available, use constexpr string_view overload
+    inline std::size_t find_invalid(const std::string& s)
     {
         std::string::const_iterator invalid = find_invalid(s.begin(), s.end());
         return (invalid == s.end()) ? std::string::npos : static_cast<std::size_t>(invalid - s.begin());
     }
+#endif
 
     template <typename octet_iterator>
     UTF_CPP17_CONSTEXPR inline bool is_valid(octet_iterator start, octet_iterator end)
@@ -494,15 +496,15 @@ namespace internal
         return (*(utf8::find_invalid(str)) == '\0');
     }
 
-    UTF_CPP20_CONSTEXPR inline bool is_valid(const std::string& s)
+#if UTF_CPP_CPLUSPLUS < 201703L
+    inline bool is_valid(const std::string& s)
     {
         return is_valid(s.begin(), s.end());
     }
-
-
+#endif
 
     template <typename octet_iterator>
-    UTF_CPP17_CONSTEXPR inline bool starts_with_bom (octet_iterator it, octet_iterator end)
+    UTF_CPP17_CONSTEXPR inline bool starts_with_bom(octet_iterator it, octet_iterator end)
     {
         return (
             ((it != end) && (utf8::internal::mask8(*it++)) == bom[0]) &&
@@ -511,10 +513,12 @@ namespace internal
            );
     }
 
-    UTF_CPP20_CONSTEXPR inline bool starts_with_bom(const std::string& s)
+#if UTF_CPP_CPLUSPLUS < 201703L
+    inline bool starts_with_bom(const std::string& s)
     {
         return starts_with_bom(s.begin(), s.end());
     }
+#endif
 } // namespace utf8
 
 #endif // header guard
