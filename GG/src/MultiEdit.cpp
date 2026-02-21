@@ -12,7 +12,7 @@
 #include <GG/MultiEdit.h>
 #include <GG/Scroll.h>
 #include <GG/StyleFactory.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include <GG/WndEvent.h>
 
 using namespace GG;

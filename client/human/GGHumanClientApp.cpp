@@ -39,7 +39,7 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim.hpp>

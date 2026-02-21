@@ -14,7 +14,7 @@
 #include "../Empire/Empire.h"
 #include "TextBrowseWnd.h"
 
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include <GG/dialogs/ColorDlg.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>

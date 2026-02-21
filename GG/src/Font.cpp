@@ -25,7 +25,7 @@
 #include <GG/Font.h>
 #include <GG/GUI.h>
 #include <GG/StyleFactory.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 
 #define DEBUG_DETERMINELINES 0

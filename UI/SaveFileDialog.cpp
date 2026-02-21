@@ -15,7 +15,7 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 #include <boost/format.hpp>
 

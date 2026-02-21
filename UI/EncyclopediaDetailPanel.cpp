@@ -10,7 +10,7 @@
 #include <GG/ScrollPanel.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include "CUIControls.h"
 #include "CUILinkTextBlock.h"
 #include "DesignWnd.h"

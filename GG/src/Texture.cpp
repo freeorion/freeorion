@@ -22,7 +22,7 @@
 #endif
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/Texture.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 
 using namespace GG;

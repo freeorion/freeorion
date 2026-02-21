@@ -31,7 +31,7 @@ struct IUnknown; // Workaround for "combaseapi.h(229,21): error C2760: syntax er
 #include <GG/GUI.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 #include <GG/WndEvent.h>
 
 

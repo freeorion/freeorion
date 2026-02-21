@@ -10,7 +10,7 @@
 #include <algorithm>
 #include <map>
 #include <GG/UnicodeCharsets.h>
-#include <GG/utf8/checked.h>
+#include <GG/utf8/utf8.h>
 
 
 namespace {
