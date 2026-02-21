@@ -1,4 +1,4 @@
-//! GiGi - A GUI for OpenGL
+﻿//! GiGi - A GUI for OpenGL
 //!
 //!  Copyright (C) 2003-2008 T. Zachary Laine <whatwasthataddress@gmail.com>
 //!  Copyright (C) 2013-2020 The FreeOrion Project
@@ -64,13 +64,58 @@ WndEvent::EventType ButtonEvent(WndEvent::EventType left_type, unsigned int mous
 }
 
 namespace {
-    using utf8_wchar_iterator = utf8::iterator<std::string_view::const_iterator, wchar_t> ;
-    using word_regex = boost::xpressive::basic_regex<utf8_wchar_iterator>;
-    using word_regex_iterator = boost::xpressive::regex_iterator<utf8_wchar_iterator>;
+    // custom utf8::iterator reimplementation outputs wchar_t instead of char32_t.
+    // utf8_iterator = utf8::iterator<std::string_view::const_iterator> issues:
+    // - with MSVC, boost::xpressive::basic_regex leads to DLL import / export
+    //   errors because MSVC does not export locale facts for char32_t.
+    //   MSVC does provice facets for char and wchar_t.
+    // - with GCC/libstdc++, boost/xpressive/traits/cpp_regex_traits.hpp has
+    //   error: invalid conversion from ‘const wchar_t*’ to ‘const char32_t*’
+    class utf8_wchar_iterator {
+        using sv_it = std::string_view::const_iterator;
+        sv_it it{}, range_start{}, range_end{};
+    public:
+        typedef wchar_t value_type; // differs from utf8::iterator
+        typedef wchar_t* pointer;
+        typedef wchar_t& reference;
+        typedef std::ptrdiff_t difference_type;
+        typedef std::bidirectional_iterator_tag iterator_category;
 
-    constexpr wchar_t WIDE_DASH = u'-';
-    const word_regex DEFAULT_WORD_REGEX =
-        +boost::xpressive::set[boost::xpressive::_w | WIDE_DASH];
+        constexpr utf8_wchar_iterator() noexcept = default;
+        constexpr utf8_wchar_iterator(sv_it octet_it, sv_it rangestart, sv_it rangeend) noexcept :
+            it(octet_it), range_start(rangestart), range_end(rangeend)
+        {}
+
+        constexpr auto base() const noexcept { return it; }
+        value_type operator*() const { auto temp = it; return static_cast<value_type>(utf8::next(temp, range_end)); }
+
+        constexpr bool operator==(const utf8_wchar_iterator& rhs) const {
+            if (range_start != rhs.range_start || range_end != rhs.range_end)
+                throw std::logic_error("Comparing utf-8 iterators defined with different ranges");
+            return (it == rhs.it);
+        }
+        constexpr bool operator!=(const utf8_wchar_iterator& rhs) const { return !(operator==(rhs)); }
+
+        auto& operator++() { utf8::next(it, range_end); return *this; }
+        auto operator++(int) {
+            auto temp = *this;
+            utf8::next(it, range_end);
+            return temp;
+        }
+        auto& operator--() { utf8::prior(it, range_start); return *this; }
+        auto operator--(int) {
+            auto temp = *this;
+            utf8::prior(it, range_start);
+            return temp;
+        }
+    };
+
+    using utf8_iterator = utf8_wchar_iterator;
+    using word_regex = boost::xpressive::basic_regex<utf8_iterator>;
+    using word_regex_iterator = boost::xpressive::regex_iterator<utf8_iterator>;
+
+    constexpr utf8_iterator::value_type HYPHEN{'-'};
+    const word_regex DEFAULT_WORD_REGEX = +boost::xpressive::set[boost::xpressive::_w | HYPHEN];
 }
 
 void WriteWndToPNG(const Wnd* wnd, const std::string& filename)
@@ -1024,8 +1069,8 @@ std::vector<std::pair<CPSize, CPSize>> GUI::FindWords(std::string_view str) cons
     std::vector<std::pair<CPSize, CPSize>> retval;
 
     try {
-        const utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-        const utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        const utf8_iterator first(str.begin(), str.begin(), str.end());
+        const utf8_iterator last(str.end(), str.begin(), str.end());
         const word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
         const word_regex_iterator end_it;
 
@@ -1043,8 +1088,8 @@ std::vector<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(std::string
     std::vector<std::pair<StrSize, StrSize>> retval;
 
     try {
-        const utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-        const utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        const utf8_iterator first(str.begin(), str.begin(), str.end());
+        const utf8_iterator last(str.end(), str.begin(), str.end());
         const word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
         const word_regex_iterator end_it;
 
@@ -1069,8 +1114,8 @@ std::vector<std::string_view> GUI::FindWordsStringViews(std::string_view str) co
     std::vector<std::string_view> retval;
 
     try {
-        const utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
-        const utf8_wchar_iterator last(str.end(), str.begin(), str.end());
+        const utf8_iterator first(str.begin(), str.begin(), str.end());
+        const utf8_iterator last(str.end(), str.begin(), str.end());
         const word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
         const word_regex_iterator end_it;
 
