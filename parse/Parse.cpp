@@ -255,10 +255,10 @@ namespace parse {
             // check for base path
             if (fn_match.substr(0, 1) == "/") {
                 base_path = GetResourceDir();
-                match_path = std::filesystem::weakly_canonical(base_path / fn_match.substr(1));
+                match_path = (base_path / fn_match.substr(1)).lexically_normal();
             } else {
                 base_path = file_search_path;
-                match_path = std::filesystem::weakly_canonical(base_path / fn_match);
+                match_path = (base_path / fn_match).lexically_normal();
             }
             std::string fn_str = std::filesystem::path(fn_match).filename().string();
             if (fn_str.substr(0, 1) == "*") {
@@ -275,7 +275,7 @@ namespace parse {
                     std::size_t match_len = fn_str.length();
                     if (it_len > match_len) {
                         if (it_str.substr(it_len - match_len, match_len) == fn_str) {
-                            match_list.insert(std::filesystem::weakly_canonical(file));
+                            match_list.insert(file.lexically_normal());
                         }
                     }
                 }
