@@ -12,7 +12,7 @@ jobs:
       - name: Setup
         uses: bend-n/godot-actions/.github/actions/setup-godot@main
         env:
-          GODOT_VERSION: 3.5.2
+          GODOT_VERSION: "3.5.2"
       - name: Generate API file
         run: |
           timeout 1m godot --no-window --disable-render-loop --video-driver Dummy --gdnative-generate-json-api godot-api.json
@@ -32,7 +32,7 @@ jobs:
         arch: [x86, x86_64, armeabi-v7a, arm64-v8a]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Dowload Godot API
         uses: actions/download-artifact@v4
         with:
@@ -60,11 +60,143 @@ jobs:
       - name: Build
         run: |
           pushd build
-          cmake --build . -- -j2
+          cmake --build . -- -j4
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:
           name: android-binaries-${{ matrix.arch }}
           path: godot/bin/
+          if-no-files-found: error
+          retention-days: 1
+  merge-binaries:
+    name: Merge binaries
+    runs-on: ubuntu-latest
+    needs: android
+    steps:
+      - name: Merge binaries
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: android-binaries
+          pattern: android-binaries-*
+          delete-merged: true
+          retention-days: 1
+  export-android:
+    name: Export Android
+    runs-on: ubuntu-22.04
+    needs: merge-binaries
+    container:
+      image: ghcr.io/bend-n/godot:3.5.2
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup
+        uses: bend-n/godot-actions/.github/actions/setup-godot@main
+        env:
+          GODOT_VERSION: "3.5.2"
+      - name: Download python library
+        id: download-python-lib
+        uses: suisei-cn/actions-download-file@v1.3.0
+        with:
+          url: https://github.com/freeorion/freeorion-sdk/releases/download/v17/python310.zip
+          target: ../
+      - name: Place resources
+        run: |
+          mkdir -p godot/default/python/lib/
+          cp ../${{ steps.download-python-lib.outputs.filename }} godot/default/python/lib/python310.zip
+          unzip -t godot/default/python/lib/python310.zip
+          mv default/data/art godot/assets/
+          mv default/data/fonts godot/assets/
+          mv default/data/sound godot/assets/
+          mv default/scripting godot/default/
+          mv default/stringtables godot/default/
+      - name: Dowload binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: android-binaries
+          path: godot/bin/
+      - name: Build
+        uses: bend-n/godot-actions/.github/actions/export-android@main
+        env:
+          GODOT_VERSION: "3.5.2"
+          NAME: freeorion
+          PROJECT_PATH: godot
+  run-android:
+    name: Run Android
+    runs-on: ubuntu-24.04
+    needs: export-android
+    steps:
+      - uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+            ~/.android/debug.keystore
+          key: avd-test-godot
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: run emulator to generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: Galaxy Nexus
+          cores: 2
+          sdcard-path-or-size: 100M
+          emulator-build: 7425822 # https://github.com/ReactiveCircus/android-emulator-runner/issues/160
+          avd-name: test
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          working-directory: ./
+          channel: beta
+          script: echo "Generated AVD snapshot for caching."
+      - name: Dowload APK
+        uses: actions/download-artifact@v4
+        with:
+          name: android
+          path: .
+      - name: run game on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: Galaxy Nexus
+          cores: 2
+          sdcard-path-or-size: 100M
+          emulator-build: 7425822 # https://github.com/ReactiveCircus/android-emulator-runner/issues/160
+          avd-name: test
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          working-directory: ./
+          channel: beta
+          script: |
+            adb devices
+            adb install freeorion.apk
+            adb logcat -c
+            adb shell am start -W -n org.godotengine.freeoriongodotclient/com.godot.game.GodotApp
+            sleep 180
+            adb shell am force-stop org.godotengine.freeoriongodotclient
+            adb logcat -d >logcat.log
+            adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log >freeorion-godot.log 2>&1
+            echo ".. check errors .."
+            ! grep "\[error\] godot : \(Parse\|ReportParseError\)" freeorion-godot.log
+            echo ".. check finish .."
+            grep "\[debug\] godot : FreeOrionNode.cpp:[0-9]\+ : FreeOrionNode::parsing_thread(): Freeorion parsing stopped" freeorion-godot.log
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-logs-${{ github.run_number }}
+          path: |
+            freeorion-godot.log
+            logcat.log
           if-no-files-found: error
           retention-days: 1
