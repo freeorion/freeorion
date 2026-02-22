@@ -310,6 +310,10 @@ if(BUILD_TESTING)
     find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 endif()
 
+if("${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" VERSION_GREATER "1.86")
+    find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS process REQUIRED)
+endif()
+
 find_package(ZLIB REQUIRED)
 if(BUILD_CLIENT_GG)
     set(SDL_NO_MAIN true)
@@ -458,6 +462,7 @@ target_link_libraries(freeorioncommon
         Boost::python${Boost_PYTHON_SUFFIX}
         Boost::thread
         Boost::serialization
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.86>:Boost::process>
         ${Python3_LIBRARIES}
         ZLIB::ZLIB
         ${ICUI18N_LIBRARY}
@@ -468,7 +473,7 @@ target_link_libraries(freeorioncommon
     PRIVATE
         # boost::uuid requires the bcrypt Windows API on Windows since boost 1.67
         # see https://github.com/boostorg/uuid/issues/68
-        $<$<AND:$<PLATFORM_ID:Windows>,$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.66>>:bcrypt>
+        $<$<AND:$<PLATFORM_ID:Windows>,$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.66>>:bcrypt> 
         ${CORE_FOUNDATION_LIBRARY}
 )
 
@@ -871,6 +876,9 @@ if(APPLE AND BUILD_CLIENT_GG)
         COMMAND
            cp -R "${CMAKE_FRAMEWORK_PATH}" "$<TARGET_FILE_DIR:freeorion>/.."
     )
+    if("${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}" VERSION_GREATER "1.86")
+        find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS process REQUIRED)
+    endif()
 endif()
 
 if(BUILD_CLIENT_GODOT)
