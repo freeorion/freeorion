@@ -528,7 +528,7 @@ namespace parse {
         {
             auto unparsed_section = file_contents.substr(file_contents.size() - std::abs(length_of_unparsed_file));
             std::copy(first, last, std::back_inserter(unparsed_section));
-            WarnLogger() << "File \"" << path << "\" was incompletely parsed. \n"
+            ErrorLogger() << "File \"" << path << "\" was incompletely parsed. \n"
                             << "Unparsed section of file, " << length_of_unparsed_file <<" characters:\n"
                             << unparsed_section;
         }
