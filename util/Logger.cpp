@@ -4,6 +4,7 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/attributes/current_thread_id.hpp>
+#include <boost/log/attributes/function.hpp>
 #include <boost/log/attributes/value_extraction.hpp>
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/sinks/frontend_requirements.hpp>
@@ -225,6 +226,9 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_channel, "Channel", std::string)
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 BOOST_LOG_ATTRIBUTE_KEYWORD(thread_id, "ThreadID", boost::log::attributes::current_thread_id::value_type);
+#if defined(FREEORION_LINUX) || defined(FREEORION_ANDROID)
+BOOST_LOG_ATTRIBUTE_KEYWORD(linux_thread_id, "LinuxThreadID", pid_t);
+#endif
 
 namespace {
     std::mutex severity_filter_mutex; /// guards severity_filter and severity_filters
@@ -264,7 +268,11 @@ namespace {
         sink_frontend.set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+#if defined(FREEORION_LINUX) || defined(FREEORION_ANDROID)
+            << " {" << linux_thread_id << "}"
+#else
             << " {" << thread_id << "}"
+#endif
             << " [" << log_severity << "] "
             << DisplayName(channel_name)
             << " : " << log_src_filename << ":" << log_src_linenum << " : "
@@ -311,6 +319,9 @@ void InitLoggingSystem(const std::string& log_file, std::string_view _unnamed_lo
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
     logging::core::get()->add_global_attribute("ThreadID", attr::current_thread_id());
+#if defined(FREEORION_LINUX) || defined(FREEORION_ANDROID)
+    logging::core::get()->add_global_attribute("LinuxThreadID", attr::make_function(&gettid));
+#endif
 
     SetLoggerThresholdCore("", default_log_level_threshold);
 
