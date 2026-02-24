@@ -612,8 +612,10 @@ const Meter* Empire::GetMeter(std::string_view name) const {
 }
 
 void Empire::BackPropagateMeters() noexcept {
-    for (auto& meter : m_meters | range_values)
-        meter.BackPropagate();
+    for (auto& meter : m_meters) {
+        ErrorLogger() << "BackPropagate " << meter.first << " which was " << meter.second.Initial() << " to " << meter.second.Current();
+        meter.second.BackPropagate();
+    }
 }
 
 bool Empire::ResearchableTech(std::string_view name) const {
