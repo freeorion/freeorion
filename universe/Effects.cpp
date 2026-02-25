@@ -995,9 +995,16 @@ namespace {
         } else if (Meter* m = empire->GetMeter(meter)) {
             return m;
         } else {
-            ErrorLogger(effects) << "SetEmpireMeter::Execute empire " << empire->Name()
-                                 << " doesn't have a meter named " << meter;
-            return nullptr;
+            InfoLogger(effects) << "SetEmpireMeter::Execute empire " << empire->Name()
+                                 << " doesn't have a meter named " << meter
+                                 << ". Adding it.";
+            empire->CreateMeter(meter);
+            if (Meter* m = empire->GetMeter(meter)) {
+                return m;
+            } else {
+                ErrorLogger(effects) << "SetEmpireMeter::Execute empire " << empire->Name()
+                                     << " after creating it still doesn't have a meter named " << meter;
+            }
         }
     }
 }
