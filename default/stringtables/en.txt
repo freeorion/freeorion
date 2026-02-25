@@ -2300,7 +2300,7 @@ OPTIONS_DB_AI_FOLDER_PATH
 Sets the path for the directory containing the AI script files, for current execution only, relative to the Resource Directory; default is "AI". Intended to facilitate AI testing.
 
 OPTIONS_DB_AI_CONFIG
-Is available to the AI via the freeorioninterface, is set for current execution only. Current expected use is to name an optional AI config file within the AI script folder; default is the empty string. Intended to facilitate AI testing.
+Is available to the AI via the freeorion interface, is set for current execution only. Current expected use is to name an optional AI config file within the AI script folder; default is the empty string. Intended to facilitate AI testing.
 
 OPTIONS_DB_AI_LOG_DIR
 Sets the path for the directory where AI clients writes log files.
@@ -6080,8 +6080,8 @@ ENC_POLICY_DETAIL_TYPE_STR
 ENC_LOOKUP
 Pedia Lookup %1%
 
-# %1% link to the system, where the combat occured.
-# %2% turn when the combat occured.
+# %1% link to the system, where the combat occurred.
+# %2% turn when the combat occurred.
 ENC_COMBAT_LOG_DESCRIPTION_STR
 Combat at %1% on turn %2%:
 
@@ -6472,7 +6472,7 @@ Allied fleets do not have a direct impact on supply blocks and starlane availabi
 
 If fleets from two or more hostile empires arrive at an unblockaded system at the same time, neither such empire will establish a system blockade over each other, although they will establish a blockade against all other hostile empires that arrive at a later time.
 
-Space monsters can also establish blockades. However, if an empire fleet becomes blockaded by a space monster, the blockade will be lifted after combat has occured, and the empire fleet will be able to leave the system by any starlane exit, or establish a blockade against the monster in turn. Furthermore, if the blockaded fleet is armed and set to aggressive mode, supply propagation will be restored. If a space monster and an empire fleet arrive at the same time, the empire fleet will be able to act first and establish a blockade against the monster.'''
+Space monsters can also establish blockades. However, if an empire fleet becomes blockaded by a space monster, the blockade will be lifted after combat has occurred, and the empire fleet will be able to leave the system by any starlane exit, or establish a blockade against the monster in turn. Furthermore, if the blockaded fleet is armed and set to aggressive mode, supply propagation will be restored. If a space monster and an empire fleet arrive at the same time, the empire fleet will be able to act first and establish a blockade against the monster.'''
 
 
 ##
@@ -6720,7 +6720,7 @@ Supply lines can also be used to refill the [[metertype METER_FUEL]] supply of s
 Empires in an [[encyclopedia ALLIANCE_TITLE]] use each other's supply lines.
 The extension of supply lines from source planets into a system can be obstructed by armed enemy ships that are in that system and that are in fleets set to [[FLEET_OBSTRUCTIVE]] or [[FLEET_AGGRESSIVE]]. Enemy ships are those owned by empires that are at [[encyclopedia WAR_TITLE]] with the supply line's empire and neutral / monster ships.
 
-If multiple empires compete for supply in a system (without any obstructions to either's supply propagation), the empire with the highested propagated supply range will supply that system. To break ties, a bonus per empire is calculated and added to the propagated supply before comparison.
+If multiple empires compete for supply in a system (without any obstructions to either's supply propagation), the empire with the highest propagated supply range will supply that system. To break ties, a bonus per empire is calculated and added to the propagated supply before comparison.
 
 • Has a colony in the system: +0.5
 • Has an outpost (but no colony) in the system: +0.3
@@ -6835,7 +6835,7 @@ GIFTING_TITLE
 Gifting
 
 GIFTING_TEXT
-Empires with sufficiently close dipomatic relations ([[encyclopedia PEACE_TITLE]] or closer), may gift planets or fleets to one another, provided the target empire has a presence (ship or planet) in the same system as the object being gifted.
+Empires with sufficiently close diplomatic relations ([[encyclopedia PEACE_TITLE]] or closer), may gift planets or fleets to one another, provided the target empire has a presence (ship or planet) in the same system as the object being gifted.
 
 OUTPOSTS_TITLE
 Outpost
@@ -6919,7 +6919,7 @@ Psychic Domination Focus
 PSYCHIC_FOCUS_TEXT
 '''The [[PSYCHIC_FOCUS_TITLE]] concentrates the mental force of the population to dominate the thoughts of non-telepathic crews of enemy empire ships in the same system.
 
-Each turn, there is a 10% chance of taking control of each ship, unless the enemy empire also posesses the technology [[LRN_PSY_DOM]].
+Each turn, there is a 10% chance of taking control of each ship, unless the enemy empire also possesses the technology [[LRN_PSY_DOM]].
 
 When the Psychic Domination Focus is engaged, it also reduces the chance that [[predefinedshipdesign SM_PSIONIC_SNOWFLAKE]]s will take control of ships controlled by the planet's empire within the system.
 
@@ -6944,7 +6944,7 @@ SLOT_TITLE
 Slot
 
 SLOT_TEXT
-A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types. This information is also shown graphically in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape. Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types. Larger (and expensive) hulls often have more slots available to be filled with parts.
+A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatible with multiple slot types. This information is also shown graphically in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape. Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types. Larger (and expensive) hulls often have more slots available to be filled with parts.
 
 DETECTION_TITLE
 Detection Strength
@@ -7142,7 +7142,7 @@ Map Window
 MAP_WINDOW_ARTICLE_TEXT
 '''The Map Window can be considered the 'main' game screen, which shows the galaxy and from which nearly all other windows can be accessed. A number of control elements are displayed in the upper bar.
 
-In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a double arrow, the game will not auto-advance; if clicked to toggle to circular arcing arrows, the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.
+In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a double arrow, the game will not auto-advance; if clicked to toggle to circular arcing arrows, the game will auto-advance to the next turn once all other empires have submitted their orders for the turn.
 
 Next are icons showing the player empire total [[metertype METER_INDUSTRY]], [[metertype METER_STOCKPILE]], total [[metertype METER_RESEARCH]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].
 
@@ -8033,7 +8033,7 @@ SITREP_PLANET_CAPTURED_LABEL
 Planet Captured
 
 SITREP_PLANET_CAPTURED_NEUTRALS
-%planet% became indepdent from %empire%
+%planet% became independent from %empire%
 
 SITREP_PLANET_CAPTURED_NEUTRALS_LABEL
 Planet Becomes Independent
@@ -8072,25 +8072,25 @@ SITREP_PLANET_ESTABLISH_FAILED
 Ship %ship% failed to establish a colony or outpost on %planet%.
 
 SITREP_PLANET_ESTABLISH_FAILED_LABEL
-Ship Failed to Esablish on Planet
+Ship Failed to Establish on Planet
 
 SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER
 Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% also attempted to establish on the same planet.
 
 SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_OTHER_LABEL
-Ship Failed to Esablish on Planet
+Ship Failed to Establish on Planet
 
 SITREP_PLANET_ESTABLISH_FAILED_ARMED
 Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% has armed ships in system.
 
 SITREP_PLANET_ESTABLISH_FAILED_ARMED_LABEL
-Ship Failed to Esablish on Planet
+Ship Failed to Establish on Planet
 
 SITREP_PLANET_ESTABLISH_FAILED_NEUTRAL_ARMED
 Ship %ship% failed to establish a colony or outpost on %planet% because there are neutral armed ships in system.
 
 SITREP_PLANET_ESTABLISH_FAILED_ARMED_NEUTRAL_LABEL
-Ship Failed to Esablish on Planet
+Ship Failed to Establish on Planet
 
 SITREP_OUTPOST_ABANDONED_PREPARATION
 Outpost on %planet% prepares to be abandoned in turn %rawtext%.
@@ -8960,15 +8960,15 @@ Prefer [[PT_OCEAN]] planets.
 
 SP_HAPPY_DESC
 '''Description: Robotic exploration submersibles.
-Though some have more bulky and blocky forms, most happybirthdays are streamlined and somewhat fish-like in shape. They all have one or more cameras and manipulator arms, usually forward facing. They also host a suit of sensors for temperature, vibrations, chemicals, radar, sonar, electrical and magnetic fields, though these often vary from model to model. They are functional in a wide range of temperature and pressure conditions in an aquatic environment.
+Though some have more bulky and blocky forms, most Happybirthdays are streamlined and somewhat fish-like in shape. They all have one or more cameras and manipulator arms, usually forward facing. They also host a suit of sensors for temperature, vibrations, chemicals, radar, sonar, electrical and magnetic fields, though these often vary from model to model. They are functional in a wide range of temperature and pressure conditions in an aquatic environment.
 
-Any happybirthday can repair any other happybirthday, and their systems often have redundant pairs for just such a reason. Sufficiently large groups can fully repair any other member of their kind, and through this same process also make a completely new unit. New units have the same programming as their parents, but a blank memory, to be filled by exploring their environment.
+Any Happybirthday can repair any other Happybirthday, and their systems often have redundant pairs for just such a reason. Sufficiently large groups can fully repair any other member of their kind, and through this same process also make a completely new unit. New units have the same programming as their parents, but a blank memory, to be filled by exploring their environment.
 
 Homeworld: Foreveralone.
 A vast and deep ocean planet. It is believed that they were originally created to survey the planet for potential colonization. It is not know why they were abandoned, but theories range from their creators deciding the planet was unsuitable for colonization, to being wiped out for some reason or another. Though the oceans are vast and there are many interesting features and life forms, there is little about the planet they were sent to that would indicate why they were sent to that world in particular.
 
 Social Structure: Codependent.
-A lone happybirthday will (psychologically) latch onto the nearest (preferably alien) sentient being and declare their eternal friendship. Their goal to alleviate their loneliness by find another being to be their friend, forever and ever and ever...
+A lone Happybirthday will (psychologically) latch onto the nearest (preferably alien) sentient being and declare their eternal friendship. Their goal to alleviate their loneliness by find another being to be their friend, forever and ever and ever...
 
 Colonization is slow and industry inefficient due to species-wide depression, sometimes leading to bouts of mass suicide. However since they don't want to make enemies and they always want to make new friends they are eager traders.
 
@@ -9076,7 +9076,7 @@ Not being able to build advanced devices themselves, the Sly couldn't leave thei
 On the right diet, a Sly will excrete refined fuel. When Sly crewed ships are in systems with a [[PT_GASGIANT]], a their ships will regenerate a little bit of fuel each turn. When in a system with a planet populated by friendly Sly, Sly-crewed ships will be refueled and repaired, as if they were in a friendly supply network with [[tech SHP_FLEET_REPAIR]].
 
 Social Structure:
-The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. The echoes of their verbal lore resound down to the deepest and densest layers of their world(s), where harmonies and resonances build up over millenia. Despite their fixation with their racial memories, they are very open minded and curious towards the galaxy and the other species they are now finally able to encounter.
+The Sly are very long-lived and keep the songs alive in which the whole cultural knowledge is encoded. The echoes of their verbal lore resound down to the deepest and densest layers of their world(s), where harmonies and resonances build up over millennia. Despite their fixation with their racial memories, they are very open minded and curious towards the galaxy and the other species they are now finally able to encounter.
 '''
 
 SP_LEMBALALAM
@@ -9091,7 +9091,7 @@ Owning the Lembala grants the technologies: [[tech SPY_STEALTH_1]], [[tech SPY_S
 
 SP_LEMBALALAM_DESC
 '''Description:
-The Lembala'Lam are an ancient species in the evening of its existence. They had some apparent resemblance with reptiles such as snakes or geckos, but most of their original physiognomy was lost to evolution warped by their mechanically enhanced lifestyle. Without machines they would no longer be capable of locomotion or feeding. The ability to reproduce was lost completely, but most importantly they've lost the trust in each other. The last nail in the coffin for Lembala society was the invention of an automated system that transfers the mind of a dying Lembala into the next spare clone, of which every Lembala has hundreds safely hidden. Almost all mental and material ressources of the Lembala are used to assure their artificial immortality, leaving little to no room for real developement of their civilization.
+The Lembala'Lam are an ancient species in the evening of its existence. They had some apparent resemblance with reptiles such as snakes or geckos, but most of their original physiognomy was lost to evolution warped by their mechanically enhanced lifestyle. Without machines they would no longer be capable of locomotion or feeding. The ability to reproduce was lost completely, but most importantly they've lost the trust in each other. The last nail in the coffin for Lembala society was the invention of an automated system that transfers the mind of a dying Lembala into the next spare clone, of which every Lembala has hundreds safely hidden. Almost all mental and material resources of the Lembala are used to assure their artificial immortality, leaving little to no room for real development of their civilization.
 
 Social Structure:
 The Lembala know each other for eons, but are suspicious of each and every one of the others. Their democratic government is forever paralyzed by long accepted stalemates. Due to paranoia and their lack of altruism even the most basic cooperation is rare and short lived.
@@ -9354,7 +9354,7 @@ Although parts easily break off and can be transplanted on virgin rocks, it is h
 
 While adult Celestephyte have prehensile appendages and can in theory do some useful work, they rarely do so in practice and like to stick to the theory. Much rather prefer they to not disturb the delicate interconnectedness of all their minute little mycelia, their intra- and interasteroidal web of fungus roots so to speak. But most of all they prefer not to be disturbed.
 
-When confronted with an enemy anyway, they try to stun them with their blatant incompetence and by staring them in the eyes if they have eyes and not yet invented the technology of protective sun goggles. Sometimes this even has the intended effect, but indirectly, because the attacker laugh themselves to death in a hysteric frenzy induced by the astral fungus'es spores transmitted telepathically through the accusing gaze of the defending Celestephyte. But that mostly works only on the weak minded, who would not have come to confront the ancient Celestephyte in the first place. That makes them kind of not quite adapted to this galaxy's way of live and some experts in the field of astromycology have speculated, that Celestephyte were originally introduced from Andromeda during the second coming of Chtullluhhulurtl by its fierceful minnions, the Fluffy Teddy Tenderizers, as they were called back in those dark and pre-empiric times.
+When confronted with an enemy anyway, they try to stun them with their blatant incompetence and by staring them in the eyes if they have eyes and not yet invented the technology of protective sun goggles. Sometimes this even has the intended effect, but indirectly, because the attacker laugh themselves to death in a hysteric frenzy induced by the astral fungus'es spores transmitted telepathically through the accusing gaze of the defending Celestephyte. But that mostly works only on the weak minded, who would not have come to confront the ancient Celestephyte in the first place. That makes them kind of not quite adapted to this galaxy's way of live and some experts in the field of astromycology have speculated, that Celestephyte were originally introduced from Andromeda during the second coming of Chtullluhhulurtl by its fierceful minions, the Fluffy Teddy Tenderizers, as they were called back in those dark and pre-empiric times.
 '''
 
 SP_KHAKTURIAN
@@ -9375,7 +9375,7 @@ Lifecycle:
 Can be grown from seeds (import restrictions are in place in many systems, the local [[buildingtype BLD_REGIONAL_ADMIN]] should be consulted before starting a plantation). No stratification required. After an initial watering in, they are drought tolerant, herbicide resistant and thrive in the dry desert sands by pulling moisture out of the atmosphere.
 
 Ecology:
-What Khakturian crave, is electrolytes and a lots of sunlights, so they love the eternal daylight that comes with a [[special TIDAL_LOCK_SPECIAL]]. Occasionally being eaten by (strong enough) herbivores does not faze them, they take it stoically and simply grow back. Although they can get a slight inferiority complex when dwarfed by the giant [[special WORLDTREE_SPECIAL]] and totally do not enjoy to stand in its shadow, they can appreciate the benefits it brings to all the other species and so they mostly just ignore it. (Khakturian do not benefit from any [[WORLDTREE_SPECIAL]] bonus.)
+What Khakturian crave, is electrolytes and a lots of sunlight, so they love the eternal daylight that comes with a [[special TIDAL_LOCK_SPECIAL]]. Occasionally being eaten by (strong enough) herbivores does not faze them, they take it stoically and simply grow back. Although they can get a slight inferiority complex when dwarfed by the giant [[special WORLDTREE_SPECIAL]] and totally do not enjoy to stand in its shadow, they can appreciate the benefits it brings to all the other species and so they mostly just ignore it. (Khakturian do not benefit from any [[WORLDTREE_SPECIAL]] bonus.)
 
 '''
 
@@ -9392,7 +9392,7 @@ Sometimes they dream of far away places they can never visit.
 SP_SLEEPERS_DESC
 '''
 
-Feathered flightless birdlike creatues who are forced to hibernate a lot. Before winter is coming, which is five sixths of their year, suitable sleeping sites need to be prepared. Sometimes they dream of far away places they can never visit. But mainly their winters are dominated just by deep and dreamless sleeping. When they are awake during and around periastron, the very brief really livable period in their world's orbit closest to the star, they can be quite industrious. But they mostly prefer to sit around and do nothing. Somnambulism is a trait they greatly admire, but the art of sleepwalking is beyond them and they never achieved it.
+Feathered flightless birdlike creatures who are forced to hibernate a lot. Before winter is coming, which is five sixths of their year, suitable sleeping sites need to be prepared. Sometimes they dream of far away places they can never visit. But mainly their winters are dominated just by deep and dreamless sleeping. When they are awake during and around periastron, the very brief really livable period in their world's orbit closest to the star, they can be quite industrious. But they mostly prefer to sit around and do nothing. Somnambulism is a trait they greatly admire, but the art of sleepwalking is beyond them and they never achieved it.
 '''
 
 SP_NIGHTSIDERS
@@ -9455,7 +9455,7 @@ Their ancestral desert world's environment possesses an extremely unlikely combi
 Since reproducing their native environment anywhere else is out of the question, they can never leave. Unless their entire world were to be moved, and great care taken not to interrupt the tidal-static-electric effects from its neighbouring star system.
 
 Description:
-A single Nymnmnych is hard to grasp. They blend into a cascading caccophony of self-perpetuating lightning-like electromagnetic discharges, in which an outsider can only discern a smear of blueish grizzle. Moving at the speed of light, yet bound to the ground, each and every individual covers the entire planetary surface several times per second. Where they meet, they briefly resonate with each other (somewhere in the low to mid terahertz range). Without corporeal form, they need to imprint their memories into the ferromagnetic portion of their planet's crust. Any mining or mechanical activities would impair or even destroy their racial memories, which is why they refrain from industry.
+A single Nymnmnych is hard to grasp. They blend into a cascading cacophony of self-perpetuating lightning-like electromagnetic discharges, in which an outsider can only discern a smear of blueish grizzle. Moving at the speed of light, yet bound to the ground, each and every individual covers the entire planetary surface several times per second. Where they meet, they briefly resonate with each other (somewhere in the low to mid terahertz range). Without corporeal form, they need to imprint their memories into the ferromagnetic portion of their planet's crust. Any mining or mechanical activities would impair or even destroy their racial memories, which is why they refrain from industry.
 
 Daily lives:
 Today's nymnmnian society is mainly preoccupied with reviewing and rating, archiving and cataloguing old tv shows and other entertainment broadcasts from foreign civilizations. They can not do otherwise, because those broadcasts touch the very essence of their beings – all their life is a non-stop binge-watching marathon if they want to or not. In consequence, they are the absolute masters of movie mockery in all the galaxies.
@@ -9696,7 +9696,7 @@ Prefer [[PT_BARREN]] planets.
 
 SP_VOLP_DESC
 '''Description:
-The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunneling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resource needs, as well as how societal structures affected individual behavior.
+The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunneling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competitors for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resource needs, as well as how societal structures affected individual behavior.
 The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
 
 They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of individually taking on various large battle engines, the chaos of combat is not their most effective environment.
@@ -9814,7 +9814,7 @@ SP_MISIORLA_DESC
 A Misiorla is a mollusc with four flexible tentacles and two pairs of four eyes each. Perfectly adapted to their homeworld they were able to swim through seas of acid fluids and float through clouds of thick heavy mists. They were considered to be a fairly mediocre species, barely worth the uplift they were given by a friendly civilization, neither smart nor productive and not talented in any way. That quickly changed when the first Misiorla were given control of a space ship. Word spread like a wildfire through the galaxy about the best combat pilots in the universe. The first Misiorla mercenaries were hired to pilot fighters, the next were given command of cruisers, but their full potential was realized when an outdated battleship manned with only Misiorla single-handily wiped out the whole space fleet of a far superior empire.
 
 Social Structure:
-The whole life of Misiorlas is wrapped around piloting space vessels. Piloting is their job, it's their sport, it's their love. The society is totally dependend on other species because they become lethargic and unorganized when doing anything else. Misiorla can be hired by almost anyone who offers something interesting to fly and the fuel to do so.
+The whole life of Misiorlas is wrapped around piloting space vessels. Piloting is their job, it's their sport, it's their love. The society is totally dependent on other species because they become lethargic and unorganized when doing anything else. Misiorla can be hired by almost anyone who offers something interesting to fly and the fuel to do so.
 
 Reason for Extinction:
 At one point in history the Final Ones, one of the Precursor civilizations, decided that the Misiorla could be a threat to their ultimate goal.
@@ -9917,25 +9917,25 @@ NATIVE_FORTIFICATION_MINIMAL
 Minimal Native Fortifications
 
 NATIVE_FORTIFICATION_MINIMAL_DESC
-The natives on this planet have built minimal fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+The natives on this planet have built minimal fortifications, giving their planet stronger defenses against attack and invasion when independent of an empire.
 
 NATIVE_FORTIFICATION_LOW
 Basic Native Fortifications
 
 NATIVE_FORTIFICATION_LOW_DESC
-The natives on this planet have built basic fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+The natives on this planet have built basic fortifications, giving their planet stronger defenses against attack and invasion when independent of an empire.
 
 NATIVE_FORTIFICATION_MEDIUM
 Moderate Native Fortifications
 
 NATIVE_FORTIFICATION_MEDIUM_DESC
-The natives on this planet have built moderate fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+The natives on this planet have built moderate fortifications, giving their planet stronger defenses against attack and invasion when independent of an empire.
 
 NATIVE_FORTIFICATION_HIGH
 Strong Native Fortifications
 
 NATIVE_FORTIFICATION_HIGH_DESC
-The natives on this planet have built strong fortications, giving their planet stronger defenses against attack and invasion when independent of an empire.
+The natives on this planet have built strong fortifications, giving their planet stronger defenses against attack and invasion when independent of an empire.
 
 GAIA_SPECIAL
 Gaia
@@ -10056,7 +10056,7 @@ TEMPORAL_ANOMALY_SPECIAL_DESC
 '''Increases [[metertype METER_TARGET_RESEARCH]] on this planet by [[value TEMPORAL_ANOMALY_TARGET_RESEARCH_PERPOP]] per [[metertype METER_POPULATION]] when Focus is set to [[encyclopedia RESEARCH_FOCUS_TITLE]]. Penalizes [[metertype METER_TARGET_POPULATION]] (regardless of Focus) with [[value TEMPORAL_ANOMALY_TARGET_POPULATION_PERSIZE]] per planet size ([[SZ_TINY]] -5, [[SZ_SMALL]] -10, [[SZ_MEDIUM]] -15, [[SZ_LARGE]] -20, [[SZ_HUGE]] -25).
 The research bonus requires a stability of [[value TEMPORAL_ANOMALY_MIN_STABILITY]].
 
-The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
+The flow of time on this planet is gravely disturbed. Seemingly random local occurrences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
 On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
 
 RESONANT_MOON_SPECIAL
@@ -10336,7 +10336,7 @@ FRACTAL_GEODES_SPECIAL
 Fractal Geodes
 
 FRACTAL_GEODES_SPECIAL_DESC
-'''The planet is scattered with irridescent fractal geodes that can be collected and exported.
+'''The planet is scattered with iridescent fractal geodes that can be collected and exported.
 
 [[LUXURY_SPECIAL]]'''
 
@@ -11023,7 +11023,7 @@ Stealth
 PC_STEALTH_DESC
 '''Stealth parts increase the [[metertype METER_STEALTH]] of a ship. The effects from these parts do not complement each other, only the highest rated part will affect the ship.
 
-If combat occurs in a system, ships that are invisible to an enemy are not targetted by the enemy's weapons. If the ship attacks, it may become visible for the following combat rounds.
+If combat occurs in a system, ships that are invisible to an enemy are not targeted by the enemy's weapons. If the ship attacks, it may become visible for the following combat rounds.
 
 See also: [[metertype METER_DETECTION]], [[encyclopedia DETECTION_TITLE]]'''
 
@@ -11982,30 +11982,30 @@ DESC_PLANET_ENVIRONMENT_NOT
 DESC_PLANET_ENVIRONMENT_CUR_SPECIES
 that it currently has
 
-# %1% textual decription of the species.
+# %1% textual description of the species.
 DESC_SPECIES
 ''' that has species %1%'''
 
-# %1% textual decription of the species.
+# %1% textual description of the species.
 DESC_SPECIES_NOT
 ''' that does not contain species %1%'''
 
-# %1% textual decription of the species.
+# %1% textual description of the species.
 # %2% description of content liked
 DESC_SPECIES_LIKES
 ''' when species %1% likes %2%'''
 
-# %1% textual decription of the species.
+# %1% textual description of the species.
 # %2% description of content liked
 DESC_SPECIES_LIKES_NOT
 ''' when species %1% does not like %2%'''
 
-# %1% textual decription of the species.
+# %1% textual description of the species.
 # %2% description of content liked
 DESC_SPECIES_DISLIKES
 ''' when species %1% dislikes %2%'''
 
-# %1% textual decription of the species.
+# %1% textual description of the species.
 # %2% description of content disliked
 DESC_SPECIES_DISLIKES_NOT
 ''' when species %1% does not dislike %2%'''
@@ -12382,22 +12382,22 @@ DESC_ORDERED_ANNEXED_NOT
 ''' that is not being annexed'''
 
 # %1% content type description, eg. species, building, focus, tech
-# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physical Brain
 DESC_LOCATION
 ''' that is matched by the location condition of %1% %2%'''
 
 # %1% content type description, eg. species, building, focus, tech
-# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physical Brain
 DESC_LOCATION_NOT
 ''' that is not matched by the location condition of %1% %2%'''
 
 # %1% content type description, eg. species, building, focus, tech
-# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physical Brain
 DESC_COMBAT_TARGET
 ''' that is matched by the combat targets condition of %1% %2%'''
 
 # %1% content type description, eg. species, building, focus, tech
-# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physicsal Brain
+# %2% name of specific scripted content, eg. Human, Imperial Palace, Industry Focus, The Physical Brain
 DESC_COMBAT_TARGET_NOT
 ''' that is not matched by the combat targets condition of %1% %2%'''
 
@@ -12675,7 +12675,7 @@ DESC_OWNER_HAS_SHIP_PART_NOT
 ''' ship part not unlocked for empire'''
 
 # %1% lowest accepted number of matching objects
-# %2% maximum number of mnatching objects
+# %2% maximum number of matching objects
 # %3% description of which objects to count
 DESC_NUMBER
 ''' if there are between %1% and %2% objects%3%'''
@@ -12849,7 +12849,7 @@ PLC_ALLIED_REPAIR
 Allied Repair
 
 PLC_ALLIED_REPAIR_DESC
-If two empires are allied, and either has adopted this policy, both will receive repairs to damaged ships while at eachother's [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]s and from [[tech SHP_FLEET_REPAIR]].
+If two empires are allied, and either has adopted this policy, both will receive repairs to damaged ships while at each other's [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]]s and from [[tech SHP_FLEET_REPAIR]].
 
 PLC_ALLIED_REPAIR_SHORT_DESC
 Allows allies to repair ships
@@ -13013,7 +13013,7 @@ PLC_NATIVE_APPROPRIATION
 Native Appropriation
 
 PLC_NATIVE_APPROPRIATION_DESC
-Increasess [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET]] on research-focused planets in systems that also contain unowned native-populated planets.
+Increases [[metertype METER_TARGET_RESEARCH]] by [[value PLC_NATIVE_APPROPRIATION_RESEARCH_PERPLANET]] on research-focused planets in systems that also contain unowned native-populated planets.
 
 PLC_NATIVE_APPROPRIATION_SHORT_DESC
 Boosts Research
@@ -13269,7 +13269,7 @@ Bureaucracy
 PLC_BUREAUCRACY_DESC
 '''• Increases an empire's populated planet stability by [[value PLC_BUREAUCRACY_STABILITY_FLAT]].
 • Changing planet focus reduces that planet's [[metertype METER_INFLUENCE]] by [[value BUREAUCRACY_FOCUS_CHANGE_PENALTY]].
-• Costs some influence based on the overall population. Costs are reduced by having more adminstrative buildings ([[buildingtype BLD_IMPERIAL_PALACE]], [[buildingtype BLD_REGIONAL_ADMIN]]) and by having [[PLC_CENTRALIZATION]] adopted.
+• Costs some influence based on the overall population. Costs are reduced by having more administrative buildings ([[buildingtype BLD_IMPERIAL_PALACE]], [[buildingtype BLD_REGIONAL_ADMIN]]) and by having [[PLC_CENTRALIZATION]] adopted.
 '''
 
 PLC_BUREAUCRACY_SHORT_DESC
@@ -13767,7 +13767,7 @@ PRO_VOID_PREDICTION
 Void Prediction
 
 PRO_VOID_PREDICTION_DESC
-'''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurences.
+'''While classic prediction always relies on statistical knowledge of the past, studying the chaotic wisdom of the void leads to robust predictions of first-time and freak occurrences.
 For the imperial stockpile service, void prediction is the quintessential tool to deliver the right goods even before the need occurs.
 
 This is an upgrade technology for the [[encyclopedia STOCKPILE_TITLE]]. The [[metertype METER_STOCKPILE]] is increased by 0.2 per [[metertype METER_POPULATION]].
@@ -13845,7 +13845,7 @@ PRO_SENTIENT_AUTOMATION_DESC
 
 Grants 1 extra economic [[encyclopedia ENC_POLICY_SLOTS]].
 
-The natural evolution of automated factories is achieved by confering to the artificial minds that control such facilities the ability to deduce and decide on their own the best course of action to achieve the goals of their owners, even before they can think about it. This improvement greatly increase the performance of the autonomous production facilities on all worlds that are actively dedicated to industrial production.'''
+The natural evolution of automated factories is achieved by conferring to the artificial minds that control such facilities the ability to deduce and decide on their own the best course of action to achieve the goals of their owners, even before they can think about it. This improvement greatly increase the performance of the autonomous production facilities on all worlds that are actively dedicated to industrial production.'''
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
@@ -14060,7 +14060,7 @@ SHP_MIDCOMB_LOG
 Mid-Combat Logistics
 
 SHP_MIDCOMB_LOG_DESC
-When interstellar fleets are in regular, commonplace use, the transfer of personnel and material in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the co-ordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
+When interstellar fleets are in regular, commonplace use, the transfer of personnel and material in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with logistics coordination due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
 
 SHP_ASTEROID_HULLS
 Asteroid Hulls
@@ -14138,7 +14138,7 @@ SHP_ENRG_FRIGATE
 Military Energy Compression
 
 SHP_ENRG_FRIGATE_DESC
-Advanced forcefields allow energy and matter to be combined to make warships, but immense energy is needed to build them at scale.
+Advanced force fields allow energy and matter to be combined to make warships, but immense energy is needed to build them at scale.
 
 SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
@@ -15560,7 +15560,7 @@ Interstellar Lighthouse
 BLD_LIGHTHOUSE_DESC
 '''Decreases the [[metertype METER_STEALTH]] of all ships in the same system by [[value BLD_LIGHTHOUSE_IMMEDIATE_STEALTH_MALUS]]. On top of this the Interstellar Lighthouse decreases the [[metertype METER_STEALTH]] of all objects by the number of turns it operates, up to [[value BLD_LIGHTHOUSE_CATALOG_STEALTH_MALUS]]. It also increases the [[metertype METER_SPEED]] of non-enemy ships that start the turn within [[value BLD_LIGHTHOUSE_SPEEDUP_DISTANCE]] uu by [[value BLD_LIGHTHOUSE_SPEEDUP]] for that turn. [[BUILDING_AVAILABLE_ON_OUTPOSTS]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
 
-This building complex sends a complex pattern of EM pulses and particle streams to reveal the location of objects in a system. After a while, all usual objects in a system are registered in a catalog so unusual occurences can be identified more effectively.
+This building complex sends a complex pattern of EM pulses and particle streams to reveal the location of objects in a system. After a while, all usual objects in a system are registered in a catalog so unusual occurrences can be identified more effectively.
 
 The building complex itself immediately gets registered in the catalog and is very visible with [[metertype METER_STEALTH]] decreased by [[value BLD_LIGHTHOUSE_SELF_STEALTH_MALUS]].'''
 
@@ -16971,7 +16971,7 @@ SH_SMALL_ROBOTIC
 Small Robotic Hull
 
 SH_SMALL_ROBOTIC_DESC
-'''This automated hull while small is surprisingly spacious making it well suited to many auxillary roles. It has three internal slot, and repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
+'''This automated hull while small is surprisingly spacious making it well suited to many auxiliary roles. It has three internal slot, and repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
@@ -17064,7 +17064,7 @@ SH_LOGISTICS_FACILITATOR
 Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has six external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occured, and to restore [[metertype METER_STRUCTURE]] to double the current when out of combat, meaning ships with at least half strength will fully repair.
+'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has six external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to effect partial repairs even on turns when combat has occurred, and to restore [[metertype METER_STRUCTURE]] to double the current when out of combat, meaning ships with at least half strength will fully repair.
 
 [[metertype METER_STEALTH]] is medium, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
@@ -17981,7 +17981,7 @@ GOOD_WEAPONS_DESC
 +	Good Pilots: weapon damage increased by one level
 
 GREAT_WEAPONS_DESC
-++	Great Pilots: weapon damge increased by two levels
+++	Great Pilots: weapon damage increased by two levels
 
 ULTIMATE_WEAPONS_DESC
 +++	Ultimate Pilots: weapon damage increased by three levels
@@ -18736,7 +18736,7 @@ CLOAK_INTERFERENCE
 Cloak Cross-Interference
 
 TRANSPATIAL_CLOAK_INTERACTION
-Transpatial Drive - Cloak Interaction
+Trans-spatial Drive - Cloak Interaction
 
 FUEL_TITLE
 Fuel
@@ -18745,7 +18745,7 @@ FUEL_EFFICIENCY_TITLE
 Fuel Efficiency
 
 FUEL_REFUEL_EFFICIENCY_TEXT
-'''[[metertype METER_FUEL]] allows ships to travel the starlanes outside of their empie's [[metertype METER_SUPPLY]]. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
+'''[[metertype METER_FUEL]] allows ships to travel the starlanes outside of their empire's [[metertype METER_SUPPLY]]. Fuel is consumed for each starlane traversed outside of supply; stopping within [[metertype METER_SUPPLY]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[metertype METER_SUPPLY]] lines, fuel will slowly regenerate.
 
 The base fuel capacity of a <encyclopedia ENC_SHIP_DESIGN>Ship Design</encyclopedia> depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
 
@@ -18960,73 +18960,73 @@ Krill Spawner
 ## AI diplomacy strings and lists
 ##
 
-# Newline separated list of polite alliance proposal acknowlegements.
+# Newline separated list of polite alliance proposal acknowledgements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Nice to hear from you again.
 Receipt of transmission acknowledged.
 '''
 
-# Newline separated list of harsh alliance proposal acknowlegements.
+# Newline separated list of harsh alliance proposal acknowledgements.
 AI_ALLIANCE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
 '''If you cannot sustain your own ambitions, you are unworthy of our help.
 Please find another benefactor to leech sustenance from.
 '''
 
-# Newline separated list of polite positive alliance proposal acknowlegements.
+# Newline separated list of polite positive alliance proposal acknowledgements.
 AI_ALLIANCE_PROPOSAL_RESPONSES_YES_MILD_LIST
 '''Our empires will benefit from mutual support and collaboration.
 We are honoured to work more closely together towards our mutual success.
 '''
 
-# Newline separated list of polite negative alliance proposal acknowlegements.
+# Newline separated list of polite negative alliance proposal acknowledgements.
 AI_ALLIANCE_PROPOSAL_RESPONSES_NO_MILD_LIST
 '''We do not believe such an agreement would be to our mutual benefit at this time.
 We cannot spare the resources that such an agreement would require of us.
 '''
 
-# Newline separated list of harsh positive alliance proposal acknowlegements.
+# Newline separated list of harsh positive alliance proposal acknowledgements.
 AI_ALLIANCE_PROPOSAL_RESPONSES_YES_HARSH_LIST
 '''We reluctantly agree to support your futile efforts.
 Perhaps we will find amusement from prolonging your hopeless struggles.
 '''
 
-# Newline separated list of harsh negative alliance proposal acknowlegements.
+# Newline separated list of harsh negative alliance proposal acknowledgements.
 AI_ALLIANCE_PROPOSAL_RESPONSES_NO_HARSH_LIST
 '''We would never agree to share our resources with you!
 You are wholely unworthy of such trust and support.
 '''
 
-# Newline separated list of polite peace proposal acknowlegements.
+# Newline separated list of polite peace proposal acknowledgements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
 '''Nice to hear from you again.
 Receipt of transmission acknowledged.
 '''
 
-# Newline separated list of harsh peace proposal acknowlegements.
+# Newline separated list of harsh peace proposal acknowledgements.
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
 '''What? Aren't you dead yet?
 Oh, not another pathetic sob story, please!
 '''
 
-# Newline separated list of polite positive peace proposal acknowlegements.
+# Newline separated list of polite positive peace proposal acknowledgements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
 '''We will be happy to trust your good intentions.
 Whatever you say, Boss. Everyone says you are very trustworthy.
 '''
 
-# Newline separated list of polite negative peace proposal acknowlegements.
+# Newline separated list of polite negative peace proposal acknowledgements.
 AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST
 '''Unfortunately, that would be very inconvenient at this time.
 We regret to inform you that we are unable to comply with that request.
 '''
 
-# Newline separated list of harsh positive peace proposal acknowlegements.
+# Newline separated list of harsh positive peace proposal acknowledgements.
 AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
 '''Out of pity, we will agree to not attack you. For now.
 Feeble Beings!  There would be little honor in vanquishing you.
 '''
 
-# Newline separated list of harsh negative peace proposal acknowlegements.
+# Newline separated list of harsh negative peace proposal acknowledgements.
 AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST
 '''We will see you dead first!
 You will not have peace until all your base r belong to us!
