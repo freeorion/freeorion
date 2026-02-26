@@ -667,6 +667,24 @@ Drone
 SM_DRONE_DESC
 A tool of a forgotten war, still fulfilling its original purpose: to mindlessly attack any ships in range.
 
+SM_HUNTER_DRONE
+Hunter Drone
+
+SM_HUNTER_DRONE_DESC
+A tool of a forgotten war, equipped with a scanner, it homes in on any ships in range.
+
+SM_CLOAKER_DRONE
+Cloaker Drone
+
+SM_CLOAKER_DRONE_DESC
+A tool of a forgotten war, it is equipped with a basic cloaking device.
+
+SM_TERMINATOR_DRONE
+Terminator Drone
+
+SM_TERMINATOR_DRONE_DESC
+A heavily armoured drone, still fulfilling its original purpose: to mindlessly attack any ships in range.
+
 SM_DRONE_FACTORY
 Drone Factory
 
@@ -17469,6 +17487,12 @@ Drone Hull
 
 SH_DRONE_BODY_DESC
 Drone Hull
+
+SH_HUNTER_DRONE_BODY
+Hunter Drone Hull
+
+SH_HUNTER_DRONE_BODY_DESC
+Hunter Drone Hull
 
 SH_IMMOBILE_FACTORY
 Drone Factory
