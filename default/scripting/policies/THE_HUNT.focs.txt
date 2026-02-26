@@ -13,6 +13,7 @@ Policy
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                Species
                 ContainedBy Contains And [
                     InSystem id = RootCandidate.SystemID
                     Planet
