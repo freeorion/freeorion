@@ -2360,20 +2360,20 @@ void Empire::CheckProductionProgress(
     struct ItemCostAndTime {
         ItemCostAndTime(int l, BuildType bt, int d, std::string_view n, float c, int t) :
             location_id(l),
-            build_type(bt),
             design_id(d),
             name(n),
             cost(c),
-            time(t)
+            time(t),
+            build_type(bt)
         {}
         ItemCostAndTime() = default;
 
         const int location_id = INVALID_OBJECT_ID;
-        const BuildType build_type = BuildType::INVALID_BUILD_TYPE;
         const int design_id = INVALID_DESIGN_ID;
         const std::string_view name = "";
         const float cost = 0.0f;
-        const int time = 0;
+        const int16_t time = 0;
+        const BuildType build_type = BuildType::INVALID_BUILD_TYPE;
     };
     std::vector<ItemCostAndTime> queue_item_costs_and_times;
     queue_item_costs_and_times.reserve(m_production_queue.size());
@@ -2435,7 +2435,7 @@ void Empire::CheckProductionProgress(
         auto [cost, turns] = get_cost_turns(queue_item_costs_and_times, elem, location_id);
 
         if (cost < 0.01f || turns < 1) {
-            ErrorLogger() << "Empire::CheckProductionProgress got strang cost/time: " << cost << " / " << turns;
+            ErrorLogger() << "Empire::CheckProductionProgress got strange cost/time: " << cost << " / " << turns;
             break;
         }
 
