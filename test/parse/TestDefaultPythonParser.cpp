@@ -21,6 +21,25 @@
 
 #include "ParserAppFixture.h"
 
+namespace {
+    template <typename T>
+    void DumpEntity(const T& t) {
+        const char* filename = std::getenv("FO_DUMP_FILE");
+        if (filename != nullptr) {
+            std::ofstream f(filename);
+            const auto dump = t.Dump(0);
+            f.write(dump.c_str(), dump.size());
+            f.flush();           
+        } else {
+            BOOST_TEST_MESSAGE(t.Dump(0));
+        }
+    }
+}
+
+/**
+ * Each test can dump parsed entity to file with environment variable FO_DUMP_FILE
+ */
+
 BOOST_FIXTURE_TEST_SUITE(TestDefaultPythonParser, ParserAppFixture)
 
 /**
@@ -62,7 +81,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
         BOOST_REQUIRE_EQUAL(tech_name, tech_it->second.Name());
 
         BOOST_TEST_MESSAGE("Dump " << tech_name << ":");
-        BOOST_TEST_MESSAGE(tech_it->second.Dump(0));
+        DumpEntity(tech_it->second);
 
         if (const char *tech_checksum_str = std::getenv("FO_CHECKSUM_TECH_VALUE")) {
             unsigned int tech_checksum = boost::lexical_cast<unsigned int>(tech_checksum_str);
@@ -112,7 +131,7 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
         BOOST_REQUIRE_EQUAL(species_name, species_it->second.Name());
 
         BOOST_TEST_MESSAGE("Dump " << species_name << ":");
-        BOOST_TEST_MESSAGE(species_it->second.Dump(0));
+        DumpEntity(species_it->second);
 
         if (const char *species_checksum_str = std::getenv("FO_CHECKSUM_SPECIES_VALUE")) {
             uint32_t species_checksum = boost::lexical_cast<uint32_t>(species_checksum_str);
@@ -151,7 +170,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
         BOOST_REQUIRE_EQUAL(buildings_name, buildings_it->second->Name());
 
         BOOST_TEST_MESSAGE("Dump " << buildings_name << ":");
-        BOOST_TEST_MESSAGE(buildings_it->second->Dump(0));
+        DumpEntity(*(buildings_it->second));
 
         if (const char *buildings_checksum_str = std::getenv("FO_CHECKSUM_BUILDINGS_VALUE")) {
             uint32_t buildings_checksum = boost::lexical_cast<uint32_t>(buildings_checksum_str);
@@ -189,7 +208,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
         BOOST_REQUIRE(empire_statistics.end() != empire_statistic_it);
 
         BOOST_TEST_MESSAGE("Dump " << empire_statistic_name << ":");
-        BOOST_TEST_MESSAGE(empire_statistic_it->second->Dump(0));
+        DumpEntity(*(empire_statistic_it->second));
 
         if (const char *empire_statistic_checksum_str = std::getenv("FO_CHECKSUM_EMPIRE_STATISTIC_VALUE")) {
             uint32_t empire_statistic_checksum = boost::lexical_cast<uint32_t>(empire_statistic_checksum_str);
@@ -252,7 +271,7 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
         BOOST_REQUIRE(fields.end() != field_it);
 
         BOOST_TEST_MESSAGE("Dump " << field_name << ":");
-        BOOST_TEST_MESSAGE(field_it->second->Dump(0));
+        DumpEntity(*(field_it->second));
 
         if (const char *field_checksum_str = std::getenv("FO_CHECKSUM_FIELD_VALUE")) {
             uint32_t field_checksum = boost::lexical_cast<uint32_t>(field_checksum_str);
