@@ -1,0 +1,6 @@
+Article
+    name = "MULTI_PLAYER_SETUP_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "MULTI_PLAYER_SETUP_SHORT_DESC"
+    description = "MULTI_PLAYER_SETUP_TEXT"
+    icon = ""

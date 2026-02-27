@@ -1,0 +1,6 @@
+Article
+    name = "QUICK_START_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "QUICK_START_SHORT_DESC"
+    description = "SINGLE_PLAYER_TEXT"
+    icon = ""
