@@ -322,7 +322,7 @@ if(BUILD_CLIENT_GG)
     find_package(OpenGL REQUIRED)
     find_package(OpenAL REQUIRED)
     find_package(Ogg REQUIRED)
-    find_package(Vorbis REQUIRED)
+    find_package(Vorbis COMPONENTS Vorbis VorbisFile REQUIRED)
 endif()
 
 if(APPLE)
@@ -707,7 +707,8 @@ if(BUILD_CLIENT_GG)
         $<IF:$<BOOL:${OPENGL_opengl_LIBRARY}>,${OPENGL_opengl_LIBRARY},${OPENGL_gl_LIBRARY}>
         ${OPENAL_LIBRARY}
         ${OGG_LIBRARIES}
-        ${VORBIS_LIBRARIES}
+        Vorbis::Vorbis
+        $<$<NOT:$<PLATFORM_ID:Darwin>>:Vorbis::VorbisFile>
         ${ICONV_LIBRARY}
     )
 
