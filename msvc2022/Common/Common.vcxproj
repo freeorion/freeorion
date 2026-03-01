@@ -351,7 +351,9 @@
     <ClCompile Include="..\..\util\PythonCommon.cpp" />
     <ClCompile Include="..\..\util\Random.cpp" />
     <ClCompile Include="..\..\util\SerializeCombat.cpp" />
-    <ClCompile Include="..\..\util\SerializeEmpire.cpp" />
+    <ClCompile Include="..\..\util\SerializeEmpire.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\..\util\SerializeModeratorAction.cpp" />
     <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp" />
     <ClCompile Include="..\..\util\SerializeOrderSet.cpp" />
