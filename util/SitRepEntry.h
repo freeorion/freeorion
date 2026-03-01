@@ -59,7 +59,7 @@ public:
                         return retval;
                     }(std::move(param_tag_data)))
     {}
-
+    [[nodiscard]] const auto&        Variables() const noexcept      { return m_variables; }
     [[nodiscard]] const std::string& GetDataString(const std::string& tag) const;
     [[nodiscard]] int                GetTurn() const noexcept        { return m_turn; }
     [[nodiscard]] const std::string& GetIcon() const noexcept        { return m_icon; }
