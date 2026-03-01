@@ -374,7 +374,7 @@ namespace {
     }
 
     // returns { next unconsumed char*, true/false did the parse succeed }
-    // parsed value returned in result
+    // parsed value returned in \a val_out
     inline auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool>
     {
         if constexpr(have_to_chars_lib) {
