@@ -107,12 +107,13 @@ namespace {
     }
 
     std::vector<std::string> OrderedSitrepTemplateStrings() {
-        // determine sitrep order
+        // extract determine sitrep ordering from stringtable entry
         std::istringstream template_stream(UserString("FUNCTIONAL_SITREP_PRIORITY_ORDER"));
         std::vector<std::string> sitrep_order;
-        std::copy(std::istream_iterator<std::string>(template_stream),
+        sitrep_order.reserve(80); // guesstimate that is a bit more than the number of results (72) in tests at time of writing
+        std::copy(std::istream_iterator<std::string>(template_stream), // split at newlines into separate strings
                   std::istream_iterator<std::string>(),
-                  std::back_inserter<std::vector<std::string>>(sitrep_order));
+                  std::back_inserter<std::vector<std::string>>(sitrep_order));  // TODO: reimplement using std::views::split if possible?
         return sitrep_order;
     }
 
@@ -158,22 +159,22 @@ namespace {
         // get templates for each empire
         std::set<std::string> template_set;
         for (const auto& entry : Empires())
-            template_set.merge(EmpireSitRepTemplateStrings(entry.first));
+            template_set.merge(EmpireSitRepTemplateStrings(entry.first)); // TODO: use a vector and sort + unique
 
-        auto ordered_template_strings{OrderedSitrepTemplateStrings()};
+        std::vector<std::string> ordered_template_strings{OrderedSitrepTemplateStrings()};
 
         std::vector<std::string> retval;
         retval.reserve(ordered_template_strings.size() + template_set.size());
 
         // first add only use those ordered templates actually in the current set of sitrep templates
-        for (std::string& templ : OrderedSitrepTemplateStrings()) {
+        for (std::string& templ : ordered_template_strings) { // TODO: reimplement using range_copy_if ?
             if (template_set.contains(templ) &&
                 !std::count(retval.begin(), retval.end(), templ))
             { retval.push_back(std::move(templ)); }
         }
 
         // next add the current templates that did not have a specified order
-        for (auto it = template_set.begin(); it != template_set.end();) {
+        for (auto it = template_set.begin(); it != template_set.end();) { // TODO: reimplement using range_copy_if ?
             if (!std::count(retval.begin(), retval.end(), *it))
                 retval.push_back(std::move(template_set.extract(it++).value()));
             else
@@ -338,9 +339,9 @@ namespace {
     /** A ListBox::Row subclass used to display SitReps. */
     class SitRepRow : public GG::ListBox::Row {
     public:
-        SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
+        SitRepRow(GG::X w, GG::Y h, SitRepEntry sitrep) :
             GG::ListBox::Row(w, h),
-            m_sitrep(sitrep)
+            m_sitrep(std::move(sitrep))
         {
             SetName("SitRepRow");
         }
@@ -512,6 +513,7 @@ namespace {
 
     /** Search forward (if \a forward is true) or backward from \a turn (but not including \a turn)
       * for the next/previous turn with any valid not-hidden sitreps. */
+    // TODO: change to GetPrevAndNextNonEmptySitrepsTurn and return a pair<int, int> to avoid redundancy when both needed...
     int GetNextNonEmptySitrepsTurn(const EmpireSitrepsContainer& sitreps, int turn,
                                    const std::vector<SitRepEntry::FixedInfo>& fixed_infos,
                                    bool forward, const std::set<std::string>& hidden_templates)
@@ -548,7 +550,7 @@ namespace {
             if (show_invalid)
                 return true; // there is at least one parameter set for this turn, and don't care if it's valid
 
-            const auto& fixed_info = get_info(x_fixedid_params_lists); // assume range checked elsewhere
+            const auto& fixed_info = get_info(x_fixedid_params_lists); // assume index was range-checked elsewhere
 
             using ParamsLists = std::decay_t<decltype(x_fixedid_params_lists.second)>;
             using ParamSetT = ParamsLists::value_type;
