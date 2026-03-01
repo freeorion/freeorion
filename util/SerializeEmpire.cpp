@@ -27,6 +27,170 @@ template void Empire::PolicyAdoptionInfo::serialize<freeorion_bin_iarchive>(free
 template void Empire::PolicyAdoptionInfo::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void Empire::PolicyAdoptionInfo::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
+namespace {
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    constexpr
+#endif
+    std::size_t ToChars(uint16_t num, char* buffer, char* buffer_end) {
+#if defined(__cpp_lib_to_chars)
+        const auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
+        return static_cast<std::size_t>(std::distance(buffer, result_ptr));
+#else
+        std::size_t buffer_sz = std::distance(buffer, buffer_end);
+        auto temp = std::to_string(num);
+        auto out_sz = std::min(buffer_sz, temp.size());
+        std::copy_n(temp.begin(), out_sz, buffer);
+        return out_sz;
+#endif
+    }
+
+    consteval std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
+        std::size_t retval = 1;
+        while (exp--)
+            retval *= base;
+        return retval;
+    }
+
+    constexpr uint16_t uint16_t_max = std::numeric_limits<uint16_t>::max();
+    constexpr uint8_t uint16_t_digits = 5; // digits in base 10 of 65536 = 2^16
+    static_assert(Pow(10, uint16_t_digits + 1) > uint16_t_max);
+
+    constexpr uint8_t data_arr_sz = 8;
+    using DataArrT = std::array<std::pair<uint16_t, uint16_t>, data_arr_sz>;
+
+    constexpr std::size_t buffer_size = data_arr_sz*2*(uint16_t_digits + 1); // space for "65535 12345 " repeated data_arr_sz times
+
+    // returns { next unconsumed char*, true/false did the parse succeed }
+    // parsed value returned in \a val_out
+    template <typename ValT>
+    inline auto FromChars(const char* start, const char* end, ValT& val_out) -> std::pair<const char*, bool>
+    {
+        static_assert(std::is_unsigned_v<ValT> && sizeof(ValT) <= sizeof(unsigned int));
+        unsigned int scratch = 0;
+        static constexpr unsigned int val_t_max{std::numeric_limits<ValT>::max()};
+
+#if defined(__cpp_lib_to_chars)
+        const auto result = std::from_chars(start, end, scratch);
+        val_out = static_cast<ValT>(std::min(val_t_max, scratch));
+        return {result.ptr, result.ec == std::errc()};
+
+#else
+        int chars_consumed = 0;
+        using val_out_t = std::decay_t<decltype(val_out)>;
+        constexpr auto format_str = "%u%n";
+        const auto matched = sscanf(start, format_str, &scratch, &chars_consumed);
+        val_out = static_cast<ValT>(std::min(val_t_max, scratch));
+        return {start + chars_consumed, matched >= 1};
+#endif
+    }
+
+
+    template <typename Archive, std::size_t N>
+    void Serialize(Archive& ar, uint8_t& count, std::array<std::pair<uint16_t, uint16_t>, N>& data)
+    {
+        static_assert(N < std::numeric_limits<std::decay_t<decltype(count)>>::max());
+
+        if constexpr (Archive::is_loading::value) {
+            ar >> boost::serialization::make_nvp("m_strings_count", count);
+
+            std::vector<std::pair<uint16_t, uint16_t>> data_vec;
+            ar >> boost::serialization::make_nvp("m_string_offsets_sizes", data_vec);
+            const std::size_t clamped_count = std::min(data_vec.size(), std::min(static_cast<std::size_t>(count), N));
+            std::copy_n(data_vec.begin(), clamped_count, data.begin());
+
+        } else {
+            uint8_t clamped_count = static_cast<uint8_t>(std::min(static_cast<std::size_t>(count), N));
+            ar << boost::serialization::make_nvp("m_strings_count", clamped_count);
+            std::vector<std::pair<uint16_t, uint16_t>> data_vec(data.begin(), data.begin() + clamped_count);
+            ar << boost::serialization::make_nvp("m_string_offsets_sizes", data_vec);
+        }
+    }
+
+    template <std::size_t N>
+    void Serialize(boost::archive::xml_oarchive& ar, uint8_t& count, std::array<std::pair<uint16_t, uint16_t>, N>& data)
+    {
+        std::array<std::string::value_type, buffer_size> buffer{};
+        auto* buffer_next = buffer.data();
+        auto* buffer_end = buffer.data() + buffer.size();
+
+        // store number of value pairs
+        buffer_next += ToChars(static_cast<int16_t>(count), buffer_next, buffer_end);
+
+        uint8_t tally = 0;
+        for (const auto& [offset, sz] : data) {
+            if (tally >= count)
+                break;
+            ++tally;
+            *buffer_next++ = ' ';
+            buffer_next += ToChars(offset, buffer_next, buffer_end);
+            *buffer_next++ = ' ';
+            buffer_next += ToChars(sz, buffer_next, buffer_end);
+        }
+
+        const auto buffer_next_dist = static_cast<std::size_t>(std::distance(buffer.data(), buffer_next));
+        const std::size_t string_size = std::min(buffer_size, buffer_next_dist);
+        std::string s(buffer.data(), string_size);
+        ar << boost::serialization::make_nvp("count_string_offsets_sizes", s);
+    }
+
+    template <std::size_t N>
+    void Serialize(boost::archive::xml_iarchive& ar, uint8_t& count, std::array<std::pair<uint16_t, uint16_t>, N>& data)
+    {
+        std::string buffer;
+        buffer.reserve(buffer_size);
+        ar >> boost::serialization::make_nvp("count_string_offsets_sizes", buffer);
+
+        unsigned int count_scratch = 0U;
+        const char* const buffer_end = buffer.c_str() + buffer.size();
+
+        auto [next, success] = FromChars(buffer.c_str(), buffer_end, count_scratch);
+        if (!success) {
+            count = 0;
+            return;
+        }
+        count = static_cast<uint8_t>(std::min<unsigned int>(count_scratch, data.size()));
+
+        for (uint8_t idx = 0; idx < static_cast<uint8_t>(count) && next != buffer_end; ++idx) {
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+
+            if (std::distance(next, buffer_end) < 3) // 3 is enough for "1 1" or similar
+                return;
+
+            unsigned int offset = 0;
+            std::tie(next, success) = FromChars(next, buffer_end, offset);
+            if (!success || offset >= std::numeric_limits<DataArrT::value_type::first_type>::max())
+                return;
+            data[idx].first = offset;
+
+            while (std::distance(next, buffer_end) > 0 && *next == ' ')
+                ++next;
+
+
+            if (std::distance(next, buffer_end) < 1) // 1 is enough for "1" or similar
+                return;
+
+            unsigned int size = 0;
+            std::tie(next, success) = FromChars(next, buffer_end, size);
+            if (!success || offset >= std::numeric_limits<DataArrT::value_type::first_type>::max())
+                return;
+            data[idx].second = size;
+        }
+    }
+}
+
+template <typename Archive>
+void Empire::ChunkedStringAndViews::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_str);
+    Serialize(ar, m_strings_count, m_string_offsets_sizes);
+}
+
+template void Empire::ChunkedStringAndViews::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void Empire::ChunkedStringAndViews::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void Empire::ChunkedStringAndViews::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void Empire::ChunkedStringAndViews::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
 
 template <typename Archive>
 void Empire::serialize(Archive& ar, const unsigned int version)
@@ -213,9 +377,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (visible) {
         try {
             ar  & boost::serialization::make_nvp("m_ship_designs", m_known_ship_designs);
-            ar  & BOOST_SERIALIZATION_NVP(m_sitrep_entries);
 
-            CopySitrepsToBlob();
+            if (Archive::is_loading::value && version < 15) {
+                DebugLogger() << "fallback sitrep load";
+                std::vector<SitRepEntry> sitreps;
+                ar  & boost::serialization::make_nvp("m_sitrep_entries", sitreps);
+                MoveSitrepsToBlob(std::move(sitreps));
+            } else {
+                ar  & boost::serialization::make_nvp("m_sitrep_blob", m_blobbed_sitreps)
+                    & BOOST_SERIALIZATION_NVP(m_blobbed_sitrep_fixed_infos);
+            }
 
             if (Archive::is_loading::value && version < 12) {
                 std::map<ResourceType, std::shared_ptr<ResourcePool>> scratch;
@@ -297,7 +468,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-BOOST_CLASS_VERSION(Empire, 14)
+BOOST_CLASS_VERSION(Empire, 15)
 
 template void Empire::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void Empire::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
@@ -324,7 +495,7 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     if constexpr (Archive::is_saving::value)
         em.GetDiplomaticMessagesToSerialize(messages, GlobalSerializationEncodingForEmpire());
 
-    TraceLogger() << "EmpireManager version : " << version;
+    //TraceLogger() << "EmpireManager version : " << version;
     if (Archive::is_loading::value && version < 1) {
         std::map<int, Empire*> empire_raw_ptr_map;
         ar  & make_nvp("m_empire_map", empire_raw_ptr_map);
@@ -395,6 +566,18 @@ void serialize(Archive& ar, EmpireManager& em, unsigned int const version)
     }
 
     DebugLogger() << "EmpireManager takes at least: " << em.SizeInMemory()/1024 << " kB";
+    DebugLogger() << "SitReps:";
+    for (const auto& [eid, e] : em.m_empire_map) {
+        const auto template_mems = e->SitRepsSizeInMemory();
+        const auto sum = std::transform_reduce(template_mems.begin(), template_mems.end(), std::size_t{0}, std::plus<>{},
+                                               [](const auto& p) noexcept { return p.second; });
+        DebugLogger() << "  empire " << eid << "  " << sum/1024 << " kB:";
+
+        for (const auto& [templ, mems] : template_mems) {
+            if (mems > 20000)
+                DebugLogger() << "    " << templ << ": " << mems/1024 << " kB"; 
+        }
+    }
 }
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, EmpireManager&, unsigned int const);

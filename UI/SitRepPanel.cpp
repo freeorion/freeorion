@@ -566,33 +566,12 @@ namespace {
         auto rng = sitreps | range_filter(turn_dir_ok) | range_filter(fixed_info_idx_in_range)
                            | range_filter(not_hidden) | range_filter(has_valid_sitrep);
 
+        if (range_empty(rng))
+            return INVALID_GAME_TURN;
 
-
-        //
-        //    // find and return the next turn on which there is a (valid or any) sitrep
-        //    if (forward) {
-        //        auto turns_with_valid_sitreps_rng = next_nonempty_rng | range_filter(has_valid_sitrep) | range_keys;
-        //        return range_empty(turns_with_valid_sitreps_rng) ? INVALID_GAME_TURN : *turns_with_valid_sitreps_rng.begin();
-        //    } else {
-        //        auto next_nonempty_reversed_rng = next_nonempty_rng | range_reverse | range_filter(has_valid_sitrep) | range_keys;
-        //        return range_empty(next_nonempty_reversed_rng) ? INVALID_GAME_TURN : *next_nonempty_reversed_rng.begin();
-        //    }
-        //};
-        //
-        //// convert all (fixed_info, turns_params) to the next turn with a (valid/any) sitrep
-        //const auto next_turns_with_sitrep = not_hidden_rng | range_transform(to_next_turn_with_sitrep) | range_to_vec;
-        //using TurnsT = std::decay_t<decltype(next_turns_with_sitrep.front())>;
-        //static_assert(std::is_same_v<int, TurnsT>);
-        //
-        //// exclude INVALID_GAME_TURN results...
-        //static constexpr auto not_invalid_turn = [](int turn) noexcept { return turn != INVALID_GAME_TURN; };
-        //auto valid_next_turns_with_sitrep = next_turns_with_sitrep | range_filter(not_invalid_turn);
-        //
-        //const auto next_it = forward ? range_min_element(valid_next_turns_with_sitrep) : range_max_element(valid_next_turns_with_sitrep);
-        //if (next_it == valid_next_turns_with_sitrep.end())
-        return INVALID_GAME_TURN;
-        //else
-        //    return *next_it;
+        // if searching backwards, the last item in the range is the closest to \a turn
+        // if searching fowards, the first item in the range is the closest to \a turn
+        return (forward ? rng.front() : rng.back()).first.first;
     }
 }
 
@@ -794,8 +773,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<G
 void SitRepPanel::Update() {
     DebugLogger() << "SitRepPanel::Update()";
 
-    std::size_t first_visible_row = std::distance(m_sitreps_lb->begin(),
-                                                  m_sitreps_lb->FirstRowShown());
+    std::size_t first_visible_row = std::distance(m_sitreps_lb->begin(), m_sitreps_lb->FirstRowShown());
     m_sitreps_lb->Clear();
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_sitreps_lb->SetVScrollWheelIncrement(ClientUI::Pts()*4.5);
@@ -806,31 +784,71 @@ void SitRepPanel::Update() {
     if (m_showing_turn == INVALID_GAME_TURN)
         m_showing_turn = 1;
 
-    const Empire* empire = GetEmpire(GetApp().EmpireID());
+    const auto& app = GetApp();
+    const auto& context = app.GetContext();
+
+    const auto empire = context.GetEmpire(app.EmpireID());
     if (!empire)
         return;
+    const auto& sitreps = empire->SitReps();
+    const auto& fixed_infos = empire->SitRepFixedInfos();
 
-    m_showing_turn = GetNextNonEmptySitrepsTurn(empire->SitReps(), m_showing_turn - 1,
-                                                empire->SitRepFixedInfos(), true, m_hidden_sitrep_templates);
+    m_showing_turn = GetNextNonEmptySitrepsTurn(sitreps, m_showing_turn - 1, fixed_infos, true, m_hidden_sitrep_templates);
     if (m_showing_turn < 1)
         this->SetName(UserString("SITREP_PANEL_TITLE"));
     else
         this->SetName(boost::io::str(FlexibleFormat(UserString("SITREP_PANEL_TITLE_TURN")) % m_showing_turn));
 
+    // picks only m_showing_turn
+    const auto is_showing_turn = [turn{m_showing_turn}](const EmpireSitrepsContainer::value_type& turn_xx) noexcept
+    { return turn_xx.first.first == turn; };
 
-    //auto& all_current_turn_sitreps = sitreps_by_turn[m_showing_turn];
+    // checks that fixed info idx is in range in container
+    const auto fixed_info_id_in_range = [sz{fixed_infos.size()}](const EmpireSitrepsContainer::value_type& x_fixedid_x) noexcept
+    { return x_fixedid_x.first.second < sz; };
+
+    // look up fixed info for id. assumes idx is in range.
+    const auto get_info = [&fixed_infos](const EmpireSitrepsContainer::value_type& x_fixedid_x) -> const SitRepEntry::FixedInfo& {
+        const uint32_t fixed_idx = x_fixedid_x.first.second;
+        return fixed_infos[fixed_idx];
+    };
+
+    const auto not_hidden = [this, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
+        const auto& fixed_info = get_info(x_fixedid_x);
+        const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
+        return !m_hidden_sitrep_templates.contains(label);
+    };
+
+    const bool show_invalid = GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown");
+    const auto has_valid_sitrep = [show_invalid, &context, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_params_lists) {
+        const auto& [turn_fixedid, params_lists] = x_fixedid_params_lists;
+        if (params_lists.empty())
+            return false; // there are no parameter sets for this turn, so no possible (valid or otherwise) sitreps
+        if (show_invalid)
+            return true; // there is at least one parameter set for this turn, and don't care if it's valid
+
+        const auto& fixed_info = get_info(x_fixedid_params_lists); // assume index was range-checked elsewhere
+
+        using ParamsLists = std::decay_t<decltype(x_fixedid_params_lists.second)>;
+        using ParamSetT = ParamsLists::value_type;
+
+        // check if any of the parameter sets make a valid sitrep
+        const auto makes_valid_sitrep = [rep_turn{turn_fixedid.first}, &fixed_info, &context](const ParamSetT& params)
+        { return SitRepEntry(fixed_info, SitRepEntry::UniqueInfo(params, rep_turn)).GetValidity(context); };
+
+        return range_any_of(params_lists, makes_valid_sitrep);
+    };
 
 
-    //// filter for valid / visible sitreps
-    //std::vector<const SitRepEntry*> current_turn_sitreps;
-    //current_turn_sitreps.reserve(all_current_turn_sitreps.size());
-    //std::copy_if(std::make_move_iterator(all_current_turn_sitreps.begin()),
-    //             std::make_move_iterator(all_current_turn_sitreps.end()),
-    //             std::back_inserter(current_turn_sitreps),
-    //             [this](const auto* s) { return s && !IsSitRepInvalid(*s, m_hidden_sitrep_templates); });
+    auto rng = sitreps | range_filter(is_showing_turn) | range_filter(fixed_info_id_in_range)
+        | range_filter(not_hidden) | range_filter(has_valid_sitrep);
 
-    //// order sitreps for display
-    //const auto ordered_template_strings = OrderedSitrepTemplateStrings();
+
+    if (range_empty(rng))
+        return;
+
+    // order sitreps for display
+    const auto ordered_template_strings = OrderedSitrepTemplateStrings();
     //std::vector<std::vector<const SitRepEntry*>> sorted_sitreps;
     //sorted_sitreps.resize(ordered_template_strings.size());
     //std::vector<const SitRepEntry*> remaining_unordered_sitreps;
@@ -920,13 +938,13 @@ std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
     { return turn_x_x.first.first == current_turn; };
 
     // checks that fixed info idx is in range in container, gets it, and checks that it is not hidden
-    const auto in_range_not_hidden = [&hidden_templates{m_hidden_sitrep_templates}, &fixed_infos](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
+    const auto in_range_not_hidden = [this, &fixed_infos](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
         const auto fixed_idx = x_fixedid_x.first.second;
         if (fixed_idx >= fixed_infos.size())
             return false;
         const auto& fixed_info = fixed_infos[fixed_idx];
         const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
-        return !hidden_templates.contains(label);
+        return !m_hidden_sitrep_templates.contains(label);
     };
 
     const auto to_this_turn_valid_sitrep_count =

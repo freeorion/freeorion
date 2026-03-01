@@ -4,6 +4,7 @@
 
 #include <array>
 #include <compare>
+#include <numeric>
 #include <string>
 #include <unordered_set>
 #include <boost/container/flat_set.hpp>
@@ -19,6 +20,27 @@
 #include "../util/Export.h"
 #include "../util/SitRepEntry.h"
 
+#if !defined(CONSTEXPR_STRING)
+#  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
+#    define CONSTEXPR_STRING constexpr
+#  else
+#    define CONSTEXPR_STRING
+#  endif
+#endif
+#if !defined(CONSTEXPR_VEC)
+#  if defined(__cpp_lib_constexpr_vector)
+#    define CONSTEXPR_VEC constexpr
+#  else
+#    define CONSTEXPR_VEC
+#  endif
+#endif
+#if !defined(CONSTEXPR_VEC_AND_STRING)
+#  if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#    define CONSTEXPR_VEC_AND_STRING constexpr
+#  else
+#    define CONSTEXPR_VEC_AND_STRING
+#  endif
+#endif
 
 struct UnlockableItem;
 class ShipDesign;
@@ -225,6 +247,7 @@ public:
     [[nodiscard]] float       Population() const;                                 ///< returns total Population of empire
 
     [[nodiscard]] std::size_t SizeInMemory() const;
+    [[nodiscard]] std::map<std::string_view, std::size_t> SitRepsSizeInMemory() const;
 
     /** If the object with id \a id is a planet owned by this empire, sets that
       * planet to be this empire's capital, and otherwise does nothing. */
@@ -571,13 +594,59 @@ private:
     std::map<int, int>              m_explored_systems;         ///< systems explored by this empire and the turn on which they were explored
     std::set<int>                   m_known_ship_designs;       ///< ids of ship designs in the universe that this empire knows about
 
-    std::vector<SitRepEntry>        m_sitrep_entries;           ///< The Empire's sitrep entries
+public:
+    struct ChunkedStringAndViews {
+        CONSTEXPR_VEC ChunkedStringAndViews() noexcept = default;
 
+        CONSTEXPR_VEC_AND_STRING ChunkedStringAndViews(const std::vector<std::string>& strs) {
+            const std::size_t str_sz = std::transform_reduce(strs.begin(), strs.end(), std::size_t{0}, std::plus<>{},
+                                                             [](const auto& str) noexcept { return str.size(); });
+            m_str.reserve(str_sz);
+
+            m_strings_count = static_cast<uint8_t>(std::min(strs.size(), m_string_offsets_sizes.size()));
+
+            uint8_t next_idx = 0;
+            for (const auto& str : strs) {
+                const auto pre_offset = m_str.size();
+                m_str.append(str);
+                const auto post_sz = m_str.size() - pre_offset;
+                m_string_offsets_sizes[next_idx] = {pre_offset, post_sz};
+                ++next_idx;
+                if (next_idx >= m_string_offsets_sizes.size())
+                    break;
+            }
+        }
+
+        CONSTEXPR_VEC std::size_t SizeOfContents() const noexcept
+        { return m_str.capacity() * sizeof(std::string::value_type); }
+
+        CONSTEXPR_VEC_AND_STRING operator std::vector<std::string>() const {
+            std::vector<std::string> retval;
+            retval.reserve(m_strings_count);
+            for (uint8_t idx = 0; idx < m_strings_count && idx < m_string_offsets_sizes.size(); ++idx) {
+                const auto& [offset, size] = m_string_offsets_sizes[idx];
+                if (size == 0 || static_cast<std::size_t>(offset + size) > m_str.size())
+                    continue;
+                retval.emplace_back(m_str.data() + offset, size);
+            }
+            return retval;
+        }
+
+        std::string m_str{}; // concatenated strings that are parameters to a SitRep
+        std::array<std::pair<uint16_t, uint16_t>, 7> m_string_offsets_sizes{}; // start and run-length of substrings of m_str for each parameter
+        uint8_t m_strings_count = 0; // how many string parameters are there / are valid?
+
+        friend class boost::serialization::access;
+        template <typename Archive>
+        void serialize(Archive& ar, const unsigned int version);
+    };
+
+private:
     //! Space-optimized storage for sitreps: map from (turn and index into fixed infos) to 
     //! list of sets of parameters for that fixed info on that turn
-    std::vector<std::pair<std::pair<int32_t, uint32_t>, std::vector<std::vector<std::string>>>> m_blobbed_sitreps;
+    std::vector<std::pair<std::pair<int32_t, uint32_t>, std::vector<ChunkedStringAndViews>>> m_blobbed_sitreps;
 
-    std::vector<std::vector<std::string>>& GetParamsListForTurnAndFixedInfoIdx(int32_t turn, uint32_t info_idx) {
+    [[nodiscard]] CONSTEXPR_VEC auto& GetParamsListForTurnAndFixedInfoIdx(int32_t turn, uint32_t info_idx) {
         std::pair key{turn, info_idx};
         auto it = std::find_if(m_blobbed_sitreps.begin(), m_blobbed_sitreps.end(),
                                [key](const auto& key_vals) noexcept { return key_vals.first == key; });
@@ -591,7 +660,7 @@ private:
 
     //! looks up \a info in fixed infos list. If not present, inserts. Returns index in list to \a info.
     template <typename SitRepFixedInfo>
-    uint32_t GetFixedInfoIndex(SitRepFixedInfo&& info) {
+    [[nodiscard]] CONSTEXPR_VEC_AND_STRING uint32_t GetFixedInfoIndex(SitRepFixedInfo&& info) {
         auto it = std::find(m_blobbed_sitrep_fixed_infos.begin(), m_blobbed_sitrep_fixed_infos.end(), info);
         if (it != m_blobbed_sitrep_fixed_infos.end()) {
             return static_cast<uint32_t>(std::distance(m_blobbed_sitrep_fixed_infos.begin(), it));
@@ -602,7 +671,7 @@ private:
         }
     }
 
-    void CopySitrepsToBlob();
+    void MoveSitrepsToBlob(std::vector<SitRepEntry>&& sitreps);
 
     ResourcePool                    m_research_pool{ResourceType::RE_RESEARCH};
     ResourcePool                    m_industry_pool{ResourceType::RE_INDUSTRY};
