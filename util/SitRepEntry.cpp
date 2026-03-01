@@ -24,19 +24,29 @@ const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
     return elem_it->second;
 }
 
+namespace {
+    CONSTEXPR_STRING std::size_t SizeOfContents(const std::string& s) {
+        CONSTEXPR_STRING const std::size_t SSO_CAP = std::string{}.capacity();
+        if (s.capacity() <= SSO_CAP)
+            return 0;
+        else
+            return s.capacity() * sizeof(std::string::value_type);
+    }
+}
+
 std::size_t SitRepEntry::SizeInMemory() const {
     std::size_t retval = 0;
     retval += sizeof(SitRepEntry);
 
     retval += sizeof(decltype(m_variables)::value_type)*m_variables.capacity();
     for (const auto& [tag, val] : m_variables) {
-        retval += (sizeof(decltype(tag)::value_type))*tag.capacity();
-        retval += (sizeof(decltype(val)::value_type))*val.capacity();
+        retval += SizeOfContents(tag);
+        retval += SizeOfContents(val);
     }
 
-    retval += sizeof(decltype(m_template_string)::value_type)*m_template_string.capacity();
-    retval += sizeof(decltype(m_icon)::value_type)*m_icon.capacity();
-    retval += sizeof(decltype(m_label)::value_type)*m_label.capacity();
+    retval += SizeOfContents(m_template_string);
+    retval += SizeOfContents(m_icon);
+    retval += SizeOfContents(m_label);
 
     return retval;
 }
@@ -57,12 +67,20 @@ SitRepEntry CreateTechResearchedSitRep(std::string tech_name, int current_turn) 
                        std::pair(std::string{VarText::TECH_TAG}, std::move(tech_name)));
 }
 
+namespace {
+    auto Enveculate(std::span<const std::pair<std::string_view, int>> tags_ids) {
+        VarText::VariablesVec retval;
+        retval.reserve(tags_ids.size());
+        for (const auto& [tag, id] : tags_ids)
+            retval.emplace_back(tag, std::to_string(id));
+        return retval;
+    }
+}
+
 SitRepEntry CreateShipBuiltSitRep(int ship_id, int system_id, int shipdesign_id, int current_turn) {
-    std::vector<std::pair<std::string, std::string>> params;
-    params.reserve(3);
-    params.emplace_back(VarText::SYSTEM_ID_TAG, std::to_string(system_id));
-    params.emplace_back(VarText::SHIP_ID_TAG,   std::to_string(ship_id));
-    params.emplace_back(VarText::DESIGN_ID_TAG, std::to_string(shipdesign_id));
+    auto params = Enveculate({{std::pair(VarText::SYSTEM_ID_TAG, system_id),
+                               std::pair(VarText::SHIP_ID_TAG, ship_id),
+                               std::pair(VarText::DESIGN_ID_TAG, shipdesign_id)}});
     return SitRepEntry(UserStringNop("SITREP_SHIP_BUILT"), current_turn + 1, "icons/sitrep/ship_produced.png",
                        UserStringNop("SITREP_SHIP_BUILT_LABEL"), true,
                        std::move(params));
