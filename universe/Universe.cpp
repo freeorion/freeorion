@@ -2246,6 +2246,16 @@ Universe::GetEmpiresPositionNextTurnFleetDetectionRanges(const ScriptingContext&
     return retval;
 }
 
+namespace {
+    CONSTEXPR_STRING std::size_t SizeOfContents(const std::string& s) {
+        CONSTEXPR_STRING const std::size_t SSO_CAP = std::string{}.capacity();
+        if (s.capacity() <= SSO_CAP)
+            return 0; // data lives in string itself, no extra allocation
+        else
+            return s.capacity() * sizeof(std::string::value_type); // separate allocation for contents
+    }
+}
+
 std::size_t Universe::SizeInMemory() const {
     std::size_t retval = 0;
     retval += sizeof(Universe);
@@ -2284,8 +2294,11 @@ std::size_t Universe::SizeInMemory() const {
     retval += sizeof(decltype(m_empire_object_visible_specials)::value_type)*m_empire_object_visible_specials.size();
     for (const auto& id_ovsm : m_empire_object_visible_specials) {
         retval += sizeof(decltype(id_ovsm.second))*id_ovsm.second.size();
-        for (const auto& s : id_ovsm.second)
+        for (const auto& s : id_ovsm.second) {
             retval += sizeof(decltype(s.second)::value_type)*s.second.size(); // underestimate of size of entry in set
+            for (const auto& ss : s.second)
+                retval += SizeOfContents(ss);
+        }
     }
 
     retval += sizeof(decltype(m_empire_known_destroyed_object_ids)::value_type)*m_empire_known_destroyed_object_ids.size();
@@ -2323,21 +2336,21 @@ std::size_t Universe::SizeInMemory() const {
 
     retval += sizeof(decltype(m_unlocked_items)::value_type)*m_unlocked_items.capacity();
     for (const auto& ui : m_unlocked_items)
-        retval += sizeof(decltype(ui.name)::value_type)*ui.name.capacity();
+        retval += SizeOfContents(ui.name);
 
     retval += sizeof(decltype(m_unlocked_buildings)::value_type)*m_unlocked_buildings.capacity();
     for (const auto& ui : m_unlocked_buildings)
-        retval += sizeof(decltype(ui.name)::value_type)*ui.name.capacity();
+        retval += SizeOfContents(ui.name);
 
     retval += sizeof(decltype(m_unlocked_fleet_plans)::value_type)*m_unlocked_fleet_plans.capacity();
     for (const auto& fpp : m_unlocked_fleet_plans) {
         if (!fpp) continue;
         const auto& fp = *fpp;
         retval += sizeof(fp);
-        retval += sizeof(std::decay_t<decltype(fp.Name())>::value_type)*fp.Name().capacity();
+        retval += SizeOfContents(fp.Name());
         retval += sizeof(std::decay_t<decltype(fp.ShipDesigns())>::value_type)*fp.ShipDesigns().capacity();
         for (const auto& sd : fp.ShipDesigns())
-            retval += sizeof(std::decay_t<decltype(sd)>::value_type)*sd.capacity();
+            retval += SizeOfContents(sd);
     }
 
     retval += sizeof(decltype(m_monster_fleet_plans)::value_type)*m_monster_fleet_plans.capacity();
@@ -2345,15 +2358,15 @@ std::size_t Universe::SizeInMemory() const {
         if (!fpp) continue;
         const auto& fp = *fpp;
         retval += sizeof(fp);
-        retval += sizeof(std::decay_t<decltype(fp.Name())>::value_type)*fp.Name().capacity();
+        retval += SizeOfContents(fp.Name());
         retval += sizeof(std::decay_t<decltype(fp.ShipDesigns())>::value_type)*fp.ShipDesigns().capacity();
         for (const auto& sd : fp.ShipDesigns())
-            retval += sizeof(std::decay_t<decltype(sd)>::value_type)*sd.capacity();
+            retval += SizeOfContents(sd);
     }
 
     retval += (sizeof(decltype(m_empire_stats)::value_type) + sizeof(void*))*m_empire_stats.size();
     for (const auto& [str, refup] : m_empire_stats) {
-        retval += sizeof(decltype(str)::value_type)*str.capacity();
+        retval += SizeOfContents(str);
         if (refup)
             retval += sizeof(decltype(*refup));
     }
