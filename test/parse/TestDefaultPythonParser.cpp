@@ -34,10 +34,22 @@ namespace {
             BOOST_TEST_MESSAGE(t.Dump(0));
         }
     }
+
+    template <typename T>
+    void DumpEntitiesList(const T& t) {
+        const char* filename = std::getenv("FO_DUMP_LIST_FILE");
+        if (filename != nullptr) {
+            std::set<std::string> names;
+            std::transform(t.begin(), t.end(), std::inserter(names, names.end()), [](const auto& pair) { return pair.first; });
+            std::ofstream f(filename);
+            std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(f, "\n"));
+            f.flush();
+        }
+    }
 }
 
 /**
- * Each test can dump parsed entity to file with environment variable FO_DUMP_FILE
+ * Each test can dump parsed entity to file with environment variable FO_DUMP_FILE and dump names of all entities to file with environment variable FO_DUMP_LIST_FILE
  */
 
 BOOST_FIXTURE_TEST_SUITE(TestDefaultPythonParser, ParserAppFixture)
@@ -75,6 +87,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
         }
     }
 
+    DumpEntitiesList(techs);
     if (const char* tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
         const auto tech_it = techs.find(tech_name);
         BOOST_REQUIRE(techs.end() != tech_it);
@@ -125,6 +138,7 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
         }
     }
 
+    DumpEntitiesList(species);
     if (const char *species_name = std::getenv("FO_CHECKSUM_SPECIES_NAME")) {
         const auto species_it = species.find(species_name);
         BOOST_REQUIRE(species.end() != species_it);
@@ -164,6 +178,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
 
     BOOST_REQUIRE_EQUAL(109, buildings.size());
 
+    DumpEntitiesList(buildings);
     if (const char *buildings_name = std::getenv("FO_CHECKSUM_BUILDINGS_NAME")) {
         const auto buildings_it = buildings.find(buildings_name);
         BOOST_REQUIRE(buildings.end() != buildings_it);
@@ -203,6 +218,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
 
     BOOST_REQUIRE_EQUAL(22, empire_statistics.size());
 
+    DumpEntitiesList(empire_statistics);
     if (const char *empire_statistic_name = std::getenv("FO_CHECKSUM_EMPIRE_STATISTIC_NAME")) {
         const auto empire_statistic_it = empire_statistics.find(empire_statistic_name);
         BOOST_REQUIRE(empire_statistics.end() != empire_statistic_it);
@@ -236,6 +252,7 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
     BOOST_CHECK(!encyclopedia_articles.empty());
     BOOST_REQUIRE_EQUAL(18, encyclopedia_articles.size());
 
+    DumpEntitiesList(encyclopedia_articles);
     if (const char *encyclopedia_category_name = std::getenv("FO_COUNT_ENCYCLOPEDIA_CATEGORY_NAME")) {
         const auto encyclopedia_category_it = encyclopedia_articles.find(encyclopedia_category_name);
         BOOST_REQUIRE(encyclopedia_articles.end() != encyclopedia_category_it);
@@ -266,6 +283,7 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
     const auto fields = *std::move(fields_opt);
     BOOST_CHECK_EQUAL(10, fields.size());
 
+    DumpEntitiesList(fields);
     if (const char *field_name = std::getenv("FO_CHECKSUM_FIELD_NAME")) {
         const auto field_it = fields.find(field_name);
         BOOST_REQUIRE(fields.end() != field_it);
