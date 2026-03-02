@@ -16,3 +16,7 @@ For example `from focs._species import *` because Species is not defined when th
 
 # Developing
 We don't want to add all things at once, so we will add them in timely manner during the conversion process.
+
+# Modules
+New way to define FOCS objects are modules defined in C++. They are correctly imported same way it was done with `freeorion` module.
+
