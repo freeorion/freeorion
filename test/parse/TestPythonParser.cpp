@@ -234,9 +234,6 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
             {},
             "icons/tech/orbital_gardens.png"
         };
-#if defined(FREEORION_MACOSX)
-        BOOST_WARN(tech == tech_it->second);
-#else
         BOOST_REQUIRE(tech.Name() == tech_it->second.Name());
         BOOST_REQUIRE(tech.Description() == tech_it->second.Description());
         BOOST_REQUIRE(tech.ShortDescription() == tech_it->second.ShortDescription());
@@ -255,7 +252,6 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
         BOOST_REQUIRE(tech.UnlockedTechs() == tech_it->second.UnlockedTechs());
         BOOST_REQUIRE(tech.Dump() == tech_it->second.Dump());
         BOOST_REQUIRE(tech == tech_it->second);
-#endif
     }
 
     // test it last
@@ -703,23 +699,12 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     BOOST_CHECK_EQUAL(5108, test_location_conds[2]->GetCheckSum());
     BOOST_CHECK_EQUAL(3683, test_location_conds[3]->GetCheckSum());
 
-#if defined(FREEORION_MACOSX)
-    // ToDo: fix broken test on MacOS
-    BOOST_WARN((*test_building.Location()) == (*building->Location()));
-#else
     BOOST_CHECK((*test_building.Location()) == (*building->Location()));
-#endif
     BOOST_CHECK_EQUAL(test_building.Location()->GetCheckSum(), building->Location()->GetCheckSum());
     BOOST_CHECK((*test_building.EnqueueLocation()) == (*building->EnqueueLocation()));
     BOOST_REQUIRE_EQUAL(test_building.Effects().size(), building->Effects().size());
-#if defined(FREEORION_MACOSX)
-    // ToDo: fix broken test on MacOS
-    BOOST_WARN(test_building.Effects() == building->Effects());
-    BOOST_WARN(test_building.Effects()[0] == building->Effects()[0]);
-#else
     BOOST_CHECK(test_building.Effects() == building->Effects());
     BOOST_CHECK(test_building.Effects()[0] == building->Effects()[0]);
-#endif
     BOOST_CHECK_EQUAL(test_building.Effects()[0].GetCheckSum(), building->Effects()[0].GetCheckSum());
     BOOST_CHECK(test_building.Effects()[1] == building->Effects()[1]);
     BOOST_CHECK_EQUAL(test_building.Effects()[1].GetCheckSum(), building->Effects()[1].GetCheckSum());
