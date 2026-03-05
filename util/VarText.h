@@ -4,7 +4,9 @@
 //! @file
 //!     Declares the VarText class.
 
+#include <algorithm>
 #include <map>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -15,6 +17,14 @@
 #include "Export.h"
 
 struct ScriptingContext;
+
+#if !defined(CONSTEXPR_VEC_AND_STRING)
+#  if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+#    define CONSTEXPR_VEC_AND_STRING constexpr
+#  else
+#    define CONSTEXPR_VEC_AND_STRING
+#  endif
+#endif
 
 //! Provides a lazy evaluated template string with named variable tags.
 //!
@@ -79,18 +89,18 @@ public:
     using VariablesVec = std::vector<std::pair<std::string, std::string>>;
 
     //! Create a VarText instance with an empty #m_template_string.
-    VarText() noexcept = default;
+    CONSTEXPR_VEC_AND_STRING VarText() noexcept = default;
 
     //! Create a VarText instance from the given @p template_string.
     //!
     //! @param  template_string  @see #m_template_string.
     //! @param  stringtable_lookup  @see #m_stringtable_lookup_flag
-    explicit VarText(std::string template_string, bool stringtable_lookup = true) noexcept :
+    CONSTEXPR_VEC_AND_STRING explicit VarText(std::string template_string, bool stringtable_lookup = true) noexcept :
         m_template_string(std::move(template_string)),
         m_stringtable_lookup_flag(stringtable_lookup)
     {}
 
-    VarText(std::string template_string, VariablesVec&& data, bool stringtable_lookup = true) noexcept :
+    CONSTEXPR_VEC_AND_STRING VarText(std::string template_string, VariablesVec&& data, bool stringtable_lookup = true) noexcept :
         m_template_string(std::move(template_string)),
         m_variables(std::move(data)),
         m_stringtable_lookup_flag(stringtable_lookup)
@@ -113,19 +123,40 @@ public:
     { return GenerateVarText(nullptr); }
 
     //! Return the #m_template_string
-    [[nodiscard]] const std::string& GetTemplateString() const noexcept { return m_template_string; }
+    [[nodiscard]] constexpr const std::string& GetTemplateString() const noexcept { return m_template_string; }
 
     //! Return the #m_stringtable_lookup_flag
-    [[nodiscard]] bool GetStringtableLookupFlag() const noexcept { return m_stringtable_lookup_flag; }
+    [[nodiscard]] constexpr bool GetStringtableLookupFlag() const noexcept { return m_stringtable_lookup_flag; }
 
     //! Return the variables available for substitution.
-    [[nodiscard]] std::vector<std::string_view> GetVariableTags() const;
+    [[nodiscard]] CONSTEXPR_VEC_AND_STRING std::vector<std::string_view> GetVariableTags() const {
+        std::vector<std::string_view> retval;
+        retval.reserve(m_variables.size());
+        std::transform(m_variables.begin(), m_variables.end(), std::back_inserter(retval),
+                       [](const auto& p) noexcept { return std::string_view(p.first); });
+        return retval;
+    }
+
+    //! Combines the provided template and variables to create a string
+    //! with variables replaced with text.
+    //! If a ScriptingContext is provided, then additional variables can
+    //! be substituted.
+    //! Returns generated string and bool true if there were no errors.
+    [[nodiscard]] static std::pair<std::string, bool> GenerateVarText(
+        std::string template_str, const VariablesVec& variables, const ScriptingContext* context);
+
+    [[nodiscard]] static std::pair<std::string, bool> GenerateVarText(
+        std::string template_str, const std::vector<std::string>& param_names,
+        std::span<const std::string_view> param_values, const ScriptingContext* context);
 
     //! Set the #m_template_string to the given @p template_string.
     //!
     //! @param  template_string  @see #m_template_string.
     //! @param  stringtable_lookup  @see #m_stringtable_lookup_flag
-    void SetTemplateString(std::string template_string, bool stringtable_lookup = true);
+    void CONSTEXPR_VEC_AND_STRING SetTemplateString(std::string template_string, bool stringtable_lookup = true) {
+        m_template_string = std::move(template_string);
+        m_stringtable_lookup_flag = stringtable_lookup;
+    }
 
     //! Assign @p data to a given @p tag. Overwrites / replaces data of existing tags.
     //!
@@ -136,9 +167,9 @@ public:
     //!     Tag of the #m_variables set, may be labled.
     //! @param  data
     //!     Data value of the #m_variables set.
-    void AddVariable(std::string tag, std::string data);
-    void AddVariable(const char* tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
-    void AddVariable(std::string_view tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
+    void CONSTEXPR_VEC_AND_STRING AddVariable(std::string tag, std::string data) { m_variables.emplace_back(std::move(tag), std::move(data)); }
+    void CONSTEXPR_VEC_AND_STRING AddVariable(const char* tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
+    void CONSTEXPR_VEC_AND_STRING AddVariable(std::string_view tag, std::string data) { AddVariable(std::string{tag}, std::move(data)); }
 
     //! Assign @p data as tags. Does not overwrite or replace data of existing tags.
     //!
@@ -147,7 +178,8 @@ public:
     //!
     //! @param  data
     //!     Tag and Data values of the #m_variables set.
-    void AddVariables(VariablesVec&& data);
+    void CONSTEXPR_VEC_AND_STRING AddVariables(VariablesVec&& data)
+    { m_variables.insert(m_variables.end(), std::make_move_iterator(data.begin()), std::make_move_iterator(data.end())); }
 
     //! @name  Variable tags
     //! @anchor variable_tags
@@ -215,7 +247,7 @@ protected:
     //! create a string with variables replaced with text.
     //! If a ScriptingContext is provided, then additional variables can
     //! be substituted.
-    //! Returns generated stromg and bool true if there were no errors.
+    //! Returns generated string and bool true if there were no errors.
     std::pair<std::string, bool> GenerateVarText(const ScriptingContext* context) const;
 
     //! The template text used by this VarText, into which variables are

@@ -285,6 +285,9 @@ namespace {
         return {opt_string, true};
     }
 
+    // look up matched label (if matched) or tag (as fallback) in param names in \a variables
+    // if found, return {label or tag, param value, tag, true}
+    // else return {"", "", "", false}
     std::tuple<std::string_view, std::string_view, std::string_view, bool> GetLabelTagViews(
         const auto& variables, xpr::smatch const& match)
     {
@@ -306,18 +309,33 @@ namespace {
         const auto label_sz = static_cast<std::size_t>(std::max(zero, label_match.length()));
         const std::string_view label(label_start_address, label_sz);
 
-        // look up child
-        const auto elem_it = range_find_if(variables, [label](const auto& elem) noexcept { return elem.first == label; });
-        //std::cout << (elem == variables.end() ? "... label not in variables": "found label in variables") << std::endl;
+        // look up label, either in a vector<pair<string-like, string-like>> or pair<vector<string-like>, vector<string-like>>
+        const auto [var_for_label, lookup_success] = [&variables, label]() -> std::pair<std::string_view, bool> {
+            if constexpr (requires { variables.begin()->first == label; }) {
+                const auto elem_it = range_find_if(variables, [label](const auto& elem) noexcept { return elem.first == label; });
+                if (elem_it != variables.end())
+                    return {std::string_view(elem_it->second), true};
 
-        if (elem_it == variables.end())
+            } else if constexpr (requires { *range_find(variables.first, label) == label; }) {
+                const auto name_it = range_find(variables.first, label);
+                if (name_it != variables.first.end()) {
+                    const auto offset = static_cast<std::size_t>(std::distance(variables.first.begin(), name_it));
+                    if (offset < variables.second.size())
+                        return {std::string_view(variables.second[offset]), true};
+                }
+            }
+
+            return {std::string_view{}, false};
+        }();
+
+        if (!lookup_success)
             return {"", "", "", false};
 
         const auto tag_start_address = &*tag_match.first; // std::to_address causes problem on Clang 14.0.1, which I wasn't able to work around with if constexpr (decltype) checks
         const std::size_t tag_sz = static_cast<std::size_t>(std::max(zero, tag_match.length()));
         const std::string_view tag(tag_start_address, tag_sz);
 
-        return {label, elem_it->second, tag, true};
+        return {label, var_for_label, tag, true};
     }
 
 
@@ -353,26 +371,32 @@ namespace {
             return {*sub_opt, true};
         }
     }
+
+    const xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -+xpr::_w)) >> '%';
+
+    std::pair<std::string, bool> GenerateVarText(std::string template_str, const auto& variables,
+                                                 const ScriptingContext* context)
+    {
+        bool valid = true;
+
+        const auto sub = [context, &valid, variables](const auto& match) -> std::string {
+            auto [retval, this_sub_valid] = Substitute(variables, match, context);
+            valid &= this_sub_valid;
+            return retval;
+        };
+
+        auto retval = xpr::regex_replace(std::move(template_str), var, sub);
+        return {retval, valid};
+    }
 }
 
-void VarText::SetTemplateString(std::string template_string, bool stringtable_lookup) {
-    m_template_string = std::move(template_string);
-    m_stringtable_lookup_flag = stringtable_lookup;
-}
+std::pair<std::string, bool> VarText::GenerateVarText(std::string template_str, const std::vector<std::string>& param_names,
+                                                      std::span<const std::string_view> param_values, const ScriptingContext* context)
+{ return ::GenerateVarText(std::move(template_str), std::pair{param_names, param_values}, context); }
 
-std::vector<std::string_view> VarText::GetVariableTags() const {
-    std::vector<std::string_view> retval;
-    retval.reserve(m_variables.size());
-    auto rng = m_variables | range_keys;
-    range_copy(rng, std::back_inserter(retval));
-    return retval;
-}
-
-void VarText::AddVariable(std::string tag, std::string data)
-{ m_variables.emplace_back(std::move(tag), std::move(data)); }
-
-void VarText::AddVariables(VariablesVec&& data)
-{ m_variables.insert(m_variables.end(), std::make_move_iterator(data.begin()), std::make_move_iterator(data.end())); }
+std::pair<std::string, bool> VarText::GenerateVarText(std::string template_str, const VariablesVec& variables,
+                                                      const ScriptingContext* context)
+{ return ::GenerateVarText(std::move(template_str), variables, context); }
 
 std::pair<std::string, bool> VarText::GenerateVarText(const ScriptingContext* context) const {
     // generate a string complete with substituted variables and hyperlinks
@@ -382,17 +406,8 @@ std::pair<std::string, bool> VarText::GenerateVarText(const ScriptingContext* co
         return {"", false};
 
     // get string into which to substitute variables
-    const auto& template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
+    std::string template_str = m_stringtable_lookup_flag ? UserString(m_template_string) : m_template_string;
 
-    bool valid = false;
-
-    auto sub = [this, &context, &valid](const auto& match) -> std::string {
-        auto [retval, sub_valid] = Substitute(m_variables, match, context);
-        valid = sub_valid;
-        return retval;
-    };
-
-    static const xpr::sregex var = '%' >> (xpr::s1 = -+xpr::_w) >> !(':' >> (xpr::s2 = -+xpr::_w)) >> '%';
-    return {xpr::regex_replace(template_str, var, sub), valid};
+    return ::GenerateVarText(std::move(template_str), m_variables, context);
 }
 
