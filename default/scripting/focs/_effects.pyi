@@ -229,6 +229,7 @@ class RootCandidate(_Planet, _Ship, _Fleet):
 
 class Target(_Planet, _Ship, _Fleet):
     PlanetID: _PlanetId
+    Size: _Float
 
 _O = TypeVar("_O", str, int, float)
 
