@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     DumpEntitiesList(techs);
     if (const char* tech_name = std::getenv("FO_CHECKSUM_TECH_NAME")) {
         const auto tech_it = techs.find(tech_name);
-        BOOST_REQUIRE(techs.end() != tech_it);
+        BOOST_REQUIRE_MESSAGE(techs.end() != tech_it, "Missing " << tech_name);
         BOOST_REQUIRE_EQUAL(tech_name, tech_it->second.Name());
 
         BOOST_TEST_MESSAGE("Dump " << tech_name << ":");
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     DumpEntitiesList(species);
     if (const char *species_name = std::getenv("FO_CHECKSUM_SPECIES_NAME")) {
         const auto species_it = species.find(species_name);
-        BOOST_REQUIRE(species.end() != species_it);
+        BOOST_REQUIRE_MESSAGE(species.end() != species_it, "Missing " << species_name);
         BOOST_REQUIRE_EQUAL(species_name, species_it->second.Name());
 
         BOOST_TEST_MESSAGE("Dump " << species_name << ":");
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
     DumpEntitiesList(buildings);
     if (const char *buildings_name = std::getenv("FO_CHECKSUM_BUILDINGS_NAME")) {
         const auto buildings_it = buildings.find(buildings_name);
-        BOOST_REQUIRE(buildings.end() != buildings_it);
+        BOOST_REQUIRE_MESSAGE(buildings.end() != buildings_it, "Missing " << buildings_name);
         BOOST_REQUIRE_EQUAL(buildings_name, buildings_it->second->Name());
 
         BOOST_TEST_MESSAGE("Dump " << buildings_name << ":");
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
     DumpEntitiesList(empire_statistics);
     if (const char *empire_statistic_name = std::getenv("FO_CHECKSUM_EMPIRE_STATISTIC_NAME")) {
         const auto empire_statistic_it = empire_statistics.find(empire_statistic_name);
-        BOOST_REQUIRE(empire_statistics.end() != empire_statistic_it);
+        BOOST_REQUIRE_MESSAGE(empire_statistics.end() != empire_statistic_it, "Missing " << empire_statistic_name);
 
         BOOST_TEST_MESSAGE("Dump " << empire_statistic_name << ":");
         DumpEntity(*(empire_statistic_it->second));
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
     DumpEntitiesList(encyclopedia_articles);
     if (const char *encyclopedia_category_name = std::getenv("FO_COUNT_ENCYCLOPEDIA_CATEGORY_NAME")) {
         const auto encyclopedia_category_it = encyclopedia_articles.find(encyclopedia_category_name);
-        BOOST_REQUIRE(encyclopedia_articles.end() != encyclopedia_category_it);
+        BOOST_REQUIRE_MESSAGE(encyclopedia_articles.end() != encyclopedia_category_it, "Missing " << encyclopedia_category_name);
         BOOST_CHECK(!encyclopedia_category_it->second.empty());
 
         if (const char *encyclopedia_category_count_str = std::getenv("FO_COUNT_ENCYCLOPEDIA_CATEGORY_VALUE")) {
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
     DumpEntitiesList(fields);
     if (const char *field_name = std::getenv("FO_CHECKSUM_FIELD_NAME")) {
         const auto field_it = fields.find(field_name);
-        BOOST_REQUIRE(fields.end() != field_it);
+        BOOST_REQUIRE_MESSAGE(fields.end() != field_it, "Missing " << field_name);
 
         BOOST_TEST_MESSAGE("Dump " << field_name << ":");
         DumpEntity(*(field_it->second));
