@@ -643,53 +643,46 @@ namespace {
         if (args[0] == parser.type_int) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<int>>> operands;
             operands.reserve(boost::python::len(args) - 1);
-            for (auto i = 1; i < boost::python::len(args); i++) {
-                auto arg = boost::python::extract<value_ref_wrapper<int>>(args[i]);
-                if (arg.check())
-                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else
-                    operands.push_back(std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(args[i])()));
-            }
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref<int>(args[i]));
             return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(op, std::move(operands))));
         } else if (args[0] == parser.type_float) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<double>>> operands;
             operands.reserve(boost::python::len(args) - 1);
-            for (auto i = 1; i < boost::python::len(args); i++) {
-                auto arg = boost::python::extract<value_ref_wrapper<double>>(args[i]);
-                if (arg.check())
-                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else {
-                    auto arg_int = boost::python::extract<value_ref_wrapper<int>>(args[i]);
-                    if (arg_int.check())
-                        operands.push_back(std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(arg_int().value_ref)));
-                    else
-                        operands.push_back(std::make_unique<ValueRef::Constant<double>>(boost::python::extract<double>(args[i])()));
-                }
-            }
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref_or_cast<double, int>(args[i]));
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(op, std::move(operands))));
         } else if (args[0] == parser.type_str) {
             std::vector<std::unique_ptr<ValueRef::ValueRef<std::string>>> operands;
             operands.reserve(boost::python::len(args) - 1);
-            for (auto i = 1; i < boost::python::len(args); i++) {
-                auto arg = boost::python::extract<value_ref_wrapper<std::string>>(args[i]);
-                if (arg.check())
-                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else
-                    operands.push_back(std::make_unique<ValueRef::Constant<std::string>>(boost::python::extract<std::string>(args[i])()));
-            }
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref<std::string>(args[i]));
             return boost::python::object(value_ref_wrapper<std::string>(std::make_shared<ValueRef::Operation<std::string>>(op, std::move(operands))));
         } else if (args[0] == "Visibility") {
             std::vector<std::unique_ptr<ValueRef::ValueRef<Visibility>>> operands;
             operands.reserve(boost::python::len(args) - 1);
-            for (auto i = 1; i < boost::python::len(args); i++) {
-                auto arg = boost::python::extract<value_ref_wrapper<Visibility>>(args[i]);
-                if (arg.check())
-                    operands.push_back(ValueRef::CloneUnique(arg().value_ref));
-                else
-                    operands.push_back(std::make_unique<ValueRef::Constant<Visibility>>(boost::python::extract<enum_wrapper<Visibility>>(args[i])().value));
-            }
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref_enum<Visibility>(args[i]));
             return boost::python::object(value_ref_wrapper<Visibility>(std::make_shared<ValueRef::Operation<Visibility>>(op, std::move(operands))));
-        }{
+        } else if (args[0] == "PlanetType") {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetType>>> operands;
+            operands.reserve(boost::python::len(args) - 1);
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref_enum<PlanetType>(args[i]));
+            return boost::python::object(value_ref_wrapper<PlanetType>(std::make_shared<ValueRef::Operation<PlanetType>>(op, std::move(operands))));
+        } else if (args[0] == "PlanetSize") {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<PlanetSize>>> operands;
+            operands.reserve(boost::python::len(args) - 1);
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref_enum<PlanetSize>(args[i]));
+            return boost::python::object(value_ref_wrapper<PlanetSize>(std::make_shared<ValueRef::Operation<PlanetSize>>(op, std::move(operands))));
+        } else if (args[0] == "StarType") {
+            std::vector<std::unique_ptr<ValueRef::ValueRef<StarType>>> operands;
+            operands.reserve(boost::python::len(args) - 1);
+            for (auto i = 1; i < boost::python::len(args); i++)
+                operands.push_back(pyobject_to_vref_enum<StarType>(args[i]));
+            return boost::python::object(value_ref_wrapper<StarType>(std::make_shared<ValueRef::Operation<StarType>>(op, std::move(operands))));
+        } else {
             ErrorLogger() << "Unsupported type for min/max/oneof : " << boost::python::extract<std::string>(boost::python::str(args[0]))();
 
             throw std::runtime_error(std::string("Not implemented ") + __func__);
