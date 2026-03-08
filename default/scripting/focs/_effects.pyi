@@ -65,6 +65,8 @@ Small = _PlanetSize()
 Medium = _PlanetSize()
 Large = _PlanetSize()
 Huge = _PlanetSize()
+AsteroidsSize = _PlanetSize()
+GasGiantSize = _PlanetSize()
 
 Swamp = _PlanetType()
 Toxic = _PlanetType()

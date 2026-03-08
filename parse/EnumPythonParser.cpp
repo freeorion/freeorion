@@ -93,8 +93,8 @@ void RegisterGlobalsEnums(boost::python::dict& globals) {
             {"Medium",    PlanetSize::SZ_MEDIUM},
             {"Large",     PlanetSize::SZ_LARGE},
             {"Huge",      PlanetSize::SZ_HUGE},
-            {"Asteroids", PlanetSize::SZ_ASTEROIDS},
-            {"GasGiant",  PlanetSize::SZ_GASGIANT}})
+            {"AsteroidsSize", PlanetSize::SZ_ASTEROIDS},
+            {"GasGiantSize",  PlanetSize::SZ_GASGIANT}})
     {
         globals[op.first] = enum_wrapper<PlanetSize>(op.second);
     }
