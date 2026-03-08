@@ -24,6 +24,7 @@
 #include <memory>
 #include <mutex>
 #include <random>
+#include <ranges>
 #include <set>
 #include <stdexcept>
 #include <string>
