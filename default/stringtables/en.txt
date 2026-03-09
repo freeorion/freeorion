@@ -11667,6 +11667,9 @@ distance between planet types %1% and %2%
 DESC_VAR_EMPIREOBJECTVISIBILITYTURN
 turn on which empire %1% had visibility of %2%
 
+DESC_VAR_USEDINDESIGNID
+ship design ID
+
 DESC_VAR_STATISTIC
 Statistic
 
