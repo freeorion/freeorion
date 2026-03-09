@@ -1,7 +1,13 @@
 from focs._effects import (
+    EmpireHasAdoptedPolicy,
     GameRule,
+    IsSource,
     NamedInteger,
+    NamedIntegerLookup,
     NamedReal,
+    NamedRealLookup,
+    Source,
+    StatisticIf,
     UsedInDesignID,
 )
 from focs._value_refs import NumPartClassesInShipDesign, PartOfClassInShipDesign
@@ -30,4 +36,34 @@ NamedInteger(
     name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF",
     value=NumPartClassesInShipDesign(design=UsedInDesignID)
     + PartOfClassInShipDesign(name="PC_COLONY", design=UsedInDesignID),
+)
+NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AAA", value=0.8)
+NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AA", value=0.9)
+NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_A", value=0.95)
+NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR", value=1.0)
+NamedReal(name="PLC_DESIGN_SIMPLICITY_MAX_REDUCTION_PERCENT", value=20)
+# round(( 1.0 - NamedRealLookup name = "PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AAA" ) * 100)
+
+# // DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF is defined in python focs, this should be executed afterwards but is not
+NamedReal(
+    name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF",
+    value=1.0 * NamedIntegerLookup(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"),
+)
+# NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF" > 4 ? 1.0 :
+# ( NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF" > 3 ? 0.95 :
+#   ( NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF" > 2 ? 0.9 : 0.8 )
+# )
+# )
+
+# FIXME unsupported operand type(s) for *: 'ValueRefInt' and 'float'
+
+NamedReal(
+    name="PLC_DESIGN_SIMPLICITY_POLICY_MULTIPLIER",
+    value=1.0
+    - (
+        (1.0 - NamedRealLookup(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF"))
+        * StatisticIf(
+            float, condition=IsSource & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_DESIGN_SIMPLICITY")
+        )
+    ),
 )
