@@ -165,6 +165,7 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
         py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
             .def("__call__", &value_ref_wrapper<double>::call)
             .def(int() * py::self_ns::self)
+             //.def(py::other<value_ref_wrapper<int>>() * double()) // WTF doesnt compile
             .def(py::other<value_ref_wrapper<int>>() * py::self_ns::self)
             .def(py::self_ns::self * py::other<value_ref_wrapper<int>>())
             .def(py::self_ns::self * double())
