@@ -42,29 +42,11 @@ MARINE_RECRUITMENT_POLICY_MULTIPLIER
 
 ///////////////////////////
 // PLC_DESIGN_SIMPLICITY //
-DESIGN_SIMPLICITY_POLICY_MULTIPLIER
-'''(1.0 - (
-   Statistic If condition = And [
-         Source
-         EmpireHasAdoptedPolicy empire = Source.Owner name = "PLC_DESIGN_SIMPLICITY"
-      ] * (1.0 - [[DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF([[DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF]])]])
-  )
-)
-'''
-
+// most values get defined in named_values for technical reasons
 // gets registered in named_values.py as necessary vrefs are not implemented for the legacy focs.txt parser
-DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF
-'''NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"
+// not constant: depends on the ship design
+DESIGN_SIMPLICITY_POLICY_MULTIPLIER
+'''NamedRealLookup name="PLC_DESIGN_SIMPLICITY_POLICY_MULTIPLIER"
 '''
 
-// The formula defining the cost factor depending on the complexity
-// note this gets calculated every time complexity is checked
-DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF
-'''
-(@1@ > 4 ? 1.0 :
- ( @1@ > 3 ? 0.95 :
-   ( @1@ > 2 ? 0.9 : 0.8 )
- )
-)
-'''
 ///////////////////////////
