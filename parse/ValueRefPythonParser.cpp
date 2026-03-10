@@ -413,6 +413,17 @@ value_ref_wrapper<double> operator<(const value_ref_wrapper<double>& lhs, double
     );
 }
 
+value_ref_wrapper<double> operator<(const value_ref_wrapper<int>& lhs, int rhs, const value_ref_wrapper<double>& iff, const value_ref_wrapper<double>& ellse) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::COMPARE_LESS_THAN,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            std::make_unique<ValueRef::Constant<double>>(rhs),
+            std::make_unique<ValueRef::Constant<double>>(iff),
+            std::make_unique<ValueRef::Constant<double>>(ellse))
+    );
+}
+
 value_ref_wrapper<double> operator!=(const value_ref_wrapper<double>& lhs, int rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
