@@ -69,15 +69,25 @@ namespace {
             condition = ValueRef::CloneUnique(py::extract<condition_wrapper>(kw["condition"])().condition);
         }
 
-        return effect_wrapper(std::make_shared<Effect::GenerateSitRepMessage>(
-                                    message,
-                                    icon,
-                                    std::move(parameters),
-                                    std::move(empire),
-                                    affiliation,
-                                    std::move(label),
-                                    stringtable_lookup
-                              ));
+        if (kw.has_key("empire")) {
+            return effect_wrapper(std::make_shared<Effect::GenerateSitRepMessage>(
+                                        message,
+                                        icon,
+                                        std::move(parameters),
+                                        std::move(empire),
+                                        affiliation,
+                                        std::move(label),
+                                        stringtable_lookup));
+        } else {
+            return effect_wrapper(std::make_shared<Effect::GenerateSitRepMessage>(
+                                        message,
+                                        icon,
+                                        std::move(parameters),
+                                        affiliation,
+                                        std::move(condition),
+                                        std::move(label),
+                                        stringtable_lookup));
+        }
     }
 
     effect_wrapper insert_conditional_(const py::tuple& args, const py::dict& kw) {
