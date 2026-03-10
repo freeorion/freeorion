@@ -117,6 +117,7 @@ class _Affilation(_Empire): ...
 
 EnemyOf = _Affilation()
 AllyOf = _Affilation()
+CanSee = _Affilation()
 CurrentTurn = 0
 
 ContentFocus = _Focus()
@@ -525,6 +526,7 @@ def SetStarType(*, type: _StarType) -> _Effect: ...
 def SetEmpireMeter(*, empire: _EmpireId, meter: str, value: _FloatParam) -> _Effect: ...
 def SetOwner(*, empire: _EmpireId) -> _Effect: ...
 def SetSpecialCapacity(name: str | _SpeciesValue, capacity: _ValueParam) -> _Effect: ...
+@overload
 def GenerateSitRepMessage(
     *,
     NoStringtableLookup: bool = True,
@@ -532,6 +534,17 @@ def GenerateSitRepMessage(
     label: str,
     empire: _EmpireId = ...,
     parameters: dict[str, Any] = ...,
+    icon: str = "",
+) -> _Effect: ...
+@overload
+def GenerateSitRepMessage(
+    *,
+    NoStringtableLookup: bool = True,
+    message: str,
+    label: str,
+    parameters: dict[str, Any] = ...,
+    affiliation: _Affilation = ...,
+    condition: _Condition = ...,
     icon: str = "",
 ) -> _Effect: ...
 def GiveEmpireTech(*, name: str, empire: _EmpireId = _Empire()) -> _Effect: ...
