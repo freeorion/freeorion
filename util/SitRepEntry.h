@@ -75,6 +75,10 @@ public:
         std::vector<std::string> m_variable_names;
         bool m_stringtable_lookup_flag = false;
 
+        // returns m_label if not empty, otherwise m_template_string
+        [[nodiscard]] CONSTEXPR_VEC_AND_STRING const std::string& EffectiveLabel() const noexcept
+        { return m_label.empty() ? m_template_string : m_label; }
+
         [[nodiscard]] CONSTEXPR_VEC_AND_STRING FixedInfo() noexcept = default;
 
         [[nodiscard]] CONSTEXPR_VEC_AND_STRING FixedInfo(std::string&& template_string,

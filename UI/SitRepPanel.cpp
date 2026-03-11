@@ -534,8 +534,7 @@ namespace {
 
         const auto not_hidden = [&hidden_templates, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
             const auto& fixed_info = get_info(x_fixedid_x);
-            const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
-            return !hidden_templates.contains(label);
+            return !hidden_templates.contains(fixed_info.EffectiveLabel());
         };
 
         // search only in range of turns before or after \a turn depending on \a forward
@@ -815,41 +814,63 @@ void SitRepPanel::Update() {
 
     const auto not_hidden = [this, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
         const auto& fixed_info = get_info(x_fixedid_x);
-        const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
-        return !m_hidden_sitrep_templates.contains(label);
-    };
-
-    const bool show_invalid = GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown");
-    const auto has_valid_sitrep = [show_invalid, &context, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_params_lists) {
-        const auto& [turn_fixedid, params_lists] = x_fixedid_params_lists;
-        if (params_lists.empty())
-            return false; // there are no parameter sets for this turn, so no possible (valid or otherwise) sitreps
-        if (show_invalid)
-            return true; // there is at least one parameter set for this turn, and don't care if it's valid
-
-        const auto& fixed_info = get_info(x_fixedid_params_lists); // assume index was range-checked elsewhere
-
-        using ParamsLists = std::decay_t<decltype(x_fixedid_params_lists.second)>;
-        using ParamSetT = ParamsLists::value_type;
-
-        // check if any of the parameter sets make a valid sitrep
-        const auto makes_valid_sitrep = [rep_turn{turn_fixedid.first}, &fixed_info, &context](const ParamSetT& params)
-        { return SitRepEntry(fixed_info, SitRepEntry::UniqueInfo(params, rep_turn)).GetValidity(context); };
-
-        return range_any_of(params_lists, makes_valid_sitrep);
+        return !m_hidden_sitrep_templates.contains(fixed_info.EffectiveLabel());
     };
 
 
-    // range over sitreps for current turn, with valid fixed info ID, not hidden, and 
-    auto rng = sitreps | range_filter(is_showing_turn) | range_filter(fixed_info_id_in_range)
-        | range_filter(not_hidden) | range_filter(has_valid_sitrep);
+    // range over sitrep templates for current turn, with valid fixed info ID, not hidden
+    auto rng_template_ok_turn_not_hidden = sitreps | range_filter(is_showing_turn) |
+        range_filter(fixed_info_id_in_range) | range_filter(not_hidden);
+
+    // extract label from and pointer to FixedInfo and parameters sets list
+    using ChunkedViewsVec = EmpireSitrepsContainer::value_type::second_type;
+    using ChunkedViews = ChunkedViewsVec::value_type;
+    static_assert(std::is_same_v<ChunkedViews, Empire::ChunkedStringAndViews>);
+    const auto to_fixed_info_and_param_ptrs = [get_info](const EmpireSitrepsContainer::value_type& x_fixedid_params)
+        -> std::pair<std::pair<std::string_view, const SitRepEntry::FixedInfo*>, const ChunkedViewsVec*>
+    {
+        const auto& fixed_info = get_info(x_fixedid_params); // assuming already range checked
+        return std::pair(std::pair(std::string_view(fixed_info.EffectiveLabel()), std::addressof(fixed_info)),
+                         std::addressof(x_fixedid_params.second));
+    };
 
 
-    if (range_empty(rng))
-        return;
+    // collect and resort ok templates into display order
+    auto ok_templates_and_params_vec = rng_template_ok_turn_not_hidden | range_transform(to_fixed_info_and_param_ptrs) | range_to_vec;
+
+
+    // extract in order to match options/stringtable specified display order for sitreps
+
+
+
+
+    //const bool show_invalid = GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown");
+    //const auto has_valid_sitrep = [show_invalid, &context, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_params_lists) {
+    //    const auto& [turn_fixedid, params_lists] = x_fixedid_params_lists;
+    //    if (params_lists.empty())
+    //        return false; // there are no parameter sets for this turn, so no possible (valid or otherwise) sitreps
+    //    if (show_invalid)
+    //        return true; // there is at least one parameter set for this turn, and don't care if it's valid
+
+    //    const auto& fixed_info = get_info(x_fixedid_params_lists); // assume index was range-checked elsewhere
+
+    //    using ParamsLists = std::decay_t<decltype(x_fixedid_params_lists.second)>;
+    //    using ParamSetT = ParamsLists::value_type;
+
+    //    // check if any of the parameter sets make a valid sitrep
+    //    const auto makes_valid_sitrep = [rep_turn{turn_fixedid.first}, &fixed_info, &context](const ParamSetT& params)
+    //    { return SitRepEntry(fixed_info, SitRepEntry::UniqueInfo(params, rep_turn)).GetValidity(context); };
+
+    //    return range_any_of(params_lists, makes_valid_sitrep);
+    //};
+
+
+
+    // check that they could be evaluated / substituted without any errors
+
 
     // order sitreps for display
-    const auto ordered_template_strings = OrderedSitrepTemplateStrings();
+    //const auto ordered_template_strings = OrderedSitrepTemplateStrings();
     //std::vector<std::vector<const SitRepEntry*>> sorted_sitreps;
     //sorted_sitreps.resize(ordered_template_strings.size());
     //std::vector<const SitRepEntry*> remaining_unordered_sitreps;
@@ -944,8 +965,7 @@ std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
         if (fixed_idx >= fixed_infos.size())
             return false;
         const auto& fixed_info = fixed_infos[fixed_idx];
-        const auto& label = fixed_info.m_label.empty() ? fixed_info.m_template_string : fixed_info.m_label;
-        return !m_hidden_sitrep_templates.contains(label);
+        return !m_hidden_sitrep_templates.contains(fixed_info.EffectiveLabel());
     };
 
     const auto to_this_turn_valid_sitrep_count =
