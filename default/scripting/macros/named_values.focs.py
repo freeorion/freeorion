@@ -39,7 +39,7 @@ NamedInteger(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_PC_COLONY", value=1 + col
 NamedInteger(
     name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF",
     value=NumPartClassesInShipDesign(design=UsedInDesignID)
-    + PartOfClassInShipDesign(name="PC_COLONY", design=UsedInDesignID),
+    + (PartOfClassInShipDesign(name="PC_COLONY", design=UsedInDesignID) * colony_extra_complexity)
 )
 NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AAA", value=0.8)
 NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AA", value=0.9)

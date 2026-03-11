@@ -451,6 +451,16 @@ value_ref_wrapper<int> operator*(int lhs, const value_ref_wrapper<int>& rhs) {
     );
 }
 
+value_ref_wrapper<int> operator*(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(
+            ValueRef::OpType::TIMES,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs)
+        )
+    );
+}
+
 value_ref_wrapper<int> operator*(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs) {
     return value_ref_wrapper<int>(
         std::make_shared<ValueRef::Operation<int>>(
