@@ -92,7 +92,13 @@ std::unique_ptr<ValueRef::ValueRef<T>> pyobject_to_vref_or_cast(const boost::pyt
     if (arg_cast.check()) {
         return std::make_unique<ValueRef::StaticCast<U, T>>(ValueRef::CloneUnique(arg_cast().value_ref));
     }
-    return std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(obj)());
+    auto arg_const = boost::python::extract<T>(obj);
+    if (arg_const.check()) {
+        return std::make_unique<ValueRef::Constant<T>>(arg_const());
+    }
+    // XXX not sure this is good, casting an const
+    auto arg_cast_const = boost::python::extract<U>(obj);
+    return std::make_unique<ValueRef::StaticCast<U, T>>(std::make_unique<ValueRef::Constant<U>>(arg_cast_const()));
 }
 
 value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs);
@@ -137,7 +143,7 @@ value_ref_wrapper<double> operator>=(const value_ref_wrapper<int>&, const value_
 value_ref_wrapper<double> operator<(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator<(double, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator<(const value_ref_wrapper<double>&, double);
-value_ref_wrapper<double> operator<(const value_ref_wrapper<int>&, int, double, double);
+value_ref_wrapper<double> lessequalor(const value_ref_wrapper<int>&, int, double, double);
 value_ref_wrapper<double> operator!=(const value_ref_wrapper<double>&, int);
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&);
 

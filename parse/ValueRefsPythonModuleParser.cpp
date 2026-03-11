@@ -91,6 +91,19 @@ namespace {
         throw std::runtime_error(error_str);
     }
 
+value_ref_wrapper<double> lessequalor(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<int>& rhs, const value_ref_wrapper<double>& iff, const value_ref_wrapper<double>& ellse) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(rhs.value_ref)),
+            //std::make_unique<ValueRef::Constant<double>>(rhs),
+            ValueRef::CloneUnique(iff.value_ref),
+            ValueRef::CloneUnique(ellse.value_ref))
+    );
+}
+
+  
     template <typename T>
     boost::python::object insert_reduce_vector_(const py::object& type_int, const py::object& type_float, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto vector = boost::python::extract<value_ref_wrapper<std::vector<T>>>(args[1]);
@@ -114,6 +127,7 @@ namespace {
     }
 }
 
+
 BOOST_PYTHON_MODULE(_value_refs) {
     boost::python::docstring_options doc_options(true, true, false);
 
@@ -133,6 +147,28 @@ BOOST_PYTHON_MODULE(_value_refs) {
 
     const auto f_insert_num_part_classes_in_ship_design_ = [](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_complex_i1("NumPartClassesInShipDesign", args, kw, "design"); };
     boost::python::def("NumPartClassesInShipDesign", boost::python::raw_function(f_insert_num_part_classes_in_ship_design_));
+
+    const auto f_insert_less_equal_or_double_ = [](const boost::python::tuple& args, const boost::python::dict& kw) {
+      /*auto lhs_int = boost::python::extract<value_ref_wrapper<int>>(kw["lhs"]);
+        auto int1 = ValueRef::CloneUnique(lhs_int().value_ref);
+                auto int2 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["rhs"])());
+        auto then = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["rhs"])());
+      */
+      auto less = pyobject_to_vref<int>(kw["lhs"]);
+      auto or_equal = pyobject_to_vref<int>(kw["rhs"]);
+      auto iff = pyobject_to_vref<int>(kw["iff"]);
+      auto ellse = pyobject_to_vref<int>(kw["ellse"]);
+      //return lessequalor(less, or_equal, iff, ellse)
+      return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            pyobject_to_vref_or_cast<double, int>(kw["lhs"]),
+            pyobject_to_vref_or_cast<double, int>(kw["rhs"]),
+            pyobject_to_vref<double>(kw["iff"]),
+            pyobject_to_vref<double>(kw["else"]))
+      );
+    };
+    boost::python::def("IfIntRefLessEqualIntThenDoubleOrDouble", boost::python::raw_function(f_insert_less_equal_or_double_));
 
     const auto f_insert_part_of_class_in_ship_design_ = [](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_complex_i1_s1("PartOfClassInShipDesign", args, kw, "design", "name"); };
     boost::python::def("PartOfClassInShipDesign", boost::python::raw_function(f_insert_part_of_class_in_ship_design_));

@@ -10,7 +10,11 @@ from focs._effects import (
     StatisticIf,
     UsedInDesignID,
 )
-from focs._value_refs import NumPartClassesInShipDesign, PartOfClassInShipDesign
+from focs._value_refs import (
+    IfIntRefLessEqualIntThenDoubleOrDouble,
+    NumPartClassesInShipDesign,
+    PartOfClassInShipDesign
+)
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
 # Examples:
@@ -47,7 +51,12 @@ NamedReal(name="PLC_DESIGN_SIMPLICITY_MAX_REDUCTION_PERCENT", value=20)
 # // DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF is defined in python focs, this should be executed afterwards but is not
 NamedReal(
     name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF",
-    value=1.0 * NamedIntegerLookup(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"),
+    value=IfIntRefLessEqualIntThenDoubleOrDouble(
+        lhs=NamedIntegerLookup(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"),
+        rhs=3,
+        iff=1.0,
+        ellse=0.8
+    )
 )
 # NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF" > 4 ? 1.0 :
 # ( NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF" > 3 ? 0.95 :
