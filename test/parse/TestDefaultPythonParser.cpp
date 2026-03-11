@@ -274,6 +274,7 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
     PythonParser parser(m_python, m_default_scripting_dir);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, m_default_scripting_dir / "macros");
+    auto named_values_py = Pending::ParseSynchronously(parse::named_value_refs_py, parser, m_default_scripting_dir / "macros");
 
     auto fields_p = Pending::ParseSynchronously(parse::fields, parser, m_default_scripting_dir / "fields");
     auto fields_opt = Pending::WaitForPendingUnlocked(std::move(fields_p));
