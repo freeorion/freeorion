@@ -48,14 +48,26 @@ NamedReal(name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR", value=1.0)
 NamedReal(name="PLC_DESIGN_SIMPLICITY_MAX_REDUCTION_PERCENT", value=20)
 # round(( 1.0 - NamedRealLookup name = "PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_AAA" ) * 100)
 
+#def less_equal_range(vref, dict, default: float):
+    
 # // DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF is defined in python focs, this should be executed afterwards but is not
 NamedReal(
     name="PLC_DESIGN_SIMPLICITY_COMPLEXITY_FACTOR_FOR_ARG1_VREF",
     value=IfIntRefLessEqualIntThenDoubleOrDouble(
         lhs=NamedIntegerLookup(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"),
-        rhs=3,
-        iff=1.0,
-        ellse=0.8
+        rhs=2,
+        iff=0.8,
+        ellse=IfIntRefLessEqualIntThenDoubleOrDouble(
+            lhs=NamedIntegerLookup(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"),
+            rhs=3,
+            iff=0.9,
+            ellse=IfIntRefLessEqualIntThenDoubleOrDouble(
+                lhs=NamedIntegerLookup(name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF"),
+                rhs=4,
+                iff=0.95,
+                ellse=1.0
+            )
+        )
     )
 )
 # NamedIntegerLookup name="DESIGN_SIMPLICITY_SOURCE_COMPLEXITY_COUNT_VREF" > 4 ? 1.0 :
