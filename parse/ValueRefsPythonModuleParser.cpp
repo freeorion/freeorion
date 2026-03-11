@@ -149,23 +149,13 @@ BOOST_PYTHON_MODULE(_value_refs) {
     boost::python::def("NumPartClassesInShipDesign", boost::python::raw_function(f_insert_num_part_classes_in_ship_design_));
 
     const auto f_insert_less_equal_or_double_ = [](const boost::python::tuple& args, const boost::python::dict& kw) {
-      /*auto lhs_int = boost::python::extract<value_ref_wrapper<int>>(kw["lhs"]);
-        auto int1 = ValueRef::CloneUnique(lhs_int().value_ref);
-                auto int2 = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["rhs"])());
-        auto then = std::make_unique<ValueRef::Constant<int>>(boost::python::extract<int>(kw["rhs"])());
-      */
-      auto less = pyobject_to_vref<int>(kw["lhs"]);
-      auto or_equal = pyobject_to_vref<int>(kw["rhs"]);
-      auto iff = pyobject_to_vref<int>(kw["iff"]);
-      auto ellse = pyobject_to_vref<int>(kw["ellse"]);
-      //return lessequalor(less, or_equal, iff, ellse)
       return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
             ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
             pyobject_to_vref_or_cast<double, int>(kw["lhs"]),
             pyobject_to_vref_or_cast<double, int>(kw["rhs"]),
             pyobject_to_vref<double>(kw["iff"]),
-            pyobject_to_vref<double>(kw["else"]))
+            pyobject_to_vref<double>(kw["ellse"]))
       );
     };
     boost::python::def("IfIntRefLessEqualIntThenDoubleOrDouble", boost::python::raw_function(f_insert_less_equal_or_double_));
