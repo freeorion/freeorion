@@ -840,6 +840,7 @@ void SitRepPanel::Update() {
     };
 
 
+    // range over sitreps for current turn, with valid fixed info ID, not hidden, and 
     auto rng = sitreps | range_filter(is_showing_turn) | range_filter(fixed_info_id_in_range)
         | range_filter(not_hidden) | range_filter(has_valid_sitrep);
 
