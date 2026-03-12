@@ -14993,6 +14993,18 @@ The [[metertype METER_RESEARCH]] cost of this tech is halved if the empire inclu
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
+SPY_BIOMIMESIS
+Bio-Inspiration
+
+SPY_BIOMIMESIS_DESC
+Biological diversity is a source of inspiration for many things.
+
+BLD_BIO_LAB
+Biological Engineering Laboratory
+
+BLD_BIO_LAB_DESC
+Allows production of [[shippart ST_COATING_GG]].
+
 SPY_CUSTOM_ADVISORIES
 Empire Intelligence Agency
 
@@ -16676,6 +16688,20 @@ ST_CLOAK_4_DESC
 '''Very Strong Cloaking (+80)
 
 Improves [[metertype METER_STEALTH]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[NO_STACK_STEALTH_SHIP_PARTS]]'''
+
+ST_COATING_GG
+Variable Pressure NanoCoating
+
+ST_COATING_GG_DESC
+'''Nanovalve-coated hulls can safely explore and hide within the high-pressure atmospheres of gas giants. Integrated nanovalves within the hull provide ultra-precise pressure regulation enabling vessels to withstand the extreme environments of gas giants. Hiding inside the clouds of gas giants slows a ship down and interferes with its detection. Researching [[tech GRO_XENO_HYBRIDS]] allows adapting the nanovalve coating for the deeper layers of gas giants.
+
+Allows ships to hide in systems with gas giants. A ship set to '[[FLEET_PASSIVE]]' will hide inside the gas giant atmosphere and as such improve its stealth by [[value ST_COATING_GG_BONUS]]. If [[tech GRO_XENO_HYBRIDS]] is researched, a stationary ship set to '[[FLEET_PASSIVE]]' will hide deeper inside the gas giant. This increases stealth by another [[value ST_COATING_GG_GRO_XENO_HYBRIDS_BONUS]]. A ship in the gas giant atmosphere has reduced speed (-[[value ST_COATING_GG_SPEED_MALUS]]) and almost no detection range (-[[value ST_COATING_GG_DETECTION_MALUS]]) and if deep in the gas giant, this malus gets doubled.'''
+
+GAS_GIANT_FIELD_STEALTH_DEEP_LABEL
+Deep Dive in Gas Giant
+
+VALVE_SPEED_REDUCTION
+Reduce the ship speed due to the presence of Variable Pressure Nanovalves
 
 AR_STD_PLATE
 Standard Armor Plating
