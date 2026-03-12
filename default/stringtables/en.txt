@@ -14993,6 +14993,12 @@ The [[metertype METER_RESEARCH]] cost of this tech is halved if the empire inclu
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
+SHP_GRAVITIC_RESONANCE
+Gravitic Resonance
+
+SHP_GRAVITIC_RESONANCE_DESC
+By computing the resonance of tiny and small planets, this allows ships using resonators to remove some stealth in the system.
+
 SPY_BIOMIMESIS
 Bio-Inspiration
 
@@ -16927,6 +16933,12 @@ Krill Spawner
 
 SP_KRILL_SPAWNER_DESC
 Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned [[PT_ASTEROIDS]] which do not already contain a krill monster. When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[metertype METER_STEALTH]] (but will not stack with any other [[metertype METER_STEALTH]] - causing  parts).
+
+SP_GRAVITIC_RESONATOR
+Gravitic Resonator
+
+SP_GRAVITIC_RESONATOR_DESC
+Reveals hidden objects by activating gravitational resonance of tiny planets and secondarily of small planets in the current system. Resonance in a system decreases [[metertype METER_STEALTH]] by [[value SP_GRAVITIC_RESONATOR_TINY_PLANET_MALUS]] for all objects if there is at least one tiny planet. If there is also at least one small planet in the system, there is an additional reduction by [[value SP_GRAVITIC_RESONATOR_SMALL_PLANET_MALUS]].
 
 SP_SOLAR_CONCENTRATOR
 Solar Concentrator
