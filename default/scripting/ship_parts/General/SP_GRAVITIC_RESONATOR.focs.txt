@@ -1,0 +1,28 @@
+Part
+    name = "SP_GRAVITIC_RESONATOR"
+    description = "SP_GRAVITIC_RESONATOR_DESC"
+    exclusions = "SP_GRAVITIC_RESONATOR"
+    class = General
+    mountableSlotTypes = Internal
+    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]]
+    buildtime = 10
+    tags = [ "PEDIA_PC_GENERAL" ]
+    location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = WithinDistance distance = 0 condition = Source
+
+            activation = ContainedBy And [
+                System
+                Contains Planet size = Tiny
+            ]
+            stackinggroup = "SP_GRAVITIC_RESONATOR_STACK"
+            effects = SetStealth value = Value
+                      - (NamedReal name = "SP_GRAVITIC_RESONATOR_SMALL_PLANET_MALUS" value = 10.0)
+                        * (Statistic If condition = And [ Planet InSystem id = Source.SystemID Planet size = Small ])
+                      - (NamedReal name = "SP_GRAVITIC_RESONATOR_TINY_PLANET_MALUS" value = 20.0)
+                        * (Statistic If condition = And [ Planet InSystem id = Source.SystemID Planet size = Tiny ])
+
+    icon = "icons/ship_parts/graviticresonator.png"
+
+#include "/scripting/macros/upkeep.macros"
