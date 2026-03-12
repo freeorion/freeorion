@@ -34,6 +34,36 @@ struct value_ref_wrapper {
         }
     }
 
+    // convert implicitely from double to wrap<vref<double>>
+    //template <std::same_as<T> double> // template argument deduction failed
+    //value_ref_wrapper(double d) :
+
+  // XXX I'd like to restrict this to value_ref_wrapper<double>...
+    template <std::same_as<double> D> 
+    value_ref_wrapper(D d) :
+      value_ref(std::make_shared<ValueRef::Constant<double>>(d))
+    {}
+  /*    
+    // convert implicitely from vref<int> to vref<double>
+    //template <> requires std::is_same_v<T, int>
+  
+    //template <std::same_as<T> int, std::same_as<value_ref_wrapper<double> W>
+    //operator W() const {
+
+    template <std::same_as<T> int, std::same_as<value_ref_wrapper<double>> W>
+    operator W() const {
+
+      //template <std::same_as<T> int>
+      //operator value_ref_wrapper<double>() const {
+      
+      //        if (value_ref->ConstantExpr()) {
+      //    return value_ref_wrapper<double>(std::make_shared<ValueRef::Constant<double>>(value_ref->Eval())): // yikes
+      //  } else {
+          return value_ref_wrapper<double>(std::make_shared<ValueRef::StaticCast<int,double>>(value_ref)); // hm, shared_ptr
+      //  }
+    }
+  */  
+
     operator condition_wrapper() const {
         auto op = std::dynamic_pointer_cast<const ValueRef::Operation<T>>(value_ref);
 

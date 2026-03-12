@@ -182,7 +182,8 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
             .def(py::self_ns::self + py::other<value_ref_wrapper<int>>())
             .def(py::other<value_ref_wrapper<int>>() + py::self_ns::self)
             .def(double() - py::self_ns::self)
-            .def(double() - py::other<value_ref_wrapper<int>>())
+             //.def(double() - py::other<value_ref_wrapper<int>>())  // no double wrapper involved. Wont find match.
+             //   instead: double should implicitely wrap and use wrap<double - wrap<int>
             .def(py::self_ns::self - double())
             .def(py::self_ns::self - py::self_ns::self)
             .def(py::self_ns::self - py::other<value_ref_wrapper<int>>())
@@ -400,6 +401,7 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
 
         py::implicitly_convertible<value_ref_wrapper<double>, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
+        py::implicitly_convertible<double, value_ref_wrapper<double>>();
 
         m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"))();
         m_meta_path->append(boost::cref(*this));
