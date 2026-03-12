@@ -145,6 +145,7 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
             .def(py::self_ns::self / int())
             .def(py::self_ns::self - int())
             .def(int() - py::self_ns::self)
+            .def(double() - py::self_ns::self)
             .def(py::self_ns::self + py::self_ns::self)
             .def(py::self_ns::self + int())
             .def(int() + py::self_ns::self)
