@@ -797,5 +797,33 @@ BOOST_AUTO_TEST_CASE(parse_fields) {
     BOOST_CHECK_EQUAL(4014678, effects[3].GetCheckSum());
 }
 
+BOOST_AUTO_TEST_CASE(parse_named_values) {
+    PythonParser parser(m_python, m_test_scripting_dir);
+
+    auto named_values_p = Pending::ParseSynchronously(parse::named_value_refs, parser, m_test_scripting_dir / "macros");
+    auto named_values_opt = Pending::WaitForPendingUnlocked(std::move(named_values_p));
+
+    BOOST_REQUIRE(named_values_opt);
+
+    const auto named_values = *std::move(named_values_opt);
+    BOOST_CHECK_EQUAL(0, named_values.size());
+
+    BOOST_CHECK_EQUAL(2, GetNamedValueRefManager().GetItems().size());
+
+    const auto* value_ref_ptr = GetNamedValueRefManager().GetValueRefBase("BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY");
+    BOOST_REQUIRE(value_ref_ptr != nullptr);
+
+    const auto* value_ref_ptr_const = dynamic_cast<const ValueRef::Constant<double>*>(value_ref_ptr);
+    BOOST_REQUIRE(value_ref_ptr_const != nullptr);
+    BOOST_CHECK_EQUAL(20, value_ref_ptr_const->Value());
+
+    const auto* value_ref_ptr_int = GetNamedValueRefManager().GetValueRefBase("MIN_MONSTER_DISTANCE");
+    BOOST_REQUIRE(value_ref_ptr_int != nullptr);
+
+    const auto* value_ref_ptr_int_op = dynamic_cast<const ValueRef::Operation<int>*>(value_ref_ptr_int);
+    BOOST_REQUIRE(value_ref_ptr_int_op != nullptr);
+    BOOST_CHECK(ValueRef::OpType::MINUS == value_ref_ptr_int_op->GetOpType());
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
