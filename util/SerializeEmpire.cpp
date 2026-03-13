@@ -106,7 +106,7 @@ namespace {
         }
     }
 
-    template <std::size_t N>
+    template <std::size_t N> requires (N <= data_arr_sz)
     void Serialize(boost::archive::xml_oarchive& ar, uint8_t& count, std::array<std::pair<uint16_t, uint16_t>, N>& data)
     {
         std::array<std::string::value_type, buffer_size> buffer{};
@@ -130,7 +130,7 @@ namespace {
         const auto buffer_next_dist = static_cast<std::size_t>(std::distance(buffer.data(), buffer_next));
         const std::size_t string_size = std::min(buffer_size, buffer_next_dist);
         std::string s(buffer.data(), string_size);
-        ar << boost::serialization::make_nvp("count_string_offsets_sizes", s);
+        ar << boost::serialization::make_nvp("ct_ofst_szs", s);
     }
 
     template <std::size_t N>
@@ -138,7 +138,7 @@ namespace {
     {
         std::string buffer;
         buffer.reserve(buffer_size);
-        ar >> boost::serialization::make_nvp("count_string_offsets_sizes", buffer);
+        ar >> boost::serialization::make_nvp("ct_ofst_szs", buffer); // ct_ofst_szs = abbreviation for "count & (offsets & sizes)
 
         unsigned int count_scratch = 0U;
         const char* const buffer_end = buffer.c_str() + buffer.size();
@@ -148,7 +148,7 @@ namespace {
             count = 0;
             return;
         }
-        count = static_cast<uint8_t>(std::min<unsigned int>(count_scratch, data.size()));
+        count = static_cast<uint8_t>(std::min<unsigned int>(count_scratch, N));
 
         for (uint8_t idx = 0; idx < static_cast<uint8_t>(count) && next != buffer_end; ++idx) {
             while (std::distance(next, buffer_end) > 0 && *next == ' ')
@@ -158,8 +158,9 @@ namespace {
                 return;
 
             unsigned int offset = 0;
+            static_assert(sizeof(decltype(offset)) >= sizeof(uint16_t));
             std::tie(next, success) = FromChars(next, buffer_end, offset);
-            if (!success || offset >= std::numeric_limits<DataArrT::value_type::first_type>::max())
+            if (!success || offset >= std::numeric_limits<uint16_t>::max())
                 return;
             data[idx].first = offset;
 
@@ -172,7 +173,7 @@ namespace {
 
             unsigned int size = 0;
             std::tie(next, success) = FromChars(next, buffer_end, size);
-            if (!success || offset >= std::numeric_limits<DataArrT::value_type::first_type>::max())
+            if (!success || offset >= std::numeric_limits<uint16_t>::max())
                 return;
             data[idx].second = size;
         }
