@@ -127,7 +127,7 @@ namespace parse {
 }
 
 namespace parse {
-    start_rule_payload named_value_refs(const std::filesystem::path& path) {
+    start_rule_payload named_value_refs(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         start_rule_payload named_value_refs;
 
         ScopedTimer timer("Named ValueRef Parsing");
@@ -138,6 +138,7 @@ namespace parse {
         for (auto& k_v : named_value_refs)
             ErrorLogger() << "Should have not returned anything: named_value_refs : " << k_v.first;
 
+        success = true;
         return named_value_refs;
     }
 }
