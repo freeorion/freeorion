@@ -834,99 +834,75 @@ void SitRepPanel::Update() {
                          std::addressof(x_fixedid_params.second));
     };
 
-
     // collect and resort ok templates into display order
     auto ok_templates_and_params_vec = rng_template_ok_turn_not_hidden | range_transform(to_fixed_info_and_param_ptrs) | range_to_vec;
 
+    //DebugLogger() << "OK sitrep templates filtered on turn: " << m_showing_turn;
+    //for (const auto& [template_fixed_info, params_lists] : ok_templates_and_params_vec)
+    //    DebugLogger() << template_fixed_info.first << "  param lists: " << params_lists->size();
 
-    // extract in order to match options/stringtable specified display order for sitreps
+    if (range_empty(ok_templates_and_params_vec))
+        return;
 
+    // arrange templates so ok templates are first and the rest are after but in the same order.
+    const auto ordered_template_strings = OrderedSitrepTemplateStrings();
+    const auto in_ordered = [&](const auto& t) { return range_contains(ordered_template_strings, t.first.first); };
+    const auto part_it = std::stable_partition(ok_templates_and_params_vec.begin(), ok_templates_and_params_vec.end(), in_ordered);
 
+    if (part_it != ok_templates_and_params_vec.begin()) {
+        auto target_pos_it = ok_templates_and_params_vec.begin();
 
+        for (const auto& sts : ordered_template_strings) {
+            const auto is_sts = [&sts{sts}](const auto& tpv) noexcept { return tpv.first.first == sts; };
+            auto sts_in_ok_it = std::find_if(ok_templates_and_params_vec.begin(), part_it, is_sts); // only reorder within range of ordered template strings
+            if (sts_in_ok_it == part_it)
+                continue; // don't have this template in the selected templates & params
 
-    //const bool show_invalid = GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown");
-    //const auto has_valid_sitrep = [show_invalid, &context, get_info](const EmpireSitrepsContainer::value_type& x_fixedid_params_lists) {
-    //    const auto& [turn_fixedid, params_lists] = x_fixedid_params_lists;
-    //    if (params_lists.empty())
-    //        return false; // there are no parameter sets for this turn, so no possible (valid or otherwise) sitreps
-    //    if (show_invalid)
-    //        return true; // there is at least one parameter set for this turn, and don't care if it's valid
+            std::swap(*target_pos_it, *sts_in_ok_it); // swap into position
+            ++target_pos_it; // move to next position
+            if (target_pos_it == part_it)
+                break; // no more ordered template strings
+        }
+    }
 
-    //    const auto& fixed_info = get_info(x_fixedid_params_lists); // assume index was range-checked elsewhere
+    //DebugLogger() << "OK sitrep templates ordered:";
+    //for (const auto& [template_fixed_info, params_lists] : ok_templates_and_params_vec)
+    //    DebugLogger() << template_fixed_info.first << "  param lists: " << params_lists->size();
 
-    //    using ParamsLists = std::decay_t<decltype(x_fixedid_params_lists.second)>;
-    //    using ParamSetT = ParamsLists::value_type;
+    const GG::X width = m_sitreps_lb->ClientWidth();
+    const GG::Y height{ClientUI::Pts()*2};
+    const bool show_invalid = GetOptionsDB().Get<bool>("ui.map.sitrep.invalid.shown");
 
-    //    // check if any of the parameter sets make a valid sitrep
-    //    const auto makes_valid_sitrep = [rep_turn{turn_fixedid.first}, &fixed_info, &context](const ParamSetT& params)
-    //    { return SitRepEntry(fixed_info, SitRepEntry::UniqueInfo(params, rep_turn)).GetValidity(context); };
+    // create sitreps and UI rows for them, if valid or showing invalid
+    for (const auto& [template_fixed_info, params_lists] : ok_templates_and_params_vec) {
+        if (!template_fixed_info.second || !params_lists)
+            continue;
+        const auto& fixed_info = *template_fixed_info.second;
 
-    //    return range_any_of(params_lists, makes_valid_sitrep);
-    //};
+        for (const auto& params : *params_lists) {
+            SitRepEntry sitrep(fixed_info, SitRepEntry::UniqueInfo(params, m_showing_turn));
+            if (show_invalid || sitrep.GetValidity(context))
+                m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, std::move(sitrep)));
+        }
+    }
 
+    if (m_sitreps_lb->NumRows() > first_visible_row)
+        m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));
+    else if (!m_sitreps_lb->Empty())
+        m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
 
+    // if at first turn with visible sitreps, disable back button
+    const int prev_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps, m_showing_turn, fixed_infos, false, m_hidden_sitrep_templates);
 
-    // check that they could be evaluated / substituted without any errors
+    const bool disable_prev_turn = prev_turn_with_sitrep == INVALID_GAME_TURN;
+    m_prev_turn_button->Disable(disable_prev_turn);
 
+    // if at last turn with visible sitreps, disable forward button
+    const int next_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps, m_showing_turn, fixed_infos, true, m_hidden_sitrep_templates);
 
-    // order sitreps for display
-    //const auto ordered_template_strings = OrderedSitrepTemplateStrings();
-    //std::vector<std::vector<const SitRepEntry*>> sorted_sitreps;
-    //sorted_sitreps.resize(ordered_template_strings.size());
-    //std::vector<const SitRepEntry*> remaining_unordered_sitreps;
-    //remaining_unordered_sitreps.reserve(current_turn_sitreps.size());
-
-    //for (auto* sitrep : current_turn_sitreps) {
-    //    if (!sitrep)
-    //        continue;
-    //    const auto& s{*sitrep};
-    //    std::string_view label_string = s.GetLabelString().empty() ? s.GetTemplateString() : s.GetLabelString();
-    //    auto it = std::find_if(ordered_template_strings.begin(), ordered_template_strings.end(),
-    //                           [label_string](const auto& ts) { return label_string == ts; });
-    //    if (it == ordered_template_strings.end()) {
-    //        remaining_unordered_sitreps.push_back(sitrep);
-    //    } else {
-    //        auto idx = std::distance(ordered_template_strings.begin(), it);
-    //        sorted_sitreps[idx].push_back(sitrep);
-    //    }
-    //}
-
-    //// flatten vector of vectors to single vector
-    //std::vector<const SitRepEntry*> ordered_sitreps;
-    //ordered_sitreps.reserve(current_turn_sitreps.size());
-    //std::for_each(sorted_sitreps.begin(), sorted_sitreps.end(),
-    //              [&ordered_sitreps](auto& sitrep_vec) {
-    //                  ordered_sitreps.insert(ordered_sitreps.end(), sitrep_vec.begin(), sitrep_vec.end());
-    //              });
-
-    //// create UI rows for all sitrps
-    //const GG::X width = m_sitreps_lb->ClientWidth();
-    //const GG::Y height{ClientUI::Pts()*2};
-    //// first the ordered sitreps
-    //for (auto* sitrep : ordered_sitreps)
-    //    m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
-    //// then the remaining unordered sitreps
-    //for (auto* sitrep : remaining_unordered_sitreps)
-    //    m_sitreps_lb->Insert(GG::Wnd::Create<SitRepRow>(width, height, *sitrep));
-
-
-    //if (m_sitreps_lb->NumRows() > first_visible_row)
-    //    m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));
-    //else if (!m_sitreps_lb->Empty())
-    //    m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
-
-    //// if at first turn with visible sitreps, disable back button
-    //int prev_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, false, m_hidden_sitrep_templates);
-
-    //bool disable_prev_turn = prev_turn_with_sitrep == INVALID_GAME_TURN;
-    //m_prev_turn_button->Disable(disable_prev_turn);
-
-    //// if at last turn with visible sitreps, disable forward button
-    //int next_turn_with_sitrep = GetNextNonEmptySitrepsTurn(sitreps_by_turn, m_showing_turn, true, m_hidden_sitrep_templates);
-
-    //bool disable_next_turn = next_turn_with_sitrep == INVALID_GAME_TURN;
-    //m_next_turn_button->Disable(disable_next_turn);
-    //m_last_turn_button->Disable(disable_next_turn);
+    const bool disable_next_turn = next_turn_with_sitrep == INVALID_GAME_TURN;
+    m_next_turn_button->Disable(disable_next_turn);
+    m_last_turn_button->Disable(disable_next_turn);
 }
 
 void SitRepPanel::ShowSitRepsForTurn(int turn) {
