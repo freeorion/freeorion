@@ -106,6 +106,7 @@ public:
         m_stringtable_lookup_flag(stringtable_lookup)
     {}
 
+    [[nodiscard]] std::string Dump() const;
 
     //! Return the text generated after substituting all variables, with or without a ScriptingContext
     [[nodiscard]] std::string GetText(const ScriptingContext& context) const

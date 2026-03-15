@@ -296,10 +296,10 @@ namespace {
 
         const bool have_label = match[2].matched;
 
-        //const auto& full_match = match[0];
         const auto& tag_match = match[1];
         const auto& label_match = match[have_label ? 2 : 1];
 
+        //const auto& full_match = match[0];
         //std::cout << "match length: " << match.length() << (have_label ? " with label" : " without label") << std::endl;
         //std::cout << "full: " << full_match << "   tag: " << tag_match << "   label: " << label_match << std::endl;
 
@@ -315,6 +315,7 @@ namespace {
                 const auto elem_it = range_find_if(variables, [label](const auto& elem) noexcept { return elem.first == label; });
                 if (elem_it != variables.end())
                     return {std::string_view(elem_it->second), true};
+                return {std::string_view{}, false};
 
             } else if constexpr (requires { *range_find(variables.first, label) == label; }) {
                 const auto name_it = range_find(variables.first, label);
@@ -323,9 +324,8 @@ namespace {
                     if (offset < variables.second.size())
                         return {std::string_view(variables.second[offset]), true};
                 }
+                return {std::string_view{}, false};
             }
-
-            return {std::string_view{}, false};
         }();
 
         if (!lookup_success)
@@ -348,6 +348,22 @@ namespace {
         auto [label, variable_value, tag, label_found] = GetLabelTagViews(variables, match);
         if (!label_found) {
             ErrorLogger() << "Substitute: No substitution function found for label: " << label << "  from token: " << match.str();
+            if constexpr (requires { variables.begin(); }) {
+                if (variables.empty())
+                    ErrorLogger() << "... no variables";
+                else
+                    ErrorLogger() << "... variables: ";
+                for (const auto& [l, r] : variables)
+                    ErrorLogger() << "... ... " << l << ": " << r;
+            } else if constexpr (requires { variables.first.size() == variables.second.size(); }){
+                const std::size_t sz = std::min(variables.first.size(), variables.second.size());
+                if (sz == 0)
+                    ErrorLogger() << "... no variables";
+                else
+                    ErrorLogger() << "... variables: ";
+                for (std::size_t idx = 0; idx < sz; ++idx)
+                    ErrorLogger() << "... ... " << variables.first[idx] << ": " << variables.second[idx];
+            }
             return {UserString("ERROR"), false};
         }
 
@@ -389,6 +405,9 @@ namespace {
         return {retval, valid};
     }
 }
+
+std::string VarText::Dump() const
+{ return "VarText template: " + m_template_string + " vars sz: " + std::to_string(m_variables.size()); }
 
 std::pair<std::string, bool> VarText::GenerateVarText(std::string template_str, const std::vector<std::string>& param_names,
                                                       std::span<const std::string_view> param_values, const ScriptingContext* context)
