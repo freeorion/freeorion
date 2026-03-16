@@ -1,0 +1,6 @@
+Article
+    name = "MAIN_MENU_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "MAIN_MENU_SHORT_DESC"
+    description = "MAIN_MENU_TEXT"
+    icon = ""
