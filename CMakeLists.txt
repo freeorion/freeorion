@@ -224,6 +224,9 @@ set_property(DIRECTORY APPEND
         # Suppress "Boost.Config is older than your compiler version" warning
         $<$<PLATFORM_ID:Windows>:BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE>
 
+        # Fix crash on std::mutex::lock
+        $<$<PLATFORM_ID:Windows>:_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR>
+
         # Define platform specific macros
         $<$<PLATFORM_ID:Windows>:FREEORION_WIN32>
         $<$<PLATFORM_ID:Darwin>:FREEORION_MACOSX>
