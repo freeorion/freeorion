@@ -33,7 +33,7 @@ Policy
                 // also in order to avoid that we instead increase the launch rate, fluff: more efficient fielding of fighters
                 SetMaxCapacity partname = "FT_BAY_1" value = Value + (NamedInteger name = "PLC_CHARGE_BAY_LAUNCH_BONUS" value = 1)
                 // Point defense and shields are less efficient when charging:
-                SetMaxDamage partname = "SR_WEAPON_0_1" value = Value - (NamedReal name = "PLC_CHARGE_FLAK_SHOT_REDUCTION" value = 1.0)
+                SetMaxSecondaryStat partname = "SR_WEAPON_0_1" value = Value - (NamedReal name = "PLC_CHARGE_FLAK_SHOT_REDUCTION" value = 1.0)
                 SetMaxShield value = Value - (NamedReal name = "PLC_CHARGE_SHIELD_REDUCTION" value = 3.0 * [[SHIP_SHIELD_FACTOR]] )
             ]
 
