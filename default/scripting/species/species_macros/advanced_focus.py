@@ -56,7 +56,7 @@ PLANETARY_DRIVE_ACTIVATION = (
         ~HasSpecial(name="STARLANE_DRIVE_INSTABILITY_SPECIAL")
         | (
             SpecialCapacity(name="STARLANE_DRIVE_INSTABILITY_SPECIAL", object=Source.ID)
-            < NamedIntegerLookup(name="STARLANE_DRIVE_MAX_JUMPS")
+            < 1.0 * NamedIntegerLookup(name="STARLANE_DRIVE_MAX_JUMPS")
         )
     )
     & WithinStarlaneJumps(
