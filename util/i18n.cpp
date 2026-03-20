@@ -323,8 +323,7 @@ const std::string& UserString(const std::string& str) {
             return error_string_value;
     }
 
-    ErrorLogger() << "Missing string: " << str;
-    DebugLogger() << StackTrace();
+    ErrorLogger() << "Missing string: " << str << "\n" << StackTrace();
 
     {
         std::unique_lock error_mutation_lock(error_stringtable_access_mutex);
@@ -353,8 +352,7 @@ const std::string& UserString(const std::string_view str) {
             return error_string_value;
     }
 
-    ErrorLogger() << "Missing string: " << str;
-    DebugLogger() << StackTrace();
+    ErrorLogger() << "Missing string: " << str << "\n" << StackTrace();
 
     {
         std::unique_lock error_mutation_lock(error_stringtable_access_mutex);
@@ -383,8 +381,7 @@ const std::string& UserString(const char* str) {
             return error_string_value;
     }
 
-    ErrorLogger() << "Missing string: " << str;
-    DebugLogger() << StackTrace();
+    ErrorLogger() << "Missing string: " << str << "\n" << StackTrace();
 
     {
         std::unique_lock error_mutation_lock(error_stringtable_access_mutex);
