@@ -411,7 +411,10 @@ std::string VarText::Dump() const
 
 std::pair<std::string, bool> VarText::GenerateVarText(std::string template_str, const std::vector<std::string>& param_names,
                                                       std::span<const std::string_view> param_values, const ScriptingContext* context)
-{ return ::GenerateVarText(std::move(template_str), std::pair{param_names, param_values}, context); }
+{
+    const std::span<const std::string> names_span(param_names);
+    return ::GenerateVarText(std::move(template_str), std::pair{names_span, param_values}, context);
+}
 
 std::pair<std::string, bool> VarText::GenerateVarText(std::string template_str, const VariablesVec& variables,
                                                       const ScriptingContext* context)
