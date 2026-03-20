@@ -57,7 +57,8 @@ std::string SitRepEntry::Dump() const {
         retval += " " + tag + " = " + value;
     retval += " turn = " + std::to_string(m_turn);
     retval += " icon = " + m_icon;
-    retval += " label = " + m_label;
+    if (!m_label.empty())
+        retval += " label = " + m_label;
     return retval;
 }
 
