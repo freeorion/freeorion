@@ -4,6 +4,7 @@ from focs._conditions import (
     DesignHasPart,
     Fleet,
     Focus,
+    HasSpecial,
     InSystem,
     IsBuilding,
     IsSource,
@@ -30,6 +31,7 @@ from focs._effects import (
     MoveTowards,
     SetMaxSupply,
     SetPopulation,
+    SetSpecialCapacity,
     SetStealth,
     SetTargetPopulation,
 )
@@ -37,6 +39,8 @@ from focs._enums import EnemyOf
 from focs._sources import LocalCandidate, RootCandidate, Source, Target
 from focs._value_refs import (
     DirectDistanceBetween,
+    NamedIntegerLookup,
+    SpecialCapacity,
     Value,
 )
 from macros.priorities import (
@@ -48,6 +52,14 @@ from macros.priorities import (
 PLANETARY_DRIVE_ACTIVATION = (
     Planet()
     & Focus(type=["FOCUS_PLANET_DRIVE"])
+    # TODO: add low / high to HasSpecial parsing
+    & (
+        ~HasSpecial(name="STARLANE_DRIVE_INSTABILITY_SPECIAL")
+        | (
+            SpecialCapacity(name="STARLANE_DRIVE_INSTABILITY_SPECIAL", object=Source.ID)
+            < NamedIntegerLookup(name="STARLANE_DRIVE_MAX_JUMPS")
+        )
+    )
     & WithinStarlaneJumps(
         jumps=1,
         condition=System
@@ -104,57 +116,47 @@ ADVANCED_FOCUS_EFFECTS = [
         scope=IsSource,
         activation=PLANETARY_DRIVE_ACTIVATION,
         priority=POPULATION_DEFAULT_PRIORITY,
-        effects=[
-            MoveTo(
-                destination=System
-                & WithinStarlaneJumps(jumps=1, condition=IsSource)
-                & Contains(
-                    (
-                        IsBuilding(name=["BLD_PLANET_BEACON"])
-                        | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
+        effects=Conditional(
+            condition=IsSource
+            & (Random(probability=0.5) | WithinDistance(distance=200, condition=IsBuilding(name=["BLD_LIGHTHOUSE"]))),
+            effects=[
+                MoveTo(
+                    destination=System
+                    & WithinStarlaneJumps(jumps=1, condition=IsSource)
+                    & Contains(
+                        (
+                            IsBuilding(name=["BLD_PLANET_BEACON"])
+                            | (
+                                Ship
+                                & DesignHasPart(name="SP_PLANET_BEACON")
+                                & Turn(low=LocalCandidate.ArrivedOnTurn + 1)
+                            )
+                        )
+                        & OwnedBy(empire=Source.Owner)
                     )
-                    & OwnedBy(empire=Source.Owner)
-                )
-                & ~Contains(IsSource)
-            ),
-            GenerateSitRepMessage(
-                message="EFFECT_PLANET_DRIVE",
-                label="EFFECT_PLANET_DRIVE_LABEL",
-                icon="icons/building/planetary_stardrive.png",
-                parameters={"planet": Source.ID, "system": Source.SystemID},
-                empire=Source.Owner,
-            ),
-            SetPopulation(value=Value / 2),
-        ],
-    ),
-    EffectsGroup(
-        scope=IsSource,
-        activation=Random(probability=0.5)
-        & Planet()
-        & Focus(type=["FOCUS_PLANET_DRIVE"])
-        & WithinStarlaneJumps(
-            jumps=1,
-            condition=System
-            & Contains(
-                (
-                    IsBuilding(name=["BLD_PLANET_BEACON"])
-                    | (Ship & DesignHasPart(name="SP_PLANET_BEACON") & Turn(low=LocalCandidate.ArrivedOnTurn + 1))
-                )
-                & OwnedBy(empire=Source.Owner)
-            )
-            & ~Contains(IsSource),
-        )
-        & ~WithinDistance(distance=200, condition=IsBuilding(name=["BLD_LIGHTHOUSE"])),
-        effects=[
-            GenerateSitRepMessage(
-                message="SITREP_PLANET_DRIVE_FAILURE",
-                label="SITREP_PLANET_DRIVE_FAILURE_LABEL",
-                icon="icons/sitrep/colony_destroyed.png",
-                parameters={"planet": Source.ID, "system": Source.SystemID},
-                empire=Source.Owner,
-            ),
-            Destroy,
-        ],
+                    & ~Contains(IsSource)
+                ),
+                SetSpecialCapacity(name="STARLANE_DRIVE_INSTABILITY_SPECIAL", capacity=Value + 1),
+                GenerateSitRepMessage(
+                    message="EFFECT_PLANET_DRIVE",
+                    label="EFFECT_PLANET_DRIVE_LABEL",
+                    icon="icons/building/planetary_stardrive.png",
+                    parameters={"planet": Source.ID, "system": Source.SystemID},
+                    empire=Source.Owner,
+                ),
+                SetPopulation(value=Value / 2),
+            ],
+            else_=[
+                GenerateSitRepMessage(
+                    message="SITREP_PLANET_DRIVE_FAILURE",
+                    label="SITREP_PLANET_DRIVE_FAILURE_LABEL",
+                    icon="icons/sitrep/colony_destroyed.png",
+                    parameters={"planet": Source.ID, "system": Source.SystemID},
+                    empire=Source.Owner,
+                ),
+                Destroy,
+            ],
+        ),
     ),
     EffectsGroup(
         scope=Fleet
