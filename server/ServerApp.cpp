@@ -1131,9 +1131,10 @@ namespace {
             return false;
         }
         
-        if (Networking::is_human(player_connection)) {
+        if (!Networking::is_human(player_connection)) {
             ErrorLogger() << "ServerApp::LoadMPGameInit found player connection of wrong type "
-                          << "for human player setup data with player id: " << id;
+                          << "for human player setup data with player id: " << id
+                          << " type: " << player_connection->GetClientType();
             return false;
         }
         return true;
