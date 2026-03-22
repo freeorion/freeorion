@@ -596,6 +596,8 @@ private:
 
 public:
     struct ChunkedStringAndViews {
+        static constexpr uint8_t BUFFER_SIZE = 7;
+
         CONSTEXPR_VEC ChunkedStringAndViews() noexcept = default;
 
         CONSTEXPR_VEC_AND_STRING ChunkedStringAndViews(const std::vector<std::string>& strs) {
@@ -603,7 +605,7 @@ public:
                                                              [](const auto& str) noexcept { return str.size(); });
             m_str.reserve(str_sz);
 
-            m_strings_count = static_cast<uint8_t>(std::min(strs.size(), m_string_offsets_sizes.size()));
+            m_strings_count = static_cast<uint8_t>(std::min(strs.size(), static_cast<std::size_t>(BUFFER_SIZE)));
 
             uint8_t next_idx = 0;
             for (const auto& str : strs) {
@@ -612,7 +614,7 @@ public:
                 const auto post_sz = m_str.size() - pre_offset;
                 m_string_offsets_sizes[next_idx] = {pre_offset, post_sz};
                 ++next_idx;
-                if (next_idx >= m_string_offsets_sizes.size())
+                if (next_idx >= BUFFER_SIZE)
                     break;
             }
         }
@@ -620,10 +622,11 @@ public:
         CONSTEXPR_VEC std::size_t SizeOfContents() const noexcept
         { return m_str.capacity() * sizeof(std::string::value_type); }
 
-        CONSTEXPR_VEC_AND_STRING operator std::vector<std::string>() const {
-            std::vector<std::string> retval;
+        template <typename StringyT> requires requires(const char* data, std::size_t sz) { StringyT(data, sz); }
+        CONSTEXPR_VEC_AND_STRING std::vector<StringyT> ToVector() const {
+            std::vector<StringyT> retval;
             retval.reserve(m_strings_count);
-            for (uint8_t idx = 0; idx < m_strings_count && idx < m_string_offsets_sizes.size(); ++idx) {
+            for (uint8_t idx = 0; idx < m_strings_count && idx < BUFFER_SIZE; ++idx) {
                 const auto& [offset, size] = m_string_offsets_sizes[idx];
                 if (size == 0 || static_cast<std::size_t>(offset + size) > m_str.size())
                     continue;
@@ -631,9 +634,24 @@ public:
             }
             return retval;
         }
+        CONSTEXPR_VEC_AND_STRING std::vector<std::string> ToStringVector() const
+        { return ToVector<std::string>(); }
+
+        CONSTEXPR_VEC_AND_STRING std::pair<std::array<std::string_view, BUFFER_SIZE>, uint8_t> ToViewsAndCount() const noexcept {
+            std::array<std::string_view, BUFFER_SIZE> retval{};
+            uint8_t out_idx = 0;
+            for (uint8_t idx = 0; idx < m_strings_count && idx < BUFFER_SIZE; ++idx) {
+                const auto& [offset, size] = m_string_offsets_sizes[idx];
+                if (size == 0 || static_cast<std::size_t>(offset + size) > m_str.size())
+                    continue;
+                retval[out_idx] = {m_str.data() + offset, size};
+                ++out_idx;
+            }
+            return {retval, out_idx};
+        }
 
         std::string m_str{}; // concatenated strings that are parameters to a SitRep
-        std::array<std::pair<uint16_t, uint16_t>, 7> m_string_offsets_sizes{}; // start and run-length of substrings of m_str for each parameter
+        std::array<std::pair<uint16_t, uint16_t>, BUFFER_SIZE> m_string_offsets_sizes{}; // start and run-length of substrings of m_str for each parameter
         uint8_t m_strings_count = 0; // how many string parameters are there / are valid?
 
         friend class boost::serialization::access;

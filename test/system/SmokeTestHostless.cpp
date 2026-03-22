@@ -204,7 +204,7 @@ BOOST_AUTO_TEST_CASE(hostless_server) {
                     continue;
                 const auto& fixed_info = fixed_infos[fixed_idx];
                 for (const auto& params : params_lists) {
-                    const SitRepEntry rep(fixed_info, SitRepEntry::UniqueInfo(params, m_current_turn));
+                    const SitRepEntry rep(fixed_info, SitRepEntry::UniqueInfo(params.ToStringVector(), m_current_turn));
                     BOOST_TEST_MESSAGE("Sitrep: " << rep.Dump());
                 }
             }

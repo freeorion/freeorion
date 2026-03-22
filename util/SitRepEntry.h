@@ -63,7 +63,7 @@ public:
     [[nodiscard]] const std::string& GetDataString(const std::string& tag) const;
     [[nodiscard]] int                GetTurn() const noexcept        { return m_turn; }
     [[nodiscard]] const std::string& GetIcon() const noexcept        { return m_icon; }
-    [[nodiscard]] const std::string& GetLabelString() const noexcept { return m_label; }
+    [[nodiscard]] const std::string& GetLabel() const noexcept { return m_label; }
     [[nodiscard]] std::string        Dump() const;
 
     [[nodiscard]] std::size_t SizeInMemory() const;
@@ -75,9 +75,11 @@ public:
         std::vector<std::string> m_variable_names;
         bool m_stringtable_lookup_flag = false;
 
-        // returns m_label if not empty, otherwise m_template_string
-        [[nodiscard]] CONSTEXPR_VEC_AND_STRING const std::string& EffectiveLabel() const noexcept
-        { return m_label.empty() ? m_template_string : m_label; }
+        static CONSTEXPR_VEC_AND_STRING std::string DetermineLabel(auto&& label, const auto& template_string) {
+            if (!label.empty()) return std::forward<decltype(label)>(label);
+            if (!template_string.empty()) return template_string + "_LABEL";
+            return {};
+        }
 
         [[nodiscard]] CONSTEXPR_VEC_AND_STRING FixedInfo() noexcept = default;
 
@@ -88,7 +90,7 @@ public:
                                                          bool lookup) noexcept :
             m_template_string(std::move(template_string)),
             m_icon(std::move(icon)),
-            m_label(std::move(label)),
+            m_label(DetermineLabel(std::move(label), m_template_string)),
             m_variable_names(std::move(var_names)),
             m_stringtable_lookup_flag(lookup)
         {}
@@ -100,7 +102,7 @@ public:
                                                          bool lookup) :
             m_template_string(template_string),
             m_icon(icon),
-            m_label(label),
+            m_label(DetermineLabel(label, template_string)),
             m_variable_names(std::move(var_names)),
             m_stringtable_lookup_flag(lookup)
         {}
@@ -122,18 +124,6 @@ public:
 
         CONSTEXPR_VEC_AND_STRING UniqueInfo(const std::vector<std::string>& variable_values, int turn) :
             m_variable_values(variable_values),
-            m_turn(turn)
-        {}
-
-        CONSTEXPR_VEC_AND_STRING UniqueInfo(std::string_view str, std::span<const std::pair<uint16_t, uint16_t>> offsets_sizes, int turn) :
-            m_variable_values([str, offsets_sizes]() {
-                const auto str_sz = static_cast<uint16_t>(str.size());
-                std::vector<std::string> vals;
-                vals.reserve(offsets_sizes.size());
-                for (const auto& [offset, sz] : offsets_sizes)
-                    vals.emplace_back(str.substr(std::min(offset, str_sz), sz));
-                return vals;
-            }()),
             m_turn(turn)
         {}
 
@@ -176,6 +166,13 @@ public:
                         return vars;
                     }(std::move(fixed.m_variable_names), std::move(unique.m_variable_values)))
     {}
+
+    [[nodiscard]] static bool IsValidSitrep(const FixedInfo& fixed, std::span<const std::string_view> param_values, const ScriptingContext* context)
+    { return VarText::GenerateVarText(fixed.m_template_string, fixed.m_variable_names, param_values, context).second; }
+
+    [[nodiscard]] static auto GenerateText(const FixedInfo& fixed, std::span<const std::string_view> param_values, const ScriptingContext* context)
+    { return VarText::GenerateVarText(fixed.m_template_string, fixed.m_variable_names, param_values, context).first; }
+
 
 private:
     int         m_turn = INVALID_GAME_TURN;

@@ -13,8 +13,8 @@ public:
     SitRepPanel(std::string_view config_name = "");
     void CompleteConstruction() override;
 
-    std::set<std::string>   HiddenSitRepTemplates() const { return m_hidden_sitrep_templates; }
-    std::size_t             NumVisibleSitrepsThisTurn() const;
+    const auto& HiddenSitRepLabels() const noexcept { return m_hidden_sitrep_labels; }
+    std::size_t NumVisibleSitrepsThisTurn() const; // TODO: replace with HasVisibleSitRepsOnTurn(int turn)
 
     void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
@@ -23,7 +23,7 @@ public:
     void Update(); ///< loads all the relevant SitReps into the window
 
     void ShowSitRepsForTurn(int turn);
-    void SetHiddenSitRepTemplates(const std::set<std::string>& templates);
+    void SetHiddenSitRepLabels(const std::set<std::string>& labels);
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
@@ -44,7 +44,7 @@ private:
     std::shared_ptr<GG::Button>     m_last_turn_button;
     std::shared_ptr<GG::Button>     m_filter_button;
     int                             m_showing_turn = 0;
-    std::set<std::string>           m_hidden_sitrep_templates;
+    std::set<std::string>           m_hidden_sitrep_labels;
 };
 
 
