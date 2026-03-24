@@ -3,10 +3,10 @@
 
 #include <GG/GGFwd.h>
 #include <GG/ListBox.h>
+#include "../client/ClientApp.h"
 #include "CUIWnd.h"
 
 class SitRepEntry;
-
 
 class SitRepPanel : public CUIWnd {
 public:
@@ -14,7 +14,9 @@ public:
     void CompleteConstruction() override;
 
     const auto& HiddenSitRepLabels() const noexcept { return m_hidden_sitrep_labels; }
-    std::size_t NumVisibleSitrepsThisTurn() const; // TODO: replace with HasVisibleSitRepsOnTurn(int turn)
+    std::size_t NumVisibleSitrepsThisTurn() const;
+    bool HasVisibleSitrepsOnTurn(const ClientApp& app, int turn) const;
+    bool HasVisibleSitrepsOnCurrentTurn(const ClientApp& app) const { return HasVisibleSitrepsOnTurn(app, app.CurrentTurn()); }
 
     void KeyPress(GG::Key key, uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
