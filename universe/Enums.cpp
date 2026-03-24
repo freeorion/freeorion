@@ -5,6 +5,7 @@
 #include <boost/preprocessor/tuple/elem.hpp>
 #include <boost/preprocessor/tuple/size.hpp>
 
+#include <sstream>
 #include <tuple>
 
 namespace {
@@ -30,9 +31,11 @@ static_assert(OneTValues().size() == 2);
 
 FO_DEF_ENUM_FROM_STRING(OneT, 1)
 static_assert(OneTFromString("v") == OneT::v);
+static_assert(std::is_same_v<decltype([]() { std::stringstream ss; OneT dummy{0}; ss << dummy; ss >> dummy; return dummy; }()), OneT>);
 
 FO_DEF_ENUM_IMPL_IMPL(TwoT, int8_t, 1, ((b, "b", 1, 1))((c, "c", 1, 0)))
 static_assert(TwoTFromString(to_string(TwoT::b)) == TwoT::b);
+static_assert(std::is_same_v<decltype([]() { std::stringstream ss; TwoT dummy{0}; ss << dummy; ss >> dummy; return dummy; }()), TwoT>);
 
 using TestTuple = std::tuple<TwoT, std::string_view, int, int>;
 static_assert((TestTuple FO_DEF_ENUM_TX_VALUE_TUPLE(TwoT::b, 1, 6))  ==  TestTuple{TwoT::b, "TwoT::b"sv, 1, 6});
@@ -78,6 +81,7 @@ FO_ENUM(
     ((FIFTEEN))((SIXTEEN))((SEVENTEEN))((EIGHTEEN))
     ((NINETEEN))((TWENTY))((NUM_TEST))
 )
+static_assert(std::is_same_v<decltype([]() { std::stringstream ss; TestEnum dummy{0}; ss << dummy; ss >> dummy; return dummy; }()), TestEnum>);
 
 static_assert(TestEnum{-1} == TestEnum::INVALID);
 static_assert(TestEnum{} == TestEnum::ZERO);
@@ -128,6 +132,8 @@ struct Encloses {
         ((TWO_HUNDRED, 200))
         ((THOUSAND, 1000))
     )
+
+    static_assert(std::is_same_v<decltype([]() { std::stringstream ss; Enclosed dummy{0}; ss << dummy; ss >> dummy; return dummy; }()), Enclosed>);
 };
 
 }
