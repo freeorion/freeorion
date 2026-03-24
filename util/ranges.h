@@ -116,10 +116,25 @@ static constexpr struct range_values_t {} range_values{};
 auto operator|(auto&& r, const range_values_t&)
 { return boost::adaptors::values(std::forward<decltype(r)>(r)); }
 
-template <typename... Args>
-inline auto range_find_if(Args&&... args) { return boost::range::find_if(std::forward<Args>(args)...); }
-template <typename... Args>
-inline auto range_find(Args&&... args) { return boost::range::find(std::forward<Args>(args)...); }
+template <typename Rng, typename Pred>
+inline auto range_find_if(Rng&& rng, Pred&& pred) { return boost::range::find_if(std::forward<Rng>(rng), std::forward<Pred>(pred)); }
+template <typename Rng, typename Val>
+inline auto range_find(Rng&& rng, Val&& val)
+{
+    if constexpr (requires { *boost::range::find(std::forward<Rng>(rng), std::forward<Val>(val)) == val; }) {
+        return boost::range::find(std::forward<Rng>(rng), std::forward<Val>(val));
+    } else { 
+        const auto is_val = [&val](const auto& rv) noexcept(noexcept(val == rv)) { return val == rv; };
+        if constexpr (requires { range_find_if(rng, is_val) != boost::end(rng); })
+            return range_find_if(std::forward<Rng>(rng), is_val);
+    }
+}
+# if defined(__GNUC__)
+template <typename T, std::size_t E, typename... Args>
+inline const auto range_find_if(std::span<T, E> s, Args&&... args)
+{ return std::find_if(s.begin(), s.end(), std::forward<Args>(args)...); }
+# endif
+
 
 template <typename... Args>
 inline const auto range_empty(Args&&... args) { return boost::empty(std::forward<Args>(args)...); }
