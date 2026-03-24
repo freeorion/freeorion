@@ -542,7 +542,7 @@ namespace {
             using ParamSetT = ParamsLists::value_type;
 
             // check if any of the parameter sets make a valid sitrep
-            const auto makes_valid_sitrep = [rep_turn{turn_fixedid.first}, &fixed_info, context{&context}](const ParamSetT& p) {
+            const auto makes_valid_sitrep = [&fixed_info, context{&context}](const ParamSetT& p) {
                 const auto [views, count] = p.ToViewsAndCount();
                 const std::span param_views(views.begin(), count);
                 bool retval = SitRepEntry::IsValidSitrep(fixed_info, param_views, context);
@@ -932,6 +932,50 @@ void SitRepPanel::SetHiddenSitRepLabels(const std::set<std::string>& labels) {
         Update();
 }
 
+bool SitRepPanel::HasVisibleSitrepsOnTurn(const ClientApp& app, int turn) const {
+    const auto& context = app.GetContext();
+    const auto empire = context.GetEmpire(app.EmpireID());
+    if (!empire)
+        return false;
+
+    const auto& sitreps = empire->SitReps();
+    const auto& fixed_infos = empire->SitRepFixedInfos();
+
+    // checks turn of sitrep is current turn
+    const auto is_this_turn = [turn](const EmpireSitrepsContainer::value_type& turn_x_x)
+    { return turn_x_x.first.first == turn; };
+
+    // checks that fixed info idx is in range in container, gets it, and checks that it is not hidden
+    const auto in_range_not_hidden = [this, &fixed_infos](const EmpireSitrepsContainer::value_type& x_fixedid_x) {
+        const auto fixed_idx = x_fixedid_x.first.second;
+        if (fixed_idx >= fixed_infos.size())
+            return false;
+        const auto& fixed_info = fixed_infos[fixed_idx];
+        return !m_hidden_sitrep_labels.contains(fixed_info.m_label);
+    };
+
+    const auto has_valid_sitrep =
+        [&context, &fixed_infos](const EmpireSitrepsContainer::value_type& turn_fixedid_params_lists) -> bool
+    {
+        const auto& [turn_idx, params_lists] = turn_fixedid_params_lists;
+        const auto fixed_idx = turn_idx.second;
+        if (fixed_idx >= fixed_infos.size())
+            return false;
+        const auto& fixed_info = fixed_infos[fixed_idx];
+
+        const auto makes_valid_sitrep = [&fixed_info, context{&context}](const Empire::ChunkedStringAndViews& p) -> bool {
+            const auto [views, count] = p.ToViewsAndCount();
+            const std::span param_views(views.begin(), count);
+            return SitRepEntry::IsValidSitrep(fixed_info, param_views, context);
+        };
+
+        return range_any_of(params_lists, makes_valid_sitrep);
+    };
+
+    auto not_hidden_sitrep_rng = sitreps | range_filter(is_this_turn) | range_filter(in_range_not_hidden);
+    return range_any_of(not_hidden_sitrep_rng, has_valid_sitrep);
+}
+
 std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
     const auto& app = GetApp();
     const auto& context = app.GetContext();
@@ -956,17 +1000,16 @@ std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
         return !m_hidden_sitrep_labels.contains(fixed_info.m_label);
     };
 
-    const auto to_this_turn_valid_sitrep_count =
-        [current_turn, &context, &fixed_infos]
+    const auto to_valid_sitrep_count = [&context, &fixed_infos]
         (const EmpireSitrepsContainer::value_type& turn_fixedid_params_lists) -> std::size_t
     {
         const auto& [turn_idx, params_lists] = turn_fixedid_params_lists;
-        const auto& [turn, fixed_idx] = turn_idx;
+        const auto fixed_idx = turn_idx.second;
         if (fixed_idx >= fixed_infos.size())
             return 0;
         const auto& fixed_info = fixed_infos[fixed_idx];
 
-        const auto makes_valid_sitrep = [current_turn, &fixed_info, context{&context}](const Empire::ChunkedStringAndViews& p) -> bool {
+        const auto makes_valid_sitrep = [&fixed_info, context{&context}](const Empire::ChunkedStringAndViews& p) -> bool {
             const auto [views, count] = p.ToViewsAndCount();
             const std::span param_views(views.begin(), count);
             return SitRepEntry::IsValidSitrep(fixed_info, param_views, context);
@@ -976,7 +1019,7 @@ std::size_t SitRepPanel::NumVisibleSitrepsThisTurn() const {
     };
 
     auto valid_not_hidden_sitrep_counts_rng = sitreps | range_filter(is_this_turn) | range_filter(in_range_not_hidden) |
-                                              range_transform(to_this_turn_valid_sitrep_count);
+                                              range_transform(to_valid_sitrep_count);
 
     return std::accumulate(valid_not_hidden_sitrep_counts_rng.begin(), valid_not_hidden_sitrep_counts_rng.end(), std::size_t{0});
 }

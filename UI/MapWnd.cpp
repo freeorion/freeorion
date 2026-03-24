@@ -2869,7 +2869,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
     bool show_intro_sitreps = context.current_turn == 1 &&
         GetOptionsDB().Get<Aggression>("setup.ai.aggression") <= Aggression::TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
-    if (show_intro_sitreps || m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
+    if (show_intro_sitreps || m_sitrep_panel->HasVisibleSitrepsOnCurrentTurn(app)) {
         m_sitrep_panel->ShowSitRepsForTurn(context.current_turn);
         if (!m_design_wnd->Visible() && !m_research_wnd->Visible()
             && !m_production_wnd->Visible())
