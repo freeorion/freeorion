@@ -8149,7 +8149,7 @@ namespace {
         [[nodiscard]] inline operator std::string() const
         { return std::string{"("} + std::to_string(x) + ", " + std::to_string(y) + ")"; }
     };
-    std::ostream& operator<<(std::ostream& os, const vec2 v2) {
+    [[maybe_unused]] std::ostream& operator<<(std::ostream& os, const vec2 v2) {
         os << std::string{v2};
         return os;
     }
