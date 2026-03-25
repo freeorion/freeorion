@@ -4078,7 +4078,7 @@ void ServerApp::CacheCostsTimes(const ScriptingContext& context) {
         // cache costs for each empire for techs on queue an that are researchable, which
         // may be used later when updating the queue
 
-        const auto to_id_and_cache = [this, &tm, &context](const auto& id_empire) {
+        const auto to_id_and_cache = [&tm, &context](const auto& id_empire) {
             const auto should_cache = [empire{id_empire.second.get()}](const auto& name_tech) -> bool {
                 return (name_tech.second.Researchable() &&
                         empire->GetTechStatus(name_tech.first) == TechStatus::TS_RESEARCHABLE
