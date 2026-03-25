@@ -439,7 +439,7 @@ void GGHumanClientApp::Initialize() {
         PythonCommon python;
         python.Initialize();
         StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
-        PostDeferredEvent(std::move(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted())));
+        PostDeferredEvent(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted()));
     });
     background.detach();
     GetOptionsDB().OptionChangedSignal("resource.path").connect(
@@ -1651,7 +1651,7 @@ void GGHumanClientApp::HandleResoureDirChange() {
             PythonCommon python;
             python.Initialize();
             StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
-            PostDeferredEvent(std::move(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted())));
+            PostDeferredEvent(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted()));
         });
         background.detach();
     } else {
