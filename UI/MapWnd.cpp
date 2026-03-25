@@ -5509,7 +5509,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        auto route = universe.GetPathfinder().ShortestPath(start_system, system_id).first;
+        auto route{universe.GetPathfinder().ShortestPath(start_system, system_id).first};
         // Prepend a non-empty old_route to the beginning of route.
         if (append && !fleet->TravelRoute().empty()) {
             auto old_route(fleet->TravelRoute());
