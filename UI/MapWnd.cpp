@@ -2790,12 +2790,15 @@ void MapWnd::EnableOrderIssuing(bool enable) {
     FleetUIManager::GetFleetUIManager().EnableOrderIssuing(enable);
 }
 
-void MapWnd::InitTurn(ScriptingContext& context) {
-    DebugLogger() << "Initializing turn " << context.current_turn;
+void MapWnd::InitTurn(ScriptingContext& orig_context) {
+    DebugLogger() << "Initializing turn " << orig_context.current_turn;
     SectionedScopedTimer timer("MapWnd::InitTurn");
     timer.EnterSection("init");
 
     //DebugLogger() << GetSupplyManager().Dump();
+    ScriptingContext context{orig_context};
+        context.current_turn--;
+    TraceLogger() << "Faking previous turn for UI - calculation of current values depended on last turn: " << context.current_turn;
 
     auto& app = GetApp();
     const auto client_empire_id = app.EmpireID();
@@ -2857,7 +2860,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
 
     // set turn button to current turn
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
-                                       std::to_string(context.current_turn)));
+                                       std::to_string(orig_context.current_turn)));
     RefreshTurnButtonTooltip();
 
     m_ready_turn = false;
@@ -2870,7 +2873,7 @@ void MapWnd::InitTurn(ScriptingContext& context) {
         GetOptionsDB().Get<Aggression>("setup.ai.aggression") <= Aggression::TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
     if (show_intro_sitreps || m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
-        m_sitrep_panel->ShowSitRepsForTurn(context.current_turn);
+        m_sitrep_panel->ShowSitRepsForTurn(orig_context.current_turn);
         if (!m_design_wnd->Visible() && !m_research_wnd->Visible()
             && !m_production_wnd->Visible())
         { ShowSitRep(); }
