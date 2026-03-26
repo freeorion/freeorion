@@ -9,7 +9,7 @@ Tech(
     researchcost=32 * TECH_COST_MULTIPLIER,
     researchturns=4,
     tags=["PEDIA_LEARNING_CATEGORY", "THEORY"],
-    prerequisites=["LRN_PHYS_BRAIN", "LRN_ALGO_ELEGANCE"],
+    prerequisites=["LRN_PHYS_BRAIN"],
     unlock=[
         Item(type=UnlockPolicy, name="PLC_MARINE_RECRUITMENT"),
         Item(type=UnlockPolicy, name="PLC_NATIVE_APPROPRIATION"),
