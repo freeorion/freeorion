@@ -34,6 +34,36 @@ struct value_ref_wrapper {
         }
     }
 
+    // convert implicitely from double to wrap<vref<double>>
+    //template <std::same_as<T> double> // template argument deduction failed
+    //value_ref_wrapper(double d) :
+
+  // XXX I'd like to restrict this to value_ref_wrapper<double>...
+    template <std::same_as<double> D> 
+    value_ref_wrapper(D d) :
+      value_ref(std::make_shared<ValueRef::Constant<double>>(d))
+    {}
+  /*    
+    // convert implicitely from vref<int> to vref<double>
+    //template <> requires std::is_same_v<T, int>
+  
+    //template <std::same_as<T> int, std::same_as<value_ref_wrapper<double> W>
+    //operator W() const {
+
+    template <std::same_as<T> int, std::same_as<value_ref_wrapper<double>> W>
+    operator W() const {
+
+      //template <std::same_as<T> int>
+      //operator value_ref_wrapper<double>() const {
+      
+      //        if (value_ref->ConstantExpr()) {
+      //    return value_ref_wrapper<double>(std::make_shared<ValueRef::Constant<double>>(value_ref->Eval())): // yikes
+      //  } else {
+          return value_ref_wrapper<double>(std::make_shared<ValueRef::StaticCast<int,double>>(value_ref)); // hm, shared_ptr
+      //  }
+    }
+  */  
+
     operator condition_wrapper() const {
         auto op = std::dynamic_pointer_cast<const ValueRef::Operation<T>>(value_ref);
 
@@ -92,7 +122,13 @@ std::unique_ptr<ValueRef::ValueRef<T>> pyobject_to_vref_or_cast(const boost::pyt
     if (arg_cast.check()) {
         return std::make_unique<ValueRef::StaticCast<U, T>>(ValueRef::CloneUnique(arg_cast().value_ref));
     }
-    return std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(obj)());
+    auto arg_const = boost::python::extract<T>(obj);
+    if (arg_const.check()) {
+        return std::make_unique<ValueRef::Constant<T>>(arg_const());
+    }
+    // XXX not sure this is good, casting an const
+    auto arg_cast_const = boost::python::extract<U>(obj);
+    return std::make_unique<ValueRef::StaticCast<U, T>>(std::make_unique<ValueRef::Constant<U>>(arg_cast_const()));
 }
 
 value_ref_wrapper<double> pow(const value_ref_wrapper<int>& lhs, double rhs);
@@ -101,6 +137,7 @@ value_ref_wrapper<double> pow(double lhs, const value_ref_wrapper<double>& rhs);
 value_ref_wrapper<double> pow(const value_ref_wrapper<double>& lhs, const value_ref_wrapper<double>& rhs);
 
 value_ref_wrapper<double> operator*(int, const value_ref_wrapper<double>&);
+value_ref_wrapper<double> operator*(const value_ref_wrapper<int>&, double);
 value_ref_wrapper<double> operator*(const value_ref_wrapper<int>&, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator*(const value_ref_wrapper<double>&, const value_ref_wrapper<int>&);
 value_ref_wrapper<double> operator*(const value_ref_wrapper<double>&, double);
@@ -136,10 +173,12 @@ value_ref_wrapper<double> operator>=(const value_ref_wrapper<int>&, const value_
 value_ref_wrapper<double> operator<(const value_ref_wrapper<double>&, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator<(double, const value_ref_wrapper<double>&);
 value_ref_wrapper<double> operator<(const value_ref_wrapper<double>&, double);
+value_ref_wrapper<double> lessequalor(const value_ref_wrapper<int>&, int, double, double);
 value_ref_wrapper<double> operator!=(const value_ref_wrapper<double>&, int);
 value_ref_wrapper<double> operator-(const value_ref_wrapper<double>&);
 
 value_ref_wrapper<int> operator*(int, const value_ref_wrapper<int>&);
+value_ref_wrapper<int> operator*(const value_ref_wrapper<int>&, int);
 value_ref_wrapper<int> operator*(const value_ref_wrapper<int>&, const value_ref_wrapper<int>&);
 value_ref_wrapper<int> operator/(const value_ref_wrapper<int>&, int);
 value_ref_wrapper<int> operator-(const value_ref_wrapper<int>&, int);

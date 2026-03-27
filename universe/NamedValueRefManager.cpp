@@ -153,7 +153,7 @@ namespace {
     void RegisterValueRefImpl(R& container, std::mutex& mutex, const std::string& label,
                               std::string&& valueref_name, std::unique_ptr<VR>&& vref)
     {
-        TraceLogger() << "Register " << label << " valueref for " << valueref_name << ": " << vref->Description();
+        ErrorLogger() << "Register " << label << " valueref for " << valueref_name << ": " << vref->Description();
         std::scoped_lock lock(mutex);
         if (container.contains(valueref_name)) {
             TraceLogger() << "Skip registration for already registered " << label << " valueref for " << valueref_name;
