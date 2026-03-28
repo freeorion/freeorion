@@ -303,7 +303,7 @@ class Aggression(Trait):
         return self.aggression
 
     def may_explore_system(self, monster_threat):
-        return monster_threat < 2000 * self.aggression
+        return monster_threat <= 2000 * self.aggression
 
     def may_surge_industry(self, total_pp, total_rp):
         return (self.aggression > fo.aggression.cautious) and ((total_pp + 1.6 * total_rp) < (50 * self.aggression))
