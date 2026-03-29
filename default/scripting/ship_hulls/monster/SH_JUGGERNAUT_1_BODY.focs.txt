@@ -43,6 +43,7 @@ Hull
             stackinggroup = "GAME_START_MOD_STACK"
             effects = AddSpecial name = "JUGGERNAUT_NEST_SPECIAL"
 
+        [[HUNT_PLANET_TYPE(Asteroids,0.5)]]
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
         [[ADD_HULL_FUEL_TO_MAX_FUEL_METER]]
