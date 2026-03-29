@@ -79,7 +79,7 @@ struct [[nodiscard]] ScriptingContext final {
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    const Universe::EmpireObjectVisibilityMap& vis,
-                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
+                                   const Universe::EmpireObjectVisibilityTurnsVecMap& vis_turns,
                                    Source, const UniverseObjectCXBase* source_,
                                    Target, UniverseObject* target_) noexcept :
         source(                   source_),
@@ -107,7 +107,7 @@ struct [[nodiscard]] ScriptingContext final {
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    const Universe::EmpireObjectVisibilityMap& vis,
-                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
+                                   const Universe::EmpireObjectVisibilityTurnsVecMap& vis_turns,
                                    Source, const UniverseObjectCXBase* source_) noexcept :
         ScriptingContext(parent_context, vis, vis_turns, Source{}, source_,
                          Target{}, parent_context.effect_target)
@@ -115,7 +115,7 @@ struct [[nodiscard]] ScriptingContext final {
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
                                    const Universe::EmpireObjectVisibilityMap& vis,
-                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns) noexcept :
+                                   const Universe::EmpireObjectVisibilityTurnsVecMap& vis_turns) noexcept :
         ScriptingContext(parent_context, vis, vis_turns, Source{}, parent_context.source)
     {}
 
@@ -333,8 +333,8 @@ private: // Universe and ObjectMap getters select one of these based on constnes
     ObjectMap*                                     objects = universe ? std::addressof(universe->Objects()) : nullptr;
     const ObjectMap&                               const_objects{objects ? *objects : const_universe.Objects()};
 public:
-    const Universe::EmpireObjectVisibilityMap&     empire_object_vis{const_universe.GetEmpireObjectVisibility()};
-    const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
+    const Universe::EmpireObjectVisibilityMap&         empire_object_vis{const_universe.GetEmpireObjectVisibility()};
+    const Universe::EmpireObjectVisibilityTurnsVecMap& empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
 private:
     EmpireManager*                                 empires = nullptr;
     const EmpireManager&                           const_empires;

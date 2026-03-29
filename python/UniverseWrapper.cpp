@@ -131,6 +131,19 @@ namespace {
         return neighbours | range_transform(swap_kvp) | range_to<std::map<int, double>>();
     }
 
+    auto GetObjEmpireVisTurns(const Universe& universe, int object_id, int empire_id) -> std::map<Visibility, int>
+    {
+        std::map<Visibility, int> retval;
+        const auto& ovt = universe.GetObjectVisibilityTurnsByEmpire(object_id, empire_id);
+        if (!ovt.empty()) {
+            for (Visibility vis : {Visibility::VIS_BASIC_VISIBILITY, Visibility::VIS_PARTIAL_VISIBILITY, Visibility::VIS_FULL_VISIBILITY}) {
+                if (ovt[vis] != INVALID_GAME_TURN)
+                    retval.emplace(vis, ovt[vis]);
+            }
+        }
+        return retval;
+    }
+
     auto ObjectSpecials(const UniverseObject& object) -> std::vector<std::string>
     { return object.Specials() | range_keys | range_to_vec; }
 
@@ -411,7 +424,7 @@ namespace FreeOrionPython {
             .def("getSystemNeighborsMap",       SystemNeighborsMap,
                                                 py::return_value_policy<py::return_by_value>())
 
-            .def("getVisibilityTurnsMap",       &Universe::GetObjectVisibilityTurnMapByEmpire,
+            .def("getVisibilityTurnsMap",       GetObjEmpireVisTurns,
                                                 py::return_value_policy<py::return_by_value>())
 
             .def("getVisibility",               &Universe::GetObjectVisibilityByEmpire,
