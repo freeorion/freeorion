@@ -29,13 +29,13 @@ public:
     [[nodiscard]] std::shared_ptr<const Empire> GetEmpire(int id) const;
     [[nodiscard]] std::shared_ptr<Empire> GetEmpire(int id);
 
-    const Universe&                                universe; // universe in which combat occurs, used for general info getting, but not object state info
-    EmpireManager&                                 empires;
-    const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns;
-    const DiploStatusMap&                          diplo_statuses;
-    const GalaxySetupData&                         galaxy_setup_data;
-    SpeciesManager&                                species;
-    const SupplyManager&                           supply;
+    const Universe&                                    universe; // universe in which combat occurs, used for general info getting, but not object state info
+    EmpireManager&                                     empires;
+    const Universe::EmpireObjectVisibilityTurnsVecMap& empire_object_vis_turns;
+    const DiploStatusMap&                              diplo_statuses;
+    const GalaxySetupData&                             galaxy_setup_data;
+    SpeciesManager&                                    species;
+    const SupplyManager&                               supply;
 
     ObjectMap                           objects;                       ///< actual state of objects relevant to combat, filtered and copied for system where combat occurs, not necessarily consistent with contents of universe's ObjectMap
     Universe::EmpireObjectVisibilityMap empire_object_visibility;      ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle

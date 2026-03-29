@@ -419,19 +419,59 @@ Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) c
     return vis_map_it->second;
 }
 
-const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const {
-    static const std::map<Visibility, int> empty_map;
+const Universe::ObjVisTurns& Universe::GetObjectVisibilityTurnsByEmpire(int object_id, int empire_id) const {
+    static constexpr ObjVisTurns never_visible{};
 
     auto empire_it = m_empire_object_visibility_turns.find(empire_id);
     if (empire_it == m_empire_object_visibility_turns.end())
-        return empty_map;
+        return never_visible;
+    const auto& obj_vis_turns = empire_it->second;
 
-    const ObjectVisibilityTurnMap& obj_vis_turn_map = empire_it->second;
-    auto object_it = obj_vis_turn_map.find(object_id);
-    if (object_it == obj_vis_turn_map.end())
-        return empty_map;
+    const auto is_obj_id = [object_id](const auto& ov) noexcept { return ov.obj_id == object_id; };
+    auto object_it = range_find_if(obj_vis_turns, is_obj_id);
+    if (object_it == obj_vis_turns.end())
+        return never_visible;
 
-    return object_it->second;
+    return *object_it;
+}
+
+int Universe::GetObjectVisibilityTurnByEmpire(int object_id, int empire_id, Visibility vis) const {
+    auto empire_it = m_empire_object_visibility_turns.find(empire_id);
+    if (empire_it == m_empire_object_visibility_turns.end())
+        return INVALID_GAME_TURN;
+    const auto& obj_vis_turns = empire_it->second;
+
+    const auto is_obj_id = [object_id](const auto& ov) noexcept { return ov.obj_id == object_id; };
+    const auto object_it = range_find_if(obj_vis_turns, is_obj_id);
+    if (object_it == obj_vis_turns.end())
+        return INVALID_GAME_TURN;
+    const auto& obj_vis = *object_it;
+
+    return obj_vis[vis];
+}
+
+bool Universe::EmpireHasEverDetectedObjectAtVisibility(int object_id, int empire_id, Visibility vis) const {
+    auto empire_it = m_empire_object_visibility_turns.find(empire_id);
+    if (empire_it == m_empire_object_visibility_turns.end())
+        return false;
+    const auto& obj_vis_turns = empire_it->second;
+
+    const auto is_obj_id = [object_id](const auto& ov) noexcept { return ov.obj_id == object_id; };
+    const auto object_it = range_find_if(obj_vis_turns, is_obj_id);
+
+    return object_it != obj_vis_turns.end() && object_it->contains(vis);
+}
+
+void Universe::SetObjectVisibilityTurnsByEmpire(int object_id, int empire_id, Visibility vis, int turn) {
+    auto& obj_vis_turns = m_empire_object_visibility_turns[empire_id];
+
+    const auto is_obj_id = [object_id](const auto& ov) noexcept { return ov.obj_id == object_id; };
+    auto object_it = range_find_if(obj_vis_turns, is_obj_id);
+
+    if (object_it != obj_vis_turns.end())
+        object_it->SetVisTurnsCascade(vis, turn);
+    else
+        obj_vis_turns.emplace_back(object_id, vis, turn);    
 }
 
 std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const {
@@ -2271,11 +2311,8 @@ std::size_t Universe::SizeInMemory() const {
         retval += sizeof(decltype(id_ovm.second)::value_type)*id_ovm.second.size();
 
     retval += sizeof(decltype(m_empire_object_visibility_turns)::value_type)*m_empire_object_visibility_turns.size();
-    for (const auto& id_ovtm : m_empire_object_visibility_turns) {
-        retval += sizeof(decltype(id_ovtm.second)::value_type)*id_ovtm.second.size();
-        for (const auto& id_vtm : id_ovtm.second)
-            retval += sizeof(decltype(id_vtm.second)::value_type)*id_vtm.second.size();
-    }
+    for (const auto& id_ovtm : m_empire_object_visibility_turns)
+        retval += sizeof(decltype(id_ovtm.second)::value_type)*id_ovtm.second.capacity();
 
     retval += sizeof(decltype(m_fleet_blockade_ship_visibility_overrides)::value_type)*m_fleet_blockade_ship_visibility_overrides.size();
     for (const auto& id_ids : m_fleet_blockade_ship_visibility_overrides)
@@ -2697,9 +2734,8 @@ namespace {
 
                 if (GetGameRules().Get<bool>("RULE_UNSEEN_STEALTHY_PLANETS_INVISIBLE")) {
                     // has the empire ever detected the planet?
-                    auto& turns_seen_by_empire = universe.GetObjectVisibilityTurnMapByEmpire(planet->ID(), empire_id);
-                    if (turns_seen_by_empire.empty())
-                        continue;   // never seen, don't grant any visibility for having an object in the system
+                    if (!universe.EmpireHasEverDetectedObject(planet_id, empire_id))
+                        continue; // never seen, don't grant any visibility for having an object in the system
                 }
 
                 // ensure planet is at least basicaly visible. does not overwrite higher visibility levels
@@ -3050,8 +3086,6 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
             // was seen at various visibility levels.
 
             ObjectMap&               known_object_map = m_empire_latest_known_objects[empire_id];         // creates empty map if none yet present
-            ObjectVisibilityTurnMap& object_vis_turn_map = m_empire_object_visibility_turns[empire_id];   // creates empty map if none yet present
-            VisibilityTurnMap&       vis_turn_map = object_vis_turn_map[object_id];                       // creates empty map if none yet present
             const auto&              known_destroyed_ids = m_empire_known_destroyed_object_ids[empire_id];
 
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
@@ -3072,19 +3106,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns(int current_turn
             //DebugLogger() << "Empire " << empire_id << " can see object " << object_id << " with vis level " << vis;
 
             // update empire's visibility turn history for current vis, and lesser vis levels
-            if (vis >= Visibility::VIS_BASIC_VISIBILITY) {
-                vis_turn_map[Visibility::VIS_BASIC_VISIBILITY] = current_turn;
-                if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
-                    vis_turn_map[Visibility::VIS_PARTIAL_VISIBILITY] = current_turn;
-                    if (vis >= Visibility::VIS_FULL_VISIBILITY) {
-                        vis_turn_map[Visibility::VIS_FULL_VISIBILITY] = current_turn;
-                    }
-                }
-                //DebugLogger() << " ... Setting empire " << empire_id << " object " << full_object->Name() << " (" << object_id << ") vis " << vis << " (and higher) turn to " << current_turn;
-            } else {
-                ErrorLogger() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() found invalid visibility for object with id " << object_id << " by empire with id " << empire_id;
-                continue;
-            }
+            SetObjectVisibilityTurnsByEmpire(object_id, empire_id, vis, current_turn);
         }
     }
 }
@@ -3585,19 +3607,19 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     }
 }
 
-void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns,
+void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns,
                                                 int encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES) {
+        // include all empires' visibility turn info
         empire_object_visibility_turns = m_empire_object_visibility_turns;
-        return;
+    } else {
+        // include just requested empire's visibility turn info
+        empire_object_visibility_turns.clear();
+        auto it = m_empire_object_visibility_turns.find(encoding_empire);
+        if (it != m_empire_object_visibility_turns.end())
+            empire_object_visibility_turns[encoding_empire] = it->second;
     }
-
-    // include just requested empire's visibility turn information
-    empire_object_visibility_turns.clear();
-    auto it = m_empire_object_visibility_turns.find(encoding_empire);
-    if (it != m_empire_object_visibility_turns.end())
-        empire_object_visibility_turns[encoding_empire] = it->second;
 }
 
 void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids,
