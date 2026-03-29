@@ -4602,7 +4602,7 @@ namespace {
                 for (const auto& empire : m_context.Empires() | range_values) {
                     count += NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                            candidate->ID(), m_context.ContextUniverse(),
-                                           m_name, m_design_id);
+                                           m_name, m_design_id, m_building_subtype);
                 }
 
             } else {
@@ -4610,7 +4610,7 @@ namespace {
                 if (!empire) return false;
                 count = NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                       candidate->ID(), m_context.ContextUniverse(),
-                                      m_name, m_design_id);
+                                      m_name, m_design_id, m_building_subtype);
             }
 
             return (m_low <= count && count <= m_high);
@@ -4698,7 +4698,7 @@ std::string Enqueued::Description(bool negated) const {
         subtype_str = UserString("BLD_SUBTYPE_SHIPYARD");
 
     std::string description_str;
-    if (m_build_type == BuildType::BT_BUILDING && m_building_subtype != BuildingType::SubType::NONE)
+    if (m_build_type == BuildType::BT_BUILDING && m_building_subtype == BuildingType::SubType::NONE)
         description_str = (!negated) ? UserString("DESC_ENQUEUED_BUILDING") : UserString("DESC_ENQUEUED_BUILDING_NOT");
     else if (m_build_type == BuildType::BT_BUILDING && m_building_subtype != BuildingType::SubType::NONE)
         description_str = (!negated) ? UserString("DESC_ENQUEUED_BUILDING_SUBTYPE") : UserString("DESC_ENQUEUED_BUILDING_SUBTYPE_NOT");
