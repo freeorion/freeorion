@@ -36,8 +36,218 @@ namespace {
 
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
-BOOST_CLASS_VERSION(Universe, 3)
+BOOST_CLASS_VERSION(Universe, 4)
 
+
+namespace {
+    template <integral T>
+    constexpr const auto* GetFormatString() {
+        if constexpr(std::is_unsigned_v<T>)
+            return "%u%n";
+        else if constexpr(std::is_signed_v<T>)
+            return "%d%n";
+        else
+            return "";
+    }
+
+    constexpr bool have_to_chars_lib =
+#if defined(__cpp_lib_to_chars)
+        true;
+#else
+        false;
+#endif
+
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    constexpr
+#endif
+    std::size_t ToChars(integral auto num, char* buffer, char* buffer_end) {
+        if constexpr (have_to_chars_lib) {
+            const auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
+            return static_cast<std::size_t>(std::distance(buffer, result_ptr));
+        } else {
+            std::size_t buffer_sz = std::distance(buffer, buffer_end);
+            auto temp = std::to_string(num);
+            auto out_sz = std::min(buffer_sz, temp.size());
+            std::copy_n(temp.begin(), out_sz, buffer);
+            return out_sz;
+        }
+    }
+
+    // returns { next unconsumed char*, true/false did the parse succeed }
+    // parsed value returned in \a val_out
+    auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool> {
+        if constexpr (have_to_chars_lib) {
+            const auto result = std::from_chars(start, end, val_out);
+            return {result.ptr, result.ec == std::errc()};
+        } else {
+            int chars_consumed = 0;
+            using val_out_t = std::decay_t<decltype(val_out)>;
+            constexpr auto val_format_str = GetFormatString<val_out_t>();
+            const auto matched = sscanf(start, val_format_str, &val_out, &chars_consumed);
+            return {start + chars_consumed, matched >= 1};
+        }
+    }
+
+
+    consteval std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
+        std::size_t retval = 1;
+        while (exp--)
+            retval *= base;
+        return retval;
+    }
+
+    constexpr int int_max = std::numeric_limits<int>::max();
+    constexpr uint8_t int_digits = 11; // digits in base 11 of -2147483648 = -2^31
+    static_assert(Pow(10, int_digits + 1) > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
+    constexpr std::size_t ovt_buffer_size = 4*(int_digits + 1); // space for "-2147483648 -2147483648 -2147483648 -2147483648 "
+
+
+    std::string ToString(const std::vector<Universe::ObjVisTurns>& data) {
+        std::string retval;
+        try {
+            retval.reserve(data.size() * (ovt_buffer_size + 1) + int_digits + 2); // space for count and all values and gaps
+        } catch(...) {}
+
+        retval.append(std::to_string(data.size()));
+
+        const auto append_turn_or_x = [&retval](int tx) {
+            if (tx == INVALID_GAME_TURN)
+                retval.append(" x");
+            else
+                retval.append(" ").append(std::to_string(tx));
+        };
+
+        for (const auto& ovt : data) {
+            retval.append("  ").append(std::to_string(ovt.obj_id));
+            append_turn_or_x(ovt.basic);
+            append_turn_or_x(ovt.partial);
+            append_turn_or_x(ovt.full);
+        }
+
+        return retval;
+    }
+
+    auto ToObjVisTurnsVec(std::string_view buffer) {
+        std::vector<Universe::ObjVisTurns> retval;
+
+        if (buffer.empty())
+            return retval;
+
+        const auto* const buffer_end = buffer.data() + buffer.size();
+
+        unsigned int count = 0;
+        auto [next, success] = FromChars(buffer.data(), buffer_end, count);
+        if (!success)
+            return retval;
+
+        try {
+            retval.reserve(count);
+        } catch (...) {}
+
+        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
+            // safety checks
+            if (!next || !buffer_end)
+                return {default_val, false, next};
+
+            // skip whitespace
+            while (next != buffer_end && *next == ' ')
+                ++next;
+
+            // safety check for end of buffer
+            if (next == buffer_end)
+                return {default_val, false, next};
+
+            // special case short representation default value
+            if (*next == 'x') {
+                ++next;
+                return {default_val, true, next};
+            }
+
+            // parse string to int
+            int result = default_val;
+            auto [next_out, success] = FromChars(next, buffer_end, result);
+            return {result, success, next_out};
+        };
+
+
+        for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
+            int obj_id = INVALID_OBJECT_ID;
+            int basic_turn = INVALID_GAME_TURN;
+            int partial_turn = INVALID_GAME_TURN;
+            int full_turn = INVALID_GAME_TURN;
+
+            std::tie(obj_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            if (!success)
+                break;
+            std::tie(basic_turn, success, next) = get_int_from_chars(next, INVALID_GAME_TURN);
+            if (!success)
+                break;
+            std::tie(partial_turn, success, next) = get_int_from_chars(next, INVALID_GAME_TURN);
+            if (!success)
+                break;
+            std::tie(full_turn, success, next) = get_int_from_chars(next, INVALID_GAME_TURN);
+            if (!success)
+                break;
+
+            retval.emplace_back(obj_id, basic_turn, partial_turn, full_turn);
+        }
+
+        return retval;
+    }
+
+
+    template <typename Archive>
+    void Serialize(Archive& ar, Universe::EmpireObjectVisibilityTurnsVecMap& eovtm)
+    { ar & boost::serialization::make_nvp("empire_object_visibility_turns", eovtm); }
+
+    void Serialize(boost::archive::xml_iarchive& ar, Universe::EmpireObjectVisibilityTurnsVecMap& eovtm) {
+        std::map<int, std::string> scratch;
+        ar >> boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+        eovtm.clear();
+        for (const auto& [eid, str] : scratch)
+            eovtm.emplace(eid, ToObjVisTurnsVec(str));
+    }
+
+    void Serialize(boost::archive::xml_oarchive& ar, Universe::EmpireObjectVisibilityTurnsVecMap& eovtm) {
+        std::map<int, std::string> scratch;
+        for (const auto& [eid, vec] : eovtm)
+            scratch.emplace(eid, ToString(vec));
+        ar << boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+    }
+
+    template <typename Archive>
+    void Serialize(Archive& ar, Universe::EmpireObjectVisibilityTurnsVecMap& eovtm, unsigned int const version)
+    {
+        if (Archive::is_loading::value && version < 4) {
+            using OldVisibilityTurnMap = std::map<Visibility, int>;
+            using OldObjectVisibilityTurnMap = std::map<int, OldVisibilityTurnMap>;
+            using OldEmpireObjectVisibilityTurnMap = std::map<int, OldObjectVisibilityTurnMap>;
+            OldEmpireObjectVisibilityTurnMap scratch;
+            ar & boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+
+            // copy to eovtm
+            for (auto& [eid, old_ovtm] : scratch) {
+                auto& ovt_vec = eovtm[eid];
+                for (auto& [obj_id, old_vtm] : old_ovtm) {
+                    auto& ovtm = ovt_vec.emplace_back(obj_id);
+                    for (auto& [vis, turn] : old_vtm)
+                        ovtm.SetVisTurnsCascade(vis, turn);
+                }
+            }
+        } else {
+            Serialize(ar, eovtm);
+        }
+    }
+}
+
+template <typename Archive>
+void serialize(Archive& ar, Universe::ObjVisTurns& ovtm, unsigned int const)
+{
+    ar  & boost::serialization::make_nvp("obj_id", ovtm.obj_id)
+        & boost::serialization::make_nvp("basic", ovtm.basic)
+        & boost::serialization::make_nvp("partial", ovtm.partial)
+        & boost::serialization::make_nvp("full", ovtm.full);
+}
 
 template <typename Archive>
 void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
@@ -54,14 +264,14 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ObjectMap                                 objects;
-    std::set<int>                             destroyed_object_ids;
-    Universe::EmpireObjectMap                 empire_latest_known_objects;
-    Universe::EmpireObjectVisibilityMap       empire_object_visibility;
-    Universe::EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
-    Universe::ObjectKnowledgeMap              empire_known_destroyed_object_ids;
-    Universe::ObjectKnowledgeMap              empire_stale_knowledge_object_ids;
-    Universe::ShipDesignMap                   ship_designs_scratch;
+    ObjectMap                                   objects;
+    std::set<int>                               destroyed_object_ids;
+    Universe::EmpireObjectMap                   empire_latest_known_objects;
+    Universe::EmpireObjectVisibilityMap         empire_object_visibility;
+    Universe::EmpireObjectVisibilityTurnsVecMap empire_object_visibility_turns;
+    Universe::ObjectKnowledgeMap                empire_known_destroyed_object_ids;
+    Universe::ObjectKnowledgeMap                empire_stale_knowledge_object_ids;
+    Universe::ShipDesignMap                     ship_designs_scratch;
 
     ar.template register_type<System>();
 
@@ -133,7 +343,8 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
     timer.EnterSection("visibility / known destroyed or stale");
     ar  & make_nvp("empire_object_visibility", empire_object_visibility);
-    ar  & make_nvp("empire_object_visibility_turns", empire_object_visibility_turns);
+    Serialize(ar, empire_object_visibility_turns, version);
+
     if constexpr (Archive::is_loading::value) {
         u.m_empire_object_visibility.swap(empire_object_visibility);
         u.m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
@@ -280,22 +491,6 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 
 namespace {
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#endif
-    auto ToChars(integral auto num, char* buffer, char* buffer_end) {
-#if defined(__cpp_lib_to_chars)
-        auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
-        return std::distance(buffer, result_ptr);
-#else
-        std::size_t buffer_sz = std::distance(buffer, buffer_end);
-        auto temp = std::to_string(num);
-        auto out_sz = std::min(buffer_sz, temp.size());
-        std::copy_n(temp.begin(), out_sz, buffer);
-        return out_sz;
-#endif
-    }
-
     constexpr std::size_t num_meters_possible{static_cast<std::size_t>(MeterType::NUM_METER_TYPES)};
     constexpr std::size_t single_meter_text_size{std::size(Meter::ToCharsArrayT())};
 
@@ -355,40 +550,6 @@ namespace {
 
     inline auto ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end)
     { return ToChars(val.first, val.second, buffer, buffer_end); }
-
-    constexpr bool have_to_chars_lib =
-#if defined(__cpp_lib_to_chars)
-        true;
-#else
-        false;
-#endif
-
-    template <integral T>
-    constexpr const auto* GetFormatString() {
-        if constexpr(std::is_unsigned_v<T>)
-            return "%u%n";
-        else if constexpr(std::is_signed_v<T>)
-            return "%d%n";
-        else
-            return "";
-    }
-
-    // returns { next unconsumed char*, true/false did the parse succeed }
-    // parsed value returned in \a val_out
-    inline auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool>
-    {
-        if constexpr(have_to_chars_lib) {
-            const auto result = std::from_chars(start, end, val_out);
-            return {result.ptr, result.ec == std::errc()};
-
-        } else {
-            int chars_consumed = 0;
-            using val_out_t = std::decay_t<decltype(val_out)>;
-            constexpr auto val_format_str = GetFormatString<val_out_t>();
-            const auto matched = sscanf(start, val_format_str, &val_out, &chars_consumed);
-            return {start + chars_consumed, matched >= 1};
-        }
-    }
 
 
     template <typename Archive>

@@ -2303,7 +2303,7 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id
 
     if (empire_id != ALL_EMPIRES) {
         const Visibility visibility = u.GetObjectVisibilityByEmpire(m_planet_id, empire_id);
-        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(m_planet_id, empire_id);
+        const auto& visibility_turns = u.GetObjectVisibilityTurnsByEmpire(m_planet_id, empire_id);
         const float empire_detection_strength = empire ? empire->GetMeter("METER_DETECTION_STRENGTH")->Current() : 0.0f;
         const float apparent_stealth = planet->GetMeter(MeterType::METER_STEALTH)->Initial();
 
@@ -2313,10 +2313,10 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id
         if (visibility == Visibility::VIS_NO_VISIBILITY) {
             visibility_info = UserString("PL_NO_VISIBILITY");
 
-            auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
-            if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
+            const int basic_vis_turn = visibility_turns[Visibility::VIS_BASIC_VISIBILITY];
+            if (basic_vis_turn != INVALID_GAME_TURN) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SEEN")) %
-                                                                        std::to_string(last_turn_visible_it->second));
+                                                                        std::to_string(basic_vis_turn));
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
@@ -2344,10 +2344,10 @@ void SidePanel::PlanetPanel::Refresh(ScriptingContext& context_in, int empire_id
         else if (visibility == Visibility::VIS_BASIC_VISIBILITY) {
             visibility_info = UserString("PL_BASIC_VISIBILITY");
 
-            const auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_PARTIAL_VISIBILITY);
-            if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
+            const int partial_vis_turn = visibility_turns[Visibility::VIS_PARTIAL_VISIBILITY];
+            if (partial_vis_turn != INVALID_GAME_TURN) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SCANNED")) %
-                                                                        std::to_string(last_turn_visible_it->second));
+                                                                        std::to_string(partial_vis_turn));
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SCANNED");

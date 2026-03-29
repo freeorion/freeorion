@@ -158,8 +158,8 @@ std::vector<float> Combat::WeaponDamageImpl(
 
     const Universe::EmpireObjectVisibilityMap empire_object_vis{
         {source.Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
-    const Universe::EmpireObjectVisibilityTurnMap empire_object_visibility_turns{
-        {source.Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
+    const Universe::EmpireObjectVisibilityTurnsVecMap empire_object_visibility_turns{
+        {source.Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}};
 
     if (target_ships == Combat::TargetShipsWD::TargetShips) {
         auto temp_ship = TempShipForDamageCalcs(source, context, target_shields);
@@ -195,8 +195,8 @@ std::map<int, Combat::FighterBoutInfo> Combat::ResolveFighterBouts(
 
     Universe::EmpireObjectVisibilityMap empire_object_vis{
         {ship->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY}}}};
-    Universe::EmpireObjectVisibilityTurnMap empire_object_visibility_turns{
-        {ship->Owner(), {{TEMPORARY_OBJECT_ID, {{Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}}}};
+    Universe::EmpireObjectVisibilityTurnsVecMap empire_object_visibility_turns{
+        {ship->Owner(), {{TEMPORARY_OBJECT_ID, Visibility::VIS_FULL_VISIBILITY, context.current_turn}}}};
     auto temp_ship = TempShipForDamageCalcs(*ship, context, 0.0f);
     ScriptingContext ship_target_context{context, empire_object_vis, empire_object_visibility_turns,
                                          ScriptingContext::Source{}, ship.get(),
