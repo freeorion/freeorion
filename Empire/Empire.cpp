@@ -1145,8 +1145,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const ScriptingContext& context,
     boost::container::flat_set<int> systems_with_at_least_partial_visibility_at_some_point;
     systems_with_at_least_partial_visibility_at_some_point.reserve(known_systems.size());
     for (int system_id : known_systems) {
-        const auto& vis_turns = universe.GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
-        if (vis_turns.contains(Visibility::VIS_PARTIAL_VISIBILITY))
+        if (universe.EmpireHasEverDetectedObjectAtVisibility(system_id, m_id, Visibility::VIS_PARTIAL_VISIBILITY))
             systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
     }
 
