@@ -1,0 +1,68 @@
+Part
+    name = "ST_COATING_GG"
+    description = "ST_COATING_GG_DESC"
+    exclusions = "ST_COATING_GG"
+    class = Stealth
+    capacity = 0
+    NoDefaultCapacityEffect
+    mountableSlotTypes = Internal
+    buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]] * [[SHIP_PART_COST_MULTIPLIER]] // FIXME upkeep macros break parsing
+    buildtime = 5
+    tags = [ "PEDIA_PC_STEALTH" ]
+    location = And [
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Building name = "BLD_BIO_LAB"
+            Or [
+                OwnedBy empire = Source.Owner
+                OwnedBy affiliation = AllyOf empire = Source.Owner
+            ]
+        ]
+        OwnedBy empire = Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = And [
+                ContainedBy And [
+                   System
+                   Contains Planet type = GasGiant
+                ]
+                // FIXME this does not do the right thing, this means only non-aggressive fleet stance
+                Passive
+            ]
+            stackinggroup = "STEALTH_GG_STACK"
+            effects = [
+                // this currently allows for surprise attacks into a neighboring system
+                // TODO the bonus should be removed when leaving a system as soon as temporary effects exists
+                SetStealth value = Value + (NamedReal name = "ST_COATING_GG_BONUS" value = 10)
+                SetSpeed value = Value - NamedReal name = "ST_COATING_GG_SPEED_MALUS" value = 10
+                SetDetection value = Value - NamedReal name = "ST_COATING_GG_DETECTION_MALUS" value = 50
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                // FIXME Passive does not do the right thing, this means only non-aggressive fleet stance
+                Passive
+                Stationary
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
+                ContainedBy And [
+                    System
+                    Contains Planet type = GasGiant
+                ]
+            ]
+            stackinggroup = "STEALTH_GG_STACK_DEEP"
+            accountinglabel = "GAS_GIANT_FIELD_STEALTH_DEEP_LABEL"
+            effects = [
+                // this currently allows for surprise attacks into a neighboring system
+                // TODO the bonus should be removed when leaving a system as soon as temporary effects exists
+                SetStealth value = Value + (NamedReal name ="ST_COATING_GG_GRO_XENO_HYBRIDS_BONUS" value = 20)
+                SetSpeed value = Value - NamedReal name = "ST_COATING_GG_SPEED_MALUS" value = 10
+                SetDetection value = Value - NamedReal name = "ST_COATING_GG_DETECTION_MALUS" value = 50
+            ]
+    ]
+    icon = "icons/ship_parts/gasgianthidden.png"
+
+#include "stealth.macros"
+
+#include "/scripting/macros/upkeep.macros"
