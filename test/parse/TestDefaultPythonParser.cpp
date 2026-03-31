@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     BOOST_CHECK(!tech_categories.empty());
     BOOST_CHECK(!categories_seen.empty());
 
-    BOOST_REQUIRE_EQUAL(211, techs.size());
+    BOOST_REQUIRE_EQUAL(213, techs.size());
     BOOST_REQUIRE_EQUAL(9, tech_categories.size());
     BOOST_REQUIRE_EQUAL(9, categories_seen.size());
 
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
 
     BOOST_CHECK(!buildings.empty());
 
-    BOOST_REQUIRE_EQUAL(109, buildings.size());
+    BOOST_REQUIRE_EQUAL(110, buildings.size());
 
     DumpEntitiesList(buildings);
     if (const char *buildings_name = std::getenv("FO_CHECKSUM_BUILDINGS_NAME")) {
