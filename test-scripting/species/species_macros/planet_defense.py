@@ -25,7 +25,6 @@ try:
         IsSource,
         LocalCandidate,
         MinOf,
-        NamedReal,
         Planet,
         SetDefense,
         SetMaxDefense,
@@ -56,11 +55,7 @@ PROTECTION_FOCUS_DEFENSE = EffectsGroup(
     effects=[
         SetMaxDefense(value=Value * 2),
         SetTargetHappiness(
-            value=Value
-            + NamedReal(
-                name="PROTECION_FOCUS_STABILITY_BONUS",
-                value=GameRule(type=float, name="RULE_PROTECTION_FOCUS_STABILITY"),
-            )
+            value=Value + GameRule(type=float, name="RULE_PROTECTION_FOCUS_STABILITY"),
         ),
     ],
 )

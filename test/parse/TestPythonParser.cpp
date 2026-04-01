@@ -326,8 +326,8 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_REQUIRE_EQUAL(false, effect_group.HasAppearanceEffects());
         BOOST_REQUIRE_EQUAL(false, effect_group.HasSitrepEffects());
         BOOST_REQUIRE_EQUAL(1, effect_group.Effects().size());
-        BOOST_REQUIRE_EQUAL(13902, effect_group.Effects()[0]->GetCheckSum());
-        BOOST_REQUIRE_EQUAL(36595, effect_group.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(8007633, effect_group.Effects()[0]->GetCheckSum());
+        BOOST_REQUIRE_EQUAL(8030326, effect_group.GetCheckSum());
 
         BOOST_REQUIRE_NE(nullptr, effect_group.Scope());
         BOOST_REQUIRE_NE(nullptr, effect_group.Activation());
@@ -383,7 +383,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 
         BOOST_REQUIRE_EQUAL(113801, CheckSums::GetCheckSum(species.AnnexationCost()));
 
-        BOOST_REQUIRE_EQUAL(8239795, CheckSums::GetCheckSum(species.Effects()));
+        BOOST_REQUIRE_EQUAL(4213540, CheckSums::GetCheckSum(species.Effects()));
         BOOST_REQUIRE_EQUAL(14018, CheckSums::GetCheckSum(species.Location()));
         BOOST_REQUIRE_EQUAL(1, CheckSums::GetCheckSum(species.Playable()));
         BOOST_REQUIRE_EQUAL(0, CheckSums::GetCheckSum(species.Native()));
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
         BOOST_TEST_MESSAGE("Dump " << species.Name() << ":");
         BOOST_TEST_MESSAGE(species.Dump(0));
 
-        BOOST_REQUIRE_EQUAL(6808164, species.GetCheckSum());
+        BOOST_REQUIRE_EQUAL(2781909, species.GetCheckSum());
 
         const Species test_species{"SP_ABADDONI",
             "SP_ABADDONI_DESC",
@@ -808,7 +808,7 @@ BOOST_AUTO_TEST_CASE(parse_named_values) {
     const auto named_values = *std::move(named_values_opt);
     BOOST_CHECK_EQUAL(0, named_values.size());
 
-    BOOST_WARN_EQUAL(2, GetNamedValueRefManager().GetItems().size());
+    BOOST_CHECK_EQUAL(2, GetNamedValueRefManager().GetItems().size());
 
     const auto* value_ref_ptr = GetNamedValueRefManager().GetValueRefBase("BLD_BLACK_HOLE_POW_GEN_MIN_STABILITY");
     BOOST_REQUIRE(value_ref_ptr != nullptr);
