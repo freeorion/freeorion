@@ -302,5 +302,49 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
 
 }
 
+/**
+ * Checks count of named values in real scripts
+ * FO_CHECKSUM_NAMED_VALUE_NAME determines named value name to be check for FO_CHECKSUM_NAMED_VALUE_VALUE checksum
+ */
+
+BOOST_AUTO_TEST_CASE(parse_named_values_full) {
+    PythonParser parser(m_python, m_default_scripting_dir);
+
+    auto named_values_p = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values_opt = Pending::WaitForPendingUnlocked(std::move(named_values_p));
+
+    BOOST_REQUIRE(named_values_opt);
+
+    const auto named_values_empty = *std::move(named_values_opt);
+    BOOST_CHECK_EQUAL(0, named_values_empty.size());
+
+    auto named_values_py_p = Pending::ParseSynchronously(parse::named_value_refs_py, parser, m_default_scripting_dir / "macros");
+    auto named_values_py_opt = Pending::WaitForPendingUnlocked(std::move(named_values_py_p));
+
+    BOOST_REQUIRE(named_values_py_opt);
+
+    const auto named_values_py_empty = *std::move(named_values_py_opt);
+    BOOST_CHECK_EQUAL(0, named_values_py_empty.size());
+
+    const auto named_values = GetNamedValueRefManager().GetItems();
+    BOOST_WARN_EQUAL(73, named_values.size()); // Can have named values from other sources
+
+    DumpEntitiesList(named_values);
+    if (const char *named_value_name = std::getenv("FO_CHECKSUM_NAMED_VALUE_NAME")) {
+        const auto named_value_it = named_values.find(named_value_name);
+        BOOST_REQUIRE_MESSAGE(named_values.end() != named_value_it, "Missing " << named_value_name);
+
+        BOOST_TEST_MESSAGE("Dump " << named_value_name << ":");
+        DumpEntity(named_value_it->second.get());
+
+        if (const char *named_value_checksum_str = std::getenv("FO_CHECKSUM_NAMED_VALUE_VALUE")) {
+            uint32_t named_value_checksum = boost::lexical_cast<uint32_t>(named_value_checksum_str);
+            uint32_t value{0};
+            CheckSums::CheckSumCombine(value, named_value_it->second.get());
+            BOOST_REQUIRE_EQUAL(named_value_checksum, value);
+        }
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
