@@ -26,7 +26,6 @@ try:
         LocalCandidate,
         MaxOf,
         MinOf,
-        NamedReal,
         OwnedBy,
         Planet,
         Poor,
@@ -137,10 +136,7 @@ BASIC_DEFENSE_TROOPS = [
         stackinggroup="POPULATION_TROOPS_STACK",
         accountinglabel="DEF_ROOT_DEFENSE",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-        effects=SetMaxTroops(
-            value=Value
-            + Target.Population * NamedReal(name="BASIC_DEFENSE_TROOPS_MAX_TROOPS_PERPOP", value=1.0 * TROOPS_PER_POP)
-        ),
+        effects=SetMaxTroops(value=Value + Target.Population * TROOPS_PER_POP),
     ),
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
         scope=IsSource,
@@ -154,11 +150,7 @@ BASIC_DEFENSE_TROOPS = [
         & (LocalCandidate.LastTurnConquered < CurrentTurn)
         & (LocalCandidate.LastTurnAttackedByShip < CurrentTurn),
         priority=AFTER_ALL_TARGET_MAX_METERS_PRIORITY,
-        effects=SetTroops(
-            value=MinOf(
-                float, Value(Target.MaxTroops), Value + NamedReal(name="BASIC_DEFENSE_TROOPS_TROOPREGEN_FLAT", value=1)
-            )
-        ),
+        effects=SetTroops(value=MinOf(float, Value(Target.MaxTroops), Value + 1)),
     ),
 ]
 

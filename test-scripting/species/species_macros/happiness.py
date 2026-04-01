@@ -28,7 +28,6 @@ try:
         Medium,
         Min,
         MinOf,
-        NamedReal,
         OwnedBy,
         Planet,
         Poor,
@@ -255,9 +254,7 @@ STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
         & ~EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_CONFEDERATION")
         & ~SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD,
         accountinglabel="CAPITAL_DISCONNECTION_LABEL",
-        effects=SetTargetHappiness(
-            value=Value - NamedReal(name="DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY", value=10)
-        ),
+        effects=SetTargetHappiness(value=Value - 10),
     ),
 ]
 
@@ -288,7 +285,7 @@ GOOD_HAPPINESS = [
         scope=IsSource,
         activation=Planet(),
         accountinglabel="GOOD_HAPPINESS_LABEL",
-        effects=SetTargetHappiness(value=Value + NamedReal(name="GOOD_HAPPINESS_VAL", value=2.5)),
+        effects=SetTargetHappiness(value=Value + 2.5),
     ),
 ]
 

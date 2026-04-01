@@ -20,7 +20,6 @@ try:
         IsHuman,
         IsSource,
         LocalCandidate,
-        NamedReal,
         OwnedBy,
         Planet,
         ResourceSupplyConnected,
@@ -44,7 +43,7 @@ BASE_INFLUENCE_COSTS = [
         priority=TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
         effects=SetTargetInfluence(
             value=Value
-            - NamedReal(name="COLONY_ADMIN_COSTS_PER_PLANET", value=0.4)
+            - 0.4
             * (
                 (
                     StatisticCount(
@@ -55,7 +54,7 @@ BASE_INFLUENCE_COSTS = [
                         & ~HasSpecies(name=["SP_EXOBOT"]),
                     )
                     + (
-                        NamedReal(name="OUTPOST_RELATIVE_ADMIN_COUNT", value=0.25)
+                        0.25
                         * (
                             StatisticCount(
                                 float,
@@ -87,10 +86,7 @@ BASE_INFLUENCE_COSTS = [
         ),
         accountinglabel="CAPITAL_DISCONNECTION_LABEL",
         priority=TARGET_LAST_BEFORE_OVERRIDE_PRIORITY,
-        effects=SetTargetInfluence(
-            value=Value
-            - NamedReal(name="SUPPLY_DISCONNECTED_INFLUENCE_MALUS", value=SUPPLY_DISCONNECTED_INFLUENCE_MALUS)
-        ),
+        effects=SetTargetInfluence(value=Value - SUPPLY_DISCONNECTED_INFLUENCE_MALUS),
     ),
     EffectsGroup(  # gives human bonuses when AI Aggression set to Beginner
         scope=IsSource,
@@ -110,20 +106,20 @@ ARTISANS_INFLUENCE_STABILITY = [
     EffectsGroup(  # artistic species generate influence when artisans workshops policy adopted
         scope=IsSource,
         activation=HasTag(name="ARTISTIC")
-        & Happiness(low=NamedReal(name="ARTISANS_MIN_STABILITY_FOCUS", value=1))
+        & Happiness(low=1)
         & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_ARTISAN_WORKSHOPS")
         & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="PLC_ARTISAN_WORKSHOPS",
-        effects=SetTargetInfluence(value=Value + NamedReal(name="ARTISANS_INFLUENCE_FLAT_FOCUS", value=2.0)),
+        effects=SetTargetInfluence(value=Value + 2.0),
     ),
     EffectsGroup(
         scope=IsSource,
         activation=HasTag(name="ARTISTIC")
-        & Happiness(low=NamedReal(name="ARTISANS_MIN_STABILITY_NO_FOCUS", value=10))
+        & Happiness(low=10)
         & EmpireHasAdoptedPolicy(empire=Source.Owner, name="PLC_ARTISAN_WORKSHOPS")
         & ~Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="PLC_ARTISAN_WORKSHOPS",
-        effects=SetTargetInfluence(value=Value + NamedReal(name="ARTISANS_INFLUENCE_FLAT_NO_FOCUS", value=0.5)),
+        effects=SetTargetInfluence(value=Value + 0.5),
     ),
 ]
 
@@ -133,9 +129,7 @@ BASIC_INFLUENCE = [
         activation=Planet() & Focus(type=["FOCUS_INFLUENCE"]),
         accountinglabel="FOCUS_INFLUENCE_LABEL",
         priority=TARGET_EARLY_BEFORE_SCALING_PRIORITY,
-        effects=SetTargetInfluence(
-            value=Value + (Target.Population**0.5) * NamedReal(name="FOCUS_INFLUENCE_INFLUENCE_PER_SQRT_POP", value=1.0)
-        ),
+        effects=SetTargetInfluence(value=Value + (Target.Population**0.5) * 1.0),
     ),
     *BASE_INFLUENCE_COSTS,
     *ARTISANS_INFLUENCE_STABILITY,
