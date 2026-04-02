@@ -154,7 +154,6 @@ public:
         m_text_elements = that.m_text_elements;
         m_code_points = that.m_code_points;
         m_font = that.m_font;
-        m_render_cache.clear();
         m_cached_minusable_size_width = that.m_cached_minusable_size_width;
         m_cached_minusable_size = that.m_cached_minusable_size;
 
@@ -334,14 +333,11 @@ protected:
     /** Returns the line data for the text in this TextControl. */
     [[nodiscard]] const Font::LineVec& GetLineData() const noexcept { return m_line_data; }
 
-    Font::RenderCache m_render_cache;///< Cache much of text rendering.
-
     friend class StateButtonRepresenter;
 
 private:
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
-    void RefreshCache();
 
     /** Recompute line data, code points, text extent and minusable size cache when
         m_text_elements changes.*/
