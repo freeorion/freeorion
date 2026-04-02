@@ -76,25 +76,19 @@ void TextControl::Render()
     if (!m_font)
         return;
 
-    RefreshCache();
+    Font::RenderState render_state(TextColor());
+
     if (m_clip_text)
         BeginClipping();
 
     glPushMatrix();
     Pt ul = ClientUpperLeft();
     glTranslated(Value(ul.x), Value(ul.y), 0);
-    m_font->RenderCachedText(m_render_cache);
+    m_font->RenderText(Pt0, Size(), m_format, m_line_data, render_state);
     glPopMatrix();
 
     if (m_clip_text)
         EndClipping();
-}
-
-void TextControl::RefreshCache() {
-    m_render_cache.clear();
-    Font::RenderState rs(TextColor());
-    if (m_font)
-        m_font->PreRenderText(Pt0, Size(), m_format, m_render_cache, m_line_data, rs);
 }
 
 void TextControl::SetText(std::string str)
@@ -146,7 +140,6 @@ void TextControl::RecomputeLineData() {
     Pt text_sz = m_font->TextExtent(m_line_data);
     m_text_ul = Pt0;
     m_text_lr = text_sz;
-    m_render_cache.clear();
     if (m_format & FORMAT_NOWRAP)
         Resize(text_sz);
     else
@@ -195,7 +188,6 @@ void TextControl::SizeMove(Pt ul, Pt lr)
         Pt text_sz = m_font->TextExtent(m_line_data);
         m_text_ul = Pt();
         m_text_lr = text_sz;
-        m_render_cache.clear();
     }
     RecomputeTextBounds();
 }
@@ -211,14 +203,12 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
 void TextControl::SetTextColor(Clr color)
 {
     m_text_color = color;
-    m_render_cache.clear();
 }
 
 void TextControl::SetColor(Clr c) noexcept
 {
     Control::SetColor(c);
     m_text_color = c;
-    m_render_cache.clear();
 }
 
 void TextControl::ClipText(bool b)
