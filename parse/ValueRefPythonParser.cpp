@@ -65,6 +65,16 @@ value_ref_wrapper<double> operator*(int lhs, const value_ref_wrapper<double>& rh
     );
 }
 
+value_ref_wrapper<double> operator*(const value_ref_wrapper<int>& lhs, double rhs) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::TIMES,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            std::make_unique<ValueRef::Constant<double>>(rhs)
+        )
+    );
+}
+
 value_ref_wrapper<double> operator*(const value_ref_wrapper<int>& lhs, const value_ref_wrapper<double>& rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
@@ -403,6 +413,17 @@ value_ref_wrapper<double> operator<(const value_ref_wrapper<double>& lhs, double
     );
 }
 
+value_ref_wrapper<double> lessequalor(const value_ref_wrapper<int>& lhs, int rhs, const value_ref_wrapper<double>& iff, const value_ref_wrapper<double>& ellse) {
+    return value_ref_wrapper<double>(
+        std::make_shared<ValueRef::Operation<double>>(
+            ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL,
+            std::make_unique<ValueRef::StaticCast<int, double>>(ValueRef::CloneUnique(lhs.value_ref)),
+            std::make_unique<ValueRef::Constant<double>>(rhs),
+            ValueRef::CloneUnique(iff.value_ref),
+            ValueRef::CloneUnique(ellse.value_ref))
+    );
+}
+
 value_ref_wrapper<double> operator!=(const value_ref_wrapper<double>& lhs, int rhs) {
     return value_ref_wrapper<double>(
         std::make_shared<ValueRef::Operation<double>>(
@@ -426,6 +447,16 @@ value_ref_wrapper<int> operator*(int lhs, const value_ref_wrapper<int>& rhs) {
             ValueRef::OpType::TIMES,
             std::make_unique<ValueRef::Constant<int>>(lhs),
             ValueRef::CloneUnique(rhs.value_ref)
+        )
+    );
+}
+
+value_ref_wrapper<int> operator*(const value_ref_wrapper<int>& lhs, int rhs) {
+    return value_ref_wrapper<int>(
+        std::make_shared<ValueRef::Operation<int>>(
+            ValueRef::OpType::TIMES,
+            ValueRef::CloneUnique(lhs.value_ref),
+            std::make_unique<ValueRef::Constant<int>>(rhs)
         )
     );
 }

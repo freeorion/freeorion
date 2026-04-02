@@ -89,12 +89,23 @@ namespace parse {
 
         bool file_success = true;
         py_grammar p = py_grammar(parser, named_value_definitions);
-        for (const auto& file : ListDir(path, IsFOCPyScript))
+        ErrorLogger(parsing) << "Start parsing python FOCS for NamedValue definitions";
+        for (const auto& file : ListDir(path, IsFOCPyScript)) {
+          DebugLogger(parsing) << "Start parsing python FOCS for NamedValue definitions (" << file << ") ";
             file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
+        }
+        if (!file_success)
+          ErrorLogger(parsing) << "Had errors parsing FOCS for NamedValue definitions. Succesfully parsed " << named_value_definitions.size() << " NamedValueRef definitions";
+        else
+          InfoLogger(parsing) << "No errors parsing FOCS for NamedValue definitions. Succesfully parsed " << named_value_definitions.size() << " NamedValueRef definitions";
 
-        TraceLogger(parsing) << "Start parsing FOCS for NamedValue definitions: " << named_value_definitions.size();
-        for (auto& [name, def] : named_value_definitions)
+        for (auto& [name, def] : named_value_definitions) {
+          auto pattern = def->ConstantExpr() ? "C" : "c";
+          DebugLogger() << "Registering from named_values.focs.py : " << name << "  " << pattern;
+          //TODO get pattern
+            // XXX maybe use ValueRef with type? << " ! ValueRef<" << (dynamic_cast<ValueRef::ValueRef*>(def))->GetReferenceType() << ">";
             TraceLogger(parsing) << "ValueRef::ValueRefBase " << name << " : " << def->GetCheckSum() << "\n" << def->Dump();
+        }
         TraceLogger(parsing) << "End parsing FOCS.py for NamedValue definitions" << named_value_definitions.size();
 
         success = file_success;
