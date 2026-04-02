@@ -297,14 +297,11 @@ protected:
     /** Returns the line data for the text in this TextControl. */
     virtual const Font::LineVec& GetLineData() const noexcept { return m_line_data; }
 
-    Font::RenderCache m_render_cache;///< Cache much of text rendering.
-
     friend class StateButtonRepresenter;
 
 private:
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
-    void RefreshCache();
 
     /** Recompute line data, code points, text extent and minusable size cache when
         m_text_elements changes.*/
