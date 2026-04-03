@@ -74,13 +74,13 @@ void Edit::Render()
 
     X first_char_offset = FirstCharOffset();
     Y text_y_pos = ToY(ul.y + ((lr.y - ul.y) - font->Height()) / 2.0);
-    //CPSize last_visible_char = LastVisibleChar();
+    CPSize last_visible_char = LastVisibleChar();
     //const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, line_data);
     //const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
     Font::RenderState rs{text_color_to_use};
 
-    const Pt font_render_ul{client_ul.x, text_y_pos};
-    const Pt font_render_lr{client_lr.x, text_y_pos + font->Height()};
+    const Pt font_render_ul{client_ul.x - first_char_offset, text_y_pos};
+    const Pt font_render_lr{client_lr.x - first_char_offset, text_y_pos + font->Height()};
 
     if (!line_data.empty() && MultiSelected()) {
         const auto& char_data = line_data.front().char_data;
@@ -95,11 +95,11 @@ void Edit::Render()
         FlatRectangle(hilite_ul, hilite_lr, hilite_color_to_use, CLR_ZERO, 0);
 
         // draw text
-        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
+        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs, 0, m_first_char_shown, line_data.size(), last_visible_char);
 
     } else { // no selected text
         // draw text
-        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
+        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs, 0, m_first_char_shown, line_data.size(), last_visible_char);
 
         if (GUI::GetGUI()->FocusWnd().get() == this) {
             // if we have focus, draw the caret as a simple vertical line
