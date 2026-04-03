@@ -79,8 +79,8 @@ void Edit::Render()
     //const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
     Font::RenderState rs{text_color_to_use};
 
-    const Pt font_render_ul{client_ul.x, text_y_pos};
-    const Pt font_render_lr{client_lr.x, text_y_pos + font->Height()};
+    const Pt font_render_ul{client_ul.x - first_char_offset, text_y_pos};
+    const Pt font_render_lr{client_lr.x - first_char_offset, text_y_pos + font->Height()};
 
     if (!line_data.empty() && MultiSelected()) {
         const auto& char_data = line_data.front().char_data;
