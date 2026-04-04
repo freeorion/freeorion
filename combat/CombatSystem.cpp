@@ -147,38 +147,37 @@ void CombatInfo::InitializeObjectVisibility() {
 
         auto& empire_vis{empire_object_visibility[empire_id]};
 
-        for (const System* obj : objects.allRaw<System>() | range_filter(not_null)) {
+        for (const System* obj : objects.allRaw<const System>() | range_filter(not_null)) {
             // systems always visible to empires with objects in them
-            empire_vis[obj->ID()] = Visibility::VIS_PARTIAL_VISIBILITY;
+            empire_vis.Set(obj->ID(), Visibility::VIS_PARTIAL_VISIBILITY);
             DebugLogger(combat) << "   System " << obj->Name() << " always visible";
         }
 
-        for (const Planet* obj : objects.allRaw<Planet>() | range_filter(not_null)) {
-            // planets always at least basically visible to empires with objects in the system
-            auto& obj_vis{empire_vis[obj->ID()]};
-            DebugLogger(combat) << "   Planet " << obj->Name()
-                                << ((obj_vis > Visibility::VIS_BASIC_VISIBILITY) ?
-                                    " visible from universe state" : " has default basic visibility");
-            obj_vis = std::max(Visibility::VIS_BASIC_VISIBILITY, obj_vis);
+        // planets always at least basically visible to empires with objects in the system
+        for (const Planet* obj : objects.allRaw<const Planet>() | range_filter(not_null)) {
+            const auto old_vis = empire_vis.Get(obj->ID());
+            const auto new_vis = empire_vis.SetOrIncrease(obj->ID(), Visibility::VIS_BASIC_VISIBILITY);
+
+            DebugLogger(combat) << "   Planet " << obj->Name() << " " <<
+                ((new_vis == old_vis) ? (std::string{to_string(old_vis)}.append(" from universe state")) : " has default basic visibility");
         }
 
         const bool aggressive_rule = GetGameRules().Get<bool>("RULE_AGGRESSIVE_SHIPS_COMBAT_VISIBLE");
 
-        for (const Ship* obj : objects.allRaw<Ship>() | range_filter(not_null)) {
-            // ships only initially visible if already detected or if the aggressive fleet rule applies
-            auto& obj_vis{empire_vis[obj->ID()]};
+        for (const Ship* obj : objects.allRaw<const Ship>() | range_filter(not_null)) {
+            const auto old_vis = empire_vis.Get(obj->ID());
 
-            if (aggressive_rule && obj_vis < Visibility::VIS_PARTIAL_VISIBILITY) {
+            if (aggressive_rule && old_vis < Visibility::VIS_PARTIAL_VISIBILITY) {
                 const auto* fleet = objects.getRaw<const Fleet>(obj->FleetID());
                 if (fleet && fleet->Aggressive()) {
-                    obj_vis = Visibility::VIS_PARTIAL_VISIBILITY;
-                    DebugLogger(combat) << "   Ship " << obj->Name() << " visible due to aggressive fleet rule";
+                    empire_vis.Set(obj->ID(), Visibility::VIS_PARTIAL_VISIBILITY);
+                    DebugLogger(combat) << "   Ship " << obj->Name() << " partially visible due to aggressive fleet rule";
                     continue;
                 }
             }
-            DebugLogger(combat) << "   Ship " << obj->Name()
-                                << ((obj_vis >= Visibility::VIS_BASIC_VISIBILITY) ?
-                                    " visible from universe state" : " initially hidden");
+
+            DebugLogger(combat) << "   Ship " << obj->Name() << " initially " <<
+                ((old_vis >= Visibility::VIS_BASIC_VISIBILITY) ? (std::string{to_string(old_vis)}.append(" from universe state")) : " hidden");
         }
     }
 }
@@ -1043,7 +1042,7 @@ namespace {
 
                 // mark fighter visible to all empire participants
                 for (auto viewing_empire_id : combat_info.empire_ids)
-                    combat_info.empire_object_visibility[viewing_empire_id][new_id] = Visibility::VIS_PARTIAL_VISIBILITY;
+                    combat_info.empire_object_visibility[viewing_empire_id].Set(new_id, Visibility::VIS_PARTIAL_VISIBILITY);
             }
 
             return retval;
@@ -1234,9 +1233,9 @@ namespace {
         }
 
         /** Report for each empire the stealthy objects in the combat. */
-        InitialStealthEvent::EmpireToObjectVisibilityMap ReportInvisibleObjects() const {
+        EmpireObjectVisibilityMap ReportInvisibleObjects() const {
             DebugLogger(combat) << "Reporting Invisible Objects";
-            InitialStealthEvent::EmpireToObjectVisibilityMap report;
+            EmpireObjectVisibilityMap report;
 
             // loop over all objects, noting which is visible by which empire or neutrals
             for (const auto* target : combat_info.objects.allRaw()) {
@@ -1246,18 +1245,14 @@ namespace {
                     auto empire_vis_info_it = combat_info.empire_object_visibility.find(viewing_empire_id);
                     if (empire_vis_info_it == combat_info.empire_object_visibility.end()) {
                         DebugLogger() << " ReportInvisibleObjects found no visibility info for viewing empire " << viewing_empire_id;
-                        report[viewing_empire_id].emplace(target->ID(), Visibility::VIS_NO_VISIBILITY);
-                        continue;
-                    }
-                    auto target_visibility_for_empire_it = empire_vis_info_it->second.find(target->ID());
-                    if (target_visibility_for_empire_it == empire_vis_info_it->second.end()) {
-                        DebugLogger() << " ReportInvisibleObjects found no visibility record for viewing empire "
-                                      << viewing_empire_id << " for object " << target->Name() << " (" << target->ID() << ")";
-                        report[viewing_empire_id].emplace(target->ID(), Visibility::VIS_NO_VISIBILITY);
+                        report[viewing_empire_id].Set(target->ID(), Visibility::VIS_NO_VISIBILITY);
                         continue;
                     }
 
-                    Visibility vis = target_visibility_for_empire_it->second;
+                    const Visibility vis = empire_vis_info_it->second.Get(target->ID());
+                    if (vis == Visibility::VIS_NO_VISIBILITY)
+                        continue;
+
                     if (viewing_empire_id == ALL_EMPIRES) {
                         DebugLogger(combat) << " Target " << target->Name() << " (" << target->ID() << "): "
                                             << vis << " to monsters and neutrals";
@@ -1268,7 +1263,7 @@ namespace {
 
                     // This adds information about invisible and basic visible objects and
                     // trusts that the combat logger only informs player/ai of what they should know
-                    report[viewing_empire_id].emplace(target->ID(), vis);
+                    report[viewing_empire_id].Set(target->ID(), vis);
                 }
             }
             return report;
@@ -1793,15 +1788,14 @@ namespace {
                     continue;
 
                 for (auto detector_empire_id : combat_info.empire_ids) {
-                    Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][attacker->ID()];
+                    Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id].Get(attacker->ID());
                     TraceLogger(combat) << "Pre-attack visibility of launching carrier id: " << attacker->ID()
                                         << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
                     if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
                         continue;
 
-                    combat_info.empire_object_visibility[detector_empire_id][attacker->ID()] =
-                        Visibility::VIS_BASIC_VISIBILITY;
+                    combat_info.empire_object_visibility[detector_empire_id].Set(attacker->ID(), Visibility::VIS_BASIC_VISIBILITY);
 
                     DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_BASIC_VISIBILITY;
 
@@ -1835,14 +1829,14 @@ namespace {
             // Set attacker as at least basically visible to other empires.
             for (const auto& this_attack : weapon_fire_events) {
                 for (auto detector_empire_id : combat_info.empire_ids) {
-                    Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id][this_attack->attacker_id];
+                    Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id].Get(this_attack->attacker_id);
                     TraceLogger(combat) << "Pre-attack visibility of attacker id: " << this_attack->attacker_id
                                         << " by empire: " << detector_empire_id << " was: " << initial_vis;
 
                     if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
                         continue;
 
-                    combat_info.empire_object_visibility[detector_empire_id][this_attack->attacker_id] = Visibility::VIS_BASIC_VISIBILITY;
+                    combat_info.empire_object_visibility[detector_empire_id].Set(this_attack->attacker_id, Visibility::VIS_BASIC_VISIBILITY);
 
                     DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_BASIC_VISIBILITY;
 
