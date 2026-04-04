@@ -3984,10 +3984,8 @@ void GenerateSitRepMessage::Execute(ScriptingContext& context) const {
             const auto eov_it = eov.find(empire_id);
             if (eov_it == eov.end())
                 return false;
-            const auto can_see_obj_id = [&ov{eov_it->second}](const auto obj_id) {
-                const auto ov_it = ov.find(obj_id);
-                return ov_it != ov.end() && ov_it->second >= Visibility::VIS_BASIC_VISIBILITY;
-            };
+            const auto can_see_obj_id = [&ov{eov_it->second}](const auto obj_id)
+            { return ov.Get(obj_id) >= Visibility::VIS_BASIC_VISIBILITY; };
             return range_any_of(obj_ids_rng, can_see_obj_id);
         };
 
