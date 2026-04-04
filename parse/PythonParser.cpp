@@ -17,7 +17,6 @@
 #include "ConditionsPythonModuleParser.h"
 #include "EffectsPythonModuleParser.h"
 #include "ValueRefsPythonModuleParser.h"
-#include "NamedValueRefPythonParser.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/core/noncopyable.hpp>

@@ -280,7 +280,6 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4180</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="..\..\parse\ConditionsPythonModuleParser.cpp" />
-    <ClCompile Include="..\..\parse\NamedValueRefPythonParser.cpp" />
     <ClCompile Include="..\..\parse\ValueRefsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\EffectsPythonModuleParser.cpp" />
     <ClCompile Include="..\..\parse\ConditionPythonParser.cpp">
@@ -327,7 +326,6 @@
     <ClInclude Include="..\..\parse\ValueRefPythonParser.h" />
     <ClInclude Include="..\..\parse\ConditionsPythonModuleParser.h" />
     <ClInclude Include="..\..\parse\ValueRefsPythonModuleParser.h" />
-    <ClInclude Include="..\..\parse\NamedValueRefPythonParser.h" />
     <ClInclude Include="..\..\parse\EffectsPythonModuleParser.h" />
     <ClInclude Include="..\..\parse\ConditionPythonParser.h" />
     <ClInclude Include="..\..\parse\EffectPythonParser.h" />

@@ -186,9 +186,6 @@
     <ClCompile Include="..\..\parse\EnumPythonParser.cpp">
       <Filter>Source Files\parse\python</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\NamedValueRefPythonParser.cpp">
-      <Filter>Source Files\parse\python</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\PythonParser.cpp">
       <Filter>Source Files\parse\python</Filter>
     </ClCompile>
@@ -295,9 +292,6 @@
       <Filter>Header Files\parse\python</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\EnumPythonParser.h">
-      <Filter>Header Files\parse\python</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\NamedValueRefPythonParser.h">
       <Filter>Header Files\parse\python</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\PythonParser.h">

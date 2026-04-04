@@ -44,7 +44,6 @@ namespace parse {
     FO_PARSE_API std::map<std::string, std::unique_ptr<BuildingType>, std::less<>> buildings(const PythonParser& parser, const std::filesystem::path& path, bool& success);
     FO_PARSE_API std::map<std::string, std::unique_ptr<FieldType>, std::less<>> fields(const PythonParser& parser, const std::filesystem::path& path, bool& success);
     FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>> named_value_refs(const PythonParser& parser, const std::filesystem::path& path, bool& success);
-    FO_PARSE_API std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>> named_value_refs_py(const PythonParser& parser, const std::filesystem::path& path, bool& success);
     FO_PARSE_API std::map<std::string, std::unique_ptr<Special>, std::less<>> specials(const std::filesystem::path& path);
 
     /* P in policies<P> should be std::vector<Policy>. This avoids having to include
