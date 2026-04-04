@@ -151,31 +151,27 @@ std::string UniverseObject::Dump(uint8_t) const {
     return retval;
 }
 
-UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const {
-    auto object_id_visible = [empire_id, &vis](int object_id) -> bool {
-        auto empire_it = vis.find(empire_id);
-        if (empire_it == vis.end())
-            return false;
-        auto obj_it = empire_it->second.find(object_id);
-        return obj_it != empire_it->second.end() &&
-            obj_it->second >= Visibility::VIS_BASIC_VISIBILITY;
-    };
+UniverseObject::IDSet UniverseObject::VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisibilityMap& vis) const {
+    auto vis_map_it = vis.find(empire_id);
+    if (vis_map_it == vis.end())
+        return {};
 
-    IDSet retval;
-    retval.reserve(ContainedObjectIDs().size());
-    for (int object_id : ContainedObjectIDs()) {
-        if (object_id_visible(object_id))
-            retval.insert(object_id);
-    }
-    return retval;
+    const auto object_id_visible = [vis_map_it, &vis](int object_id) -> bool
+    { return vis_map_it->second.Get(object_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+
+#if BOOST_VERSION >= 107900
+    return ContainedObjectIDs() | range_filter(object_id_visible) | range_to<IDSet>();
+#else
+    auto ids_as_vec = ContainedObjectIDs() | range_filter(object_id_visible) | range_to_vec;
+    return {ids_as_vec.begin(), ids_as_vec.end()};
+#endif
 }
 
-Visibility UniverseObject::GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const {
+Visibility UniverseObject::GetVisibility(int empire_id, const EmpireObjectVisibilityMap& v) const {
     auto empire_it = v.find(empire_id);
     if (empire_it == v.end())
         return Visibility::VIS_NO_VISIBILITY;
-    auto obj_it = empire_it->second.find(m_id);
-    return (obj_it == empire_it->second.end()) ? Visibility::VIS_NO_VISIBILITY : obj_it->second;
+    return empire_it->second.Get(m_id);
 }
 
 Visibility UniverseObject::GetVisibility(int empire_id, const Universe& u) const
