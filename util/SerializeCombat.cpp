@@ -81,10 +81,20 @@ void serialize(Archive& ar, InitialStealthEvent& obj, unsigned int const version
     using namespace boost::serialization;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
-    ar & make_nvp("empire_to_object_visibility", obj.empire_to_object_visibility);
+
+    if constexpr (Archive::is_loading::value) {
+        obj.empire_object_visibility.clear();
+        bool old_format = version < 5;
+        const char* xml_tag = old_format ? "empire_to_object_visibility" : nullptr;
+        if (old_format)
+            DebugLogger() << "Deserializing InitialStealthEvent old format version: " << version;
+        Deserialize(ar, obj.empire_object_visibility, old_format, xml_tag);
+    } else {
+        Serialize(ar, obj.empire_object_visibility);
+    }
 }
 
-BOOST_CLASS_VERSION(InitialStealthEvent, 4)
+BOOST_CLASS_VERSION(InitialStealthEvent, 5)
 BOOST_CLASS_EXPORT(InitialStealthEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, InitialStealthEvent&, unsigned int const);

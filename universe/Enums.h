@@ -24,5 +24,4 @@ FO_ENUM(
     ((NUM_AFFIL_TYPES)) ///< keep last, the number of affiliation types
 )
 
-
 #endif

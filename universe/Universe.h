@@ -19,7 +19,8 @@
 #include "ObjectMap.h"
 #include "Pathfinder.h"
 #include "UnlockableItem.h"
-#include "UniverseObject.h"
+#include "Visibility.h"
+
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -33,6 +34,7 @@ class IDAllocator;
 class FleetPlan;
 class MonsterFleetPlan;
 struct ScriptingContext;
+class UniverseObjectCXBase;
 
 
 namespace Condition {
@@ -56,6 +58,7 @@ namespace ValueRef {
     struct ValueRef;
 }
 
+using IDSet = boost::container::flat_set<int32_t>;
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -68,71 +71,15 @@ class FO_COMMON_API Universe {
 public:
     using EmpireObjectMap = std::map<int, ObjectMap>; ///< Known information each empire had about objects in the Universe; keyed by empire id
 
-    struct ObjVisTurns {
-        int obj_id = INVALID_OBJECT_ID;
-        int basic = INVALID_GAME_TURN;
-        int partial = INVALID_GAME_TURN;
-        int full = INVALID_GAME_TURN;
-
-        constexpr ObjVisTurns() noexcept = default;
-        constexpr explicit ObjVisTurns(int obj_id_) noexcept :
-            obj_id(obj_id_)
-        {}
-        constexpr ObjVisTurns(int obj_id_, int basic_turn, int partial_turn, int full_turn) noexcept :
-            obj_id(obj_id_), basic(basic_turn), partial(partial_turn), full(full_turn)
-        {}
-        constexpr ObjVisTurns(int obj_id_, Visibility vis, int turn) noexcept :
-            obj_id(obj_id_),
-            basic(vis >= Visibility::VIS_BASIC_VISIBILITY ? turn : INVALID_GAME_TURN),
-            partial(vis >= Visibility::VIS_PARTIAL_VISIBILITY ? turn : INVALID_GAME_TURN),
-            full(vis >= Visibility::VIS_FULL_VISIBILITY ? turn : INVALID_GAME_TURN)
-        {}
-
-        constexpr bool operator<(const ObjVisTurns& rhs) noexcept { return obj_id < rhs.obj_id; };
-        constexpr bool operator==(const ObjVisTurns& rhs) noexcept { return obj_id == rhs.obj_id; };
-
-        constexpr int& operator[](Visibility vis) noexcept {
-            switch (vis) {
-            case Visibility::VIS_FULL_VISIBILITY:    return full;
-            case Visibility::VIS_PARTIAL_VISIBILITY: return partial;
-            default:                                 return basic;
-            }
-        }
-        [[nodiscard]] constexpr int operator[](Visibility vis) const noexcept {
-            switch (vis) {
-            case Visibility::VIS_FULL_VISIBILITY:    return full;
-            case Visibility::VIS_PARTIAL_VISIBILITY: return partial;
-            default:                                 return basic;
-            }
-        }
-
-        [[nodiscard]] constexpr bool contains(Visibility vis) const noexcept { return operator[](vis) != INVALID_GAME_TURN; }
-        [[nodiscard]] constexpr bool empty() const noexcept { return obj_id == INVALID_OBJECT_ID || basic == INVALID_GAME_TURN; }
-
-        // sets turn for \a vis and lower visibilities to \a turn
-        constexpr void SetVisTurnsCascade(Visibility vis, int turn) noexcept {
-            switch (vis) {
-            case Visibility::VIS_FULL_VISIBILITY:    full = std::max(full, turn); [[fallthrough]];
-            case Visibility::VIS_PARTIAL_VISIBILITY: partial = std::max(partial, turn); [[fallthrough]];
-            case Visibility::VIS_BASIC_VISIBILITY:   basic = std::max(basic, turn); break;
-            default: break;
-            }
-        }
-
-        template <typename Archive>
-        friend void serialize(Archive&, Universe&, unsigned int const);
-    };
-    using EmpireObjectVisibilityTurnsVecMap = std::map<int, std::vector<ObjVisTurns>>;
-
-    using IDSet = UniverseObject::IDSet;
+    using IDSet = ::IDSet;
 
 private:
-    typedef std::map<int, std::unordered_set<int>>  ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    using ObjectKnowledgeMap = std::map<int, std::unordered_set<int>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
-    typedef const ValueRef::ValueRef<Visibility>*   VisValRef;
-    typedef std::vector<std::pair<int, VisValRef>>  SrcVisValRefVec;
-    typedef std::map<int, SrcVisValRefVec>          ObjSrcVisValRefVecMap;
-    typedef std::map<int, ObjSrcVisValRefVecMap>    EmpireObjectVisValueRefMap;
+    using VisValRef = const ValueRef::ValueRef<Visibility>*;
+    using SrcVisValRefVec = std::vector<std::pair<int, VisValRef>>;
+    using ObjSrcVisValRefVecMap = std::map<int, SrcVisValRefVec>;
+    using EmpireObjectVisValueRefMap = std::map<int, ObjSrcVisValRefVecMap>;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
@@ -142,9 +89,6 @@ private:
     using DiscrepancyMap = std::unordered_map<int, boost::container::flat_map<MeterType, double>>;
 
 public:
-    using ObjectVisibilityMap = std::map<int, Visibility>;                ///< map from object id to Visibility level for a particular empire
-    using EmpireObjectVisibilityMap = std::map<int, ObjectVisibilityMap>; ///< map from empire id to ObjectVisibilityMap for that empire
-
     using ObjectSpecialsMap = std::map<int, std::set<std::string>>;       ///< map from object id to names of specials on an object
     using EmpireObjectSpecialsMap = std::map<int, ObjectSpecialsMap>;     ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
 

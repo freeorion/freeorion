@@ -12,6 +12,7 @@
 #include "../universe/ConstantsFwd.h"
 #include "../universe/EnumsFwd.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Universe.h"
 
 #include "CombatEvent.h"
 
@@ -118,18 +119,16 @@ typedef std::shared_ptr<FighterLaunchesEvent> FighterLaunchesEventPtr;
     Note:  Because it is initialized with the unfiltered stealth information it
     contains information not availble to all empires. */
 struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
-    typedef std::map<int, std::map<int, Visibility>> EmpireToObjectVisibilityMap;
-
     [[nodiscard]] InitialStealthEvent() = default;
-    [[nodiscard]] explicit InitialStealthEvent(EmpireToObjectVisibilityMap x) :
-        empire_to_object_visibility(std::move(x))
+    [[nodiscard]] explicit InitialStealthEvent(EmpireObjectVisibilityMap x) noexcept :
+        empire_object_visibility(std::move(x))
     {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
 
 private:
-    EmpireToObjectVisibilityMap empire_to_object_visibility;
+    EmpireObjectVisibilityMap empire_object_visibility;
 
     template <typename Archive>
     friend void serialize(Archive&, InitialStealthEvent&, unsigned int const);

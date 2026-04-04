@@ -2633,12 +2633,9 @@ namespace {
                 }
 
                 // which empires know about this object?
-                for (auto& [viewing_empire_id, empire_known_objects] : combat_info.empire_object_visibility) {
+                for (auto& [viewing_empire_id, empire_vis] : combat_info.empire_object_visibility) {
                     // does this empire know about this object?
-                    auto damaged_obj_it = empire_known_objects.find(damaged_object_id);
-                    if (damaged_obj_it == empire_known_objects.end())
-                        continue;
-                    if (damaged_obj_it->second < Visibility::VIS_PARTIAL_VISIBILITY)
+                    if (empire_vis.Get(damaged_object_id) <= Visibility::VIS_BASIC_VISIBILITY)
                         continue;
 
                     if (auto empire = combat_info.GetEmpire(viewing_empire_id))
@@ -2898,18 +2895,11 @@ namespace {
                     const auto is_visible =
                         [empire_it{context.empire_object_vis.find(empire_id)},
                          end_it{context.empire_object_vis.end()}](const int obj_id) -> bool
-                    {
-                        if (empire_it == end_it)
-                            return false;
-                        const auto obj_it = empire_it->second.find(obj_id);
-                        if (obj_it == empire_it->second.end())
-                            return false;
-                        return obj_it->second >= Visibility::VIS_BASIC_VISIBILITY;
-                    };
+                    { return empire_it != end_it && empire_it->second.Get(obj_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+
 
                     for (const int ship_id : colonizing_ships) {
                         bool created_empire_specific_message = false;
-
 
                         // check other ships colonizing here...
                         for (const auto& [other_empire_id, other_empire_colonizing_ships] : empires_ships_colonizing) {
@@ -2925,12 +2915,7 @@ namespace {
                             }
                         }
                         // can this empire see another ship that attempted to colonize the same planet?
-                        // SITREP_PLANET_ESTABLISH_FAILED_VISIBLE
-                        //Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% also attempted to establish on the same planet.
-                        //SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_LABEL
-
-                        // no, just issue generic message
-                        if (!created_empire_specific_message)
+                        if (!created_empire_specific_message) // no, just issue generic message
                             empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, ship_id, context.current_turn));
                     }
                 }
