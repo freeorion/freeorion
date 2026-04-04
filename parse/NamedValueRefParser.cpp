@@ -5,11 +5,19 @@
 #include "ValueRefParser.h"
 #include "EnumValueRefRules.h"
 
+#include "PythonParserImpl.h"
+#include "ValueRefPythonParser.h"
+#include "ConditionPythonParser.h"
+#include "EnumPythonParser.h"
+#include "SourcePythonParser.h"
+
 #include "MovableEnvelope.h"
 #include "../universe/NamedValueRefManager.h"
 #include "../universe/ValueRefs.h"
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
+
+#include <boost/python/import.hpp>
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/phoenix/core.hpp>
@@ -124,6 +132,25 @@ namespace parse {
         named_value_ref_rule                            named_ref;
         start_rule                                      start;
     };
+
+    struct py_grammar {
+        boost::python::dict globals;
+        const PythonParser& parser;
+
+        py_grammar(const PythonParser& parser_) :
+            globals(boost::python::import("builtins").attr("__dict__")),
+            parser(parser_)
+        {
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsValueRefs(globals, parser_);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+
+            parser.LoadValueRefsModule();
+        }
+
+        boost::python::dict operator()() const { return globals; }
+    };
 }
 
 namespace parse {
@@ -132,13 +159,17 @@ namespace parse {
 
         ScopedTimer timer("Named ValueRef Parsing");
 
+        bool file_success = true;
         for (const auto& file : ListDir(path, IsFOCScript))
             detail::parse_file<grammar, start_rule_payload>(GetLexer(), file, named_value_refs);
+        py_grammar p = py_grammar(parser);
+        for (const auto& file : ListDir(path, IsFOCPyScript))
+            file_success = file_success && py_parse::detail::parse_file<py_grammar>(parser, file, p);
 
         for (auto& k_v : named_value_refs)
             ErrorLogger() << "Should have not returned anything: named_value_refs : " << k_v.first;
 
-        success = true;
+        success = file_success;
         return named_value_refs;
     }
 }
