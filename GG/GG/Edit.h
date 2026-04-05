@@ -62,7 +62,7 @@ public:
     Pt ClientLowerRight() const noexcept override { return LowerRight() - Pt(X(PIXEL_MARGIN), Y(PIXEL_MARGIN)); }
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
-    Pt MinUsableSize(X) const override { return MinUsableSize(); }
+    Pt MinUsableSize(X) const noexcept override final { return MinUsableSize(); }
 
     /** Returns the current position of the cursor (first selected character
         to one past the last selected one). */
