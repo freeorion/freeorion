@@ -103,7 +103,7 @@ else()
 endif()
 
 if(APPLE)
-    set(FreeOrionSDK_VERSION 17)
+    set(FreeOrionSDK_VERSION 18)
     set(FreeOrionSDK_FILE "FreeOrionSDK_${FreeOrionSDK_VERSION}_Clang-MacOSX-10.15-${CMAKE_OSX_ARCHITECTURES}.tar.bz2")
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/${FreeOrionSDK_FILE}")
     file(DOWNLOAD
@@ -361,7 +361,7 @@ set_property(DIRECTORY APPEND
         # It also tries to link by default to the boost in-source zlib librar,
         # which we don't want.
         # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp
-        $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=zlib.lib>
+        $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=z.lib>
 
         # We don't need localized output of Boost date_time and not setting
         # the define causes the inclusion of code, which contains std::tolower.
