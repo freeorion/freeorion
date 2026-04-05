@@ -1829,8 +1829,9 @@ std::pair<StrSize, StrSize> GG::GlyphIndicesRangeToStringSizeIndices(
 
 namespace {
     CONSTEXPR_FONT StrSize CodePointIndexToStringSizeIndexInLines(
-        CPSize cp_idx, const Font::LineVec& line_data)
+        CPSize cp_idx, const Font::LineVec& line_data) noexcept
     {
+        static_assert(noexcept(line_data.begin()->Empty()));
         // LineData contain info about glyphs, not code points, so can't directly access
         // the underlying code points in the text. Instead, can check the code point indices
         // of the glyphs to find the requested ones.
@@ -1853,8 +1854,9 @@ namespace {
 
 
     CONSTEXPR_FONT std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndicesInLines(
-        CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data)
+        CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data) noexcept
     {
+        static_assert(noexcept(CodePointIndexToStringSizeIndexInLines(start_idx, line_data)));
         return {CodePointIndexToStringSizeIndexInLines(start_idx, line_data),
                 CodePointIndexToStringSizeIndexInLines(end_idx, line_data)};
     }
@@ -1862,8 +1864,11 @@ namespace {
 }
 
 std::pair<StrSize, StrSize> GG::CodePointIndicesRangeToStringSizeIndices(
-    CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data)
-{ return CodePointIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data); }
+    CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data) noexcept
+{
+    static_assert(noexcept(CodePointIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data)));
+    return CodePointIndicesRangeToStringSizeIndicesInLines(start_idx, end_idx, line_data);
+}
 
 
 namespace {

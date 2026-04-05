@@ -1034,7 +1034,7 @@ GG_API std::pair<StrSize, StrSize> GlyphIndicesRangeToStringSizeIndices(
     CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data);
 
 GG_API std::pair<StrSize, StrSize> CodePointIndicesRangeToStringSizeIndices(
-    CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data);
+    CPSize start_idx, CPSize end_idx, const Font::LineVec& line_data) noexcept;
 
 GG_API CPSize GlyphIndexOfX(const Font::LineData::CharVec& char_data, X x, X offset = X0);
 GG_API CPSize GlyphIndexOfXOnLine0(const Font::LineVec& line_data, X x, X offset = X0);
