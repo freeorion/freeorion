@@ -127,9 +127,7 @@ public:
         m_set_min_size(that.m_set_min_size),
         m_text_elements(that.m_text_elements),
         m_code_points(that.m_code_points),
-        m_font(that.m_font),
-        m_cached_minusable_size_width(that.m_cached_minusable_size_width),
-        m_cached_minusable_size(that.m_cached_minusable_size)
+        m_font(that.m_font)
     {
         for (auto& elem : m_text_elements)
             elem.Bind(m_text);
@@ -154,8 +152,6 @@ public:
         m_text_elements = that.m_text_elements;
         m_code_points = that.m_code_points;
         m_font = that.m_font;
-        m_cached_minusable_size_width = that.m_cached_minusable_size_width;
-        m_cached_minusable_size = that.m_cached_minusable_size;
 
         for (auto& elem : m_text_elements)
             elem.Bind(m_text);
@@ -166,7 +162,8 @@ public:
     Pt MinUsableSize() const noexcept override { return m_text_lr - m_text_ul; }
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
-    virtual Pt MinUsableSize(X width) const;
+    virtual Pt MinUsableSize(X width) const
+    { return m_font ? m_font->TextExtent(m_font->DetermineLines(m_text, m_format, width, m_text_elements)) : Pt0; }
 
     /** Returns the text displayed in this control. */
     const std::string& Text() const noexcept { return m_text; }
@@ -339,8 +336,7 @@ private:
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
 
-    /** Recompute line data, code points, text extent and minusable size cache when
-        m_text_elements changes.*/
+    /** Recompute line data, code points, text extent when m_text_elements changes.*/
     void RecomputeLineData();
 
     std::string                    m_text;
@@ -354,9 +350,6 @@ private:
     std::shared_ptr<const Font>    m_font;
     Pt                             m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                             m_text_lr;     ///< stored relative to the control's UpperLeft()
-
-    mutable X                      m_cached_minusable_size_width{X0};
-    mutable Pt                     m_cached_minusable_size{Pt0};
 };
 
 typedef TextControl Label;

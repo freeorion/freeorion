@@ -16,27 +16,6 @@ using namespace GG;
 ////////////////////////////////////////////////
 // GG::TextControl
 ////////////////////////////////////////////////
-
-Pt TextControl::MinUsableSize(X width) const
-{
-    // If the requested width is within one space width of the cached width
-    // don't recalculate the size
-    X min_delta = m_font ? m_font->SpaceWidth() : X1;
-    X abs_delta_w = X(std::abs(Value(m_cached_minusable_size_width - width)));
-    if (m_cached_minusable_size_width != X0 &&  abs_delta_w < min_delta)
-        return m_cached_minusable_size;
-
-    // Calculate and cache the minimum usable size when m_cached_minusable_size is equal to width.
-    // Create dummy line data with line breaks added so that lines are not wider than width.
-    Flags<TextFormat> dummy_format(m_format);
-    auto dummy_line_data = m_font ?
-        m_font->DetermineLines(m_text, dummy_format, width, m_text_elements) : Font::LineVec{};
-    m_cached_minusable_size = (m_font ? m_font->TextExtent(dummy_line_data) : Pt{})
-        + (ClientUpperLeft() - UpperLeft()) + (LowerRight() - ClientLowerRight());
-    m_cached_minusable_size_width = width;
-    return m_cached_minusable_size;
-}
-
 namespace {
     template <typename T>
     constexpr auto to_addr(T it) noexcept
@@ -144,8 +123,6 @@ void TextControl::RecomputeLineData() {
         Resize(text_sz);
     else
         RecomputeTextBounds();
-
-    m_cached_minusable_size_width = X0;
 }
 
 void TextControl::SetFont(std::shared_ptr<const Font> font)
