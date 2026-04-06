@@ -28,6 +28,7 @@ class System;
 class ShipDesignManager;
 struct ScriptingContext;
 class ObjectMap;
+class Universe;
 class GGHumanClientApp;
 
 //! \brief ClientUI Main Module
@@ -125,7 +126,7 @@ public:
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true; loads default missing.png if name isn't
       * found. */
-    std::shared_ptr<GG::Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
+    static std::shared_ptr<GG::Texture> GetTexture(const std::filesystem::path& path, bool mipmap = false);
 
     /** Returns the default font in the specified point size. Uses "ui.font.path"
       * option setting as the font filename, and provides Unicode character sets
@@ -183,20 +184,20 @@ public:
     static bool     DisplayTimestamp();                 //!< Will be timestamp shown in the chats.
 
     // Content Texture Getters
-    std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);
+    static std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);
     std::shared_ptr<GG::Texture> PlanetSizeIcon(PlanetSize planet_size);
     std::shared_ptr<GG::Texture> MeterIcon(MeterType meter_type);
-    std::shared_ptr<GG::Texture> BuildingIcon(std::string_view building_type_name);
+    static std::shared_ptr<GG::Texture> BuildingIcon(std::string_view building_type_name);
     std::shared_ptr<GG::Texture> CategoryIcon(std::string_view category_name);
     std::shared_ptr<GG::Texture> TechIcon(std::string_view tech_name);
     std::shared_ptr<GG::Texture> PolicyIcon(std::string_view policy_name);
     std::shared_ptr<GG::Texture> SpecialIcon(std::string_view special_name);
     std::shared_ptr<GG::Texture> SpeciesIcon(std::string_view species_name);
-    std::shared_ptr<GG::Texture> FieldTexture(std::string_view field_type_name);
+    static std::shared_ptr<GG::Texture> FieldTexture(std::string_view field_type_name);
     std::shared_ptr<GG::Texture> PartIcon(std::string_view part_name);
-    std::shared_ptr<GG::Texture> HullTexture(std::string_view hull_name);
-    std::shared_ptr<GG::Texture> HullIcon(std::string_view hull_name);
-    std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id);
+    static std::shared_ptr<GG::Texture> HullTexture(std::string_view hull_name);
+    static std::shared_ptr<GG::Texture> HullIcon(std::string_view hull_name);
+    static std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id, const Universe& universe);
 
     // research screen
     static GG::Clr  KnownTechFillColor();

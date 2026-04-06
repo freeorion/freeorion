@@ -1088,12 +1088,10 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
 };
 
 namespace {
-    const std::vector<std::shared_ptr<GG::Texture>>& GetAsteroidTextures() {
+    const std::vector<std::shared_ptr<GG::Texture>>& GetAsteroidTextures(ClientUI& ui) {
         static std::vector<std::shared_ptr<GG::Texture>> retval;
-        if (retval.empty()) {
-            retval = GetApp().GetUI().GetPrefixedTextures(
-                ClientUI::ArtDir() / "planets" / "asteroids", "asteroids1_", false);
-        }
+        if (retval.empty())
+            retval = ui.GetPrefixedTextures(ClientUI::ArtDir() / "planets" / "asteroids", "asteroids1_", false);
         return retval;
     }
 
@@ -1350,7 +1348,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic(PlanetType type, PlanetSize si
     DetachChildAndReset(m_rotating_planet_graphic);
 
     if (type == PlanetType::PT_ASTEROIDS) {
-        const auto& textures = GetAsteroidTextures();
+        const auto& textures = GetAsteroidTextures(GetApp().GetUI());
         if (textures.empty())
             return;
         GG::X texture_width = textures.front()->DefaultWidth();

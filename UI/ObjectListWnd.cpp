@@ -1387,21 +1387,19 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
 
 
 namespace {
-    auto ObjectTextures(const auto& obj) {
+    auto ObjectTextures(const auto& obj, auto& app) {
         std::vector<std::shared_ptr<GG::Texture>> retval;
         retval.reserve(4);
 
-        auto& app = GetApp();
-        auto& ui = GetApp().GetUI();
+        auto& ui = app.GetUI();
 
         if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
-            auto* ship = static_cast<const Ship*>(obj.get());
-            if (ship) {
+            if (auto* ship = static_cast<const Ship*>(obj.get())) {
                 if (const ShipDesign* design = app.GetContext().ContextUniverse().GetShipDesign(ship->DesignID()))
-                    retval.push_back(ui.ShipDesignIcon(design->ID()));
+                    retval.push_back(ClientUI::ShipDesignIcon(design->ID(), app.GetContext().ContextUniverse()));
             }
             if (retval.empty())
-                retval.push_back(ui.ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
+                retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID, app.GetContext().ContextUniverse()));  // default icon
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_FLEET) {
             if (auto* fleet = static_cast<const Fleet*>(obj.get())) {
@@ -1425,15 +1423,15 @@ namespace {
             }
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
             if (auto* planet = static_cast<const Planet*>(obj.get()))
-                retval.push_back(ui.PlanetIcon(planet->Type()));
+                retval.push_back(ClientUI::PlanetIcon(planet->Type()));
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_BUILDING) {
             if (auto* building = static_cast<const Building*>(obj.get()))
-                retval.push_back(ui.BuildingIcon(building->BuildingTypeName()));
+                retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
 
         } else if (obj->ObjectType() == UniverseObjectType::OBJ_FIELD) {
             if (auto* field = static_cast<const Field*>(obj.get()))
-                retval.push_back(ui.FieldTexture(field->FieldTypeName()));
+                retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
 
         } // UniverseObjectType::OBJ_FIGHTER shouldn't exist outside of combat, so ignored here
         if (retval.empty())
@@ -1610,7 +1608,7 @@ private:
             AttachChild(m_dot);
         }
 
-        auto textures = ObjectTextures(objects.get(m_object_id));
+        auto textures = ObjectTextures(objects.get(m_object_id), app);
         auto tx_size = textures.size();
 
         m_icon = GG::Wnd::Create<MultiTextureStaticGraphic>(

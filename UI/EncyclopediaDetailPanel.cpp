@@ -2920,7 +2920,7 @@ namespace {
         // Ship Designs
         if (!only_description) {
             name = design.Name();
-            texture = app.GetUI().ShipDesignIcon(design_id);
+            texture = ClientUI::ShipDesignIcon(design_id, universe);
             int default_location_id = DefaultLocationForEmpire(client_empire_id, context);
             turns = design.ProductionTime(client_empire_id, default_location_id, context);
             cost = design.ProductionCost(client_empire_id, default_location_id, context);
