@@ -271,7 +271,7 @@ namespace {
             //min_turns = design->ProductionTime(elem.empire_id, elem.location);
             total_cost = design->ProductionCost(elem.empire_id, elem.location, context) * elem.blocksize;
             max_allocation = design->PerTurnCost(elem.empire_id, elem.location, context) * elem.blocksize;
-            icon = ClientUI::ShipDesignIcon(elem.item.design_id, context.ContextUniverse());
+            icon = ClientUI::ShipDesignIcon(*design);
 
         } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
             main_text += UserString("BUILD_ITEM_TYPE_PROJECT") + "\n";
@@ -440,12 +440,12 @@ namespace {
             name_text = UserString(elem.item.name);
 
         } else if (elem.item.build_type == BuildType::BT_SHIP) {
-            graphic = ClientUI::ShipDesignIcon(elem.item.design_id, context.ContextUniverse());
-            const ShipDesign* design = context.ContextUniverse().GetShipDesign(elem.item.design_id);
-            if (design)
+            if (const ShipDesign* design = context.ContextUniverse().GetShipDesign(elem.item.design_id)) {
                 name_text = design->Name();
-            else
+                graphic = ClientUI::ShipDesignIcon(*design);
+            } else {
                 ErrorLogger() << "QueueProductionItemPanel unable to get design with id: " << elem.item.design_id;
+            }
 
         } else if (elem.item.build_type == BuildType::BT_STOCKPILE) {
             graphic = ui.MeterIcon(MeterType::METER_STOCKPILE);

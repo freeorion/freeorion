@@ -1396,7 +1396,7 @@ namespace {
         if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
             if (auto* ship = static_cast<const Ship*>(obj.get())) {
                 if (const ShipDesign* design = app.GetContext().ContextUniverse().GetShipDesign(ship->DesignID()))
-                    retval.push_back(ClientUI::ShipDesignIcon(design->ID(), app.GetContext().ContextUniverse()));
+                    retval.push_back(ClientUI::ShipDesignIcon(*design));
             }
             if (retval.empty())
                 retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID, app.GetContext().ContextUniverse()));  // default icon

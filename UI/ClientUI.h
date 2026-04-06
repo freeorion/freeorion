@@ -25,6 +25,7 @@ class MultiPlayerLobbyWnd;
 class PasswordEnterWnd;
 struct SaveGameUIData;
 class System;
+class ShipDesign;
 class ShipDesignManager;
 struct ScriptingContext;
 class ObjectMap;
@@ -198,6 +199,7 @@ public:
     static std::shared_ptr<GG::Texture> HullTexture(std::string_view hull_name);
     static std::shared_ptr<GG::Texture> HullIcon(std::string_view hull_name);
     static std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id, const Universe& universe);
+    static std::shared_ptr<GG::Texture> ShipDesignIcon(const ShipDesign& design);
 
     // research screen
     static GG::Clr  KnownTechFillColor();
