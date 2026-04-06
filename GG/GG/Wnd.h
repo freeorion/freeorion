@@ -262,8 +262,7 @@ public:
             becomes active, in ms. */
         unsigned int time = 0;
 
-        /** The BrowseInfoWnd used to display the browse info for this
-            mode. */
+        /** The BrowseInfoWnd used to display the browse info for this mode. */
         std::shared_ptr<BrowseInfoWnd> wnd;
 
         /** The text to display in the BrowseInfoWnd shown for this mode. */
@@ -278,12 +277,10 @@ public:
         /** No child clipping is performed. */
         DontClip,
 
-        /** Children or parts of children that fall outside the client area
-            are not visible. */
+        /** Children or parts of children that fall outside the client area are not visible. */
         ClipToClient,
 
-        /** Children or parts of children that fall outside the window's area
-            are not visible. */
+        /** Children or parts of children that fall outside the window's area are not visible. */
         ClipToWindow,
 
         /** Acts as ClipToClient on children whose NonClientChild() member
