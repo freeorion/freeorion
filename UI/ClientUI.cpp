@@ -337,15 +337,21 @@ std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
     return GetTexture(ArtDir() / texture_name.data(), true);
 }
 
+std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(const ShipDesign& design) {
+    const auto& design_icon = design.Icon();
+    if (design_icon.empty())
+        return ClientUI::HullIcon(design.Hull());
+    else
+        return GetTexture(ArtDir() / design_icon.data(), true);
+}
+
 std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id, const Universe& universe) {
-    if (const ShipDesign* design = universe.GetShipDesign(design_id)) {
-        std::string_view icon_name = design->Icon();
-        if (icon_name.empty())
-            return ClientUI::HullIcon(design->Hull());
-        else
-            return GetTexture(ArtDir() / icon_name.data(), true);
-    }
-    return ClientUI::HullTexture("");
+    if (design_id == INVALID_DESIGN_ID)
+        return ClientUI::HullTexture("");
+    else if (const ShipDesign* design = universe.GetShipDesign(design_id))
+        return ShipDesignIcon(*design);
+    else
+        return ClientUI::HullTexture("");
 }
 
 

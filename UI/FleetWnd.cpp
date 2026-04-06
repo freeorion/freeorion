@@ -727,7 +727,7 @@ namespace {
             return;
 
         const ShipDesign* design = universe.GetShipDesign(ship->DesignID());
-        auto icon{ClientUI::ShipDesignIcon(design ? design->ID() : INVALID_OBJECT_ID, universe)};
+        auto icon{design ? ClientUI::ShipDesignIcon(*design) : ClientUI::ShipDesignIcon(INVALID_DESIGN_ID, universe)};
 
         m_ship_icon = GG::Wnd::Create<GG::StaticGraphic>(std::move(icon), DATA_PANEL_ICON_STYLE);
         m_ship_icon->Resize(GG::Pt(DataPanelIconSpace().x, ClientHeight()));
