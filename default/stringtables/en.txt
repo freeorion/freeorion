@@ -17082,7 +17082,7 @@ SH_TITANIC
 Titanic Hull
 
 SH_TITANIC_DESC
-'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots, three internal slots and a core slot, and its max [[metertype METER_STRUCTURE]] is very high. It also repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat. Its immense size makes it almost impossible to hide, even with advanced stealth technology.
+'''This extraordinarily large hull requires quite a feat of engineering even to move. It has fifteen external slots, three internal slots and a core slot, and its max [[metertype METER_STRUCTURE]] is very high. It also repairs [[value SHP_ROBOTIC_REPAIR]] points of [[metertype METER_STRUCTURE]] each turn as long as the ship has not been in combat. Its immense size makes it almost impossible to hide, even with advanced stealth technology.
 
 [[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is average.
 
