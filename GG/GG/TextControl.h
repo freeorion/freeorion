@@ -170,7 +170,7 @@ public:
 
     /** Returns the text displayed in this control between the specified
         position code point indices \a from through position \a to. */
-    std::string_view Text(CPSize from, CPSize to) const;
+    std::string_view Text(CPSize from, CPSize to) const noexcept;
 
     /** Returns the text format (vertical and horizontal justification, use of
         word breaks and line wrapping, etc.) */

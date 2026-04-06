@@ -28,22 +28,23 @@ namespace {
     }
 }
 
-std::string_view TextControl::Text(CPSize from, CPSize to) const
+std::string_view TextControl::Text(CPSize from, CPSize to) const noexcept
 {
     if (from == INVALID_CP_SIZE || to == INVALID_CP_SIZE)
         return "";
 
-    std::tie(from, to) = [from, to]() { return std::pair{std::min(from, to), std::max(from, to)}; }();
+    std::tie(from, to) = [from, to]() noexcept { return std::pair{std::min(from, to), std::max(from, to)}; }();
 
+    static_assert(noexcept(CodePointIndicesRangeToStringSizeIndices(from, to, m_line_data)));
     const auto txt_sz = m_text.size();
     auto [low_string_idx_strsz, high_string_idx_strsz] = CodePointIndicesRangeToStringSizeIndices(from, to, m_line_data);
     const auto low_string_idx = std::min(Value(low_string_idx_strsz), txt_sz);
     const auto high_string_idx = std::min(Value(high_string_idx_strsz), txt_sz);
     const auto out_length = std::max(low_string_idx, high_string_idx) - std::min(low_string_idx, high_string_idx);
 
-    const auto low_it = m_text.begin() + low_string_idx;
-
     try {
+        auto low_it = m_text.begin();
+        std::advance(low_it, low_string_idx);
         return {to_addr(low_it), out_length};
     } catch (...) {
         return {};
