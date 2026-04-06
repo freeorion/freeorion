@@ -16735,7 +16735,7 @@ SH_TITANIC
 Coque Titanesque
 
 SH_TITANIC_DESC
-'''Cette coque extraordinairement grande est un véritable exploit d'ingénierie. Elle dispose de seize niches externes, de trois niches internes et d'une niche centrale, et sa [[metertype METER_STRUCTURE]] max est extrêmement élevée. Son immense taille la rend quasiment impossible à dissimuler, même à l'aide des technologies de Furtivité les plus avancées.
+'''Cette coque extraordinairement grande est un véritable exploit d'ingénierie. Elle dispose de quinze niches externes, de trois niches internes et d'une niche centrale, et sa [[metertype METER_STRUCTURE]] max est extrêmement élevée. Son immense taille la rend quasiment impossible à dissimuler, même à l'aide des technologies de Furtivité les plus avancées.
 
 Sa [[metertype METER_STEALTH]] est donc très faible, son [[metertype METER_DETECTION]] standard, tandis que sa [[metertype METER_SPEED]] est moyenne.
 

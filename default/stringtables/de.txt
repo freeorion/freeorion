@@ -7470,7 +7470,7 @@ SH_TITANIC
 Titanenrumpf
 
 SH_TITANIC_DESC
-'''Nur durch meisterhafte Ingenieurskunst lässt sich ein Rumpf dieser Größe überhaupt zum Bewegen zu bringen. Er hat sechzehn externe, drei interne und einen Kernsteckplatz und sehr hohe [[metertype METER_STRUCTURE]]. Die enorme Größe des [[SH_TITANIC]] macht ein Verstecken nahezu unmöglich, selbst mit fortschrittlicher Tarntechnologie.
+'''Nur durch meisterhafte Ingenieurskunst lässt sich ein Rumpf dieser Größe überhaupt zum Bewegen zu bringen. Er hat fünfzehn externe, drei interne und einen Kernsteckplatz und sehr hohe [[metertype METER_STRUCTURE]]. Die enorme Größe des [[SH_TITANIC]] macht ein Verstecken nahezu unmöglich, selbst mit fortschrittlicher Tarntechnologie.
 
 [[metertype METER_STEALTH]] ist sehr gering, [[metertype METER_DETECTION]] ist durchschnittlich und [[metertype METER_SPEED]] ist durchschnittlich.
 
