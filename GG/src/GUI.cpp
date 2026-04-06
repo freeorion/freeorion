@@ -1477,35 +1477,13 @@ void GUI::EnableModalAcceleratorSignals(bool allow)
 void GUI::SetMouseLRSwapped(bool swapped)
 { m_impl->m_mouse_lr_swap = swapped; }
 
-std::shared_ptr<const Font> GUI::GetFont(std::string_view font_filename, unsigned int pts)
-{ return GetFontManager().GetFont(font_filename, pts); }
-
-std::shared_ptr<const Font> GUI::GetFont(std::string_view font_filename, unsigned int pts,
-                                         const std::vector<uint8_t>& file_contents)
-{ return GetFontManager().GetFont(font_filename, pts, file_contents); }
-
-std::shared_ptr<const Font> GUI::GetFont(const std::shared_ptr<const Font>& font, unsigned int pts) const
+std::shared_ptr<const Font> GUI::GetFont(const std::shared_ptr<const Font>& font, unsigned int pts)
 {
     if (!font || font->FontName() == StyleFactory::DefaultFontName())
         return GetStyleFactory().DefaultFont(pts);
     else
         return GetFontManager().GetFont(font->FontName(), pts, font->UnicodeCharsets());
 }
-
-void GUI::FreeFont(std::string_view font_filename, unsigned int pts)
-{ GetFontManager().FreeFont(font_filename, pts); }
-
-void GUI::StoreTexture(Texture* texture, std::string texture_name)
-{ GetTextureManager().StoreTexture(texture, std::move(texture_name)); }
-
-void GUI::StoreTexture(std::shared_ptr<Texture> texture, std::string texture_name)
-{ GetTextureManager().StoreTexture(std::move(texture), std::move(texture_name)); }
-
-std::shared_ptr<Texture> GUI::GetTexture(const std::filesystem::path& path, bool mipmap)
-{ return GetTextureManager().GetTexture(path, mipmap); }
-
-void GUI::FreeTexture(const std::filesystem::path& path)
-{ GetTextureManager().FreeTexture(path); }
 
 void GUI::SetStyleFactory(std::unique_ptr<StyleFactory>&& factory) noexcept
 { m_impl->m_style_factory = std::move(factory); }

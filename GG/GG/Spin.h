@@ -154,9 +154,9 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<c
     const auto& style = GetStyleFactory();
     Control::SetColor(color);
     m_edit = style.NewSpinEdit("", font, CLR_ZERO, text_color, CLR_ZERO);
-    const auto* gui = GUI::GetGUI();
     const int small_pts = static_cast<int>((font ? font->PointSize() : 8u) * 3 / 4);
-    auto small_font = gui->GetFont(font, small_pts);
+    auto* gui = GUI::GetGUI();
+    auto small_font = gui ? gui->GetFont(font, small_pts) : font;
     m_up_button = style.NewSpinIncrButton(small_font, color);
     m_down_button = style.NewSpinDecrButton(small_font, color);
 

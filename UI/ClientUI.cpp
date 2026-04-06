@@ -295,9 +295,8 @@ std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(std::string_view species_name
 }
 
 std::shared_ptr<GG::Texture> ClientUI::FieldTexture(std::string_view field_type_name) {
-    const FieldType* type = GetFieldType(field_type_name);
     std::string_view texture_name = "";
-    if (type)
+    if (const FieldType* type = GetFieldType(field_type_name))
         texture_name = type->Graphic();
     if (texture_name.empty())
         return GetTexture(ArtDir() / "fields" / "ion_storm.png", true);
@@ -305,9 +304,8 @@ std::shared_ptr<GG::Texture> ClientUI::FieldTexture(std::string_view field_type_
 }
 
 std::shared_ptr<GG::Texture> ClientUI::PartIcon(std::string_view part_name) {
-    const ShipPart* part = GetShipPart(part_name);
     std::string_view texture_name = "";
-    if (part)
+    if (const ShipPart* part = GetShipPart(part_name))
         texture_name = part->Icon();
     if (texture_name.empty())
         return GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", true);
@@ -315,9 +313,8 @@ std::shared_ptr<GG::Texture> ClientUI::PartIcon(std::string_view part_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::HullTexture(std::string_view hull_name) {
-    const ShipHull* hull = GetShipHull(hull_name);
-    std::string_view texture_name = "";
-    if (hull) {
+    std::string_view texture_name;
+    if (const ShipHull* hull = GetShipHull(hull_name)) {
         texture_name = hull->Graphic();
         if (texture_name.empty())
             texture_name = hull->Icon();
@@ -328,9 +325,9 @@ std::shared_ptr<GG::Texture> ClientUI::HullTexture(std::string_view hull_name) {
 }
 
 std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
-    const ShipHull* hull = GetShipHull(hull_name);
+    
     std::string_view texture_name = "";
-    if (hull) {
+    if (const ShipHull* hull = GetShipHull(hull_name)) {
         texture_name = hull->Icon();
         if (texture_name.empty())
             texture_name = hull->Graphic();
@@ -340,8 +337,8 @@ std::shared_ptr<GG::Texture> ClientUI::HullIcon(std::string_view hull_name) {
     return GetTexture(ArtDir() / texture_name.data(), true);
 }
 
-std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
-    if (const ShipDesign* design = m_app.GetContext().ContextUniverse().GetShipDesign(design_id)) {
+std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id, const Universe& universe) {
+    if (const ShipDesign* design = universe.GetShipDesign(design_id)) {
         std::string_view icon_name = design->Icon();
         if (icon_name.empty())
             return ClientUI::HullIcon(design->Hull());
@@ -1092,12 +1089,12 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound) {
 std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& path, bool mipmap) {
     std::shared_ptr<GG::Texture> retval;
     try {
-        retval = m_app.GetTexture(path, mipmap);
+        retval = GGHumanClientApp::GetTexture(path, mipmap);
     } catch (const std::exception& e) {
         ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
             "reason: " << e.what();
         try {
-            retval = m_app.GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+            retval = GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
         } catch (...) {
             return retval;
         }
@@ -1105,7 +1102,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const std::filesystem::path& p
         ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
             "reason unknown...?";
         try {
-            retval = m_app.GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
+            retval = GGHumanClientApp::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
         } catch (...) {
             return retval;
         }
