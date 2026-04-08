@@ -75,6 +75,165 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Simulta
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SimultaneousEvents&, unsigned int const);
 
 
+
+namespace {
+    // <concepts> library not fully implemented in XCode 13.2
+    template <class T>
+    concept integral = std::is_integral_v<T>;
+
+    template <integral T>
+    constexpr const auto* GetFormatString() {
+        if constexpr (std::is_same_v<T, unsigned int>)
+            return "%u%n";
+        else if constexpr (std::is_same_v<T, int>)
+            return "%d%n";
+    }
+
+    constexpr bool have_to_chars_lib =
+#if defined(__cpp_lib_to_chars)
+        true;
+#else
+        false;
+#endif
+
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    constexpr
+#endif
+    std::size_t ToChars(integral auto num, char* buffer, char* buffer_end) {
+        if constexpr (have_to_chars_lib) {
+            const auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
+            return static_cast<std::size_t>(std::distance(buffer, result_ptr));
+        } else {
+            std::size_t buffer_sz = std::distance(buffer, buffer_end);
+            auto temp = std::to_string(num);
+            auto out_sz = std::min(buffer_sz, temp.size());
+            std::copy_n(temp.begin(), out_sz, buffer);
+            return out_sz;
+        }
+    }
+
+    // returns { next unconsumed char*, true/false did the parse succeed }
+    // parsed value returned in \a val_out
+    auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool> {
+        if constexpr (have_to_chars_lib) {
+            const auto result = std::from_chars(start, end, val_out);
+            return {result.ptr, result.ec == std::errc()};
+        } else {
+            int chars_consumed = 0;
+            using val_out_t = std::decay_t<decltype(val_out)>;
+            constexpr auto val_format_str = GetFormatString<val_out_t>();
+            const auto matched = sscanf(start, val_format_str, &val_out, &chars_consumed);
+            return {start + chars_consumed, matched >= 1};
+        }
+    }
+
+
+    consteval std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
+        std::size_t retval = 1;
+        while (exp--)
+            retval *= base;
+        return retval;
+    }
+
+    constexpr int int_max = std::numeric_limits<int>::max();
+    constexpr uint8_t int_digits = 11; // digits in base 11 of -2147483648 = -2^31
+    static_assert(Pow(10, int_digits + 1) > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
+    constexpr std::size_t ovt_buffer_size = 4*(int_digits + 1); // space for "-2147483648 -2147483648 -2147483648 -2147483648 "
+    std::string ToString(const auto& data)
+        requires requires { data.size(); } && std::is_same_v<int, std::decay_t<decltype(*data.begin())>>
+    {
+        std::string retval;
+
+        try {
+            retval.reserve(data.size() * (int_digits + 1) + int_digits + 2); // space for count and all values and gaps
+        } catch(...) {}
+
+        retval.append(std::to_string(data.size()));
+
+        for (const auto& v : data)
+            retval.append(" ").append(std::to_string(v));
+
+        return retval;
+    }
+
+    void FillIntContainer(auto& container, std::string_view buffer)
+        requires requires { container.push_back(1); } || requires { container.insert(1); }
+    {
+        if (buffer.empty())
+            return;
+
+        const auto* const buffer_end = buffer.data() + buffer.size();
+
+        unsigned int count = 0;
+        auto [next, success] = FromChars(buffer.data(), buffer_end, count);
+        if (!success)
+            return;
+
+        if constexpr (requires { container.reserve(count); }) {
+            try {
+                container.reserve(count);
+            } catch (...) {}
+        }
+
+        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
+            // safety checks
+            if (!next || !buffer_end)
+                return {default_val, false, next};
+
+            // skip whitespace
+            while (next != buffer_end && *next == ' ')
+                ++next;
+
+            // safety check for end of buffer
+            if (next == buffer_end)
+                return {default_val, false, next};
+
+            // parse string to int
+            int result = default_val;
+            auto [next_out, success] = FromChars(next, buffer_end, result);
+            return {result, success, next_out};
+        };
+
+
+        for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
+            int num = 0;
+
+            std::tie(num, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            if (!success)
+                break;
+
+            if constexpr (requires { container.push_back(num); })
+                container.push_back(num);
+            else if constexpr (requires { container.insert(num); })
+                container.insert(num);
+        }
+    }
+
+    template <typename Archive>
+    void Serialize(Archive& ar, auto& container, const char* tag, bool old_non_string_format)
+    {
+        if constexpr (Archive::is_loading::value) {
+            if (old_non_string_format) {
+                ar >> boost::serialization::make_nvp(tag, container);
+            } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+                std::string str;
+                ar >> boost::serialization::make_nvp(tag, str);
+                FillIntContainer(container, str);
+            } else {
+                ar >> boost::serialization::make_nvp(tag, container);
+            }
+        } else {
+            if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+                std::string str = ToString(container);
+                ar << boost::serialization::make_nvp(tag, str);
+            } else {
+                ar << boost::serialization::make_nvp(tag, container);
+            }
+        }
+    }
+}
+
+
 template <typename Archive>
 void serialize(Archive& ar, InitialStealthEvent& obj, unsigned int const version)
 {
@@ -234,7 +393,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Fighter
 
 
 template <typename Archive>
-void serialize (Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
+void serialize(Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
@@ -306,8 +465,10 @@ void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int/* ve
 }
 
 
+BOOST_CLASS_EXPORT(CombatLog)
+
 template <typename Archive>
-void serialize(Archive& ar, CombatLog& obj, const unsigned int/* version*/)
+void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
 {
     using namespace boost::serialization;
 
@@ -323,11 +484,12 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int/* version*/)
     ar.template register_type<WeaponsPlatformEvent>();
 
     ar  & make_nvp("turn", obj.turn)
-        & make_nvp("system_id", obj.system_id)
-        & make_nvp("empire_ids", obj.empire_ids)
-        & make_nvp("object_ids", obj.object_ids)
-        & make_nvp("damaged_object_ids", obj.damaged_object_ids)
-        & make_nvp("destroyed_object_ids", obj.destroyed_object_ids);
+        & make_nvp("system_id", obj.system_id);
+
+    Serialize(ar, obj.empire_ids, "empire_ids", version < 2);
+    Serialize(ar, obj.object_ids, "object_ids", version < 2);
+    Serialize(ar, obj.damaged_object_ids, "damaged_object_ids", version < 2);
+    Serialize(ar, obj.destroyed_object_ids, "destroyed_object_ids", version < 2);
 
     if (obj.combat_events.size() > 1)
         TraceLogger() << "CombatLog::serialize turn " << obj.turn << "  combat at " << obj.system_id << "  combat events size: " << obj.combat_events.size();
@@ -345,6 +507,7 @@ template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatL
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLog&, const unsigned int);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLog&, const unsigned int);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLog&, const unsigned int);
+
 
 template <typename Archive>
 void serialize(Archive& ar, CombatLogManager& obj, const unsigned int/* version*/)
