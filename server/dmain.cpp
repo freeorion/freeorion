@@ -72,7 +72,6 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #endif
     InitDirs((args.empty() ? "" : args.front()), testing);
 
-    [[maybe_unused]] const auto& logger_init_helper = GetLoggerInitHelper();
     auto& db = GetOptionsDB();
 
 #ifndef FREEORION_DMAIN_KEEP_STACKTRACE
@@ -116,6 +115,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 
         // override previously-saved and default options with command line parameters and flags
         db.SetFromCommandLine(args);
+        [[maybe_unused]] const auto& logger_init_helper = GetLoggerInitHelper();
 
 
         auto help_arg = db.Get<std::string>("help");
