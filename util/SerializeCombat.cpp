@@ -81,6 +81,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Simulta
 namespace {
     template <typename Archive>
     void Serialize(Archive& ar, auto& container, const char* tag, bool old_non_string_format)
+        requires std::is_same_v<int, std::decay_t<decltype(*container.begin())>>
     {
         if constexpr (Archive::is_loading::value) {
             if (old_non_string_format) {
@@ -98,6 +99,114 @@ namespace {
                 ar << boost::serialization::make_nvp(tag, str);
             } else {
                 ar << boost::serialization::make_nvp(tag, container);
+            }
+        }
+    }
+
+
+
+    std::string ToString(const auto& data)
+        requires requires { data.size(); } &&
+                 std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*data.begin())>>
+    {
+        std::string retval;
+
+        try {
+            retval.reserve(data.size() * 3 * (int_digits + 1) + int_digits + 2); // space for count and all int value triples and gaps
+        } catch(...) {}
+
+        retval.append(std::to_string(data.size()));
+
+        for (const auto& [id, state] : data) {
+            retval.append(" ").append(std::to_string(id))
+                  .append(" ").append(std::to_string(Meter::FromFloat(state.current_health)))
+                  .append(" ").append(std::to_string(Meter::FromFloat(state.max_health)));
+        }
+
+        return retval;
+    }
+
+    void FillCombatStates(auto& container, std::string_view buffer)
+        requires requires { container.emplace(1, CombatParticipantState{}); }
+    {
+        if (buffer.empty())
+            return;
+
+        const auto* const buffer_end = buffer.data() + buffer.size();
+
+        unsigned int count = 0;
+        auto [next, success] = FromChars(buffer.data(), buffer_end, count);
+        if (!success)
+            return;
+
+        if constexpr (requires { container.reserve(count); }) {
+            try {
+                container.reserve(count);
+            } catch (...) {}
+        }
+
+        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
+            // safety checks
+            if (!next || !buffer_end)
+                return {default_val, false, next};
+
+            // skip whitespace
+            while (next != buffer_end && *next == ' ')
+                ++next;
+
+            // safety check for end of buffer
+            if (next == buffer_end)
+                return {default_val, false, next};
+
+            // parse string to int
+            int result = default_val;
+            auto [next_out, success] = FromChars(next, buffer_end, result);
+            return {result, success, next_out};
+        };
+
+
+        for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
+            int obj_id = INVALID_OBJECT_ID;
+            int cur_int = Meter::DEFAULT_INT;
+            int max_int = Meter::DEFAULT_INT;
+
+            std::tie(obj_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            if (!success)
+                break;
+            std::tie(cur_int, success, next) = get_int_from_chars(next, Meter::DEFAULT_INT);
+            if (!success)
+                break;
+            std::tie(max_int, success, next) = get_int_from_chars(next, Meter::DEFAULT_INT);
+            if (!success)
+                break;
+
+            container.emplace(obj_id, CombatParticipantState(Meter::FromInt(cur_int), Meter::FromInt(max_int)));
+        }
+    }
+
+    template <typename Archive>
+    void Serialize(Archive& ar, auto& states, const char* tag, bool old_non_string_format)
+        requires std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*states.begin())>>
+    {
+        if constexpr (Archive::is_loading::value) {
+            if (old_non_string_format) {
+                std::map<int, CombatParticipantState> data;
+                ar >> boost::serialization::make_nvp(tag, data);
+                states.clear();
+                states.insert(boost::container::ordered_unique_range, data.begin(), data.end());
+            } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+                std::string str;
+                ar >> boost::serialization::make_nvp(tag, str);
+                FillCombatStates(states, str);
+            } else {
+                ar >> boost::serialization::make_nvp(tag, states);
+            }
+        } else {
+            if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+                std::string str = ToString(states);
+                ar << boost::serialization::make_nvp(tag, str);
+            } else {
+                ar << boost::serialization::make_nvp(tag, states);
             }
         }
     }
@@ -369,7 +478,9 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
         ErrorLogger() << "combat events serializing failed!: caught exception: " << e.what();
     }
 
-    ar & make_nvp("participant_states", obj.participant_states);
+    static_assert(std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*obj.participant_states.begin())>>);
+
+    Serialize(ar, obj.participant_states, "participant_states", version < 3);
 }
 
 

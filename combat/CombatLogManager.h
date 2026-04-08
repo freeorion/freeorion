@@ -3,6 +3,7 @@
 
 #include "CombatSystem.h"
 #include "../util/Export.h"
+#include <boost/container/flat_map.hpp>
 #include <boost/optional/optional.hpp>
 #include <memory>
 
@@ -13,8 +14,11 @@ struct FO_COMMON_API CombatParticipantState {
     float current_health = 0.0f;
     float max_health = 0.0f;
 
-    CombatParticipantState() = default;
-    CombatParticipantState(const UniverseObject& object);
+    constexpr CombatParticipantState() noexcept = default;
+    explicit CombatParticipantState(const UniverseObject& object);
+    constexpr CombatParticipantState(float cur, float max) noexcept :
+        current_health(cur), max_health(max)
+    {}
 };
 
 struct FO_COMMON_API CombatLog {
@@ -28,7 +32,7 @@ struct FO_COMMON_API CombatLog {
     std::set<int>               damaged_object_ids;
     std::set<int>               destroyed_object_ids;
     std::vector<CombatEventPtr> combat_events;
-    std::map<int, CombatParticipantState> participant_states;
+    boost::container::flat_map<int, CombatParticipantState> participant_states;
 };
 
 

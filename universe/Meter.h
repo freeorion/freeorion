@@ -93,7 +93,6 @@ public:
     static constexpr float LARGE_VALUE = 99999.0f;      ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
     static constexpr float INVALID_VALUE = -LARGE_VALUE;///< sentinel value to indicate no valid value for this meter
 
-private:
     // Value must be rounded, otherwise a calculated increase of 0.99999997 will be truncated to 0.999.
     // Negative values are increased by truncation, so the offset must be negative, too.
     static constexpr int32_t FromFloat(float f) noexcept(from_float_noexcept)
@@ -104,6 +103,7 @@ private:
 
     static constexpr int32_t DEFAULT_INT = 0; // should be equal to Meter::FromFloat(DEFAULT_VALUE);
 
+private:
     int32_t cur = DEFAULT_INT;
     int32_t init = DEFAULT_INT;
 
