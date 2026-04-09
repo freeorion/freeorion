@@ -60,7 +60,7 @@ endif()
 
 set(MINIMUM_BOOST_VERSION 1.69.0)
 
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem regex REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS filesystem REQUIRED)
 
 message(STATUS "Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "Compiler Version: ${CMAKE_CXX_COMPILER_VERSION}")
@@ -161,7 +161,6 @@ target_link_libraries(GiGi
         $<IF:$<BOOL:${OPENGL_opengl_LIBRARY}>,${OPENGL_opengl_LIBRARY},${OPENGL_gl_LIBRARY}>
     PRIVATE
         Boost::filesystem
-        Boost::regex
         ${FREETYPE_LIBRARIES}
 )
 
