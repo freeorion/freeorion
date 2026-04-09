@@ -49,7 +49,7 @@ jobs:
         id: download-vcredist
         uses: suisei-cn/actions-download-file@v1.4.0
         with:
-          url: https://github.com/freeorion/freeorion/files/9733497/vcredist_x86.exe.zip
+          url: https://github.com/freeorion/freeorion/files/9733497/vc_redist.x64.exe.zip
           target: ../
       - name: Prepare vcredist
         run: |

@@ -55,9 +55,9 @@ Section "MainSection" SEC01
 
   SetOutPath "$$INSTDIR"
   SetOverwrite try
-  File "..\..\vcredist_x86.exe"
-  ExecWait "$$INSTDIR\vcredist_x86.exe /q"
-  Delete "$$INSTDIR\vcredist_x86.exe"
+  File "..\..\vc_redist.x64.exe"
+  ExecWait "$$INSTDIR\vc_redist.x64.exe /q"
+  Delete "$$INSTDIR\vc_redist.x64.exe"
 
   ${FreeOrion_DLL_LIST_INSTALL}
   File "..\Python${FreeOrion_PYTHON_VERSION}.zip"
