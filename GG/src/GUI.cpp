@@ -1471,13 +1471,13 @@ void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys)
 void GUI::RemoveAccelerator(accel_iterator it)
 { m_impl->m_accelerators.erase(it); }
 
-void GUI::EnableModalAcceleratorSignals(bool allow)
+void GUI::EnableModalAcceleratorSignals(bool allow) noexcept
 { m_impl->m_allow_modal_accelerator_signals = allow; }
 
-void GUI::SetMouseLRSwapped(bool swapped)
+void GUI::SetMouseLRSwapped(bool swapped) noexcept
 { m_impl->m_mouse_lr_swap = swapped; }
 
-std::shared_ptr<const Font> GUI::GetFont(const std::shared_ptr<const Font>& font, unsigned int pts)
+std::shared_ptr<const Font> GUI::GetFont(const std::shared_ptr<const Font>& font, unsigned int pts) const
 {
     if (!font || font->FontName() == StyleFactory::DefaultFontName())
         return GetStyleFactory().DefaultFont(pts);
