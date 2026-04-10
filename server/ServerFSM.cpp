@@ -918,20 +918,21 @@ MPLobby::MPLobby(my_context c) :
         if (!host_con)
             return;
 
-        // create player setup data for host, and store in list
-        m_lobby_data->players.push_back({host_id, PlayerSetupData()});
-
-        PlayerSetupData& player_setup_data = m_lobby_data->players.begin()->second;
-
-        player_setup_data.player_name =           host_con->PlayerName();
-        player_setup_data.empire_name =           Networking::is_ai(host_con) ?
+        auto empire_name = Networking::is_ai(host_con) ?
             host_con->PlayerName() :
-            GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
-        player_setup_data.empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-        player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-        // leaving save game empire id as default
-        player_setup_data.client_type =           host_con->GetClientType();
-        player_setup_data.authenticated =         host_con->IsAuthenticated();
+            GenerateEmpireName(host_con->PlayerName(), m_lobby_data->players);
+
+        // create player setup data for host, and store in list
+        m_lobby_data->players.emplace_back(
+            std::piecewise_construct,
+            std::forward_as_tuple(host_id),
+            std::forward_as_tuple(host_con->PlayerName(),
+                                  std::move(empire_name),
+                                  host_id,
+                                  host_con->GetClientType(),
+                                  EmpireColors().at(0),
+                                  sm.RandomPlayableSpeciesName(),
+                                  host_con->IsAuthenticated())).second;
 
         host_con->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
@@ -1078,48 +1079,49 @@ void MPLobby::EstablishPlayer(PlayerConnectionPtr player_connection,
     ServerApp& server = Server();
     const SpeciesManager& sm = server.GetSpeciesManager();
 
-    if (context<ServerFSM>().EstablishPlayer(player_connection, player_name, client_type,
-                                             client_version_string, roles))
-    {
-        const int player_id = player_connection->PlayerID();
+    bool established = context<ServerFSM>().EstablishPlayer(player_connection, player_name, client_type,
+                                                            client_version_string, roles);
+    if (!established)
+        return;
 
-        // Inform AI of logging configuration.
-        if (Networking::is_ai(client_type))
-            player_connection->SendMessage(
-                LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
+    const int player_id = player_connection->PlayerID();
 
-        // assign player info from defaults or from connection to lobby data players list
-        PlayerSetupData player_setup_data;
-        player_setup_data.player_name = player_name;
-        player_setup_data.client_type = client_type;
-        player_setup_data.empire_name = Networking::is_human(client_type) ?
-            player_name : GenerateEmpireName(player_name, m_lobby_data->players);
-        player_setup_data.empire_color = GetUnusedEmpireColour(m_lobby_data->players);
-        if (m_lobby_data->seed.empty())
-            player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-        else
-            player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
-        player_setup_data.authenticated =  player_connection->IsAuthenticated();
+    // Inform AI of logging configuration.
+    if (Networking::is_ai(client_type))
+        player_connection->SendMessage(
+            LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
-        // after setting all details, push into lobby data
-        m_lobby_data->players.push_back({player_id, player_setup_data});
+    // assign player info from defaults or from connection, put into lobby data
+    auto empire_name = Networking::is_human(client_type) ?
+        player_name : GenerateEmpireName(player_name, m_lobby_data->players);
+    const auto& starting_species_name = m_lobby_data->seed.empty() ?
+        sm.RandomPlayableSpeciesName() : sm.SequentialPlayableSpeciesName(player_id);
+    m_lobby_data->players.emplace_back(
+        std::piecewise_construct,
+        std::forward_as_tuple(player_id),
+        std::forward_as_tuple(player_name,
+                              std::move(empire_name),
+                              player_id,
+                              client_type,
+                              GetUnusedEmpireColour(m_lobby_data->players),
+                              starting_species_name,
+                              player_connection->IsAuthenticated()));
 
-        // drop ready player flag at new player
-        for (auto& plr : m_lobby_data->players | range_values) {
-            if (plr.empire_name == player_name) {
-                // change empire name
-                plr.empire_name = Networking::is_human(plr) ?
-                    plr.player_name : GenerateEmpireName(plr.player_name, m_lobby_data->players);
-            }
-
-            plr.player_ready = false;
+    // drop ready player flag at new player
+    for (auto& plr : m_lobby_data->players | range_values) {
+        if (plr.empire_name == player_name) {
+            // change empire name
+            plr.empire_name = Networking::is_human(plr) ?
+                plr.player_name : GenerateEmpireName(plr.player_name, m_lobby_data->players);
         }
 
-        ValidateClientLimits();
-
-        for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
-            epc->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+        plr.player_ready = false;
     }
+
+    ValidateClientLimits();
+
+    for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
+        epc->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
 }
 
 namespace {
