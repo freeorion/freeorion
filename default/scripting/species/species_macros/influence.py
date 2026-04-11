@@ -62,7 +62,9 @@ _BASE_INFLUENCE_COSTS = [
                         )
                         + StatisticCount(
                             float,
-                            condition=Ship & OwnedBy(empire=Source.Owner) & (LocalCandidate.OrderedColonizePlanetID != -1),
+                            condition=Ship
+                            & OwnedBy(empire=Source.Owner)
+                            & (LocalCandidate.OrderedColonizePlanetID != -1),
                         )
                         + StatisticCount(
                             float,
