@@ -855,7 +855,7 @@ void MapWndPopup::CompleteConstruction() {
 
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
-    if (auto mapwnd = GetApp().GetUI().GetMapWnd(false))
+    if (auto mapwnd = GetApp().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
         mapwnd->RegisterPopup(std::static_pointer_cast<MapWndPopup>(shared_from_this()));
 }
 
@@ -874,7 +874,7 @@ MapWndPopup::~MapWndPopup() {
 
     // MapWndPopupWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
-    if (auto mapwnd = GetApp().GetUI().GetMapWnd(false))
+    if (auto mapwnd = GetApp().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
         mapwnd->RemovePopup(this);
 }
 

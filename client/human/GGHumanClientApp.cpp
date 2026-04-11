@@ -1152,7 +1152,7 @@ void GGHumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     SetAppSize(GG::Pt{w, h});
 
-    if (auto* map_wnd = m_ui.GetMapWnd(false))
+    if (auto* map_wnd = m_ui.GetMapWnd(ClientUI::ConstructFlag::NEVER))
         map_wnd->DoLayout();
     if (auto intro_screen = m_ui.GetIntroScreen())
         intro_screen->Resize(GG::Pt(w, h));
@@ -1232,7 +1232,7 @@ bool GGHumanClientApp::ToggleFullscreen() {
 void GGHumanClientApp::StartGame(bool is_new_game) {
     m_game_started = true;
 
-    if (auto map_wnd = m_ui.GetMapWnd(false))
+    if (auto map_wnd = m_ui.GetMapWnd(ClientUI::ConstructFlag::NEVER))
         map_wnd->ResetEmpireShown();
 
     if (auto* sdm = m_ui.GetShipDesignManager())
@@ -1489,7 +1489,7 @@ void GGHumanClientApp::ResetClientData(bool save_connection) {
         m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     }
     SetEmpireID(ALL_EMPIRES);
-    if (auto map_wnd = m_ui.GetMapWnd(false))
+    if (auto map_wnd = m_ui.GetMapWnd(ClientUI::ConstructFlag::NEVER))
         map_wnd->Sanitize();
 
     m_universe.Clear();

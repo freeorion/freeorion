@@ -199,7 +199,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
         // Logging configuration can only be sent after receiving host id.
         Client().SendLoggingConfigToServer();
 
-        if (auto mapwnd = Client().GetUI().GetMapWnd(false))
+        if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
             mapwnd->Sanitize();
 
         return transit<PlayingGame>();
@@ -558,7 +558,7 @@ boost::statechart::result MPLobby::react(const GameStart& msg) {
     auto& client_ui = Client().GetUI();
 
 
-    if (auto mapwnd = client_ui.GetMapWnd(false))
+    if (auto mapwnd = client_ui.GetMapWnd(ClientUI::ConstructFlag::NEVER))
         mapwnd->Sanitize();
     Client().Remove(client_ui.GetMultiPlayerLobbyWnd());
 
@@ -835,7 +835,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     GGHumanClientApp& client = Client();
     // Stop auto-advance turn on error
-    if (auto mapwnd = client.GetUI().GetMapWnd(true)) {
+    if (auto mapwnd = client.GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE)) {
         if (mapwnd->AutoEndTurnEnabled()) {
             mapwnd->ToggleAutoEndTurn();
             client.InitAutoTurns(0);
@@ -869,7 +869,7 @@ boost::statechart::result PlayingGame::react(const TurnPartialUpdate& msg) {
 
     try {
         ExtractTurnPartialUpdateMessageData(msg.m_message, Client().EmpireID(), Client().GetUniverse());
-        if (auto mapwnd = Client().GetUI().GetMapWnd(false))
+        if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
             mapwnd->MidTurnUpdate();
     } catch (...) {}
 
@@ -898,7 +898,7 @@ boost::statechart::result PlayingGame::react(const TurnTimeout& msg) {
     } catch (const boost::bad_lexical_cast&) {
         ErrorLogger(FSM) << "PlayingGame::react(const TurnTimeout& msg) could not convert \"" << text << "\" to timeout";
     }
-    if (auto mapwnd = Client().GetUI().GetMapWnd(false))
+    if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
         mapwnd->ResetTimeoutClock(timeout_remain);
     return discard_event();
 }
@@ -953,7 +953,7 @@ WaitingForGameStart::WaitingForGameStart(my_context ctx) :
 {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart";
     Client().Register(Client().GetUI().GetPlayerListWnd());
-    if (auto mapwnd = Client().GetUI().GetMapWnd(true))
+    if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE))
         mapwnd->EnableOrderIssuing(false);
 }
 
@@ -962,7 +962,7 @@ WaitingForGameStart::~WaitingForGameStart()
 
 boost::statechart::result WaitingForGameStart::react(const GameStart& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForGameStart.GameStart";
-    if (auto mapwnd = Client().GetUI().GetMapWnd(true))
+    if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE))
         mapwnd->ResetTimeoutClock(0);
     Client().Orders().Reset();
 
@@ -1032,7 +1032,7 @@ boost::statechart::result WaitingForGameStart::react(const GameStartDataUnpacked
         TraceLogger(FSM) << "UI data from save data restored";
 
         Client().GetUI().GetPlayerListWnd()->Refresh(Client());
-        if (auto mapwnd = Client().GetUI().GetMapWnd(true))
+        if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE))
             mapwnd->ResetTimeoutClock(0);
 
     } catch (const std::exception& e) {
@@ -1072,7 +1072,7 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     Base(ctx)
 {
     TraceLogger(FSM) << "(HumanClientFSM) WaitingForTurnData";
-    if (auto mapwnd = Client().GetUI().GetMapWnd(true))
+    if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE))
         mapwnd->EnableOrderIssuing(false);
 }
 
@@ -1098,7 +1098,7 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg)
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
     TraceLogger(FSM) << "(HumanClientFSM) PlayingGame.TurnUpdate";
 
-    if (auto mapwnd = Client().GetUI().GetMapWnd(true))
+    if (auto mapwnd = Client().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE))
         mapwnd->ResetTimeoutClock(0);
     Client().Orders().Reset();
 

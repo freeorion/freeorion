@@ -43,7 +43,9 @@ public:
     ClientUI(const ClientUI&) = delete;
     ClientUI(ClientUI&&) = delete;
 
-    MapWnd*                                 GetMapWnd(bool construct);  //!< Returns the main map window. if \a is true, creates a MapWnd if one doesn't already exist. if \a is false, may return nullptr
+    enum class ConstructFlag : bool { NEVER, IF_NOT_YET_DONE };
+
+    MapWnd*                                 GetMapWnd(ConstructFlag construct); //!< Returns the main map window. if \a construct is IF_NOT_YET_DONE, creates a MapWnd if one doesn't already exist. if \a is NEVER, may return nullptr
     const MapWnd*                           GetMapWndConst() const noexcept { return m_map_wnd.get(); }
     std::shared_ptr<MapWnd>                 GetMapWndShared();          //!< Returns the main map window, constructing one if not already available
     std::shared_ptr<MessageWnd>             GetMessageWnd();            //!< Returns the chat / message window.
