@@ -615,6 +615,23 @@ ClientUI::ClientUI(GGHumanClientApp& app) :
 
     // Set the root path for image tags in rich text.
     GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
+
+
+    HotkeyManager& hkm = HotkeyManager::GetManager();
+
+    // general-use hotkeys, not specific to any particular bit of the UI
+    hkm.Connect(boost::bind(&GGHumanClientApp::CutFocusWndText,            std::addressof(m_app)), "ui.cut");
+    hkm.Connect(boost::bind(&GGHumanClientApp::CopyFocusWndText,           std::addressof(m_app)), "ui.copy");
+    hkm.Connect(boost::bind(&GGHumanClientApp::PasteFocusWndClipboardText, std::addressof(m_app)), "ui.paste");
+    hkm.Connect(boost::bind(&GGHumanClientApp::FocusWndSelectAll,          std::addressof(m_app)), "ui.select.all");
+    hkm.Connect(boost::bind(&GGHumanClientApp::FocusWndDeselect,           std::addressof(m_app)), "ui.select.none");
+
+    //hkm.Connect(boost::bind(&GGHumanClientApp::SetPrevFocusWndInCycle,     std::addressof(m_app)), "ui.focus.prev",
+    //            NoModalWndsOpenCondition);
+    //hkm.Connect(boost::bind(&GGHumanClientApp::SetNextFocusWndInCycle,     std::addressof(m_app)), "ui.focus.next",
+    //            NoModalWndsOpenCondition);
+
+    hkm.RebuildShortcuts();
 }
 
 
