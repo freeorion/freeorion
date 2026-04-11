@@ -222,11 +222,13 @@ struct PlayerSetupData {
 
     PlayerSetupData(std::string name, std::string empire_name_, int player_id_,
                     Networking::ClientType type, std::array<uint8_t, 4> clr,
-                    std::string starting_species, bool is_auth) :
+                    std::string starting_species, bool is_auth,
+                    int save_empire_id = ALL_EMPIRES) :
         player_name(std::move(name)),
         empire_name(std::move(empire_name_)),
         starting_species_name(std::move(starting_species)),
         player_id(player_id_),
+        save_game_empire_id(save_empire_id),
         empire_color(clr),
         client_type(type),
         authenticated(is_auth)
