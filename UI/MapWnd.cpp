@@ -7301,20 +7301,6 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm.Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.circle.shown"), "ui.map.scale.circle",
                 AndCondition(OrCondition(InvisibleWindowCondition(bl), VisibleWindowCondition(this)), NoModalWndsOpenCondition));
 
-
-    // these are general-use hotkeys, only connected here as a convenient location to do so once.
-    hkm.Connect(boost::bind(&GG::GUI::CutFocusWndText, GG::GUI::GetGUI()), "ui.cut");
-    hkm.Connect(boost::bind(&GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()), "ui.copy");
-    hkm.Connect(boost::bind(&GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()), "ui.paste");
-
-    hkm.Connect(boost::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "ui.select.all");
-    hkm.Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "ui.select.none");
-
-    //hkm.Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.prev",
-    //             NoModalWndsOpenCondition);
-    //hkm.Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.next",
-    //             NoModalWndsOpenCondition);
-
     hkm.RebuildShortcuts();
 }
 
