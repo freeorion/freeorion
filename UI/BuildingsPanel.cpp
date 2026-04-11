@@ -379,7 +379,7 @@ void BuildingIndicator::RClick(GG::Pt pt, GG::Flags<GG::ModKey> mod_keys) {
     if (!building)
         return;
 
-    auto map_wnd = app.GetUI().GetMapWnd(false);
+    auto map_wnd = app.GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER);
     if (ClientPlayerIsModerator() &&
         map_wnd && map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
     {

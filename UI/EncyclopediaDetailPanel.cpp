@@ -4155,7 +4155,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     timer.EnterSection("Find words in search text");
 
     // force MapWnd construction before possible parallel accesses below...
-    GetApp().GetUI().GetMapWnd(true);
+    GetApp().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE);
 
     const unsigned int num_threads = static_cast<unsigned int>(std::max(1, EffectsProcessingThreads()));
     boost::asio::thread_pool thread_pool(num_threads);

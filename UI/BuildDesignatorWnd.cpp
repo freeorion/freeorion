@@ -1327,7 +1327,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
         if (auto build_location = objects.get(location_id)) {
             // centre map on system of build location
             const int system_id = build_location->SystemID();
-            if (auto map = app.GetUI().GetMapWnd(false)) {
+            if (auto map = app.GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER)) {
                 map->CenterOnObject(system_id, objects);
                 if (open) {
                     map->SelectSystem(system_id, context);

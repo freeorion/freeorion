@@ -688,7 +688,7 @@ void SystemIcon::ShowName() {
 
     // get font size
     int name_pts = ClientUI::Pts();
-    if (auto map_wnd = GetApp().GetUI().GetMapWnd(true))
+    if (auto map_wnd = GetApp().GetUI().GetMapWnd(ClientUI::ConstructFlag::IF_NOT_YET_DONE))
         name_pts = map_wnd->SystemNamePts();
 
     auto it = m_colored_names.find(name_pts);

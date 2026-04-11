@@ -618,8 +618,8 @@ ClientUI::ClientUI(GGHumanClientApp& app) :
 }
 
 
-MapWnd* ClientUI::GetMapWnd(bool construct) {
-    if (!m_map_wnd && construct)
+MapWnd* ClientUI::GetMapWnd(ConstructFlag construct) {
+    if (!m_map_wnd && construct == ConstructFlag::IF_NOT_YET_DONE)
         m_map_wnd = GG::Wnd::Create<MapWnd>();
     return m_map_wnd.get();
 }
@@ -724,7 +724,7 @@ std::string ClientUI::GetFilenameWithSaveFileDialog(
 }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) {
-    auto mapwnd = GetMapWnd(true);
+    auto mapwnd = GetMapWnd(ConstructFlag::IF_NOT_YET_DONE);
     if (!mapwnd) {
         ErrorLogger() << "GetSaveGameUIData couldn't get mapwnd";
         return;
@@ -789,7 +789,7 @@ bool ClientUI::ZoomToObject(int id, ScriptingContext& context, int client_empire
 }
 
 bool ClientUI::ZoomToPlanet(int id, ScriptingContext& context) {
-    if (auto mapwnd = GetMapWnd(false)) {
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER)) {
         if (auto planet = std::as_const(context).ContextObjects().getRaw<Planet>(id)) {
             mapwnd->CenterOnMapCoord(planet->X(), planet->Y());
             mapwnd->SelectSystem(planet->SystemID(), context);
@@ -802,7 +802,7 @@ bool ClientUI::ZoomToPlanet(int id, ScriptingContext& context) {
 
 bool ClientUI::ZoomToPlanetPedia(int id, const ObjectMap& objects) {
     if (objects.get<Planet>(id)) {
-        if (auto mapwnd = GetMapWnd(false)) {
+        if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER)) {
             mapwnd->ShowPlanet(id);
             return true;
         }
@@ -816,7 +816,7 @@ bool ClientUI::ZoomToSystem(int id, ScriptingContext& context) {
 }
 
 bool ClientUI::ZoomToSystem(const System& system, ScriptingContext& context) {
-    if (auto mapwnd = GetMapWnd(false)) {
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER)) {
         mapwnd->CenterOnMapCoord(system.X(), system.Y());
         mapwnd->SelectSystem(std::addressof(system), context);
         return true;
@@ -829,7 +829,7 @@ bool ClientUI::ZoomToFleet(int id, const ScriptingContext& context, int client_e
     auto fleet = context.ContextObjects().get<Fleet>(id);
     if (!fleet) return false;
 
-    if (auto mapwnd = GetMapWnd(false)) {
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER)) {
         mapwnd->CenterOnObject(*fleet);
         mapwnd->SelectFleet(id, context, client_empire_id);
     }
@@ -854,14 +854,14 @@ bool ClientUI::ZoomToBuilding(int id, ScriptingContext& context) {
 
 bool ClientUI::ZoomToField(int id, const ObjectMap& objects) {
     if (auto field = objects.get<Field>(id))
-        if (auto mapwnd = GetMapWnd(false))
+        if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
             mapwnd->CenterOnObject(*field);
     return false;
 }
 
 bool ClientUI::ZoomToCombatLog(int id) {
     if (GetCombatLogManager().GetLog(id)) {
-        if (auto mapwnd = GetMapWnd(false))
+        if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
             mapwnd->ShowCombatLog(id);
         return true;
     }
@@ -916,7 +916,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup) {
 bool ClientUI::ZoomToTech(std::string tech_name) {
     if (!GetTech(tech_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowTech(std::move(tech_name));
     return true;
 }
@@ -924,7 +924,7 @@ bool ClientUI::ZoomToTech(std::string tech_name) {
 bool ClientUI::ZoomToPolicy(std::string policy_name) {
     if (!GetPolicy(policy_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowPolicy(std::move(policy_name));
     return true;
 }
@@ -932,7 +932,7 @@ bool ClientUI::ZoomToPolicy(std::string policy_name) {
 bool ClientUI::ZoomToBuildingType(std::string building_type_name) {
     if (!GetBuildingType(building_type_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowBuildingType(std::move(building_type_name));
     return true;
 }
@@ -940,7 +940,7 @@ bool ClientUI::ZoomToBuildingType(std::string building_type_name) {
 bool ClientUI::ZoomToSpecial(std::string special_name) {
     if (!GetSpecial(special_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowSpecial(std::move(special_name));
     return true;
 }
@@ -948,7 +948,7 @@ bool ClientUI::ZoomToSpecial(std::string special_name) {
 bool ClientUI::ZoomToShipHull(std::string hull_name) {
     if (!GetShipHull(hull_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowShipHull(std::move(hull_name));
     return true;
 }
@@ -956,7 +956,7 @@ bool ClientUI::ZoomToShipHull(std::string hull_name) {
 bool ClientUI::ZoomToShipPart(std::string part_name) {
     if (!GetShipPart(part_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowShipPart(std::move(part_name));
     return true;
 }
@@ -964,7 +964,7 @@ bool ClientUI::ZoomToShipPart(std::string part_name) {
 bool ClientUI::ZoomToSpecies(std::string species_name) {
     if (!m_app.GetSpeciesManager().GetSpecies(species_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowSpecies(std::move(species_name));
     return true;
 }
@@ -972,7 +972,7 @@ bool ClientUI::ZoomToSpecies(std::string species_name) {
 bool ClientUI::ZoomToFieldType(std::string field_type_name) {
     if (!GetFieldType(field_type_name))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowFieldType(std::move(field_type_name));
     return true;
 }
@@ -981,7 +981,7 @@ bool ClientUI::ZoomToShipDesign(int design_id) {
     const auto& universe = m_app.GetContext().ContextUniverse();
     if (!universe.GetShipDesign(design_id))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowShipDesign(design_id);
     return true;
 }
@@ -989,25 +989,25 @@ bool ClientUI::ZoomToShipDesign(int design_id) {
 bool ClientUI::ZoomToEmpire(int empire_id) {
     if (!m_app.GetContext().GetEmpire(empire_id))
         return false;
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowEmpire(empire_id);
     return true;
 }
 
 bool ClientUI::ZoomToMeterTypeArticle(std::string meter_string) {
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowMeterTypeArticle(std::move(meter_string));
     return true;
 }
 
 bool ClientUI::ZoomToMeterTypeArticle(MeterType meter_type) {
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowMeterTypeArticle(meter_type);
     return true;
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(std::string str) {
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->ShowEncyclopediaEntry(std::move(str));
     return true;
 }
@@ -1077,7 +1077,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const std::filesystem::p
 }
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data) {
-    if (auto mapwnd = GetMapWnd(false))
+    if (auto mapwnd = GetMapWnd(ConstructFlag::NEVER))
         mapwnd->RestoreFromSaveData(ui_data);
     m_ship_designs->Load(ui_data);
 }

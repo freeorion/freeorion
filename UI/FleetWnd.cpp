@@ -2610,7 +2610,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         return;
     auto fleet = objects.get<Fleet>(m_fleet_id);
 
-    const auto map_wnd = app.GetUI().GetMapWnd(false);
+    const auto map_wnd = app.GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER);
 
     if (ClientPlayerIsModerator() &&
         map_wnd && map_wnd->GetModeratorActionSetting() != ModeratorActionSetting::MAS_NoAction)
@@ -2896,7 +2896,7 @@ void FleetWnd::CompleteConstruction() {
 FleetWnd::~FleetWnd() {
     // FleetWnd is registered as a top level window, the same as ClientUI and MapWnd.
     // Consequently, when the GUI shutsdown either could be destroyed before this Wnd
-    if (auto mapwnd = GetApp().GetUI().GetMapWnd(false))
+    if (auto mapwnd = GetApp().GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER))
         mapwnd->ClearProjectedFleetMovementLines();
     ClosingSignal(this);
 }
@@ -3497,7 +3497,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
 
     auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
 
-    const auto mapwnd = app.GetUI().GetMapWnd(false);
+    const auto mapwnd = app.GetUI().GetMapWnd(ClientUI::ConstructFlag::NEVER);
 
     // add a fleet popup command to send the fleet exploring, and stop it from exploring
     if (system && mapwnd
