@@ -77,7 +77,6 @@ void Edit::Render()
     //CPSize last_visible_char = LastVisibleChar();
     //const StrSize INDEX_0 = StringIndexOfLineAndGlyph(0, m_first_char_shown, line_data);
     //const StrSize INDEX_END = StringIndexOfLineAndGlyph(0, last_visible_char, line_data);
-    Font::RenderState rs{text_color_to_use};
 
     const Pt font_render_ul{client_ul.x - first_char_offset, text_y_pos};
     const Pt font_render_lr{client_lr.x - first_char_offset, text_y_pos + font->Height()};
@@ -85,7 +84,7 @@ void Edit::Render()
     if (!line_data.empty() && MultiSelected()) {
         const auto& char_data = line_data.front().char_data;
 
-        // if one or more chars are selected, hilite, then draw the range in the selected-text color
+        // if one or more chars are selected, draw hilite background
         CPSize low_cursor_pos  = std::min(CPSize(char_data.size()), std::min(m_cursor_pos.first, m_cursor_pos.second));
         CPSize high_cursor_pos = std::min(CPSize(char_data.size()), std::max(m_cursor_pos.first, m_cursor_pos.second));
 
@@ -93,19 +92,16 @@ void Edit::Render()
         Pt hilite_ul(client_ul.x + ((low_cursor_pos < CP1) ? X0 : char_data.at(Value(low_cursor_pos - CP1)).extent) - first_char_offset, client_ul.y);
         Pt hilite_lr(client_ul.x + ((high_cursor_pos < CP1) ? X0 : char_data.at(Value(high_cursor_pos - CP1)).extent) - first_char_offset, client_lr.y);
         FlatRectangle(hilite_ul, hilite_lr, hilite_color_to_use, CLR_ZERO, 0);
+    }
 
-        // draw text
-        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
+    // draw text
+    Font::RenderState rs{text_color_to_use};
+    font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
 
-    } else { // no selected text
-        // draw text
-        font->RenderText(font_render_ul, font_render_lr, fmt, line_data, rs);
-
-        if (GUI::GetGUI()->FocusWnd().get() == this) {
-            // if we have focus, draw the caret as a simple vertical line
-            X caret_x = ScreenPosOfChar(m_cursor_pos.second);
-            Line(caret_x, client_ul.y, caret_x, client_lr.y, text_color_to_use);
-        }
+    if (!MultiSelected() && GUI::GetGUI()->FocusWnd().get() == this) {
+        // if we have focus, draw the caret as a simple vertical line
+        X caret_x = ScreenPosOfChar(m_cursor_pos.second);
+        Line(caret_x, client_ul.y, caret_x, client_lr.y, text_color_to_use);
     }
 
     EndScissorClipping();
