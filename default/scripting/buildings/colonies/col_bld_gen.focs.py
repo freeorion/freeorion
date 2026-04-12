@@ -109,8 +109,8 @@ for sp_id, sp_graphic in species_list:
         sp_tags += ["CTRL_EXTINCT"]
 
     if sp_id == "SP_EXOBOT":
-        species_condition = None
-    if extinct_tech == "":
+        species_condition = Population(high=0)
+    elif extinct_tech == "":
         species_condition = ResourceSupplyConnected(
             empire=Source.Owner,
             condition=Planet()
