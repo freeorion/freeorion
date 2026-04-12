@@ -16209,7 +16209,7 @@ BLD_COL_EXOBOT
 Colony of [[SP_EXOBOT]]
 
 BLD_COL_EXOBOT_DESC
-This building will construct an [[species SP_EXOBOT]] colony at an [[encyclopedia OUTPOSTS_TITLE]]. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
+This building will construct an [[species SP_EXOBOT]] colony at an [[encyclopedia OUTPOSTS_TITLE]]. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range or the imperial stockpile to provide the necessary Production Points.
 
 BLD_COL_SUPER_TEST
 Super Tester Colony
