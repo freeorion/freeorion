@@ -903,6 +903,7 @@ function(_Boost_COMPONENT_DEPENDENCIES component _ret)
     set(_Boost_TIMER_DEPENDENCIES chrono system)
     set(_Boost_WAVE_DEPENDENCIES filesystem serialization thread chrono date_time atomic)
     set(_Boost_WSERIALIZATION_DEPENDENCIES serialization)
+  # The script itself got deprecated so for newer version it was manually tested which dependencies are still available.
   elseif(NOT Boost_VERSION VERSION_LESS 107000 AND Boost_VERSION VERSION_LESS 108800)
     set(_Boost_CONTRACT_DEPENDENCIES thread chrono date_time)
     set(_Boost_COROUTINE_DEPENDENCIES context)
