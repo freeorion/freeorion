@@ -330,6 +330,8 @@ std::string ServerApp::GetVisibleObjectName(const UniverseObject& object)
 { return object.Name(); }
 
 void ServerApp::Run() {
+    if (IsHostless())
+        m_fsm.process_event(Hostless());
     DebugLogger() << "FreeOrion server waiting for network events";
     try {
         while (1) {
