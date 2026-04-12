@@ -559,7 +559,7 @@ Idle::Idle(my_context c) :
 {
     TraceLogger(FSM) << "(ServerFSM) Idle";
     if (Server().IsHostless())
-        post_event(Hostless());
+        return;
     else if (!GetOptionsDB().Get<std::string>("load").empty())
         throw std::invalid_argument("Autostart load file was chosen but the server wasn't started in a hostless mode");
     else if (GetOptionsDB().Get<bool>("quickstart"))
