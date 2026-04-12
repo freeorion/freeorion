@@ -296,41 +296,134 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Stealth
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, StealthChangeEvent::StealthChangeEventDetail&, unsigned int const);
 
 
-template <typename Archive>
-void serialize(Archive& ar, WeaponFireEvent& obj, unsigned int const version)
-{
-    using namespace boost::serialization;
+namespace {
+    std::string ToString(const WeaponFireEvent& obj) {
+        return      std::to_string(obj.bout).append(" ")
+            .append(std::to_string(obj.round)).append(" ")
+            .append(std::to_string(obj.attacker_id)).append(" ")
+            .append(std::to_string(obj.target_id)).append(" ")
+            .append(std::to_string(obj.attacker_owner_id)).append(" ")
+            .append(std::to_string(obj.target_owner_id)).append(" ")
+            .append(std::to_string(Meter::FromFloat(obj.power))).append(" ")
+            .append(std::to_string(Meter::FromFloat(obj.shield))).append(" ")
+            .append(std::to_string(Meter::FromFloat(obj.damage))).append(" ")
+            .append(obj.weapon_name);
+    }
 
-    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    void FillWeaponFireEvent(WeaponFireEvent& obj, std::string_view buffer) {
+        const auto* const buffer_end = buffer.data() + buffer.size();
+        const auto* next = buffer.data();
+        bool success = false;
 
-    if (version < 5) {
-        ar & make_nvp("bout", obj.bout)
-           & make_nvp("round", obj.round)
-           & make_nvp("attacker_id", obj.attacker_id)
-           & make_nvp("target_id", obj.target_id)
-           & make_nvp("weapon_name", obj.weapon_name)
-           & make_nvp("power", obj.power)
-           & make_nvp("shield", obj.shield)
-           & make_nvp("damage", obj.damage)
-           & make_nvp("target_owner_id", obj.target_owner_id)
-           & make_nvp("attacker_owner_id", obj.attacker_owner_id);
-    } else {
-        ar & make_nvp("b", obj.bout)
-           & make_nvp("r", obj.round)
-           & make_nvp("a", obj.attacker_id)
-           & make_nvp("t", obj.target_id)
-           & make_nvp("w", obj.weapon_name)
-           & make_nvp("p", obj.power)
-           & make_nvp("s", obj.shield)
-           & make_nvp("d", obj.damage)
-           & make_nvp("to", obj.target_owner_id)
-           & make_nvp("ao", obj.attacker_owner_id);
+        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
+            // safety checks
+            if (!next || !buffer_end)
+                return {default_val, false, next};
+
+            // skip whitespace
+            while (next != buffer_end && *next == ' ')
+                ++next;
+
+            // safety check for end of buffer
+            if (next == buffer_end)
+                return {default_val, false, next};
+
+            // parse string to int
+            int result = default_val;
+            auto [next_out, success] = FromChars(next, buffer_end, result);
+            return {result, success, next_out};
+        };
+
+        std::tie(obj.bout, success, next) = get_int_from_chars(next, -1);
+        if (!success)
+            return;
+        std::tie(obj.round, success, next) = get_int_from_chars(next, -1);
+        if (!success)
+            return;
+        std::tie(obj.attacker_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+        if (!success)
+            return;
+        std::tie(obj.target_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+        if (!success)
+            return;
+        std::tie(obj.attacker_owner_id, success, next) = get_int_from_chars(next, ALL_EMPIRES);
+        if (!success)
+            return;
+        std::tie(obj.target_owner_id, success, next) = get_int_from_chars(next, ALL_EMPIRES);
+        if (!success)
+            return;
+
+        int power_as_int = 0;
+        std::tie(power_as_int, success, next) = get_int_from_chars(next, 0);
+        if (!success)
+            return;
+        obj.power = Meter::FromInt(power_as_int);
+
+        int shield_as_int = 0;
+        std::tie(shield_as_int, success, next) = get_int_from_chars(next, 0);
+        if (!success)
+            return;
+        obj.shield = Meter::FromInt(shield_as_int);
+
+        int damage_as_int = 0;
+        std::tie(damage_as_int, success, next) = get_int_from_chars(next, 0);
+        if (!success)
+            return;
+        obj.damage = Meter::FromInt(damage_as_int);
+
+        const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
+        if (next_offset > buffer.size())
+            return;
+        obj.weapon_name = buffer.substr(next_offset);
+    }
+
+    template <typename Archive>
+    void Serialize(Archive& ar, WeaponFireEvent& obj, bool short_tags)
+    {
+        using boost::serialization::make_nvp;
+        ar  & make_nvp(short_tags ? "b" : "bout", obj.bout)
+            & make_nvp(short_tags ? "r" : "round", obj.round)
+            & make_nvp(short_tags ? "a" : "attacker_id", obj.attacker_id)
+            & make_nvp(short_tags ? "t" : "target_id", obj.target_id)
+            & make_nvp(short_tags ? "w" : "weapon_name", obj.weapon_name)
+            & make_nvp(short_tags ? "p" : "power", obj.power)
+            & make_nvp(short_tags ? "s" : "shield", obj.shield)
+            & make_nvp(short_tags ? "d" : "damage", obj.damage)
+            & make_nvp(short_tags ? "to" : "target_owner_id", obj.target_owner_id)
+            & make_nvp(short_tags ? "ao" : "attacker_owner_id", obj.attacker_owner_id);
     }
 }
 
-BOOST_CLASS_VERSION(WeaponFireEvent, 5)
-BOOST_CLASS_EXPORT(WeaponFireEvent)
+template <typename Archive>
+void serialize(Archive& ar, WeaponFireEvent& obj, unsigned int const version)
+{
+    using boost::serialization::make_nvp;
+    using boost::serialization::base_object;
 
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    if constexpr (Archive::is_loading::value) {
+        if (version < 6) {
+            Serialize(ar, obj, version == 5);
+        } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+            std::string str;
+            ar >> make_nvp("info", str);
+            FillWeaponFireEvent(obj, str);
+        } else {
+            Serialize(ar, obj, true);
+        }
+    } else {
+        if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+            std::string str = ToString(obj);
+            ar << make_nvp("info", str);
+        } else {
+            Serialize(ar, obj, true);
+        }
+    }
+}
+
+BOOST_CLASS_VERSION(WeaponFireEvent, 6)
+BOOST_CLASS_EXPORT(WeaponFireEvent)
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, WeaponFireEvent&, unsigned int const);
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, WeaponFireEvent&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, WeaponFireEvent&, unsigned int const);
