@@ -15,6 +15,10 @@ from macros.base_prod import RESEARCH_PER_POP
 
 NamedReal(name="ANCIENT_RUINS_TARGET_RESEARCH_PERPOP", value=5 * RESEARCH_PER_POP)
 
+NamedReal(name="ANCIENT_RUINS_MIN_STABILITY", value=12)
+
+NamedReal(name="IMPERIAL_GARRISON_MAX_TROOPS_FLAT", value=6)
+
 NamedInteger(name="XENOPHOBIC_MAX_JUMPS", value=4)
 
 NamedReal(name="PROTECION_FOCUS_STABILITY_BONUS", value=GameRule(type=float, name="RULE_PROTECTION_FOCUS_STABILITY"))
