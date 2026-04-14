@@ -1802,41 +1802,39 @@ namespace {
         }
 
 
+        const auto handle_attack_event = [&combat_info, &stealth_change_event](const auto& attack_event) {
+            if (!attack_event) return; 
+
+            // Set attacker as at least basically visible to other empires.
+            for (auto detector_empire_id : combat_info.empire_ids) {
+                Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id].Get(attack_event->attacker_id);
+                TraceLogger(combat) << "Pre-attack visibility of attacker id: " << attack_event->attacker_id
+                                    << " by empire: " << detector_empire_id << " was: " << initial_vis;
+
+                if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
+                    continue;
+
+                combat_info.empire_object_visibility[detector_empire_id].Set(attack_event->attacker_id, Visibility::VIS_BASIC_VISIBILITY);
+
+                DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_BASIC_VISIBILITY;
+
+                // record visibility change event due to attack
+                stealth_change_event->AddEvent(attack_event->attacker_id, attack_event->target_id, attack_event->attacker_owner_id,
+                                               attack_event->target_owner_id, Visibility::VIS_BASIC_VISIBILITY);
+            }
+        };
+
+
         // Create weapon fire events and mark attackers as visible to other battle participants
         auto attacks_this_bout = attacks_event->SubEvents(ALL_EMPIRES);
         for (const auto& this_event : attacks_this_bout) {
-            // Generate attack events
-            std::vector<std::shared_ptr<const WeaponFireEvent>> weapon_fire_events;
             if (auto naked_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(this_event)) {
-                weapon_fire_events.push_back(std::move(naked_fire_event));
+                handle_attack_event(naked_fire_event);
 
             } else if (auto weapons_platform = std::dynamic_pointer_cast<const WeaponsPlatformEvent>(this_event)) {
-                for (auto more_event : weapons_platform->SubEvents(ALL_EMPIRES)) {
-                    if (auto this_attack = std::dynamic_pointer_cast<const WeaponFireEvent>(more_event))
-                        weapon_fire_events.push_back(std::move(this_attack));
-                }
-            }
-
-            // Set attacker as at least basically visible to other empires.
-            for (const auto& this_attack : weapon_fire_events) {
-                for (auto detector_empire_id : combat_info.empire_ids) {
-                    Visibility initial_vis = combat_info.empire_object_visibility[detector_empire_id].Get(this_attack->attacker_id);
-                    TraceLogger(combat) << "Pre-attack visibility of attacker id: " << this_attack->attacker_id
-                                        << " by empire: " << detector_empire_id << " was: " << initial_vis;
-
-                    if (initial_vis >= Visibility::VIS_BASIC_VISIBILITY)
-                        continue;
-
-                    combat_info.empire_object_visibility[detector_empire_id].Set(this_attack->attacker_id, Visibility::VIS_BASIC_VISIBILITY);
-
-                    DebugLogger(combat) << " ... Setting post-attack visability to " << Visibility::VIS_BASIC_VISIBILITY;
-
-                    // record visibility change event due to attack
-                    stealth_change_event->AddEvent(this_attack->attacker_id,
-                                                   this_attack->target_id,
-                                                   this_attack->attacker_owner_id,
-                                                   this_attack->target_owner_id,
-                                                   Visibility::VIS_BASIC_VISIBILITY);
+                for (const auto& more_event : weapons_platform->SubEvents(ALL_EMPIRES)) {
+                    if (auto nested_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(more_event))
+                        handle_attack_event(nested_fire_event);
                 }
             }
         }
