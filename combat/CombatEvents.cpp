@@ -209,22 +209,21 @@ std::string SimultaneousEvents::DebugString(const ScriptingContext&) const
 
 std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
     // Sort the events by viewing empire, then ALL_EMPIRES, and then other empires.
-    std::vector<std::pair<int, ConstCombatEventPtr>> empire_to_event;
-    empire_to_event.reserve(events.size());
-    const auto to_faction_event = [viewing_empire_id](const auto& event)
-    { return std::pair{event->PrincipalFaction(viewing_empire_id).get_value_or(ALL_EMPIRES), event}; };
-    range_copy(events | range_transform(to_faction_event), std::back_inserter(empire_to_event));
+    const auto to_faction_event = [viewing_empire_id](const auto& event) {
+        auto fac = event->PrincipalFaction(viewing_empire_id);
+        return std::pair{fac.has_value() ? *fac : ALL_EMPIRES, ConstCombatEventPtr(event)};
+    };
+
+    auto empire_to_event = events | range_transform(to_faction_event) | range_to_vec;
+
     // put viewer events first
     const auto viewer_events_end_it = std::stable_partition(empire_to_event.begin(), empire_to_event.end(),
                                                             [viewing_empire_id](const auto& e) { return e.first == viewing_empire_id; });
     // sort remaining events by viewer id. ALL_EMPIRES should be lower than other empire IDs so appears next
     std::stable_sort(viewer_events_end_it, empire_to_event.end(),
-                     [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
+                     [](const auto& lhs, const auto& rhs) noexcept { return lhs.first < rhs.first; });
 
-    std::vector<ConstCombatEventPtr> ordered_events;
-    ordered_events.reserve(empire_to_event.size());
-    range_copy(empire_to_event | range_values, std::back_inserter(ordered_events));
-    return ordered_events;
+    return empire_to_event | range_values | range_to_vec;
 }
 
 //////////////////////////////////////////
@@ -485,9 +484,6 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id, con
     return str(FlexibleFormat(template_str) % owner_string % object_link);
 }
 
-boost::optional<int> IncapacitationEvent::PrincipalFaction(int) const
-{ return object_owner_id; }
-
 
 //////////////////////////////////////////
 ///////// FightersAttackFightersEvent ////
@@ -518,7 +514,7 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
     // then the remainder.
     auto show_events_for_empire =
         [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id, &context]
-        (boost::optional<int> show_attacker)
+        (std::optional<int> show_attacker)
     {
             int attacker_empire;
             int target_empire;
@@ -550,7 +546,7 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
     // Sort the events by viewing empire, then ALL_EMPIRES and then other empires.
     show_events_for_empire(viewing_empire_id);
     show_events_for_empire(ALL_EMPIRES);
-    show_events_for_empire(boost::none);
+    show_events_for_empire(std::nullopt);
 
     return ss.str();
 }
@@ -587,9 +583,6 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id,
               % std::abs(number_launched));
 }
 
-boost::optional<int> FighterLaunchEvent::PrincipalFaction(int) const
-{ return fighter_owner_empire_id; }
-
 
 //////////////////////////////////////////
 ///////// FightersDestroyedEvent ////
@@ -620,7 +613,7 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
     // ALL_EMPIRES and then the remainder.
     auto show_events_for_empire =
         [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id, &context]
-        (boost::optional<int> show_empire_id)
+        (std::optional<int> show_empire_id)
     {
             for (auto& [target_empire_id, count] : events_to_show) {
                 // Skip if this is not the particular attacker requested
@@ -652,7 +645,7 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
     // Sort the events by viewing empire, then ALL_EMPIRES and then other empires.
     show_events_for_empire(viewing_empire_id);
     show_events_for_empire(ALL_EMPIRES);
-    show_events_for_empire(boost::none);
+    show_events_for_empire(std::nullopt);
 
     return ss.str();
 }
@@ -740,6 +733,3 @@ std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int) const {
             all_events.push_back(std::dynamic_pointer_cast<CombatEvent>(event));
     return all_events;
 }
-
-boost::optional<int> WeaponsPlatformEvent::PrincipalFaction(int) const
-{ return attacker_owner_id; }
