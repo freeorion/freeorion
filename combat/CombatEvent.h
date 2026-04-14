@@ -2,11 +2,10 @@
 #define COMBATEVENT_H
 
 
-#include <boost/optional/optional.hpp>
-
 #include "../util/Export.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -66,7 +65,7 @@ struct FO_COMMON_API CombatEvent {
         faction most active in the event (i.e. the attacker in a WeaponEvent).
         It is from the perspective of the \p viewing_empire_id. Some events
         like BoutBegin are not associated with any faction.*/
-    [[nodiscard]] virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    [[nodiscard]] virtual std::optional<int> PrincipalFaction(int viewing_empire_id) const;
 };
 
 

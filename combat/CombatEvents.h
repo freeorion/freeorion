@@ -228,7 +228,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDetails(int viewing_empire_id) const override;
     [[nodiscard]] bool AreDetailsEmpty(int) const noexcept override { return false; }
-    [[nodiscard]] boost::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_id; }
+    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_id; }
 
     int attacker_id = INVALID_OBJECT_ID;
     int target_id = INVALID_OBJECT_ID;
@@ -252,7 +252,7 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
+    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return object_owner_id; }
 
     int bout = -1;
     int object_id = INVALID_OBJECT_ID;
@@ -296,7 +296,7 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
+    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return fighter_owner_empire_id; }
 
     int bout = 0;
     int fighter_owner_empire_id = ALL_EMPIRES;
@@ -345,7 +345,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
     [[nodiscard]] std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
-    [[nodiscard]] boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
+    [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_owner_id; }
 
     int bout = 0;
     int attacker_id = INVALID_OBJECT_ID;
