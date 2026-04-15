@@ -17,6 +17,8 @@ from focs._effects import (
     LocalCandidate,
     MaxOf,
     MinOf,
+    NamedIntegerLookup,
+    NamedReal,
     Neutron,
     NoStar,
     Orange,
@@ -114,7 +116,14 @@ _SELF_SUSTAINING_BONUS = EffectsGroup(
     activation=Planet(environment=[Good]) & HasTag(name="SELF_SUSTAINING"),
     accountinglabel="SELF_SUSTAINING_LABEL",
     priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
-    effects=SetTargetPopulation(value=Value + 3 * Target.HabitableSize),  # Gets the same bonus as three growth specials
+    effects=SetTargetPopulation(
+        value=Value
+        + NamedReal(
+            name="SELF_SUSTAINING_TARGET_POPULATION_PER_SIZE_BONUS",
+            value=3 * NamedIntegerLookup(name="GROWTH_SPECIAL_TARGET_POPULATION_PER_SIZE_BONUS"),
+        )
+        * Target.HabitableSize
+    ),  # Gets the same bonus as three growth specials
 )
 
 _PHOTOTROPHIC_BONUS = [
