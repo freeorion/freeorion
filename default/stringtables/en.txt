@@ -7012,7 +7012,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 
 SELF_SUSTAINING_SPECIES_TEXT
-[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their [[metertype METER_TARGET_POPULATION]] is very high. While there are no specials that boost their growth, on planets with [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]] their Target Population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials, resulting in [[value SELF_SUSTAINING_TARGET_POPULATION_PER_SIZE_BONUS]] extra Target Population per habitable planet size.
+[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their [[metertype METER_TARGET_POPULATION]] is very high. While there are no specials that boost their growth, on planets with [[PE_GOOD]] [[encyclopedia ENVIRONMENT_TITLE]] their Target Population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials, resulting in [[value SELF_SUSTAINING_TARGET_POPULATION_PER_SIZE_BONUS]] extra Target Population per habitable planet size. On planets with [[PE_ADEQUATE]] environment Target Population is equal to a species provided with a single growth special, resulting [[value GROWTH_SPECIAL_TARGET_POPULATION_PER_SIZE_BONUS]] extra Target Population per habitable planet size.
 
 GASEOUS_SPECIES_TITLE
 Gaseous Metabolism
