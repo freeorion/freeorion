@@ -7,6 +7,7 @@ from focs._effects import (
 )
 from focs._tech import *
 from macros.base_prod import TECH_COST_MULTIPLIER
+from policies.RACIAL_PURITY_helper import racial_purity_once_per_turn_effectgroups
 
 Tech(
     name="CON_ARCH_PSYCH",
@@ -22,7 +23,8 @@ Tech(
         EffectsGroup(
             scope=IsSource,
             effects=SetEmpireMeter(empire=Source.Owner, meter="SOCIAL_CATEGORY_NUM_POLICY_SLOTS", value=Value + 1),
-        )
+        ),
+        *racial_purity_once_per_turn_effectgroups
     ],
     graphic="icons/tech/architecture_psychology.png",
 )
