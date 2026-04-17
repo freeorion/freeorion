@@ -1,0 +1,6 @@
+Article
+    name = "MAIN_OPTIONS_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "MAIN_OPTIONS_SHORT_DESC"
+    description = "MAIN_OPTIONS_TEXT"
+    icon = ""

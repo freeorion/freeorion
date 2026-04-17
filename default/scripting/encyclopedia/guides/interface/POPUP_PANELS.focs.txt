@@ -1,0 +1,6 @@
+Article
+    name = "POPUP_PANELS_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "POPUP_PANELS_SHORT_DESC"
+    description = "POPUP_PANELS_TEXT"
+    icon = ""

@@ -2649,6 +2649,29 @@ A:
 ## Intro screen
 ##
 
+MAIN_MENU_TITLE
+[[INTRO_WINDOW_TITLE]]
+
+MAIN_MENU_SHORT_DESC
+[[INTRO_WINDOW_TITLE]]
+
+MAIN_MENU_TEXT
+'''This screen shows the [[INTRO_WINDOW_TITLE]] for starting a FreeOrion session. The [[INTRO_BTN_PEDIA]] button opens the [[encyclopedia PEDIA_TITLE]] page; use this to get in-game help by using the Pedia button or from the right-click menu on various elements.
+
+The following buttons are available:
+
+[[encyclopedia CONTINUE_TITLE]] - Continues with the last saved game.
+[[encyclopedia SINGLE_PLAYER_TITLE]] - Start a new game for 1 player to play against AI opponents. Various game options can be set before creating a Galaxy and starting the game.
+[[encyclopedia QUICK_START_TITLE]] - Start a new single player game using the options set by the last single player game created.
+[[encyclopedia MULTI_PLAYER_TITLE]] - Start playing a multiple player game by joining an existing multi player game or by creating a new game for other players.
+[[encyclopedia LOAD_GAME_TITLE]] - Load a previously saved single player game.
+[[encyclopedia MAIN_OPTIONS_TITLE]] - Set the game options (quite a lot); not the new game parameters.
+[[encyclopedia PEDIA_TITLE]] - Help pages; referred to as Pedia pages in the game.
+<u>[[INTRO_BTN_ABOUT]]</u> - A note about FreeOrion.
+<u>[[INTRO_BTN_WEBSITE]]</u> - Open the FreeOrion website (freeorion.org).
+<u>[[INTRO_BTN_CREDITS]]</u> - Game Credits.
+<u>[[INTRO_BTN_EXIT]]</u> - Exit the game.'''
+
 INTRO_WINDOW_TITLE
 FreeOrion Main Menu
 
@@ -2684,6 +2707,123 @@ Credits
 
 INTRO_BTN_EXIT
 Exit
+
+CONTINUE_TITLE
+Continue game
+
+CONTINUE_SHORT_DESC
+Continue game
+
+SINGLE_PLAYER_TITLE
+Single Player game
+
+SINGLE_PLAYER_SHORT_DESC
+Single Player game
+
+SINGLE_PLAYER_TEXT
+'''The <u>[[INTRO_BTN_SINGLE_PLAYER]]</u> button creates a new Single Player game. The [[encyclopedia GALAXY_SETUP_TITLE]] is shown, allowing selection of the new Galaxy; when done, click the 'OK' button.
+
+The <u>[[QUICK_START_TITLE]]</u> button creates a new Single Player game using the last selections for the [[encyclopedia GALAXY_SETUP_TITLE]] panel; the panel is not shown.
+'''
+
+QUICK_START_TITLE
+Quick Start game
+
+QUICK_START_SHORT_DESC
+Quick Start game
+
+MULTI_PLAYER_TITLE
+Multi Player game
+
+MULTI_PLAYER_SHORT_DESC
+Multi Player game
+
+MULTI_PLAYER_TEXT
+'''The [[INTRO_BTN_MULTI_PLAYER]] creates a new Multi Player game (as a server), or joins an existing game on a server.
+
+<u>Host a new game</u> shows the [[encyclopedia MULTI_PLAYER_SETUP_TITLE]] for creating a new Galaxy for the game.
+
+<u>Join a game as</u> allows joining an existing Server game.
+'''
+
+MULTI_PLAYER_SETUP_TITLE
+Multi Player Setup
+
+MULTI_PLAYER_SETUP_SHORT_DESC
+Multi Player Setup
+
+MULTI_PLAYER_SETUP_TEXT
+Multi Player Setup
+
+LOAD_GAME_TITLE
+Load game
+
+LOAD_GAME_SHORT_DESC
+Load game
+
+MAIN_OPTIONS_TITLE
+Main options
+
+MAIN_OPTIONS_SHORT_DESC
+Main options
+
+MAIN_OPTIONS_TEXT
+Main options
+
+GALAXY_SETUP_TITLE
+Galaxy Setup
+
+GALAXY_SETUP_SHORT_DESC
+Galaxy set up
+
+GALAXY_SETUP_TEXT
+Galaxy set up
+
+SAVE_GAME_TITLE
+Save game
+
+SAVE_GAME_SHORT_DESC
+Save game
+
+SAVE_LOAD_TEXT
+'''<u>Saving Games</u>:
+[[SINGLE_PLAYER_TITLE]] games are saved from the in-game menu. Games are autosaved using the values in the [[OPTIONS_PAGE_AUTOSAVE]], [[OPTIONS_PAGE_DIRECTORIES]] and [[OPTIONS_PAGE_MISC]] tabs of the [[encyclopedia MAIN_OPTIONS_TITLE]] page. Saved files can be binary or XML. If not given, ".sav" is added to the entered filename.
+
+If the file cannot be saved, for whatever reason, and you get "[[UNABLE_TO_WRITE_SAVE_FILE]]", check that you have not used invalid characters in the filename or an incorrect save directory (e.g. on a removed USB drive).
+
+<u>Loading Games</u>:
+Single Player games can be loaded from the [[INTRO_WINDOW_TITLE]] or the in-game menu.
+
+The <u>[[INTRO_BTN_CONTINUE]]</u> button loads the last manual or auto saved single player game by date, looking in the Directory set in the [[OPTIONS_FOLDER_SAVE]] field of the [[encyclopedia MAIN_OPTIONS_TITLE]] and its 'auto' sub-directory.
+
+<u>Save Game Files panel</u>:
+A Load or Save action opens the Save Game Files panel. A file is selected using the scroll bar and clicking on the file, or by typing in the File: field. For a Load action, the file must exist before the OK button is clickable. For a Save action, an existing file requires a confirmation before it is overwritten.
+
+Saved games can be deleted, when saving or loading, but only singly whether selecting or typing the filename. A confirmation is required before it is deleted.'''
+
+PEDIA_TITLE
+Pedia
+
+PEDIA_SHORT_DESC
+Pedia
+
+PEDIA_TEXT
+'''The Pedia is the searchable help text for FreeOrion. It is accessed from the [[INTRO_BTN_PEDIA]] on the [[INTRO_WINDOW_TITLE]] and from links on panels.
+
+The Pedia [[encyclopedia POPUP_PANELS_TITLE]] show the article title, category name and the text for the article. The three buttons navigate to previous, parent and next article. The search box next to these buttons allows searching for articles. The text may contain clickable links to other articles.'''
+
+POPUP_PANELS_TITLE
+Pop-up panels
+
+POPUP_PANELS_SHORT_DESC
+Panel
+
+POPUP_PANELS_TEXT
+'''Pop-up panels show a title, a size-lock toggle button (circle) and a close button (X). If size-lock is on, the circle is filled and the panel position and size cannot be changed until toggled off.
+
+Click and hold on the title bar of a panel to move it around the screen. Click and hold on the triangle area at the bottom right to change the size of the panel. Text will be wrapped as necessary, adding a scroll bar when full.
+
+If a panel is closed it remembers the size and position when reopened.'''
 
 ERR_CONNECT_TIMED_OUT
 Timed out while attempting to connect to server
