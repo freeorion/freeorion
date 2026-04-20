@@ -19,11 +19,22 @@ Special
     ]
     graphic = "icons/building/planetary_stardrive.png"
 
+Special
+    name = "STARLANE_DRIVE_INSTABILITY_SPECIAL"
+    description =  "STARLANE_DRIVE_INSTABILITY_SPECIAL_DESC"
+    stealth = 0
+    graphic = "icons/building/planetary_stardrive.png"
+
+//FIXME this is duplicated in advanced_focus.py, remove when refactoring specials to focs.py
 PLANETARY_DRIVE_ACTIVATION
 '''
     And [
         Planet
         Focus type = "FOCUS_PLANET_DRIVE"
+        Or [
+            Not HasSpecial name = "STARLANE_DRIVE_INSTABILITY_SPECIAL"
+            HasSpecialCapacity name = "STARLANE_DRIVE_INSTABILITY_SPECIAL" high = (NamedIntegerLookup name="STARLANE_DRIVE_MAX_JUMPS" - 1)
+        ]
         WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [

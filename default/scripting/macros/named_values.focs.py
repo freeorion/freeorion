@@ -19,6 +19,8 @@ NamedReal(name="ANCIENT_RUINS_MIN_STABILITY", value=12)
 
 NamedReal(name="IMPERIAL_GARRISON_MAX_TROOPS_FLAT", value=6)
 
+NamedInteger(name="STARLANE_DRIVE_MAX_JUMPS", value=3)
+
 NamedInteger(name="XENOPHOBIC_MAX_JUMPS", value=4)
 
 NamedReal(name="PROTECION_FOCUS_STABILITY_BONUS", value=GameRule(type=float, name="RULE_PROTECTION_FOCUS_STABILITY"))
