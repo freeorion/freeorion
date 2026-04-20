@@ -36,3 +36,5 @@ NamedInteger(
     value=NumPartClassesInShipDesign(design=UsedInDesignID)
     + PartOfClassInShipDesign(name="PC_COLONY", design=UsedInDesignID),
 )
+
+NamedInteger(name="GROWTH_SPECIAL_TARGET_POPULATION_PER_SIZE_BONUS", value=1)
