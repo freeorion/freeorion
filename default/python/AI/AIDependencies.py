@@ -68,7 +68,6 @@ INDUSTRY_PER_POP = 0.2
 RESEARCH_PER_POP = 0.2
 TROOPS_PER_POP = 0.2
 
-PROT_FOCUS_MULTIPLIER = 2.0
 HOMEWORLD_INFLUENCE_COST = 1  # homeworld independency movement
 
 STABILITY_PER_LIKED_FOCUS = 2.0
@@ -86,8 +85,16 @@ SHIP_STRUCTURE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_STRUCTURE_FACTOR"
 SHIP_WEAPON_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_SHIP_WEAPON_DAMAGE_FACTOR")
 FIGHTER_DAMAGE_FACTOR = fo.getGameRules().getDouble("RULE_FIGHTER_DAMAGE_FACTOR")
 
-# Colonization details
-OUTPOST_POD_COST = 50  # TODO Query directly from part
+
+def outpost_pod_cost():
+    """
+    Get current outpost cost.
+
+    This value is changed on each turn, don't cache it.
+    """
+    return fo.getShipPart("CO_OUTPOST_POD").productionCost(fo.empireID(), -1, -1)
+
+
 COLONY_POD_UPKEEP = 0.06
 SHIP_UPKEEP = 0.01
 
