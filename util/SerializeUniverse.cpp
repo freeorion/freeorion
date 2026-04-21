@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include "Serialize.ipp"
+#include "SerializeUtil.h"
 
 #include "../universe/IDAllocator.h"
 #include "../universe/Building.h"
@@ -34,77 +35,40 @@
 #include <type_traits>
 #include <vector>
 
-namespace {
-    // <concepts> library not fully implemented in XCode 13.2
-    template <class T>
-    concept integral = std::is_integral_v<T>;
-}
 
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 5)
 
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+namespace {
+    static_assert([]() {
+        const char nine = '9';
+        const std::string_view one_char_sv(&nine, 1);
+        int val = 0;
+        auto [next, success] = FromChars(one_char_sv, val);
+        return success && next == (one_char_sv.data() + 1) && val == 9;
+     }());
+
+    static_assert([]() {
+        const std::array<char, 10> not_null_terminated_str{'3', ' ', ' ', 'n', 'o', ' ', 'n', 'u', 'l', 'l'};
+        const std::string_view sv(not_null_terminated_str.data(), not_null_terminated_str.size());
+        int val = 0;
+        auto [next, success] = FromChars(sv, val);
+        return success && next == (sv.data() + 1) && val == 3;
+    }());
+
+    static_assert([]() {
+        const std::string_view empty_sv;
+        int val = -1;
+        auto [next, success] = FromChars(empty_sv, val);
+        return !success && next == empty_sv.data() && val == -1;
+    }());
+}
+#endif
 
 namespace {
-    template <integral T>
-    constexpr const auto* GetFormatString() {
-        if constexpr (std::is_same_v<T, unsigned int>)
-            return "%u%n";
-        else if constexpr (std::is_same_v<T, int>)
-            return "%d%n";
-    }
-
-    constexpr bool have_to_chars_lib =
-#if defined(__cpp_lib_to_chars)
-        true;
-#else
-        false;
-#endif
-
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#endif
-    std::size_t ToChars(integral auto num, char* buffer, char* buffer_end) {
-        if constexpr (have_to_chars_lib) {
-            const auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
-            return static_cast<std::size_t>(std::distance(buffer, result_ptr));
-        } else {
-            std::size_t buffer_sz = std::distance(buffer, buffer_end);
-            auto temp = std::to_string(num);
-            auto out_sz = std::min(buffer_sz, temp.size());
-            std::copy_n(temp.begin(), out_sz, buffer);
-            return out_sz;
-        }
-    }
-
-    // returns { next unconsumed char*, true/false did the parse succeed }
-    // parsed value returned in \a val_out
-    auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool> {
-        if constexpr (have_to_chars_lib) {
-            const auto result = std::from_chars(start, end, val_out);
-            return {result.ptr, result.ec == std::errc()};
-        } else {
-            int chars_consumed = 0;
-            using val_out_t = std::decay_t<decltype(val_out)>;
-            constexpr auto val_format_str = GetFormatString<val_out_t>();
-            const auto matched = sscanf(start, val_format_str, &val_out, &chars_consumed);
-            return {start + chars_consumed, matched >= 1};
-        }
-    }
-
-
-    consteval std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
-        std::size_t retval = 1;
-        while (exp--)
-            retval *= base;
-        return retval;
-    }
-
-    constexpr int int_max = std::numeric_limits<int>::max();
-    constexpr uint8_t int_digits = 11; // digits in base 11 of -2147483648 = -2^31
-    static_assert(Pow(10, int_digits + 1) > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer
     constexpr std::size_t ovt_buffer_size = 4*(int_digits + 1); // space for "-2147483648 -2147483648 -2147483648 -2147483648 "
-
 
     std::string ToString(const std::vector<ObjVisTurns>& data) {
         std::string retval;
