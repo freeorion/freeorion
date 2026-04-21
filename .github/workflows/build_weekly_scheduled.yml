@@ -50,6 +50,22 @@ jobs:
             gh run -R "${{ github.repository }}" cancel ${{ github.run_id }}
             exit 1
           fi
+  check-last-post:
+    needs: check-run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Mastodon account
+        run: >-
+          echo "::group::Mastodon Account ID"
+
+          ACCOUNT_ID=$(curl -sSL
+          -X GET
+          -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
+          https://fosstodon.org/api/v1/accounts/verify_credentials | jq -r '.id')
+
+          echo "Account ID: ${ACCOUNT_ID}"
+
+          echo "::endgroup::"
   macos:
     needs: check-run
     uses: ./.github/workflows/_build-macos.yml
@@ -81,7 +97,7 @@ jobs:
     needs: [macos, macos-26-arm64, windows, windows-msvs, linux-snap]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: .github
       - name: Decrypt deploy SSH key
@@ -124,7 +140,7 @@ jobs:
     needs: [merge-binaries-to-sf, to-snap]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: .github
       - name: Get version
@@ -132,7 +148,8 @@ jobs:
         run: TZ=UTC0 git show ${{ github.sha }} --format="short-version=%cd.%h" --quiet --date='format-local:%Y-%m-%d' --abbrev=7 >> "$GITHUB_OUTPUT"
       - name: Toot
         run: >-
-          curl -X POST
+          curl -sSL
+          -X POST
           -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
           -H "Idempotency-Key: ${{ steps.get-version.outputs.short-version }}"
           --data-raw 'status=New #4X #TBS #FreeOrion weekly #TestBuild available (build ${{ steps.get-version.outputs.short-version }}):%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap (#Linux): https://snapcraft.io/freeorion'
