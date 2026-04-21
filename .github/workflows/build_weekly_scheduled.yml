@@ -98,7 +98,7 @@ jobs:
       - name: Check artifacts
         run: ls -l .
       - name: Upload artifacts
-        run: scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_MacOSX_*.dmg FreeOrion_*_Test_Win32_Setup.exe FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/
+        run: scp -vv -o ServerAliveCountMax=2 -o ServerAliveInterval=300 -o ConnectTimeout=120 -o ConnectionAttempts=5 FreeOrion_*_Test_MacOSX_*.dmg FreeOrion_*_Test_x64_Setup.exe FreeOrion_*.zip o01eg@frs.sourceforge.net:/home/frs/project/freeorion/FreeOrion/Test/
   to-snap:
     name: Publish snap
     runs-on: ubuntu-latest
@@ -135,7 +135,7 @@ jobs:
           curl -X POST
           -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
           -H "Idempotency-Key: ${{ steps.get-version.outputs.short-version }}"
-          --data-raw 'status=New test builds available (build ${{ steps.get-version.outputs.short-version }}):%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap: https://snapcraft.io/freeorion'
+          --data-raw 'status=New #4X #TBS #FreeOrion weekly #TestBuild available (build ${{ steps.get-version.outputs.short-version }}):%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap (#Linux): https://snapcraft.io/freeorion'
           -d 'visibility=public'
           -d 'language=en'
           https://fosstodon.org/api/v1/statuses
