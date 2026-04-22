@@ -3,6 +3,7 @@
 
 
 #include <concepts>
+#include <map>
 #include <set>
 #include <span>
 #include <string>
@@ -18,13 +19,12 @@
 #include "../util/blocking_combiner.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
-
+#include "Visibility.h"
 
 class System;
 class SitRepEntry;
 class EmpireManager;
 class ObjectMap;
-class Universe;
 struct ScriptingContext;
 
 // The ID number assigned to temporary universe objects
@@ -43,19 +43,6 @@ FO_ENUM(
     ((OBJ_FIELD))
     ((OBJ_FIGHTER))
     ((NUM_OBJ_TYPES))
-)
-
-//! Degrees of visibility an Empire or UniverseObject can have for an
-//! UniverseObject.  Determines how much information the empire gets about
-//!the (non)visible object.
-FO_ENUM(
-    (Visibility),
-    ((INVALID_VISIBILITY, -1))
-    ((VIS_NO_VISIBILITY))
-    ((VIS_BASIC_VISIBILITY))
-    ((VIS_PARTIAL_VISIBILITY))
-    ((VIS_FULL_VISIBILITY))
-    ((NUM_VISIBILITIES))
 )
 
 [[nodiscard]] constexpr std::string_view DumpEnum(UniverseObjectType value) noexcept {
@@ -225,6 +212,10 @@ constexpr MeterType AssociatedMeterType(MeterType meter_type) {
     return (mt_pair_it != assoc_meters.end()) ? mt_pair_it->second : MeterType::INVALID_METER_TYPE;
 }
 
+using IDSet = boost::container::flat_set<int32_t>;
+
+
+
 #if !defined(CONSTEXPR_STRING)
 #  if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 11))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934)))
 #    define CONSTEXPR_STRING constexpr
@@ -385,10 +376,10 @@ public:
     using MeterMap = boost::container::flat_map<MeterType, Meter>;
     static_assert(std::is_same_v<boost::container::flat_map<MeterType, Meter, std::less<MeterType>>, MeterMap>);
 
-    using IDSet = boost::container::flat_set<int32_t>;
-
     using CombinerType = assignable_blocking_combiner;
     using StateChangedSignalType = boost::signals2::signal<void (), CombinerType>;
+
+    using IDSet = ::IDSet;
 
     [[nodiscard]] const std::string& Name() const noexcept override final { return m_name; }///< returns the name of this object; some valid objects will have no name
 
@@ -402,8 +393,7 @@ public:
 
     [[nodiscard]] std::string       Dump(uint8_t ntabs = 0) const override;
 
-    using EmpireObjectVisMap = std::map<int, std::map<int, Visibility>>;
-    [[nodiscard]] IDSet             VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
+    [[nodiscard]] IDSet             VisibleContainedObjectIDs(int empire_id, const EmpireObjectVisibilityMap& vis) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
 protected:
     [[nodiscard]] static constexpr auto ToSpan(auto& in) {
@@ -427,8 +417,7 @@ public:
     [[nodiscard]] MeterSpan         Meters() override { return ToSpan(m_meters); }
     [[nodiscard]] ConstMeterSpan    Meters() const override { return ToSpan(m_meters); }
 
-    using EmpireIDtoObjectIDtoVisMap = std::map<int, std::map<int, Visibility>>; // duplicates Universe::EmpireObjectVisibilityMap
-    [[nodiscard]] Visibility        GetVisibility(int empire_id, const EmpireIDtoObjectIDtoVisMap& v) const;
+    [[nodiscard]] Visibility        GetVisibility(int empire_id, const EmpireObjectVisibilityMap& v) const;
     [[nodiscard]] Visibility        GetVisibility(int empire_id, const Universe& u) const;
 
     [[nodiscard]] const std::string& PublicName(int, const Universe&) const override { return m_name; };

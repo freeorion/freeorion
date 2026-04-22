@@ -2721,15 +2721,11 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, GG::Pt pt,
         const auto ship_id = ship->ID();
         auto forget_ship_action = [ship_id, map_wnd]() { map_wnd->ForgetObject(ship_id); };
 
-        const auto& visibility_turn_map{context.ContextUniverse().GetObjectVisibilityTurnMapByEmpire(
-            ship->ID(), client_empire_id)};
+        const int basic_vis_last_turn = context.ContextUniverse().GetObjectVisibilityTurnByEmpire(
+            ship->ID(), client_empire_id, Visibility::VIS_BASIC_VISIBILITY);
 
-        auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
-        if (last_turn_visible_it != visibility_turn_map.end()
-            && last_turn_visible_it->second < context.current_turn)
-        {
+        if (basic_vis_last_turn != INVALID_GAME_TURN && basic_vis_last_turn < context.current_turn)
             popup->AddMenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"), false, false, forget_ship_action);
-        }
     }
 
     popup->Run();
@@ -3743,13 +3739,13 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, GG::Pt pt, GG::Flags<
     if (mapwnd && !fleet->OwnedBy(client_empire_id)) {
         const auto fleet_id = fleet->ID();
         auto forget_fleet_action = [fleet_id, mapwnd]() { mapwnd->ForgetObject(fleet_id); };
-        const auto& visibility_turn_map = u.GetObjectVisibilityTurnMapByEmpire(fleet_id, client_empire_id);
-        auto last_turn_visible_it = visibility_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
-        if (last_turn_visible_it != visibility_turn_map.end()
-            && last_turn_visible_it->second < GetApp().CurrentTurn())
-        {
+
+        const int basic_vis_last_turn = context.ContextUniverse().GetObjectVisibilityTurnByEmpire(
+            fleet_id, client_empire_id, Visibility::VIS_BASIC_VISIBILITY);
+
+        if (basic_vis_last_turn != INVALID_GAME_TURN && basic_vis_last_turn < app.CurrentTurn()) {
             popup->AddMenuItem(UserString("FW_ORDER_DISMISS_SENSOR_GHOST"),
-                                            false, false, std::move(forget_fleet_action));
+                                          false, false, std::move(forget_fleet_action));
         }
     }
 

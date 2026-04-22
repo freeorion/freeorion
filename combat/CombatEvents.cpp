@@ -227,7 +227,6 @@ std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empir
     return ordered_events;
 }
 
-
 //////////////////////////////////////////
 ///////// InitialStealthEvent /////////////
 //////////////////////////////////////////
@@ -237,18 +236,16 @@ std::string InitialStealthEvent::DebugString(const ScriptingContext& context) co
         return obj ? std::pair(obj->ID(), obj->Owner()) : std::pair(INVALID_OBJECT_ID, ALL_EMPIRES);
     };
 
+    static constexpr auto is_empire_id = [](const auto& x_oid) noexcept { return x_oid.second != ALL_EMPIRES; };
+
     std::stringstream ss;
     ss << "InitialStealthEvent: ";
-    for (auto& [empire_id, empire_object_vis] : empire_to_object_visibility) {
+    for (auto& [empire_id, empire_object_vis] : empire_object_visibility) {
         ss << " Viewing Empire: " << EmpireLink(empire_id, context) << "\n";
 
         for (const auto [object_id, owner_id] : empire_object_vis
-             | range_keys | range_transform(get_obj_id_owner))
-        {
-            if (owner_id == ALL_EMPIRES)
-                continue;
-            ss << FighterOrPublicNameLink(ALL_EMPIRES, object_id, owner_id, context);
-        }
+             | range_keys | range_transform(get_obj_id_owner) | range_filter(is_empire_id))
+        { ss << FighterOrPublicNameLink(ALL_EMPIRES, object_id, owner_id, context); }
         ss << "\n";
     }
     return ss.str();
@@ -259,7 +256,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id, con
 
     std::string desc;
 
-    for (auto& [detector_empire_id, visible_objects] : empire_to_object_visibility) {
+    for (auto& [detector_empire_id, visible_objects] : empire_object_visibility) {
         DebugLogger() << "CombatLogDescription for InitialStealthEvent for detector empire: " << detector_empire_id;
 
         if (visible_objects.empty()) {

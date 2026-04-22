@@ -4129,7 +4129,7 @@ PL_NEVER_SCANNED
 This planet has never been thoroughly scanned by your empire.
 
 PL_NOT_IN_RANGE
-This planet is out of range of your empire's scanners.
+This planet is out of scanner range.
 
 # %1% last known stealth value of the planet.
 # %2% detection strength of the empire which scanned the planet.

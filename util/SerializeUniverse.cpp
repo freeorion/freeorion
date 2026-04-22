@@ -2,16 +2,18 @@
 
 #include "Logger.h"
 #include "Serialize.ipp"
+#include "SerializeUtil.h"
 
 #include "../universe/IDAllocator.h"
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
+#include "../universe/Field.h"
 #include "../universe/Fleet.h"
-#include "../universe/Ship.h"
+#include "../universe/ObjectMap.h"
 #include "../universe/Planet.h"
+#include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
-#include "../universe/Field.h"
 #include "../universe/Universe.h"
 #include "ScopedTimer.h"
 #include "AppInterface.h"
@@ -20,24 +22,265 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/uuid/nil_generator.hpp>
 
+#include <cstdint>
+#include <limits>
 #include <numeric>
 #if __has_include(<charconv>)
 #include <charconv>
 #else
 #include <cstdio>
 #endif
+#include <string>
+#include <string_view>
 #include <type_traits>
+#include <vector>
 
-namespace {
-    // <concepts> library not fully implemented in XCode 13.2
-    template <class T>
-    concept integral = std::is_integral_v<T>;
-}
 
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
-BOOST_CLASS_VERSION(Universe, 3)
+BOOST_CLASS_VERSION(Universe, 5)
 
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+namespace {
+    static_assert([]() {
+        const char nine = '9';
+        const std::string_view one_char_sv(&nine, 1);
+        int val = 0;
+        auto [next, success] = FromChars(one_char_sv, val);
+        return success && next == (one_char_sv.data() + 1) && val == 9;
+     }());
+
+    static_assert([]() {
+        const std::array<char, 10> not_null_terminated_str{'3', ' ', ' ', 'n', 'o', ' ', 'n', 'u', 'l', 'l'};
+        const std::string_view sv(not_null_terminated_str.data(), not_null_terminated_str.size());
+        int val = 0;
+        auto [next, success] = FromChars(sv, val);
+        return success && next == (sv.data() + 1) && val == 3;
+    }());
+
+    static_assert([]() {
+        const std::string_view empty_sv;
+        int val = -1;
+        auto [next, success] = FromChars(empty_sv, val);
+        return !success && next == empty_sv.data() && val == -1;
+    }());
+}
+#endif
+
+namespace {
+    constexpr std::size_t ovt_buffer_size = 4*(int_digits + 1); // space for "-2147483648 -2147483648 -2147483648 -2147483648 "
+
+    std::string ToString(const std::vector<ObjVisTurns>& data) {
+        std::string retval;
+        try {
+            retval.reserve(data.size() * (ovt_buffer_size + 1) + int_digits + 2); // space for count and all values and gaps
+        } catch(...) {}
+
+        retval.append(std::to_string(data.size()));
+
+        const auto append_turn_or_x = [&retval](int tx) {
+            if (tx == INVALID_GAME_TURN)
+                retval.append(" x");
+            else
+                retval.append(" ").append(std::to_string(tx));
+        };
+
+        for (const auto& ovt : data) {
+            retval.append("  ").append(std::to_string(ovt.obj_id));
+            append_turn_or_x(ovt.basic);
+            append_turn_or_x(ovt.partial);
+            append_turn_or_x(ovt.full);
+        }
+
+        return retval;
+    }
+
+    auto ToObjVisTurnsVec(std::string_view buffer) {
+        std::vector<ObjVisTurns> retval;
+
+        if (buffer.empty())
+            return retval;
+
+        const auto* const buffer_end = buffer.data() + buffer.size();
+
+        unsigned int count = 0;
+        auto [next, success] = FromChars(buffer.data(), buffer_end, count);
+        if (!success)
+            return retval;
+
+        try {
+            retval.reserve(count);
+        } catch (...) {}
+
+        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
+            // safety checks
+            if (!next || !buffer_end)
+                return {default_val, false, next};
+
+            // skip whitespace
+            while (next != buffer_end && *next == ' ')
+                ++next;
+
+            // safety check for end of buffer
+            if (next == buffer_end)
+                return {default_val, false, next};
+
+            // special case short representation default value
+            if (*next == 'x') {
+                ++next;
+                return {default_val, true, next};
+            }
+
+            // parse string to int
+            int result = default_val;
+            auto [next_out, success] = FromChars(next, buffer_end, result);
+            return {result, success, next_out};
+        };
+
+
+        for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
+            int obj_id = INVALID_OBJECT_ID;
+            int basic_turn = INVALID_GAME_TURN;
+            int partial_turn = INVALID_GAME_TURN;
+            int full_turn = INVALID_GAME_TURN;
+
+            std::tie(obj_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            if (!success)
+                break;
+            std::tie(basic_turn, success, next) = get_int_from_chars(next, INVALID_GAME_TURN);
+            if (!success)
+                break;
+            std::tie(partial_turn, success, next) = get_int_from_chars(next, INVALID_GAME_TURN);
+            if (!success)
+                break;
+            std::tie(full_turn, success, next) = get_int_from_chars(next, INVALID_GAME_TURN);
+            if (!success)
+                break;
+
+            retval.emplace_back(obj_id, basic_turn, partial_turn, full_turn);
+        }
+
+        return retval;
+    }
+
+
+    // default binary fallback and xml archive specializations
+    template <typename Archive>
+    void Serialize(Archive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm)
+    { ar & boost::serialization::make_nvp("empire_object_visibility_turns", eovtm); }
+
+    void Serialize(boost::archive::xml_iarchive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm) {
+        std::map<int, std::string> scratch;
+        ar >> boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+        eovtm.clear();
+        for (const auto& [eid, str] : scratch)
+            eovtm.emplace(eid, ToObjVisTurnsVec(str));
+    }
+
+    void Serialize(boost::archive::xml_oarchive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm) {
+        std::map<int, std::string> scratch;
+        for (const auto& [eid, vec] : eovtm)
+            scratch.emplace(eid, ToString(vec));
+        ar << boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+    }
+
+    template <typename Archive>
+    void Serialize(Archive& ar, EmpireObjectVisibilityTurnsVecMap& eovtm, unsigned int const universe_version)
+    {
+        if (Archive::is_loading::value && universe_version < 4) {
+            using OldVisibilityTurnMap = std::map<Visibility, int>;
+            using OldObjectVisibilityTurnMap = std::map<int, OldVisibilityTurnMap>;
+            using OldEmpireObjectVisibilityTurnMap = std::map<int, OldObjectVisibilityTurnMap>;
+            OldEmpireObjectVisibilityTurnMap scratch;
+            ar & boost::serialization::make_nvp("empire_object_visibility_turns", scratch);
+
+            // copy to eovtm
+            for (auto& [eid, old_ovtm] : scratch) {
+                auto& ovt_vec = eovtm[eid];
+                for (auto& [obj_id, old_vtm] : old_ovtm) {
+                    auto& ovtm = ovt_vec.emplace_back(obj_id);
+                    for (auto& [vis, turn] : old_vtm)
+                        ovtm.SetVisTurnsCascade(vis, turn);
+                }
+            }
+        } else {
+            Serialize(ar, eovtm);
+        }
+    }
+}
+
+
+template <typename Archive>
+void Serialize(Archive& oa, const std::map<int, Visibilities>& eov)
+{
+    static_assert(Archive::is_saving::value);
+
+    if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        std::vector<std::pair<int, std::string>> scratch;
+        scratch.reserve(eov.size());
+        for (const auto& [eid, vis] : eov)
+            scratch.emplace_back(eid, vis.ToString());
+        oa << boost::serialization::make_nvp("empire_object_visibility", scratch);
+
+    } else {
+        oa << boost::serialization::make_nvp("empire_object_visibilities", eov);
+    }
+}
+
+template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const std::map<int, Visibilities>&);
+template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const std::map<int, Visibilities>&);
+
+template <typename Archive>
+void Deserialize(Archive& ia, std::map<int, Visibilities>& eov, bool old_map_format, const char* xml_tag)
+{
+    static_assert(Archive::is_loading::value);
+
+    if (!xml_tag)
+        xml_tag = "empire_object_visibility";
+
+    if (old_map_format) {
+        DebugLogger() << "fallback empire object visibility load";
+        using OldObjectVisibilityMap = std::map<int, Visibility>;
+        using OldEmpireObjectVisibilityMap = std::map<int, OldObjectVisibilityMap>;
+        OldEmpireObjectVisibilityMap scratch;
+        ia >> boost::serialization::make_nvp(xml_tag, scratch);
+
+        // copy to eovm
+        for (auto& [eid, old_ovm] : scratch) {
+            auto& vis = eov[eid];
+            for (const auto& [obj_id, vs] : old_ovm)
+                vis.Set(obj_id, vs);
+        }
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        std::vector<std::pair<int, std::string>> scratch;
+        ia >> boost::serialization::make_nvp(xml_tag, scratch);
+        eov.clear();
+        for (const auto& [eid, str] : scratch)
+            eov.emplace(eid, Visibilities(str));
+
+    } else {
+        ia >> boost::serialization::make_nvp(xml_tag, eov);
+    }
+}
+
+template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, std::map<int, Visibilities>&, bool, const char*);
+template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, std::map<int, Visibilities>&, bool, const char*);
+
+
+
+template <typename Archive>
+void serialize(Archive& ar, ObjVisTurns& ovtm, unsigned int const)
+{
+    ar  & boost::serialization::make_nvp("obj_id", ovtm.obj_id)
+        & boost::serialization::make_nvp("basic", ovtm.basic)
+        & boost::serialization::make_nvp("partial", ovtm.partial)
+        & boost::serialization::make_nvp("full", ovtm.full);
+}
+
+template <typename Archive>
+void serialize(Archive& ar, Visibilities& vis, unsigned int const)
+{ ar  & boost::serialization::make_nvp("ids_vis", vis.ids_vis); }
 
 template <typename Archive>
 void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
@@ -54,14 +297,14 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ObjectMap                                 objects;
-    std::set<int>                             destroyed_object_ids;
-    Universe::EmpireObjectMap                 empire_latest_known_objects;
-    Universe::EmpireObjectVisibilityMap       empire_object_visibility;
-    Universe::EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
-    Universe::ObjectKnowledgeMap              empire_known_destroyed_object_ids;
-    Universe::ObjectKnowledgeMap              empire_stale_knowledge_object_ids;
-    Universe::ShipDesignMap                   ship_designs_scratch;
+    ObjectMap                         objects;
+    std::set<int>                     destroyed_object_ids;
+    Universe::EmpireObjectMap         empire_latest_known_objects;
+    EmpireObjectVisibilityMap         empire_object_visibility;
+    EmpireObjectVisibilityTurnsVecMap empire_object_visibility_turns;
+    Universe::ObjectKnowledgeMap      empire_known_destroyed_object_ids;
+    Universe::ObjectKnowledgeMap      empire_stale_knowledge_object_ids;
+    Universe::ShipDesignMap           ship_designs_scratch;
 
     ar.template register_type<System>();
 
@@ -132,8 +375,15 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
     ar  & make_nvp("m_empire_known_ship_design_ids", u.m_empire_known_ship_design_ids);
 
     timer.EnterSection("visibility / known destroyed or stale");
-    ar  & make_nvp("empire_object_visibility", empire_object_visibility);
-    ar  & make_nvp("empire_object_visibility_turns", empire_object_visibility_turns);
+
+    if constexpr (Archive::is_saving::value)
+        Serialize(ar, empire_object_visibility);
+    else
+        Deserialize(ar, empire_object_visibility, version < 5);
+
+    Serialize(ar, empire_object_visibility_turns, version);
+
+
     if constexpr (Archive::is_loading::value) {
         u.m_empire_object_visibility.swap(empire_object_visibility);
         u.m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
@@ -280,22 +530,6 @@ void serialize(Archive& ar, Universe& u, unsigned int const version)
 
 
 namespace {
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#endif
-    auto ToChars(integral auto num, char* buffer, char* buffer_end) {
-#if defined(__cpp_lib_to_chars)
-        auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
-        return std::distance(buffer, result_ptr);
-#else
-        std::size_t buffer_sz = std::distance(buffer, buffer_end);
-        auto temp = std::to_string(num);
-        auto out_sz = std::min(buffer_sz, temp.size());
-        std::copy_n(temp.begin(), out_sz, buffer);
-        return out_sz;
-#endif
-    }
-
     constexpr std::size_t num_meters_possible{static_cast<std::size_t>(MeterType::NUM_METER_TYPES)};
     constexpr std::size_t single_meter_text_size{std::size(Meter::ToCharsArrayT())};
 
@@ -355,40 +589,6 @@ namespace {
 
     inline auto ToChars(const UniverseObject::MeterMap::value_type& val, char* const buffer, char* const buffer_end)
     { return ToChars(val.first, val.second, buffer, buffer_end); }
-
-    constexpr bool have_to_chars_lib =
-#if defined(__cpp_lib_to_chars)
-        true;
-#else
-        false;
-#endif
-
-    template <integral T>
-    constexpr const auto* GetFormatString() {
-        if constexpr(std::is_unsigned_v<T>)
-            return "%u%n";
-        else if constexpr(std::is_signed_v<T>)
-            return "%d%n";
-        else
-            return "";
-    }
-
-    // returns { next unconsumed char*, true/false did the parse succeed }
-    // parsed value returned in \a val_out
-    inline auto FromChars(const char* start, const char* end, integral auto& val_out) -> std::pair<const char*, bool>
-    {
-        if constexpr(have_to_chars_lib) {
-            const auto result = std::from_chars(start, end, val_out);
-            return {result.ptr, result.ec == std::errc()};
-
-        } else {
-            int chars_consumed = 0;
-            using val_out_t = std::decay_t<decltype(val_out)>;
-            constexpr auto val_format_str = GetFormatString<val_out_t>();
-            const auto matched = sscanf(start, val_format_str, &val_out, &chars_consumed);
-            return {start + chars_consumed, matched >= 1};
-        }
-    }
 
 
     template <typename Archive>
@@ -1094,27 +1294,39 @@ void serialize(Archive& ar, ShipDesign& obj, unsigned int const version)
 BOOST_CLASS_EXPORT(ShipDesign)
 BOOST_CLASS_VERSION(ShipDesign, 2)
 
-template <typename Archive>
+template <typename Archive> 
 void Serialize(Archive& oa, const Universe& universe)
-{ oa << BOOST_SERIALIZATION_NVP(universe); }
+{
+    static_assert(Archive::is_saving::value);
+    oa << BOOST_SERIALIZATION_NVP(universe);
+}
 template FO_COMMON_API void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const Universe& universe);
 template FO_COMMON_API void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const Universe& universe);
 
 template <typename Archive>
 void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects)
-{ oa << BOOST_SERIALIZATION_NVP(objects); }
+{
+    static_assert(Archive::is_saving::value);
+    oa << BOOST_SERIALIZATION_NVP(objects);
+}
 template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const std::map<int, std::shared_ptr<UniverseObject>>& objects);
 
 template <typename Archive>
 void Deserialize(Archive& ia, Universe& universe)
-{ ia >> BOOST_SERIALIZATION_NVP(universe); }
+{
+    static_assert(Archive::is_loading::value);
+    ia >> BOOST_SERIALIZATION_NVP(universe);
+}
 template FO_COMMON_API void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, Universe& universe);
 template FO_COMMON_API void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, Universe& universe);
 
 template <typename Archive>
 void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects)
-{ ia >> BOOST_SERIALIZATION_NVP(objects); }
+{
+    static_assert(Archive::is_loading::value);
+    ia >> BOOST_SERIALIZATION_NVP(objects);
+}
 template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, std::map<int, std::shared_ptr<UniverseObject>>& objects);
 

@@ -1,6 +1,8 @@
 #include "Serialize.h"
 
 #include "Serialize.ipp"
+#include "SerializeUtil.h"
+
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
 
@@ -75,16 +77,53 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Simulta
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, SimultaneousEvents&, unsigned int const);
 
 
+
+namespace {
+    template <typename Archive>
+    void Serialize(Archive& ar, auto& container, const char* tag, bool old_non_string_format)
+    {
+        if constexpr (Archive::is_loading::value) {
+            if (old_non_string_format) {
+                ar >> boost::serialization::make_nvp(tag, container);
+            } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+                std::string str;
+                ar >> boost::serialization::make_nvp(tag, str);
+                FillIntContainer(container, str);
+            } else {
+                ar >> boost::serialization::make_nvp(tag, container);
+            }
+        } else {
+            if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+                std::string str = ToString(container);
+                ar << boost::serialization::make_nvp(tag, str);
+            } else {
+                ar << boost::serialization::make_nvp(tag, container);
+            }
+        }
+    }
+}
+
+
 template <typename Archive>
 void serialize(Archive& ar, InitialStealthEvent& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
-    ar & make_nvp("empire_to_object_visibility", obj.empire_to_object_visibility);
+
+    if constexpr (Archive::is_loading::value) {
+        obj.empire_object_visibility.clear();
+        bool old_format = version < 5;
+        const char* xml_tag = old_format ? "empire_to_object_visibility" : nullptr;
+        if (old_format)
+            DebugLogger() << "Deserializing InitialStealthEvent old format version: " << version;
+        Deserialize(ar, obj.empire_object_visibility, old_format, xml_tag);
+    } else {
+        Serialize(ar, obj.empire_object_visibility);
+    }
 }
 
-BOOST_CLASS_VERSION(InitialStealthEvent, 4)
+BOOST_CLASS_VERSION(InitialStealthEvent, 5)
 BOOST_CLASS_EXPORT(InitialStealthEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, InitialStealthEvent&, unsigned int const);
@@ -224,7 +263,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Fighter
 
 
 template <typename Archive>
-void serialize (Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
+void serialize(Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
@@ -296,8 +335,10 @@ void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int/* ve
 }
 
 
+BOOST_CLASS_EXPORT(CombatLog)
+
 template <typename Archive>
-void serialize(Archive& ar, CombatLog& obj, const unsigned int/* version*/)
+void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
 {
     using namespace boost::serialization;
 
@@ -313,11 +354,12 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int/* version*/)
     ar.template register_type<WeaponsPlatformEvent>();
 
     ar  & make_nvp("turn", obj.turn)
-        & make_nvp("system_id", obj.system_id)
-        & make_nvp("empire_ids", obj.empire_ids)
-        & make_nvp("object_ids", obj.object_ids)
-        & make_nvp("damaged_object_ids", obj.damaged_object_ids)
-        & make_nvp("destroyed_object_ids", obj.destroyed_object_ids);
+        & make_nvp("system_id", obj.system_id);
+
+    Serialize(ar, obj.empire_ids, "empire_ids", version < 2);
+    Serialize(ar, obj.object_ids, "object_ids", version < 2);
+    Serialize(ar, obj.damaged_object_ids, "damaged_object_ids", version < 2);
+    Serialize(ar, obj.destroyed_object_ids, "destroyed_object_ids", version < 2);
 
     if (obj.combat_events.size() > 1)
         TraceLogger() << "CombatLog::serialize turn " << obj.turn << "  combat at " << obj.system_id << "  combat events size: " << obj.combat_events.size();
@@ -335,6 +377,7 @@ template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatL
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, CombatLog&, const unsigned int);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLog&, const unsigned int);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLog&, const unsigned int);
+
 
 template <typename Archive>
 void serialize(Archive& ar, CombatLogManager& obj, const unsigned int/* version*/)

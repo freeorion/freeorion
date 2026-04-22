@@ -7497,21 +7497,25 @@ namespace {
                 return m_context.ContextVis(candidate->ID(), m_empire_id) >= m_vis;
 
             } else {
-                // if a game turn after which to check is specified, check the
+                // if (a game turn after which to check) is specified, check the
                 // history of when empires saw which objects at which visibility
+
                 const auto& vis_turn_map{m_context.empire_object_vis_turns};
                 auto empire_it = vis_turn_map.find(m_empire_id);
                 if (empire_it == vis_turn_map.end())
                     return false;
-                const auto& object_vis_turns_map = empire_it->second;
-                auto object_it = object_vis_turns_map.find(candidate->ID());
-                if (object_it == object_vis_turns_map.end())
+                const auto& obj_vis_turns = empire_it->second;
+
+                const auto is_candidate = [cid{candidate->ID()}](const auto& ov) noexcept { return ov.obj_id == cid; };
+                const auto object_it = range_find_if(obj_vis_turns, is_candidate);
+                if (object_it == obj_vis_turns.end())
                     return false;
-                const auto& vis_turns = object_it->second;
-                auto vis_it = vis_turns.find(m_vis);
-                if (vis_it == vis_turns.end())
+
+                const auto& id_turns = *object_it;
+                if (!id_turns.contains(m_vis))
                     return false;
-                return vis_it->second >= m_since_turn;
+
+                return id_turns[m_vis] >= m_since_turn;
             }
         }
 

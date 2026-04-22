@@ -14,6 +14,7 @@
 class OrderSet;
 class Universe;
 class UniverseObject;
+class Visibilities;
 
 typedef boost::archive::binary_iarchive freeorion_bin_iarchive;
 typedef boost::archive::binary_oarchive freeorion_bin_oarchive;
@@ -46,6 +47,11 @@ void Serialize(Archive& oa, const std::map<int, std::shared_ptr<UniverseObject>>
 template <typename Archive>
 void Serialize(Archive& oa, const OrderSet& order_set);
 
+//! Serialize @p eov to output archive @p oa.
+template <typename Archive>
+FO_COMMON_API void Serialize(Archive& ia, const std::map<int, Visibilities>& eov);
+
+
 //! Deserialize @p universe from input archive @p ia.
 template <typename Archive>
 FO_COMMON_API void Deserialize(Archive& ia, Universe& universe);
@@ -57,6 +63,10 @@ void Deserialize(Archive& ia, std::map<int, std::shared_ptr<UniverseObject>>& ob
 //! Deserialize @p order_set from input archive @p ia.
 template <typename Archive>
 void Deserialize(Archive& ia, OrderSet& order_set);
+
+//! Deserialize @p eov from input archive @p ia.
+template <typename Archive>
+FO_COMMON_API void Deserialize(Archive& ia, std::map<int, Visibilities>& eov, bool old_map_format, const char* xml_tag = nullptr);
 
 
 struct ChatHistoryEntity;
@@ -73,7 +83,7 @@ extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_x
 
 struct CombatLog;
 
-BOOST_CLASS_VERSION(CombatLog, 1);
+BOOST_CLASS_VERSION(CombatLog, 2);
 
 template <typename Archive>
 void serialize(Archive&, CombatLog&, const unsigned int);
