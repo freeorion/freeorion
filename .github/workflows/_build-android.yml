@@ -178,18 +178,34 @@ jobs:
           working-directory: ./
           channel: beta
           script: |
+            echo "::group::Installing APK"
             adb devices
             adb install freeorion.apk
             adb logcat -c
+            echo "::endgroup::"
+
+            echo "::group::Starting APK"
             adb shell am start -W -n org.godotengine.freeoriongodotclient/com.godot.game.GodotApp
+            echo "::endgroup::"
+
             sleep 180
+
+            echo "::group::Stopping APK"
             adb shell am force-stop org.godotengine.freeoriongodotclient
+            echo "::endgroup::"
+
+            echo "::group::Getting logs"
             adb logcat -d >logcat.log
             adb exec-out run-as org.godotengine.freeoriongodotclient cat files/freeorion-godot.log >freeorion-godot.log 2>&1
-            echo ".. check errors .."
+            echo "::endgroup::"
+
+            echo "::group::Checking errors"
             ! grep "\[error\] godot : \(Parse\|ReportParseError\)" freeorion-godot.log
-            echo ".. check finish .."
+            echo "::endgroup::"
+
+            echo "::group::Checking finish"
             grep "\[debug\] godot : FreeOrionNode.cpp:[0-9]\+ : FreeOrionNode::parsing_thread(): Freeorion parsing stopped" freeorion-godot.log
+            echo "::endgroup::"
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v7
