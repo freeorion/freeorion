@@ -8558,7 +8558,19 @@ SITREP_FIELD_RESEARCH_LABEL
 Exploration Research
 
 SITREP_FIELD_RESEARCH
-At %system%: exploration generated research.
+At %system%: %policy% generated research.
+
+SITREP_FIELD_RESEARCH_KILLED
+TURN %rawtext:turn%  %system% received research (%rpbonus% RP) from newly explored systems before the exploring ships were all destroyed.
+
+SITREP_FIELD_RESEARCH_KILLED_LABEL
+Research from Killed Explorers
+
+SITREP_FIELD_RESEARCH_KILLED_SYSTEM
+All your ships in newly explored %system% were destroyed. Exploration research got send to %system:target% (%rawtext:rpbonus% RP).
+
+SITREP_FIELD_RESEARCH_KILLED_SYSTEM_LABEL
+All Ships Destroyed
 
 CUSTOM_SITREP_INTRODUCTION
 Welcome to the initial Situation Report Briefing. Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
@@ -10239,6 +10251,15 @@ Derelict Trooper
 
 DERELICT_SPECIAL_DESC
 An ancient derelict ship from an unknown species. Who knows what it could reveal...
+
+NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL
+Salvaged Exploration
+
+NEWLY_EXPLORED_SYSTEMS_WITH_NO_FLEET_SPECIAL_DESC
+Recorded [[policy Exploration]] research sent from destroyed ships. This special is a technical artifact: it decreases research meter and removes itself in order to counter temporary research meter growth.
+
+PLANET_SPECIAL_INFO
+In %system% planet %planet% had special %special% with capacity %rawtext:specialcapacity% added on turn %rawtext:specialaddedonturn% (Turn %rawtext:turn%) %rawtext:remark% %rawtext:remark2%
 
 ACCRETION_DISC_SPECIAL
 Accretion Disc
