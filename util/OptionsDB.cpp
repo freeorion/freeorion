@@ -725,7 +725,6 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized."
                              << " It may not be registered yet or could be a typo.";
 
-
             } else {
                 // recognized option
                 Option& option = *it;
@@ -737,6 +736,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         // check if parameter exists...
                         if (std::cmp_greater_equal(i + 1, args.size())) {
                             m_dirty |= option.SetFromString("");
+                            InfoLogger() << "Option \"" << option_name << "\", was set on the command line with no value";
                             continue;
                         }
                         // get parameter value
@@ -749,11 +749,16 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                                                      "\" was followed by the parameter \"" + std::string{value_str} +
                                                      "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
                         m_dirty |= option.SetFromString(value_str);
+
+                        InfoLogger() << "Option \"" << option_name << "\", was set on the command line with value: " << value_str;
+
                     } catch (const std::exception& e) {
                         throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attempting to set option \"" + option.name + "\": " + e.what() + "\n\n");
                     }
+
                 } else { // flag
                     option.value = true;
+                    InfoLogger() << "Option flag \"" << option_name << "\", was set on the command line.";
                 }
             }
 
@@ -769,12 +774,12 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 throw std::runtime_error("A \'-\' was given with no options.");
 
             for (unsigned int j = 0; j < single_char_options.size(); ++j) {
-                auto short_name_it = short_names.find(single_char_options[j]);
+                const auto short_name_it = short_names.find(single_char_options[j]);
 
                 if (short_name_it == short_names.end())
                     throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
 
-                auto name_it = find_option(short_name_it->second);
+                const auto name_it = find_option(short_name_it->second);
 
                 if (name_it == m_options.end())
                     throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
@@ -787,13 +792,23 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                     if (j < single_char_options.size() - 1) {
                         throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                     } else {
-                        if (std::cmp_greater_equal(i + 1, args.size()))
+                        if (std::cmp_greater_equal(i + 1, args.size())) {
                             m_dirty |= option.SetFromString("");
-                        else
-                            m_dirty |= option.SetFromString(args[++i]);
+                            InfoLogger() << "Option \"" << short_name_it->second << "\", was set on the command line using short name '"
+                                         << short_name_it->first << "' and with no value";
+
+                        } else {
+                            const auto& value_str = args[++i];
+                            m_dirty |= option.SetFromString(value_str);
+                            InfoLogger() << "Option \"" << short_name_it->second << "\", was set on the command line using short name '"
+                                         << short_name_it->first << "' with value \"" << value_str << "\"";
+                        }
                     }
+
                 } else {
                     option.value = true;
+                    InfoLogger() << "Option flag \"" << short_name_it->second << "\", was set on the command line using short name '"
+                                 << short_name_it->first << "'";
                 }
             }
         }
