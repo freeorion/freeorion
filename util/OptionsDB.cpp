@@ -279,7 +279,7 @@ namespace {
     std::string SplitText(const std::string& text, std::pair<std::size_t, std::size_t> indents = { 0, 0 },
                           std::pair<std::size_t, std::size_t> widths = {TERMINAL_LINE_WIDTH, TERMINAL_LINE_WIDTH})
     {
-        const boost::char_separator<char> separator { " \t", "\n" };
+        const boost::char_separator<char> separator{" \t", "\n"};
         const boost::tokenizer<boost::char_separator<char>> tokens{text, separator};
 
         std::vector<std::string> lines{""};
@@ -287,19 +287,20 @@ namespace {
             if (token == "\n") 
                 lines.emplace_back();
             else if (widths.second < lines.back().size() + token.size() + indents.second)
-                lines.push_back(token + " ");
+                lines.emplace_back(token).append(" ");
             else if (!token.empty())
-                lines.back().append(token + " ");
+                lines.back().append(token).append(" ");
         }
 
-        std::stringstream retval;
-        retval << std::string(indents.first, ' ') << lines.front() << "\n";
-        std::string indent(indents.second, ' ');
-        for (const auto& line : lines)
-            if (!line.empty())
-                retval << indent << line << "\n";
+        std::string retval = std::string(indents.first, ' ').append(lines.front()).append("\n");
 
-        return retval.str();
+        const std::string indent(indents.second, ' ');
+
+        static constexpr auto not_empty = [](const auto& l) noexcept { return !l.empty(); }; 
+        for (const auto& line : lines | range_drop(1) | range_filter(not_empty))
+            retval.append(indent).append(line).append("\n");
+
+        return retval;
     }
 
     constexpr bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) noexcept {
@@ -412,6 +413,10 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
     return options_by_section;
 }
 
+namespace {
+    const std::string EMPTY_STRING;
+}
+
 void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool allow_unrecognized) const {
     // Prevent logger output from garbling console display for low severity messages
     OverrideAllLoggersThresholds(LogLevel::warn);
@@ -430,8 +435,8 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
             os << "\nFreeOrion is a 4X Space Strategy game.\n\n";
     }
 
-    const auto find_section = [this](const auto section_name) {
-        const auto has_section_name = [section_name](const auto& s) noexcept { return s.name == section_name; };
+    const auto find_section = [this](const auto& section_name) {
+        const auto has_section_name = [&section_name](const auto& s) noexcept { return s.name == section_name; };
         return range_find_if(m_sections, has_section_name);
     };
 
@@ -447,7 +452,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
     }
 
     bool print_misc_section = command_line.empty();
-    std::set<std::string_view> section_list;
+    std::set<std::string> section_list;
     // print option sections
     if (command_line != "all" && command_line != "raw") {
         std::size_t name_col_width = 20;
@@ -460,7 +465,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
                             name_col_width = section.size();
             }
         } else {
-            for (const auto& sec : options_by_section | range_keys) {
+            for (const auto sec : options_by_section | range_keys) {
                 if (OptionNameHasParentSection(sec, command_line))
                     if (section_list.emplace(sec).second && name_col_width < sec.size())
                         name_col_width = sec.size();
@@ -473,17 +478,17 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
 
         const auto indents = std::pair(2, name_col_width + 4);
         const auto widths = std::pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
-        for (std::string_view section : section_list) {
+        for (const std::string& section : section_list) {
             if (section == "misc") {
                 print_misc_section = true;
                 continue;
             }
             const auto section_it = find_section(section);
-            std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->description);
+            const std::string& descr = (section_it == m_sections.end()) ? EMPTY_STRING : UserString(section_it->description);
 
-            os << std::setw(2) << "" // indent
-               << std::setw(name_col_width) << std::left << section // section name
-               << SplitText(descr, indents, widths); // section description
+            os << std::setw(2) << ""; // indent
+            os << std::setw(name_col_width) << std::left << section; // section name
+            os << SplitText(descr, indents, widths); // section description
         }
 
         if (print_misc_section) {
@@ -725,7 +730,6 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized."
                              << " It may not be registered yet or could be a typo.";
 
-
             } else {
                 // recognized option
                 Option& option = *it;
@@ -737,6 +741,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                         // check if parameter exists...
                         if (std::cmp_greater_equal(i + 1, args.size())) {
                             m_dirty |= option.SetFromString("");
+                            InfoLogger() << "Option \"" << option_name << "\", was set on the command line with no value";
                             continue;
                         }
                         // get parameter value
@@ -749,11 +754,16 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                                                      "\" was followed by the parameter \"" + std::string{value_str} +
                                                      "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
                         m_dirty |= option.SetFromString(value_str);
+
+                        InfoLogger() << "Option \"" << option_name << "\", was set on the command line with value: " << value_str;
+
                     } catch (const std::exception& e) {
                         throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attempting to set option \"" + option.name + "\": " + e.what() + "\n\n");
                     }
+
                 } else { // flag
                     option.value = true;
+                    InfoLogger() << "Option flag \"" << option_name << "\", was set on the command line.";
                 }
             }
 
@@ -769,12 +779,12 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 throw std::runtime_error("A \'-\' was given with no options.");
 
             for (unsigned int j = 0; j < single_char_options.size(); ++j) {
-                auto short_name_it = short_names.find(single_char_options[j]);
+                const auto short_name_it = short_names.find(single_char_options[j]);
 
                 if (short_name_it == short_names.end())
                     throw std::runtime_error(std::string("Unknown option \"-") + single_char_options[j] + "\" was given.");
 
-                auto name_it = find_option(short_name_it->second);
+                const auto name_it = find_option(short_name_it->second);
 
                 if (name_it == m_options.end())
                     throw std::runtime_error("Option \"--" + short_name_it->second + "\", abbreviated as \"-" + short_name_it->first + "\", could not be found.");
@@ -787,13 +797,23 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                     if (j < single_char_options.size() - 1) {
                         throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                     } else {
-                        if (std::cmp_greater_equal(i + 1, args.size()))
+                        if (std::cmp_greater_equal(i + 1, args.size())) {
                             m_dirty |= option.SetFromString("");
-                        else
-                            m_dirty |= option.SetFromString(args[++i]);
+                            InfoLogger() << "Option \"" << short_name_it->second << "\", was set on the command line using short name '"
+                                         << short_name_it->first << "' and with no value";
+
+                        } else {
+                            const auto& value_str = args[++i];
+                            m_dirty |= option.SetFromString(value_str);
+                            InfoLogger() << "Option \"" << short_name_it->second << "\", was set on the command line using short name '"
+                                         << short_name_it->first << "' with value \"" << value_str << "\"";
+                        }
                     }
+
                 } else {
                     option.value = true;
+                    InfoLogger() << "Option flag \"" << short_name_it->second << "\", was set on the command line using short name '"
+                                 << short_name_it->first << "'";
                 }
             }
         }
