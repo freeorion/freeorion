@@ -279,7 +279,7 @@ namespace {
     std::string SplitText(const std::string& text, std::pair<std::size_t, std::size_t> indents = { 0, 0 },
                           std::pair<std::size_t, std::size_t> widths = {TERMINAL_LINE_WIDTH, TERMINAL_LINE_WIDTH})
     {
-        const boost::char_separator<char> separator { " \t", "\n" };
+        const boost::char_separator<char> separator{" \t", "\n"};
         const boost::tokenizer<boost::char_separator<char>> tokens{text, separator};
 
         std::vector<std::string> lines{""};
@@ -287,19 +287,20 @@ namespace {
             if (token == "\n") 
                 lines.emplace_back();
             else if (widths.second < lines.back().size() + token.size() + indents.second)
-                lines.push_back(token + " ");
+                lines.emplace_back(token).append(" ");
             else if (!token.empty())
-                lines.back().append(token + " ");
+                lines.back().append(token).append(" ");
         }
 
-        std::stringstream retval;
-        retval << std::string(indents.first, ' ') << lines.front() << "\n";
-        std::string indent(indents.second, ' ');
-        for (const auto& line : lines)
-            if (!line.empty())
-                retval << indent << line << "\n";
+        std::string retval = std::string(indents.first, ' ').append(lines.front()).append("\n");
 
-        return retval.str();
+        const std::string indent(indents.second, ' ');
+
+        static constexpr auto not_empty = [](const auto& l) noexcept { return !l.empty(); }; 
+        for (const auto& line : lines | range_drop(1) | range_filter(not_empty))
+            retval.append(indent).append(line).append("\n");
+
+        return retval;
     }
 
     constexpr bool OptionNameHasParentSection(std::string_view lhs, std::string_view rhs) noexcept {
@@ -412,6 +413,10 @@ std::unordered_map<std::string_view, std::set<std::string_view>> OptionsDB::Opti
     return options_by_section;
 }
 
+namespace {
+    const std::string EMPTY_STRING;
+}
+
 void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool allow_unrecognized) const {
     // Prevent logger output from garbling console display for low severity messages
     OverrideAllLoggersThresholds(LogLevel::warn);
@@ -430,8 +435,8 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
             os << "\nFreeOrion is a 4X Space Strategy game.\n\n";
     }
 
-    const auto find_section = [this](const auto section_name) {
-        const auto has_section_name = [section_name](const auto& s) noexcept { return s.name == section_name; };
+    const auto find_section = [this](const auto& section_name) {
+        const auto has_section_name = [&section_name](const auto& s) noexcept { return s.name == section_name; };
         return range_find_if(m_sections, has_section_name);
     };
 
@@ -447,7 +452,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
     }
 
     bool print_misc_section = command_line.empty();
-    std::set<std::string_view> section_list;
+    std::set<std::string> section_list;
     // print option sections
     if (command_line != "all" && command_line != "raw") {
         std::size_t name_col_width = 20;
@@ -460,7 +465,7 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
                             name_col_width = section.size();
             }
         } else {
-            for (const auto& sec : options_by_section | range_keys) {
+            for (const auto sec : options_by_section | range_keys) {
                 if (OptionNameHasParentSection(sec, command_line))
                     if (section_list.emplace(sec).second && name_col_width < sec.size())
                         name_col_width = sec.size();
@@ -473,17 +478,17 @@ void OptionsDB::GetUsage(std::ostream& os, std::string_view command_line, bool a
 
         const auto indents = std::pair(2, name_col_width + 4);
         const auto widths = std::pair(TERMINAL_LINE_WIDTH - name_col_width, TERMINAL_LINE_WIDTH);
-        for (std::string_view section : section_list) {
+        for (const std::string& section : section_list) {
             if (section == "misc") {
                 print_misc_section = true;
                 continue;
             }
             const auto section_it = find_section(section);
-            std::string descr = (section_it == m_sections.end()) ? "" : UserString(section_it->description);
+            const std::string& descr = (section_it == m_sections.end()) ? EMPTY_STRING : UserString(section_it->description);
 
-            os << std::setw(2) << "" // indent
-               << std::setw(name_col_width) << std::left << section // section name
-               << SplitText(descr, indents, widths); // section description
+            os << std::setw(2) << ""; // indent
+            os << std::setw(name_col_width) << std::left << section; // section name
+            os << SplitText(descr, indents, widths); // section description
         }
 
         if (print_misc_section) {
