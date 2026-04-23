@@ -774,15 +774,23 @@ auto PathToString(fs::path const& path) -> std::string
 #endif
 }
 
-#if !defined(FREEORION_ANDROID)
 auto FilenameTimestamp() -> std::string
 {
+#ifdef FREEORION_ANDROID
+    std::time_t now = std::time(nullptr);
+    std::tm local_time;
+    localtime_r(&now, &local_time);
+    char buffer[20];
+    std::strftime(buffer, sizeof(buffer), "%Y%m%d_%H%M%S", &local_time);
+    std::string retval(buffer);
+#else
     boost::posix_time::time_facet* facet = new boost::posix_time::time_facet("%Y%m%d_%H%M%S");
     std::stringstream date_stream;
 
     date_stream.imbue(std::locale(date_stream.getloc(), facet));// alternate locales: GetLocale("en_US.UTF-8") or GetLocale("ja_JA.UTF-8") or date_stream.getloc()
     date_stream << boost::posix_time::microsec_clock::local_time();
     std::string retval = date_stream.str();
+#endif
     TraceLogger() << "Filename initial timestamp: " << retval;
 
     // replace spaces and colons with safer chars for filenames
@@ -797,7 +805,6 @@ auto FilenameTimestamp() -> std::string
 
     return retval;
 }
-#endif
 
 auto IsFOCScript(const fs::path& path) -> bool
 { return IsExistingFile(path) && ".txt" == path.extension() && path.stem().extension() == ".focs"; }
