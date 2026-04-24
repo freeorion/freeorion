@@ -2062,19 +2062,20 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
 
         for (PlayerSaveHeaderData& psgd : player_save_header_data | range_filter(Networking::is_ai_or_human)) {
-
             if (!have_assigned_host_id && is_human(psgd)) {
                 have_assigned_host_id = true;
 
                 auto& psd = players.emplace_back(std::move(psgd.name), psgd.empire_id,
                                                  server.Networking().HostPlayerID(),
                                                  Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER);
-                DebugLogger() << "Assigned host player to setup data entry with name: " << psd.player_name;
+                DebugLogger() << "Assigned human host player with id " << psd.player_id
+                              << " to setup data entry with name: " << psd.player_name;
             } else {
                 auto& psd = players.emplace_back(std::move(psgd.name), psgd.empire_id,
                                                  player_id++,
                                                  Networking::ClientType::CLIENT_TYPE_AI_PLAYER);
-                DebugLogger() << "Assigned AI player to setup data entry with name: " << psd.player_name;
+                DebugLogger() << "Assigned AI player with id " << psd.player_id
+                              << " to setup data entry with name: " << psd.player_name;
             }
         }
     }
@@ -2112,7 +2113,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     const Message& message = msg.m_message;
     auto& player_connection = msg.m_player_connection;
 
-    std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
+    std::string player_name("Default_SP_Joiner_Player_Name");
     Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
@@ -2183,7 +2184,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 }
 
 sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
-    TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
+    DebugLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
     // if all expected players have connected, proceed to start new or load game
@@ -2221,6 +2222,10 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
         }
         return transit<PlayingGame>();
+    } else {
+        DebugLogger(FSM) << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have "
+                         << server.m_networking.NumEstablishedPlayers() << " of "
+                         << m_num_expected_players << " expected players connected.";
     }
 
     return discard_event();
