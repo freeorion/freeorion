@@ -258,7 +258,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     args.reserve(16);
     args.push_back("\"" + AI_CLIENT_EXE + "\"");
     args.push_back("place_holder");
-    const std::size_t player_pos = args.size()-1;
+    const std::size_t player_name_in_vec_idx = args.size()-1;
     args.push_back(std::to_string(max_aggression));
     args.push_back("--resource.path");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
@@ -305,29 +305,25 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     }
 
     // for each AI client player, create a new AI client process
-    static constexpr auto to_name = [](const auto& psd) noexcept -> const auto& { return psd.player_name; };
-    for (const auto& player_name : player_setup_data | range_filter(Networking::is_ai) | range_transform(to_name)) {
+    for (const auto& ai_psd : player_setup_data | range_filter(Networking::is_ai)) {
         // check that AIs have a name, as they will be sorted later based on it
-        if (player_name.empty()) {
+        if (ai_psd.player_name.empty()) {
             ErrorLogger() << "ServerApp::CreateAIClients can't create a player with no name.";
             return;
         }
+        args[player_name_in_vec_idx] = ai_psd.player_name;
 
-        args[player_pos] = player_name;
-        m_ai_client_processes.insert_or_assign(player_name, Process(m_io_context, AI_CLIENT_EXE, args));
+        DebugLogger() << "Adding Process for setup data: name: " << ai_psd.player_name
+                      << " player id: " << ai_psd.player_id
+                      << " empire name:" << ai_psd.empire_name
+                      << " save empire id: " << ai_psd.save_game_empire_id;
 
-        DebugLogger() << "done starting AI " << player_name;
+        m_ai_client_processes.emplace(ai_psd, Process(m_io_context, AI_CLIENT_EXE, args));
     }
 
     // set initial AI process priority to low
     SetAIsProcessPriorityToLow(true);
 }
-
-Empire* ServerApp::GetEmpire(int id)
-{ return m_empires.GetEmpire(id).get(); }
-
-std::string ServerApp::GetVisibleObjectName(const UniverseObject& object)
-{ return object.Name(); }
 
 void ServerApp::Run() {
     if (IsHostless())
@@ -1873,6 +1869,26 @@ bool ServerApp::EliminatePlayer(const PlayerConnectionPtr& player_connection) {
 void ServerApp::DropPlayerEmpireLink(int player_id)
 { m_player_empire_ids.erase(player_id); }
 
+namespace {
+    void EraseAIPlayerProcess(auto& ai_processes, int player_id) {
+        DebugLogger() << "Dropping player connection with previous id: " << player_id;
+        DebugLogger() << "AI processes (" << ai_processes.size() << "):";
+        for (const auto& proc_info : ai_processes | range_keys)
+            DebugLogger() << " ... id: " << proc_info.player_id << " name: " << proc_info.player_name
+                          << " empire id: " << proc_info.empire_id << " empire name: " << proc_info.empire_name;
+
+        // kill unneeded AI process based on ID
+        const auto is_player_id = [player_id](const auto& key_proc) noexcept
+        { return key_proc.first.player_id == player_id; };
+
+        auto process_it = range_find_if(ai_processes, is_player_id);
+        if (process_it != ai_processes.end()) {
+            process_it->second.Kill();
+            ai_processes.erase(process_it);
+        }
+    }
+}
+
 int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, int target_empire_id) {
     std::shared_ptr<Empire> empire;
     int empire_id = ALL_EMPIRES;
@@ -1944,7 +1960,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     const SaveGameUIData& ui_data = orders_it->ui_data;
 
 
-    int previous_player_id = EmpirePlayerID(empire_id);
+    const int previous_player_id = EmpirePlayerID(empire_id);
 
     // make a link to new connection
     m_player_empire_ids[player_connection->PlayerID()] = empire_id;
@@ -1953,8 +1969,8 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     // drop previous connection to that empire
     if (previous_player_id != Networking::INVALID_PLAYER_ID && previous_player_id != player_connection->PlayerID()) {
         WarnLogger() << "ServerApp::AddPlayerIntoGame empire " << empire_id
-                     << " previous player " << previous_player_id
-                     << " was kicked.";
+                     << " previous player " << previous_player_id << " was kicked.";
+
         DropPlayerEmpireLink(previous_player_id);
         if (auto prev_player = m_networking.GetPlayer(previous_player_id)) {
             const Networking::ClientType previous_client_type = prev_player->GetClientType(); // intentional copy
@@ -1962,15 +1978,9 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
             m_networking.Disconnect(previous_player_id);
 
             if (Networking::is_ai(previous_client_type)) {
-                // change empire's player so after reload the player still could connect
-                // to the empire
+                // change empire's player so after reload the player still could connect to the empire
                 empire->SetPlayerName(player_connection->PlayerName());
-                // kill unneeded AI process
-                auto it = m_ai_client_processes.find(previous_player_name);
-                if (it != m_ai_client_processes.end()) {
-                    it->second.Kill();
-                    m_ai_client_processes.erase(it);
-                }
+                EraseAIPlayerProcess(m_ai_client_processes, previous_player_id);
             }
         }
     }
@@ -4614,6 +4624,14 @@ void ServerApp::PostCombatProcessTurns() {
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
 
+namespace {
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr const std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
+}
+
 void ServerApp::CheckForEmpireElimination() {
     std::set<std::shared_ptr<Empire>> surviving_empires;
     std::set<std::shared_ptr<Empire>> non_eliminated_non_ai_controlled_empires;
@@ -4623,16 +4641,14 @@ void ServerApp::CheckForEmpireElimination() {
             empire->Eliminate(m_empires, m_current_turn);
             RemoveEmpireData(empire_id);
             const int player_id = EmpirePlayerID(empire_id);
-            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
-                          << " of player #" << player_id << " eliminated";
             const auto player = m_networking.GetPlayer(player_id);
-            if (Networking::is_ai(player)) {
-                auto it = m_ai_client_processes.find(player->PlayerName());
-                if (it != m_ai_client_processes.end()) {
-                    it->second.Kill();
-                    m_ai_client_processes.erase(it);
-                }
-            }
+            const auto& name = player ? player->PlayerName() : EMPTY_STRING;
+            DebugLogger() << "ServerApp::CheckForEmpireElimination empire #" << empire_id << " " << empire->Name()
+                          << " of player #" << player_id << " named " << name << " has been eliminated!";
+
+            if (Networking::is_ai(player))
+                EraseAIPlayerProcess(m_ai_client_processes, player_id);
+
         } else {
             surviving_empires.insert(empire);
             // empires could be controlled only by connected AI client, connected human client, or

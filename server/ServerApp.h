@@ -40,14 +40,14 @@ public:
     /** Returns a ClientApp pointer to the singleton instance of the app. */
     [[nodiscard]] Universe& GetUniverse() noexcept override { return m_universe; }
     [[nodiscard]] EmpireManager& Empires() noexcept override { return m_empires; }
-    [[nodiscard]] Empire* GetEmpire(int id) override;
+    [[nodiscard]] Empire* GetEmpire(int id) override { return m_empires.GetEmpire(id).get(); }
     [[nodiscard]] SupplyManager& GetSupplyManager() noexcept override { return m_supply_manager; }
     [[nodiscard]] SpeciesManager& GetSpeciesManager() noexcept override { return m_species_manager; }
 
     [[nodiscard]] ScriptingContext& GetContext() noexcept override { return m_context; };
     [[nodiscard]] const ScriptingContext& GetContext() const noexcept override { return m_context; };
 
-    [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override;
+    [[nodiscard]] std::string GetVisibleObjectName(const UniverseObject& object) override { return object.Name(); }
 
     [[nodiscard]] int EmpireID() const noexcept override { return ALL_EMPIRES; }
     [[nodiscard]] int CurrentTurn() const noexcept override { return m_current_turn; }
@@ -326,10 +326,33 @@ private:
     std::map<int, int>      m_player_empire_ids;                ///< map from player id to empire id that the player controls.
     int                     m_current_turn = INVALID_GAME_TURN; ///< current turn number
     bool                    m_turn_expired = false;             ///< true when turn exceeds its timeout
-    std::map<std::string, Process> m_ai_client_processes;       ///< AI client child processes indexed by player name
     bool                    m_single_player_game = false;       ///< true when the game being played is single-player
-    GalaxySetupData         m_galaxy_setup_data;                ///< stored setup data for the game currently being played
-    boost::circular_buffer<ChatHistoryEntity> m_chat_history;   ///< Stored last chat messages.
+
+    struct AIKey {
+        AIKey() = default;
+        AIKey(const PlayerSetupData& psd) :
+            player_name(psd.player_name),
+            empire_name(psd.empire_name),
+            player_id(psd.player_id),
+            empire_id(psd.save_game_empire_id)
+        {}
+
+        std::string player_name;
+        std::string empire_name;
+        int         player_id = Networking::INVALID_PLAYER_ID;
+        int         empire_id = ALL_EMPIRES;
+
+        static_assert(__cpp_impl_three_way_comparison);
+#if !defined(__cpp_lib_three_way_comparison)
+        [[nodiscard]] std::strong_ordering operator<=>(const AIKey&) const = default;
+#else
+        [[nodiscard]] auto operator<=>(const AIKey&) const = default;
+#endif
+    };
+    std::map<AIKey, Process>                  m_ai_client_processes; ///< AI client child processes indexed by player name
+
+    GalaxySetupData                           m_galaxy_setup_data;   ///< stored setup data for the game currently being played
+    boost::circular_buffer<ChatHistoryEntity> m_chat_history;        ///< Stored last chat messages.
 
 
     /** Player name, empire id, and orders. */
