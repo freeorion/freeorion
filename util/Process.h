@@ -14,10 +14,11 @@ namespace boost {
     }
 }
 
-/** Encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the
-   data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as
-   a shared_ptr.  In addition, the created process is automatically killed when its owning Process object is
-   destroyed, unless it is explicitly Free()d.  Note that whether or not the process is explicitly Free()d, it may be
+/** Encapsulates a spawned child process in a platform-independent manner.
+   A Process object holds a pointer to the data on the process it creates
+   and that process is automatically killed when its owning Process object
+   is destroyed, unless it is explicitly Free()d.
+   Note that whether or not the process is explicitly Free()d, it may be
    explicitly Kill()ed at any time.
    <br>
    Currently, creating processes is supported on these operating systems:
