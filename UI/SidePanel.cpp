@@ -803,7 +803,8 @@ private:
     static constexpr std::size_t            s_background_start_idx = 0;
     std::size_t                             m_main_border_sz = 0;
     std::size_t                             m_disable_greyover_start_idx = 0;
-    std::size_t                             m_border_line_start_idx = 0;
+    std::size_t                             m_border_line_selected_start_idx = 0;
+    std::size_t                             m_border_line_unselected_start_idx = 0;
     std::size_t                             m_title_box_start_idx = 0;
     static constexpr std::size_t            s_title_box_sz = 4u;
 
@@ -1249,8 +1250,8 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
 
     RequirePreRender();
 
-    m_verts.reserve(3*8+4);
-    m_colours.reserve(3*8+4);
+    m_verts.reserve(4*8 + s_title_box_sz);
+    m_colours.reserve(4*8 + s_title_box_sz);
 }
 
 void SidePanel::PlanetPanel::DoLayout(PlanetType type, PlanetSize size) {
@@ -2570,22 +2571,18 @@ void SidePanel::PlanetPanel::PreRender() {
     GG::Control::PreRender();
     if (const auto* planet = GetApp().GetContext().ContextObjects().getRaw<Planet>(m_planet_id))
         DoLayout(planet->Type(), planet->Size());
-}
 
-void SidePanel::PlanetPanel::Render() {
-    const GG::Pt ul = UpperLeft(), lr = LowerRight() - GG::Pt{GG::X1, GG::Y0};
-    const GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
-    const GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->Bottom());
+    const GG::Pt ul = GG::Pt0, lr = Size() - GG::Pt{ GG::X1, GG::Y0 };
+    const GG::Pt name_ul = m_planet_name->RelativeUpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
+    const GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->Height());
 
     const bool show_planet_box = m_rotating_planet_graphic || m_planet_graphic;
     const GG::Pt planet_box_lr = m_planet_graphic ?
-        m_planet_graphic->LowerRight() :
-        ul + [mpd{MaxPlanetDiameter()}](){ return GG::Pt(GG::X(mpd), GG::Y(mpd)); }();
+        m_planet_graphic->RelativeLowerRight() :
+        [mpd{ MaxPlanetDiameter() }]() { return GG::Pt(GG::X(mpd), GG::Y(mpd)); }();
 
     const GG::Clr background_colour = ClientUI::CtrlColor();
     const GG::Clr title_background_colour = ClientUI::WndOuterBorderColor();
-    const GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
-
 
     m_verts.clear();
     m_colours.clear();
@@ -2617,8 +2614,11 @@ void SidePanel::PlanetPanel::Render() {
     static constexpr GG::Clr HALF_GREY(128, 128, 128, 128);
     store_main_border_fan(HALF_GREY);
 
-    m_border_line_start_idx = m_verts.size();
-    store_main_border_fan(border_colour);
+    m_border_line_unselected_start_idx = m_verts.size();
+    store_main_border_fan(title_background_colour);
+
+    m_border_line_selected_start_idx = m_verts.size();
+    store_main_border_fan(m_empire_colour);
 
     m_title_box_start_idx = m_verts.size();
     m_verts.store(name_lr.x, name_ul.y);
@@ -2627,6 +2627,16 @@ void SidePanel::PlanetPanel::Render() {
     m_verts.store(name_lr.x, name_lr.y);
     m_colours.store(s_title_box_sz, title_background_colour);
 
+    m_verts.createServerBuffer();
+    m_colours.createServerBuffer();
+}
+
+void SidePanel::PlanetPanel::Render() {
+    auto ul = UpperLeft();
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
 
     glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -2649,11 +2659,12 @@ void SidePanel::PlanetPanel::Render() {
 
     // border
     glLineWidth(1.5f);
-    glDrawArrays(GL_LINE_LOOP, m_border_line_start_idx, m_main_border_sz);
+    glDrawArrays(GL_LINE_LOOP, m_selected ? m_border_line_selected_start_idx : m_border_line_unselected_start_idx, m_main_border_sz);
     glLineWidth(1.0f);
 
 
     glPopClientAttrib();
+    glPopMatrix();
     glEnable(GL_TEXTURE_2D);
 }
 
