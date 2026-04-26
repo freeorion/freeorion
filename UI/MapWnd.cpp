@@ -1018,6 +1018,26 @@ void MapWnd::CompleteConstruction() {
 
     SetName("MapWnd");
 
+    m_move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+
+    if (m_move_line_dot_texture) {
+        glBindTexture(GL_TEXTURE_2D, m_move_line_dot_texture->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        const auto [dot_tex_left, dot_tex_top, dot_tex_right, dot_tex_bottom]
+            = m_move_line_dot_texture->DefaultTexCoords();
+
+        m_dot_tex_quad = {
+            dot_tex_left,  dot_tex_top,
+            dot_tex_right, dot_tex_top,
+            dot_tex_right, dot_tex_bottom,
+            dot_tex_left,  dot_tex_bottom,
+        };
+    } else {
+        ErrorLogger() << "move_line_dot.png texture not found!";
+    }
+
     using boost::placeholders::_1;
     using boost::placeholders::_2;
 
@@ -2221,112 +2241,89 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
 }
 
 namespace {
-    auto MoveLineDotTexture()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png"); }
-}
-
-void MapWnd::BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
-                                       GG::GLRGBAColorBuffer& dot_colours_buf,
-                                       GG::GLTexCoordBuffer& dot_star_texture_coords_buf,
-                                       float offset, float dot_size, int dot_spacing,
-                                       const MapWnd::MovementLineData& move_line,
-                                       GG::Clr colour_override) const
-{
-    const float dot_half_sz = dot_size / 2.0f;
-
-    const auto colour = colour_override == GG::CLR_ZERO ? move_line.colour : colour_override;
-
-    std::vector<std::pair<int, int>> vert_screen_coords;
-    vert_screen_coords.reserve(move_line.vertices.size());
-    std::transform(move_line.vertices.begin(), move_line.vertices.end(),
-                   std::back_inserter(vert_screen_coords),
-                   [left{Value(ClientUpperLeft().x)},
-                    top{Value(ClientUpperLeft().y)},
-                    zoom{ZoomFactor()}] (const auto& vert)
+    void BufferAddMoveLineVertices(GG::GL2DVertexBuffer& dot_verts_buf,
+                                   GG::GLRGBAColorBuffer& dot_colours_buf,
+                                   GG::GLTexCoordBuffer& dot_star_texture_coords_buf,
+                                   float offset, float half_dot_width, float half_dot_height, float dot_spacing,
+                                   const std::array<GLfloat, 8>& dot_tex_quad,
+                                   const auto& vertices, GG::Clr colour)
     {
-        int x = (vert.x * zoom) + left;
-        int y = (vert.y * zoom) + top;
-        return std::pair{x, y};
-    });
+        if (vertices.empty() || vertices.size() % 2 != 0)
+            return;
 
-    const auto vert_coord_end = vert_screen_coords.end();
-    for (auto vert_coord_it = vert_screen_coords.begin(); vert_coord_it != vert_coord_end;) {
-        // get next two vertices screen positions
-        const auto& [x1, y1] = *vert_coord_it;
-        ++vert_coord_it;
-        if (vert_coord_it == vert_coord_end)
-            break;
-        const auto& [x2, y2] = *vert_coord_it;
+        static constexpr auto to_xy = [](const auto& v) { return std::pair<float, float>(v.x, v.y); };
 
-        // get unit vector along line connecting vertices
-        const float deltaX = x2 - x1;
-        const float deltaY = y2 - y1;
-        const float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-        if (!std::isnormal(length)) // safety check
-            continue;
-        const float uVecX = deltaX / length;
-        const float uVecY = deltaY / length;
+        auto [x1, y1] = to_xy(vertices[0]);
 
-        // increment along line, adding dots to buffers, until end of line segment is passed
-        while (offset < length) {
-            // don't know why the dot needs to be shifted half a dot size down/right and
-            // rendered 2 x dot size on each axis, but apparently it does...
+        for (auto [x2, y2] : vertices | range_drop(1) | range_transform(to_xy)) {
+            // get unit vector along line connecting vertices
+            const float deltaX = x2 - x1;
+            const float deltaY = y2 - y1;
+            const float distSq = deltaX*deltaX + deltaY*deltaY;
+            if (distSq > 1e-9f) { // safety check, faster than isnormal
+                const float length = std::sqrt(distSq);
 
-            // find position of dot from initial vertex position, offset length and unit vectors
-            const auto left = x1 + offset * uVecX + dot_half_sz;
-            const auto top =  y1 + offset * uVecY + dot_half_sz;
+                const float uVecX = deltaX / length;
+                const float uVecY = deltaY / length;
 
-            dot_verts_buf.store(left - dot_size, top - dot_size);
-            dot_verts_buf.store(left - dot_size, top + dot_size);
-            dot_verts_buf.store(left + dot_size, top + dot_size);
-            dot_verts_buf.store(left + dot_size, top - dot_size);
+                // increment along line, adding dots to buffers, until end of line segment is passed
+                while (offset < length) {
+                    // find position of dot from initial vertex position, offset length and unit vectors
+                    const float x = x1 + offset * uVecX;
+                    const float y = y1 + offset * uVecY;
+                    dot_verts_buf.store(x - half_dot_width, y - half_dot_height);
+                    dot_verts_buf.store(x + half_dot_width, y - half_dot_height);
+                    dot_verts_buf.store(x + half_dot_width, y + half_dot_height);
+                    dot_verts_buf.store(x - half_dot_width, y + half_dot_height);
 
-            // move offset to that for next dot
-            offset += dot_spacing;
+                    // move offset to that for next dot
+                    offset += dot_spacing;
 
-            dot_colours_buf.store(colour);
-            dot_colours_buf.store(colour);
-            dot_colours_buf.store(colour);
-            dot_colours_buf.store(colour);
+                    dot_colours_buf.store(4, colour);
 
-            dot_star_texture_coords_buf.store(0.0f, 0.0f);
-            dot_star_texture_coords_buf.store(0.0f, 1.0f);
-            dot_star_texture_coords_buf.store(1.0f, 1.0f);
-            dot_star_texture_coords_buf.store(1.0f, 0.0f);
+                    dot_star_texture_coords_buf.store(dot_tex_quad);
+                }
+
+                offset -= length;   // so next segment's dots meld smoothly into this segment's
+            }
+            x1 = x2;
+            y1 = y2;
         }
-
-        offset -= length;   // so next segment's dots meld smoothly into this segment's
     }
 }
 
 void MapWnd::RenderFleetMovementLines() {
-    if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
+    const double zoom = ZoomFactor();
+
+    if (zoom < ClientUI::TinyFleetButtonZoomThreshold())
         return;
 
-    // determine animation shift for move lines
+    // determine animation shift for move lines:
+    // how far apart dots should be along the path, in pixels
     const int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
+
+    // rate = speed of dots, in pixels per tick
     const float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
+    // ticks = elapsed time for this frame rendering
     const int ticks = GG::GUI::GetGUI()->Ticks();
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
     const float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
-    // texture for dots
-    const auto move_line_dot_texture = MoveLineDotTexture();
-    const float dot_size = Value(move_line_dot_texture->DefaultWidth());
-
-    // dots rendered same size for all zoom levels, so do positioning in screen
-    // space instead of universe space
-    glPushMatrix();
-    glLoadIdentity();
-
-    // render movement lines for all fleets
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
+    // ticks * rate = how far along the path dots have moved per current time, in pixels
+    // since pattern repeats every dot_spacing pixels, we can cast away whole chunks of dot_spacing
+    // and what remains is the initial shift of animation to get current frame of motion per
+    // current time elapsed
+    // using float modulo so animation looks smooth, continuous, synchronized to actual fps
+    // if integer modulo % was used, that would discretize dot space unnecessarily, leading to
+    // fixed positions (number of frames) divorced from real frames-per-second
+    // also, rescale this initial shift from pixels to world units via zoom factor
+    const float move_line_animation_shift = std::fmod((ticks * rate), dot_spacing) / zoom;
+    // rescaling other various lengths according to zoom factor so they represent world coords
+    // but stay same size in terms of screen pixel size when transformed to screen view
+    const float zoomed_dot_spacing = dot_spacing / zoom;
+    const float half_dot_width = Value(m_move_line_dot_texture->DefaultWidth()) / (2.0f * zoom);
+    const float half_dot_height = Value(m_move_line_dot_texture->DefaultHeight()) / (2.0f * zoom);
 
     const auto sz = (m_fleet_lines.size() + m_projected_fleet_lines.size()) * 4;
     m_fleet_move_dot_vertices.clear();
@@ -2337,20 +2334,18 @@ void MapWnd::RenderFleetMovementLines() {
     m_fleet_move_dot_star_texture_coords.reserve(sz);
 
     for (const auto& move_line : m_fleet_lines | range_values) {
-        if (move_line.vertices.empty() || move_line.vertices.size() % 2 == 1)
-            continue;
         BufferAddMoveLineVertices(m_fleet_move_dot_vertices, m_fleet_move_dot_colours,
                                   m_fleet_move_dot_star_texture_coords, move_line_animation_shift,
-                                  dot_size, dot_spacing, move_line);
+                                  half_dot_width, half_dot_height, zoomed_dot_spacing, m_dot_tex_quad,
+                                  move_line.vertices, move_line.colour);
     }
     m_projected_move_dots_start_index = m_fleet_move_dot_vertices.size();
 
     for (const auto& proj_line : m_projected_fleet_lines | range_values) {
-        if (proj_line.vertices.empty() || proj_line.vertices.size() % 2 == 1)
-            continue;
         BufferAddMoveLineVertices(m_fleet_move_dot_vertices, m_fleet_move_dot_colours,
                                   m_fleet_move_dot_star_texture_coords, move_line_animation_shift,
-                                  dot_size, dot_spacing, proj_line, GG::CLR_WHITE);
+                                  half_dot_width, half_dot_height, zoomed_dot_spacing, m_dot_tex_quad,
+                                  proj_line.vertices, GG::CLR_WHITE);
     }
 
 
@@ -2359,20 +2354,27 @@ void MapWnd::RenderFleetMovementLines() {
         auto line_it = m_fleet_lines.find(fleet_id);
         if (line_it != m_fleet_lines.end()) {
             const auto& move_line = line_it->second;
-            if (!move_line.vertices.empty() && move_line.vertices.size() % 2 == 0) {
-                BufferAddMoveLineVertices(m_fleet_move_dot_vertices, m_fleet_move_dot_colours,
-                                          m_fleet_move_dot_star_texture_coords,
-                                          move_line_animation_shift,
-                                          dot_size, dot_spacing, move_line,
-                                          GG::CLR_WHITE);
-            }
+            BufferAddMoveLineVertices(m_fleet_move_dot_vertices, m_fleet_move_dot_colours,
+                                      m_fleet_move_dot_star_texture_coords,
+                                      move_line_animation_shift,
+                                      half_dot_width, half_dot_height, zoomed_dot_spacing, m_dot_tex_quad,
+                                      move_line.vertices, GG::CLR_WHITE);
         }
     }
+
+    // render movement lines for all fleets
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glBindTexture(GL_TEXTURE_2D, m_move_line_dot_texture->OpenGLId());
 
     // after adding all dots to buffer, render general fleet move dots in one call
     m_fleet_move_dot_vertices.activate();
     m_fleet_move_dot_colours.activate();
     m_fleet_move_dot_star_texture_coords.activate();
+
     glDrawArrays(GL_QUADS, 0, m_projected_move_dots_start_index);
 
     glDisableClientState(GL_COLOR_ARRAY);
@@ -2385,10 +2387,12 @@ void MapWnd::RenderFleetMovementLines() {
     }
 
     // render projected move lines, starting from offset index
-    glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
+    glEnableClientState(GL_COLOR_ARRAY);
+    glBindTexture(GL_TEXTURE_2D, m_move_line_dot_texture->OpenGLId());
     m_fleet_move_dot_vertices.activate();
     m_fleet_move_dot_colours.activate();
     m_fleet_move_dot_star_texture_coords.activate();
+
     glDrawArrays(GL_QUADS, m_projected_move_dots_start_index,
                  m_fleet_move_dot_vertices.size() - m_projected_move_dots_start_index);
 
@@ -2398,7 +2402,6 @@ void MapWnd::RenderFleetMovementLines() {
         RenderMovementLineETAIndicators(eta_indicator.second, GG::CLR_WHITE);
 
     glPopClientAttrib();
-    glPopMatrix();
 }
 
 void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr) {
