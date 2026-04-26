@@ -2082,8 +2082,10 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     m_num_expected_players = players.size();
     m_expected_ai_names_and_ids.clear();
-    for (const auto& player_data : players | range_filter(Networking::is_ai))
-        m_expected_ai_names_and_ids.emplace(player_data.player_name, player_data.player_id);
+    for (const auto& player_data : players | range_filter(Networking::is_ai)) {
+        m_expected_ai_names_and_ids.emplace_back(player_data.player_name, player_data.player_id);
+        DebugLogger() << "Waiting for expected AI player name: " << player_data.player_name << "  and id: " << player_data.player_id;
+    }
 
     server.CreateAIClients(players, int(m_single_player_setup_data->ai_aggr));    // also disconnects any currently-connected AI clients
 
@@ -2123,23 +2125,37 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
                                    dependencies, cookie);
     } catch (...) {}
 
-    DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
+    DebugLogger() << "Player connection named: " << player_name
+                  << "  of type: " << to_string(client_type)
+                  << "  with client version: " << client_version_string
+                  << "  (no ID yet) has dependencies: " << StringifyDependencies(dependencies);
 
     // is this an AI?
     if (Networking::is_ai(client_type)) {
-        const auto& expected_it = m_expected_ai_names_and_ids.find(player_name);
+        // AIs are launched with their name as a parameter, which they
+        // send back with their join game message. Use the name to
+        // associate with an expected AI. Don't have an ID yet as not
+        // yet established.
+        const auto is_player_name = [&player_name](const auto& name_id) noexcept { return player_name == name_id.first; };
+
+        auto expected_it = range_find_if(m_expected_ai_names_and_ids, is_player_name);
         // verify that player name was expected
         if (expected_it == m_expected_ai_names_and_ids.end()) {
             // unexpected ai player
-            ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
+            ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \""
+                             << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(std::move(player_connection));
 
         } else {
+            const int established_id = expected_it->second;
+            // remove name from expected names list, so as to only allow one connection per AI
+            m_expected_ai_names_and_ids.erase(expected_it);
+
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, // player_name used below
+            player_connection->EstablishPlayer(established_id, player_name, client_type, // player_name used below
                                                std::move(client_version_string));
-            player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid()));
+            player_connection->SendMessage(JoinAckMessage(established_id, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage(server.GetSpeciesManager()));
 
@@ -2148,8 +2164,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
                 LoggerConfigMessage(Networking::INVALID_PLAYER_ID,
                                     LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
-            // remove name from expected names list, so as to only allow one connection per AI
-            m_expected_ai_names_and_ids.erase(std::move(player_name));
+
         }
 
     } else if (Networking::is_human(client_type)) {
