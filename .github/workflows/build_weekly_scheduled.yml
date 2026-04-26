@@ -2,6 +2,9 @@ name: "Weekly Scheduled"
 on:
   schedule:
     - cron: '*/20 15-18 * * 2'
+concurrency:
+  group: weekly_test_build
+  cancel-in-progress: false
 jobs:
   check-run:
     name: Check If Weekly Test Build should be built
@@ -16,56 +19,91 @@ jobs:
           echo ${{ github.token }} | gh auth login --with-token
           WORKFLOW_ID=$(gh api -X GET "/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" --jq='.workflow_id')
 
-          TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=in_progress&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
-          echo "Runs in progress count: ${TOTAL_COUNT}"
+          TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
+          echo "Runs success count: ${TOTAL_COUNT}"
 
           if (( $TOTAL_COUNT == 0 )); then
             DATE_YESTERDAY=$(date -u --date=yesterday "+%F")
 
-            TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=in_progress&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
-            echo "Runs in progress from yesterday count: ${TOTAL_COUNT}"
-
-            if (( $TOTAL_COUNT == 0 )); then
-              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
-              echo "Runs success count: ${TOTAL_COUNT}"
-            fi
-
-            if (( $TOTAL_COUNT == 0 )); then
-              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
-              echo "Runs success from yesterday count: ${TOTAL_COUNT}"
-            fi
-
-            if (( $TOTAL_COUNT == 0 )); then
-              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=queued&per_page=1&head_sha=${{ github.sha }}" --jq '.total_count')
-              echo "Runs queued count: ${TOTAL_COUNT}"
-            fi
-
-            if (( $TOTAL_COUNT == 0 )); then
-              TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=queued&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
-              echo "Runs queued from yesterday count: ${TOTAL_COUNT}"
-            fi
+            TOTAL_COUNT=$(gh api -X GET "/repos/${{ github.repository }}/actions/workflows/${WORKFLOW_ID}/runs?status=success&per_page=1&created=%3E%3D${DATE_YESTERDAY}" --jq '.total_count')
+            echo "Runs success from yesterday count: ${TOTAL_COUNT}"
           fi
 
           if (( "${TOTAL_COUNT}" != 0 )); then
             gh run -R "${{ github.repository }}" cancel ${{ github.run_id }}
+            sleep 2
             exit 1
           fi
   check-last-post:
     needs: check-run
     runs-on: ubuntu-latest
+    outputs:
+      count: ${{ steps.repo-stats.outputs.count }}
+      authors: ${{ steps.repo-stats.outputs.authors }}
     steps:
       - name: Get Mastodon account
-        run: >-
-          echo "::group::Mastodon Account ID"
+        run: >
+          RESPONSE=$(curl -sSL -w "\n%{http_code}" \
+          -X GET \
+          -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}" \
+          https://fosstodon.org/api/v1/accounts/verify_credentials)
 
-          ACCOUNT_ID=$(curl -sSL
-          -X GET
-          -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
-          https://fosstodon.org/api/v1/accounts/verify_credentials | jq -r '.id')
+          HTTP_CODE=$(echo "${RESPONSE}" | tail -n1)
+          HTTP_BODY=$(echo "${RESPONSE}" | sed '$d')
+          if (( HTTP_CODE != 200 )); then
+            ERROR_MSG=$(echo "${HTTP_BODY}" | jq -r '.error // empty')
+            echo "::warning title=Mastodon::Got error code ${HTTP_CODE}. Error: ${ERROR_MSG}"
+            exit 0
+          fi
 
-          echo "Account ID: ${ACCOUNT_ID}"
+          ACCOUNT_ID=$(echo "${HTTP_BODY}" | jq -r '.id // empty')
+          if [[ ! "${ACCOUNT_ID}" =~ ^[0-9]+$ ]]; then
+            echo "::warning title=Mastodon::Missing account ID"
+            exit 0
+          fi
 
-          echo "::endgroup::"
+          echo "ACCOUNT_ID=${ACCOUNT_ID}" >> $GITHUB_ENV
+      - name: Get last statuses
+        id: prev-status
+        run: >
+          RESPONSE=$(curl -sSL -w "\n%{http_code}" \
+          -X GET \
+          -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}" \
+          "https://fosstodon.org/api/v1/accounts/${ACCOUNT_ID}/statuses?limit=1&tagged=TestBuild&exclude_reblogs=true&exclude_replies=true")
+
+          HTTP_CODE=$(echo "${RESPONSE}" | tail -n1)
+          HTTP_BODY=$(echo "${RESPONSE}" | sed '$d')
+          if (( HTTP_CODE != 200 )); then
+            ERROR_MSG=$(echo "${HTTP_BODY}" | jq -r '.error // empty')
+            echo "::warning title=Mastodon::Got error code ${HTTP_CODE}. Error: ${ERROR_MSG}"
+            exit 0
+          fi
+
+          CONTENT=$(echo "${HTTP_BODY}" | jq -r '.[0].content // empty')
+          if [[ -z "${CONTENT}" ]]; then
+            echo "::warning title=Mastodon::Missing test build status"
+          else
+            PREV_GIT_SHA=$(echo "${CONTENT}" | grep -oP '\(build \d{4}-\d{2}-\d{2}\.\K[a-f0-9]+(?=\))' || echo "")
+            if [[ -z "${PREV_GIT_SHA}" ]]; then
+              echo "::warning title=Mastodon::Missing previous commit SHA"
+            else
+              echo "prev-git-sha=${PREV_GIT_SHA}" >> "${GITHUB_OUTPUT}"
+            fi
+          fi
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        if: steps.prev-status.outputs.prev-git-sha != ''
+        with:
+          fetch-depth: 2
+      - name: Fetch recent commits
+        id: repo-stats
+        if: steps.prev-status.outputs.prev-git-sha != ''
+        run: |
+          git fetch --filter=blob:none origin ${{ steps.prev-status.outputs.prev-git-sha }}
+          COUNT=$(git rev-list --count --no-merges ${{ steps.prev-status.outputs.prev-git-sha }}..${{ github.sha }})
+          AUTHORS=$(git log --format='%aN' ${{ steps.prev-status.outputs.prev-git-sha }}..${{ github.sha }} | sort -u | wc -l)
+          echo "count=${COUNT}" >> "${GITHUB_OUTPUT}"
+          echo "authors=${AUTHORS}" >> "${GITHUB_OUTPUT}"
   macos:
     needs: check-run
     uses: ./.github/workflows/_build-macos.yml
@@ -137,7 +175,7 @@ jobs:
   publish-post:
     name: Publish post about weekly test build
     runs-on: ubuntu-latest
-    needs: [merge-binaries-to-sf, to-snap]
+    needs: [merge-binaries-to-sf, to-snap, check-last-post]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -146,13 +184,25 @@ jobs:
       - name: Get version
         id: get-version
         run: TZ=UTC0 git show ${{ github.sha }} --format="short-version=%cd.%h" --quiet --date='format-local:%Y-%m-%d' --abbrev=7 >> "$GITHUB_OUTPUT"
+      - name: Prepare text
+        id: prepare-text
+        run: |
+          PRE_TEXT='New #4X #TBS #FreeOrion weekly #TestBuild available (build ${{ steps.get-version.outputs.short-version }})'
+          COUNT='${{ needs.check-last-post.outputs.count }}'
+          AUTHORS='${{ needs.check-last-post.outputs.authors }}'
+          STATS_TEXT=""
+          if [[ -n "${COUNT}" && "${COUNT}" != "0" ]]; then
+            STATS_TEXT=" with ${COUNT} commits by ${AUTHORS} authors"
+          fi
+          POST_TEXT=':%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap (#Linux): https://snapcraft.io/freeorion'
+          echo "text=${PRE_TEXT}${STATS_TEXT}${POST_TEXT}" >> "${GITHUB_OUTPUT}"
       - name: Toot
         run: >-
           curl -sSL
           -X POST
           -H "Authorization: Bearer ${{ secrets.MASTODON_ACCESS_TOKEN }}"
           -H "Idempotency-Key: ${{ steps.get-version.outputs.short-version }}"
-          --data-raw 'status=New #4X #TBS #FreeOrion weekly #TestBuild available (build ${{ steps.get-version.outputs.short-version }}):%0AFor #Windows and #macOS: https://sourceforge.net/projects/freeorion/files/FreeOrion/Test/%0AFor Snap (#Linux): https://snapcraft.io/freeorion'
+          --data-raw "status=${{ steps.prepare-text.outputs.text }}"
           -d 'visibility=public'
           -d 'language=en'
           https://fosstodon.org/api/v1/statuses
