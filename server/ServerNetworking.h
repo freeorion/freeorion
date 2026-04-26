@@ -66,20 +66,16 @@ class PlayerConnection :
 public:
     ~PlayerConnection();
 
-    /** Returns true if EstablishPlayer() successfully has been called on this
-        connection. */
+    /** Returns true if EstablishPlayer() successfully has been called on this connection. */
     [[nodiscard]] bool EstablishedPlayer() const noexcept;
 
-    /** Returns the ID of the player associated with this connection, if
-        any. */
+    /** Returns the ID of the player associated with this connection, if any. */
     [[nodiscard]] int PlayerID() const noexcept { return m_ID; }
 
-    /** Returns the name of the player associated with this connection, if
-        any. */
+    /** Returns the name of the player associated with this connection, if any. */
     [[nodiscard]] const std::string& PlayerName() const noexcept { return m_player_name; }
 
-    /** Returns the type of client associated with this connection (AI client,
-      * human client, ...) */
+    /** Returns the type of client associated with this connection (AI client, human client, ...) */
     [[nodiscard]] Networking::ClientType GetClientType() const noexcept { return m_client_type; }
 
     /** Returns the version string the client provided when joining. */

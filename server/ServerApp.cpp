@@ -257,8 +257,10 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     std::vector<std::string> args;
     args.reserve(16);
     args.push_back("\"" + AI_CLIENT_EXE + "\"");
+
     args.push_back("place_holder");
     const std::size_t player_name_in_vec_idx = args.size()-1;
+
     args.push_back(std::to_string(max_aggression));
     args.push_back("--resource.path");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource.path") + "\"");
@@ -1908,7 +1910,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
                 break;
             }
         }
-        // Assign player to empire if he doesn't have own empire and delegates signle
+        // Assign player to empire if he doesn't have own empire and delegates single
         if (delegation.size() == 1 && !empire) {
             for (auto& [loop_empire_id, loop_empire] : m_empires) {
                 if (loop_empire->PlayerName() == delegation.front()) {
@@ -1942,10 +1944,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
         }
     }
 
-    if (empire_id == ALL_EMPIRES || !empire)
-        return ALL_EMPIRES;
-
-    if (empire->Eliminated())
+    if (empire_id == ALL_EMPIRES || !empire || empire->Eliminated())
         return ALL_EMPIRES;
 
     const auto is_empire_id = [empire_id](const auto& pd) noexcept { return pd.empire_id == empire_id; };
