@@ -2961,7 +2961,7 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
     if (this->m_op_type == OpType::SIGN)
         return "sign(" + LHS()->Dump(ntabs) + ")";
 
-    bool parenthesize_whole = [this]() {
+    bool parenthesize_compare = [this]() {
         switch (this->m_op_type) {
         case OpType::COMPARE_EQUAL: [[fallthrough]];
         case OpType::COMPARE_GREATER_THAN: [[fallthrough]];
@@ -3003,7 +3003,7 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
             parenthesize_rhs = true;
     }
 
-    std::string retval = parenthesize_whole ? "(" : "";
+    std::string retval = parenthesize_compare ? "(" : "";
     retval += parenthesize_lhs ? ('(' + LHS()->Dump(ntabs) + ')') : LHS()->Dump(ntabs);
 
     switch (this->m_op_type) {
@@ -3025,7 +3025,14 @@ std::string Operation<T>::Dump(uint8_t ntabs) const
 
     retval += parenthesize_rhs ? ('(' + RHS()->Dump(ntabs) + ')') : RHS()->Dump(ntabs);
 
-    retval += parenthesize_whole ? ")" : "";
+    retval += parenthesize_compare ? ")" : "";
+
+    if (parenthesize_compare && m_operands.size() >= 3) {
+        retval += " ? " + m_operands[2]->Dump(ntabs);
+        if (m_operands.size() >= 4) {
+            retval += " : " + m_operands[3]->Dump(ntabs);
+        }
+    }
 
     return retval;
 }
