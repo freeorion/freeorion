@@ -3134,8 +3134,14 @@ namespace {
         // -- planet's current species, if any
         {
             const std::string_view planet_current_species = planet.SpeciesName();
-            if (!planet_current_species.empty())
-                retval.push_back(planet_current_species);
+            if (!planet_current_species.empty()) {
+                const auto species = species_manager.GetSpecies(planet_current_species);
+                if (species) {
+                    // intentionally taking name string_view from Species, not Planet
+                    // the planet's species is subject to change when simulating max pop
+                    retval.push_back(species->Name());
+                }
+            }
         }
 
         const auto empire_id = app.EmpireID();
