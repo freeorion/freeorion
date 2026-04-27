@@ -65,7 +65,11 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
 
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_default_scripting_dir / "techs");
-    auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
+    auto techs_opt = Pending::WaitForPendingUnlocked(std::move(techs_p));
+
+    BOOST_REQUIRE(techs_opt);
+
+    auto [techs, tech_categories, categories_seen] = *std::move(techs_opt);
 
     BOOST_CHECK(!techs.empty());
     BOOST_CHECK(!tech_categories.empty());
@@ -115,7 +119,11 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
 
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_default_scripting_dir / "species");
-    const auto [species, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
+    auto species_opt = Pending::WaitForPendingUnlocked(std::move(species_p));
+
+    BOOST_REQUIRE(species_opt);
+
+    const auto [species, ordering] = *std::move(species_opt);
 
     BOOST_CHECK(!ordering.empty());
     BOOST_CHECK(!species.empty());
