@@ -404,30 +404,39 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     }
 }
 
+namespace {
+#if defined(__cpp_lib_constexpr_string) && ((!defined(__GNUC__) || (__GNUC__ > 12) || (__GNUC__ == 12 && __GNUC_MINOR__ >= 2))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))) && ((!defined(__clang_major__) || (__clang_major__ >= 17)))
+    constexpr const std::string EMPTY_STRING;
+#else
+    const std::string EMPTY_STRING;
+#endif
+    constexpr EmpireColor SOLID_WHITE{{255, 255, 255, 255}};
+}
+
 void ServerFSM::UpdateIngameLobby() {
-    GalaxySetupData galaxy_data = m_server.GetGalaxySetupData();
-    MultiplayerLobbyData dummy_lobby_data(std::move(galaxy_data));
+    MultiplayerLobbyData dummy_lobby_data(m_server.GetGalaxySetupData());
     dummy_lobby_data.any_can_edit = false;
     dummy_lobby_data.new_game = false;
     dummy_lobby_data.in_game = true;
     dummy_lobby_data.start_locked = true;
     dummy_lobby_data.save_game_current_turn = m_server.CurrentTurn();
     dummy_lobby_data.save_game_empire_data = CompileSaveGameEmpireData(m_server.Empires());
+
     for (const auto& est_player : m_server.m_networking.EstablishedPlayerConnections()) {
-        PlayerSetupData player_setup_data;
         const int player_id = est_player->PlayerID();
-        player_setup_data.player_id =   player_id;
-        player_setup_data.player_name = est_player->PlayerName();
-        player_setup_data.client_type = est_player->GetClientType();
-        if (auto empire = m_server.Empires().GetEmpire(m_server.PlayerEmpireID(player_id))) {
-            player_setup_data.save_game_empire_id = empire->EmpireID();
-            player_setup_data.empire_name = empire->Name();
-            player_setup_data.empire_color = empire->Color();
-        } else {
-            player_setup_data.empire_color = {{255, 255, 255, 255}};
-        }
-        player_setup_data.authenticated = est_player->IsAuthenticated();
-        dummy_lobby_data.players.emplace_back(player_id, player_setup_data);
+        const auto empire = m_server.Empires().GetEmpire(m_server.PlayerEmpireID(player_id));
+
+        auto& psd = dummy_lobby_data.players.emplace_back(
+            std::piecewise_construct,
+            std::forward_as_tuple(player_id),
+            std::forward_as_tuple(est_player->PlayerName(),
+                                  empire ? empire->Name() : EMPTY_STRING,
+                                  player_id,
+                                  est_player->GetClientType(),
+                                  empire ? empire->Color() : SOLID_WHITE,
+                                  EMPTY_STRING, // starting species
+                                  est_player->IsAuthenticated(),
+                                  empire ? empire->EmpireID() : ALL_EMPIRES));
     }
     dummy_lobby_data.start_lock_cause = UserStringNop("SERVER_ALREADY_PLAYING_GAME");
 
@@ -733,18 +742,19 @@ sc::result Idle::react(const Hostless&) {
         const int ai_count = GetOptionsDB().Get<int>("setup.ai.player.count");
         int ai_next_index = 1;
         while (ai_next_index <= ai_count && (ai_next_index <= max_ai || max_ai < 0)) {
-            PlayerSetupData player_setup_data;
-            player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
-            player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
-            player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-            player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, lobby_data->players);
-            player_setup_data.empire_color =  GetUnusedEmpireColour(lobby_data->players);
-            if (lobby_data->seed != "")
-                player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-            else
-                player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(ai_next_index);
-
-            lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
+            auto player_name = UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
+            auto empire_name = GenerateEmpireName(player_name, lobby_data->players);
+            lobby_data->players.emplace_back(
+                std::piecewise_construct,
+                std::forward_as_tuple(Networking::INVALID_PLAYER_ID),
+                std::forward_as_tuple(std::move(player_name),
+                                      std::move(empire_name),
+                                      Networking::INVALID_PLAYER_ID,
+                                      Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
+                                      GetUnusedEmpireColour(lobby_data->players),
+                                      lobby_data->seed.empty() ?
+                                        sm.SequentialPlayableSpeciesName(ai_next_index) : sm.RandomPlayableSpeciesName(),
+                                      false)); // is not authenticated
         }
 
     } else {
@@ -777,12 +787,13 @@ sc::result Idle::react(const Hostless&) {
             // fill lobby data with AI to start them with server
             std::size_t ai_next_index = 1u;
             for (const auto& psgd : player_save_game_data | range_filter(Networking::is_ai)) {
-                PlayerSetupData player_setup_data;
-                player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
-                player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++);
-                player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.save_game_empire_id = psgd.empire_id;
-                lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID, std::move(player_setup_data));
+                lobby_data->players.emplace_back(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(Networking::INVALID_PLAYER_ID),
+                    std::forward_as_tuple(UserString("AI_PLAYER") + "_" + std::to_string(ai_next_index++),
+                                          psgd.empire_id,
+                                          Networking::INVALID_PLAYER_ID,
+                                          Networking::ClientType::CLIENT_TYPE_AI_PLAYER));
             }
         } catch (const std::exception& e) {
             // expect no players to send error message to
@@ -846,37 +857,38 @@ MPLobby::MPLobby(my_context c) :
             const int player_id = player_connection->PlayerID();
             DebugLogger(FSM) << "(ServerFSM) MPLobby. Fill MPLobby player " << player_id;
             if (!Networking::is_ai(player_connection)) {
-                PlayerSetupData player_setup_data;
-                player_setup_data.player_id =     player_id;
-                player_setup_data.player_name =   player_connection->PlayerName();
-                player_setup_data.client_type =   player_connection->GetClientType();
-                player_setup_data.empire_name =   Networking::is_human(player_connection) ?
+                auto empire_name = Networking::is_human(player_connection) ?
                     player_connection->PlayerName() :
-                    GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
-                player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-                if (!m_lobby_data->seed.empty())
-                    player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-                else
-                    player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
-                player_setup_data.authenticated = player_connection->IsAuthenticated();
-
-                m_lobby_data->players.emplace_back(player_id, std::move(player_setup_data));
+                    GenerateEmpireName(player_connection->PlayerName(), m_lobby_data->players);
+                const auto& species_name = m_lobby_data->seed.empty() ?
+                    sm.SequentialPlayableSpeciesName(player_id) : sm.RandomPlayableSpeciesName();
+                m_lobby_data->players.emplace_back(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(player_id),
+                    std::forward_as_tuple(player_connection->PlayerName(),
+                                          std::move(empire_name),
+                                          player_id,
+                                          player_connection->GetClientType(),
+                                          GetUnusedEmpireColour(m_lobby_data->players),
+                                          species_name,
+                                          player_connection->IsAuthenticated()));
 
             } else {
                 if (m_ai_next_index <= max_ai || max_ai < 0) {
-                    PlayerSetupData player_setup_data;
-                    player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
-                    player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                    player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-                    player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
-                    player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-                    if (!m_lobby_data->seed.empty())
-                        player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-                    else
-                        player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
-
-                    m_lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID,
-                                                       std::move(player_setup_data));
+                    auto player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                    auto empire_name = GenerateEmpireName(player_name, m_lobby_data->players);
+                    const auto& species_name = m_lobby_data->seed.empty() ?
+                        sm.SequentialPlayableSpeciesName(m_ai_next_index) : sm.RandomPlayableSpeciesName();
+                    m_lobby_data->players.emplace_back(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(Networking::INVALID_PLAYER_ID),
+                        std::forward_as_tuple(std::move(player_name),
+                                              std::move(empire_name),
+                                              Networking::INVALID_PLAYER_ID,
+                                              Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
+                                              GetUnusedEmpireColour(m_lobby_data->players),
+                                              species_name,
+                                              player_connection->IsAuthenticated()));
                 }
                 // disconnect AI
                 to_disconnect.push_back(player_connection);
@@ -892,19 +904,21 @@ MPLobby::MPLobby(my_context c) :
             // use AI count from option
             const int ai_count = GetOptionsDB().Get<int>("setup.ai.player.count");
             while (m_ai_next_index <= ai_count && (m_ai_next_index <= max_ai || max_ai < 0)) {
-                PlayerSetupData player_setup_data;
-                player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
-                player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.empire_name =   GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
-                player_setup_data.empire_color =  GetUnusedEmpireColour(m_lobby_data->players);
-                if (!m_lobby_data->seed.empty())
-                    player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-                else
-                    player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(m_ai_next_index);
+                auto player_name = UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
+                auto empire_name = GenerateEmpireName(player_name, m_lobby_data->players);
+                const auto& species_name = m_lobby_data->seed.empty() ?
+                    sm.SequentialPlayableSpeciesName(m_ai_next_index) : sm.RandomPlayableSpeciesName();
 
-                m_lobby_data->players.emplace_back(Networking::INVALID_PLAYER_ID,
-                                                   std::move(player_setup_data));
+                m_lobby_data->players.emplace_back(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(Networking::INVALID_PLAYER_ID),
+                    std::forward_as_tuple(std::move(player_name),
+                                          std::move(empire_name),
+                                          Networking::INVALID_PLAYER_ID,
+                                          Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
+                                          GetUnusedEmpireColour(m_lobby_data->players),
+                                          species_name,
+                                          false));
             }
         }
 
@@ -918,20 +932,21 @@ MPLobby::MPLobby(my_context c) :
         if (!host_con)
             return;
 
-        // create player setup data for host, and store in list
-        m_lobby_data->players.push_back({host_id, PlayerSetupData()});
-
-        PlayerSetupData& player_setup_data = m_lobby_data->players.begin()->second;
-
-        player_setup_data.player_name =           host_con->PlayerName();
-        player_setup_data.empire_name =           Networking::is_ai(host_con) ?
+        auto empire_name = Networking::is_ai(host_con) ?
             host_con->PlayerName() :
-            GenerateEmpireName(player_setup_data.player_name, m_lobby_data->players);
-        player_setup_data.empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-        player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-        // leaving save game empire id as default
-        player_setup_data.client_type =           host_con->GetClientType();
-        player_setup_data.authenticated =         host_con->IsAuthenticated();
+            GenerateEmpireName(host_con->PlayerName(), m_lobby_data->players);
+
+        // create player setup data for host, and store in list
+        m_lobby_data->players.emplace_back(
+            std::piecewise_construct,
+            std::forward_as_tuple(host_id),
+            std::forward_as_tuple(host_con->PlayerName(),
+                                  std::move(empire_name),
+                                  host_id,
+                                  host_con->GetClientType(),
+                                  EmpireColors().at(0),
+                                  sm.RandomPlayableSpeciesName(),
+                                  host_con->IsAuthenticated())).second;
 
         host_con->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
     }
@@ -1028,17 +1043,10 @@ sc::result MPLobby::react(const Disconnection& d) {
         DebugLogger(FSM) << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not established";
         return discard_event();
     }
-    bool player_was_in_lobby = false;
-    for (auto it = m_lobby_data->players.begin();
-         it != m_lobby_data->players.end(); ++it)
-    {
-        if (it->first == id) {
-            player_was_in_lobby = true;
-            m_lobby_data->players.erase(it);
-            break;
-        }
-    }
-    if (player_was_in_lobby) {
+    auto id_it = range_find_if(m_lobby_data->players, [id](const auto& id_p) noexcept { return id_p.first == id; });
+    if (const bool player_was_in_lobby = (id_it != m_lobby_data->players.end())) {
+        m_lobby_data->players.erase(id_it);
+
         // update cookie's expire date
         // so player could reconnect within 15 minutes
         Server().Networking().UpdateCookie(player_connection->Cookie());
@@ -1078,48 +1086,49 @@ void MPLobby::EstablishPlayer(PlayerConnectionPtr player_connection,
     ServerApp& server = Server();
     const SpeciesManager& sm = server.GetSpeciesManager();
 
-    if (context<ServerFSM>().EstablishPlayer(player_connection, player_name, client_type,
-                                             client_version_string, roles))
-    {
-        const int player_id = player_connection->PlayerID();
+    bool established = context<ServerFSM>().EstablishPlayer(player_connection, player_name, client_type,
+                                                            client_version_string, roles);
+    if (!established)
+        return;
 
-        // Inform AI of logging configuration.
-        if (Networking::is_ai(client_type))
-            player_connection->SendMessage(
-                LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
+    const int player_id = player_connection->PlayerID();
 
-        // assign player info from defaults or from connection to lobby data players list
-        PlayerSetupData player_setup_data;
-        player_setup_data.player_name = player_name;
-        player_setup_data.client_type = client_type;
-        player_setup_data.empire_name = Networking::is_human(client_type) ?
-            player_name : GenerateEmpireName(player_name, m_lobby_data->players);
-        player_setup_data.empire_color = GetUnusedEmpireColour(m_lobby_data->players);
-        if (m_lobby_data->seed.empty())
-            player_setup_data.starting_species_name = sm.RandomPlayableSpeciesName();
-        else
-            player_setup_data.starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
-        player_setup_data.authenticated =  player_connection->IsAuthenticated();
+    // Inform AI of logging configuration.
+    if (Networking::is_ai(client_type))
+        player_connection->SendMessage(
+            LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
-        // after setting all details, push into lobby data
-        m_lobby_data->players.push_back({player_id, player_setup_data});
+    // assign player info from defaults or from connection, put into lobby data
+    auto empire_name = Networking::is_human(client_type) ?
+        player_name : GenerateEmpireName(player_name, m_lobby_data->players);
+    const auto& species_name = m_lobby_data->seed.empty() ?
+        sm.RandomPlayableSpeciesName() : sm.SequentialPlayableSpeciesName(player_id);
+    m_lobby_data->players.emplace_back(
+        std::piecewise_construct,
+        std::forward_as_tuple(player_id),
+        std::forward_as_tuple(player_name,
+                              std::move(empire_name),
+                              player_id,
+                              client_type,
+                              GetUnusedEmpireColour(m_lobby_data->players),
+                              species_name,
+                              player_connection->IsAuthenticated()));
 
-        // drop ready player flag at new player
-        for (auto& plr : m_lobby_data->players | range_values) {
-            if (plr.empire_name == player_name) {
-                // change empire name
-                plr.empire_name = Networking::is_human(plr) ?
-                    plr.player_name : GenerateEmpireName(plr.player_name, m_lobby_data->players);
-            }
-
-            plr.player_ready = false;
+    // drop ready player flag at new player
+    for (auto& plr : m_lobby_data->players | range_values) {
+        if (plr.empire_name == player_name) {
+            // change empire name
+            plr.empire_name = Networking::is_human(plr) ?
+                plr.player_name : GenerateEmpireName(plr.player_name, m_lobby_data->players);
         }
 
-        ValidateClientLimits();
-
-        for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
-            epc->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
+        plr.player_ready = false;
     }
+
+    ValidateClientLimits();
+
+    for (const auto& epc : server.m_networking.EstablishedPlayerConnections())
+        epc->SendMessage(ServerLobbyUpdateMessage(*m_lobby_data));
 }
 
 namespace {
@@ -1481,7 +1490,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 incoming_lobby_data.save_game.clear();
             }
 
-            auto ai_count = range_count_if(incoming_lobby_data.players | range_values, Networking::is_ai);
+            const auto ai_count = range_count_if(incoming_lobby_data.players | range_values, Networking::is_ai);
 
             // limit count of AI
             auto max_ai = GetOptionsDB().Get<int>("network.server.ai.max");
@@ -1494,25 +1503,26 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     // check players shouldn't set protected empire to themselves
                     // if they don't have required player's name
                     bool incorrect_empire = false;
-                    for (const auto& plr : incoming_lobby_data.players) {
-                        if (plr.first != sender->PlayerID())
+                    for (const auto& [ild_pid, plr] : incoming_lobby_data.players) {
+                        if (ild_pid != sender->PlayerID())
                             continue;
-                        if (plr.second.save_game_empire_id != ALL_EMPIRES) {
-                            const auto empire_it = m_lobby_data->save_game_empire_data.find(plr.second.save_game_empire_id);
+                        if (plr.save_game_empire_id != ALL_EMPIRES) {
+                            const auto empire_it = m_lobby_data->save_game_empire_data.find(plr.save_game_empire_id);
                             if (empire_it != m_lobby_data->save_game_empire_data.end()) {
-                                if (empire_it->second.eliminated) {
-                                    WarnLogger(FSM) << "Trying to take over eliminated empire \"" << empire_it->second.empire_name << "\"";
+                                const auto& sged_data = empire_it->second;
+                                if (sged_data.eliminated) {
+                                    WarnLogger(FSM) << "Trying to take over eliminated empire \"" << sged_data.empire_name << "\"";
                                     incorrect_empire = true;
-                                } else if (empire_it->second.authenticated) {
-                                    if (empire_it->second.player_name != sender->PlayerName()) {
-                                        WarnLogger(FSM) << "Unauthorized access to protected empire \"" << empire_it->second.empire_name << "\"."
-                                                        << " Expected player \"" << empire_it->second.player_name << "\""
+                                } else if (sged_data.authenticated) {
+                                    if (sged_data.player_name != sender->PlayerName()) {
+                                        WarnLogger(FSM) << "Unauthorized access to protected empire \"" << sged_data.empire_name << "\"."
+                                                        << " Expected player \"" << sged_data.player_name << "\""
                                                         << " got \"" << sender->PlayerName() << "\"";
                                         incorrect_empire = true;
                                     }
                                 }
                             } else {
-                                WarnLogger(FSM) << "Unknown empire #" << plr.second.save_game_empire_id;
+                                WarnLogger(FSM) << "Unknown empire #" << plr.save_game_empire_id;
                                 incorrect_empire = true;
                             }
                         }
@@ -1538,28 +1548,21 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             for (const auto& player_connection : server.m_networking.EstablishedPlayerConnections()) {
                 if (!player_connection->IsEstablishedNamedValidClient())
                     continue;
-                int player_id = player_connection->PlayerID();
+                const int player_id = player_connection->PlayerID();
 
                 // get lobby data for this player connection
-                bool found_player_lobby_data = false;
-                auto player_setup_it = m_lobby_data->players.begin();
-                while (player_setup_it != m_lobby_data->players.end()) {
-                    if (player_setup_it->first == player_id) {
-                        found_player_lobby_data = true;
-                        break;
-                    }
-                    ++player_setup_it;
-                }
+                const auto is_pid = [player_id](const auto& id_p) noexcept { return player_id == id_p.first; };
+                const auto player_setup_it = range_find_if(m_lobby_data->players, is_pid);
 
                 // drop connections which have no lobby data
-                if (!found_player_lobby_data) {
+                if (player_setup_it == m_lobby_data->players.end()) {
                     ErrorLogger(FSM) << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
                     player_connections_to_drop.push_back(player_connection);
                     continue;
                 }
 
                 // get client type, and drop connections with invalid type, as that indicates a requested drop
-                auto client_type = player_setup_it->second.client_type;
+                const auto client_type = player_setup_it->second.client_type;
 
                 if (client_type != Networking::ClientType::INVALID_CLIENT_TYPE) {
                     // update player connection type for lobby change
@@ -1698,6 +1701,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             psd.empire_color = CLR_ZERO;
         }
 
+        const auto& sm = server.m_species_manager;
+
         // refresh save game empire data
         std::filesystem::path save_dir(GetServerSaveDir());
         std::vector<PlayerSaveHeaderData> player_save_header_data;
@@ -1715,25 +1720,25 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (empire_data_it == m_lobby_data->save_game_empire_data.end())
                     continue;
 
-                PlayerSetupData player_setup_data;
-                player_setup_data.player_id =     Networking::INVALID_PLAYER_ID;
-                // don't use original names to prevent collision with manually added AIs
-                player_setup_data.player_name =   UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++);
-                player_setup_data.client_type =   Networking::ClientType::CLIENT_TYPE_AI_PLAYER;
-                player_setup_data.save_game_empire_id = pshd.empire_id;
-                player_setup_data.empire_name =   empire_data_it->second.empire_name;
-                player_setup_data.empire_color =  empire_data_it->second.color;
-                if (m_lobby_data->seed != "")
-                    player_setup_data.starting_species_name = server.GetSpeciesManager().RandomPlayableSpeciesName();
-                else
-                    player_setup_data.starting_species_name = server.GetSpeciesManager().SequentialPlayableSpeciesName(m_ai_next_index);
-                m_lobby_data->players.push_back({Networking::INVALID_PLAYER_ID, player_setup_data});
+                const auto& species_name = m_lobby_data->seed.empty() ?
+                    sm.SequentialPlayableSpeciesName(m_ai_next_index) : sm.RandomPlayableSpeciesName();
+                m_lobby_data->players.emplace_back(
+                    std::piecewise_construct,
+                    std::forward_as_tuple(Networking::INVALID_PLAYER_ID),
+                    std::forward_as_tuple(UserString("AI_PLAYER") + "_" + std::to_string(m_ai_next_index++),
+                                          empire_data_it->second.empire_name,
+                                          Networking::INVALID_PLAYER_ID,
+                                          Networking::ClientType::CLIENT_TYPE_AI_PLAYER,
+                                          empire_data_it->second.color,
+                                          species_name,
+                                          false,
+                                          pshd.empire_id));
             }
 
             // reset empire color of non-AI player to unused
-            for (auto& psd : m_lobby_data->players) {
-                if (psd.second.save_game_empire_id == ALL_EMPIRES)
-                    psd.second.empire_color = GetUnusedEmpireColour(m_lobby_data->players, m_lobby_data->save_game_empire_data);
+            for (auto& psd : m_lobby_data->players | range_values) {
+                if (psd.save_game_empire_id == ALL_EMPIRES)
+                    psd.empire_color = GetUnusedEmpireColour(m_lobby_data->players, m_lobby_data->save_game_empire_data);
             }
         } catch (...) {
             // inform player who attempted to change the save file that there was a problem
@@ -2033,29 +2038,54 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
             return;
         }
 
-        // add player setup data for each player in saved gamed
+        if (player_save_header_data.empty()) {
+            ErrorLogger() << "Save contains no player save header data...";
+            SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+            post_event(LoadSaveFileFailed());
+            return;
+        }
+
+        static constexpr auto is_human = [](const auto& psgd) noexcept
+        { return psgd.client_type == Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER; };
+        static constexpr auto is_ai = [](const auto& psgd) noexcept
+        { return psgd.client_type == Networking::ClientType::CLIENT_TYPE_AI_PLAYER; };
+
+
+        if (range_none_of(player_save_header_data, is_human)) {
+            ErrorLogger() << "Save contains no human player save header data";
+            SendMessageToHost(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+            post_event(LoadSaveFileFailed());
+            return;
+        }
+
+        bool have_assigned_host_id = false;
+
+
         for (PlayerSaveHeaderData& psgd : player_save_header_data | range_filter(Networking::is_ai_or_human)) {
-            auto& psd = players.emplace_back();
+            if (!have_assigned_host_id && is_human(psgd)) {
+                have_assigned_host_id = true;
 
-            psd.player_name = std::move(psgd.name);
-            //psd.empire_name // left default
-            //psd.empire_color // left default
-            //psd.starting_species_name // left default
-            psd.save_game_empire_id = psgd.empire_id;
-            psd.client_type = psgd.client_type;
-
-            if (Networking::is_human(psd)) {
-                psd.player_id = server.Networking().HostPlayerID();
+                auto& psd = players.emplace_back(std::move(psgd.name), psgd.empire_id,
+                                                 server.Networking().HostPlayerID(),
+                                                 Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER);
+                DebugLogger() << "Assigned human host player with id " << psd.player_id
+                              << " to setup data entry with name: " << psd.player_name;
             } else {
-                psd.player_id = player_id++;
+                auto& psd = players.emplace_back(std::move(psgd.name), psgd.empire_id,
+                                                 player_id++,
+                                                 Networking::ClientType::CLIENT_TYPE_AI_PLAYER);
+                DebugLogger() << "Assigned AI player with id " << psd.player_id
+                              << " to setup data entry with name: " << psd.player_name;
             }
         }
     }
 
     m_num_expected_players = players.size();
     m_expected_ai_names_and_ids.clear();
-    for (const auto& player_data : players | range_filter(Networking::is_ai))
-        m_expected_ai_names_and_ids.emplace(player_data.player_name, player_data.player_id);
+    for (const auto& player_data : players | range_filter(Networking::is_ai)) {
+        m_expected_ai_names_and_ids.emplace_back(player_data.player_name, player_data.player_id);
+        DebugLogger() << "Waiting for expected AI player name: " << player_data.player_name << "  and id: " << player_data.player_id;
+    }
 
     server.CreateAIClients(players, int(m_single_player_setup_data->ai_aggr));    // also disconnects any currently-connected AI clients
 
@@ -2085,7 +2115,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     const Message& message = msg.m_message;
     auto& player_connection = msg.m_player_connection;
 
-    std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
+    std::string player_name("Default_SP_Joiner_Player_Name");
     Networking::ClientType client_type = Networking::ClientType::INVALID_CLIENT_TYPE;
     std::string client_version_string;
     std::map<std::string, std::string> dependencies;
@@ -2095,23 +2125,37 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
                                    dependencies, cookie);
     } catch (...) {}
 
-    DebugLogger() << "Player " << player_name << " has dependencies: " << StringifyDependencies(dependencies);
+    DebugLogger() << "Player connection named: " << player_name
+                  << "  of type: " << to_string(client_type)
+                  << "  with client version: " << client_version_string
+                  << "  (no ID yet) has dependencies: " << StringifyDependencies(dependencies);
 
     // is this an AI?
     if (Networking::is_ai(client_type)) {
-        const auto& expected_it = m_expected_ai_names_and_ids.find(player_name);
+        // AIs are launched with their name as a parameter, which they
+        // send back with their join game message. Use the name to
+        // associate with an expected AI. Don't have an ID yet as not
+        // yet established.
+        const auto is_player_name = [&player_name](const auto& name_id) noexcept { return player_name == name_id.first; };
+
+        auto expected_it = range_find_if(m_expected_ai_names_and_ids, is_player_name);
         // verify that player name was expected
         if (expected_it == m_expected_ai_names_and_ids.end()) {
             // unexpected ai player
-            ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
+            ErrorLogger(FSM) << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \""
+                             << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(std::move(player_connection));
 
         } else {
+            const int established_id = expected_it->second;
+            // remove name from expected names list, so as to only allow one connection per AI
+            m_expected_ai_names_and_ids.erase(expected_it);
+
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, // player_name used below
+            player_connection->EstablishPlayer(established_id, player_name, client_type, // player_name used below
                                                std::move(client_version_string));
-            player_connection->SendMessage(JoinAckMessage(expected_it->second, boost::uuids::nil_uuid()));
+            player_connection->SendMessage(JoinAckMessage(established_id, boost::uuids::nil_uuid()));
             if (!GetOptionsDB().Get<bool>("skip-checksum"))
                 player_connection->SendMessage(ContentCheckSumMessage(server.GetSpeciesManager()));
 
@@ -2120,8 +2164,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
                 LoggerConfigMessage(Networking::INVALID_PLAYER_ID,
                                     LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
-            // remove name from expected names list, so as to only allow one connection per AI
-            m_expected_ai_names_and_ids.erase(std::move(player_name));
+
         }
 
     } else if (Networking::is_human(client_type)) {
@@ -2156,7 +2199,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 }
 
 sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
-    TraceLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
+    DebugLogger(FSM) << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
     // if all expected players have connected, proceed to start new or load game
@@ -2194,6 +2237,10 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
             server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
         }
         return transit<PlayingGame>();
+    } else {
+        DebugLogger(FSM) << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have "
+                         << server.m_networking.NumEstablishedPlayers() << " of "
+                         << m_num_expected_players << " expected players connected.";
     }
 
     return discard_event();

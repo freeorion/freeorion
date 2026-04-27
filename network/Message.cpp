@@ -1017,8 +1017,7 @@ void ExtractJoinGameMessageData(const Message& msg, std::string& player_name,
                                 std::map<std::string, std::string>& dependencies,
                                 boost::uuids::uuid& cookie)
 {
-    DebugLogger() << "ExtractJoinGameMessageData() from " << player_name
-                  << " client type " << client_type;
+    DebugLogger() << "ExtractJoinGameMessageData() from " << player_name << " client type " << client_type;
     dependencies.clear();
     try {
         std::istringstream is(msg.Text());
