@@ -38,6 +38,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/ScopedTimer.h"
+#include "../util/SerializeUtil.h"
 #include "../util/ThreadPool.h"
 #include "../util/i18n.h"
 
@@ -409,70 +410,9 @@ const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
 }
 
 namespace {
-    // <concepts> library not fully implemented in XCode 13.2
-    template <class T>
-    concept integral = std::is_integral_v<T>;
-
-    template <integral T>
-    consteval const auto* GetFormatString() {
-        if constexpr (std::is_same_v<T, unsigned int>)
-            return "%u%n";
-        else if constexpr (std::is_same_v<T, int>)
-            return "%d%n";
-        else
-            static_assert(sizeof(T) == 0); // unsupported type
-    }
-
-    constexpr bool have_to_chars_lib =
-#if defined(__cpp_lib_to_chars)
-        true;
-#else
-        false;
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    constexpr
 #endif
-
-    static_assert(std::array<char, 64>{}.back() == 0); // check that aray is init to contain null chars
-
-    // returns { next unconsumed char*, true/false did the parse succeed }
-    // parsed value returned in \a val_out
-    std::pair<const char*, bool> FromChars(const char* start, const char* end, integral auto& val_out) {
-        if constexpr (have_to_chars_lib) {
-            const auto result = std::from_chars(start, end, val_out);
-            return {result.ptr, result.ec == std::errc() && result.ptr != start};
-
-        } else {
-            const auto rng_sz = std::distance(start, end);
-            if (rng_sz < 1)
-                return {start, false};
-
-            std::array<char, 64> null_terminated_buffer{};
-
-            // digits10 gives how many digits are guaranteed to be storable.
-            // For char, digits10 is 2, and not 3 since 257+ is not possible to store in a char.
-            // To get space needed to store full range of type, add:
-            //   + 1 for potential sign char
-            //   + 1 for the next digit above digits that can be stored losslessly
-            //   + 1 for null terminator
-            // based on that, verify buffer is big enough for any potential char representation
-            // of values of type being parsed
-            using val_out_t = std::decay_t<decltype(val_out)>;
-            static constexpr std::size_t needed_chars_to_encode_all_values = std::numeric_limits<val_out_t>::digits10 + 3;
-            static_assert(needed_chars_to_encode_all_values < null_terminated_buffer.size());
-
-            // copy data into local buffer so it can be guaranteed null terminated
-            const std::size_t copy_count = std::min(static_cast<std::size_t>(rng_sz), null_terminated_buffer.size() - 1);
-            std::copy_n(start, copy_count, null_terminated_buffer.data());
-            null_terminated_buffer.back() = 0;
-
-            int chars_consumed = 0;
-            constexpr auto val_format_str = GetFormatString<val_out_t>();
-            const auto matched = sscanf(null_terminated_buffer.data(), val_format_str, &val_out, &chars_consumed);
-            if (matched > 0)
-                return {start + chars_consumed, chars_consumed > 0};
-            else
-                return {start, false};
-        }
-    }
-
     std::tuple<int, Visibility, bool, const char*> GetVisIdFromChars(const char* next, const char* const buffer_end) {
         // safety checks
         if (!next || !buffer_end || next == buffer_end)
@@ -507,18 +447,23 @@ namespace {
         ++next;
 
         return {id, vs, success, next};
-     };
+    };
 
-    consteval std::size_t Pow(std::size_t base, std::size_t exp) noexcept {
-        std::size_t retval = 1;
-        while (exp--)
-            retval *= base;
-        return retval;
-    }
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    static_assert([]() {
+        const std::array<char, 15> arr{' ', ' ', '1', '2', 'p', ' ', '5', 'f', ' ', 'b', 'l', 'a', 'h', ' ', ' '};
+        const std::string_view sv(arr.data(), arr.size());
+        const auto start = sv.data();
+        const auto end = sv.data() + 11;
+        const auto [id0, vis0, success0, next0] = GetVisIdFromChars(start, end);
+        const auto [id1, vis1, success1, next1] = GetVisIdFromChars(next0, end);
+        const auto [id2, vis2, success2, next2] = GetVisIdFromChars(next1, end);
+        return id0 == 12 && vis0 == Visibility::VIS_PARTIAL_VISIBILITY && success0 &&
+               id1 == 5 && vis1 == Visibility::VIS_FULL_VISIBILITY && success1 &&
+               id2 == INVALID_OBJECT_ID && vis2 == Visibility::INVALID_VISIBILITY && !success2;
+    }());
+#endif
 
-    constexpr int int_max = std::numeric_limits<int>::max();
-    constexpr uint8_t int_digits = 11; // digits in base 11 of -2147483648 = -2^31
-    static_assert(Pow(10, int_digits + 1) > static_cast<std::size_t>(int_max)); // biggest possible int should fit in buffer of this length
     constexpr std::size_t idv_buffer_size = int_digits + 2; // space for "-2147483648b "
 }
 
