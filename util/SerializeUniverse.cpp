@@ -40,32 +40,85 @@ BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Universe)
 BOOST_CLASS_VERSION(Universe, 5)
 
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
 namespace {
-    static_assert([]() {
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    static_assert([]() { std::vector<int> vec; FillIntContainer(vec, "3 1000 -1 0"); return vec.size() == 3 && vec[1] == -1; }());
+    static_assert([]() { std::vector<int> vec; FillIntContainer(vec, "0 1 2 3"); return vec.empty(); }());
+    static_assert([]() { std::vector<int> vec; FillIntContainer(vec, "3 99999999"); return vec.size() == 1 && vec.front() == 99999999; }());
+    static_assert([]() { std::vector<int> vec; FillIntContainer(vec, "20 qq rr ss tt"); return vec.empty(); }());
+    static_assert([]() { std::vector<int> vec; FillIntContainer(vec, "   20   "); return vec.empty(); }());
+    static_assert([]() { std::vector<int> vec; FillIntContainer(vec, ""); return vec.empty(); }());
+#endif
+}
+
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+# define CONSTEXPR_FROMCHARS constexpr
+#else
+# define CONSTEXPR_FROMCHARS
+#endif
+
+namespace {
+    CONSTEXPR_FROMCHARS bool TestOneCharParse() {
         const char nine = '9';
         const std::string_view one_char_sv(&nine, 1);
         int val = 0;
         auto [next, success] = FromChars(one_char_sv, val);
         return success && next == (one_char_sv.data() + 1) && val == 9;
-     }());
+     }
 
-    static_assert([]() {
+    CONSTEXPR_FROMCHARS bool TestNoNullTerminatorParse() {
         const std::array<char, 10> not_null_terminated_str{'3', ' ', ' ', 'n', 'o', ' ', 'n', 'u', 'l', 'l'};
         const std::string_view sv(not_null_terminated_str.data(), not_null_terminated_str.size());
-        int val = 0;
-        auto [next, success] = FromChars(sv, val);
-        return success && next == (sv.data() + 1) && val == 3;
-    }());
 
-    static_assert([]() {
+        int val_full = 0;
+        const auto [next_full, success_full] = FromChars(sv, val_full); // test passing a long string view, not null terminated
+
+        int val_short = 0;
+        const auto [next_short, success_short] = FromChars(sv.substr(0, 1), val_short); // test passing a short string view
+
+        return success_full && next_full == (sv.data() + 1) && val_full == 3 &&
+               success_short && next_short == next_full && val_short == 3;
+    }
+
+    CONSTEXPR_FROMCHARS bool TestMultiCharNumberParse() {
+        const std::string_view sv = "12345 7890";
+
+        int val_full = 0;
+        const auto [next_full, success_full] = FromChars(sv, val_full); // test passing a multi-char number
+
+        int val_short = 0;
+        const auto [next_short, success_short] = FromChars(sv.substr(0, 1), val_short); // test passing a short string view with parasble stuff after it
+
+        return success_full && next_full == (sv.data() + 5) && val_full == 12345 &&
+               success_short && next_short == (sv.data() + 1) && val_short == 1;
+    }
+
+    CONSTEXPR_FROMCHARS bool TestEmptyStringViewParse() {
         const std::string_view empty_sv;
         int val = -1;
         auto [next, success] = FromChars(empty_sv, val);
         return !success && next == empty_sv.data() && val == -1;
-    }());
-}
+    }
+
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    static_assert(TestOneCharParse());
+    static_assert(TestNoNullTerminatorParse());
+    static_assert(TestMultiCharNumberParse());
+    static_assert(TestEmptyStringViewParse());
 #endif
+    void LogTestFromCharsTests() {
+        try {
+            const bool oc = TestOneCharParse();
+            const bool nnt = TestNoNullTerminatorParse();
+            const bool mcn = TestMultiCharNumberParse();
+            const bool esv = TestEmptyStringViewParse();
+            DebugLogger() << "FromChars Tests " << (have_to_chars_lib ? "with to_chars: " : "with sscanf: ")
+                          << oc << " " << nnt << " " << mcn << " " << esv;
+        } catch (...) {}
+    };
+
+    std::once_flag log_test_once;
+}
 
 namespace {
     constexpr std::size_t ovt_buffer_size = 4*(int_digits + 1); // space for "-2147483648 -2147483648 -2147483648 -2147483648 "
@@ -295,6 +348,9 @@ void serialize(Archive& ar, ObjectMap& objmap, unsigned int const)
 template <typename Archive>
 void serialize(Archive& ar, Universe& u, unsigned int const version)
 {
+    // need somewhere to invoke test after logging is initialized
+    std::call_once(log_test_once, &LogTestFromCharsTests);
+
     using namespace boost::serialization;
 
     ObjectMap                         objects;
