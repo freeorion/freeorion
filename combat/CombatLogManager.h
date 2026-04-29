@@ -14,8 +14,10 @@ struct FO_COMMON_API CombatParticipantState {
     float current_health = 0.0f;
     float max_health = 0.0f;
 
+    static constexpr bool get_meter_nx = noexcept(std::declval<UniverseObjectCXBase&>().GetMeter(MeterType::METER_STEALTH)->Current());
+
     constexpr CombatParticipantState() noexcept = default;
-    explicit CombatParticipantState(const UniverseObject& object);
+    explicit CombatParticipantState(const UniverseObjectCXBase& object) noexcept(get_meter_nx);
     constexpr CombatParticipantState(float cur, float max) noexcept :
         current_health(cur), max_health(max)
     {}
