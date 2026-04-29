@@ -24,6 +24,7 @@ from focs._effects import (
     NoStar,
     Orange,
     OwnedBy,
+    OwnerHasTech,
     Planet,
     Poor,
     Red,
@@ -133,7 +134,9 @@ _SELF_SUSTAINING_BONUS = [
     ),
     EffectsGroup(
         scope=IsSource,
-        activation=Planet(environment=[Adequate]) & HasTag(name="SELF_SUSTAINING"),
+        activation=OwnerHasTech(name="GRO_XENO_GENETICS")
+        & Planet(environment=[Adequate])
+        & HasTag(name="SELF_SUSTAINING"),
         accountinglabel="SELF_SUSTAINING_LABEL",
         priority=TARGET_POPULATION_AFTER_SCALING_PRIORITY,
         effects=SetTargetPopulation(
