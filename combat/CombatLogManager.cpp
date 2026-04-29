@@ -9,7 +9,9 @@
 namespace {
     DeclareThreadSafeLogger(combat_log);
 
-    float MaxHealth(const UniverseObject& object) {
+    constexpr float MaxHealth(const UniverseObjectCXBase& object)
+        noexcept(CombatParticipantState::get_meter_nx)
+    {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
 
@@ -27,7 +29,9 @@ namespace {
         return 0.0f;
     }
 
-    float CurrentHealth(const UniverseObject& object) {
+    constexpr float CurrentHealth(const UniverseObjectCXBase& object)
+        noexcept(CombatParticipantState::get_meter_nx)
+    {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_STRUCTURE)->Current();
 
@@ -46,7 +50,7 @@ namespace {
     }
 }
 
-CombatParticipantState::CombatParticipantState(const UniverseObject& object) :
+CombatParticipantState::CombatParticipantState(const UniverseObjectCXBase& object) noexcept(get_meter_nx) :
     current_health(CurrentHealth(object)),
     max_health(MaxHealth(object))
 {}
