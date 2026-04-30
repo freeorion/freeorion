@@ -115,7 +115,6 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 int mainConfigOptionsSetup(const std::vector<std::string>& args) {
     InitDirs((args.empty() ? "" : args.front()));
 
-    GGHumanClientApp::InitLogging();
     auto& db = GetOptionsDB();
 
     // read and process command-line arguments, if any
@@ -192,6 +191,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 
         // override previously-saved and default options with command line parameters and flags
         db.SetFromCommandLine(args);
+        GGHumanClientApp::InitLogging();
 
         CompleteXDGMigration();
 
