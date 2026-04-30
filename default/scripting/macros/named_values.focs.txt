@@ -4,24 +4,6 @@
 // - GARRISON_2_TROOPREGEN_FLAT (flat bonus/malus to troop regen from tech Garrison_2
 // - GRO_CYBORGS_MAX_TROOPS_PERPOP (bonus/malus per population to MaxTroops from tech GRO_CYBORGS)
 
-NamedReal name = "SHP_REINFORCED_HULL_BONUS" value = (5 * [[SHIP_STRUCTURE_FACTOR]])
-
-NamedInteger name = "NUM_COMBAT_ROUNDS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS")
-
-NamedInteger name = "NUM_COMBAT_ROUNDS_FIGHTERS" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS") - 1
-
-NamedInteger name = "FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE" value = (GameRule name = "RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
-
-NamedReal name = "AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT" value = 40.0
-
-// For calculation we mostly need a real value
-NamedReal name = "NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE" value = (GameRule name = "RULE_NUM_COMBAT_ROUNDS") - (GameRule name = "RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE") + 1
-
-NamedInteger name = "MIN_COLONY_SIZE" value = [[MIN_RECOLONIZING_SIZE]]
-
-NamedInteger name = "MIN_COLONY_HAPPINESS" value = [[MIN_RECOLONIZING_HAPPINESS]]
-
-NamedInteger name = "MIN_MONSTER_DISTANCE" value = (GameRule name = "RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL") - 1
 
 // Spatial Flux Stealth section
 NamedReal name = "SPATIAL_FLUX_STEALTH_HULL_BASE" value = [[SPATIAL_FLUX_STEALTH_HULL_BASE]]

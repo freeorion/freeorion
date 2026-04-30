@@ -6,6 +6,7 @@ from focs._effects import (
 )
 from focs._value_refs import NumPartClassesInShipDesign, PartOfClassInShipDesign
 from macros.base_prod import RESEARCH_PER_POP
+from macros.misc import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
 # Examples:
@@ -25,6 +26,33 @@ NamedReal(name="PROTECION_FOCUS_STABILITY_BONUS", value=GameRule(type=float, nam
 
 NamedReal(name="FU_RAMSCOOP_REFUEL", value=0.4)
 NamedReal(name="BLD_NEST_RESERVE_WILD_SPAWN_FACTOR", value=0.3)
+
+NamedReal(name="SHP_REINFORCED_HULL_BONUS", value=5 * SHIP_STRUCTURE_FACTOR)
+
+NamedInteger(name="NUM_COMBAT_ROUNDS", value=GameRule(type=int, name="RULE_NUM_COMBAT_ROUNDS"))
+
+NamedInteger(name="NUM_COMBAT_ROUNDS_FIGHTERS", value=GameRule(type=int, name="RULE_NUM_COMBAT_ROUNDS") - 1)
+
+NamedInteger(
+    name="FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE",
+    value=GameRule(type=int, name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE"),
+)
+
+NamedReal(name="AUGMENTATION_FULL_GROWTH_INFRASTRUCTURE_REQUIREMENT", value=40.0)
+
+# For calculation we mostly need a real value
+NamedReal(
+    name="NUM_REAL_COMBAT_ROUNDS_IN_CLOSE_TARGETING_RANGE",
+    value=GameRule(type=float, name="RULE_NUM_COMBAT_ROUNDS")
+    - GameRule(type=float, name="RULE_FIRST_COMBAT_ROUND_IN_CLOSE_TARGETING_RANGE")
+    + 1,
+)
+
+NamedInteger(name="MIN_COLONY_SIZE", value=MIN_RECOLONIZING_SIZE)
+
+NamedInteger(name="MIN_COLONY_HAPPINESS", value=MIN_RECOLONIZING_HAPPINESS)
+
+NamedInteger(name="MIN_MONSTER_DISTANCE", value=GameRule(type=int, name="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL") - 1)
 
 # For reduced/increased ship cost
 # value is used in upkeep.focs.txt, can be migrated to upkeep.focs.py as soon as that gets used when parsing ships
