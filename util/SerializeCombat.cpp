@@ -363,11 +363,36 @@ namespace {
             return;
         obj.damage = Meter::FromInt(damage_as_int);
 
+        // skip whitespace
+        while (next != buffer_end && *next == ' ')
+            ++next;
+
         const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
         if (next_offset > buffer.size())
             return;
-        obj.weapon_name = buffer.substr(next_offset);
+
+        // extract weapon name and remove trailing whitespace
+        auto weapon_name = buffer.substr(next_offset);
+        const auto trim_pos = weapon_name.find_last_not_of(' ');
+        if (trim_pos != weapon_name.npos)
+            weapon_name.remove_suffix(weapon_name.size() - (trim_pos + 1));
+
+        obj.weapon_name = weapon_name;
     }
+
+    static_assert([]() {
+        std::string_view ts = "trailing spaces    ";
+        auto trim_pos0 = ts.find_last_not_of(' ');
+        if (trim_pos0 != ts.npos)
+            ts.remove_suffix(ts.size() - (trim_pos0 + 1));
+
+        std::string_view empty;
+        auto trim_pos1 = empty.find_last_not_of(' ');
+        if (trim_pos1 != empty.npos)
+            empty.remove_suffix(empty.size() - (trim_pos1 + 1));
+
+        return ts == "trailing spaces" && empty.empty();
+    }());
 
     template <typename Archive>
     void Serialize(Archive& ar, WeaponFireEvent& obj, bool short_tags, bool include_bout_round)
