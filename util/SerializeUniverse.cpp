@@ -310,7 +310,7 @@ void Deserialize(Archive& ia, std::map<int, Visibilities>& eov, bool old_map_for
         ia >> boost::serialization::make_nvp(xml_tag, scratch);
         eov.clear();
         for (const auto& [eid, str] : scratch)
-            eov.emplace(eid, Visibilities(str));
+            eov.emplace(eid, str);
 
     } else {
         ia >> boost::serialization::make_nvp(xml_tag, eov);
