@@ -106,8 +106,14 @@ namespace {
 
 
     std::string ToString(const auto& data)
-        requires requires { data.size(); } &&
-                 std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*data.begin())>>
+        requires requires {
+            data.size();
+            data.begin();
+            data.end();
+            std::to_string(data.begin()->first);
+            Meter::FromFloat(data.begin()->second.current_health);
+            Meter::FromFloat(data.begin()->second.max_health);
+        }
     {
         std::string retval;
 
@@ -129,13 +135,19 @@ namespace {
     void FillCombatStates(auto& container, std::string_view buffer)
         requires requires { container.emplace(1, CombatParticipantState{}); }
     {
-        if (buffer.empty())
+        if (buffer.empty() || !buffer.data())
             return;
 
+        auto* next = buffer.data();
         const auto* const buffer_end = buffer.data() + buffer.size();
 
+        // skip whitespace
+        while (next != buffer_end && *next == ' ')
+            ++next;
+
         unsigned int count = 0;
-        auto [next, success] = FromChars(buffer.data(), buffer_end, count);
+        bool success = false;
+        std::tie(next, success) = FromChars(buffer.data(), buffer_end, count);
         if (!success)
             return;
 
@@ -186,7 +198,8 @@ namespace {
 
     template <typename Archive>
     void Serialize(Archive& ar, auto& states, const char* tag, bool old_non_string_format)
-        requires std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*states.begin())>>
+        requires std::is_same_v<int, std::decay_t<decltype(states.begin()->first)>> &&
+                 std::is_same_v<CombatParticipantState, std::decay_t<decltype(states.begin()->second)>>
     {
         if constexpr (Archive::is_loading::value) {
             if (old_non_string_format) {
