@@ -57,6 +57,13 @@ namespace {
 # define CONSTEXPR_FROMCHARS
 #endif
 
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+#  define CONSTEXPR_VEC_AND_FROMCHARS constexpr
+#else
+#  define CONSTEXPR_VEC_AND_FROMCHARS
+#endif
+
+
 namespace {
     CONSTEXPR_FROMCHARS bool TestOneCharParse() {
         const char nine = '9';
@@ -148,16 +155,27 @@ namespace {
         return retval;
     }
 
-    auto ToObjVisTurnsVec(std::string_view buffer) {
+    CONSTEXPR_VEC_AND_FROMCHARS auto ToObjVisTurnsVec(std::string_view buffer) {
         std::vector<ObjVisTurns> retval;
 
-        if (buffer.empty())
+        if (buffer.empty() || !buffer.data())
             return retval;
 
+        const auto* next = buffer.data();
         const auto* const buffer_end = buffer.data() + buffer.size();
 
+        // skip whitespace
+        while (next != buffer_end && *next == ' ')
+            ++next;
+
+        // safety check for end of buffer
+        if (next == buffer_end)
+            return retval;
+
+        // get expected count
+        bool success = false;
         unsigned int count = 0;
-        auto [next, success] = FromChars(buffer.data(), buffer_end, count);
+        std::tie(next, success) = FromChars(next, buffer_end, count);
         if (!success)
             return retval;
 
@@ -216,6 +234,27 @@ namespace {
         return retval;
     }
 
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    static_assert(ToObjVisTurnsVec("").empty());
+    static_assert(ToObjVisTurnsVec("qqq").empty());
+    static_assert(ToObjVisTurnsVec("0  ").empty());
+    static_assert(ToObjVisTurnsVec("0 1 2 3 4").empty());
+    static_assert(ToObjVisTurnsVec("1 -1  ").empty());
+    static_assert(ToObjVisTurnsVec("1 -1 2 x 4").size() == 1);
+    static_assert(ToObjVisTurnsVec("3 x x x x x x x x x x x x").size() == 3);
+    static_assert(ToObjVisTurnsVec("1  x   x  x xxx").size() == 1);
+    static_assert(ToObjVisTurnsVec("1 -1 2 3 4  ").size() == 1);
+    static_assert(ToObjVisTurnsVec("  9999 -1 2 3 4 5").size() == 1);
+    static_assert(ToObjVisTurnsVec("99999  -1 2 3 4  99 98 97 96").back() == ObjVisTurns{99, 0, 0, 0}); // only first param (id) is checked
+    static_assert([]() {
+        const auto vec = ToObjVisTurnsVec("  3  x x x 4  x x x x  x 10 11 x  ");
+        return vec.size() == 3 &&
+               vec.front()[Visibility::VIS_FULL_VISIBILITY] == 4 &&
+               vec.back()[Visibility::INVALID_VISIBILITY] == 10 &&
+               vec.back().partial == 11 &&
+               vec.back().obj_id == INVALID_OBJECT_ID;
+    }());
+#endif
 
     // default binary fallback and xml archive specializations
     template <typename Archive>
