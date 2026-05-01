@@ -298,14 +298,19 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Stealth
 
 namespace {
     std::string ToString(const WeaponFireEvent& obj) {
-        return      std::to_string(obj.attacker_id).append(" ")
-            .append(std::to_string(obj.target_id)).append(" ")
-            .append(std::to_string(obj.attacker_owner_id)).append(" ")
-            .append(std::to_string(obj.target_owner_id)).append(" ")
-            .append(std::to_string(Meter::FromFloat(obj.power))).append(" ")
-            .append(std::to_string(Meter::FromFloat(obj.shield))).append(" ")
-            .append(std::to_string(Meter::FromFloat(obj.damage))).append(" ")
-            .append(obj.weapon_name);
+        std::string retval;
+        try {
+            retval.reserve(7 * (int_digits + 1) + obj.weapon_name.size());
+        } catch (...) {}
+        retval.append(std::to_string(obj.attacker_id)).append(" ")
+              .append(std::to_string(obj.target_id)).append(" ")
+              .append(std::to_string(obj.attacker_owner_id)).append(" ")
+              .append(std::to_string(obj.target_owner_id)).append(" ")
+              .append(std::to_string(Meter::FromFloat(obj.power))).append(" ")
+              .append(std::to_string(Meter::FromFloat(obj.shield))).append(" ")
+              .append(std::to_string(Meter::FromFloat(obj.damage))).append(" ")
+              .append(obj.weapon_name);
+        return retval;
     }
 
     void FillWeaponFireEvent(WeaponFireEvent& obj, std::string_view buffer) {
