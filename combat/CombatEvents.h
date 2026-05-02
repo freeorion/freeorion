@@ -64,7 +64,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
 
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
 
@@ -73,7 +73,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
 private:
     int bout = 0;
 
-    std::vector<CombatEventPtr> events;
+    std::vector<CombatEventPtr> events; // TODO: <ConstCombatEventPtr> ?
 
     template <typename Archive>
     friend void serialize(Archive&, BoutEvent&, unsigned int const);
@@ -90,11 +90,11 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     [[nodiscard]] std::string DebugString(const ScriptingContext&) const override;
     [[nodiscard]] std::string CombatLogDescription(int, const ScriptingContext&)
         const noexcept(CombatEventDetail::nxstr) override { return {}; }
-    [[nodiscard]] std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
 
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
 
-    [[nodiscard]] virtual bool FlattenSubEvents() const noexcept override
+    [[nodiscard]] bool FlattenSubEvents() const noexcept override
     { return true; }
 
 protected:
@@ -144,7 +144,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
 
     void AddEvent(int attacker_id_, int target_id_, int attacker_empire_,
@@ -343,7 +343,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
     [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_owner_id; }
 

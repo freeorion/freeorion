@@ -169,6 +169,10 @@ namespace {
         return part.empty() ?
             UserString("ENC_COMBAT_UNKNOWN_OBJECT") : WrapUserStringWithTag(part, VarText::SHIP_PART_TAG);
     }
+
+
+    constexpr auto get_raw_ptr = [](const auto& sptr) noexcept -> const auto* { return sptr.get(); };
+    constexpr auto not_null = [](const auto& o) noexcept -> bool { return !!o; };
 }
 
 
@@ -194,8 +198,8 @@ std::string BoutEvent::DebugString(const ScriptingContext&) const {
 std::string BoutEvent::CombatLogDescription(int, const ScriptingContext&) const
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
-std::vector<ConstCombatEventPtr> BoutEvent::SubEvents(int) const
-{ return std::vector<ConstCombatEventPtr>{events.begin(), events.end()}; }
+std::vector<const CombatEvent*> BoutEvent::SubEvents(int) const
+{ return events | range_filter(not_null) | range_transform(get_raw_ptr) | range_to_vec; }
 
 
 //////////////////////////////////////////
@@ -207,14 +211,14 @@ void SimultaneousEvents::AddEvent(CombatEventPtr event)
 std::string SimultaneousEvents::DebugString(const ScriptingContext&) const
 { return "SimultaneousEvents has " + std::to_string(events.size()) + " events"; }
 
-std::vector<ConstCombatEventPtr> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
+std::vector<const CombatEvent*> SimultaneousEvents::SubEvents(int viewing_empire_id) const {
     // Sort the events by viewing empire, then ALL_EMPIRES, and then other empires.
-    const auto to_faction_event = [viewing_empire_id](const auto& event) {
+    const auto to_faction_event = [viewing_empire_id](const auto& event) -> std::pair<int, const CombatEvent*> {
         auto fac = event->PrincipalFaction(viewing_empire_id);
-        return std::pair{fac.has_value() ? *fac : ALL_EMPIRES, ConstCombatEventPtr(event)};
+        return std::pair{fac.has_value() ? *fac : ALL_EMPIRES, event.get()};
     };
 
-    auto empire_to_event = events | range_transform(to_faction_event) | range_to_vec;
+    auto empire_to_event = events | range_filter(not_null) | range_transform(to_faction_event) | range_to_vec;
 
     // put viewer events first
     const auto viewer_events_end_it = std::stable_partition(empire_to_event.begin(), empire_to_event.end(),
@@ -394,13 +398,18 @@ std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id, cons
     return desc;
 }
 
-std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int) const {
-    std::vector<ConstCombatEventPtr> all_events;
-    all_events.reserve(events.size());  // underestimate probably
-    for (const auto& target : events)
-        for (const auto& event : target.second)
-            all_events.push_back(std::dynamic_pointer_cast<CombatEvent>(event));
-    return all_events;
+std::vector<const CombatEvent*> StealthChangeEvent::SubEvents(int) const {
+    auto sz_rng = events | range_values | range_transform([](const auto& c) noexcept { return c.size(); });
+    const auto sz_sum = std::accumulate(sz_rng.begin(), sz_rng.end(), std::size_t{0});
+    std::vector<const CombatEvent*> retval;
+    retval.reserve(sz_sum);
+
+    for (const auto& sub_event_vec : events | range_values) {
+        auto raw_sub_events_rng = sub_event_vec | range_filter(not_null) | range_transform(get_raw_ptr);
+        retval.insert(retval.end(), raw_sub_events_rng.begin(), raw_sub_events_rng.end());
+    }
+
+    return retval;
 }
 
 
@@ -725,11 +734,16 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
     return desc;
 }
 
-std::vector<ConstCombatEventPtr> WeaponsPlatformEvent::SubEvents(int) const {
-    std::vector<ConstCombatEventPtr> all_events;
-    all_events.reserve(events.size());  // underestimate probably
-    for (const auto& target : events)
-        for (const auto& event : target.second)
-            all_events.push_back(std::dynamic_pointer_cast<CombatEvent>(event));
-    return all_events;
+std::vector<const CombatEvent*> WeaponsPlatformEvent::SubEvents(int) const {
+    auto sz_rng = events | range_values | range_transform([](const auto& c) noexcept { return c.size(); });
+    const auto sz_sum = std::accumulate(sz_rng.begin(), sz_rng.end(), std::size_t{0});
+    std::vector<const CombatEvent*> retval;
+    retval.reserve(sz_sum);
+
+    for (const auto& sub_event_vec : events | range_values) {
+        auto raw_sub_events_rng = sub_event_vec | range_filter(not_null) | range_transform(get_raw_ptr);
+        retval.insert(retval.end(), raw_sub_events_rng.begin(), raw_sub_events_rng.end());
+    }
+
+    return retval;
 }
