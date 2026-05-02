@@ -1826,14 +1826,14 @@ namespace {
 
 
         // Create weapon fire events and mark attackers as visible to other battle participants
-        auto attacks_this_bout = attacks_event->SubEvents(ALL_EMPIRES);
-        for (const auto& this_event : attacks_this_bout) {
-            if (auto naked_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(this_event)) {
+        const auto attacks_this_bout = attacks_event->SubEvents(ALL_EMPIRES);
+        for (const auto* this_event : attacks_this_bout) {
+            if (const auto* naked_fire_event = dynamic_cast<const WeaponFireEvent*>(this_event)) {
                 handle_attack_event(naked_fire_event);
 
-            } else if (auto weapons_platform = std::dynamic_pointer_cast<const WeaponsPlatformEvent>(this_event)) {
-                for (const auto& more_event : weapons_platform->SubEvents(ALL_EMPIRES)) {
-                    if (auto nested_fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(more_event))
+            } else if (const auto* weapons_platform = dynamic_cast<const WeaponsPlatformEvent*>(this_event)) {
+                for (const auto* more_event : weapons_platform->SubEvents(ALL_EMPIRES)) {
+                    if (auto nested_fire_event = dynamic_cast<const WeaponFireEvent*>(more_event))
                         handle_attack_event(nested_fire_event);
                 }
             }

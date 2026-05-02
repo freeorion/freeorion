@@ -43,8 +43,8 @@ struct FO_COMMON_API CombatEvent {
 
     /** If the combat event is composed of smaller events then return a vector of the sub events,
         otherwise returns an empty vector. */
-    [[nodiscard]] virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
-    { return std::vector<ConstCombatEventPtr>(); }
+    [[nodiscard]] virtual std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const
+    { return {}; }
 
     /** Return true if there are no details; */
     [[nodiscard]] virtual bool AreDetailsEmpty(int viewing_empire_id) const noexcept
@@ -55,7 +55,7 @@ struct FO_COMMON_API CombatEvent {
     { return true; }
 
     /** Return true if sub events are to be flattened on display; */
-    virtual bool FlattenSubEvents() const noexcept
+    [[nodiscard]] virtual bool FlattenSubEvents() const noexcept
     { return false; }
 
     /** Return principal faction.
