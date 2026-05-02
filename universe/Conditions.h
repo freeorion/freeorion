@@ -49,6 +49,21 @@ enum class ComparisonType : int8_t {
     NOT_EQUAL
 };
 
+/** ComparisonType helper to reverse their arguments */
+constexpr ComparisonType ReverseComparisonType(ComparisonType comparison) noexcept {
+    switch (comparison) {
+        case ComparisonType::GREATER_THAN:
+            return ComparisonType::LESS_THAN;
+        case ComparisonType::GREATER_THAN_OR_EQUAL:
+            return ComparisonType::LESS_THAN_OR_EQUAL;
+        case ComparisonType::LESS_THAN:
+            return ComparisonType::GREATER_THAN;
+        case ComparisonType::LESS_THAN_OR_EQUAL:
+            return ComparisonType::GREATER_THAN_OR_EQUAL;
+    }
+    return comparison;
+};
+
 enum class ContentType : uint8_t {
     CONTENT_BUILDING,
     CONTENT_SPECIES,

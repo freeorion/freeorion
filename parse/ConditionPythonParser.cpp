@@ -35,40 +35,122 @@ condition_wrapper operator&(const condition_wrapper& lhs, const condition_wrappe
         const auto lhs_vals = lhs_cond->ValuesDouble();
         const auto rhs_vals = rhs_cond->ValuesDouble();
 
-        if (!lhs_vals[2] && !rhs_vals[2] && lhs_vals[1] && rhs_vals[0] && (*lhs_vals[1] == *rhs_vals[0])) {
-            return make_wrapped<Condition::ValueTest>(
-                lhs_vals[0] ? lhs_vals[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals[1] ? rhs_vals[1]->Clone() : nullptr
-            );
+        if (!lhs_vals[2] && !rhs_vals[2]) {
+            // Match (A < X) & (X < B) and convert it to (A < X < B)
+            if (lhs_vals[1] && rhs_vals[0] && (*lhs_vals[1] == *rhs_vals[0])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals[0] ? lhs_vals[0]->Clone() : nullptr,
+                    lhs_cond->CompareTypes()[0],
+                    lhs_vals[1]->Clone(),
+                    rhs_cond->CompareTypes()[0],
+                    rhs_vals[1] ? rhs_vals[1]->Clone() : nullptr
+                );
+            // Match (X > A) & (X < B) and convert it to (A < X < B)
+            } else if (lhs_vals[0] && rhs_vals[0] && (*lhs_vals[0] == *rhs_vals[0])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals[1] ? lhs_vals[1]->Clone() : nullptr,
+                    Condition::ReverseComparisonType(lhs_cond->CompareTypes()[0]),
+                    lhs_vals[0]->Clone(),
+                    rhs_cond->CompareTypes()[0],
+                    rhs_vals[1] ? rhs_vals[1]->Clone() : nullptr
+                );
+            // Match (A < X) & (B > X) and convert it to (A < X < B)
+            } else if (lhs_vals[1] && rhs_vals[1] && (*lhs_vals[1] == *rhs_vals[1])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals[0] ? lhs_vals[0]->Clone() : nullptr,
+                    lhs_cond->CompareTypes()[0],
+                    lhs_vals[1]->Clone(),
+                    Condition::ReverseComparisonType(rhs_cond->CompareTypes()[0]),
+                    rhs_vals[0] ? rhs_vals[0]->Clone() : nullptr
+                );
+            // Match (X > A) & (B > X) and convert it to (A < X < B)
+            } else if (lhs_vals[0] && rhs_vals[1] && (*lhs_vals[0] == *rhs_vals[1])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals[1] ? lhs_vals[1]->Clone() : nullptr,
+                    Condition::ReverseComparisonType(lhs_cond->CompareTypes()[0]),
+                    lhs_vals[0]->Clone(),
+                    Condition::ReverseComparisonType(rhs_cond->CompareTypes()[0]),
+                    rhs_vals[0] ? rhs_vals[0]->Clone() : nullptr
+                );
+            }
         }
 
         const auto lhs_vals_i = lhs_cond->ValuesInt();
         const auto rhs_vals_i = rhs_cond->ValuesInt();
 
-        if (!lhs_vals_i[2] && !rhs_vals_i[2] && lhs_vals_i[1] && rhs_vals_i[0] && (*lhs_vals_i[1] == *rhs_vals_i[0])) {
-            return make_wrapped<Condition::ValueTest>(
-                lhs_vals_i[0] ? lhs_vals_i[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals_i[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals_i[1] ? rhs_vals_i[1]->Clone() : nullptr
-            );
+        if (!lhs_vals_i[2] && !rhs_vals_i[2]) {
+            if (lhs_vals_i[1] && rhs_vals_i[0] && (*lhs_vals_i[1] == *rhs_vals_i[0])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_i[0] ? lhs_vals_i[0]->Clone() : nullptr,
+                    lhs_cond->CompareTypes()[0],
+                    lhs_vals_i[1]->Clone(),
+                    rhs_cond->CompareTypes()[0],
+                    rhs_vals_i[1] ? rhs_vals_i[1]->Clone() : nullptr
+                );
+            } else if (lhs_vals_i[0] && rhs_vals_i[0] && (*lhs_vals_i[0] == *rhs_vals_i[0])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_i[1] ? lhs_vals_i[1]->Clone() : nullptr,
+                    Condition::ReverseComparisonType(lhs_cond->CompareTypes()[0]),
+                    lhs_vals_i[0]->Clone(),
+                    rhs_cond->CompareTypes()[0],
+                    rhs_vals_i[1] ? rhs_vals_i[1]->Clone() : nullptr
+                );
+            } else if (lhs_vals_i[1] && rhs_vals_i[1] && (*lhs_vals_i[1] == *rhs_vals_i[1])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_i[0] ? lhs_vals_i[0]->Clone() : nullptr,
+                    lhs_cond->CompareTypes()[0],
+                    lhs_vals_i[1]->Clone(),
+                    Condition::ReverseComparisonType(rhs_cond->CompareTypes()[0]),
+                    rhs_vals_i[0] ? rhs_vals_i[0]->Clone() : nullptr
+                );
+            } else if (lhs_vals_i[0] && rhs_vals_i[1] && (*lhs_vals_i[0] == *rhs_vals_i[1])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_i[1] ? lhs_vals_i[1]->Clone() : nullptr,
+                    Condition::ReverseComparisonType(lhs_cond->CompareTypes()[0]),
+                    lhs_vals_i[0]->Clone(),
+                    Condition::ReverseComparisonType(rhs_cond->CompareTypes()[0]),
+                    rhs_vals_i[0] ? rhs_vals_i[0]->Clone() : nullptr
+                );
+            }
         }
 
         const auto lhs_vals_s = lhs_cond->ValuesString();
         const auto rhs_vals_s = rhs_cond->ValuesString();
 
-        if (!lhs_vals_s[2] && !rhs_vals_s[2] && lhs_vals_s[1] && rhs_vals_s[0] && (*lhs_vals_s[1] == *rhs_vals_s[0])) {
-            return make_wrapped<Condition::ValueTest>(
-                lhs_vals_s[0] ? lhs_vals_s[0]->Clone() : nullptr,
-                lhs_cond->CompareTypes()[0],
-                lhs_vals_s[1]->Clone(),
-                rhs_cond->CompareTypes()[0],
-                rhs_vals_s[1] ? rhs_vals_s[1]->Clone() : nullptr
-            );
+        if (!lhs_vals_s[2] && !rhs_vals_s[2]) {
+            if (lhs_vals_s[1] && rhs_vals_s[0] && (*lhs_vals_s[1] == *rhs_vals_s[0])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_s[0] ? lhs_vals_s[0]->Clone() : nullptr,
+                    lhs_cond->CompareTypes()[0],
+                    lhs_vals_s[1]->Clone(),
+                    rhs_cond->CompareTypes()[0],
+                    rhs_vals_s[1] ? rhs_vals_s[1]->Clone() : nullptr
+                );
+            } else if (lhs_vals_s[0] && rhs_vals_s[0] && (*lhs_vals_s[0] == *rhs_vals_s[0])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_s[1] ? lhs_vals_s[1]->Clone() : nullptr,
+                    Condition::ReverseComparisonType(lhs_cond->CompareTypes()[0]),
+                    lhs_vals_s[0]->Clone(),
+                    rhs_cond->CompareTypes()[0],
+                    rhs_vals_s[1] ? rhs_vals_s[1]->Clone() : nullptr
+                );
+            } else if (lhs_vals_s[1] && rhs_vals_s[1] && (*lhs_vals_s[1] == *rhs_vals_s[1])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_s[0] ? lhs_vals_s[0]->Clone() : nullptr,
+                    lhs_cond->CompareTypes()[0],
+                    lhs_vals_s[1]->Clone(),
+                    Condition::ReverseComparisonType(rhs_cond->CompareTypes()[0]),
+                    rhs_vals_s[0] ? rhs_vals_s[0]->Clone() : nullptr
+                );
+            } else if (lhs_vals_s[0] && rhs_vals_s[1] && (*lhs_vals_s[0] == *rhs_vals_s[1])) {
+                return make_wrapped<Condition::ValueTest>(
+                    lhs_vals_s[1] ? lhs_vals_s[1]->Clone() : nullptr,
+                    Condition::ReverseComparisonType(lhs_cond->CompareTypes()[0]),
+                    lhs_vals_s[0]->Clone(),
+                    Condition::ReverseComparisonType(rhs_cond->CompareTypes()[0]),
+                    rhs_vals_s[0] ? rhs_vals_s[0]->Clone() : nullptr
+                );
+            }
         }
     }
 
