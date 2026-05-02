@@ -29,11 +29,21 @@ jobs:
     - name: Install dependencies for test launch
       run: |
         sudo apt update -y
-        sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0
+        sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0 imagemagick xvfb x11-xserver-utils optipng
     - name: Test freeorion launch
-      uses: coactions/setup-xvfb@v1
+      run: |
+        xvfb-run --auto-servernum --server-args="-screen 0 1280x720x24" /bin/bash .github/snap-xvfb-launch.sh
+    - name: Optimize screenshot
+      run: optipng -o2 screenshot.png
+    - name: Upload logs and screenshot
+      uses: actions/upload-artifact@v4
       with:
-        run: /bin/bash .github/snap-xvfb-launch.sh
+        name: snap-log-screenshot-${{ github.run_number }}
+        path: |
+          screenshot.png
+          freeorion.log
+          freeorion-godot.log
+        retention-days: 1
     - name: Upload binaries artifacts
       uses: actions/upload-artifact@v4
       if: ${{ inputs.weekly-deploy }}
