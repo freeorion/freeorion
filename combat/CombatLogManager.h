@@ -8,8 +8,7 @@
 #include <memory>
 
 
-// A snapshot of the state of a participant of the combat
-// at it's end
+// A snapshot of the state of a participant at the end of combat
 struct FO_COMMON_API CombatParticipantState {
     float current_health = 0.0f;
     float max_health = 0.0f;
