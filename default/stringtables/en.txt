@@ -13071,9 +13071,10 @@ PLC_INDOCTRINATION
 Indoctrination
 
 PLC_INDOCTRINATION_DESC
-'''• Increases [[metertype METER_TARGET_HAPPINESS]] on planets over time. The bonus grows by [[value PLC_INDOCTRINATION_PER_TURN]] per turn, up to a maximum of [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Conquered planets start with zero, settled planets get the current maximum.
-• Decreases [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_INDOCTRINATION_INFLUENCE_COST_FLAT]], on planets that receive that boost to [[metertype METER_TARGET_HAPPINESS]].
-• Increases [[metertype METER_TARGET_INFLUENCE]] of the capital or planets with a [[buildingtype BLD_REGIONAL_ADMIN]] that have [[encyclopedia INFLUENCE_FOCUS_TITLE]] by [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
+'''Increases [[metertype METER_TARGET_HAPPINESS]] on the capital and all the empire's colonies while costing some [[metertype METER_TARGET_INFLUENCE]]. Administrative planets may focus on gaining extra [[metertype METER_TARGET_INFLUENCE]].
+• Increases [[metertype METER_TARGET_HAPPINESS]] on all planets inhabited by subjects of the empire. The bonus grows by [[value PLC_INDOCTRINATION_PER_TURN]] per turn, up to a maximum of [[value PLC_INDOCTRINATION_STRENGTH_MAX]]. Conquered planets start with zero, settled planets get the current maximum.
+• Decreases [[metertype METER_TARGET_INFLUENCE]] by [[value PLC_INDOCTRINATION_INFLUENCE_COST_FLAT]], on all planets inhabited by subjects of the empire.
+• Increases [[metertype METER_TARGET_INFLUENCE]] of the capital or colonies with a [[buildingtype BLD_REGIONAL_ADMIN]] that have [[encyclopedia INFLUENCE_FOCUS_TITLE]] by [[value PLC_INDOCTRINATION_INFLUENCE_FLAT]].'''
 
 PLC_INDOCTRINATION_SHORT_DESC
 Increases stability over time
