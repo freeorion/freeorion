@@ -20,13 +20,19 @@
 #  endif
 #endif
 
+#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+# define CONSTEXPR_FROM_CHARS constexpr
+#else
+# define CONSTEXPR_FROM_CHARS
+#endif
+
 namespace {
     // <concepts> library not fully implemented in XCode 13.2
     template <class T>
     concept integral = std::is_integral_v<T>;
 
     template <integral T>
-    consteval const auto* GetFormatString() {
+    consteval const auto* const GetFormatString() noexcept {
         if constexpr (std::is_same_v<T, unsigned int>)
             return "%u%n";
         else if constexpr (std::is_same_v<T, int>)
@@ -42,12 +48,7 @@ namespace {
         false;
 #endif
 
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#else
-    inline
-#endif
-    std::size_t ToChars(integral auto num, char* buffer, char* buffer_end) {
+    inline CONSTEXPR_FROM_CHARS std::size_t ToChars(integral auto num, char* buffer, char* buffer_end) {
         if constexpr (have_to_chars_lib) {
             const auto result_ptr = std::to_chars(buffer, buffer_end, num).ptr;
             return static_cast<std::size_t>(std::distance(buffer, result_ptr));
@@ -62,12 +63,7 @@ namespace {
 
     // returns { next unconsumed char*, true/false did the parse succeed }
     // parsed value returned in \a val_out
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#else
-    inline
-#endif
-    std::pair<const char*, bool> FromChars(const char* start, const char* end, integral auto& val_out) {
+    inline CONSTEXPR_FROM_CHARS std::pair<const char*, bool> FromChars(const char* start, const char* end, integral auto& val_out) {
         if constexpr (have_to_chars_lib) {
             const auto result = std::from_chars(start, end, val_out);
             return {result.ptr, result.ec == std::errc() && result.ptr != start};
@@ -106,12 +102,8 @@ namespace {
         }
     }
 
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#else
-    inline
-#endif
-    auto FromChars(std::string_view str, integral auto& val_out) { return FromChars(str.data(), str.data() + str.size(), val_out); };
+    inline CONSTEXPR_FROM_CHARS auto FromChars(std::string_view str, integral auto& val_out)
+    { return FromChars(str.data(), str.data() + str.size(), val_out); };
 
     constexpr int int_max = std::numeric_limits<int>::max();
     constexpr uint8_t int_digits = 11; // digits in base 11 of -2147483648 = -2^31
@@ -135,12 +127,7 @@ namespace {
         return retval;
     }
 
-#if defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    constexpr
-#else
-    inline
-#endif
-    void FillIntContainer(auto& container, std::string_view buffer)
+    inline CONSTEXPR_FROM_CHARS void FillIntContainer(auto& container, std::string_view buffer)
         requires requires { container.push_back(1); } || requires { container.insert(1); }
     {
         if (buffer.empty())
