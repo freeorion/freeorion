@@ -195,10 +195,7 @@ private:
 
 /// An event that describes a single attack by one object or fighter against
 /// another object or fighter
-struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
-    typedef std::shared_ptr<WeaponFireEvent> WeaponFireEventPtr;
-    typedef std::shared_ptr<const WeaponFireEvent> ConstWeaponFireEventPtr;
-
+struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
     [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent() noexcept(CombatEventDetail::nxstr) = default;
 
     /** WeaponFireEvent encodes a single attack in \p bout, \p round by \p
@@ -328,18 +325,18 @@ private:
 /** WeaponsPlatformEvent describes a ship or planet with zero or more weapons firing its weapons in combat.
    It may have some WeaponFire sub-events.*/
 struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
-    typedef std::shared_ptr<WeaponsPlatformEvent> WeaponsPlatformEventPtr;
-    typedef std::shared_ptr<const WeaponsPlatformEvent> ConstWeaponsPlatformEventPtr;
-
     [[nodiscard]] WeaponsPlatformEvent() = default;
-    [[nodiscard]] WeaponsPlatformEvent(int bout_, int attacker_id_, int attacker_owner_id_) :
-        bout(bout_),
+    [[nodiscard]] WeaponsPlatformEvent(int attacker_id_, int attacker_owner_id_) :
         attacker_id(attacker_id_),
         attacker_owner_id(attacker_owner_id_)
     {}
 
-    void AddEvent(int target_id, int target_owner_id_, const std::string& weapon_name_,
-                  float power_, float shield_, float damage_);
+    void AddEvent(int target_id, int target_owner_id_, std::string weapon_name_,
+                  float power_, float shield_, float damage_)
+    {
+        events[target_id].emplace_back(attacker_id, target_id, std::move(weapon_name_),
+                                       std::tie(power_, shield_, damage_), attacker_owner_id, target_owner_id_);
+    }
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
@@ -347,13 +344,11 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
     [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_owner_id; }
 
-    int bout = 0;
     int attacker_id = INVALID_OBJECT_ID;
     int attacker_owner_id = ALL_EMPIRES;
+    std::map<int, std::vector<WeaponFireEvent>> events;
 
 private:
-    std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr>> events;
-
     template <typename Archive>
     friend void serialize(Archive&, WeaponsPlatformEvent&, unsigned int const);
 };
