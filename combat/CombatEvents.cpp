@@ -172,6 +172,7 @@ namespace {
     }
 
 
+    constexpr auto addressof = [](const auto& o) noexcept -> const auto* { return std::addressof(o); };
     constexpr auto get_raw_ptr = [](const auto& sptr) noexcept -> const auto* { return sptr.get(); };
     constexpr auto not_null = [](const auto& o) noexcept -> bool { return !!o; };
 }
@@ -664,24 +665,12 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
 //////////////////////////////////////////
 ///////// WeaponsPlatformEvent /////////////
 //////////////////////////////////////////
-void WeaponsPlatformEvent::AddEvent(int target_id_, int target_owner_id_,
-                                    const std::string& weapon_name_, float power_,
-                                    float shield_, float damage_)
-{
-    events[target_id_].push_back(
-        std::make_shared<WeaponFireEvent>(
-            attacker_id, target_id_, weapon_name_,
-            std::tie(power_, shield_, damage_),
-            attacker_owner_id, target_owner_id_));
-}
-
 std::string WeaponsPlatformEvent::DebugString(const ScriptingContext& context) const {
     std::stringstream desc;
-    desc << "WeaponsPlatformEvent bout = " << bout << " attacker_id = "
-        << attacker_id << " attacker_owner = "<< attacker_owner_id;
+    desc << "WeaponsPlatformEvent attacker_id = " << attacker_id << " attacker_owner = " << attacker_owner_id;
     for (auto& event_vec : events | range_values) {
         for (const auto& attack : event_vec)
-            desc << "\n" << attack->DebugString(context);
+            desc << "\n" << attack.DebugString(context);
     }
     return desc.str();
 }
@@ -692,18 +681,19 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
 
     std::vector<std::string> damaged_target_links;
     std::vector<std::string> undamaged_target_links;
+    damaged_target_links.reserve(events.size()); // underestimate
+    undamaged_target_links.reserve(events.size()); // underestimate
 
-    for (const auto& target : events) {
-        if (target.second.empty())
+    for (const auto& [target_id, weapon_fire_events] : events) {
+        if (weapon_fire_events.empty())
             continue;
 
-        const auto& fire_event(target.second.front());
         std::string target_public_name{
-            FighterOrPublicNameLink(viewing_empire_id, target.first, fire_event->target_owner_id, context)};
+            FighterOrPublicNameLink(viewing_empire_id, target_id, weapon_fire_events.front().target_owner_id, context)};
 
         double damage = 0.0f;
-        for (auto attack_it : target.second)
-            damage += attack_it->damage;
+        for (const auto& weapon_fire_event : weapon_fire_events)
+            damage += weapon_fire_event.damage;
 
         if (damage <= 0.0f) {
             undamaged_target_links.push_back(std::move(target_public_name));
@@ -714,10 +704,12 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
         }
     }
 
-    std::string desc;
 
-    std::vector<std::string> attacker_link{FighterOrPublicNameLink(
+    const std::vector<std::string> attacker_link{FighterOrPublicNameLink(
         viewing_empire_id, attacker_id, attacker_owner_id, context)};
+
+    std::string desc;
+    desc.reserve(200); // guesstimate based on test game resulting size
 
     if (!damaged_target_links.empty() ) {
         desc += FlexibleFormatList(attacker_link, damaged_target_links,
@@ -732,6 +724,7 @@ std::string WeaponsPlatformEvent::CombatLogDescription(int viewing_empire_id, co
                                    UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_MANY_EVENTS"),
                                    UserString("ENC_COMBAT_PLATFORM_NO_DAMAGE_1_EVENTS")).str();
     }
+
     return desc;
 }
 
@@ -742,7 +735,7 @@ std::vector<const CombatEvent*> WeaponsPlatformEvent::SubEvents(int) const {
     retval.reserve(sz_sum);
 
     for (const auto& sub_event_vec : events | range_values) {
-        auto raw_sub_events_rng = sub_event_vec | range_filter(not_null) | range_transform(get_raw_ptr);
+        auto raw_sub_events_rng = sub_event_vec | range_transform(addressof);
         retval.insert(retval.end(), raw_sub_events_rng.begin(), raw_sub_events_rng.end());
     }
 

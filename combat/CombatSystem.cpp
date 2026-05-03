@@ -355,7 +355,7 @@ namespace {
 
     void AttackShipShip(Ship* attacker, const PartAttackInfo& weapon,
                         Ship* target, CombatInfo& combat_info,
-                        WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
+                        WeaponsPlatformEvent& combat_event)
     {
         if (!attacker || !target) return;
 
@@ -387,7 +387,7 @@ namespace {
                                 << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, shield, damage);
 
         attacker->SetLastTurnActiveInCombat(combat_info.turn);
@@ -396,7 +396,7 @@ namespace {
 
     void AttackShipPlanet(Ship* attacker, const PartAttackInfo& weapon,
                           Planet* target, CombatInfo& combat_info,
-                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event,
+                          WeaponsPlatformEvent& combat_event,
                           const Universe& universe)
     {
         if (!attacker || !target) return;
@@ -467,8 +467,8 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
-                               power, 0.0f, total_damage);
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
+                              power, 0.0f, total_damage);
 
         attacker->SetLastTurnActiveInCombat(combat_info.turn);
         target->SetLastTurnAttackedByShip(combat_info.turn);
@@ -476,7 +476,7 @@ namespace {
 
     void AttackShipFighter(Ship* attacker, const PartAttackInfo& weapon,
                            Fighter* target, CombatInfo& combat_info,
-                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
+                           WeaponsPlatformEvent& combat_event)
     {
         float power = weapon.part_attack;
 
@@ -487,14 +487,14 @@ namespace {
                                 << " damage to " << target->Name() << " (" << target->ID() << ")";
             target->SetDestroyed();
         }
-        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
-                               power, 0.0f, 1.0f);
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
+                              power, 0.0f, 1.0f);
         attacker->SetLastTurnActiveInCombat(combat_info.turn);
     }
 
     void AttackPlanetShip(Planet* attacker, const PartAttackInfo& weapon,
                           Ship* target, CombatInfo& combat_info,
-                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
+                          WeaponsPlatformEvent& combat_event)
     {
         if (!attacker || !target) return;
 
@@ -528,15 +528,15 @@ namespace {
                                 << target->ID() << ")";
         }
 
-        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
-                               power, shield, damage);
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
+                              power, shield, damage);
 
         target->SetLastTurnActiveInCombat(combat_info.turn);
     }
 
     void AttackPlanetPlanet(Planet* attacker, const PartAttackInfo& weapon,
                             Planet* target, CombatInfo& combat_info,
-                            WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
+                            WeaponsPlatformEvent& combat_event)
     {
         if (!attacker || !target) return;
 
@@ -604,8 +604,8 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
-                               power, 0.0f, total_damage);
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
+                              power, 0.0f, total_damage);
 
         //attacker->SetLastTurnActiveInCombat(combat_info.turn);
         //target->SetLastTurnAttackedByShip(combat_info.turn);
@@ -613,7 +613,7 @@ namespace {
 
     void AttackPlanetFighter(Planet* attacker, const PartAttackInfo& weapon,
                              Fighter* target, CombatInfo& combat_info,
-                             WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
+                             WeaponsPlatformEvent& combat_event)
     {
         if (!attacker || !target) return;
 
@@ -630,8 +630,8 @@ namespace {
             target->SetDestroyed();
         }
 
-        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
-                               power, 0.0f, 1.0f);
+        combat_event.AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
+                              power, 0.0f, 1.0f);
     }
 
     void AttackFighterShip(Fighter* attacker, const PartAttackInfo& weapon,
@@ -776,7 +776,7 @@ namespace {
     void Attack(UniverseObject* attacker, const PartAttackInfo& weapon,
                 UniverseObject* target, CombatInfo& combat_info,
                 AttacksEventPtr& attacks_event,
-                WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event,
+                WeaponsPlatformEvent& platform_event,
                 std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         const auto attack_ship = attacker->ObjectType() == UniverseObjectType::OBJ_SHIP ?
@@ -1358,7 +1358,7 @@ namespace {
     void ShootAllWeapons(UniverseObject* attacker,
                          AutoresolveInfo& combat_state,
                          AttacksEventPtr& attacks_event,
-                         WeaponsPlatformEvent::WeaponsPlatformEventPtr& platform_event,
+                         WeaponsPlatformEvent& platform_event,
                          std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         auto weapons = GetWeapons(attacker, combat_state.combat_info.universe);
@@ -1720,12 +1720,15 @@ namespace {
             }
             DebugLogger(combat) << "Planet: " << planet->Name();
 
-            auto platform_event = std::make_shared<WeaponsPlatformEvent>(
-                combat_info.bout, planet->ID(), planet->Owner());
+            auto platform_event = std::make_shared<WeaponsPlatformEvent>(planet->ID(), planet->Owner());
+            if (!platform_event) {
+                ErrorLogger() << "unable to create WeaponPlatformEvent!";
+                continue;
+            }
             attacks_event->AddEvent(platform_event);
 
             ShootAllWeapons(planet, combat_state,
-                            attacks_event, platform_event, fighter_on_fighter_event);
+                            attacks_event, *platform_event, fighter_on_fighter_event);
         }
 
 
@@ -1744,11 +1747,14 @@ namespace {
             DebugLogger(combat) << "Attacker: " << attacker->ObjectType() << " : "
                                 << attacker->Name() << " (" << attacker->ID() << ")";
 
-            auto platform_event = std::make_shared<WeaponsPlatformEvent>(
-                combat_info.bout, attacker->ID(), attacker->Owner());
+            auto platform_event = std::make_shared<WeaponsPlatformEvent>(attacker->ID(), attacker->Owner());
+            if (!platform_event) {
+                ErrorLogger() << "unable to create WeaponPlatformEvent!";
+                continue;
+            }
 
             ShootAllWeapons(attacker, combat_state,
-                            attacks_event, platform_event, fighter_on_fighter_event);
+                            attacks_event, *platform_event, fighter_on_fighter_event);
 
             if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
                 attacks_event->AddEvent(std::move(platform_event));

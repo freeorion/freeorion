@@ -6,6 +6,7 @@
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
 
+#include <numeric>
 
 namespace {
     DeclareThreadSafeLogger(combat_log);
@@ -104,7 +105,6 @@ namespace {
     }
 
 
-
     std::string ToString(const auto& data)
         requires requires {
             data.size();
@@ -132,7 +132,35 @@ namespace {
         return retval;
     }
 
-    void FillCombatStates(auto& container, std::string_view buffer)
+    // interprets text at \a next as int or unsigned int. skips initial whitespace.
+    // fails if \a next or \a buffer_end are nullptr, if incrementing \a next reaches
+    // \a buffer end before parsing succeeds, or if text at \a next (after whitespace)
+    // is not interpretable as int or unsigned int as appropriate.
+    // returns tuple of result value, bool indicating success/fail, and new next address
+    template <typename IntOrUInt> requires std::is_same_v<int, IntOrUInt> || std::is_same_v<unsigned int, IntOrUInt>
+    CONSTEXPR_FROM_CHARS std::tuple<IntOrUInt, bool, const char*>
+        GetIntFromChars(const char* const buffer_end, const char* next, const IntOrUInt default_val)
+    {
+        // safety checks
+        if (!next || !buffer_end)
+            return {default_val, false, next};
+
+        // skip whitespace
+        while (next != buffer_end && *next == ' ')
+            ++next;
+
+        // safety check for end of buffer
+        if (next == buffer_end)
+            return {default_val, false, next};
+
+        // parse string to int
+        IntOrUInt result = default_val;
+        auto [next_out, success] = FromChars(next, buffer_end, result);
+        return {result, success, next_out};
+    };
+
+
+    CONSTEXPR_FROM_CHARS void FillCombatStates(auto& container, std::string_view buffer)
         requires requires { container.emplace(1, CombatParticipantState{}); }
     {
         if (buffer.empty() || !buffer.data())
@@ -140,14 +168,10 @@ namespace {
 
         auto* next = buffer.data();
         const auto* const buffer_end = buffer.data() + buffer.size();
-
-        // skip whitespace
-        while (next != buffer_end && *next == ' ')
-            ++next;
-
         unsigned int count = 0;
         bool success = false;
-        std::tie(next, success) = FromChars(buffer.data(), buffer_end, count);
+
+        std::tie(count, success, next) = GetIntFromChars<unsigned int>(buffer_end, next, 0u);
         if (!success)
             return;
 
@@ -157,25 +181,8 @@ namespace {
             } catch (...) {}
         }
 
-        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
-            // safety checks
-            if (!next || !buffer_end)
-                return {default_val, false, next};
-
-            // skip whitespace
-            while (next != buffer_end && *next == ' ')
-                ++next;
-
-            // safety check for end of buffer
-            if (next == buffer_end)
-                return {default_val, false, next};
-
-            // parse string to int
-            int result = default_val;
-            auto [next_out, success] = FromChars(next, buffer_end, result);
-            return {result, success, next_out};
-        };
-
+        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val)
+        { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
         for (std::size_t idx = 0; idx < static_cast<std::size_t>(count) && next != buffer_end; ++idx) {
             int obj_id = INVALID_OBJECT_ID;
@@ -192,7 +199,9 @@ namespace {
             if (!success)
                 break;
 
-            container.emplace(obj_id, CombatParticipantState(Meter::FromInt(cur_int), Meter::FromInt(max_int)));
+            container.emplace(std::piecewise_construct,
+                              std::forward_as_tuple(obj_id),
+                              std::forward_as_tuple(Meter::FromInt(cur_int), Meter::FromInt(max_int)));
         }
     }
 
@@ -312,61 +321,48 @@ namespace {
               .append(obj.weapon_name);
         return retval;
     }
+    constexpr auto wfe_to_string = [](const WeaponFireEvent& wfe) { return ToString(wfe); };
 
-    void FillWeaponFireEvent(WeaponFireEvent& obj, std::string_view buffer) {
+    // fills \a obj from \a buffer. returns true/false indicating success/failure. 
+    bool FillWeaponFireEvent(WeaponFireEvent& obj, std::string_view buffer) {
         const auto* const buffer_end = buffer.data() + buffer.size();
         const auto* next = buffer.data();
         bool success = false;
 
-        const auto get_int_from_chars = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*> {
-            // safety checks
-            if (!next || !buffer_end)
-                return {default_val, false, next};
+        const auto get_next_int = [buffer_end](const char* next, const int default_val)
+        { return GetIntFromChars<int>(buffer_end, next, default_val); };
 
-            // skip whitespace
-            while (next != buffer_end && *next == ' ')
-                ++next;
-
-            // safety check for end of buffer
-            if (next == buffer_end)
-                return {default_val, false, next};
-
-            // parse string to int
-            int result = default_val;
-            auto [next_out, success] = FromChars(next, buffer_end, result);
-            return {result, success, next_out};
-        };
-
-        std::tie(obj.attacker_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+        std::tie(obj.attacker_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
         if (!success)
-            return;
-        std::tie(obj.target_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
+            return false;
+        std::tie(obj.target_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
         if (!success)
-            return;
-        std::tie(obj.attacker_owner_id, success, next) = get_int_from_chars(next, ALL_EMPIRES);
+            return false;
+        std::tie(obj.attacker_owner_id, success, next) = get_next_int(next, ALL_EMPIRES);
         if (!success)
-            return;
-        std::tie(obj.target_owner_id, success, next) = get_int_from_chars(next, ALL_EMPIRES);
+            return false;
+        std::tie(obj.target_owner_id, success, next) = get_next_int(next, ALL_EMPIRES);
         if (!success)
-            return;
+            return false;
 
         int power_as_int = 0;
-        std::tie(power_as_int, success, next) = get_int_from_chars(next, 0);
+        std::tie(power_as_int, success, next) = get_next_int(next, 0);
         if (!success)
-            return;
+            return false;
         obj.power = Meter::FromInt(power_as_int);
 
         int shield_as_int = 0;
-        std::tie(shield_as_int, success, next) = get_int_from_chars(next, 0);
+        std::tie(shield_as_int, success, next) = get_next_int(next, 0);
         if (!success)
-            return;
+            return false;
         obj.shield = Meter::FromInt(shield_as_int);
 
         int damage_as_int = 0;
-        std::tie(damage_as_int, success, next) = get_int_from_chars(next, 0);
+        std::tie(damage_as_int, success, next) = get_next_int(next, 0);
         if (!success)
-            return;
+            return false;
         obj.damage = Meter::FromInt(damage_as_int);
+
 
         // skip whitespace
         while (next != buffer_end && *next == ' ')
@@ -374,7 +370,7 @@ namespace {
 
         const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
         if (next_offset > buffer.size())
-            return;
+            return false;
 
         // extract weapon name and remove trailing whitespace
         auto weapon_name = buffer.substr(next_offset);
@@ -383,6 +379,8 @@ namespace {
             weapon_name.remove_suffix(weapon_name.size() - (trim_pos + 1));
 
         obj.weapon_name = weapon_name;
+
+        return true;
     }
 
     static_assert([]() {
@@ -544,21 +542,143 @@ template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, Fighter
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FightersDestroyedEvent&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FightersDestroyedEvent&, unsigned int const);
 
+namespace {
+    constexpr auto not_null = [](const auto& p) noexcept -> bool { return p.get(); };
+    constexpr auto to_size = [](const auto& c) noexcept { return c.size(); };
+    constexpr auto extract_from_shptr = [](auto& sptr) -> auto& { return *sptr; };
+
+
+    std::vector<std::string> ToStrings(const WeaponsPlatformEvent& obj) {
+        // WeaponsPlatformEvent contains a map from target_id to vector of WeaponFireEvent
+        // WeaponFireEvent also contains a target_id
+        // this stringification flattens that to a series of strings for each WeaponFireEvent
+        auto fire_event_counts_rng = obj.events | range_values | range_transform(to_size);
+        const std::size_t fire_event_count =
+            std::accumulate(fire_event_counts_rng.begin(), fire_event_counts_rng.end(), std::size_t{0});
+
+        std::vector<std::string> retval;
+        try {
+            retval.reserve(fire_event_count + 1); // + 1 for common "own" state
+        } catch (...) {}
+
+        auto& own_state_str = retval.emplace_back();
+        own_state_str.reserve(2*int_digits + 1);
+        own_state_str.append(std::to_string(obj.attacker_id)).append(" ")
+                     .append(std::to_string(obj.attacker_owner_id));
+
+        for (const auto& [target_id, weapon_fire_events] : obj.events) {
+            auto wfe_str_rng = weapon_fire_events | range_transform(wfe_to_string);
+            retval.insert(retval.end(), wfe_str_rng.begin(), wfe_str_rng.end());
+        }
+
+        return retval;
+    }
+
+    bool FillWeaponsPlatformBaseState(WeaponsPlatformEvent& obj, std::string_view buffer) {
+        const auto* buffer_end = buffer.data() + buffer.size();
+        const auto* next = buffer.data();
+        bool success = false;
+
+        std::tie(obj.attacker_id, success, next) = GetIntFromChars<int>(buffer_end, next, INVALID_OBJECT_ID);
+        if (!success)
+            return false;
+        std::tie(obj.attacker_owner_id, success, next) = GetIntFromChars<int>(buffer_end, next, ALL_EMPIRES);
+        return success;
+    }
+
+    void FillWeaponsPlatformEvent(WeaponsPlatformEvent& obj, const std::vector<std::string>& buffers) {
+        if (buffers.empty())
+            return;
+
+        {
+            // extract base state for platform event
+            bool success = FillWeaponsPlatformBaseState(obj, buffers.front());
+            if (!success)
+                return;
+        }
+
+        for (const auto& wfe_buffer : buffers | range_drop(1)) {
+            WeaponFireEvent wfe;
+            bool success = FillWeaponFireEvent(wfe, wfe_buffer);
+            if (!success) continue;
+            const int target_id = wfe.target_id;
+            obj.events[target_id].push_back(std::move(wfe));
+        }
+    }
+
+    template <typename Archive>
+    void FillWeaponsPlatformEventViaSharedPtrVecs(Archive& ar, WeaponsPlatformEvent& obj)
+    {
+        static_assert(Archive::is_loading::value);
+        using boost::serialization::make_nvp;
+
+        int ingored = 0;
+        ar >> make_nvp("bout", ingored)
+           >> make_nvp("attacker_id", obj.attacker_id)
+           >> make_nvp("attacker_owner_id", obj.attacker_owner_id);
+
+        using WeaponFireEventPtr = std::shared_ptr<WeaponFireEvent>;
+        std::map<int, std::vector<WeaponFireEventPtr>> shared_wfes;
+
+        ar >> make_nvp("events", shared_wfes);
+
+        static_assert(std::is_same_v<std::decay_t<decltype(obj.events)>, std::map<int, std::vector<WeaponFireEvent>>>);
+
+
+        obj.events.clear();
+        for (auto& [target_id, shared_wfe_vec] : shared_wfes) {
+            auto value_wfes_rng = shared_wfe_vec | range_filter(not_null) | range_transform(extract_from_shptr);
+            static_assert(std::is_same_v<decltype(*value_wfes_rng.begin()), WeaponFireEvent&>);
+            obj.events.emplace(std::piecewise_construct,
+                               std::forward_as_tuple(target_id),
+                               std::forward_as_tuple(std::make_move_iterator(value_wfes_rng.begin()),
+                                                     std::make_move_iterator(value_wfes_rng.end())));
+        }
+    }
+
+    template <typename Archive>
+    void Serialize(Archive& ar, WeaponsPlatformEvent& obj, bool include_bout)
+    {
+        using boost::serialization::make_nvp;
+        if (include_bout) {
+            int ignored = -1;
+            ar  & make_nvp("bout", ignored);
+        }
+        ar  & make_nvp("attacker_id", obj.attacker_id)
+            & make_nvp("attacker_owner_id", obj.attacker_owner_id)
+            & make_nvp("events", obj.events);
+    }
+}
 
 template <typename Archive>
 void serialize(Archive& ar, WeaponsPlatformEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
+    using boost::serialization::make_nvp;
+    using boost::serialization::base_object;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
-    ar & make_nvp("bout", obj.bout)
-       & make_nvp("attacker_id", obj.attacker_id)
-       & make_nvp("attacker_owner_id", obj.attacker_owner_id)
-       & make_nvp("events", obj.events);
+    if constexpr (Archive::is_loading::value) {
+        if (version < 5) {
+            FillWeaponsPlatformEventViaSharedPtrVecs(ar, obj);
+        } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+            std::vector<std::string> strs;
+            ar >> make_nvp("WeaponEvents", strs);
+            FillWeaponsPlatformEvent(obj, strs);
+        } else {
+            Serialize(ar, obj, version < 5); // format version < 5 had bout encoded
+        }
+    } else {
+        if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+            std::vector<std::string> strs = ToStrings(obj);
+            ar << make_nvp("WeaponEvents", strs);
+        } else {
+            Serialize(ar, obj, false); // new format omits bout
+        }
+    }
 }
 
-BOOST_CLASS_VERSION(WeaponsPlatformEvent, 4)
+BOOST_CLASS_VERSION(WeaponsPlatformEvent, 5)
 BOOST_CLASS_EXPORT(WeaponsPlatformEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, WeaponsPlatformEvent&, unsigned int const);
