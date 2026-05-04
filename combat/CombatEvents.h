@@ -85,7 +85,7 @@ private:
 struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     [[nodiscard]] CONSTEXPR_VEC SimultaneousEvents() noexcept(CombatEventDetail::nxcepv) = default;
 
-    void AddEvent(CombatEventPtr event);
+    void AddEvent(CombatEventPtr event) { events.push_back(std::move(event)); }
 
     [[nodiscard]] std::string DebugString(const ScriptingContext&) const override;
     [[nodiscard]] std::string CombatLogDescription(int, const ScriptingContext&)
@@ -134,8 +134,9 @@ private:
     friend void serialize(Archive&, InitialStealthEvent&, unsigned int const);
 };
 
-/**StealthChangeEvent describes changes in the visibility of objects during combat.
- At this time always decloaking.*/
+
+/** StealthChangeEvent describes changes in the visibility of objects during combat.
+    At this time always decloaking.*/
 struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] StealthChangeEvent() = default;
     [[nodiscard]] explicit StealthChangeEvent(int bout_) :
@@ -147,10 +148,17 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
 
-    void AddEvent(int attacker_id_, int target_id_, int attacker_empire_,
-                  int target_empire_, Visibility new_visibility_);
-    void AddEvent(int launcher_id_, int launcher_empire_id_,
-                  int observer_empire_id_, Visibility new_visibility_);
+    void AddEvent(int attacker_id, int target_id, int attacker_empire_id, int target_empire_id, Visibility new_visibility) {
+        events[target_empire_id].push_back(
+            std::make_shared<StealthChangeEventDetail>(
+                attacker_id, target_id, attacker_empire_id, target_empire_id, new_visibility));
+    }
+
+    void AddEvent(int launcher_id, int launcher_empire_id, int observer_empire_id, Visibility new_visibility) {
+        events[observer_empire_id].push_back(
+            std::make_shared<StealthChangeEventDetail>(
+                launcher_id, launcher_empire_id, observer_empire_id, new_visibility));
+    }
 
     struct StealthChangeEventDetail;
     typedef std::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
@@ -192,6 +200,7 @@ private:
     template <typename Archive>
     friend void serialize(Archive&, StealthChangeEvent&, unsigned int const);
 };
+
 
 /// An event that describes a single attack by one object or fighter against
 /// another object or fighter
@@ -237,6 +246,7 @@ struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
     int target_owner_id = ALL_EMPIRES;
 };
 
+
 /// Created when an object becomes unable to fight anymore,
 /// eg. a ship is destroyed or a planet loses all defence
 struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
@@ -266,7 +276,8 @@ struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    void AddEvent(int attacker_empire_, int target_empire_);
+    void AddEvent(int attacker_empire_, int target_empire_)
+    { events[{attacker_empire_, target_empire_}] += 1; }
 
 private:
     int bout = 0;
@@ -310,7 +321,7 @@ struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    void AddEvent(int target_empire_);
+    void AddEvent(int target_empire_) { events[target_empire_] += 1; }
 
 private:
     int bout = 0;
