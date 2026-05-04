@@ -636,7 +636,7 @@ namespace {
 
     void AttackFighterShip(Fighter* attacker, const PartAttackInfo& weapon,
                            Ship* target, CombatInfo& combat_info,
-                           AttacksEventPtr& attacks_event)
+                           AttacksEvent& attacks_event)
     {
         if (!attacker || !target) return;
 
@@ -672,13 +672,13 @@ namespace {
             attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, damage),
             attacker->Owner(), target->Owner());
-        attacks_event->AddEvent(std::move(attack_event));
+        attacks_event.AddEvent(std::move(attack_event));
         target->SetLastTurnActiveInCombat(combat_info.turn);
     }
 
     void AttackFighterPlanet(Fighter* attacker, const PartAttackInfo& weapon,
                              Planet* target, CombatInfo& combat_info,
-                             AttacksEventPtr& attacks_event)
+                             AttacksEvent& attacks_event)
     {
         if (!attacker || !target) return;
 
@@ -749,14 +749,14 @@ namespace {
             attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, total_damage),
             attacker->Owner(), target->Owner());
-        attacks_event->AddEvent(std::move(attack_event));
+        attacks_event.AddEvent(std::move(attack_event));
 
         target->SetLastTurnAttackedByShip(combat_info.turn);
     }
 
     void AttackFighterFighter(Fighter* attacker, const PartAttackInfo& weapon,
                               Fighter* target, CombatInfo& combat_info,
-                              std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
+                              FightersAttackFightersEvent& fighter_on_fighter_event)
     {
         if (!attacker || !target) return;
 
@@ -770,14 +770,14 @@ namespace {
             target->SetDestroyed();
         }
 
-        fighter_on_fighter_event->AddEvent(attacker->Owner(), target->Owner());
+        fighter_on_fighter_event.AddEvent(attacker->Owner(), target->Owner());
     }
 
     void Attack(UniverseObject* attacker, const PartAttackInfo& weapon,
                 UniverseObject* target, CombatInfo& combat_info,
-                AttacksEventPtr& attacks_event,
+                AttacksEvent& attacks_event,
                 WeaponsPlatformEvent& platform_event,
-                std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
+                FightersAttackFightersEvent& fighter_on_fighter_event)
     {
         const auto attack_ship = attacker->ObjectType() == UniverseObjectType::OBJ_SHIP ?
             static_cast<Ship*>(attacker) : nullptr;
@@ -1059,11 +1059,11 @@ namespace {
         }
 
         /// Removes dead units from lists of attackers and defenders
-        void CullTheDead(int bout, BoutEvent::BoutEventPtr& bout_event) {
-            auto fighters_destroyed_event = std::make_shared<FightersDestroyedEvent>();
+        void CullTheDead(int bout, BoutEvent& bout_event) {
+            FightersDestroyedEvent fighters_destroyed_event;
             bool at_least_one_fighter_destroyed = false;
 
-            IncapacitationsEventPtr incaps_event = std::make_shared<IncapacitationsEvent>();
+            IncapacitationsEvent incaps_event;
 
             std::vector<int> delete_list;
             delete_list.reserve(combat_info.objects.size());
@@ -1079,21 +1079,21 @@ namespace {
                 TraceLogger(combat) << "Added destroyed object id: " << obj->ID();
 
                 if (obj->ObjectType() == UniverseObjectType::OBJ_FIGHTER) {
-                    fighters_destroyed_event->AddEvent(obj->Owner());
+                    fighters_destroyed_event.AddEvent(obj->Owner());
                     at_least_one_fighter_destroyed = true;
                     // delete actual fighter object so that it can't be targeted
                     // again next round (ships have a minimal structure test instead)
                     delete_list.push_back(obj->ID());
                 } else {
-                    incaps_event->AddEvent(std::make_shared<IncapacitationEvent>(obj->ID(), obj->Owner()));
+                    incaps_event.AddEvent(std::make_shared<IncapacitationEvent>(obj->ID(), obj->Owner()));
                 }
             }
 
             if (at_least_one_fighter_destroyed)
-                bout_event->AddEvent(std::move(fighters_destroyed_event));
+                bout_event.AddEvent(std::make_shared<FightersDestroyedEvent>(std::move(fighters_destroyed_event)));
 
-            if (!incaps_event->AreSubEventsEmpty(ALL_EMPIRES))
-                bout_event->AddEvent(std::move(incaps_event));
+            if (!incaps_event.AreSubEventsEmpty(ALL_EMPIRES))
+                bout_event.AddEvent(std::make_shared<IncapacitationsEvent>(std::move(incaps_event)));
 
 
             for (auto id : delete_list)
@@ -1357,9 +1357,9 @@ namespace {
 
     void ShootAllWeapons(UniverseObject* attacker,
                          AutoresolveInfo& combat_state,
-                         AttacksEventPtr& attacks_event,
+                         AttacksEvent& attacks_event,
                          WeaponsPlatformEvent& platform_event,
-                         std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
+                         FightersAttackFightersEvent& fighter_on_fighter_event)
     {
         auto weapons = GetWeapons(attacker, combat_state.combat_info.universe);
         if (weapons.empty()) {
@@ -1521,7 +1521,7 @@ namespace {
     void LaunchFighters(UniverseObject* attacker,
                         const std::vector<PartAttackInfo>& weapons,
                         AutoresolveInfo& combat_state,
-                        FighterLaunchesEventPtr& launches_event)
+                        FighterLaunchesEvent& launches_event)
     {
         if (weapons.empty()) {
             DebugLogger(combat) << "no weapons' can't launch figters!";
@@ -1567,7 +1567,7 @@ namespace {
                                          fighter_name, weapon.combat_targets);
 
             // combat event
-            launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
+            launches_event.AddEvent(std::make_shared<FighterLaunchEvent>(
                 attacker->ID(), attacker_owner_id, new_fighter_ids.size()));
 
 
@@ -1633,7 +1633,7 @@ namespace {
         }
     }
 
-    void RecoverFighters(CombatInfo& combat_info, int bout, FighterLaunchesEventPtr& launches_event) {
+    void RecoverFighters(CombatInfo& combat_info, int bout, FighterLaunchesEvent& launches_event) {
         std::map<int, float> ships_fighters_to_add_back;
         DebugLogger() << "Recovering fighters at end of combat...";
 
@@ -1669,7 +1669,8 @@ namespace {
             }
             IncreaseStoredFighterCount(*ship, fighter_count, combat_info.universe);
             // launching negative ships indicates recovery of them
-            launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
+            launches_event.AddEvent(std::make_shared<FighterLaunchEvent>(
+                ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
         }
     }
 
@@ -1738,8 +1739,7 @@ namespace {
             }
             attacks_event->AddEvent(platform_event);
 
-            ShootAllWeapons(planet, combat_state,
-                            attacks_event, *platform_event, fighter_on_fighter_event);
+            ShootAllWeapons(planet, combat_state, *attacks_event, *platform_event, *fighter_on_fighter_event);
         }
 
 
@@ -1764,8 +1764,7 @@ namespace {
                 continue;
             }
 
-            ShootAllWeapons(attacker, combat_state,
-                            attacks_event, *platform_event, fighter_on_fighter_event);
+            ShootAllWeapons(attacker, combat_state, *attacks_event, *platform_event, *fighter_on_fighter_event);
 
             if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
                 attacks_event->AddEvent(std::move(platform_event));
@@ -1777,7 +1776,8 @@ namespace {
         // There is no point to launching fighters during the last bout, since
         // they won't get any chance to attack during this combat
         if (combat_info.bout < NUM_COMBAT_ROUNDS) {
-            auto launches_event = std::make_shared<FighterLaunchesEvent>();
+            FighterLaunchesEvent launches_event;
+
             for (auto* attacker : combat_info.objects.findRaw<Ship>(shuffled_attackers)) {
                 if (!attacker)
                     continue;
@@ -1792,7 +1792,7 @@ namespace {
                 DebugLogger(combat) << "Attacker: " << attacker->Name();
 
                 // Set launching carrier as at least basically visible to other empires.
-                if (launches_event->AreSubEventsEmpty(ALL_EMPIRES))
+                if (launches_event.AreSubEventsEmpty(ALL_EMPIRES))
                     continue;
 
                 for (auto detector_empire_id : combat_info.empire_ids) {
@@ -1814,8 +1814,8 @@ namespace {
                 }
             }
 
-            if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES))
-                bout_event->AddEvent(std::move(launches_event));
+            if (!launches_event.AreSubEventsEmpty(ALL_EMPIRES))
+                bout_event->AddEvent(std::make_shared<FighterLaunchesEvent>(std::move(launches_event)));
         }
 
 
@@ -1860,7 +1860,7 @@ namespace {
             combat_info.combat_events.push_back(std::move(stealth_change_event));
 
         /// Remove all who died in the bout
-        combat_state.CullTheDead(combat_info.bout, bout_event);
+        combat_state.CullTheDead(combat_info.bout, *bout_event);
 
         // Backpropagate meters so that next round tests can use the results of the previous round
         for (auto* obj : combat_info.objects.allRaw())
@@ -1918,7 +1918,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     if (auto launches_event = std::make_shared<FighterLaunchesEvent>()) {
         combat_info.combat_events.push_back(launches_event);
-        RecoverFighters(combat_info, last_bout, launches_event);
+        RecoverFighters(combat_info, last_bout, *launches_event);
     }
 
     DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();

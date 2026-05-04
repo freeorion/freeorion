@@ -53,8 +53,6 @@ struct FO_COMMON_API BoutBeginEvent final : public CombatEvent {
 /** BoutEvent describes all the events that happen in one bout of combat.
    It may have some sub-events and the sub-events will be ordered.*/
 struct FO_COMMON_API BoutEvent : public CombatEvent {
-    typedef std::shared_ptr<BoutEvent> BoutEventPtr;
-
     [[nodiscard]] CONSTEXPR_VEC BoutEvent() noexcept(CombatEventDetail::nxcepv) = default;
     [[nodiscard]] CONSTEXPR_VEC explicit BoutEvent(int bout_) noexcept(CombatEventDetail::nxcepv) :
         bout(bout_)
@@ -105,14 +103,9 @@ protected:
 };
 
 
-typedef SimultaneousEvents AttacksEvent;
-typedef std::shared_ptr<AttacksEvent> AttacksEventPtr;
-
-typedef SimultaneousEvents IncapacitationsEvent;
-typedef std::shared_ptr<IncapacitationsEvent> IncapacitationsEventPtr;
-
-typedef SimultaneousEvents FighterLaunchesEvent;
-typedef std::shared_ptr<FighterLaunchesEvent> FighterLaunchesEventPtr;
+using AttacksEvent = SimultaneousEvents;
+using IncapacitationsEvent = SimultaneousEvents; // TODO: make a custom class that just stores vector<IncapacitationEvent>
+using FighterLaunchesEvent = SimultaneousEvents; // TODO: make a custom class that just stores vector<FighterLaunchEvent>
 
 
 /** InitialStealthEvent describes the initially stealthy combatants.
