@@ -290,7 +290,7 @@ void serialize(Archive& ar, StealthChangeEvent::StealthChangeEventDetail& obj, u
     ar  & make_nvp("attacker_id", obj.attacker_id)
         & make_nvp("target_id", obj.target_id)
         & make_nvp("attacker_empire_id", obj.attacker_empire_id)
-        & make_nvp("target_empire_id", obj.target_empire_id)
+        & make_nvp("target_empire_id", obj.target_observer_empire_id)
         & make_nvp("visibility", obj.visibility);
     if (version >= 5)
         ar  & make_nvp("is_fighter_launch", obj.is_fighter_launch);
