@@ -14,6 +14,7 @@
 #include "../../util/AppInterface.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
+#include "../../util/ranges.h"
 #include "../../util/VarText.h"
 #include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"
@@ -511,7 +512,8 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
         new_logs.push_back(DecorateLinkText(std::move(details)));
 
     if (!event.AreSubEventsEmpty(viewing_empire_id)) {
-        for (const auto* sub_event : event.SubEvents(viewing_empire_id) | range_filter(not_null)) {
+        const auto subevents = event.SubEvents(viewing_empire_id);
+        for (const auto* sub_event : subevents | range_filter(not_null)) {
             auto flat_logs = MakeCombatLogPanel(w, viewing_empire_id, *sub_event);
             new_logs.insert(new_logs.end(), std::make_move_iterator(flat_logs.begin()),
                             std::make_move_iterator(flat_logs.end()));

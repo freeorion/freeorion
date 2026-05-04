@@ -2754,14 +2754,17 @@ namespace {
 
         // copy nested sub-events of top-level events
         for (const auto& event1 : events1 | range_filter(not_null) | range_transform(get_raw_ptr)) {
-            for (const auto* event2 : event1->SubEvents(ALL_EMPIRES) | range_filter(not_null)) {
+            const auto events2 = event1->SubEvents(ALL_EMPIRES);
+            for (const auto* event2 : events2 | range_filter(not_null)) {
                 flat_events.push_back(event2);
 
-                for (const auto* event3 : event2->SubEvents(ALL_EMPIRES) | range_filter(not_null)) {
+                const auto events3 = event2->SubEvents(ALL_EMPIRES);
+                for (const auto* event3 : events3 | range_filter(not_null)) {
                     flat_events.push_back(event3);
 
-                    auto events4 = event3->SubEvents(ALL_EMPIRES) | range_filter(not_null);
-                    flat_events.insert(flat_events.end(), events4.begin(), events4.end());
+                    auto events4 = event3->SubEvents(ALL_EMPIRES);
+                    auto events4_rng = events4 | range_filter(not_null);
+                    flat_events.insert(flat_events.end(), events4_rng.begin(), events4_rng.end());
                 }
             }
         }
