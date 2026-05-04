@@ -215,8 +215,8 @@ struct PlayerSetupData {
     PlayerSetupData() = default;
     PlayerSetupData(std::string name, int empire_id, int player_id_, Networking::ClientType type) :
         player_name(std::move(name)),
-        save_game_empire_id(empire_id),
         player_id(player_id_),
+        save_game_empire_id(empire_id),
         client_type(type)
     {}
 
