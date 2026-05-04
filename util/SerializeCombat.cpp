@@ -263,17 +263,182 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Initial
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, InitialStealthEvent&, unsigned int const);
 
 
+namespace {
+    constexpr auto not_null = [](const auto& p) noexcept -> bool { return p.get(); };
+    constexpr auto to_size = [](const auto& c) noexcept { return c.size(); };
+    constexpr auto extract_from_shptr = [](auto& sptr) -> auto& { return *sptr; };
+}
+
+
+namespace {
+    [[nodiscard]] constexpr std::string_view VisToChar(Visibility vis) noexcept {
+        switch (vis) {
+        case Visibility::VIS_FULL_VISIBILITY:    return "f"; break;
+        case Visibility::VIS_PARTIAL_VISIBILITY: return "p"; break;
+        case Visibility::VIS_BASIC_VISIBILITY:   return "b"; break;
+        default:                                 return "x";
+        }
+    }
+
+    [[nodiscard]] constexpr Visibility CharToVis(char c) noexcept {
+        switch (c) {
+        case 'f': return Visibility::VIS_FULL_VISIBILITY;    break;
+        case 'p': return Visibility::VIS_PARTIAL_VISIBILITY; break;
+        case 'b': return Visibility::VIS_BASIC_VISIBILITY;   break;
+        default:  return Visibility::VIS_NO_VISIBILITY;
+        }
+    }
+
+    std::string ToString(const std::vector<StealthChangeEvent::StealthChangeEventDetail>& events) {
+        std::string retval;
+        try {
+            static constexpr std::size_t one_event_buffer_sz = 4 * (int_digits + 1) + 4; // 4 ints + spaces, fighter flag, visibility flag, separator spaces
+            retval.reserve(int_digits + 1 + events.size()*one_event_buffer_sz);          // count, spaces, events
+        } catch (...) {}
+
+        retval.append(std::to_string(events.size()));
+        for (const auto& event : events) {
+            retval.append("  ")
+                  .append(std::to_string(event.attacker_id)).append(" ")
+                  .append(std::to_string(event.target_id)).append(" ")
+                  .append(std::to_string(event.attacker_empire_id)).append(" ")
+                  .append(std::to_string(event.target_observer_empire_id)).append(" ")
+                  .append(VisToChar(event.visibility))
+                  .append(event.is_fighter_launch ? "l" : "n");
+        }
+        return retval;
+    }
+
+    template <typename Archive>
+    void FillStealthChangeEventViaSharedPtrs(Archive& ar, std::vector<StealthChangeEvent::StealthChangeEventDetail>& events)
+    {
+        using boost::serialization::make_nvp;
+
+        using StealthChangeEventDetailPtr = std::shared_ptr<StealthChangeEvent::StealthChangeEventDetail>;
+        std::map<int, std::vector<StealthChangeEventDetailPtr>> sced_sptr_map;
+        ar >> make_nvp("events", sced_sptr_map);
+
+        auto sc_event_counts_rng = sced_sptr_map | range_values | range_transform(to_size);
+        const std::size_t sc_event_count =
+            std::accumulate(sc_event_counts_rng.begin(), sc_event_counts_rng.end(), std::size_t{0});
+
+        events.clear();
+        events.reserve(sc_event_count);
+
+        for (auto& sced_sptr_vec : sced_sptr_map | range_values) {
+            auto sptr_rng = sced_sptr_vec | range_filter(not_null) | range_transform(extract_from_shptr);
+            events.insert(events.end(), sptr_rng.begin(), sptr_rng.end());
+        }
+    }
+
+    std::tuple<StealthChangeEvent::StealthChangeEventDetail, const char*, bool>
+    GetStealthChangeEventDetailFromChars(const char* next, const char* const buffer_end)
+    {
+        StealthChangeEvent::StealthChangeEventDetail retval;
+        if (!next || !buffer_end)
+            return {retval, next, false};
+
+        const auto get_next_int = [buffer_end](const char* next, const int default_val) -> std::tuple<int, bool, const char*>
+        { return GetIntFromChars<int>(buffer_end, next, default_val); };
+
+        bool success = false;
+
+        std::tie(retval.attacker_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        if (!success)
+            return {retval, next, false};
+        std::tie(retval.target_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+        if (!success)
+            return {retval, next, false};
+        std::tie(retval.attacker_empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        if (!success)
+            return {retval, next, false};
+        std::tie(retval.target_observer_empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+        if (!success)
+            return {retval, next, false};
+
+        // skip whitespace
+        while (next != buffer_end && *next == ' ')
+            ++next;
+        // safety check for end of buffer
+        if (next == buffer_end)
+            return {retval, next, false};
+
+        retval.visibility = CharToVis(*next);
+        ++next;
+        if (next == buffer_end)
+            return {retval, next, false};
+
+        retval.is_fighter_launch = (*next == 'l'); // anything besides 'l' treated as not a fighter launch
+        if (*next != ' ')
+            ++next;
+
+        return {retval, next, true};
+    }
+
+    void FillStealthChangeEvent(std::vector<StealthChangeEvent::StealthChangeEventDetail>& events, std::string_view buffer) {
+        using Detail = StealthChangeEvent::StealthChangeEventDetail;
+        events.clear();
+
+        const auto* const buffer_end = buffer.data() + buffer.size();
+        const auto* next = buffer.data();
+
+        unsigned int count_ui = 0;
+        bool success = false;
+        std::tie(next, success) = FromChars(next, buffer_end, count_ui);
+        if (!success)
+            return;
+        std::size_t count = static_cast<std::size_t>(count_ui);
+
+        try {
+            events.reserve(count);
+        } catch (...) {}
+
+        for (std::size_t idx = 0; idx < count && next != buffer_end; ++idx) {
+            StealthChangeEvent::StealthChangeEventDetail detail;
+            std::tie(detail, next, success) = GetStealthChangeEventDetailFromChars(next, buffer_end);
+            if (!success)
+                return;
+            events.push_back(std::move(detail));
+        }
+
+        static constexpr auto target_observer_id_less = [](const Detail& lhs, const Detail& rhs) noexcept
+        { return lhs.target_observer_empire_id < rhs.target_observer_empire_id; };
+
+        // order by observer empire id
+        std::stable_sort(events.begin(), events.end(), target_observer_id_less);
+    }
+}
+
 template <typename Archive>
 void serialize(Archive& ar, StealthChangeEvent& obj, unsigned int const version)
 {
-    using namespace boost::serialization;
+    using boost::serialization::make_nvp;
+    using boost::serialization::base_object;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
-    ar & make_nvp("bout", obj.bout)
-       & make_nvp("events", obj.events);
+    ar & make_nvp("bout", obj.bout);
+
+    if constexpr (Archive::is_loading::value) {
+        if (version < 5) {
+            FillStealthChangeEventViaSharedPtrs(ar, obj.events);
+        } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+            std::string str;
+            ar >> make_nvp("events", str);
+            FillStealthChangeEvent(obj.events, str);
+        } else {
+            ar >> make_nvp("events", obj.events);
+        }
+    } else {
+        if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+            std::string str = ToString(obj.events);
+            ar << make_nvp("events", str);
+        } else {
+            ar << make_nvp("events", obj.events);
+        }
+    }
 }
 
-BOOST_CLASS_VERSION(StealthChangeEvent, 4)
+BOOST_CLASS_VERSION(StealthChangeEvent, 5)
 BOOST_CLASS_EXPORT(StealthChangeEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, StealthChangeEvent&, unsigned int const);
@@ -543,11 +708,6 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Fighter
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FightersDestroyedEvent&, unsigned int const);
 
 namespace {
-    constexpr auto not_null = [](const auto& p) noexcept -> bool { return p.get(); };
-    constexpr auto to_size = [](const auto& c) noexcept { return c.size(); };
-    constexpr auto extract_from_shptr = [](auto& sptr) -> auto& { return *sptr; };
-
-
     std::vector<std::string> ToStrings(const WeaponsPlatformEvent& obj) {
         // WeaponsPlatformEvent contains a map from target_id to vector of WeaponFireEvent
         // WeaponFireEvent also contains a target_id
