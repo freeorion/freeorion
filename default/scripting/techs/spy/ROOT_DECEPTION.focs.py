@@ -2,7 +2,6 @@ from focs._effects import (
     AddSpecial,
     BlackHole,
     EffectsGroup,
-    InGame,
     InSystem,
     IsTarget,
     LocalCandidate,
@@ -22,7 +21,6 @@ from focs._effects import (
     Star,
     Statistic,
     StatisticCount,
-    StatisticElse,
     Target,
     Value,
 )
@@ -34,6 +32,18 @@ from macros.priorities import (
 
 lower_stealth_count_special = "LOWER_STEALTH_COUNT_SPECIAL"
 base_stealth_special = "BASE_STEALTH_SPECIAL"
+
+
+def InGame():
+    """Returns a condition which matches objects on the map
+
+    :returns: a focs condition matching objects with non-negative ID
+    """
+    return LocalCandidate.ID >= 0
+
+
+def StatisticElse(type_, *, condition):
+    return 1 - StatisticIf(type_, condition=condition)
 
 
 def count_lower_stealth_ships_statistic_valref(base_cond):
