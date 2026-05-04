@@ -2568,9 +2568,12 @@ X Font::RenderText(Pt pt, const std::string_view text, const RenderState& render
         }
     }
 
-    shared_cache.vertices.createServerBuffer();
-    shared_cache.coordinates.createServerBuffer();
-    shared_cache.colors.createServerBuffer();
+    // creating server buffers here can lead to too much CPU and GPU synchronization in driver,
+    // does not make sense if those buffers are always getting recreated here
+    // rather than stored for reuse in separate rendering step
+    //shared_cache.vertices.createServerBuffer();
+    //shared_cache.coordinates.createServerBuffer();
+    //shared_cache.colors.createServerBuffer();
     RenderCachedText(shared_cache);
 
     return pt.x - orig_x;
@@ -2846,9 +2849,18 @@ void Font::PreRenderText(Pt ul, Pt lr, const Flags<TextFormat> format,
     PreRenderImpl(y_origin, m_lineskip, ul.x, lr.x, go, gsd, line_data, m_glyphs,
                   begin_line, begin_char, end_line, end_char, cache, render_state);
 
-    cache.vertices.createServerBuffer();
-    cache.coordinates.createServerBuffer();
-    cache.colors.createServerBuffer();
+    // at the time of writing this comment, this call tends to happen on shared_cache,
+    // tightly coupled with RenderFromCache, so there is bit too much GPU+CPU synchronization if
+    // those buffers aren't really used as a cache for static rendering and instead are recreated
+    // every Render
+    //
+    // either way, may as well let the caller decide whether they want server buffers or not
+    // (if PreRenderText and RenderCachedText were actually split so buffers would not be recreated every Render,
+    // then it could make sense to have server buffers for fairly static text rendering, but it can be left to
+    // whoever created given RenderCache to decide if it is worth it or not in their case)
+    //cache.vertices.createServerBuffer();
+    //cache.coordinates.createServerBuffer();
+    //cache.colors.createServerBuffer();
 }
 
 void Font::RenderCachedText(RenderCache& cache) const
