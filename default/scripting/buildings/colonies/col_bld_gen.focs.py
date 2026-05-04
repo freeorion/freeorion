@@ -8,17 +8,9 @@ When executed, definition files will be generated in the current working directo
 Run black and ruff to fix formatting.
 """
 
-from typing import TYPE_CHECKING
-
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
 from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR
-
-if TYPE_CHECKING:
-    # Stub for type checker only
-    def BuildingType(*args, **kwargs):
-        pass
-
 
 try:
     from focs._buildings import *
@@ -203,7 +195,7 @@ for sp_id, sp_graphic in species_list:
             ),
         )
 
-    BuildingType(  # pyright: ignore[unbound-name]
+    BuildingType(  # pyrefly: ignore[unbound-name]
         colony=True,
         name=f"BLD_COL_{sp_name}",
         description=f"BLD_COL_{sp_name}_DESC",
