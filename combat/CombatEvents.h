@@ -148,21 +148,12 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
     [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
 
-    void AddEvent(int attacker_id, int target_id, int attacker_empire_id, int target_empire_id, Visibility new_visibility) {
-        events[target_empire_id].push_back(
-            std::make_shared<StealthChangeEventDetail>(
-                attacker_id, target_id, attacker_empire_id, target_empire_id, new_visibility));
-    }
+    void AddEvent(int attacker_id, int target_id, int attacker_empire_id, int target_empire_id, Visibility new_visibility)
+    { events.emplace_back(attacker_id, target_id, attacker_empire_id, target_empire_id, new_visibility); }
 
-    void AddEvent(int launcher_id, int launcher_empire_id, int observer_empire_id, Visibility new_visibility) {
-        events[observer_empire_id].push_back(
-            std::make_shared<StealthChangeEventDetail>(
-                launcher_id, launcher_empire_id, observer_empire_id, new_visibility));
-    }
+    void AddEvent(int launcher_id, int launcher_empire_id, int observer_empire_id, Visibility new_visibility)
+    { events.emplace_back(launcher_id, launcher_empire_id, observer_empire_id, new_visibility); }
 
-    struct StealthChangeEventDetail;
-    typedef std::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
-    typedef std::shared_ptr<const StealthChangeEventDetail> ConstStealthChangeEventDetailPtr;
     struct StealthChangeEventDetail : public CombatEvent {
         [[nodiscard]] constexpr StealthChangeEventDetail() noexcept = default;
         [[nodiscard]] constexpr StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
@@ -195,7 +186,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
 
 private:
     int bout = -1;
-    std::map<int, std::vector<StealthChangeEventDetailPtr>> events;
+    std::vector<StealthChangeEventDetail> events;
 
     template <typename Archive>
     friend void serialize(Archive&, StealthChangeEvent&, unsigned int const);

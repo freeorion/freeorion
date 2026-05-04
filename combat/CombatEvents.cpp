@@ -304,9 +304,10 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id, con
 //////////////////////////////////////////
 std::string StealthChangeEvent::StealthChangeEventDetail::DebugString(const ScriptingContext& context) const {
     std::stringstream ss;
-    ss << "StealthChangeDetailEvent"
-       <<  FighterOrPublicNameLink(ALL_EMPIRES, attacker_id, attacker_empire_id, context)
-       << "->" << visibility << " ";
+    ss << "StealthChangeDetailEvent " << (is_fighter_launch ? " observer: " : " target: ")
+       << target_observer_empire_id << " "
+       << FighterOrPublicNameLink(ALL_EMPIRES, attacker_id, attacker_empire_id, context)
+       << " -> " << visibility << " ";
     return ss.str();
 }
 
@@ -334,63 +335,43 @@ std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(
 
 std::string StealthChangeEvent::DebugString(const ScriptingContext& context) const {
     std::stringstream ss;
-    ss << "StealthChangeEvent";
-    if (events.size() > 4) {
-        ss << events.size() << " empires.";
-    } else {
-        for (auto& [target_empire_id, stealth_change_events] : events) {
-            ss << "Target Empire: " << EmpireLink(target_empire_id, context) << "\n";
-
-            if (stealth_change_events.size() > 4) {
-                ss << stealth_change_events.size() << " events.";
-            } else {
-                for (const auto& event : stealth_change_events)
-                    ss << event->DebugString(context);
-            }
-        }
-    }
+    ss << "StealthChangeEvent: ";
+    for (const auto& event : events)
+        ss << event.DebugString(context);
     return ss.str();
 }
 
 std::string StealthChangeEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
     std::string desc;
-
     if (events.empty())
         return desc;
 
-    for (const auto& [target_empire_id, stealth_change_events] : events) {
-        std::vector<std::string> uncloaked_attackers;
-        uncloaked_attackers.reserve(stealth_change_events.size());
-        for (const auto& event : stealth_change_events)
-            uncloaked_attackers.push_back(FighterOrPublicNameLink(
-                viewing_empire_id, event->attacker_id, event->attacker_empire_id, context));
+    std::map<int, std::vector<std::string>> target_empire_uncloaked_attackers;
 
-        if (!uncloaked_attackers.empty()) {
-            if (!desc.empty())
-                desc += "\n";
-            std::vector<std::string> target_empire_link{EmpireLink(target_empire_id, context)};
+    for (const auto& event : events) {
+        target_empire_uncloaked_attackers[event.target_observer_empire_id].push_back(
+            FighterOrPublicNameLink(viewing_empire_id, event.attacker_id, event.attacker_empire_id, context));
+    }
 
-            desc += FlexibleFormatList(target_empire_link, uncloaked_attackers,
-                                       UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS"),
-                                       UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS")).str();
-        }
+    for (const auto& [toeid, attacker_links] : target_empire_uncloaked_attackers) {
+        if (attacker_links.empty())
+            continue;
+        if (!desc.empty())
+            desc += "\n";
+        std::vector<std::string> target_empire_link{EmpireLink(toeid, context)};
+
+        desc += FlexibleFormatList(target_empire_link, attacker_links,
+                                   UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_MANY_EVENTS"),
+                                   UserString("ENC_COMBAT_STEALTH_DECLOAK_ATTACK_1_EVENTS")).str();
     }
 
     return desc;
 }
 
 std::vector<const CombatEvent*> StealthChangeEvent::SubEvents(int) const {
-    auto sz_rng = events | range_values | range_transform([](const auto& c) noexcept { return c.size(); });
-    const auto sz_sum = std::accumulate(sz_rng.begin(), sz_rng.end(), std::size_t{0});
-    std::vector<const CombatEvent*> retval;
-    retval.reserve(sz_sum);
-
-    for (const auto& sub_event_vec : events | range_values) {
-        auto raw_sub_events_rng = sub_event_vec | range_filter(not_null) | range_transform(get_raw_ptr);
-        retval.insert(retval.end(), raw_sub_events_rng.begin(), raw_sub_events_rng.end());
-    }
-
-    return retval;
+    static constexpr auto to_combatevent_ptr = [](const StealthChangeEventDetail& p) noexcept -> const CombatEvent*
+    { return std::addressof(p); };
+    return events | range_transform(to_combatevent_ptr) | range_to_vec;
 }
 
 
