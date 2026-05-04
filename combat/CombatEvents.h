@@ -166,18 +166,18 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     struct StealthChangeEventDetail : public CombatEvent {
         [[nodiscard]] constexpr StealthChangeEventDetail() noexcept = default;
         [[nodiscard]] constexpr StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_,
-                                                         int target_empire_, Visibility new_visibility_) noexcept :
+                                                         int target_observer_empire_, Visibility new_visibility_) noexcept :
             attacker_id(attacker_id_),
             target_id(target_id_),
             attacker_empire_id(attacker_empire_),
-            target_empire_id(target_empire_),
+            target_observer_empire_id(target_observer_empire_),
             visibility(new_visibility_)
         {}
-        [[nodiscard]] constexpr StealthChangeEventDetail(int laucher_id_, int laucher_empire_, int observer_empire_,
-                                                         Visibility new_visibility_) noexcept :
+        [[nodiscard]] constexpr StealthChangeEventDetail(int laucher_id_, int attacker_laucher_empire_,
+                                                         int target_observer_empire_, Visibility new_visibility_) noexcept :
             attacker_id(laucher_id_),
-            attacker_empire_id(laucher_empire_),
-            target_empire_id(observer_empire_),
+            attacker_empire_id(attacker_laucher_empire_),
+            target_observer_empire_id(target_observer_empire_),
             visibility(new_visibility_),
             is_fighter_launch(true)
         {}
@@ -188,7 +188,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
         int attacker_id = INVALID_OBJECT_ID;
         int target_id = INVALID_OBJECT_ID;
         int attacker_empire_id = ALL_EMPIRES;
-        int target_empire_id = ALL_EMPIRES;
+        int target_observer_empire_id = ALL_EMPIRES;
         Visibility visibility = Visibility::VIS_NO_VISIBILITY;
         bool is_fighter_launch = false;
     };
@@ -291,8 +291,6 @@ private:
 
 /// Created when an fighter is launched
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
-    typedef std::shared_ptr<FighterLaunchEvent> FighterLaunchEventPtr;
-
     [[nodiscard]] constexpr FighterLaunchEvent() noexcept = default;
     [[nodiscard]] constexpr FighterLaunchEvent(int bout_, int launched_from_id_,
                                                int fighter_owner_empire_id_, int number_launched_) noexcept :
