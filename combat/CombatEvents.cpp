@@ -207,9 +207,6 @@ std::vector<const CombatEvent*> BoutEvent::SubEvents(int) const
 //////////////////////////////////////////
 ///////// SimultaneousEvents ///////////////////
 //////////////////////////////////////////
-void SimultaneousEvents::AddEvent(CombatEventPtr event)
-{ events.push_back(std::move(event)); }
-
 std::string SimultaneousEvents::DebugString(const ScriptingContext&) const
 { return "SimultaneousEvents has " + std::to_string(events.size()) + " events"; }
 
@@ -334,23 +331,6 @@ std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(
                    % target_link
                    % target_empire_link);
     }
-}
-
-
-void StealthChangeEvent::AddEvent(int attacker_id_, int target_id_, int attacker_empire_,
-                                  int target_empire_, Visibility new_visibility_)
-{
-    events[target_empire_].push_back(
-        std::make_shared<StealthChangeEventDetail>(
-            attacker_id_, target_id_, attacker_empire_, target_empire_, new_visibility_));
-}
-
-void StealthChangeEvent::AddEvent(int launcher_id_, int launcher_empire_id_,
-                                  int observer_empire_id_, Visibility new_visibility_)
-{
-    events[observer_empire_id_].push_back(
-        std::make_shared<StealthChangeEventDetail>(
-            launcher_id_, launcher_empire_id_, observer_empire_id_, new_visibility_));
 }
 
 std::string StealthChangeEvent::DebugString(const ScriptingContext& context) const {
@@ -499,9 +479,6 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id, con
 //////////////////////////////////////////
 ///////// FightersAttackFightersEvent ////
 //////////////////////////////////////////
-void FightersAttackFightersEvent::AddEvent(int attacker_empire_, int target_empire_)
-{ events[{attacker_empire_, target_empire_}] += 1; }
-
 std::string FightersAttackFightersEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "FightersAttackFightersEvent: ";
@@ -598,9 +575,6 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id,
 //////////////////////////////////////////
 ///////// FightersDestroyedEvent ////
 //////////////////////////////////////////
-void FightersDestroyedEvent::AddEvent(int target_empire_)
-{ events[target_empire_] += 1; }
-
 std::string FightersDestroyedEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "FightersDestroyedEvent: ";
