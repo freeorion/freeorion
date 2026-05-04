@@ -118,13 +118,13 @@ namespace {
         std::string retval;
 
         try {
-            retval.reserve(data.size() * 3 * (int_digits + 1) + int_digits + 2); // space for count and all int value triples and gaps
+            retval.reserve(data.size() * 3 * (int_digits + 1) + int_digits + 3); // space for count and all int value triples and gaps
         } catch(...) {}
 
         retval.append(std::to_string(data.size()));
 
         for (const auto& [id, state] : data) {
-            retval.append(" ").append(std::to_string(id))
+            retval.append("  ").append(std::to_string(id))
                   .append(" ").append(std::to_string(Meter::FromFloat(state.current_health)))
                   .append(" ").append(std::to_string(Meter::FromFloat(state.max_health)));
         }
