@@ -511,7 +511,9 @@ py::object PythonParser::find_spec(const std::string& fullname, const py::object
         module_path.replace_extension("py");
         if (IsExistingFile(module_path))
             return py::object(module_spec(fullname, parent, *this));
-        else {
+        else if (fullname == "_typing") {
+            return py::object();
+        } else {
             ErrorLogger() << "Couldn't find file for module spec " << fullname;
             throw import_error("Couldn't find file for module spec " + fullname);
         }
