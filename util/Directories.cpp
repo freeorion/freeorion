@@ -26,6 +26,7 @@
 #  include <android/asset_manager.h>
 #  include <android/asset_manager_jni.h>
 #  include <android/log.h>
+#  include <patchlevel.h>
 #endif
 
 #if defined(FREEORION_LINUX) || defined(FREEORION_FREEBSD) || defined(FREEORION_OPENBSD) || defined(FREEORION_NETBSD) || defined(FREEORION_DRAGONFLY) || defined(FREEORION_HAIKU) || defined(FREEORION_ANDROID)
@@ -75,6 +76,8 @@ namespace {
     jobject        s_jni_asset_manager;
     JavaVM*        s_java_vm;
 
+#define PYTHON_LIB_PATH "lib/python" BOOST_PP_STRINGIZE(BOOST_PP_CAT(PY_MAJOR_VERSION, PY_MINOR_VERSION)) ".zip"
+
 void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
 {
     std::thread background([priority, tag, fd]() {
@@ -91,8 +94,7 @@ void RedirectOutputLogAndroid(int priority, const char* tag, int fd)
     background.detach();
 }
 
-void CopyInitialResourceAndroid(const std::string& rel_path)
-{
+void CopyInitialResourceAndroid(const std::string& rel_path) {
     AAsset* asset = AAssetManager_open(s_asset_manager, ("default/python/" + rel_path).c_str(), AASSET_MODE_STREAMING);
     if (!asset)
         return;
@@ -501,7 +503,7 @@ void InitDirs(std::string const& argv0, bool test)
 
     s_python_home = s_cache_dir / "python";
     fs::create_directories(s_python_home / "lib");
-    CopyInitialResourceAndroid("lib/python310.zip");
+    CopyInitialResourceAndroid(PYTHON_LIB_PATH);
 #endif
 
     g_initialized = true;
