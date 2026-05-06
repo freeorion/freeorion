@@ -119,6 +119,7 @@ builtins = []
 
 [tool.ty.rules]
 unresolved-reference = "ignore"
+deprecated = "ignore"
 unused-ignore-comment = "error"
 
 [tool.ty.environment]

@@ -1,6 +1,12 @@
 from __future__ import annotations
 
+import sys
 from typing import Any, TypeVar, overload
+
+if sys.version_info >= (3, 13):
+    from typing import deprecated
+else:
+    from typing_extensions import deprecated
 
 # Default value for int keyword arguments, use it when default value is not clear
 from focs._types import (
@@ -325,8 +331,10 @@ def Statistic(
     value: _ValueParam | _SpeciesValue,
     condition: _Condition,
 ) -> _T_OUT: ...
+@deprecated("Use NamedRealLookup instead and define NamedReal in macros/*.focs.py")
 def NamedReal(*, name: str, value: _FloatParam) -> _Float: ...
 def NamedRealLookup(*, name: str) -> _Float: ...
+@deprecated("Use NamedIntegerLookup instead and define NamedInteger in macros/*.focs.py")
 def NamedInteger(*, name: str, value: _IntParam) -> _Int: ...
 def NamedIntegerLookup(*, name: str) -> _Int: ...
 def JumpsBetween(source: _ID, target: _ID) -> _Int: ...

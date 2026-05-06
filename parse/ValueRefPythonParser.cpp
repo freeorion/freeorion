@@ -293,7 +293,7 @@ namespace {
     }
 
     template<typename T>
-    value_ref_wrapper<T> insert_named_(const boost::python::tuple& args, const boost::python::dict& kw) {
+    [[deprecated]] value_ref_wrapper<T> insert_named_(const boost::python::tuple& args, const boost::python::dict& kw) {
         auto name = boost::python::extract<std::string>(kw["name"])();
         std::unique_ptr<ValueRef::ValueRef<T>> value;
 

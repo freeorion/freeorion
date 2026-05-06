@@ -24,7 +24,7 @@ from focs._effects import (
     Medium,
     Min,
     MinOf,
-    NamedReal,
+    NamedRealLookup,
     OwnedBy,
     Planet,
     Poor,
@@ -251,7 +251,7 @@ _STANDARD_SPECIES_CAPITAL_SUPPLY_CONNECTION_STABILITY = [
         & ~_SUPPLY_CONNECTED_TO_CAPITAL_OR_REGAD,
         accountinglabel="CAPITAL_DISCONNECTION_LABEL",
         effects=SetTargetHappiness(
-            value=Value - NamedReal(name="DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY", value=10)
+            value=Value - NamedRealLookup(name="DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY")
         ),
     ),
 ]
@@ -264,7 +264,7 @@ VERY_BAD_HAPPINESS = [
         scope=IsSource,
         activation=Planet(),
         accountinglabel="VERY_BAD_HAPPINESS_LABEL",
-        effects=SetTargetHappiness(value=Value + NamedReal(name="VERY_BAD_HAPPINESS_VAL", value=-5.0)),
+        effects=SetTargetHappiness(value=Value + NamedRealLookup(name="VERY_BAD_HAPPINESS_VAL")),
     ),
 ]
 
@@ -276,7 +276,7 @@ BAD_HAPPINESS = [
         scope=IsSource,
         activation=Planet(),
         accountinglabel="BAD_HAPPINESS_LABEL",
-        effects=SetTargetHappiness(value=Value + NamedReal(name="BAD_HAPPINESS_VAL", value=-2.5)),
+        effects=SetTargetHappiness(value=Value + NamedRealLookup(name="BAD_HAPPINESS_VAL")),
     ),
 ]
 
@@ -293,7 +293,7 @@ GOOD_HAPPINESS = [
         scope=IsSource,
         activation=Planet(),
         accountinglabel="GOOD_HAPPINESS_LABEL",
-        effects=SetTargetHappiness(value=Value + NamedReal(name="GOOD_HAPPINESS_VAL", value=2.5)),
+        effects=SetTargetHappiness(value=Value + NamedRealLookup(name="GOOD_HAPPINESS_VAL")),
     ),
 ]
 
@@ -305,7 +305,7 @@ GREAT_HAPPINESS = [
         scope=IsSource,
         activation=Planet(),
         accountinglabel="GREAT_HAPPINESS_LABEL",
-        effects=SetTargetHappiness(value=Value + NamedReal(name="GREAT_HAPPINESS_VAL", value=5)),
+        effects=SetTargetHappiness(value=Value + NamedRealLookup(name="GREAT_HAPPINESS_VAL")),
     ),
 ]
 

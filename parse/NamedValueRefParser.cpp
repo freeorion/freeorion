@@ -17,7 +17,11 @@
 #include "../universe/ValueRef.h"
 #include "../util/Directories.h"
 
+#include <boost/python/def.hpp>
+#include <boost/python/docstring_options.hpp>
 #include <boost/python/import.hpp>
+#include <boost/python/module.hpp>
+#include <boost/python/raw_function.hpp>
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/phoenix/core.hpp>
@@ -33,7 +37,24 @@ namespace std {
 }
 #endif
 
-namespace parse {
+extern "C" BOOST_SYMBOL_EXPORT PyObject* PyInit__named_ref();
+
+namespace {
+    template<typename T>
+    value_ref_wrapper<T> insert_named_(const boost::python::tuple& args, const boost::python::dict& kw) {
+        auto name = boost::python::extract<std::string>(kw["name"])();
+        std::unique_ptr<ValueRef::ValueRef<T>> value;
+
+        auto value_arg = boost::python::extract<value_ref_wrapper<T>>(kw["value"]);
+        if (value_arg.check())
+            value = ValueRef::CloneUnique(value_arg().value_ref);
+        else
+            value = std::make_unique<ValueRef::Constant<T>>(boost::python::extract<T>(kw["value"])());
+
+        ::RegisterValueRef<T>(name, std::move(value));
+
+        return value_ref_wrapper<T>(std::make_shared<ValueRef::NamedRef<T>>(name));
+    }
 
     template <typename T>
     void insert_named_ref(std::map<std::string, std::unique_ptr<ValueRef::ValueRefBase>, std::less<>>& named_refs,
@@ -136,10 +157,12 @@ namespace parse {
     struct py_grammar {
         boost::python::dict globals;
         const PythonParser& parser;
+        boost::python::object module;
 
         py_grammar(const PythonParser& parser_) :
             globals(boost::python::import("builtins").attr("__dict__")),
-            parser(parser_)
+            parser(parser_),
+            module(parser_.LoadModule(&PyInit__named_ref))
         {
             RegisterGlobalsConditions(globals);
             RegisterGlobalsValueRefs(globals, parser_);
@@ -149,8 +172,19 @@ namespace parse {
             parser.LoadValueRefsModule();
         }
 
+        ~py_grammar() {
+            parser.UnloadModule(module);
+        }
+
         boost::python::dict operator()() const { return globals; }
     };
+}
+
+BOOST_PYTHON_MODULE(_named_ref) {
+    boost::python::docstring_options doc_options(true, true, false);
+
+    boost::python::def("NamedInteger", boost::python::raw_function(insert_named_<int>));
+    boost::python::def("NamedReal", boost::python::raw_function(insert_named_<double>));
 }
 
 namespace parse {

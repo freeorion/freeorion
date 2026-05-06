@@ -1,12 +1,12 @@
 from focs._effects import (
     GameRule,
-    NamedInteger,
-    NamedReal,
     UsedInDesignID,
 )
+from focs._named_ref import NamedInteger, NamedReal
 from focs._value_refs import NumPartClassesInShipDesign, PartOfClassInShipDesign
-from macros.base_prod import RESEARCH_PER_POP
+from macros.base_prod import INDUSTRY_PER_POP, RESEARCH_PER_POP
 from macros.misc import MIN_RECOLONIZING_HAPPINESS, MIN_RECOLONIZING_SIZE, SHIP_STRUCTURE_FACTOR
+from macros.multiplier import BAD_MULTIPLIER, GOOD_MULTIPLIER, GREAT_MULTIPLIER, VERY_BAD_MULTIPLIER
 
 # Proposed naming convention: <EFFECT_NAME> _ <METER_NAME> _ FLAT/PERPOP/<others>
 # Examples:
@@ -78,3 +78,22 @@ NamedReal(name="PLC_RACIAL_PURITY_TARGET_STABILITY_OTHER", value=-10)
 NamedReal(name="PLC_RACIAL_PURITY_TARGET_INFLUENCE_OTHER", value=-1)
 
 NamedReal(name="PLC_RACIAL_PURITY_TARGET_INDUSTRY_OTHER", value=0.25 * RESEARCH_PER_POP)
+
+# Species / Happiness
+
+NamedReal(name="DISCONNECTED_FROM_CAPITAL_AND_REGIONAL_ADMIN_STABILITY_PENALTY", value=10)
+
+NamedReal(name="VERY_BAD_HAPPINESS_VAL", value=-5.0)
+NamedReal(name="BAD_HAPPINESS_VAL", value=-2.5)
+NamedReal(name="GOOD_HAPPINESS_VAL", value=2.5)
+NamedReal(name="GREAT_HAPPINESS_VAL", value=5)
+
+NamedReal(name="INDUSTRY_FOCUS_TARGET_INDUSTRY_PERPOP", value=1.0 * INDUSTRY_PER_POP)
+
+for tag, default_multiplier in {
+    "BAD": BAD_MULTIPLIER,
+    "GOOD": GOOD_MULTIPLIER,
+    "GREAT": GREAT_MULTIPLIER,
+    "VERY_BAD": VERY_BAD_MULTIPLIER,
+}.items():
+    NamedReal(name=f"{tag}_INDUSTRY_TARGET_INDUSTRY_SCALING", value=default_multiplier)
