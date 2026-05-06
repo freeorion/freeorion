@@ -120,9 +120,16 @@ namespace {
             {"__add__", "__radd__", ValueRef::OpType::PLUS},
             {"__sub__", "__rsub__", ValueRef::OpType::MINUS},
             {"__mul__", "__rmul__", ValueRef::OpType::TIMES},
-            {"__truediv__", "__rtruediv__", ValueRef::OpType::DIVIDE}})
+            {"__truediv__", "__rtruediv__", ValueRef::OpType::DIVIDE},
+            {"__eq__", nullptr, ValueRef::OpType::COMPARE_EQUAL},
+            {"__gt__", nullptr, ValueRef::OpType::COMPARE_GREATER_THAN},
+            {"__ge__", nullptr, ValueRef::OpType::COMPARE_GREATER_THAN_OR_EQUAL},
+            {"__lt__", nullptr, ValueRef::OpType::COMPARE_LESS_THAN},
+            {"__le__", nullptr, ValueRef::OpType::COMPARE_LESS_THAN_OR_EQUAL},
+            {"__ne__", nullptr, ValueRef::OpType::COMPARE_NOT_EQUAL}})
         {
             const auto op_type = std::get<2>(op);
+            const char* reverse_op = std::get<1>(op);
             cl.def(std::get<0>(op), py::make_function(
                 [op_type](const value_ref_wrapper<T>& lhs, Arg rhs){ return OperationCreator<const value_ref_wrapper<T>&, Arg>()(op_type, lhs, rhs); },
                 py::default_call_policies(),
@@ -132,15 +139,17 @@ namespace {
                     Arg
                 >()
             ));
-            cl.def(std::get<1>(op), py::make_function(
-                [op_type](const value_ref_wrapper<T>& rhs, Arg lhs){ return OperationCreator<Arg, const value_ref_wrapper<T>&>()(op_type, lhs, rhs); },
-                py::default_call_policies(),
-                boost::mpl::vector<
-                    value_ref_wrapper<typename OperationCreator<const value_ref_wrapper<T>&, Arg>::BaseT>,
-                    const value_ref_wrapper<T>&,
-                    Arg
-                >()
-            ));
+            if (reverse_op != nullptr) {
+                cl.def(reverse_op, py::make_function(
+                    [op_type](const value_ref_wrapper<T>& rhs, Arg lhs){ return OperationCreator<Arg, const value_ref_wrapper<T>&>()(op_type, lhs, rhs); },
+                    py::default_call_policies(),
+                    boost::mpl::vector<
+                        value_ref_wrapper<typename OperationCreator<const value_ref_wrapper<T>&, Arg>::BaseT>,
+                        const value_ref_wrapper<T>&,
+                        Arg
+                    >()
+                ));
+            }
             cl.def(std::get<0>(op), py::make_function(
                 [op_type](const value_ref_wrapper<T>& lhs, const value_ref_wrapper<Arg>& rhs){ return OperationCreator<const value_ref_wrapper<T>&, const value_ref_wrapper<Arg>&>()(op_type, lhs, rhs); },
                 py::default_call_policies(),
@@ -216,18 +225,6 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
         // Use wrappers to not collide with types in server and AI
         auto value_ref_wrapper_double_class = py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
             .def("__call__", &value_ref_wrapper<double>::call)
-            .def(double() <= py::self_ns::self)
-            .def(py::self_ns::self <= double())
-            .def(py::self_ns::self <= py::self_ns::self)
-            .def(py::other<value_ref_wrapper<int>>() <= py::self_ns::self)
-            .def(py::other<value_ref_wrapper<int>>() >= py::self_ns::self)
-            .def(py::self_ns::self >= int())
-            .def(py::self_ns::self > py::self_ns::self)
-            .def(py::self_ns::self >= py::self_ns::self)
-            .def(py::self_ns::self < py::self_ns::self)
-            .def(double() < py::self_ns::self)
-            .def(py::self_ns::self < double())
-            .def(py::self_ns::self != int())
             .def(py::self_ns::pow(py::self_ns::self, double()))
             .def(py::self_ns::pow(double(), py::self_ns::self))
             .def(py::self_ns::pow(py::self_ns::self, py::self_ns::self))
@@ -238,15 +235,6 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
         register_arithmetic_ops<double, double>(value_ref_wrapper_double_class);
         register_arithmetic_ops<double, int>(value_ref_wrapper_double_class);
         auto value_ref_wrapper_int_class = py::class_<value_ref_wrapper<int>>("ValueRefInt", py::no_init)
-            .def(py::self_ns::self < py::self_ns::self)
-            .def(py::self_ns::self < int())
-            .def(py::self_ns::self <= int())
-            .def(py::self_ns::self > int())
-            .def(py::self_ns::self >= int())
-            .def(py::self_ns::self >= py::self_ns::self)
-            .def(py::self_ns::self == py::self_ns::self)
-            .def(py::self_ns::self == int())
-            .def(py::self_ns::self != int())
             .def(py::self_ns::self & py::self_ns::self)
             .def(py::self_ns::self | py::self_ns::self)
             .def(~py::self_ns::self)
