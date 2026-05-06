@@ -1679,6 +1679,10 @@ namespace {
         const ScriptingContext context{combat_info};
 
         auto bout_event = std::make_shared<BoutEvent>(combat_info.bout);
+        if (!bout_event) {
+            ErrorLogger() << "unable to create BoutEvent!";
+            return;
+        }
         combat_info.combat_events.push_back(bout_event);
         if (combat_state.valid_attacker_object_ids.empty()) {
             DebugLogger(combat) << "Combat bout " << combat_info.bout << " aborted due to no remaining attackers.";
@@ -1697,9 +1701,17 @@ namespace {
         }();
 
         auto attacks_event = std::make_shared<AttacksEvent>();
+        if (!attacks_event) {
+            ErrorLogger() << "unable to create AttacksEvent!";
+            return;
+        }
         bout_event->AddEvent(attacks_event);
 
         auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(combat_info.bout);
+        if (!fighter_on_fighter_event) {
+            ErrorLogger() << "unable to create FightersAttackFightersEvent!";
+            return;
+        }
         bout_event->AddEvent(fighter_on_fighter_event);
 
         const int NUM_COMBAT_ROUNDS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
@@ -1905,10 +1917,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         last_bout = bout;
     } // end for over combat arounds
 
-    auto launches_event = std::make_shared<FighterLaunchesEvent>();
-    combat_info.combat_events.push_back(launches_event);
-
-    RecoverFighters(combat_info, last_bout, launches_event);
+    if (auto launches_event = std::make_shared<FighterLaunchesEvent>()) {
+        combat_info.combat_events.push_back(launches_event);
+        RecoverFighters(combat_info, last_bout, launches_event);
+    }
 
     DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
