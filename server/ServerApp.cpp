@@ -2186,7 +2186,7 @@ namespace {
     // .second.first: IDs of empires with aggressive-fleet combat-capable ships at that system
     // .second.second: IDs of empires with obstructive-fleet combat-capable ships at that system
     // empire IDs may include ALL_EMPIRES for non-empire-owned ships
-    std::pair<std::vector<int>, std::pair<std::vector<int>, std::vector<int>>> GetEmpiresWithFleetsAtSystem(
+    std::pair<std::vector<int>, std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>> GetEmpiresWithFleetsAtSystem(
         int system_id, const ScriptingContext& context)
     {
         const ObjectMap& objects = context.ContextObjects();
@@ -2204,8 +2204,8 @@ namespace {
             return retval;
         };
 
-        const auto aggressive_obstructive_combat_fleet_owner_ids =
-            [&fleets, &context, system_id, system]() -> std::pair<std::vector<int>, std::vector<int>>
+        const auto aggressive_bombarding_obstructive_combat_fleet_owner_ids =
+            [&fleets, &context, system_id, system]() -> std::tuple<std::vector<int>, std::vector<int>, std::vector<int>>
         {
             if (fleets.empty())
                 return {};
@@ -2220,17 +2220,20 @@ namespace {
 
             static constexpr auto is_aggressive = [](const Fleet* fleet) noexcept -> bool
             { return fleet && fleet->Aggression() == FleetAggression::FLEET_AGGRESSIVE; };
+            static auto is_bombarding = [&context](const Fleet* fleet) noexcept -> bool
+            { return fleet && fleet->HasShipsOrderedBombard(context.ContextUniverse()); };
             static constexpr auto is_obstructive = [](const Fleet* fleet) noexcept -> bool
             { return fleet && fleet->Aggression() == FleetAggression::FLEET_OBSTRUCTIVE; };
 
             DebugLogger(combat) << "CombatConditionsInSystem() for system (" << system_id << ") " << system->Name();
-            DebugLogger(combat) << "   fleets here: " << [&fleets]() {
+            DebugLogger(combat) << "   fleets here: " << [&context,&fleets]() {
                 std::string retval;
-                for (auto& f : fleets)
+                for (auto& f : fleets) {
                     retval.append(f->Name()).append(" ( id: ").append(std::to_string(f->ID()))
                           .append("  owner: ").append(std::to_string(f->Owner()))
                           .append("  aggression: ").append(to_string(f->Aggression()))
                           .append(" )   ");
+                }
                 return retval;
             }();
 
@@ -2240,16 +2243,58 @@ namespace {
                        std::back_inserter(retval_aggressive));
             Uniquify(retval_aggressive);
 
+            std::vector<int> retval_bombarding;
+            retval_bombarding.reserve(fleets.size());
+            range_copy(fleets | range_filter(not_null) | range_filter(is_bombarding) | range_transform(to_owner),
+                       std::back_inserter(retval_bombarding));
+            Uniquify(retval_bombarding);
+
             std::vector<int> retval_obstructive;
             retval_obstructive.reserve(fleets.size());
             range_copy(combat_provoking_fleets_rng | range_filter(is_obstructive) | range_transform(to_owner),
                        std::back_inserter(retval_obstructive));
             Uniquify(retval_obstructive);
 
-            return {retval_aggressive, retval_obstructive};
+            return {retval_aggressive, retval_bombarding, retval_obstructive};
         };
 
-        return {fleets_owner_ids(), aggressive_obstructive_combat_fleet_owner_ids()};
+        return {fleets_owner_ids(), aggressive_bombarding_obstructive_combat_fleet_owner_ids()};
+    }
+
+    std::map<int, std::set<int>> GetBombardingTargetsAtSystem(
+        int system_id, const ScriptingContext& context)
+    {
+        const ObjectMap& objects = context.ContextObjects();
+        const auto* system = objects.getRaw<System>(system_id);
+        if (!system)
+            return {};
+        const auto& planet_ids = system->PlanetIDs();
+        if (planet_ids.empty())
+            return {};
+        const auto fleets = objects.findRaw<Fleet>(system->FleetIDs());
+
+        std::map<int, std::set<int>> empire_targets;
+        // we need to check all ships (in fleets ordered to bombard)
+        // fleet->HasShipsOrderedBombard also checks all ships in the fleet, so we dont use it to filter
+        for (const auto& fleet : fleets) {
+            const auto ships = objects.findRaw<Ship>(fleet->ShipIDs());
+            for (const auto& ship : ships) {
+                if (INVALID_OBJECT_ID != ship->OrderedBombardPlanet() && ship->CanBombard(context.ContextUniverse())) {
+                   if (std::find(planet_ids.begin(), planet_ids.end(), ship->OrderedBombardPlanet()) == planet_ids.end()) {
+                        ErrorLogger() << "Ship " << ship->ID() << " ordered to bombard planet "
+                                      << ship->OrderedBombardPlanet()
+                                      << " which is not in system " << system_id;
+                        continue;
+                    }
+                    if (!empire_targets.contains(fleet->Owner())) {
+                        empire_targets.insert({fleet->Owner(), {ship->OrderedBombardPlanet()}});
+                    } else {
+                        empire_targets[fleet->Owner()].insert(ship->OrderedBombardPlanet());
+                    }
+                }
+            }
+        }
+        return empire_targets;
     }
 
     std::vector<int> GetEmpiresWithPlanetsAtSystem(int system_id, const ObjectMap& objects) {
@@ -2358,16 +2403,20 @@ namespace {
         // seen empire B fleet being involved in a blockade of empire A's fleet(s)
 
         // what empires have fleets here? (including monsters as id ALL_EMPIRES)
-        const auto [empires_with_fleets_here, aggressive_obstructive_fleets_here] =
+        const auto [empires_with_fleets_here, aggressive_bombarding_obstructive_fleets_here] =
             GetEmpiresWithFleetsAtSystem(system_id, context);
-        const auto& [empires_with_aggressive_armed_fleets_here, empires_with_obstructive_armed_fleets_here] =
-            aggressive_obstructive_fleets_here;
-        if (empires_with_fleets_here.empty() || empires_with_aggressive_armed_fleets_here.empty())
+        const auto& [empires_with_aggressive_armed_fleets_here, empires_with_bombarding_fleets_here, empires_with_obstructive_armed_fleets_here] =
+            aggressive_bombarding_obstructive_fleets_here;
+        if (empires_with_fleets_here.empty())
+            return false;
+        if (empires_with_aggressive_armed_fleets_here.empty() && empires_with_bombarding_fleets_here.empty())
             return false;
         DebugLogger(combat) << "   Empires with at least one armed aggressive fleet present:  "
                             << to_string(empires_with_aggressive_armed_fleets_here);
         DebugLogger(combat) << "   Empires with at least one armed obstructive fleet present: "
                             << to_string(empires_with_obstructive_armed_fleets_here);
+        DebugLogger(combat) << "   Empires with at least one bombarding fleet present: "
+                            << to_string(empires_with_bombarding_fleets_here);
         DebugLogger(combat) << "   Empires with any fleet present: "
                             << to_string(empires_with_fleets_here);
 
@@ -2383,6 +2432,7 @@ namespace {
                             empires_with_fleets_here.begin(), empires_with_fleets_here.end());
         Uniquify(empires_here);
 
+
         // what combinations of present empires are at war?
         std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
         for (auto emp1_it = empires_here.begin(); emp1_it != empires_here.end(); ++emp1_it) {
@@ -2397,17 +2447,46 @@ namespace {
                 }
             }
         }
+
         if (empires_here_at_war.empty()) {
             DebugLogger(combat) << "   No warring combatants present: no combat.";
             return false;
         }
 
+        // ships blockading this empire from GetBlockadingFleetsForEmpires
         const auto overrides_for_empire =
             [&empire_vis_overrides](const int override_empire_id) -> const std::vector<int>& {
                 static CONSTEXPR_VEC const std::vector<int> EMPTY_VEC;
                 auto it = empire_vis_overrides.find(override_empire_id);
                 return it == empire_vis_overrides.end() ? EMPTY_VEC : it->second;
             };
+        if (!empires_with_bombarding_fleets_here.empty()) {
+            const auto& empires_targets = GetBombardingTargetsAtSystem(system_id, context);
+
+            // is an empire with a bombarding fleet here able to see the target planet
+            for (int bombarding_empire_id : empires_with_bombarding_fleets_here) {
+                // what planets can the aggressive empire see?
+                const auto bombarding_empire_visible_planets =
+                  GetObjsVisibleToEmpireOrNeutralsAtSystem<Planet>(
+                    bombarding_empire_id, system_id, overrides_for_empire(bombarding_empire_id), context);
+                // nothing to see, means nothing to bombard
+                if (bombarding_empire_visible_planets.empty())
+                    continue;
+                // check each visible planet if it is a target
+                for (const auto& visible_planet : bombarding_empire_visible_planets) {
+                    auto it = empires_targets.find(bombarding_empire_id);
+                    if (it == empires_targets.end()) continue;
+                    const auto& targets = it->second;
+
+                    if (std::binary_search(targets.begin(), targets.end(), visible_planet->ID())) {
+                        ErrorLogger(combat) << "   bombarding fleet empire " << bombarding_empire_id
+                                            << " sees a target planet";
+                        return true; // an aggressive empire can see a fleet owned by an empire it is at war with
+                    }
+                }
+            }
+            WarnLogger(combat) << "No bombarding fleet sees a target planet";
+        }
 
         // is an empire with an aggressive fleet here able to see a planet of an
         // empire it is at war with here?
@@ -4152,10 +4231,6 @@ void ServerApp::PreCombatProcessTurns() {
 
     // inform players of order execution
     m_networking.SendMessageAll(TurnProgressMessage(Message::TurnProgressPhase::PROCESSING_ORDERS));
-
-    // clear bombardment state before executing orders, so result after is only
-    // determined by what orders set.
-    CleanUpBombardmentStateInfo(m_universe.Objects());
 
 
     // execute orders

@@ -1245,6 +1245,129 @@ bool BombardOrder::UndoImpl(ScriptingContext& context) const {
 }
 
 ////////////////////////////////////////////////
+// StopBombardOrder
+////////////////////////////////////////////////
+StopBombardOrder::StopBombardOrder(int empire, int ship, int planet, const ScriptingContext& context) :
+    Order(empire),
+    m_ship(ship),
+    m_planet(planet)
+{ Check(empire, m_ship, m_planet, context); }
+
+std::string StopBombardOrder::Dump() const
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_STOP_BOMBARD")) % m_planet % m_ship) + ExecutedTag(this); }
+
+bool StopBombardOrder::Check(int empire_id, int ship_id, int planet_id,
+                         const ScriptingContext& context)
+{
+    const Universe& universe = context.ContextUniverse();
+    const ObjectMap& objects = context.ContextObjects();
+
+    if (empire_id == ALL_EMPIRES) {
+        ErrorLogger() << "StopBombardOrder::Check() : empire " << empire_id << " is not an empire";
+        return false;
+    }
+
+    auto ship = objects.get<Ship>(ship_id);
+    if (!ship) {
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl couldn't get ship with id " << ship_id;
+        return false;
+    }
+    if (!ship->CanBombard(universe)) {
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl got ship that can't bombard";
+        return false;
+    }
+    if (!ship->OwnedBy(empire_id)) {
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        return false;
+    }
+
+    auto planet = objects.get<Planet>(planet_id);
+    if (!planet) {
+        WarnLogger() << "StopBombardOrder::ExecuteImpl couldn't get planet with id " << planet_id;
+    }
+    if (planet->OwnedBy(empire_id)) {
+        WarnLogger() << "StopBombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+    }
+    if (!planet->Unowned() && context.ContextDiploStatus(planet->Owner(), empire_id) != DiplomaticStatus::DIPLO_WAR) {
+        WarnLogger() << "StopBombardOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+    }
+    if (universe.GetObjectVisibilityByEmpire(planet_id, empire_id) < Visibility::VIS_BASIC_VISIBILITY) {
+        WarnLogger() << "StopBombardOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of";
+    }
+
+    int ship_system_id = ship->SystemID();
+    if (ship_system_id == INVALID_OBJECT_ID) {
+        WarnLogger() << "StopBombardOrder::ExecuteImpl given id of ship not in a system";
+    }
+    int planet_system_id = planet->SystemID();
+    if (ship_system_id != planet_system_id) {
+        WarnLogger() << "StopBombardOrder::ExecuteImpl given ids of ship and planet not in the same system";
+    }
+    int bombarded_planet_id = ship->OrderedBombardPlanet();
+    if (bombarded_planet_id == INVALID_OBJECT_ID) {
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl given id of ship which is not (yet?) ordered to bombard. Proceed anyway";
+        //return false;
+    }
+    if (bombarded_planet_id != planet_id) {
+        ErrorLogger() << "StopBombardOrder::ExecuteImpl to stop bombardment of planet " << planet_id
+                      << " was given id of ship which is ordered to bombard different planet " << bombarded_planet_id
+                      << ". Proceed anyway";
+        //return false;
+    }
+
+    return true;
+}
+
+void StopBombardOrder::ExecuteImpl(ScriptingContext& context) const {
+    GetValidatedEmpire(context);
+
+    if (!Check(EmpireID(), m_ship, m_planet, context))
+        return;
+
+    ObjectMap& objects{context.ContextObjects()};
+    auto ship = objects.get<Ship>(m_ship);
+    auto planet = objects.get<Planet>(m_planet);
+
+    // note: multiple ships, from same or different empires, can bombard the same planet on the same turn
+    DebugLogger() << "StopBombardOrder::ExecuteImpl set for ship " << m_ship << " "
+                  << ship->Name() << " to stop bombarding planet " << m_planet << " "
+                  << planet->Name();
+    //planet->SetIsAboutToBeBombarded(false); // probably someone else is bombarding
+    ship->ClearBombardPlanet();
+
+    if (auto fleet = objects.get<Fleet>(ship->FleetID()))
+        fleet->StateChangedSignal();
+}
+
+bool StopBombardOrder::UndoImpl(ScriptingContext& context) const {
+    ObjectMap& objects{context.ContextObjects()};
+
+    auto planet = objects.get<Planet>(m_planet);
+    if (!planet) {
+        ErrorLogger() << "StopBombardOrder::UndoImpl couldn't get planet with id " << m_planet;
+        return false;
+    }
+
+    auto ship = objects.get<Ship>(m_ship);
+    if (!ship) {
+        ErrorLogger() << "StopBombardOrder::UndoImpl couldn't get ship with id " << m_ship;
+        return false;
+    }
+    auto const bombarding_planet_id = ship->OrderedBombardPlanet();
+    if (bombarding_planet_id != m_planet && bombarding_planet_id != INVALID_OBJECT_ID) {
+        WarnLogger() << "StopBombardOrder::UndoImpl ship is already bombarding planet " << bombarding_planet_id;
+    }
+
+    planet->SetIsAboutToBeBombarded(true);
+    ship->SetBombardPlanet(m_planet);
+
+    if (auto fleet = objects.get<Fleet>(ship->FleetID()))
+        fleet->StateChangedSignal();
+
+    return true;
+}
+
+////////////////////////////////////////////////
 // ChangeFocusOrder
 ////////////////////////////////////////////////
 ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, std::string focus, const ScriptingContext& context) :
