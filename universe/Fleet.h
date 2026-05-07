@@ -120,6 +120,7 @@ public:
     [[nodiscard]] bool    HasColonyShips(const Universe& universe) const;             ///< true if there is at least one colony ship with nonzero capacity in the fleet.
     [[nodiscard]] bool    HasOutpostShips(const Universe& universe) const;            ///< true if there is at least one colony ship with zero capacity in the fleet
     [[nodiscard]] bool    HasTroopShips(const Universe& universe) const;              ///< true if there is at least one troop ship in the fleet.
+    [[nodiscard]] bool    HasShipsOrderedBombard(const Universe& universe) const;     ///< true if there is at least one ship ordered and capable to bombard a planet in the fleet.
     [[nodiscard]] bool    HasShipsOrderedScrapped(const Universe& universe) const;    ///< true if there is at least one ship ordered scrapped in the fleet.
     [[nodiscard]] bool    HasShipsWithoutScrapOrders(const Universe& universe) const; ///< true if there is at least one ship without any scrap orders in the fleet.
     [[nodiscard]] auto    NumShips() const noexcept { return m_ships.size(); }        ///< number of ships in fleet.

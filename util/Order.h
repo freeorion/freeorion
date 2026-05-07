@@ -406,7 +406,7 @@ private:
 /////////////////////////////////////////////////////
 // BombardOrder
 /////////////////////////////////////////////////////
-/** the Order subclass that represents a planet bombardment action*/
+/** the Order subclass that represents starting a planet bombardment action*/
 class FO_COMMON_API BombardOrder final : public Order {
 public:
     BombardOrder(int empire, int ship, int planet, const ScriptingContext& context);
@@ -433,6 +433,39 @@ private:
      *      - The ship with ID m_ship will be marked to bombard the planet with
      *        id m_planet during the next turn processing.
      */
+    void ExecuteImpl(ScriptingContext& context) const override;
+
+    bool UndoImpl(ScriptingContext& context) const override;
+
+    int m_ship = INVALID_OBJECT_ID;
+    int m_planet = INVALID_OBJECT_ID;
+
+    friend class boost::serialization::access;
+    template <typename Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/////////////////////////////////////////////////////
+// StopBombardOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents a stopping planet bombardment action*/
+class FO_COMMON_API StopBombardOrder final : public Order {
+public:
+    StopBombardOrder(int empire, int ship, int planet, const ScriptingContext& context);
+
+    [[nodiscard]] std::string Dump() const override;
+
+    /** Returns ID of the planet where to stop the bombardment of this ship. Mostly for diagnostic purposes. */
+    [[nodiscard]] int PlanetID() const noexcept { return m_planet; }
+
+    /** Returns ID of the ship which is bombarding the planet. */
+    [[nodiscard]] int ShipID() const noexcept { return m_ship; }
+
+    static bool Check(int empire_id, int ship_id, int planet_id, const ScriptingContext& context);
+
+private:
+    StopBombardOrder() = default;
+
     void ExecuteImpl(ScriptingContext& context) const override;
 
     bool UndoImpl(ScriptingContext& context) const override;
