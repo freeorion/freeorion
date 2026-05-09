@@ -187,24 +187,26 @@ std::string BoutBeginEvent::CombatLogDescription(int, const ScriptingContext&) c
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
 
-//////////////////////////////////////////
-///////// BoutEvent /////////////
-//////////////////////////////////////////
+/////////////////////////////////////
+/////////// BoutEvent ///////////////
+/////////////////////////////////////
 std::string BoutEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
-    ss << "Bout " << bout << " has " << events.size() << " events";
+    ss << "Bout " << bout << " has " << weapon_firings.SubEvents(ALL_EMPIRES).size() << " weapon firings, "
+       << weapons_platform_firings.SubEvents(ALL_EMPIRES).size() << " weapon platform firings, "
+       << fighter_launches.SubEvents(ALL_EMPIRES).size() << " launches, "
+       << fighters_destroyed.SubEvents(ALL_EMPIRES).size() << " fighters destroyed, "
+       << fighters_attack_fighters.SubEvents(ALL_EMPIRES).size() << " fighters on fighter attack, "
+       << incapacitations.SubEvents(ALL_EMPIRES).size() << " incapacitations";
     return ss.str();
 }
 
 std::string BoutEvent::CombatLogDescription(int, const ScriptingContext&) const
 { return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
 
-std::vector<const CombatEvent*> BoutEvent::SubEvents(int) const
-{ return events | range_filter(not_null) | range_transform(get_raw_ptr) | range_to_vec; }
-
 
 //////////////////////////////////////////
-///////// SimultaneousEvents ///////////////////
+///////// SimultaneousEvents /////////////
 //////////////////////////////////////////
 std::string SimultaneousEvents::DebugString(const ScriptingContext&) const
 { return "SimultaneousEvents has " + std::to_string(events.size()) + " events"; }

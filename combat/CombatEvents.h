@@ -50,36 +50,10 @@ struct FO_COMMON_API BoutBeginEvent final : public CombatEvent {
     int bout = 0;
 };
 
-/** BoutEvent describes all the events that happen in one bout of combat.
-   It may have some sub-events and the sub-events will be ordered.*/
-struct FO_COMMON_API BoutEvent : public CombatEvent {
-    [[nodiscard]] CONSTEXPR_VEC BoutEvent() noexcept(CombatEventDetail::nxcepv) = default;
-    [[nodiscard]] CONSTEXPR_VEC explicit BoutEvent(int bout_) noexcept(CombatEventDetail::nxcepv) :
-        bout(bout_)
-    {}
-
-    void AddEvent(CombatEventPtr event) { events.push_back(std::move(event)); }
-
-    [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
-
-    [[nodiscard]] bool AreSubEventsEmpty(int) const noexcept override { return events.empty(); }
-
-    [[nodiscard]] bool FlattenSubEvents() const noexcept override { return true; }
-
-private:
-    int bout = 0;
-
-    std::vector<CombatEventPtr> events; // TODO: <ConstCombatEventPtr> ?
-
-    template <typename Archive>
-    friend void serialize(Archive&, BoutEvent&, unsigned int const);
-};
 
 /** SimultaneousEvents describes a set of simultaneous events in one bout of combat.
-   It may have some sub-events and the sub-events will be shown in
-   viewing empire first followed by ALL_EMPIRES and then other empires.*/
+  * It may have some sub-events and the sub-events will be shown in
+  * viewing empire first followed by ALL_EMPIRES and then other empires.*/
 struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     [[nodiscard]] CONSTEXPR_VEC SimultaneousEvents() noexcept(CombatEventDetail::nxcepv) = default;
 
@@ -95,6 +69,8 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     [[nodiscard]] bool FlattenSubEvents() const noexcept override
     { return true; }
 
+    [[nodiscard]] auto& Events() noexcept { return events; }
+
 protected:
     std::vector<CombatEventPtr> events;
 
@@ -103,14 +79,9 @@ protected:
 };
 
 
-using AttacksEvent = SimultaneousEvents;
-using IncapacitationsEvent = SimultaneousEvents; // TODO: make a custom class that just stores vector<IncapacitationEvent>
-using FighterLaunchesEvent = SimultaneousEvents; // TODO: make a custom class that just stores vector<FighterLaunchEvent>
-
-
 /** InitialStealthEvent describes the initially stealthy combatants.
-    Note:  Because it is initialized with the unfiltered stealth information it
-    contains information not availble to all empires. */
+  * Note:  Because it is initialized with the unfiltered stealth information it
+  * contains information not availble to all empires. */
 struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
     [[nodiscard]] InitialStealthEvent() = default;
     [[nodiscard]] explicit InitialStealthEvent(EmpireObjectVisibilityMap x) noexcept :
@@ -129,7 +100,7 @@ private:
 
 
 /** StealthChangeEvent describes changes in the visibility of objects during combat.
-    At this time always decloaking.*/
+  * At this time always decloaking. */
 struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] StealthChangeEvent() = default;
 
@@ -182,8 +153,8 @@ private:
 };
 
 
-/// An event that describes a single attack by one object or fighter against
-/// another object or fighter
+/** An event that describes a single attack by one object or fighter against
+  * another object or fighter. */
 struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
     [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent() noexcept(CombatEventDetail::nxstr) = default;
 
@@ -262,7 +233,8 @@ private:
     friend void serialize(Archive&, FightersAttackFightersEvent&, unsigned int const);
 };
 
-/// Created when an fighter is launched
+
+/** Created when an fighter is launched. */
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     [[nodiscard]] constexpr FighterLaunchEvent() noexcept = default;
     [[nodiscard]] constexpr FighterLaunchEvent(int launched_from_id_, int fighter_owner_empire_id_, int number_launched_) noexcept :
@@ -280,6 +252,7 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     int number_launched = 0;
 };
 
+
 /** FightersDestroyedEvent aggregates all the fighters destroyed during one combat bout.*/
 struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
     [[nodiscard]] FightersDestroyedEvent() = default;
@@ -296,8 +269,9 @@ private:
     friend void serialize(Archive&, FightersDestroyedEvent&, unsigned int const);
 };
 
+
 /** WeaponsPlatformEvent describes a ship or planet with zero or more weapons firing its weapons in combat.
-   It may have some WeaponFire sub-events.*/
+  * It may have some WeaponFire sub-events.*/
 struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     [[nodiscard]] WeaponsPlatformEvent() = default;
     [[nodiscard]] WeaponsPlatformEvent(int attacker_id_, int attacker_owner_id_) :
@@ -325,6 +299,46 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
 private:
     template <typename Archive>
     friend void serialize(Archive&, WeaponsPlatformEvent&, unsigned int const);
+};
+
+
+/** BoutEvent describes all the events that happen in one bout of combat. */
+struct FO_COMMON_API BoutEvent : public CombatEvent {
+    [[nodiscard]] explicit BoutEvent() noexcept(CombatEventDetail::nxcepv) = default;
+    [[nodiscard]] explicit BoutEvent(int bout_) noexcept(CombatEventDetail::nxcepv) :
+        bout(bout_)
+    {}
+
+    [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override {
+        return {std::addressof(weapon_firings), std::addressof(weapons_platform_firings), std::addressof(fighter_launches),
+                std::addressof(fighters_attack_fighters), std::addressof(fighters_destroyed), std::addressof(incapacitations)};
+    }
+
+    [[nodiscard]] bool AreSubEventsEmpty(int viewing_empire_id) const noexcept override {
+        return weapon_firings.AreSubEventsEmpty(viewing_empire_id) &&
+               weapons_platform_firings.AreSubEventsEmpty(viewing_empire_id) &&
+               fighter_launches.AreSubEventsEmpty(viewing_empire_id) &&
+               fighters_destroyed.AreSubEventsEmpty(viewing_empire_id) &&
+               fighters_attack_fighters.AreSubEventsEmpty(viewing_empire_id) &&
+               incapacitations.AreSubEventsEmpty(viewing_empire_id);
+    }
+
+    [[nodiscard]] bool FlattenSubEvents() const noexcept override { return true; }
+
+    int bout = 0;
+
+    SimultaneousEvents weapon_firings;              // make into vector<WeaponFireEvent> ?
+    SimultaneousEvents weapons_platform_firings;    // make info vector<WeaponsPlatformEvent> ?
+    SimultaneousEvents fighter_launches;            // make info vector<FighterLaunchEvent> or fancier nested structure
+    FightersDestroyedEvent fighters_destroyed;
+    FightersAttackFightersEvent fighters_attack_fighters;
+    SimultaneousEvents incapacitations;             // make into vector<IncapacitationEvent> ?
+
+private:
+    template <typename Archive>
+    friend void serialize(Archive&, BoutEvent&, unsigned int const);
 };
 
 
