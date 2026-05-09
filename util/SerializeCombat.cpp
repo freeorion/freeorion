@@ -298,9 +298,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Stealth
 
 namespace {
     std::string ToString(const WeaponFireEvent& obj) {
-        return      std::to_string(obj.bout).append(" ")
-            .append(std::to_string(obj.round)).append(" ")
-            .append(std::to_string(obj.attacker_id)).append(" ")
+        return      std::to_string(obj.attacker_id).append(" ")
             .append(std::to_string(obj.target_id)).append(" ")
             .append(std::to_string(obj.attacker_owner_id)).append(" ")
             .append(std::to_string(obj.target_owner_id)).append(" ")
@@ -334,12 +332,6 @@ namespace {
             return {result, success, next_out};
         };
 
-        std::tie(obj.bout, success, next) = get_int_from_chars(next, -1);
-        if (!success)
-            return;
-        std::tie(obj.round, success, next) = get_int_from_chars(next, -1);
-        if (!success)
-            return;
         std::tie(obj.attacker_id, success, next) = get_int_from_chars(next, INVALID_OBJECT_ID);
         if (!success)
             return;
@@ -378,12 +370,15 @@ namespace {
     }
 
     template <typename Archive>
-    void Serialize(Archive& ar, WeaponFireEvent& obj, bool short_tags)
+    void Serialize(Archive& ar, WeaponFireEvent& obj, bool short_tags, bool include_bout_round)
     {
         using boost::serialization::make_nvp;
-        ar  & make_nvp(short_tags ? "b" : "bout", obj.bout)
-            & make_nvp(short_tags ? "r" : "round", obj.round)
-            & make_nvp(short_tags ? "a" : "attacker_id", obj.attacker_id)
+        if (include_bout_round) {
+            int ignored = -1;
+            ar  & make_nvp(short_tags ? "b" : "bout", ignored)
+                & make_nvp(short_tags ? "r" : "round", ignored);
+        }
+        ar  & make_nvp(short_tags ? "a" : "attacker_id", obj.attacker_id)
             & make_nvp(short_tags ? "t" : "target_id", obj.target_id)
             & make_nvp(short_tags ? "w" : "weapon_name", obj.weapon_name)
             & make_nvp(short_tags ? "p" : "power", obj.power)
@@ -404,20 +399,22 @@ void serialize(Archive& ar, WeaponFireEvent& obj, unsigned int const version)
 
     if constexpr (Archive::is_loading::value) {
         if (version < 6) {
-            Serialize(ar, obj, version == 5);
+            // versions 5 and earlier had round and bout
+            // version 5 started using shortenend tags
+            Serialize(ar, obj, version >= 5, true); 
         } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
             std::string str;
             ar >> make_nvp("info", str);
             FillWeaponFireEvent(obj, str);
         } else {
-            Serialize(ar, obj, true);
+            Serialize(ar, obj, true, false); // 6 and later use short tags and exclude round and bout
         }
     } else {
         if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
             std::string str = ToString(obj);
             ar << make_nvp("info", str);
         } else {
-            Serialize(ar, obj, true);
+            Serialize(ar, obj, true, false); // use short tags, and exclude round and bout for new encodings
         }
     }
 }

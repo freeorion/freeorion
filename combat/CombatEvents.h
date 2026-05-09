@@ -209,13 +209,11 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
 
         The use of tuple in the constructor is to keep the number of parameters below 10 which
         is the maximum that some compilers that emulate variadic templates support. */
-    [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent(int bout_, int round_, int attacker_id_, int target_id_,
+    [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent(int attacker_id_, int target_id_,
                                                    std::string weapon_name_,
                                                    const std::tuple<float, float, float>& power_shield_damage,
                                                    int attacker_owner_id_, int target_owner_id_)
         noexcept(CombatEventDetail::nxstrmove) :
-        bout(bout_),
-        round(round_),
         attacker_id(attacker_id_),
         target_id(target_id_),
         weapon_name(std::move(weapon_name_)),
@@ -232,8 +230,6 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
     [[nodiscard]] bool AreDetailsEmpty(int) const noexcept override { return false; }
     [[nodiscard]] boost::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return attacker_id; }
 
-    int bout = -1;
-    int round = -1;
     int attacker_id = INVALID_OBJECT_ID;
     int target_id = INVALID_OBJECT_ID;
     std::string weapon_name;
@@ -342,7 +338,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
         attacker_owner_id(attacker_owner_id_)
     {}
 
-    void AddEvent(int round, int target_id, int target_owner_id_, const std::string& weapon_name_,
+    void AddEvent(int target_id, int target_owner_id_, const std::string& weapon_name_,
                   float power_, float shield_, float damage_);
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;

@@ -355,7 +355,6 @@ namespace {
 
     void AttackShipShip(Ship* attacker, const PartAttackInfo& weapon,
                         Ship* target, CombatInfo& combat_info,
-                        int bout, int round,
                         WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -388,7 +387,7 @@ namespace {
                                 << target->Name() << " (" << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, shield, damage);
 
         attacker->SetLastTurnActiveInCombat(combat_info.turn);
@@ -397,7 +396,6 @@ namespace {
 
     void AttackShipPlanet(Ship* attacker, const PartAttackInfo& weapon,
                           Planet* target, CombatInfo& combat_info,
-                          int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event,
                           const Universe& universe)
     {
@@ -469,7 +467,7 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, total_damage);
 
         attacker->SetLastTurnActiveInCombat(combat_info.turn);
@@ -478,7 +476,6 @@ namespace {
 
     void AttackShipFighter(Ship* attacker, const PartAttackInfo& weapon,
                            Fighter* target, CombatInfo& combat_info,
-                           int bout, int round,
                            WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         float power = weapon.part_attack;
@@ -490,14 +487,13 @@ namespace {
                                 << " damage to " << target->Name() << " (" << target->ID() << ")";
             target->SetDestroyed();
         }
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, 1.0f);
         attacker->SetLastTurnActiveInCombat(combat_info.turn);
     }
 
     void AttackPlanetShip(Planet* attacker, const PartAttackInfo& weapon,
                           Ship* target, CombatInfo& combat_info,
-                          int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -532,7 +528,7 @@ namespace {
                                 << target->ID() << ")";
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, shield, damage);
 
         target->SetLastTurnActiveInCombat(combat_info.turn);
@@ -540,7 +536,6 @@ namespace {
 
     void AttackPlanetPlanet(Planet* attacker, const PartAttackInfo& weapon,
                             Planet* target, CombatInfo& combat_info,
-                            int bout, int round,
                             WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -609,7 +604,7 @@ namespace {
 
         //TODO report the planet damage details more clearly
         float total_damage = shield_damage + defense_damage + construction_damage;
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, total_damage);
 
         //attacker->SetLastTurnActiveInCombat(combat_info.turn);
@@ -618,7 +613,6 @@ namespace {
 
     void AttackPlanetFighter(Planet* attacker, const PartAttackInfo& weapon,
                              Fighter* target, CombatInfo& combat_info,
-                             int bout, int round,
                              WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
@@ -636,13 +630,13 @@ namespace {
             target->SetDestroyed();
         }
 
-        combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.ship_part_name,
+        combat_event->AddEvent(target->ID(), target->Owner(), weapon.ship_part_name,
                                power, 0.0f, 1.0f);
     }
 
     void AttackFighterShip(Fighter* attacker, const PartAttackInfo& weapon,
                            Ship* target, CombatInfo& combat_info,
-                           int bout, int round, AttacksEventPtr& attacks_event)
+                           AttacksEventPtr& attacks_event)
     {
         if (!attacker || !target) return;
 
@@ -675,7 +669,7 @@ namespace {
 
         float pierced_shield_value(-1.0);
         CombatEventPtr attack_event = std::make_shared<WeaponFireEvent>(
-            bout, round, attacker->ID(), target->ID(), weapon.ship_part_name,
+            attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, damage),
             attacker->Owner(), target->Owner());
         attacks_event->AddEvent(std::move(attack_event));
@@ -684,7 +678,7 @@ namespace {
 
     void AttackFighterPlanet(Fighter* attacker, const PartAttackInfo& weapon,
                              Planet* target, CombatInfo& combat_info,
-                             int bout, int round, AttacksEventPtr& attacks_event)
+                             AttacksEventPtr& attacks_event)
     {
         if (!attacker || !target) return;
 
@@ -752,7 +746,7 @@ namespace {
 
         static constexpr float pierced_shield_value(0.0f);
         auto attack_event = std::make_shared<WeaponFireEvent>(
-            bout, round, attacker->ID(), target->ID(), weapon.ship_part_name,
+            attacker->ID(), target->ID(), weapon.ship_part_name,
             std::tie(power, pierced_shield_value, total_damage),
             attacker->Owner(), target->Owner());
         attacks_event->AddEvent(std::move(attack_event));
@@ -762,7 +756,6 @@ namespace {
 
     void AttackFighterFighter(Fighter* attacker, const PartAttackInfo& weapon,
                               Fighter* target, CombatInfo& combat_info,
-                              int bout, int round,
                               std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         if (!attacker || !target) return;
@@ -782,7 +775,7 @@ namespace {
 
     void Attack(UniverseObject* attacker, const PartAttackInfo& weapon,
                 UniverseObject* target, CombatInfo& combat_info,
-                int bout, int round, AttacksEventPtr& attacks_event,
+                AttacksEventPtr& attacks_event,
                 WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event,
                 std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
@@ -800,23 +793,23 @@ namespace {
             static_cast<Fighter*>(target) : nullptr;
 
         if (attack_ship && target_ship) {
-            AttackShipShip(         attack_ship,    weapon, target_ship,    combat_info, bout, round, platform_event);
+            AttackShipShip(         attack_ship,    weapon, target_ship,    combat_info, platform_event);
         } else if (attack_ship && target_planet) {
-            AttackShipPlanet(       attack_ship,    weapon, target_planet,  combat_info, bout, round, platform_event, combat_info.universe);
+            AttackShipPlanet(       attack_ship,    weapon, target_planet,  combat_info, platform_event, combat_info.universe);
         } else if (attack_ship && target_fighter) {
-            AttackShipFighter(      attack_ship,    weapon, target_fighter, combat_info, bout, round, platform_event);
+            AttackShipFighter(      attack_ship,    weapon, target_fighter, combat_info, platform_event);
         } else if (attack_planet && target_ship) {
-            AttackPlanetShip(       attack_planet,  weapon, target_ship,    combat_info, bout, round, platform_event);
+            AttackPlanetShip(       attack_planet,  weapon, target_ship,    combat_info, platform_event);
         } else if (attack_planet && target_planet) {
-            AttackPlanetPlanet(     attack_planet,  weapon, target_planet,  combat_info, bout, round, platform_event);
+            AttackPlanetPlanet(     attack_planet,  weapon, target_planet,  combat_info, platform_event);
         } else if (attack_planet && target_fighter) {
-            AttackPlanetFighter(    attack_planet,  weapon, target_fighter, combat_info, bout, round, platform_event);
+            AttackPlanetFighter(    attack_planet,  weapon, target_fighter, combat_info, platform_event);
         } else if (attack_fighter && target_ship) {
-            AttackFighterShip(      attack_fighter, weapon, target_ship,    combat_info, bout, round, attacks_event);
+            AttackFighterShip(      attack_fighter, weapon, target_ship,    combat_info, attacks_event);
         } else if (attack_fighter && target_planet) {
-            AttackFighterPlanet(    attack_fighter, weapon, target_planet,  combat_info, bout, round, attacks_event);
+            AttackFighterPlanet(    attack_fighter, weapon, target_planet,  combat_info, attacks_event);
         } else if (attack_fighter && target_fighter) {
-            AttackFighterFighter(   attack_fighter, weapon, target_fighter, combat_info, bout, round, fighter_on_fighter_event);
+            AttackFighterFighter(   attack_fighter, weapon, target_fighter, combat_info, fighter_on_fighter_event);
         }
     }
 
@@ -1363,7 +1356,7 @@ namespace {
     }
 
     void ShootAllWeapons(UniverseObject* attacker,
-                         AutoresolveInfo& combat_state, int round,
+                         AutoresolveInfo& combat_state,
                          AttacksEventPtr& attacks_event,
                          WeaponsPlatformEvent::WeaponsPlatformEventPtr& platform_event,
                          std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
@@ -1480,7 +1473,6 @@ namespace {
 
             // do actual attacks
             Attack(attacker, weapon, target, combat_state.combat_info,
-                   combat_state.combat_info.bout, round,
                    attacks_event, platform_event, fighter_on_fighter_event);
 
         } // end for over weapons
@@ -1528,7 +1520,7 @@ namespace {
 
     void LaunchFighters(UniverseObject* attacker,
                         const std::vector<PartAttackInfo>& weapons,
-                        AutoresolveInfo& combat_state, int round,
+                        AutoresolveInfo& combat_state,
                         FighterLaunchesEventPtr& launches_event)
     {
         if (weapons.empty()) {
@@ -1710,7 +1702,6 @@ namespace {
         auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(combat_info.bout);
         bout_event->AddEvent(fighter_on_fighter_event);
 
-        int round = 1;  // counter of events during the current combat bout
         const int NUM_COMBAT_ROUNDS = GetGameRules().Get<int>("RULE_NUM_COMBAT_ROUNDS");
 
         // TODO: cache results of GetWeapons(attacker) to avoid re-calling multiple times per combat.
@@ -1733,7 +1724,7 @@ namespace {
                 combat_info.bout, planet->ID(), planet->Owner());
             attacks_event->AddEvent(platform_event);
 
-            ShootAllWeapons(planet, combat_state, round++,
+            ShootAllWeapons(planet, combat_state,
                             attacks_event, platform_event, fighter_on_fighter_event);
         }
 
@@ -1756,7 +1747,7 @@ namespace {
             auto platform_event = std::make_shared<WeaponsPlatformEvent>(
                 combat_info.bout, attacker->ID(), attacker->Owner());
 
-            ShootAllWeapons(attacker, combat_state, round++,
+            ShootAllWeapons(attacker, combat_state,
                             attacks_event, platform_event, fighter_on_fighter_event);
 
             if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
@@ -1779,7 +1770,7 @@ namespace {
                 }
                 auto weapons = GetWeapons(attacker, combat_info.universe); // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with ShipPartClass::PC_DIRECT_WEAPON part class
 
-                LaunchFighters(attacker, weapons, combat_state, round++, launches_event);
+                LaunchFighters(attacker, weapons, combat_state, launches_event);
 
                 DebugLogger(combat) << "Attacker: " << attacker->Name();
 
