@@ -47,11 +47,54 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
     using namespace boost::serialization;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
-    ar & make_nvp("bout", obj.bout)
-       & make_nvp("events", obj.events);
+    ar & make_nvp("bout", obj.bout);
+    if (Archive::is_loading::value && version < 5) {
+        std::vector<CombatEventPtr> events;
+        ar & make_nvp("events", events);
+
+        // expect sub-events in BoutEvent::events were added in order:
+        // in CombatRound: AttacksEvent, FightersAttackFightersEvent, FighterLaunchesEvent
+        // and in CullTheDead: FightersDestroyedEvent, IncapacitationsEvent.
+        // But not necessarily all were added, as some were skipped if empty.
+        // Weapon firings, weapon platform firings, and incapacitations were all stored in
+        // SimultaneousEvents, so need to inspect contents to disambiguate.
+        for (auto& event : events) {
+            if (auto simultaneous_events = std::dynamic_pointer_cast<SimultaneousEvents>(event)) {
+                // sort sub-events into appropriate containers
+                for (auto& sub_event : simultaneous_events->Events()) {
+                    if (auto wfe = std::dynamic_pointer_cast<WeaponFireEvent>(sub_event))
+                        obj.weapon_firings.AddEvent(std::move(wfe));
+                    else if (auto wpfe = std::dynamic_pointer_cast<WeaponsPlatformEvent>(sub_event))
+                        obj.weapons_platform_firings.AddEvent(std::move(wpfe));
+                    else if (auto ie = std::dynamic_pointer_cast<IncapacitationEvent>(sub_event))
+                        obj.incapacitations.AddEvent(std::move(ie));
+                    else if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
+                        obj.fighter_launches.AddEvent(std::move(le));
+                    else
+                        ErrorLogger() << "unrecognized/unexpected sub-event in SimultaneousEvents in BoutEvent! typeid: " << typeid(*sub_event).name();
+                }
+
+            } else if (auto fighters_destroyed = std::dynamic_pointer_cast<FightersDestroyedEvent>(event)) {
+                obj.fighters_destroyed = std::move(*fighters_destroyed);
+
+            } else if (auto fighters_attack_fighters = std::dynamic_pointer_cast<FightersAttackFightersEvent>(event)) {
+                obj.fighters_attack_fighters = std::move(*fighters_attack_fighters);
+
+            } else {
+                ErrorLogger() << "unrecognized/unexpected sub-event in BoutEvent! event: " << typeid(*event).name();
+            }
+        }
+    } else {
+       ar & make_nvp("weapon_firings", obj.weapon_firings)
+          & make_nvp("weapon_platform_firings", obj.weapons_platform_firings)
+          & make_nvp("fighter_launches", obj.fighter_launches)
+          & make_nvp("fighters_destroyed", obj.fighters_destroyed)
+          & make_nvp("fighters_attack_fighters", obj.fighters_attack_fighters)
+          & make_nvp("incapacitations", obj.incapacitations);
+    }
 }
 
-BOOST_CLASS_VERSION(BoutEvent, 4)
+BOOST_CLASS_VERSION(BoutEvent, 5)
 BOOST_CLASS_EXPORT(BoutEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, BoutEvent&, unsigned int const);
