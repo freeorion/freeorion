@@ -411,8 +411,7 @@ std::vector<ConstCombatEventPtr> StealthChangeEvent::SubEvents(int) const {
 //////////////////////////////////////////
 std::string WeaponFireEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
-    ss << "rnd: " << round << " : "
-       << attacker_id << " -> " << target_id << " : " << weapon_name << " "
+    ss << attacker_id << " -> " << target_id << " : " << weapon_name << " "
        << power << " - " << shield << " = " << damage << "   attacker owner: " << attacker_owner_id;
     return ss.str();
 }
@@ -426,9 +425,7 @@ std::string WeaponFireEvent::CombatLogDescription(int viewing_empire_id, const S
     return str(FlexibleFormat(template_str)
                % attacker_link
                % target_link
-               % damage
-               % bout
-               % round);
+               % damage);
 }
 
 std::string WeaponFireEvent::CombatLogDetails(int) const {
@@ -665,13 +662,13 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
 //////////////////////////////////////////
 ///////// WeaponsPlatformEvent /////////////
 //////////////////////////////////////////
-void WeaponsPlatformEvent::AddEvent(int round_, int target_id_, int target_owner_id_,
+void WeaponsPlatformEvent::AddEvent(int target_id_, int target_owner_id_,
                                     const std::string& weapon_name_, float power_,
                                     float shield_, float damage_)
 {
     events[target_id_].push_back(
         std::make_shared<WeaponFireEvent>(
-            bout, round_, attacker_id, target_id_, weapon_name_,
+            attacker_id, target_id_, weapon_name_,
             std::tie(power_, shield_, damage_),
             attacker_owner_id, target_owner_id_));
 }
