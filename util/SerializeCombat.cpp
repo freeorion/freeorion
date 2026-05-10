@@ -660,17 +660,22 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Incapac
 
 
 template <typename Archive>
-void serialize(Archive& ar, FightersAttackFightersEvent& obj, unsigned int const)
+void serialize(Archive& ar, FightersAttackFightersEvent& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
-    ar & make_nvp("bout", obj.bout)
-       & make_nvp("events", obj.events);
+    if constexpr (Archive::is_loading::value) {
+        if (version < 5) {
+            int ignored = -1;
+            ar >> make_nvp("bout", ignored);
+        }
+    }
+    ar & make_nvp("events", obj.events);
 }
 
-BOOST_CLASS_VERSION(FightersAttackFightersEvent, 4)
+BOOST_CLASS_VERSION(FightersAttackFightersEvent, 5)
 BOOST_CLASS_EXPORT(FightersAttackFightersEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FightersAttackFightersEvent&, unsigned int const);
