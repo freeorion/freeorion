@@ -255,9 +255,6 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
 /** FightersAttackFightersEvent aggregates all the fighter on fighter combat for one bout.*/
 struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
     [[nodiscard]] FightersAttackFightersEvent() = default;
-    [[nodiscard]] explicit FightersAttackFightersEvent(int bout_) :
-        bout(bout_)
-    {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
@@ -265,8 +262,6 @@ struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
     { events[{attacker_empire_, target_empire_}] += 1; }
 
 private:
-    int bout = 0;
-
     // Store the number of each of the identical fighter combat events.
     std::map<std::pair<int, int>, unsigned int> events;
 

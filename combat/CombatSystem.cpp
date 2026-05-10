@@ -1707,7 +1707,7 @@ namespace {
         }
         bout_event->AddEvent(attacks_event);
 
-        auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(combat_info.bout);
+        auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>();
         if (!fighter_on_fighter_event) {
             ErrorLogger() << "unable to create FightersAttackFightersEvent!";
             return;
