@@ -1085,7 +1085,7 @@ namespace {
                     // again next round (ships have a minimal structure test instead)
                     delete_list.push_back(obj->ID());
                 } else {
-                    incaps_event->AddEvent(std::make_shared<IncapacitationEvent>(bout, obj->ID(), obj->Owner()));
+                    incaps_event->AddEvent(std::make_shared<IncapacitationEvent>(obj->ID(), obj->Owner()));
                 }
             }
 
