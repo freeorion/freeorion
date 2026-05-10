@@ -1772,7 +1772,7 @@ namespace {
                 attacks_event->AddEvent(std::move(platform_event));
         }
 
-        auto stealth_change_event = std::make_shared<StealthChangeEvent>(combat_info.bout);
+        auto stealth_change_event = std::make_shared<StealthChangeEvent>();
 
         // Launch fighters (which can attack in any subsequent combat bouts).
         // There is no point to launching fighters during the last bout, since
