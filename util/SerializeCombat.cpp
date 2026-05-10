@@ -691,12 +691,18 @@ void serialize(Archive& ar, FighterLaunchEvent& obj, unsigned int const version)
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
-    ar & make_nvp("bout", obj.bout)
-       & make_nvp("fighter_owner_empire_id", obj.fighter_owner_empire_id)
+    if constexpr (Archive::is_loading::value) {
+        if (version < 1) {
+            int ignored = -1;
+            ar >> make_nvp("bout", ignored);
+        }
+    }
+    ar & make_nvp("fighter_owner_empire_id", obj.fighter_owner_empire_id)
        & make_nvp("launched_from_id", obj.launched_from_id)
        & make_nvp("number_launched", obj.number_launched);
 }
 
+BOOST_CLASS_VERSION(FighterLaunchEvent, 1)
 BOOST_CLASS_EXPORT(FighterLaunchEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FighterLaunchEvent&, unsigned int const);

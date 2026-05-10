@@ -1568,7 +1568,7 @@ namespace {
 
             // combat event
             launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
-                combat_state.combat_info.bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size()));
+                attacker->ID(), attacker_owner_id, new_fighter_ids.size()));
 
 
             // reduce hangar capacity (contents) corresponding to launched fighters
@@ -1669,8 +1669,7 @@ namespace {
             }
             IncreaseStoredFighterCount(*ship, fighter_count, combat_info.universe);
             // launching negative ships indicates recovery of them
-            launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(
-                bout, ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
+            launches_event->AddEvent(std::make_shared<FighterLaunchEvent>(ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
         }
     }
 
