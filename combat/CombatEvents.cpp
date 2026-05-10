@@ -558,9 +558,8 @@ std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id,
 std::string FightersDestroyedEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "FightersDestroyedEvent: ";
-    for (auto& [empire_id, count] : events) {
+    for (auto& [empire_id, count] : events)
         ss << count << " repeated fighters from empire " << empire_id << " destroyed.";
-    }
     return ss.str();
 }
 
