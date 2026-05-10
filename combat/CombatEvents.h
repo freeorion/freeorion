@@ -300,17 +300,12 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
 /** FightersDestroyedEvent aggregates all the fighters destroyed during one combat bout.*/
 struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
     [[nodiscard]] FightersDestroyedEvent() = default;
-    [[nodiscard]] explicit FightersDestroyedEvent(int bout_) :
-        bout(bout_)
-    {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
     void AddEvent(int target_empire_) { events[target_empire_] += 1; }
 
 private:
-    int bout = 0;
-
     // Store the number of each of the identical fighter combat events.
     std::map<int, unsigned int> events;
 

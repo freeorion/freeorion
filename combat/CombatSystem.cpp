@@ -1060,7 +1060,7 @@ namespace {
 
         /// Removes dead units from lists of attackers and defenders
         void CullTheDead(int bout, BoutEvent::BoutEventPtr& bout_event) {
-            auto fighters_destroyed_event = std::make_shared<FightersDestroyedEvent>(bout);
+            auto fighters_destroyed_event = std::make_shared<FightersDestroyedEvent>();
             bool at_least_one_fighter_destroyed = false;
 
             IncapacitationsEventPtr incaps_event = std::make_shared<IncapacitationsEvent>();
