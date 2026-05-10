@@ -698,11 +698,14 @@ void serialize(Archive& ar, FightersDestroyedEvent& obj, unsigned int const vers
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
 
-    ar & make_nvp("bout", obj.bout)
-       & make_nvp("events", obj.events);
+    if (version < 5) {
+        int ignored = -1;
+        ar & make_nvp("bout", ignored);
+    }
+    ar & make_nvp("events", obj.events);
 }
 
-BOOST_CLASS_VERSION(FightersDestroyedEvent, 4)
+BOOST_CLASS_VERSION(FightersDestroyedEvent, 5)
 BOOST_CLASS_EXPORT(FightersDestroyedEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FightersDestroyedEvent&, unsigned int const);
