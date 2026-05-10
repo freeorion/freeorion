@@ -272,9 +272,7 @@ private:
 /// Created when an fighter is launched
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     [[nodiscard]] constexpr FighterLaunchEvent() noexcept = default;
-    [[nodiscard]] constexpr FighterLaunchEvent(int bout_, int launched_from_id_,
-                                               int fighter_owner_empire_id_, int number_launched_) noexcept :
-        bout(bout_),
+    [[nodiscard]] constexpr FighterLaunchEvent(int launched_from_id_, int fighter_owner_empire_id_, int number_launched_) noexcept :
         fighter_owner_empire_id(fighter_owner_empire_id_),
         launched_from_id(launched_from_id_),
         number_launched(number_launched_)
@@ -284,7 +282,6 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
     [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return fighter_owner_empire_id; }
 
-    int bout = 0;
     int fighter_owner_empire_id = ALL_EMPIRES;
     int launched_from_id = INVALID_OBJECT_ID;
     int number_launched = 0;

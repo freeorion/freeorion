@@ -527,8 +527,7 @@ std::string FighterLaunchEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
     ss << "launch from object " << launched_from_id
        << " of " << number_launched
-       << " fighter(s) of empire " << fighter_owner_empire_id
-       << " at bout " << bout;
+       << " fighter(s) of empire " << fighter_owner_empire_id;
     return ss.str();
 }
 
