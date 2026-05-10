@@ -194,14 +194,14 @@ private:
 struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
     [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent() noexcept(CombatEventDetail::nxstr) = default;
 
-    /** WeaponFireEvent encodes a single attack in \p bout, \p round by \p
-        attacker_id owned by \p attacker_owner_id on \p target_id with \p
-        weapon_name of \p power against \p shield doing \p damage.
+    /** WeaponFireEvent encodes a single attack by \p attacker_id owned
+      * by \p attacker_owner_id on \p target_id with \p weapon_name of
+      * \p power against \p shield doing \p damage.
+      *
+      * If \p shield is negative that implies the weapon is shield piercing.
 
-        If \p shield is negative that implies the weapon is shield piercing.
-
-        The use of tuple in the constructor is to keep the number of parameters below 10 which
-        is the maximum that some compilers that emulate variadic templates support. */
+      * The use of tuple in the constructor is to keep the number of parameters below 10 which
+      * is the maximum that some compilers that emulate variadic templates support. */
     [[nodiscard]] CONSTEXPR_STRING WeaponFireEvent(int attacker_id_, int target_id_,
                                                    std::string weapon_name_,
                                                    const std::tuple<float, float, float>& power_shield_damage,
