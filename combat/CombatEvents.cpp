@@ -421,7 +421,7 @@ std::string WeaponFireEvent::CombatLogDetails(int) const {
 //////////////////////////////////////////
 std::string IncapacitationEvent::DebugString(const ScriptingContext&) const {
     std::stringstream ss;
-    ss << "incapacitation of " << object_id << " owned by " << object_owner_id << " at bout " << bout;
+    ss << "incapacitation of " << object_id << " owned by " << object_owner_id;
     return ss.str();
 }
 

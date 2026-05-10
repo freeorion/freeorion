@@ -234,12 +234,11 @@ struct FO_COMMON_API WeaponFireEvent final : public CombatEvent {
 };
 
 
-/// Created when an object becomes unable to fight anymore,
-/// eg. a ship is destroyed or a planet loses all defence
+/** Created when an object becomes unable to fight anymore,
+  * eg. a ship is destroyed or a planet loses all defence. */
 struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     [[nodiscard]] constexpr IncapacitationEvent() noexcept = default;
-    [[nodiscard]] constexpr IncapacitationEvent(int bout_, int object_id_, int object_owner_id_) noexcept :
-        bout(bout_),
+    [[nodiscard]] constexpr IncapacitationEvent(int object_id_, int object_owner_id_) noexcept :
         object_id(object_id_),
         object_owner_id(object_owner_id_)
     {}
@@ -248,7 +247,6 @@ struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
     [[nodiscard]] std::optional<int> PrincipalFaction(int viewing_empire_id) const noexcept override { return object_owner_id; }
 
-    int bout = -1;
     int object_id = INVALID_OBJECT_ID;
     int object_owner_id = ALL_EMPIRES;
 };
