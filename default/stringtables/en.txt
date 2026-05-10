@@ -5706,6 +5706,9 @@ Invade %1% with %2%
 ORDER_BOMBARD
 Bombard %1% with %2%
 
+ORDER_STOP_BOMBARD
+Stop Bombard %1% with %2%
+
 ORDER_FOCUS_CHANGE
 Focus Change %1% to %2%
 

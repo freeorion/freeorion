@@ -23,6 +23,7 @@ BOOST_CLASS_EXPORT(AnnexOrder)
 BOOST_CLASS_EXPORT(ColonizeOrder)
 BOOST_CLASS_EXPORT(InvadeOrder)
 BOOST_CLASS_EXPORT(BombardOrder)
+BOOST_CLASS_EXPORT(StopBombardOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(PolicyOrder)
 BOOST_CLASS_VERSION(PolicyOrder, 2)
@@ -43,6 +44,7 @@ void Order::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_empire);
     // m_executed is intentionally not serialized so that orders always
+
     // deserialize with m_execute = false.  See class comment for OrderSet.
     if constexpr (Archive::is_loading::value) {
         if (version < 1) {
@@ -123,6 +125,14 @@ void InvadeOrder::serialize(Archive& ar, const unsigned int version)
 
 template <typename Archive>
 void BombardOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_ship)
+        & BOOST_SERIALIZATION_NVP(m_planet);
+}
+
+template <typename Archive>
+void StopBombardOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_ship)
