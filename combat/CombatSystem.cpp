@@ -1059,7 +1059,7 @@ namespace {
         }
 
         /// Removes dead units from lists of attackers and defenders
-        void CullTheDead(int bout, BoutEvent& bout_event) {
+        void CullTheDead(BoutEvent& bout_event) {
             FightersDestroyedEvent fighters_destroyed_event;
             bool at_least_one_fighter_destroyed = false;
 
@@ -1633,7 +1633,7 @@ namespace {
         }
     }
 
-    void RecoverFighters(CombatInfo& combat_info, int bout, FighterLaunchesEvent& launches_event) {
+    void RecoverFighters(CombatInfo& combat_info, FighterLaunchesEvent& launches_event) {
         std::map<int, float> ships_fighters_to_add_back;
         DebugLogger() << "Recovering fighters at end of combat...";
 
@@ -1860,7 +1860,7 @@ namespace {
             combat_info.combat_events.push_back(std::move(stealth_change_event));
 
         /// Remove all who died in the bout
-        combat_state.CullTheDead(combat_info.bout, *bout_event);
+        combat_state.CullTheDead(*bout_event);
 
         // Backpropagate meters so that next round tests can use the results of the previous round
         for (auto* obj : combat_info.objects.allRaw())
@@ -1918,7 +1918,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
     if (auto launches_event = std::make_shared<FighterLaunchesEvent>()) {
         combat_info.combat_events.push_back(launches_event);
-        RecoverFighters(combat_info, last_bout, *launches_event);
+        RecoverFighters(combat_info, *launches_event);
     }
 
     DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
