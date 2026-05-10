@@ -139,9 +139,6 @@ private:
     At this time always decloaking.*/
 struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     [[nodiscard]] StealthChangeEvent() = default;
-    [[nodiscard]] explicit StealthChangeEvent(int bout_) :
-        bout(bout_)
-    {}
 
     [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
     [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
@@ -185,7 +182,6 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     };
 
 private:
-    int bout = -1;
     std::vector<StealthChangeEventDetail> events;
 
     template <typename Archive>
