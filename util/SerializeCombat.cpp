@@ -416,7 +416,10 @@ void serialize(Archive& ar, StealthChangeEvent& obj, unsigned int const version)
     using boost::serialization::base_object;
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
-    ar & make_nvp("bout", obj.bout);
+    if (version < 6) {
+        int ignored = -1;
+        ar & make_nvp("bout", ignored);
+    }
 
     if constexpr (Archive::is_loading::value) {
         if (version < 5) {
@@ -438,7 +441,7 @@ void serialize(Archive& ar, StealthChangeEvent& obj, unsigned int const version)
     }
 }
 
-BOOST_CLASS_VERSION(StealthChangeEvent, 5)
+BOOST_CLASS_VERSION(StealthChangeEvent, 6)
 BOOST_CLASS_EXPORT(StealthChangeEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, StealthChangeEvent&, unsigned int const);
