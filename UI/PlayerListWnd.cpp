@@ -304,11 +304,6 @@ namespace {
             if (m_host)
                 HostIcon(ui)->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
 
-            // render diplomatic status indicators
-            m_war_indicator->Render();
-            m_peace_indicator->Render();
-            m_allied_indicator->Render();
-
             // render win/lose icon
             switch (m_win_status)
             {
