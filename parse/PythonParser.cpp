@@ -213,8 +213,6 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
     }
 
     try {
-        py::import("builtins").attr("parser_context") = true;
-
         py::register_exception_translator<import_error>(&translate);
 
         py::class_<PythonParser, py::bases<>, PythonParser, boost::noncopyable>("PythonParser", py::no_init)
