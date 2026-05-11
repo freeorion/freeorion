@@ -39,7 +39,7 @@ namespace {
         {
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals, parser);
+            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 

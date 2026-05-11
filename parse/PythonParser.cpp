@@ -175,6 +175,21 @@ struct module_spec {
     std::string parent;
 };
 
+PythonTypes::PythonTypes() {
+    auto builtings = py::import("builtins");
+    type_int = builtings.attr("int");
+    type_float = builtings.attr("float");
+    type_bool = builtings.attr("bool");
+    type_str = builtings.attr("str");
+}
+
+PythonTypes::~PythonTypes() {
+    type_int = py::object();
+    type_float = py::object();
+    type_bool = py::object();
+    type_str = py::object();
+}
+
 PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir) :
     m_python(_python),
     m_scripting_dir(scripting_dir)
@@ -198,10 +213,6 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
     }
 
     try {
-        type_int = py::import("builtins").attr("int");
-        type_float = py::import("builtins").attr("float");
-        type_bool = py::import("builtins").attr("bool");
-        type_str = py::import("builtins").attr("str");
         py::import("builtins").attr("parser_context") = true;
 
         py::register_exception_translator<import_error>(&translate);
@@ -452,10 +463,6 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
 PythonParser::~PythonParser() {
     try {
         m_meta_path->pop(m_meta_path_len - 1);
-        type_int = py::object();
-        type_float = py::object();
-        type_bool = py::object();
-        type_str = py::object();
         m_meta_path = boost::none;
     } catch (const py::error_already_set&) {
         ErrorLogger() << "Python parser destructor throw exception";
@@ -587,7 +594,7 @@ py::object PythonParser::exec_module(py::object& module) {
             try {
                 RegisterGlobalsEffects(m_dict);
                 RegisterGlobalsConditions(m_dict);
-                RegisterGlobalsValueRefs(m_dict, *this);
+                RegisterGlobalsValueRefs(m_dict);
                 RegisterGlobalsSources(m_dict);
                 RegisterGlobalsEnums(m_dict);
 

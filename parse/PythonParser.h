@@ -12,6 +12,16 @@ class PythonCommon;
 
 struct module_spec;
 
+struct FO_PARSE_API PythonTypes {
+    PythonTypes();
+    ~PythonTypes();
+
+    boost::python::object type_int;
+    boost::python::object type_float;
+    boost::python::object type_bool;
+    boost::python::object type_str;
+};
+
 class FO_PARSE_API PythonParser {
 public:
     PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir);
@@ -37,11 +47,6 @@ public:
     void LoadConditionsModule() const;
     void LoadValueRefsModule() const;
     void LoadEffectsModule() const;
-
-    boost::python::object type_int;
-    boost::python::object type_float;
-    boost::python::object type_bool;
-    boost::python::object type_str;
 private:
     boost::python::object find_spec(const std::string& fullname, const boost::python::object& path, const boost::python::object& target) const;
     boost::python::object create_module(const module_spec& spec);
