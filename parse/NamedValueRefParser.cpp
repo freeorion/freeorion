@@ -135,14 +135,12 @@ namespace parse {
 
     struct py_grammar {
         boost::python::dict globals;
-        const PythonParser& parser;
 
-        py_grammar(const PythonParser& parser_) :
-            globals(boost::python::import("builtins").attr("__dict__")),
-            parser(parser_)
+        py_grammar(const PythonParser& parser) :
+            globals(boost::python::import("builtins").attr("__dict__"))
         {
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals, parser_);
+            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 

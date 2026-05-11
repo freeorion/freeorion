@@ -7,6 +7,7 @@
 #include <boost/python/module.hpp>
 #include <boost/python/raw_function.hpp>
 
+#include "PythonParser.h"
 #include "ValueRefPythonParser.h"
 
 namespace py = boost::python;
@@ -72,14 +73,14 @@ namespace {
         ));
     }
 
-    py::object insert_random_number_operation(const py::object& type_int, const py::object& type_float, const py::object& type, const py::object& min, const py::object& max) {
-        if (type == type_int) {
+    py::object insert_random_number_operation(const PythonTypes& types, const py::object& type, const py::object& min, const py::object& max) {
+        if (type == types.type_int) {
             auto min_arg = pyobject_to_vref<int>(min);
             auto max_arg = pyobject_to_vref<int>(max);
             return py::object(value_ref_wrapper<int>(std::make_shared<ValueRef::Operation<int>>(ValueRef::OpType::RANDOM_UNIFORM,
                 std::move(min_arg),
                 std::move(max_arg))));
-        } else if (type == type_float) {
+        } else if (type == types.type_float) {
             auto min_arg = pyobject_to_vref_or_cast<double, int>(min);
             auto max_arg = pyobject_to_vref_or_cast<double, int>(max);
             return py::object(value_ref_wrapper<double>(std::make_shared<ValueRef::Operation<double>>(ValueRef::OpType::RANDOM_UNIFORM,
@@ -92,14 +93,14 @@ namespace {
     }
 
     template <typename T>
-    boost::python::object insert_reduce_vector_(const py::object& type_int, const py::object& type_float, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
+    boost::python::object insert_reduce_vector_(const PythonTypes& types, const ValueRef::StatisticType type, const boost::python::tuple& args, const boost::python::dict& kw) {
         auto vector = boost::python::extract<value_ref_wrapper<std::vector<T>>>(args[1]);
         if (!vector.check()) {
             ErrorLogger() << "No vector vref in ReduceVector";
         }
-        if (args[0] == type_int) {
+        if (args[0] == types.type_int) {
             return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ReduceVector<int,T>>(ValueRef::CloneUnique(vector().value_ref), type)));
-        } else if (args[0] == type_float) {
+        } else if (args[0] == types.type_float) {
             ErrorLogger() << "insert_reduce_vector_(parser.type_float) using untested functionality - remove this log entry after test";
             return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ReduceVector<double,T>>(ValueRef::CloneUnique(vector().value_ref), type)));
         //} else if (args[0] == type_str) { // only supporting arithmetic T currently
@@ -145,17 +146,16 @@ BOOST_PYTHON_MODULE(_value_refs) {
         py::scope().attr(variable) = value_ref_wrapper<double>(std::make_shared<ValueRef::Variable<double>>(ValueRef::ReferenceType::NON_OBJECT_REFERENCE, variable));
     }
 
-    const auto type_int = py::import("builtins").attr("int");
-    const auto type_float = py::import("builtins").attr("float");
+    const PythonTypes types;
 
     py::def("EmpireAdoptedPolicies", boost::python::raw_function(insert_empire_adopted_policies_));
 
     py::def("RandomNumber", py::make_function(
-        [type_int, type_float](const py::object& type, const py::object& min, const py::object& max) { return insert_random_number_operation(type_int, type_float, type, min, max); },
+        [types](const py::object& type, const py::object& min, const py::object& max) { return insert_random_number_operation(types, type, min, max); },
         py::default_call_policies(),
         boost::mpl::vector<py::object, const py::object&, const py::object&, const py::object&>()));
 
-    const auto f_insert_vector_count = [type_int, type_float](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_reduce_vector_<std::string>(type_int, type_float, ValueRef::StatisticType::COUNT, args, kw); };
+    const auto f_insert_vector_count = [types](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_reduce_vector_<std::string>(types, ValueRef::StatisticType::COUNT, args, kw); };
     py::def("VectorCount", boost::python::raw_function(f_insert_vector_count, 1));
 }
 

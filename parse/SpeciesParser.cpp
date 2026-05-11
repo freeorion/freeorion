@@ -22,21 +22,6 @@ namespace {
     DeclareThreadSafeLogger(parsing);
 }
 
-#define DEBUG_PARSERS 0
-
-#if DEBUG_PARSERS
-namespace std {
-    inline ostream& operator<<(ostream& os, const FocusType&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<FocusType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const parse::effects_group_payload&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<PlanetType, PlanetEnvironment>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const PlanetType, PlanetEnvironment>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<PlanetType, PlanetEnvironment>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<Species>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<Species>>&) { return os; }
-}
-#endif
-
 namespace {
     using start_rule_payload = std::pair<
         std::map<std::string, const Species, std::less<>>, // species_by_name
@@ -143,12 +128,12 @@ namespace {
     struct py_grammar {
         boost::python::dict globals;
 
-        py_grammar(const PythonParser& parser, start_rule_payload::first_type& species_) :
+        py_grammar(start_rule_payload::first_type& species_) :
             globals(boost::python::import("builtins").attr("__dict__"))
         {
             RegisterGlobalsEffects(globals);
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals, parser);
+            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 
@@ -181,7 +166,7 @@ namespace parse {
         ScopedTimer timer("Species Parsing");
 
         bool file_success = true;
-        py_grammar p = py_grammar(parser, species_);
+        py_grammar p = py_grammar(species_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.py" ) {
                 manifest_file = file;

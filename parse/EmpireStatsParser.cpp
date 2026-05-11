@@ -37,7 +37,7 @@ namespace {
             stats(stats_)
         {
             RegisterGlobalsConditions(globals);
-            RegisterGlobalsValueRefs(globals, parser);
+            RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
 

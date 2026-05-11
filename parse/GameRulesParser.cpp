@@ -21,11 +21,7 @@ struct grammar;
 object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple& args, const dict& kw);
 
 struct grammar {
-    const PythonParser& m_parser;
-
-    grammar(const PythonParser& parser) :
-        m_parser(parser)
-    {}
+    const PythonTypes m_types;
 
     dict operator()(GameRulesTypeMap& game_rules) const {
         dict globals(import("builtins").attr("__dict__"));
@@ -42,7 +38,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
     uint32_t rank{extract<uint32_t>(kw["rank"])()};
 
 
-    if (type_ == g.m_parser.type_int) {
+    if (type_ == g.m_types.type_int) {
         int default_value{extract<int>(kw["default"])()};
         int min{extract<int>(kw["min"])()};
         int max{extract<int>(kw["max"])()};
@@ -53,7 +49,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                                                    std::move(desc), std::make_unique<RangedValidator<int>>(min, max),
                                                    false, rank, std::move(category)});
 
-    } else if (type_ == g.m_parser.type_float) {
+    } else if (type_ == g.m_types.type_float) {
         double default_value{extract<double>(kw["default"])()};
         double min{extract<double>(kw["min"])()};
         double max{extract<double>(kw["max"])()};
@@ -64,7 +60,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                                                    std::move(desc), std::make_unique<RangedValidator<double>>(min, max),
                                                    false, rank, std::move(category)});
 
-    } else if (type_ == g.m_parser.type_bool) {
+    } else if (type_ == g.m_types.type_bool) {
         bool default_value{extract<bool>(kw["default"])()};
         DebugLogger() << "Adding Boolean game rule with name: " << name
                       << ", desc: " << desc << ", default: " << default_value;
@@ -72,7 +68,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
                                                    std::move(desc), std::make_unique<Validator<bool>>(),
                                                    false, rank, std::move(category)});
 
-    } else if (type_ == g.m_parser.type_str) {
+    } else if (type_ == g.m_types.type_str) {
         auto default_value{extract<std::string>(kw["default"])()};
         std::vector<std::string> allowed{stl_input_iterator<std::string>(kw["allowed"]),
                                       stl_input_iterator<std::string>()};
@@ -101,7 +97,7 @@ object insert_rule_(const grammar& g, GameRulesTypeMap& game_rules, const tuple&
 namespace parse {
     GameRulesTypeMap game_rules(const PythonParser& parser, const std::filesystem::path& path, bool& success) {
         GameRulesTypeMap game_rules;
-        success = py_parse::detail::parse_file<grammar, GameRulesTypeMap>(parser, path, grammar(parser), game_rules);
+        success = py_parse::detail::parse_file<grammar, GameRulesTypeMap>(parser, path, grammar(), game_rules);
         return game_rules;
     }
 }
