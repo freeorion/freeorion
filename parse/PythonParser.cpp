@@ -164,17 +164,15 @@ namespace {
 }
 
 struct module_spec {
-    module_spec(const std::string& name, const std::string& parent_, const PythonParser& parser_) :
+    module_spec(const std::string& name, const std::string& parent_) :
         fullname(name),
-        parent(parent_),
-        parser(parser_)
+        parent(parent_)
     {}
 
     py::list path;
     py::list uninitialized_submodules;
     std::string fullname;
     std::string parent;
-    const PythonParser& parser;
 };
 
 PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir) :
@@ -543,11 +541,11 @@ py::object PythonParser::find_spec(const std::string& fullname, const py::object
     }
 
     if (IsExistingDir(module_path)) {
-        return py::object(module_spec(fullname, parent, *this));
+        return py::object(module_spec(fullname, parent));
     } else {
         module_path.replace_extension("py");
         if (IsExistingFile(module_path))
-            return py::object(module_spec(fullname, parent, *this));
+            return py::object(module_spec(fullname, parent));
         else if (fullname == "_typing") {
             return py::object();
         } else {
