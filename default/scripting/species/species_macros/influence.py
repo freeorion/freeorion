@@ -5,6 +5,7 @@ from focs._effects import (
     EmpireHasAdoptedPolicy,
     Focus,
     GalaxyMaxAIAggression,
+    GameRule,
     Happiness,
     HasSpecies,
     HasTag,
@@ -13,6 +14,7 @@ from focs._effects import (
     IsHuman,
     IsSource,
     LocalCandidate,
+    MinOf,
     NamedReal,
     OwnedBy,
     Planet,
@@ -47,69 +49,75 @@ _BASE_INFLUENCE_COSTS = [
             value=Value
             - NamedReal(name="COLONY_ADMIN_COSTS_PER_PLANET", value=0.4)
             * (
-                (
-                    StatisticCount(
-                        float,
-                        condition=Planet()
-                        & OwnedBy(empire=Source.Owner)
-                        & HasSpecies()
-                        & ~HasSpecies(name=["SP_EXOBOT"]),
-                    )
-                    + StatisticCount(
-                        float,
-                        condition=Ship & OwnedBy(empire=Source.Owner) & (LocalCandidate.OrderedColonizePlanetID != -1),
-                    )
-                    + StatisticCount(
-                        float,
-                        condition=IsBuilding()
-                        & OwnedBy(empire=Source.Owner)
-                        & IsBuilding(
-                            name=[
-                                "BLD_COL_SUPER_TEST",
-                                "BLD_COL_ABADDONI",
-                                "BLD_COL_BANFORO",
-                                "BLD_COL_CHATO",
-                                "BLD_COL_CRAY",
-                                "BLD_COL_DERTHREAN",
-                                "BLD_COL_EAXAW",
-                                "BLD_COL_EGASSEM",
-                                "BLD_COL_ETTY",
-                                "BLD_COL_FULVER",
-                                "BLD_COL_FURTHEST",
-                                "BLD_COL_GEORGE",
-                                "BLD_COL_GYSACHE",
-                                "BLD_COL_HAPPY",
-                                "BLD_COL_HHHOH",
-                                "BLD_COL_HUMAN",
-                                "BLD_COL_KILANDOW",
-                                "BLD_COL_KOBUNTURA",
-                                "BLD_COL_LAENFA",
-                                "BLD_COL_MISIORLA",
-                                "BLD_COL_MUURSH",
-                                "BLD_COL_PHINNERT",
-                                "BLD_COL_SCYLIOR",
-                                "BLD_COL_SETINON",
-                                "BLD_COL_SILEXIAN",
-                                "BLD_COL_SLY",
-                                "BLD_COL_SSLITH",
-                                "BLD_COL_TAEGHIRUS",
-                                "BLD_COL_TRITH",
-                                "BLD_COL_REPLICON",
-                                "BLD_COL_UGMORS",
-                            ]
-                        ),
-                    )
-                    + (
-                        NamedReal(name="OUTPOST_RELATIVE_ADMIN_COUNT", value=0.25)
-                        * (
-                            StatisticCount(
-                                float,
-                                condition=Planet()
-                                & OwnedBy(empire=Source.Owner)
-                                & (~HasSpecies() | HasSpecies(name=["SP_EXOBOT"])),
+                MinOf(
+                    float,
+                    GameRule(type=int, name="RULE_COLONY_ADMIN_COSTS_PLANET_LIMIT"),
+                    (
+                        StatisticCount(
+                            float,
+                            condition=Planet()
+                            & OwnedBy(empire=Source.Owner)
+                            & HasSpecies()
+                            & ~HasSpecies(name=["SP_EXOBOT"]),
+                        )
+                        + StatisticCount(
+                            float,
+                            condition=Ship
+                            & OwnedBy(empire=Source.Owner)
+                            & (LocalCandidate.OrderedColonizePlanetID != -1),
+                        )
+                        + StatisticCount(
+                            float,
+                            condition=IsBuilding()
+                            & OwnedBy(empire=Source.Owner)
+                            & IsBuilding(
+                                name=[
+                                    "BLD_COL_SUPER_TEST",
+                                    "BLD_COL_ABADDONI",
+                                    "BLD_COL_BANFORO",
+                                    "BLD_COL_CHATO",
+                                    "BLD_COL_CRAY",
+                                    "BLD_COL_DERTHREAN",
+                                    "BLD_COL_EAXAW",
+                                    "BLD_COL_EGASSEM",
+                                    "BLD_COL_ETTY",
+                                    "BLD_COL_FULVER",
+                                    "BLD_COL_FURTHEST",
+                                    "BLD_COL_GEORGE",
+                                    "BLD_COL_GYSACHE",
+                                    "BLD_COL_HAPPY",
+                                    "BLD_COL_HHHOH",
+                                    "BLD_COL_HUMAN",
+                                    "BLD_COL_KILANDOW",
+                                    "BLD_COL_KOBUNTURA",
+                                    "BLD_COL_LAENFA",
+                                    "BLD_COL_MISIORLA",
+                                    "BLD_COL_MUURSH",
+                                    "BLD_COL_PHINNERT",
+                                    "BLD_COL_SCYLIOR",
+                                    "BLD_COL_SETINON",
+                                    "BLD_COL_SILEXIAN",
+                                    "BLD_COL_SLY",
+                                    "BLD_COL_SSLITH",
+                                    "BLD_COL_TAEGHIRUS",
+                                    "BLD_COL_TRITH",
+                                    "BLD_COL_REPLICON",
+                                    "BLD_COL_UGMORS",
+                                ]
+                            ),
+                        )
+                        + (
+                            NamedReal(name="OUTPOST_RELATIVE_ADMIN_COUNT", value=0.25)
+                            * (
+                                StatisticCount(
+                                    float,
+                                    condition=Planet()
+                                    & OwnedBy(empire=Source.Owner)
+                                    & (~HasSpecies() | HasSpecies(name=["SP_EXOBOT"])),
+                                )
                             )
                         )
-                    )
+                    ),
                 )
                 ** 0.5
             )

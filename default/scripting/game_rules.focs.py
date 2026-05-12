@@ -169,6 +169,17 @@ GameRule(
 )
 
 GameRule(
+    name="RULE_COLONY_ADMIN_COSTS_PLANET_LIMIT",
+    description="RULE_COLONY_ADMIN_COSTS_PLANET_LIMIT_DESC",
+    category="BALANCE",
+    type=int,
+    default=5000,
+    min=25,
+    max=5000,
+    rank=next(ranker),
+)
+
+GameRule(
     name="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL",
     description="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL_DESC",
     category="BALANCE",
