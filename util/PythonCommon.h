@@ -1,6 +1,8 @@
 #ifndef __FreeOrion__Util__PythonCommon__
 #define __FreeOrion__Util__PythonCommon__
 
+#include <filesystem>
+
 #include "../util/boost_fix.h"
 #include <boost/python.hpp>
 
@@ -34,6 +36,9 @@ public:
     virtual bool InitCommonImports(); // initializes Python imports
 
     void Finalize();          // stops Python interpreter and releases its resources
+
+    // Compiles and evaluates \a code with defined \a filename. Populates \a globals
+    static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::object& globals);
 private:
     // some helper objects needed to initialize and run the Python interface
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
