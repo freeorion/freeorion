@@ -16,37 +16,46 @@ namespace py = boost::python;
 
 namespace {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
-wchar_t* GetFilePath(const std::filesystem::path& path)
-{
-#if defined(FREEORION_WIN32)
-    const std::wstring_view native_path = path.native();
-    wchar_t* py_path = (wchar_t*)PyMem_RawCalloc(native_path.size() + 1, sizeof(wchar_t));
-    native_path.copy(py_path, native_path.size());
-    py_path[native_path.size()] = L'\0';
-    return py_path;
-#else
-    return Py_DecodeLocale(path.string().c_str(), nullptr);
-#endif
-}
+    wchar_t* GetFilePath(const std::filesystem::path& path)
+    {
+# if defined(FREEORION_WIN32)
+        const std::wstring_view native_path = path.native();
+        wchar_t* py_path = (wchar_t*)PyMem_RawCalloc(native_path.size() + 1, sizeof(wchar_t));
+        native_path.copy(py_path, native_path.size());
+        py_path[native_path.size()] = L'\0';
+        return py_path;
+# else
+        return Py_DecodeLocale(path.string().c_str(), nullptr);
+# endif
+    }
 #endif
 
-auto GetLoggableString(const wchar_t* const original)
-{
+    auto GetLoggableString(const wchar_t* const original)
+    {
 #if defined(FREEORION_WIN32)
-    const std::wstring_view view(original);
-    const size_t original_size = view.size(); // passing -1 would compute size for null terminated string, but would include the null
-    int utf8_size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, original, original_size, nullptr, 0, nullptr, nullptr);
-    std::string utf8_string(utf8_size, '\0');
-    if (utf8_size > 0)
-        WideCharToMultiByte(CP_UTF8, 0, original, original_size, utf8_string.data(), utf8_size, nullptr, nullptr);
-    return utf8_string;
+        const std::wstring_view view(original);
+        const size_t original_size = view.size(); // passing -1 would compute size for null terminated string, but would include the null
+        int utf8_size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, original, original_size, nullptr, 0, nullptr, nullptr);
+        std::string utf8_string(utf8_size, '\0');
+        if (utf8_size > 0)
+            WideCharToMultiByte(CP_UTF8, 0, original, original_size, utf8_string.data(), utf8_size, nullptr, nullptr);
+        return utf8_string;
 #else
-    return original;
+        return original;
 #endif
-}
+    }
 
-auto GetPythonExecutable() // should be the containing C++ binary / .exe file
-{ return py::extract<std::string>(py::import("sys").attr("executable"))(); }
+    template<typename T>
+    PyObject* path_to_pyobject(const std::basic_string<T>& filename) {
+        if constexpr (std::is_same_v<T, wchar_t>) {
+            return PyUnicode_FromWideChar(filename.c_str(), filename.size());
+        } else {
+            return PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
+        }
+    }
+
+    auto GetPythonExecutable() // should be the containing C++ binary / .exe file
+    { return py::extract<std::string>(py::import("sys").attr("executable"))(); }
 }
 
 PythonCommon::~PythonCommon()
@@ -179,3 +188,23 @@ void PythonCommon::Finalize() {
     }
 }
 
+void PythonCommon::CompileEval(const char* code, const std::filesystem::path& filename, const py::object& globals) {
+    PyObject* filename_str = path_to_pyobject(filename.native());
+    if (!filename_str) {
+        ErrorLogger() << "Failed to convert path to str: " << PathToString(filename);
+        py::throw_error_already_set();
+    }
+    py::object o_filename_str{py::handle<>(filename_str)};
+    PyObject* compiled_code = Py_CompileStringObject(code, o_filename_str.ptr(), Py_file_input, nullptr, 2);
+    if (!compiled_code) {
+        ErrorLogger() << "Failed to compile: " << PathToString(filename);
+        py::throw_error_already_set();
+    }
+    py::object o_code{py::handle<>(compiled_code)};
+    PyObject* result = PyEval_EvalCode(o_code.ptr(), globals.ptr(), globals.ptr());
+    if (!result) {
+        ErrorLogger() << "Failed to eval: " << PathToString(filename);
+        py::throw_error_already_set();
+    }
+    py::object o_result{py::handle<>(result)};
+}
