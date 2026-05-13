@@ -52,7 +52,14 @@ namespace {
  * Each test can dump parsed entity to file with environment variable FO_DUMP_FILE and dump names of all entities to file with environment variable FO_DUMP_LIST_FILE
  */
 
-BOOST_FIXTURE_TEST_SUITE(TestDefaultPythonParser, ParserAppFixture)
+class DefaultParserAppFixture : public ParserAppFixture {
+public:
+    DefaultParserAppFixture() :
+        ParserAppFixture(false)
+    { }
+};
+
+BOOST_FIXTURE_TEST_SUITE(TestDefaultPythonParser, DefaultParserAppFixture)
 
 /**
  * Checks count of techs and tech categories in real scripts
@@ -60,11 +67,11 @@ BOOST_FIXTURE_TEST_SUITE(TestDefaultPythonParser, ParserAppFixture)
  */
 
 BOOST_AUTO_TEST_CASE(parse_techs_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
-    auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_default_scripting_dir / "techs");
+    auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
     auto techs_opt = Pending::WaitForPendingUnlocked(std::move(techs_p));
 
     BOOST_REQUIRE(techs_opt);
@@ -114,11 +121,11 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_species_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
-    auto species_p = Pending::ParseSynchronously(parse::species, parser, m_default_scripting_dir / "species");
+    auto species_p = Pending::ParseSynchronously(parse::species, parser, m_scripting_dir / "species");
     auto species_opt = Pending::WaitForPendingUnlocked(std::move(species_p));
 
     BOOST_REQUIRE(species_opt);
@@ -168,11 +175,11 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_buildings_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
-    auto buildings_p = Pending::ParseSynchronously(parse::buildings, parser, m_default_scripting_dir / "buildings");
+    auto buildings_p = Pending::ParseSynchronously(parse::buildings, parser, m_scripting_dir / "buildings");
     auto buildings_opt = Pending::WaitForPendingUnlocked(std::move(buildings_p));
 
     BOOST_REQUIRE(buildings_opt);
@@ -207,11 +214,11 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
-    auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_default_scripting_dir / "empire_statistics");
+    auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_scripting_dir / "empire_statistics");
     auto empire_statistics_opt = Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
 
     BOOST_REQUIRE(empire_statistics_opt);
@@ -245,9 +252,9 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto encyclopedia_articles_p = Pending::ParseSynchronously(parse::encyclopedia_articles, parser, m_default_scripting_dir / "encyclopedia");
+    auto encyclopedia_articles_p = Pending::ParseSynchronously(parse::encyclopedia_articles, parser, m_scripting_dir / "encyclopedia");
     auto encyclopedia_articles_opt = Pending::WaitForPendingUnlocked(std::move(encyclopedia_articles_p));
 
     BOOST_REQUIRE(encyclopedia_articles_opt);
@@ -275,11 +282,11 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_fields_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
-    auto fields_p = Pending::ParseSynchronously(parse::fields, parser, m_default_scripting_dir / "fields");
+    auto fields_p = Pending::ParseSynchronously(parse::fields, parser, m_scripting_dir / "fields");
     auto fields_opt = Pending::WaitForPendingUnlocked(std::move(fields_p));
 
     BOOST_REQUIRE(fields_opt);
@@ -311,9 +318,9 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_named_values_full) {
-    PythonParser parser(m_python, m_default_scripting_dir);
+    PythonParser parser(m_python, m_scripting_dir);
 
-    auto named_values_p = Pending::ParseSynchronously(parse::named_value_refs, parser, m_default_scripting_dir / "macros");
+    auto named_values_p = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
     auto named_values_opt = Pending::WaitForPendingUnlocked(std::move(named_values_p));
 
     BOOST_REQUIRE(named_values_opt);

@@ -15,7 +15,7 @@
 
 class ParserAppFixture : public IApp {
 public:
-    ParserAppFixture();
+    ParserAppFixture(bool test_scripting);
 
     ParserAppFixture(const ParserAppFixture&) = delete;
     ParserAppFixture(ParserAppFixture&&) = delete;
@@ -41,19 +41,18 @@ public:
     [[nodiscard]] const ScriptingContext& GetContext() const noexcept override { return m_context; };
 
 protected:
-    std::filesystem::path m_test_scripting_dir;
-    std::filesystem::path m_default_scripting_dir;
-    PythonCommon            m_python;
+    std::filesystem::path m_scripting_dir;
+    PythonCommon          m_python;
 
     // Gamestate...
-    Universe                    m_universe;
-    GalaxySetupData             m_galaxy_setup_data;
-    EmpireManager               m_empires;
-    SpeciesManager              m_species_manager;
-    SupplyManager               m_supply_manager;
+    Universe              m_universe;
+    GalaxySetupData       m_galaxy_setup_data;
+    EmpireManager         m_empires;
+    SpeciesManager        m_species_manager;
+    SupplyManager         m_supply_manager;
     // End Gamestate
 
-    ScriptingContext            m_context;
+    ScriptingContext      m_context;
 };
 
 

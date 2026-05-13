@@ -5,7 +5,7 @@
 
 namespace fs = std::filesystem;
 
-ParserAppFixture::ParserAppFixture() :
+ParserAppFixture::ParserAppFixture(bool test_scripting) :
     m_context(*this)
 {
     BOOST_TEST_MESSAGE("Init parse tests " << boost::unit_test::framework::master_test_suite().argv[0]);
@@ -16,29 +16,25 @@ ParserAppFixture::ParserAppFixture() :
     }
 
 #if defined(FREEORION_MACOSX)
-    m_test_scripting_dir = GetRootDataDir() / "test-scripting";
-#else
-    m_test_scripting_dir = fs::absolute(GetBinDir() / "test-scripting");
-#endif
-    BOOST_TEST_MESSAGE("Test scripting directory: " << m_test_scripting_dir);
-    BOOST_REQUIRE(m_test_scripting_dir.is_absolute());
-    BOOST_REQUIRE(fs::exists(m_test_scripting_dir));
-    BOOST_REQUIRE(fs::is_directory(m_test_scripting_dir));
-
-#if defined(FREEORION_MACOSX)
     std::filesystem::path resource_dir = GetRootDataDir() / "default";
 #else
     std::filesystem::path resource_dir = GetBinDir() / "default";
 #endif
-
     GetOptionsDB().Set<std::string>("resource.path", PathToString(resource_dir));
 
-    m_default_scripting_dir = resource_dir / "scripting";
-
-    BOOST_TEST_MESSAGE("Default scripting directory: " << m_default_scripting_dir);
-    BOOST_REQUIRE(m_default_scripting_dir.is_absolute());
-    BOOST_REQUIRE(fs::exists(m_default_scripting_dir));
-    BOOST_REQUIRE(fs::is_directory(m_default_scripting_dir));
+    if (test_scripting) {
+#if defined(FREEORION_MACOSX)
+        m_scripting_dir = GetRootDataDir() / "test-scripting";
+#else
+        m_scripting_dir = fs::absolute(GetBinDir() / "test-scripting");
+#endif
+    } else {
+        m_scripting_dir = resource_dir / "scripting";
+    }
+    BOOST_TEST_MESSAGE("Test scripting directory: " << m_scripting_dir);
+    BOOST_REQUIRE(m_scripting_dir.is_absolute());
+    BOOST_REQUIRE(fs::exists(m_scripting_dir));
+    BOOST_REQUIRE(fs::is_directory(m_scripting_dir));
 }
 
 int ParserAppFixture::EmpireID() const noexcept
