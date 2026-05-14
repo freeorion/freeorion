@@ -17,7 +17,8 @@ LIBGL_DEBUG=verbose /snap/bin/freeorion \
   --video.fullscreen.height 720 \
   --video.windowed.height 720 \
   --video.windowed.top 0 \
-  --setup.ai.player.count 3 &
+  --setup.ai.player.count 3 \
+  --setup.seed RANDOM &
 FOPID=$!
 echo "FreeOrion started pid ${FOPID}"
 sleep 25
