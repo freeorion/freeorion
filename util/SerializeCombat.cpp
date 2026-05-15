@@ -41,6 +41,18 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, BoutBeg
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, BoutBeginEvent&, unsigned int const);
 
 
+namespace {
+    // for backwards compatability
+    struct IncapacitationEvent : public CombatEvent {
+        IncapacitationEvent() noexcept = default;
+        std::string DebugString(const ScriptingContext&) const override { return ""; }
+        std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
+
+        int object_id = INVALID_OBJECT_ID;
+        int object_owner_id = ALL_EMPIRES;
+    };
+}
+
 template <typename Archive>
 void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
 {
@@ -48,6 +60,7 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
 
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     ar & make_nvp("bout", obj.bout);
+
     if (Archive::is_loading::value && version < 5) {
         std::vector<CombatEventPtr> events;
         ar & make_nvp("events", events);
@@ -67,7 +80,7 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
                     else if (auto wpfe = std::dynamic_pointer_cast<WeaponsPlatformEvent>(sub_event))
                         obj.weapons_platform_firings.AddEvent(std::move(wpfe));
                     else if (auto ie = std::dynamic_pointer_cast<IncapacitationEvent>(sub_event))
-                        obj.incapacitations.AddEvent(std::move(ie));
+                        obj.other_incapacitations.AddEvent(ie->object_id, ie->object_owner_id); // don't know type from prior serialization version events
                     else if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
                         obj.fighter_launches.AddEvent(std::move(le));
                     else
@@ -90,7 +103,9 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
           & make_nvp("fighter_launches", obj.fighter_launches)
           & make_nvp("fighters_destroyed", obj.fighters_destroyed)
           & make_nvp("fighters_attack_fighters", obj.fighters_attack_fighters)
-          & make_nvp("incapacitations", obj.incapacitations);
+          & make_nvp("ship_incapacitations", obj.ship_incapacitations)
+          & make_nvp("planet_incapacitations", obj.planet_incapacitations)
+          & make_nvp("other_incapacitations", obj.other_incapacitations);
     }
 }
 
@@ -702,6 +717,122 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Incapac
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, IncapacitationEvent&, unsigned int const);
 
 
+namespace {
+    constexpr auto to_second_size = [](const auto& id_vec) noexcept { return id_vec.second.size(); };
+
+    // for vectors (of pairs (of ints and vectors of castable-to-int))
+    std::string ToString(const std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events) {
+        auto events_sizes_rng = events | range_transform(to_second_size);
+        const std::size_t event_count = std::accumulate(events_sizes_rng.begin(), events_sizes_rng.end(), std::size_t{0});
+
+        std::string retval;
+        try { //                  one int per event             empire id and id count per empire      empire count
+            retval.reserve((int_digits + 1) * event_count  +  (2 * int_digits + 3) * events.size()  +  int_digits);
+        } catch (...) {}
+
+        retval.append(std::to_string(events.size()));
+        for (const auto& [empire_id, objs_ids] : events) {
+            retval.append("  ").append(std::to_string(empire_id)).append(" ")
+                  .append(std::to_string(objs_ids.size()));
+            for (const auto& obj_id : objs_ids)
+                retval.append(" ").append(std::to_string(static_cast<int>(obj_id)));
+        }
+
+        return retval;
+    }
+
+    // for vectors (of pairs (of ints and vectors of wrapper-of-int))
+    void FillVecOfIntAndVecOfIncapDetailEvent(
+        std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events,
+        std::string_view buffer, UniverseObjectType object_type)
+    {
+        const auto* const buffer_end = buffer.data() + buffer.size();
+        const auto* next = buffer.data();
+
+        const auto get_next_uint = [buffer_end](const char* next, const unsigned int default_val)
+        { return GetIntFromChars<unsigned int>(buffer_end, next, default_val); };
+
+        const auto get_next_int = [buffer_end](const char* next, const int default_val)
+        { return GetIntFromChars<int>(buffer_end, next, default_val); };
+
+        bool success = false;
+        unsigned int count_ui = 0;
+
+        std::tie(count_ui, success, next) = get_next_uint(next, 0u);
+        if (!success)
+            return;
+        const std::size_t empire_count = static_cast<std::size_t>(count_ui);
+        events.reserve(empire_count);
+
+        for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
+            int empire_id = ALL_EMPIRES;
+            std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+            if (!success)
+                return;
+            std::tie(count_ui, success, next) = get_next_uint(next, 0u);
+            if (!success)
+                return;
+
+            auto& obj_ids = events.emplace_back(std::piecewise_construct,
+                                                std::forward_as_tuple(empire_id),
+                                                std::forward_as_tuple()).second;
+            const std::size_t id_count = static_cast<std::size_t>(count_ui);
+            obj_ids.reserve(id_count);
+
+            for (std::size_t obj_id_idx = 0; obj_id_idx < id_count && next != buffer_end; ++obj_id_idx) {
+                int object_id = INVALID_OBJECT_ID;
+                std::tie(object_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+                if (!success)
+                    return;
+                obj_ids.emplace_back(object_id, object_type);
+            }
+        }
+    }
+}
+
+template <typename Archive>
+void serialize(Archive& ar, IncapacitationsEvent::IncapacitationDetail& obj, unsigned int const)
+{ ar & boost::serialization::make_nvp("id", obj.id); }
+
+BOOST_CLASS_EXPORT(IncapacitationsEvent::IncapacitationDetail)
+
+
+template <typename Archive>
+void serialize(Archive& ar, IncapacitationsEvent& obj, unsigned int const)
+{
+    using boost::serialization::make_nvp;
+    using boost::serialization::base_object;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+    ar & make_nvp("type", obj.objects_type);
+
+    if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        static_assert(Archive::is_loading::value);
+        std::string str;
+        ar >> make_nvp("events", str);
+        FillVecOfIntAndVecOfIncapDetailEvent(obj.events, str, obj.objects_type);
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        static_assert(Archive::is_saving::value);
+        std::string str = ToString(obj.events);
+        ar << make_nvp("events", str);
+    } else {
+        ar & make_nvp("events", obj.events);
+        if constexpr (Archive::is_loading::value) {
+            for (auto& events : obj.events | range_values)
+                for (auto& event : events)
+                    event.object_type = obj.objects_type;
+        }
+    }
+}
+
+BOOST_CLASS_EXPORT(IncapacitationsEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, IncapacitationsEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, IncapacitationsEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, IncapacitationsEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, IncapacitationsEvent&, unsigned int const);
+
+
 template <typename Archive>
 void serialize(Archive& ar, FightersAttackFightersEvent& obj, unsigned int const version)
 {
@@ -775,6 +906,7 @@ template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, Fighter
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FightersDestroyedEvent&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FightersDestroyedEvent&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FightersDestroyedEvent&, unsigned int const);
+
 
 namespace {
     std::vector<std::string> ToStrings(const WeaponsPlatformEvent& obj) {
@@ -1035,4 +1167,3 @@ template void SerializeIncompleteLogs<freeorion_bin_oarchive>(freeorion_bin_oarc
 template void SerializeIncompleteLogs<freeorion_bin_iarchive>(freeorion_bin_iarchive&, CombatLogManager&, unsigned int const);
 template void SerializeIncompleteLogs<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatLogManager&, unsigned int const);
 template void SerializeIncompleteLogs<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatLogManager&, unsigned int const);
-
