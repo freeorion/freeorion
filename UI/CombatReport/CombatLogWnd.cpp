@@ -511,7 +511,7 @@ void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id,
     if (!details.empty())
         new_logs.push_back(DecorateLinkText(std::move(details)));
 
-    if (!event.AreSubEventsEmpty(viewing_empire_id)) {
+    if (!event.IsEmpty()) {
         const auto subevents = event.SubEvents(viewing_empire_id);
         for (const auto* sub_event : subevents | range_filter(not_null)) {
             auto flat_logs = MakeCombatLogPanel(w, viewing_empire_id, *sub_event);
@@ -528,27 +528,23 @@ std::vector<std::shared_ptr<GG::Wnd>> CombatLogWnd::Impl::MakeCombatLogPanel(
     std::vector<std::shared_ptr<GG::Wnd>> new_logs;
 
     // Create an accordion log if there are detail or sub events and
-    // the log isn't explicitly flattened.  Otherwise, flatten the log,
-    // details and sub events.
+    // the log isn't explicitly flattened.
+    // Otherwise, flatten the log, details and sub events.
 
-    if (!event.FlattenSubEvents() && !event.AreSubEventsEmpty(viewing_empire_id) ) {
+    if (!event.FlattenSubEvents() && !event.IsEmpty() ) {
         new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, &event));
         return new_logs;
-    }
 
-    if (!event.FlattenSubEvents() && !event.AreDetailsEmpty(viewing_empire_id)) {
-        new_logs.push_back(GG::Wnd::Create<CombatLogAccordionPanel>(w, *this, viewing_empire_id, &event));
+    } else {
+        std::string title = event.CombatLogDescription(viewing_empire_id, GetApp().GetContext());
+        if (!(event.FlattenSubEvents() && title.empty()))
+            new_logs.push_back(DecorateLinkText(title));
+
+        std::string details = event.CombatLogDetails(viewing_empire_id);
+        PopulateWithFlatLogs(w, viewing_empire_id, new_logs, event, std::move(details));
+
         return new_logs;
     }
-
-    std::string title = event.CombatLogDescription(viewing_empire_id, GetApp().GetContext());
-    if (!(event.FlattenSubEvents() && title.empty()))
-        new_logs.push_back(DecorateLinkText(title));
-
-    std::string details = event.CombatLogDetails(viewing_empire_id);
-    PopulateWithFlatLogs(w, viewing_empire_id, new_logs, event, std::move(details));
-
-    return new_logs;
 }
 
 
