@@ -1079,8 +1079,12 @@ namespace {
                     // delete actual fighter object so that it can't be targeted
                     // again next round (ships have a minimal structure test instead)
                     delete_list.push_back(obj->ID());
+                } else if (obj->ObjectType() == UniverseObjectType::OBJ_SHIP) {
+                    bout_event.ship_incapacitations.AddEvent(obj->ID(), obj->Owner());
+                } else if (obj->ObjectType() == UniverseObjectType::OBJ_PLANET) {
+                    bout_event.planet_incapacitations.AddEvent(obj->ID(), obj->Owner());
                 } else {
-                    bout_event.incapacitations.AddEvent(std::make_shared<IncapacitationEvent>(obj->ID(), obj->Owner()));
+                    bout_event.other_incapacitations.AddEvent(obj->ID(), obj->Owner());
                 }
             }
 
@@ -1749,7 +1753,7 @@ namespace {
             ShootAllWeapons(attacker, combat_state, bout_event->weapon_firings,
                             *platform_event, bout_event->fighters_attack_fighters);
 
-            if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
+            if (!platform_event->IsEmpty())
                 bout_event->weapons_platform_firings.AddEvent(std::move(platform_event));
         }
 
@@ -1833,7 +1837,7 @@ namespace {
             }
         }
 
-        if (!stealth_change_event->AreSubEventsEmpty(ALL_EMPIRES))
+        if (!stealth_change_event->IsEmpty())
             combat_info.combat_events.push_back(std::move(stealth_change_event));
 
         /// Remove all who died in the bout
