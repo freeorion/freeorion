@@ -400,6 +400,11 @@ void GGHumanClientApp::Initialize() {
             GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1)};
     GG::Wnd::SetDefaultBrowseInfoWnd(std::move(default_browse_info_wnd));
 
+#ifndef FREEORION_WIN32
+    if(const auto icon = m_ui.GetTexture(ClientUI::ArtDir() / "icons" / "FO_Icon_256x256.png"))
+        SetWindowIcon(*icon);
+#endif
+
     auto cursor_texture = m_ui.GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
     SetCursor(std::make_unique<GG::TextureCursor>(std::move(cursor_texture), GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
