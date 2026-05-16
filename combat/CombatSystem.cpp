@@ -1514,7 +1514,7 @@ namespace {
     bool LaunchFighters(UniverseObject* attacker,
                         const std::vector<PartAttackInfo>& weapons,
                         AutoresolveInfo& combat_state,
-                        SimultaneousEvents& launches_event)
+                        FighterLaunchesEvent& launches_event)
     {
         bool launched_something = false;
 
@@ -1562,9 +1562,7 @@ namespace {
                                          fighter_name, weapon.combat_targets);
 
             // combat event
-            launches_event.AddEvent(std::make_shared<FighterLaunchEvent>(
-                attacker->ID(), attacker_owner_id, new_fighter_ids.size()));
-
+            launches_event.AddEvent(attacker->ID(), attacker_owner_id, new_fighter_ids.size());
 
             // reduce hangar capacity (contents) corresponding to launched fighters
             const int num_launched = new_fighter_ids.size();
@@ -1631,7 +1629,7 @@ namespace {
         }
     }
 
-    void RecoverFighters(CombatInfo& combat_info, SimultaneousEvents& launches_event) {
+    void RecoverFighters(CombatInfo& combat_info, FighterLaunchesEvent& launches_event) {
         std::map<int, float> ships_fighters_to_add_back;
         DebugLogger() << "Recovering fighters at end of combat...";
 
@@ -1667,8 +1665,7 @@ namespace {
             }
             IncreaseStoredFighterCount(*ship, fighter_count, combat_info.universe);
             // launching negative ships indicates recovery of them
-            launches_event.AddEvent(std::make_shared<FighterLaunchEvent>(
-                ship_id, ship->Owner(), -static_cast<int>(fighter_count)));
+            launches_event.AddEvent(ship_id, ship->Owner(), -static_cast<int>(fighter_count));
         }
     }
 
@@ -1772,7 +1769,7 @@ namespace {
                 }
                 const auto weapons = GetWeapons(attacker, combat_info.universe); // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with ShipPartClass::PC_DIRECT_WEAPON part class
 
-                const bool launched_something = LaunchFighters(attacker, weapons, combat_state, bout_event->fighter_launches);
+                const bool launched_something = LaunchFighters(attacker, weapons, combat_state, bout_event->fighter_launches2);
 
                 // Set launching carrier as at least basically visible to other empires.
                 if (!launched_something)
@@ -1883,7 +1880,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             Seed(base_seed + bout);    // ensure each combat bout produces different results
 
         // empires may have valid targets, but nothing to attack with.  If all
-        // empires have no attackers or no valid targers, combat is over
+        // empires have no attackers or no valid targets, combat is over
         if (!combat_state.CanSomeoneAttackSomething()) {
             DebugLogger(combat) << "No empire has valid targets and something to attack with; combat over.";
             break;
@@ -1896,7 +1893,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         last_bout = bout;
     } // end for over combat arounds
 
-    if (auto launches_event = std::make_shared<SimultaneousEvents>()) {
+    if (auto launches_event = std::make_shared<FighterLaunchesEvent>()) {
         combat_info.combat_events.push_back(launches_event);
         RecoverFighters(combat_info, *launches_event);
     }
