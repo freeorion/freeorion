@@ -117,17 +117,17 @@ class TechGroup1(TechGroup):
                 "LRN_PHYS_BRAIN",
                 "GRO_PLANET_ECOL",
                 "GRO_SUBTER_HAB",
-                "LRN_ALGO_ELEGANCE",
-                Dep.LRN_ARTIF_MINDS_1,
+                "CON_ASYMP_MATS",
+                "CON_ARCH_PSYCH",
                 "PRO_ROBOTIC_PROD",
             ]
         )
         self.weapon.extend(
             [
-                "SHP_WEAPON_ARC_DISRUPTOR_1",
                 "SHP_WEAPON_1_2",
-                "SHP_WEAPON_1_3",
+                "SHP_WEAPON_ARC_DISRUPTOR_1",
                 "SHP_FIGHTERS_1",
+                "SHP_WEAPON_1_3",
                 "SHP_WEAPON_1_4",
             ]
         )
@@ -143,7 +143,7 @@ class TechGroup1(TechGroup):
                 "SHP_ORG_HULL",
             ]
         )
-        # always start with the same first 8 techs; leaves 1 econ, 4 weap, 2 hull
+        # always start with the same first 6 techs; leaves 1 econ, 4 weap, 2 hull and 2 defense
         self.enqueue(
             self.economy,
             self.economy,
@@ -151,8 +151,6 @@ class TechGroup1(TechGroup):
             self.economy,
             self.economy,
             self.weapon,
-            self.defense,
-            self.defense,
         )
 
 
@@ -160,13 +158,12 @@ class TechGroup1a(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
-            self.weapon,
-            self.weapon,
-            self.weapon,
-            self.weapon,
             self.economy,
+            self.weapon,
+            self.weapon,
             self.hull,
-            "CON_ARCH_PSYCH",
+            "LRN_ALGO_ELEGANCE",
+            Dep.LRN_ARTIF_MINDS_1,
         )
 
 
@@ -174,13 +171,11 @@ class TechGroup1b(TechGroup1):
     def __init__(self):
         super().__init__()
         self.enqueue(
-            self.weapon,
-            self.hull,
-            self.economy,
+            "SHP_CONT_SYMB",
             self.weapon,
             self.weapon,
-            self.weapon,
-            "CON_ARCH_PSYCH",
+            "LRN_ALGO_ELEGANCE",
+            Dep.LRN_ARTIF_MINDS_1,
         )
 
 
@@ -195,7 +190,8 @@ class TechGroup1SparseA(TechGroup1):
             self.weapon,
             "SHP_SPACE_FLUX_DRIVE",
             self.weapon,
-            "CON_ARCH_PSYCH",
+            "LRN_ALGO_ELEGANCE",
+            Dep.LRN_ARTIF_MINDS_1,
         )
 
 
@@ -210,8 +206,8 @@ class TechGroup1SparseB(TechGroup1):
             self.weapon,
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
-            "CON_ARCH_PSYCH",
-            "CON_ASYMP_MATS",
+            "LRN_ALGO_ELEGANCE",
+            Dep.LRN_ARTIF_MINDS_1,
             "PRO_EXOBOTS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
@@ -243,8 +239,8 @@ class TechGroup1SparseC(TechGroup1):
             "PRO_NANOTECH_PROD",
             Dep.PRO_AUTO_1,
             self.weapon,
-            "CON_ARCH_PSYCH",
-            "CON_ASYMP_MATS",
+            "LRN_ALGO_ELEGANCE",
+            Dep.LRN_ARTIF_MINDS_1,
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "GRO_GENETIC_MED",
             "GRO_SYMBIOTIC_BIO",
@@ -271,11 +267,12 @@ class TechGroup2(TechGroup):
         super().__init__()
         self.economy.extend(
             [
-                "PRO_FUSION_GEN",
+                "PRO_INDUSTRY_CENTER_I",
                 Dep.PRO_AUTO_1,
                 "PRO_EXOBOTS",
                 "GRO_SYMBIOTIC_BIO",
                 "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
+                "LRN_MIND_VOID",  # opens social policy slot and design simplicity policy
                 # "PRO_MICROGRAV_MAN",  # handled by fast-forwarding when we have asteroids
                 # "PRO_ORBITAL_GEN",    # handled by fast-forwarding when we have a GG
             ]
@@ -418,7 +415,7 @@ class TechGroup3(TechGroup):
         )
         self.economy.extend(
             [
-                "PRO_INDUSTRY_CENTER_I",
+                "PRO_FUSION_GEN",
                 "GRO_GENETIC_ENG",
                 "GRO_GENETIC_MED",
                 "GRO_XENO_GENETICS",
@@ -652,7 +649,6 @@ class TechGroup5(TechGroup):
                 "SHP_ADV_DAM_CONT",
                 "LRN_TIME_MECH",
                 "SPY_DETECT_4",
-                "SHP_CONT_SYMB",
                 "SHP_MONOCELL_EXP",
                 "GRO_TERRAFORM",
                 "GRO_ENERGY_META",
