@@ -331,7 +331,6 @@ void Deserialize(Archive& ia, std::map<int, Visibilities>& eov, bool old_map_for
         xml_tag = "empire_object_visibility";
 
     if (old_map_format) {
-        DebugLogger() << "fallback empire object visibility load";
         using OldObjectVisibilityMap = std::map<int, Visibility>;
         using OldEmpireObjectVisibilityMap = std::map<int, OldObjectVisibilityMap>;
         OldEmpireObjectVisibilityMap scratch;
