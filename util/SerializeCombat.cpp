@@ -348,8 +348,6 @@ void serialize(Archive& ar, InitialStealthEvent& obj, unsigned int const version
         obj.empire_object_visibility.clear();
         bool old_format = version < 5;
         const char* xml_tag = old_format ? "empire_to_object_visibility" : nullptr;
-        if (old_format)
-            DebugLogger() << "Deserializing InitialStealthEvent old format version: " << version;
         Deserialize(ar, obj.empire_object_visibility, old_format, xml_tag);
     } else {
         Serialize(ar, obj.empire_object_visibility);
