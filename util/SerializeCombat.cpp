@@ -24,11 +24,19 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, CombatE
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, CombatEvent&, const unsigned int);
 
 
+namespace {
+    // for backwards compatability
+    struct BoutBeginEvent final : public CombatEvent {
+        std::string DebugString(const ScriptingContext&) const override { return ""; }
+        std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
+        int bout = 0;
+    };
+}
+
 template <typename Archive>
-void serialize(Archive& ar, BoutBeginEvent& obj, unsigned int const version)
+void serialize(Archive& ar, BoutBeginEvent& obj, unsigned int const)
 {
     using namespace boost::serialization;
-
     ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
     ar & make_nvp("bout", obj.bout);
 }
@@ -44,7 +52,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, BoutBeg
 namespace {
     // for backwards compatability
     struct IncapacitationEvent : public CombatEvent {
-        IncapacitationEvent() noexcept = default;
+        constexpr IncapacitationEvent() noexcept = default;
         std::string DebugString(const ScriptingContext&) const override { return ""; }
         std::string CombatLogDescription(int, const ScriptingContext&) const override { return ""; }
 
@@ -52,6 +60,42 @@ namespace {
         int object_owner_id = ALL_EMPIRES;
     };
 }
+
+template <typename Archive>
+void serialize(Archive& ar, IncapacitationEvent& obj, unsigned int const version)
+{
+    using namespace boost::serialization;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    if constexpr (Archive::is_loading::value) {
+        if (version < 2) {
+            int ignored = -1;
+            ar >> make_nvp("bout", ignored)
+               >> make_nvp("object_id", obj.object_id)
+               >> make_nvp("object_owner_id", obj.object_owner_id);
+        } else {
+            if (version < 3) {
+                int ignored = -1;
+                ar >> make_nvp("b", ignored);
+            }
+            ar >> make_nvp("i", obj.object_id)
+               >> make_nvp("o", obj.object_owner_id);
+        }
+    } else {
+        ar << make_nvp("i", obj.object_id)
+           << make_nvp("o", obj.object_owner_id);
+    }
+}
+
+BOOST_CLASS_VERSION(IncapacitationEvent, 3)
+BOOST_CLASS_EXPORT(IncapacitationEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, IncapacitationEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, IncapacitationEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, IncapacitationEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, IncapacitationEvent&, unsigned int const);
+
 
 template <typename Archive>
 void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
@@ -679,42 +723,6 @@ template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, WeaponF
 template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, WeaponFireEvent&, unsigned int const);
 template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, WeaponFireEvent&, unsigned int const);
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, WeaponFireEvent&, unsigned int const);
-
-
-template <typename Archive>
-void serialize(Archive& ar, IncapacitationEvent& obj, unsigned int const version)
-{
-    using namespace boost::serialization;
-
-    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
-
-    if constexpr (Archive::is_loading::value) {
-        if (version < 2) {
-            int ignored = -1;
-            ar >> make_nvp("bout", ignored)
-               >> make_nvp("object_id", obj.object_id)
-               >> make_nvp("object_owner_id", obj.object_owner_id);
-        } else {
-            if (version < 3) {
-                int ignored = -1;
-                ar >> make_nvp("b", ignored);
-            }
-            ar >> make_nvp("i", obj.object_id)
-               >> make_nvp("o", obj.object_owner_id);
-        }
-    } else {
-        ar << make_nvp("i", obj.object_id)
-           << make_nvp("o", obj.object_owner_id);
-    }
-}
-
-BOOST_CLASS_VERSION(IncapacitationEvent, 3)
-BOOST_CLASS_EXPORT(IncapacitationEvent)
-
-template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, IncapacitationEvent&, unsigned int const);
-template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, IncapacitationEvent&, unsigned int const);
-template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, IncapacitationEvent&, unsigned int const);
-template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, IncapacitationEvent&, unsigned int const);
 
 
 namespace {

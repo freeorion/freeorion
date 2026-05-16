@@ -182,16 +182,6 @@ namespace {
 }
 
 
-///////////////////////////////////
-///////// BoutBeginEvent //////////
-///////////////////////////////////
-std::string BoutBeginEvent::DebugString(const ScriptingContext&) const
-{ return std::string{"Bout "}.append(std::to_string(bout)).append(" begins."); }
-
-std::string BoutBeginEvent::CombatLogDescription(int, const ScriptingContext&) const
-{ return str(FlexibleFormat(UserString("ENC_ROUND_BEGIN")) % bout); }
-
-
 /////////////////////////////////////
 /////////// BoutEvent ///////////////
 /////////////////////////////////////
