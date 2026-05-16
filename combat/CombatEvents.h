@@ -37,18 +37,6 @@ namespace CombatEventDetail {
     constexpr bool nxstrmove = noexcept(std::string{std::declval<std::string&&>()});
 }
 
-/// Generated when a new bout begins in the battle
-struct FO_COMMON_API BoutBeginEvent final : public CombatEvent {
-    [[nodiscard]] constexpr BoutBeginEvent() noexcept = default;
-    [[nodiscard]] constexpr explicit BoutBeginEvent(int bout_) noexcept :
-        bout(bout_)
-    {}
-
-    [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
-    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
-
-    int bout = 0;
-};
 
 
 /** SimultaneousEvents describes a set of simultaneous events in one bout of combat.
