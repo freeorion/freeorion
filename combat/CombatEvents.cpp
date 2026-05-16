@@ -150,6 +150,9 @@ namespace {
             return UserString("ENC_COMBAT_UNKNOWN_OBJECT");
     }
 
+    std::string EmpireColouredFighterLink(int empire_id, const ScriptingContext& context)
+    { return EmpireColorWrappedText(empire_id, UserString("OBJ_FIGHTER"), context); }
+
     /// Creates a link tag of the appropriate type for either a fighter or another object.
     std::string FighterOrPublicNameLink(int viewing_empire_id, int object_id,
                                         int object_empire_id, const ScriptingContext& context)
@@ -157,7 +160,7 @@ namespace {
         if (object_id >= 0)   // ship
             return PublicNameLink(viewing_empire_id, object_id, context.ContextUniverse());
         else                  // fighter
-            return EmpireColorWrappedText(object_empire_id, UserString("OBJ_FIGHTER"), context);
+            return EmpireColouredFighterLink(object_empire_id, context);
     }
 
     std::string EmpireLink(int empire_id, const ScriptingContext& context) {
@@ -189,6 +192,7 @@ std::string BoutEvent::DebugString(const ScriptingContext&) const {
     ss << "Bout " << bout << " has " << weapon_firings.SubEvents(ALL_EMPIRES).size() << " weapon firings, "
        << weapons_platform_firings.SubEvents(ALL_EMPIRES).size() << " weapon platform firings, "
        << fighter_launches.SubEvents(ALL_EMPIRES).size() << " launches, "
+       << fighter_launches2.SubEvents(ALL_EMPIRES).size() << " launches, "
        << fighters_destroyed.SubEvents(ALL_EMPIRES).size() << " fighters destroyed, "
        << fighters_attack_fighters.SubEvents(ALL_EMPIRES).size() << " fighters on fighter attack, "
        << ship_incapacitations.SubEvents(ALL_EMPIRES).size() << " ship incapacitations, "
@@ -203,9 +207,10 @@ std::string BoutEvent::CombatLogDescription(int, const ScriptingContext&) const
 std::vector<const CombatEvent*> BoutEvent::SubEvents(int) const {
     std::vector<const CombatEvent*> retval;
     retval.reserve(8);
-    for (const auto* subevent : std::array<const CombatEvent*, 8>{
+    for (const auto* subevent : std::array<const CombatEvent*, 9>{
         std::addressof(weapon_firings),         std::addressof(weapons_platform_firings),
-        std::addressof(fighter_launches),       std::addressof(fighters_attack_fighters),
+        std::addressof(fighter_launches),       std::addressof(fighter_launches2),
+        std::addressof(fighters_attack_fighters),
         std::addressof(fighters_destroyed),     std::addressof(ship_incapacitations),
         std::addressof(planet_incapacitations), std::addressof(other_incapacitations)})
     {
@@ -518,7 +523,7 @@ namespace {
     void AddDetailEvent(std::vector<std::pair<int, std::vector<IncapacitationsEvent::IncapacitationDetail>>>& events,
                         int object_id, int owner_id, UniverseObjectType obj_type)
     {
-        const auto is_owner = [owner_id](const auto owner_vec) noexcept { return owner_vec.first == owner_id; };
+        const auto is_owner = [owner_id](const auto& owner_vec) noexcept { return owner_vec.first == owner_id; };
         auto it = std::find_if(events.begin(), events.end(), is_owner);
         if (it == events.end()) {
             auto& vec = events.emplace_back(std::piecewise_construct,
@@ -637,23 +642,108 @@ std::string FighterLaunchEvent::DebugString(const ScriptingContext&) const {
     return ss.str();
 }
 
-std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id,
-                                                     const ScriptingContext& context) const
+namespace {
+    std::string FighterLaunchLogDescription(int viewing_empire_id, int launched_from_id,
+                                            int owner_empire_id, int number_launched,
+                                            const ScriptingContext& context)
+    {
+        std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id,
+                                                        context.ContextUniverse());
+        std::string empire_coloured_fighter = EmpireColorWrappedText(
+            owner_empire_id, UserString("OBJ_FIGHTER"), context);
+
+        // launching negative fighters indicates recovery of them by the ship
+        const std::string& template_str = (number_launched >= 0 ?
+                                           UserString("ENC_COMBAT_LAUNCH_STR") :
+                                           UserString("ENC_COMBAT_RECOVER_STR"));
+
+        return str(FlexibleFormat(template_str)
+                   % launched_from_link
+                   % empire_coloured_fighter
+                   % std::abs(number_launched));
+    }
+}
+
+std::string FighterLaunchEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const
+{ return FighterLaunchLogDescription(viewing_empire_id, launched_from_id, fighter_owner_empire_id, number_launched, context); }
+
+
+////////////////////////////////////////////
+/////////// FighterLaunchesEvent ///////////
+////////////////////////////////////////////
+namespace {
+    auto TallyEmpireLaunches(const std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events) {
+        static constexpr auto to_count_sum = [](const std::vector<FighterLaunchesEvent::FighterLaunchDetail>& details) {
+            auto counts_rng = details | range_transform([](const auto& d) noexcept { return d.count; });
+            return std::accumulate(counts_rng.begin(), counts_rng.end(), 0);
+        };
+
+        static constexpr auto to_eid_sum = [](const auto& eid_vec) noexcept
+        { return std::pair{eid_vec.first, to_count_sum(eid_vec.second)}; };
+
+        return events | range_transform(to_eid_sum) | range_to_vec;
+    }
+}
+
+std::string FighterLaunchesEvent::DebugString(const ScriptingContext&) const {
+    const auto empire_tallies = TallyEmpireLaunches(events);
+    std::string retval = "empire fighter launches:";
+    for (auto& [eid, count] : empire_tallies)
+        retval.append("  ").append(std::to_string(eid)).append(": ").append(std::to_string(count));
+    return retval;
+}
+
+std::string FighterLaunchesEvent::CombatLogDescription(int, const ScriptingContext& context) const {
+    std::string retval;
+    if (events.empty())
+        return retval;
+
+    const auto empire_tallies = TallyEmpireLaunches(events);
+    if (empire_tallies.empty())
+        return retval;
+
+    const auto& launch_str = UserString("ENC_COMBAT_EMPIRE_LAUNCHES_FIGHTERS");
+    const auto& recover_str = UserString("ENC_COMBAT_EMPIRE_RECOVERS_FIGHTERS");
+
+    for (auto& [eid, count] : empire_tallies) {
+        if (count == 0)
+            continue;
+        if (!retval.empty())
+            retval.append("\n");
+
+        const auto empire_link = EmpireLink(eid, context);
+        const auto fighter_link = EmpireColouredFighterLink(eid, context);
+        const auto& template_str = (count > 0) ? launch_str : recover_str;
+
+        retval.append(str(FlexibleFormat(template_str) % empire_link % std::abs(count) % fighter_link));
+    }
+
+    return retval;
+}
+
+std::vector<const CombatEvent*> FighterLaunchesEvent::SubEvents(int) const
+{ return ExtractedNestedSubEvents(events); }
+
+void FighterLaunchesEvent::AddEvent(int from_id, int fighter_owner_empire_id, int count) {
+    const auto is_empire = [fighter_owner_empire_id](const auto& eid_vec) noexcept { return eid_vec.first == fighter_owner_empire_id; };
+    auto empire_it = std::find_if(events.begin(), events.end(), is_empire);
+    if (empire_it == events.end()) {
+        auto& vec = events.emplace_back(std::piecewise_construct,
+                                        std::forward_as_tuple(fighter_owner_empire_id),
+                                        std::forward_as_tuple()).second;
+        vec.emplace_back(from_id, count);
+    } else {
+        auto& vec = empire_it->second;
+        vec.emplace_back(from_id, count);
+    }
+}
+
+std::string FighterLaunchesEvent::FighterLaunchDetail::CombatLogDescription(
+    int viewing_empire_id, const ScriptingContext& context) const
 {
-    std::string launched_from_link = PublicNameLink(viewing_empire_id, launched_from_id,
-                                                    context.ContextUniverse());
-    std::string empire_coloured_fighter = EmpireColorWrappedText(
-        fighter_owner_empire_id, UserString("OBJ_FIGHTER"), context);
-
-    // launching negative fighters indicates recovery of them by the ship
-    const std::string& template_str = (number_launched >= 0 ?
-                                       UserString("ENC_COMBAT_LAUNCH_STR") :
-                                       UserString("ENC_COMBAT_RECOVER_STR"));
-
-   return str(FlexibleFormat(template_str)
-              % launched_from_link
-              % empire_coloured_fighter
-              % std::abs(number_launched));
+    const auto* launcher_obj = context.ContextObjects().getRaw(from_id);
+    const int launcher_empire_id = launcher_obj ? launcher_obj->Owner() : ALL_EMPIRES;
+    return FighterLaunchLogDescription(viewing_empire_id, from_id, launcher_empire_id, count, context);
 }
 
 
@@ -668,9 +758,7 @@ std::string FightersDestroyedEvent::DebugString(const ScriptingContext&) const {
     return ss.str();
 }
 
-std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id,
-                                                         const ScriptingContext& context) const
-{
+std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const {
     if (events.empty())
         return "";
 

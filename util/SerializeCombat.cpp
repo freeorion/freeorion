@@ -12,6 +12,12 @@ namespace {
     DeclareThreadSafeLogger(combat_log);
 }
 
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+#  define CONSTEXPR_VEC_AND_FROMCHARS constexpr
+#else
+#  define CONSTEXPR_VEC_AND_FROMCHARS
+#endif
+
 template<typename Archive>
 void serialize(Archive&, CombatEvent&, unsigned int const)
 {}
@@ -126,9 +132,11 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
                     else if (auto ie = std::dynamic_pointer_cast<IncapacitationEvent>(sub_event))
                         obj.other_incapacitations.AddEvent(ie->object_id, ie->object_owner_id); // don't know type from prior serialization version events
                     else if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
-                        obj.fighter_launches.AddEvent(std::move(le));
-                    else
+                        obj.fighter_launches2.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
+                    else if (sub_event)
                         ErrorLogger() << "unrecognized/unexpected sub-event in SimultaneousEvents in BoutEvent! typeid: " << typeid(*sub_event).name();
+                    else
+                        ErrorLogger() << "unexpected null sub-event in SimultaneousEvents in BoutEvent!";
                 }
 
             } else if (auto fighters_destroyed = std::dynamic_pointer_cast<FightersDestroyedEvent>(event)) {
@@ -137,23 +145,45 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
             } else if (auto fighters_attack_fighters = std::dynamic_pointer_cast<FightersAttackFightersEvent>(event)) {
                 obj.fighters_attack_fighters = std::move(*fighters_attack_fighters);
 
-            } else {
+            } else if (event) {
                 ErrorLogger() << "unrecognized/unexpected sub-event in BoutEvent! event: " << typeid(*event).name();
+
+            } else {
+                ErrorLogger() << "unexpected null sub-event in BoutEvent!";
             }
         }
     } else {
-       ar & make_nvp("weapon_firings", obj.weapon_firings)
-          & make_nvp("weapon_platform_firings", obj.weapons_platform_firings)
-          & make_nvp("fighter_launches", obj.fighter_launches)
-          & make_nvp("fighters_destroyed", obj.fighters_destroyed)
-          & make_nvp("fighters_attack_fighters", obj.fighters_attack_fighters)
-          & make_nvp("ship_incapacitations", obj.ship_incapacitations)
-          & make_nvp("planet_incapacitations", obj.planet_incapacitations)
-          & make_nvp("other_incapacitations", obj.other_incapacitations);
+        ar & make_nvp("weapon_firings", obj.weapon_firings)
+           & make_nvp("weapon_platform_firings", obj.weapons_platform_firings);
+
+        if constexpr (Archive::is_loading::value) {
+            if (version < 6) {
+                SimultaneousEvents fighter_launches;
+                ar >> make_nvp("fighter_launches", fighter_launches);
+                for (auto& sub_event : fighter_launches.Events()) {
+                    if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
+                        obj.fighter_launches2.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
+                    else if (sub_event)
+                        ErrorLogger() << "unrecognized/unexpected sub-event in FighterLaunchEvent: " << typeid(*sub_event).name();
+                    else
+                        ErrorLogger() << "unexpected null sub-event in FighterLaunchEvent!";
+                }
+            } else {
+                ar >> make_nvp("fighter_launches", obj.fighter_launches2);
+            }
+        } else {
+            ar << make_nvp("fighter_launches", obj.fighter_launches2);
+        }
+            
+        ar & make_nvp("fighters_destroyed", obj.fighters_destroyed)
+           & make_nvp("fighters_attack_fighters", obj.fighters_attack_fighters)
+           & make_nvp("ship_incapacitations", obj.ship_incapacitations)
+           & make_nvp("planet_incapacitations", obj.planet_incapacitations)
+           & make_nvp("other_incapacitations", obj.other_incapacitations);
     }
 }
 
-BOOST_CLASS_VERSION(BoutEvent, 5)
+BOOST_CLASS_VERSION(BoutEvent, 6)
 BOOST_CLASS_EXPORT(BoutEvent)
 
 template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, BoutEvent&, unsigned int const);
@@ -364,7 +394,7 @@ template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, Initial
 
 
 namespace {
-    constexpr auto not_null = [](const auto& p) noexcept -> bool { return p.get(); };
+    constexpr auto not_null = [](const auto& p) noexcept -> bool { return p != nullptr; };
     constexpr auto to_size = [](const auto& c) noexcept { return c.size(); };
     constexpr auto extract_from_shptr = [](auto& sptr) -> auto& { return *sptr; };
 }
@@ -891,6 +921,135 @@ template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, Fighter
 template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FighterLaunchEvent&, unsigned int const);
 
 
+namespace {
+    // for vectors (of pairs (of ints and vectors castable to of pair of ints))
+    std::string ToString(const std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events) {
+        auto events_sizes_rng = events | range_transform(to_second_size);
+        const std::size_t event_count = std::accumulate(events_sizes_rng.begin(), events_sizes_rng.end(), std::size_t{0});
+
+        std::string retval;
+        try { //                  two ints per event                   empire id and launch count per empire    empire count
+            retval.reserve((2 * (int_digits + 1) + 1) * event_count  +  (2 * int_digits + 3) * events.size()  +  int_digits);
+        } catch (...) {}
+
+        retval.append(std::to_string(events.size()));                           // number of top-level pair<int, vector>
+        for (const auto& [empire_id, launches] : events) {
+            retval.append("  ").append(std::to_string(empire_id)).append(" ")   // number id of empire launching fighters
+                .append(std::to_string(launches.size()));                       // number of distinct launches
+            for (const auto& launch : launches) {
+                retval.append("  ").append(std::to_string(launch.from_id))      // id of launching ship
+                      .append(" ").append(std::to_string(launch.count));        // number of fighters launched
+            }
+        }
+
+        return retval;
+    }
+
+    // for vectors (of pairs (of ints and vectors of wrapper of pair of ints))
+    CONSTEXPR_VEC_AND_FROMCHARS bool FillVecOfIntAndVecOfLaunchDetailEvent(
+        std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>>& events,
+        std::string_view buffer)
+    {
+        const auto* const buffer_end = buffer.data() + buffer.size();
+        const auto* next = buffer.data();
+
+        const auto get_next_uint = [buffer_end](const char* next, const unsigned int default_val)
+        { return GetIntFromChars<unsigned int>(buffer_end, next, default_val); };
+
+        const auto get_next_int = [buffer_end](const char* next, const int default_val)
+        { return GetIntFromChars<int>(buffer_end, next, default_val); };
+
+        bool success = false;
+        unsigned int count_ui = 0;
+
+        std::tie(count_ui, success, next) = get_next_uint(next, 0u);            //
+        if (!success)
+            return false;
+        const std::size_t empire_count = static_cast<std::size_t>(count_ui);
+        events.reserve(empire_count);
+
+        for (std::size_t empire_idx = 0; empire_idx < empire_count && next != buffer_end; ++empire_idx) {
+            int empire_id = ALL_EMPIRES;
+            std::tie(empire_id, success, next) = get_next_int(next, ALL_EMPIRES);
+            if (!success)
+                return false;
+            std::tie(count_ui, success, next) = get_next_uint(next, 0u);
+            if (!success)
+                return false;
+
+            auto& from_id_counts_vec = events.emplace_back(std::piecewise_construct,
+                                                           std::forward_as_tuple(empire_id),
+                                                           std::forward_as_tuple()).second;
+            const std::size_t from_id_count_count = static_cast<std::size_t>(count_ui);
+            from_id_counts_vec.reserve(from_id_count_count);
+
+            for (std::size_t obj_id_idx = 0; obj_id_idx < from_id_count_count && next != buffer_end; ++obj_id_idx) {
+                int object_id = INVALID_OBJECT_ID;
+                std::tie(object_id, success, next) = get_next_int(next, INVALID_OBJECT_ID);
+                if (!success)
+                    return false;
+                int count = 0;
+                std::tie(object_id, success, next) = get_next_int(next, 0);
+                if (!success)
+                    return false;
+                from_id_counts_vec.emplace_back(object_id, count);
+            }
+        }
+
+        return true;
+    }
+
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    constexpr auto ToLaunchesEvent(std::string_view str) {
+        std::vector<std::pair<int, std::vector<FighterLaunchesEvent::FighterLaunchDetail>>> retval;
+        bool success = FillVecOfIntAndVecOfLaunchDetailEvent(retval, str);
+        return std::pair{retval, success};
+    }
+
+    static_assert(ToLaunchesEvent("").first.empty() && !ToLaunchesEvent("").second);
+    static_assert(ToLaunchesEvent("0").first.empty() && ToLaunchesEvent("0").second);
+#endif
+}
+
+template <typename Archive>
+void serialize(Archive& ar, FighterLaunchesEvent::FighterLaunchDetail& obj, unsigned int const)
+{
+    ar & boost::serialization::make_nvp("from", obj.from_id)
+       & boost::serialization::make_nvp("count", obj.count);
+}
+
+BOOST_CLASS_EXPORT(FighterLaunchesEvent::FighterLaunchDetail)
+
+template <typename Archive>
+void serialize(Archive& ar, FighterLaunchesEvent& obj, unsigned int const version)
+{
+    using boost::serialization::make_nvp;
+    using boost::serialization::base_object;
+
+    ar & make_nvp("CombatEvent", base_object<CombatEvent>(obj));
+
+    if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        static_assert(Archive::is_loading::value);
+        std::string str;
+        ar >> make_nvp("events", str);
+        FillVecOfIntAndVecOfLaunchDetailEvent(obj.events, str);
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        static_assert(Archive::is_saving::value);
+        std::string str = ToString(obj.events);
+        ar << make_nvp("events", str);
+    } else {
+        ar & make_nvp("events", obj.events);
+    }
+}
+
+BOOST_CLASS_EXPORT(FighterLaunchesEvent)
+
+template void serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, FighterLaunchesEvent&, unsigned int const);
+template void serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, FighterLaunchesEvent&, unsigned int const);
+template void serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, FighterLaunchesEvent&, unsigned int const);
+template void serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, FighterLaunchesEvent&, unsigned int const);
+
+
 template <typename Archive>
 void serialize(Archive& ar, FightersDestroyedEvent& obj, unsigned int const version)
 {
@@ -1064,6 +1223,38 @@ void serialize(Archive& ar, CombatParticipantState& obj, const unsigned int/* ve
 }
 
 
+namespace {
+    // convert launches event format, from SimultaneousEvent containing
+    // FighterLaunchEvent into a FighterLaunchesEvent
+    void ConsolidateLaunchEvents(std::vector<CombatEventPtr>& events) {
+        static constexpr auto to_launch_event = [](const auto& e) noexcept -> const auto*
+        { return dynamic_cast<const FighterLaunchEvent*>(e.get()); };
+
+        for (auto& event : events) {
+            const auto* simul_events = dynamic_cast<const SimultaneousEvents*>(event.get());
+            if (!simul_events || simul_events->Events().empty())
+                continue;
+
+            auto launch_events = simul_events->Events() | range_transform(to_launch_event)
+                                                        | range_filter(not_null)
+                                                        | range_to_vec;
+
+            if (launch_events.size() != simul_events->Events().size())
+                continue; // something else also in this SimultanousEvent besides FighterLaunchEvent
+
+            auto launches_event = std::make_shared<FighterLaunchesEvent>();
+            if (!launches_event)
+                break;
+
+            for (const auto* le : launch_events)
+                launches_event->AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
+
+            // replace original event point with pointer to new launches event
+            event = std::move(launches_event);
+        }
+    }
+}
+
 BOOST_CLASS_EXPORT(CombatLog)
 
 template <typename Archive>
@@ -1097,6 +1288,9 @@ void serialize(Archive& ar, CombatLog& obj, const unsigned int version)
     } catch (const std::exception& e) {
         ErrorLogger() << "combat events serializing failed!: caught exception: " << e.what();
     }
+
+    if (Archive::is_loading::value && version < 4)
+        ConsolidateLaunchEvents(obj.combat_events);
 
     static_assert(std::is_same_v<std::pair<int, CombatParticipantState>, std::decay_t<decltype(*obj.participant_states.begin())>>);
 

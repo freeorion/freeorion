@@ -83,7 +83,7 @@ extern template FO_COMMON_API void serialize<freeorion_xml_iarchive>(freeorion_x
 
 struct CombatLog;
 
-BOOST_CLASS_VERSION(CombatLog, 3);
+BOOST_CLASS_VERSION(CombatLog, 4);
 
 template <typename Archive>
 void serialize(Archive&, CombatLog&, const unsigned int);

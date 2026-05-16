@@ -229,7 +229,7 @@ private:
 };
 
 
-/** FightersAttackFightersEvent aggregates all the fighter on fighter combat for one bout.*/
+/** Aggregates all the fighter on fighter combat for one bout.*/
 struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
     [[nodiscard]] FightersAttackFightersEvent() = default;
 
@@ -242,14 +242,14 @@ struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
 
 private:
     // Store the number of each of the identical fighter combat events.
-    std::map<std::pair<int, int>, unsigned int> events;
+    std::map<std::pair<int, int>, unsigned int> events; // indexed by {attacker_empire, target_empire} -> count of such attacks
 
     template <typename Archive>
     friend void serialize(Archive&, FightersAttackFightersEvent&, unsigned int const);
 };
 
 
-/** Created when an fighter is launched. */
+/** Created when a fighter is launched. */
 struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     [[nodiscard]] constexpr FighterLaunchEvent() noexcept = default;
     [[nodiscard]] constexpr FighterLaunchEvent(int launched_from_id_, int fighter_owner_empire_id_, int number_launched_) noexcept :
@@ -266,6 +266,42 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     int fighter_owner_empire_id = ALL_EMPIRES;
     int launched_from_id = INVALID_OBJECT_ID;
     int number_launched = 0;
+};
+
+
+struct FO_COMMON_API FighterLaunchesEvent : public CombatEvent {
+    [[nodiscard]] constexpr FighterLaunchesEvent() noexcept = default;
+
+    [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override;
+    [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+    [[nodiscard]] std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const override;
+    [[nodiscard]] bool IsEmpty() const noexcept override {
+        static constexpr auto second_is_empty = [](const auto& c) noexcept { return c.second.empty(); };
+        return events.empty() || std::all_of(events.begin(), events.end(), second_is_empty);
+    }
+
+    void AddEvent(int from_id, int fighter_owner_empire_id, int count);
+
+    struct FighterLaunchDetail : public CombatEvent {
+        [[nodiscard]] constexpr FighterLaunchDetail() noexcept = default;
+        [[nodiscard]] constexpr FighterLaunchDetail(int from_id_, int count_) noexcept :
+            from_id(from_id_), count(count_)
+        {}
+
+        [[nodiscard]] std::string DebugString(const ScriptingContext& context) const override
+        { return std::string{"launched "} + std::to_string(count) + " from " + std::to_string(from_id); }
+
+        [[nodiscard]] std::string CombatLogDescription(int viewing_empire_id, const ScriptingContext& context) const override;
+
+        int from_id = INVALID_OBJECT_ID;
+        int count = 0;
+    };
+
+private:
+    std::vector<std::pair<int, std::vector<FighterLaunchDetail>>> events; // .first are launching empires
+
+    template <typename Archive>
+    friend void serialize(Archive&, FighterLaunchesEvent&, unsigned int const);
 };
 
 
@@ -312,7 +348,7 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
 
     int attacker_id = INVALID_OBJECT_ID;
     int attacker_owner_id = ALL_EMPIRES;
-    std::map<int, std::vector<WeaponFireEvent>> events;
+    std::map<int, std::vector<WeaponFireEvent>> events; // indexed by target ID
 
 private:
     template <typename Archive>
@@ -334,7 +370,8 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
 
     [[nodiscard]] bool IsEmpty() const noexcept override {
         return weapon_firings.IsEmpty() &&              weapons_platform_firings.IsEmpty() &&
-               fighter_launches.IsEmpty() &&            fighters_destroyed.IsEmpty() &&
+               fighter_launches.IsEmpty() &&            fighter_launches2.IsEmpty() &&
+               fighters_destroyed.IsEmpty() &&
                fighters_attack_fighters.IsEmpty() &&    ship_incapacitations.IsEmpty() &&
                planet_incapacitations.IsEmpty() &&      other_incapacitations.IsEmpty();
     }
@@ -344,6 +381,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     SimultaneousEvents weapon_firings;              // make into vector<WeaponFireEvent> ?
     SimultaneousEvents weapons_platform_firings;    // make info vector<WeaponsPlatformEvent> ?
     SimultaneousEvents fighter_launches;            // make info vector<FighterLaunchEvent> or fancier nested structure
+    FighterLaunchesEvent fighter_launches2;
     FightersDestroyedEvent fighters_destroyed;
     FightersAttackFightersEvent fighters_attack_fighters;
     IncapacitationsEvent ship_incapacitations{UniverseObjectType::OBJ_SHIP};

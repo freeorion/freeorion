@@ -6188,6 +6188,18 @@ ENC_COMBAT_MANY_DESTROYED_SHIPS
 ENC_COMBAT_MANY_INCAPACITATED_PLANETS
 %1% planets incapacitated
 
+# %1% name of empire launching fighters
+# %2% number of fighters launched
+# %3% name of thing launched
+ENC_COMBAT_EMPIRE_LAUNCHES_FIGHTERS
+%1% launches %2% %3%
+
+# %1% name of empire recovering fighters
+# %2% number of fighters recovered
+# %3% name of thing recovered
+ENC_COMBAT_EMPIRE_RECOVERS_FIGHTERS
+%1% recovers %2% %3%
+
 # %1% number of items in list
 # %2% name of empire
 ENC_COMBAT_INITIAL_STEALTH_LIST
