@@ -2888,11 +2888,13 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         }
 
         std::string original_player_name = player_name;
-        // Remove AI prefix to distinguish Human from AI.
-        std::string ai_prefix = UserString("AI_PLAYER") + "_";
-        if (!Networking::is_ai(client_type)) {
-            while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
-                player_name.erase(0, ai_prefix.size());
+        if (!GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
+            // Remove AI prefix to distinguish Human from AI.
+            std::string ai_prefix = UserString("AI_PLAYER") + "_";
+            if (!Networking::is_ai(client_type)) {
+                while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
+                    player_name.erase(0, ai_prefix.size());
+            }
         }
         if (player_name.empty())
             player_name = "_";
