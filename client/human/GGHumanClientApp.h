@@ -60,7 +60,7 @@ public:
     void HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) override;
     void SetSinglePlayerGame(bool sp = true);
     void NewSinglePlayerGame(bool quickstart = false);
-    void MultiPlayerGame();                     ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected
+    void MultiPlayerGame(bool autoconnect = false);                     ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected
     void StartMultiPlayerGameFromLobby();       ///< begins
     void CancelMultiplayerGameFromLobby();      ///< cancels out of multiplayer game
     void SaveGame(const std::string& filename); ///< saves the current game; blocks until all save-related network traffic is resolved
