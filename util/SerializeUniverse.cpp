@@ -855,8 +855,10 @@ namespace {
 
     struct ResourceCenter {
         std::string m_focus;
+        int         m_focus_target = INVALID_OBJECT_ID;
         int         m_last_turn_focus_changed = INVALID_GAME_TURN;
         std::string m_focus_turn_initial;
+        int         m_focus_target_turn_initial = INVALID_OBJECT_ID;
         int         m_last_turn_focus_changed_turn_initial = INVALID_GAME_TURN;
     };
 
@@ -866,8 +868,10 @@ namespace {
         using namespace boost::serialization;
 
         ar  & make_nvp("m_focus", rs.m_focus)
+            & make_nvp("m_focus_target", rs.m_focus_target)
             & make_nvp("m_last_turn_focus_changed", rs.m_last_turn_focus_changed)
             & make_nvp("m_focus_turn_initial", rs.m_focus_turn_initial)
+            & make_nvp("m_focus_target_turn_initial", rs.m_focus_target_turn_initial)
             & make_nvp("m_last_turn_focus_changed_turn_initial", rs.m_last_turn_focus_changed_turn_initial);
     }
 }
@@ -896,8 +900,10 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
             obj.m_last_turn_focus_changed_turn_initial = res.m_last_turn_focus_changed_turn_initial;
         } else {
             ar  & make_nvp("m_focus", obj.m_focus)
+                & make_nvp("m_focus_target", obj.m_focus_target)
                 & make_nvp("m_last_turn_focus_changed", obj.m_last_turn_focus_changed)
                 & make_nvp("m_focus_turn_initial", obj.m_focus_turn_initial)
+                & make_nvp("m_focus_target_turn_initial", obj.m_focus_target_turn_initial)
                 & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial);
         }
 
@@ -905,8 +911,10 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
         ar  & make_nvp("m_species_name", obj.m_species_name);
 
         ar  & make_nvp("m_focus", obj.m_focus)
+            & make_nvp("m_focus_target", obj.m_focus_target)
             & make_nvp("m_last_turn_focus_changed", obj.m_last_turn_focus_changed)
             & make_nvp("m_focus_turn_initial", obj.m_focus_turn_initial)
+            & make_nvp("m_focus_target_turn_initial", obj.m_focus_target_turn_initial)
             & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial);
     }
 

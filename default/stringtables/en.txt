@@ -11847,6 +11847,12 @@ DESC_SOURCE
 DESC_SOURCE_NOT
 ''' that is not the source object'''
 
+DESC_FOCUS_TARGET
+''' that is the focus target object'''
+
+DESC_FOCUS_TARGET_NOT
+''' that is not the focus target object'''
+
 DESC_ROOT_CANDIDATE
 ''' that is the root candidate object'''
 

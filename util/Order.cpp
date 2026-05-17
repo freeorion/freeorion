@@ -1418,6 +1418,51 @@ void ChangeFocusOrder::ExecuteImpl(ScriptingContext& context) const {
 }
 
 ////////////////////////////////////////////////
+// ChangeFocusTargetOrder
+////////////////////////////////////////////////
+ChangeFocusTargetOrder::ChangeFocusTargetOrder(int empire, int planet, int focus_target, const ScriptingContext& context) :
+    Order(empire),
+    m_planet(planet),
+    m_focus_target(focus_target)
+{ Check(empire, m_planet, m_focus_target, context); }
+
+std::string ChangeFocusTargetOrder::Dump() const
+{ return boost::io::str(FlexibleFormat(UserString("ORDER_FOCUS_TARGET_CHANGE")) % m_planet % m_focus_target) + ExecutedTag(this); }
+
+bool ChangeFocusTargetOrder::Check(int empire_id, int planet_id, int focus_target,
+                             const ScriptingContext& context)
+{
+    auto planet = context.ContextObjects().getRaw<Planet>(planet_id);
+
+    if (!planet) {
+        ErrorLogger() << "Invalid planet id " << planet_id << " specified in change planet focus target order.";
+        return false;
+    }
+
+    if (!planet->OwnedBy(empire_id)) {
+        ErrorLogger() << "Empire " << empire_id
+                      << " attempted to issue change planet focus target to another's planet: " << planet_id;
+        return false;
+    }
+
+    // TODO: add check that the focustarget is valid. (Currently caught at planet itself.)
+
+    return true;
+}
+
+void ChangeFocusTargetOrder::ExecuteImpl(ScriptingContext& context) const {
+    GetValidatedEmpire(context);
+
+    if (!Check(EmpireID(), m_planet, m_focus_target, context))
+        return;
+
+    auto planet = context.ContextObjects().getRaw<Planet>(m_planet);
+
+    planet->SetFocusTarget(m_focus_target, context);
+}
+
+
+////////////////////////////////////////////////
 // PolicyOrder
 ////////////////////////////////////////////////
 std::string PolicyOrder::Dump() const {

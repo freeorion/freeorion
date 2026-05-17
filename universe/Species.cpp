@@ -24,10 +24,12 @@
 /////////////////////////////////////////////////
 FocusType::FocusType(std::string name, std::string description,
                      std::unique_ptr<Condition::Condition>&& location,
+                     std::unique_ptr<Condition::Condition>&& focus_target,
                      std::string graphic) :
     m_name(std::move(name)),
     m_description(std::move(description)),
     m_location(std::move(location)),
+    m_focus_target(std::move(focus_target)),
     m_graphic(std::move(graphic))
 {}
 
@@ -50,6 +52,14 @@ bool FocusType::operator==(const FocusType& rhs) const {
         return false;
     }
 
+    if (m_focus_target == rhs.m_focus_target) { // could be nullptr
+        // check next member
+    } else if (!m_focus_target || !rhs.m_focus_target) {
+        return false;
+    } else if (*m_focus_target != *(rhs.m_focus_target)) {
+        return false;
+    }
+
     return true;
 }
 
@@ -59,6 +69,10 @@ std::string FocusType::Dump(uint8_t ntabs) const {
     retval += DumpIndent(ntabs+1) + "description = \"" + m_description + "\"\n";
     retval += DumpIndent(ntabs+1) + "location = \n";
     retval += m_location->Dump(ntabs+2);
+    if(m_focus_target){
+        retval += DumpIndent(ntabs+1) + "focus_target = \n";
+        retval += m_focus_target->Dump(ntabs+2);
+	}
     retval += DumpIndent(ntabs+1) + "graphic = \"" + m_graphic + "\"\n";
     return retval;
 }
@@ -69,6 +83,9 @@ uint32_t FocusType::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_name);
     CheckSums::CheckSumCombine(retval, m_description);
     CheckSums::CheckSumCombine(retval, m_location);
+    // Backwards compatiblity; if the focus target is not changed from the default, then it is not checksummed.
+    if(m_focus_target.get() && (*(m_focus_target.get()) != Condition::None()))
+		CheckSums::CheckSumCombine(retval, m_focus_target);
     CheckSums::CheckSumCombine(retval, m_graphic);
 
     return retval;

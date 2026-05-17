@@ -418,9 +418,9 @@ BOOST_AUTO_TEST_CASE(parse_species) {
             "SP_ABADDONI_DESC",
             "SP_ABADDONI_GAMEPLAY_DESC",
             {
-                {"FOCUS_INDUSTRY", "FOCUS_INDUSTRY_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/industry.png"},
-                {"FOCUS_RESEARCH", "FOCUS_RESEARCH_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/research.png"},
-                {"FOCUS_INFLUENCE", "FOCUS_INFLUENCE_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/influence.png"},
+                {"FOCUS_INDUSTRY", "FOCUS_INDUSTRY_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), std::make_unique<Condition::None>(), "icons/focus/industry.png"},
+                {"FOCUS_RESEARCH", "FOCUS_RESEARCH_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), std::make_unique<Condition::None>(), "icons/focus/research.png"},
+                {"FOCUS_INFLUENCE", "FOCUS_INFLUENCE_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), std::make_unique<Condition::None>(), "icons/focus/influence.png"},
                 {"FOCUS_GROWTH", "FOCUS_GROWTH_DESC", std::make_unique<Condition::Or>(array_to_vector<Condition::Condition, 10>({
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Homeworld>(array_to_vector<ValueRef::ValueRef<std::string>, 1>({std::make_unique<ValueRef::Variable<std::string>>(ValueRef::ReferenceType::SOURCE_REFERENCE, "Species")})),
@@ -435,56 +435,56 @@ BOOST_AUTO_TEST_CASE(parse_species) {
                     std::make_unique<Condition::HasSpecial>("ELERIUM_SPECIAL"),
                     std::make_unique<Condition::HasSpecial>("CRYSTALS_SPECIAL"),
                     std::make_unique<Condition::HasSpecial>("MINERALS_SPECIAL")
-                })), "icons/focus/growth.png"},
-                {"FOCUS_PROTECTION", "FOCUS_PROTECTION_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), "icons/focus/protection.png"},
-                {"FOCUS_LOGISTICS", "FOCUS_LOGISTICS_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("SHP_INTSTEL_LOG")), "icons/focus/supply.png"},
-                {"FOCUS_STOCKPILE", "FOCUS_STOCKPILE_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("PRO_GENERIC_SUPPLIES")), "icons/focus/stockpile.png"},
+                })), std::make_unique<Condition::None>(), "icons/focus/growth.png"},
+                {"FOCUS_PROTECTION", "FOCUS_PROTECTION_DESC", std::make_unique<Condition::Type>(UniverseObjectType::OBJ_PLANET), std::make_unique<Condition::None>(), "icons/focus/protection.png"},
+                {"FOCUS_LOGISTICS", "FOCUS_LOGISTICS_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("SHP_INTSTEL_LOG")), std::make_unique<Condition::None>(), "icons/focus/supply.png"},
+                {"FOCUS_STOCKPILE", "FOCUS_STOCKPILE_DESC", std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("PRO_GENERIC_SUPPLIES")), std::make_unique<Condition::None>(), "icons/focus/stockpile.png"},
                 {"FOCUS_STEALTH", "FOCUS_STEALTH_DESC", std::make_unique<Condition::Or>(
                     std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_PLANET_CLOAK")),
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("DEF_PLANET_CLOAK"))
                     )
-                ), "icons/focus/stealth.png"},
+                ), std::make_unique<Condition::None>(), "icons/focus/stealth.png"},
                 {"FOCUS_BIOTERROR", "FOCUS_BIOTERROR_DESC", std::make_unique<Condition::Or>(
                     std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_BIOTERROR_PROJECTOR")),
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("GRO_BIOTERROR"))
                     )
-                ), "icons/focus/bioterror.png"},
+                ), std::make_unique<Condition::None>(), "icons/focus/bioterror.png"},
                 {"FOCUS_STARGATE_SEND", "FOCUS_STARGATE_SEND_DESC", std::make_unique<Condition::Or>(
                     std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_STARGATE")),
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
                     )
-                ), "icons/focus/stargate_send.png"},
+                ), std::make_unique<Condition::None>(), "icons/focus/stargate_send.png"},
                 {"FOCUS_STARGATE_RECEIVE", "FOCUS_STARGATE_RECEIVE_DESC", std::make_unique<Condition::Or>(
                     std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_STARGATE")),
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_STARGATE"))
                     )
-                ), "icons/focus/stargate_receive.png"},
+                ), std::make_unique<Condition::None>(), "icons/focus/stargate_receive.png"},
                 {"FOCUS_PLANET_DRIVE", "FOCUS_PLANET_DRIVE_DESC", std::make_unique<Condition::Or>(
                     std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_PLANET_DRIVE")),
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("CON_PLANET_DRIVE"))
                     )
-                ), "icons/building/planetary_stardrive.png"},
+                ), std::make_unique<Condition::None>(), "icons/building/planetary_stardrive.png"},
                 {"FOCUS_DISTORTION", "FOCUS_DISTORTION_DESC", std::make_unique<Condition::Or>(
                     std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_SPATIAL_DISTORT_GEN")),
                     std::make_unique<Condition::And>(
                         std::make_unique<Condition::Contains<>>(std::make_unique<Condition::Building>("BLD_TRANSFORMER")),
                         std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("LRN_SPATIAL_DISTORT_GEN"))
                     )
-                ), "icons/focus/distortion.png"},
+                ), std::make_unique<Condition::None>(), "icons/focus/distortion.png"},
                 {"FOCUS_DOMINATION", "FOCUS_DOMINATION_DESC", std::make_unique<Condition::And>(
                     std::make_unique<Condition::HasTag>("TELEPATHIC"),
                     std::make_unique<Condition::OwnerHasTech>(std::make_unique<ValueRef::Constant<std::string>>("LRN_PSY_DOM"))
-                ), "icons/focus/psi_domination.png"}
+                ), std::make_unique<Condition::None>(), "icons/focus/psi_domination.png"}
             },
             "FOCUS_INDUSTRY",
             {

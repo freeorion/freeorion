@@ -114,8 +114,10 @@ void Planet::Copy(const Planet& copied_planet, const Universe& universe, int emp
         if (vis >= Visibility::VIS_PARTIAL_VISIBILITY) {
             this->m_species_name =                          copied_planet.m_species_name;
             this->m_focus =                                 copied_planet.m_focus;
+            this->m_focus_target =                          copied_planet.m_focus_target;
             this->m_last_turn_focus_changed =               copied_planet.m_last_turn_focus_changed;
             this->m_focus_turn_initial =                    copied_planet.m_focus_turn_initial;
+            this->m_focus_target_turn_initial =             copied_planet.m_focus_target_turn_initial;
             this->m_last_turn_focus_changed_turn_initial =  copied_planet.m_last_turn_focus_changed_turn_initial;
             this->m_last_turn_attacked_by_ship =            copied_planet.m_last_turn_attacked_by_ship;
             this->m_ordered_annexed_by_empire_id =          copied_planet.m_ordered_annexed_by_empire_id;
@@ -171,8 +173,8 @@ std::string Planet::Dump(uint8_t ntabs) const {
     std::string retval = UniverseObject::Dump(ntabs);
     retval.reserve(2048);
     retval.append(" species: ").append(m_species_name).append("  ");
-    retval.append(" focus: ").append(m_focus).append(" last changed on turn: ")
-          .append(std::to_string(m_last_turn_focus_changed));
+    retval.append(" focus: ").append(m_focus).append(" target: ").append(std::to_string(m_focus_target))
+          .append(" last changed on turn: ").append(std::to_string(m_last_turn_focus_changed));
     retval.append(" type: ").append(to_string(m_type))
           .append(" original type: ").append(to_string(m_original_type))
           .append(" size: ").append(to_string(m_size))
@@ -600,6 +602,31 @@ const std::string& Planet::FocusIcon(std::string_view focus_name, const Scriptin
     return EMPTY_STRING;
 }
 
+std::vector<int> Planet::AvailableFocusTargets(const ScriptingContext& context) const {
+    std::vector<int> retval;
+    const auto* species = context.species.GetSpecies(this->SpeciesName());
+    if (!species)
+        return retval;
+
+    const auto is_focus = [this](const FocusType& focus_type) noexcept { return focus_type.Name() == m_focus; };
+    const auto& foci = species->Foci();
+    const auto it = range_find_if(foci, is_focus);
+    if (it == foci.end())
+        return retval;
+
+    const ScriptingContext planet_context(context, ScriptingContext::Source{}, this);
+
+    const auto* focus_target = (*it).FocusTarget();
+    if (focus_target){
+        Condition::ObjectSet matches = focus_target->Eval(planet_context);
+        for (const auto &obj : matches){
+            retval.push_back(obj->ID());
+        }
+    }
+
+    return retval;
+}
+
 std::map<int, double> Planet::EmpireGroundCombatForces() const {
     std::map<int, double> empire_troops;
     if (UniverseObject::GetMeter(MeterType::METER_TROOPS)->Initial() > 0.0f) {
@@ -730,6 +757,7 @@ void Planet::Reset(ObjectMap& objects) {
     m_species_name.clear();
 
     m_focus.clear();
+    m_focus_target = INVALID_OBJECT_ID;
     m_last_turn_focus_changed = INVALID_GAME_TURN;
 
     GetMeter(MeterType::METER_INDUSTRY)->Reset();
@@ -877,7 +905,26 @@ void Planet::SetFocus(std::string focus, const ScriptingContext& context) {
     }
 
     m_focus = std::move(focus);
-    if (m_focus == m_focus_turn_initial)
+    // Changing focus resets any targets that were set.
+    m_focus_target = INVALID_OBJECT_ID;
+    HandleFocusChanged(context);
+}
+
+void Planet::SetFocusTarget(int target, const ScriptingContext& context){
+    if (target == m_focus_target)
+        return;
+
+    auto available_targets = AvailableFocusTargets(context);
+    if(std::find(available_targets.begin(), available_targets.end(), target) == available_targets.end())
+        m_focus_target = INVALID_OBJECT_ID;
+
+    m_focus_target = target;
+    HandleFocusChanged(context);
+}
+
+void Planet::HandleFocusChanged(const ScriptingContext& context)
+{
+    if ((m_focus == m_focus_turn_initial) && (m_focus_target == m_focus_target_turn_initial))
         m_last_turn_focus_changed = m_last_turn_focus_changed_turn_initial;
     else
         m_last_turn_focus_changed = context.current_turn;
@@ -886,16 +933,18 @@ void Planet::SetFocus(std::string focus, const ScriptingContext& context) {
 
 void Planet::ClearFocus(int current_turn) {
     m_focus.clear();
+    m_focus_target = INVALID_OBJECT_ID;
     m_last_turn_focus_changed = current_turn;
     ResourceCenterChangedSignal();
 }
 
 void Planet::UpdateFocusHistory() {
-    TraceLogger() << "Planet::UpdateFocusHistory: focus: " << m_focus
-        << "  initial focus: " << m_focus_turn_initial
+    TraceLogger() << "Planet::UpdateFocusHistory: focus: " << m_focus << " (target: " << m_focus_target << ")"
+        << "  initial focus: " << m_focus_turn_initial << " (target: " << m_focus_target_turn_initial << ")"
         << "  turns since change initial: " << m_last_turn_focus_changed_turn_initial;
-    if (m_focus != m_focus_turn_initial) {
+    if (m_focus != m_focus_turn_initial || m_focus_target != m_focus_target_turn_initial) {
         m_focus_turn_initial = m_focus;
+        m_focus_target_turn_initial = m_focus_target;
         m_last_turn_focus_changed_turn_initial = m_last_turn_focus_changed;
     }
 }
