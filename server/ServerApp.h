@@ -79,7 +79,7 @@ public:
     [[nodiscard]] int EmpirePlayerID(int empire_id) const;
 
     /** Checks if \a player_name are not used by other players. */
-    [[nodiscard]] bool IsAvailableName(const std::string& player_name) const;
+    [[nodiscard]] bool IsAvailableName(const std::string& player_name, bool ignore_ai = false) const;
 
     /** Checks if server runs in a hostless mode. */
     [[nodiscard]] bool IsHostless() const;

@@ -2888,7 +2888,8 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         }
 
         std::string original_player_name = player_name;
-        if (!GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
+        bool take_over_ai = GetOptionsDB().Get<bool>("network.server.take-over-ai");
+        if (!take_over_ai) {
             // Remove AI prefix to distinguish Human from AI.
             std::string ai_prefix = UserString("AI_PLAYER") + "_";
             if (!Networking::is_ai(client_type)) {
@@ -2908,7 +2909,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
         {
             collision = false;
             roles.Clear();
-            if (!server.IsAvailableName(new_player_name) ||
+            if (!server.IsAvailableName(new_player_name, take_over_ai) ||
                 (!relaxed_auth && server.IsAuthRequiredOrFillRoles(new_player_name,
                                                                    player_connection->GetIpAddress(), roles)))
             {

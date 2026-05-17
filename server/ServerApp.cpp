@@ -1653,11 +1653,11 @@ bool ServerApp::IsLocalHumanPlayer(int player_id) {
     return player && Networking::is_human(player) && player->IsLocalConnection();
 }
 
-bool ServerApp::IsAvailableName(const std::string& player_name) const {
+bool ServerApp::IsAvailableName(const std::string& player_name, bool ignore_ai) const {
     if (player_name.empty())
         return false;
-    const auto has_name = [n{std::string_view{player_name}}](const auto& pcon) noexcept
-    { return pcon->PlayerName() == n; };
+    const auto has_name = [n{std::string_view{player_name}}, ignore_ai](const auto& pcon) noexcept
+    { return pcon->PlayerName() == n && (!ignore_ai || !Networking::is_ai(pcon->GetClientType())); };
     // check if any other player has the same name
     if (range_any_of(m_networking.EstablishedPlayerConnections(), has_name))
         return false;
