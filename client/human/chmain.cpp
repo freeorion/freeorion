@@ -127,6 +127,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         db.AddFlag('v', "version",                      UserStringNop("OPTIONS_DB_VERSION"),
                    OptionsDB::Storable::UNSTORABLE,     "version");
         db.AddFlag('g', "generate-config-xml",          UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),    OptionsDB::Storable::UNSTORABLE);
+        db.AddFlag('A', "auto-connect",                 UserStringNop("OPTIONS_DB_AUTO_CONNECT"),           OptionsDB::Storable::UNSTORABLE);
         db.AddFlag('f', "video.fullscreen.enabled",     UserStringNop("OPTIONS_DB_FULLSCREEN"),             STORE_FULLSCREEN_FLAG);
         db.Add<bool>("video.fullscreen.reset",          UserStringNop("OPTIONS_DB_RESET_FSSIZE"),           true);
         db.Add<bool>("video.fullscreen.fake.enabled",   UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),       FAKE_MODE_CHANGE_FLAG);
@@ -295,6 +296,12 @@ int mainSetupAndRun() {
             // go into a single player game, loading the indicated file
             // (without requiring the user to click the load button).
             app.LoadSinglePlayerGame(load_filename);
+        }
+
+        if (db.Get<bool>("auto-connect")) {
+            // immediately connect to the server and join the game
+            // (without requiring the user to click on server connect window).
+            app.MultiPlayerGame(true);
         }
 
         // run rendering loop

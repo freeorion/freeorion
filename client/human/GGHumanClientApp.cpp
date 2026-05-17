@@ -698,7 +698,7 @@ void GGHumanClientApp::NewSinglePlayerGame(bool quickstart) {
     DebugLogger() << "GGHumanClientApp::NewSinglePlayerGame done";
 }
 
-void GGHumanClientApp::MultiPlayerGame() {
+void GGHumanClientApp::MultiPlayerGame(bool autoconnect) {
     ClearPreviousPendingSaves(m_game_saves_in_progress);
 
     if (m_networking->IsConnected()) {
@@ -706,11 +706,21 @@ void GGHumanClientApp::MultiPlayerGame() {
         return;
     }
 
-    auto server_connect_wnd = GG::Wnd::Create<ServerConnectWnd>();
-    server_connect_wnd->Run();
+    ServerConnectWnd::Result result;
+    if (autoconnect) {
+        result = {
+            GetOptionsDB().Get<std::string>("setup.multiplayer.player.name"),
+            GetOptionsDB().Get<std::string>("setup.multiplayer.host.address"),
+            Networking::ClientType::CLIENT_TYPE_HUMAN_PLAYER
+        };
+    } else {
+        auto server_connect_wnd = GG::Wnd::Create<ServerConnectWnd>();
+        server_connect_wnd->Run();
 
-    std::string server_dest = server_connect_wnd->GetResult().server_dest;
+        result = server_connect_wnd->GetResult();
+    }
 
+    std::string server_dest = result.server_dest;
     if (server_dest.empty())
         return;
 
@@ -736,13 +746,13 @@ void GGHumanClientApp::MultiPlayerGame() {
     m_connected = m_networking->ConnectToServer(server_dest);
     if (!m_connected) {
         m_ui.MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED")
+        if (result.server_dest == "HOST GAME SELECTED")
             ResetToIntro(true);
         return;
     }
 
-    if (server_connect_wnd->GetResult().server_dest == "HOST GAME SELECTED") {
-        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd->GetResult().player_name, DependencyVersions()));
+    if (result.server_dest == "HOST GAME SELECTED") {
+        m_networking->SendMessage(HostMPGameMessage(result.player_name, DependencyVersions()));
         m_fsm.process_event(HostMPGameRequested());
     } else {
         boost::uuids::uuid cookie = boost::uuids::nil_uuid();
@@ -763,8 +773,8 @@ void GGHumanClientApp::MultiPlayerGame() {
             // ignore
         }
 
-        m_networking->SendMessage(JoinGameMessage(server_connect_wnd->GetResult().player_name,
-                                                  server_connect_wnd->GetResult().type,
+        m_networking->SendMessage(JoinGameMessage(result.player_name,
+                                                  result.type,
                                                   DependencyVersions(),
                                                   cookie));
         m_fsm.process_event(JoinMPGameRequested());
