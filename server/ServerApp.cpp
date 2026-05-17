@@ -1897,8 +1897,16 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
     auto delegation = GetPlayerDelegation(player_connection->PlayerName());
     if (GetOptionsDB().Get<bool>("network.server.take-over-ai")) {
         for (auto& [loop_empire_id, loop_empire] : m_empires) {
-            if (!loop_empire->Eliminated() && Networking::is_ai(GetEmpireClientType(loop_empire_id)))
-                delegation.push_back(loop_empire->PlayerName());
+            if (!loop_empire->Eliminated() && Networking::is_ai(GetEmpireClientType(loop_empire_id))) {
+                if (loop_empire->PlayerName() == player_connection->PlayerName()) {
+                    empire_id = loop_empire_id;
+                    target_empire_id = loop_empire_id;
+                    empire = loop_empire;
+                    break;
+                } else {
+                    delegation.push_back(loop_empire->PlayerName());
+                }
+            }
         }
     }
     if (target_empire_id == ALL_EMPIRES) {
@@ -1921,7 +1929,7 @@ int ServerApp::AddPlayerIntoGame(const PlayerConnectionPtr& player_connection, i
             }
         }
         if (!delegation.empty()) {
-            DebugLogger() << "ServerApp::AddPlayerIntoGame(...): Player should choose between delegates.";
+            DebugLogger() << "ServerApp::AddPlayerIntoGame(...): Player " << player_connection->PlayerName() << " should choose between delegates.";
             return ALL_EMPIRES;
         }
     } else {
