@@ -38,6 +38,9 @@ apps:
     plugs: [home, network, network-bind]
     environment:
       LD_LIBRARY_PATH: $SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}/freeorion:$SNAP/usr/lib/${CRAFT_ARCH_TRIPLET}:$SNAP_DESKTOP_RUNTIME/usr/lib/${CRAFT_ARCH_TRIPLET}
+      XDG_CONFIG_HOME: $SNAP_USER_DATA/.config
+      XDG_DATA_HOME: $SNAP_USER_DATA/.local/share
+      XDG_CACHE_HOME: $SNAP_USER_DATA/.cache
       #PYTHONPATH: $SNAP_DESKTOP_RUNTIME/usr/lib/python3.10
   freeoriond-dedicated:
     command: usr/bin/freeoriond --hostless --network.server.unconn-human-empire-players.max 0 --network.server.conn-human-empire-players.min 0
