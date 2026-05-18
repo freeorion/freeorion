@@ -1769,7 +1769,7 @@ namespace {
                 }
                 const auto weapons = GetWeapons(attacker, combat_info.universe); // includes info about fighter launches with ShipPartClass::PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with ShipPartClass::PC_DIRECT_WEAPON part class
 
-                const bool launched_something = LaunchFighters(attacker, weapons, combat_state, bout_event->fighter_launches2);
+                const bool launched_something = LaunchFighters(attacker, weapons, combat_state, bout_event->fighter_launches);
 
                 // Set launching carrier as at least basically visible to other empires.
                 if (!launched_something)

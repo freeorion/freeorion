@@ -370,8 +370,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
 
     [[nodiscard]] bool IsEmpty() const noexcept override {
         return weapon_firings.IsEmpty() &&              weapons_platform_firings.IsEmpty() &&
-               fighter_launches.IsEmpty() &&            fighter_launches2.IsEmpty() &&
-               fighters_destroyed.IsEmpty() &&
+               fighter_launches.IsEmpty() &&            fighters_destroyed.IsEmpty() &&
                fighters_attack_fighters.IsEmpty() &&    ship_incapacitations.IsEmpty() &&
                planet_incapacitations.IsEmpty() &&      other_incapacitations.IsEmpty();
     }
@@ -380,8 +379,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
 
     SimultaneousEvents weapon_firings;              // make into vector<WeaponFireEvent> ?
     SimultaneousEvents weapons_platform_firings;    // make info vector<WeaponsPlatformEvent> ?
-    SimultaneousEvents fighter_launches;            // make info vector<FighterLaunchEvent> or fancier nested structure
-    FighterLaunchesEvent fighter_launches2;
+    FighterLaunchesEvent fighter_launches;
     FightersDestroyedEvent fighters_destroyed;
     FightersAttackFightersEvent fighters_attack_fighters;
     IncapacitationsEvent ship_incapacitations{UniverseObjectType::OBJ_SHIP};

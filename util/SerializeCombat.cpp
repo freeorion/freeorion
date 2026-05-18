@@ -132,7 +132,7 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
                     else if (auto ie = std::dynamic_pointer_cast<IncapacitationEvent>(sub_event))
                         obj.other_incapacitations.AddEvent(ie->object_id, ie->object_owner_id); // don't know type from prior serialization version events
                     else if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
-                        obj.fighter_launches2.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
+                        obj.fighter_launches.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
                     else if (sub_event)
                         ErrorLogger() << "unrecognized/unexpected sub-event in SimultaneousEvents in BoutEvent! typeid: " << typeid(*sub_event).name();
                     else
@@ -162,17 +162,17 @@ void serialize(Archive& ar, BoutEvent& obj, unsigned int const version)
                 ar >> make_nvp("fighter_launches", fighter_launches);
                 for (auto& sub_event : fighter_launches.Events()) {
                     if (auto le = std::dynamic_pointer_cast<FighterLaunchEvent>(sub_event))
-                        obj.fighter_launches2.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
+                        obj.fighter_launches.AddEvent(le->launched_from_id, le->fighter_owner_empire_id, le->number_launched);
                     else if (sub_event)
                         ErrorLogger() << "unrecognized/unexpected sub-event in FighterLaunchEvent: " << typeid(*sub_event).name();
                     else
                         ErrorLogger() << "unexpected null sub-event in FighterLaunchEvent!";
                 }
             } else {
-                ar >> make_nvp("fighter_launches", obj.fighter_launches2);
+                ar >> make_nvp("fighter_launches", obj.fighter_launches);
             }
         } else {
-            ar << make_nvp("fighter_launches", obj.fighter_launches2);
+            ar << make_nvp("fighter_launches", obj.fighter_launches);
         }
 
         ar & make_nvp("fighters_destroyed", obj.fighters_destroyed)
