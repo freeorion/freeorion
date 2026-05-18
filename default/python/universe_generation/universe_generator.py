@@ -10,7 +10,7 @@ import universe_statistics
 from common.handlers import init_handlers
 from common.listeners import listener
 from common.option_tools import parse_config
-from empires import compile_home_system_list, setup_empire
+from empires import compile_home_system_list, get_starting_species_pool, setup_empire
 from fields import generate_fields
 from galaxy import calc_star_system_positions
 from monsters import generate_monsters
@@ -120,6 +120,18 @@ def create_universe(psd_map):  # noqa: C901
         raise Exception(err_msg)
     print("Home systems:", home_systems)
 
+    usedSpecies = (
+        None
+        if fo.getGameRules().getToggle("RULE_ALLOW_REPEATED_SPECIES")
+        else {
+            psd.starting_species
+            for psd in psd_map.values()
+            if psd.starting_species and psd.starting_species != "RANDOM"
+        }
+    )
+    # generates starting species for empires, use next(starting_species_pool) to get next species
+    starting_species_pool = get_starting_species_pool(usedSpecies)
+
     teams = {}
     for psd in psd_map.values():
         if psd.starting_team >= 0:
@@ -141,7 +153,13 @@ def create_universe(psd_map):  # noqa: C901
                 else:
                     placed = True
                     if not setup_empire(
-                        empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd
+                        empire,
+                        psd.empire_name,
+                        home_system,
+                        psd.starting_species,
+                        psd.player_name,
+                        gsd,
+                        starting_species_pool,
                     ):
                         report_error(f"Python create_universe: couldn't set up empire for player {psd.player_name}")
             if not placed:
@@ -149,12 +167,16 @@ def create_universe(psd_map):  # noqa: C901
             psds = psds_new
         # place leftovers
         for (empire, psd), home_system in zip(psds, hs):
-            if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd):
+            if not setup_empire(
+                empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd, starting_species_pool
+            ):
                 report_error(f"Python create_universe: couldn't set up empire for player {psd.player_name}")
     else:
         # set up empires for each player
         for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
-            if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd):
+            if not setup_empire(
+                empire, psd.empire_name, home_system, psd.starting_species, psd.player_name, gsd, starting_species_pool
+            ):
                 report_error(f"Python create_universe: couldn't set up empire for player {psd.player_name}")
 
     # assign names to all star systems and their planets
