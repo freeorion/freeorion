@@ -193,7 +193,6 @@ std::string BoutEvent::DebugString(const ScriptingContext&) const {
     ss << "Bout " << bout << " has " << weapon_firings.SubEvents(ALL_EMPIRES).size() << " weapon firings, "
        << weapons_platform_firings.SubEvents(ALL_EMPIRES).size() << " weapon platform firings, "
        << fighter_launches.SubEvents(ALL_EMPIRES).size() << " launches, "
-       << fighter_launches2.SubEvents(ALL_EMPIRES).size() << " launches, "
        << fighters_destroyed.SubEvents(ALL_EMPIRES).size() << " fighters destroyed, "
        << fighters_attack_fighters.SubEvents(ALL_EMPIRES).size() << " fighters on fighter attack, "
        << ship_incapacitations.SubEvents(ALL_EMPIRES).size() << " ship incapacitations, "
@@ -208,10 +207,9 @@ std::string BoutEvent::CombatLogDescription(int, const ScriptingContext&) const
 std::vector<const CombatEvent*> BoutEvent::SubEvents(int) const {
     std::vector<const CombatEvent*> retval;
     retval.reserve(8);
-    for (const auto* subevent : std::array<const CombatEvent*, 9>{
+    for (const auto* subevent : std::array<const CombatEvent*, 8>{
         std::addressof(weapon_firings),         std::addressof(weapons_platform_firings),
-        std::addressof(fighter_launches),       std::addressof(fighter_launches2),
-        std::addressof(fighters_attack_fighters),
+        std::addressof(fighter_launches),       std::addressof(fighters_attack_fighters),
         std::addressof(fighters_destroyed),     std::addressof(ship_incapacitations),
         std::addressof(planet_incapacitations), std::addressof(other_incapacitations)})
     {
