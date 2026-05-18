@@ -19,7 +19,7 @@ jobs:
       snap: ${{ steps.snapcraft.outputs.snap }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
     - name: Build snap package
       uses: snapcore/action-build@v1
       id: snapcraft
@@ -29,7 +29,7 @@ jobs:
     - name: Install dependencies for test launch
       run: |
         sudo apt update -y
-        sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0 imagemagick xvfb x11-xserver-utils optipng
+        sudo apt install -y mesa-utils libgl1-mesa-dri libglx-mesa0 imagemagick xvfb x11-xserver-utils optipng xdotool
     - name: Test freeorion launch
       run: |
         xvfb-run --auto-servernum --server-args="-screen 0 1280x720x24" /bin/bash .github/snap-xvfb-launch.sh
