@@ -4129,7 +4129,7 @@ PL_NEVER_SCANNED
 This planet has never been thoroughly scanned by your empire.
 
 PL_NOT_IN_RANGE
-This planet is out of range of your empire's scanners.
+This planet is out of scanner range.
 
 # %1% last known stealth value of the planet.
 # %2% detection strength of the empire which scanned the planet.
@@ -6149,27 +6149,56 @@ Round %1%'''
 ENC_COMBAT_UNKNOWN_DESTROYED_STR
 %2% was incapacitated
 
+# %1% number of destoyed fighters
+ENC_COMBAT_MANY_DESTROYED_MISC
+%1% destroyed/incapacitated
+
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
-A %1% %2% was destroyed.
+A %1% %2% was destroyed
 
 # A combat log report for multiple destroyed fighters from one empire
 # %1% count of number of repeated events
 # %2% name of the empire which owns the attacked unit.
 # %3% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_REPEATED_STR
-%1%X %2% %3%s were destroyed.
+%1%X %2% %3%s were destroyed
+
+# %1% number of destoyed fighters
+ENC_COMBAT_MANY_DESTROYED_FIGHTERS
+%1% fighters destroyed
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked planet.
 ENC_COMBAT_PLANET_INCAPACITATED_STR
-The planet %2% was incapacitated
+The %1% planet %2% was incapacitated
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked unit.
 ENC_COMBAT_DESTROYED_STR
-The ship %2% was destroyed
+The %1% ship %2% was destroyed
+
+# %1% number of destoyed ships
+ENC_COMBAT_MANY_DESTROYED_SHIPS
+%1% ships destroyed
+
+# %1% number of incapacitated planets
+# %2% name of the empire which owns incapacitated planets
+ENC_COMBAT_MANY_INCAPACITATED_PLANETS
+%1% planets incapacitated
+
+# %1% name of empire launching fighters
+# %2% number of fighters launched
+# %3% name of thing launched
+ENC_COMBAT_EMPIRE_LAUNCHES_FIGHTERS
+%1% launches %2% %3%
+
+# %1% name of empire recovering fighters
+# %2% number of fighters recovered
+# %3% name of thing recovered
+ENC_COMBAT_EMPIRE_RECOVERS_FIGHTERS
+%1% recovers %2% %3%
 
 # %1% number of items in list
 # %2% name of empire

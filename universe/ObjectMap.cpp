@@ -392,7 +392,7 @@ void ObjectMap::AuditContainment(const std::unordered_set<int>& destroyed_object
     }
 
     auto to_flat_set = [](const auto& container)
-    { return UniverseObject::IDSet(container.begin(), container.end()); };
+    { return IDSet(container.begin(), container.end()); };
 
     // set contained objects of all possible containers
     for (auto* obj : allRaw()) {

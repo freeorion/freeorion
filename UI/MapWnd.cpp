@@ -5555,11 +5555,11 @@ std::vector<int> MapWnd::FleetIDsOfFleetButtonsOverlapping(
     const auto it = m_fleet_buttons.find(fleet_id);
     if (it == m_fleet_buttons.end()) {
         // Log that a FleetButton could not be found for the requested fleet, and include when the fleet was last seen
-        const auto& vis_turn_map = universe.GetObjectVisibilityTurnMapByEmpire(fleet_id, empire_id);
-        const auto vis_it = vis_turn_map.find(Visibility::VIS_BASIC_VISIBILITY);
-        const int vis_turn = (vis_it != vis_turn_map.end()) ? vis_it->second : -1;
+        const int basic_vis_last_turn = context.ContextUniverse().GetObjectVisibilityTurnByEmpire(
+            fleet_id, empire_id, Visibility::VIS_BASIC_VISIBILITY);
+
         ErrorLogger() << "Couldn't find a FleetButton for fleet " << fleet_id
-                      << " with last basic vis turn " << vis_turn;
+                      << " with last basic vis turn " << basic_vis_last_turn;
         return {};
     }
     const auto& fleet_btn = it->second;

@@ -9,7 +9,9 @@
 namespace {
     DeclareThreadSafeLogger(combat_log);
 
-    float MaxHealth(const UniverseObject& object) {
+    constexpr float MaxHealth(const UniverseObjectCXBase& object)
+        noexcept(CombatParticipantState::get_meter_nx)
+    {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_MAX_STRUCTURE)->Current();
 
@@ -27,36 +29,31 @@ namespace {
         return 0.0f;
     }
 
-    float CurrentHealth(const UniverseObject& object) {
+    constexpr float CurrentHealth(const UniverseObjectCXBase& object)
+        noexcept(CombatParticipantState::get_meter_nx)
+    {
         if (object.ObjectType() == UniverseObjectType::OBJ_SHIP) {
             return object.GetMeter(MeterType::METER_STRUCTURE)->Current();
 
         } else if (object.ObjectType() == UniverseObjectType::OBJ_PLANET) {
-            const Meter* defense = object.GetMeter(MeterType::METER_DEFENSE);
-            const Meter* shield = object.GetMeter(MeterType::METER_SHIELD);
-            const Meter* construction = object.GetMeter(MeterType::METER_CONSTRUCTION);
-
             float ret = 0.0f;
-            if (defense)
+            if (const Meter* defense = object.GetMeter(MeterType::METER_DEFENSE))
                 ret += defense->Current();
-            if (shield)
+            if (const Meter* shield = object.GetMeter(MeterType::METER_SHIELD))
                 ret += shield->Current();
-            if (construction)
+            if (const Meter* construction = object.GetMeter(MeterType::METER_CONSTRUCTION))
                 ret += construction->Current();
             return ret;
         }
 
         return 0.0f;
     }
-
-    void FillState(CombatParticipantState& state, const UniverseObject& object) {
-        state.current_health = CurrentHealth(object);
-        state.max_health = MaxHealth(object);
-    };
 }
 
-CombatParticipantState::CombatParticipantState(const UniverseObject& object)
-{ FillState(*this, object); }
+CombatParticipantState::CombatParticipantState(const UniverseObjectCXBase& object) noexcept(get_meter_nx) :
+    current_health(CurrentHealth(object)),
+    max_health(MaxHealth(object))
+{}
 
 ////////////////////////////////////////////////
 // CombatLog

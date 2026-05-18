@@ -190,8 +190,7 @@ std::string System::ApparentName(int empire_id, const Universe& u, bool blank_un
         return this->PublicName(empire_id, u);
 
     // has the indicated empire ever detected this system?
-    const auto& vtm = u.GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
-    if (!vtm.contains(Visibility::VIS_PARTIAL_VISIBILITY)) {
+    if (!u.EmpireHasEverDetectedObjectAtVisibility(this->ID(), empire_id, Visibility::VIS_PARTIAL_VISIBILITY)) {
         if (blank_unexplored_and_none)
             return EMPTY_STRING;
 

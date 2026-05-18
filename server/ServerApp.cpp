@@ -2179,8 +2179,8 @@ namespace {
         return retval;
     };
 
-    constexpr auto not_null = [](const auto* p) noexcept -> bool { return !!p; };
-    constexpr auto to_owner = [](const auto* p) noexcept { return p->Owner(); };
+    constexpr auto not_null = [](const auto& p) noexcept -> bool { return !!p; };
+    constexpr auto to_owner = [](const auto* p) noexcept { return p ? p->Owner() : ALL_EMPIRES; };
 
     // .first: IDs of all empires with fleets at system with id \a system_id
     // .second.first: IDs of empires with aggressive-fleet combat-capable ships at that system
@@ -2644,12 +2644,9 @@ namespace {
                 }
 
                 // which empires know about this object?
-                for (auto& [viewing_empire_id, empire_known_objects] : combat_info.empire_object_visibility) {
+                for (auto& [viewing_empire_id, empire_vis] : combat_info.empire_object_visibility) {
                     // does this empire know about this object?
-                    auto damaged_obj_it = empire_known_objects.find(damaged_object_id);
-                    if (damaged_obj_it == empire_known_objects.end())
-                        continue;
-                    if (damaged_obj_it->second < Visibility::VIS_PARTIAL_VISIBILITY)
+                    if (empire_vis.Get(damaged_object_id) <= Visibility::VIS_BASIC_VISIBILITY)
                         continue;
 
                     if (auto empire = combat_info.GetEmpire(viewing_empire_id))
@@ -2660,24 +2657,26 @@ namespace {
         }
     }
 
+    constexpr auto get_raw_ptr = [](const auto& sptr) noexcept -> const auto* { return sptr.get(); };
+
     /** De-nests sub-events into a single layer list of events */
-    std::vector<ConstCombatEventPtr> FlattenEvents(const std::vector<CombatEventPtr>& events1) {
-        auto flat_events = events1 | range_to<std::vector<ConstCombatEventPtr>>(); // copy top-level input events
+    std::vector<const CombatEvent*> FlattenEvents(const std::vector<CombatEventPtr>& events1) {
+        // copy top level events
+        std::vector<const CombatEvent*> flat_events = events1 | range_filter(not_null) | range_transform(get_raw_ptr) | range_to_vec;
 
         // copy nested sub-events of top-level events
-        for (const auto& event1 : events1) {                        // can't modify the input events pointers
-            auto events2{event1->SubEvents(ALL_EMPIRES)};           // makes movable pointers to event1's sub-events
+        for (const auto& event1 : events1 | range_filter(not_null) | range_transform(get_raw_ptr)) {
+            const auto events2 = event1->SubEvents(ALL_EMPIRES);
+            for (const auto* event2 : events2 | range_filter(not_null)) {
+                flat_events.push_back(event2);
 
-            for (auto& event2 : events2) {
-                auto events3{event2->SubEvents(ALL_EMPIRES)};       // makes movable pointers to event2's sub-events
-                flat_events.push_back(std::move(event2));           // can move the pointers to events2 = event1's sub-events
+                const auto events3 = event2->SubEvents(ALL_EMPIRES);
+                for (const auto* event3 : events3 | range_filter(not_null)) {
+                    flat_events.push_back(event3);
 
-                for (auto& event3 : events3) {
-                    auto events4{event3->SubEvents(ALL_EMPIRES)};   // makes movable pointers to event3's sub-events
-                    flat_events.push_back(std::move(event3));       // can move the pointers to events3 = event2's sub-events
-
-                    for (auto& event4 : events4)
-                        flat_events.push_back(std::move(event4));   // can move the pointers to events4 = event3's sub-events
+                    auto events4 = event3->SubEvents(ALL_EMPIRES);
+                    auto events4_rng = events4 | range_filter(not_null);
+                    flat_events.insert(flat_events.end(), events4_rng.begin(), events4_rng.end());
                 }
             }
         }
@@ -2686,18 +2685,18 @@ namespace {
     }
 
     /** Records info in Empires about what they destroyed or had destroyed during combat. */
-    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats,
-                                           ScriptingContext& context)
-    {
+    void UpdateEmpireCombatDestructionInfo(const std::vector<CombatInfo>& combats, ScriptingContext& context) {
         for (const CombatInfo& combat_info : combats) {
             const auto& combat_objects = combat_info.objects;
 
-            std::vector<WeaponFireEvent::ConstWeaponFireEventPtr> events_that_killed;
-            for (auto& event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
-                auto fire_event = std::dynamic_pointer_cast<const WeaponFireEvent>(std::move(event));
+            std::vector<const WeaponFireEvent*> events_that_killed;
+            events_that_killed.reserve(combat_info.combat_events.size());
+
+            for (const auto* event : FlattenEvents(combat_info.combat_events)) { // TODO: could do the filtering in the call function and avoid some moves later...
+                auto fire_event = dynamic_cast<const WeaponFireEvent*>(event);
                 if (fire_event && combat_info.destroyed_object_ids.contains(fire_event->target_id)) {
                     TraceLogger() << "Kill event: " << fire_event->DebugString(context);
-                    events_that_killed.push_back(std::move(fire_event));
+                    events_that_killed.push_back(fire_event);
                 }
             }
             DebugLogger() << "Combat combat_info system: " << combat_info.system_id
@@ -2711,7 +2710,7 @@ namespace {
             std::unordered_set<int> already_logged__target_ships;
             std::unordered_map<int, int> empire_destroyed_ship_ids;
 
-            for (const auto& attack_event : events_that_killed) {
+            for (const auto* attack_event : events_that_killed) {
                 auto attacker = combat_objects.get(attack_event->attacker_id);
                 if (!attacker)
                     continue;
@@ -2909,18 +2908,11 @@ namespace {
                     const auto is_visible =
                         [empire_it{context.empire_object_vis.find(empire_id)},
                          end_it{context.empire_object_vis.end()}](const int obj_id) -> bool
-                    {
-                        if (empire_it == end_it)
-                            return false;
-                        const auto obj_it = empire_it->second.find(obj_id);
-                        if (obj_it == empire_it->second.end())
-                            return false;
-                        return obj_it->second >= Visibility::VIS_BASIC_VISIBILITY;
-                    };
+                    { return empire_it != end_it && empire_it->second.Get(obj_id) >= Visibility::VIS_BASIC_VISIBILITY; };
+
 
                     for (const int ship_id : colonizing_ships) {
                         bool created_empire_specific_message = false;
-
 
                         // check other ships colonizing here...
                         for (const auto& [other_empire_id, other_empire_colonizing_ships] : empires_ships_colonizing) {
@@ -2936,12 +2928,7 @@ namespace {
                             }
                         }
                         // can this empire see another ship that attempted to colonize the same planet?
-                        // SITREP_PLANET_ESTABLISH_FAILED_VISIBLE
-                        //Ship %ship% failed to establish a colony or outpost on %planet% because the %empire% also attempted to establish on the same planet.
-                        //SITREP_PLANET_ESTABLISH_FAILED_VISIBLE_LABEL
-
-                        // no, just issue generic message
-                        if (!created_empire_specific_message)
+                        if (!created_empire_specific_message) // no, just issue generic message
                             empire->AddSitRepEntry(CreatePlanetEstablishFailedSitRep(planet_id, ship_id, context.current_turn));
                     }
                 }

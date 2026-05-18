@@ -78,8 +78,8 @@ struct [[nodiscard]] ScriptingContext final {
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   const Universe::EmpireObjectVisibilityMap& vis,
-                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
+                                   const EmpireObjectVisibilityMap& vis,
+                                   const EmpireObjectVisibilityTurnsVecMap& vis_turns,
                                    Source, const UniverseObjectCXBase* source_,
                                    Target, UniverseObject* target_) noexcept :
         source(                   source_),
@@ -106,16 +106,16 @@ struct [[nodiscard]] ScriptingContext final {
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   const Universe::EmpireObjectVisibilityMap& vis,
-                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns,
+                                   const EmpireObjectVisibilityMap& vis,
+                                   const EmpireObjectVisibilityTurnsVecMap& vis_turns,
                                    Source, const UniverseObjectCXBase* source_) noexcept :
         ScriptingContext(parent_context, vis, vis_turns, Source{}, source_,
                          Target{}, parent_context.effect_target)
     {}
 
     [[nodiscard]] ScriptingContext(const ScriptingContext& parent_context,
-                                   const Universe::EmpireObjectVisibilityMap& vis,
-                                   const Universe::EmpireObjectVisibilityTurnMap& vis_turns) noexcept :
+                                   const EmpireObjectVisibilityMap& vis,
+                                   const EmpireObjectVisibilityTurnsVecMap& vis_turns) noexcept :
         ScriptingContext(parent_context, vis, vis_turns, Source{}, parent_context.source)
     {}
 
@@ -281,10 +281,7 @@ struct [[nodiscard]] ScriptingContext final {
         const auto empire_it = empire_object_vis.find(empire_id);
         if (empire_it == empire_object_vis.end())
             return Visibility::VIS_NO_VISIBILITY;
-        const auto object_it = empire_it->second.find(object_id);
-        if (object_it == empire_it->second.end())
-            return Visibility::VIS_NO_VISIBILITY;
-        return object_it->second;
+        return empire_it->second.Get(object_id);
     }
 
     // mutable empire not thread safe to modify
@@ -333,8 +330,8 @@ private: // Universe and ObjectMap getters select one of these based on constnes
     ObjectMap*                                     objects = universe ? std::addressof(universe->Objects()) : nullptr;
     const ObjectMap&                               const_objects{objects ? *objects : const_universe.Objects()};
 public:
-    const Universe::EmpireObjectVisibilityMap&     empire_object_vis{const_universe.GetEmpireObjectVisibility()};
-    const Universe::EmpireObjectVisibilityTurnMap& empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
+    const EmpireObjectVisibilityMap&               empire_object_vis{const_universe.GetEmpireObjectVisibility()};
+    const EmpireObjectVisibilityTurnsVecMap&       empire_object_vis_turns{const_universe.GetEmpireObjectVisibilityTurnMap()};
 private:
     EmpireManager*                                 empires = nullptr;
     const EmpireManager&                           const_empires;

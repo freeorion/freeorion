@@ -2131,18 +2131,19 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         const auto empire_it = vis_turn_map.find(empire_id);
         if (empire_it == vis_turn_map.end())
             return 0;
-        const auto& object_vis_turns_map = empire_it->second;
+        const auto& object_vis_turns = empire_it->second;
 
         const int object_id = m_int_ref2->Eval(context);
-        const auto object_it = object_vis_turns_map.find(object_id);
-        if (object_it == object_vis_turns_map.end())
+        const auto is_obj_id = [object_id](const auto& ov) noexcept { return ov.obj_id == object_id; };
+        const auto object_it = range_find_if(object_vis_turns, is_obj_id);
+        if (object_it == object_vis_turns.end())
+            return 0;
+        const auto& obj_vis_turns = *object_it;
+
+        if (!obj_vis_turns.contains(Visibility::VIS_BASIC_VISIBILITY))
             return 0;
 
-        const auto& vis_turns = object_it->second;
-        const auto vis_it = vis_turns.find(Visibility::VIS_BASIC_VISIBILITY);
-        if (vis_it == vis_turns.end())
-            return 0;
-        return vis_it->second;
+        return obj_vis_turns[Visibility::VIS_BASIC_VISIBILITY];
     }
 
     return 0;

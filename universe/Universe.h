@@ -19,7 +19,8 @@
 #include "ObjectMap.h"
 #include "Pathfinder.h"
 #include "UnlockableItem.h"
-#include "UniverseObject.h"
+#include "Visibility.h"
+
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -33,6 +34,7 @@ class IDAllocator;
 class FleetPlan;
 class MonsterFleetPlan;
 struct ScriptingContext;
+class UniverseObjectCXBase;
 
 
 namespace Condition {
@@ -56,6 +58,7 @@ namespace ValueRef {
     struct ValueRef;
 }
 
+using IDSet = boost::container::flat_set<int32_t>;
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -66,39 +69,34 @@ namespace ValueRef {
   * and populate new Universe gamestates when new games are started. */
 class FO_COMMON_API Universe {
 public:
-    typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
-    typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
-    typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
-    typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
-    using IDSet = UniverseObject::IDSet;
+    using EmpireObjectMap = std::map<int, ObjectMap>; ///< Known information each empire had about objects in the Universe; keyed by empire id
+
+    using IDSet = ::IDSet;
 
 private:
-    typedef std::map<int, std::unordered_set<int>>  ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    using ObjectKnowledgeMap = std::map<int, std::unordered_set<int>>; ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
-    typedef const ValueRef::ValueRef<Visibility>*   VisValRef;
-    typedef std::vector<std::pair<int, VisValRef>>  SrcVisValRefVec;
-    typedef std::map<int, SrcVisValRefVec>          ObjSrcVisValRefVecMap;
-    typedef std::map<int, ObjSrcVisValRefVecMap>    EmpireObjectVisValueRefMap;
+    using VisValRef = const ValueRef::ValueRef<Visibility>*;
+    using SrcVisValRefVec = std::vector<std::pair<int, VisValRef>>;
+    using ObjSrcVisValRefVecMap = std::map<int, SrcVisValRefVec>;
+    using EmpireObjectVisValueRefMap = std::map<int, ObjSrcVisValRefVecMap>;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
       * available -> the unknown factor affecting the meter.  This is used
       * when generating effect accounting, in the case where the expected
       * and actual meter values don't match. */
-    typedef std::unordered_map<int, boost::container::flat_map<MeterType, double>> DiscrepancyMap;
+    using DiscrepancyMap = std::unordered_map<int, boost::container::flat_map<MeterType, double>>;
 
 public:
-    typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
-    typedef std::map<int, ObjectVisibilityMap>      EmpireObjectVisibilityMap;      ///< map from empire id to ObjectVisibilityMap for that empire
+    using ObjectSpecialsMap = std::map<int, std::set<std::string>>;       ///< map from object id to names of specials on an object
+    using EmpireObjectSpecialsMap = std::map<int, ObjectSpecialsMap>;     ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
 
-    typedef std::map<int, std::set<std::string>>    ObjectSpecialsMap;              ///< map from object id to names of specials on an object
-    typedef std::map<int, ObjectSpecialsMap>        EmpireObjectSpecialsMap;        ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
-
-    typedef std::map<int, ShipDesign>               ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
-    typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
+    using ShipDesignMap = std::map<int, ShipDesign>;                      ///< ShipDesigns in universe; keyed by design id
+    using ship_design_iterator = ShipDesignMap::const_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
     /** emitted just before the UniverseObject is deleted */
-    typedef boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
+    using UniverseObjectDeleteSignalType = boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)>;
 
     Universe();
     Universe& operator=(Universe&& other) noexcept;
@@ -163,12 +161,29 @@ public:
      * object at that visibility level)). */
     [[nodiscard]] auto& GetEmpireObjectVisibilityTurnMap() const noexcept { return m_empire_object_visibility_turns; }
 
-    /** Returns the map from Visibility level to turn number on which the empire
-      * with id \a empire_id last had the various Visibility levels of the
-      * UniverseObject with id \a object_id .  The returned map may be empty or
-      * not have entries for all visibility levels, if the empire has not seen
-      * the object at that visibility level yet. */
-    [[nodiscard]] const VisibilityTurnMap& GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
+    /** Returns the turns on which empire \a empire_id last saw the object
+      * \a object_id at basic/partial/full visibility. Returned value may
+      * be INVALID_OBJECT_ID/INVALID_GAME_TURN if the empire has not seen
+      * the object at one or more visibility levels yet. */
+    [[nodiscard]] const ObjVisTurns& GetObjectVisibilityTurnsByEmpire(int object_id, int empire_id) const;
+
+    /** Returns the turn on which empire \a empire_id last saw the object
+      * \a object_id at visibility \a vis. If \a vis is not one of
+      * FULL/PARTIAL/BASIC visibility, returns the turn for VIS_BASIC_VISIBILTY.
+      * If that empire has not seen that object, returns INVALID_GAME_TURN. */
+    [[nodiscard]] int GetObjectVisibilityTurnByEmpire(int object_id, int empire_id, Visibility vis = Visibility::VIS_BASIC_VISIBILITY) const;
+
+    /** Returns true if the empire \a empire_id has ever detected the object
+      * \a object_id at visibility \a vis or higher. If \a vis is not one of
+      * FULL/PARTIAL/BASIC visibility, returns as if for VIS_BASIC_VISIBILITY. */
+    [[nodiscard]] bool EmpireHasEverDetectedObjectAtVisibility(int object_id, int empire_id, Visibility vis) const;
+    [[nodiscard]] bool EmpireHasEverDetectedObject(int object_id, int empire_id) const
+    { return EmpireHasEverDetectedObjectAtVisibility(object_id, empire_id, Visibility::VIS_BASIC_VISIBILITY); }
+
+
+    /** Sets latest visibility turn for \a empire_id of object \a object_id
+      * to \a turn for visibility level \a vis and below. */
+    void SetObjectVisibilityTurnsByEmpire(int object_id, int empire_id, Visibility vis, int turn);
 
     /** Returns the set of specials attached to the object with id \a object_id
       * that the empire with id \a empire_id can see this turn. */
@@ -523,8 +538,8 @@ private:
 
     std::unordered_set<int>         m_destroyed_object_ids;             ///< all ids of objects that have been destroyed (on server) or that a player knows were destroyed (on clients)
 
-    EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
-    EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
+    EmpireObjectVisibilityMap         m_empire_object_visibility;       ///< map from empire id to (map from object id to visibility of that object for that empire)
+    EmpireObjectVisibilityTurnsVecMap m_empire_object_visibility_turns; ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
     std::map<int, std::vector<int>> m_fleet_blockade_ship_visibility_overrides; // map from empire id to (list of ship ids that are visibile to that empire due to being revealed by participating in a blockade)
     EmpireObjectVisValueRefMap      m_effect_specified_empire_object_visibilities;
@@ -594,7 +609,7 @@ private:
     void GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
 
     /***/
-    void GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
+    void GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnsVecMap& empire_object_visibility_turns, int encoding_empire) const;
 
     /***/
     //void GetEffectSpecifiedVisibilities(EmpireObjectVisibilityMap& effect_specified_empire_object_visibilities, int encoding_empire) const;

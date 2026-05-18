@@ -2,11 +2,10 @@
 #define COMBATEVENT_H
 
 
-#include <boost/optional/optional.hpp>
-
 #include "../util/Export.h"
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -44,19 +43,15 @@ struct FO_COMMON_API CombatEvent {
 
     /** If the combat event is composed of smaller events then return a vector of the sub events,
         otherwise returns an empty vector. */
-    [[nodiscard]] virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const
-    { return std::vector<ConstCombatEventPtr>(); }
+    [[nodiscard]] virtual std::vector<const CombatEvent*> SubEvents(int viewing_empire_id) const
+    { return {}; }
 
-    /** Return true if there are no details; */
-    [[nodiscard]] virtual bool AreDetailsEmpty(int viewing_empire_id) const noexcept
-    { return true; }
-
-    /** Return true if there are no sub events; */
-    [[nodiscard]] virtual bool AreSubEventsEmpty(int viewing_empire_id) const noexcept
+    /** Return true if there are no details or sub-events; */
+    [[nodiscard]] virtual bool IsEmpty() const noexcept
     { return true; }
 
     /** Return true if sub events are to be flattened on display; */
-    virtual bool FlattenSubEvents() const noexcept
+    [[nodiscard]] virtual bool FlattenSubEvents() const noexcept
     { return false; }
 
     /** Return principal faction.
@@ -64,9 +59,9 @@ struct FO_COMMON_API CombatEvent {
         PrincipalFaction is used by UnorderedEvents to sort the display
         of events by Facton.  The principal faction should be the
         faction most active in the event (i.e. the attacker in a WeaponEvent).
-        It is from the perspective of the \p viewing_empire_id. Some events
-        like BoutBegin are not associated with any faction.*/
-    [[nodiscard]] virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+        It is from the perspective of the \p viewing_empire_id.
+        Some events, eg. BoutBegin, are not associated with any faction.*/
+    [[nodiscard]] virtual std::optional<int> PrincipalFaction(int viewing_empire_id) const;
 };
 
 

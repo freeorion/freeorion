@@ -3,18 +3,23 @@
 
 #include "CombatSystem.h"
 #include "../util/Export.h"
+#include <boost/container/flat_map.hpp>
 #include <boost/optional/optional.hpp>
 #include <memory>
 
 
-// A snapshot of the state of a participant of the combat
-// at it's end
+// A snapshot of the state of a participant at the end of combat
 struct FO_COMMON_API CombatParticipantState {
     float current_health = 0.0f;
     float max_health = 0.0f;
 
-    CombatParticipantState() = default;
-    CombatParticipantState(const UniverseObject& object);
+    static constexpr bool get_meter_nx = noexcept(std::declval<UniverseObjectCXBase&>().GetMeter(MeterType::METER_STEALTH)->Current());
+
+    constexpr CombatParticipantState() noexcept = default;
+    explicit CombatParticipantState(const UniverseObjectCXBase& object) noexcept(get_meter_nx);
+    constexpr CombatParticipantState(float cur, float max) noexcept :
+        current_health(cur), max_health(max)
+    {}
 };
 
 struct FO_COMMON_API CombatLog {
@@ -28,7 +33,7 @@ struct FO_COMMON_API CombatLog {
     std::set<int>               damaged_object_ids;
     std::set<int>               destroyed_object_ids;
     std::vector<CombatEventPtr> combat_events;
-    std::map<int, CombatParticipantState> participant_states;
+    boost::container::flat_map<int, CombatParticipantState> participant_states;
 };
 
 
