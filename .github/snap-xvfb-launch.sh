@@ -54,7 +54,9 @@ while [ ! -f screenshot.png ]; do
   if ! grep --quiet "Checksum received from server does not match client checksum." freeorion.log; then
     xdotool key ctrl+h
     sleep 5
-    import -display :99 -window root $(pwd)/screenshot.png
+    if grep -quiet "Zoomed to capital system " freeorion.log; then
+      import -display :99 -window root $(pwd)/screenshot.png
+    fi
   fi
   kill -9 ${FOPID}
   wait ${FOPID}
