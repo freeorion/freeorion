@@ -7008,7 +7008,7 @@ bool MapWnd::ZoomToHomeSystem() {
             return false;
         CenterOnObject(*object);
         SelectSystem(object->SystemID(), context);
-	InfoLogger() << "Zoomed to capital system " << object->SystemID();
+        InfoLogger() << "Zoomed to capital system " << object->SystemID();
     }
 
     return true;
