@@ -89,6 +89,15 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base& event
     const boost::statechart::event_base* event_ptr = std::addressof(event);
     if (dynamic_cast<const Disconnection*>(event_ptr))
         most_derived_message_type_str = "Disconnection";
+    if (dynamic_cast<const ParserCompleted*>(event_ptr)) {
+        most_derived_message_type_str = "ParserCompleted";
+        m_parser_completed = true;
+        if (m_server_checksum_msg.Type() == Message::MessageType::CHECKSUM) {
+            bool result = m_client.VerifyCheckSum(m_server_checksum_msg);
+            if (!result)
+                m_client.GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+        }
+    }
 #define EVENT_CASE(r, data, name)                                       \
     else if (dynamic_cast<const name*>(event_ptr))                      \
         most_derived_message_type_str = BOOST_PP_STRINGIZE(name);
@@ -171,6 +180,7 @@ boost::statechart::result IntroMenu::react(const Disconnection&) {
 
 boost::statechart::result IntroMenu::react(const ParserCompleted&) {
     TraceLogger(FSM) << "(HumanClientFSM) IntroMenu.ParserCompleted";
+    context<HumanClientFSM>().m_parser_completed = true;
     Client().GetUI().ShowIntroScreen();
     GetGameRules().ResetToDefaults();
     return discard_event();
@@ -254,10 +264,13 @@ boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e)
 }
 
 boost::statechart::result WaitingForSPHostAck::react(const CheckSum& e) {
-    TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    bool result = Client().VerifyCheckSum(e.m_message);
-    if (!result)
-        Client().GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+    DebugLogger(FSM) << "(HumanClientFSM) CheckSum.";
+    context<HumanClientFSM>().m_server_checksum_msg = e.m_message;
+    if (context<HumanClientFSM>().m_parser_completed) {
+        bool result = Client().VerifyCheckSum(e.m_message);
+        if (!result)
+            Client().GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+    }
     return discard_event();
 }
 
@@ -335,10 +348,13 @@ boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e)
 }
 
 boost::statechart::result WaitingForMPHostAck::react(const CheckSum& e) {
-    TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    bool result = Client().VerifyCheckSum(e.m_message);
-    if (!result)
-        Client().GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+    DebugLogger(FSM) << "(HumanClientFSM) CheckSum.";
+    context<HumanClientFSM>().m_server_checksum_msg = e.m_message;
+    if (context<HumanClientFSM>().m_parser_completed) {
+        bool result = Client().VerifyCheckSum(e.m_message);
+        if (!result)
+            Client().GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+    }
     return discard_event();
 }
 
@@ -606,10 +622,13 @@ boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
 }
 
 boost::statechart::result MPLobby::react(const CheckSum& e) {
-    TraceLogger(FSM) << "(HumanClientFSM) CheckSum.";
-    bool result = Client().VerifyCheckSum(e.m_message);
-    if (!result)
-        Client().GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+    DebugLogger(FSM) << "(HumanClientFSM) CheckSum.";
+    context<HumanClientFSM>().m_server_checksum_msg = e.m_message;
+    if (context<HumanClientFSM>().m_parser_completed) {
+        bool result = Client().VerifyCheckSum(e.m_message);
+        if (!result)
+            Client().GetUI().MessageBox(UserString("ERROR_CHECKSUM_MISMATCH"), true);
+    }
     return discard_event();
 }
 

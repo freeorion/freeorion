@@ -96,6 +96,8 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
     void unconsumed_event(const boost::statechart::event_base& event);
 
     GGHumanClientApp& m_client;
+    Message m_server_checksum_msg;
+    bool m_parser_completed = false;
 
 private:
     using Base::post_event; // for synchronous FSM, should only be called within state transitions and constructors...
