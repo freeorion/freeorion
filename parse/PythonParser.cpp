@@ -136,15 +136,17 @@ namespace {
 }
 
 struct module_spec {
-    module_spec(const std::string& name, const std::string& parent_) :
+    module_spec(const std::string& name, const std::string& parent_, const PythonParser& parser_) :
         fullname(name),
-        parent(parent_)
+        parent(parent_),
+        parser(parser_)
     {}
 
     py::list path;
     py::list uninitialized_submodules;
     std::string fullname;
     std::string parent;
+    const PythonParser& parser;
 };
 
 PythonTypes::PythonTypes() {
@@ -160,6 +162,24 @@ PythonTypes::~PythonTypes() {
     type_float = py::object();
     type_bool = py::object();
     type_str = py::object();
+}
+
+BOOST_PYTHON_MODULE(freeorion_loader) {
+    py::register_exception_translator<import_error>(&translate);
+
+    py::class_<PythonParser, py::bases<>, PythonParser, boost::noncopyable>("PythonParser", py::no_init)
+        .def("find_spec", &PythonParser::find_spec)
+        .def("create_module", &PythonParser::create_module)
+        .def("exec_module", &PythonParser::exec_module);
+
+    py::class_<module_spec>("PythonParserSpec", py::no_init)
+        .def_readonly("name", &module_spec::fullname)
+        .def_readonly("_uninitialized_submodules", &module_spec::uninitialized_submodules)
+        .add_property("loader", py::make_function(+[](const module_spec& self) -> const PythonParser& { return self.parser; }, py::return_value_policy<py::reference_existing_object>()))
+        .def_readonly("submodule_search_locations", &module_spec::path)
+        .def_readonly("has_location", STATIC_FALSE)
+        .def_readonly("cached", STATIC_FALSE)
+        .def_readonly("parent", &module_spec::parent);
 }
 
 PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir) :
@@ -185,21 +205,7 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
     }
 
     try {
-        py::register_exception_translator<import_error>(&translate);
-
-        py::class_<PythonParser, py::bases<>, PythonParser, boost::noncopyable>("PythonParser", py::no_init)
-            .def("find_spec", &PythonParser::find_spec)
-            .def("create_module", &PythonParser::create_module)
-            .def("exec_module", &PythonParser::exec_module);
-
-        py::class_<module_spec>("PythonParserSpec", py::no_init)
-            .def_readonly("name", &module_spec::fullname)
-            .def_readonly("_uninitialized_submodules", &module_spec::uninitialized_submodules)
-            .add_static_property("loader", py::make_getter(*this, py::return_value_policy<py::reference_existing_object>()))
-            .def_readonly("submodule_search_locations", &module_spec::path)
-            .def_readonly("has_location", STATIC_FALSE)
-            .def_readonly("cached", STATIC_FALSE)
-            .def_readonly("parent", &module_spec::parent);
+        LoadModule(&PyInit_freeorion_loader);
 
         // Use wrappers to not collide with types in server and AI
         auto value_ref_wrapper_double_class = py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
@@ -518,11 +524,11 @@ py::object PythonParser::find_spec(const std::string& fullname, const py::object
     }
 
     if (IsExistingDir(module_path)) {
-        return py::object(module_spec(fullname, parent));
+        return py::object(module_spec(fullname, parent, *this));
     } else {
         module_path.replace_extension("py");
         if (IsExistingFile(module_path))
-            return py::object(module_spec(fullname, parent));
+            return py::object(module_spec(fullname, parent, *this));
         else if (fullname == "_typing") {
             return py::object();
         } else {
@@ -589,4 +595,3 @@ py::object PythonParser::exec_module(py::object& module) {
         }
     }
 }
-
