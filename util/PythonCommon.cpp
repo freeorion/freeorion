@@ -46,12 +46,15 @@ namespace {
     }
 
     template<typename T>
-    PyObject* path_to_pyobject(const std::basic_string<T>& filename) {
-        if constexpr (std::is_same_v<T, wchar_t>) {
-            return PyUnicode_FromWideChar(filename.c_str(), filename.size());
-        } else {
-            return PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
-        }
+    py::object path_to_pyobject(const std::basic_string<T>& filename) {
+        PyObject* raw_py_str = nullptr;
+        if constexpr (std::is_same_v<T, wchar_t>)
+            raw_py_str = PyUnicode_FromWideChar(filename.c_str(), filename.size());
+        else
+            raw_py_str = PyUnicode_FromStringAndSize(filename.c_str(), filename.size());
+        if (!raw_py_str)
+            return py::object();
+        return py::object(py::handle<>(raw_py_str));
     }
 
     auto GetPythonExecutable() // should be the containing C++ binary / .exe file
@@ -189,12 +192,11 @@ void PythonCommon::Finalize() {
 }
 
 void PythonCommon::CompileEval(const char* code, const std::filesystem::path& filename, const py::object& globals) {
-    PyObject* filename_str = path_to_pyobject(filename.native());
-    if (!filename_str) {
+    py::object o_filename_str = path_to_pyobject(filename.native());
+    if (o_filename_str.is_none()) {
         ErrorLogger() << "Failed to convert path to str: " << PathToString(filename);
         py::throw_error_already_set();
     }
-    py::object o_filename_str{py::handle<>(filename_str)};
     PyObject* compiled_code = Py_CompileStringObject(code, o_filename_str.ptr(), Py_file_input, nullptr, 2);
     if (!compiled_code) {
         ErrorLogger() << "Failed to compile: " << PathToString(filename);
