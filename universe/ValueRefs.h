@@ -885,6 +885,18 @@ protected:
 template <typename FromType, typename ToType>
 struct FO_COMMON_API StaticCast final : public Variable<ToType>
 {
+    static_assert(!std::is_same_v<FromType, ToType>);
+    static_assert(requires { static_cast<ToType>(std::declval<FromType>()); });
+
+    static_assert(!std::is_enum_v<FromType> || std::is_same_v<ToType, int>);
+    static_assert(std::is_same_v<FromType, int> || !std::is_enum_v<ToType>);
+
+    static_assert(!std::is_same_v<FromType, double> || std::is_same_v<ToType, int>);
+    static_assert(std::is_same_v<FromType, int> || !std::is_same_v<ToType, double>);
+
+    static_assert(!std::is_same_v<FromType, std::string>);
+    static_assert(!std::is_same_v<ToType, std::string>);
+
     explicit StaticCast(auto&& value_ref) requires requires { std::unique_ptr<ValueRef<FromType>>(std::move(value_ref)); } :
         Variable<ToType>(RefsRTSLICE(value_ref), RefToReferenceType(value_ref), RefToProperty(value_ref),
                          RefToMeterType(value_ref), RefToContainerType(value_ref),
@@ -915,6 +927,8 @@ private:
 template <typename FromType>
 struct FO_COMMON_API StringCast final : public Variable<std::string>
 {
+    static_assert(!std::is_same_v<FromType, std::string>);
+
     explicit StringCast(std::unique_ptr<ValueRef<FromType>>&& value_ref) :
         Variable<std::string>(
             RefsRTSLICE(value_ref), RefToReferenceType(value_ref), RefToProperty(value_ref),
@@ -1996,7 +2010,16 @@ bool StaticCast<FromType, ToType>::operator==(const ValueRef<ToType>& rhs) const
 
 template <typename FromType, typename ToType>
 ToType StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
-{ return static_cast<ToType>(m_value_ref->Eval(context)); }
+{
+    const FromType from_type_value = m_value_ref->Eval(context);
+    if constexpr (std::is_same_v<FromType, double>) {
+        if (std::isinf(from_type_value))
+            return (from_type_value < 0) ? INT_MIN : INT_MAX;
+        if (!std::isfinite(from_type_value))
+            return ToType{0}; 
+    } // TODO: maybe if casting to an enumeration created with FO_ENUM, have some validity checks for the result?
+    return static_cast<ToType>(from_type_value);
+}
 
 template <typename FromType, typename ToType>
 std::string StaticCast<FromType, ToType>::Description() const
