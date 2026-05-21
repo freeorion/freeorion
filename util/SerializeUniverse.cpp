@@ -933,30 +933,127 @@ namespace {
     }
 }
 
+namespace {
+    std::string ToString(int i0, int i1, int i2, int i3, std::string_view name) {
+        std::string buffer;
+        buffer.reserve(4 * (int_digits + 1) + name.size());
+        buffer.append(std::to_string(i0)).append(" ")
+              .append(std::to_string(i1)).append(" ")
+              .append(std::to_string(i2)).append(" ")
+              .append(std::to_string(i3)).append(" ")
+              .append(name);
+        return buffer;
+    }
+
+    CONSTEXPR_FROM_CHARS auto ExtractFromString(const std::string& buffer) {
+        int i0 = 0;
+        int i1 = 0;
+        int i2 = 0;
+        int i3 = 0;
+        std::string str;
+
+        if (buffer.empty())
+            return std::tuple{i0, i1, i2, i3, str};
+
+        const auto* const buffer_end = buffer.c_str() + buffer.size();
+        const auto get_next_int = [buffer_end](const char* next) -> std::tuple<int, bool, const char*>
+        { return GetIntFromChars<int>(buffer_end, next, 0); };
+
+        const auto* next = buffer.c_str();
+        bool success = true;
+
+        std::tie(i0, success, next) = get_next_int(buffer.c_str());
+        if (success)
+            std::tie(i1, success, next) = get_next_int(next);
+        if (success)
+            std::tie(i2, success, next) = get_next_int(next);
+        if (success)
+            std::tie(i3, success, next) = get_next_int(next);
+        if (!success)
+            return std::tuple{i0, i1, i2, i3, str};
+
+        // skip whitespace
+        while (next != buffer_end && *next == ' ')
+            ++next;
+
+        const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
+        if (next_offset > buffer.size())
+            return std::tuple{i0, i1, i2, i3, str};
+
+        // use find remaining chars as string
+        str = buffer.substr(next_offset);
+
+        return std::tuple{i0, i1, i2, i3, str};
+    }
+
+#if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
+    static_assert(std::get<0>(ExtractFromString("1 2 3 4 a")) == 1);
+    static_assert(std::get<1>(ExtractFromString("  1 2  ")) == 2);
+    static_assert(std::get<4>(ExtractFromString("  1 2  ")).empty());
+    static_assert(std::get<3>(ExtractFromString("1  2   3 4   a  ")) == 4);
+    static_assert(std::get<4>(ExtractFromString("1 2 3 4 -abcdef axx")) == "-abcdef axx");
+#endif
+}
+
+
 BOOST_CLASS_EXPORT(UniverseObject)
-BOOST_CLASS_VERSION(UniverseObject, 4)
+BOOST_CLASS_VERSION(UniverseObject, 5)
 
 template <typename Archive>
 void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("m_id", o.m_id)
-        & make_nvp("m_name", o.m_name)
-        & make_nvp("m_x", o.m_x)
-        & make_nvp("m_y", o.m_y)
-        & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
-        & make_nvp("m_system_id", o.m_system_id);
-    if (version < 3) {
-        std::map<std::string, std::pair<int, float>> specials_map;
-        ar  & make_nvp("m_specials", specials_map);
-        o.m_specials.reserve(specials_map.size());
-        o.m_specials.insert(specials_map.begin(), specials_map.end());
+    if (Archive::is_loading::value && version < 5) {
+        ar  & make_nvp("m_id", o.m_id)
+            & make_nvp("m_name", o.m_name)
+            & make_nvp("m_x", o.m_x)
+            & make_nvp("m_y", o.m_y)
+            & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
+            & make_nvp("m_system_id", o.m_system_id);
+
+        if (version < 3) {
+            std::map<std::string, std::pair<int, float>> specials_map;
+            ar  & make_nvp("m_specials", specials_map);
+            o.m_specials.reserve(specials_map.size());
+            o.m_specials.insert(specials_map.begin(), specials_map.end());
+        } else {
+            ar  & make_nvp("m_specials", o.m_specials);
+        }
+
+        Serialize(ar, o.m_meters, version);
+        ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        std::string str;
+        ar >> make_nvp("info", str)
+           >> make_nvp("x", o.m_x)
+           >> make_nvp("y", o.m_y);
+
+        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn, o.m_name) = ExtractFromString(str);
+
+        Serialize(ar, o.m_meters, version);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        std::string str = ToString(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn, o.m_name);
+
+        ar << make_nvp("info", str)
+           << make_nvp("x", o.m_x) // not included in str because as of this writing m_x and m_y are floating-point types, which are not portably serialized by standard library to/from text converters
+           << make_nvp("y", o.m_y);
+
+        Serialize(ar, o.m_meters, version);
+
     } else {
-        ar  & make_nvp("m_specials", o.m_specials);
+        ar  & make_nvp("m_id", o.m_id)
+            & make_nvp("m_name", o.m_name)
+            & make_nvp("m_x", o.m_x)
+            & make_nvp("m_y", o.m_y)
+            & make_nvp("m_owner_empire_id", o.m_owner_empire_id)
+            & make_nvp("m_system_id", o.m_system_id)
+            & make_nvp("m_specials", o.m_specials)
+            & make_nvp("m_created_on_turn", o.m_created_on_turn);
+        Serialize(ar, o.m_meters, version);
     }
-    Serialize(ar, o.m_meters, version);
-    ar  & make_nvp("m_created_on_turn", o.m_created_on_turn);
 }
 
 namespace {
