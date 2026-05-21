@@ -182,9 +182,9 @@ BOOST_PYTHON_MODULE(freeorion_loader) {
         .def_readonly("parent", &module_spec::parent);
 }
 
-PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& scripting_dir) :
+PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& modules_dir) :
     m_python(_python),
-    m_scripting_dir(scripting_dir)
+    m_modules_dir(modules_dir)
 {
     if (!m_python.IsPythonRunning()) {
         ErrorLogger() << "Python parse given non-initialized python!";
@@ -206,6 +206,13 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& s
 
     try {
         LoadModule(&PyInit_freeorion_loader);
+        m_populate_globals_func = [](py::dict& dict) {
+            RegisterGlobalsEffects(dict);
+            RegisterGlobalsConditions(dict);
+            RegisterGlobalsValueRefs(dict);
+            RegisterGlobalsSources(dict);
+            RegisterGlobalsEnums(dict);
+        };
 
         // Use wrappers to not collide with types in server and AI
         auto value_ref_wrapper_double_class = py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
@@ -507,7 +514,7 @@ void PythonParser::LoadEffectsModule() const
 { (void)LoadModule(&PyInit__effects_new); } // marked [[nodiscard]] but result not needed in this case
 
 py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
-    auto module_path(m_scripting_dir);
+    auto module_path(m_modules_dir);
     std::string parent;
     std::string current;
     for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
@@ -544,9 +551,9 @@ py::object PythonParser::create_module(const module_spec& spec)
 py::object PythonParser::exec_module(py::object& module) {
     std::string fullname = py::extract<std::string>(module.attr("__name__"));
 
-    py::dict m_dict = py::extract<py::dict>(module.attr("__dict__"));
+    py::dict globals = py::extract<py::dict>(module.attr("__dict__"));
 
-    auto module_path(m_scripting_dir);
+    auto module_path(m_modules_dir);
     for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
          it != boost::algorithm::split_iterator<std::string::iterator>(); ++it)
     { module_path = module_path / boost::copy_range<std::string>(*it); }
@@ -568,13 +575,11 @@ py::object PythonParser::exec_module(py::object& module) {
             // and still import will work
             DebugLogger() << "Executing module file " << PathToString(module_path);
             try {
-                RegisterGlobalsEffects(m_dict);
-                RegisterGlobalsConditions(m_dict);
-                RegisterGlobalsValueRefs(m_dict);
-                RegisterGlobalsSources(m_dict);
-                RegisterGlobalsEnums(m_dict);
+                if (m_populate_globals_func) {
+                    m_populate_globals_func(globals);
+                }
 
-                PythonCommon::CompileEval(file_contents.c_str(), module_path, m_dict);
+                PythonCommon::CompileEval(file_contents.c_str(), module_path, globals);
             } catch (const boost::python::error_already_set&) {
                 m_python.HandleErrorAlreadySet();
                 ErrorLogger() << "Unable to parse module file " << PathToString(module_path);
