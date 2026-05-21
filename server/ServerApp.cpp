@@ -118,7 +118,8 @@ ServerApp::ServerApp() :
 
     // Start parsing content before FSM initialization
     // to have data initialized before autostart execution
-    StartBackgroundParsing(PythonParser(m_python_server, GetResourceDir() / "scripting"));
+    m_python_server.SetModulesDir(GetResourceDir() / "scripting");
+    StartBackgroundParsing(PythonParser(m_python_server));
 
     m_fsm.initiate();
 

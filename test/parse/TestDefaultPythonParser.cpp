@@ -67,7 +67,7 @@ BOOST_FIXTURE_TEST_SUITE(TestDefaultPythonParser, DefaultParserAppFixture)
  */
 
 BOOST_AUTO_TEST_CASE(parse_techs_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(parse_techs_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_species_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE(parse_species_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_buildings_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto encyclopedia_articles_p = Pending::ParseSynchronously(parse::encyclopedia_articles, parser, m_scripting_dir / "encyclopedia");
     auto encyclopedia_articles_opt = Pending::WaitForPendingUnlocked(std::move(encyclopedia_articles_p));
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_fields_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
 
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(parse_fields_full) {
  */
 
 BOOST_AUTO_TEST_CASE(parse_named_values_full) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values_p = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
     auto named_values_opt = Pending::WaitForPendingUnlocked(std::move(named_values_p));

@@ -37,16 +37,6 @@
 namespace py = boost::python;
 
 namespace {
-    struct import_error : std::runtime_error {
-        import_error(const std::string& what) : std::runtime_error(what) {}
-    };
-
-    void translate(import_error const& e) {
-        PyErr_SetString(PyExc_ImportError, e.what());
-    }
-
-    constexpr bool STATIC_FALSE = false;
-
     template <typename T1, typename T2>
     using ResultValueRefNumericType = std::conditional_t<std::is_same_v<T1, double>
         || std::is_same_v<std::remove_cvref_t<T1>, value_ref_wrapper<double>>
@@ -135,20 +125,6 @@ namespace {
     }
 }
 
-struct module_spec {
-    module_spec(const std::string& name, const std::string& parent_, const PythonParser& parser_) :
-        fullname(name),
-        parent(parent_),
-        parser(parser_)
-    {}
-
-    py::list path;
-    py::list uninitialized_submodules;
-    std::string fullname;
-    std::string parent;
-    const PythonParser& parser;
-};
-
 PythonTypes::PythonTypes() {
     auto builtings = py::import("builtins");
     type_int = builtings.attr("int");
@@ -164,27 +140,8 @@ PythonTypes::~PythonTypes() {
     type_str = py::object();
 }
 
-BOOST_PYTHON_MODULE(freeorion_loader) {
-    py::register_exception_translator<import_error>(&translate);
-
-    py::class_<PythonParser, py::bases<>, PythonParser, boost::noncopyable>("PythonParser", py::no_init)
-        .def("find_spec", &PythonParser::find_spec)
-        .def("create_module", &PythonParser::create_module)
-        .def("exec_module", &PythonParser::exec_module);
-
-    py::class_<module_spec>("PythonParserSpec", py::no_init)
-        .def_readonly("name", &module_spec::fullname)
-        .def_readonly("_uninitialized_submodules", &module_spec::uninitialized_submodules)
-        .add_property("loader", py::make_function(+[](const module_spec& self) -> const PythonParser& { return self.parser; }, py::return_value_policy<py::reference_existing_object>()))
-        .def_readonly("submodule_search_locations", &module_spec::path)
-        .def_readonly("has_location", STATIC_FALSE)
-        .def_readonly("cached", STATIC_FALSE)
-        .def_readonly("parent", &module_spec::parent);
-}
-
-PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& modules_dir) :
-    m_python(_python),
-    m_modules_dir(modules_dir)
+PythonParser::PythonParser(PythonCommon& _python) :
+    m_python(_python)
 {
     if (!m_python.IsPythonRunning()) {
         ErrorLogger() << "Python parse given non-initialized python!";
@@ -205,14 +162,14 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& m
     }
 
     try {
-        LoadModule(&PyInit_freeorion_loader);
-        m_populate_globals_func = [](py::dict& dict) {
-            RegisterGlobalsEffects(dict);
-            RegisterGlobalsConditions(dict);
-            RegisterGlobalsValueRefs(dict);
-            RegisterGlobalsSources(dict);
-            RegisterGlobalsEnums(dict);
-        };
+        m_python.SetPopulateGlobalsFunc([](py::dict& globals) {
+            RegisterGlobalsEffects(globals);
+            RegisterGlobalsConditions(globals);
+            RegisterGlobalsValueRefs(globals);
+            RegisterGlobalsSources(globals);
+            RegisterGlobalsEnums(globals);
+        });
+        m_python.InitModuleLoader();
 
         // Use wrappers to not collide with types in server and AI
         auto value_ref_wrapper_double_class = py::class_<value_ref_wrapper<double>>("ValueRefDouble", py::no_init)
@@ -426,10 +383,6 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& m
 
         py::implicitly_convertible<value_ref_wrapper<double>, condition_wrapper>();
         py::implicitly_convertible<value_ref_wrapper<int>, condition_wrapper>();
-
-        m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"))();
-        m_meta_path->append(boost::cref(*this));
-        m_meta_path_len = static_cast<int>(py::len(*m_meta_path));
     } catch (const boost::python::error_already_set&) {
         m_python.HandleErrorAlreadySet();
         if (!m_python.IsPythonRunning()) {
@@ -443,14 +396,11 @@ PythonParser::PythonParser(PythonCommon& _python, const std::filesystem::path& m
     }
 }
 
-PythonParser::~PythonParser() {
-    try {
-        m_meta_path->pop(m_meta_path_len - 1);
-        m_meta_path = boost::none;
-    } catch (const py::error_already_set&) {
-        ErrorLogger() << "Python parser destructor throw exception";
-        m_python.HandleErrorAlreadySet();
-    }
+PythonParser::~PythonParser()
+{
+    m_python.SetPopulateGlobalsFunc(std::function<void(py::dict&)>{});
+    // To correctly init it again between sub-interpreters border
+    m_python.FinalizeModuleLoader();
 
     Py_EndInterpreter(m_parser_thread_state);
     PyThreadState_Swap(m_main_thread_state);
@@ -512,91 +462,3 @@ void PythonParser::LoadValueRefsModule() const
 
 void PythonParser::LoadEffectsModule() const
 { (void)LoadModule(&PyInit__effects_new); } // marked [[nodiscard]] but result not needed in this case
-
-py::object PythonParser::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
-    auto module_path(m_modules_dir);
-    std::string parent;
-    std::string current;
-    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
-         it != boost::algorithm::split_iterator<std::string::const_iterator>(); ++it)
-    {
-        module_path = module_path / boost::copy_range<std::string>(*it);
-        if (!current.empty()) {
-            if (parent.empty())
-                parent = std::move(current);
-            else
-                parent = parent + "." + current;
-        }
-        current = boost::copy_range<std::string>(*it);
-    }
-
-    if (IsExistingDir(module_path)) {
-        return py::object(module_spec(fullname, parent, *this));
-    } else {
-        module_path.replace_extension("py");
-        if (IsExistingFile(module_path))
-            return py::object(module_spec(fullname, parent, *this));
-        else if (fullname == "_typing") {
-            return py::object();
-        } else {
-            ErrorLogger() << "Couldn't find file for module spec " << fullname;
-            throw import_error("Couldn't find file for module spec " + fullname);
-        }
-    }
-}
-
-py::object PythonParser::create_module(const module_spec& spec)
-{ return py::object(); }
-
-py::object PythonParser::exec_module(py::object& module) {
-    std::string fullname = py::extract<std::string>(module.attr("__name__"));
-
-    py::dict globals = py::extract<py::dict>(module.attr("__dict__"));
-
-    auto module_path(m_modules_dir);
-    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
-         it != boost::algorithm::split_iterator<std::string::iterator>(); ++it)
-    { module_path = module_path / boost::copy_range<std::string>(*it); }
-
-    if (IsExistingDir(module_path)) {
-        return py::object();
-    } else {
-        module_path.replace_extension("py");
-        if (IsExistingFile(module_path)) {
-            std::string file_contents;
-            bool read_success = ReadFile(module_path, file_contents);
-            if (!read_success) {
-                ErrorLogger() << "Unable to open data file " << PathToString(module_path);
-                throw import_error("Unreadable module " + fullname);
-            }
-
-            // store globals content in module namespace
-            // it is required so functions in the same module will see each other
-            // and still import will work
-            DebugLogger() << "Executing module file " << PathToString(module_path);
-            try {
-                if (m_populate_globals_func) {
-                    m_populate_globals_func(globals);
-                }
-
-                PythonCommon::CompileEval(file_contents.c_str(), module_path, globals);
-            } catch (const boost::python::error_already_set&) {
-                m_python.HandleErrorAlreadySet();
-                ErrorLogger() << "Unable to parse module file " << PathToString(module_path);
-                if (!m_python.IsPythonRunning()) {
-                    ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
-                    if (m_python.Initialize()) {
-                        ErrorLogger() << "Python interpreter successfully restarted.";
-                    } else {
-                        ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                    }
-                }
-                throw import_error("Cannot execute module " + fullname);
-            }
-
-            return py::object();
-        } else {
-            throw import_error("Module not existed " + fullname);
-        }
-    }
-}

@@ -5,8 +5,11 @@
 
 #include "../util/boost_fix.h"
 #include <boost/python.hpp>
+#include <boost/optional.hpp>
 
 #include "Export.h"
+
+struct module_spec;
 
 class FO_COMMON_API PythonCommon {
 public:
@@ -33,12 +36,28 @@ public:
 
     bool InitErrorHandler();  // initializes error handler
 
+    bool InitModuleLoader();  // initializes module loader
+
     virtual bool InitCommonImports(); // initializes Python imports
 
     void Finalize();          // stops Python interpreter and releases its resources
 
+    void FinalizeModuleLoader();  // removes module loader
+
     // Compiles and evaluates \a code with defined \a filename. Populates \a globals
     static void CompileEval(const char* code, const std::filesystem::path& filename, const boost::python::object& globals);
+
+    void SetModulesDir(const std::filesystem::path& modules_dir);
+
+    void SetPopulateGlobalsFunc(std::function<void(boost::python::dict&)> populate_globals_func);
+
+    //! @name Modules finder and loader
+    //! Methods exposed to Python as a meta path finder and a loader
+    //! @{
+    boost::python::object find_spec(const std::string& fullname, const boost::python::object& path, const boost::python::object& target) const;
+    boost::python::object create_module(const module_spec& spec);
+    boost::python::object exec_module(boost::python::object& module);
+    //! @}
 private:
     // some helper objects needed to initialize and run the Python interface
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32) || defined(FREEORION_ANDROID)
@@ -49,6 +68,15 @@ private:
     // exceptions.  It can't be created in the exception handler.
     boost::python::object m_system_exit;
     boost::python::object m_traceback_format_exception;
+
+    //! @name Modules finder and loader
+    //! Finder and loader implementation properties
+    //! @{
+    std::function<void(boost::python::dict&)> m_populate_globals_func;
+    std::filesystem::path m_modules_dir;
+    boost::optional<boost::python::list> m_meta_path;
+    int m_meta_path_len;
+    //! @}
 };
 
 #endif /* defined(__FreeOrion__Util__PythonCommon__) */
