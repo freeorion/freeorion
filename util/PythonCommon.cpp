@@ -1,6 +1,7 @@
 #include "PythonCommon.h"
 
-#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/python/module.hpp>
 
 #include "../util/Directories.h"
 #include "../util/Logger.h"
@@ -56,6 +57,48 @@ namespace {
 
     auto GetPythonExecutable() // should be the containing C++ binary / .exe file
     { return py::extract<std::string>(py::import("sys").attr("executable"))(); }
+
+    struct import_error : std::runtime_error {
+        import_error(const std::string& what) : std::runtime_error(what) {}
+    };
+
+    void translate(import_error const& e) {
+        PyErr_SetString(PyExc_ImportError, e.what());
+    }
+
+    constexpr bool STATIC_FALSE = false;
+}
+
+struct module_spec {
+    module_spec(const std::string& name, const std::string& parent_, const PythonCommon& python_) :
+        fullname(name),
+        parent(parent_),
+        python(python_)
+    {}
+
+    py::list path;
+    py::list uninitialized_submodules;
+    std::string fullname;
+    std::string parent;
+    const PythonCommon& python;
+};
+
+BOOST_PYTHON_MODULE(freeorion_loader) {
+    py::register_exception_translator<import_error>(&translate);
+
+    py::class_<PythonCommon, py::bases<>, PythonCommon, boost::noncopyable>("PythonCommon", py::no_init)
+        .def("find_spec", &PythonCommon::find_spec)
+        .def("create_module", &PythonCommon::create_module)
+        .def("exec_module", &PythonCommon::exec_module);
+
+    py::class_<module_spec>("PythonCommonModuleSpec", py::no_init)
+        .def_readonly("name", &module_spec::fullname)
+        .def_readonly("_uninitialized_submodules", &module_spec::uninitialized_submodules)
+        .add_property("loader", py::make_function(+[](const module_spec& self) -> const PythonCommon& { return self.python; }, py::return_value_policy<py::reference_existing_object>()))
+        .def_readonly("submodule_search_locations", &module_spec::path)
+        .def_readonly("has_location", STATIC_FALSE)
+        .def_readonly("cached", STATIC_FALSE)
+        .def_readonly("parent", &module_spec::parent);
 }
 
 PythonCommon::~PythonCommon()
@@ -87,6 +130,12 @@ bool PythonCommon::Initialize() {
 #if defined(FREEORION_ANDROID)
         Py_NoSiteFlag = 1;
 #endif
+        // allow the "freeorion_loader" C++ module to be imported within Python code
+        if (PyImport_AppendInittab("freeorion_loader", PyInit_freeorion_loader) == -1) {
+            ErrorLogger() << "Unable to initialize freeorion_loader import";
+            return false;
+        }
+
         if (!InitCommonImports()) {
             ErrorLogger() << "Unable to initialize imports";
             return false;
@@ -102,6 +151,26 @@ bool PythonCommon::Initialize() {
     catch (...) {
         ErrorLogger() << "Unable to initialize Python interpreter";
         return false;
+    }
+
+    return true;
+}
+
+bool PythonCommon::InitModuleLoader() {
+    if (!m_meta_path) {
+        try {
+            py::import("freeorion_loader");
+            m_meta_path = py::extract<py::list>(py::import("sys").attr("meta_path"))();
+            m_meta_path->append(boost::cref(*this));
+            m_meta_path_len = static_cast<int>(py::len(*m_meta_path));
+        } catch (const py::error_already_set&) {
+            HandleErrorAlreadySet();
+            ErrorLogger() << "Unable to initialize Python module loader because of Python errors";
+            return false;
+        } catch (...) {
+            ErrorLogger() << "Unable to initialize Python module loader";
+            return false;
+        }
     }
 
     return true;
@@ -163,6 +232,7 @@ void PythonCommon::HandleErrorAlreadySet() {
 }
 
 void PythonCommon::Finalize() {
+    FinalizeModuleLoader();
     if (Py_IsInitialized()) {
         // cleanup python objects before interpterer shutdown
         m_system_exit = py::object();
@@ -188,6 +258,20 @@ void PythonCommon::Finalize() {
     }
 }
 
+void PythonCommon::FinalizeModuleLoader() {
+    if (Py_IsInitialized()) {
+        if (m_meta_path) {
+            try {
+                m_meta_path->pop(m_meta_path_len - 1);
+                m_meta_path = boost::none;
+            } catch (const py::error_already_set&) {
+                ErrorLogger() << "Python parser destructor throw exception";
+                HandleErrorAlreadySet();
+            }
+        }
+    }
+}
+
 void PythonCommon::CompileEval(const char* code, const std::filesystem::path& filename, const py::object& globals) {
     PyObject* filename_str = path_to_pyobject(filename.native());
     if (!filename_str) {
@@ -207,4 +291,97 @@ void PythonCommon::CompileEval(const char* code, const std::filesystem::path& fi
         py::throw_error_already_set();
     }
     py::object o_result{py::handle<>(result)};
+}
+
+void PythonCommon::SetModulesDir(const std::filesystem::path& modules_dir) {
+    m_modules_dir = modules_dir;
+}
+
+void PythonCommon::SetPopulateGlobalsFunc(std::function<void(boost::python::dict&)> populate_globals_func) {
+    m_populate_globals_func = populate_globals_func;
+}
+
+py::object PythonCommon::find_spec(const std::string& fullname, const py::object& path, const py::object& target) const {
+    auto module_path(m_modules_dir);
+    std::string parent;
+    std::string current;
+    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
+         it != boost::algorithm::split_iterator<std::string::const_iterator>(); ++it)
+    {
+        module_path = module_path / boost::copy_range<std::string>(*it);
+        if (!current.empty()) {
+            if (parent.empty())
+                parent = std::move(current);
+            else
+                parent = parent + "." + current;
+        }
+        current = boost::copy_range<std::string>(*it);
+    }
+
+    if (IsExistingDir(module_path)) {
+        return py::object(module_spec(fullname, parent, *this));
+    } else {
+        module_path.replace_extension("py");
+        if (IsExistingFile(module_path))
+            return py::object(module_spec(fullname, parent, *this));
+        else {
+            WarnLogger() << "Couldn't find file for module spec " << fullname;
+            return py::object();
+        }
+    }
+}
+
+py::object PythonCommon::create_module(const module_spec& spec)
+{ return py::object(); }
+
+py::object PythonCommon::exec_module(py::object& module) {
+    std::string fullname = py::extract<std::string>(module.attr("__name__"));
+
+    py::dict globals = py::extract<py::dict>(module.attr("__dict__"));
+
+    auto module_path(m_modules_dir);
+    for (auto it = boost::algorithm::make_split_iterator(fullname, boost::algorithm::token_finder(boost::algorithm::is_any_of(".")));
+         it != boost::algorithm::split_iterator<std::string::iterator>(); ++it)
+    { module_path = module_path / boost::copy_range<std::string>(*it); }
+
+    if (IsExistingDir(module_path)) {
+        return py::object();
+    } else {
+        module_path.replace_extension("py");
+        if (IsExistingFile(module_path)) {
+            std::string file_contents;
+            bool read_success = ReadFile(module_path, file_contents);
+            if (!read_success) {
+                ErrorLogger() << "Unable to open data file " << module_path.string();
+                throw import_error("Unreadable module " + fullname);
+            }
+
+            // store globals content in module namespace
+            // it is required so functions in the same module will see each other
+            // and still import will work
+            DebugLogger() << "Executing module file " << module_path.string();
+            try {
+                if (m_populate_globals_func)
+                    m_populate_globals_func(globals);
+
+                CompileEval(file_contents.c_str(), module_path.native(), globals);
+            } catch (const boost::python::error_already_set&) {
+                HandleErrorAlreadySet();
+                ErrorLogger() << "Unable to parse module file " << PathToString(module_path);
+                if (!IsPythonRunning()) {
+                    ErrorLogger() << "Python interpreter is no longer running.  Attempting to restart.";
+                    if (Initialize()) {
+                        ErrorLogger() << "Python interpreter successfully restarted.";
+                    } else {
+                        ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
+                    }
+                }
+                throw import_error("Cannot execute module " + fullname);
+            }
+
+            return py::object();
+        } else {
+            throw import_error("Module not existed " + fullname);
+        }
+    }
 }

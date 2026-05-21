@@ -56,7 +56,7 @@ public:
 BOOST_FIXTURE_TEST_SUITE(TestPythonParser, TestParserAppFixture)
 
 BOOST_AUTO_TEST_CASE(parse_game_rules) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules.focs.py");
     auto game_rules_opt = Pending::WaitForPendingUnlocked(std::move(game_rules_p));
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_game_rules_failed) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto game_rules_p = Pending::ParseSynchronously(parse::game_rules, parser,  m_scripting_dir / "game_rules_failed.focs.py");
     auto game_rules_opt = Pending::WaitForPendingUnlocked(std::move(game_rules_p));
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(parse_game_rules_failed) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_techs) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
     auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_species) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_scripting_dir / "species");
     const auto [species_map, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
@@ -548,7 +548,7 @@ BOOST_AUTO_TEST_CASE(parse_species) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_buildings) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto buildings_p = Pending::ParseSynchronously(parse::buildings, parser, m_scripting_dir / "buildings");
     const auto buildings = *Pending::WaitForPendingUnlocked(std::move(buildings_p));
@@ -720,7 +720,7 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto empire_statistics_p = Pending::ParseSynchronously(parse::statistics, parser, m_scripting_dir / "empire_statistics");
     auto empire_statistics_opt = Pending::WaitForPendingUnlocked(std::move(empire_statistics_p));
@@ -753,7 +753,7 @@ BOOST_AUTO_TEST_CASE(parse_empire_statistics) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto encyclopedia_articles_p = Pending::ParseSynchronously(parse::encyclopedia_articles, parser, m_scripting_dir / "encyclopedia");
     auto encyclopedia_articles_opt = Pending::WaitForPendingUnlocked(std::move(encyclopedia_articles_p));
@@ -777,7 +777,7 @@ BOOST_AUTO_TEST_CASE(parse_encyclopedia_articles) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_fields) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto fields_p = Pending::ParseSynchronously(parse::fields, parser, m_scripting_dir / "fields");
     auto fields_opt = Pending::WaitForPendingUnlocked(std::move(fields_p));
@@ -805,7 +805,7 @@ BOOST_AUTO_TEST_CASE(parse_fields) {
 }
 
 BOOST_AUTO_TEST_CASE(parse_named_values) {
-    PythonParser parser(m_python, m_scripting_dir);
+    PythonParser parser(m_python);
 
     auto named_values_p = Pending::ParseSynchronously(parse::named_value_refs, parser, m_scripting_dir / "macros");
     auto named_values_opt = Pending::WaitForPendingUnlocked(std::move(named_values_p));

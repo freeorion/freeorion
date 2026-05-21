@@ -438,7 +438,8 @@ void GGHumanClientApp::Initialize() {
         DebugLogger() << "Started background parser thread";
         PythonCommon python;
         python.Initialize();
-        StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
+        python.SetModulesDir(GetResourceDir() / "scripting");
+        StartBackgroundParsing(PythonParser(python));
         PostDeferredEvent(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted()));
     });
     background.detach();
@@ -1660,7 +1661,8 @@ void GGHumanClientApp::HandleResoureDirChange() {
             DebugLogger() << "Started background parser thread";
             PythonCommon python;
             python.Initialize();
-            StartBackgroundParsing(PythonParser(python, GetResourceDir() / "scripting"));
+            python.SetModulesDir(GetResourceDir() / "scripting");
+            StartBackgroundParsing(PythonParser(python));
             PostDeferredEvent(boost::intrusive_ptr<const ParserCompleted>(new ParserCompleted()));
         });
         background.detach();
