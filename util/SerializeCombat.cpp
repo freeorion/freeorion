@@ -264,33 +264,6 @@ namespace {
         return retval;
     }
 
-    // interprets text at \a next as int or unsigned int. skips initial whitespace.
-    // fails if \a next or \a buffer_end are nullptr, if incrementing \a next reaches
-    // \a buffer end before parsing succeeds, or if text at \a next (after whitespace)
-    // is not interpretable as int or unsigned int as appropriate.
-    // returns tuple of result value, bool indicating success/fail, and new next address
-    template <typename IntOrUInt> requires std::is_same_v<int, IntOrUInt> || std::is_same_v<unsigned int, IntOrUInt>
-    CONSTEXPR_FROM_CHARS std::tuple<IntOrUInt, bool, const char*>
-        GetIntFromChars(const char* const buffer_end, const char* next, const IntOrUInt default_val)
-    {
-        // safety checks
-        if (!next || !buffer_end)
-            return {default_val, false, next};
-
-        // skip whitespace
-        while (next != buffer_end && *next == ' ')
-            ++next;
-
-        // safety check for end of buffer
-        if (next == buffer_end)
-            return {default_val, false, next};
-
-        // parse string to int
-        IntOrUInt result = default_val;
-        auto [next_out, success] = FromChars(next, buffer_end, result);
-        return {result, success, next_out};
-    };
-
 
     CONSTEXPR_FROM_CHARS void FillCombatStates(auto& container, std::string_view buffer)
         requires requires { container.emplace(1, CombatParticipantState{}); }
