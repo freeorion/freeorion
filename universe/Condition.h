@@ -1,15 +1,19 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
+#include <algorithm>
 #include <array>
+#include <cstdint>
 #include <memory>
+#include <span>
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include "ScriptingContext.h"
 #include "../util/Export.h"
 
 
+struct ScriptingContext;
+class UniverseObjectCXBase;
 class UniverseObject;
 
 namespace Effect {
@@ -119,27 +123,14 @@ struct FO_COMMON_API Condition {
      * not-searched container. */
     virtual void Eval(const ScriptingContext& parent_context,
                       ObjectSet& matches, ObjectSet& non_matches,
-                      SearchDomain search_domain = SearchDomain::NON_MATCHES) const
-    {
-        const auto match_one_candidate = [cond{this}, &parent_context](const auto* candidate) -> bool {
-            static constexpr ScriptingContext::LocalCandidate lc;
-            const ScriptingContext candidate_context{parent_context, lc, candidate};
-            return cond->Match(candidate_context); // this requies a derived Condition class to override either this Eval or Match
-        };
-
-        EvalImpl(matches, non_matches, search_domain, match_one_candidate);
-    }
+                      SearchDomain search_domain = SearchDomain::NON_MATCHES) const;
 
     /** Returns true iff at least one object in \a candidates matches this condition.
       * Returns false for an empty candiates list. */
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
                                        std::span<const UniverseObjectCXBase*> candidates) const;
     [[nodiscard]] virtual bool EvalAny(const ScriptingContext& parent_context,
-                                       std::span<const int> candidate_ids) const
-    {
-        auto objs = parent_context.ContextObjects().findRaw<UniverseObjectCXBase>(candidate_ids);
-        return EvalAny(parent_context, objs);
-    }
+                                       std::span<const int> candidate_ids) const;
 
     [[nodiscard]] bool EvalAny(const ScriptingContext& parent_context) const {
         ObjectSet candidates = GetDefaultInitialCandidateObjects(parent_context);

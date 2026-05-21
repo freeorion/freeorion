@@ -3,7 +3,7 @@
 
 #include "boost_fix.h"
 #include "Export.h"
-#include "../universe/Universe.h"
+#include "../universe/ObjectMap.h"
 #include "../network/Networking.h"
 
 class EmpireManager;
@@ -13,7 +13,6 @@ class Species;
 class SupplyManager;
 class Universe;
 class UniverseObject;
-class ObjectMap;
 class Planet;
 class System;
 class Ship;
@@ -22,6 +21,7 @@ class Building;
 class Field;
 class PythonParser;
 struct GalaxySetupData;
+struct ScriptingContext;
 
 class FO_COMMON_API IApp {
 protected:
@@ -44,6 +44,9 @@ public:
     //! A constant reference to the single ::Universe instance representing the
     //! known universe of this application.
     virtual Universe& GetUniverse() noexcept = 0;
+
+    //! Returns objects from the ::Universe known to this application
+    [[nodiscard]] ObjectMap& Objects();
 
     /** Launches asynchronous parsing of game content, then starts
       * additional content parsing in the calling thread.
@@ -125,7 +128,7 @@ protected:
 [[nodiscard]] inline ObjectMap& Objects() {
     static ObjectMap empty_objects;
     auto app = IApp::GetApp();
-    return app ? app->GetUniverse().Objects() : empty_objects;
+    return app ? app->Objects() : empty_objects;
 }
 
 /** Returns the object name of the universe object. This can be apperant object

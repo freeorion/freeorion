@@ -1,11 +1,14 @@
 #ifndef _ValueRef_h_
 #define _ValueRef_h_
 
-#include "ScriptingContext.h"
+#include "EnumsFwd.h"
+#include "../util/AppInterface.h"
 #include "../util/Enum.h"
 #include "../util/Export.h"
 #include "../util/i18n.h"
 #include <type_traits>
+
+struct ScriptingContext;
 
 namespace ValueRef {
 enum class ReferenceType : int8_t {

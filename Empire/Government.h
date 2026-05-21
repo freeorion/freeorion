@@ -14,6 +14,7 @@
 #include <map>
 #include <set>
 
+struct UnlockableItem;
 
 class FO_COMMON_API Policy {
 public:

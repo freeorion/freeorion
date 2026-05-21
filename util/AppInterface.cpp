@@ -131,3 +131,7 @@ void IApp::StartBackgroundParsing(const PythonParser& python) {
     else
         ErrorLogger() << "Background parse path doesn't exist: " << (rdir / "scripting/empire_colors.xml").string();
 }
+
+ObjectMap& IApp::Objects() {
+    return GetUniverse().Objects();
+}

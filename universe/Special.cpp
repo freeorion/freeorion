@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Condition.h"
 #include "Effect.h"
+#include "ScriptingContext.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"
 #include "../util/AppInterface.h"
