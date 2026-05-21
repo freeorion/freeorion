@@ -5,6 +5,8 @@
 #include <thread>
 #include "ValueRef.h"
 #include "../util/CheckSums.h"
+#include "../util/Logger.h"
+#include "../util/Pending.h"
 
 [[nodiscard]] FO_COMMON_API const std::string& UserString(const std::string& str);
 

@@ -7,6 +7,7 @@
 #include "../util/Random.h"
 #include "../util/Serialize.h"
 #include "../util/Serialize.ipp"
+#include "Universe.h"
 
 
 namespace {
