@@ -53,12 +53,13 @@ namespace {
 
     constexpr uint16_t uint16_t_max = std::numeric_limits<uint16_t>::max();
     constexpr uint8_t uint16_t_digits = 5; // digits in base 10 of 65536 = 2^16
+    constexpr uint8_t uint8_t_digits = 3;  // digits in base 10 of 255 = 2^8
     static_assert(Pow(10, uint16_t_digits + 1) > uint16_t_max);
 
     constexpr uint8_t data_arr_sz = 8;
     using DataArrT = std::array<std::pair<uint16_t, uint16_t>, data_arr_sz>;
 
-    constexpr std::size_t buffer_size = data_arr_sz*2*(uint16_t_digits + 1); // space for "65535 12345 " repeated data_arr_sz times
+    constexpr std::size_t buffer_size = uint8_t_digits + 1 + data_arr_sz*2*(uint16_t_digits + 1); // space for "65535 12345 " repeated data_arr_sz times, plus the count
 
     // returns { next unconsumed char*, true/false did the parse succeed }
     // parsed value returned in \a val_out
