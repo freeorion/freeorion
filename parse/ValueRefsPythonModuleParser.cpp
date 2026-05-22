@@ -113,6 +113,34 @@ namespace {
 
         return boost::python::object();
     }
+
+    py::object insert_game_rule_(const PythonTypes& types, const py::tuple& args, const py::dict& kw) {
+        auto name{py::extract<std::string>(kw["name"])()};
+        auto type_ = kw["type"];
+
+        if (type_ == types.type_int) {
+            return py::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
+                "GameRule",
+                nullptr,
+                nullptr,
+                nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
+                nullptr)));
+        } else if (type_ == types.type_float) {
+            return py::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
+                "GameRule",
+                nullptr,
+                nullptr,
+                nullptr,
+                std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
+                nullptr)));
+        } else {
+            ErrorLogger() << "Unsupported type for rule " << name << ": "
+                          << py::extract<std::string>(py::str(type_))();
+
+            throw std::runtime_error(std::string("Not implemented ") + __func__);
+        }
+    }
 }
 
 BOOST_PYTHON_MODULE(_value_refs) {
@@ -157,5 +185,8 @@ BOOST_PYTHON_MODULE(_value_refs) {
 
     const auto f_insert_vector_count = [types](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_reduce_vector_<std::string>(types, ValueRef::StatisticType::COUNT, args, kw); };
     py::def("VectorCount", boost::python::raw_function(f_insert_vector_count, 1));
+
+    auto f_insert_game_rule = [types](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(types, args, kw); };
+    py::def("GameRule", boost::python::raw_function(std::move(f_insert_game_rule)));
 }
 

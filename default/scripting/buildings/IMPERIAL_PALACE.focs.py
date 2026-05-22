@@ -6,7 +6,6 @@ from focs._effects import (
     Contains,
     EffectsGroup,
     Enqueued,
-    GameRule,
     HasSpecies,
     IsBuilding,
     IsSource,
@@ -38,6 +37,7 @@ from focs._effects import (
     Unowned,
     Value,
 )
+from focs._value_refs import GameRule
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import PLANET_DEFENSE_FACTOR
 from macros.priorities import TARGET_AFTER_SCALING_PRIORITY

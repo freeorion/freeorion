@@ -458,12 +458,6 @@ def OnPlanet(*, id: _ID) -> _Condition: ...
 # Effects
 Destroy = _Effect()
 
-def GameRule(
-    *,
-    type: type[_T],
-    name: str,
-) -> _T: ...
-
 NoOpEffect = _Effect()
 
 def Conditional(

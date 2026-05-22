@@ -8,6 +8,7 @@ When executed, definition files will be generated in the current working directo
 Run black and ruff to fix formatting.
 """
 
+from focs._value_refs import GameRule
 from macros.base_prod import BUILDING_COST_MULTIPLIER
 from macros.misc import LIFECYCLE_MANIP_POPULATION_EFFECTS, MIN_RECOLONIZING_SIZE
 from macros.upkeep import COLONIZATION_POLICY_MULTIPLIER, COLONY_UPKEEP_MULTIPLICATOR

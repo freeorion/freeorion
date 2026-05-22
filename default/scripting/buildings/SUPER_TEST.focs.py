@@ -1,7 +1,6 @@
 from focs._effects import (
     Destroy,
     EffectsGroup,
-    GameRule,
     HasSpecies,
     IsSource,
     MaxOf,
@@ -12,6 +11,7 @@ from focs._effects import (
     Source,
     Target,
 )
+from focs._value_refs import GameRule
 from macros.priorities import POPULATION_OVERRIDE_PRIORITY
 
 try:

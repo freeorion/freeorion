@@ -6,7 +6,6 @@ from focs._effects import (
     CurrentTurn,
     EffectsGroup,
     EmpireHasAdoptedPolicy,
-    GameRule,
     GasGiantType,
     Good,
     HasSpecies,
@@ -43,6 +42,7 @@ from focs._effects import (
     Unowned,
     Value,
 )
+from focs._value_refs import GameRule
 from macros.misc import DESCRIPTION_EFFECTSGROUP_MACRO
 from macros.opinion import POLICY_DISLIKE_SCALING
 from macros.priorities import AFTER_ALL_TARGET_MAX_METERS_PRIORITY
