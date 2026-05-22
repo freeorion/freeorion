@@ -128,7 +128,7 @@ namespace {
     struct py_grammar {
         boost::python::dict globals;
 
-        py_grammar(start_rule_payload::first_type& species_) :
+        py_grammar(const PythonParser& parser_, start_rule_payload::first_type& species_) :
             globals(boost::python::import("builtins").attr("__dict__"))
         {
             RegisterGlobalsEffects(globals);
@@ -136,6 +136,8 @@ namespace {
             RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
+
+            parser_.LoadValueRefsModule();
 
             globals["Species"] = boost::python::raw_function(
                 [&species_](const boost::python::tuple& args, const boost::python::dict& kw)
@@ -166,7 +168,7 @@ namespace parse {
         ScopedTimer timer("Species Parsing");
 
         bool file_success = true;
-        py_grammar p = py_grammar(species_);
+        py_grammar p = py_grammar(parser, species_);
         for (const auto& file : ListDir(path, IsFOCPyScript)) {
             if (file.filename() == "SpeciesCensusOrdering.focs.py" ) {
                 manifest_file = file;
@@ -179,7 +181,7 @@ namespace parse {
         TraceLogger(parsing) << "Start parsing FOCS for Species: " << species_.size();
         for (auto& [sp_name, sp] : species_)
             TraceLogger(parsing) << "Species " << sp_name << " : " << sp.GetCheckSum() << "\n" << sp.Dump();
-        TraceLogger(parsing) << "End parsing FOCS for Soecies" << species_.size();
+        TraceLogger(parsing) << "End parsing FOCS for Species" << species_.size();
 
         if (!manifest_file.empty()) {
             try {
