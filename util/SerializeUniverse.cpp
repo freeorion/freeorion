@@ -765,7 +765,7 @@ namespace {
 
 
     template <typename Archive>
-    void Serialize(Archive& ar, Ship::PartMeterMap& meters, unsigned int const)
+    void Serialize(Archive& ar, Ship::PartMeterMap& meters, unsigned int const version)
     { ar & boost::serialization::make_nvp("m_part_meters", meters); }
 
     template <>
@@ -952,6 +952,10 @@ namespace {
         int i2 = 0;
         int i3 = 0;
         int i4 = 0;
+        int i5 = 0;
+        int i6 = 0;
+        int i7 = 0;
+        int i8 = 0;
         std::string str;
 
         const auto get_retval = [&]() {
@@ -959,6 +963,8 @@ namespace {
                 return std::tuple{i0, i1, i2, i3, str};
             else if constexpr (NumInts == 5)
                 return std::tuple{i0, i1, i2, i3, i4, str};
+            else if constexpr (NumInts == 9)
+                return std::tuple{i0, i1, i2, i3, i4, i5, i6, i7, i8, str};
             else
                 static_assert(NumInts < 6);
         };
@@ -983,6 +989,14 @@ namespace {
             std::tie(i3, success, next) = get_next_int(next);
         if (success && NumInts >= 5)
             std::tie(i4, success, next) = get_next_int(next);
+        if (success && NumInts >= 6)
+            std::tie(i5, success, next) = get_next_int(next);
+        if (success && NumInts >= 7)
+            std::tie(i6, success, next) = get_next_int(next);
+        if (success && NumInts >= 8)
+            std::tie(i7, success, next) = get_next_int(next);
+        if (success && NumInts >= 9)
+            std::tie(i8, success, next) = get_next_int(next);
         if (!success)
             return get_retval();
 
@@ -1002,7 +1016,7 @@ namespace {
 
 #if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
     static_assert(std::get<0>(ExtractIntsAndRestFromString<4>("1 2 3 4 a")) == 1);
-    static_assert(std::get<1>(ExtractIntsAndRestFromString<4>("  1 2  ")) == 2);
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<9>("  1 2  ")) == 2);
     static_assert(std::get<5>(ExtractIntsAndRestFromString<5>("  1 2  ")).empty());
     static_assert(std::get<3>(ExtractIntsAndRestFromString<4>("1  2   3 4   a  ")) == 4);
     static_assert(std::get<4>(ExtractIntsAndRestFromString<4>("1 2 3 4 -abcdef axx")) == "-abcdef axx");
@@ -1523,28 +1537,122 @@ BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_VERSION(Fleet, 8)
 
 
+namespace {
+    std::string ToString(int i0, int i1, int i2, int i3, int i4,
+                         int i5, int i6, int i7, int i8, bool tf, std::string_view str)
+    {
+        std::string buffer;
+        buffer.reserve(9 * (int_digits + 1) + 2 + str.size());
+        buffer.append(std::to_string(i0)).append(" ")
+              .append(std::to_string(i1)).append(" ")
+              .append(std::to_string(i2)).append(" ")
+              .append(std::to_string(i3)).append(" ")
+              .append(std::to_string(i4)).append(" ")
+              .append(std::to_string(i5)).append(" ")
+              .append(std::to_string(i6)).append(" ")
+              .append(std::to_string(i7)).append(" ")
+              .append(std::to_string(i8)).append(" ");
+        buffer.append(tf ? "t" : "f"); // intentionally no space delimeter here to avoid ambiguity with spaces in \a str
+        buffer.append(str);
+        return buffer;
+    }
+
+    CONSTEXPR_STRING std::pair<bool, std::string> ExtractBoolAndRest(std::string buffer) {
+        const auto not_ws_idx = buffer.find_first_not_of(' ');
+        if (not_ws_idx != buffer.npos)
+            buffer = buffer.substr(not_ws_idx);
+
+        if (buffer.empty())
+            return {false, buffer};
+        else
+            return {buffer.front() == 't', buffer.substr(1)};
+    }
+
+    namespace TestExtract {
+#if !(defined(__cpp_lib_constexpr_string) && (__cpp_lib_constexpr_string >= 201907L) && ((!defined(__GNUC__) || (__GNUC__ > 13) || ((__GNUC__ == 13) && (__GNUC__MINOR__ >= 3)))) && ((!defined(_MSC_VER) || (_MSC_VER >= 1934))))
+        constexpr std::pair<bool, std::string_view> ExtractBoolAndRest(const char* nt_cstr) {
+            if (!nt_cstr)
+                return {false, std::string_view{}};
+            std::string_view buffer{nt_cstr};
+
+            const auto not_ws_idx = buffer.find_first_not_of(' ');
+            if (not_ws_idx != buffer.npos)
+                buffer.remove_prefix(not_ws_idx);
+
+            if (buffer.empty()) {
+                return {false, buffer};
+            } else {
+                bool tf = (buffer.front() == 't');
+                buffer.remove_prefix(1);
+                return {tf, buffer};
+            }
+        }
+#endif
+        using namespace std::literals;
+        static_assert(ExtractBoolAndRest(" t TEST TEST ") == std::pair{true, " TEST TEST "sv});
+        static_assert(ExtractBoolAndRest("") == std::pair{false, ""sv});
+        static_assert(ExtractBoolAndRest("x") == std::pair{false, ""sv});
+        static_assert(ExtractBoolAndRest("xxx") == std::pair{false, "xx"sv});
+        static_assert(ExtractBoolAndRest("f") == std::pair{false, ""sv});
+        static_assert(ExtractBoolAndRest("f  x") == std::pair{false, "  x"sv});
+    }
+}
+
 template <typename Archive>
 void serialize(Archive& ar, Ship& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
-    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj))
-        & make_nvp("m_design_id", obj.m_design_id)
-        & make_nvp("m_fleet_id", obj.m_fleet_id)
-        & make_nvp("m_ordered_scrapped", obj.m_ordered_scrapped)
-        & make_nvp("m_ordered_colonize_planet_id", obj.m_ordered_colonize_planet_id)
-        & make_nvp("m_ordered_invade_planet_id", obj.m_ordered_invade_planet_id)
-        & make_nvp("m_ordered_bombard_planet_id", obj.m_ordered_bombard_planet_id);
-    Serialize(ar, obj.m_part_meters, version);
-    ar  & make_nvp("m_species_name", obj.m_species_name)
-        & make_nvp("m_produced_by_empire_id", obj.m_produced_by_empire_id)
-        & make_nvp("m_arrived_on_turn", obj.m_arrived_on_turn);
-    ar  & make_nvp("m_last_turn_active_in_combat", obj.m_last_turn_active_in_combat);
-    ar  & make_nvp("m_last_resupplied_on_turn", obj.m_last_resupplied_on_turn);
+    ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj));
+
+    static constexpr auto serialize_flat = [](auto& ar, Ship& obj, unsigned int const version) {
+        ar  & make_nvp("m_design_id", obj.m_design_id)
+            & make_nvp("m_fleet_id", obj.m_fleet_id)
+            & make_nvp("m_ordered_scrapped", obj.m_ordered_scrapped)
+            & make_nvp("m_ordered_colonize_planet_id", obj.m_ordered_colonize_planet_id)
+            & make_nvp("m_ordered_invade_planet_id", obj.m_ordered_invade_planet_id)
+            & make_nvp("m_ordered_bombard_planet_id", obj.m_ordered_bombard_planet_id);
+        Serialize(ar, obj.m_part_meters, version);
+        ar  & make_nvp("m_species_name", obj.m_species_name)
+            & make_nvp("m_produced_by_empire_id", obj.m_produced_by_empire_id)
+            & make_nvp("m_arrived_on_turn", obj.m_arrived_on_turn);
+        ar  & make_nvp("m_last_turn_active_in_combat", obj.m_last_turn_active_in_combat);
+        ar  & make_nvp("m_last_resupplied_on_turn", obj.m_last_resupplied_on_turn);
+    };
+
+    if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        static_assert(Archive::is_saving::value);
+        std::string info_str = ToString(obj.m_design_id, obj.m_fleet_id, obj.m_ordered_colonize_planet_id,
+                                        obj.m_ordered_invade_planet_id, obj.m_ordered_bombard_planet_id,
+                                        obj.m_produced_by_empire_id, obj.m_arrived_on_turn, 
+                                        obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn,
+                                        obj.m_ordered_scrapped, obj.m_species_name);
+        ar  << make_nvp("info", info_str);
+        Serialize(ar, obj.m_part_meters, version);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        static_assert(Archive::is_loading::value);
+        if (version >= 4) {
+            std::string info_str;
+            ar  >> make_nvp("info", info_str);
+            std::tie(obj.m_design_id, obj.m_fleet_id, obj.m_ordered_colonize_planet_id,
+                     obj.m_ordered_invade_planet_id, obj.m_ordered_bombard_planet_id,
+                     obj.m_produced_by_empire_id, obj.m_arrived_on_turn, 
+                     obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn,
+                     info_str) = ExtractIntsAndRestFromString<9>(info_str);
+            std::tie(obj.m_ordered_scrapped, obj.m_species_name) = ExtractBoolAndRest(info_str);
+            Serialize(ar, obj.m_part_meters, version);
+        } else {
+            serialize_flat(ar, obj, version);
+        }
+
+    } else {
+        serialize_flat(ar, obj, version);
+    } 
 }
 
 BOOST_CLASS_EXPORT(Ship)
-BOOST_CLASS_VERSION(Ship, 3)
+BOOST_CLASS_VERSION(Ship, 4)
 
 
 template <typename Archive>
