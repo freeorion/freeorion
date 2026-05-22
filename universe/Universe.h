@@ -209,7 +209,7 @@ public:
       * the server is allocating an id on behalf of itself.  This can be removed
       * when no longer supporting legacy id allocation in pending Orders. \note
       * Universe gains ownership of \a ship_design once inserted. */
-    bool InsertShipDesignID(ShipDesign ship_design, boost::optional<int> empire_id, int id);
+    bool InsertShipDesignID(ShipDesign ship_design, std::optional<int> empire_id, int id);
 
    /** Reset object and ship design id allocation for a new game. */
     void ResetAllIDAllocation(const std::vector<int>& empire_ids = std::vector<int>());
@@ -552,11 +552,11 @@ private:
     //! Various unlocked items are kept as a Pending::Pending while being parsed and
     //! then transfered.  They are mutable to allow processing in const accessors.
     //! @{
-    mutable boost::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_items = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_buildings = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>>          m_pending_fleet_plans = boost::none;
-    mutable boost::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>>   m_pending_monster_fleet_plans = boost::none;
-    mutable boost::optional<Pending::Pending<EmpireStatsMap>>                                   m_pending_empire_stats = boost::none;
+    mutable std::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_items = std::nullopt;
+    mutable std::optional<Pending::Pending<std::vector<UnlockableItem>>>                      m_pending_buildings = std::nullopt;
+    mutable std::optional<Pending::Pending<std::vector<std::unique_ptr<FleetPlan>>>>          m_pending_fleet_plans = std::nullopt;
+    mutable std::optional<Pending::Pending<std::vector<std::unique_ptr<MonsterFleetPlan>>>>   m_pending_monster_fleet_plans = std::nullopt;
+    mutable std::optional<Pending::Pending<EmpireStatsMap>>                                   m_pending_empire_stats = std::nullopt;
 
     mutable std::vector<UnlockableItem>                     m_unlocked_items;
     mutable std::vector<UnlockableItem>                     m_unlocked_buildings;

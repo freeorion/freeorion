@@ -5,10 +5,10 @@
 #include "Logger.h"
 
 #include <filesystem>
-#include <boost/optional/optional.hpp>
 
 #include <future>
 #include <mutex>
+#include <optional>
 #include <string>
 
 /** namespace Pending collection classes and functions used for
@@ -19,7 +19,7 @@ namespace Pending {
     struct FO_COMMON_API Pending {
         using result_type = T;
 
-        Pending(boost::optional<std::future<T>>&& pending_,
+        Pending(std::optional<std::future<T>>&& pending_,
                 const std::string& name_) :
             pending(std::move(pending_)),
             filename(name_)
@@ -40,17 +40,17 @@ namespace Pending {
 
         Pending& operator=(const Pending& other) = delete;
 
-        boost::optional<std::future<T>> pending = boost::none;
+        std::optional<std::future<T>> pending = std::nullopt;
         std::string filename;
         std::mutex m_mutex;
     };
 
     template <typename T>
-    [[nodiscard]] boost::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
+    [[nodiscard]] std::optional<T> WaitForPendingUnlocked(Pending<T>&& pending, bool do_not_care_about_result = false) {
         std::future_status status = std::future_status::deferred;
         do {
             if (!pending.pending->valid())
-                return boost::none;
+                return std::nullopt;
 
             status = pending.pending->wait_for(std::chrono::seconds(1));
             if (status == std::future_status::timeout)
@@ -71,7 +71,7 @@ namespace Pending {
                     pending.pending->get(); // needs to be called once to release state
                 }
                 DebugLogger() << "Don't care for result of parsing \"" << pending.filename << "\". Was already released.";
-                return boost::none;
+                return std::nullopt;
             }
             DebugLogger() << "Retrieve result of parsing \"" << pending.filename << "\".";
             return pending.pending->get();
@@ -79,33 +79,33 @@ namespace Pending {
             ErrorLogger() << "Parsing of \"" << pending.filename << "\" failed with error: " << e.what();
         }
 
-        return boost::none;
+        return std::nullopt;
     }
-    /** Wait for the \p pending parse to complete.  Set pending to boost::none
+    /** Wait for the \p pending parse to complete.  Set pending to std::nullopt
         and return the parsed T. Destroys the shared state in the wrapped std::future.
-        Return boost::none on errors.*/
+        Return std::nullopt on errors.*/
     template <typename T>
-    boost::optional<T> WaitForPending(boost::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
+    std::optional<T> WaitForPending(std::optional<Pending<T>>& pending, bool do_not_care_about_result = false) {
         if (!pending)
-            return boost::none;
+            return std::nullopt;
         std::scoped_lock lock(pending->m_mutex);
         if (!pending || !(pending->pending)) {
             // another thread in the meantime transferred the pending to stored
-            return boost::none;
+            return std::nullopt;
         }
         if (auto tt = WaitForPendingUnlocked(std::move(*pending), do_not_care_about_result)) {
-            pending = boost::none;
+            pending = std::nullopt;
             return tt;
         } else {
-            pending = boost::none;
-            return boost::none;
+            pending = std::nullopt;
+            return std::nullopt;
         }
     }
 
     /** If there is a pending parse, wait for it and swap it with the stored
         value.  Return the stored value.*/
     template <typename T>
-    T& SwapPending(boost::optional<Pending<T>>& pending, T& stored) {
+    T& SwapPending(std::optional<Pending<T>>& pending, T& stored) {
         if (pending) {
             std::scoped_lock lock(pending->m_mutex);
             if (!pending)
@@ -113,7 +113,7 @@ namespace Pending {
 
             if (auto tt = WaitForPendingUnlocked(std::move(*pending)))
                 std::swap(*tt, stored);
-            pending = boost::none;
+            pending = std::nullopt;
         }
         return stored;
     }
