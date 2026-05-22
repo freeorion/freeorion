@@ -945,15 +945,26 @@ namespace {
         return buffer;
     }
 
-    CONSTEXPR_FROM_CHARS auto ExtractFromString(const std::string& buffer) {
+    template <uint8_t NumInts>
+    CONSTEXPR_FROM_CHARS auto ExtractIntsAndRestFromString(const std::string& buffer) {
         int i0 = 0;
         int i1 = 0;
         int i2 = 0;
         int i3 = 0;
+        int i4 = 0;
         std::string str;
 
+        const auto get_retval = [&]() {
+            if constexpr (NumInts == 4)
+                return std::tuple{i0, i1, i2, i3, str};
+            else if constexpr (NumInts == 5)
+                return std::tuple{i0, i1, i2, i3, i4, str};
+            else
+                static_assert(NumInts < 6);
+        };
+
         if (buffer.empty())
-            return std::tuple{i0, i1, i2, i3, str};
+            return get_retval();
 
         const auto* const buffer_end = buffer.c_str() + buffer.size();
         const auto get_next_int = [buffer_end](const char* next) -> std::tuple<int, bool, const char*>
@@ -962,15 +973,18 @@ namespace {
         const auto* next = buffer.c_str();
         bool success = true;
 
-        std::tie(i0, success, next) = get_next_int(buffer.c_str());
-        if (success)
+        if (NumInts >= 1)
+            std::tie(i0, success, next) = get_next_int(buffer.c_str());
+        if (success && NumInts >= 2)
             std::tie(i1, success, next) = get_next_int(next);
-        if (success)
+        if (success && NumInts >= 3)
             std::tie(i2, success, next) = get_next_int(next);
-        if (success)
+        if (success && NumInts >= 4)
             std::tie(i3, success, next) = get_next_int(next);
+        if (success && NumInts >= 5)
+            std::tie(i4, success, next) = get_next_int(next);
         if (!success)
-            return std::tuple{i0, i1, i2, i3, str};
+            return get_retval();
 
         // skip whitespace
         while (next != buffer_end && *next == ' ')
@@ -978,21 +992,30 @@ namespace {
 
         const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
         if (next_offset > buffer.size())
-            return std::tuple{i0, i1, i2, i3, str};
+            return get_retval();
 
         // use find remaining chars as string
         str = buffer.substr(next_offset);
 
-        return std::tuple{i0, i1, i2, i3, str};
+        return get_retval();
     }
 
 #if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    static_assert(std::get<0>(ExtractFromString("1 2 3 4 a")) == 1);
-    static_assert(std::get<1>(ExtractFromString("  1 2  ")) == 2);
-    static_assert(std::get<4>(ExtractFromString("  1 2  ")).empty());
-    static_assert(std::get<3>(ExtractFromString("1  2   3 4   a  ")) == 4);
-    static_assert(std::get<4>(ExtractFromString("1 2 3 4 -abcdef axx")) == "-abcdef axx");
+    static_assert(std::get<0>(ExtractIntsAndRestFromString<4>("1 2 3 4 a")) == 1);
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<4>("  1 2  ")) == 2);
+    static_assert(std::get<5>(ExtractIntsAndRestFromString<5>("  1 2  ")).empty());
+    static_assert(std::get<3>(ExtractIntsAndRestFromString<4>("1  2   3 4   a  ")) == 4);
+    static_assert(std::get<4>(ExtractIntsAndRestFromString<4>("1 2 3 4 -abcdef axx")) == "-abcdef axx");
 #endif
+
+    static_assert([]() {
+        std::string_view a = "  a";
+        const auto not_ws_idx = a.find_first_not_of(' ');
+        a.remove_prefix(not_ws_idx);
+        return a == "a";
+    }());
+    static_assert(std::string_view{"    "}.find_first_not_of(' ') == std::string_view::npos);
+    static_assert(std::string_view{}.find_first_not_of(' ') == std::string_view::npos);
 }
 
 
@@ -1030,7 +1053,7 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
            >> make_nvp("x", o.m_x)
            >> make_nvp("y", o.m_y);
 
-        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn, o.m_name) = ExtractFromString(str);
+        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn, o.m_name) = ExtractIntsAndRestFromString<4>(str);
 
         Serialize(ar, o.m_meters, version);
 
@@ -1379,6 +1402,55 @@ template <typename Archive>
 void load_construct_data(Archive&, Fleet* obj, unsigned int const)
 { ::new(obj)Fleet(); }
 
+namespace {
+    std::string ToString(int i0, int i1, int i2, int i3, int i4, FleetAggression aggr, bool tf) {
+        std::string buffer;
+        buffer.reserve(5 * (int_digits + 1) + 3);
+        buffer.append(std::to_string(i0)).append(" ")
+              .append(std::to_string(i1)).append(" ")
+              .append(std::to_string(i2)).append(" ")
+              .append(std::to_string(i3)).append(" ")
+              .append(std::to_string(i4)).append(" ");
+        buffer.append([aggr](){
+            switch (aggr) {
+                case FleetAggression::FLEET_AGGRESSIVE:  return "a";
+                case FleetAggression::FLEET_PASSIVE:     return "p";
+                case FleetAggression::FLEET_OBSTRUCTIVE: return "o";
+                case FleetAggression::FLEET_DEFENSIVE:
+                default:                                 return "d";
+            }
+        }());
+        buffer.append(tf ? "t" : "f");
+        return buffer;
+    }
+
+    constexpr std::pair<FleetAggression, bool> ExtractAggressionAndBool(std::string_view buffer) {
+        const auto not_ws_idx = buffer.find_first_not_of(' ');
+        if (not_ws_idx != buffer.npos)
+            buffer.remove_prefix(not_ws_idx);
+
+        if (buffer.empty())
+            return {FleetAggression::FLEET_DEFENSIVE, false};
+
+        const FleetAggression aggression = [agr_c = buffer[0]]() {
+            switch (agr_c) {
+            case 'a': return FleetAggression::FLEET_AGGRESSIVE;
+            case 'p': return FleetAggression::FLEET_PASSIVE;
+            case 'o': return FleetAggression::FLEET_OBSTRUCTIVE;
+            case 'd':
+            default:  return FleetAggression::FLEET_DEFENSIVE;
+        }
+        }();
+
+        const auto tf = (buffer.size() >= 2) && (buffer[1] == 't');
+
+        return {aggression, tf};
+    }
+
+    static_assert(ExtractAggressionAndBool("") == std::pair{FleetAggression::FLEET_DEFENSIVE, false});
+    static_assert(ExtractAggressionAndBool("  ot ") == std::pair{FleetAggression::FLEET_OBSTRUCTIVE, true});
+}
+
 template <typename Archive>
 void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 {
@@ -1386,35 +1458,69 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
 
     ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj));
 
-    if constexpr (Archive::is_loading::value) {
-        if (version < 7)
-            DeserializeSetIntoFlatSet(ar, "m_ships", obj.m_ships);
-        else
+    if (Archive::is_loading::value && version < 8) {
+        if constexpr (Archive::is_loading::value) {
+            if (version < 7)
+                DeserializeSetIntoFlatSet(ar, "m_ships", obj.m_ships);
+            else
+                Serialize(ar, "m_ships", obj.m_ships);
+        } else {
             Serialize(ar, "m_ships", obj.m_ships);
+        }
+
+        ar  & make_nvp("m_prev_system", obj.m_prev_system)
+            & make_nvp("m_next_system", obj.m_next_system)
+            & make_nvp("m_aggression", obj.m_aggression);
+
+        ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id);
+        if (version < 6) {
+            std::list<int> travel_route;
+            ar  & make_nvp("m_travel_route", travel_route);
+            obj.m_travel_route = std::vector(travel_route.begin(), travel_route.end());
+        } else {
+            ar & make_nvp("m_travel_route", obj.m_travel_route);
+        }
+        ar  & make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered)
+            & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
+            & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        Serialize(ar, "ships", obj.m_ships);
+
+        std::string route_str;
+        std::string info_str;
+        ar  >> make_nvp("route", route_str)
+            >> make_nvp("info", info_str);
+        FillIntContainer(obj.m_travel_route, route_str);
+        std::tie(obj.m_prev_system, obj.m_next_system, obj.m_ordered_given_to_empire_id,
+                 obj.m_last_turn_move_ordered, obj.m_arrival_starlane, info_str) = ExtractIntsAndRestFromString<5>(info_str);
+        std::tie(obj.m_aggression, obj.m_arrived_this_turn) = ExtractAggressionAndBool(info_str);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        Serialize(ar, "ships", obj.m_ships);
+
+        std::string route_str = ToString(obj.m_travel_route);
+        std::string info_str = ToString(obj.m_prev_system, obj.m_next_system, obj.m_ordered_given_to_empire_id,
+                                        obj.m_last_turn_move_ordered, obj.m_arrival_starlane,
+                                        obj.m_aggression, obj.m_arrived_this_turn);
+        ar  << make_nvp("route", route_str)
+            << make_nvp("info", info_str);
+
     } else {
         Serialize(ar, "m_ships", obj.m_ships);
+        ar  & make_nvp("m_prev_system", obj.m_prev_system)
+            & make_nvp("m_next_system", obj.m_next_system)
+            & make_nvp("m_aggression", obj.m_aggression)
+            & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
+            & make_nvp("m_travel_route", obj.m_travel_route)
+            & make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered)
+            & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
+            & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
     }
-
-    ar  & make_nvp("m_prev_system", obj.m_prev_system)
-        & make_nvp("m_next_system", obj.m_next_system);
-
-    ar  & make_nvp("m_aggression", obj.m_aggression);
-
-    ar  & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id);
-    if (version < 6) {
-        std::list<int> travel_route;
-        ar & make_nvp("m_travel_route", travel_route);
-        obj.m_travel_route = std::vector(travel_route.begin(), travel_route.end());
-    } else {
-        ar & make_nvp("m_travel_route", obj.m_travel_route);
-    }
-    ar & boost::serialization::make_nvp("m_last_turn_move_ordered", obj.m_last_turn_move_ordered);
-    ar  & make_nvp("m_arrived_this_turn", obj.m_arrived_this_turn)
-        & make_nvp("m_arrival_starlane", obj.m_arrival_starlane);
 }
 
 BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_VERSION(Fleet, 7)
+BOOST_CLASS_VERSION(Fleet, 8)
 
 
 template <typename Archive>
