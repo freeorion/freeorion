@@ -130,7 +130,7 @@ namespace {
     struct py_grammar {
         boost::python::dict globals;
 
-        py_grammar(start_rule_payload& buildings_) :
+        py_grammar(const PythonParser& parser_, start_rule_payload& buildings_) :
             globals(boost::python::import("builtins").attr("__dict__"))
         {
             RegisterGlobalsEffects(globals);
@@ -138,6 +138,8 @@ namespace {
             RegisterGlobalsValueRefs(globals);
             RegisterGlobalsSources(globals);
             RegisterGlobalsEnums(globals);
+
+            parser_.LoadValueRefsModule();
 
             globals["BuildingType"] = boost::python::raw_function(
                 [&buildings_](const boost::python::tuple& args, const boost::python::dict& kw)
@@ -155,7 +157,7 @@ namespace parse {
         ScopedTimer timer("Buildings Parsing");
 
         bool file_success = true;
-        py_grammar p = py_grammar(building_types);
+        py_grammar p = py_grammar(parser, building_types);
         for (const auto& file : ListDir(path, IsFOCPyScript))
             file_success = py_parse::detail::parse_file<py_grammar>(parser, file, p) && file_success;
 
