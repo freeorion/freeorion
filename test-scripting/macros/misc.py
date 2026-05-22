@@ -1,8 +1,9 @@
 try:
-    from focs._effects import EffectsGroup, GameRule, IsSource, NoOpEffect
+    from focs._effects import EffectsGroup, IsSource, NoOpEffect
 except ModuleNotFoundError:
     pass
 
+from focs._value_refs import GameRule
 
 MIN_RECOLONIZING_SIZE = 3
 

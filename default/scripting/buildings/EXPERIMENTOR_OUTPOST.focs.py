@@ -11,7 +11,6 @@ from focs._effects import (
     GalaxyMaxAIAggression,
     GalaxyPlanetDensity,
     GalaxySize,
-    GameRule,
     GenerateSitRepMessage,
     HasDesign,
     HasSpecies,
@@ -44,6 +43,7 @@ from focs._effects import (
     Victory,
     WithinStarlaneJumps,
 )
+from focs._value_refs import GameRule
 from macros.misc import PLANET_DEFENSE_FACTOR, PLANET_SHIELD_FACTOR
 
 try:

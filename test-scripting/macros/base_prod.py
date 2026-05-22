@@ -1,7 +1,4 @@
-try:
-    from focs._effects import GameRule
-except ModuleNotFoundError:
-    pass
+from focs._value_refs import GameRule
 
 INDUSTRY_PER_POP = 0.2
 

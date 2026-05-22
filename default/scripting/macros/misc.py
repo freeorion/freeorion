@@ -1,7 +1,6 @@
 from focs._effects import (
     EffectsGroup,
     EmpireHasAdoptedPolicy,
-    GameRule,
     IsSource,
     IsTarget,
     LocalCandidate,
@@ -15,6 +14,7 @@ from focs._effects import (
     StatisticIf,
     Turn,
 )
+from focs._value_refs import GameRule
 from macros.priorities import POPULATION_DEFAULT_PRIORITY
 
 MIN_RECOLONIZING_SIZE = 3

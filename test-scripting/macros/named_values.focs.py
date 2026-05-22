@@ -1,8 +1,8 @@
 from focs._effects import (
-    GameRule,
     NamedInteger,
     NamedReal,
 )
+from focs._value_refs import GameRule
 
 NamedInteger(name="MIN_MONSTER_DISTANCE", value=GameRule(type=int, name="RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL") - 1)
 

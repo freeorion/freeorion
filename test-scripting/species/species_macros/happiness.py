@@ -10,7 +10,6 @@ try:
         CurrentTurn,
         EffectsGroup,
         EmpireHasAdoptedPolicy,
-        GameRule,
         GasGiantType,
         Good,
         HasSpecies,
@@ -49,6 +48,7 @@ try:
 except ModuleNotFoundError:
     pass
 
+from focs._value_refs import GameRule
 
 STABILITY_PER_LIKED_FOCUS = 2.0
 

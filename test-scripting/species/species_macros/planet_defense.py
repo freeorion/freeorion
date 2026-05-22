@@ -21,7 +21,6 @@ try:
         CurrentTurn,
         EffectsGroup,
         Focus,
-        GameRule,
         IsSource,
         LocalCandidate,
         MinOf,
@@ -36,6 +35,7 @@ try:
 except ModuleNotFoundError:
     pass
 
+from focs._value_refs import GameRule
 
 STANDARD_DEFENSE_GROWTH = EffectsGroup(  # increase 1 per turn, up to max
     scope=IsSource,

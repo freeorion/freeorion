@@ -1,7 +1,6 @@
 from focs._effects import (
     Capital,
     EffectsGroup,
-    GameRule,
     HasSpecies,
     LocalCandidate,
     MaxOf,
@@ -18,6 +17,7 @@ from focs._effects import (
     ThisSpecies,
     Value,
 )
+from focs._value_refs import GameRule
 
 
 def FIXED_OPINION_EFFECTS(name: str, value: float):

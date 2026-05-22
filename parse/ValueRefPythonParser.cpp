@@ -288,36 +288,6 @@ namespace {
         throw std::runtime_error(std::string("Not implemented ") + __func__);
     }
 
-    boost::python::object insert_game_rule_(const PythonTypes& types, const boost::python::tuple& args, const boost::python::dict& kw) {
-        auto name{boost::python::extract<std::string>(kw["name"])()};
-        auto type_ = kw["type"];
-
-        if (type_ == types.type_int) {
-            return boost::python::object(value_ref_wrapper<int>(std::make_shared<ValueRef::ComplexVariable<int>>(
-                "GameRule",
-                nullptr,
-                nullptr,
-                nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
-                nullptr)));
-        } else if (type_ == types.type_float) {
-            return boost::python::object(value_ref_wrapper<double>(std::make_shared<ValueRef::ComplexVariable<double>>(
-                "GameRule",
-                nullptr,
-                nullptr,
-                nullptr,
-                std::make_unique<ValueRef::Constant<std::string>>(std::move(name)),
-                nullptr)));
-        } else {
-            ErrorLogger() << "Unsupported type for rule " << name << ": "
-                          << boost::python::extract<std::string>(boost::python::str(type_))();
-
-            throw std::runtime_error(std::string("Not implemented ") + __func__);
-        }
-
-        return boost::python::object();
-    }
-
     boost::python::object insert_int_complex_variable_(const char* variable,
                                                        const boost::python::tuple& args,
                                                        const boost::python::dict& kw)
@@ -772,9 +742,6 @@ void RegisterGlobalsValueRefs(boost::python::dict& globals) {
     {
         globals[variable] = current_content;
     }
-
-    const auto f_insert_game_rule = [types](const boost::python::tuple& args, const boost::python::dict& kw) { return insert_game_rule_(types, args, kw); };
-    globals["GameRule"] = boost::python::raw_function(f_insert_game_rule);
 
     // selection_operator
     for (const auto& op : std::initializer_list<std::pair<const char*, ValueRef::OpType>>{
