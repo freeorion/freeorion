@@ -4,6 +4,7 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -11,7 +12,6 @@
 #include <boost/container/flat_map.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/optional/optional.hpp>
 #include "ConstantsFwd.h"
 #include "EnumsFwd.h"
 #include "Meter.h"
@@ -352,7 +352,7 @@ private:
     void CheckPendingSpeciesTypes() const;
 
     // these are mutable because they may be updated in CheckPendingSpeciesTypes
-    mutable boost::optional<PendingT>       m_pending_types;
+    mutable std::optional<PendingT>         m_pending_types;
     mutable SpeciesManager::SpeciesTypeMap  m_species;
     mutable SpeciesManager::CensusOrder     m_census_order;
 

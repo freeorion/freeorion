@@ -222,7 +222,7 @@ private:
 
     /** Future rules being parsed by parser.  mutable so that it can
         be assigned to m_game_rules when completed.*/
-    boost::optional<Pending::Pending<GameRulesTypeMap>> m_pending_rules = boost::none;
+    std::optional<Pending::Pending<GameRulesTypeMap>> m_pending_rules = std::nullopt;
 
     GameRulesTypeMap m_game_rules;
 

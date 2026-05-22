@@ -7,9 +7,8 @@
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
-#include <boost/optional/optional.hpp>
-
 #include <memory>
+#include <optional>
 #include <string>
 #include <map>
 #include <set>
@@ -94,7 +93,7 @@ private:
 
     //! Future types being parsed by parser.  mutable so that it can
     //! be assigned to m_species_types when completed.
-    mutable boost::optional<Pending::Pending<std::vector<Policy>>> m_pending_types = boost::none;
+    mutable std::optional<Pending::Pending<std::vector<Policy>>> m_pending_types = std::nullopt;
 
     mutable PoliciesTypeMap m_policies;
 };

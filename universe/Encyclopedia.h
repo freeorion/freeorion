@@ -3,9 +3,9 @@
 
 
 #include <map>
+#include <optional>
 #include <string>
 #include <vector>
-#include <boost/optional/optional.hpp>
 #include "../util/Export.h"
 #include "../util/Pending.h"
 
@@ -49,7 +49,7 @@ private:
     mutable ArticleMap m_articles;
 
     /** Future articles.  mutable so that it can be assigned to m_articles when completed.*/
-    mutable boost::optional<Pending::Pending<ArticleMap>> m_pending_articles = boost::none;
+    mutable std::optional<Pending::Pending<ArticleMap>> m_pending_articles = std::nullopt;
 };
 
 [[nodiscard]] FO_COMMON_API Encyclopedia& GetEncyclopedia();
