@@ -193,7 +193,7 @@ private:
     void CheckPendingShipParts() const;
 
     //! Future that provides all ShipPart%s after loaded by the parser.
-    mutable boost::optional<Pending::Pending<ShipPartMap>> m_pending_ship_parts = boost::none;
+    mutable std::optional<Pending::Pending<ShipPartMap>> m_pending_ship_parts = std::nullopt;
 
     //! Map of ShipPart::Name to ShipPart%s.
     mutable ShipPartMap m_parts;

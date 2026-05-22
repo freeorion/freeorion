@@ -111,7 +111,7 @@ private:
 
     //! Future types being parsed by parser.
     //! mutable so that it can be assigned to m_field_types when completed.
-    mutable boost::optional<Pending::Pending<container_type>> m_pending_types = boost::none;
+    mutable std::optional<Pending::Pending<container_type>> m_pending_types = std::nullopt;
 
     mutable container_type m_field_types;
 

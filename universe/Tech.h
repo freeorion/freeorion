@@ -4,11 +4,11 @@
 
 #include <array>
 #include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/optional/optional.hpp>
 #include "Effect.h"
 #include "EnumsFwd.h"
 #include "../util/Export.h"
@@ -215,7 +215,7 @@ private:
 
     /** Future types being parsed by parser.  mutable so that it can
         be assigned to m_species_types when completed.*/
-    mutable boost::optional<Pending::Pending<TechParseTuple>> m_pending_types = boost::none;
+    mutable std::optional<Pending::Pending<TechParseTuple>> m_pending_types = std::nullopt;
 
     mutable TechContainer         m_techs;
     mutable TechCategoryContainer m_categories;

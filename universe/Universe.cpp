@@ -495,11 +495,11 @@ int Universe::InsertShipDesign(ShipDesign ship_design) {
         return INVALID_DESIGN_ID; // already have a design with that ID
 
     const auto new_id = GenerateDesignID();
-    const auto success = InsertShipDesignID(std::move(ship_design), boost::none, new_id);
+    const auto success = InsertShipDesignID(std::move(ship_design), std::nullopt, new_id);
     return success ? new_id : INVALID_DESIGN_ID;
 }
 
-bool Universe::InsertShipDesignID(ShipDesign ship_design, boost::optional<int>, int id) {
+bool Universe::InsertShipDesignID(ShipDesign ship_design, std::optional<int>, int id) {
     if (!m_design_id_allocator->UpdateIDAndCheckIfOwned(id)) {
         ErrorLogger() << "Ship design id " << id << " is invalid.";
         return false;

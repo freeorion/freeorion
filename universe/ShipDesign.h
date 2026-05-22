@@ -299,8 +299,8 @@ private:
 
     /** Future ship design type being parsed by parser.  mutable so that it can
         be assigned to m_ship design_types when completed.*/
-    mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_designs = boost::none;
-    mutable boost::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_monsters = boost::none;
+    mutable std::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_designs = std::nullopt;
+    mutable std::optional<Pending::Pending<ParsedShipDesignsType>> m_pending_monsters = std::nullopt;
 
     mutable std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>,
                                boost::hash<boost::uuids::uuid>> m_designs;

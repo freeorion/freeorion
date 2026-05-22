@@ -225,7 +225,7 @@ private:
     void CheckPendingShipHulls() const;
 
     //! Future hull type being parsed by parser.
-    mutable boost::optional<Pending::Pending<container_type>> m_pending_ship_hulls = boost::none;
+    mutable std::optional<Pending::Pending<container_type>> m_pending_ship_hulls = std::nullopt;
 
     //! Set of hull types.
     mutable container_type m_hulls;
