@@ -83,7 +83,11 @@ BOOST_AUTO_TEST_CASE(parse_techs) {
     PythonParser parser(m_python, m_scripting_dir);
 
     auto techs_p = Pending::ParseSynchronously(parse::techs<TechManager::TechParseTuple>, parser, m_scripting_dir / "techs");
-    auto [techs, tech_categories, categories_seen] = *Pending::WaitForPendingUnlocked(std::move(techs_p));
+    auto techs_opt = Pending::WaitForPendingUnlocked(std::move(techs_p));
+
+    BOOST_REQUIRE(techs_opt);
+
+    auto [techs, tech_categories, categories_seen] = *std::move(techs_opt);
     BOOST_REQUIRE(!tech_categories.empty());
 
     BOOST_REQUIRE(tech_categories.contains("PRODUCTION_CATEGORY"));
@@ -271,7 +275,11 @@ BOOST_AUTO_TEST_CASE(parse_species) {
     PythonParser parser(m_python, m_scripting_dir);
 
     auto species_p = Pending::ParseSynchronously(parse::species, parser, m_scripting_dir / "species");
-    const auto [species_map, ordering] = *Pending::WaitForPendingUnlocked(std::move(species_p));
+    auto species_opt = Pending::WaitForPendingUnlocked(std::move(species_p));
+
+    BOOST_REQUIRE(species_opt);
+
+    const auto [species_map, ordering] = *std::move(species_opt);
 
     BOOST_REQUIRE(!ordering.empty());
     BOOST_CHECK(!species_map.empty());
@@ -551,7 +559,11 @@ BOOST_AUTO_TEST_CASE(parse_buildings) {
     PythonParser parser(m_python, m_scripting_dir);
 
     auto buildings_p = Pending::ParseSynchronously(parse::buildings, parser, m_scripting_dir / "buildings");
-    const auto buildings = *Pending::WaitForPendingUnlocked(std::move(buildings_p));
+    auto buildings_opt = Pending::WaitForPendingUnlocked(std::move(buildings_p));
+
+    BOOST_REQUIRE(buildings_opt);
+
+    const auto buildings = *std::move(buildings_opt);
 
     BOOST_REQUIRE(!buildings.empty());
 
