@@ -166,3 +166,20 @@ GAS_GIANT_STEALTH_BONUS
             accountinglabel = "GAS_GIANT_STEALTH"
             effects = SetStealth value = Value + 20
 '''
+
+SPAWN_DRONE
+'''If condition = Or [
+            (GalaxyMaxAIAggression < 1)
+            (CurrentTurn < 25)
+        ]
+        effects = CreateShip designname = "SM_DRONE"
+    else = [
+        If condition = (CurrentTurn < 50)
+            effects = CreateShip designname = OneOf("SM_DRONE", "SM_HUNTER_DRONE")
+        else = [
+            If condition = (CurrentTurn < 75)
+                effects = CreateShip designname = OneOf("SM_DRONE", "SM_HUNTER_DRONE", "SM_CLOAKER_DRONE")
+            else = CreateShip designname = OneOf("SM_DRONE", "SM_HUNTER_DRONE", "SM_CLOAKER_DRONE", "SM_TERMINATOR_DRONE")
+        ]
+    ]
+'''

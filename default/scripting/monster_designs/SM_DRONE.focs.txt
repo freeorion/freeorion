@@ -6,7 +6,7 @@ ShipDesign
     parts = [
         "AR_ZORTRIUM_PLATE"
         "SR_WEAPON_2_1"
-        ""
+        "SR_WEAPON_0_1"
     ]
     icon = "icons/monsters/drone.png"
     model = "seed"
