@@ -107,7 +107,12 @@ public:
             m_stringtable_lookup_flag(lookup)
         {}
 
+#if defined(__cpp_impl_three_way_comparison)
         CONSTEXPR_VEC_AND_STRING auto operator<=>(const FixedInfo&) const noexcept = default;
+#else
+        CONSTEXPR_VEC_AND_STRING bool operator==(const FixedInfo&) const noexcept = default;
+        CONSTEXPR_VEC_AND_STRING bool operator!=(const FixedInfo&) const noexcept = default;
+#endif
 
         friend class boost::serialization::access;
         template <typename Archive>
