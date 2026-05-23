@@ -1,0 +1,6 @@
+Article
+    name = "CONTINUE_TITLE"
+    category = "INTERFACE_TITLE"
+    short_description = "CONTINUE_SHORT_DESC"
+    description = "SAVE_LOAD_TEXT"
+    icon = ""
