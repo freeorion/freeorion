@@ -947,30 +947,11 @@ namespace {
 
     template <uint8_t NumInts>
     CONSTEXPR_FROM_CHARS auto ExtractIntsAndRestFromString(const std::string& buffer) {
-        int i0 = 0;
-        int i1 = 0;
-        int i2 = 0;
-        int i3 = 0;
-        int i4 = 0;
-        int i5 = 0;
-        int i6 = 0;
-        int i7 = 0;
-        int i8 = 0;
+        std::array<int, NumInts> i{};
         std::string str;
 
-        const auto get_retval = [&]() {
-            if constexpr (NumInts == 4)
-                return std::tuple{i0, i1, i2, i3, str};
-            else if constexpr (NumInts == 5)
-                return std::tuple{i0, i1, i2, i3, i4, str};
-            else if constexpr (NumInts == 9)
-                return std::tuple{i0, i1, i2, i3, i4, i5, i6, i7, i8, str};
-            else
-                static_assert(NumInts < 6);
-        };
-
         if (buffer.empty())
-            return get_retval();
+            return std::pair(i, str);
 
         const auto* const buffer_end = buffer.c_str() + buffer.size();
         const auto get_next_int = [buffer_end](const char* next) -> std::tuple<int, bool, const char*>
@@ -979,26 +960,11 @@ namespace {
         const auto* next = buffer.c_str();
         bool success = true;
 
-        if (NumInts >= 1)
-            std::tie(i0, success, next) = get_next_int(buffer.c_str());
-        if (success && NumInts >= 2)
-            std::tie(i1, success, next) = get_next_int(next);
-        if (success && NumInts >= 3)
-            std::tie(i2, success, next) = get_next_int(next);
-        if (success && NumInts >= 4)
-            std::tie(i3, success, next) = get_next_int(next);
-        if (success && NumInts >= 5)
-            std::tie(i4, success, next) = get_next_int(next);
-        if (success && NumInts >= 6)
-            std::tie(i5, success, next) = get_next_int(next);
-        if (success && NumInts >= 7)
-            std::tie(i6, success, next) = get_next_int(next);
-        if (success && NumInts >= 8)
-            std::tie(i7, success, next) = get_next_int(next);
-        if (success && NumInts >= 9)
-            std::tie(i8, success, next) = get_next_int(next);
+        for (std::size_t idx = 0; success && idx < NumInts; ++idx)
+            std::tie(i[idx], success, next) = get_next_int(next);
+
         if (!success)
-            return get_retval();
+            return std::pair(i, str);
 
         // skip whitespace
         while (next != buffer_end && *next == ' ')
@@ -1006,20 +972,20 @@ namespace {
 
         const auto next_offset = static_cast<std::size_t>(std::distance(buffer.data(), next));
         if (next_offset > buffer.size())
-            return get_retval();
+            return std::pair(i, str);
 
         // use find remaining chars as string
         str = buffer.substr(next_offset);
 
-        return get_retval();
+        return std::pair(i, str);
     }
 
 #if defined(__cpp_lib_constexpr_vector) && defined(__cpp_lib_to_chars) && defined(__cpp_lib_constexpr_charconv)
-    static_assert(std::get<0>(ExtractIntsAndRestFromString<4>("1 2 3 4 a")) == 1);
-    static_assert(std::get<1>(ExtractIntsAndRestFromString<9>("  1 2  ")) == 2);
-    static_assert(std::get<5>(ExtractIntsAndRestFromString<5>("  1 2  ")).empty());
-    static_assert(std::get<3>(ExtractIntsAndRestFromString<4>("1  2   3 4   a  ")) == 4);
-    static_assert(std::get<4>(ExtractIntsAndRestFromString<4>("1 2 3 4 -abcdef axx")) == "-abcdef axx");
+    static_assert(std::get<0>(ExtractIntsAndRestFromString<4>("1 2 3 4 a").first) == 1);
+    static_assert(std::get<1>(ExtractIntsAndRestFromString<9>("  1 2  ").first) == 2);
+    static_assert(ExtractIntsAndRestFromString<16>("  1 2  ").second.empty());
+    static_assert(std::get<3>(ExtractIntsAndRestFromString<5>("1  2   3 4 6  a  ").first) == 4);
+    static_assert(ExtractIntsAndRestFromString<4>("1 2 3 4 -abcdef axx").second == "-abcdef axx");
 #endif
 
     static_assert([]() {
@@ -1067,7 +1033,9 @@ void serialize(Archive& ar, UniverseObject& o, unsigned int const version)
            >> make_nvp("x", o.m_x)
            >> make_nvp("y", o.m_y);
 
-        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn, o.m_name) = ExtractIntsAndRestFromString<4>(str);
+        auto [i, name_str] = ExtractIntsAndRestFromString<4>(str);
+        std::tie(o.m_id, o.m_owner_empire_id, o.m_system_id, o.m_created_on_turn) = i;
+        o.m_name = std::move(name_str);
 
         Serialize(ar, o.m_meters, version);
 
@@ -1300,13 +1268,165 @@ namespace {
     }
 }
 
+namespace {
+    constexpr std::array<std::pair<PlanetType, std::string_view>, static_cast<std::size_t>(PlanetType::NUM_PLANET_TYPES) + 2> pt_sv =
+    {{
+        {PlanetType::INVALID_PLANET_TYPE, "ipt"},
+        {PlanetType::PT_SWAMP,            "psw"},
+        {PlanetType::PT_TOXIC,            "ptx"},
+        {PlanetType::PT_INFERNO,          "pin"},
+        {PlanetType::PT_RADIATED,         "pra"},
+        {PlanetType::PT_BARREN,           "pba"},
+        {PlanetType::PT_TUNDRA,           "ptu"},
+        {PlanetType::PT_DESERT,           "pde"},
+        {PlanetType::PT_TERRAN,           "pte"},
+        {PlanetType::PT_OCEAN,            "poc"},
+        {PlanetType::PT_ASTEROIDS,        "pas"},
+        {PlanetType::PT_GASGIANT,         "pgg"},
+        {PlanetType::NUM_PLANET_TYPES,    "npt"}
+    }};
+
+    constexpr std::string_view ToString(PlanetType pt) {
+        static_assert(static_cast<int8_t>(PlanetType::INVALID_PLANET_TYPE) == -1);
+        static_assert(std::is_same_v<int8_t, std::underlying_type_t<PlanetType>>);
+        std::size_t idx = static_cast<std::size_t>(static_cast<int8_t>(pt) + 1);
+        if (idx >= pt_sv.size())
+            return pt_sv.front().second;
+        return pt_sv[idx].second;
+    }
+
+    constexpr PlanetType ToPlanetType(std::string_view sv) {
+        const auto is_sv = [sv](const auto& ptp) noexcept { return ptp.second == sv; };
+        auto it = std::find_if(pt_sv.begin(), pt_sv.end(), is_sv);
+        if (it == pt_sv.end())
+            return pt_sv.front().first;
+        return it->first;
+    }
+
+    static_assert(ToPlanetType(ToString(PlanetType::NUM_PLANET_TYPES)) == PlanetType::NUM_PLANET_TYPES);
+    static_assert(ToPlanetType(ToString(PlanetType::INVALID_PLANET_TYPE)) == PlanetType::INVALID_PLANET_TYPE);
+    static_assert(ToPlanetType(ToString(PlanetType::PT_TUNDRA)) == PlanetType::PT_TUNDRA);
+
+
+    constexpr std::array<std::pair<PlanetSize, std::string_view>, static_cast<std::size_t>(PlanetSize::NUM_PLANET_SIZES) + 2> ps_sv =
+    {{
+        {PlanetSize::INVALID_PLANET_SIZE, "ips"},
+        {PlanetSize::SZ_NOWORLD,          "snw"},
+        {PlanetSize::SZ_TINY,             "stn"},
+        {PlanetSize::SZ_SMALL,            "ssm"},
+        {PlanetSize::SZ_MEDIUM,           "smd"},
+        {PlanetSize::SZ_LARGE,            "slg"},
+        {PlanetSize::SZ_HUGE,             "shg"},
+        {PlanetSize::SZ_ASTEROIDS,        "sas"},
+        {PlanetSize::SZ_GASGIANT,         "sgg"},
+        {PlanetSize::NUM_PLANET_SIZES,    "nps"}
+    }};
+
+    constexpr std::string_view ToString(PlanetSize ps) {
+        static_assert(static_cast<int8_t>(PlanetSize::INVALID_PLANET_SIZE) == -1);
+        static_assert(std::is_same_v<int8_t, std::underlying_type_t<PlanetSize>>);
+        std::size_t idx = static_cast<std::size_t>(static_cast<int8_t>(ps) + 1);
+        if (idx >= ps_sv.size())
+            return ps_sv.front().second;
+        return ps_sv[idx].second;
+    }
+
+    constexpr PlanetSize ToPlanetSize(std::string_view sv) {
+        const auto is_sv = [sv](const auto& psp) noexcept { return psp.second == sv; };
+        auto it = std::find_if(ps_sv.begin(), ps_sv.end(), is_sv);
+        if (it == ps_sv.end())
+            return ps_sv.front().first;
+        return it->first;
+    }
+
+
+    std::string ToString(int i0, int i1, int i2, int i3, int i4, int i5,
+                         int i6, int i7, int i8, int i9, int i10, int i11,
+                         float f0, float f1, float f2, float f3,
+                         PlanetType pt0, PlanetType pt1, PlanetSize ps,
+                         bool b0, bool b1, bool b2)
+    {
+        std::string buffer;
+        buffer.reserve(16 * (int_digits + 1) + 4 + (4 * 3));
+        buffer.append(std::to_string(i0)).append(" ")
+              .append(std::to_string(i1)).append(" ")
+              .append(std::to_string(i2)).append(" ")
+              .append(std::to_string(i3)).append(" ")
+              .append(std::to_string(i4)).append(" ")
+              .append(std::to_string(i5)).append(" ")
+              .append(std::to_string(i6)).append(" ")
+              .append(std::to_string(i7)).append(" ")
+              .append(std::to_string(i8)).append(" ")
+              .append(std::to_string(i9)).append(" ")
+              .append(std::to_string(i10)).append(" ")
+              .append(std::to_string(i11)).append(" ");
+
+        buffer.append(std::to_string(Meter::FromFloat(f0))).append(" ")
+              .append(std::to_string(Meter::FromFloat(f1))).append(" ")
+              .append(std::to_string(Meter::FromFloat(f2))).append(" ")
+              .append(std::to_string(Meter::FromFloat(f3))).append(" ");
+
+        buffer.append(ToString(pt0)).append(" ")
+              .append(ToString(pt1)).append(" ")
+              .append(ToString(ps)).append(" ");
+
+        buffer.append(b0 ? "t" : "f")
+              .append(b1 ? "t" : "f")
+              .append(b2 ? "t" : "f");
+
+        return buffer;
+    }
+
+    constexpr auto RemoveSpaces(std::string_view sv) {
+        const auto not_ws_idx = sv.find_first_not_of(' ');
+        if (not_ws_idx != sv.npos)
+            sv.remove_prefix(not_ws_idx);
+        return sv;
+    };
+
+    constexpr auto ExtractPtPtPsBBBFromString(std::string_view buffer) {
+        std::tuple<PlanetType, PlanetType, PlanetSize, bool, bool, bool> retval{
+            PlanetType::INVALID_PLANET_TYPE, PlanetType::INVALID_PLANET_TYPE, PlanetSize::INVALID_PLANET_SIZE, false, false, false};
+
+        buffer = RemoveSpaces(buffer);
+
+        if (buffer.size() < 3)
+            return retval;
+        std::get<0>(retval) = ToPlanetType(buffer.substr(0, 3));
+        buffer.remove_prefix(3);
+        buffer = RemoveSpaces(buffer);
+
+        if (buffer.size() < 3)
+            return retval;
+        std::get<1>(retval) = ToPlanetType(buffer.substr(0, 3));
+        buffer.remove_prefix(3);
+        buffer = RemoveSpaces(buffer);
+
+        if (buffer.size() < 3)
+            return retval;
+        std::get<2>(retval) = ToPlanetSize(buffer.substr(0, 3));
+        buffer.remove_prefix(3);
+        buffer = RemoveSpaces(buffer);
+
+        if (buffer.size() >= 1)
+            std::get<3>(retval) = (buffer[0] == 't');
+        if (buffer.size() >= 2)
+            std::get<4>(retval) = (buffer[1] == 't');
+        if (buffer.size() >= 3)
+            std::get<5>(retval) = (buffer[2] == 't');
+
+        return retval;
+    }
+}
+
 template <typename Archive>
 void serialize(Archive& ar, Planet& obj, unsigned int const version)
 {
     using namespace boost::serialization;
 
     ar  & make_nvp("UniverseObject", base_object<UniverseObject>(obj));
-    if constexpr (Archive::is_loading::value) {
+
+    if (Archive::is_loading::value && version < 11) {
         if (version < 3) {
             PopCenter pop;
             ar  & make_nvp("PopCenter", pop);
@@ -1329,68 +1449,164 @@ void serialize(Archive& ar, Planet& obj, unsigned int const version)
                 & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial);
         }
 
-    } else {
-        ar  & make_nvp("m_species_name", obj.m_species_name);
+        ar  & make_nvp("m_type", obj.m_type)
+            & make_nvp("m_original_type", obj.m_original_type)
+            & make_nvp("m_size", obj.m_size)
+            & make_nvp("m_orbital_period", obj.m_orbital_period)
+            & make_nvp("m_initial_orbital_position", obj.m_initial_orbital_position)
+            & make_nvp("m_rotational_period", obj.m_rotational_period)
+            & make_nvp("m_axial_tilt", obj.m_axial_tilt);
 
-        ar  & make_nvp("m_focus", obj.m_focus)
+        if constexpr (Archive::is_loading::value) {
+            if (version < 5)
+                DeserializeSetIntoFlatSet(ar, "m_buildings", obj.m_buildings);
+            else
+                Serialize(ar, "m_buildings", obj.m_buildings);
+        } else {
+            Serialize(ar, "m_buildings", obj.m_buildings);
+        }
+
+        if (version < 6) {
+            obj.m_turn_last_annexed = INVALID_GAME_TURN;
+            obj.m_ordered_annexed_by_empire_id = ALL_EMPIRES;
+        } else {
+            ar  & make_nvp("m_turn_last_annexed", obj.m_turn_last_annexed)
+                & make_nvp("m_ordered_annexed_by_empire_id", obj.m_ordered_annexed_by_empire_id);
+        }
+
+        ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized)
+            & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered)
+            & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
+            & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
+            & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
+            & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
+            & make_nvp("m_last_turn_attacked_by_ship", obj.m_last_turn_attacked_by_ship);
+
+        if (version < 7)
+            obj.m_owner_before_last_conquered = obj.Owner();
+        else
+            ar  & make_nvp("m_owner_before_last_conquered", obj.m_owner_before_last_conquered);
+
+        if (version < 8)
+            obj.m_last_invaded_by_empire_id = ALL_EMPIRES;
+        else
+            ar  & make_nvp("m_last_invaded_by_empire_id", obj.m_last_invaded_by_empire_id);
+
+        if (version < 9)
+            obj.m_last_colonized_by_empire_id = ALL_EMPIRES;
+        else
+            ar  & make_nvp("m_last_colonized_by_empire_id", obj.m_last_colonized_by_empire_id);
+
+        if (version < 10)
+            obj.m_last_annexed_by_empire_id = ALL_EMPIRES;
+        else
+            ar  & make_nvp("m_last_annexed_by_empire_id", obj.m_last_annexed_by_empire_id);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_iarchive>) {
+        std::string info_str;
+        ar >> make_nvp("info", info_str)
+           >> make_nvp("species", obj.m_species_name)
+           >> make_nvp("focus", obj.m_focus)
+           >> make_nvp("init_focus", obj.m_focus_turn_initial);
+
+        Serialize(ar, "buildings", obj.m_buildings);
+
+        auto [i, rest_str] = ExtractIntsAndRestFromString<16>(info_str);
+        int f0 = 0;
+        int f1 = 0;
+        int f2 = 0;
+        int f3 = 0;
+        std::tie(obj.m_last_turn_focus_changed,
+                 obj.m_last_turn_focus_changed_turn_initial,
+                 obj.m_turn_last_annexed,
+                 obj.m_turn_last_colonized,
+                 obj.m_turn_last_conquered,
+                 obj.m_ordered_annexed_by_empire_id,
+                 obj.m_ordered_given_to_empire_id,
+                 obj.m_last_turn_attacked_by_ship,
+                 obj.m_owner_before_last_conquered,
+                 obj.m_last_invaded_by_empire_id,
+                 obj.m_last_colonized_by_empire_id,
+                 obj.m_last_annexed_by_empire_id,
+                 f0, f1, f2, f3) = i;
+        obj.m_orbital_period = Meter::FromFloat(f0);
+        obj.m_initial_orbital_position = Meter::FromFloat(f1);
+        obj.m_rotational_period = Meter::FromFloat(f2);
+        obj.m_axial_tilt = Meter::FromFloat(f3);
+
+        std::tie(obj.m_type,
+                 obj.m_original_type,
+                 obj.m_size,
+                 obj.m_is_about_to_be_colonized,
+                 obj.m_is_about_to_be_invaded,
+                 obj.m_is_about_to_be_bombarded) = ExtractPtPtPsBBBFromString(rest_str);
+
+    } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
+        std::string info_str = ToString(obj.m_last_turn_focus_changed,
+                                        obj.m_last_turn_focus_changed_turn_initial,
+                                        obj.m_turn_last_annexed,
+                                        obj.m_turn_last_colonized,
+                                        obj.m_turn_last_conquered,
+                                        obj.m_ordered_annexed_by_empire_id,
+                                        obj.m_ordered_given_to_empire_id,
+                                        obj.m_last_turn_attacked_by_ship,
+                                        obj.m_owner_before_last_conquered,
+                                        obj.m_last_invaded_by_empire_id,
+                                        obj.m_last_colonized_by_empire_id,
+                                        obj.m_last_annexed_by_empire_id,
+
+                                        obj.m_orbital_period,
+                                        obj.m_initial_orbital_position,
+                                        obj.m_rotational_period,
+                                        obj.m_axial_tilt,
+
+                                        obj.m_type,
+                                        obj.m_original_type,
+                                        obj.m_size,
+
+                                        obj.m_is_about_to_be_colonized,
+                                        obj.m_is_about_to_be_invaded,
+                                        obj.m_is_about_to_be_bombarded);
+
+        ar << make_nvp("info", info_str)
+           << make_nvp("species", obj.m_species_name)
+           << make_nvp("focus", obj.m_focus)
+           << make_nvp("init_focus", obj.m_focus_turn_initial);
+
+        Serialize(ar, "buildings", obj.m_buildings);
+
+    } else {
+        ar  & make_nvp("m_species_name", obj.m_species_name)
+            & make_nvp("m_focus", obj.m_focus)
             & make_nvp("m_last_turn_focus_changed", obj.m_last_turn_focus_changed)
             & make_nvp("m_focus_turn_initial", obj.m_focus_turn_initial)
-            & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial);
-    }
-
-    ar  & make_nvp("m_type", obj.m_type)
-        & make_nvp("m_original_type", obj.m_original_type)
-        & make_nvp("m_size", obj.m_size)
-        & make_nvp("m_orbital_period", obj.m_orbital_period)
-        & make_nvp("m_initial_orbital_position", obj.m_initial_orbital_position)
-        & make_nvp("m_rotational_period", obj.m_rotational_period)
-        & make_nvp("m_axial_tilt", obj.m_axial_tilt);
-    if constexpr (Archive::is_loading::value) {
-        if (version < 5)
-            DeserializeSetIntoFlatSet(ar, "m_buildings", obj.m_buildings);
-        else
-            Serialize(ar, "m_buildings", obj.m_buildings);
-    } else {
-        Serialize(ar, "m_buildings", obj.m_buildings);
-    }
-    if (Archive::is_loading::value && version < 6) {
-        obj.m_turn_last_annexed = INVALID_GAME_TURN;
-        obj.m_ordered_annexed_by_empire_id = ALL_EMPIRES;
-    } else {
-        ar  & make_nvp("m_turn_last_annexed", obj.m_turn_last_annexed)
-            & make_nvp("m_ordered_annexed_by_empire_id", obj.m_ordered_annexed_by_empire_id);
-    }
-    ar  & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized);
-    ar  & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered);
-    ar  & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
-        & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
-        & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
-        & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
-        & make_nvp("m_last_turn_attacked_by_ship", obj.m_last_turn_attacked_by_ship);
-    if (Archive::is_loading::value && version < 7) {
-        obj.m_owner_before_last_conquered = obj.Owner();
-    } else {
-        ar  & make_nvp("m_owner_before_last_conquered", obj.m_owner_before_last_conquered);
-    }
-    if (Archive::is_loading::value && version < 8) {
-        obj.m_last_invaded_by_empire_id = ALL_EMPIRES;
-    } else {
-        ar  & make_nvp("m_last_invaded_by_empire_id", obj.m_last_invaded_by_empire_id);
-    }
-    if (Archive::is_loading::value && version < 9) {
-        obj.m_last_colonized_by_empire_id = ALL_EMPIRES;
-    } else {
-        ar  & make_nvp("m_last_colonized_by_empire_id", obj.m_last_colonized_by_empire_id);
-    }
-    if (Archive::is_loading::value && version < 10) {
-        obj.m_last_annexed_by_empire_id = ALL_EMPIRES;
-    } else {
-        ar  & make_nvp("m_last_annexed_by_empire_id", obj.m_last_annexed_by_empire_id);
+            & make_nvp("m_last_turn_focus_changed_turn_initial", obj.m_last_turn_focus_changed_turn_initial)
+            & make_nvp("m_type", obj.m_type)
+            & make_nvp("m_original_type", obj.m_original_type)
+            & make_nvp("m_size", obj.m_size)
+            & make_nvp("m_orbital_period", obj.m_orbital_period)
+            & make_nvp("m_initial_orbital_position", obj.m_initial_orbital_position)
+            & make_nvp("m_rotational_period", obj.m_rotational_period)
+            & make_nvp("m_axial_tilt", obj.m_axial_tilt)
+            & make_nvp("m_turn_last_annexed", obj.m_turn_last_annexed)
+            & make_nvp("m_ordered_annexed_by_empire_id", obj.m_ordered_annexed_by_empire_id)
+            & make_nvp("m_turn_last_colonized", obj.m_turn_last_colonized)
+            & make_nvp("m_turn_last_conquered", obj.m_turn_last_conquered)
+            & make_nvp("m_is_about_to_be_colonized", obj.m_is_about_to_be_colonized)
+            & make_nvp("m_is_about_to_be_invaded", obj.m_is_about_to_be_invaded)
+            & make_nvp("m_is_about_to_be_bombarded", obj.m_is_about_to_be_bombarded)
+            & make_nvp("m_ordered_given_to_empire_id", obj.m_ordered_given_to_empire_id)
+            & make_nvp("m_last_turn_attacked_by_ship", obj.m_last_turn_attacked_by_ship)
+            & make_nvp("m_owner_before_last_conquered", obj.m_owner_before_last_conquered)
+            & make_nvp("m_last_invaded_by_empire_id", obj.m_last_invaded_by_empire_id)
+            & make_nvp("m_last_colonized_by_empire_id", obj.m_last_colonized_by_empire_id)
+            & make_nvp("m_last_annexed_by_empire_id", obj.m_last_annexed_by_empire_id)
+            & make_nvp("m_buildings", obj.m_buildings);
     }
 }
 
 BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_VERSION(Planet, 10)
+BOOST_CLASS_VERSION(Planet, 11)
 
 
 template <typename Archive>
@@ -1427,11 +1643,11 @@ namespace {
               .append(std::to_string(i4)).append(" ");
         buffer.append([aggr](){
             switch (aggr) {
-                case FleetAggression::FLEET_AGGRESSIVE:  return "a";
-                case FleetAggression::FLEET_PASSIVE:     return "p";
-                case FleetAggression::FLEET_OBSTRUCTIVE: return "o";
-                case FleetAggression::FLEET_DEFENSIVE:
-                default:                                 return "d";
+            case FleetAggression::FLEET_AGGRESSIVE:  return "a";
+            case FleetAggression::FLEET_PASSIVE:     return "p";
+            case FleetAggression::FLEET_OBSTRUCTIVE: return "o";
+            case FleetAggression::FLEET_DEFENSIVE:
+            default:                                 return "d";
             }
         }());
         buffer.append(tf ? "t" : "f");
@@ -1506,9 +1722,10 @@ void serialize(Archive& ar, Fleet& obj, unsigned int const version)
         ar  >> make_nvp("route", route_str)
             >> make_nvp("info", info_str);
         FillIntContainer(obj.m_travel_route, route_str);
+        auto [i, rest_str] = ExtractIntsAndRestFromString<5>(info_str);
         std::tie(obj.m_prev_system, obj.m_next_system, obj.m_ordered_given_to_empire_id,
-                 obj.m_last_turn_move_ordered, obj.m_arrival_starlane, info_str) = ExtractIntsAndRestFromString<5>(info_str);
-        std::tie(obj.m_aggression, obj.m_arrived_this_turn) = ExtractAggressionAndBool(info_str);
+                 obj.m_last_turn_move_ordered, obj.m_arrival_starlane) = i;
+        std::tie(obj.m_aggression, obj.m_arrived_this_turn) = ExtractAggressionAndBool(rest_str);
 
     } else if constexpr (std::is_same_v<Archive, boost::archive::xml_oarchive>) {
         Serialize(ar, "ships", obj.m_ships);
@@ -1635,12 +1852,12 @@ void serialize(Archive& ar, Ship& obj, unsigned int const version)
         if (version >= 4) {
             std::string info_str;
             ar  >> make_nvp("info", info_str);
+            auto [i, rest_str] = ExtractIntsAndRestFromString<9>(info_str);
             std::tie(obj.m_design_id, obj.m_fleet_id, obj.m_ordered_colonize_planet_id,
                      obj.m_ordered_invade_planet_id, obj.m_ordered_bombard_planet_id,
                      obj.m_produced_by_empire_id, obj.m_arrived_on_turn, 
-                     obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn,
-                     info_str) = ExtractIntsAndRestFromString<9>(info_str);
-            std::tie(obj.m_ordered_scrapped, obj.m_species_name) = ExtractBoolAndRest(info_str);
+                     obj.m_last_turn_active_in_combat, obj.m_last_resupplied_on_turn) = i;
+            std::tie(obj.m_ordered_scrapped, obj.m_species_name) = ExtractBoolAndRest(rest_str);
             Serialize(ar, obj.m_part_meters, version);
         } else {
             serialize_flat(ar, obj, version);
