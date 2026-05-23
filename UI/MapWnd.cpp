@@ -1038,6 +1038,30 @@ void MapWnd::CompleteConstruction() {
         ErrorLogger() << "move_line_dot.png texture not found!";
     }
 
+    auto& optionsDB = GetOptionsDB();
+
+    const auto update_dot_spacing = [this, &optionsDB]() {
+        m_dot_spacing = optionsDB.Get<int>("ui.map.fleet.supply.dot.spacing");
+        if (m_dot_spacing < 1) {
+            ErrorLogger() << "correcting ui.map.fleet.supply.dot.spacing to be at least 1; was " << m_dot_spacing;
+            m_dot_spacing = 1;
+        }
+    };
+
+    const auto update_dot_speed = [this, &optionsDB]() {
+        m_dot_speed = static_cast<float>(optionsDB.Get<double>("ui.map.fleet.supply.dot.rate"));
+        if (m_dot_speed < 0.01f) {
+            ErrorLogger() << "correcting ui.map.fleet.supply.dot.rate to be at least 0.01; was " << m_dot_speed;
+            m_dot_speed = 0.01f;
+        }
+    };
+
+    update_dot_spacing();
+    update_dot_speed();
+
+    m_signal_connections.push_back(optionsDB.OptionChangedSignal("ui.map.fleet.supply.dot.spacing").connect(update_dot_spacing));
+    m_signal_connections.push_back(optionsDB.OptionChangedSignal("ui.map.fleet.supply.dot.rate").connect(update_dot_speed));
+
     using boost::placeholders::_1;
     using boost::placeholders::_2;
 
@@ -2299,29 +2323,20 @@ void MapWnd::RenderFleetMovementLines() {
         return;
 
     // determine animation shift for move lines:
-    // how far apart dots should be along the path, in pixels
-    const int dot_spacing = GetOptionsDB().Get<int>("ui.map.fleet.supply.dot.spacing");
-
-    // rate = speed of dots, in pixels per tick
-    const float rate = static_cast<float>(GetOptionsDB().Get<double>("ui.map.fleet.supply.dot.rate"));
     // ticks = elapsed time for this frame rendering
     const int ticks = GG::GUI::GetGUI()->Ticks();
-    /* Updated each frame to shift rendered posistion of dots that are drawn to
-     * show fleet move lines. */
-    const float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
-
-    // ticks * rate = how far along the path dots have moved per current time, in pixels
-    // since pattern repeats every dot_spacing pixels, we can cast away whole chunks of dot_spacing
+    // ticks * m_dot_speed = how far along the path dots have moved per current time, in pixels
+    // since pattern repeats every m_dot_spacing pixels, we can cast away whole chunks of m_dot_spacing
     // and what remains is the initial shift of animation to get current frame of motion per
     // current time elapsed
     // using float modulo so animation looks smooth, continuous, synchronized to actual fps
     // if integer modulo % was used, that would discretize dot space unnecessarily, leading to
     // fixed positions (number of frames) divorced from real frames-per-second
     // also, rescale this initial shift from pixels to world units via zoom factor
-    const float move_line_animation_shift = std::fmod((ticks * rate), dot_spacing) / zoom;
+    const float move_line_animation_shift = std::fmod((ticks * m_dot_speed), m_dot_spacing) / zoom;
     // rescaling other various lengths according to zoom factor so they represent world coords
     // but stay same size in terms of screen pixel size when transformed to screen view
-    const float zoomed_dot_spacing = dot_spacing / zoom;
+    const float zoomed_dot_spacing = m_dot_spacing / zoom;
     const float half_dot_width = Value(m_move_line_dot_texture->DefaultWidth()) / (2.0f * zoom);
     const float half_dot_height = Value(m_move_line_dot_texture->DefaultHeight()) / (2.0f * zoom);
 
