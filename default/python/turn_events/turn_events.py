@@ -17,7 +17,8 @@ def execute_turn_events():
     # creating fields
     systems = fo.get_systems()
     radius = fo.get_universe_width() / 2.0
-    field_types = ["FLD_MOLECULAR_CLOUD", "FLD_ION_STORM", "FLD_NANITE_SWARM", "FLD_METEOR_BLIZZARD", "FLD_VOID_RIFT"]
+    field_types = ["FLD_MOLECULAR_CLOUD", "FLD_ION_STORM", "FLD_NANITE_SWARM", "FLD_CORROSIVE_NANITE_SWARM",
+                   "FLD_METEOR_BLIZZARD", "FLD_VOID_RIFT"]
 
     if random() < max(0.00015 * radius, 0.03):
         field_type = choice(field_types)
