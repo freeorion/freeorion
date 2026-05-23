@@ -531,6 +531,8 @@ private:
 
     std::shared_ptr<GG::Texture> m_move_line_dot_texture;           //!< texture of dots showing fleet movement along the lines
     std::array<GLfloat, 8>  m_dot_tex_quad;                         //!< actual texture coords of movement dot within possible power-of-two padding
+    int                     m_dot_spacing;                          //!< spacing between dots, in screen pixels
+    float                   m_dot_speed;                            //!< speed of dots, in pixels per tick
     GG::GL2DVertexBuffer    m_fleet_move_dot_vertices;
     GG::GLRGBAColorBuffer   m_fleet_move_dot_colours;
     GG::GLTexCoordBuffer    m_fleet_move_dot_star_texture_coords;
