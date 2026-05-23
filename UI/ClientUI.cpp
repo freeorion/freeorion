@@ -66,10 +66,6 @@
 #include <stdio.h>
 #endif
 
-bool TextureFileNameCompare(const std::shared_ptr<GG::Texture>& t1,
-                            const std::shared_ptr<GG::Texture>& t2)
-{ return t1 && t2 && t1->Path() < t2->Path(); }
-
 namespace fs = std::filesystem;
 
 
@@ -1195,22 +1191,26 @@ const std::vector<std::shared_ptr<GG::Texture>>& ClientUI::GetPrefixedTextures(
         return prefixed_textures_it->second;
 
     // if not already loaded, load textures with requested key
-    std::vector<std::shared_ptr<GG::Texture>> textures;
+    std::vector<std::pair<std::string, std::shared_ptr<GG::Texture>>> textures;
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(dir); it != end_it; ++it) {
         try {
-            if (fs::exists(*it) &&
-                !fs::is_directory(*it) &&
-                boost::algorithm::starts_with(it->path().filename().string(), prefix))
-            { textures.push_back(m_app.GetTexture(*it, mipmap)); }
+            if (fs::exists(*it) && !fs::is_directory(*it)) {
+                auto path_str = it->path().filename().string();
+                if (boost::algorithm::starts_with(path_str, prefix))
+                    textures.emplace_back(std::move(path_str), m_app.GetTexture(*it, mipmap));
+            }
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
             if (e.code() != std::errc::permission_denied)
                 throw;
         }
     }
-    std::sort(textures.begin(), textures.end(), TextureFileNameCompare);
-    auto emplace_it = m_prefixed_textures.emplace(std::move(KEY), std::move(textures)).first;
+
+    static constexpr auto first_less = [](const auto& lhs, const auto& rhs) { return lhs < rhs; };
+    std::sort(textures.begin(), textures.end(), first_less);
+    auto tex_ptrs_vec = textures | range_values | range_to_vec;
+    auto emplace_it = m_prefixed_textures.emplace(std::move(KEY), std::move(tex_ptrs_vec)).first;
     return emplace_it->second;
 }
 

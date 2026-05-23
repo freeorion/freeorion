@@ -64,8 +64,6 @@ public:
 
     const auto& GetTexture() const noexcept { return m_graphic; }
 
-    const std::filesystem::path& GetTexturePath() const;
-
     void Render() override;
 
     /** Sets the style flags, and perfroms sanity checking \see GraphicStyle */
