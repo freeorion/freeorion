@@ -57,19 +57,17 @@ public:
 
     virtual ~Texture();
 
-    auto& Path() const noexcept { return m_path; } ///< file path from which this texture was loaded (default / empty if this texture was not loaded from a file)
-
-    GLenum           WrapS() const noexcept { return m_wrap_s; }                ///< returns S-wrap mode associated with this opengl texture
-    GLenum           WrapT() const noexcept { return m_wrap_t; }                ///< returns T-wrap mode associated with this opengl texture
-    GLenum           MinFilter() const noexcept { return m_min_filter; }        ///< returns minimization filter modes associated with this opengl texture
-    GLenum           MagFilter() const noexcept { return m_mag_filter; }        ///< returns maximization filter modes associated with this opengl texture
-    unsigned int     BytesPP() const noexcept { return m_bytes_pp; }            ///< returns the image's color depth in bytes
-    X                Width() const noexcept { return m_width; }                 ///< returns width of entire texture
-    Y                Height() const noexcept { return m_height; }               ///< returns height of entire texture
-    bool             MipMapped() const noexcept { return m_mipmaps; }           ///< returns true if the texture has mipmaps
-    GLuint           OpenGLId() const noexcept { return m_opengl_id; }          ///< GLuint "name" of the opengl texture object associated with this object
-    X                DefaultWidth() const noexcept { return m_default_width; }  ///< returns width in pixels, based on initial image (0 if texture was not loaded)
-    Y                DefaultHeight() const noexcept { return m_default_height; }///< returns height in pixels, based on initial image (0 if texture was not loaded)
+    GLenum  WrapS() const noexcept { return m_wrap_s; }                ///< returns S-wrap mode associated with this opengl texture
+    GLenum  WrapT() const noexcept { return m_wrap_t; }                ///< returns T-wrap mode associated with this opengl texture
+    GLenum  MinFilter() const noexcept { return m_min_filter; }        ///< returns minimization filter modes associated with this opengl texture
+    GLenum  MagFilter() const noexcept { return m_mag_filter; }        ///< returns maximization filter modes associated with this opengl texture
+    uint8_t BytesPP() const noexcept { return m_bytes_pp; }            ///< returns the image's color depth in bytes
+    X       Width() const noexcept { return m_width; }                 ///< returns width of entire texture
+    Y       Height() const noexcept { return m_height; }               ///< returns height of entire texture
+    bool    MipMapped() const noexcept { return m_mipmaps; }           ///< returns true if the texture has mipmaps
+    GLuint  OpenGLId() const noexcept { return m_opengl_id; }          ///< GLuint "name" of the opengl texture object associated with this object
+    X       DefaultWidth() const noexcept { return m_default_width; }  ///< returns width in pixels, based on initial image (0 if texture was not loaded)
+    Y       DefaultHeight() const noexcept { return m_default_height; }///< returns height in pixels, based on initial image (0 if texture was not loaded)
 
     std::array<GLfloat, 4> DefaultTexCoords() const noexcept { return m_tex_coords; }///< texture coordinates to use by default when blitting this texture
 
@@ -105,7 +103,7 @@ public:
         subclass if the texture creation fails in one of the specified
         ways. */
     void Init(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
-              unsigned int bytes_per_pixel, bool mipmap = false);
+              uint8_t bytes_per_pixel, bool mipmap = false);
 
     void SetFilters(GLenum min, GLenum mag);  ///< sets the opengl min/mag filter modes associated with opengl texture m_opengl_id
     void Clear();  ///< frees the opengl texture object associated with this object
@@ -127,12 +125,9 @@ private:
     Texture& operator=(const Texture& rhs) = delete;
 
     void InitFromRawData(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
-                         unsigned int bytes_per_pixel, bool mipmap);
+                         uint8_t bytes_per_pixel, bool mipmap);
     [[nodiscard]] std::vector<uint8_t> GetRawBytes();
 
-    std::filesystem::path m_path;     ///< file path from which this Texture was constructed
-
-    unsigned int m_bytes_pp = 0;
     X            m_width = GG::X0;
     Y            m_height = GG::Y0;
 
@@ -141,6 +136,7 @@ private:
     GLenum       m_min_filter = GL_LINEAR_MIPMAP_LINEAR;
     GLenum       m_mag_filter = GL_LINEAR;
 
+    uint8_t      m_bytes_pp = 0;
     bool         m_mipmaps = false;
     GLuint       m_opengl_id = 0;   ///< OpenGL texture ID
     GLenum       m_format = GL_INVALID_ENUM;

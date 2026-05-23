@@ -228,7 +228,6 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
 #endif
     }
 
-    m_path = path;
     m_default_width = X(image.width());
     m_default_height = Y(image.height());
     m_type = GL_UNSIGNED_BYTE;
@@ -278,7 +277,7 @@ void Texture::Load(const std::filesystem::path& path, bool mipmap)
 }
 
 void Texture::Init(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
-                   unsigned int bytes_per_pixel, bool mipmap)
+                   uint8_t bytes_per_pixel, bool mipmap)
 {
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
     glPixelStorei(GL_UNPACK_SWAP_BYTES, false);
@@ -314,8 +313,6 @@ void Texture::Clear()
     if (m_opengl_id)
         glDeleteTextures(1, &m_opengl_id);
 
-    m_path.clear();
-
     m_bytes_pp = 4;
     m_default_width = m_width = X0;
     m_default_height = m_height = Y0;
@@ -334,7 +331,7 @@ void Texture::Clear()
 }
 
 void Texture::InitFromRawData(X width, Y height, const uint8_t* image, GLenum format, GLenum type,
-                              unsigned int bytes_per_pixel, bool mipmap)
+                              uint8_t bytes_per_pixel, bool mipmap)
 {
     if (!image)
         return;
