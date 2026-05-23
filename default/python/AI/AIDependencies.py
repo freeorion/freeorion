@@ -344,6 +344,7 @@ TECH_NATIVE_SPECIALS = {
 # <editor-fold desc="Techs">
 # <editor-fold desc="Various tech names">
 # For IDE support and to avoid typos and easier editing, define tech names here and import for scripts
+CON_ORBITAL_CON = "CON_ORBITAL_CON"
 GRO_LIFE_CYCLE = "GRO_LIFECYCLE_MAN"
 PRO_ORBITAL_GEN = "PRO_ORBITAL_GEN"
 PRO_SOL_ORB_GEN = "PRO_SOL_ORB_GEN"

@@ -239,15 +239,17 @@ def _determine_local_presence(planet: fo.planet, details: list) -> _LocalPresenc
     details.append(f"local presence {len(planets)}({len(populated)} pop.)")
     asteroids_rating = ggg_rating = 0.0
     have_asteroids, have_gas_giant = _already_have_types(planets)
+    # Check the pre-requisite tech for Microgravity Industry and Gas Giant Generators to allow for parallel research/production
+    # TODO consider checking the pre-requisites directly from the tech
     if planet.type in (fo.planetType.gasGiant, fo.planetType.asteroids):
         if planet.type == fo.planetType.asteroids:
-            if not have_asteroids and tech_is_complete(AIDependencies.PRO_MICROGRAV_MAN):
+            if not have_asteroids and tech_is_complete(AIDependencies.CON_ORBITAL_CON):
                 users = _count_producers(populated, get_named_real("PRO_MICROGRAV_MAN_MIN_STABILITY"), True)
                 bonus = get_named_real("PRO_MICROGRAV_MAN_TARGET_INDUSTRY_FLAT")
                 asteroids_rating = _rate_production(users * bonus)
                 details.append(f"Mirco-gravity users={users}, rating={asteroids_rating}")
         else:  # gas giant
-            if not have_gas_giant and tech_is_complete(AIDependencies.PRO_ORBITAL_GEN):
+            if not have_gas_giant and tech_is_complete(AIDependencies.CON_ORBITAL_CON):
                 users = _count_producers(populated, get_named_real("BLD_GAS_GIANT_GEN_MIN_STABILITY"), True)
                 bonus = get_named_real("BLD_GAS_GIANT_GEN_OUTPOST_TARGET_INDUSTRY_FLAT")
                 ggg_rating = _rate_production(users * bonus)
